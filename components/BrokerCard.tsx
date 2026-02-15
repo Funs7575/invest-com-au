@@ -3,7 +3,7 @@
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, renderStars } from "@/lib/tracking";
 
-export default function BrokerCard({ broker, badge, context = 'compare' }: { broker: Broker; badge?: string; context?: 'compare' | 'review' | 'calculator' | 'versus' | 'quiz' }) {
+export default function BrokerCard({ broker, badge, context = 'compare', ctaColor = 'amber' }: { broker: Broker; badge?: string; context?: 'compare' | 'review' | 'calculator' | 'versus' | 'quiz'; ctaColor?: 'amber' | 'green' }) {
   return (
     <div className={`rounded-xl border p-4 bg-white ${badge ? 'border-amber ring-1 ring-amber/30' : 'border-slate-200'}`}>
       {badge && (
@@ -37,7 +37,7 @@ export default function BrokerCard({ broker, badge, context = 'compare' }: { bro
         target="_blank"
         rel="noopener noreferrer nofollow"
         onClick={() => trackClick(broker.slug, broker.name, 'compare-mobile', window.location.pathname, context)}
-        className="block w-full text-center text-sm px-3 py-2 bg-amber text-white font-semibold rounded-lg hover:bg-amber-600 transition-colors mb-3"
+        className={`block w-full text-center text-sm px-3 py-2 font-semibold rounded-lg transition-colors mb-3 ${ctaColor === 'green' ? 'bg-green-700 text-white hover:bg-green-800' : 'bg-amber text-white hover:bg-amber-600'}`}
       >
         {getBenefitCta(broker, context)}
       </a>

@@ -27,11 +27,11 @@ export default function RootLayout({
         <div className="bg-slate-50 border-b border-slate-200 py-2 text-center text-xs text-slate-600">
           <div className="container-custom">
             We may receive a commission from partners. This does not affect our rankings.{" "}
-            <Link href="/how-we-earn" className="text-amber hover:text-amber-600 underline transition-colors">
+            <Link href="/how-we-earn" className="text-green-700 hover:text-green-800 underline transition-colors">
               How we make money
             </Link>
             {" · "}
-            <Link href="/about" className="text-amber hover:text-amber-600 underline transition-colors">
+            <Link href="/about" className="text-green-700 hover:text-green-800 underline transition-colors">
               About us
             </Link>
           </div>
