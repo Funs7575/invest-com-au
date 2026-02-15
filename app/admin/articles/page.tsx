@@ -46,6 +46,10 @@ export default function AdminArticlesPage() {
       evergreen: formData.get("evergreen") === "on",
       published_at: formData.get("published_at") || new Date().toISOString(),
       updated_at: new Date().toISOString(),
+      author_name: formData.get("author_name") || null,
+      author_title: formData.get("author_title") || null,
+      author_linkedin: formData.get("author_linkedin") || null,
+      author_twitter: formData.get("author_twitter") || null,
     };
 
     try {
@@ -157,6 +161,25 @@ export default function AdminArticlesPage() {
             </div>
           </div>
 
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-medium text-slate-400 mb-1">Author Name</label>
+              <input name="author_name" defaultValue={formArticle.author_name} placeholder="Market Research Team" className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-slate-400 mb-1">Author Title</label>
+              <input name="author_title" defaultValue={formArticle.author_title} placeholder="Invest.com.au" className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-slate-400 mb-1">Author LinkedIn URL</label>
+              <input name="author_linkedin" defaultValue={formArticle.author_linkedin} placeholder="https://linkedin.com/in/..." className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-slate-400 mb-1">Author Twitter URL</label>
+              <input name="author_twitter" defaultValue={formArticle.author_twitter} placeholder="https://x.com/..." className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
+            </div>
+          </div>
+
           <label className="flex items-center gap-2 cursor-pointer">
             <input type="checkbox" name="evergreen" defaultChecked={formArticle.evergreen} className="w-4 h-4 rounded bg-slate-700 border-slate-600" />
             <span className="text-sm text-slate-300">Evergreen content</span>
@@ -185,6 +208,7 @@ export default function AdminArticlesPage() {
               <thead className="bg-slate-700/50">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Article</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Author</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Category</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Read Time</th>
                   <th className="px-4 py-3 text-right text-xs font-semibold text-slate-400 uppercase">Actions</th>
@@ -197,6 +221,7 @@ export default function AdminArticlesPage() {
                       <div className="text-sm font-semibold text-white">{article.title}</div>
                       <div className="text-xs text-slate-400">{article.slug}</div>
                     </td>
+                    <td className="px-4 py-3 text-sm text-slate-300">{article.author_name || "Team"}</td>
                     <td className="px-4 py-3 text-sm text-slate-300">{article.category || "—"}</td>
                     <td className="px-4 py-3 text-sm text-slate-300">{article.read_time ? `${article.read_time} min` : "—"}</td>
                     <td className="px-4 py-3 text-right space-x-2">

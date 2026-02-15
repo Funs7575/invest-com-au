@@ -52,6 +52,10 @@ export interface Article {
   related_calc?: string;
   evergreen: boolean;
   published_at?: string;
+  author_name?: string;
+  author_title?: string;
+  author_linkedin?: string;
+  author_twitter?: string;
   created_at: string;
   updated_at: string;
 }

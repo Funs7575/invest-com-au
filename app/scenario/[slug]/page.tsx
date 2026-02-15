@@ -3,6 +3,7 @@ import type { Scenario, Broker } from "@/lib/types";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getAffiliateLink } from "@/lib/tracking";
+import AuthorByline from "@/components/AuthorByline";
 
 export async function generateMetadata({
   params,
@@ -86,6 +87,9 @@ export default async function ScenarioPage({
             {s.hero_title}
           </p>
         )}
+
+        {/* Author Byline */}
+        <AuthorByline variant="light" />
 
         {/* The Problem */}
         {s.problem && (

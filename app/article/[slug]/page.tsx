@@ -7,6 +7,7 @@ import ArticleDetailClient from "./ArticleDetailClient";
 import IntlBrokersEnhanced from "@/components/IntlBrokersEnhanced";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import ComparisonTableSkeleton from "@/components/ComparisonTableSkeleton";
+import AuthorByline from "@/components/AuthorByline";
 
 const CATEGORY_COLORS: Record<string, string> = {
   tax: "bg-purple-100 text-purple-700",
@@ -112,40 +113,43 @@ export default async function ArticlePage({
   const calcInfo = a.related_calc ? CALC_NAMES[a.related_calc] : null;
   const pagePath = `/article/${slug}`;
 
-  // JSON-LD schema for enhanced articles
-  const jsonLd = isEnhanced
-    ? {
-        "@context": "https://schema.org",
-        "@type": "Article",
-        headline: a.title,
-        description: a.excerpt,
-        datePublished: a.published_at,
-        dateModified: a.updated_at,
-        author: {
-          "@type": "Organization",
-          name: "Invest.com.au",
-          url: "https://invest-com-au.vercel.app",
-        },
-        publisher: {
-          "@type": "Organization",
-          name: "Invest.com.au",
-        },
-        mainEntityOfPage: {
-          "@type": "WebPage",
-          "@id": `https://invest-com-au.vercel.app${pagePath}`,
-        },
-      }
-    : null;
+  // JSON-LD schema for all articles
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: a.title,
+    description: a.excerpt,
+    datePublished: a.published_at,
+    dateModified: a.updated_at,
+    author:
+      a.author_name && a.author_name !== "Market Research Team"
+        ? {
+            "@type": "Person",
+            name: a.author_name,
+            ...(a.author_linkedin ? { url: a.author_linkedin } : {}),
+          }
+        : {
+            "@type": "Organization",
+            name: "Invest.com.au",
+            url: "https://invest-com-au.vercel.app",
+          },
+    publisher: {
+      "@type": "Organization",
+      name: "Invest.com.au",
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `https://invest-com-au.vercel.app${pagePath}`,
+    },
+  };
 
   return (
     <div>
       {/* Schema.org JSON-LD */}
-      {jsonLd && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
-      )}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
       {/* Dark Hero Section */}
       <section className="bg-brand text-white py-16">
@@ -208,6 +212,24 @@ export default async function ArticlePage({
                 {a.excerpt}
               </p>
             )}
+
+            {/* Author Byline */}
+            <AuthorByline
+              name={a.author_name}
+              title={a.author_title}
+              linkedinUrl={a.author_linkedin ?? undefined}
+              twitterUrl={a.author_twitter ?? undefined}
+              verifiedDate={
+                a.updated_at
+                  ? new Date(a.updated_at).toLocaleDateString("en-AU", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })
+                  : undefined
+              }
+              variant="dark"
+            />
           </div>
         </div>
       </section>
