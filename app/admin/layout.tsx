@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ToastProvider } from "@/components/Toast";
 
 export const metadata: Metadata = {
   title: "Admin — Invest.com.au",
@@ -6,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+  return <ToastProvider>{children}</ToastProvider>;
 }

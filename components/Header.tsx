@@ -1,15 +1,20 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 
+const navItems = [
+  { name: "Brokers", href: "/compare" },
+  { name: "Versus", href: "/versus" },
+  { name: "Reviews", href: "/reviews" },
+  { name: "Calculators", href: "/calculators" },
+  { name: "Articles", href: "/articles" },
+  { name: "Scenarios", href: "/scenarios" },
+  { name: "About", href: "/about" },
+];
+
 export default function Header() {
-  const navItems = [
-    { name: "Brokers", href: "/compare" },
-    { name: "Versus", href: "/versus" },
-    { name: "Reviews", href: "/reviews" },
-    { name: "Calculators", href: "/calculators" },
-    { name: "Articles", href: "/articles" },
-    { name: "Scenarios", href: "/scenarios" },
-    { name: "About", href: "/about" },
-  ];
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <>
@@ -20,6 +25,7 @@ export default function Header() {
               Invest<span className="text-amber">.com.au</span>
             </Link>
 
+            {/* Desktop Nav */}
             <nav className="hidden md:flex items-center gap-8">
               {navItems.map((item) => (
                 <Link
@@ -31,8 +37,52 @@ export default function Header() {
                 </Link>
               ))}
             </nav>
+
+            {/* Mobile Hamburger */}
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="md:hidden p-2 text-slate-700 hover:text-brand transition-colors"
+              aria-label="Toggle menu"
+            >
+              {menuOpen ? (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              )}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Slide-out Menu */}
+        {menuOpen && (
+          <div className="md:hidden border-t border-slate-200 bg-white">
+            <nav className="container-custom py-4 space-y-1">
+              {navItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMenuOpen(false)}
+                  className="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-brand rounded-lg transition-colors"
+                >
+                  {item.name}
+                </Link>
+              ))}
+              <div className="pt-2 mt-2 border-t border-slate-100">
+                <Link
+                  href="/quiz"
+                  onClick={() => setMenuOpen(false)}
+                  className="block px-4 py-3 text-sm font-semibold text-amber hover:bg-amber/5 rounded-lg transition-colors"
+                >
+                  Take The Quiz
+                </Link>
+              </div>
+            </nav>
+          </div>
+        )}
       </header>
 
       {/* Quick Nav Bar */}

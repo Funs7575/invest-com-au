@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
   );
 
   const body = await request.json();
-  const { broker_name, broker_slug, source, page } = body;
+  const { broker_name, broker_slug, source, page, layer } = body;
 
   if (!broker_slug) {
     return NextResponse.json({ error: 'Missing broker_slug' }, { status: 400 });
@@ -34,6 +34,7 @@ export async function POST(request: NextRequest) {
     broker_slug,
     source: source || 'website',
     page: page || '/',
+    layer: layer || null,
     user_agent: userAgent,
     ip_hash: ipHash,
   });

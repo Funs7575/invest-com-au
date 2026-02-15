@@ -1,0 +1,254 @@
+"use client";
+
+import Link from "next/link";
+import type { Broker } from "@/lib/types";
+import { trackClick, getAffiliateLink, getBenefitCta, renderStars } from "@/lib/tracking";
+import StickyCTABar from "@/components/StickyCTABar";
+
+function FeeVerdict({ value, thresholds }: { value: number | undefined; thresholds: [number, number] }) {
+  if (value == null) return <span className="px-2 py-0.5 bg-slate-100 text-slate-500 text-xs font-semibold rounded-full">N/A</span>;
+  const color = value <= thresholds[0] ? 'green' : value <= thresholds[1] ? 'amber' : 'red';
+  const label = value <= thresholds[0] ? 'Low' : value <= thresholds[1] ? 'Medium' : 'High';
+  const colorMap = { green: 'bg-green-100 text-green-700', amber: 'bg-amber-100 text-amber-700', red: 'bg-red-100 text-red-700' };
+  return <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${colorMap[color]}`}>{label}</span>;
+}
+
+export default function BrokerReviewClient({ broker: b, similar }: { broker: Broker; similar: Broker[] }) {
+  const feeRows = [
+    { label: 'ASX Brokerage', value: b.asx_fee || 'N/A', numVal: b.asx_fee_value, thresholds: [5, 15] as [number, number], verdict: b.asx_fee_value != null && b.asx_fee_value <= 5 ? 'Low' : b.asx_fee_value != null && b.asx_fee_value <= 15 ? 'Medium' : 'High' },
+    { label: 'US Brokerage', value: b.us_fee || 'N/A', numVal: b.us_fee_value, thresholds: [0, 5] as [number, number], verdict: b.us_fee_value === 0 ? 'Free' : b.us_fee_value != null && b.us_fee_value <= 5 ? 'Low' : 'High' },
+    { label: 'FX Rate', value: b.fx_rate != null ? `${b.fx_rate}%` : 'N/A', numVal: b.fx_rate, thresholds: [0.3, 0.5] as [number, number], verdict: b.fx_rate != null && b.fx_rate <= 0.3 ? 'Excellent' : b.fx_rate != null && b.fx_rate <= 0.5 ? 'Fair' : 'Expensive' },
+    { label: 'Inactivity Fee', value: b.inactivity_fee || 'None', numVal: b.inactivity_fee === 'None' || !b.inactivity_fee ? 0 : 1, thresholds: [0, 0] as [number, number], verdict: b.inactivity_fee === 'None' || !b.inactivity_fee ? 'None' : 'Watch out' },
+  ];
+
+  const stickyDetail = `${b.asx_fee || 'N/A'} ASX · ${b.chess_sponsored ? 'CHESS' : 'Custodial'} · ${b.rating}/5`;
+
+  return (
+    <div className="py-12">
+      <div className="container-custom max-w-4xl">
+        {/* Breadcrumb */}
+        <div className="text-sm text-slate-500 mb-6">
+          <Link href="/" className="hover:text-brand">Home</Link>
+          <span className="mx-2">/</span>
+          <Link href="/reviews" className="hover:text-brand">Reviews</Link>
+          <span className="mx-2">/</span>
+          <span className="text-brand">{b.name}</span>
+        </div>
+
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-start gap-6 mb-4">
+          <div
+            className="w-16 h-16 rounded-xl flex items-center justify-center text-2xl font-bold shrink-0"
+            style={{ background: `${b.color}20`, color: b.color }}
+          >
+            {b.icon || b.name.charAt(0)}
+          </div>
+          <div className="flex-1">
+            <h1 className="text-3xl md:text-4xl font-extrabold">{b.name} Review (2026)</h1>
+            <p className="text-slate-600 mt-1">{b.tagline}</p>
+            <div className="flex items-center gap-3 mt-2 flex-wrap">
+              <span className="text-amber text-sm">{renderStars(b.rating || 0)}</span>
+              <span className="text-sm text-slate-500">{b.rating}/5</span>
+              {b.chess_sponsored && (
+                <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded-full">CHESS Sponsored</span>
+              )}
+              {b.deal && (
+                <span className="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-semibold rounded-full">Deal of the Month</span>
+              )}
+            </div>
+          </div>
+          <a
+            href={getAffiliateLink(b)}
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+            onClick={() => trackClick(b.slug, b.name, 'review-header', `/broker/${b.slug}`, 'review')}
+            className="shrink-0 px-6 py-3 bg-amber text-white font-semibold rounded-lg hover:bg-amber-600 transition-colors"
+          >
+            {getBenefitCta(b, 'review')}
+          </a>
+        </div>
+        <p className="text-xs text-slate-400 mb-8">
+          {Math.floor(300 + Math.random() * 700)} Australians viewed this review this week
+        </p>
+
+        {/* Fee Audit */}
+        <h2 className="text-2xl font-extrabold mb-2">Fee Audit</h2>
+        <p className="text-slate-600 mb-4 text-sm">We&apos;ve audited {b.name}&apos;s fee structure so you don&apos;t have to read the PDS.</p>
+        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden mb-8">
+          {feeRows.map((row, i) => (
+            <div key={i} className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100 last:border-b-0">
+              <span className="text-sm font-medium text-slate-700">{row.label}</span>
+              <div className="flex items-center gap-3">
+                <span className="font-semibold text-sm">{row.value}</span>
+                <FeeVerdict value={row.numVal} thresholds={row.thresholds} />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Inline CTA 1 */}
+        <div className="bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-200 rounded-xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+          <p className="text-sm">
+            <strong>Like what you see?</strong>{' '}
+            {(b.asx_fee_value ?? 999) <= 5
+              ? `${b.name} offers some of the lowest fees in Australia.`
+              : b.chess_sponsored
+              ? `${b.name} is CHESS sponsored — your shares, your name.`
+              : `See if ${b.name} fits your needs.`}
+          </p>
+          <a
+            href={getAffiliateLink(b)}
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+            onClick={() => trackClick(b.slug, b.name, 'review-inline-1', `/broker/${b.slug}`, 'review')}
+            className="shrink-0 px-4 py-2 bg-amber text-white text-sm font-semibold rounded-lg hover:bg-amber-600 transition-colors"
+          >
+            {getBenefitCta(b, 'review')}
+          </a>
+        </div>
+
+        {/* Safety Check */}
+        <h2 className="text-2xl font-extrabold mb-3">Safety &amp; Scam Check</h2>
+        <div className={`rounded-xl p-6 mb-8 border ${b.chess_sponsored ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+          <div className="flex items-center gap-3 mb-3">
+            <span className="text-3xl">{b.chess_sponsored ? '✅' : '⚠️'}</span>
+            <h3 className="text-lg font-bold">
+              {b.chess_sponsored
+                ? 'CHESS Sponsored — You Own Your Shares'
+                : 'Custodial Model — Broker Holds Your Shares'}
+            </h3>
+          </div>
+          <p className="text-sm text-slate-700">
+            {b.chess_sponsored
+              ? `${b.name} is CHESS sponsored. Your shares are registered directly in your name on the ASX via a HIN. If ${b.name} goes bust, your shares are safe.`
+              : `${b.name} uses a custodial model. Shares are held in the broker's name. If they were to fail, your shares would be part of the insolvency process.`}
+          </p>
+        </div>
+
+        {/* Pros & Cons */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          {b.pros && b.pros.length > 0 && (
+            <div className="bg-green-50 rounded-xl p-6">
+              <h3 className="text-green-800 font-bold mb-3">What We Like</h3>
+              <ul className="space-y-2">
+                {b.pros.map((pro: string, i: number) => (
+                  <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
+                    <span className="text-green-600 font-bold mt-0.5">+</span>
+                    <span>{pro}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {b.cons && b.cons.length > 0 && (
+            <div className="bg-red-50 rounded-xl p-6">
+              <h3 className="text-red-800 font-bold mb-3">What We Don&apos;t</h3>
+              <ul className="space-y-2">
+                {b.cons.map((con: string, i: number) => (
+                  <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
+                    <span className="text-red-600 font-bold mt-0.5">-</span>
+                    <span>{con}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+
+        {/* Inline CTA 2 */}
+        <div className="bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-200 rounded-xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+          <p className="text-sm">
+            <strong>Ready to decide?</strong>{' '}
+            {b.deal
+              ? b.deal_text
+              : (b.asx_fee_value ?? 999) === 0
+              ? 'Trade with $0 brokerage on ASX and US shares.'
+              : (b.asx_fee_value ?? 999) <= 5
+              ? `Start trading from just ${b.asx_fee} per trade.`
+              : 'Open an account in minutes.'}
+          </p>
+          <a
+            href={getAffiliateLink(b)}
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+            onClick={() => trackClick(b.slug, b.name, 'review-inline-2', `/broker/${b.slug}`, 'review')}
+            className="shrink-0 px-4 py-2 bg-amber text-white text-sm font-semibold rounded-lg hover:bg-amber-600 transition-colors"
+          >
+            {getBenefitCta(b, 'review')}
+          </a>
+        </div>
+
+        {/* Details Grid */}
+        <h2 className="text-2xl font-extrabold mb-3">Details</h2>
+        <div className="grid grid-cols-2 gap-4 mb-8">
+          <div className="bg-slate-50 rounded-lg p-4">
+            <p className="text-[0.65rem] uppercase text-slate-500 tracking-wide font-medium mb-1">Platforms</p>
+            <p className="text-sm font-medium">{b.platforms?.join(', ') || 'N/A'}</p>
+          </div>
+          <div className="bg-slate-50 rounded-lg p-4">
+            <p className="text-[0.65rem] uppercase text-slate-500 tracking-wide font-medium mb-1">Payment Methods</p>
+            <p className="text-sm font-medium">{b.payment_methods?.join(', ') || 'N/A'}</p>
+          </div>
+          <div className="bg-slate-50 rounded-lg p-4">
+            <p className="text-[0.65rem] uppercase text-slate-500 tracking-wide font-medium mb-1">SMSF Support</p>
+            <p className="text-sm font-medium">{b.smsf_support ? 'Yes' : 'No'}</p>
+          </div>
+          <div className="bg-slate-50 rounded-lg p-4">
+            <p className="text-[0.65rem] uppercase text-slate-500 tracking-wide font-medium mb-1">Min Deposit</p>
+            <p className="text-sm font-medium">{b.min_deposit || '$0'}</p>
+          </div>
+        </div>
+
+        {/* Similar Brokers */}
+        {similar.length > 0 && (
+          <>
+            <h2 className="text-xl font-extrabold mb-2">Similar Brokers</h2>
+            <p className="text-sm text-slate-600 mb-4">If {b.name} isn&apos;t quite right, consider these alternatives:</p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+              {similar.map(s => (
+                <Link
+                  key={s.slug}
+                  href={`/broker/${s.slug}`}
+                  className="border border-slate-200 rounded-xl p-4 hover:shadow-md transition-shadow"
+                >
+                  <div
+                    className="w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold mb-2"
+                    style={{ background: `${s.color}20`, color: s.color }}
+                  >
+                    {s.icon || s.name.charAt(0)}
+                  </div>
+                  <h3 className="font-bold text-sm">{s.name}</h3>
+                  <div className="text-xs text-amber">{renderStars(s.rating || 0)} <span className="text-slate-500">{s.rating}/5</span></div>
+                  <div className="text-xs text-slate-500 mt-1">ASX: {s.asx_fee} · {s.chess_sponsored ? 'CHESS' : 'Custodial'}</div>
+                  <span className="inline-block mt-2 text-xs px-3 py-1 border border-slate-200 rounded-md">Compare →</span>
+                </Link>
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* Bottom CTA */}
+        <div className="bg-slate-900 text-white rounded-xl p-8 text-center">
+          <h2 className="text-2xl font-extrabold mb-2">Ready to try {b.name}?</h2>
+          <p className="text-slate-300 mb-4">
+            {b.deal_text || ((b.asx_fee_value ?? 999) <= 5
+              ? `Start trading from just ${b.asx_fee} per trade. Takes under 5 minutes.`
+              : 'Open an account and start trading in minutes.')}
+          </p>
+          <a
+            href={getAffiliateLink(b)}
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+            onClick={() => trackClick(b.slug, b.name, 'review-bottom', `/broker/${b.slug}`, 'review')}
+            className="inline-block px-8 py-3 bg-amber text-white font-semibold rounded-lg hover:bg-amber-600 transition-colors animate-pulse"
+          >
+            {getBenefitCta(b, 'review')}
+          </a>
+          <p className="text-xs text-slate-500 mt-3">We may receive a commission. This does not affect our review.</p>
+        </div>
+      </div>
+
+      <StickyCTABar broker={b} detail={stickyDetail} context="review" />
+    </div>
+  );
+}

@@ -4,6 +4,8 @@ import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CookieBanner from "@/components/CookieBanner";
+import BackToTop from "@/components/BackToTop";
+import QuizPromptBar from "@/components/QuizPromptBar";
 import Link from "next/link";
 
 const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
@@ -39,6 +41,8 @@ export default function RootLayout({
         <main className="min-h-screen">{children}</main>
         <Footer />
         <CookieBanner />
+        <BackToTop />
+        <QuizPromptBar />
       </body>
     </html>
   );

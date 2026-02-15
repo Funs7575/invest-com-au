@@ -1,66 +1,160 @@
 import Link from "next/link";
 
+export const metadata = {
+  title: "About Us — Invest.com.au",
+  description: "Learn about Invest.com.au, Australia's independent broker comparison platform. Our mission, editorial independence pledge, and review methodology.",
+};
+
+const METHODOLOGY = [
+  { name: "Fees & Costs", desc: "ASX brokerage, US share fees, FX conversion rates, inactivity fees, account fees, and hidden charges.", weight: "30%" },
+  { name: "Platform & Features", desc: "Trading tools, charting, mobile app quality, order types, research resources, and educational content.", weight: "20%" },
+  { name: "Safety & Regulation", desc: "CHESS sponsorship, ASIC regulation, client money segregation, insurance, and company track record.", weight: "20%" },
+  { name: "Product Range", desc: "ASX shares, US/international markets, ETFs, options, crypto, managed funds, and SMSF support.", weight: "15%" },
+  { name: "User Experience", desc: "Account opening speed, funding options, customer support quality, and onboarding process.", weight: "10%" },
+  { name: "Value Extras", desc: "Fractional shares, auto-invest, dividend reinvestment plans, educational tools, and community features.", weight: "5%" },
+];
+
 export default function AboutPage() {
   return (
     <div className="py-12">
       <div className="container-custom">
         <div className="max-w-3xl mx-auto">
-          <h1 className="text-4xl font-bold mb-6">About Invest.com.au</h1>
+          {/* Breadcrumb */}
+          <div className="text-sm text-slate-500 mb-6">
+            <Link href="/" className="hover:text-brand">Home</Link>
+            <span className="mx-2">/</span>
+            <span className="text-brand">About Us</span>
+          </div>
 
-          <div className="space-y-6 text-slate-700 leading-relaxed">
-            <p className="text-lg">
-              Invest.com.au is Australia&apos;s independent broker comparison platform. We help
-              everyday Australians find the right share trading platform without bank bias or paid rankings.
-            </p>
+          <h1 className="text-4xl font-extrabold mb-8">About Invest.com.au</h1>
 
-            <h2 className="text-2xl font-bold text-brand mt-8">Our Mission</h2>
-            <p>
-              The Australian brokerage market is confusing. Banks charge hidden fees, comparison sites
-              rank whoever pays them the most, and new investors have no idea where to start.
-              We built Invest.com.au to change that.
-            </p>
-
-            <h2 className="text-2xl font-bold text-brand mt-8">How We&apos;re Different</h2>
-            <ul className="space-y-3">
-              <li className="flex items-start gap-3">
-                <span className="text-amber font-bold text-lg">1.</span>
-                <div>
-                  <strong>Independent Rankings</strong> — Our ratings are based on real fee data, platform
-                  features, and user experience. Not who pays us the most.
-                </div>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-amber font-bold text-lg">2.</span>
-                <div>
-                  <strong>Transparent Monetisation</strong> — We earn affiliate commissions when you
-                  sign up to a broker through our links. This doesn&apos;t affect our rankings.{" "}
-                  <Link href="/how-we-earn" className="text-amber hover:underline">Learn more</Link>.
-                </div>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="text-amber font-bold text-lg">3.</span>
-                <div>
-                  <strong>Scenario-Based Advice</strong> — Instead of one-size-fits-all recommendations,
-                  we help you find the best broker for your specific situation.
-                </div>
-              </li>
-            </ul>
-
-            <h2 className="text-2xl font-bold text-brand mt-8">What We Cover</h2>
-            <p>
-              We compare 10+ Australian share trading platforms across ASX fees, US share access,
-              FX rates, CHESS sponsorship, SMSF support, and more. We also cover cryptocurrency
-              exchanges for Aussie investors.
-            </p>
-
-            <div className="mt-10 p-6 bg-slate-50 border border-slate-200 rounded-lg">
-              <h3 className="font-bold text-lg mb-2">Disclaimer</h3>
-              <p className="text-sm text-slate-600">
-                Invest.com.au provides general information only and does not constitute financial advice.
-                Always do your own research and consider seeking professional advice before making
-                investment decisions. Past performance is not indicative of future results.
+          {/* Who We Are */}
+          <section className="mb-10">
+            <h2 className="text-2xl font-extrabold text-brand mb-3">Who We Are</h2>
+            <div className="space-y-4 text-slate-700 leading-relaxed">
+              <p className="text-lg">
+                Invest.com.au is Australia&apos;s independent broker comparison platform. We help
+                everyday Australians find the right share trading platform without bank bias or paid rankings.
+              </p>
+              <p>
+                The Australian brokerage market is confusing. Banks charge hidden fees, comparison sites
+                rank whoever pays them the most, and new investors have no idea where to start.
+                We built Invest.com.au to change that.
+              </p>
+              <p>
+                Our team compares every major Australian broker on real data — fees, features, safety, and
+                user experience — so you can make an informed choice in minutes, not hours.
               </p>
             </div>
+          </section>
+
+          {/* Editorial Independence Pledge */}
+          <section className="mb-10">
+            <div className="bg-brand text-white rounded-xl p-6 md:p-8">
+              <h2 className="text-2xl font-extrabold mb-4">Editorial Independence Pledge</h2>
+              <div className="space-y-3 text-slate-100 leading-relaxed">
+                <p>
+                  We take editorial independence seriously. Every review, rating, and recommendation
+                  on Invest.com.au is based on our independent analysis — never influenced by commercial relationships.
+                </p>
+                <ul className="space-y-2 mt-4">
+                  <li className="flex items-start gap-3">
+                    <span className="text-amber font-bold shrink-0">1.</span>
+                    <span><strong className="text-white">Rankings are data-driven.</strong> Our ratings are based on real fee data, platform features, and user experience — not who pays us the most.</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-amber font-bold shrink-0">2.</span>
+                    <span><strong className="text-white">Monetisation is transparent.</strong> We earn affiliate commissions when you sign up through our links. This never affects rankings.{" "}
+                      <Link href="/how-we-earn" className="text-amber hover:underline">Learn more</Link>.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-amber font-bold shrink-0">3.</span>
+                    <span><strong className="text-white">We review everyone.</strong> Every broker on our platform is reviewed using the same methodology, whether they have an affiliate relationship with us or not.</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-amber font-bold shrink-0">4.</span>
+                    <span><strong className="text-white">Scenario-based advice.</strong> Instead of one-size-fits-all recommendations, we help you find the best broker for your specific situation.</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          {/* Review Methodology */}
+          <section className="mb-10">
+            <h2 className="text-2xl font-extrabold text-brand mb-3">Review Methodology</h2>
+            <p className="text-slate-700 mb-6 leading-relaxed">
+              Every broker on Invest.com.au is scored across six dimensions, each weighted
+              to reflect what matters most to Australian investors. Here&apos;s how we calculate our ratings:
+            </p>
+            <div className="space-y-3">
+              {METHODOLOGY.map((item) => (
+                <div key={item.name} className="border border-slate-200 rounded-xl p-4 flex items-start gap-4">
+                  <div className="shrink-0 w-14 h-14 rounded-lg bg-amber/10 flex items-center justify-center">
+                    <span className="text-amber font-extrabold text-sm">{item.weight}</span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold text-slate-900">{item.name}</h3>
+                    <p className="text-sm text-slate-600 mt-0.5">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* What We Cover */}
+          <section className="mb-10">
+            <h2 className="text-2xl font-extrabold text-brand mb-3">What We Cover</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              {[
+                "ASX Share Trading",
+                "US & International Shares",
+                "ETFs & Index Funds",
+                "CHESS Sponsorship",
+                "SMSF Brokers",
+                "Crypto Exchanges",
+                "Options Trading",
+                "Fee Calculators",
+                "Investing Guides",
+              ].map((item) => (
+                <div key={item} className="flex items-center gap-2 text-sm text-slate-700 bg-slate-50 rounded-lg px-3 py-2 border border-slate-100">
+                  <span className="text-amber font-bold">&#10003;</span>
+                  <span>{item}</span>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Disclaimers */}
+          <section>
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-6 space-y-4">
+              <h3 className="font-extrabold text-lg">Disclaimers</h3>
+              <div className="text-sm text-slate-600 space-y-3 leading-relaxed">
+                <p>
+                  <strong>General Advice Warning:</strong> The information on Invest.com.au is general in nature
+                  and does not consider your personal objectives, financial situation, or needs. You should
+                  consider whether the information is appropriate to your needs, and where appropriate, seek
+                  professional advice from a financial adviser.
+                </p>
+                <p>
+                  <strong>Accuracy:</strong> While we strive to keep all information accurate and up to date,
+                  we cannot guarantee the completeness or accuracy of information on this site. Always verify
+                  information with the product issuer before making a decision.
+                </p>
+                <p>
+                  <strong>Past Performance:</strong> Past performance is not indicative of future results.
+                  Investment returns can go up and down, and you may receive back less than you invested.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          {/* Bottom CTA */}
+          <div className="mt-10 text-center">
+            <Link href="/compare" className="inline-block px-8 py-3 bg-amber text-white font-semibold rounded-lg hover:bg-amber-600 transition-colors">
+              Compare All Brokers
+            </Link>
           </div>
         </div>
       </div>

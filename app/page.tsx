@@ -24,6 +24,22 @@ export default async function HomePage() {
 
   const dealBroker = dealBrokers?.[0];
 
+  // Fetch site settings for social proof
+  const { data: settings } = await supabase
+    .from('site_settings')
+    .select('key, value');
+
+  const settingsMap: Record<string, string> = {};
+  settings?.forEach((s: { key: string; value: string | null }) => {
+    if (s.value) settingsMap[s.key] = s.value;
+  });
+
+  const visitorCount = settingsMap.visitor_count || "52,000+";
+  const userRating = settingsMap.user_rating || "4.8/5";
+  const heroHeadline = settingsMap.hero_headline || 'Stop <em class="text-amber not-italic">Overpaying</em> Your Broker.';
+  const heroSubtitle = settingsMap.hero_subtitle || "Compare 10+ Australian share trading platforms. Real fees, real data, no bank bias. Find the broker that actually fits your situation.";
+  const mediaLogos = settingsMap.media_logos || "AFR,News.com.au";
+
   // Calculate days left in current month for deal banner
   const now = new Date();
   const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
@@ -65,12 +81,12 @@ export default async function HomePage() {
 
         <div className="container-custom relative z-10">
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-5xl font-bold mb-6">
-              Stop <em className="text-amber not-italic">Overpaying</em> Your Broker.
-            </h1>
+            <h1
+              className="text-5xl font-bold mb-6"
+              dangerouslySetInnerHTML={{ __html: heroHeadline }}
+            />
             <p className="text-xl text-slate-600 mb-8">
-              Compare 10+ Australian share trading platforms. Real fees, real data, no bank bias.
-              Find the broker that actually fits your situation.
+              {heroSubtitle}
             </p>
             <div className="flex gap-4 justify-center flex-wrap">
               <Link
@@ -97,7 +113,7 @@ export default async function HomePage() {
             <div className="flex items-center gap-2">
               <span className="text-2xl">📊</span>
               <div className="text-left">
-                <div className="text-2xl md:text-3xl font-bold text-brand">52,000+</div>
+                <div className="text-2xl md:text-3xl font-bold text-brand">{visitorCount}</div>
                 <div className="text-xs md:text-sm text-slate-600">Australians Trust Us</div>
               </div>
             </div>
@@ -105,7 +121,7 @@ export default async function HomePage() {
             <div className="flex items-center gap-2">
               <span className="text-2xl">⭐</span>
               <div className="text-left">
-                <div className="text-2xl md:text-3xl font-bold text-brand">4.8/5</div>
+                <div className="text-2xl md:text-3xl font-bold text-brand">{userRating}</div>
                 <div className="text-xs md:text-sm text-slate-600">Average Rating</div>
               </div>
             </div>
@@ -120,12 +136,11 @@ export default async function HomePage() {
             <div className="hidden md:block w-px h-12 bg-slate-200"></div>
             <div className="flex items-center gap-3 opacity-50">
               <span className="text-xs font-bold text-slate-400">AS SEEN IN:</span>
-              <span className="px-2 py-1 bg-slate-50 border border-slate-200 rounded text-[0.6rem] font-bold text-slate-400 uppercase tracking-wide">
-                AFR
-              </span>
-              <span className="px-2 py-1 bg-slate-50 border border-slate-200 rounded text-[0.6rem] font-bold text-slate-400 uppercase tracking-wide">
-                News.com.au
-              </span>
+              {mediaLogos.split(",").map((logo: string) => (
+                <span key={logo.trim()} className="px-2 py-1 bg-slate-50 border border-slate-200 rounded text-[0.6rem] font-bold text-slate-400 uppercase tracking-wide">
+                  {logo.trim()}
+                </span>
+              ))}
             </div>
           </div>
         </div>
@@ -171,7 +186,12 @@ export default async function HomePage() {
       {/* Top Brokers */}
       <section className="py-16">
         <div className="container-custom">
-          <h2 className="text-3xl font-bold mb-8">Top Rated Brokers</h2>
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-3xl font-bold">Top Rated Brokers</h2>
+            <span className="text-sm text-slate-500">
+              Updated {new Date().toLocaleDateString("en-AU", { month: "long", year: "numeric" })}
+            </span>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {brokers?.map((broker: Broker) => (
               <Link

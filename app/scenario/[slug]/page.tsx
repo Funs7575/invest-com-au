@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import type { Scenario } from "@/lib/types";
+import type { Scenario, Broker } from "@/lib/types";
 import { notFound } from "next/navigation";
 
 export default async function ScenarioPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -17,79 +17,110 @@ export default async function ScenarioPage({ params }: { params: Promise<{ slug:
 
   const s = scenario as Scenario;
 
+  // Fetch actual broker data for recommended brokers
+  let recBrokers: Broker[] = [];
+  if (s.brokers && s.brokers.length > 0) {
+    const { data } = await supabase
+      .from('brokers')
+      .select('*')
+      .eq('status', 'active')
+      .in('slug', s.brokers);
+    recBrokers = (data as Broker[]) || [];
+  }
+
   return (
     <div className="py-12">
-      <div className="container-custom">
-        <div className="max-w-3xl mx-auto">
-          {/* Breadcrumb */}
-          <div className="text-sm text-slate-500 mb-6">
-            <Link href="/" className="hover:text-brand">Home</Link>
-            <span className="mx-2">/</span>
-            <Link href="/scenarios" className="hover:text-brand">Scenarios</Link>
-            <span className="mx-2">/</span>
-            <span className="text-brand">{s.title}</span>
+      <div className="container-custom max-w-3xl mx-auto">
+        {/* Breadcrumb */}
+        <div className="text-sm text-slate-500 mb-6">
+          <Link href="/" className="hover:text-brand">Home</Link>
+          <span className="mx-2">/</span>
+          <Link href="/scenarios" className="hover:text-brand">Investing For</Link>
+          <span className="mx-2">/</span>
+          <span className="text-brand">{s.title}</span>
+        </div>
+
+        <h1 className="text-3xl md:text-4xl font-extrabold mb-6 leading-tight">{s.hero_title || s.title}</h1>
+
+        {/* Problem Box */}
+        {s.problem && (
+          <div className="bg-red-50 border border-red-200 rounded-xl p-6 mb-6">
+            <h2 className="font-extrabold text-lg mb-2 text-red-800">The Problem</h2>
+            <p className="text-slate-700">{s.problem}</p>
           </div>
+        )}
 
-          {/* Header */}
-          <div className="mb-10">
-            {s.icon && <div className="text-5xl mb-4">{s.icon}</div>}
-            <h1 className="text-4xl font-bold mb-4">{s.hero_title || s.title}</h1>
+        {/* Solution Box */}
+        {s.solution && (
+          <div className="bg-green-50 border border-green-200 rounded-xl p-6 mb-8">
+            <h2 className="font-extrabold text-lg mb-2 text-green-800">The Solution</h2>
+            <p className="text-slate-700">{s.solution}</p>
           </div>
+        )}
 
-          {/* Problem */}
-          {s.problem && (
-            <section className="mb-8 border-l-4 border-red-400 pl-6">
-              <h2 className="text-xl font-bold text-red-700 mb-2">The Problem</h2>
-              <p className="text-slate-700 leading-relaxed whitespace-pre-line">{s.problem}</p>
-            </section>
-          )}
+        {/* Key Considerations */}
+        {s.considerations && s.considerations.length > 0 && (
+          <>
+            <h2 className="text-xl font-extrabold mb-3">Key Considerations</h2>
+            <ul className="mb-8 space-y-2">
+              {s.considerations.map((item: string, i: number) => (
+                <li key={i} className="flex items-start gap-3 text-slate-700">
+                  <span className="text-amber font-bold shrink-0">{i + 1}.</span>
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
 
-          {/* Solution */}
-          {s.solution && (
-            <section className="mb-8 border-l-4 border-green-400 pl-6">
-              <h2 className="text-xl font-bold text-green-700 mb-2">The Solution</h2>
-              <p className="text-slate-700 leading-relaxed whitespace-pre-line">{s.solution}</p>
-            </section>
-          )}
-
-          {/* Recommended Brokers */}
-          {s.brokers && s.brokers.length > 0 && (
-            <section className="mb-8">
-              <h2 className="text-xl font-bold mb-4">Recommended Brokers</h2>
-              <div className="flex flex-wrap gap-3">
-                {s.brokers.map((slug: string) => (
-                  <Link
-                    key={slug}
-                    href={`/broker/${slug}`}
-                    className="px-4 py-3 bg-amber/10 text-amber border border-amber/30 font-semibold rounded-lg hover:bg-amber/20 transition-colors"
+        {/* Recommended Brokers */}
+        {recBrokers.length > 0 && (
+          <>
+            <h2 className="text-xl font-extrabold mb-3">Recommended Brokers</h2>
+            <div className="space-y-3 mb-8">
+              {recBrokers.map(b => (
+                <div key={b.slug} className="flex items-center gap-4 p-4 border border-slate-200 rounded-xl flex-wrap">
+                  <div
+                    className="w-12 h-12 rounded-lg flex items-center justify-center text-sm font-bold shrink-0"
+                    style={{ background: `${b.color}20`, color: b.color }}
                   >
-                    {slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}
-                  </Link>
-                ))}
-              </div>
-            </section>
-          )}
+                    {b.icon || b.name.charAt(0)}
+                  </div>
+                  <div className="flex-1 min-w-[200px]">
+                    <h3 className="font-bold">{b.name}</h3>
+                    <p className="text-xs text-slate-600">{b.tagline}</p>
+                    <div className="flex gap-3 mt-1 text-[0.65rem] text-slate-500">
+                      <span>ASX: {b.asx_fee}</span>
+                      <span>CHESS: {b.chess_sponsored ? 'Yes' : 'No'}</span>
+                      <span>SMSF: {b.smsf_support ? 'Yes' : 'No'}</span>
+                    </div>
+                  </div>
+                  <div className="flex gap-2 shrink-0">
+                    <Link href={`/broker/${b.slug}`} className="px-3 py-2 text-sm border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
+                      Review
+                    </Link>
+                    <a
+                      href={b.affiliate_url || `/broker/${b.slug}`}
+                      target="_blank"
+                      rel="noopener noreferrer nofollow"
+                      className="px-3 py-2 text-sm bg-amber text-white rounded-lg hover:bg-amber-600 transition-colors"
+                    >
+                      {b.cta_text || 'Visit'}
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
 
-          {/* Considerations */}
-          {s.considerations && s.considerations.length > 0 && (
-            <section className="mb-8 border border-slate-200 rounded-lg p-6 bg-slate-50">
-              <h2 className="text-xl font-bold mb-4">Key Considerations</h2>
-              <ul className="space-y-3">
-                {s.considerations.map((item: string, i: number) => (
-                  <li key={i} className="flex items-start gap-3">
-                    <span className="text-amber font-bold mt-0.5">&#8226;</span>
-                    <span className="text-slate-700">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
-
-          <div className="mt-12">
-            <Link href="/scenarios" className="text-amber font-semibold hover:underline">
-              &larr; Back to Scenarios
-            </Link>
-          </div>
+        {/* Bottom CTA */}
+        <div className="bg-slate-50 rounded-xl p-6 text-center">
+          <h2 className="text-lg font-extrabold mb-2">Need help deciding?</h2>
+          <p className="text-slate-600 mb-4 text-sm">Compare all brokers side-by-side.</p>
+          <Link href="/compare" className="inline-block px-6 py-3 bg-amber text-white font-semibold rounded-lg hover:bg-amber-600 transition-colors">
+            Compare All Brokers
+          </Link>
         </div>
       </div>
     </div>

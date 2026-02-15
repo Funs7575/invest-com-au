@@ -5,6 +5,7 @@ export interface Broker {
   color: string;
   icon?: string;
   cta_text?: string;
+  benefit_cta?: string;
   tagline?: string;
   asx_fee?: string;
   asx_fee_value?: number;
@@ -76,7 +77,39 @@ export interface AffiliateClick {
   broker_slug?: string;
   source?: string;
   page?: string;
+  layer?: string;
   user_agent?: string;
   ip_hash?: string;
   clicked_at: string;
+}
+
+export interface QuizQuestion {
+  id: number;
+  order_index: number;
+  question_text: string;
+  options: { label: string; key: string }[];
+  active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CalculatorConfig {
+  id: number;
+  calc_type: string;
+  config: Record<string, any>;
+  updated_at: string;
+}
+
+export interface EmailCapture {
+  id: number;
+  email: string;
+  source?: string;
+  captured_at: string;
+}
+
+export interface SiteSettings {
+  id: number;
+  key: string;
+  value?: string;
+  updated_at: string;
 }

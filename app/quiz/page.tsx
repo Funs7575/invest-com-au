@@ -1,145 +1,192 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
-
-const questions = [
-  {
-    q: "What best describes your investing experience?",
-    options: [
-      { label: "Complete beginner", weight: "beginner" },
-      { label: "Some experience", weight: "low_fee" },
-      { label: "Experienced trader", weight: "advanced" },
-    ],
-  },
-  {
-    q: "What do you most want to invest in?",
-    options: [
-      { label: "ASX shares", weight: "beginner" },
-      { label: "US shares (Tesla, Apple, etc.)", weight: "us_shares" },
-      { label: "Crypto", weight: "crypto" },
-      { label: "A bit of everything", weight: "low_fee" },
-    ],
-  },
-  {
-    q: "What matters most to you?",
-    options: [
-      { label: "Lowest fees possible", weight: "low_fee" },
-      { label: "Easy to use platform", weight: "beginner" },
-      { label: "Advanced tools & charting", weight: "advanced" },
-      { label: "SMSF support", weight: "smsf" },
-    ],
-  },
-  {
-    q: "How often do you plan to trade?",
-    options: [
-      { label: "A few times a year", weight: "beginner" },
-      { label: "Monthly", weight: "low_fee" },
-      { label: "Weekly or more", weight: "advanced" },
-    ],
-  },
-];
+import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
+import type { Broker } from "@/lib/types";
+import { trackClick, getAffiliateLink, getBenefitCta, renderStars } from "@/lib/tracking";
 
 type WeightKey = "beginner" | "low_fee" | "us_shares" | "smsf" | "crypto" | "advanced";
 
-const brokerScores: Record<string, Record<WeightKey, number>> = {
+// Fallback questions if DB fetch fails
+const fallbackQuestions = [
+  { question_text: "What is your main investing goal?", options: [{ label: "Buy Crypto", key: "crypto" }, { label: "Active Trading", key: "trade" }, { label: "Dividend Income", key: "income" }, { label: "Long-Term Growth", key: "grow" }] },
+  { question_text: "How experienced are you with investing?", options: [{ label: "Complete Beginner", key: "beginner" }, { label: "Some Experience", key: "intermediate" }, { label: "Advanced / Professional", key: "pro" }] },
+  { question_text: "How much are you looking to invest?", options: [{ label: "Under $5,000", key: "small" }, { label: "$5,000 - $50,000", key: "medium" }, { label: "$50,000 - $100,000", key: "large" }, { label: "$100,000+", key: "whale" }] },
+  { question_text: "What matters most to you?", options: [{ label: "Lowest Fees", key: "fees" }, { label: "Safety (CHESS)", key: "safety" }, { label: "Best Tools & Research", key: "tools" }, { label: "Simplicity", key: "simple" }] },
+];
+
+// Fallback scoring weights
+const fallbackScores: Record<string, Record<WeightKey, number>> = {
   "selfwealth": { beginner: 7, low_fee: 9, us_shares: 7, smsf: 8, crypto: 0, advanced: 5 },
   "stake": { beginner: 8, low_fee: 10, us_shares: 10, smsf: 3, crypto: 0, advanced: 4 },
   "commsec": { beginner: 9, low_fee: 3, us_shares: 5, smsf: 7, crypto: 0, advanced: 6 },
-  "commsec-pocket": { beginner: 10, low_fee: 8, us_shares: 0, smsf: 0, crypto: 0, advanced: 2 },
   "cmc-markets": { beginner: 6, low_fee: 8, us_shares: 8, smsf: 5, crypto: 0, advanced: 8 },
   "interactive-brokers": { beginner: 3, low_fee: 7, us_shares: 9, smsf: 6, crypto: 0, advanced: 10 },
-  "nabtrade": { beginner: 7, low_fee: 3, us_shares: 5, smsf: 8, crypto: 0, advanced: 5 },
-  "pearler": { beginner: 9, low_fee: 8, us_shares: 5, smsf: 4, crypto: 0, advanced: 3 },
+  "moomoo": { beginner: 7, low_fee: 9, us_shares: 9, smsf: 4, crypto: 0, advanced: 7 },
   "superhero": { beginner: 8, low_fee: 9, us_shares: 7, smsf: 6, crypto: 4, advanced: 4 },
   "tiger-brokers": { beginner: 5, low_fee: 7, us_shares: 9, smsf: 3, crypto: 0, advanced: 7 },
   "swyftx": { beginner: 8, low_fee: 7, us_shares: 0, smsf: 3, crypto: 10, advanced: 5 },
   "coinspot": { beginner: 9, low_fee: 5, us_shares: 0, smsf: 2, crypto: 9, advanced: 3 },
 };
 
-const brokerNames: Record<string, string> = {
-  "selfwealth": "SelfWealth",
-  "stake": "Stake",
-  "commsec": "CommSec",
-  "commsec-pocket": "CommSec Pocket",
-  "cmc-markets": "CMC Markets",
-  "interactive-brokers": "Interactive Brokers",
-  "nabtrade": "nabtrade",
-  "pearler": "Pearler",
-  "superhero": "Superhero",
-  "tiger-brokers": "Tiger Brokers",
-  "swyftx": "Swyftx",
-  "coinspot": "CoinSpot",
-};
-
 export default function QuizPage() {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
+  const [questions, setQuestions] = useState(fallbackQuestions);
+  const [brokers, setBrokers] = useState<Broker[]>([]);
+  const [weights, setWeights] = useState<Record<string, Record<string, number>>>(fallbackScores);
 
-  const handleAnswer = (weight: string) => {
-    const newAnswers = [...answers, weight];
-    setAnswers(newAnswers);
+  useEffect(() => {
+    const supabase = createClient();
+
+    // Fetch brokers
+    supabase.from('brokers').select('*').eq('status', 'active').order('rating', { ascending: false })
+      .then(({ data }) => { if (data) setBrokers(data); });
+
+    // Fetch quiz questions from DB
+    supabase.from('quiz_questions').select('*').eq('active', true).order('order_index')
+      .then(({ data }) => { if (data && data.length > 0) setQuestions(data); });
+
+    // Fetch quiz weights from DB
+    supabase.from('quiz_weights').select('*')
+      .then(({ data }) => {
+        if (data && data.length > 0) {
+          const w: Record<string, Record<string, number>> = {};
+          data.forEach((row: any) => {
+            w[row.broker_slug] = {
+              beginner: row.beginner_weight || 0,
+              low_fee: row.low_fee_weight || 0,
+              us_shares: row.us_shares_weight || 0,
+              smsf: row.smsf_weight || 0,
+              crypto: row.crypto_weight || 0,
+              advanced: row.advanced_weight || 0,
+            };
+          });
+          setWeights(w);
+        }
+      });
+  }, []);
+
+  const handleAnswer = (key: string) => {
+    setAnswers([...answers, key]);
     setStep(step + 1);
   };
 
-  const getResults = () => {
-    const weightCounts: Record<string, number> = {};
-    answers.forEach(w => {
-      weightCounts[w] = (weightCounts[w] || 0) + 1;
-    });
-
-    const scored = Object.entries(brokerScores).map(([slug, scores]) => {
+  const getResults = (): { broker: Broker | null; slug: string; total: number }[] => {
+    // Score all brokers based on answers
+    const scored = Object.entries(weights).map(([slug, scores]) => {
       let total = 0;
-      Object.entries(weightCounts).forEach(([key, count]) => {
-        total += (scores[key as WeightKey] || 0) * count;
+
+      answers.forEach(key => {
+        // Map answer keys to weight categories
+        const keyMap: Record<string, WeightKey> = {
+          crypto: 'crypto', trade: 'advanced', income: 'low_fee', grow: 'beginner',
+          beginner: 'beginner', intermediate: 'low_fee', pro: 'advanced',
+          small: 'beginner', medium: 'low_fee', large: 'us_shares', whale: 'advanced',
+          fees: 'low_fee', safety: 'beginner', tools: 'advanced', simple: 'beginner',
+        };
+        const weightKey = keyMap[key] || 'beginner';
+        total += (scores[weightKey] || 0);
       });
-      return { slug, total };
+
+      // Rating multiplier
+      const broker = brokers.find(b => b.slug === slug);
+      if (broker?.rating) total *= (1 + (broker.rating - 4) * 0.1);
+
+      return { slug, total, broker: broker || null };
     });
 
     scored.sort((a, b) => b.total - a.total);
     return scored.slice(0, 3);
   };
 
+  // Results screen
   if (step >= questions.length) {
     const results = getResults();
+    const topMatch = results[0];
+    const runnerUps = results.slice(1);
+
     return (
       <div className="py-12">
-        <div className="container-custom">
-          <div className="max-w-2xl mx-auto text-center">
-            <h1 className="text-4xl font-bold mb-4">Your Best Match</h1>
-            <p className="text-lg text-slate-600 mb-10">
-              Based on your answers, here are our top picks for you.
-            </p>
+        <div className="container-custom max-w-2xl mx-auto">
+          <div className="text-center mb-8">
+            <div className="text-5xl mb-4">🎯</div>
+            <h1 className="text-3xl font-extrabold mb-2">Your #1 Match</h1>
+            <p className="text-slate-600">Based on your answers, here are our top picks for you.</p>
+          </div>
 
-            <div className="space-y-4">
-              {results.map((r, i) => (
-                <Link
-                  key={r.slug}
-                  href={`/broker/${r.slug}`}
-                  className={`block border rounded-lg p-6 text-left hover:shadow-lg transition-shadow ${
-                    i === 0 ? 'border-amber bg-amber/5 ring-2 ring-amber' : 'border-slate-200'
-                  }`}
+          {/* Top Match */}
+          {topMatch?.broker && (
+            <div className="border-2 border-amber rounded-xl p-6 bg-amber-50/30 mb-6">
+              <div className="text-[0.6rem] uppercase font-extrabold text-amber-700 tracking-wider mb-3">#1 Best Match</div>
+              <div className="flex items-center gap-4 mb-4">
+                <div
+                  className="w-14 h-14 rounded-xl flex items-center justify-center text-xl font-bold shrink-0"
+                  style={{ background: `${topMatch.broker.color}20`, color: topMatch.broker.color }}
                 >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      {i === 0 && (
-                        <span className="text-xs font-bold text-amber uppercase tracking-wide">Best Match</span>
-                      )}
-                      <h2 className={`text-xl font-bold ${i === 0 ? 'text-2xl' : ''}`}>
-                        {brokerNames[r.slug] || r.slug}
-                      </h2>
-                    </div>
-                    <span className="text-amber font-semibold">View &rarr;</span>
-                  </div>
-                </Link>
-              ))}
+                  {topMatch.broker.icon || topMatch.broker.name.charAt(0)}
+                </div>
+                <div className="flex-1">
+                  <h2 className="text-2xl font-extrabold">{topMatch.broker.name}</h2>
+                  <div className="text-sm text-amber">{renderStars(topMatch.broker.rating || 0)} <span className="text-slate-500">{topMatch.broker.rating}/5</span></div>
+                </div>
+              </div>
+              <p className="text-sm text-slate-600 mb-3">{topMatch.broker.tagline}</p>
+              <div className="flex flex-wrap gap-3 text-xs text-slate-500 mb-4">
+                <span>ASX: {topMatch.broker.asx_fee}</span>
+                <span>CHESS: {topMatch.broker.chess_sponsored ? 'Yes' : 'No'}</span>
+                <span>SMSF: {topMatch.broker.smsf_support ? 'Yes' : 'No'}</span>
+              </div>
+              <a
+                href={getAffiliateLink(topMatch.broker)}
+                target="_blank"
+                rel="noopener noreferrer nofollow"
+                onClick={() => trackClick(topMatch.broker!.slug, topMatch.broker!.name, 'quiz-result-1', '/quiz', 'quiz')}
+                className="block w-full text-center px-6 py-3 bg-amber text-white font-semibold rounded-lg hover:bg-amber-600 transition-colors"
+              >
+                {getBenefitCta(topMatch.broker, 'quiz')}
+              </a>
             </div>
+          )}
 
+          {/* Runner Ups */}
+          {runnerUps.length > 0 && (
+            <>
+              <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wide mb-3">Runner Up{runnerUps.length > 1 ? 's' : ''}</h3>
+              <div className="space-y-3 mb-8">
+                {runnerUps.map((r, i) => r.broker && (
+                  <div key={r.slug} className="border border-slate-200 rounded-xl p-4 flex items-center gap-4">
+                    <div
+                      className="w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold shrink-0"
+                      style={{ background: `${r.broker.color}20`, color: r.broker.color }}
+                    >
+                      {r.broker.icon || r.broker.name.charAt(0)}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-bold text-sm">{r.broker.name}</h3>
+                      <div className="text-xs text-slate-500">{r.broker.asx_fee} · {r.broker.chess_sponsored ? 'CHESS' : 'Custodial'}</div>
+                    </div>
+                    <a
+                      href={getAffiliateLink(r.broker)}
+                      target="_blank"
+                      rel="noopener noreferrer nofollow"
+                      onClick={() => trackClick(r.broker!.slug, r.broker!.name, `quiz-result-${i + 2}`, '/quiz', 'quiz')}
+                      className="shrink-0 px-4 py-2 bg-amber text-white text-sm font-semibold rounded-lg hover:bg-amber-600 transition-colors"
+                    >
+                      {getBenefitCta(r.broker, 'quiz')}
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+
+          <div className="text-center">
             <button
               onClick={() => { setStep(0); setAnswers([]); }}
-              className="mt-8 text-sm text-slate-500 hover:text-brand"
+              className="text-sm text-slate-500 hover:text-brand transition-colors"
             >
-              Retake Quiz
+              Restart Quiz →
             </button>
           </div>
         </div>
@@ -147,39 +194,57 @@ export default function QuizPage() {
     );
   }
 
+  // Question screen
   const current = questions[step];
 
   return (
     <div className="py-12">
-      <div className="container-custom">
-        <div className="max-w-2xl mx-auto">
-          {/* Progress */}
-          <div className="mb-8">
-            <div className="flex justify-between text-sm text-slate-500 mb-2">
-              <span>Question {step + 1} of {questions.length}</span>
-            </div>
-            <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-amber rounded-full transition-all duration-300"
-                style={{ width: `${((step + 1) / questions.length) * 100}%` }}
-              />
-            </div>
+      <div className="container-custom max-w-2xl mx-auto">
+        {/* Progress dots */}
+        <div className="flex items-center justify-center gap-2 mb-8">
+          {questions.map((_, i) => (
+            <div
+              key={i}
+              className={`w-3 h-3 rounded-full transition-colors ${
+                i < step ? 'bg-amber' : i === step ? 'bg-amber ring-2 ring-amber/30 ring-offset-2' : 'bg-slate-200'
+              }`}
+            />
+          ))}
+        </div>
+
+        {/* Progress bar */}
+        <div className="mb-2">
+          <div className="flex justify-between text-xs text-slate-500 mb-1">
+            <span>Question {step + 1} of {questions.length}</span>
+            <span>{Math.round(((step + 1) / questions.length) * 100)}%</span>
           </div>
-
-          <h1 className="text-3xl font-bold mb-8">{current.q}</h1>
-
-          <div className="space-y-3">
-            {current.options.map((opt) => (
-              <button
-                key={opt.label}
-                onClick={() => handleAnswer(opt.weight)}
-                className="w-full text-left border border-slate-200 rounded-lg px-6 py-4 hover:border-amber hover:bg-amber/5 transition-colors font-medium"
-              >
-                {opt.label}
-              </button>
-            ))}
+          <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+            <div className="h-full bg-amber rounded-full transition-all duration-500" style={{ width: `${((step + 1) / questions.length) * 100}%` }} />
           </div>
         </div>
+
+        <h1 className="text-2xl md:text-3xl font-extrabold mb-8 mt-6">{current.question_text}</h1>
+
+        <div className="space-y-3">
+          {current.options.map((opt: { label: string; key: string }) => (
+            <button
+              key={opt.label}
+              onClick={() => handleAnswer(opt.key)}
+              className="w-full text-left border border-slate-200 rounded-xl px-6 py-4 hover:border-amber hover:bg-amber/5 transition-all font-medium text-sm md:text-base"
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+
+        {step > 0 && (
+          <button
+            onClick={() => { setStep(step - 1); setAnswers(answers.slice(0, -1)); }}
+            className="mt-6 text-sm text-slate-400 hover:text-slate-600 transition-colors"
+          >
+            ← Back
+          </button>
+        )}
       </div>
     </div>
   );

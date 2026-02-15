@@ -11,15 +11,32 @@ interface Stats {
   scenarios: number;
   clicks: number;
   clicksToday: number;
+  emails: number;
+}
+
+interface HealthIssue {
+  type: "warning" | "error";
+  message: string;
+  link?: string;
+}
+
+interface RecentClick {
+  id: number;
+  broker_name: string;
+  source: string;
+  page: string;
+  clicked_at: string;
 }
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<Stats | null>(null);
+  const [health, setHealth] = useState<HealthIssue[]>([]);
+  const [recentClicks, setRecentClicks] = useState<RecentClick[]>([]);
 
   useEffect(() => {
     const supabase = createClient();
     async function load() {
-      const [brokers, articles, scenarios, clicks, clicksToday] = await Promise.all([
+      const [brokers, articles, scenarios, clicks, clicksToday, emails] = await Promise.all([
         supabase.from("brokers").select("id", { count: "exact", head: true }),
         supabase.from("articles").select("id", { count: "exact", head: true }),
         supabase.from("scenarios").select("id", { count: "exact", head: true }),
@@ -28,6 +45,7 @@ export default function AdminDashboard() {
           .from("affiliate_clicks")
           .select("id", { count: "exact", head: true })
           .gte("clicked_at", new Date().toISOString().split("T")[0]),
+        supabase.from("email_captures").select("id", { count: "exact", head: true }),
       ]);
       setStats({
         brokers: brokers.count || 0,
@@ -35,7 +53,82 @@ export default function AdminDashboard() {
         scenarios: scenarios.count || 0,
         clicks: clicks.count || 0,
         clicksToday: clicksToday.count || 0,
+        emails: emails.count || 0,
       });
+
+      // Health checks
+      const issues: HealthIssue[] = [];
+
+      // Check brokers missing affiliate URLs
+      const { data: brokersData } = await supabase
+        .from("brokers")
+        .select("name, slug, affiliate_url, pros, cons, review_content")
+        .eq("status", "active");
+
+      if (brokersData) {
+        const noAffiliate = brokersData.filter((b) => !b.affiliate_url);
+        if (noAffiliate.length > 0) {
+          issues.push({
+            type: "warning",
+            message: `${noAffiliate.length} broker(s) missing affiliate URL: ${noAffiliate.map((b) => b.name).join(", ")}`,
+            link: "/admin/affiliate-links",
+          });
+        }
+
+        const noPros = brokersData.filter((b) => !b.pros || b.pros.length === 0);
+        if (noPros.length > 0) {
+          issues.push({
+            type: "warning",
+            message: `${noPros.length} broker(s) missing pros: ${noPros.map((b) => b.name).join(", ")}`,
+            link: "/admin/brokers",
+          });
+        }
+
+        const noCons = brokersData.filter((b) => !b.cons || b.cons.length === 0);
+        if (noCons.length > 0) {
+          issues.push({
+            type: "warning",
+            message: `${noCons.length} broker(s) missing cons: ${noCons.map((b) => b.name).join(", ")}`,
+            link: "/admin/brokers",
+          });
+        }
+
+        const noReview = brokersData.filter((b) => !b.review_content);
+        if (noReview.length > 0) {
+          issues.push({
+            type: "warning",
+            message: `${noReview.length} broker(s) missing review content`,
+            link: "/admin/brokers",
+          });
+        }
+      }
+
+      // Check deal of the month
+      const { count: dealCount } = await supabase
+        .from("brokers")
+        .select("id", { count: "exact", head: true })
+        .eq("deal", true);
+      if (!dealCount || dealCount === 0) {
+        issues.push({
+          type: "warning",
+          message: "No Deal of the Month is currently set",
+          link: "/admin/deal-of-month",
+        });
+      }
+
+      if (issues.length === 0) {
+        issues.push({ type: "warning", message: "All content health checks passed!" });
+      }
+
+      setHealth(issues);
+
+      // Recent clicks
+      const { data: recent } = await supabase
+        .from("affiliate_clicks")
+        .select("id, broker_name, source, page, clicked_at")
+        .order("clicked_at", { ascending: false })
+        .limit(5);
+      if (recent) setRecentClicks(recent);
     }
     load();
   }, []);
@@ -46,13 +139,14 @@ export default function AdminDashboard() {
     { label: "Scenarios", value: stats?.scenarios, href: "/admin/scenarios", color: "bg-purple-500/10 text-purple-400" },
     { label: "Total Clicks", value: stats?.clicks, href: "/admin/analytics", color: "bg-amber-500/10 text-amber-400" },
     { label: "Clicks Today", value: stats?.clicksToday, href: "/admin/analytics", color: "bg-red-500/10 text-red-400" },
+    { label: "Email Captures", value: stats?.emails, href: "#", color: "bg-cyan-500/10 text-cyan-400" },
   ];
 
   return (
     <AdminShell>
       <h1 className="text-2xl font-bold text-white mb-6">Dashboard</h1>
 
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+      <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 mb-8">
         {cards.map((card) => (
           <Link
             key={card.label}
@@ -67,33 +161,81 @@ export default function AdminDashboard() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Content Health Check */}
         <div className="bg-slate-800 border border-slate-700 rounded-lg p-6">
-          <h2 className="text-lg font-semibold text-white mb-4">Quick Actions</h2>
+          <h2 className="text-lg font-semibold text-white mb-4">Content Health</h2>
           <div className="space-y-2">
-            <Link href="/admin/brokers" className="block px-4 py-3 bg-slate-700/50 rounded-lg text-slate-300 hover:bg-slate-700 transition-colors">
-              Manage Brokers →
-            </Link>
-            <Link href="/admin/articles" className="block px-4 py-3 bg-slate-700/50 rounded-lg text-slate-300 hover:bg-slate-700 transition-colors">
-              Manage Articles →
-            </Link>
-            <Link href="/admin/analytics" className="block px-4 py-3 bg-slate-700/50 rounded-lg text-slate-300 hover:bg-slate-700 transition-colors">
-              View Analytics →
-            </Link>
+            {health.map((issue, i) => (
+              <div key={i} className="flex items-start gap-2">
+                <span className={`shrink-0 mt-0.5 ${issue.type === "error" ? "text-red-400" : "text-amber-400"}`}>
+                  {issue.type === "error" ? "●" : "●"}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm text-slate-300">{issue.message}</p>
+                  {issue.link && (
+                    <Link href={issue.link} className="text-xs text-amber-400 hover:text-amber-300">
+                      Fix →
+                    </Link>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
+        {/* Recent Clicks */}
         <div className="bg-slate-800 border border-slate-700 rounded-lg p-6">
-          <h2 className="text-lg font-semibold text-white mb-4">Site Links</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-white">Recent Clicks</h2>
+            <Link href="/admin/analytics" className="text-xs text-amber-400 hover:text-amber-300">View All →</Link>
+          </div>
+          {recentClicks.length === 0 ? (
+            <p className="text-sm text-slate-500">No clicks recorded yet.</p>
+          ) : (
+            <div className="space-y-2">
+              {recentClicks.map((click) => (
+                <div key={click.id} className="flex items-center justify-between text-sm">
+                  <div className="min-w-0">
+                    <div className="text-white font-medium truncate">{click.broker_name}</div>
+                    <div className="text-xs text-slate-500 truncate">{click.source} · {click.page}</div>
+                  </div>
+                  <div className="text-xs text-slate-400 shrink-0 ml-2">
+                    {new Date(click.clicked_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Quick Actions */}
+        <div className="bg-slate-800 border border-slate-700 rounded-lg p-6">
+          <h2 className="text-lg font-semibold text-white mb-4">Quick Actions</h2>
           <div className="space-y-2">
-            <a href="/" target="_blank" rel="noopener noreferrer" className="block px-4 py-3 bg-slate-700/50 rounded-lg text-slate-300 hover:bg-slate-700 transition-colors">
+            <Link href="/admin/brokers" className="block px-4 py-3 bg-slate-700/50 rounded-lg text-slate-300 hover:bg-slate-700 transition-colors text-sm">
+              🏦 Manage Brokers
+            </Link>
+            <Link href="/admin/articles" className="block px-4 py-3 bg-slate-700/50 rounded-lg text-slate-300 hover:bg-slate-700 transition-colors text-sm">
+              📝 Manage Articles
+            </Link>
+            <Link href="/admin/deal-of-month" className="block px-4 py-3 bg-slate-700/50 rounded-lg text-slate-300 hover:bg-slate-700 transition-colors text-sm">
+              🔥 Set Deal of Month
+            </Link>
+            <Link href="/admin/affiliate-links" className="block px-4 py-3 bg-slate-700/50 rounded-lg text-slate-300 hover:bg-slate-700 transition-colors text-sm">
+              🔗 Manage Affiliate Links
+            </Link>
+            <Link href="/admin/export-import" className="block px-4 py-3 bg-slate-700/50 rounded-lg text-slate-300 hover:bg-slate-700 transition-colors text-sm">
+              💾 Export / Import Data
+            </Link>
+          </div>
+
+          <div className="mt-4 pt-4 border-t border-slate-700 space-y-2">
+            <a href="/" target="_blank" rel="noopener noreferrer" className="block px-4 py-3 bg-slate-700/50 rounded-lg text-slate-300 hover:bg-slate-700 transition-colors text-sm">
               🌐 View Live Site
             </a>
-            <a href="https://supabase.com/dashboard/project/guggzyqceattncjwvgyc" target="_blank" rel="noopener noreferrer" className="block px-4 py-3 bg-slate-700/50 rounded-lg text-slate-300 hover:bg-slate-700 transition-colors">
+            <a href="https://supabase.com/dashboard/project/guggzyqceattncjwvgyc" target="_blank" rel="noopener noreferrer" className="block px-4 py-3 bg-slate-700/50 rounded-lg text-slate-300 hover:bg-slate-700 transition-colors text-sm">
               🗄️ Supabase Dashboard
-            </a>
-            <a href="https://vercel.com/finns-projects-2deaa68c/invest-com-au" target="_blank" rel="noopener noreferrer" className="block px-4 py-3 bg-slate-700/50 rounded-lg text-slate-300 hover:bg-slate-700 transition-colors">
-              ▲ Vercel Dashboard
             </a>
           </div>
         </div>
