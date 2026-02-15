@@ -1,0 +1,1193 @@
+{
+  "brokers": [
+    {
+      "name": "CommSec",
+      "slug": "commsec",
+      "color": "#FFD700",
+      "icon": "CBA",
+      "ctaText": "Open CommSec Account",
+      "tagline": "Australia's biggest broker. But is bigger better?",
+      "asxFee": "$29.95",
+      "asxFeeValue": 29.95,
+      "usFee": "$19.95",
+      "usFeeValue": 19.95,
+      "fxRate": 0.7,
+      "chessSponsored": true,
+      "inactivityFee": "None",
+      "paymentMethods": [
+        "BPAY",
+        "Bank Transfer",
+        "Direct Debit"
+      ],
+      "smsfSupport": true,
+      "minDeposit": "$0",
+      "platforms": [
+        "Web",
+        "Mobile App",
+        "CommSec Pocket"
+      ],
+      "pros": [
+        "CHESS sponsored — you own your shares directly",
+        "Full ASX market access",
+        "Backed by Commonwealth Bank",
+        "Comprehensive research tools"
+      ],
+      "cons": [
+        "Highest brokerage fees in Australia",
+        "FX rate of 0.70% is above average",
+        "Interface feels dated compared to fintechs",
+        "No free trades or promotional offers"
+      ],
+      "affiliateUrl": "https://www.commsec.com.au",
+      "rating": 3.5,
+      "layer": "cash"
+    },
+    {
+      "name": "Stake",
+      "slug": "stake",
+      "color": "#00DC82",
+      "icon": "STK",
+      "ctaText": "Get Your Free Stock →",
+      "tagline": "Low-cost ASX & US trading with CHESS sponsorship.",
+      "asxFee": "$3",
+      "asxFeeValue": 3,
+      "usFee": "$0",
+      "usFeeValue": 0,
+      "fxRate": 0.7,
+      "chessSponsored": true,
+      "inactivityFee": "None",
+      "paymentMethods": [
+        "Bank Transfer",
+        "POLi"
+      ],
+      "smsfSupport": false,
+      "minDeposit": "$0",
+      "platforms": [
+        "Web",
+        "Mobile App"
+      ],
+      "pros": [
+        "$3 flat ASX trades — among the cheapest",
+        "Free US stock trades (FX fee applies)",
+        "CHESS sponsored for ASX",
+        "Clean, modern interface"
+      ],
+      "cons": [
+        "No SMSF support",
+        "FX rate of 0.70% on US trades",
+        "Limited research tools",
+        "No phone support"
+      ],
+      "affiliateUrl": "https://hellostake.com/referral?code=INVESTCOM&offer=FREE_STOCK",
+      "rating": 4.2,
+      "dealOfMonth": true,
+      "dealText": "Get a free US stock when you sign up and deposit $50+",
+      "layer": "cash"
+    },
+    {
+      "name": "SelfWealth",
+      "slug": "selfwealth",
+      "color": "#00B4D8",
+      "icon": "SW",
+      "ctaText": "Start Flat-Fee Trading",
+      "tagline": "Flat $9.50 trades with CHESS and SMSF support.",
+      "asxFee": "$9.50",
+      "asxFeeValue": 9.5,
+      "usFee": "$9.50 USD",
+      "usFeeValue": 9.5,
+      "fxRate": 0.5,
+      "chessSponsored": true,
+      "inactivityFee": "None",
+      "paymentMethods": [
+        "Bank Transfer",
+        "Direct Debit"
+      ],
+      "smsfSupport": true,
+      "minDeposit": "$0",
+      "platforms": [
+        "Web",
+        "Mobile App"
+      ],
+      "pros": [
+        "Flat $9.50 per trade — no hidden extras",
+        "CHESS sponsored",
+        "SMSF support available",
+        "Community portfolio insights"
+      ],
+      "cons": [
+        "US trading via third-party (Stake)",
+        "Interface not as polished as competitors",
+        "Limited educational content",
+        "No fractional shares"
+      ],
+      "affiliateUrl": "https://www.selfwealth.com.au",
+      "rating": 4,
+      "layer": "cash"
+    },
+    {
+      "name": "CMC Markets",
+      "slug": "cmc-markets",
+      "color": "#0066CC",
+      "icon": "CMC",
+      "ctaText": "Trade Free Today",
+      "tagline": "First trade free each day. ASX & International.",
+      "asxFee": "$0 (1st/day)",
+      "asxFeeValue": 0,
+      "usFee": "$0 (1st/day)",
+      "usFeeValue": 0,
+      "fxRate": 0.6,
+      "chessSponsored": true,
+      "inactivityFee": "None",
+      "paymentMethods": [
+        "Bank Transfer",
+        "BPAY"
+      ],
+      "smsfSupport": false,
+      "minDeposit": "$0",
+      "platforms": [
+        "Web",
+        "Mobile App",
+        "MT4"
+      ],
+      "pros": [
+        "First trade FREE each day on ASX and US",
+        "CHESS sponsored",
+        "Strong charting and research tools",
+        "Access to 15+ international markets"
+      ],
+      "cons": [
+        "Subsequent trades cost $11 or 0.10%",
+        "No SMSF support for share trading",
+        "Free trade has $1,000 minimum",
+        "CFD platform can confuse beginners"
+      ],
+      "affiliateUrl": "https://www.cmcmarkets.com/en-au",
+      "rating": 4.3,
+      "layer": "cash"
+    },
+    {
+      "name": "IG",
+      "slug": "ig",
+      "color": "#DC143C",
+      "icon": "IG",
+      "ctaText": "Try IG Platform",
+      "tagline": "Global broker with deep research and CFD options.",
+      "asxFee": "$8 or 0.1%",
+      "asxFeeValue": 8,
+      "usFee": "$0",
+      "usFeeValue": 0,
+      "fxRate": 0.5,
+      "chessSponsored": false,
+      "inactivityFee": "$12/month after 24mo",
+      "paymentMethods": [
+        "Bank Transfer",
+        "BPAY",
+        "Credit Card"
+      ],
+      "smsfSupport": false,
+      "minDeposit": "$0",
+      "platforms": [
+        "Web",
+        "Mobile App",
+        "ProRealTime"
+      ],
+      "pros": [
+        "Commission-free US share trading",
+        "Excellent research and charting",
+        "Access to global markets",
+        "Established global brand"
+      ],
+      "cons": [
+        "Not CHESS sponsored — custodial model",
+        "Inactivity fee after 24 months",
+        "No SMSF support",
+        "Complex platform for beginners"
+      ],
+      "affiliateUrl": "https://www.ig.com/au",
+      "rating": 3.8,
+      "layer": "jackpot"
+    },
+    {
+      "name": "Moomoo",
+      "slug": "moomoo",
+      "color": "#FF6B00",
+      "icon": "moo",
+      "ctaText": "Trade $0 Brokerage",
+      "tagline": "Zero brokerage on ASX & US with powerful tools.",
+      "asxFee": "$0",
+      "asxFeeValue": 0,
+      "usFee": "$0",
+      "usFeeValue": 0,
+      "fxRate": 0.35,
+      "chessSponsored": false,
+      "inactivityFee": "None",
+      "paymentMethods": [
+        "Bank Transfer"
+      ],
+      "smsfSupport": false,
+      "minDeposit": "$0",
+      "platforms": [
+        "Web",
+        "Mobile App",
+        "Desktop"
+      ],
+      "pros": [
+        "Zero brokerage on ASX and US trades",
+        "Lowest FX rate at 0.35%",
+        "Professional-grade charting tools",
+        "Free Level 2 market data"
+      ],
+      "cons": [
+        "Not CHESS sponsored — custodial model",
+        "Backed by Futu (China-based parent)",
+        "No SMSF support",
+        "Relatively new to Australia"
+      ],
+      "affiliateUrl": "https://www.moomoo.com/au",
+      "rating": 4.1,
+      "layer": "cash"
+    },
+    {
+      "name": "Webull",
+      "slug": "webull",
+      "color": "#F44336",
+      "icon": "WB",
+      "ctaText": "Get Free Stocks",
+      "tagline": "Commission-free US trading with advanced tools.",
+      "asxFee": "N/A",
+      "asxFeeValue": 999,
+      "usFee": "$0",
+      "usFeeValue": 0,
+      "fxRate": 0.4,
+      "chessSponsored": false,
+      "inactivityFee": "None",
+      "paymentMethods": [
+        "Bank Transfer"
+      ],
+      "smsfSupport": false,
+      "minDeposit": "$0",
+      "platforms": [
+        "Web",
+        "Mobile App",
+        "Desktop"
+      ],
+      "pros": [
+        "Commission-free US stock trading",
+        "Advanced charting and analysis tools",
+        "Paper trading for practice",
+        "Extended hours trading"
+      ],
+      "cons": [
+        "No ASX trading available",
+        "Not CHESS sponsored",
+        "No SMSF support",
+        "Limited Australian customer support"
+      ],
+      "affiliateUrl": "https://www.webull.com.au",
+      "rating": 3.6,
+      "layer": "cash"
+    },
+    {
+      "name": "Interactive Brokers",
+      "slug": "interactive-brokers",
+      "color": "#D81B60",
+      "icon": "IB",
+      "ctaText": "Open Pro Account",
+      "tagline": "The pro's choice. Low fees, 150+ markets.",
+      "asxFee": "$6 or 0.08%",
+      "asxFeeValue": 6,
+      "usFee": "$0.005/share",
+      "usFeeValue": 1,
+      "fxRate": 0.002,
+      "chessSponsored": true,
+      "inactivityFee": "None",
+      "paymentMethods": [
+        "Bank Transfer"
+      ],
+      "smsfSupport": true,
+      "minDeposit": "$0",
+      "platforms": [
+        "TWS",
+        "Web",
+        "Mobile App"
+      ],
+      "pros": [
+        "Lowest FX conversion — just 0.002%",
+        "CHESS sponsored for ASX",
+        "Access to 150+ global markets",
+        "SMSF support"
+      ],
+      "cons": [
+        "Complex platform — steep learning curve",
+        "Pricing structure confusing for beginners",
+        "Customer service can be slow",
+        "Not intuitive for casual investors"
+      ],
+      "affiliateUrl": "https://www.interactivebrokers.com.au",
+      "rating": 4.4,
+      "layer": "cash"
+    },
+    {
+      "name": "Saxo",
+      "slug": "saxo",
+      "color": "#0033A0",
+      "icon": "SAX",
+      "ctaText": "Explore Saxo",
+      "tagline": "Premium broker for high net worth investors.",
+      "asxFee": "$8 min",
+      "asxFeeValue": 8,
+      "usFee": "$1 min",
+      "usFeeValue": 1,
+      "fxRate": 0.25,
+      "chessSponsored": false,
+      "inactivityFee": "$100/qtr (waived if active)",
+      "paymentMethods": [
+        "Bank Transfer"
+      ],
+      "smsfSupport": true,
+      "minDeposit": "$0",
+      "platforms": [
+        "SaxoTraderGO",
+        "SaxoTraderPRO",
+        "Mobile App"
+      ],
+      "pros": [
+        "Premium research and analysis",
+        "Low FX rate of 0.25%",
+        "SMSF support",
+        "Bonds, options, futures access"
+      ],
+      "cons": [
+        "Not CHESS sponsored",
+        "High inactivity fee if dormant",
+        "Complex fee structure",
+        "Overkill for small portfolios"
+      ],
+      "affiliateUrl": "https://www.home.saxo/en-au",
+      "rating": 3.9,
+      "layer": "jackpot"
+    },
+    {
+      "name": "Tiger Brokers",
+      "slug": "tiger-brokers",
+      "color": "#FF8C00",
+      "icon": "TGR",
+      "ctaText": "Try Tiger Free",
+      "tagline": "Low-cost US & ASX trading with social features.",
+      "asxFee": "$6.49",
+      "asxFeeValue": 6.49,
+      "usFee": "$0 (promo)",
+      "usFeeValue": 0,
+      "fxRate": 0.4,
+      "chessSponsored": false,
+      "inactivityFee": "None",
+      "paymentMethods": [
+        "Bank Transfer"
+      ],
+      "smsfSupport": false,
+      "minDeposit": "$0",
+      "platforms": [
+        "Web",
+        "Mobile App",
+        "Desktop"
+      ],
+      "pros": [
+        "Competitive ASX and US fees",
+        "Free US trades on promo",
+        "Social trading features",
+        "Good mobile app experience"
+      ],
+      "cons": [
+        "Not CHESS sponsored",
+        "No SMSF support",
+        "Singapore-based parent company",
+        "FX rate higher than some competitors"
+      ],
+      "affiliateUrl": "https://www.tigerbrokers.com.au",
+      "rating": 3.7,
+      "layer": "cash"
+    },
+    {
+      "name": "Swyftx",
+      "slug": "swyftx",
+      "color": "#6C63FF",
+      "icon": "SX",
+      "ctaText": "Start Trading Crypto",
+      "tagline": "Australia's top crypto exchange. 300+ coins, low fees.",
+      "asxFee": "N/A",
+      "asxFeeValue": 999,
+      "usFee": "N/A",
+      "usFeeValue": 999,
+      "fxRate": 0,
+      "chessSponsored": false,
+      "inactivityFee": "None",
+      "paymentMethods": [
+        "Bank Transfer",
+        "POLi",
+        "PayID",
+        "Credit Card"
+      ],
+      "smsfSupport": false,
+      "minDeposit": "$30",
+      "platforms": [
+        "Web",
+        "Mobile App"
+      ],
+      "pros": [
+        "300+ cryptocurrencies available",
+        "Low 0.6% trading fee",
+        "Fast AUD deposits via PayID",
+        "Excellent mobile app and interface"
+      ],
+      "cons": [
+        "Not suitable for share trading",
+        "Crypto-only platform",
+        "No CHESS sponsorship (not applicable)",
+        "Spread can vary in volatile markets"
+      ],
+      "affiliateUrl": "https://trade.swyftx.com.au/register/?ref=investcom",
+      "rating": 4.3,
+      "layer": "wealth",
+      "isCrypto": true
+    },
+    {
+      "name": "CoinSpot",
+      "slug": "coinspot",
+      "color": "#2E86DE",
+      "icon": "CS",
+      "ctaText": "Buy Crypto Instantly",
+      "tagline": "Australia's longest-running crypto exchange. Simple and secure.",
+      "asxFee": "N/A",
+      "asxFeeValue": 999,
+      "usFee": "N/A",
+      "usFeeValue": 999,
+      "fxRate": 0,
+      "chessSponsored": false,
+      "inactivityFee": "None",
+      "paymentMethods": [
+        "Bank Transfer",
+        "POLi",
+        "PayID",
+        "BPAY",
+        "Cash"
+      ],
+      "smsfSupport": false,
+      "minDeposit": "$0",
+      "platforms": [
+        "Web",
+        "Mobile App"
+      ],
+      "pros": [
+        "400+ cryptocurrencies supported",
+        "Instant buy/sell for beginners",
+        "Australian-owned and AUSTRAC registered",
+        "Multiple deposit methods including cash"
+      ],
+      "cons": [
+        "Higher fees than Swyftx (1% instant trade)",
+        "Not suitable for share trading",
+        "Advanced traders may prefer lower-fee exchanges",
+        "No margin or leverage trading"
+      ],
+      "affiliateUrl": "https://www.coinspot.com.au?affiliate=investcom",
+      "rating": 4,
+      "layer": "wealth",
+      "isCrypto": true
+    }
+  ],
+  "articles": [
+    {
+      "title": "How to Buy Shares in Australia (2026 Guide)",
+      "slug": "how-to-buy-shares",
+      "excerpt": "The complete step-by-step guide to buying your first shares on the ASX.",
+      "category": "beginners",
+      "tags": [
+        "beginners",
+        "asx"
+      ],
+      "date": "2026-02-01",
+      "readTime": 12,
+      "evergreen": true,
+      "relatedBrokers": [
+        "stake",
+        "cmc-markets",
+        "moomoo"
+      ],
+      "relatedCalc": "calc-switching",
+      "sections": [
+        {
+          "heading": "Why Australians Are Buying Shares in Record Numbers",
+          "body": "More Australians hold shares today than at any point in history. The rise of low-cost online brokers has made it possible to buy your first share for as little as $0 in brokerage. But with over 10 platforms competing for your money, choosing the right one matters more than ever."
+        },
+        {
+          "heading": "Step 1: Choose a Broker",
+          "body": "Your broker is your gateway to the ASX. The biggest decision is whether you want <strong>CHESS sponsorship</strong> (your shares are registered in your name) or a <strong>custodial model</strong> (the broker holds them for you)."
+        },
+        {
+          "heading": "Step 2: Open and Verify Your Account",
+          "body": "Most brokers require you to provide: a valid ID, your Tax File Number (TFN), a linked Australian bank account, and proof of address."
+        },
+        {
+          "heading": "Step 3: Deposit Funds",
+          "body": "Transfer money from your bank via direct debit, BPAY, or bank transfer."
+        },
+        {
+          "heading": "Step 4: Place Your First Trade",
+          "body": "Search for the stock by name or ASX code. Choose between a market order or a limit order."
+        },
+        {
+          "heading": "Step 5: Understand the Tax Implications",
+          "body": "When you sell shares at a profit, you'll pay Capital Gains Tax (CGT). But if you hold for more than 12 months, you get a 50% CGT discount."
+        },
+        {
+          "heading": "Common Mistakes to Avoid",
+          "body": "Paying too much in brokerage, ignoring FX fees, not understanding CHESS."
+        }
+      ]
+    },
+    {
+      "title": "Franking Credits Explained",
+      "slug": "franking-credits",
+      "excerpt": "Franking credits can add up to 30% to your dividend yield.",
+      "category": "tax",
+      "tags": [
+        "tax",
+        "dividends"
+      ],
+      "date": "2026-01-28",
+      "readTime": 8,
+      "evergreen": true,
+      "relatedBrokers": [
+        "commsec",
+        "selfwealth",
+        "interactive-brokers"
+      ],
+      "relatedCalc": "calc-franking",
+      "sections": [
+        {
+          "heading": "What Are Franking Credits?",
+          "body": "When an Australian company pays you a dividend, it may have already paid 30% corporate tax."
+        },
+        {
+          "heading": "How They Boost Your Yield",
+          "body": "A stock with a 4% dividend yield and full franking delivers a 5.71% gross yield."
+        },
+        {
+          "heading": "Who Benefits Most?",
+          "body": "SMSF in pension phase get the full refund. Low-income earners also benefit significantly."
+        },
+        {
+          "heading": "Which ASX Stocks Are Fully Franked?",
+          "body": "Most big banks and miners pay fully franked dividends."
+        },
+        {
+          "heading": "The Tax Trap Nobody Mentions",
+          "body": "If you're in the 45% bracket, franking credits help but don't eliminate your tax bill."
+        }
+      ]
+    },
+    {
+      "title": "CHESS vs Custodial: What You Need to Know",
+      "slug": "chess-vs-custodial",
+      "excerpt": "CHESS-sponsored brokers give you direct ownership.",
+      "category": "beginners",
+      "tags": [
+        "beginners",
+        "chess"
+      ],
+      "date": "2026-01-15",
+      "readTime": 6,
+      "evergreen": true,
+      "relatedBrokers": [
+        "stake",
+        "commsec",
+        "selfwealth"
+      ],
+      "relatedCalc": "calc-chess",
+      "sections": [
+        {
+          "heading": "The Ownership Question",
+          "body": "Two fundamentally different ways your shares can be held."
+        },
+        {
+          "heading": "CHESS Sponsored: You Own Your Shares",
+          "body": "Registered directly in your name on the ASX subregister."
+        },
+        {
+          "heading": "Custodial: The Broker Owns Them",
+          "body": "Shares are held in the broker's name or a nominee company."
+        },
+        {
+          "heading": "So Which Should You Choose?",
+          "body": "For long-term investors: always choose CHESS."
+        }
+      ]
+    },
+    {
+      "title": "SMSF Share Trading: Rules, Brokers & Tax Traps",
+      "slug": "smsf-guide",
+      "excerpt": "Running an SMSF? Here's how to trade compliantly.",
+      "category": "smsf",
+      "tags": [
+        "smsf",
+        "tax"
+      ],
+      "date": "2026-02-01",
+      "readTime": 15,
+      "evergreen": true,
+      "relatedBrokers": [
+        "commsec",
+        "selfwealth",
+        "interactive-brokers"
+      ],
+      "relatedCalc": "calc-franking",
+      "sections": [
+        {
+          "heading": "Why SMSF Share Trading Is Different",
+          "body": "A Self-Managed Super Fund is a trust with legal obligations."
+        },
+        {
+          "heading": "Broker Requirements for SMSF",
+          "body": "CHESS sponsorship, corporate trustee support, admin integration."
+        },
+        {
+          "heading": "The Tax Advantage",
+          "body": "15% tax in accumulation, 0% in pension phase."
+        },
+        {
+          "heading": "Common SMSF Tax Traps",
+          "body": "In-house asset rules, sole purpose test, arm's length dealings."
+        },
+        {
+          "heading": "Best SMSF Brokers Ranked",
+          "body": "Interactive Brokers, SelfWealth, CommSec."
+        }
+      ]
+    },
+    {
+      "title": "Stake Raises ASX Fees",
+      "slug": "stake-fees-2026",
+      "excerpt": "Stake changed its fee structure. Should you switch?",
+      "category": "news",
+      "tags": [
+        "news",
+        "stake"
+      ],
+      "date": "2026-02-01",
+      "readTime": 4,
+      "evergreen": false,
+      "relatedBrokers": [
+        "stake",
+        "moomoo",
+        "cmc-markets"
+      ],
+      "relatedCalc": "calc-switching",
+      "sections": [
+        {
+          "heading": "What Changed",
+          "body": "Stake adjusted its ASX brokerage from the original $3 flat fee."
+        },
+        {
+          "heading": "How It Compares Now",
+          "body": "Still cheaper than CommSec but Moomoo and CMC may be better."
+        },
+        {
+          "heading": "Should You Switch?",
+          "body": "Use the Switching Cost Simulator to check."
+        }
+      ]
+    },
+    {
+      "title": "The CGT 50% Discount",
+      "slug": "cgt-discount",
+      "excerpt": "Hold shares 12+ months and cut CGT by 50%.",
+      "category": "tax",
+      "tags": [
+        "tax",
+        "cgt"
+      ],
+      "date": "2026-01-20",
+      "readTime": 7,
+      "evergreen": true,
+      "relatedBrokers": [
+        "commsec",
+        "selfwealth",
+        "stake"
+      ],
+      "relatedCalc": "calc-cgt",
+      "sections": [
+        {
+          "heading": "The 12-Month Rule",
+          "body": "Hold 12 months and only 50% of the gain is taxable."
+        },
+        {
+          "heading": "The Math in Action",
+          "body": "$5,000 profit: $1,500 before vs $750 after the discount."
+        },
+        {
+          "heading": "When It Doesn't Apply",
+          "body": "Companies, non-residents, and share traders miss out."
+        },
+        {
+          "heading": "Strategic Implications",
+          "body": "Buy-and-hold investors benefit enormously."
+        }
+      ]
+    },
+    {
+      "title": "Dollar Cost Averaging on the ASX",
+      "slug": "dca-asx",
+      "excerpt": "DCA reduces timing risk. But brokerage can kill returns.",
+      "category": "strategy",
+      "tags": [
+        "strategy",
+        "beginners"
+      ],
+      "date": "2026-01-10",
+      "readTime": 9,
+      "evergreen": true,
+      "relatedBrokers": [
+        "moomoo",
+        "stake",
+        "cmc-markets"
+      ],
+      "relatedCalc": "calc-switching",
+      "sections": [
+        {
+          "heading": "What Is Dollar Cost Averaging?",
+          "body": "Invest a fixed amount at regular intervals."
+        },
+        {
+          "heading": "Why DCA Works",
+          "body": "The ASX returns approximately 10% per year long-term."
+        },
+        {
+          "heading": "The Brokerage Fee Problem",
+          "body": "$29.95 fees on $500 trades = 6% eaten."
+        },
+        {
+          "heading": "Best ETFs for DCA",
+          "body": "VAS, IVV, VDHG."
+        },
+        {
+          "heading": "Setting Up Your System",
+          "body": "Choose a low-fee broker, pick 1-3 ETFs, set a schedule."
+        }
+      ]
+    },
+    {
+      "title": "Best Brokers for International Shares",
+      "slug": "best-intl-brokers",
+      "excerpt": "Compare FX fees for US, UK, and Asian stocks.",
+      "category": "reviews",
+      "tags": [
+        "reviews",
+        "international"
+      ],
+      "date": "2026-02-05",
+      "readTime": 11,
+      "evergreen": true,
+      "relatedBrokers": [
+        "interactive-brokers",
+        "saxo",
+        "stake"
+      ],
+      "relatedCalc": "calc-fx",
+      "sections": [
+        {
+          "heading": "The Hidden Cost",
+          "body": "FX conversion fees can be 5-10x more than brokerage."
+        },
+        {
+          "heading": "FX Fee Comparison",
+          "body": "IBKR 0.002% vs CommSec 0.70% — huge difference."
+        },
+        {
+          "heading": "Best for US Shares",
+          "body": "Interactive Brokers wins for serious investors."
+        },
+        {
+          "heading": "W-8BEN Form",
+          "body": "Lodge to reduce US withholding from 30% to 15%."
+        },
+        {
+          "heading": "Best All-Round",
+          "body": "IBKR for frequent, Stake for simple, Saxo for exotic."
+        }
+      ]
+    },
+    {
+      "title": "How to Read an ASX Annual Report",
+      "slug": "read-annual-report",
+      "excerpt": "Annual reports are key to understanding ASX companies.",
+      "category": "beginners",
+      "tags": [
+        "beginners",
+        "research"
+      ],
+      "date": "2025-12-01",
+      "readTime": 10,
+      "evergreen": true,
+      "relatedBrokers": [
+        "commsec",
+        "interactive-brokers"
+      ],
+      "relatedCalc": null,
+      "sections": [
+        {
+          "heading": "Why They Matter",
+          "body": "The single most important document for financial health."
+        },
+        {
+          "heading": "5 Sections That Matter",
+          "body": "Chairman's Letter, P&L, Balance Sheet, Cash Flow, Notes."
+        },
+        {
+          "heading": "Red Flags",
+          "body": "Declining revenue, high debt, negative cash flow."
+        },
+        {
+          "heading": "Where to Find Them",
+          "body": "ASX announcements, investor relations websites."
+        }
+      ]
+    },
+    {
+      "title": "Investing for Kids in Australia",
+      "slug": "investing-kids",
+      "excerpt": "Minor's tax rate is 66%. Here's how to invest smartly.",
+      "category": "strategy",
+      "tags": [
+        "strategy",
+        "kids",
+        "tax"
+      ],
+      "date": "2026-01-25",
+      "readTime": 13,
+      "evergreen": true,
+      "relatedBrokers": [
+        "commsec",
+        "selfwealth"
+      ],
+      "relatedCalc": "calc-franking",
+      "sections": [
+        {
+          "heading": "The Tax Trap",
+          "body": "66% tax on unearned income over $416/year."
+        },
+        {
+          "heading": "Option 1: Informal Trust",
+          "body": "Invest in parent's name, taxed at parent's rate."
+        },
+        {
+          "heading": "Option 2: Insurance Bond",
+          "body": "30% internal tax, tax-free after 10 years for education."
+        },
+        {
+          "heading": "Which Wins?",
+          "body": "Informal trust for most families."
+        },
+        {
+          "heading": "Practical Steps",
+          "body": "Open account in your name, invest in diversified ETFs."
+        }
+      ]
+    },
+    {
+      "title": "CHESS vs Custodial: What You Need to Know (Copy)",
+      "slug": "chess-vs-custodial-copy",
+      "excerpt": "CHESS-sponsored brokers give you direct ownership.",
+      "category": "beginners",
+      "tags": [
+        "beginners",
+        "chess"
+      ],
+      "date": "2026-01-15",
+      "readTime": 6,
+      "evergreen": true,
+      "relatedBrokers": [
+        "stake",
+        "commsec",
+        "selfwealth"
+      ],
+      "relatedCalc": "calc-chess",
+      "sections": [
+        {
+          "heading": "The Ownership Question",
+          "body": "Two fundamentally different ways your shares can be held."
+        },
+        {
+          "heading": "CHESS Sponsored: You Own Your Shares",
+          "body": "Registered directly in your name on the ASX subregister."
+        },
+        {
+          "heading": "Custodial: The Broker Owns Them",
+          "body": "Shares are held in the broker's name or a nominee company."
+        },
+        {
+          "heading": "So Which Should You Choose?",
+          "body": "For long-term investors: always choose CHESS."
+        }
+      ]
+    },
+    {
+      "title": "CHESS vs Custodial: What You Need to Know (Copy)",
+      "slug": "chess-vs-custodial-copy",
+      "excerpt": "CHESS-sponsored brokers give you direct ownership.",
+      "category": "beginners",
+      "tags": [
+        "beginners",
+        "chess"
+      ],
+      "date": "2026-01-15",
+      "readTime": 6,
+      "evergreen": true,
+      "relatedBrokers": [
+        "stake",
+        "commsec",
+        "selfwealth"
+      ],
+      "relatedCalc": "calc-chess",
+      "sections": [
+        {
+          "heading": "The Ownership Question",
+          "body": "Two fundamentally different ways your shares can be held."
+        },
+        {
+          "heading": "CHESS Sponsored: You Own Your Shares",
+          "body": "Registered directly in your name on the ASX subregister."
+        },
+        {
+          "heading": "Custodial: The Broker Owns Them",
+          "body": "Shares are held in the broker's name or a nominee company."
+        },
+        {
+          "heading": "So Which Should You Choose?",
+          "body": "For long-term investors: always choose CHESS."
+        }
+      ]
+    },
+    {
+      "title": "CHESS vs Custodial: What You Need to Know (Copy)",
+      "slug": "chess-vs-custodial-copy",
+      "excerpt": "CHESS-sponsored brokers give you direct ownership.",
+      "category": "beginners",
+      "tags": [
+        "beginners",
+        "chess"
+      ],
+      "date": "2026-01-15",
+      "readTime": 6,
+      "evergreen": true,
+      "relatedBrokers": [
+        "stake",
+        "commsec",
+        "selfwealth"
+      ],
+      "relatedCalc": "calc-chess",
+      "sections": [
+        {
+          "heading": "The Ownership Question",
+          "body": "Two fundamentally different ways your shares can be held."
+        },
+        {
+          "heading": "CHESS Sponsored: You Own Your Shares",
+          "body": "Registered directly in your name on the ASX subregister."
+        },
+        {
+          "heading": "Custodial: The Broker Owns Them",
+          "body": "Shares are held in the broker's name or a nominee company."
+        },
+        {
+          "heading": "So Which Should You Choose?",
+          "body": "For long-term investors: always choose CHESS."
+        }
+      ]
+    },
+    {
+      "title": "CHESS vs Custodial: What You Need to Know (Copy)",
+      "slug": "chess-vs-custodial-copy",
+      "excerpt": "CHESS-sponsored brokers give you direct ownership.",
+      "category": "beginners",
+      "tags": [
+        "beginners",
+        "chess"
+      ],
+      "date": "2026-01-15",
+      "readTime": 6,
+      "evergreen": true,
+      "relatedBrokers": [
+        "stake",
+        "commsec",
+        "selfwealth"
+      ],
+      "relatedCalc": "calc-chess",
+      "sections": [
+        {
+          "heading": "The Ownership Question",
+          "body": "Two fundamentally different ways your shares can be held."
+        },
+        {
+          "heading": "CHESS Sponsored: You Own Your Shares",
+          "body": "Registered directly in your name on the ASX subregister."
+        },
+        {
+          "heading": "Custodial: The Broker Owns Them",
+          "body": "Shares are held in the broker's name or a nominee company."
+        },
+        {
+          "heading": "So Which Should You Choose?",
+          "body": "For long-term investors: always choose CHESS."
+        }
+      ]
+    },
+    {
+      "title": "CHESS vs Custodial: What You Need to Know (Copy)",
+      "slug": "chess-vs-custodial-copy",
+      "excerpt": "CHESS-sponsored brokers give you direct ownership.",
+      "category": "beginners",
+      "tags": [
+        "beginners",
+        "chess"
+      ],
+      "date": "2026-01-15",
+      "readTime": 6,
+      "evergreen": true,
+      "relatedBrokers": [
+        "stake",
+        "commsec",
+        "selfwealth"
+      ],
+      "relatedCalc": "calc-chess",
+      "sections": [
+        {
+          "heading": "The Ownership Question",
+          "body": "Two fundamentally different ways your shares can be held."
+        },
+        {
+          "heading": "CHESS Sponsored: You Own Your Shares",
+          "body": "Registered directly in your name on the ASX subregister."
+        },
+        {
+          "heading": "Custodial: The Broker Owns Them",
+          "body": "Shares are held in the broker's name or a nominee company."
+        },
+        {
+          "heading": "So Which Should You Choose?",
+          "body": "For long-term investors: always choose CHESS."
+        }
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "slug": "kids",
+      "title": "Investing for Kids",
+      "heroTitle": "How to Invest for Your Kids in Australia (Without Getting Slugged by Tax)",
+      "icon": "👶",
+      "problem": "Unearned income for minors is taxed at 66% over $416/year.",
+      "solution": "Informal Trust (taxed in parent's name) or Insurance Bond (30% internal, tax-free after 10 years).",
+      "brokers": [
+        "commsec",
+        "selfwealth",
+        "interactive-brokers"
+      ],
+      "considerations": [
+        "Minor's tax rate: 66% on unearned income over $416/year",
+        "Informal Trust: taxed in parent's hands",
+        "Insurance Bond: 30% internal tax",
+        "Don't put investments in child's name"
+      ]
+    },
+    {
+      "slug": "smsf",
+      "title": "SMSF Share Trading",
+      "heroTitle": "The Best Brokers for SMSF Share Trading in Australia (2026)",
+      "icon": "🏦",
+      "problem": "Not all brokers support SMSF accounts. You need CHESS and admin integration.",
+      "solution": "CommSec, SelfWealth, and Interactive Brokers are the top picks.",
+      "brokers": [
+        "commsec",
+        "selfwealth",
+        "interactive-brokers",
+        "saxo"
+      ],
+      "considerations": [
+        "Must use CHESS-sponsored broker",
+        "Broker must support SMSF structures",
+        "Integration with admin providers matters",
+        "Annual audit needs clear records"
+      ]
+    },
+    {
+      "slug": "expats",
+      "title": "Investing as an Expat",
+      "heroTitle": "How to Invest in Australian Shares as an Expat",
+      "icon": "✈️",
+      "problem": "Many brokers won't accept non-resident applications. CGT rules change.",
+      "solution": "Interactive Brokers is best for expats. Non-residents lose 50% CGT discount.",
+      "brokers": [
+        "interactive-brokers",
+        "saxo",
+        "commsec"
+      ],
+      "considerations": [
+        "Update tax residency status",
+        "Non-residents lose 50% CGT discount",
+        "Some brokers will close your account",
+        "Consider double tax agreements"
+      ]
+    },
+    {
+      "slug": "day-trading",
+      "title": "Day Trading",
+      "heroTitle": "Best Brokers for Day Trading in Australia (2026)",
+      "icon": "⚡",
+      "problem": "Day trading requires low latency, low fees, and advanced tools.",
+      "solution": "CMC Markets and Interactive Brokers are top picks.",
+      "brokers": [
+        "cmc-markets",
+        "interactive-brokers",
+        "ig",
+        "moomoo"
+      ],
+      "considerations": [
+        "ATO may classify you as a share trader",
+        "Low per-trade fees are critical",
+        "Level 2 data and charting essential",
+        "Consider paper trading first"
+      ]
+    }
+  ],
+  "config": {
+    "transferFee": 54,
+    "corpTaxRate": 30,
+    "siteTitle": "Invest.com.au — Australia's Independent Broker Comparison",
+    "metaDesc": "Compare Australia's best share trading platforms. Honest reviews, fee calculators, and CHESS-sponsored broker comparisons. No bank bias.",
+    "abn": "",
+    "email": "hello@invest.com.au",
+    "visitors": "52,000+",
+    "userRating": "4.8/5",
+    "mediaLogos": "AFR, News.com.au, Smart Company",
+    "heroHeadline": "Stop <em>Overpaying</em> Your Broker.",
+    "heroSubtitle": "Compare 10+ Australian share trading platforms. Real fees, real data, no bank bias. Find the broker that actually fits your situation."
+  },
+  "quizWeights": {
+    "goalCrypto": 50,
+    "goalTrade": 30,
+    "goalIncome": 20,
+    "goalGrow": 10,
+    "expBeginnerBoost": 15,
+    "expProBoost": 15,
+    "budgetSmallLowFee": 15,
+    "budgetWhaleSMSF": 20,
+    "budgetLargeFxBonus": 10,
+    "priorityFeesFree": 20,
+    "priorityFees3": 15,
+    "prioritySafety": 25,
+    "priorityTools": 20,
+    "prioritySimple": 20,
+    "ratingMultiplier": 3
+  },
+  "generatedAt": "2026-02-14T19:59:44.786Z"
+}
