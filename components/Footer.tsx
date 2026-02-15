@@ -9,7 +9,7 @@ export default function Footer() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-400 leading-relaxed">
             <div className="border border-slate-700 rounded-lg p-4">
               <h4 className="font-semibold text-slate-300 mb-1">General Advice Warning</h4>
-              <p>The information on Invest.com.au is general in nature and does not consider your personal objectives, financial situation, or needs. You should consider whether the information is appropriate to your needs, and where appropriate, seek professional advice from a financial adviser.</p>
+              <p>The information on Invest.com.au is general in nature and does not take into account your personal financial situation. It is not financial advice. You should consider whether the information is appropriate to your needs, and where appropriate, seek professional advice from a financial adviser. Past performance is not a reliable indicator of future performance.</p>
             </div>
             <div className="border border-slate-700 rounded-lg p-4">
               <h4 className="font-semibold text-slate-300 mb-1">Affiliate Disclosure</h4>
@@ -17,7 +17,7 @@ export default function Footer() {
             </div>
             <div className="border border-slate-700 rounded-lg p-4">
               <h4 className="font-semibold text-slate-300 mb-1">Crypto Warning</h4>
-              <p>Cryptocurrency is highly speculative and not legal tender. Past performance is not an indicator of future returns. You could lose all of your investment. Only invest what you can afford to lose.</p>
+              <p>Cryptocurrency is highly speculative and not legal tender. Past performance is not a reliable indicator of future returns. You could lose all of your investment. Only invest what you can afford to lose.</p>
             </div>
             <div className="border border-slate-700 rounded-lg p-4">
               <h4 className="font-semibold text-slate-300 mb-1">Regulatory Note</h4>
@@ -61,6 +61,7 @@ export default function Footer() {
             <ul className="space-y-2 text-sm">
               <li><Link href="/about" className="hover:text-white transition-colors">About Us</Link></li>
               <li><Link href="/how-we-earn" className="hover:text-white transition-colors">How We Earn</Link></li>
+              <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
             </ul>
           </div>
         </div>

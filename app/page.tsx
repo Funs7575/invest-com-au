@@ -143,12 +143,12 @@ export default async function HomePage() {
             </div>
             <div className="hidden md:block w-px h-12 bg-slate-200"></div>
             <div className="flex items-center gap-3 opacity-50">
-              <span className="text-xs font-bold text-slate-400">AS SEEN IN:</span>
-              {mediaLogos.split(",").map((logo: string) => (
-                <span key={logo.trim()} className="px-2 py-1 bg-slate-50 border border-slate-200 rounded text-[0.6rem] font-bold text-slate-400 uppercase tracking-wide">
-                  {logo.trim()}
-                </span>
-              ))}
+              <span className="px-2 py-1 bg-slate-50 border border-slate-200 rounded text-[0.6rem] font-bold text-slate-400 uppercase tracking-wide">
+                🇦🇺 Aussie-Owned
+              </span>
+              <span className="px-2 py-1 bg-slate-50 border border-slate-200 rounded text-[0.6rem] font-bold text-slate-400 uppercase tracking-wide">
+                No Bank Bias
+              </span>
             </div>
           </div>
         </div>
@@ -198,6 +198,7 @@ export default async function HomePage() {
                   {dealBroker.cta_text || "Claim Deal →"}
                 </Link>
               </div>
+              <p className="text-[0.6rem] text-slate-700/60 mt-3">Sponsored — we may earn a commission if you sign up via this link, at no extra cost to you.</p>
             </div>
           </section>
         </ScrollFadeIn>

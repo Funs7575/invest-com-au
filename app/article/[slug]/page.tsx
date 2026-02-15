@@ -323,14 +323,14 @@ export default async function ArticlePage({
                 </div>
               )}
 
-              {/* Best Brokers for This Topic */}
+              {/* Brokers to Compare for This Topic */}
               {relatedBrokers.length > 0 && (
                 <div className="mt-12 border border-slate-200 rounded-xl p-6 bg-white">
                   <h3 className="text-lg font-bold mb-1">
-                    Best Brokers for This Topic
+                    Brokers to Compare for This Topic
                   </h3>
                   <p className="text-sm text-slate-500 mb-5">
-                    Top-rated platforms relevant to this guide.
+                    Platforms relevant to this guide. We may earn a commission via these links.
                   </p>
                   <div className="space-y-4">
                     {relatedBrokers.map((broker) => (

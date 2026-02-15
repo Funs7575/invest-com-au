@@ -130,8 +130,15 @@ export default function QuizPage() {
         <div className="container-custom max-w-2xl mx-auto">
           <div className="text-center mb-8">
             <div className="text-5xl mb-4">🎉</div>
-            <h1 className="text-3xl font-extrabold mb-2">Your Perfect Match!</h1>
-            <p className="text-slate-600">Based on your answers, here are our top picks for you.</p>
+            <h1 className="text-3xl font-extrabold mb-2">Your Top Matches</h1>
+            <p className="text-slate-600">Based on your answers, here are brokers worth considering.</p>
+          </div>
+
+          {/* General Advice Warning */}
+          <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 mb-6">
+            <p className="text-[0.65rem] text-slate-500 leading-relaxed">
+              <strong>General Advice Warning:</strong> This result is general in nature and does not take into account your personal financial situation. It is not financial advice. We may earn a commission if you open an account via these links, at no extra cost to you. Consider whether any product is appropriate to your circumstances before making a decision.
+            </p>
           </div>
 
           {/* Top Match */}
@@ -155,7 +162,7 @@ export default function QuizPage() {
                   background: `${topMatch.broker.color || '#f59e0b'}20`,
                 }}
               >
-                🏆 #1 Best Match
+                🏆 #1 Top Match
               </div>
               <div className="flex items-center gap-4 mb-4">
                 <div

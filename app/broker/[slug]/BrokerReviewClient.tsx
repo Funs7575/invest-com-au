@@ -68,7 +68,7 @@ export default function BrokerReviewClient({ broker: b, similar }: { broker: Bro
           </a>
         </div>
         <p className="text-xs text-slate-400 mb-8">
-          {Math.floor(300 + Math.random() * 700)} Australians viewed this review this week
+          Affiliate link — we may earn a commission at no extra cost to you.
         </p>
 
         {/* Fee Audit */}
@@ -240,7 +240,7 @@ export default function BrokerReviewClient({ broker: b, similar }: { broker: Bro
             target="_blank"
             rel="noopener noreferrer nofollow"
             onClick={() => trackClick(b.slug, b.name, 'review-bottom', `/broker/${b.slug}`, 'review')}
-            className="inline-block px-8 py-3 bg-amber text-white font-semibold rounded-lg hover:bg-amber-600 transition-colors animate-pulse"
+            className="inline-block px-8 py-3 bg-amber text-white font-semibold rounded-lg hover:bg-amber-600 transition-colors"
           >
             {getBenefitCta(b, 'review')}
           </a>

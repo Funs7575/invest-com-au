@@ -64,6 +64,9 @@ export default function MobileFloatingCTA({
           Open Account
         </a>
       </div>
+      <div className="px-4 pb-1.5 text-[0.55rem] text-slate-400 text-center">
+        Sponsored — we may earn a commission at no extra cost to you.
+      </div>
     </div>
   );
 }

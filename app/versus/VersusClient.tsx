@@ -176,13 +176,13 @@ export default function VersusClient() {
                 target="_blank"
                 rel="noopener noreferrer nofollow"
                 onClick={() => trackClick(overallWinner.slug, overallWinner.name, 'versus-winner', '/versus', 'versus')}
-                className="shrink-0 px-6 py-3 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-800 transition-colors animate-pulse"
+                className="shrink-0 px-6 py-3 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-800 transition-colors"
               >
                 {getBenefitCta(overallWinner, 'versus')}
               </a>
             </div>
             <p className="text-xs text-slate-400 mb-6">
-              {Math.floor(200 + Math.random() * 500)} people compared these brokers this week
+              We may earn a commission if you open an account via our links, at no extra cost to you.
             </p>
 
             {/* Verdict Breakdown */}

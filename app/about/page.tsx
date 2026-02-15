@@ -54,7 +54,7 @@ export default function AboutPage() {
               <h2 className="text-2xl font-extrabold mb-4">Editorial Independence Pledge</h2>
               <div className="space-y-3 text-slate-100 leading-relaxed">
                 <p>
-                  We take editorial independence seriously. Every review, rating, and recommendation
+                  We take editorial independence seriously. Every review, rating, and comparison
                   on Invest.com.au is based on our independent analysis — never influenced by commercial relationships.
                 </p>
                 <ul className="space-y-2 mt-4">
@@ -74,7 +74,7 @@ export default function AboutPage() {
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-amber font-bold shrink-0">4.</span>
-                    <span><strong className="text-white">Scenario-based advice.</strong> Instead of one-size-fits-all recommendations, we help you find the best broker for your specific situation.</span>
+                    <span><strong className="text-white">Scenario-based comparisons.</strong> Instead of one-size-fits-all lists, we help you compare brokers for your specific situation.</span>
                   </li>
                 </ul>
               </div>
@@ -143,7 +143,7 @@ export default function AboutPage() {
                   information with the product issuer before making a decision.
                 </p>
                 <p>
-                  <strong>Past Performance:</strong> Past performance is not indicative of future results.
+                  <strong>Past Performance:</strong> Past performance is not a reliable indicator of future performance.
                   Investment returns can go up and down, and you may receive back less than you invested.
                 </p>
               </div>

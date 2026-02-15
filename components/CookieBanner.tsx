@@ -52,7 +52,7 @@ export default function CookieBanner() {
               We use cookies to enhance your experience on our site. By clicking "Accept All",
               you consent to our use of cookies for analytics and personalization.{" "}
               <Link
-                href="/about"
+                href="/privacy"
                 className="text-amber underline hover:text-amber-400 transition-colors"
               >
                 Learn more in our Privacy Policy

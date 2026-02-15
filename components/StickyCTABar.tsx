@@ -37,10 +37,11 @@ export default function StickyCTABar({ broker, detail, context = 'review' }: { b
           target="_blank"
           rel="noopener noreferrer nofollow"
           onClick={() => trackClick(broker.slug, broker.name, 'sticky-cta', window.location.pathname, context)}
-          className="shrink-0 px-5 py-2 bg-amber text-white text-sm font-semibold rounded-lg hover:bg-amber-600 transition-colors animate-pulse"
+          className="shrink-0 px-5 py-2 bg-amber text-white text-sm font-semibold rounded-lg hover:bg-amber-600 transition-colors"
         >
           {getBenefitCta(broker, context)}
         </a>
+        <span className="hidden sm:inline text-[0.55rem] text-slate-500">Sponsored</span>
       </div>
     </div>
   );

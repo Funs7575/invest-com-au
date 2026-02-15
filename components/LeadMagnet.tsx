@@ -1,14 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 export default function LeadMagnet() {
   const [email, setEmail] = useState("");
+  const [consent, setConsent] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!email || !email.includes("@")) return;
+    if (!email || !email.includes("@") || !consent) return;
 
     setStatus("loading");
     try {
@@ -56,9 +58,26 @@ export default function LeadMagnet() {
             required
             className="w-full px-4 py-2.5 rounded-lg text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-white/50"
           />
+          <label className="flex items-start gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={consent}
+              onChange={(e) => setConsent(e.target.checked)}
+              required
+              className="mt-0.5 w-4 h-4 rounded border-white/50 accent-slate-900 shrink-0"
+            />
+            <span className="text-[0.65rem] text-amber-50 leading-tight">
+              I agree to receive the Fee Audit PDF and occasional updates from Invest.com.au.
+              View our{" "}
+              <Link href="/privacy" className="underline hover:text-white">
+                Privacy Policy
+              </Link>
+              . You can unsubscribe at any time.
+            </span>
+          </label>
           <button
             type="submit"
-            disabled={status === "loading"}
+            disabled={status === "loading" || !consent}
             className="w-full px-4 py-2.5 bg-brand text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-60"
           >
             {status === "loading" ? "Sending..." : "Get the Free PDF"}
@@ -68,9 +87,6 @@ export default function LeadMagnet() {
               Something went wrong. Please try again.
             </p>
           )}
-          <p className="text-[0.65rem] text-amber-100 text-center">
-            No spam. Unsubscribe any time.
-          </p>
         </form>
       )}
     </div>

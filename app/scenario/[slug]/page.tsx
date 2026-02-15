@@ -126,12 +126,13 @@ export default async function ScenarioPage({
           </>
         )}
 
-        {/* Recommended Brokers */}
+        {/* Brokers Worth Comparing */}
         {recBrokers.length > 0 && (
           <>
             <h2 className="text-xl font-extrabold mb-3 text-brand">
-              Recommended Brokers
+              Brokers Worth Comparing
             </h2>
+            <p className="text-xs text-slate-400 mb-3">We may earn a commission if you open an account via these links. This does not affect our editorial analysis.</p>
             <div className="space-y-3 mb-8">
               {recBrokers.map((b) => (
                 <div
