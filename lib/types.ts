@@ -1,0 +1,82 @@
+export interface Broker {
+  id: number;
+  name: string;
+  slug: string;
+  color: string;
+  icon?: string;
+  cta_text?: string;
+  tagline?: string;
+  asx_fee?: string;
+  asx_fee_value?: number;
+  us_fee?: string;
+  us_fee_value?: number;
+  fx_rate?: number;
+  chess_sponsored: boolean;
+  inactivity_fee?: string;
+  payment_methods?: string[];
+  smsf_support: boolean;
+  is_crypto: boolean;
+  min_deposit?: string;
+  platforms?: string[];
+  pros?: string[];
+  cons?: string[];
+  affiliate_url?: string;
+  rating?: number;
+  layer?: string;
+  deal: boolean;
+  editors_pick: boolean;
+  status: string;
+  review_content?: string;
+  fee_audit?: any;
+  markets?: string[];
+  regulated_by?: string;
+  year_founded?: number;
+  headquarters?: string;
+  deal_text?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Article {
+  id: number;
+  title: string;
+  slug: string;
+  excerpt?: string;
+  category?: string;
+  content?: string;
+  sections?: { heading: string; body: string }[];
+  tags?: string[];
+  read_time?: number;
+  related_brokers?: string[];
+  related_calc?: string;
+  evergreen: boolean;
+  published_at?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Scenario {
+  id: number;
+  title: string;
+  slug: string;
+  hero_title?: string;
+  icon?: string;
+  problem?: string;
+  solution?: string;
+  brokers?: string[];
+  considerations?: string[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AffiliateClick {
+  id: number;
+  broker_id?: number;
+  broker_name?: string;
+  broker_slug?: string;
+  source?: string;
+  page?: string;
+  user_agent?: string;
+  ip_hash?: string;
+  clicked_at: string;
+}
