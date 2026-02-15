@@ -2,7 +2,11 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import type { Article, Broker } from "@/lib/types";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import ArticleDetailClient from "./ArticleDetailClient";
+import IntlBrokersEnhanced from "@/components/IntlBrokersEnhanced";
+import ArticleSidebar from "@/components/ArticleSidebar";
+import ComparisonTableSkeleton from "@/components/ComparisonTableSkeleton";
 
 const CATEGORY_COLORS: Record<string, string> = {
   tax: "bg-purple-100 text-purple-700",
@@ -10,6 +14,7 @@ const CATEGORY_COLORS: Record<string, string> = {
   smsf: "bg-green-100 text-green-700",
   strategy: "bg-amber-100 text-amber-700",
   news: "bg-red-100 text-red-700",
+  reviews: "bg-teal-100 text-teal-700",
 };
 
 const CALC_NAMES: Record<string, { name: string; icon: string }> = {
@@ -20,7 +25,13 @@ const CALC_NAMES: Record<string, { name: string; icon: string }> = {
   "calc-chess": { name: "CHESS Lookup Tool", icon: "🔒" },
 };
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+const ENHANCED_SLUGS = ["best-intl-brokers"];
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const { slug } = await params;
   const supabase = await createClient();
   const { data: article } = await supabase
@@ -45,7 +56,6 @@ export default async function ArticlePage({
   const { slug } = await params;
   const supabase = await createClient();
 
-  // Fetch the article
   const { data: article } = await supabase
     .from("articles")
     .select("*")
@@ -55,6 +65,7 @@ export default async function ArticlePage({
   if (!article) notFound();
 
   const a = article as Article;
+  const isEnhanced = ENHANCED_SLUGS.includes(slug);
 
   // Fetch related brokers
   let relatedBrokers: Broker[] = [];
@@ -67,7 +78,24 @@ export default async function ArticlePage({
     relatedBrokers = (relatedBrokerData as Broker[]) || [];
   }
 
-  // Fetch related articles (same category, different slug)
+  // For enhanced articles: also fetch all brokers with FX data
+  let allFxBrokers: Broker[] = [];
+  let topPick: Broker | null = null;
+  if (isEnhanced) {
+    const { data: fxData } = await supabase
+      .from("brokers")
+      .select("*")
+      .eq("status", "active")
+      .not("fx_rate", "is", null)
+      .order("fx_rate", { ascending: true });
+    allFxBrokers = (fxData as Broker[]) || [];
+    topPick =
+      relatedBrokers.sort((x, y) => (y.rating ?? 0) - (x.rating ?? 0))[0] ||
+      allFxBrokers[0] ||
+      null;
+  }
+
+  // Fetch related articles
   let relatedArticles: Article[] = [];
   if (a.category) {
     const { data: related } = await supabase
@@ -81,22 +109,58 @@ export default async function ArticlePage({
 
   const categoryColor =
     CATEGORY_COLORS[a.category || ""] || "bg-slate-100 text-slate-700";
-
   const calcInfo = a.related_calc ? CALC_NAMES[a.related_calc] : null;
+  const pagePath = `/article/${slug}`;
+
+  // JSON-LD schema for enhanced articles
+  const jsonLd = isEnhanced
+    ? {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        headline: a.title,
+        description: a.excerpt,
+        datePublished: a.published_at,
+        dateModified: a.updated_at,
+        author: {
+          "@type": "Organization",
+          name: "Invest.com.au",
+          url: "https://invest-com-au.vercel.app",
+        },
+        publisher: {
+          "@type": "Organization",
+          name: "Invest.com.au",
+        },
+        mainEntityOfPage: {
+          "@type": "WebPage",
+          "@id": `https://invest-com-au.vercel.app${pagePath}`,
+        },
+      }
+    : null;
 
   return (
     <div>
+      {/* Schema.org JSON-LD */}
+      {jsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
+
       {/* Dark Hero Section */}
       <section className="bg-brand text-white py-16">
         <div className="container-custom">
-          <div className="max-w-3xl mx-auto">
+          <div className={isEnhanced ? "max-w-5xl mx-auto" : "max-w-3xl mx-auto"}>
             {/* Breadcrumb */}
             <div className="text-sm text-slate-400 mb-6">
               <Link href="/" className="hover:text-white transition-colors">
                 Home
               </Link>
               <span className="mx-2">/</span>
-              <Link href="/articles" className="hover:text-white transition-colors">
+              <Link
+                href="/articles"
+                className="hover:text-white transition-colors"
+              >
                 Articles
               </Link>
               <span className="mx-2">/</span>
@@ -126,6 +190,11 @@ export default async function ArticlePage({
                   })}
                 </span>
               )}
+              {isEnhanced && (
+                <span className="text-xs font-semibold bg-amber/20 text-amber px-2.5 py-0.5 rounded-full">
+                  Updated Feb 2026
+                </span>
+              )}
             </div>
 
             {/* Title */}
@@ -135,7 +204,7 @@ export default async function ArticlePage({
 
             {/* Excerpt */}
             {a.excerpt && (
-              <p className="text-lg text-slate-300 leading-relaxed">
+              <p className="text-lg text-slate-300 leading-relaxed max-w-3xl">
                 {a.excerpt}
               </p>
             )}
@@ -146,168 +215,246 @@ export default async function ArticlePage({
       {/* Main Content */}
       <div className="py-12">
         <div className="container-custom">
-          <div className="max-w-3xl mx-auto">
-            {/* Table of Contents */}
-            {a.sections && a.sections.length > 1 && (
-              <nav className="border border-slate-200 rounded-xl p-6 mb-10 bg-slate-50">
-                <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500 mb-3">
-                  Table of Contents
-                </h2>
-                <ol className="space-y-2">
-                  {a.sections.map(
-                    (section: { heading: string; body: string }, i: number) => (
-                      <li key={i}>
-                        <a
-                          href={`#section-${i}`}
-                          className="text-sm text-slate-700 hover:text-amber transition-colors flex items-start gap-2"
-                        >
-                          <span className="text-amber font-semibold shrink-0">
-                            {i + 1}.
-                          </span>
+          <div
+            className={
+              isEnhanced
+                ? "max-w-5xl mx-auto flex gap-8"
+                : "max-w-3xl mx-auto"
+            }
+          >
+            {/* Article Column */}
+            <div className={isEnhanced ? "flex-1 min-w-0" : ""}>
+              {/* Table of Contents */}
+              {a.sections && a.sections.length > 1 && (
+                <nav className="border border-slate-200 rounded-xl p-6 mb-10 bg-slate-50">
+                  <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500 mb-3">
+                    Table of Contents
+                  </h2>
+                  <ol className="space-y-2">
+                    {a.sections.map(
+                      (
+                        section: { heading: string; body: string },
+                        i: number
+                      ) => (
+                        <li key={i}>
+                          <a
+                            href={`#section-${i}`}
+                            className="text-sm text-slate-700 hover:text-amber transition-colors flex items-start gap-2"
+                          >
+                            <span className="text-amber font-semibold shrink-0">
+                              {i + 1}.
+                            </span>
+                            {section.heading}
+                          </a>
+                        </li>
+                      )
+                    )}
+                  </ol>
+                </nav>
+              )}
+
+              {/* Enhanced: Inject comparison tools after first section */}
+              {isEnhanced && a.sections && a.sections.length > 0 && (
+                <div className="space-y-10">
+                  {/* First section */}
+                  <section id="section-0" className="scroll-mt-24">
+                    <h2 className="text-2xl font-bold mb-4">
+                      {a.sections[0].heading}
+                    </h2>
+                    <div className="max-w-none text-slate-700 leading-relaxed whitespace-pre-line">
+                      {a.sections[0].body}
+                    </div>
+                  </section>
+
+                  {/* Inject enhanced tools */}
+                  <Suspense fallback={<ComparisonTableSkeleton />}>
+                    <IntlBrokersEnhanced
+                      brokers={allFxBrokers}
+                      topPick={topPick}
+                      pagePath={pagePath}
+                    />
+                  </Suspense>
+
+                  {/* Remaining sections */}
+                  {a.sections.slice(1).map(
+                    (
+                      section: { heading: string; body: string },
+                      i: number
+                    ) => (
+                      <section
+                        key={i + 1}
+                        id={`section-${i + 1}`}
+                        className="scroll-mt-24"
+                      >
+                        <h2 className="text-2xl font-bold mb-4">
                           {section.heading}
-                        </a>
-                      </li>
+                        </h2>
+                        <div className="max-w-none text-slate-700 leading-relaxed whitespace-pre-line">
+                          {section.body}
+                        </div>
+                      </section>
                     )
                   )}
-                </ol>
-              </nav>
-            )}
-
-            {/* Article Sections */}
-            {a.sections && a.sections.length > 0 && (
-              <div className="space-y-10">
-                {a.sections.map(
-                  (section: { heading: string; body: string }, i: number) => (
-                    <section key={i} id={`section-${i}`} className="scroll-mt-24">
-                      <h2 className="text-2xl font-bold mb-4">{section.heading}</h2>
-                      <div className="max-w-none text-slate-700 leading-relaxed whitespace-pre-line">
-                        {section.body}
-                      </div>
-                    </section>
-                  )
-                )}
-              </div>
-            )}
-
-            {/* Best Brokers for This Topic */}
-            {relatedBrokers.length > 0 && (
-              <div className="mt-12 border border-slate-200 rounded-xl p-6 bg-white">
-                <h3 className="text-lg font-bold mb-1">
-                  Best Brokers for This Topic
-                </h3>
-                <p className="text-sm text-slate-500 mb-5">
-                  Top-rated platforms relevant to this guide.
-                </p>
-                <div className="space-y-4">
-                  {relatedBrokers.map((broker) => (
-                    <ArticleDetailClient key={broker.id} broker={broker} slug={slug} />
-                  ))}
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Related Calculator CTA */}
-            {calcInfo && a.related_calc && (
-              <div className="mt-8 border border-amber-200 rounded-xl p-6 bg-amber-50">
-                <div className="flex items-start gap-4">
-                  <div className="text-3xl">{calcInfo.icon}</div>
-                  <div className="flex-1">
-                    <h3 className="text-lg font-bold mb-1">Related Calculator</h3>
-                    <p className="text-sm text-slate-600 mb-3">
-                      Run the numbers yourself with our {calcInfo.name}.
-                    </p>
-                    <Link
-                      href={`/calculators?calc=${a.related_calc}`}
-                      className="inline-block px-5 py-2.5 bg-amber text-white text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors"
-                    >
-                      Open {calcInfo.name} &rarr;
-                    </Link>
+              {/* Standard: Render all sections normally */}
+              {!isEnhanced && a.sections && a.sections.length > 0 && (
+                <div className="space-y-10">
+                  {a.sections.map(
+                    (
+                      section: { heading: string; body: string },
+                      i: number
+                    ) => (
+                      <section
+                        key={i}
+                        id={`section-${i}`}
+                        className="scroll-mt-24"
+                      >
+                        <h2 className="text-2xl font-bold mb-4">
+                          {section.heading}
+                        </h2>
+                        <div className="max-w-none text-slate-700 leading-relaxed whitespace-pre-line">
+                          {section.body}
+                        </div>
+                      </section>
+                    )
+                  )}
+                </div>
+              )}
+
+              {/* Best Brokers for This Topic */}
+              {relatedBrokers.length > 0 && (
+                <div className="mt-12 border border-slate-200 rounded-xl p-6 bg-white">
+                  <h3 className="text-lg font-bold mb-1">
+                    Best Brokers for This Topic
+                  </h3>
+                  <p className="text-sm text-slate-500 mb-5">
+                    Top-rated platforms relevant to this guide.
+                  </p>
+                  <div className="space-y-4">
+                    {relatedBrokers.map((broker) => (
+                      <ArticleDetailClient
+                        key={broker.id}
+                        broker={broker}
+                        slug={slug}
+                      />
+                    ))}
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* Related Articles */}
-            {relatedArticles.length > 0 && (
-              <div className="mt-12">
-                <h3 className="text-xl font-bold mb-6">Related Articles</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                  {relatedArticles.map((ra) => {
-                    const raCategoryColor =
-                      CATEGORY_COLORS[ra.category || ""] ||
-                      "bg-slate-100 text-slate-700";
-                    return (
+              {/* Related Calculator CTA */}
+              {calcInfo && a.related_calc && (
+                <div className="mt-8 border border-amber-200 rounded-xl p-6 bg-amber-50">
+                  <div className="flex items-start gap-4">
+                    <div className="text-3xl">{calcInfo.icon}</div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-bold mb-1">
+                        Related Calculator
+                      </h3>
+                      <p className="text-sm text-slate-600 mb-3">
+                        Run the numbers yourself with our {calcInfo.name}.
+                      </p>
                       <Link
-                        key={ra.id}
-                        href={`/article/${ra.slug}`}
-                        className="border border-slate-200 rounded-xl p-5 hover:shadow-lg transition-shadow bg-white flex flex-col"
+                        href={`/calculators?calc=${a.related_calc}`}
+                        className="inline-block px-5 py-2.5 bg-amber text-white text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors"
                       >
-                        {ra.category && (
-                          <span
-                            className={`text-xs font-semibold px-2.5 py-0.5 rounded-full self-start mb-2 ${raCategoryColor}`}
-                          >
-                            {ra.category}
-                          </span>
-                        )}
-                        <h4 className="text-sm font-bold mb-2 line-clamp-2 flex-1">
-                          {ra.title}
-                        </h4>
-                        {ra.read_time && (
-                          <span className="text-xs text-slate-400">
-                            {ra.read_time} min read
-                          </span>
-                        )}
+                        Open {calcInfo.name} &rarr;
                       </Link>
-                    );
-                  })}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Related Articles */}
+              {relatedArticles.length > 0 && (
+                <div className="mt-12">
+                  <h3 className="text-xl font-bold mb-6">Related Articles</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    {relatedArticles.map((ra) => {
+                      const raCategoryColor =
+                        CATEGORY_COLORS[ra.category || ""] ||
+                        "bg-slate-100 text-slate-700";
+                      return (
+                        <Link
+                          key={ra.id}
+                          href={`/article/${ra.slug}`}
+                          className="border border-slate-200 rounded-xl p-5 hover:shadow-lg hover:scale-[1.02] transition-all bg-white flex flex-col"
+                        >
+                          {ra.category && (
+                            <span
+                              className={`text-xs font-semibold px-2.5 py-0.5 rounded-full self-start mb-2 ${raCategoryColor}`}
+                            >
+                              {ra.category}
+                            </span>
+                          )}
+                          <h4 className="text-sm font-bold mb-2 line-clamp-2 flex-1">
+                            {ra.title}
+                          </h4>
+                          {ra.read_time && (
+                            <span className="text-xs text-slate-400">
+                              {ra.read_time} min read
+                            </span>
+                          )}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Bottom CTA */}
+              <div className="mt-12 bg-brand rounded-xl p-8 text-center text-white">
+                <h3 className="text-2xl font-extrabold mb-2">
+                  Find the Right Broker
+                </h3>
+                <p className="text-slate-300 mb-6 max-w-lg mx-auto">
+                  Compare fees, features, and platforms across every major
+                  Australian broker — or let our quiz match you in 60 seconds.
+                </p>
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                  <Link
+                    href="/compare"
+                    className="px-6 py-3 bg-white text-brand text-sm font-bold rounded-lg hover:bg-slate-100 transition-colors"
+                  >
+                    Compare All Brokers
+                  </Link>
+                  <Link
+                    href="/quiz"
+                    className="px-6 py-3 bg-amber text-white text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors"
+                  >
+                    Take the Quiz
+                  </Link>
                 </div>
               </div>
-            )}
 
-            {/* Bottom CTA */}
-            <div className="mt-12 bg-brand rounded-xl p-8 text-center text-white">
-              <h3 className="text-2xl font-extrabold mb-2">
-                Find the Right Broker
-              </h3>
-              <p className="text-slate-300 mb-6 max-w-lg mx-auto">
-                Compare fees, features, and platforms across every major
-                Australian broker — or let our quiz match you in 60 seconds.
-              </p>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-                <Link
-                  href="/compare"
-                  className="px-6 py-3 bg-white text-brand text-sm font-bold rounded-lg hover:bg-slate-100 transition-colors"
-                >
-                  Compare All Brokers
-                </Link>
-                <Link
-                  href="/quiz"
-                  className="px-6 py-3 bg-amber text-white text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors"
-                >
-                  Take the Quiz
-                </Link>
+              {/* Disclaimer */}
+              <div className="mt-10 border-t border-slate-200 pt-6">
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  <strong>General Advice Warning:</strong> The information on
+                  this page is general in nature and does not constitute
+                  financial advice. We are not licensed financial advisers under
+                  the Corporations Act 2001 (Cth). Consider your own
+                  circumstances and seek professional advice before making
+                  investment decisions. Invest.com.au may receive a commission
+                  from partners featured on this page, but this does not
+                  influence our editorial opinions or rankings.{" "}
+                  <Link
+                    href="/how-we-earn"
+                    className="text-amber hover:underline"
+                  >
+                    How we earn money
+                  </Link>
+                  .
+                </p>
               </div>
             </div>
 
-            {/* Disclaimer */}
-            <div className="mt-10 border-t border-slate-200 pt-6">
-              <p className="text-xs text-slate-400 leading-relaxed">
-                <strong>Disclaimer:</strong> The information on this page is
-                general in nature and does not constitute financial advice. We
-                are not licensed financial advisers. Consider your own
-                circumstances and seek professional advice before making
-                investment decisions. Invest.com.au may receive a commission
-                from partners featured on this page, but this does not
-                influence our editorial opinions or rankings.{" "}
-                <Link
-                  href="/how-we-earn"
-                  className="text-amber hover:underline"
-                >
-                  How we earn money
-                </Link>
-                .
-              </p>
-            </div>
+            {/* Desktop Sidebar (enhanced articles only) */}
+            {isEnhanced && topPick && (
+              <ArticleSidebar broker={topPick} pagePath={pagePath} />
+            )}
           </div>
         </div>
       </div>
