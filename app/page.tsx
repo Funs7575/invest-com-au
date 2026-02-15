@@ -36,7 +36,9 @@ export default async function HomePage() {
 
   const visitorCount = settingsMap.visitor_count || "52,000+";
   const userRating = settingsMap.user_rating || "4.8/5";
-  const heroHeadline = settingsMap.hero_headline || 'Stop <em class="text-amber not-italic">Overpaying</em> Your Broker.';
+  const heroHeadlinePrefix = settingsMap.hero_headline_prefix || "Stop";
+  const heroHeadlineHighlight = settingsMap.hero_headline_highlight || "Overpaying";
+  const heroHeadlineSuffix = settingsMap.hero_headline_suffix || "Your Broker.";
   const heroSubtitle = settingsMap.hero_subtitle || "Compare 10+ Australian share trading platforms. Real fees, real data, no bank bias. Find the broker that actually fits your situation.";
   const mediaLogos = settingsMap.media_logos || "AFR,News.com.au";
 
@@ -81,10 +83,9 @@ export default async function HomePage() {
 
         <div className="container-custom relative z-10">
           <div className="max-w-3xl mx-auto text-center">
-            <h1
-              className="text-5xl font-bold mb-6"
-              dangerouslySetInnerHTML={{ __html: heroHeadline }}
-            ></h1>
+            <h1 className="text-5xl font-bold mb-6">
+              {heroHeadlinePrefix} <em className="text-amber not-italic">{heroHeadlineHighlight}</em> {heroHeadlineSuffix}
+            </h1>
             <p className="text-xl text-slate-600 mb-8">
               {heroSubtitle}
             </p>
