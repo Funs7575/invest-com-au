@@ -3,6 +3,11 @@ import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
 import TradingGateway from "@/components/TradingGateway";
 
+export const metadata = {
+  title: "Invest.com.au — Australia's Independent Broker Comparison",
+  description: "Compare 10+ Australian share trading platforms. Real fees, real data, no bank bias. Find the broker that actually fits your situation.",
+};
+
 export default async function HomePage() {
   const supabase = await createClient();
 

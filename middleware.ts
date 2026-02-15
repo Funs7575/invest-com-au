@@ -35,6 +35,14 @@ export async function middleware(request: NextRequest) {
       url.pathname = '/admin/login'
       return NextResponse.redirect(url)
     }
+
+    // Only allow admin emails
+    const isAdmin = user.email?.endsWith('@invest.com.au') || user.email === 'finnduns@gmail.com';
+    if (!isAdmin) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/'
+      return NextResponse.redirect(url)
+    }
   }
 
   // Redirect logged-in users away from login page

@@ -2,6 +2,11 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import type { Broker } from "@/lib/types";
 
+export const metadata = {
+  title: "Broker Reviews — Invest.com.au",
+  description: "In-depth, honest reviews of every major Australian share trading platform. Fees, pros, cons, and our verdict.",
+};
+
 export default async function ReviewsPage() {
   const supabase = await createClient();
 

@@ -3,6 +3,23 @@ import type { Broker } from "@/lib/types";
 import { notFound } from "next/navigation";
 import BrokerReviewClient from "./BrokerReviewClient";
 
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const supabase = await createClient();
+  const { data: broker } = await supabase
+    .from('brokers')
+    .select('name, tagline')
+    .eq('slug', slug)
+    .single();
+
+  if (!broker) return { title: 'Broker Not Found — Invest.com.au' };
+
+  return {
+    title: `${broker.name} Review (2026) — Invest.com.au`,
+    description: broker.tagline || `Honest review of ${broker.name}. Fees, pros, cons, and our verdict.`,
+  };
+}
+
 export default async function BrokerPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const supabase = await createClient();

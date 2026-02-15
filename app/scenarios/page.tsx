@@ -2,6 +2,11 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import type { Scenario } from "@/lib/types";
 
+export const metadata = {
+  title: "Investing Scenarios — Invest.com.au",
+  description: "Find the best broker for your specific situation: SMSF, kids, expats, day trading, and more.",
+};
+
 export default async function ScenariosPage() {
   const supabase = await createClient();
 
