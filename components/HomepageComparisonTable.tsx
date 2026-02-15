@@ -1,29 +1,43 @@
 "use client";
 
-import { useMemo } from "react";
+import { useState, useMemo } from "react";
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, renderStars } from "@/lib/tracking";
 
+const TAB_OPTIONS = ["All Platforms", "Share Trading", "Crypto Exchanges", "SMSF"] as const;
+type TabOption = (typeof TAB_OPTIONS)[number];
+
+function deriveCategory(broker: Broker): string {
+  if (broker.is_crypto) return "Crypto Exchanges";
+  if (broker.smsf_support) return "SMSF";
+  return "Share Trading";
+}
+
 export default function HomepageComparisonTable({ brokers }: { brokers: Broker[] }) {
-  // Show top brokers sorted by rating (non-crypto first)
-  const topBrokers = useMemo(() => {
-    return [...brokers]
-      .filter((b) => !b.is_crypto)
+  const [activeTab, setActiveTab] = useState<TabOption>("All Platforms");
+
+  // Filter by active tab, sort by rating, take top 8
+  const displayBrokers = useMemo(() => {
+    const base =
+      activeTab === "All Platforms"
+        ? brokers
+        : brokers.filter((b) => deriveCategory(b) === activeTab);
+    return [...base]
       .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
       .slice(0, 8);
-  }, [brokers]);
+  }, [brokers, activeTab]);
 
-  // Compute editor picks (same algorithm as CompareClient)
+  // Compute editor picks from the displayed list
   const editorPicks = useMemo(() => {
     const picks: Record<string, string> = {};
-    if (topBrokers.length > 0) {
-      const cheapest = topBrokers.reduce((a, b) =>
+    if (displayBrokers.length > 0) {
+      const cheapest = displayBrokers.reduce((a, b) =>
         (a.asx_fee_value ?? 999) <= (b.asx_fee_value ?? 999) ? a : b
       );
-      const bestOverall = topBrokers.reduce((a, b) =>
+      const bestOverall = displayBrokers.reduce((a, b) =>
         (a.rating ?? 0) >= (b.rating ?? 0) ? a : b
       );
-      const bestValue = topBrokers
+      const bestValue = displayBrokers
         .filter((b) => b.chess_sponsored && (b.asx_fee_value ?? 999) <= 5)
         .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))[0];
 
@@ -33,10 +47,37 @@ export default function HomepageComparisonTable({ brokers }: { brokers: Broker[]
       if (bestValue && !picks[bestValue.slug]) picks[bestValue.slug] = "Best Value";
     }
     return picks;
-  }, [topBrokers]);
+  }, [displayBrokers]);
 
   return (
     <div>
+      {/* Compliance header */}
+      <div className="flex justify-end mb-2">
+        <a
+          href="#advertiser-disclosure"
+          className="text-xs text-gray-400 underline hover:text-gray-600 transition-colors"
+        >
+          Advertiser Disclosure
+        </a>
+      </div>
+
+      {/* Filter Tabs */}
+      <div className="flex flex-wrap gap-2 mb-6">
+        {TAB_OPTIONS.map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              activeTab === tab
+                ? "bg-green-800 text-white"
+                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+            }`}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
+
       {/* Desktop Table */}
       <div className="hidden md:block overflow-x-auto">
         <table className="w-full border border-slate-200 rounded-xl overflow-hidden">
@@ -53,7 +94,7 @@ export default function HomepageComparisonTable({ brokers }: { brokers: Broker[]
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200">
-            {topBrokers.map((broker, i) => (
+            {displayBrokers.map((broker, i) => (
               <tr
                 key={broker.id}
                 className={`hover:bg-slate-50 transition-colors ${
@@ -65,14 +106,8 @@ export default function HomepageComparisonTable({ brokers }: { brokers: Broker[]
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
-                    <div
-                      className="w-9 h-9 rounded-lg flex items-center justify-center text-xs font-bold shrink-0"
-                      style={{
-                        background: `${broker.color}20`,
-                        color: broker.color,
-                      }}
-                    >
-                      {broker.icon || broker.name.substring(0, 2).toUpperCase()}
+                    <div className="w-10 h-10 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center font-bold text-green-900 text-sm shrink-0">
+                      {broker.name.substring(0, 2).toUpperCase()}
                     </div>
                     <div>
                       <a
@@ -136,7 +171,7 @@ export default function HomepageComparisonTable({ brokers }: { brokers: Broker[]
 
       {/* Mobile Cards */}
       <div className="md:hidden space-y-3">
-        {topBrokers.map((broker, i) => (
+        {displayBrokers.map((broker, i) => (
           <div
             key={broker.id}
             className={`rounded-xl border p-4 bg-white ${
@@ -152,14 +187,8 @@ export default function HomepageComparisonTable({ brokers }: { brokers: Broker[]
             )}
             <div className="flex items-center gap-3 mb-3">
               <div className="text-xs font-bold text-slate-400 w-5">#{i + 1}</div>
-              <div
-                className="w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold shrink-0"
-                style={{
-                  background: `${broker.color}20`,
-                  color: broker.color,
-                }}
-              >
-                {broker.icon || broker.name.charAt(0)}
+              <div className="w-10 h-10 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center font-bold text-green-900 text-sm shrink-0">
+                {broker.name.substring(0, 2).toUpperCase()}
               </div>
               <div className="flex-1 min-w-0">
                 <a
@@ -223,7 +252,7 @@ export default function HomepageComparisonTable({ brokers }: { brokers: Broker[]
                   "homepage"
                 )
               }
-              className="block w-full text-center text-sm px-3 py-2.5 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors"
+              className="block w-full text-center py-3 bg-green-700 text-white font-bold rounded-lg mt-4 hover:bg-green-800 transition-colors"
             >
               {getBenefitCta(broker, "compare")}
             </a>
@@ -232,7 +261,7 @@ export default function HomepageComparisonTable({ brokers }: { brokers: Broker[]
       </div>
 
       {/* Affiliate disclosure */}
-      <p className="text-[0.6rem] text-slate-400 mt-4 text-center">
+      <p id="advertiser-disclosure" className="text-[0.6rem] text-slate-400 mt-4 text-center">
         Sponsored — we may earn a commission if you open an account via our links, at no
         extra cost to you. Rankings are based on editorial assessment and not influenced by
         compensation.

@@ -4,8 +4,8 @@ import type { Broker } from "@/lib/types";
 import MarketTicker from "@/components/MarketTicker";
 import HomepageSearchBar from "@/components/HomepageSearchBar";
 import HomepageComparisonTable from "@/components/HomepageComparisonTable";
+import AuthorByline from "@/components/AuthorByline";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
-import CountUp from "@/components/CountUp";
 import LeadMagnet from "@/components/LeadMagnet";
 
 export const metadata = {
@@ -54,21 +54,6 @@ export default async function HomePage() {
     .eq("status", "active")
     .order("rating", { ascending: false });
 
-  const { data: settings } = await supabase
-    .from("site_settings")
-    .select("key, value");
-
-  const settingsMap: Record<string, string> = {};
-  settings?.forEach((s: { key: string; value: string | null }) => {
-    if (s.value) settingsMap[s.key] = s.value;
-  });
-
-  const visitorCount = settingsMap.visitor_count || "52,000+";
-  const visitorNumber =
-    parseInt(visitorCount.replace(/[^0-9]/g, "")) || 52000;
-  const userRating = settingsMap.user_rating || "4.8/5";
-  const ratingNumber = parseFloat(userRating) || 4.8;
-
   const brokerCount = brokers?.length || 40;
 
   return (
@@ -77,87 +62,17 @@ export default async function HomePage() {
       <MarketTicker />
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-green-50 to-white py-16 md:py-20 relative overflow-hidden">
-        {/* Decorative gold accent circles */}
-        <svg
-          className="absolute top-0 right-0 opacity-[0.06] pointer-events-none hidden md:block"
-          width="400" height="400" viewBox="0 0 400 400" fill="none"
-        >
-          <circle cx="200" cy="200" r="150" stroke="#f59e0b" strokeWidth="2" />
-          <circle cx="200" cy="200" r="120" stroke="#f59e0b" strokeWidth="2" />
-          <circle cx="200" cy="200" r="90" stroke="#15803d" strokeWidth="2" />
-        </svg>
-        <div className="container-custom relative z-10">
-          <div className="max-w-3xl mx-auto text-center">
-            <ScrollFadeIn>
-              <h1 className="text-4xl md:text-5xl font-extrabold mb-4 leading-tight text-green-900">
-                Compare{" "}
-                <span className="text-amber-500">{brokerCount}+</span>{" "}
-                Australian Investment Platforms
-              </h1>
-            </ScrollFadeIn>
-            <ScrollFadeIn delay={100}>
-              <p className="text-lg text-slate-600 mb-8">
-                Real fees. Real data. Updated daily. Find the broker that fits
-                your situation.
-              </p>
-            </ScrollFadeIn>
-            <ScrollFadeIn delay={200}>
-              <HomepageSearchBar />
-            </ScrollFadeIn>
-          </div>
-        </div>
-      </section>
-
-      {/* Trust Bar */}
-      <section className="py-6 border-y border-green-100 bg-white">
-        <div className="container-custom">
-          <div className="flex flex-wrap justify-center gap-8 md:gap-12 text-center items-center">
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">📊</span>
-              <div className="text-left">
-                <div className="text-2xl md:text-3xl font-bold text-green-800">
-                  <CountUp end={visitorNumber} suffix="+" />
-                </div>
-                <div className="text-xs md:text-sm text-slate-600">
-                  Australians Compare Here
-                </div>
-              </div>
-            </div>
-            <div className="hidden md:block w-px h-12 bg-green-100"></div>
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">⭐</span>
-              <div className="text-left">
-                <div className="text-2xl md:text-3xl font-bold text-green-800">
-                  <CountUp end={ratingNumber} suffix="/5" decimals={1} />
-                </div>
-                <div className="text-xs md:text-sm text-slate-600">
-                  Average Rating
-                </div>
-              </div>
-            </div>
-            <div className="hidden md:block w-px h-12 bg-green-100"></div>
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">🔒</span>
-              <div className="text-left">
-                <div className="text-2xl md:text-3xl font-bold text-green-800">
-                  <CountUp end={100} suffix="%" />
-                </div>
-                <div className="text-xs md:text-sm text-slate-600">
-                  Independent
-                </div>
-              </div>
-            </div>
-            <div className="hidden md:block w-px h-12 bg-green-100"></div>
-            <div className="flex items-center gap-3">
-              <span className="px-2 py-1 bg-amber-100 border border-amber-200 rounded text-[0.6rem] font-bold text-amber-700 uppercase tracking-wide">
-                🇦🇺 Aussie-Owned
-              </span>
-              <span className="px-2 py-1 bg-green-50 border border-green-200 rounded text-[0.6rem] font-bold text-green-700 uppercase tracking-wide">
-                No Bank Bias
-              </span>
-            </div>
-          </div>
+      <section className="bg-white py-16">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <h1 className="text-4xl font-extrabold text-green-950">
+            Compare {brokerCount}+ Australian Investment Platforms
+          </h1>
+          <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
+            Stop overpaying. We tracked the hidden fees of every
+            ASIC-regulated broker.
+          </p>
+          <AuthorByline />
+          <HomepageSearchBar />
         </div>
       </section>
 
