@@ -26,7 +26,7 @@ export default function Header() {
             </Link>
 
             {/* Desktop Nav */}
-            <nav className="hidden md:flex items-center gap-8">
+            <nav className="hidden md:flex items-center gap-6">
               {navItems.map((item) => (
                 <Link
                   key={item.href}
@@ -36,6 +36,12 @@ export default function Header() {
                   {item.name}
                 </Link>
               ))}
+              <Link
+                href="/quiz"
+                className="px-4 py-2 bg-amber text-white text-sm font-semibold rounded-lg hover:bg-amber-600 transition-colors"
+              >
+                Find Your Broker
+              </Link>
             </nav>
 
             {/* Mobile Hamburger */}

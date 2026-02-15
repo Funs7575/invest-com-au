@@ -180,7 +180,7 @@ export default async function ArticlePage({
                   (section: { heading: string; body: string }, i: number) => (
                     <section key={i} id={`section-${i}`} className="scroll-mt-24">
                       <h2 className="text-2xl font-bold mb-4">{section.heading}</h2>
-                      <div className="prose prose-slate max-w-none text-slate-700 leading-relaxed whitespace-pre-line">
+                      <div className="max-w-none text-slate-700 leading-relaxed whitespace-pre-line">
                         {section.body}
                       </div>
                     </section>
