@@ -156,7 +156,7 @@ export default function QuizQuestionsPage() {
     setSaving(false);
   }
 
-  async function handleDelete(id: string) {
+  async function handleDelete(id: number) {
     setSaving(true);
     const { error } = await supabase.from("quiz_questions").delete().eq("id", id);
     if (error) {
