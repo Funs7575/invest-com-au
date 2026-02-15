@@ -11,7 +11,7 @@ const tickerData = [
 
 export default function MarketTicker() {
   return (
-    <div className="bg-slate-900 border-b border-slate-800 overflow-hidden relative">
+    <div className="bg-green-900 border-b border-green-800 overflow-hidden relative">
       <div className="flex items-center">
         {/* Scrolling content — duplicated for seamless loop */}
         <div
@@ -22,11 +22,11 @@ export default function MarketTicker() {
         >
           {[...tickerData, ...tickerData].map((item, i) => (
             <div key={i} className="flex items-center gap-2 text-xs">
-              <span className="text-slate-400 font-medium">{item.label}</span>
+              <span className="text-green-300 font-medium">{item.label}</span>
               <span className="text-white font-semibold">{item.value}</span>
               <span
                 className={`flex items-center gap-0.5 font-semibold ${
-                  item.up ? "text-green-500" : "text-red-400"
+                  item.up ? "text-amber-400" : "text-red-400"
                 }`}
               >
                 {item.up ? (
@@ -37,14 +37,14 @@ export default function MarketTicker() {
                 {item.change}
               </span>
               {i < [...tickerData, ...tickerData].length - 1 && (
-                <span className="text-slate-700 ml-2">|</span>
+                <span className="text-green-700 ml-2">|</span>
               )}
             </div>
           ))}
         </div>
       </div>
       {/* Compliance disclaimer */}
-      <div className="absolute right-2 top-1/2 -translate-y-1/2 text-[0.5rem] text-slate-600 hidden lg:block bg-slate-900 pl-4">
+      <div className="absolute right-2 top-1/2 -translate-y-1/2 text-[0.5rem] text-green-500 hidden lg:block bg-green-900 pl-4">
         Indicative only. Not financial advice.
       </div>
     </div>

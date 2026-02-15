@@ -77,13 +77,22 @@ export default async function HomePage() {
       <MarketTicker />
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-slate-50 to-white py-16 md:py-20">
-        <div className="container-custom">
+      <section className="bg-gradient-to-b from-green-50 to-white py-16 md:py-20 relative overflow-hidden">
+        {/* Decorative gold accent circles */}
+        <svg
+          className="absolute top-0 right-0 opacity-[0.06] pointer-events-none hidden md:block"
+          width="400" height="400" viewBox="0 0 400 400" fill="none"
+        >
+          <circle cx="200" cy="200" r="150" stroke="#f59e0b" strokeWidth="2" />
+          <circle cx="200" cy="200" r="120" stroke="#f59e0b" strokeWidth="2" />
+          <circle cx="200" cy="200" r="90" stroke="#15803d" strokeWidth="2" />
+        </svg>
+        <div className="container-custom relative z-10">
           <div className="max-w-3xl mx-auto text-center">
             <ScrollFadeIn>
-              <h1 className="text-4xl md:text-5xl font-extrabold mb-4 leading-tight">
+              <h1 className="text-4xl md:text-5xl font-extrabold mb-4 leading-tight text-green-900">
                 Compare{" "}
-                <span className="text-green-700">{brokerCount}+</span>{" "}
+                <span className="text-amber-500">{brokerCount}+</span>{" "}
                 Australian Investment Platforms
               </h1>
             </ScrollFadeIn>
@@ -101,13 +110,13 @@ export default async function HomePage() {
       </section>
 
       {/* Trust Bar */}
-      <section className="py-6 border-y border-slate-200 bg-white">
+      <section className="py-6 border-y border-green-100 bg-white">
         <div className="container-custom">
           <div className="flex flex-wrap justify-center gap-8 md:gap-12 text-center items-center">
             <div className="flex items-center gap-2">
               <span className="text-2xl">📊</span>
               <div className="text-left">
-                <div className="text-2xl md:text-3xl font-bold text-brand">
+                <div className="text-2xl md:text-3xl font-bold text-green-800">
                   <CountUp end={visitorNumber} suffix="+" />
                 </div>
                 <div className="text-xs md:text-sm text-slate-600">
@@ -115,11 +124,11 @@ export default async function HomePage() {
                 </div>
               </div>
             </div>
-            <div className="hidden md:block w-px h-12 bg-slate-200"></div>
+            <div className="hidden md:block w-px h-12 bg-green-100"></div>
             <div className="flex items-center gap-2">
               <span className="text-2xl">⭐</span>
               <div className="text-left">
-                <div className="text-2xl md:text-3xl font-bold text-brand">
+                <div className="text-2xl md:text-3xl font-bold text-green-800">
                   <CountUp end={ratingNumber} suffix="/5" decimals={1} />
                 </div>
                 <div className="text-xs md:text-sm text-slate-600">
@@ -127,11 +136,11 @@ export default async function HomePage() {
                 </div>
               </div>
             </div>
-            <div className="hidden md:block w-px h-12 bg-slate-200"></div>
+            <div className="hidden md:block w-px h-12 bg-green-100"></div>
             <div className="flex items-center gap-2">
               <span className="text-2xl">🔒</span>
               <div className="text-left">
-                <div className="text-2xl md:text-3xl font-bold text-brand">
+                <div className="text-2xl md:text-3xl font-bold text-green-800">
                   <CountUp end={100} suffix="%" />
                 </div>
                 <div className="text-xs md:text-sm text-slate-600">
@@ -139,12 +148,12 @@ export default async function HomePage() {
                 </div>
               </div>
             </div>
-            <div className="hidden md:block w-px h-12 bg-slate-200"></div>
+            <div className="hidden md:block w-px h-12 bg-green-100"></div>
             <div className="flex items-center gap-3">
-              <span className="px-2 py-1 bg-green-50 border border-green-200 rounded text-[0.6rem] font-bold text-green-700 uppercase tracking-wide">
+              <span className="px-2 py-1 bg-amber-100 border border-amber-200 rounded text-[0.6rem] font-bold text-amber-700 uppercase tracking-wide">
                 🇦🇺 Aussie-Owned
               </span>
-              <span className="px-2 py-1 bg-slate-50 border border-slate-200 rounded text-[0.6rem] font-bold text-slate-500 uppercase tracking-wide">
+              <span className="px-2 py-1 bg-green-50 border border-green-200 rounded text-[0.6rem] font-bold text-green-700 uppercase tracking-wide">
                 No Bank Bias
               </span>
             </div>

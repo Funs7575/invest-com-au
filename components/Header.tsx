@@ -21,8 +21,8 @@ export default function Header() {
       <header className="sticky top-0 z-50 bg-white border-b border-slate-200">
         <div className="container-custom">
           <div className="flex items-center justify-between h-16">
-            <Link href="/" className="text-xl font-bold text-brand">
-              Invest<span className="text-amber">.com.au</span>
+            <Link href="/" className="text-xl font-bold text-green-800">
+              Invest<span className="text-amber-500">.com.au</span>
             </Link>
 
             {/* Desktop Nav */}
@@ -31,14 +31,14 @@ export default function Header() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="text-sm font-medium text-slate-700 hover:text-brand transition-colors"
+                  className="text-sm font-medium text-slate-700 hover:text-green-800 transition-colors"
                 >
                   {item.name}
                 </Link>
               ))}
               <Link
                 href="/quiz"
-                className="px-4 py-2 bg-amber text-white text-sm font-semibold rounded-lg hover:bg-amber-600 transition-colors"
+                className="px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
               >
                 Find Your Broker
               </Link>
@@ -47,7 +47,7 @@ export default function Header() {
             {/* Mobile Hamburger */}
             <button
               onClick={() => setMenuOpen(!menuOpen)}
-              className="md:hidden p-2 text-slate-700 hover:text-brand transition-colors"
+              className="md:hidden p-2 text-slate-700 hover:text-green-800 transition-colors"
               aria-label="Toggle menu"
             >
               {menuOpen ? (
@@ -72,7 +72,7 @@ export default function Header() {
                   key={item.href}
                   href={item.href}
                   onClick={() => setMenuOpen(false)}
-                  className="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-brand rounded-lg transition-colors"
+                  className="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-green-50 hover:text-green-800 rounded-lg transition-colors"
                 >
                   {item.name}
                 </Link>
@@ -81,7 +81,7 @@ export default function Header() {
                 <Link
                   href="/quiz"
                   onClick={() => setMenuOpen(false)}
-                  className="block px-4 py-3 text-sm font-semibold text-amber hover:bg-amber/5 rounded-lg transition-colors"
+                  className="block px-4 py-3 text-sm font-semibold text-green-700 hover:bg-green-50 rounded-lg transition-colors"
                 >
                   Take The Quiz
                 </Link>
@@ -92,23 +92,23 @@ export default function Header() {
       </header>
 
       {/* Quick Nav Bar */}
-      <div className="sticky top-[64px] z-40 bg-slate-800 border-b border-slate-700 overflow-x-auto">
+      <div className="sticky top-[64px] z-40 bg-green-800 border-b border-green-700 overflow-x-auto">
         <div className="container-custom">
-          <div className="flex items-center gap-4 py-2 text-xs text-slate-300">
-            <span className="font-semibold text-slate-400 whitespace-nowrap">Popular:</span>
-            <Link href="/versus?vs=stake,commsec" className="whitespace-nowrap hover:text-amber transition-colors">
+          <div className="flex items-center gap-4 py-2 text-xs text-green-200">
+            <span className="font-semibold text-green-300 whitespace-nowrap">Popular:</span>
+            <Link href="/versus?vs=stake,commsec" className="whitespace-nowrap hover:text-amber-400 transition-colors">
               Stake vs CommSec
             </Link>
-            <span className="text-slate-600">•</span>
-            <Link href="/calculators?calc=franking" className="whitespace-nowrap hover:text-amber transition-colors">
+            <span className="text-green-600">•</span>
+            <Link href="/calculators?calc=franking" className="whitespace-nowrap hover:text-amber-400 transition-colors">
               Franking Calculator
             </Link>
-            <span className="text-slate-600">•</span>
-            <Link href="/article/how-to-buy-shares" className="whitespace-nowrap hover:text-amber transition-colors">
+            <span className="text-green-600">•</span>
+            <Link href="/article/how-to-buy-shares" className="whitespace-nowrap hover:text-amber-400 transition-colors">
               How to Buy Shares
             </Link>
-            <span className="text-slate-600">•</span>
-            <Link href="/scenarios/smsf" className="whitespace-nowrap hover:text-amber transition-colors">
+            <span className="text-green-600">•</span>
+            <Link href="/scenarios/smsf" className="whitespace-nowrap hover:text-amber-400 transition-colors">
               SMSF Brokers
             </Link>
           </div>
