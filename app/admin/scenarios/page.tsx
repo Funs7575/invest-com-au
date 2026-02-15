@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import AdminShell from "@/components/AdminShell";
+import { useToast } from "@/components/Toast";
 import type { Scenario } from "@/lib/types";
 
 export default function AdminScenariosPage() {
@@ -12,6 +13,7 @@ export default function AdminScenariosPage() {
   const [saving, setSaving] = useState(false);
 
   const supabase = createClient();
+  const { toast } = useToast();
 
   const load = async () => {
     const { data } = await supabase.from("scenarios").select("*").order("created_at", { ascending: false });
@@ -34,10 +36,17 @@ export default function AdminScenariosPage() {
       updated_at: new Date().toISOString(),
     };
 
-    if (editing) {
-      await supabase.from("scenarios").update(record).eq("id", editing.id);
-    } else {
-      await supabase.from("scenarios").insert(record);
+    try {
+      if (editing) {
+        const { error } = await supabase.from("scenarios").update(record).eq("id", editing.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from("scenarios").insert(record);
+        if (error) throw error;
+      }
+      toast("Scenario saved", "success");
+    } catch {
+      toast("Failed to save scenario", "error");
     }
 
     setSaving(false);
@@ -48,7 +57,13 @@ export default function AdminScenariosPage() {
 
   const handleDelete = async (id: number) => {
     if (!confirm("Delete this scenario?")) return;
-    await supabase.from("scenarios").delete().eq("id", id);
+    try {
+      const { error } = await supabase.from("scenarios").delete().eq("id", id);
+      if (error) throw error;
+      toast("Scenario deleted", "success");
+    } catch {
+      toast("Failed to delete scenario", "error");
+    }
     load();
   };
 

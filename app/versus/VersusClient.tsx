@@ -8,6 +8,12 @@ import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, formatPercent } from "@/lib/tracking";
 import StickyCTABar from "@/components/StickyCTABar";
 
+const popularComparisons = [
+  { label: "Stake vs CommSec", href: "/versus?vs=stake,commsec" },
+  { label: "CMC vs Moomoo", href: "/versus?vs=cmc-markets,moomoo" },
+  { label: "Interactive Brokers vs Saxo", href: "/versus?vs=interactive-brokers,saxo" },
+];
+
 export default function VersusClient() {
   const searchParams = useSearchParams();
   const [brokers, setBrokers] = useState<Broker[]>([]);
@@ -269,8 +275,25 @@ export default function VersusClient() {
         )}
 
         {(!a || !b) && brokers.length > 0 && (
-          <div className="text-center py-16 text-slate-400">
-            Select two brokers above to compare them side by side.
+          <div className="text-center py-16">
+            <div className="text-5xl mb-4">&#x2694;&#xFE0F;</div>
+            <p className="text-slate-500 text-lg mb-2">Select two brokers above to compare them side by side.</p>
+            <p className="text-slate-400 text-sm mb-6">See fees, features, and our honest verdict in seconds.</p>
+
+            <div className="mt-6">
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 mb-3">Popular comparisons</p>
+              <div className="flex flex-wrap justify-center gap-3">
+                {popularComparisons.map((c) => (
+                  <Link
+                    key={c.href}
+                    href={c.href}
+                    className="px-4 py-2 rounded-full border border-slate-200 text-sm font-medium text-slate-600 hover:border-amber hover:text-amber hover:bg-amber-50 transition-all"
+                  >
+                    {c.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
           </div>
         )}
       </div>

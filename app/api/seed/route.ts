@@ -2,9 +2,19 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import siteData from "@/data/site-data.json";
 
+const ADMIN_EMAILS = ["finnduns@gmail.com"];
+const ADMIN_DOMAIN = "@invest.com.au";
+
 export async function POST() {
   try {
     const supabase = await createClient();
+
+    // Auth guard: require authenticated admin user
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user || (!ADMIN_EMAILS.includes(user.email || "") && !user.email?.endsWith(ADMIN_DOMAIN))) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const now = new Date().toISOString();
 
     // ── Brokers ──────────────────────────────────────────────────────

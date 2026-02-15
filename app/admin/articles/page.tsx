@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import AdminShell from "@/components/AdminShell";
+import { useToast } from "@/components/Toast";
 import type { Article } from "@/lib/types";
 
 export default function AdminArticlesPage() {
@@ -10,8 +11,10 @@ export default function AdminArticlesPage() {
   const [editing, setEditing] = useState<Article | null>(null);
   const [creating, setCreating] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [search, setSearch] = useState("");
 
   const supabase = createClient();
+  const { toast } = useToast();
 
   const load = async () => {
     const { data } = await supabase.from("articles").select("*").order("created_at", { ascending: false });
@@ -45,10 +48,17 @@ export default function AdminArticlesPage() {
       updated_at: new Date().toISOString(),
     };
 
-    if (editing) {
-      await supabase.from("articles").update(record).eq("id", editing.id);
-    } else {
-      await supabase.from("articles").insert(record);
+    try {
+      if (editing) {
+        const { error } = await supabase.from("articles").update(record).eq("id", editing.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from("articles").insert(record);
+        if (error) throw error;
+      }
+      toast("Article saved", "success");
+    } catch {
+      toast("Failed to save article", "error");
     }
 
     setSaving(false);
@@ -59,12 +69,22 @@ export default function AdminArticlesPage() {
 
   const handleDelete = async (id: number) => {
     if (!confirm("Delete this article?")) return;
-    await supabase.from("articles").delete().eq("id", id);
+    try {
+      const { error } = await supabase.from("articles").delete().eq("id", id);
+      if (error) throw error;
+      toast("Article deleted", "success");
+    } catch {
+      toast("Failed to delete article", "error");
+    }
     load();
   };
 
   const showForm = editing || creating;
   const formArticle = editing || {} as Partial<Article>;
+
+  const filteredArticles = articles.filter((a) =>
+    a.title.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <AdminShell>
@@ -150,34 +170,45 @@ export default function AdminArticlesPage() {
           </div>
         </form>
       ) : (
-        <div className="bg-slate-800 border border-slate-700 rounded-lg overflow-hidden">
-          <table className="w-full">
-            <thead className="bg-slate-700/50">
-              <tr>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Article</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Category</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Read Time</th>
-                <th className="px-4 py-3 text-right text-xs font-semibold text-slate-400 uppercase">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-700">
-              {articles.map((article) => (
-                <tr key={article.id} className="hover:bg-slate-700/30">
-                  <td className="px-4 py-3">
-                    <div className="text-sm font-semibold text-white">{article.title}</div>
-                    <div className="text-xs text-slate-400">{article.slug}</div>
-                  </td>
-                  <td className="px-4 py-3 text-sm text-slate-300">{article.category || "—"}</td>
-                  <td className="px-4 py-3 text-sm text-slate-300">{article.read_time ? `${article.read_time} min` : "—"}</td>
-                  <td className="px-4 py-3 text-right space-x-2">
-                    <button onClick={() => setEditing(article)} className="text-xs text-amber-400 hover:text-amber-300">Edit</button>
-                    <button onClick={() => handleDelete(article.id)} className="text-xs text-red-400 hover:text-red-300">Delete</button>
-                  </td>
+        <>
+          <div className="mb-4">
+            <input
+              type="text"
+              placeholder="Search articles..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+            />
+          </div>
+          <div className="bg-slate-800 border border-slate-700 rounded-lg overflow-hidden">
+            <table className="w-full">
+              <thead className="bg-slate-700/50">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Article</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Category</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Read Time</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-slate-400 uppercase">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-slate-700">
+                {filteredArticles.map((article) => (
+                  <tr key={article.id} className="hover:bg-slate-700/30">
+                    <td className="px-4 py-3">
+                      <div className="text-sm font-semibold text-white">{article.title}</div>
+                      <div className="text-xs text-slate-400">{article.slug}</div>
+                    </td>
+                    <td className="px-4 py-3 text-sm text-slate-300">{article.category || "—"}</td>
+                    <td className="px-4 py-3 text-sm text-slate-300">{article.read_time ? `${article.read_time} min` : "—"}</td>
+                    <td className="px-4 py-3 text-right space-x-2">
+                      <button onClick={() => setEditing(article)} className="text-xs text-amber-400 hover:text-amber-300">Edit</button>
+                      <button onClick={() => handleDelete(article.id)} className="text-xs text-red-400 hover:text-red-300">Delete</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
     </AdminShell>
   );

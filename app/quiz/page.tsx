@@ -35,6 +35,7 @@ export default function QuizPage() {
   const [questions, setQuestions] = useState(fallbackQuestions);
   const [brokers, setBrokers] = useState<Broker[]>([]);
   const [weights, setWeights] = useState<Record<string, Record<string, number>>>(fallbackScores);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
@@ -70,6 +71,24 @@ export default function QuizPage() {
   const handleAnswer = (key: string) => {
     setAnswers([...answers, key]);
     setStep(step + 1);
+  };
+
+  const handleShareResult = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Fallback for older browsers
+      const textarea = document.createElement("textarea");
+      textarea.value = window.location.href;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
   };
 
   const getResults = (): { broker: Broker | null; slug: string; total: number }[] => {
@@ -110,39 +129,63 @@ export default function QuizPage() {
       <div className="py-12">
         <div className="container-custom max-w-2xl mx-auto">
           <div className="text-center mb-8">
-            <div className="text-5xl mb-4">🎯</div>
-            <h1 className="text-3xl font-extrabold mb-2">Your #1 Match</h1>
+            <div className="text-5xl mb-4">🎉</div>
+            <h1 className="text-3xl font-extrabold mb-2">Your Perfect Match!</h1>
             <p className="text-slate-600">Based on your answers, here are our top picks for you.</p>
           </div>
 
           {/* Top Match */}
           {topMatch?.broker && (
-            <div className="border-2 border-amber rounded-xl p-6 bg-amber-50/30 mb-6">
-              <div className="text-[0.6rem] uppercase font-extrabold text-amber-700 tracking-wider mb-3">#1 Best Match</div>
+            <div
+              className="border-2 rounded-xl p-8 mb-6 relative overflow-hidden"
+              style={{
+                borderColor: topMatch.broker.color || '#f59e0b',
+                background: `linear-gradient(135deg, ${topMatch.broker.color}08 0%, ${topMatch.broker.color}15 100%)`,
+              }}
+            >
+              {/* Accent bar */}
+              <div
+                className="absolute top-0 left-0 w-full h-1"
+                style={{ background: topMatch.broker.color || '#f59e0b' }}
+              />
+              <div
+                className="text-[0.6rem] uppercase font-extrabold tracking-wider mb-4 inline-block px-3 py-1 rounded-full"
+                style={{
+                  color: topMatch.broker.color || '#b45309',
+                  background: `${topMatch.broker.color || '#f59e0b'}20`,
+                }}
+              >
+                🏆 #1 Best Match
+              </div>
               <div className="flex items-center gap-4 mb-4">
                 <div
-                  className="w-14 h-14 rounded-xl flex items-center justify-center text-xl font-bold shrink-0"
+                  className="w-16 h-16 rounded-xl flex items-center justify-center text-2xl font-bold shrink-0"
                   style={{ background: `${topMatch.broker.color}20`, color: topMatch.broker.color }}
                 >
                   {topMatch.broker.icon || topMatch.broker.name.charAt(0)}
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-2xl font-extrabold">{topMatch.broker.name}</h2>
+                  <h2 className="text-3xl font-extrabold">{topMatch.broker.name}</h2>
                   <div className="text-sm text-amber">{renderStars(topMatch.broker.rating || 0)} <span className="text-slate-500">{topMatch.broker.rating}/5</span></div>
                 </div>
               </div>
-              <p className="text-sm text-slate-600 mb-3">{topMatch.broker.tagline}</p>
-              <div className="flex flex-wrap gap-3 text-xs text-slate-500 mb-4">
-                <span>ASX: {topMatch.broker.asx_fee}</span>
-                <span>CHESS: {topMatch.broker.chess_sponsored ? 'Yes' : 'No'}</span>
-                <span>SMSF: {topMatch.broker.smsf_support ? 'Yes' : 'No'}</span>
+              <p className="text-slate-600 mb-4">{topMatch.broker.tagline}</p>
+              <div className="flex flex-wrap gap-3 text-xs text-slate-500 mb-5">
+                <span className="bg-white/60 px-2 py-1 rounded">ASX: {topMatch.broker.asx_fee}</span>
+                <span className="bg-white/60 px-2 py-1 rounded">CHESS: {topMatch.broker.chess_sponsored ? 'Yes' : 'No'}</span>
+                <span className="bg-white/60 px-2 py-1 rounded">SMSF: {topMatch.broker.smsf_support ? 'Yes' : 'No'}</span>
               </div>
               <a
                 href={getAffiliateLink(topMatch.broker)}
                 target="_blank"
                 rel="noopener noreferrer nofollow"
                 onClick={() => trackClick(topMatch.broker!.slug, topMatch.broker!.name, 'quiz-result-1', '/quiz', 'quiz')}
-                className="block w-full text-center px-6 py-3 bg-amber text-white font-semibold rounded-lg hover:bg-amber-600 transition-colors"
+                className="block w-full text-center px-6 py-3.5 text-white font-semibold rounded-lg transition-colors text-lg"
+                style={{
+                  background: topMatch.broker.color || '#f59e0b',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.opacity = '0.9')}
+                onMouseLeave={(e) => (e.currentTarget.style.opacity = '1')}
               >
                 {getBenefitCta(topMatch.broker, 'quiz')}
               </a>
@@ -155,7 +198,11 @@ export default function QuizPage() {
               <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wide mb-3">Runner Up{runnerUps.length > 1 ? 's' : ''}</h3>
               <div className="space-y-3 mb-8">
                 {runnerUps.map((r, i) => r.broker && (
-                  <div key={r.slug} className="border border-slate-200 rounded-xl p-4 flex items-center gap-4">
+                  <div
+                    key={r.slug}
+                    className="border border-slate-200 rounded-xl p-4 flex items-center gap-4"
+                    style={{ borderLeftWidth: '4px', borderLeftColor: r.broker.color || '#e2e8f0' }}
+                  >
                     <div
                       className="w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold shrink-0"
                       style={{ background: `${r.broker.color}20`, color: r.broker.color }}
@@ -181,7 +228,24 @@ export default function QuizPage() {
             </>
           )}
 
-          <div className="text-center">
+          {/* Share & Restart */}
+          <div className="flex items-center justify-center gap-4">
+            <button
+              onClick={handleShareResult}
+              className="text-sm text-slate-500 hover:text-brand transition-colors flex items-center gap-1.5 px-4 py-2 border border-slate-200 rounded-lg hover:border-slate-300"
+            >
+              {copied ? (
+                <>
+                  <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  <span className="text-green-600 font-medium">Copied!</span>
+                </>
+              ) : (
+                <>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
+                  Share your result
+                </>
+              )}
+            </button>
             <button
               onClick={() => { setStep(0); setAnswers([]); }}
               className="text-sm text-slate-500 hover:text-brand transition-colors"

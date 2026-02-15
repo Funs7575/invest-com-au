@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import AdminShell from "@/components/AdminShell";
+import { useToast } from "@/components/Toast";
 import type { Broker } from "@/lib/types";
 
 export default function AdminBrokersPage() {
@@ -10,8 +11,10 @@ export default function AdminBrokersPage() {
   const [editing, setEditing] = useState<Broker | null>(null);
   const [creating, setCreating] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [search, setSearch] = useState("");
 
   const supabase = createClient();
+  const { toast } = useToast();
 
   const load = async () => {
     const { data } = await supabase.from("brokers").select("*").order("rating", { ascending: false });
@@ -21,6 +24,12 @@ export default function AdminBrokersPage() {
   useEffect(() => { load(); }, []);
 
   const handleSave = async (formData: FormData) => {
+    const name = formData.get("name") as string;
+    if (!name || !name.trim()) {
+      toast("Name is required", "error");
+      return;
+    }
+
     setSaving(true);
     const record: Record<string, unknown> = {
       name: formData.get("name"),
@@ -56,10 +65,17 @@ export default function AdminBrokersPage() {
       updated_at: new Date().toISOString(),
     };
 
-    if (editing) {
-      await supabase.from("brokers").update(record).eq("id", editing.id);
-    } else {
-      await supabase.from("brokers").insert(record);
+    try {
+      if (editing) {
+        const { error } = await supabase.from("brokers").update(record).eq("id", editing.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from("brokers").insert(record);
+        if (error) throw error;
+      }
+      toast("Broker saved", "success");
+    } catch {
+      toast("Failed to save broker", "error");
     }
 
     setSaving(false);
@@ -70,12 +86,22 @@ export default function AdminBrokersPage() {
 
   const handleDelete = async (id: number) => {
     if (!confirm("Are you sure you want to delete this broker?")) return;
-    await supabase.from("brokers").delete().eq("id", id);
+    try {
+      const { error } = await supabase.from("brokers").delete().eq("id", id);
+      if (error) throw error;
+      toast("Broker deleted", "success");
+    } catch {
+      toast("Failed to delete broker", "error");
+    }
     load();
   };
 
   const showForm = editing || creating;
   const formBroker = editing || {} as Partial<Broker>;
+
+  const filteredBrokers = brokers.filter((b) =>
+    b.name.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <AdminShell>
@@ -99,42 +125,53 @@ export default function AdminBrokersPage() {
           onCancel={() => { setEditing(null); setCreating(false); }}
         />
       ) : (
-        <div className="bg-slate-800 border border-slate-700 rounded-lg overflow-hidden">
-          <table className="w-full">
-            <thead className="bg-slate-700/50">
-              <tr>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Broker</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Rating</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase">ASX Fee</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Status</th>
-                <th className="px-4 py-3 text-right text-xs font-semibold text-slate-400 uppercase">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-700">
-              {brokers.map((broker) => (
-                <tr key={broker.id} className="hover:bg-slate-700/30">
-                  <td className="px-4 py-3">
-                    <div className="text-sm font-semibold text-white">{broker.name}</div>
-                    <div className="text-xs text-slate-400">{broker.slug}</div>
-                  </td>
-                  <td className="px-4 py-3 text-sm text-amber-400 font-semibold">{broker.rating || "—"}★</td>
-                  <td className="px-4 py-3 text-sm text-slate-300">{broker.asx_fee || "N/A"}</td>
-                  <td className="px-4 py-3">
-                    <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                      broker.status === "active" ? "bg-green-500/10 text-green-400" : "bg-slate-600 text-slate-300"
-                    }`}>
-                      {broker.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-right space-x-2">
-                    <button onClick={() => setEditing(broker)} className="text-xs text-amber-400 hover:text-amber-300">Edit</button>
-                    <button onClick={() => handleDelete(broker.id)} className="text-xs text-red-400 hover:text-red-300">Delete</button>
-                  </td>
+        <>
+          <div className="mb-4">
+            <input
+              type="text"
+              placeholder="Search brokers..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+            />
+          </div>
+          <div className="bg-slate-800 border border-slate-700 rounded-lg overflow-hidden">
+            <table className="w-full">
+              <thead className="bg-slate-700/50">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Broker</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Rating</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase">ASX Fee</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Status</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-slate-400 uppercase">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-slate-700">
+                {filteredBrokers.map((broker) => (
+                  <tr key={broker.id} className="hover:bg-slate-700/30">
+                    <td className="px-4 py-3">
+                      <div className="text-sm font-semibold text-white">{broker.name}</div>
+                      <div className="text-xs text-slate-400">{broker.slug}</div>
+                    </td>
+                    <td className="px-4 py-3 text-sm text-amber-400 font-semibold">{broker.rating || "—"}★</td>
+                    <td className="px-4 py-3 text-sm text-slate-300">{broker.asx_fee || "N/A"}</td>
+                    <td className="px-4 py-3">
+                      <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                        broker.status === "active" ? "bg-green-500/10 text-green-400" : "bg-slate-600 text-slate-300"
+                      }`}>
+                        {broker.status}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-right space-x-2">
+                      <button onClick={() => setEditing(broker)} className="text-xs text-amber-400 hover:text-amber-300">Edit</button>
+                      <button onClick={() => handleDelete(broker.id)} className="text-xs text-red-400 hover:text-red-300">Delete</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
     </AdminShell>
   );

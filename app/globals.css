@@ -28,3 +28,45 @@ body {
   padding-left: 1rem;
   padding-right: 1rem;
 }
+
+/* Scroll-triggered fade-in animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.scroll-fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.scroll-fade-in.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scroll-fade-in.delay-100 { transition-delay: 0.1s; }
+.scroll-fade-in.delay-200 { transition-delay: 0.2s; }
+.scroll-fade-in.delay-300 { transition-delay: 0.3s; }
+.scroll-fade-in.delay-400 { transition-delay: 0.4s; }
+
+/* Hover lift effect for cards */
+@utility hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  }
+}

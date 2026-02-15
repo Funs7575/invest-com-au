@@ -104,7 +104,7 @@ export default function Header() {
               Franking Calculator
             </Link>
             <span className="text-slate-600">•</span>
-            <Link href="/articles/how-to-buy-shares" className="whitespace-nowrap hover:text-amber transition-colors">
+            <Link href="/article/how-to-buy-shares" className="whitespace-nowrap hover:text-amber transition-colors">
               How to Buy Shares
             </Link>
             <span className="text-slate-600">•</span>
