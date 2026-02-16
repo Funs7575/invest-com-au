@@ -162,6 +162,15 @@ export default function HowWeVerifyPage() {
             </div>
           </section>
 
+          {/* Fee Change Alerts Signup */}
+          <div className="bg-green-50 border border-green-200 rounded-xl p-6 mb-8 text-center">
+            <h2 className="text-lg font-extrabold text-green-900 mb-2">Get Notified of Fee Changes</h2>
+            <p className="text-sm text-slate-600 mb-4">Be the first to know when broker fees change. Join our mailing list.</p>
+            <Link href="/#email-capture" className="inline-block px-5 py-2.5 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors">
+              Subscribe to Fee Alerts →
+            </Link>
+          </div>
+
           {/* CTA */}
           <section className="bg-green-700/5 border border-green-700/20 rounded-xl p-6 md:p-8 text-center">
             <h3 className="font-extrabold text-xl mb-2">Find the right broker for you</h3>
