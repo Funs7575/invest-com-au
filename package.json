@@ -12,8 +12,8 @@
     "next": "16.1.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "@supabase/supabase-js": "^2.39.7",
-    "@supabase/ssr": "^0.1.0",
+    "@supabase/supabase-js": "^2.49.1",
+    "@supabase/ssr": "^0.6.1",
     "lucide-react": "^0.469.0",
     "@vercel/speed-insights": "^1.1.0"
   },

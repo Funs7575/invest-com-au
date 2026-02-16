@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 export default function AdminLoginPage() {
@@ -8,6 +9,7 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,7 +24,11 @@ export default function AdminLoginPage() {
         setError(error.message);
         setLoading(false);
       } else {
-        window.location.href = "/admin";
+        // Use router.refresh() to re-run middleware with fresh auth cookies,
+        // then push to /admin. This prevents the redirect loop that occurs
+        // when window.location.href fires before cookies are fully synced.
+        router.refresh();
+        router.push("/admin");
       }
     } catch (err) {
       // Network errors (fetch failures, CORS, ad blockers) throw raw errors

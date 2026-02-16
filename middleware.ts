@@ -26,6 +26,8 @@ export async function middleware(request: NextRequest) {
     }
   )
 
+  // IMPORTANT: Do not add code between createServerClient and getUser().
+  // A simple mistake could make it very hard to debug auth issues.
   const { data: { user } } = await supabase.auth.getUser()
 
   // Protect admin routes (except login)
@@ -33,7 +35,12 @@ export async function middleware(request: NextRequest) {
     if (!user) {
       const url = request.nextUrl.clone()
       url.pathname = '/admin/login'
-      return NextResponse.redirect(url)
+      const redirectResponse = NextResponse.redirect(url)
+      // Copy refreshed auth cookies to the redirect response
+      supabaseResponse.cookies.getAll().forEach(cookie => {
+        redirectResponse.cookies.set(cookie.name, cookie.value)
+      })
+      return redirectResponse
     }
 
     // Only allow admin emails (additional emails via ADMIN_EMAILS env var, comma-separated)
@@ -42,7 +49,11 @@ export async function middleware(request: NextRequest) {
     if (!isAdmin) {
       const url = request.nextUrl.clone()
       url.pathname = '/'
-      return NextResponse.redirect(url)
+      const redirectResponse = NextResponse.redirect(url)
+      supabaseResponse.cookies.getAll().forEach(cookie => {
+        redirectResponse.cookies.set(cookie.name, cookie.value)
+      })
+      return redirectResponse
     }
   }
 
@@ -50,7 +61,12 @@ export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname === '/admin/login' && user) {
     const url = request.nextUrl.clone()
     url.pathname = '/admin'
-    return NextResponse.redirect(url)
+    const redirectResponse = NextResponse.redirect(url)
+    // Copy refreshed auth cookies to the redirect response
+    supabaseResponse.cookies.getAll().forEach(cookie => {
+      redirectResponse.cookies.set(cookie.name, cookie.value)
+    })
+    return redirectResponse
   }
 
   return supabaseResponse
