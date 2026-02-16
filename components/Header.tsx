@@ -108,7 +108,7 @@ export default function Header() {
               How to Buy Shares
             </Link>
             <span className="text-green-600">•</span>
-            <Link href="/scenarios/smsf" className="whitespace-nowrap hover:text-amber-400 transition-colors">
+            <Link href="/scenario/smsf" className="whitespace-nowrap hover:text-amber-400 transition-colors">
               SMSF Brokers
             </Link>
           </div>

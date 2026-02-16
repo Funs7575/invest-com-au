@@ -1,4 +1,6 @@
 import { Suspense } from "react";
+import { createClient } from "@/lib/supabase/server";
+import type { Broker } from "@/lib/types";
 import VersusClient from "./VersusClient";
 
 export const metadata = {
@@ -7,10 +9,18 @@ export const metadata = {
     "Compare two Australian brokers side by side. See fees, features, CHESS sponsorship, and our honest pick.",
 };
 
-export default function VersusPage() {
+export default async function VersusPage() {
+  const supabase = await createClient();
+
+  const { data: brokers } = await supabase
+    .from("brokers")
+    .select("*")
+    .eq("status", "active")
+    .order("name");
+
   return (
     <Suspense fallback={<VersusLoading />}>
-      <VersusClient />
+      <VersusClient brokers={(brokers as Broker[]) || []} />
     </Suspense>
   );
 }

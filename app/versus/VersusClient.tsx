@@ -3,7 +3,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, formatPercent } from "@/lib/tracking";
 import StickyCTABar from "@/components/StickyCTABar";
@@ -14,35 +13,23 @@ const popularComparisons = [
   { label: "Interactive Brokers vs Saxo", href: "/versus?vs=interactive-brokers,saxo" },
 ];
 
-export default function VersusClient() {
+export default function VersusClient({ brokers }: { brokers: Broker[] }) {
   const searchParams = useSearchParams();
-  const [brokers, setBrokers] = useState<Broker[]>([]);
   const [brokerA, setBrokerA] = useState<string>("");
   const [brokerB, setBrokerB] = useState<string>("");
 
   useEffect(() => {
-    const supabase = createClient();
-    supabase
-      .from('brokers')
-      .select('*')
-      .eq('status', 'active')
-      .order('name')
-      .then(({ data }) => {
-        if (data) {
-          setBrokers(data);
-          // Pre-select from URL params
-          const vs = searchParams.get('vs');
-          if (vs) {
-            const [slugA, slugB] = vs.split(',');
-            if (slugA) setBrokerA(slugA);
-            if (slugB) setBrokerB(slugB);
-          }
-          const a = searchParams.get('a');
-          const b = searchParams.get('b');
-          if (a) setBrokerA(a);
-          if (b) setBrokerB(b);
-        }
-      });
+    // Pre-select from URL params
+    const vs = searchParams.get('vs');
+    if (vs) {
+      const [slugA, slugB] = vs.split(',');
+      if (slugA) setBrokerA(slugA);
+      if (slugB) setBrokerB(slugB);
+    }
+    const a = searchParams.get('a');
+    const b = searchParams.get('b');
+    if (a) setBrokerA(a);
+    if (b) setBrokerB(b);
   }, [searchParams]);
 
   const a = brokers.find(b => b.slug === brokerA);

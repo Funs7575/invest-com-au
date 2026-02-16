@@ -18,7 +18,7 @@ const categoryCards = [
   {
     title: "Beginners",
     description: "Low minimum deposits, easy platforms, educational resources",
-    href: "/scenarios/beginner",
+    href: "/scenario/beginner",
     emoji: "🌱",
     color: "bg-green-50 border-green-200 text-green-800",
   },
@@ -32,7 +32,7 @@ const categoryCards = [
   {
     title: "SMSF",
     description: "CHESS-sponsored brokers with SMSF account support",
-    href: "/scenarios/smsf",
+    href: "/scenario/smsf",
     emoji: "🏦",
     color: "bg-blue-50 border-blue-200 text-blue-800",
   },
@@ -72,6 +72,20 @@ export default async function HomePage() {
             ASIC-regulated broker.
           </p>
           <AuthorByline />
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 my-6">
+            <Link
+              href="/compare"
+              className="px-6 py-3 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors text-sm"
+            >
+              Compare All Brokers &rarr;
+            </Link>
+            <Link
+              href="/quiz"
+              className="px-6 py-3 border border-green-700 text-green-700 font-semibold rounded-lg hover:bg-green-50 transition-colors text-sm"
+            >
+              Take the 60-sec Quiz &rarr;
+            </Link>
+          </div>
           <HomepageSearchBar />
         </div>
       </section>

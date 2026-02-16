@@ -1,27 +1,52 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 
 export default function Footer() {
+  const [disclaimerOpen, setDisclaimerOpen] = useState(false);
+
   return (
     <footer className="bg-slate-900 text-slate-300 mt-20">
-      {/* Compliance Blocks */}
+      {/* Collapsible Compliance Blocks */}
       <div className="border-b border-slate-800">
-        <div className="container-custom py-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-400 leading-relaxed">
-            <div className="border border-slate-700 rounded-lg p-4">
-              <h4 className="font-semibold text-slate-300 mb-1">General Advice Warning</h4>
-              <p>The information on Invest.com.au is general in nature and does not take into account your personal financial situation. It is not financial advice. You should consider whether the information is appropriate to your needs, and where appropriate, seek professional advice from a financial adviser. Past performance is not a reliable indicator of future performance.</p>
-            </div>
-            <div className="border border-slate-700 rounded-lg p-4">
-              <h4 className="font-semibold text-slate-300 mb-1">Affiliate Disclosure</h4>
-              <p>Invest.com.au may receive compensation from the companies listed on this site. This compensation may impact how and where products appear (including the order in which they appear). Our site does not include all available offers.</p>
-            </div>
-            <div className="border border-slate-700 rounded-lg p-4">
-              <h4 className="font-semibold text-slate-300 mb-1">Crypto Warning</h4>
-              <p>Cryptocurrency is highly speculative and not legal tender. Past performance is not a reliable indicator of future returns. You could lose all of your investment. Only invest what you can afford to lose.</p>
-            </div>
-            <div className="border border-slate-700 rounded-lg p-4">
-              <h4 className="font-semibold text-slate-300 mb-1">Regulatory Note</h4>
-              <p>Invest.com.au is not a financial product issuer, credit provider, or financial adviser. We are an information service. Always verify information with the product issuer before making a decision.</p>
+        <div className="container-custom">
+          <button
+            onClick={() => setDisclaimerOpen(!disclaimerOpen)}
+            className="w-full flex items-center justify-between py-4 text-sm text-slate-400 hover:text-slate-300 transition-colors"
+            aria-expanded={disclaimerOpen}
+          >
+            <span className="font-semibold">Legal &amp; Disclaimers</span>
+            <svg
+              className={`w-4 h-4 transition-transform duration-300 ${disclaimerOpen ? "rotate-180" : ""}`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          <div
+            className="overflow-hidden transition-all duration-300"
+            style={{ maxHeight: disclaimerOpen ? "600px" : "0" }}
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-400 leading-relaxed pb-6">
+              <div className="border border-slate-700 rounded-lg p-4">
+                <h4 className="font-semibold text-slate-300 mb-1">General Advice Warning</h4>
+                <p>The information on Invest.com.au is general in nature and does not take into account your personal financial situation. It is not financial advice. You should consider whether the information is appropriate to your needs, and where appropriate, seek professional advice from a financial adviser. Past performance is not a reliable indicator of future performance.</p>
+              </div>
+              <div className="border border-slate-700 rounded-lg p-4">
+                <h4 className="font-semibold text-slate-300 mb-1">Affiliate Disclosure</h4>
+                <p>Invest.com.au may receive compensation from the companies listed on this site. This compensation may impact how and where products appear (including the order in which they appear). Our site does not include all available offers.</p>
+              </div>
+              <div className="border border-slate-700 rounded-lg p-4">
+                <h4 className="font-semibold text-slate-300 mb-1">Crypto Warning</h4>
+                <p>Cryptocurrency is highly speculative and not legal tender. Past performance is not a reliable indicator of future returns. You could lose all of your investment. Only invest what you can afford to lose.</p>
+              </div>
+              <div className="border border-slate-700 rounded-lg p-4">
+                <h4 className="font-semibold text-slate-300 mb-1">Regulatory Note</h4>
+                <p>Invest.com.au is not a financial product issuer, credit provider, or financial adviser. We are an information service. Always verify information with the product issuer before making a decision.</p>
+              </div>
             </div>
           </div>
         </div>
