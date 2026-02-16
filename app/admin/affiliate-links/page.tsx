@@ -56,7 +56,8 @@ export default function AffiliateLinksPage() {
     if (edits[broker.slug] && edits[broker.slug][field] !== undefined) {
       return edits[broker.slug][field] as string;
     }
-    const val = (broker as Record<string, unknown>)[field];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const val = (broker as any)[field];
     if (val === null || val === undefined) return "";
     return String(val);
   }
