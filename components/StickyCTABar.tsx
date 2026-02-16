@@ -15,10 +15,12 @@ export default function StickyCTABar({ broker, detail, context = 'review' }: { b
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  if (!visible) return null;
-
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-slate-900 border-t border-green-700/20 shadow-lg">
+    <div
+      className={`fixed bottom-0 left-0 right-0 z-50 bg-slate-900 border-t border-green-700/20 shadow-lg transition-transform duration-300 ${
+        visible ? 'translate-y-0' : 'translate-y-full'
+      }`}
+    >
       <div className="container-custom py-3 flex items-center justify-between gap-4">
         <div className="flex items-center gap-3 min-w-0">
           <div
@@ -31,17 +33,24 @@ export default function StickyCTABar({ broker, detail, context = 'review' }: { b
             <div className="font-bold text-sm text-white truncate">{broker.name}</div>
             <div className="text-xs text-slate-400 truncate">{detail}</div>
           </div>
+          {broker.deal && (
+            <span className="hidden md:inline-flex items-center gap-1 px-2 py-0.5 bg-amber-500/20 border border-amber-500/30 rounded-full text-[0.6rem] text-amber-300 font-semibold">
+              🔥 Deal Available
+            </span>
+          )}
         </div>
-        <a
-          href={getAffiliateLink(broker)}
-          target="_blank"
-          rel="noopener noreferrer nofollow"
-          onClick={() => trackClick(broker.slug, broker.name, 'sticky-cta', window.location.pathname, context)}
-          className="shrink-0 px-5 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
-        >
-          {getBenefitCta(broker, context)}
-        </a>
-        <span className="hidden sm:inline text-[0.55rem] text-slate-500">Sponsored</span>
+        <div className="flex items-center gap-3">
+          <a
+            href={getAffiliateLink(broker)}
+            target="_blank"
+            rel="noopener noreferrer nofollow"
+            onClick={() => trackClick(broker.slug, broker.name, 'sticky-cta', window.location.pathname, context)}
+            className="shrink-0 px-5 py-2.5 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-600 hover:shadow-lg transition-all active:scale-[0.97]"
+          >
+            {getBenefitCta(broker, context)}
+          </a>
+          <span className="hidden sm:inline text-[0.55rem] text-slate-500">Sponsored</span>
+        </div>
       </div>
     </div>
   );

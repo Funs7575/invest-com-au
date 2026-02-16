@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Link from "next/link";
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, renderStars } from "@/lib/tracking";
 import BrokerCard from "@/components/BrokerCard";
@@ -103,8 +104,36 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           Side-by-side comparison of fees, features, and safety. Updated February 2026.
         </p>
 
+        {/* Deal of the Month Banner */}
+        {(() => {
+          const dealBroker = brokers.find(b => b.deal && b.deal_text);
+          if (!dealBroker) return null;
+          return (
+            <div className="mb-6 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="text-2xl">🔥</div>
+                <div>
+                  <div className="text-xs font-bold uppercase tracking-wide text-amber-700 mb-0.5">Deal of the Month</div>
+                  <p className="text-sm text-slate-700">
+                    <strong>{dealBroker.name}</strong> — {dealBroker.deal_text}
+                  </p>
+                </div>
+              </div>
+              <a
+                href={getAffiliateLink(dealBroker)}
+                target="_blank"
+                rel="noopener noreferrer nofollow"
+                onClick={() => trackClick(dealBroker.slug, dealBroker.name, 'compare-deal-banner', '/compare', 'compare')}
+                className="shrink-0 px-4 py-2 bg-amber-600 text-white text-sm font-semibold rounded-lg hover:bg-amber-700 transition-colors"
+              >
+                Claim Deal →
+              </a>
+            </div>
+          );
+        })()}
+
         {/* Filter Pills */}
-        <div className="flex flex-wrap gap-2 mb-6">
+        <div className="flex flex-wrap gap-2 mb-4">
           {filters.map(f => (
             <button
               key={f.key}
@@ -118,6 +147,14 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               {f.label}
             </button>
           ))}
+        </div>
+
+        {/* Quiz prompt inline */}
+        <div className="flex items-center gap-2 mb-6 text-xs text-slate-500">
+          <span>Not sure which is right for you?</span>
+          <Link href="/quiz" className="text-green-700 font-semibold hover:text-green-800 transition-colors">
+            Take the 60-sec quiz →
+          </Link>
         </div>
 
         {/* Desktop Table */}
@@ -228,6 +265,26 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             No brokers match this filter. Try a different category.
           </div>
         )}
+
+        {/* Bottom conversion section */}
+        <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-slate-900 text-white rounded-xl p-6">
+            <div className="text-2xl mb-2">🎯</div>
+            <h3 className="text-lg font-bold mb-1">Find Your Best Match</h3>
+            <p className="text-sm text-slate-300 mb-4">Answer 4 quick questions and we&apos;ll recommend the best broker for your situation.</p>
+            <Link href="/quiz" className="inline-block px-5 py-2.5 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors">
+              Take the Quiz →
+            </Link>
+          </div>
+          <div className="bg-green-50 border border-green-200 rounded-xl p-6">
+            <div className="text-2xl mb-2">📊</div>
+            <h3 className="text-lg font-bold text-green-900 mb-1">Free Fee Comparison PDF</h3>
+            <p className="text-sm text-slate-600 mb-4">Download our 2026 fee audit — every broker&apos;s brokerage, FX fees, and hidden costs in one document.</p>
+            <Link href="/#email-capture" className="inline-block px-5 py-2.5 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors">
+              Get Free PDF →
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   );

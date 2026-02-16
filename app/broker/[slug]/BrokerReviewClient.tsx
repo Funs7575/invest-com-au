@@ -93,9 +93,31 @@ export default function BrokerReviewClient({ broker: b, similar }: { broker: Bro
             {getBenefitCta(b, 'review')}
           </a>
         </div>
-        <p className="text-xs text-slate-400 mb-8">
+        <p className="text-xs text-slate-400 mb-4">
           Affiliate link — we may earn a commission at no extra cost to you.
         </p>
+
+        {/* Deal banner */}
+        {b.deal && b.deal_text && (
+          <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">🔥</span>
+              <div>
+                <div className="text-xs font-bold uppercase tracking-wide text-amber-700 mb-0.5">Limited Time Deal</div>
+                <p className="text-sm font-semibold text-slate-700">{b.deal_text}</p>
+              </div>
+            </div>
+            <a
+              href={getAffiliateLink(b)}
+              target="_blank"
+              rel="noopener noreferrer nofollow"
+              onClick={() => trackClick(b.slug, b.name, 'review-deal-banner', `/broker/${b.slug}`, 'review')}
+              className="shrink-0 px-5 py-2.5 bg-amber-600 text-white text-sm font-bold rounded-lg hover:bg-amber-700 transition-all hover:shadow-md active:scale-[0.98]"
+            >
+              Claim Deal →
+            </a>
+          </div>
+        )}
 
         {/* Who Is This Best For? */}
         <div className="bg-green-50 border border-green-200 rounded-xl p-6 mb-8">
@@ -308,11 +330,24 @@ export default function BrokerReviewClient({ broker: b, similar }: { broker: Bro
             target="_blank"
             rel="noopener noreferrer nofollow"
             onClick={() => trackClick(b.slug, b.name, 'review-bottom', `/broker/${b.slug}`, 'review')}
-            className="inline-block px-8 py-3 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors"
+            className="inline-block px-8 py-3.5 bg-green-700 text-white font-bold rounded-lg hover:bg-green-600 hover:shadow-lg transition-all active:scale-[0.98] text-lg"
           >
             {getBenefitCta(b, 'review')}
           </a>
           <p className="text-xs text-slate-500 mt-3">We may receive a commission. This does not affect our review.</p>
+        </div>
+
+        {/* Not convinced? Quiz prompt */}
+        <div className="mt-6 text-center">
+          <p className="text-sm text-slate-500 mb-2">Not sure {b.name} is right for you?</p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link href="/quiz" className="text-sm text-green-700 font-semibold hover:text-green-800 transition-colors border border-green-200 rounded-lg px-4 py-2 hover:bg-green-50">
+              Take Our Broker Quiz →
+            </Link>
+            <Link href="/compare" className="text-sm text-slate-600 font-semibold hover:text-slate-800 transition-colors border border-slate-200 rounded-lg px-4 py-2 hover:bg-slate-50">
+              Compare All Brokers →
+            </Link>
+          </div>
         </div>
       </div>
 

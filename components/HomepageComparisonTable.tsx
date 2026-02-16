@@ -151,23 +151,28 @@ export default function HomepageComparisonTable({
                   <span className="text-sm text-slate-500 ml-1">{broker.rating}</span>
                 </td>
                 <td className="px-4 py-3 text-center">
-                  <a
-                    href={getAffiliateLink(broker)}
-                    target="_blank"
-                    rel="noopener noreferrer nofollow"
-                    onClick={() =>
-                      trackClick(
-                        broker.slug,
-                        broker.name,
-                        "homepage-table",
-                        "/",
-                        "homepage"
-                      )
-                    }
-                    className="inline-block px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
-                  >
-                    {getBenefitCta(broker, "compare")}
-                  </a>
+                  <div className="flex flex-col items-center gap-1">
+                    <a
+                      href={getAffiliateLink(broker)}
+                      target="_blank"
+                      rel="noopener noreferrer nofollow"
+                      onClick={() =>
+                        trackClick(
+                          broker.slug,
+                          broker.name,
+                          "homepage-table",
+                          "/",
+                          "homepage"
+                        )
+                      }
+                      className="inline-block px-4 py-2 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-600 hover:shadow-md transition-all active:scale-[0.97]"
+                    >
+                      {getBenefitCta(broker, "compare")}
+                    </a>
+                    {broker.deal && (
+                      <span className="text-[0.55rem] text-amber-600 font-semibold">🔥 Deal</span>
+                    )}
+                  </div>
                 </td>
               </tr>
             ))}

@@ -32,12 +32,20 @@ export default function BrokerCard({ broker, badge, context = 'compare' }: { bro
         </a>
       </div>
 
+      {/* Deal badge */}
+      {broker.deal && broker.deal_text && (
+        <div className="mb-3 flex items-center gap-1.5 px-2.5 py-1.5 bg-amber-50 border border-amber-200 rounded-lg">
+          <span className="text-xs">🔥</span>
+          <span className="text-[0.65rem] text-amber-700 font-semibold leading-tight">{broker.deal_text}</span>
+        </div>
+      )}
+
       <a
         href={getAffiliateLink(broker)}
         target="_blank"
         rel="noopener noreferrer nofollow"
         onClick={() => trackClick(broker.slug, broker.name, 'compare-mobile', window.location.pathname, context)}
-        className="block w-full text-center text-sm px-3 py-2 font-semibold rounded-lg transition-colors mb-3 bg-green-700 text-white hover:bg-green-800"
+        className="block w-full text-center text-sm px-3 py-2.5 font-bold rounded-lg transition-all mb-3 bg-green-700 text-white hover:bg-green-800 hover:shadow-md active:scale-[0.98]"
       >
         {getBenefitCta(broker, context)}
       </a>

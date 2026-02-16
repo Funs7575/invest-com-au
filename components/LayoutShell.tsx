@@ -6,6 +6,8 @@ import Footer from "@/components/Footer";
 import CookieBanner from "@/components/CookieBanner";
 import BackToTop from "@/components/BackToTop";
 import QuizPromptBar from "@/components/QuizPromptBar";
+import ExitIntentPopup from "@/components/ExitIntentPopup";
+import SocialProofToast from "@/components/SocialProofToast";
 import Link from "next/link";
 
 export default function LayoutShell({ children }: { children: React.ReactNode }) {
@@ -38,6 +40,8 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
       <CookieBanner />
       <BackToTop />
       <QuizPromptBar />
+      <ExitIntentPopup />
+      <SocialProofToast />
     </>
   );
 }

@@ -7,6 +7,7 @@ import HomepageComparisonTable from "@/components/HomepageComparisonTable";
 import AuthorByline from "@/components/AuthorByline";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
 import LeadMagnet from "@/components/LeadMagnet";
+import SocialProofBar from "@/components/SocialProofBar";
 
 export const metadata = {
   title: "Compare Australian Brokers — Invest.com.au",
@@ -87,6 +88,7 @@ export default async function HomePage() {
             </Link>
           </div>
           <HomepageSearchBar />
+          <SocialProofBar />
         </div>
       </section>
 
