@@ -32,7 +32,7 @@ export default function QuizPromptBar() {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 bg-slate-900 text-white border-t border-slate-700">
+    <div className="fixed bottom-0 left-0 right-0 z-40 bg-[#0c1a14] text-white border-t border-green-900/40">
       <div className="container-custom py-3 flex items-center justify-between gap-4">
         <p className="text-sm">
           <span className="hidden sm:inline">Not sure which broker to pick? </span>
@@ -41,7 +41,7 @@ export default function QuizPromptBar() {
         <div className="flex items-center gap-2 shrink-0">
           <Link
             href="/quiz"
-            className="px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
+            className="px-4 py-2 bg-amber-500 text-slate-900 text-sm font-semibold rounded-lg hover:bg-amber-600 transition-colors"
           >
             Take Quiz →
           </Link>

@@ -119,11 +119,11 @@ export default function ExitIntentPopup() {
           ✕
         </button>
 
-        {/* Green accent header */}
-        <div className="bg-gradient-to-br from-green-600 via-green-700 to-green-800 px-6 pt-6 pb-8 text-white text-center">
+        {/* Dark accent header */}
+        <div className="bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950 px-6 pt-6 pb-8 text-white text-center">
           <div className="text-4xl mb-3">📊</div>
           <h2 id="exit-popup-title" className="text-xl font-extrabold mb-1">Wait — Before You Go</h2>
-          <p className="text-sm text-green-100">
+          <p className="text-sm text-amber-300">
             Get our free 2026 broker fee comparison PDF. See exactly what every platform charges.
           </p>
         </div>
@@ -140,7 +140,7 @@ export default function ExitIntentPopup() {
                 </p>
                 <Link
                   href="/quiz"
-                  className="inline-block px-5 py-2.5 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
+                  className="inline-block px-5 py-2.5 bg-amber-500 text-slate-900 text-sm font-semibold rounded-lg hover:bg-amber-600 transition-colors"
                 >
                   Take the Broker Quiz →
                 </Link>
@@ -149,15 +149,15 @@ export default function ExitIntentPopup() {
               <form onSubmit={handleSubmit} className="space-y-3">
                 <div className="flex items-center gap-2 text-xs text-slate-500 mb-1">
                   <span className="flex items-center gap-1">
-                    <svg className="w-3.5 h-3.5 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                    <svg className="w-3.5 h-3.5 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
                     Free PDF
                   </span>
                   <span className="flex items-center gap-1">
-                    <svg className="w-3.5 h-3.5 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                    <svg className="w-3.5 h-3.5 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
                     No spam
                   </span>
                   <span className="flex items-center gap-1">
-                    <svg className="w-3.5 h-3.5 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                    <svg className="w-3.5 h-3.5 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
                     Unsubscribe anytime
                   </span>
                 </div>
@@ -167,7 +167,7 @@ export default function ExitIntentPopup() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full px-4 py-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-green-600/30 focus:border-green-600"
+                  className="w-full px-4 py-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500"
                 />
                 <label className="flex items-start gap-2 cursor-pointer">
                   <input
@@ -175,11 +175,11 @@ export default function ExitIntentPopup() {
                     checked={consent}
                     onChange={(e) => setConsent(e.target.checked)}
                     required
-                    className="mt-0.5 w-4 h-4 rounded accent-green-700 shrink-0"
+                    className="mt-0.5 w-4 h-4 rounded accent-amber-500 shrink-0"
                   />
                   <span className="text-[0.65rem] text-slate-500 leading-tight">
                     I agree to receive the PDF and occasional broker updates.{" "}
-                    <Link href="/privacy" className="underline hover:text-green-700">
+                    <Link href="/privacy" className="underline hover:text-amber-600">
                       Privacy Policy
                     </Link>
                   </span>
@@ -187,7 +187,7 @@ export default function ExitIntentPopup() {
                 <button
                   type="submit"
                   disabled={status === "loading" || !consent}
-                  className="w-full px-4 py-3 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors disabled:opacity-60"
+                  className="w-full px-4 py-3 bg-amber-500 text-slate-900 text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-60"
                 >
                   {status === "loading" ? "Sending..." : "Get Free Fee Comparison PDF →"}
                 </button>
@@ -204,7 +204,7 @@ export default function ExitIntentPopup() {
           <div className="text-center mt-3">
             <Link
               href="/quiz"
-              className="text-sm text-slate-500 hover:text-green-700 transition-colors"
+              className="text-sm text-slate-500 hover:text-amber-600 transition-colors"
             >
               Or take our free 60-second broker quiz →
             </Link>
