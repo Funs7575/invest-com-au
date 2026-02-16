@@ -32,11 +32,13 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [health, setHealth] = useState<HealthIssue[]>([]);
   const [recentClicks, setRecentClicks] = useState<RecentClick[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const supabase = createClient();
     async function load() {
-      const [brokers, articles, scenarios, clicks, clicksToday, emails] = await Promise.all([
+      // Batch ALL queries in a single Promise.all — stats + health data + recent clicks
+      const [brokers, articles, scenarios, clicks, clicksToday, emails, brokersData, dealCount, recent] = await Promise.all([
         supabase.from("brokers").select("id", { count: "exact", head: true }),
         supabase.from("articles").select("id", { count: "exact", head: true }),
         supabase.from("scenarios").select("id", { count: "exact", head: true }),
@@ -46,7 +48,23 @@ export default function AdminDashboard() {
           .select("id", { count: "exact", head: true })
           .gte("clicked_at", new Date().toISOString().split("T")[0]),
         supabase.from("email_captures").select("id", { count: "exact", head: true }),
+        // Health check data
+        supabase
+          .from("brokers")
+          .select("name, slug, affiliate_url, pros, cons, review_content")
+          .eq("status", "active"),
+        supabase
+          .from("brokers")
+          .select("id", { count: "exact", head: true })
+          .eq("deal", true),
+        // Recent clicks
+        supabase
+          .from("affiliate_clicks")
+          .select("id, broker_name, source, page, clicked_at")
+          .order("clicked_at", { ascending: false })
+          .limit(5),
       ]);
+
       setStats({
         brokers: brokers.count || 0,
         articles: articles.count || 0,
@@ -59,14 +77,8 @@ export default function AdminDashboard() {
       // Health checks
       const issues: HealthIssue[] = [];
 
-      // Check brokers missing affiliate URLs
-      const { data: brokersData } = await supabase
-        .from("brokers")
-        .select("name, slug, affiliate_url, pros, cons, review_content")
-        .eq("status", "active");
-
-      if (brokersData) {
-        const noAffiliate = brokersData.filter((b) => !b.affiliate_url);
+      if (brokersData.data) {
+        const noAffiliate = brokersData.data.filter((b) => !b.affiliate_url);
         if (noAffiliate.length > 0) {
           issues.push({
             type: "warning",
@@ -75,7 +87,7 @@ export default function AdminDashboard() {
           });
         }
 
-        const noPros = brokersData.filter((b) => !b.pros || b.pros.length === 0);
+        const noPros = brokersData.data.filter((b) => !b.pros || b.pros.length === 0);
         if (noPros.length > 0) {
           issues.push({
             type: "warning",
@@ -84,7 +96,7 @@ export default function AdminDashboard() {
           });
         }
 
-        const noCons = brokersData.filter((b) => !b.cons || b.cons.length === 0);
+        const noCons = brokersData.data.filter((b) => !b.cons || b.cons.length === 0);
         if (noCons.length > 0) {
           issues.push({
             type: "warning",
@@ -93,7 +105,7 @@ export default function AdminDashboard() {
           });
         }
 
-        const noReview = brokersData.filter((b) => !b.review_content);
+        const noReview = brokersData.data.filter((b) => !b.review_content);
         if (noReview.length > 0) {
           issues.push({
             type: "warning",
@@ -103,12 +115,7 @@ export default function AdminDashboard() {
         }
       }
 
-      // Check deal of the month
-      const { count: dealCount } = await supabase
-        .from("brokers")
-        .select("id", { count: "exact", head: true })
-        .eq("deal", true);
-      if (!dealCount || dealCount === 0) {
+      if (!dealCount.count || dealCount.count === 0) {
         issues.push({
           type: "warning",
           message: "No Deal of the Month is currently set",
@@ -121,14 +128,8 @@ export default function AdminDashboard() {
       }
 
       setHealth(issues);
-
-      // Recent clicks
-      const { data: recent } = await supabase
-        .from("affiliate_clicks")
-        .select("id, broker_name, source, page, clicked_at")
-        .order("clicked_at", { ascending: false })
-        .limit(5);
-      if (recent) setRecentClicks(recent);
+      if (recent.data) setRecentClicks(recent.data);
+      setLoading(false);
     }
     load();
   }, []);
@@ -146,42 +147,74 @@ export default function AdminDashboard() {
     <AdminShell>
       <h1 className="text-2xl font-bold text-white mb-6">Dashboard</h1>
 
+      {/* Health summary banner */}
+      {!loading && health.length > 0 && !health[0].message.includes("passed") && (
+        <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg px-4 py-2 mb-4 flex items-center gap-2">
+          <span className="text-amber-400">⚠</span>
+          <span className="text-sm text-amber-300">
+            {health.length} content issue{health.length !== 1 ? "s" : ""} need attention
+          </span>
+        </div>
+      )}
+
+      {/* Stat Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 mb-8">
-        {cards.map((card) => (
-          <Link
-            key={card.label}
-            href={card.href}
-            className="bg-slate-800 border border-slate-700 rounded-lg p-4 hover:border-slate-600 transition-colors"
-          >
-            <div className={`text-3xl font-bold ${card.color}`}>
-              {stats ? card.value : "—"}
-            </div>
-            <div className="text-sm text-slate-400 mt-1">{card.label}</div>
-          </Link>
-        ))}
+        {loading
+          ? Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="bg-slate-800 border border-slate-700 rounded-lg p-4 animate-pulse">
+                <div className="h-8 w-16 bg-slate-700 rounded mb-2" />
+                <div className="h-4 w-20 bg-slate-700 rounded" />
+              </div>
+            ))
+          : cards.map((card) => (
+              <Link
+                key={card.label}
+                href={card.href}
+                className="bg-slate-800 border border-slate-700 rounded-lg p-4 hover:border-slate-600 transition-colors"
+              >
+                <div className={`text-3xl font-bold ${card.color}`}>
+                  {card.value ?? 0}
+                </div>
+                <div className="text-sm text-slate-400 mt-1">{card.label}</div>
+              </Link>
+            ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Content Health Check */}
         <div className="bg-slate-800 border border-slate-700 rounded-lg p-6">
           <h2 className="text-lg font-semibold text-white mb-4">Content Health</h2>
-          <div className="space-y-2">
-            {health.map((issue, i) => (
-              <div key={i} className="flex items-start gap-2">
-                <span className={`shrink-0 mt-0.5 ${issue.type === "error" ? "text-red-400" : "text-amber-400"}`}>
-                  {issue.type === "error" ? "●" : "●"}
-                </span>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-slate-300">{issue.message}</p>
-                  {issue.link && (
-                    <Link href={issue.link} className="text-xs text-amber-400 hover:text-amber-300">
-                      Fix →
-                    </Link>
-                  )}
+          {loading ? (
+            <div className="space-y-3">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="animate-pulse flex items-start gap-2">
+                  <div className="h-3 w-3 bg-slate-700 rounded-full mt-1 shrink-0" />
+                  <div className="flex-1 space-y-1">
+                    <div className="h-4 w-full bg-slate-700 rounded" />
+                    <div className="h-3 w-16 bg-slate-700 rounded" />
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {health.map((issue, i) => (
+                <div key={i} className="flex items-start gap-2">
+                  <span className={`shrink-0 mt-0.5 ${issue.type === "error" ? "text-red-400" : "text-amber-400"}`}>
+                    {issue.type === "error" ? "●" : "●"}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-slate-300">{issue.message}</p>
+                    {issue.link && (
+                      <Link href={issue.link} className="text-xs text-amber-400 hover:text-amber-300">
+                        Fix →
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Recent Clicks */}
@@ -190,7 +223,19 @@ export default function AdminDashboard() {
             <h2 className="text-lg font-semibold text-white">Recent Clicks</h2>
             <Link href="/admin/analytics" className="text-xs text-amber-400 hover:text-amber-300">View All →</Link>
           </div>
-          {recentClicks.length === 0 ? (
+          {loading ? (
+            <div className="space-y-3">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="animate-pulse flex items-center justify-between">
+                  <div className="space-y-1">
+                    <div className="h-4 w-28 bg-slate-700 rounded" />
+                    <div className="h-3 w-36 bg-slate-700 rounded" />
+                  </div>
+                  <div className="h-3 w-12 bg-slate-700 rounded" />
+                </div>
+              ))}
+            </div>
+          ) : recentClicks.length === 0 ? (
             <p className="text-sm text-slate-500">No clicks recorded yet.</p>
           ) : (
             <div className="space-y-2">
