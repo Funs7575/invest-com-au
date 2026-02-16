@@ -40,7 +40,7 @@ export default function ArticlesClient({ articles }: { articles: Article[] }) {
           onClick={() => setActiveCategory("all")}
           className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
             activeCategory === "all"
-              ? "bg-amber text-white"
+              ? "bg-green-700 text-white"
               : "bg-slate-100 text-slate-700 hover:bg-slate-200"
           }`}
         >
@@ -52,7 +52,7 @@ export default function ArticlesClient({ articles }: { articles: Article[] }) {
             onClick={() => setActiveCategory(cat)}
             className={`px-4 py-2 text-sm font-medium rounded-full capitalize transition-colors ${
               activeCategory === cat
-                ? "bg-amber text-white"
+                ? "bg-green-700 text-white"
                 : "bg-slate-100 text-slate-700 hover:bg-slate-200"
             }`}
           >
@@ -120,7 +120,7 @@ export default function ArticlesClient({ articles }: { articles: Article[] }) {
                 {/* CTA */}
                 <Link
                   href={`/article/${article.slug}`}
-                  className="text-sm font-semibold text-amber hover:text-amber-600 transition-colors mt-auto"
+                  className="text-sm font-semibold text-green-700 hover:text-green-800 transition-colors mt-auto"
                 >
                   Read Guide &rarr;
                 </Link>

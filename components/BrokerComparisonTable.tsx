@@ -181,7 +181,7 @@ export default function BrokerComparisonTable({
                         context
                       )
                     }
-                    className="inline-block px-4 py-2 bg-amber text-white text-xs font-bold rounded-lg hover:bg-amber-600 hover:scale-105 transition-all"
+                    className="inline-block px-4 py-2 bg-green-700 text-white text-xs font-bold rounded-lg hover:bg-green-800 hover:scale-105 transition-all"
                   >
                     Go to Site &rarr;
                   </a>
@@ -259,7 +259,7 @@ export default function BrokerComparisonTable({
                   context
                 )
               }
-              className="block w-full text-center px-4 py-2.5 bg-amber text-white text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors"
+              className="block w-full text-center px-4 py-2.5 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors"
             >
               Go to Site &rarr;
             </a>

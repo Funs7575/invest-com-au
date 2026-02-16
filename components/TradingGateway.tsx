@@ -72,11 +72,11 @@ export default function TradingGateway({ brokers }: TradingGatewayProps) {
             background: "linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)",
           }}
         >
-          {/* Amber glow effect */}
+          {/* Green glow effect */}
           <div
             className="absolute top-[-40%] right-[-10%] w-96 h-96 rounded-full pointer-events-none"
             style={{
-              background: "radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 70%)",
+              background: "radial-gradient(circle, rgba(21,128,61,0.08) 0%, transparent 70%)",
             }}
           ></div>
 
@@ -95,7 +95,7 @@ export default function TradingGateway({ brokers }: TradingGatewayProps) {
                 <select
                   value={market}
                   onChange={(e) => setMarket(e.target.value)}
-                  className="bg-amber text-slate-900 font-bold px-4 py-2 rounded-lg border-2 border-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                  className="bg-green-700 text-white font-bold px-4 py-2 rounded-lg border-2 border-green-800 focus:outline-none focus:ring-2 focus:ring-green-400"
                 >
                   <option value="asx">ASX shares</option>
                   <option value="us">US shares</option>
@@ -105,7 +105,7 @@ export default function TradingGateway({ brokers }: TradingGatewayProps) {
                 <select
                   value={feeType}
                   onChange={(e) => setFeeType(e.target.value)}
-                  className="bg-amber text-slate-900 font-bold px-4 py-2 rounded-lg border-2 border-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                  className="bg-green-700 text-white font-bold px-4 py-2 rounded-lg border-2 border-green-800 focus:outline-none focus:ring-2 focus:ring-green-400"
                 >
                   <option value="any">any fees</option>
                   <option value="free">$0 fees</option>
@@ -115,7 +115,7 @@ export default function TradingGateway({ brokers }: TradingGatewayProps) {
                 <select
                   value={budget}
                   onChange={(e) => setBudget(e.target.value)}
-                  className="bg-amber text-slate-900 font-bold px-4 py-2 rounded-lg border-2 border-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                  className="bg-green-700 text-white font-bold px-4 py-2 rounded-lg border-2 border-green-800 focus:outline-none focus:ring-2 focus:ring-green-400"
                 >
                   <option value="any">any budget</option>
                   <option value="beginner">beginner budget ($0-$500)</option>
@@ -144,7 +144,7 @@ export default function TradingGateway({ brokers }: TradingGatewayProps) {
                       <div className="flex-1">
                         <div className="text-white font-bold">{broker.name}</div>
                         {broker.deal && (
-                          <div className="text-xs text-amber font-semibold uppercase tracking-wide">
+                          <div className="text-xs text-green-400 font-semibold uppercase tracking-wide">
                             🔥 Deal Active
                           </div>
                         )}
@@ -175,7 +175,7 @@ export default function TradingGateway({ brokers }: TradingGatewayProps) {
                     </div>
 
                     <div className="mt-4">
-                      <span className="text-xs text-amber hover:underline">
+                      <span className="text-xs text-green-400 hover:underline">
                         View Details →
                       </span>
                     </div>

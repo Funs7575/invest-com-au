@@ -79,7 +79,7 @@ export default function BrokerReviewClient({ broker: b, similar }: { broker: Bro
                 <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded-full">CHESS Sponsored</span>
               )}
               {b.deal && (
-                <span className="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-semibold rounded-full">Deal of the Month</span>
+                <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded-full">Deal of the Month</span>
               )}
             </div>
           </div>

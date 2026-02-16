@@ -180,7 +180,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                   <div key={i} className="flex items-start gap-4 pb-3 border-b border-slate-100 last:border-b-0 last:pb-0">
                     <span className="text-xs font-bold text-slate-500 uppercase tracking-wide w-32 shrink-0 pt-0.5">{v.cat}</span>
                     <div>
-                      <span className="font-bold text-sm text-amber-700">{v.winner}</span>
+                      <span className="font-bold text-sm text-green-700">{v.winner}</span>
                       <div className="text-xs text-slate-500">{v.reason}</div>
                     </div>
                   </div>
@@ -240,7 +240,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                     href={getAffiliateLink(br)}
                     target="_blank"
                     rel="noopener noreferrer nofollow"
-                    className="inline-block px-4 py-2 bg-amber text-white text-sm font-semibold rounded-lg hover:bg-amber-600 transition-colors"
+                    className="inline-block px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
                   >
                     {br.cta_text || `Visit ${br.name}`}
                   </a>
@@ -252,7 +252,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
             <div className="bg-slate-50 rounded-xl p-6 text-center">
               <h2 className="text-lg font-extrabold mb-2">Still not sure?</h2>
               <p className="text-slate-600 mb-4 text-sm">Use our Switching Cost Simulator to see exactly how much you&apos;d save.</p>
-              <Link href="/calculators?calc=switching" className="inline-block px-6 py-3 bg-amber text-white font-semibold rounded-lg hover:bg-amber-600 transition-colors">
+              <Link href="/calculators?calc=switching" className="inline-block px-6 py-3 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors">
                 Calculate Your Savings
               </Link>
             </div>
@@ -274,7 +274,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                   <Link
                     key={c.href}
                     href={c.href}
-                    className="px-4 py-2 rounded-full border border-slate-200 text-sm font-medium text-slate-600 hover:border-amber hover:text-amber hover:bg-amber-50 transition-all"
+                    className="px-4 py-2 rounded-full border border-slate-200 text-sm font-medium text-slate-600 hover:border-green-700 hover:text-green-700 hover:bg-green-50 transition-all"
                   >
                     {c.label}
                   </Link>

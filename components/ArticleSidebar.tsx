@@ -29,10 +29,10 @@ export default function ArticleSidebar({
   return (
     <div className="hidden lg:block">
       <div className="sticky top-20 w-64 xl:w-72">
-        <div className="border border-amber/30 rounded-xl bg-white shadow-lg overflow-hidden">
+        <div className="border border-green-700/30 rounded-xl bg-white shadow-lg overflow-hidden">
           {/* Header */}
-          <div className="bg-gradient-to-r from-amber to-amber-600 px-5 py-3">
-            <div className="text-[0.6rem] font-extrabold uppercase tracking-wider text-amber-100">
+          <div className="bg-gradient-to-r from-green-600 via-green-700 to-green-800 px-5 py-3">
+            <div className="text-[0.6rem] font-extrabold uppercase tracking-wider text-green-100">
               Top Pick
             </div>
           </div>
@@ -94,7 +94,7 @@ export default function ArticleSidebar({
                   "article"
                 )
               }
-              className="block w-full text-center px-4 py-3 bg-amber text-white font-bold text-sm rounded-lg hover:bg-amber-600 hover:scale-[1.02] transition-all"
+              className="block w-full text-center px-4 py-3 bg-green-700 text-white font-bold text-sm rounded-lg hover:bg-green-800 hover:scale-[1.02] transition-all"
             >
               Open Account &rarr;
             </a>

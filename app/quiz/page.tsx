@@ -91,6 +91,31 @@ export default function QuizPage() {
     }
   };
 
+  // Generate personalized match reasons based on user answers and broker strengths
+  const getMatchReasons = (userAnswers: string[], broker: Broker): string[] => {
+    const reasons: string[] = [];
+
+    if (userAnswers.includes('fees') || userAnswers.includes('income'))
+      reasons.push(`Low brokerage fees (${broker.asx_fee || 'competitive rates'})`);
+    if (userAnswers.includes('safety') && broker.chess_sponsored)
+      reasons.push('CHESS sponsorship — your shares are held in your name');
+    if (userAnswers.includes('beginner') || userAnswers.includes('simple'))
+      reasons.push('Beginner-friendly platform with a simple interface');
+    if (userAnswers.includes('crypto') && broker.is_crypto)
+      reasons.push('Regulated Australian crypto exchange');
+    if (userAnswers.includes('large') || userAnswers.includes('whale'))
+      reasons.push('Suited for larger portfolios with competitive international fees');
+    if (userAnswers.includes('tools') || userAnswers.includes('pro'))
+      reasons.push('Advanced charting and research tools');
+    if (broker.smsf_support && (userAnswers.includes('income') || userAnswers.includes('grow')))
+      reasons.push('Supports SMSF accounts for tax-effective investing');
+    if (broker.rating && broker.rating >= 4.5)
+      reasons.push(`Highly rated (${broker.rating}/5) by our editorial team`);
+
+    if (!reasons.length) reasons.push('Strong overall score across your priorities');
+    return reasons.slice(0, 4);
+  };
+
   const getResults = (): { broker: Broker | null; slug: string; total: number }[] => {
     // Score all brokers based on answers
     const scored = Object.entries(weights).map(([slug, scores]) => {
@@ -177,6 +202,22 @@ export default function QuizPage() {
                 </div>
               </div>
               <p className="text-slate-600 mb-4">{topMatch.broker.tagline}</p>
+
+              {/* Why this broker? */}
+              <div className="bg-white/60 rounded-lg p-3 mb-4">
+                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">
+                  Why {topMatch.broker.name}?
+                </p>
+                <ul className="space-y-1">
+                  {getMatchReasons(answers, topMatch.broker).map((reason, i) => (
+                    <li key={i} className="text-sm text-slate-700 flex items-start gap-2">
+                      <span className="text-green-600 shrink-0">✓</span>
+                      {reason}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
               <div className="flex flex-wrap gap-3 text-xs text-slate-500 mb-5">
                 <span className="bg-white/60 px-2 py-1 rounded">ASX: {topMatch.broker.asx_fee}</span>
                 <span className="bg-white/60 px-2 py-1 rounded">CHESS: {topMatch.broker.chess_sponsored ? 'Yes' : 'No'}</span>
@@ -225,7 +266,7 @@ export default function QuizPage() {
                       target="_blank"
                       rel="noopener noreferrer nofollow"
                       onClick={() => trackClick(r.broker!.slug, r.broker!.name, `quiz-result-${i + 2}`, '/quiz', 'quiz')}
-                      className="shrink-0 px-4 py-2 bg-amber text-white text-sm font-semibold rounded-lg hover:bg-amber-600 transition-colors"
+                      className="shrink-0 px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
                     >
                       {getBenefitCta(r.broker, 'quiz')}
                     </a>
@@ -277,7 +318,7 @@ export default function QuizPage() {
             <div
               key={i}
               className={`w-3 h-3 rounded-full transition-colors ${
-                i < step ? 'bg-amber' : i === step ? 'bg-amber ring-2 ring-amber/30 ring-offset-2' : 'bg-slate-200'
+                i < step ? 'bg-green-700' : i === step ? 'bg-green-700 ring-2 ring-green-700/30 ring-offset-2' : 'bg-slate-200'
               }`}
             />
           ))}
@@ -290,7 +331,7 @@ export default function QuizPage() {
             <span>{Math.round(((step + 1) / questions.length) * 100)}%</span>
           </div>
           <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
-            <div className="h-full bg-amber rounded-full transition-all duration-500" style={{ width: `${((step + 1) / questions.length) * 100}%` }} />
+            <div className="h-full bg-green-700 rounded-full transition-all duration-500" style={{ width: `${((step + 1) / questions.length) * 100}%` }} />
           </div>
         </div>
 
@@ -301,7 +342,7 @@ export default function QuizPage() {
             <button
               key={opt.label}
               onClick={() => handleAnswer(opt.key)}
-              className="w-full text-left border border-slate-200 rounded-xl px-6 py-4 hover:border-amber hover:bg-amber/5 transition-all font-medium text-sm md:text-base"
+              className="w-full text-left border border-slate-200 rounded-xl px-6 py-4 hover:border-green-700 hover:bg-green-700/5 transition-all font-medium text-sm md:text-base"
             >
               {opt.label}
             </button>

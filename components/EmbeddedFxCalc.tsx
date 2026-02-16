@@ -51,7 +51,7 @@ export default function EmbeddedFxCalc({ brokers }: { brokers: Broker[] }) {
   const savings = big4Cost - cheapestCost;
 
   return (
-    <div className="my-10 border-2 border-amber/30 rounded-2xl overflow-hidden bg-gradient-to-b from-amber-50/50 to-white">
+    <div className="my-10 border-2 border-green-700/30 rounded-2xl overflow-hidden bg-gradient-to-b from-green-50/50 to-white">
       {/* Header */}
       <div className="bg-brand text-white px-6 py-4">
         <div className="flex items-center gap-2">
@@ -83,9 +83,9 @@ export default function EmbeddedFxCalc({ brokers }: { brokers: Broker[] }) {
             step={500}
             value={amount}
             onChange={(e) => setAmount(Number(e.target.value))}
-            className="w-full h-2 rounded-full appearance-none cursor-pointer accent-amber"
+            className="w-full h-2 rounded-full appearance-none cursor-pointer accent-green-700"
             style={{
-              background: `linear-gradient(to right, #f59e0b ${
+              background: `linear-gradient(to right, #15803d ${
                 ((amount - 1000) / 49000) * 100
               }%, #e2e8f0 ${((amount - 1000) / 49000) * 100}%)`,
             }}
@@ -189,7 +189,7 @@ export default function EmbeddedFxCalc({ brokers }: { brokers: Broker[] }) {
                 "calculator"
               )
             }
-            className="block w-full text-center px-6 py-3 bg-amber text-white font-bold rounded-lg hover:bg-amber-600 hover:scale-[1.02] transition-all"
+            className="block w-full text-center px-6 py-3 bg-green-700 text-white font-bold rounded-lg hover:bg-green-800 hover:scale-[1.02] transition-all"
           >
             Open {cheapest.name} Account — {formatPercent(cheapest.fx_rate ?? 0)}{" "}
             FX &rarr;

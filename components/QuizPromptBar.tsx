@@ -41,7 +41,7 @@ export default function QuizPromptBar() {
         <div className="flex items-center gap-2 shrink-0">
           <Link
             href="/quiz"
-            className="px-4 py-2 bg-amber text-white text-sm font-semibold rounded-lg hover:bg-amber-600 transition-colors"
+            className="px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
           >
             Take Quiz →
           </Link>

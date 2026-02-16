@@ -21,7 +21,7 @@ export default function IntlBrokersEnhanced({
       <div className="bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 mb-8 text-xs text-slate-500 leading-relaxed">
         <strong>Disclosure:</strong> We may earn a commission from partners on
         this page. This does not influence our ratings or analysis.{" "}
-        <a href="/how-we-earn" className="text-amber underline hover:text-amber-600">
+        <a href="/how-we-earn" className="text-green-700 underline hover:text-green-800">
           How we earn money
         </a>
       </div>

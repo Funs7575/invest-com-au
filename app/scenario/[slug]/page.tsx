@@ -57,7 +57,30 @@ export default async function ScenarioPage({
     recBrokers = (data as Broker[]) || [];
   }
 
+  // JSON-LD structured data — FAQ format for rich snippets
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      ...(s.problem ? [{
+        "@type": "Question",
+        name: `What's the challenge with ${s.title.toLowerCase()}?`,
+        acceptedAnswer: { "@type": "Answer", text: s.problem },
+      }] : []),
+      ...(s.solution ? [{
+        "@type": "Question",
+        name: `What's the best approach for ${s.title.toLowerCase()}?`,
+        acceptedAnswer: { "@type": "Answer", text: s.solution },
+      }] : []),
+    ],
+  };
+
   return (
+    <>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
     <div className="py-12">
       <div className="container-custom max-w-3xl mx-auto">
         {/* Breadcrumb */}
@@ -120,7 +143,7 @@ export default async function ScenarioPage({
             <ul className="mb-8 space-y-2">
               {s.considerations.map((item: string, i: number) => (
                 <li key={i} className="flex items-start gap-3 text-slate-700">
-                  <span className="text-amber font-bold shrink-0">
+                  <span className="text-green-700 font-bold shrink-0">
                     {i + 1}.
                   </span>
                   <span>{item}</span>
@@ -227,5 +250,6 @@ export default async function ScenarioPage({
         </div>
       </div>
     </div>
+    </>
   );
 }

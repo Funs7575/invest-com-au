@@ -18,7 +18,7 @@ export default function StickyCTABar({ broker, detail, context = 'review' }: { b
   if (!visible) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-slate-900 border-t border-amber/20 shadow-lg">
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-slate-900 border-t border-green-700/20 shadow-lg">
       <div className="container-custom py-3 flex items-center justify-between gap-4">
         <div className="flex items-center gap-3 min-w-0">
           <div
@@ -37,7 +37,7 @@ export default function StickyCTABar({ broker, detail, context = 'review' }: { b
           target="_blank"
           rel="noopener noreferrer nofollow"
           onClick={() => trackClick(broker.slug, broker.name, 'sticky-cta', window.location.pathname, context)}
-          className="shrink-0 px-5 py-2 bg-amber text-white text-sm font-semibold rounded-lg hover:bg-amber-600 transition-colors"
+          className="shrink-0 px-5 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
         >
           {getBenefitCta(broker, context)}
         </a>

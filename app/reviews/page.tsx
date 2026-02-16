@@ -16,10 +16,31 @@ export default async function ReviewsPage() {
     .eq('status', 'active')
     .order('rating', { ascending: false });
 
-  const shareBrokers = (brokers || []).filter((b: Broker) => !b.is_crypto);
-  const cryptoBrokers = (brokers || []).filter((b: Broker) => b.is_crypto);
+  const allBrokers = (brokers as Broker[]) || [];
+  const shareBrokers = allBrokers.filter((b: Broker) => !b.is_crypto);
+  const cryptoBrokers = allBrokers.filter((b: Broker) => b.is_crypto);
+
+  // JSON-LD structured data for search results
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Australian Broker Reviews",
+    description: "In-depth, honest reviews of every major Australian share trading platform.",
+    numberOfItems: allBrokers.length,
+    itemListElement: allBrokers.slice(0, 10).map((b: Broker, i: number) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: b.name,
+      url: `https://invest.com.au/broker/${b.slug}`,
+    })),
+  };
 
   return (
+    <>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
     <div className="py-12">
       <div className="container-custom">
         <h1 className="text-3xl md:text-4xl font-extrabold mb-2">Broker Reviews</h1>
@@ -48,6 +69,7 @@ export default async function ReviewsPage() {
         )}
       </div>
     </div>
+    </>
   );
 }
 
@@ -99,7 +121,7 @@ function BrokerReviewCard({ broker }: { broker: Broker }) {
         </div>
       </div>
       <div className="px-6 py-3 bg-slate-50 border-t border-slate-200 text-center">
-        <span className="text-sm font-semibold text-amber">Read Full Review →</span>
+        <span className="text-sm font-semibold text-green-700">Read Full Review →</span>
       </div>
     </Link>
   );

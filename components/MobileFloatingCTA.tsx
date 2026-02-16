@@ -59,7 +59,7 @@ export default function MobileFloatingCTA({
               "article"
             )
           }
-          className="shrink-0 px-5 py-2.5 bg-amber text-white text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors"
+          className="shrink-0 px-5 py-2.5 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors"
         >
           Open Account
         </a>

@@ -31,12 +31,12 @@ export default function LeadMagnet() {
   }
 
   return (
-    <div className="rounded-xl p-6 bg-gradient-to-br from-amber-400 via-amber-500 to-amber-600 text-white shadow-lg">
-      <div className="text-xs font-bold uppercase tracking-wider mb-2 text-amber-100">
+    <div className="rounded-xl p-6 bg-gradient-to-br from-green-600 via-green-700 to-green-800 text-white shadow-lg">
+      <div className="text-xs font-bold uppercase tracking-wider mb-2 text-green-100">
         Free Download
       </div>
       <h3 className="text-xl font-extrabold mb-2">2026 Fee Audit PDF</h3>
-      <p className="text-sm text-amber-50 mb-4 leading-relaxed">
+      <p className="text-sm text-green-50 mb-4 leading-relaxed">
         See exactly what every Australian broker charges — brokerage, FX fees,
         inactivity fees, and hidden costs. Compare side-by-side in one document.
       </p>
@@ -44,9 +44,10 @@ export default function LeadMagnet() {
       {status === "success" ? (
         <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4 text-center">
           <div className="text-lg font-bold mb-1">Check your inbox!</div>
-          <p className="text-sm text-amber-50">
+          <p className="text-sm text-green-50">
             We&apos;ve sent the 2026 Fee Audit PDF to your email.
           </p>
+
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-3">
@@ -66,7 +67,7 @@ export default function LeadMagnet() {
               required
               className="mt-0.5 w-4 h-4 rounded border-white/50 accent-slate-900 shrink-0"
             />
-            <span className="text-[0.65rem] text-amber-50 leading-tight">
+            <span className="text-[0.65rem] text-green-50 leading-tight">
               I agree to receive the Fee Audit PDF and occasional updates from Invest.com.au.
               View our{" "}
               <Link href="/privacy" className="underline hover:text-white">

@@ -53,7 +53,7 @@ export default function CookieBanner() {
               you consent to our use of cookies for analytics and personalization.{" "}
               <Link
                 href="/privacy"
-                className="text-amber underline hover:text-amber-400 transition-colors"
+                className="text-green-700 underline hover:text-green-800 transition-colors"
               >
                 Learn more in our Privacy Policy
               </Link>
@@ -70,7 +70,7 @@ export default function CookieBanner() {
             </button>
             <button
               onClick={handleAccept}
-              className="px-6 py-2 bg-amber text-slate-900 font-semibold rounded-lg hover:bg-amber-600 transition-colors text-sm"
+              className="px-6 py-2 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors text-sm"
             >
               Accept All
             </button>
