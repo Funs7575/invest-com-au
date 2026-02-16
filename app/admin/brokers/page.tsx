@@ -7,6 +7,8 @@ import ConfirmDialog from "@/components/ConfirmDialog";
 import { useToast } from "@/components/Toast";
 import type { Broker } from "@/lib/types";
 
+type FeeChangeEntry = { date: string; field: string; old_value: string; new_value: string };
+
 const PAGE_SIZE = 15;
 
 export default function AdminBrokersPage() {
@@ -28,7 +30,7 @@ export default function AdminBrokersPage() {
 
   useEffect(() => { load(); }, []);
 
-  const handleSave = async (formData: FormData) => {
+  const handleSave = async (formData: FormData, feeChangelog: FeeChangeEntry[]) => {
     const name = formData.get("name") as string;
     const slug = formData.get("slug") as string;
 
@@ -82,6 +84,11 @@ export default function AdminBrokersPage() {
       platforms: formData.get("platforms") ? (formData.get("platforms") as string).split("\n").filter(Boolean) : [],
       markets: formData.get("markets") ? (formData.get("markets") as string).split("\n").filter(Boolean) : [],
       payment_methods: formData.get("payment_methods") ? (formData.get("payment_methods") as string).split("\n").filter(Boolean) : [],
+      // Fee verification fields
+      fee_source_url: formData.get("fee_source_url") || null,
+      fee_source_tcs_url: formData.get("fee_source_tcs_url") || null,
+      fee_verified_date: formData.get("fee_verified_date") || null,
+      fee_changelog: feeChangelog.length > 0 ? feeChangelog : [],
       updated_at: new Date().toISOString(),
     };
 
@@ -156,6 +163,7 @@ export default function AdminBrokersPage() {
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Broker</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Rating</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase">ASX Fee</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase hidden md:table-cell">Verified</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Status</th>
                   <th className="px-4 py-3 text-right text-xs font-semibold text-slate-400 uppercase">Actions</th>
                 </tr>
@@ -167,8 +175,17 @@ export default function AdminBrokersPage() {
                       <div className="text-sm font-semibold text-white">{broker.name}</div>
                       <div className="text-xs text-slate-400">{broker.slug}</div>
                     </td>
-                    <td className="px-4 py-3 text-sm text-amber-400 font-semibold">{broker.rating || "—"}★</td>
+                    <td className="px-4 py-3 text-sm text-amber-400 font-semibold">{broker.rating || "\u2014"}</td>
                     <td className="px-4 py-3 text-sm text-slate-300">{broker.asx_fee || "N/A"}</td>
+                    <td className="px-4 py-3 hidden md:table-cell">
+                      {broker.fee_verified_date ? (
+                        <span className="text-xs px-2 py-1 rounded-full font-medium bg-green-500/10 text-green-400">
+                          {new Date(broker.fee_verified_date).toLocaleDateString("en-AU", { month: "short", day: "numeric" })}
+                        </span>
+                      ) : (
+                        <span className="text-xs px-2 py-1 rounded-full font-medium bg-amber-500/10 text-amber-400">Pending</span>
+                      )}
+                    </td>
                     <td className="px-4 py-3">
                       <span className={`text-xs px-2 py-1 rounded-full font-medium ${broker.status === "active" ? "bg-green-500/10 text-green-400" : "bg-slate-600 text-slate-300"}`}>{broker.status}</span>
                     </td>
@@ -185,8 +202,8 @@ export default function AdminBrokersPage() {
             <div className="flex items-center justify-between mt-4">
               <span className="text-xs text-slate-400">Page {page + 1} of {totalPages}</span>
               <div className="flex gap-2">
-                <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0} className="px-3 py-1.5 text-xs bg-slate-700 text-slate-300 rounded-lg hover:bg-slate-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">← Prev</button>
-                <button onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))} disabled={page >= totalPages - 1} className="px-3 py-1.5 text-xs bg-slate-700 text-slate-300 rounded-lg hover:bg-slate-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">Next →</button>
+                <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0} className="px-3 py-1.5 text-xs bg-slate-700 text-slate-300 rounded-lg hover:bg-slate-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">&larr; Prev</button>
+                <button onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))} disabled={page >= totalPages - 1} className="px-3 py-1.5 text-xs bg-slate-700 text-slate-300 rounded-lg hover:bg-slate-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">Next &rarr;</button>
               </div>
             </div>
           )}
@@ -198,15 +215,35 @@ export default function AdminBrokersPage() {
   );
 }
 
-function BrokerForm({ broker, saving, onSave, onCancel }: { broker: Partial<Broker>; saving: boolean; onSave: (fd: FormData) => void; onCancel: () => void; }) {
+function BrokerForm({ broker, saving, onSave, onCancel }: { broker: Partial<Broker>; saving: boolean; onSave: (fd: FormData, changelog: FeeChangeEntry[]) => void; onCancel: () => void; }) {
+  const [changelog, setChangelog] = useState<FeeChangeEntry[]>(broker.fee_changelog || []);
+  const [showAddEntry, setShowAddEntry] = useState(false);
+  const [newEntry, setNewEntry] = useState<FeeChangeEntry>({ date: new Date().toISOString().split("T")[0], field: "", old_value: "", new_value: "" });
+
+  const addEntry = () => {
+    if (!newEntry.field || !newEntry.old_value || !newEntry.new_value) return;
+    setChangelog(prev => [newEntry, ...prev]);
+    setNewEntry({ date: new Date().toISOString().split("T")[0], field: "", old_value: "", new_value: "" });
+    setShowAddEntry(false);
+  };
+
+  const removeEntry = (index: number) => {
+    setChangelog(prev => prev.filter((_, i) => i !== index));
+  };
+
   return (
-    <form onSubmit={(e) => { e.preventDefault(); onSave(new FormData(e.currentTarget)); }} className="bg-slate-800 border border-slate-700 rounded-lg p-6 space-y-6">
+    <form onSubmit={(e) => { e.preventDefault(); onSave(new FormData(e.currentTarget), changelog); }} className="bg-slate-800 border border-slate-700 rounded-lg p-6 space-y-6">
+      {/* Basic Info */}
+      <SectionHeading title="Basic Info" />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Field label="Name *" name="name" defaultValue={broker.name} required />
         <Field label="Slug *" name="slug" defaultValue={broker.slug} required />
         <Field label="Color" name="color" defaultValue={broker.color || "#0f172a"} />
       </div>
       <Field label="Tagline" name="tagline" defaultValue={broker.tagline} />
+
+      {/* Fees */}
+      <SectionHeading title="Fees & Costs" />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Field label="ASX Fee (display)" name="asx_fee" defaultValue={broker.asx_fee} />
         <Field label="ASX Fee Value ($)" name="asx_fee_value" defaultValue={broker.asx_fee_value?.toString()} type="number" step="0.01" />
@@ -215,13 +252,138 @@ function BrokerForm({ broker, saving, onSave, onCancel }: { broker: Partial<Brok
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Field label="US Fee Value ($)" name="us_fee_value" defaultValue={broker.us_fee_value?.toString()} type="number" step="0.01" />
         <Field label="FX Rate (%)" name="fx_rate" defaultValue={broker.fx_rate?.toString()} type="number" step="0.001" />
-        <Field label="Rating" name="rating" defaultValue={broker.rating?.toString()} type="number" step="0.1" min="0" max="5" />
+        <Field label="Inactivity Fee" name="inactivity_fee" defaultValue={broker.inactivity_fee} />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Field label="Inactivity Fee" name="inactivity_fee" defaultValue={broker.inactivity_fee} />
         <Field label="Min Deposit" name="min_deposit" defaultValue={broker.min_deposit} />
+        <Field label="Rating" name="rating" defaultValue={broker.rating?.toString()} type="number" step="0.1" min="0" max="5" />
         <Field label="Status" name="status" defaultValue={broker.status || "active"} />
       </div>
+
+      {/* Fee Verification */}
+      <SectionHeading title="Fee Verification" badge={broker.fee_verified_date ? "Verified" : "Pending"} badgeColor={broker.fee_verified_date ? "green" : "amber"} />
+      <div className="bg-slate-700/30 border border-slate-600 rounded-lg p-4 space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Field label="Verified Date" name="fee_verified_date" defaultValue={broker.fee_verified_date || ""} type="date" />
+          <Field label="Pricing Page URL" name="fee_source_url" defaultValue={broker.fee_source_url} placeholder="https://broker.com.au/pricing" />
+          <Field label="T&Cs / PDS URL" name="fee_source_tcs_url" defaultValue={broker.fee_source_tcs_url} placeholder="https://broker.com.au/terms" />
+        </div>
+        <p className="text-xs text-slate-500">Set the verified date when you confirm fees match the broker&apos;s pricing page. This date is shown publicly on the broker review page.</p>
+
+        {/* Mark as verified today shortcut */}
+        {!broker.fee_verified_date && (
+          <button
+            type="button"
+            onClick={() => {
+              const dateInput = document.querySelector('input[name="fee_verified_date"]') as HTMLInputElement;
+              if (dateInput) dateInput.value = new Date().toISOString().split("T")[0];
+            }}
+            className="text-xs text-amber-400 hover:text-amber-300 transition-colors"
+          >
+            Set to today &rarr;
+          </button>
+        )}
+      </div>
+
+      {/* Fee Changelog */}
+      <SectionHeading title="Fee Change History" count={changelog.length} />
+      <div className="bg-slate-700/30 border border-slate-600 rounded-lg p-4 space-y-3">
+        {changelog.length === 0 && !showAddEntry && (
+          <p className="text-xs text-slate-500">No fee changes recorded. Add an entry when a broker changes their fees.</p>
+        )}
+
+        {changelog.map((entry, i) => (
+          <div key={i} className="flex items-center justify-between bg-slate-700/50 rounded-lg px-3 py-2">
+            <div className="flex-1 min-w-0">
+              <span className="text-xs text-slate-400">{entry.date}</span>
+              <span className="text-xs text-slate-300 mx-2">&mdash;</span>
+              <span className="text-xs font-medium text-white">{entry.field}:</span>
+              <span className="text-xs text-red-400 ml-1 line-through">{entry.old_value}</span>
+              <span className="text-xs text-slate-400 mx-1">&rarr;</span>
+              <span className="text-xs text-green-400">{entry.new_value}</span>
+            </div>
+            <button type="button" onClick={() => removeEntry(i)} className="text-xs text-red-400 hover:text-red-300 ml-3 shrink-0">&times;</button>
+          </div>
+        ))}
+
+        {showAddEntry && (
+          <div className="border border-slate-500 rounded-lg p-3 space-y-3">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div>
+                <label className="block text-xs font-medium text-slate-400 mb-1">Date</label>
+                <input
+                  type="date"
+                  value={newEntry.date}
+                  onChange={(e) => setNewEntry(prev => ({ ...prev, date: e.target.value }))}
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-400 mb-1">Field</label>
+                <select
+                  value={newEntry.field}
+                  onChange={(e) => setNewEntry(prev => ({ ...prev, field: e.target.value }))}
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                >
+                  <option value="">Select...</option>
+                  <option value="ASX Brokerage">ASX Brokerage</option>
+                  <option value="US Brokerage">US Brokerage</option>
+                  <option value="FX Rate">FX Rate</option>
+                  <option value="Inactivity Fee">Inactivity Fee</option>
+                  <option value="Min Deposit">Min Deposit</option>
+                  <option value="Account Fee">Account Fee</option>
+                  <option value="Options Fee">Options Fee</option>
+                  <option value="Crypto Fee">Crypto Fee</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-400 mb-1">Old Value</label>
+                <input
+                  type="text"
+                  value={newEntry.old_value}
+                  onChange={(e) => setNewEntry(prev => ({ ...prev, old_value: e.target.value }))}
+                  placeholder="e.g. $9.50"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-400 mb-1">New Value</label>
+                <input
+                  type="text"
+                  value={newEntry.new_value}
+                  onChange={(e) => setNewEntry(prev => ({ ...prev, new_value: e.target.value }))}
+                  placeholder="e.g. $5.00"
+                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+                />
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={addEntry}
+                disabled={!newEntry.field || !newEntry.old_value || !newEntry.new_value}
+                className="bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg px-4 py-1.5 text-xs transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                Add Entry
+              </button>
+              <button type="button" onClick={() => setShowAddEntry(false)} className="text-xs text-slate-400 hover:text-white px-3 py-1.5 transition-colors">Cancel</button>
+            </div>
+          </div>
+        )}
+
+        {!showAddEntry && (
+          <button
+            type="button"
+            onClick={() => setShowAddEntry(true)}
+            className="text-xs text-amber-400 hover:text-amber-300 transition-colors"
+          >
+            + Add fee change entry
+          </button>
+        )}
+      </div>
+
+      {/* Flags */}
+      <SectionHeading title="Flags" />
       <div className="flex flex-wrap gap-6">
         <Checkbox label="CHESS Sponsored" name="chess_sponsored" defaultChecked={broker.chess_sponsored} />
         <Checkbox label="SMSF Support" name="smsf_support" defaultChecked={broker.smsf_support} />
@@ -229,16 +391,25 @@ function BrokerForm({ broker, saving, onSave, onCancel }: { broker: Partial<Brok
         <Checkbox label="Deal" name="deal" defaultChecked={broker.deal} />
         <Checkbox label="Editor's Pick" name="editors_pick" defaultChecked={broker.editors_pick} />
       </div>
+
+      {/* Affiliate & CTA */}
+      <SectionHeading title="Affiliate & CTA" />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Field label="Affiliate URL" name="affiliate_url" defaultValue={broker.affiliate_url} />
         <Field label="CTA Text" name="cta_text" defaultValue={broker.cta_text} />
       </div>
       <Field label="Deal Text" name="deal_text" defaultValue={broker.deal_text} />
+
+      {/* Company Info */}
+      <SectionHeading title="Company Info" />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Field label="Regulated By" name="regulated_by" defaultValue={broker.regulated_by} />
         <Field label="Year Founded" name="year_founded" defaultValue={broker.year_founded?.toString()} type="number" />
         <Field label="Headquarters" name="headquarters" defaultValue={broker.headquarters} />
       </div>
+
+      {/* Lists */}
+      <SectionHeading title="Pros, Cons & Details" />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <TextArea label="Pros (one per line)" name="pros" defaultValue={broker.pros?.join("\n")} rows={4} />
         <TextArea label="Cons (one per line)" name="cons" defaultValue={broker.cons?.join("\n")} rows={4} />
@@ -248,7 +419,12 @@ function BrokerForm({ broker, saving, onSave, onCancel }: { broker: Partial<Brok
         <TextArea label="Markets (one per line)" name="markets" defaultValue={broker.markets?.join("\n")} rows={3} />
         <TextArea label="Payment Methods (one per line)" name="payment_methods" defaultValue={broker.payment_methods?.join("\n")} rows={3} />
       </div>
+
+      {/* Review Content */}
+      <SectionHeading title="Review Content" />
       <TextArea label="Review Content" name="review_content" defaultValue={broker.review_content} rows={6} />
+
+      {/* Save */}
       <div className="flex gap-3 pt-2">
         <button type="submit" disabled={saving} className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold rounded-lg px-6 py-2.5 text-sm transition-colors disabled:opacity-50">{saving ? "Saving..." : broker.id ? "Update Broker" : "Create Broker"}</button>
         <button type="button" onClick={onCancel} className="text-slate-400 hover:text-white px-4 py-2.5 text-sm transition-colors">Cancel</button>
@@ -257,11 +433,22 @@ function BrokerForm({ broker, saving, onSave, onCancel }: { broker: Partial<Brok
   );
 }
 
-function Field({ label, name, defaultValue, required, type = "text", ...props }: { label: string; name: string; defaultValue?: string; required?: boolean; type?: string; [key: string]: unknown; }) {
+function SectionHeading({ title, badge, badgeColor, count }: { title: string; badge?: string; badgeColor?: "green" | "amber"; count?: number }) {
+  const colorMap = { green: "bg-green-500/10 text-green-400", amber: "bg-amber-500/10 text-amber-400" };
+  return (
+    <div className="flex items-center gap-2 pt-2 border-t border-slate-700 first:border-t-0 first:pt-0">
+      <h3 className="text-sm font-bold text-slate-300 uppercase tracking-wide">{title}</h3>
+      {badge && <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${colorMap[badgeColor || "amber"]}`}>{badge}</span>}
+      {count != null && count > 0 && <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-slate-600 text-slate-300">{count}</span>}
+    </div>
+  );
+}
+
+function Field({ label, name, defaultValue, required, type = "text", placeholder, ...props }: { label: string; name: string; defaultValue?: string; required?: boolean; type?: string; placeholder?: string; [key: string]: unknown; }) {
   return (
     <div>
       <label className="block text-xs font-medium text-slate-400 mb-1">{label}</label>
-      <input name={name} type={type} defaultValue={defaultValue || ""} required={required} className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50" {...props} />
+      <input name={name} type={type} defaultValue={defaultValue || ""} required={required} placeholder={placeholder} className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50" {...props} />
     </div>
   );
 }
