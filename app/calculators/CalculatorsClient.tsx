@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useMemo } from "react";
+import Link from "next/link";
 import type { Broker } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
 import { trackClick, trackEvent, getAffiliateLink, getBenefitCta } from "@/lib/tracking";
@@ -115,6 +116,28 @@ export default function CalculatorsClient({ brokers }: Props) {
           {activeCalc === "fx" && <FxFeeCalculator brokers={nonCryptoBrokers} />}
           {activeCalc === "cgt" && <CgtCalculator />}
           {activeCalc === "chess" && <ChessLookup brokers={nonCryptoBrokers} />}
+        </div>
+
+        {/* Related Resources */}
+        <div className="mt-8 bg-slate-50 border border-slate-200 rounded-xl p-6">
+          <h3 className="text-sm font-bold text-slate-700 mb-3">Related Resources</h3>
+          <div className="flex flex-wrap gap-2">
+            <Link href="/compare" className="text-xs px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-white transition-colors">
+              Compare All Brokers →
+            </Link>
+            <Link href="/scenario/beginner" className="text-xs px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-white transition-colors">
+              Best for Beginners →
+            </Link>
+            <Link href="/scenario/smsf" className="text-xs px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-white transition-colors">
+              SMSF Brokers →
+            </Link>
+            <Link href="/article/how-to-buy-shares" className="text-xs px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-white transition-colors">
+              How to Buy Shares →
+            </Link>
+            <Link href="/quiz" className="text-xs px-3 py-1.5 border border-green-200 text-green-700 rounded-lg hover:bg-green-50 transition-colors">
+              Take the Broker Quiz →
+            </Link>
+          </div>
         </div>
       </div>
     </div>

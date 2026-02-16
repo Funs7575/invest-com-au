@@ -72,6 +72,20 @@ export default async function HomePage() {
 
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "Invest.com.au",
+            url: "https://invest.com.au",
+            description: "Australia's independent broker comparison platform. Compare fees, features, and safety across every major Australian investment platform.",
+            sameAs: [],
+          }),
+        }}
+      />
+
       {/* Market Ticker */}
       <MarketTicker />
 

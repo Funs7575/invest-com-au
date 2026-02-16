@@ -72,15 +72,6 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
     name: `${b.name} Trading Platform`,
     description: b.tagline || `Review of ${b.name} share trading platform`,
     brand: { "@type": "Brand", name: b.name },
-    ...(b.rating ? {
-      aggregateRating: {
-        "@type": "AggregateRating",
-        ratingValue: b.rating,
-        bestRating: 5,
-        worstRating: 1,
-        ratingCount: 1,
-      }
-    } : {}),
     review: {
       "@type": "Review",
       author: { "@type": "Organization", name: "Invest.com.au" },
