@@ -55,10 +55,20 @@ export default function ExitIntentPopup() {
     };
   }, [showPopup]);
 
-  const handleDismiss = () => {
+  const handleDismiss = useCallback(() => {
     setVisible(false);
     localStorage.setItem("exitIntentDismissed", "true");
-  };
+  }, []);
+
+  // Escape key to close modal
+  useEffect(() => {
+    if (!visible) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") handleDismiss();
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [visible, handleDismiss]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -92,7 +102,12 @@ export default function ExitIntentPopup() {
       />
 
       {/* Modal */}
-      <div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden animate-in fade-in zoom-in-95 duration-300">
+      <div
+        className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden animate-in fade-in zoom-in-95 duration-300"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="exit-popup-title"
+      >
         {/* Close button */}
         <button
           onClick={handleDismiss}
@@ -105,7 +120,7 @@ export default function ExitIntentPopup() {
         {/* Green accent header */}
         <div className="bg-gradient-to-br from-green-600 via-green-700 to-green-800 px-6 pt-6 pb-8 text-white text-center">
           <div className="text-4xl mb-3">📊</div>
-          <h2 className="text-xl font-extrabold mb-1">Wait — Before You Go</h2>
+          <h2 id="exit-popup-title" className="text-xl font-extrabold mb-1">Wait — Before You Go</h2>
           <p className="text-sm text-green-100">
             Get our free 2026 broker fee comparison PDF. See exactly what every platform charges.
           </p>

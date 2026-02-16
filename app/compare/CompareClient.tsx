@@ -1,7 +1,9 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { Search, X } from "lucide-react";
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, renderStars } from "@/lib/tracking";
 import BrokerCard from "@/components/BrokerCard";
@@ -38,9 +40,17 @@ function InfoTip({ text }: { text: string }) {
 }
 
 export default function CompareClient({ brokers }: { brokers: Broker[] }) {
+  const searchParams = useSearchParams();
+  const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   const [sortCol, setSortCol] = useState<SortCol>('rating');
   const [sortDir, setSortDir] = useState<1 | -1>(-1);
+
+  // Read ?q= param from URL (e.g. from homepage search bar)
+  useEffect(() => {
+    const q = searchParams.get("q");
+    if (q) setSearchQuery(q);
+  }, [searchParams]);
 
   function handleSort(col: SortCol) {
     if (sortCol === col) {
@@ -62,8 +72,17 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
       case 'crypto': list = list.filter(b => b.is_crypto); break;
       default: list = list.filter(b => !b.is_crypto); break;
     }
+    // Text search filter
+    if (searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase();
+      list = list.filter(b =>
+        b.name.toLowerCase().includes(q) ||
+        (b.tagline && b.tagline.toLowerCase().includes(q)) ||
+        b.slug.toLowerCase().includes(q)
+      );
+    }
     return list;
-  }, [brokers, activeFilter]);
+  }, [brokers, activeFilter, searchQuery]);
 
   const sorted = useMemo(() => {
     return [...filtered].sort((a, b) => {
@@ -133,11 +152,13 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         })()}
 
         {/* Filter Pills */}
-        <div className="flex flex-wrap gap-2 mb-4">
+        <div className="flex flex-wrap gap-2 mb-4" role="tablist" aria-label="Broker filter">
           {filters.map(f => (
             <button
               key={f.key}
               onClick={() => setActiveFilter(f.key)}
+              role="tab"
+              aria-selected={activeFilter === f.key}
               className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
                 activeFilter === f.key
                   ? 'bg-green-700 text-white'
@@ -147,6 +168,28 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               {f.label}
             </button>
           ))}
+        </div>
+
+        {/* Search Input */}
+        <div className="relative mb-4">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search brokers by name..."
+            className="w-full md:w-80 px-4 py-2.5 pl-10 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-green-700 focus:ring-1 focus:ring-green-700"
+            aria-label="Search brokers by name"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className="absolute right-3 md:right-auto md:left-[18.5rem] top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              aria-label="Clear search"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
         </div>
 
         {/* Quiz prompt inline */}
@@ -162,25 +205,25 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           <table className="w-full border border-slate-200 rounded-lg">
             <thead className="bg-slate-50">
               <tr>
-                <th className="px-4 py-3 text-left font-semibold text-sm">
-                  <button onClick={() => handleSort('name')} className="hover:text-green-700 transition-colors">
+                <th className="px-4 py-3 text-left font-semibold text-sm" aria-sort={sortCol === 'name' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
+                  <button onClick={() => handleSort('name')} className="hover:text-green-700 transition-colors" aria-label="Sort by broker name">
                     Broker{sortArrow('name')}
                   </button>
                 </th>
-                <th className="px-4 py-3 text-left font-semibold text-sm">
-                  <button onClick={() => handleSort('asx_fee_value')} className="hover:text-green-700 transition-colors">
+                <th className="px-4 py-3 text-left font-semibold text-sm" aria-sort={sortCol === 'asx_fee_value' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
+                  <button onClick={() => handleSort('asx_fee_value')} className="hover:text-green-700 transition-colors" aria-label="Sort by ASX fee">
                     ASX Fee{sortArrow('asx_fee_value')}
                   </button>
                   <InfoTip text={feeTooltips.asx_fee_value} />
                 </th>
-                <th className="px-4 py-3 text-left font-semibold text-sm">
-                  <button onClick={() => handleSort('us_fee_value')} className="hover:text-green-700 transition-colors">
+                <th className="px-4 py-3 text-left font-semibold text-sm" aria-sort={sortCol === 'us_fee_value' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
+                  <button onClick={() => handleSort('us_fee_value')} className="hover:text-green-700 transition-colors" aria-label="Sort by US fee">
                     US Fee{sortArrow('us_fee_value')}
                   </button>
                   <InfoTip text={feeTooltips.us_fee_value} />
                 </th>
-                <th className="px-4 py-3 text-left font-semibold text-sm">
-                  <button onClick={() => handleSort('fx_rate')} className="hover:text-green-700 transition-colors">
+                <th className="px-4 py-3 text-left font-semibold text-sm" aria-sort={sortCol === 'fx_rate' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
+                  <button onClick={() => handleSort('fx_rate')} className="hover:text-green-700 transition-colors" aria-label="Sort by FX rate">
                     FX Rate{sortArrow('fx_rate')}
                   </button>
                   <InfoTip text={feeTooltips.fx_rate} />
@@ -190,8 +233,8 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                   <InfoTip text={feeTooltips.chess} />
                 </th>
                 <th className="px-4 py-3 text-center font-semibold text-sm">SMSF</th>
-                <th className="px-4 py-3 text-center font-semibold text-sm">
-                  <button onClick={() => handleSort('rating')} className="hover:text-green-700 transition-colors">
+                <th className="px-4 py-3 text-center font-semibold text-sm" aria-sort={sortCol === 'rating' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
+                  <button onClick={() => handleSort('rating')} className="hover:text-green-700 transition-colors" aria-label="Sort by rating">
                     Rating{sortArrow('rating')}
                   </button>
                 </th>
@@ -262,7 +305,19 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
 
         {sorted.length === 0 && (
           <div className="text-center py-12 text-slate-500">
-            No brokers match this filter. Try a different category.
+            {searchQuery ? (
+              <>
+                <p className="text-lg font-medium mb-2">No brokers match &ldquo;{searchQuery}&rdquo;</p>
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="text-green-700 font-semibold hover:text-green-800 transition-colors"
+                >
+                  Clear search
+                </button>
+              </>
+            ) : (
+              "No brokers match this filter. Try a different category."
+            )}
           </div>
         )}
 

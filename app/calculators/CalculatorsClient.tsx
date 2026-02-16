@@ -85,11 +85,14 @@ export default function CalculatorsClient({ brokers }: Props) {
         </div>
 
         {/* ── Pill Navigation ──────────────────────── */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-10">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-10" role="tablist" aria-label="Calculator selection">
           {CALCS.map((c) => (
             <button
               key={c.id}
               onClick={() => setActiveCalc(c.id)}
+              role="tab"
+              aria-selected={activeCalc === c.id}
+              aria-controls="calc-container"
               className={`relative flex flex-col items-start p-4 rounded-xl border text-left transition-all h-full w-full group ${
                 activeCalc === c.id
                   ? "bg-white border-green-700 ring-1 ring-green-700 shadow-md"
@@ -106,7 +109,7 @@ export default function CalculatorsClient({ brokers }: Props) {
         </div>
 
         {/* ── Active Calculator ────────────────────── */}
-        <div id="calc-container" className="scroll-mt-24 min-h-[400px]">
+        <div id="calc-container" className="scroll-mt-24 min-h-[400px]" role="tabpanel">
           {activeCalc === "franking" && <FrankingCalculator />}
           {activeCalc === "switching" && <SwitchingCostCalculator brokers={nonCryptoBrokers} />}
           {activeCalc === "fx" && <FxFeeCalculator brokers={nonCryptoBrokers} />}

@@ -20,6 +20,13 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
 
   return (
     <>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[200] focus:px-4 focus:py-2 focus:bg-green-700 focus:text-white focus:rounded-lg focus:text-sm focus:font-semibold"
+      >
+        Skip to main content
+      </a>
+
       {/* Disclosure Bar */}
       <div className="bg-slate-50 border-b border-slate-200 py-2 text-center text-xs text-slate-600">
         <div className="container-custom">
@@ -35,7 +42,7 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
       </div>
 
       <Header />
-      <main className="min-h-screen">{children}</main>
+      <main id="main-content" className="min-h-screen">{children}</main>
       <Footer />
       <CookieBanner />
       <BackToTop />

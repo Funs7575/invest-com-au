@@ -68,11 +68,13 @@ export default function HomepageComparisonTable({
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex flex-wrap gap-2 mb-6">
+      <div className="flex flex-wrap gap-2 mb-6" role="tablist" aria-label="Broker category filter">
         {TAB_OPTIONS.map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
+            role="tab"
+            aria-selected={activeTab === tab}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               activeTab === tab
                 ? "bg-green-800 text-white"

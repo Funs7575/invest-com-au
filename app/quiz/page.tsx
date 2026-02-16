@@ -429,7 +429,14 @@ export default function QuizPage() {
             <span>Question {step + 1} of {questions.length}</span>
             <span>{Math.round(((step + 1) / questions.length) * 100)}%</span>
           </div>
-          <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+          <div
+            className="h-1.5 bg-slate-100 rounded-full overflow-hidden"
+            role="progressbar"
+            aria-valuenow={step + 1}
+            aria-valuemin={1}
+            aria-valuemax={questions.length}
+            aria-label={`Question ${step + 1} of ${questions.length}`}
+          >
             <div className="h-full bg-green-700 rounded-full transition-all duration-500" style={{ width: `${((step + 1) / questions.length) * 100}%` }} />
           </div>
         </div>
@@ -441,6 +448,7 @@ export default function QuizPage() {
             <button
               key={opt.label}
               onClick={() => handleAnswer(opt.key)}
+              aria-label={`Select: ${opt.label}`}
               className="w-full text-left border border-slate-200 rounded-xl px-6 py-4 hover:border-green-700 hover:bg-green-700/5 transition-all font-medium text-sm md:text-base"
             >
               {opt.label}
