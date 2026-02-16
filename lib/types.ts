@@ -34,6 +34,9 @@ export interface Broker {
   year_founded?: number;
   headquarters?: string;
   deal_text?: string;
+  commission_type?: string;
+  commission_value?: number;
+  estimated_epc?: number;
   created_at: string;
   updated_at: string;
 }
