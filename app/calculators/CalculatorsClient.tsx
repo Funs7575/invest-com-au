@@ -5,6 +5,8 @@ import type { Broker } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
 import { trackClick, getAffiliateLink, getBenefitCta } from "@/lib/tracking";
 import { useSearchParams } from "next/navigation";
+import AuthorByline from "@/components/AuthorByline";
+import Link from "next/link";
 
 /* ──────────────────────────────────────────────
    Types
@@ -52,24 +54,31 @@ export default function CalculatorsClient({ brokers }: Props) {
   const nonCryptoBrokers = useMemo(() => brokers.filter((b) => !b.is_crypto), [brokers]);
 
   return (
-    <div className="py-12">
-      <div className="container-custom">
-        {/* Page Header */}
-        <h1 className="text-4xl font-bold mb-4">Investment Calculators</h1>
-        <p className="text-lg text-slate-600 mb-10">
-          Free tools to help Australian investors understand costs, compare brokers, and plan smarter.
-        </p>
+    <div>
+      {/* Dark Hero */}
+      <section className="bg-brand text-white py-12">
+        <div className="container-custom text-center">
+          <h1 className="text-3xl md:text-4xl font-extrabold mb-3">
+            Investment Calculators
+          </h1>
+          <p className="text-lg text-slate-300 max-w-2xl mx-auto">
+            Free tools to help Australian investors understand costs, compare brokers, and plan smarter.
+          </p>
+          <AuthorByline variant="dark" />
+        </div>
+      </section>
 
+      <div className="container-custom py-12">
         {/* ── Calculator Hub ──────────────────────── */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-14">
           {CALCS.map((c) => (
             <button
               key={c.id}
               onClick={() => scrollTo(c.id)}
-              className="group border border-slate-200 rounded-xl bg-white p-5 text-left hover:border-amber hover:shadow-md transition-all"
+              className="group border border-slate-200 rounded-xl bg-white p-5 text-left hover:border-green-700 hover:shadow-md hover-lift transition-all"
             >
               <span className="text-3xl block mb-2">{c.emoji}</span>
-              <span className="text-sm font-bold text-slate-900 group-hover:text-amber transition-colors block leading-tight">
+              <span className="text-sm font-bold text-slate-900 group-hover:text-green-700 transition-colors block leading-tight">
                 {c.title}
               </span>
               <span className="text-xs text-slate-500 block mt-1 leading-tight">{c.subtitle}</span>
@@ -84,6 +93,30 @@ export default function CalculatorsClient({ brokers }: Props) {
           <FxFeeCalculator brokers={nonCryptoBrokers} />
           <CgtCalculator />
           <ChessLookup brokers={nonCryptoBrokers} />
+        </div>
+
+        {/* Bottom CTA */}
+        <div className="mt-14 bg-brand rounded-xl p-8 text-center text-white">
+          <h3 className="text-2xl font-extrabold mb-2">
+            Need Help Choosing a Broker?
+          </h3>
+          <p className="text-slate-300 mb-6 max-w-lg mx-auto">
+            Compare fees, features, and platforms across every major Australian broker — or let our quiz match you in 60 seconds.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Link
+              href="/compare"
+              className="px-6 py-3 bg-white text-brand text-sm font-bold rounded-lg hover:bg-slate-100 transition-colors"
+            >
+              Compare All Brokers
+            </Link>
+            <Link
+              href="/quiz"
+              className="px-6 py-3 bg-amber text-white text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors"
+            >
+              Take the Quiz
+            </Link>
+          </div>
         </div>
       </div>
     </div>
@@ -179,7 +212,7 @@ function SwitchingCostCalculator({ brokers }: { brokers: Broker[] }) {
           <select
             value={currentSlug}
             onChange={(e) => setCurrentSlug(e.target.value)}
-            className="w-full border border-slate-300 rounded-lg px-4 py-2 bg-white"
+            className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 focus:bg-white focus:border-green-500 focus:ring-2 focus:ring-green-500/20 outline-none transition-all"
           >
             <option value="">Select broker...</option>
             {brokers.map((b) => (
@@ -194,7 +227,7 @@ function SwitchingCostCalculator({ brokers }: { brokers: Broker[] }) {
           <select
             value={newSlug}
             onChange={(e) => setNewSlug(e.target.value)}
-            className="w-full border border-slate-300 rounded-lg px-4 py-2 bg-white"
+            className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 focus:bg-white focus:border-green-500 focus:ring-2 focus:ring-green-500/20 outline-none transition-all"
           >
             <option value="">Select broker...</option>
             {brokers.map((b) => (
@@ -238,7 +271,7 @@ function SwitchingCostCalculator({ brokers }: { brokers: Broker[] }) {
 
           {/* Inline CTA for cheaper broker */}
           {cheaperBroker && (
-            <div className="mt-6 flex items-center gap-4 bg-amber-50 border border-amber-200 rounded-xl p-4">
+            <div className="mt-6 flex items-center gap-4 bg-green-50 border border-green-200 rounded-xl p-5">
               <div className="flex-1">
                 <p className="text-sm font-semibold text-slate-900">
                   {cheaperBroker.name} is the cheaper option.
@@ -254,7 +287,7 @@ function SwitchingCostCalculator({ brokers }: { brokers: Broker[] }) {
                 onClick={() =>
                   trackClick(cheaperBroker.slug, cheaperBroker.name, "calculator-switching", "/calculators", "cta")
                 }
-                className="px-5 py-2 bg-amber text-white font-semibold rounded-lg hover:bg-amber-600 transition-colors text-sm whitespace-nowrap"
+                className="px-5 py-2.5 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors text-sm whitespace-nowrap"
               >
                 {getBenefitCta(cheaperBroker, "calculator")}
               </a>
@@ -312,9 +345,9 @@ function FxFeeCalculator({ brokers }: { brokers: Broker[] }) {
                 <div className="w-32 md:w-40 text-sm font-medium text-slate-800 truncate shrink-0">
                   {broker.name}
                 </div>
-                <div className="flex-1 bg-slate-100 rounded-full h-7 relative overflow-hidden">
+                <div className="flex-1 bg-slate-100 rounded-lg h-9 relative overflow-hidden">
                   <div
-                    className={`h-full rounded-full transition-all ${
+                    className={`h-full rounded-lg transition-all duration-500 flex items-center pr-2 ${
                       isCheapest
                         ? "bg-green-500"
                         : isMostExpensive
@@ -322,17 +355,27 @@ function FxFeeCalculator({ brokers }: { brokers: Broker[] }) {
                         : "bg-amber"
                     }`}
                     style={{ width: `${Math.max(barWidth, 3)}%` }}
-                  />
+                  >
+                    {barWidth > 15 && (
+                      <span className="text-xs font-bold text-white ml-auto">
+                        {formatCurrency(fee)}
+                      </span>
+                    )}
+                  </div>
+                  {barWidth <= 15 && (
+                    <span className="absolute left-[calc(3%+8px)] top-1/2 -translate-y-1/2 text-xs font-bold text-slate-700">
+                      {formatCurrency(fee)}
+                    </span>
+                  )}
                 </div>
-                <div className="w-28 md:w-36 text-right shrink-0">
+                <div className="w-20 md:w-24 text-right shrink-0">
                   <span
                     className={`text-sm font-bold ${
                       isCheapest ? "text-green-700" : isMostExpensive ? "text-red-600" : "text-slate-800"
                     }`}
                   >
-                    {formatCurrency(fee)}
+                    {rate}%
                   </span>
-                  <span className="text-xs text-slate-500 ml-1">({rate}%)</span>
                 </div>
               </div>
             );
@@ -340,7 +383,7 @@ function FxFeeCalculator({ brokers }: { brokers: Broker[] }) {
 
           {/* Cheapest broker CTA */}
           {fxBrokers.length > 0 && (
-            <div className="mt-4 flex items-center gap-4 bg-green-50 border border-green-200 rounded-xl p-4">
+            <div className="mt-4 flex items-center gap-4 bg-green-50 border border-green-200 rounded-xl p-5">
               <div className="flex-1">
                 <p className="text-sm font-semibold text-slate-900">
                   {fxBrokers[0].broker.name} has the lowest FX fee at {fxBrokers[0].rate}%.
@@ -363,7 +406,7 @@ function FxFeeCalculator({ brokers }: { brokers: Broker[] }) {
                     "cta"
                   )
                 }
-                className="px-5 py-2 bg-amber text-white font-semibold rounded-lg hover:bg-amber-600 transition-colors text-sm whitespace-nowrap"
+                className="px-5 py-2.5 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors text-sm whitespace-nowrap"
               >
                 {getBenefitCta(fxBrokers[0].broker, "calculator")}
               </a>
@@ -415,7 +458,7 @@ function CgtCalculator() {
               type="checkbox"
               checked={held12Months}
               onChange={(e) => setHeld12Months(e.target.checked)}
-              className="w-5 h-5 rounded border-slate-300 text-amber accent-amber"
+              className="w-5 h-5 rounded border-slate-300 text-green-700 accent-green-700"
             />
             <span className="text-sm font-medium text-slate-700">Held &gt; 12 months (50% discount)</span>
           </label>
@@ -510,7 +553,7 @@ function ChessLookup({ brokers }: { brokers: Broker[] }) {
         <select
           value={selectedSlug}
           onChange={(e) => setSelectedSlug(e.target.value)}
-          className="w-full border border-slate-300 rounded-lg px-4 py-2 bg-white"
+          className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 focus:bg-white focus:border-green-500 focus:ring-2 focus:ring-green-500/20 outline-none transition-all"
         >
           <option value="">Choose a broker...</option>
           {brokers.map((b) => (
@@ -637,13 +680,17 @@ function CalcSection({
   children: React.ReactNode;
 }) {
   return (
-    <section id={id} className="border border-slate-200 rounded-xl p-6 md:p-8 scroll-mt-24">
-      <div className="flex items-start gap-3 mb-2">
-        <span className="text-2xl">{emoji}</span>
-        <h2 className="text-2xl font-bold">{title}</h2>
+    <section id={id} className="rounded-2xl overflow-hidden border border-slate-200 shadow-sm scroll-mt-24">
+      <div className="bg-brand text-white px-6 py-4">
+        <div className="flex items-center gap-3">
+          <span className="text-xl">{emoji}</span>
+          <h2 className="text-xl font-extrabold">{title}</h2>
+        </div>
+        <p className="text-sm text-slate-300 mt-1 ml-9">{desc}</p>
       </div>
-      <p className="text-sm text-slate-600 mb-6 ml-10">{desc}</p>
-      {children}
+      <div className="p-6 md:p-8 bg-white">
+        {children}
+      </div>
     </section>
   );
 }
@@ -667,7 +714,7 @@ function InputField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-amber focus:border-amber outline-none transition-colors"
+        className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 focus:bg-white focus:border-green-500 focus:ring-2 focus:ring-green-500/20 outline-none transition-all"
       />
     </div>
   );
@@ -684,13 +731,17 @@ function ResultBox({
   positive?: boolean;
   negative?: boolean;
 }) {
-  const bg = positive ? "bg-green-50 border border-green-200" : negative ? "bg-red-50 border border-red-200" : "bg-slate-50";
+  const bg = positive
+    ? "bg-green-50 border border-green-200"
+    : negative
+    ? "bg-red-50 border border-red-200"
+    : "bg-slate-50 border border-slate-200";
   const textColor = positive ? "text-green-700" : negative ? "text-red-600" : "text-slate-900";
 
   return (
-    <div className={`rounded-lg p-4 ${bg}`}>
-      <div className="text-xs text-slate-500 mb-1">{label}</div>
-      <div className={`text-lg font-bold ${textColor}`}>{value}</div>
+    <div className={`rounded-xl p-5 ${bg}`}>
+      <div className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">{label}</div>
+      <div className={`text-2xl font-extrabold ${textColor}`}>{value}</div>
     </div>
   );
 }
