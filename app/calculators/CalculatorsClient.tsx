@@ -5,14 +5,39 @@ import type { Broker } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
 import { trackClick, getAffiliateLink, getBenefitCta } from "@/lib/tracking";
 import { useSearchParams } from "next/navigation";
+import AuthorByline from "@/components/AuthorByline";
 
 /* ──────────────────────────────────────────────
-   Types
+   Animated number – smooth counting transitions
    ────────────────────────────────────────────── */
-interface Props {
-  brokers: Broker[];
+function AnimatedNumber({ value, prefix = "$", decimals = 2 }: { value: number; prefix?: string; decimals?: number }) {
+  const [display, setDisplay] = useState(value);
+  const ref = useRef(value);
+  useEffect(() => {
+    const start = ref.current;
+    const end = value;
+    const duration = 400;
+    const t0 = performance.now();
+    function tick(now: number) {
+      const p = Math.min((now - t0) / duration, 1);
+      setDisplay(start + (end - start) * (1 - Math.pow(1 - p, 3)));
+      if (p < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+    ref.current = end;
+  }, [value]);
+  return (
+    <span>
+      {prefix}
+      {display.toLocaleString("en-AU", { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}
+    </span>
+  );
 }
 
+/* ──────────────────────────────────────────────
+   Types & constants
+   ────────────────────────────────────────────── */
+interface Props { brokers: Broker[] }
 type CalcId = "franking" | "switching" | "fx" | "cgt" | "chess";
 
 const CALCS: { id: CalcId; emoji: string; title: string; subtitle: string }[] = [
@@ -25,65 +50,68 @@ const CALCS: { id: CalcId; emoji: string; title: string; subtitle: string }[] = 
 
 const CORPORATE_TAX_RATE = 0.3;
 const TRANSFER_FEE = 54;
+const TAX_BRACKETS = [0, 19, 32.5, 37, 45];
 
 /* ──────────────────────────────────────────────
-   Root client component
+   Root component
    ────────────────────────────────────────────── */
 export default function CalculatorsClient({ brokers }: Props) {
   const searchParams = useSearchParams();
   const initialCalc = searchParams.get("calc") as CalcId | null;
   const hasScrolled = useRef(false);
+  const [activeCalc, setActiveCalc] = useState<CalcId>(initialCalc || "franking");
 
   useEffect(() => {
     if (initialCalc && !hasScrolled.current) {
       hasScrolled.current = true;
-      const el = document.getElementById(initialCalc);
-      if (el) {
-        setTimeout(() => el.scrollIntoView({ behavior: "smooth", block: "start" }), 150);
-      }
+      setActiveCalc(initialCalc);
+      const el = document.getElementById("calc-container");
+      if (el) setTimeout(() => el.scrollIntoView({ behavior: "smooth", block: "start" }), 150);
     }
   }, [initialCalc]);
-
-  function scrollTo(id: CalcId) {
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
 
   const nonCryptoBrokers = useMemo(() => brokers.filter((b) => !b.is_crypto), [brokers]);
 
   return (
     <div className="py-12">
       <div className="container-custom">
-        {/* Page Header */}
-        <h1 className="text-4xl font-bold mb-4">Investment Calculators</h1>
-        <p className="text-lg text-slate-600 mb-10">
-          Free tools to help Australian investors understand costs, compare brokers, and plan smarter.
-        </p>
+        {/* Page header */}
+        <div className="text-center mb-10">
+          <h1 className="text-3xl md:text-4xl font-extrabold text-brand tracking-tight mb-3">Investment Calculators</h1>
+          <p className="text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed">
+            Free tools to help Australian investors understand costs, compare brokers, and plan smarter.
+          </p>
+          <AuthorByline variant="light" />
+        </div>
 
-        {/* ── Calculator Hub ──────────────────────── */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-14">
+        {/* ── Pill Navigation ──────────────────────── */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-10">
           {CALCS.map((c) => (
             <button
               key={c.id}
-              onClick={() => scrollTo(c.id)}
-              className="group border border-slate-200 rounded-xl bg-white p-5 text-left hover:border-green-700 hover:shadow-md transition-all"
+              onClick={() => setActiveCalc(c.id)}
+              className={`relative flex flex-col items-start p-4 rounded-xl border text-left transition-all h-full w-full group ${
+                activeCalc === c.id
+                  ? "bg-white border-green-700 ring-1 ring-green-700 shadow-md"
+                  : "bg-white border-slate-200 hover:border-green-600/40 hover:shadow-sm"
+              }`}
             >
-              <span className="text-3xl block mb-2">{c.emoji}</span>
-              <span className="text-sm font-bold text-slate-900 group-hover:text-green-700 transition-colors block leading-tight">
+              <span className={`text-2xl mb-2 transition-transform ${activeCalc === c.id ? "scale-110" : "group-hover:scale-105"}`}>{c.emoji}</span>
+              <span className={`text-sm font-bold mb-0.5 leading-tight ${activeCalc === c.id ? "text-green-800" : "text-slate-900"}`}>
                 {c.title}
               </span>
-              <span className="text-xs text-slate-500 block mt-1 leading-tight">{c.subtitle}</span>
+              <span className="text-xs text-slate-500 leading-snug">{c.subtitle}</span>
             </button>
           ))}
         </div>
 
-        {/* ── Calculator Sections ─────────────────── */}
-        <div className="space-y-14">
-          <FrankingCalculator />
-          <SwitchingCostCalculator brokers={nonCryptoBrokers} />
-          <FxFeeCalculator brokers={nonCryptoBrokers} />
-          <CgtCalculator />
-          <ChessLookup brokers={nonCryptoBrokers} />
+        {/* ── Active Calculator ────────────────────── */}
+        <div id="calc-container" className="scroll-mt-24 min-h-[400px]">
+          {activeCalc === "franking" && <FrankingCalculator />}
+          {activeCalc === "switching" && <SwitchingCostCalculator brokers={nonCryptoBrokers} />}
+          {activeCalc === "fx" && <FxFeeCalculator brokers={nonCryptoBrokers} />}
+          {activeCalc === "cgt" && <CgtCalculator />}
+          {activeCalc === "chess" && <ChessLookup brokers={nonCryptoBrokers} />}
         </div>
       </div>
     </div>
@@ -94,13 +122,13 @@ export default function CalculatorsClient({ brokers }: Props) {
    1) Franking Credits Calculator
    ────────────────────────────────────────────── */
 function FrankingCalculator() {
-  const [dividendYield, setDividendYield] = useState("");
+  const [dividendYield, setDividendYield] = useState("4.5");
   const [frankingPct, setFrankingPct] = useState("100");
-  const [marginalRate, setMarginalRate] = useState("32.5");
+  const [marginalRate, setMarginalRate] = useState(32.5);
 
   const dy = parseFloat(dividendYield) || 0;
   const fp = (parseFloat(frankingPct) || 0) / 100;
-  const mr = (parseFloat(marginalRate) || 0) / 100;
+  const mr = marginalRate / 100;
 
   const frankingCredit = (dy * fp * CORPORATE_TAX_RATE) / (1 - CORPORATE_TAX_RATE);
   const grossedUpYield = dy + frankingCredit;
@@ -111,6 +139,9 @@ function FrankingCalculator() {
 
   const showResults = dy > 0;
 
+  // For waterfall chart - scale relative to grossed-up
+  const maxBar = grossedUpYield || 1;
+
   return (
     <CalcSection
       id="franking"
@@ -118,25 +149,86 @@ function FrankingCalculator() {
       title="Franking Credits Calculator"
       desc="Calculate the true after-tax value of franked dividends. Uses corporate tax rate of 30%."
     >
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <InputField label="Dividend Yield (%)" value={dividendYield} onChange={setDividendYield} placeholder="4.5" />
-        <InputField label="Franking (%)" value={frankingPct} onChange={setFrankingPct} placeholder="100" />
-        <InputField label="Marginal Tax Rate (%)" value={marginalRate} onChange={setMarginalRate} placeholder="32.5" />
-      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* Inputs */}
+        <div className="lg:col-span-4">
+          <div className="space-y-5">
+            <InputField label="Dividend Yield" value={dividendYield} onChange={setDividendYield} placeholder="4.5" suffix="%" />
+            <InputField label="Franking" value={frankingPct} onChange={setFrankingPct} placeholder="100" suffix="%" />
 
-      {showResults && (
-        <div className="mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          <ResultBox label="Grossed-Up Yield" value={`${grossedUpYield.toFixed(2)}%`} />
-          <ResultBox label="Franking Credit" value={`${frankingCredit.toFixed(2)}%`} />
-          <ResultBox label="Tax Payable" value={`${taxPayable.toFixed(2)}%`} negative />
-          <ResultBox label="Net Yield After Tax" value={`${netYield.toFixed(2)}%`} positive />
-          {hasRefund ? (
-            <ResultBox label="Refund (Excess Credits)" value={`${excessCredits.toFixed(2)}%`} positive />
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Marginal Tax Rate</label>
+              <div className="grid grid-cols-5 gap-1.5">
+                {TAX_BRACKETS.map((rate) => (
+                  <button
+                    key={rate}
+                    onClick={() => setMarginalRate(rate)}
+                    className={`py-2 text-sm font-semibold rounded-lg transition-all ${
+                      marginalRate === rate
+                        ? "bg-brand text-white shadow-sm"
+                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                    }`}
+                  >
+                    {rate}%
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Results visualisation */}
+        <div className="lg:col-span-8">
+          {showResults ? (
+            <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm h-full">
+              {/* Hero number */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-5 border-b border-slate-100">
+                <div>
+                  <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Net Yield After Tax</span>
+                  <div className="text-4xl font-extrabold text-brand tracking-tight mt-0.5">
+                    <AnimatedNumber value={netYield} prefix="" decimals={2} />%
+                  </div>
+                </div>
+                <div className="mt-3 sm:mt-0 flex gap-6">
+                  <div className="text-right">
+                    <span className="block text-xs font-bold uppercase text-slate-400">Effective Yield</span>
+                    <span className="text-xl font-bold text-green-700">{netYield.toFixed(2)}%</span>
+                  </div>
+                  <div className="text-right">
+                    <span className="block text-xs font-bold uppercase text-slate-400">Grossed-Up</span>
+                    <span className="text-xl font-bold text-slate-700">{grossedUpYield.toFixed(2)}%</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Waterfall chart */}
+              <div className="space-y-5">
+                <WaterfallBar label="Cash Dividend" value={`${dy.toFixed(2)}%`} width={(dy / maxBar) * 100} color="bg-blue-500" />
+                <WaterfallBar label="+ Franking Credits" value={`+${frankingCredit.toFixed(2)}%`} width={(frankingCredit / maxBar) * 100} color="bg-green-600" valueColor="text-green-700" />
+                <WaterfallBar label="- Tax Payable" value={`-${taxPayable.toFixed(2)}%`} width={(taxPayable / maxBar) * 100} color="bg-red-400" valueColor="text-red-500" />
+              </div>
+
+              {/* Insight box */}
+              {hasRefund && (
+                <div className="mt-6 bg-green-50 border border-green-200 rounded-lg p-4 flex gap-3 items-start">
+                  <span className="text-green-600 mt-0.5 shrink-0">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                  </span>
+                  <p className="text-sm text-green-900 leading-relaxed">
+                    <strong>Tax Refund:</strong> Your franking credits exceed your tax liability by <strong>{excessCredits.toFixed(2)}%</strong>. You may be eligible for a tax refund on the excess.
+                  </p>
+                </div>
+              )}
+            </div>
           ) : (
-            <ResultBox label="Shortfall (Tax Owed)" value={`${Math.abs(excessCredits).toFixed(2)}%`} negative />
+            <div className="border-2 border-dashed border-slate-200 rounded-xl p-12 text-center h-full flex flex-col items-center justify-center">
+              <span className="text-5xl mb-4">📊</span>
+              <h3 className="text-lg font-bold text-slate-900 mb-1">Enter a Dividend Yield</h3>
+              <p className="text-sm text-slate-500 max-w-xs">Type a value on the left to see your franking credit waterfall chart.</p>
+            </div>
           )}
         </div>
-      )}
+      </div>
     </CalcSection>
   );
 }
@@ -153,7 +245,6 @@ function SwitchingCostCalculator({ brokers }: { brokers: Broker[] }) {
   const currentBroker = brokers.find((b) => b.slug === currentSlug);
   const newBroker = brokers.find((b) => b.slug === newSlug);
   const tpm = parseFloat(tradesPerMonth) || 0;
-  const pv = parseFloat(portfolioValue) || 0;
 
   const currentMonthly = (currentBroker?.asx_fee_value ?? 0) * tpm;
   const newMonthly = (newBroker?.asx_fee_value ?? 0) * tpm;
@@ -163,7 +254,6 @@ function SwitchingCostCalculator({ brokers }: { brokers: Broker[] }) {
   const fiveYearNet = annualSavings * 5 - TRANSFER_FEE;
 
   const cheaperBroker = monthlySavings > 0 ? newBroker : monthlySavings < 0 ? currentBroker : null;
-
   const showResults = currentBroker && newBroker && currentSlug !== newSlug && tpm > 0;
 
   return (
@@ -173,95 +263,86 @@ function SwitchingCostCalculator({ brokers }: { brokers: Broker[] }) {
       title="Switching Cost Simulator"
       desc="See if switching brokers is worth it after factoring in the $54 CHESS transfer fee."
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Current Broker</label>
-          <select
-            value={currentSlug}
-            onChange={(e) => setCurrentSlug(e.target.value)}
-            className="w-full border border-slate-300 rounded-lg px-4 py-2 bg-white focus:ring-2 focus:ring-green-700/20 focus:border-green-700 outline-none transition-colors"
-          >
-            <option value="">Select broker...</option>
-            {brokers.map((b) => (
-              <option key={b.slug} value={b.slug}>
-                {b.name} ({b.asx_fee || "N/A"}/trade)
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">New Broker</label>
-          <select
-            value={newSlug}
-            onChange={(e) => setNewSlug(e.target.value)}
-            className="w-full border border-slate-300 rounded-lg px-4 py-2 bg-white focus:ring-2 focus:ring-green-700/20 focus:border-green-700 outline-none transition-colors"
-          >
-            <option value="">Select broker...</option>
-            {brokers.map((b) => (
-              <option key={b.slug} value={b.slug}>
-                {b.name} ({b.asx_fee || "N/A"}/trade)
-              </option>
-            ))}
-          </select>
-        </div>
-        <InputField label="Trades per Month" value={tradesPerMonth} onChange={setTradesPerMonth} placeholder="4" />
-        <InputField label="Portfolio Value ($)" value={portfolioValue} onChange={(v) => setPortfolioValue(v)} placeholder="50000" />
-      </div>
-
-      {showResults && (
-        <>
-          <div className="mt-6 grid grid-cols-2 md:grid-cols-5 gap-4">
-            <ResultBox
-              label="Monthly Savings"
-              value={formatCurrency(monthlySavings)}
-              positive={monthlySavings > 0}
-              negative={monthlySavings < 0}
-            />
-            <ResultBox
-              label="Annual Savings"
-              value={formatCurrency(annualSavings)}
-              positive={annualSavings > 0}
-              negative={annualSavings < 0}
-            />
-            <ResultBox label="Switching Cost" value={formatCurrency(TRANSFER_FEE)} />
-            <ResultBox
-              label="Break-Even"
-              value={breakEvenMonths != null ? `${breakEvenMonths} month${breakEvenMonths !== 1 ? "s" : ""}` : "N/A"}
-            />
-            <ResultBox
-              label="5-Year Net Savings"
-              value={formatCurrency(fiveYearNet)}
-              positive={fiveYearNet > 0}
-              negative={fiveYearNet < 0}
-            />
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* Inputs */}
+        <div className="lg:col-span-5 space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <SelectField label="Current Broker" value={currentSlug} onChange={setCurrentSlug} placeholder="Select broker...">
+              {brokers.map((b) => (
+                <option key={b.slug} value={b.slug}>{b.name} ({b.asx_fee || "N/A"}/trade)</option>
+              ))}
+            </SelectField>
+            <SelectField label="New Broker" value={newSlug} onChange={setNewSlug} placeholder="Select broker...">
+              {brokers.map((b) => (
+                <option key={b.slug} value={b.slug}>{b.name} ({b.asx_fee || "N/A"}/trade)</option>
+              ))}
+            </SelectField>
           </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <InputField label="Trades per Month" value={tradesPerMonth} onChange={setTradesPerMonth} placeholder="4" />
+            <InputField label="Portfolio Value" value={portfolioValue} onChange={setPortfolioValue} placeholder="50000" prefix="$" />
+          </div>
+        </div>
 
-          {/* Inline CTA for cheaper broker */}
-          {cheaperBroker && (
-            <div className="mt-6 flex items-center gap-4 bg-green-50 border border-green-200 rounded-xl p-4">
-              <div className="flex-1">
-                <p className="text-sm font-semibold text-slate-900">
-                  {cheaperBroker.name} is the cheaper option.
-                </p>
-                <p className="text-xs text-slate-600 mt-0.5">
-                  Save {formatCurrency(Math.abs(annualSavings))}/year on brokerage fees.
-                </p>
+        {/* Results */}
+        <div className="lg:col-span-7">
+          {showResults ? (
+            <div className="h-full space-y-4">
+              {/* Hero savings */}
+              <div className={`rounded-xl p-6 text-center border ${
+                annualSavings > 0 ? "bg-green-50 border-green-200" : annualSavings < 0 ? "bg-red-50 border-red-200" : "bg-slate-50 border-slate-200"
+              }`}>
+                <span className={`text-xs font-bold uppercase tracking-wider ${annualSavings > 0 ? "text-green-700" : annualSavings < 0 ? "text-red-600" : "text-slate-500"}`}>
+                  {annualSavings > 0 ? "Projected Annual Savings" : annualSavings < 0 ? "You\u2019d Pay More" : "No Difference"}
+                </span>
+                <div className={`text-4xl md:text-5xl font-extrabold tracking-tight mt-1 ${
+                  annualSavings > 0 ? "text-green-800" : annualSavings < 0 ? "text-red-600" : "text-slate-700"
+                }`}>
+                  <AnimatedNumber value={Math.abs(annualSavings)} /><span className="text-2xl font-bold text-slate-400">/yr</span>
+                </div>
+                {breakEvenMonths != null && (
+                  <p className="text-sm text-slate-600 mt-2">
+                    Break even on the ${TRANSFER_FEE} transfer fee in <strong>{breakEvenMonths} month{breakEvenMonths !== 1 ? "s" : ""}</strong>
+                  </p>
+                )}
               </div>
-              <a
-                href={getAffiliateLink(cheaperBroker)}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() =>
-                  trackClick(cheaperBroker.slug, cheaperBroker.name, "calculator-switching", "/calculators", "cta")
-                }
-                className="px-5 py-2 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors text-sm whitespace-nowrap"
-              >
-                {getBenefitCta(cheaperBroker, "calculator")}
-              </a>
+
+              {/* Stat grid */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <ResultBox label="Monthly" value={formatCurrency(monthlySavings)} positive={monthlySavings > 0} negative={monthlySavings < 0} />
+                <ResultBox label="Switch Cost" value={formatCurrency(TRANSFER_FEE)} />
+                <ResultBox label="Break-Even" value={breakEvenMonths != null ? `${breakEvenMonths} mo` : "N/A"} />
+                <ResultBox label="5-Year Net" value={formatCurrency(fiveYearNet)} positive={fiveYearNet > 0} negative={fiveYearNet < 0} />
+              </div>
+
+              {/* CTA */}
+              {cheaperBroker && (
+                <div className="flex items-center gap-4 bg-green-50 border border-green-200 rounded-xl p-4">
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-slate-900">{cheaperBroker.name} is the cheaper option.</p>
+                    <p className="text-xs text-slate-600 mt-0.5">Save {formatCurrency(Math.abs(annualSavings))}/year on brokerage fees.</p>
+                  </div>
+                  <a
+                    href={getAffiliateLink(cheaperBroker)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => trackClick(cheaperBroker.slug, cheaperBroker.name, "calculator-switching", "/calculators", "cta")}
+                    className="px-5 py-2.5 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors text-sm whitespace-nowrap"
+                  >
+                    {getBenefitCta(cheaperBroker, "calculator")}
+                  </a>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="border-2 border-dashed border-slate-200 rounded-xl p-12 text-center h-full flex flex-col items-center justify-center">
+              <span className="text-5xl mb-4">⚖️</span>
+              <h3 className="text-lg font-bold text-slate-900 mb-1">Compare Two Brokers</h3>
+              <p className="text-sm text-slate-500 max-w-xs">Select your current and target broker on the left to see the cost analysis.</p>
             </div>
           )}
-        </>
-      )}
+        </div>
+      </div>
     </CalcSection>
   );
 }
@@ -270,24 +351,20 @@ function SwitchingCostCalculator({ brokers }: { brokers: Broker[] }) {
    3) FX Fee Calculator
    ────────────────────────────────────────────── */
 function FxFeeCalculator({ brokers }: { brokers: Broker[] }) {
-  const [amount, setAmount] = useState("");
-  const tradeAmount = parseFloat(amount) || 0;
+  const [amount, setAmount] = useState(10000);
+  const tradeAmount = amount;
 
-  // Only brokers with a valid FX rate
   const fxBrokers = useMemo(() => {
     return brokers
       .filter((b) => b.fx_rate != null && b.fx_rate > 0)
-      .map((b) => ({
-        broker: b,
-        rate: b.fx_rate!,
-        fee: tradeAmount * (b.fx_rate! / 100),
-      }))
+      .map((b) => ({ broker: b, rate: b.fx_rate!, fee: tradeAmount * (b.fx_rate! / 100) }))
       .sort((a, b) => a.rate - b.rate);
   }, [brokers, tradeAmount]);
 
   const cheapest = fxBrokers[0]?.broker.slug;
   const mostExpensive = fxBrokers[fxBrokers.length - 1]?.broker.slug;
   const maxFee = fxBrokers[fxBrokers.length - 1]?.fee || 1;
+  const savings = fxBrokers.length > 1 ? fxBrokers[fxBrokers.length - 1].fee - fxBrokers[0].fee : 0;
 
   return (
     <CalcSection
@@ -296,79 +373,101 @@ function FxFeeCalculator({ brokers }: { brokers: Broker[] }) {
       title="FX Fee Calculator"
       desc="See what every broker charges you in currency conversion fees on international trades."
     >
-      <div className="max-w-md">
-        <InputField label="Trade Amount (AUD)" value={amount} onChange={setAmount} placeholder="10000" />
+      {/* Slider + amount */}
+      <div className="mb-8">
+        <div className="flex justify-between items-baseline mb-2">
+          <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Trade Amount</label>
+          <span className="text-2xl font-extrabold text-brand tracking-tight">${amount.toLocaleString("en-AU")}</span>
+        </div>
+        <input
+          type="range"
+          min={1000}
+          max={50000}
+          step={500}
+          value={amount}
+          onChange={(e) => setAmount(Number(e.target.value))}
+          className="w-full h-2 rounded-full appearance-none cursor-pointer accent-green-700"
+          style={{
+            background: `linear-gradient(to right, #15803d ${((amount - 1000) / 49000) * 100}%, #e2e8f0 ${((amount - 1000) / 49000) * 100}%)`,
+          }}
+        />
+        <div className="flex justify-between text-xs text-slate-400 mt-1">
+          <span>$1,000</span>
+          <span>$25,000</span>
+          <span>$50,000</span>
+        </div>
       </div>
 
-      {tradeAmount > 0 && fxBrokers.length > 0 && (
-        <div className="mt-6 space-y-2">
-          {fxBrokers.map(({ broker, rate, fee }) => {
-            const isCheapest = broker.slug === cheapest;
-            const isMostExpensive = broker.slug === mostExpensive;
-            const barWidth = maxFee > 0 ? (fee / maxFee) * 100 : 0;
+      {/* Savings hero */}
+      {fxBrokers.length > 1 && (
+        <div className="bg-green-50 border border-green-200 rounded-xl p-5 text-center mb-8">
+          <span className="text-xs font-bold uppercase tracking-wider text-green-700">You could save</span>
+          <div className="text-3xl md:text-4xl font-extrabold text-green-800 tracking-tight mt-0.5">
+            <AnimatedNumber value={savings} />
+          </div>
+          <p className="text-sm text-green-700 mt-1">
+            on a {formatCurrency(tradeAmount)} trade by using <strong>{fxBrokers[0].broker.name}</strong> instead of {fxBrokers[fxBrokers.length - 1].broker.name}
+          </p>
+        </div>
+      )}
 
-            return (
-              <div key={broker.slug} className="flex items-center gap-3">
-                <div className="w-32 md:w-40 text-sm font-medium text-slate-800 truncate shrink-0">
-                  {broker.name}
+      {/* Bar chart */}
+      <div className="space-y-2.5">
+        {fxBrokers.map(({ broker, rate, fee }) => {
+          const isCheapest = broker.slug === cheapest;
+          const isMostExpensive = broker.slug === mostExpensive;
+          const barWidth = maxFee > 0 ? (fee / maxFee) * 100 : 0;
+
+          return (
+            <div key={broker.slug} className="flex items-center gap-3">
+              <div className="w-28 md:w-36 text-xs font-semibold text-slate-600 text-right shrink-0 truncate">
+                {broker.name}
+              </div>
+              <div className="flex-1 relative">
+                <div
+                  className={`h-9 rounded-lg transition-all duration-500 flex items-center pr-3 ${
+                    isCheapest ? "bg-green-700" : isMostExpensive ? "bg-red-400" : "bg-amber"
+                  }`}
+                  style={{ width: `${Math.max(barWidth, 4)}%` }}
+                >
+                  {barWidth > 18 && (
+                    <span className="text-xs font-bold text-white ml-auto">{formatCurrency(fee)}</span>
+                  )}
                 </div>
-                <div className="flex-1 bg-slate-100 rounded-full h-7 relative overflow-hidden">
-                  <div
-                    className={`h-full rounded-full transition-all ${
-                      isCheapest
-                        ? "bg-green-700"
-                        : isMostExpensive
-                        ? "bg-red-400"
-                        : "bg-amber"
-                    }`}
-                    style={{ width: `${Math.max(barWidth, 3)}%` }}
-                  />
-                </div>
-                <div className="w-28 md:w-36 text-right shrink-0">
-                  <span
-                    className={`text-sm font-bold ${
-                      isCheapest ? "text-green-800" : isMostExpensive ? "text-red-600" : "text-slate-800"
-                    }`}
-                  >
+                {barWidth <= 18 && (
+                  <span className="absolute left-[calc(4%+8px)] top-1/2 -translate-y-1/2 text-xs font-bold text-slate-700">
                     {formatCurrency(fee)}
                   </span>
-                  <span className="text-xs text-slate-500 ml-1">({rate}%)</span>
-                </div>
+                )}
               </div>
-            );
-          })}
-
-          {/* Cheapest broker CTA */}
-          {fxBrokers.length > 0 && (
-            <div className="mt-4 flex items-center gap-4 bg-green-50 border border-green-200 rounded-xl p-4">
-              <div className="flex-1">
-                <p className="text-sm font-semibold text-slate-900">
-                  {fxBrokers[0].broker.name} has the lowest FX fee at {fxBrokers[0].rate}%.
-                </p>
-                <p className="text-xs text-slate-600 mt-0.5">
-                  You save {formatCurrency(fxBrokers[fxBrokers.length - 1].fee - fxBrokers[0].fee)} vs the most
-                  expensive option on a {formatCurrency(tradeAmount)} trade.
-                </p>
+              <div className="w-14 text-right shrink-0">
+                <span className={`text-xs font-bold ${isCheapest ? "text-green-800" : isMostExpensive ? "text-red-600" : "text-slate-500"}`}>
+                  {rate}%
+                </span>
               </div>
-              <a
-                href={getAffiliateLink(fxBrokers[0].broker)}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() =>
-                  trackClick(
-                    fxBrokers[0].broker.slug,
-                    fxBrokers[0].broker.name,
-                    "calculator-fx",
-                    "/calculators",
-                    "cta"
-                  )
-                }
-                className="px-5 py-2 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors text-sm whitespace-nowrap"
-              >
-                {getBenefitCta(fxBrokers[0].broker, "calculator")}
-              </a>
             </div>
-          )}
+          );
+        })}
+      </div>
+
+      {/* CTA */}
+      {fxBrokers.length > 0 && (
+        <div className="mt-6 flex items-center gap-4 bg-green-50 border border-green-200 rounded-xl p-4">
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-slate-900">{fxBrokers[0].broker.name} has the lowest FX fee at {fxBrokers[0].rate}%.</p>
+            <p className="text-xs text-slate-600 mt-0.5">
+              You save {formatCurrency(savings)} vs the most expensive on a {formatCurrency(tradeAmount)} trade.
+            </p>
+          </div>
+          <a
+            href={getAffiliateLink(fxBrokers[0].broker)}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => trackClick(fxBrokers[0].broker.slug, fxBrokers[0].broker.name, "calculator-fx", "/calculators", "cta")}
+            className="px-5 py-2.5 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors text-sm whitespace-nowrap"
+          >
+            {getBenefitCta(fxBrokers[0].broker, "calculator")}
+          </a>
         </div>
       )}
     </CalcSection>
@@ -380,21 +479,17 @@ function FxFeeCalculator({ brokers }: { brokers: Broker[] }) {
    ────────────────────────────────────────────── */
 function CgtCalculator() {
   const [gainAmount, setGainAmount] = useState("");
-  const [marginalRate, setMarginalRate] = useState("32.5");
+  const [marginalRate, setMarginalRate] = useState(32.5);
   const [held12Months, setHeld12Months] = useState(true);
 
   const gain = parseFloat(gainAmount) || 0;
-  const mr = (parseFloat(marginalRate) || 0) / 100;
+  const mr = marginalRate / 100;
 
-  // Without discount
   const taxWithout = gain * mr;
   const effectiveWithout = gain > 0 ? (taxWithout / gain) * 100 : 0;
-
-  // With 50% discount (only if held >12 months)
   const discountedGain = held12Months ? gain * 0.5 : gain;
   const taxWith = discountedGain * mr;
   const effectiveWith = gain > 0 ? (taxWith / gain) * 100 : 0;
-
   const taxSaved = taxWithout - taxWith;
 
   const showResults = gain > 0;
@@ -406,10 +501,30 @@ function CgtCalculator() {
       title="CGT Estimator"
       desc="Estimate capital gains tax and see how the 50% CGT discount affects your tax bill. Not financial advice."
     >
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <InputField label="Capital Gain ($)" value={gainAmount} onChange={setGainAmount} placeholder="10000" />
-        <InputField label="Marginal Tax Rate (%)" value={marginalRate} onChange={setMarginalRate} placeholder="32.5" />
-        <div className="flex items-end pb-1">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        {/* Inputs */}
+        <div className="lg:col-span-4 space-y-5">
+          <InputField label="Capital Gain" value={gainAmount} onChange={setGainAmount} placeholder="10000" prefix="$" />
+
+          <div>
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Marginal Tax Rate</label>
+            <div className="grid grid-cols-5 gap-1.5">
+              {TAX_BRACKETS.map((rate) => (
+                <button
+                  key={rate}
+                  onClick={() => setMarginalRate(rate)}
+                  className={`py-2 text-sm font-semibold rounded-lg transition-all ${
+                    marginalRate === rate
+                      ? "bg-brand text-white shadow-sm"
+                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                  }`}
+                >
+                  {rate}%
+                </button>
+              ))}
+            </div>
+          </div>
+
           <label className="flex items-center gap-2 cursor-pointer select-none">
             <input
               type="checkbox"
@@ -420,73 +535,75 @@ function CgtCalculator() {
             <span className="text-sm font-medium text-slate-700">Held &gt; 12 months (50% discount)</span>
           </label>
         </div>
-      </div>
 
-      {showResults && (
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Without discount */}
-          <div className="bg-slate-50 border border-slate-200 rounded-xl p-5">
-            <h4 className="text-sm font-bold text-slate-500 uppercase tracking-wide mb-3">Without CGT Discount</h4>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-slate-600">Taxable Gain</span>
-                <span className="font-semibold">{formatCurrency(gain)}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-slate-600">Tax Payable</span>
-                <span className="font-semibold text-red-600">{formatCurrency(taxWithout)}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-slate-600">Effective Rate</span>
-                <span className="font-semibold">{effectiveWithout.toFixed(1)}%</span>
+        {/* Results */}
+        <div className="lg:col-span-8">
+          {showResults ? (
+            <div className="space-y-4">
+              {/* Hero savings */}
+              {held12Months && taxSaved > 0 && (
+                <div className="bg-green-50 border border-green-200 rounded-xl p-5 text-center">
+                  <span className="text-xs font-bold uppercase tracking-wider text-green-700">CGT Discount Saves You</span>
+                  <div className="text-3xl md:text-4xl font-extrabold text-green-800 tracking-tight mt-0.5">
+                    <AnimatedNumber value={taxSaved} />
+                  </div>
+                  <p className="text-sm text-green-700 mt-1">
+                    Effective rate drops from {effectiveWithout.toFixed(1)}% to <strong>{effectiveWith.toFixed(1)}%</strong>
+                  </p>
+                </div>
+              )}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Without discount */}
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-5">
+                  <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Without CGT Discount</h4>
+                  <div className="space-y-2.5">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-slate-600">Taxable Gain</span>
+                      <span className="font-semibold">{formatCurrency(gain)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-slate-600">Tax Payable</span>
+                      <span className="font-bold text-red-600">{formatCurrency(taxWithout)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-slate-600">Effective Rate</span>
+                      <span className="font-semibold">{effectiveWithout.toFixed(1)}%</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* With discount */}
+                <div className={`border rounded-xl p-5 ${held12Months ? "bg-green-50 border-green-200" : "bg-slate-50 border-slate-200"}`}>
+                  <h4 className={`text-xs font-bold uppercase tracking-wider mb-3 ${held12Months ? "text-green-700" : "text-slate-500"}`}>
+                    {held12Months ? "With 50% CGT Discount" : "No Discount (< 12 months)"}
+                  </h4>
+                  <div className="space-y-2.5">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-slate-600">Taxable Gain</span>
+                      <span className="font-semibold">{formatCurrency(discountedGain)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-slate-600">Tax Payable</span>
+                      <span className={`font-bold ${held12Months ? "text-green-700" : "text-red-600"}`}>{formatCurrency(taxWith)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-slate-600">Effective Rate</span>
+                      <span className="font-semibold">{effectiveWith.toFixed(1)}%</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-
-          {/* With discount */}
-          <div
-            className={`border rounded-xl p-5 ${
-              held12Months ? "bg-green-50 border-green-200" : "bg-slate-50 border-slate-200"
-            }`}
-          >
-            <h4
-              className={`text-sm font-bold uppercase tracking-wide mb-3 ${
-                held12Months ? "text-green-700" : "text-slate-500"
-              }`}
-            >
-              {held12Months ? "With 50% CGT Discount" : "No Discount (< 12 months)"}
-            </h4>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-slate-600">Taxable Gain</span>
-                <span className="font-semibold">{formatCurrency(discountedGain)}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-slate-600">Tax Payable</span>
-                <span className={`font-semibold ${held12Months ? "text-green-700" : "text-red-600"}`}>
-                  {formatCurrency(taxWith)}
-                </span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-slate-600">Effective Rate</span>
-                <span className="font-semibold">{effectiveWith.toFixed(1)}%</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Tax saved summary */}
-          {held12Months && taxSaved > 0 && (
-            <div className="md:col-span-2 bg-green-50 border border-green-200 rounded-xl p-4 text-center">
-              <p className="text-green-800 font-bold text-lg">
-                You save {formatCurrency(taxSaved)} in tax by holding for 12+ months.
-              </p>
-              <p className="text-green-700 text-sm mt-1">
-                Effective tax rate drops from {effectiveWithout.toFixed(1)}% to {effectiveWith.toFixed(1)}%.
-              </p>
+          ) : (
+            <div className="border-2 border-dashed border-slate-200 rounded-xl p-12 text-center h-full flex flex-col items-center justify-center">
+              <span className="text-5xl mb-4">📅</span>
+              <h3 className="text-lg font-bold text-slate-900 mb-1">Enter a Capital Gain</h3>
+              <p className="text-sm text-slate-500 max-w-xs">Type your gain amount to see the tax comparison with and without the 50% discount.</p>
             </div>
           )}
         </div>
-      )}
+      </div>
     </CalcSection>
   );
 }
@@ -505,24 +622,16 @@ function ChessLookup({ brokers }: { brokers: Broker[] }) {
       title="CHESS Sponsorship Lookup"
       desc="Check if a broker uses CHESS sponsorship or a custodial model, and what it means for you."
     >
-      <div className="max-w-md">
-        <label className="block text-sm font-medium text-slate-700 mb-1">Select Broker</label>
-        <select
-          value={selectedSlug}
-          onChange={(e) => setSelectedSlug(e.target.value)}
-          className="w-full border border-slate-300 rounded-lg px-4 py-2 bg-white focus:ring-2 focus:ring-green-700/20 focus:border-green-700 outline-none transition-colors"
-        >
-          <option value="">Choose a broker...</option>
+      <div className="max-w-md mb-6">
+        <SelectField label="Select Broker" value={selectedSlug} onChange={setSelectedSlug} placeholder="Choose a broker...">
           {brokers.map((b) => (
-            <option key={b.slug} value={b.slug}>
-              {b.name}
-            </option>
+            <option key={b.slug} value={b.slug}>{b.name}</option>
           ))}
-        </select>
+        </SelectField>
       </div>
 
       {broker && (
-        <div className="mt-6">
+        <div className="space-y-6">
           <div
             className={`border rounded-xl p-6 ${
               broker.chess_sponsored ? "bg-green-50 border-green-200" : "bg-amber-50 border-amber-300"
@@ -532,81 +641,54 @@ function ChessLookup({ brokers }: { brokers: Broker[] }) {
               <span className="text-4xl">{broker.chess_sponsored ? "\u{2705}" : "\u{1F6E1}\u{FE0F}"}</span>
               <div className="flex-1">
                 <h4 className="text-lg font-bold text-slate-900 mb-1">
-                  {broker.name} &mdash;{" "}
-                  {broker.chess_sponsored ? "CHESS Sponsored" : "Custodial Model"}
+                  {broker.name} &mdash; {broker.chess_sponsored ? "CHESS Sponsored" : "Custodial Model"}
                 </h4>
-
                 {broker.chess_sponsored ? (
                   <div className="text-sm text-slate-700 space-y-2 mt-2">
-                    <p>
-                      <strong>What this means:</strong> Your shares are held directly in your name on the ASX CHESS
-                      sub-register. You receive a unique Holder Identification Number (HIN) from ASX.
-                    </p>
-                    <p>
-                      <strong>Safety:</strong> If {broker.name} were to go bankrupt, your shares are still registered
-                      in your name with the ASX. They are not the broker&apos;s assets and cannot be claimed by their
-                      creditors. You can transfer your HIN to another CHESS-sponsored broker.
-                    </p>
-                    <p>
-                      <strong>Trade-off:</strong> CHESS-sponsored brokers may charge slightly higher fees for the added
-                      safety and direct ownership benefits.
-                    </p>
+                    <p><strong>What this means:</strong> Your shares are held directly in your name on the ASX CHESS sub-register. You receive a unique Holder Identification Number (HIN) from ASX.</p>
+                    <p><strong>Safety:</strong> If {broker.name} were to go bankrupt, your shares are still registered in your name with the ASX. They are not the broker&apos;s assets and cannot be claimed by their creditors.</p>
+                    <p><strong>Trade-off:</strong> CHESS-sponsored brokers may charge slightly higher fees for the added safety and direct ownership benefits.</p>
                   </div>
                 ) : (
                   <div className="text-sm text-slate-700 space-y-2 mt-2">
-                    <p>
-                      <strong>What this means:</strong> Your shares are held in a pooled custodial account (an
-                      &ldquo;omnibus&rdquo; account) under the broker&apos;s name, not directly in your name on the ASX
-                      register.
-                    </p>
-                    <p>
-                      <strong>Safety:</strong> The broker is required by ASIC to segregate your holdings from their own
-                      assets. However, in a broker insolvency, recovery can be slower and more complex than with
-                      CHESS sponsorship. You do not receive a personal HIN.
-                    </p>
-                    <p>
-                      <strong>Trade-off:</strong> Custodial models often enable lower fees, fractional shares, and
-                      access to international markets that CHESS-sponsored brokers may not offer.
-                    </p>
+                    <p><strong>What this means:</strong> Your shares are held in a pooled custodial account (an &ldquo;omnibus&rdquo; account) under the broker&apos;s name, not directly in your name on the ASX register.</p>
+                    <p><strong>Safety:</strong> The broker is required by ASIC to segregate your holdings from their own assets. However, in a broker insolvency, recovery can be slower and more complex than with CHESS sponsorship.</p>
+                    <p><strong>Trade-off:</strong> Custodial models often enable lower fees, fractional shares, and access to international markets that CHESS-sponsored brokers may not offer.</p>
                   </div>
                 )}
               </div>
             </div>
           </div>
 
-          {/* Quick reference table for all brokers */}
-          <div className="mt-6">
-            <h4 className="text-sm font-bold text-slate-500 uppercase tracking-wide mb-3">All Brokers at a Glance</h4>
+          {/* All brokers table */}
+          <div>
+            <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">All Brokers at a Glance</h4>
             <div className="border border-slate-200 rounded-xl overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
-                    <th className="text-left px-4 py-2 font-semibold text-slate-700">Broker</th>
-                    <th className="text-left px-4 py-2 font-semibold text-slate-700">Model</th>
-                    <th className="text-right px-4 py-2 font-semibold text-slate-700">ASX Fee</th>
+                    <th className="text-left px-4 py-2.5 font-semibold text-slate-700">Broker</th>
+                    <th className="text-left px-4 py-2.5 font-semibold text-slate-700">Model</th>
+                    <th className="text-right px-4 py-2.5 font-semibold text-slate-700">ASX Fee</th>
                   </tr>
                 </thead>
                 <tbody>
                   {brokers.map((b) => (
                     <tr
                       key={b.slug}
-                      className={`border-b border-slate-100 last:border-0 ${
-                        b.slug === selectedSlug ? "bg-green-50" : ""
+                      className={`border-b border-slate-100 last:border-0 transition-colors ${
+                        b.slug === selectedSlug ? "bg-green-50" : "hover:bg-slate-50"
                       }`}
                     >
-                      <td className="px-4 py-2 font-medium text-slate-800">{b.name}</td>
-                      <td className="px-4 py-2">
+                      <td className="px-4 py-2.5 font-medium text-slate-800">{b.name}</td>
+                      <td className="px-4 py-2.5">
                         {b.chess_sponsored ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-50 text-green-700 text-xs rounded border border-green-200 font-medium">
-                            CHESS
-                          </span>
+                          <span className="inline-flex items-center px-2 py-0.5 bg-green-50 text-green-700 text-xs rounded border border-green-200 font-medium">CHESS</span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-slate-100 text-slate-600 text-xs rounded border border-slate-200 font-medium">
-                            Custodial
-                          </span>
+                          <span className="inline-flex items-center px-2 py-0.5 bg-slate-100 text-slate-600 text-xs rounded border border-slate-200 font-medium">Custodial</span>
                         )}
                       </td>
-                      <td className="px-4 py-2 text-right text-slate-700">{b.asx_fee || "N/A"}</td>
+                      <td className="px-4 py-2.5 text-right text-slate-700">{b.asx_fee || "N/A"}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -623,74 +705,89 @@ function ChessLookup({ brokers }: { brokers: Broker[] }) {
    Shared UI Components
    ────────────────────────────────────────────── */
 
-function CalcSection({
-  id,
-  emoji,
-  title,
-  desc,
-  children,
-}: {
-  id: string;
-  emoji: string;
-  title: string;
-  desc: string;
-  children: React.ReactNode;
+function CalcSection({ id, emoji, title, desc, children }: {
+  id: string; emoji: string; title: string; desc: string; children: React.ReactNode;
 }) {
   return (
-    <section id={id} className="border border-slate-200 rounded-xl p-6 md:p-8 scroll-mt-24">
-      <div className="flex items-start gap-3 mb-2">
+    <section id={id} className="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-sm">
+      <div className="flex items-start gap-3 mb-1">
         <span className="text-2xl">{emoji}</span>
-        <h2 className="text-2xl font-bold">{title}</h2>
+        <h2 className="text-xl font-extrabold text-slate-900">{title}</h2>
       </div>
-      <p className="text-sm text-slate-600 mb-6 ml-10">{desc}</p>
+      <p className="text-sm text-slate-500 mb-6 ml-10">{desc}</p>
       {children}
     </section>
   );
 }
 
-function InputField({
-  label,
-  value,
-  onChange,
-  placeholder,
-}: {
-  label: string;
-  value: string;
-  onChange: (v: string) => void;
-  placeholder?: string;
+function InputField({ label, value, onChange, placeholder, prefix, suffix }: {
+  label: string; value: string; onChange: (v: string) => void; placeholder?: string; prefix?: string; suffix?: string;
 }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-slate-700 mb-1">{label}</label>
-      <input
-        type="number"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-700/20 focus:border-green-700 outline-none transition-colors"
-      />
+      <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">{label}</label>
+      <div className="relative">
+        {prefix && <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium text-sm">{prefix}</div>}
+        <input
+          type="number"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          className={`w-full bg-white border border-slate-200 rounded-lg py-2.5 shadow-sm focus:outline-none focus:border-green-700 focus:ring-1 focus:ring-green-700 transition-all font-medium ${prefix ? "pl-7" : "pl-4"} ${suffix ? "pr-10" : "pr-4"}`}
+        />
+        {suffix && <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium text-sm">{suffix}</div>}
+      </div>
     </div>
   );
 }
 
-function ResultBox({
-  label,
-  value,
-  positive,
-  negative,
-}: {
-  label: string;
-  value: string;
-  positive?: boolean;
-  negative?: boolean;
+function SelectField({ label, value, onChange, placeholder, children }: {
+  label: string; value: string; onChange: (v: string) => void; placeholder: string; children: React.ReactNode;
 }) {
-  const bg = positive ? "bg-green-50 border border-green-200" : negative ? "bg-red-50 border border-red-200" : "bg-slate-50";
+  return (
+    <div>
+      <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">{label}</label>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 shadow-sm focus:outline-none focus:border-green-700 focus:ring-1 focus:ring-green-700 transition-all font-medium"
+      >
+        <option value="">{placeholder}</option>
+        {children}
+      </select>
+    </div>
+  );
+}
+
+function ResultBox({ label, value, positive, negative }: {
+  label: string; value: string; positive?: boolean; negative?: boolean;
+}) {
+  const bg = positive ? "bg-green-50 border-green-200" : negative ? "bg-red-50 border-red-200" : "bg-slate-50 border-slate-200";
   const textColor = positive ? "text-green-800" : negative ? "text-red-600" : "text-slate-900";
 
   return (
-    <div className={`rounded-lg p-4 ${bg}`}>
-      <div className="text-xs text-slate-500 mb-1">{label}</div>
-      <div className={`text-lg font-bold ${textColor}`}>{value}</div>
+    <div className={`rounded-xl p-3.5 border ${bg}`}>
+      <div className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">{label}</div>
+      <div className={`text-xl font-extrabold tracking-tight ${textColor}`}>{value}</div>
+    </div>
+  );
+}
+
+function WaterfallBar({ label, value, width, color, valueColor }: {
+  label: string; value: string; width: number; color: string; valueColor?: string;
+}) {
+  return (
+    <div>
+      <div className="flex justify-between text-sm mb-1.5">
+        <span className="text-slate-600 font-semibold">{label}</span>
+        <span className={`font-bold ${valueColor || "text-slate-900"}`}>{value}</span>
+      </div>
+      <div className="h-9 w-full bg-slate-100 rounded-lg overflow-hidden flex items-center px-1">
+        <div
+          className={`h-7 rounded-md transition-all duration-500 ease-out ${color}`}
+          style={{ width: `${Math.max(Math.min(width, 100), 2)}%` }}
+        />
+      </div>
     </div>
   );
 }
