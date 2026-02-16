@@ -1,10 +1,17 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import type { Broker } from "@/lib/types";
+import { absoluteUrl } from "@/lib/seo";
 
 export const metadata = {
-  title: "Broker Reviews — Invest.com.au",
+  title: "Broker Reviews",
   description: "In-depth, honest reviews of every major Australian share trading platform. Fees, pros, cons, and our verdict.",
+  openGraph: {
+    title: "Broker Reviews — Invest.com.au",
+    description: "In-depth, honest reviews of every major Australian share trading platform. Fees, pros, cons, and our verdict.",
+    images: [{ url: "/api/og?title=Broker+Reviews&subtitle=Honest+reviews+of+every+Australian+broker&type=default", width: 1200, height: 630 }],
+  },
+  alternates: { canonical: "/reviews" },
 };
 
 export default async function ReviewsPage() {
@@ -31,7 +38,7 @@ export default async function ReviewsPage() {
       "@type": "ListItem",
       position: i + 1,
       name: b.name,
-      url: `https://invest.com.au/broker/${b.slug}`,
+      url: absoluteUrl(`/broker/${b.slug}`),
     })),
   };
 

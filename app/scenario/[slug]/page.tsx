@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getAffiliateLink } from "@/lib/tracking";
 import AuthorByline from "@/components/AuthorByline";
+import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 
 export async function generateMetadata({
   params,
@@ -20,11 +21,30 @@ export async function generateMetadata({
 
   if (!scenario) return { title: "Scenario Not Found" };
 
+  const title = scenario.title;
+  const description =
+    scenario.hero_title ||
+    `Find the best broker for ${scenario.title.toLowerCase()}. Compare fees, features, and platforms.`;
+  const ogImageUrl = `/api/og?title=${encodeURIComponent(`Best Broker for ${scenario.title}`)}&subtitle=${encodeURIComponent(description.slice(0, 80))}&type=scenario`;
+
   return {
-    title: `${scenario.title} — Invest.com.au`,
-    description:
-      scenario.hero_title ||
-      `Find the best broker for ${scenario.title.toLowerCase()}. Compare fees, features, and platforms on Invest.com.au.`,
+    title,
+    description,
+    openGraph: {
+      title: `${title} — ${SITE_NAME}`,
+      description,
+      url: absoluteUrl(`/scenario/${slug}`),
+      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: title }],
+    },
+    twitter: {
+      card: "summary_large_image" as const,
+      title: `${title} — ${SITE_NAME}`,
+      description,
+      images: [ogImageUrl],
+    },
+    alternates: {
+      canonical: `/scenario/${slug}`,
+    },
   };
 }
 
@@ -75,11 +95,21 @@ export default async function ScenarioPage({
     ],
   };
 
+  const breadcrumbLd = breadcrumbJsonLd([
+    { name: "Home", url: absoluteUrl("/") },
+    { name: "Investing For", url: absoluteUrl("/scenarios") },
+    { name: s.title },
+  ]);
+
   return (
     <>
     <script
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
     />
     <div className="py-12">
       <div className="container-custom max-w-3xl mx-auto">

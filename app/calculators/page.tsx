@@ -4,9 +4,15 @@ import { Suspense } from "react";
 import CalculatorsClient from "./CalculatorsClient";
 
 export const metadata = {
-  title: "Investment Calculators — Invest.com.au",
+  title: "Investment Calculators",
   description:
     "Free Australian investment calculators: franking credits, broker switching costs, FX fees, capital gains tax, and CHESS sponsorship lookup.",
+  openGraph: {
+    title: "Investment Calculators — Invest.com.au",
+    description: "Free Australian investment calculators: franking credits, broker switching costs, FX fees, CGT.",
+    images: [{ url: "/api/og?title=Investment+Calculators&subtitle=Franking+credits,+FX+fees,+CGT+%26+more&type=default", width: 1200, height: 630 }],
+  },
+  alternates: { canonical: "/calculators" },
 };
 
 export default async function CalculatorsPage() {

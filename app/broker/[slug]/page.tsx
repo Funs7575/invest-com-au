@@ -2,21 +2,41 @@ import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
 import { notFound } from "next/navigation";
 import BrokerReviewClient from "./BrokerReviewClient";
+import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const supabase = await createClient();
   const { data: broker } = await supabase
     .from('brokers')
-    .select('name, tagline')
+    .select('name, tagline, rating')
     .eq('slug', slug)
     .single();
 
-  if (!broker) return { title: 'Broker Not Found — Invest.com.au' };
+  if (!broker) return { title: 'Broker Not Found' };
+
+  const title = `${broker.name} Review (2026)`;
+  const description = broker.tagline || `Honest review of ${broker.name}. Fees, pros, cons, and our verdict.`;
+  const ogImageUrl = `/api/og?title=${encodeURIComponent(`${broker.name} Review`)}&subtitle=${encodeURIComponent(broker.rating ? `${broker.rating}/5 Rating — Fees, Pros & Cons` : 'Honest Review — Fees, Pros & Cons')}&type=broker`;
 
   return {
-    title: `${broker.name} Review (2026) — Invest.com.au`,
-    description: broker.tagline || `Honest review of ${broker.name}. Fees, pros, cons, and our verdict.`,
+    title,
+    description,
+    openGraph: {
+      title: `${title} — ${SITE_NAME}`,
+      description,
+      url: absoluteUrl(`/broker/${slug}`),
+      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: `${broker.name} Review` }],
+    },
+    twitter: {
+      card: "summary_large_image" as const,
+      title: `${title} — ${SITE_NAME}`,
+      description,
+      images: [ogImageUrl],
+    },
+    alternates: {
+      canonical: `/broker/${slug}`,
+    },
   };
 }
 
@@ -72,11 +92,21 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
     },
   };
 
+  const breadcrumbLd = breadcrumbJsonLd([
+    { name: "Home", url: absoluteUrl("/") },
+    { name: "Reviews", url: absoluteUrl("/reviews") },
+    { name: b.name },
+  ]);
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
       <BrokerReviewClient broker={b} similar={(similar as Broker[]) || []} />
     </>

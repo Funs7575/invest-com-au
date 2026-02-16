@@ -4,9 +4,15 @@ import type { Broker } from "@/lib/types";
 import VersusClient from "./VersusClient";
 
 export const metadata = {
-  title: "Broker vs Broker — Invest.com.au",
+  title: "Broker vs Broker",
   description:
     "Compare two Australian brokers side by side. See fees, features, CHESS sponsorship, and our honest pick.",
+  openGraph: {
+    title: "Broker vs Broker — Invest.com.au",
+    description: "Compare two Australian brokers side by side. See fees, features, CHESS sponsorship, and our honest pick.",
+    images: [{ url: "/api/og?title=Broker+vs+Broker&subtitle=Compare+any+two+brokers+side-by-side&type=default", width: 1200, height: 630 }],
+  },
+  alternates: { canonical: "/versus" },
 };
 
 export default async function VersusPage() {

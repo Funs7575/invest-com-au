@@ -10,9 +10,21 @@ import LeadMagnet from "@/components/LeadMagnet";
 import SocialProofBar from "@/components/SocialProofBar";
 
 export const metadata = {
-  title: "Compare Australian Brokers — Invest.com.au",
+  title: "Compare Australian Brokers",
   description:
     "Compare 40+ Australian share trading platforms side-by-side. Real fees, real data, updated daily. Find the broker that fits your situation.",
+  openGraph: {
+    title: "Compare Australian Brokers — Invest.com.au",
+    description: "Compare 40+ Australian share trading platforms side-by-side. Real fees, real data, updated daily.",
+    url: "/",
+    images: [{ url: "/api/og", width: 1200, height: 630 }],
+  },
+  twitter: {
+    card: "summary_large_image" as const,
+    title: "Compare Australian Brokers — Invest.com.au",
+    description: "Compare 40+ Australian share trading platforms side-by-side. Real fees, real data, updated daily.",
+  },
+  alternates: { canonical: "/" },
 };
 
 const categoryCards = [

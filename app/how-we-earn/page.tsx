@@ -1,12 +1,25 @@
 import Link from "next/link";
+import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 
 export const metadata = {
-  title: "How We Earn Money — Invest.com.au",
+  title: "How We Earn Money",
   description: "Full transparency on how Invest.com.au makes money. Affiliate commissions explained, and what it means for our rankings and your experience.",
+  alternates: { canonical: "/how-we-earn" },
 };
 
 export default function HowWeEarnPage() {
+  const breadcrumbs = breadcrumbJsonLd([
+    { name: "Home", url: absoluteUrl("/") },
+    { name: "About", url: absoluteUrl("/about") },
+    { name: "How We Earn" },
+  ]);
+
   return (
+    <>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
+    />
     <div className="py-12">
       <div className="container-custom">
         <div className="max-w-3xl mx-auto">
@@ -125,5 +138,6 @@ export default function HowWeEarnPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

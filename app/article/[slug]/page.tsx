@@ -8,6 +8,7 @@ import IntlBrokersEnhanced from "@/components/IntlBrokersEnhanced";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import ComparisonTableSkeleton from "@/components/ComparisonTableSkeleton";
 import AuthorByline from "@/components/AuthorByline";
+import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 
 const CATEGORY_COLORS: Record<string, string> = {
   tax: "bg-purple-100 text-purple-700",
@@ -37,15 +38,39 @@ export async function generateMetadata({
   const supabase = await createClient();
   const { data: article } = await supabase
     .from("articles")
-    .select("title, excerpt")
+    .select("title, excerpt, category, published_at")
     .eq("slug", slug)
     .single();
 
   if (!article) return { title: "Article Not Found" };
 
+  const title = article.title;
+  const description = article.excerpt || "";
+  const categoryLabel = article.category
+    ? `${article.category.charAt(0).toUpperCase() + article.category.slice(1)} Guide`
+    : "Investing Guide";
+  const ogImageUrl = `/api/og?title=${encodeURIComponent(title)}&subtitle=${encodeURIComponent(categoryLabel)}&type=article`;
+
   return {
-    title: `${article.title} — Invest.com.au`,
-    description: article.excerpt || "",
+    title,
+    description,
+    openGraph: {
+      type: "article" as const,
+      title: `${title} — ${SITE_NAME}`,
+      description,
+      url: absoluteUrl(`/article/${slug}`),
+      publishedTime: article.published_at || undefined,
+      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: title }],
+    },
+    twitter: {
+      card: "summary_large_image" as const,
+      title: `${title} — ${SITE_NAME}`,
+      description,
+      images: [ogImageUrl],
+    },
+    alternates: {
+      canonical: `/article/${slug}`,
+    },
   };
 }
 
@@ -131,7 +156,7 @@ export default async function ArticlePage({
         : {
             "@type": "Organization",
             name: "Invest.com.au",
-            url: "https://invest-com-au.vercel.app",
+            url: absoluteUrl("/"),
           },
     publisher: {
       "@type": "Organization",
@@ -139,9 +164,15 @@ export default async function ArticlePage({
     },
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `https://invest-com-au.vercel.app${pagePath}`,
+      "@id": absoluteUrl(pagePath),
     },
   };
+
+  const breadcrumbLd = breadcrumbJsonLd([
+    { name: "Home", url: absoluteUrl("/") },
+    { name: "Articles", url: absoluteUrl("/articles") },
+    { name: a.title },
+  ]);
 
   return (
     <div>
@@ -149,6 +180,10 @@ export default async function ArticlePage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
 
       {/* Dark Hero Section */}

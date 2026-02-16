@@ -1,10 +1,17 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
 import CompareClient from "./CompareClient";
+import { absoluteUrl } from "@/lib/seo";
 
 export const metadata = {
-  title: "Compare Australian Brokers — Invest.com.au",
+  title: "Compare Australian Brokers",
   description: "Side-by-side comparison of fees, features, and safety for Australian share trading platforms. Updated February 2026.",
+  openGraph: {
+    title: "Compare Australian Brokers — Invest.com.au",
+    description: "Side-by-side comparison of fees, features, and safety for Australian share trading platforms.",
+    images: [{ url: "/api/og?title=Compare+Australian+Brokers&subtitle=Fees,+features+%26+safety+side-by-side&type=default", width: 1200, height: 630 }],
+  },
+  alternates: { canonical: "/compare" },
 };
 
 export default async function ComparePage() {
@@ -29,7 +36,7 @@ export default async function ComparePage() {
       "@type": "ListItem",
       position: i + 1,
       name: b.name,
-      url: `https://invest.com.au/broker/${b.slug}`,
+      url: absoluteUrl(`/broker/${b.slug}`),
     })),
   };
 

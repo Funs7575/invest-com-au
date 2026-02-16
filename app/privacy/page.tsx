@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — Invest.com.au",
+  title: "Privacy Policy",
   description:
     "How Invest.com.au collects, uses, and protects your personal information under the Australian Privacy Act 1988.",
+  alternates: { canonical: "/privacy" },
 };
 
 export default function PrivacyPage() {

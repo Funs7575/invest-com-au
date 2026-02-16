@@ -1,8 +1,10 @@
 import Link from "next/link";
+import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 
 export const metadata = {
-  title: "About Us — Invest.com.au",
+  title: "About Us",
   description: "Learn about Invest.com.au, Australia's independent broker comparison platform. Our mission, editorial independence pledge, and review methodology.",
+  alternates: { canonical: "/about" },
 };
 
 const METHODOLOGY = [
@@ -15,7 +17,17 @@ const METHODOLOGY = [
 ];
 
 export default function AboutPage() {
+  const breadcrumbs = breadcrumbJsonLd([
+    { name: "Home", url: absoluteUrl("/") },
+    { name: "About Us" },
+  ]);
+
   return (
+    <>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
+    />
     <div className="py-12">
       <div className="container-custom">
         <div className="max-w-3xl mx-auto">
@@ -159,5 +171,6 @@ export default function AboutPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }
