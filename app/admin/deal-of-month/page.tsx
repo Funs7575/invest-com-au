@@ -2,17 +2,20 @@
 
 import { useEffect, useState } from "react";
 import AdminShell from "@/components/AdminShell";
+import ConfirmDialog from "@/components/ConfirmDialog";
 import { createClient } from "@/lib/supabase/client";
+import { useToast } from "@/components/Toast";
 import { Broker } from "@/lib/types";
 
 export default function DealOfMonthPage() {
   const supabase = createClient();
+  const { toast } = useToast();
   const [brokers, setBrokers] = useState<Broker[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [dealText, setDealText] = useState("");
   const [dealTextEdited, setDealTextEdited] = useState(false);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [clearConfirmOpen, setClearConfirmOpen] = useState(false);
 
   useEffect(() => {
     fetchBrokers();
@@ -25,7 +28,7 @@ export default function DealOfMonthPage() {
       .select("*")
       .order("name");
     if (error) {
-      console.error("Error fetching brokers:", error);
+      toast("Error loading brokers", "error");
     } else {
       setBrokers(data || []);
       const dealBroker = (data || []).find((b: any) => b.deal === true);
@@ -47,7 +50,7 @@ export default function DealOfMonthPage() {
       .neq("slug", "");
 
     if (clearError) {
-      console.error("Error clearing deals:", clearError);
+      toast("Error clearing deals", "error");
       setSaving(false);
       return;
     }
@@ -59,9 +62,9 @@ export default function DealOfMonthPage() {
       .eq("slug", broker.slug);
 
     if (setError) {
-      console.error("Error setting deal:", setError);
+      toast("Error setting deal", "error");
     } else {
-      showSuccess(`${broker.name} set as Deal of the Month`);
+      toast(`${broker.name} set as Deal of the Month`, "success");
       setDealText("");
       setDealTextEdited(false);
       fetchBrokers();
@@ -77,14 +80,15 @@ export default function DealOfMonthPage() {
       .neq("slug", "");
 
     if (error) {
-      console.error("Error clearing deal:", error);
+      toast("Error clearing deal", "error");
     } else {
-      showSuccess("Deal of the Month cleared");
+      toast("Deal of the Month cleared", "success");
       setDealText("");
       setDealTextEdited(false);
       fetchBrokers();
     }
     setSaving(false);
+    setClearConfirmOpen(false);
   }
 
   async function handleSaveDealText() {
@@ -96,18 +100,13 @@ export default function DealOfMonthPage() {
       .eq("slug", dealBroker.slug);
 
     if (error) {
-      console.error("Error saving deal text:", error);
+      toast("Error saving deal text", "error");
     } else {
-      showSuccess("Deal text updated");
+      toast("Deal text updated", "success");
       setDealTextEdited(false);
       fetchBrokers();
     }
     setSaving(false);
-  }
-
-  function showSuccess(message: string) {
-    setSuccessMessage(message);
-    setTimeout(() => setSuccessMessage(null), 3000);
   }
 
   return (
@@ -117,7 +116,7 @@ export default function DealOfMonthPage() {
           <h1 className="text-2xl font-bold text-white">Deal of the Month</h1>
           {dealBroker && (
             <button
-              onClick={handleClearDeal}
+              onClick={() => setClearConfirmOpen(true)}
               disabled={saving}
               className="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded hover:bg-red-500 disabled:opacity-50 transition-colors"
             >
@@ -125,12 +124,6 @@ export default function DealOfMonthPage() {
             </button>
           )}
         </div>
-
-        {successMessage && (
-          <div className="bg-green-900/50 border border-green-700 text-green-300 px-4 py-3 rounded-lg">
-            {successMessage}
-          </div>
-        )}
 
         {/* Current Deal */}
         <div className="bg-slate-800 border border-slate-700 rounded-lg p-6">
@@ -212,6 +205,17 @@ export default function DealOfMonthPage() {
           )}
         </div>
       </div>
+
+      {/* Clear Deal Confirmation Dialog */}
+      <ConfirmDialog
+        open={clearConfirmOpen}
+        title="Clear Deal of the Month"
+        message={`Are you sure you want to remove ${dealBroker?.name || "the current broker"} as Deal of the Month? The deal badge will be removed from all pages.`}
+        confirmLabel="Clear Deal"
+        variant="warning"
+        onConfirm={handleClearDeal}
+        onCancel={() => setClearConfirmOpen(false)}
+      />
     </AdminShell>
   );
 }

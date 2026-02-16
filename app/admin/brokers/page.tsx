@@ -3,8 +3,11 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import AdminShell from "@/components/AdminShell";
+import ConfirmDialog from "@/components/ConfirmDialog";
 import { useToast } from "@/components/Toast";
 import type { Broker } from "@/lib/types";
+
+const PAGE_SIZE = 15;
 
 export default function AdminBrokersPage() {
   const [brokers, setBrokers] = useState<Broker[]>([]);
@@ -12,6 +15,8 @@ export default function AdminBrokersPage() {
   const [creating, setCreating] = useState(false);
   const [saving, setSaving] = useState(false);
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(0);
+  const [deleteTarget, setDeleteTarget] = useState<Broker | null>(null);
 
   const supabase = createClient();
   const { toast } = useToast();
@@ -25,9 +30,24 @@ export default function AdminBrokersPage() {
 
   const handleSave = async (formData: FormData) => {
     const name = formData.get("name") as string;
+    const slug = formData.get("slug") as string;
+
     if (!name || !name.trim()) {
       toast("Name is required", "error");
       return;
+    }
+    if (!slug || !slug.trim()) {
+      toast("Slug is required", "error");
+      return;
+    }
+
+    // Duplicate slug check
+    if (!editing || editing.slug !== slug) {
+      const existing = brokers.find(b => b.slug === slug && b.id !== editing?.id);
+      if (existing) {
+        toast(`Slug "${slug}" is already used by ${existing.name}`, "error");
+        return;
+      }
     }
 
     setSaving(true);
@@ -84,15 +104,16 @@ export default function AdminBrokersPage() {
     load();
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this broker?")) return;
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
     try {
-      const { error } = await supabase.from("brokers").delete().eq("id", id);
+      const { error } = await supabase.from("brokers").delete().eq("id", deleteTarget.id);
       if (error) throw error;
       toast("Broker deleted", "success");
     } catch {
       toast("Failed to delete broker", "error");
     }
+    setDeleteTarget(null);
     load();
   };
 
@@ -100,40 +121,33 @@ export default function AdminBrokersPage() {
   const formBroker = editing || {} as Partial<Broker>;
 
   const filteredBrokers = brokers.filter((b) =>
-    b.name.toLowerCase().includes(search.toLowerCase())
+    b.name.toLowerCase().includes(search.toLowerCase()) ||
+    b.slug.toLowerCase().includes(search.toLowerCase())
   );
+
+  const totalPages = Math.ceil(filteredBrokers.length / PAGE_SIZE);
+  const paginatedBrokers = filteredBrokers.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+
+  useEffect(() => { setPage(0); }, [search]);
 
   return (
     <AdminShell>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-white">Brokers</h1>
-        {!showForm && (
-          <button
-            onClick={() => setCreating(true)}
-            className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold rounded-lg px-4 py-2 text-sm transition-colors"
-          >
-            + Add Broker
-          </button>
-        )}
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-slate-400">{filteredBrokers.length} broker{filteredBrokers.length !== 1 ? "s" : ""}</span>
+          {!showForm && (
+            <button onClick={() => setCreating(true)} className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold rounded-lg px-4 py-2 text-sm transition-colors">+ Add Broker</button>
+          )}
+        </div>
       </div>
 
       {showForm ? (
-        <BrokerForm
-          broker={formBroker}
-          saving={saving}
-          onSave={handleSave}
-          onCancel={() => { setEditing(null); setCreating(false); }}
-        />
+        <BrokerForm broker={formBroker} saving={saving} onSave={handleSave} onCancel={() => { setEditing(null); setCreating(false); }} />
       ) : (
         <>
           <div className="mb-4">
-            <input
-              type="text"
-              placeholder="Search brokers..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
-            />
+            <input type="text" placeholder="Search brokers by name or slug..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
           </div>
           <div className="bg-slate-800 border border-slate-700 rounded-lg overflow-hidden">
             <table className="w-full">
@@ -147,7 +161,7 @@ export default function AdminBrokersPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-700">
-                {filteredBrokers.map((broker) => (
+                {paginatedBrokers.map((broker) => (
                   <tr key={broker.id} className="hover:bg-slate-700/30">
                     <td className="px-4 py-3">
                       <div className="text-sm font-semibold text-white">{broker.name}</div>
@@ -156,69 +170,58 @@ export default function AdminBrokersPage() {
                     <td className="px-4 py-3 text-sm text-amber-400 font-semibold">{broker.rating || "—"}★</td>
                     <td className="px-4 py-3 text-sm text-slate-300">{broker.asx_fee || "N/A"}</td>
                     <td className="px-4 py-3">
-                      <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                        broker.status === "active" ? "bg-green-500/10 text-green-400" : "bg-slate-600 text-slate-300"
-                      }`}>
-                        {broker.status}
-                      </span>
+                      <span className={`text-xs px-2 py-1 rounded-full font-medium ${broker.status === "active" ? "bg-green-500/10 text-green-400" : "bg-slate-600 text-slate-300"}`}>{broker.status}</span>
                     </td>
                     <td className="px-4 py-3 text-right space-x-2">
                       <button onClick={() => setEditing(broker)} className="text-xs text-amber-400 hover:text-amber-300">Edit</button>
-                      <button onClick={() => handleDelete(broker.id)} className="text-xs text-red-400 hover:text-red-300">Delete</button>
+                      <button onClick={() => setDeleteTarget(broker)} className="text-xs text-red-400 hover:text-red-300">Delete</button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between mt-4">
+              <span className="text-xs text-slate-400">Page {page + 1} of {totalPages}</span>
+              <div className="flex gap-2">
+                <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0} className="px-3 py-1.5 text-xs bg-slate-700 text-slate-300 rounded-lg hover:bg-slate-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">← Prev</button>
+                <button onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))} disabled={page >= totalPages - 1} className="px-3 py-1.5 text-xs bg-slate-700 text-slate-300 rounded-lg hover:bg-slate-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">Next →</button>
+              </div>
+            </div>
+          )}
         </>
       )}
+
+      <ConfirmDialog open={!!deleteTarget} title="Delete Broker" message={`Are you sure you want to delete "${deleteTarget?.name}"? This cannot be undone.`} confirmLabel="Delete Broker" onConfirm={handleDelete} onCancel={() => setDeleteTarget(null)} />
     </AdminShell>
   );
 }
 
-function BrokerForm({
-  broker,
-  saving,
-  onSave,
-  onCancel,
-}: {
-  broker: Partial<Broker>;
-  saving: boolean;
-  onSave: (fd: FormData) => void;
-  onCancel: () => void;
-}) {
+function BrokerForm({ broker, saving, onSave, onCancel }: { broker: Partial<Broker>; saving: boolean; onSave: (fd: FormData) => void; onCancel: () => void; }) {
   return (
-    <form
-      onSubmit={(e) => { e.preventDefault(); onSave(new FormData(e.currentTarget)); }}
-      className="bg-slate-800 border border-slate-700 rounded-lg p-6 space-y-6"
-    >
+    <form onSubmit={(e) => { e.preventDefault(); onSave(new FormData(e.currentTarget)); }} className="bg-slate-800 border border-slate-700 rounded-lg p-6 space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Field label="Name" name="name" defaultValue={broker.name} required />
-        <Field label="Slug" name="slug" defaultValue={broker.slug} required />
+        <Field label="Name *" name="name" defaultValue={broker.name} required />
+        <Field label="Slug *" name="slug" defaultValue={broker.slug} required />
         <Field label="Color" name="color" defaultValue={broker.color || "#0f172a"} />
       </div>
-
       <Field label="Tagline" name="tagline" defaultValue={broker.tagline} />
-
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Field label="ASX Fee (display)" name="asx_fee" defaultValue={broker.asx_fee} />
         <Field label="ASX Fee Value ($)" name="asx_fee_value" defaultValue={broker.asx_fee_value?.toString()} type="number" step="0.01" />
         <Field label="US Fee (display)" name="us_fee" defaultValue={broker.us_fee} />
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Field label="US Fee Value ($)" name="us_fee_value" defaultValue={broker.us_fee_value?.toString()} type="number" step="0.01" />
         <Field label="FX Rate (%)" name="fx_rate" defaultValue={broker.fx_rate?.toString()} type="number" step="0.001" />
         <Field label="Rating" name="rating" defaultValue={broker.rating?.toString()} type="number" step="0.1" min="0" max="5" />
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Field label="Inactivity Fee" name="inactivity_fee" defaultValue={broker.inactivity_fee} />
         <Field label="Min Deposit" name="min_deposit" defaultValue={broker.min_deposit} />
         <Field label="Status" name="status" defaultValue={broker.status || "active"} />
       </div>
-
       <div className="flex flex-wrap gap-6">
         <Checkbox label="CHESS Sponsored" name="chess_sponsored" defaultChecked={broker.chess_sponsored} />
         <Checkbox label="SMSF Support" name="smsf_support" defaultChecked={broker.smsf_support} />
@@ -226,80 +229,48 @@ function BrokerForm({
         <Checkbox label="Deal" name="deal" defaultChecked={broker.deal} />
         <Checkbox label="Editor's Pick" name="editors_pick" defaultChecked={broker.editors_pick} />
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Field label="Affiliate URL" name="affiliate_url" defaultValue={broker.affiliate_url} />
         <Field label="CTA Text" name="cta_text" defaultValue={broker.cta_text} />
       </div>
-
       <Field label="Deal Text" name="deal_text" defaultValue={broker.deal_text} />
-
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Field label="Regulated By" name="regulated_by" defaultValue={broker.regulated_by} />
         <Field label="Year Founded" name="year_founded" defaultValue={broker.year_founded?.toString()} type="number" />
         <Field label="Headquarters" name="headquarters" defaultValue={broker.headquarters} />
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <TextArea label="Pros (one per line)" name="pros" defaultValue={broker.pros?.join("\n")} rows={4} />
         <TextArea label="Cons (one per line)" name="cons" defaultValue={broker.cons?.join("\n")} rows={4} />
       </div>
-
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <TextArea label="Platforms (one per line)" name="platforms" defaultValue={broker.platforms?.join("\n")} rows={3} />
         <TextArea label="Markets (one per line)" name="markets" defaultValue={broker.markets?.join("\n")} rows={3} />
         <TextArea label="Payment Methods (one per line)" name="payment_methods" defaultValue={broker.payment_methods?.join("\n")} rows={3} />
       </div>
-
       <TextArea label="Review Content" name="review_content" defaultValue={broker.review_content} rows={6} />
-
       <div className="flex gap-3 pt-2">
-        <button
-          type="submit"
-          disabled={saving}
-          className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold rounded-lg px-6 py-2.5 text-sm transition-colors disabled:opacity-50"
-        >
-          {saving ? "Saving..." : broker.id ? "Update Broker" : "Create Broker"}
-        </button>
-        <button type="button" onClick={onCancel} className="text-slate-400 hover:text-white px-4 py-2.5 text-sm transition-colors">
-          Cancel
-        </button>
+        <button type="submit" disabled={saving} className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold rounded-lg px-6 py-2.5 text-sm transition-colors disabled:opacity-50">{saving ? "Saving..." : broker.id ? "Update Broker" : "Create Broker"}</button>
+        <button type="button" onClick={onCancel} className="text-slate-400 hover:text-white px-4 py-2.5 text-sm transition-colors">Cancel</button>
       </div>
     </form>
   );
 }
 
-function Field({ label, name, defaultValue, required, type = "text", ...props }: {
-  label: string; name: string; defaultValue?: string; required?: boolean; type?: string;
-  [key: string]: unknown;
-}) {
+function Field({ label, name, defaultValue, required, type = "text", ...props }: { label: string; name: string; defaultValue?: string; required?: boolean; type?: string; [key: string]: unknown; }) {
   return (
     <div>
       <label className="block text-xs font-medium text-slate-400 mb-1">{label}</label>
-      <input
-        name={name}
-        type={type}
-        defaultValue={defaultValue || ""}
-        required={required}
-        className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
-        {...props}
-      />
+      <input name={name} type={type} defaultValue={defaultValue || ""} required={required} className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50" {...props} />
     </div>
   );
 }
 
-function TextArea({ label, name, defaultValue, rows = 3 }: {
-  label: string; name: string; defaultValue?: string; rows?: number;
-}) {
+function TextArea({ label, name, defaultValue, rows = 3 }: { label: string; name: string; defaultValue?: string; rows?: number; }) {
   return (
     <div>
       <label className="block text-xs font-medium text-slate-400 mb-1">{label}</label>
-      <textarea
-        name={name}
-        defaultValue={defaultValue || ""}
-        rows={rows}
-        className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
-      />
+      <textarea name={name} defaultValue={defaultValue || ""} rows={rows} className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
     </div>
   );
 }
