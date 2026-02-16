@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Search, X } from "lucide-react";
 import type { Broker } from "@/lib/types";
-import { trackClick, getAffiliateLink, getBenefitCta, renderStars } from "@/lib/tracking";
+import { trackClick, trackEvent, getAffiliateLink, getBenefitCta, renderStars } from "@/lib/tracking";
 import BrokerCard from "@/components/BrokerCard";
 
 type FilterType = 'all' | 'chess' | 'free' | 'us' | 'smsf' | 'low-fx' | 'crypto';
@@ -45,6 +45,20 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   const [sortCol, setSortCol] = useState<SortCol>('rating');
   const [sortDir, setSortDir] = useState<1 | -1>(-1);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+
+  function toggleSelected(slug: string) {
+    setSelected(prev => {
+      const next = new Set(prev);
+      if (next.has(slug)) {
+        next.delete(slug);
+      } else {
+        next.add(slug);
+        trackEvent('compare_select', { broker: slug }, '/compare');
+      }
+      return next;
+    });
+  }
 
   // Read ?q= param from URL (e.g. from homepage search bar)
   useEffect(() => {
@@ -205,6 +219,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           <table className="w-full border border-slate-200 rounded-lg">
             <thead className="bg-slate-50">
               <tr>
+                <th className="px-3 py-3 w-10"></th>
                 <th className="px-4 py-3 text-left font-semibold text-sm" aria-sort={sortCol === 'name' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
                   <button onClick={() => handleSort('name')} className="hover:text-green-700 transition-colors" aria-label="Sort by broker name">
                     Broker{sortArrow('name')}
@@ -247,6 +262,15 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                   key={broker.id}
                   className={`hover:bg-slate-50 ${editorPicks[broker.slug] ? 'bg-green-50/40' : ''}`}
                 >
+                  <td className="px-3 py-3">
+                    <input
+                      type="checkbox"
+                      checked={selected.has(broker.slug)}
+                      onChange={() => toggleSelected(broker.slug)}
+                      className="w-4 h-4 accent-green-700 rounded"
+                      aria-label={`Select ${broker.name} for comparison`}
+                    />
+                  </td>
                   <td className="px-4 py-3">
                     <a href={`/broker/${broker.slug}`} className="font-semibold text-brand hover:text-green-700 transition-colors">
                       {broker.name}
@@ -302,6 +326,20 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             />
           ))}
         </div>
+
+        {selected.size >= 2 && (
+          <div className="fixed bottom-0 left-0 right-0 z-40 bg-green-700 text-white py-3 shadow-lg">
+            <div className="container-custom flex items-center justify-between">
+              <span className="text-sm font-semibold">{selected.size} brokers selected</span>
+              <Link
+                href={`/versus?vs=${Array.from(selected).slice(0, 2).join(',')}`}
+                className="px-5 py-2 bg-white text-green-700 font-bold text-sm rounded-lg hover:bg-green-50 transition-colors"
+              >
+                Compare Side-by-Side →
+              </Link>
+            </div>
+          </div>
+        )}
 
         {sorted.length === 0 && (
           <div className="text-center py-12 text-slate-500">
