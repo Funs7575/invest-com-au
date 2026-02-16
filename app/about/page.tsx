@@ -114,6 +114,11 @@ export default function AboutPage() {
                 </div>
               ))}
             </div>
+            <div className="mt-4">
+              <Link href="/methodology" className="text-sm text-green-700 font-semibold hover:text-green-800 transition-colors">
+                Read our full methodology →
+              </Link>
+            </div>
           </section>
 
           {/* What We Cover */}

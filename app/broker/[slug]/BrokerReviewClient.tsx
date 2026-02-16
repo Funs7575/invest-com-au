@@ -153,6 +153,52 @@ export default function BrokerReviewClient({ broker: b, similar }: { broker: Bro
           ))}
         </div>
 
+        {/* Sources & Verification */}
+        <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 mb-8">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-lg">📋</span>
+            <h3 className="text-sm font-extrabold text-slate-700">Sources &amp; Verification</h3>
+          </div>
+          <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-slate-500">
+            <span>
+              Data verified:{" "}
+              <strong className="text-slate-700">
+                {b.fee_verified_date
+                  ? new Date(b.fee_verified_date).toLocaleDateString("en-AU", { year: "numeric", month: "long", day: "numeric" })
+                  : "Verification pending"}
+              </strong>
+            </span>
+            {b.fee_source_url && (
+              <a href={b.fee_source_url} target="_blank" rel="noopener noreferrer" className="text-green-700 hover:underline">
+                Pricing page ↗
+              </a>
+            )}
+            {b.fee_source_tcs_url && (
+              <a href={b.fee_source_tcs_url} target="_blank" rel="noopener noreferrer" className="text-green-700 hover:underline">
+                Terms &amp; Conditions ↗
+              </a>
+            )}
+            <Link href="/how-we-verify" className="text-green-700 hover:underline">
+              How we verify fees
+            </Link>
+          </div>
+          {b.fee_changelog && b.fee_changelog.length > 0 && (
+            <details className="mt-3">
+              <summary className="text-xs font-semibold text-slate-600 cursor-pointer hover:text-slate-800">
+                Fee Change History ({b.fee_changelog.length})
+              </summary>
+              <div className="mt-2 space-y-1">
+                {b.fee_changelog.map((change, i) => (
+                  <div key={i} className="text-xs text-slate-500">
+                    <span className="text-slate-400">{change.date}</span>{" "}
+                    — {change.field}: {change.old_value} → {change.new_value}
+                  </div>
+                ))}
+              </div>
+            </details>
+          )}
+        </div>
+
         {/* Real Cost Example */}
         <div className="border border-slate-200 rounded-xl p-6 mb-8">
           <div className="flex items-center gap-2 mb-4">
