@@ -66,10 +66,10 @@ export default function CalculatorsClient({ brokers }: Props) {
             <button
               key={c.id}
               onClick={() => scrollTo(c.id)}
-              className="group border border-slate-200 rounded-xl bg-white p-5 text-left hover:border-amber hover:shadow-md transition-all"
+              className="group border border-slate-200 rounded-xl bg-white p-5 text-left hover:border-green-700 hover:shadow-md transition-all"
             >
               <span className="text-3xl block mb-2">{c.emoji}</span>
-              <span className="text-sm font-bold text-slate-900 group-hover:text-amber transition-colors block leading-tight">
+              <span className="text-sm font-bold text-slate-900 group-hover:text-green-700 transition-colors block leading-tight">
                 {c.title}
               </span>
               <span className="text-xs text-slate-500 block mt-1 leading-tight">{c.subtitle}</span>
@@ -179,7 +179,7 @@ function SwitchingCostCalculator({ brokers }: { brokers: Broker[] }) {
           <select
             value={currentSlug}
             onChange={(e) => setCurrentSlug(e.target.value)}
-            className="w-full border border-slate-300 rounded-lg px-4 py-2 bg-white"
+            className="w-full border border-slate-300 rounded-lg px-4 py-2 bg-white focus:ring-2 focus:ring-green-700/20 focus:border-green-700 outline-none transition-colors"
           >
             <option value="">Select broker...</option>
             {brokers.map((b) => (
@@ -194,7 +194,7 @@ function SwitchingCostCalculator({ brokers }: { brokers: Broker[] }) {
           <select
             value={newSlug}
             onChange={(e) => setNewSlug(e.target.value)}
-            className="w-full border border-slate-300 rounded-lg px-4 py-2 bg-white"
+            className="w-full border border-slate-300 rounded-lg px-4 py-2 bg-white focus:ring-2 focus:ring-green-700/20 focus:border-green-700 outline-none transition-colors"
           >
             <option value="">Select broker...</option>
             {brokers.map((b) => (
@@ -238,7 +238,7 @@ function SwitchingCostCalculator({ brokers }: { brokers: Broker[] }) {
 
           {/* Inline CTA for cheaper broker */}
           {cheaperBroker && (
-            <div className="mt-6 flex items-center gap-4 bg-amber-50 border border-amber-200 rounded-xl p-4">
+            <div className="mt-6 flex items-center gap-4 bg-green-50 border border-green-200 rounded-xl p-4">
               <div className="flex-1">
                 <p className="text-sm font-semibold text-slate-900">
                   {cheaperBroker.name} is the cheaper option.
@@ -254,7 +254,7 @@ function SwitchingCostCalculator({ brokers }: { brokers: Broker[] }) {
                 onClick={() =>
                   trackClick(cheaperBroker.slug, cheaperBroker.name, "calculator-switching", "/calculators", "cta")
                 }
-                className="px-5 py-2 bg-amber text-white font-semibold rounded-lg hover:bg-amber-600 transition-colors text-sm whitespace-nowrap"
+                className="px-5 py-2 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors text-sm whitespace-nowrap"
               >
                 {getBenefitCta(cheaperBroker, "calculator")}
               </a>
@@ -316,7 +316,7 @@ function FxFeeCalculator({ brokers }: { brokers: Broker[] }) {
                   <div
                     className={`h-full rounded-full transition-all ${
                       isCheapest
-                        ? "bg-green-500"
+                        ? "bg-green-700"
                         : isMostExpensive
                         ? "bg-red-400"
                         : "bg-amber"
@@ -327,7 +327,7 @@ function FxFeeCalculator({ brokers }: { brokers: Broker[] }) {
                 <div className="w-28 md:w-36 text-right shrink-0">
                   <span
                     className={`text-sm font-bold ${
-                      isCheapest ? "text-green-700" : isMostExpensive ? "text-red-600" : "text-slate-800"
+                      isCheapest ? "text-green-800" : isMostExpensive ? "text-red-600" : "text-slate-800"
                     }`}
                   >
                     {formatCurrency(fee)}
@@ -363,7 +363,7 @@ function FxFeeCalculator({ brokers }: { brokers: Broker[] }) {
                     "cta"
                   )
                 }
-                className="px-5 py-2 bg-amber text-white font-semibold rounded-lg hover:bg-amber-600 transition-colors text-sm whitespace-nowrap"
+                className="px-5 py-2 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors text-sm whitespace-nowrap"
               >
                 {getBenefitCta(fxBrokers[0].broker, "calculator")}
               </a>
@@ -415,7 +415,7 @@ function CgtCalculator() {
               type="checkbox"
               checked={held12Months}
               onChange={(e) => setHeld12Months(e.target.checked)}
-              className="w-5 h-5 rounded border-slate-300 text-amber accent-amber"
+              className="w-5 h-5 rounded border-slate-300 text-green-700 accent-green-700"
             />
             <span className="text-sm font-medium text-slate-700">Held &gt; 12 months (50% discount)</span>
           </label>
@@ -510,7 +510,7 @@ function ChessLookup({ brokers }: { brokers: Broker[] }) {
         <select
           value={selectedSlug}
           onChange={(e) => setSelectedSlug(e.target.value)}
-          className="w-full border border-slate-300 rounded-lg px-4 py-2 bg-white"
+          className="w-full border border-slate-300 rounded-lg px-4 py-2 bg-white focus:ring-2 focus:ring-green-700/20 focus:border-green-700 outline-none transition-colors"
         >
           <option value="">Choose a broker...</option>
           {brokers.map((b) => (
@@ -525,7 +525,7 @@ function ChessLookup({ brokers }: { brokers: Broker[] }) {
         <div className="mt-6">
           <div
             className={`border rounded-xl p-6 ${
-              broker.chess_sponsored ? "bg-green-50 border-green-200" : "bg-amber-50 border-amber-200"
+              broker.chess_sponsored ? "bg-green-50 border-green-200" : "bg-amber-50 border-amber-300"
             }`}
           >
             <div className="flex items-start gap-4">
@@ -591,7 +591,7 @@ function ChessLookup({ brokers }: { brokers: Broker[] }) {
                     <tr
                       key={b.slug}
                       className={`border-b border-slate-100 last:border-0 ${
-                        b.slug === selectedSlug ? "bg-amber-50" : ""
+                        b.slug === selectedSlug ? "bg-green-50" : ""
                       }`}
                     >
                       <td className="px-4 py-2 font-medium text-slate-800">{b.name}</td>
@@ -667,7 +667,7 @@ function InputField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-amber focus:border-amber outline-none transition-colors"
+        className="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-700/20 focus:border-green-700 outline-none transition-colors"
       />
     </div>
   );
@@ -685,7 +685,7 @@ function ResultBox({
   negative?: boolean;
 }) {
   const bg = positive ? "bg-green-50 border border-green-200" : negative ? "bg-red-50 border border-red-200" : "bg-slate-50";
-  const textColor = positive ? "text-green-700" : negative ? "text-red-600" : "text-slate-900";
+  const textColor = positive ? "text-green-800" : negative ? "text-red-600" : "text-slate-900";
 
   return (
     <div className={`rounded-lg p-4 ${bg}`}>
