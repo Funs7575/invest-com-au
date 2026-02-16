@@ -36,7 +36,7 @@ export default function QuizPromptBar() {
       <div className="container-custom py-3 flex items-center justify-between gap-4">
         <p className="text-sm">
           <span className="hidden sm:inline">Not sure which broker to pick? </span>
-          <strong>Take our 60-second quiz</strong> to find your best match.
+          <strong>Take our 60-second quiz</strong> to filter by your priorities.
         </p>
         <div className="flex items-center gap-2 shrink-0">
           <Link

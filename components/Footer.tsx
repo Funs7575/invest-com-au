@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE, CRYPTO_WARNING, REGULATORY_NOTE } from "@/lib/compliance";
 
 export default function Footer() {
   const [disclaimerOpen, setDisclaimerOpen] = useState(false);
@@ -33,19 +34,19 @@ export default function Footer() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-400 leading-relaxed pb-6">
               <div className="border border-slate-700 rounded-lg p-4">
                 <h4 className="font-semibold text-slate-300 mb-1">General Advice Warning</h4>
-                <p>The information on Invest.com.au is general in nature and does not take into account your personal financial situation. It is not financial advice. You should consider whether the information is appropriate to your needs, and where appropriate, seek professional advice from a financial adviser. Past performance is not a reliable indicator of future performance.</p>
+                <p>{GENERAL_ADVICE_WARNING}</p>
               </div>
               <div className="border border-slate-700 rounded-lg p-4">
                 <h4 className="font-semibold text-slate-300 mb-1">Affiliate Disclosure</h4>
-                <p>Invest.com.au may receive compensation from the companies listed on this site. This compensation may impact how and where products appear (including the order in which they appear). Our site does not include all available offers.</p>
+                <p>{ADVERTISER_DISCLOSURE}</p>
               </div>
               <div className="border border-slate-700 rounded-lg p-4">
                 <h4 className="font-semibold text-slate-300 mb-1">Crypto Warning</h4>
-                <p>Cryptocurrency is highly speculative and not legal tender. Past performance is not a reliable indicator of future returns. You could lose all of your investment. Only invest what you can afford to lose.</p>
+                <p>{CRYPTO_WARNING}</p>
               </div>
               <div className="border border-slate-700 rounded-lg p-4">
                 <h4 className="font-semibold text-slate-300 mb-1">Regulatory Note</h4>
-                <p>Invest.com.au is not a financial product issuer, credit provider, or financial adviser. We are an information service. Always verify information with the product issuer before making a decision.</p>
+                <p>{REGULATORY_NOTE}</p>
               </div>
             </div>
           </div>
@@ -87,6 +88,9 @@ export default function Footer() {
               <li><Link href="/about" className="hover:text-white transition-colors">About Us</Link></li>
               <li><Link href="/how-we-earn" className="hover:text-white transition-colors">How We Earn</Link></li>
               <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
+              <li><Link href="/methodology" className="hover:text-white transition-colors">Methodology</Link></li>
+              <li><Link href="/how-we-verify" className="hover:text-white transition-colors">How We Verify Fees</Link></li>
+              <li><Link href="/terms" className="hover:text-white transition-colors">Terms of Use</Link></li>
             </ul>
           </div>
         </div>

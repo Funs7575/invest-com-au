@@ -37,6 +37,10 @@ export interface Broker {
   commission_type?: string;
   commission_value?: number;
   estimated_epc?: number;
+  fee_source_url?: string;
+  fee_source_tcs_url?: string;
+  fee_verified_date?: string;
+  fee_changelog?: { date: string; field: string; old_value: string; new_value: string }[];
   created_at: string;
   updated_at: string;
 }
@@ -73,6 +77,8 @@ export interface Scenario {
   solution?: string;
   brokers?: string[];
   considerations?: string[];
+  related_calculators?: string[];
+  related_articles?: string[];
   created_at: string;
   updated_at: string;
 }
@@ -87,7 +93,20 @@ export interface AffiliateClick {
   layer?: string;
   user_agent?: string;
   ip_hash?: string;
+  click_id?: string;
+  session_id?: string;
   clicked_at: string;
+}
+
+export interface AnalyticsEvent {
+  id: number;
+  event_type: string;
+  event_data?: Record<string, unknown>;
+  session_id?: string;
+  page?: string;
+  ip_hash?: string;
+  user_agent?: string;
+  created_at: string;
 }
 
 export interface QuizQuestion {

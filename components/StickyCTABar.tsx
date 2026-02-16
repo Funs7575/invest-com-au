@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta } from "@/lib/tracking";
+import { ADVERTISER_DISCLOSURE_SHORT, RISK_WARNING_CTA } from "@/lib/compliance";
 
 export default function StickyCTABar({ broker, detail, context = 'review' }: { broker: Broker; detail: string; context?: 'review' | 'versus' | 'calculator' }) {
   const [visible, setVisible] = useState(false);
@@ -49,7 +50,7 @@ export default function StickyCTABar({ broker, detail, context = 'review' }: { b
           >
             {getBenefitCta(broker, context)}
           </a>
-          <span className="hidden sm:inline text-[0.55rem] text-slate-500">Sponsored</span>
+          <span className="hidden sm:inline text-[0.55rem] text-slate-500 max-w-[200px] leading-tight">{ADVERTISER_DISCLOSURE_SHORT} {RISK_WARNING_CTA}</span>
         </div>
       </div>
     </div>

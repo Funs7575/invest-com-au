@@ -6,6 +6,7 @@ import Link from "next/link";
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, formatPercent } from "@/lib/tracking";
 import StickyCTABar from "@/components/StickyCTABar";
+import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 
 const popularComparisons = [
   { label: "Stake vs CommSec", href: "/versus?vs=stake,commsec" },
@@ -169,7 +170,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
               </a>
             </div>
             <p className="text-xs text-slate-400 mb-6">
-              We may earn a commission if you open an account via our links, at no extra cost to you.
+              {ADVERTISER_DISCLOSURE_SHORT}
             </p>
 
             {/* Verdict Breakdown */}

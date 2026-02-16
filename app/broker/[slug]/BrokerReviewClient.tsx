@@ -3,6 +3,8 @@
 import Link from "next/link";
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, renderStars } from "@/lib/tracking";
+import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
+import RiskWarningInline from "@/components/RiskWarningInline";
 import StickyCTABar from "@/components/StickyCTABar";
 
 function FeeVerdict({ value, thresholds }: { value: number | undefined; thresholds: [number, number] }) {
@@ -92,9 +94,10 @@ export default function BrokerReviewClient({ broker: b, similar }: { broker: Bro
           >
             {getBenefitCta(b, 'review')}
           </a>
+          <RiskWarningInline />
         </div>
         <p className="text-xs text-slate-400 mb-4">
-          Affiliate link — we may earn a commission at no extra cost to you.
+          {ADVERTISER_DISCLOSURE_SHORT}
         </p>
 
         {/* Deal banner */}
@@ -195,6 +198,7 @@ export default function BrokerReviewClient({ broker: b, similar }: { broker: Bro
           >
             {getBenefitCta(b, 'review')}
           </a>
+          <RiskWarningInline />
         </div>
 
         {/* Safety Check */}
@@ -266,6 +270,7 @@ export default function BrokerReviewClient({ broker: b, similar }: { broker: Bro
           >
             {getBenefitCta(b, 'review')}
           </a>
+          <RiskWarningInline />
         </div>
 
         {/* Details Grid */}
@@ -334,12 +339,13 @@ export default function BrokerReviewClient({ broker: b, similar }: { broker: Bro
           >
             {getBenefitCta(b, 'review')}
           </a>
-          <p className="text-xs text-slate-500 mt-3">We may receive a commission. This does not affect our review.</p>
+          <RiskWarningInline />
+          <p className="text-xs text-slate-500 mt-3">{ADVERTISER_DISCLOSURE_SHORT}</p>
         </div>
 
         {/* Not convinced? Quiz prompt */}
         <div className="mt-6 text-center">
-          <p className="text-sm text-slate-500 mb-2">Not sure {b.name} is right for you?</p>
+          <p className="text-sm text-slate-500 mb-2">Want to compare other options?</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link href="/quiz" className="text-sm text-green-700 font-semibold hover:text-green-800 transition-colors border border-green-200 rounded-lg px-4 py-2 hover:bg-green-50">
               Take Our Broker Quiz →

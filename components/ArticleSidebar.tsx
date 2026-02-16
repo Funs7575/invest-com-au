@@ -2,6 +2,8 @@
 
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, formatPercent } from "@/lib/tracking";
+import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
+import RiskWarningInline from "@/components/RiskWarningInline";
 
 function Stars({ rating }: { rating: number }) {
   const full = Math.floor(rating);
@@ -110,11 +112,12 @@ export default function ArticleSidebar({
 
         {/* Disclaimer */}
         <p className="text-[0.6rem] text-slate-400 mt-3 leading-relaxed px-1">
-          Sponsored. We may earn a commission.{" "}
+          {ADVERTISER_DISCLOSURE_SHORT}{" "}
           <a href="/how-we-earn" className="underline hover:text-slate-600">
             Learn more
           </a>
         </p>
+        <RiskWarningInline />
       </div>
     </div>
   );

@@ -8,7 +8,7 @@ import BackToTop from "@/components/BackToTop";
 import QuizPromptBar from "@/components/QuizPromptBar";
 import ExitIntentPopup from "@/components/ExitIntentPopup";
 import SocialProofToast from "@/components/SocialProofToast";
-import Link from "next/link";
+import DisclosureBanner from "@/components/DisclosureBanner";
 
 export default function LayoutShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -27,19 +27,7 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
         Skip to main content
       </a>
 
-      {/* Disclosure Bar */}
-      <div className="bg-slate-50 border-b border-slate-200 py-2 text-center text-xs text-slate-600">
-        <div className="container-custom">
-          We may receive a commission from partners. This does not affect our rankings.{" "}
-          <Link href="/how-we-earn" className="text-green-700 hover:text-green-800 underline transition-colors">
-            How we make money
-          </Link>
-          {" · "}
-          <Link href="/about" className="text-green-700 hover:text-green-800 underline transition-colors">
-            About us
-          </Link>
-        </div>
-      </div>
+      <DisclosureBanner variant="header" />
 
       <Header />
       <main id="main-content" className="min-h-screen">{children}</main>

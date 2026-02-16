@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Broker Quiz — Find Your Best Match in 60 Seconds",
+  title: "Broker Quiz — Filter Brokers in 60 Seconds",
   description:
-    "Answer 5 quick questions and get matched to the best Australian broker for your situation. Free, independent, and takes under 60 seconds.",
+    "Answer 5 quick questions and narrow down Australian brokers based on your priorities. Free, independent, and takes under 60 seconds.",
   openGraph: {
-    title: "Broker Quiz — Find Your Best Match in 60 Seconds",
+    title: "Broker Quiz — Filter Brokers in 60 Seconds",
     description:
-      "Answer 5 quick questions and get matched to the best Australian broker for your situation.",
+      "Answer 5 quick questions and narrow down Australian brokers based on your priorities.",
     images: [
       {
         url: "/api/og?title=Find+Your+Best+Broker&subtitle=Take+the+60-second+quiz&type=default",
@@ -18,9 +18,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Broker Quiz — Find Your Best Match in 60 Seconds",
+    title: "Broker Quiz — Filter Brokers in 60 Seconds",
     description:
-      "Answer 5 quick questions and get matched to the best Australian broker for your situation.",
+      "Answer 5 quick questions and narrow down Australian brokers based on your priorities.",
   },
   alternates: {
     canonical: "/quiz",

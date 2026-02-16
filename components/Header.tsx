@@ -46,7 +46,7 @@ export default function Header() {
               href="/quiz"
               className="px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
             >
-              Find Your Broker
+              Broker Quiz
             </Link>
           </nav>
 

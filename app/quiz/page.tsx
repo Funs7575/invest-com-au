@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, renderStars } from "@/lib/tracking";
+import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
+import RiskWarningInline from "@/components/RiskWarningInline";
 
 type WeightKey = "beginner" | "low_fee" | "us_shares" | "smsf" | "crypto" | "advanced";
 
@@ -100,11 +102,11 @@ export default function QuizPage() {
     if (userAnswers.includes('safety') && broker.chess_sponsored)
       reasons.push('CHESS sponsorship — your shares are held in your name');
     if (userAnswers.includes('beginner') || userAnswers.includes('simple'))
-      reasons.push('Beginner-friendly platform with a simple interface');
+      reasons.push('Simple, beginner-friendly platform and interface');
     if (userAnswers.includes('crypto') && broker.is_crypto)
       reasons.push('Regulated Australian crypto exchange');
     if (userAnswers.includes('large') || userAnswers.includes('whale'))
-      reasons.push('Suited for larger portfolios with competitive international fees');
+      reasons.push('Competitive international fees for larger portfolios');
     if (userAnswers.includes('tools') || userAnswers.includes('pro'))
       reasons.push('Advanced charting and research tools');
     if (broker.smsf_support && (userAnswers.includes('income') || userAnswers.includes('grow')))
@@ -112,7 +114,7 @@ export default function QuizPage() {
     if (broker.rating && broker.rating >= 4.5)
       reasons.push(`Highly rated (${broker.rating}/5) by our editorial team`);
 
-    if (!reasons.length) reasons.push('Strong overall score across your priorities');
+    if (!reasons.length) reasons.push('Strong overall score across your selected criteria');
     return reasons.slice(0, 4);
   };
 
@@ -156,8 +158,8 @@ export default function QuizPage() {
         <div className="container-custom max-w-2xl mx-auto">
           <div className="text-center mb-8">
             <div className="text-5xl mb-4">🎉</div>
-            <h1 className="text-3xl font-extrabold mb-2">Your Top Matches</h1>
-            <p className="text-slate-600">Based on your answers, here are brokers worth considering.</p>
+            <h1 className="text-3xl font-extrabold mb-2">Your Shortlist</h1>
+            <p className="text-slate-600">Based on your answers, these brokers scored highest on your selected criteria.</p>
             <div className="flex items-center justify-center gap-1.5 mt-3 text-xs text-slate-400">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
@@ -170,7 +172,7 @@ export default function QuizPage() {
           {/* General Advice Warning */}
           <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 mb-6">
             <p className="text-[0.65rem] text-slate-500 leading-relaxed">
-              <strong>General Advice Warning:</strong> This result is general in nature and does not take into account your personal financial situation. It is not financial advice. We may earn a commission if you open an account via these links, at no extra cost to you. Consider whether any product is appropriate to your circumstances before making a decision.
+              <strong>General Advice Warning:</strong> {GENERAL_ADVICE_WARNING} {ADVERTISER_DISCLOSURE_SHORT}
             </p>
           </div>
 
@@ -195,7 +197,7 @@ export default function QuizPage() {
                   background: `${topMatch.broker.color || '#f59e0b'}20`,
                 }}
               >
-                🏆 #1 Top Match
+                🏆 #1 on Your Shortlist
               </div>
               <div className="flex items-center gap-4 mb-4">
                 <div
@@ -243,6 +245,7 @@ export default function QuizPage() {
               >
                 {getBenefitCta(topMatch.broker, 'quiz')}
               </a>
+              <RiskWarningInline />
               {topMatch.broker.deal && topMatch.broker.deal_text && (
                 <div className="mt-3 text-center">
                   <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 border border-amber-200 rounded-full text-xs font-semibold text-amber-700">
@@ -304,6 +307,7 @@ export default function QuizPage() {
                           >
                             Visit →
                           </a>
+                          <RiskWarningInline />
                         </td>
                       </tr>
                     ))}
@@ -344,6 +348,7 @@ export default function QuizPage() {
                       >
                         {getBenefitCta(r.broker, 'quiz')}
                       </a>
+                      <RiskWarningInline />
                     </div>
                     {/* Match reasons for runner-ups too */}
                     <div className="mt-2 flex flex-wrap gap-1.5">

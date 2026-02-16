@@ -8,6 +8,7 @@ import AuthorByline from "@/components/AuthorByline";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
 import LeadMagnet from "@/components/LeadMagnet";
 import SocialProofBar from "@/components/SocialProofBar";
+import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 
 export const metadata = {
   title: "Compare Australian Brokers",
@@ -169,7 +170,7 @@ export default async function HomePage() {
                 <div className="text-3xl mb-2">🎯</div>
                 <h3 className="font-bold mb-1">Broker Quiz</h3>
                 <p className="text-sm text-slate-600">
-                  Answer 5 questions and get matched to the right broker for you.
+                  Answer 5 questions and filter brokers based on your priorities.
                 </p>
               </Link>
               <Link
@@ -213,12 +214,7 @@ export default async function HomePage() {
         <div className="container-custom">
           <p className="text-[0.65rem] text-slate-400 text-center leading-relaxed max-w-3xl mx-auto">
             <strong className="text-slate-500">General Advice Warning:</strong>{" "}
-            The information on Invest.com.au is general in nature and does not
-            take into account your personal financial situation. It is not
-            financial advice. You should consider whether the information is
-            appropriate to your needs, and where appropriate, seek professional
-            advice from a financial adviser. Past performance is not a reliable
-            indicator of future performance.
+            {GENERAL_ADVICE_WARNING}
           </p>
         </div>
       </section>

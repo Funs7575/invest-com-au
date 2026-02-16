@@ -5,6 +5,7 @@ import Link from "next/link";
 import { getAffiliateLink } from "@/lib/tracking";
 import AuthorByline from "@/components/AuthorByline";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
+import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 
 export async function generateMetadata({
   params,
@@ -199,7 +200,7 @@ export default async function ScenarioPage({
             <h2 className="text-xl font-extrabold mb-3 text-brand">
               Brokers Worth Comparing
             </h2>
-            <p className="text-xs text-slate-400 mb-3">We may earn a commission if you open an account via these links. This does not affect our editorial analysis.</p>
+            <p className="text-xs text-slate-400 mb-3">{ADVERTISER_DISCLOSURE_SHORT}</p>
             <div className="space-y-3 mb-8">
               {recBrokers.map((b) => (
                 <div
@@ -260,8 +261,7 @@ export default async function ScenarioPage({
             Need help deciding?
           </h2>
           <p className="text-slate-600 mb-5 text-sm max-w-md mx-auto">
-            Compare all brokers side-by-side or let our 60-second quiz match you
-            with the right platform.
+            Compare all brokers side-by-side or use our 60-second quiz to filter platforms by your criteria.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link

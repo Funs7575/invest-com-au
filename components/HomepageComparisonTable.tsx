@@ -3,6 +3,8 @@
 import { useState, useMemo } from "react";
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, renderStars } from "@/lib/tracking";
+import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
+import RiskWarningInline from "@/components/RiskWarningInline";
 
 const TAB_OPTIONS = ["All Platforms", "Share Trading", "Crypto Exchanges", "SMSF"] as const;
 type TabOption = (typeof TAB_OPTIONS)[number];
@@ -274,11 +276,10 @@ export default function HomepageComparisonTable({
       </div>
 
       {/* Affiliate disclosure */}
-      <p id="advertiser-disclosure" className="text-[0.6rem] text-slate-400 mt-4 text-center">
-        Sponsored — we may earn a commission if you open an account via our links, at no
-        extra cost to you. Rankings are based on editorial assessment and not influenced by
-        compensation.
-      </p>
+      <div id="advertiser-disclosure" className="text-[0.6rem] text-slate-400 mt-4 text-center">
+        <p>{ADVERTISER_DISCLOSURE_SHORT}</p>
+        <RiskWarningInline />
+      </div>
     </div>
   );
 }

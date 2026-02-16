@@ -82,10 +82,10 @@ export default function TradingGateway({ brokers }: TradingGatewayProps) {
 
           <div className="relative z-10">
             <h2 className="text-2xl md:text-3xl font-bold text-white mb-4 text-center">
-              Find Your Perfect Broker in 3 Clicks
+              Filter Brokers in 3 Clicks
             </h2>
             <p className="text-slate-300 text-center mb-8 max-w-2xl mx-auto">
-              Tell us what you're looking for and we'll show you the best matches
+              Tell us what you're looking for and we'll show brokers that fit your criteria
             </p>
 
             {/* Gateway Sentence */}

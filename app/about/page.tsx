@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
+import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 
 export const metadata = {
   title: "About Us",
@@ -144,10 +145,7 @@ export default function AboutPage() {
               <h3 className="font-extrabold text-lg">Disclaimers</h3>
               <div className="text-sm text-slate-600 space-y-3 leading-relaxed">
                 <p>
-                  <strong>General Advice Warning:</strong> The information on Invest.com.au is general in nature
-                  and does not consider your personal objectives, financial situation, or needs. You should
-                  consider whether the information is appropriate to your needs, and where appropriate, seek
-                  professional advice from a financial adviser.
+                  <strong>General Advice Warning:</strong> {GENERAL_ADVICE_WARNING}
                 </p>
                 <p>
                   <strong>Accuracy:</strong> While we strive to keep all information accurate and up to date,

@@ -2,6 +2,7 @@
 
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, renderStars } from "@/lib/tracking";
+import RiskWarningInline from "@/components/RiskWarningInline";
 
 export default function BrokerCard({ broker, badge, context = 'compare' }: { broker: Broker; badge?: string; context?: 'compare' | 'review' | 'calculator' | 'versus' | 'quiz' }) {
   return (
@@ -49,6 +50,7 @@ export default function BrokerCard({ broker, badge, context = 'compare' }: { bro
       >
         {getBenefitCta(broker, context)}
       </a>
+      <RiskWarningInline />
 
       <div className="grid grid-cols-2 gap-2">
         <div className="bg-slate-50 rounded-md p-2">

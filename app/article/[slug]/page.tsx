@@ -9,6 +9,7 @@ import ArticleSidebar from "@/components/ArticleSidebar";
 import ComparisonTableSkeleton from "@/components/ComparisonTableSkeleton";
 import AuthorByline from "@/components/AuthorByline";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
+import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 
 const CATEGORY_COLORS: Record<string, string> = {
   tax: "bg-purple-100 text-purple-700",
@@ -361,7 +362,7 @@ export default async function ArticlePage({
                   <div className="flex-1">
                     <h3 className="font-bold text-green-900 mb-1">Ready to act?</h3>
                     <p className="text-sm text-slate-600">
-                      Compare the brokers mentioned in this article, or let our quiz match you in 60 seconds.
+                      Compare the brokers mentioned in this article, or use our quiz to filter in 60 seconds.
                     </p>
                   </div>
                   <div className="flex gap-2 shrink-0">
@@ -413,7 +414,7 @@ export default async function ArticlePage({
                     Brokers to Compare for This Topic
                   </h3>
                   <p className="text-sm text-slate-500 mb-5">
-                    Platforms relevant to this guide. We may earn a commission via these links.
+                    Platforms relevant to this guide. {ADVERTISER_DISCLOSURE_SHORT}
                   </p>
                   <div className="space-y-4">
                     {relatedBrokers.map((broker) => (
@@ -494,7 +495,7 @@ export default async function ArticlePage({
                 </h3>
                 <p className="text-slate-300 mb-6 max-w-lg mx-auto">
                   Compare fees, features, and platforms across every major
-                  Australian broker — or let our quiz match you in 60 seconds.
+                  Australian broker — or use our quiz to filter in 60 seconds.
                 </p>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                   <Link
@@ -515,14 +516,7 @@ export default async function ArticlePage({
               {/* Disclaimer */}
               <div className="mt-10 border-t border-slate-200 pt-6">
                 <p className="text-xs text-slate-400 leading-relaxed">
-                  <strong>General Advice Warning:</strong> The information on
-                  this page is general in nature and does not constitute
-                  financial advice. We are not licensed financial advisers under
-                  the Corporations Act 2001 (Cth). Consider your own
-                  circumstances and seek professional advice before making
-                  investment decisions. Invest.com.au may receive a commission
-                  from partners featured on this page, but this does not
-                  influence our editorial opinions or rankings.{" "}
+                  <strong>General Advice Warning:</strong> {GENERAL_ADVICE_WARNING} {ADVERTISER_DISCLOSURE_SHORT}{" "}
                   <Link
                     href="/how-we-earn"
                     className="text-green-700 hover:underline"

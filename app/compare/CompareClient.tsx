@@ -194,7 +194,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
 
         {/* Quiz prompt inline */}
         <div className="flex items-center gap-2 mb-6 text-xs text-slate-500">
-          <span>Not sure which is right for you?</span>
+          <span>Not sure which to pick?</span>
           <Link href="/quiz" className="text-green-700 font-semibold hover:text-green-800 transition-colors">
             Take the 60-sec quiz →
           </Link>
@@ -325,8 +325,8 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="bg-slate-900 text-white rounded-xl p-6">
             <div className="text-2xl mb-2">🎯</div>
-            <h3 className="text-lg font-bold mb-1">Find Your Best Match</h3>
-            <p className="text-sm text-slate-300 mb-4">Answer 4 quick questions and we&apos;ll recommend the best broker for your situation.</p>
+            <h3 className="text-lg font-bold mb-1">Filter by Your Priorities</h3>
+            <p className="text-sm text-slate-300 mb-4">Answer 4 quick questions and narrow down brokers based on what matters to you.</p>
             <Link href="/quiz" className="inline-block px-5 py-2.5 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors">
               Take the Quiz →
             </Link>
