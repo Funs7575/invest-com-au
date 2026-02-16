@@ -1,10 +1,38 @@
 import type { Broker } from './types';
+import { getSessionId } from './session';
 
 export function trackClick(brokerSlug: string, brokerName: string, source: string, page: string, layer?: string) {
+  const sessionId = getSessionId();
   fetch('/api/track-click', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ broker_slug: brokerSlug, broker_name: brokerName, source, page, layer }),
+    body: JSON.stringify({ broker_slug: brokerSlug, broker_name: brokerName, source, page, layer, session_id: sessionId }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      // If click_id returned, append to outbound links for attribution
+      if (data?.click_id && typeof window !== 'undefined') {
+        (window as unknown as Record<string, string>).__inv_last_click_id = data.click_id;
+      }
+    })
+    .catch(() => {});
+}
+
+export function trackEvent(
+  eventType: string,
+  eventData?: Record<string, unknown>,
+  page?: string
+) {
+  const sessionId = getSessionId();
+  fetch('/api/track-event', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      event_type: eventType,
+      event_data: eventData || {},
+      page: page || (typeof window !== 'undefined' ? window.location.pathname : '/'),
+      session_id: sessionId,
+    }),
   }).catch(() => {});
 }
 

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { trackEvent } from "@/lib/tracking";
 
 export default function LeadMagnet() {
   const [email, setEmail] = useState("");
@@ -22,6 +23,7 @@ export default function LeadMagnet() {
       if (res.ok) {
         setStatus("success");
         setEmail("");
+        trackEvent('pdf_opt_in', { source: 'lead-magnet' });
       } else {
         setStatus("error");
       }

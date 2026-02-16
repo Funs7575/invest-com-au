@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import type { Broker } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
-import { trackClick, getAffiliateLink, getBenefitCta } from "@/lib/tracking";
+import { trackClick, trackEvent, getAffiliateLink, getBenefitCta } from "@/lib/tracking";
 import { useSearchParams } from "next/navigation";
 import AuthorByline from "@/components/AuthorByline";
 
@@ -129,6 +129,17 @@ function FrankingCalculator() {
   const [frankingPct, setFrankingPct] = useState("100");
   const [marginalRate, setMarginalRate] = useState(32.5);
 
+  // Track calculator usage (debounced)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      // Only track if user has actually interacted (e.g. changed from defaults)
+      if (dividendYield !== "4.5" || frankingPct !== "100" || marginalRate !== 32.5) {
+        trackEvent('calculator_use', { calc_type: 'franking', dividend_yield: dividendYield, franking_pct: frankingPct, marginal_rate: marginalRate }, '/calculators');
+      }
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, [dividendYield, frankingPct, marginalRate]);
+
   const dy = parseFloat(dividendYield) || 0;
   const fp = (parseFloat(frankingPct) || 0) / 100;
   const mr = marginalRate / 100;
@@ -245,6 +256,17 @@ function SwitchingCostCalculator({ brokers }: { brokers: Broker[] }) {
   const [tradesPerMonth, setTradesPerMonth] = useState("4");
   const [portfolioValue, setPortfolioValue] = useState("");
 
+  // Track calculator usage (debounced)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      // Only track if user has actually interacted (e.g. changed from defaults)
+      if (currentSlug || newSlug || tradesPerMonth !== "4" || portfolioValue) {
+        trackEvent('calculator_use', { calc_type: 'switching', current_broker: currentSlug, new_broker: newSlug, trades_per_month: tradesPerMonth }, '/calculators');
+      }
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, [currentSlug, newSlug, tradesPerMonth, portfolioValue]);
+
   const currentBroker = brokers.find((b) => b.slug === currentSlug);
   const newBroker = brokers.find((b) => b.slug === newSlug);
   const tpm = parseFloat(tradesPerMonth) || 0;
@@ -356,6 +378,17 @@ function SwitchingCostCalculator({ brokers }: { brokers: Broker[] }) {
 function FxFeeCalculator({ brokers }: { brokers: Broker[] }) {
   const [amount, setAmount] = useState(10000);
   const tradeAmount = amount;
+
+  // Track calculator usage (debounced)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      // Only track if user has actually interacted (e.g. changed from defaults)
+      if (amount !== 10000) {
+        trackEvent('calculator_use', { calc_type: 'fx', trade_amount: amount }, '/calculators');
+      }
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, [amount]);
 
   const fxBrokers = useMemo(() => {
     return brokers
@@ -484,6 +517,17 @@ function CgtCalculator() {
   const [gainAmount, setGainAmount] = useState("");
   const [marginalRate, setMarginalRate] = useState(32.5);
   const [held12Months, setHeld12Months] = useState(true);
+
+  // Track calculator usage (debounced)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      // Only track if user has actually interacted (e.g. changed from defaults)
+      if (gainAmount || marginalRate !== 32.5 || !held12Months) {
+        trackEvent('calculator_use', { calc_type: 'cgt', gain_amount: gainAmount, marginal_rate: marginalRate, held_12_months: held12Months }, '/calculators');
+      }
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, [gainAmount, marginalRate, held12Months]);
 
   const gain = parseFloat(gainAmount) || 0;
   const mr = marginalRate / 100;
@@ -617,6 +661,17 @@ function CgtCalculator() {
 function ChessLookup({ brokers }: { brokers: Broker[] }) {
   const [selectedSlug, setSelectedSlug] = useState("");
   const broker = brokers.find((b) => b.slug === selectedSlug);
+
+  // Track calculator usage (debounced)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      // Only track if user has actually interacted (e.g. changed from defaults)
+      if (selectedSlug) {
+        trackEvent('calculator_use', { calc_type: 'chess', selected_broker: selectedSlug }, '/calculators');
+      }
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, [selectedSlug]);
 
   return (
     <CalcSection

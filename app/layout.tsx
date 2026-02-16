@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import LayoutShell from "@/components/LayoutShell";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/seo";
 
 const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"] });
@@ -59,6 +60,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <LayoutShell>{children}</LayoutShell>
+        <SpeedInsights />
       </body>
     </html>
   );

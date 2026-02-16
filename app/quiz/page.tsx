@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Broker } from "@/lib/types";
-import { trackClick, getAffiliateLink, getBenefitCta, renderStars } from "@/lib/tracking";
+import { trackClick, trackEvent, getAffiliateLink, getBenefitCta, renderStars } from "@/lib/tracking";
 import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import RiskWarningInline from "@/components/RiskWarningInline";
 
@@ -70,7 +70,21 @@ export default function QuizPage() {
       });
   }, []);
 
+  useEffect(() => {
+    if (step >= questions.length && step > 0 && brokers.length > 0) {
+      const results = getResults();
+      trackEvent('quiz_complete', {
+        answers,
+        top_broker: results[0]?.slug || null,
+        results_count: results.length,
+      }, '/quiz');
+    }
+  }, [step, questions.length, brokers.length]);
+
   const handleAnswer = (key: string) => {
+    if (step === 0) {
+      trackEvent('quiz_start', { first_answer: key }, '/quiz');
+    }
     setAnswers([...answers, key]);
     setStep(step + 1);
   };

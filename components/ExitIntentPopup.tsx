@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import { trackEvent } from "@/lib/tracking";
 
 export default function ExitIntentPopup() {
   const [visible, setVisible] = useState(false);
@@ -83,6 +84,7 @@ export default function ExitIntentPopup() {
       if (res.ok) {
         setStatus("success");
         setEmail("");
+        trackEvent('pdf_opt_in', { source: 'exit-intent' });
       } else {
         setStatus("error");
       }
