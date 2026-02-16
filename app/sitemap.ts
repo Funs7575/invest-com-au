@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { MetadataRoute } from "next";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://invest-com-au.vercel.app";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app";
   const supabase = await createClient();
 
   // Static pages

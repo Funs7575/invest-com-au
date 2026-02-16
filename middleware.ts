@@ -36,8 +36,9 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(url)
     }
 
-    // Only allow admin emails
-    const isAdmin = user.email?.endsWith('@invest.com.au') || user.email === 'finnduns@gmail.com';
+    // Only allow admin emails (additional emails via ADMIN_EMAILS env var, comma-separated)
+    const extraAdmins = (process.env.ADMIN_EMAILS || 'finnduns@gmail.com').split(',').map(e => e.trim().toLowerCase());
+    const isAdmin = user.email?.endsWith('@invest.com.au') || extraAdmins.includes(user.email?.toLowerCase() || '');
     if (!isAdmin) {
       const url = request.nextUrl.clone()
       url.pathname = '/'
