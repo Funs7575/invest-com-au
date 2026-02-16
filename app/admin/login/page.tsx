@@ -2,28 +2,36 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
 
-    if (error) {
-      setError(error.message);
+      if (error) {
+        setError(error.message);
+        setLoading(false);
+      } else {
+        window.location.href = "/admin";
+      }
+    } catch (err) {
+      // Network errors (fetch failures, CORS, ad blockers) throw raw errors
+      setError(
+        err instanceof Error
+          ? `Connection error: ${err.message}. Check your network or try disabling ad blockers.`
+          : "An unexpected error occurred. Please try again."
+      );
       setLoading(false);
-    } else {
-      window.location.href = "/admin";
     }
   };
 
