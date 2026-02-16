@@ -5,51 +5,6 @@ import type { Broker } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
 import { trackClick, getAffiliateLink, getBenefitCta } from "@/lib/tracking";
 import { useSearchParams } from "next/navigation";
-import Link from "next/link";
-import AuthorByline from "@/components/AuthorByline";
-
-/* ──────────────────────────────────────────────
-   Animated number (reused from EmbeddedFxCalc)
-   ────────────────────────────────────────────── */
-function AnimatedNumber({
-  value,
-  prefix = "$",
-  decimals = 2,
-}: {
-  value: number;
-  prefix?: string;
-  decimals?: number;
-}) {
-  const [display, setDisplay] = useState(value);
-  const ref = useRef(value);
-
-  useEffect(() => {
-    const start = ref.current;
-    const end = value;
-    const duration = 400;
-    const startTime = performance.now();
-
-    function animate(now: number) {
-      const elapsed = now - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setDisplay(start + (end - start) * eased);
-      if (progress < 1) requestAnimationFrame(animate);
-    }
-    requestAnimationFrame(animate);
-    ref.current = end;
-  }, [value]);
-
-  return (
-    <span>
-      {prefix}
-      {display.toLocaleString("en-AU", {
-        minimumFractionDigits: decimals,
-        maximumFractionDigits: decimals,
-      })}
-    </span>
-  );
-}
 
 /* ──────────────────────────────────────────────
    Types
@@ -97,26 +52,21 @@ export default function CalculatorsClient({ brokers }: Props) {
   const nonCryptoBrokers = useMemo(() => brokers.filter((b) => !b.is_crypto), [brokers]);
 
   return (
-    <div>
-      {/* ── Dark Hero ──────────────────────────── */}
-      <section className="bg-brand text-white py-12">
-        <div className="container-custom text-center">
-          <h1 className="text-3xl md:text-4xl font-extrabold mb-3">Investment Calculators</h1>
-          <p className="text-lg text-slate-300 max-w-2xl mx-auto mb-6">
-            Free tools to help Australian investors understand costs, compare brokers, and plan smarter.
-          </p>
-          <AuthorByline variant="dark" />
-        </div>
-      </section>
+    <div className="py-12">
+      <div className="container-custom">
+        {/* Page Header */}
+        <h1 className="text-4xl font-bold mb-4">Investment Calculators</h1>
+        <p className="text-lg text-slate-600 mb-10">
+          Free tools to help Australian investors understand costs, compare brokers, and plan smarter.
+        </p>
 
-      <div className="container-custom py-12">
         {/* ── Calculator Hub ──────────────────────── */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-14">
           {CALCS.map((c) => (
             <button
               key={c.id}
               onClick={() => scrollTo(c.id)}
-              className="group border border-slate-200 rounded-xl bg-white p-5 text-left hover:border-green-700 hover:shadow-md hover-lift transition-all"
+              className="group border border-slate-200 rounded-xl bg-white p-5 text-left hover:border-green-700 hover:shadow-md transition-all"
             >
               <span className="text-3xl block mb-2">{c.emoji}</span>
               <span className="text-sm font-bold text-slate-900 group-hover:text-green-700 transition-colors block leading-tight">
@@ -134,22 +84,6 @@ export default function CalculatorsClient({ brokers }: Props) {
           <FxFeeCalculator brokers={nonCryptoBrokers} />
           <CgtCalculator />
           <ChessLookup brokers={nonCryptoBrokers} />
-        </div>
-
-        {/* ── Bottom CTA ──────────────────────────── */}
-        <div className="mt-14 bg-brand rounded-xl p-8 text-center text-white">
-          <h3 className="text-2xl font-extrabold mb-2">Need Help Choosing a Broker?</h3>
-          <p className="text-slate-300 mb-6 max-w-lg mx-auto">
-            Compare fees, features, and platforms across every major Australian broker — or let our quiz match you in 60 seconds.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Link href="/compare" className="px-6 py-3 bg-white text-brand text-sm font-bold rounded-lg hover:bg-slate-100 transition-colors">
-              Compare All Brokers
-            </Link>
-            <Link href="/quiz" className="px-6 py-3 bg-amber text-white text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors">
-              Take the Quiz
-            </Link>
-          </div>
         </div>
       </div>
     </div>
@@ -191,33 +125,17 @@ function FrankingCalculator() {
       </div>
 
       {showResults && (
-        <>
-          {/* Hero result */}
-          <div className="mt-6 bg-green-50 border border-green-200 rounded-xl p-5 text-center">
-            <div className="text-xs font-semibold text-green-700 uppercase tracking-wider mb-1">
-              Net Yield After Tax
-            </div>
-            <div className="text-3xl md:text-4xl font-extrabold text-green-800">
-              <AnimatedNumber value={netYield} prefix="" decimals={2} />%
-            </div>
-            {hasRefund && (
-              <div className="text-sm text-green-700 mt-1">
-                Includes a <strong>{excessCredits.toFixed(2)}%</strong> tax refund from excess credits
-              </div>
-            )}
-          </div>
-
-          <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
-            <ResultBox label="Grossed-Up Yield" value={`${grossedUpYield.toFixed(2)}%`} />
-            <ResultBox label="Franking Credit" value={`${frankingCredit.toFixed(2)}%`} positive />
-            <ResultBox label="Tax Payable" value={`${taxPayable.toFixed(2)}%`} negative />
-            {hasRefund ? (
-              <ResultBox label="Excess Credits" value={`${excessCredits.toFixed(2)}%`} positive />
-            ) : (
-              <ResultBox label="Tax Shortfall" value={`${Math.abs(excessCredits).toFixed(2)}%`} negative />
-            )}
-          </div>
-        </>
+        <div className="mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <ResultBox label="Grossed-Up Yield" value={`${grossedUpYield.toFixed(2)}%`} />
+          <ResultBox label="Franking Credit" value={`${frankingCredit.toFixed(2)}%`} />
+          <ResultBox label="Tax Payable" value={`${taxPayable.toFixed(2)}%`} negative />
+          <ResultBox label="Net Yield After Tax" value={`${netYield.toFixed(2)}%`} positive />
+          {hasRefund ? (
+            <ResultBox label="Refund (Excess Credits)" value={`${excessCredits.toFixed(2)}%`} positive />
+          ) : (
+            <ResultBox label="Shortfall (Tax Owed)" value={`${Math.abs(excessCredits).toFixed(2)}%`} negative />
+          )}
+        </div>
       )}
     </CalcSection>
   );
@@ -257,11 +175,11 @@ function SwitchingCostCalculator({ brokers }: { brokers: Broker[] }) {
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Current Broker</label>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Current Broker</label>
           <select
             value={currentSlug}
             onChange={(e) => setCurrentSlug(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 focus:bg-white focus:border-green-600 focus:ring-2 focus:ring-green-600/20 outline-none transition-all"
+            className="w-full border border-slate-300 rounded-lg px-4 py-2 bg-white focus:ring-2 focus:ring-green-700/20 focus:border-green-700 outline-none transition-colors"
           >
             <option value="">Select broker...</option>
             {brokers.map((b) => (
@@ -272,11 +190,11 @@ function SwitchingCostCalculator({ brokers }: { brokers: Broker[] }) {
           </select>
         </div>
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">New Broker</label>
+          <label className="block text-sm font-medium text-slate-700 mb-1">New Broker</label>
           <select
             value={newSlug}
             onChange={(e) => setNewSlug(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 focus:bg-white focus:border-green-600 focus:ring-2 focus:ring-green-600/20 outline-none transition-all"
+            className="w-full border border-slate-300 rounded-lg px-4 py-2 bg-white focus:ring-2 focus:ring-green-700/20 focus:border-green-700 outline-none transition-colors"
           >
             <option value="">Select broker...</option>
             {brokers.map((b) => (
@@ -292,45 +210,26 @@ function SwitchingCostCalculator({ brokers }: { brokers: Broker[] }) {
 
       {showResults && (
         <>
-          {/* Hero savings */}
-          {annualSavings !== 0 && (
-            <div className={`mt-6 rounded-xl p-5 text-center border ${
-              annualSavings > 0
-                ? "bg-green-50 border-green-200"
-                : "bg-red-50 border-red-200"
-            }`}>
-              <div className={`text-xs font-semibold uppercase tracking-wider mb-1 ${
-                annualSavings > 0 ? "text-green-700" : "text-red-600"
-              }`}>
-                {annualSavings > 0 ? "You could save" : "You\u2019d pay more"}
-              </div>
-              <div className={`text-3xl md:text-4xl font-extrabold ${
-                annualSavings > 0 ? "text-green-800" : "text-red-600"
-              }`}>
-                <AnimatedNumber value={Math.abs(annualSavings)} />/yr
-              </div>
-              {breakEvenMonths != null && (
-                <div className="text-sm text-slate-600 mt-1">
-                  Break even on the $54 transfer fee in <strong>{breakEvenMonths} month{breakEvenMonths !== 1 ? "s" : ""}</strong>
-                </div>
-              )}
-            </div>
-          )}
-
-          <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="mt-6 grid grid-cols-2 md:grid-cols-5 gap-4">
             <ResultBox
               label="Monthly Savings"
               value={formatCurrency(monthlySavings)}
               positive={monthlySavings > 0}
               negative={monthlySavings < 0}
             />
+            <ResultBox
+              label="Annual Savings"
+              value={formatCurrency(annualSavings)}
+              positive={annualSavings > 0}
+              negative={annualSavings < 0}
+            />
             <ResultBox label="Switching Cost" value={formatCurrency(TRANSFER_FEE)} />
             <ResultBox
               label="Break-Even"
-              value={breakEvenMonths != null ? `${breakEvenMonths} mo` : "N/A"}
+              value={breakEvenMonths != null ? `${breakEvenMonths} month${breakEvenMonths !== 1 ? "s" : ""}` : "N/A"}
             />
             <ResultBox
-              label="5-Year Net"
+              label="5-Year Net Savings"
               value={formatCurrency(fiveYearNet)}
               positive={fiveYearNet > 0}
               negative={fiveYearNet < 0}
@@ -339,7 +238,7 @@ function SwitchingCostCalculator({ brokers }: { brokers: Broker[] }) {
 
           {/* Inline CTA for cheaper broker */}
           {cheaperBroker && (
-            <div className="mt-6 flex items-center gap-4 bg-green-50 border border-green-200 rounded-xl p-5">
+            <div className="mt-6 flex items-center gap-4 bg-green-50 border border-green-200 rounded-xl p-4">
               <div className="flex-1">
                 <p className="text-sm font-semibold text-slate-900">
                   {cheaperBroker.name} is the cheaper option.
@@ -355,7 +254,7 @@ function SwitchingCostCalculator({ brokers }: { brokers: Broker[] }) {
                 onClick={() =>
                   trackClick(cheaperBroker.slug, cheaperBroker.name, "calculator-switching", "/calculators", "cta")
                 }
-                className="px-5 py-2.5 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 hover:scale-[1.02] transition-all text-sm whitespace-nowrap"
+                className="px-5 py-2 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors text-sm whitespace-nowrap"
               >
                 {getBenefitCta(cheaperBroker, "calculator")}
               </a>
@@ -402,70 +301,46 @@ function FxFeeCalculator({ brokers }: { brokers: Broker[] }) {
       </div>
 
       {tradeAmount > 0 && fxBrokers.length > 0 && (
-        <>
-          {/* Savings hero */}
-          <div className="mt-6 bg-green-50 border border-green-200 rounded-xl p-5 text-center">
-            <div className="text-xs font-semibold text-green-700 uppercase tracking-wider mb-1">
-              Cheapest vs most expensive — you save
-            </div>
-            <div className="text-3xl md:text-4xl font-extrabold text-green-800">
-              <AnimatedNumber value={fxBrokers[fxBrokers.length - 1].fee - fxBrokers[0].fee} />
-            </div>
-            <div className="text-sm text-green-700 mt-1">
-              on a {formatCurrency(tradeAmount)} trade by using <strong>{fxBrokers[0].broker.name}</strong>
-            </div>
-          </div>
+        <div className="mt-6 space-y-2">
+          {fxBrokers.map(({ broker, rate, fee }) => {
+            const isCheapest = broker.slug === cheapest;
+            const isMostExpensive = broker.slug === mostExpensive;
+            const barWidth = maxFee > 0 ? (fee / maxFee) * 100 : 0;
 
-          {/* Bar chart */}
-          <div className="mt-6 space-y-2.5">
-            {fxBrokers.map(({ broker, rate, fee }) => {
-              const isCheapest = broker.slug === cheapest;
-              const isMostExpensive = broker.slug === mostExpensive;
-              const barWidth = maxFee > 0 ? (fee / maxFee) * 100 : 0;
-
-              return (
-                <div key={broker.slug} className="flex items-center gap-3">
-                  <div className="w-28 md:w-36 text-xs font-semibold text-slate-600 text-right shrink-0 truncate">
-                    {broker.name}
-                  </div>
-                  <div className="flex-1 relative">
-                    <div
-                      className={`h-9 rounded-lg transition-all duration-500 flex items-center pr-2 ${
-                        isCheapest
-                          ? "bg-green-700"
-                          : isMostExpensive
-                          ? "bg-red-400"
-                          : "bg-amber"
-                      }`}
-                      style={{ width: `${Math.max(barWidth, 4)}%` }}
-                    >
-                      {barWidth > 15 && (
-                        <span className="text-xs font-bold text-white ml-auto">
-                          {formatCurrency(fee)}
-                        </span>
-                      )}
-                    </div>
-                    {barWidth <= 15 && (
-                      <span className="absolute left-[calc(4%+8px)] top-1/2 -translate-y-1/2 text-xs font-bold text-slate-700">
-                        {formatCurrency(fee)}
-                      </span>
-                    )}
-                  </div>
-                  <div className="w-16 text-right shrink-0">
-                    <span className={`text-xs font-bold ${
-                      isCheapest ? "text-green-800" : isMostExpensive ? "text-red-600" : "text-slate-500"
-                    }`}>
-                      {rate}%
-                    </span>
-                  </div>
+            return (
+              <div key={broker.slug} className="flex items-center gap-3">
+                <div className="w-32 md:w-40 text-sm font-medium text-slate-800 truncate shrink-0">
+                  {broker.name}
                 </div>
-              );
-            })}
-          </div>
+                <div className="flex-1 bg-slate-100 rounded-full h-7 relative overflow-hidden">
+                  <div
+                    className={`h-full rounded-full transition-all ${
+                      isCheapest
+                        ? "bg-green-700"
+                        : isMostExpensive
+                        ? "bg-red-400"
+                        : "bg-amber"
+                    }`}
+                    style={{ width: `${Math.max(barWidth, 3)}%` }}
+                  />
+                </div>
+                <div className="w-28 md:w-36 text-right shrink-0">
+                  <span
+                    className={`text-sm font-bold ${
+                      isCheapest ? "text-green-800" : isMostExpensive ? "text-red-600" : "text-slate-800"
+                    }`}
+                  >
+                    {formatCurrency(fee)}
+                  </span>
+                  <span className="text-xs text-slate-500 ml-1">({rate}%)</span>
+                </div>
+              </div>
+            );
+          })}
 
           {/* Cheapest broker CTA */}
           {fxBrokers.length > 0 && (
-            <div className="mt-6 flex items-center gap-4 bg-green-50 border border-green-200 rounded-xl p-5">
+            <div className="mt-4 flex items-center gap-4 bg-green-50 border border-green-200 rounded-xl p-4">
               <div className="flex-1">
                 <p className="text-sm font-semibold text-slate-900">
                   {fxBrokers[0].broker.name} has the lowest FX fee at {fxBrokers[0].rate}%.
@@ -488,13 +363,13 @@ function FxFeeCalculator({ brokers }: { brokers: Broker[] }) {
                     "cta"
                   )
                 }
-                className="px-5 py-2.5 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 hover:scale-[1.02] transition-all text-sm whitespace-nowrap"
+                className="px-5 py-2 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors text-sm whitespace-nowrap"
               >
                 {getBenefitCta(fxBrokers[0].broker, "calculator")}
               </a>
             </div>
           )}
-        </>
+        </div>
       )}
     </CalcSection>
   );
@@ -548,74 +423,69 @@ function CgtCalculator() {
       </div>
 
       {showResults && (
-        <>
-          {/* Hero savings */}
-          {held12Months && taxSaved > 0 && (
-            <div className="mt-6 bg-green-50 border border-green-200 rounded-xl p-5 text-center">
-              <div className="text-xs font-semibold text-green-700 uppercase tracking-wider mb-1">
-                CGT Discount Saves You
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Without discount */}
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-5">
+            <h4 className="text-sm font-bold text-slate-500 uppercase tracking-wide mb-3">Without CGT Discount</h4>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-600">Taxable Gain</span>
+                <span className="font-semibold">{formatCurrency(gain)}</span>
               </div>
-              <div className="text-3xl md:text-4xl font-extrabold text-green-800">
-                <AnimatedNumber value={taxSaved} />
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-600">Tax Payable</span>
+                <span className="font-semibold text-red-600">{formatCurrency(taxWithout)}</span>
               </div>
-              <div className="text-sm text-green-700 mt-1">
-                Effective rate drops from {effectiveWithout.toFixed(1)}% to <strong>{effectiveWith.toFixed(1)}%</strong>
-              </div>
-            </div>
-          )}
-
-          <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Without discount */}
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-5">
-              <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Without CGT Discount</h4>
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-slate-600">Taxable Gain</span>
-                  <span className="font-semibold">{formatCurrency(gain)}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-slate-600">Tax Payable</span>
-                  <span className="font-semibold text-red-600">{formatCurrency(taxWithout)}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-slate-600">Effective Rate</span>
-                  <span className="font-semibold">{effectiveWithout.toFixed(1)}%</span>
-                </div>
-              </div>
-            </div>
-
-            {/* With discount */}
-            <div
-              className={`border rounded-xl p-5 ${
-                held12Months ? "bg-green-50 border-green-200" : "bg-slate-50 border-slate-200"
-              }`}
-            >
-              <h4
-                className={`text-xs font-semibold uppercase tracking-wider mb-3 ${
-                  held12Months ? "text-green-700" : "text-slate-500"
-                }`}
-              >
-                {held12Months ? "With 50% CGT Discount" : "No Discount (< 12 months)"}
-              </h4>
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-slate-600">Taxable Gain</span>
-                  <span className="font-semibold">{formatCurrency(discountedGain)}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-slate-600">Tax Payable</span>
-                  <span className={`font-semibold ${held12Months ? "text-green-700" : "text-red-600"}`}>
-                    {formatCurrency(taxWith)}
-                  </span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-slate-600">Effective Rate</span>
-                  <span className="font-semibold">{effectiveWith.toFixed(1)}%</span>
-                </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-600">Effective Rate</span>
+                <span className="font-semibold">{effectiveWithout.toFixed(1)}%</span>
               </div>
             </div>
           </div>
-        </>
+
+          {/* With discount */}
+          <div
+            className={`border rounded-xl p-5 ${
+              held12Months ? "bg-green-50 border-green-200" : "bg-slate-50 border-slate-200"
+            }`}
+          >
+            <h4
+              className={`text-sm font-bold uppercase tracking-wide mb-3 ${
+                held12Months ? "text-green-700" : "text-slate-500"
+              }`}
+            >
+              {held12Months ? "With 50% CGT Discount" : "No Discount (< 12 months)"}
+            </h4>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-600">Taxable Gain</span>
+                <span className="font-semibold">{formatCurrency(discountedGain)}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-600">Tax Payable</span>
+                <span className={`font-semibold ${held12Months ? "text-green-700" : "text-red-600"}`}>
+                  {formatCurrency(taxWith)}
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-600">Effective Rate</span>
+                <span className="font-semibold">{effectiveWith.toFixed(1)}%</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Tax saved summary */}
+          {held12Months && taxSaved > 0 && (
+            <div className="md:col-span-2 bg-green-50 border border-green-200 rounded-xl p-4 text-center">
+              <p className="text-green-800 font-bold text-lg">
+                You save {formatCurrency(taxSaved)} in tax by holding for 12+ months.
+              </p>
+              <p className="text-green-700 text-sm mt-1">
+                Effective tax rate drops from {effectiveWithout.toFixed(1)}% to {effectiveWith.toFixed(1)}%.
+              </p>
+            </div>
+          )}
+        </div>
       )}
     </CalcSection>
   );
@@ -636,11 +506,11 @@ function ChessLookup({ brokers }: { brokers: Broker[] }) {
       desc="Check if a broker uses CHESS sponsorship or a custodial model, and what it means for you."
     >
       <div className="max-w-md">
-        <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Select Broker</label>
+        <label className="block text-sm font-medium text-slate-700 mb-1">Select Broker</label>
         <select
           value={selectedSlug}
           onChange={(e) => setSelectedSlug(e.target.value)}
-          className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 focus:bg-white focus:border-green-600 focus:ring-2 focus:ring-green-600/20 outline-none transition-all"
+          className="w-full border border-slate-300 rounded-lg px-4 py-2 bg-white focus:ring-2 focus:ring-green-700/20 focus:border-green-700 outline-none transition-colors"
         >
           <option value="">Choose a broker...</option>
           {brokers.map((b) => (
@@ -706,26 +576,26 @@ function ChessLookup({ brokers }: { brokers: Broker[] }) {
 
           {/* Quick reference table for all brokers */}
           <div className="mt-6">
-            <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">All Brokers at a Glance</h4>
+            <h4 className="text-sm font-bold text-slate-500 uppercase tracking-wide mb-3">All Brokers at a Glance</h4>
             <div className="border border-slate-200 rounded-xl overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
-                    <th className="text-left px-4 py-2.5 font-semibold text-slate-700">Broker</th>
-                    <th className="text-left px-4 py-2.5 font-semibold text-slate-700">Model</th>
-                    <th className="text-right px-4 py-2.5 font-semibold text-slate-700">ASX Fee</th>
+                    <th className="text-left px-4 py-2 font-semibold text-slate-700">Broker</th>
+                    <th className="text-left px-4 py-2 font-semibold text-slate-700">Model</th>
+                    <th className="text-right px-4 py-2 font-semibold text-slate-700">ASX Fee</th>
                   </tr>
                 </thead>
                 <tbody>
                   {brokers.map((b) => (
                     <tr
                       key={b.slug}
-                      className={`border-b border-slate-100 last:border-0 transition-colors ${
-                        b.slug === selectedSlug ? "bg-green-50" : "hover:bg-slate-50"
+                      className={`border-b border-slate-100 last:border-0 ${
+                        b.slug === selectedSlug ? "bg-green-50" : ""
                       }`}
                     >
-                      <td className="px-4 py-2.5 font-medium text-slate-800">{b.name}</td>
-                      <td className="px-4 py-2.5">
+                      <td className="px-4 py-2 font-medium text-slate-800">{b.name}</td>
+                      <td className="px-4 py-2">
                         {b.chess_sponsored ? (
                           <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-50 text-green-700 text-xs rounded border border-green-200 font-medium">
                             CHESS
@@ -736,7 +606,7 @@ function ChessLookup({ brokers }: { brokers: Broker[] }) {
                           </span>
                         )}
                       </td>
-                      <td className="px-4 py-2.5 text-right text-slate-700">{b.asx_fee || "N/A"}</td>
+                      <td className="px-4 py-2 text-right text-slate-700">{b.asx_fee || "N/A"}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -767,19 +637,13 @@ function CalcSection({
   children: React.ReactNode;
 }) {
   return (
-    <section id={id} className="rounded-2xl overflow-hidden shadow-sm scroll-mt-24">
-      {/* Dark header bar */}
-      <div className="bg-brand text-white px-6 py-4">
-        <div className="flex items-center gap-3">
-          <span className="text-xl">{emoji}</span>
-          <h2 className="text-xl font-extrabold">{title}</h2>
-        </div>
-        <p className="text-sm text-slate-300 mt-1 ml-9">{desc}</p>
+    <section id={id} className="border border-slate-200 rounded-xl p-6 md:p-8 scroll-mt-24">
+      <div className="flex items-start gap-3 mb-2">
+        <span className="text-2xl">{emoji}</span>
+        <h2 className="text-2xl font-bold">{title}</h2>
       </div>
-      {/* White body */}
-      <div className="p-6 md:p-8 bg-white border border-t-0 border-slate-200 rounded-b-2xl">
-        {children}
-      </div>
+      <p className="text-sm text-slate-600 mb-6 ml-10">{desc}</p>
+      {children}
     </section>
   );
 }
@@ -797,13 +661,13 @@ function InputField({
 }) {
   return (
     <div>
-      <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">{label}</label>
+      <label className="block text-sm font-medium text-slate-700 mb-1">{label}</label>
       <input
         type="number"
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 focus:bg-white focus:border-green-600 focus:ring-2 focus:ring-green-600/20 outline-none transition-all"
+        className="w-full border border-slate-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-700/20 focus:border-green-700 outline-none transition-colors"
       />
     </div>
   );
@@ -820,17 +684,13 @@ function ResultBox({
   positive?: boolean;
   negative?: boolean;
 }) {
-  const bg = positive
-    ? "bg-green-50 border border-green-200"
-    : negative
-    ? "bg-red-50 border border-red-200"
-    : "bg-slate-50 border border-slate-200";
+  const bg = positive ? "bg-green-50 border border-green-200" : negative ? "bg-red-50 border border-red-200" : "bg-slate-50";
   const textColor = positive ? "text-green-800" : negative ? "text-red-600" : "text-slate-900";
 
   return (
-    <div className={`rounded-xl p-4 ${bg}`}>
-      <div className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">{label}</div>
-      <div className={`text-2xl font-extrabold ${textColor}`}>{value}</div>
+    <div className={`rounded-lg p-4 ${bg}`}>
+      <div className="text-xs text-slate-500 mb-1">{label}</div>
+      <div className={`text-lg font-bold ${textColor}`}>{value}</div>
     </div>
   );
 }
