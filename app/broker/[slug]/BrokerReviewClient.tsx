@@ -13,6 +13,18 @@ function FeeVerdict({ value, thresholds }: { value: number | undefined; threshol
   return <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${colorMap[color]}`}>{label}</span>;
 }
 
+function getBestFor(b: Broker): string[] {
+  const bestFor: string[] = [];
+  if ((b.asx_fee_value ?? 999) === 0) bestFor.push("Cost-conscious traders who want $0 brokerage");
+  else if ((b.asx_fee_value ?? 999) <= 5) bestFor.push("Active traders looking for low ASX fees");
+  if (b.chess_sponsored) bestFor.push("Safety-first investors who want CHESS sponsorship");
+  if (b.smsf_support) bestFor.push("SMSF trustees needing compliant custody");
+  if (b.is_crypto) bestFor.push("Crypto investors on a regulated Australian exchange");
+  if (b.fx_rate != null && b.fx_rate <= 0.3) bestFor.push("International investors wanting low FX fees");
+  if (!bestFor.length) bestFor.push("General investors looking for a solid all-rounder");
+  return bestFor;
+}
+
 export default function BrokerReviewClient({ broker: b, similar }: { broker: Broker; similar: Broker[] }) {
   const feeRows = [
     { label: 'ASX Brokerage', value: b.asx_fee || 'N/A', numVal: b.asx_fee_value, thresholds: [5, 15] as [number, number], verdict: b.asx_fee_value != null && b.asx_fee_value <= 5 ? 'Low' : b.asx_fee_value != null && b.asx_fee_value <= 15 ? 'Medium' : 'High' },
@@ -22,6 +34,20 @@ export default function BrokerReviewClient({ broker: b, similar }: { broker: Bro
   ];
 
   const stickyDetail = `${b.asx_fee || 'N/A'} ASX · ${b.chess_sponsored ? 'CHESS' : 'Custodial'} · ${b.rating}/5`;
+  const bestFor = getBestFor(b);
+
+  // Real cost calculations
+  const asxCost = b.asx_fee_value ?? 0;
+  const usCost = (amount: number) => {
+    const fee = b.us_fee_value ?? 0;
+    const fxCost = amount * ((b.fx_rate ?? 0) / 100);
+    return fee + fxCost;
+  };
+  const costScenarios = [
+    { label: "$1,000 ASX Trade", amount: 1000, cost: asxCost, type: "asx" as const },
+    { label: "$5,000 US Trade", amount: 5000, cost: usCost(5000), type: "us" as const },
+    { label: "$10,000 US Trade", amount: 10000, cost: usCost(10000), type: "us" as const },
+  ];
 
   return (
     <div className="py-12">
@@ -62,7 +88,7 @@ export default function BrokerReviewClient({ broker: b, similar }: { broker: Bro
             target="_blank"
             rel="noopener noreferrer nofollow"
             onClick={() => trackClick(b.slug, b.name, 'review-header', `/broker/${b.slug}`, 'review')}
-            className="shrink-0 px-6 py-3 bg-amber text-white font-semibold rounded-lg hover:bg-amber-600 transition-colors"
+            className="shrink-0 px-6 py-3 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors"
           >
             {getBenefitCta(b, 'review')}
           </a>
@@ -70,6 +96,22 @@ export default function BrokerReviewClient({ broker: b, similar }: { broker: Bro
         <p className="text-xs text-slate-400 mb-8">
           Affiliate link — we may earn a commission at no extra cost to you.
         </p>
+
+        {/* Who Is This Best For? */}
+        <div className="bg-green-50 border border-green-200 rounded-xl p-6 mb-8">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-xl">🎯</span>
+            <h2 className="text-lg font-extrabold text-green-900">Who Is {b.name} Best For?</h2>
+          </div>
+          <ul className="space-y-2">
+            {bestFor.map((item, i) => (
+              <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
+                <span className="text-green-600 font-bold mt-0.5">✓</span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
 
         {/* Fee Audit */}
         <h2 className="text-2xl font-extrabold mb-2">Fee Audit</h2>
@@ -86,8 +128,34 @@ export default function BrokerReviewClient({ broker: b, similar }: { broker: Bro
           ))}
         </div>
 
+        {/* Real Cost Example */}
+        <div className="border border-slate-200 rounded-xl p-6 mb-8">
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-xl">🧮</span>
+            <h2 className="text-lg font-extrabold">What Would a Typical Trade Cost?</h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {costScenarios.map((s, i) => (
+              <div key={i} className="bg-slate-50 rounded-lg p-4 text-center">
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-1">{s.label}</p>
+                <p className="text-2xl font-extrabold text-brand">${s.cost.toFixed(2)}</p>
+                <p className="text-xs text-slate-400 mt-1">
+                  {((s.cost / s.amount) * 100).toFixed(2)}% of trade
+                  {s.type === "us" && b.fx_rate != null && (
+                    <span className="block text-slate-400">incl. {b.fx_rate}% FX</span>
+                  )}
+                </p>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-slate-400 mt-3 text-center">
+            Estimates based on published fee schedule. Actual costs may vary.{' '}
+            <Link href="/calculators" className="text-green-700 hover:underline">Try our full calculators →</Link>
+          </p>
+        </div>
+
         {/* Inline CTA 1 */}
-        <div className="bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-200 rounded-xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+        <div className="bg-green-50 border border-green-200 rounded-xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
           <p className="text-sm">
             <strong>Like what you see?</strong>{' '}
             {(b.asx_fee_value ?? 999) <= 5
@@ -101,7 +169,7 @@ export default function BrokerReviewClient({ broker: b, similar }: { broker: Bro
             target="_blank"
             rel="noopener noreferrer nofollow"
             onClick={() => trackClick(b.slug, b.name, 'review-inline-1', `/broker/${b.slug}`, 'review')}
-            className="shrink-0 px-4 py-2 bg-amber text-white text-sm font-semibold rounded-lg hover:bg-amber-600 transition-colors"
+            className="shrink-0 px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
           >
             {getBenefitCta(b, 'review')}
           </a>
@@ -156,7 +224,7 @@ export default function BrokerReviewClient({ broker: b, similar }: { broker: Bro
         </div>
 
         {/* Inline CTA 2 */}
-        <div className="bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-200 rounded-xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+        <div className="bg-green-50 border border-green-200 rounded-xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
           <p className="text-sm">
             <strong>Ready to decide?</strong>{' '}
             {b.deal
@@ -172,7 +240,7 @@ export default function BrokerReviewClient({ broker: b, similar }: { broker: Bro
             target="_blank"
             rel="noopener noreferrer nofollow"
             onClick={() => trackClick(b.slug, b.name, 'review-inline-2', `/broker/${b.slug}`, 'review')}
-            className="shrink-0 px-4 py-2 bg-amber text-white text-sm font-semibold rounded-lg hover:bg-amber-600 transition-colors"
+            className="shrink-0 px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
           >
             {getBenefitCta(b, 'review')}
           </a>
@@ -240,7 +308,7 @@ export default function BrokerReviewClient({ broker: b, similar }: { broker: Bro
             target="_blank"
             rel="noopener noreferrer nofollow"
             onClick={() => trackClick(b.slug, b.name, 'review-bottom', `/broker/${b.slug}`, 'review')}
-            className="inline-block px-8 py-3 bg-amber text-white font-semibold rounded-lg hover:bg-amber-600 transition-colors"
+            className="inline-block px-8 py-3 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors"
           >
             {getBenefitCta(b, 'review')}
           </a>

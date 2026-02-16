@@ -130,6 +130,16 @@ export default async function ScenarioPage({
           </>
         )}
 
+        {/* Quiz nudge — placed between considerations and broker list */}
+        <div className="mb-8">
+          <Link
+            href="/quiz"
+            className="text-sm text-green-700 font-semibold hover:underline transition-colors"
+          >
+            Not sure which is right? Take our 60-second quiz &rarr;
+          </Link>
+        </div>
+
         {/* Brokers Worth Comparing */}
         {recBrokers.length > 0 && (
           <>
@@ -180,7 +190,7 @@ export default async function ScenarioPage({
                       href={getAffiliateLink(b)}
                       target="_blank"
                       rel="noopener noreferrer nofollow"
-                      className="px-3 py-2 text-sm bg-amber text-white rounded-lg hover:bg-amber-600 transition-colors"
+                      className="px-3 py-2 text-sm bg-green-700 text-white rounded-lg hover:bg-green-800 transition-colors"
                     >
                       {b.cta_text || `Visit ${b.name}`}
                     </a>
@@ -203,7 +213,7 @@ export default async function ScenarioPage({
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link
               href="/compare"
-              className="px-6 py-3 bg-amber text-white text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors"
+              className="px-6 py-3 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors"
             >
               Compare All Brokers
             </Link>

@@ -106,7 +106,7 @@ export default async function HomePage() {
                 })}
               </span>
             </div>
-            <HomepageComparisonTable brokers={(brokers as Broker[]) || []} />
+            <HomepageComparisonTable brokers={(brokers as Broker[]) || []} defaultTab="Share Trading" />
             <div className="text-center mt-6">
               <Link
                 href="/compare"

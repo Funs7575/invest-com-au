@@ -13,8 +13,14 @@ function deriveCategory(broker: Broker): string {
   return "Share Trading";
 }
 
-export default function HomepageComparisonTable({ brokers }: { brokers: Broker[] }) {
-  const [activeTab, setActiveTab] = useState<TabOption>("All Platforms");
+export default function HomepageComparisonTable({
+  brokers,
+  defaultTab = "All Platforms",
+}: {
+  brokers: Broker[];
+  defaultTab?: TabOption;
+}) {
+  const [activeTab, setActiveTab] = useState<TabOption>(defaultTab);
 
   // Filter by active tab, sort by rating, take top 8
   const displayBrokers = useMemo(() => {
@@ -98,7 +104,7 @@ export default function HomepageComparisonTable({ brokers }: { brokers: Broker[]
               <tr
                 key={broker.id}
                 className={`hover:bg-slate-50 transition-colors ${
-                  editorPicks[broker.slug] ? "bg-amber-50/40" : ""
+                  editorPicks[broker.slug] ? "bg-green-50/40" : ""
                 }`}
               >
                 <td className="px-3 py-3 text-sm text-slate-400 font-medium">
@@ -117,7 +123,7 @@ export default function HomepageComparisonTable({ brokers }: { brokers: Broker[]
                         {broker.name}
                       </a>
                       {editorPicks[broker.slug] && (
-                        <div className="text-[0.6rem] font-extrabold text-amber-700 uppercase tracking-wide">
+                        <div className="text-[0.6rem] font-extrabold text-green-700 uppercase tracking-wide">
                           {editorPicks[broker.slug]}
                         </div>
                       )}
@@ -176,12 +182,12 @@ export default function HomepageComparisonTable({ brokers }: { brokers: Broker[]
             key={broker.id}
             className={`rounded-xl border p-4 bg-white ${
               editorPicks[broker.slug]
-                ? "border-amber ring-1 ring-amber/30"
+                ? "border-green-700 ring-1 ring-green-700/30"
                 : "border-slate-200"
             }`}
           >
             {editorPicks[broker.slug] && (
-              <div className="text-[0.6rem] font-extrabold uppercase tracking-wide text-amber-700 mb-2">
+              <div className="text-[0.6rem] font-extrabold uppercase tracking-wide text-green-700 mb-2">
                 {editorPicks[broker.slug]}
               </div>
             )}

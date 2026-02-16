@@ -18,6 +18,24 @@ const filters: { key: FilterType; label: string }[] = [
   { key: 'crypto', label: 'Crypto' },
 ];
 
+const feeTooltips: Record<string, string> = {
+  asx_fee_value: "The brokerage you pay per ASX trade. Lower is better.",
+  us_fee_value: "Cost per US share trade (excl. FX). Some brokers charge $0.",
+  fx_rate: "Currency conversion markup on international trades. Big 4 banks charge ~0.7%.",
+  chess: "CHESS = your shares registered in your name. Safer if the broker fails.",
+};
+
+function InfoTip({ text }: { text: string }) {
+  return (
+    <span className="relative group ml-1 inline-flex">
+      <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-slate-200 text-slate-500 text-[0.55rem] font-bold cursor-help">?</span>
+      <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2.5 py-1.5 bg-slate-800 text-white text-xs rounded-lg whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-10 max-w-[220px] whitespace-normal text-center leading-tight">
+        {text}
+      </span>
+    </span>
+  );
+}
+
 export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   const [sortCol, setSortCol] = useState<SortCol>('rating');
@@ -93,7 +111,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               onClick={() => setActiveFilter(f.key)}
               className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
                 activeFilter === f.key
-                  ? 'bg-amber text-white'
+                  ? 'bg-green-700 text-white'
                   : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
               }`}
             >
@@ -108,29 +126,35 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             <thead className="bg-slate-50">
               <tr>
                 <th className="px-4 py-3 text-left font-semibold text-sm">
-                  <button onClick={() => handleSort('name')} className="hover:text-amber transition-colors">
+                  <button onClick={() => handleSort('name')} className="hover:text-green-700 transition-colors">
                     Broker{sortArrow('name')}
                   </button>
                 </th>
                 <th className="px-4 py-3 text-left font-semibold text-sm">
-                  <button onClick={() => handleSort('asx_fee_value')} className="hover:text-amber transition-colors">
+                  <button onClick={() => handleSort('asx_fee_value')} className="hover:text-green-700 transition-colors">
                     ASX Fee{sortArrow('asx_fee_value')}
                   </button>
+                  <InfoTip text={feeTooltips.asx_fee_value} />
                 </th>
                 <th className="px-4 py-3 text-left font-semibold text-sm">
-                  <button onClick={() => handleSort('us_fee_value')} className="hover:text-amber transition-colors">
+                  <button onClick={() => handleSort('us_fee_value')} className="hover:text-green-700 transition-colors">
                     US Fee{sortArrow('us_fee_value')}
                   </button>
+                  <InfoTip text={feeTooltips.us_fee_value} />
                 </th>
                 <th className="px-4 py-3 text-left font-semibold text-sm">
-                  <button onClick={() => handleSort('fx_rate')} className="hover:text-amber transition-colors">
+                  <button onClick={() => handleSort('fx_rate')} className="hover:text-green-700 transition-colors">
                     FX Rate{sortArrow('fx_rate')}
                   </button>
+                  <InfoTip text={feeTooltips.fx_rate} />
                 </th>
-                <th className="px-4 py-3 text-center font-semibold text-sm">CHESS</th>
+                <th className="px-4 py-3 text-center font-semibold text-sm">
+                  CHESS
+                  <InfoTip text={feeTooltips.chess} />
+                </th>
                 <th className="px-4 py-3 text-center font-semibold text-sm">SMSF</th>
                 <th className="px-4 py-3 text-center font-semibold text-sm">
-                  <button onClick={() => handleSort('rating')} className="hover:text-amber transition-colors">
+                  <button onClick={() => handleSort('rating')} className="hover:text-green-700 transition-colors">
                     Rating{sortArrow('rating')}
                   </button>
                 </th>
@@ -141,14 +165,14 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               {sorted.map(broker => (
                 <tr
                   key={broker.id}
-                  className={`hover:bg-slate-50 ${editorPicks[broker.slug] ? 'bg-amber-50/40' : ''}`}
+                  className={`hover:bg-slate-50 ${editorPicks[broker.slug] ? 'bg-green-50/40' : ''}`}
                 >
                   <td className="px-4 py-3">
-                    <a href={`/broker/${broker.slug}`} className="font-semibold text-brand hover:text-amber transition-colors">
+                    <a href={`/broker/${broker.slug}`} className="font-semibold text-brand hover:text-green-700 transition-colors">
                       {broker.name}
                     </a>
                     {editorPicks[broker.slug] && (
-                      <div className="text-[0.6rem] font-extrabold text-amber-700 uppercase tracking-wide">
+                      <div className="text-[0.6rem] font-extrabold text-green-700 uppercase tracking-wide">
                         {editorPicks[broker.slug]}
                       </div>
                     )}
@@ -176,7 +200,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                       target="_blank"
                       rel="noopener noreferrer nofollow"
                       onClick={() => trackClick(broker.slug, broker.name, 'compare-table', '/compare', 'compare')}
-                      className="inline-block px-4 py-2 bg-amber text-white text-sm font-semibold rounded-lg hover:bg-amber-600 transition-colors"
+                      className="inline-block px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
                     >
                       {getBenefitCta(broker, 'compare')}
                     </a>

@@ -320,6 +320,32 @@ export default async function ArticlePage({
                 </div>
               )}
 
+              {/* Early CTA — surfaces broker comparison before users drop off */}
+              {relatedBrokers.length > 0 && (
+                <div className="bg-green-50 border border-green-200 rounded-xl p-5 mb-10 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                  <div className="flex-1">
+                    <h3 className="font-bold text-green-900 mb-1">Ready to act?</h3>
+                    <p className="text-sm text-slate-600">
+                      Compare the brokers mentioned in this article, or let our quiz match you in 60 seconds.
+                    </p>
+                  </div>
+                  <div className="flex gap-2 shrink-0">
+                    <Link
+                      href="/compare"
+                      className="px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
+                    >
+                      Compare Brokers &rarr;
+                    </Link>
+                    <Link
+                      href="/quiz"
+                      className="px-4 py-2 border border-green-700 text-green-700 text-sm font-semibold rounded-lg hover:bg-green-100 transition-colors"
+                    >
+                      Take the Quiz
+                    </Link>
+                  </div>
+                </div>
+              )}
+
               {/* Standard: Render all sections normally */}
               {!isEnhanced && a.sections && a.sections.length > 0 && (
                 <div className="space-y-10">

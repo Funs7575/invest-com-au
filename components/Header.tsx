@@ -13,107 +13,102 @@ const navItems = [
   { name: "About", href: "/about" },
 ];
 
+const popularLinks = [
+  { label: "Stake vs CommSec", href: "/versus?vs=stake,commsec" },
+  { label: "Franking Calculator", href: "/calculators?calc=franking" },
+  { label: "How to Buy Shares", href: "/article/how-to-buy-shares" },
+  { label: "SMSF Brokers", href: "/scenario/smsf" },
+];
+
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <>
-      <header className="sticky top-0 z-50 bg-white border-b border-slate-200">
-        <div className="container-custom">
-          <div className="flex items-center justify-between h-16">
-            <Link href="/" className="text-xl font-bold text-green-800">
-              Invest<span className="text-amber-500">.com.au</span>
-            </Link>
+    <header className="sticky top-0 z-50 bg-white border-b border-slate-200">
+      <div className="container-custom">
+        <div className="flex items-center justify-between h-16">
+          <Link href="/" className="text-xl font-bold text-green-800">
+            Invest<span className="text-amber-500">.com.au</span>
+          </Link>
 
-            {/* Desktop Nav */}
-            <nav className="hidden md:flex items-center gap-6">
-              {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="text-sm font-medium text-slate-700 hover:text-green-800 transition-colors"
-                >
-                  {item.name}
-                </Link>
-              ))}
+          {/* Desktop Nav */}
+          <nav className="hidden md:flex items-center gap-6">
+            {navItems.map((item) => (
               <Link
-                href="/quiz"
-                className="px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
+                key={item.href}
+                href={item.href}
+                className="text-sm font-medium text-slate-700 hover:text-green-800 transition-colors"
               >
-                Find Your Broker
+                {item.name}
               </Link>
-            </nav>
-
-            {/* Mobile Hamburger */}
-            <button
-              onClick={() => setMenuOpen(!menuOpen)}
-              className="md:hidden p-2 text-slate-700 hover:text-green-800 transition-colors"
-              aria-label="Toggle menu"
+            ))}
+            <Link
+              href="/quiz"
+              className="px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
             >
-              {menuOpen ? (
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              ) : (
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-              )}
-            </button>
-          </div>
-        </div>
+              Find Your Broker
+            </Link>
+          </nav>
 
-        {/* Mobile Slide-out Menu */}
-        {menuOpen && (
-          <div className="md:hidden border-t border-slate-200 bg-white">
-            <nav className="container-custom py-4 space-y-1">
-              {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setMenuOpen(false)}
-                  className="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-green-50 hover:text-green-800 rounded-lg transition-colors"
-                >
-                  {item.name}
-                </Link>
-              ))}
-              <div className="pt-2 mt-2 border-t border-slate-100">
-                <Link
-                  href="/quiz"
-                  onClick={() => setMenuOpen(false)}
-                  className="block px-4 py-3 text-sm font-semibold text-green-700 hover:bg-green-50 rounded-lg transition-colors"
-                >
-                  Take The Quiz
-                </Link>
-              </div>
-            </nav>
-          </div>
-        )}
-      </header>
-
-      {/* Quick Nav Bar */}
-      <div className="sticky top-[64px] z-40 bg-green-800 border-b border-green-700 overflow-x-auto">
-        <div className="container-custom">
-          <div className="flex items-center gap-4 py-2 text-xs text-green-200">
-            <span className="font-semibold text-green-300 whitespace-nowrap">Popular:</span>
-            <Link href="/versus?vs=stake,commsec" className="whitespace-nowrap hover:text-amber-400 transition-colors">
-              Stake vs CommSec
-            </Link>
-            <span className="text-green-600">•</span>
-            <Link href="/calculators?calc=franking" className="whitespace-nowrap hover:text-amber-400 transition-colors">
-              Franking Calculator
-            </Link>
-            <span className="text-green-600">•</span>
-            <Link href="/article/how-to-buy-shares" className="whitespace-nowrap hover:text-amber-400 transition-colors">
-              How to Buy Shares
-            </Link>
-            <span className="text-green-600">•</span>
-            <Link href="/scenario/smsf" className="whitespace-nowrap hover:text-amber-400 transition-colors">
-              SMSF Brokers
-            </Link>
-          </div>
+          {/* Mobile Hamburger */}
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="md:hidden p-2 text-slate-700 hover:text-green-800 transition-colors"
+            aria-label="Toggle menu"
+          >
+            {menuOpen ? (
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            )}
+          </button>
         </div>
       </div>
-    </>
+
+      {/* Mobile Slide-out Menu */}
+      {menuOpen && (
+        <div className="md:hidden border-t border-slate-200 bg-white">
+          <nav className="container-custom py-4 space-y-1">
+            {navItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setMenuOpen(false)}
+                className="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-green-50 hover:text-green-800 rounded-lg transition-colors"
+              >
+                {item.name}
+              </Link>
+            ))}
+            <div className="pt-2 mt-2 border-t border-slate-100">
+              <Link
+                href="/quiz"
+                onClick={() => setMenuOpen(false)}
+                className="block px-4 py-3 text-sm font-semibold text-green-700 hover:bg-green-50 rounded-lg transition-colors"
+              >
+                Take The Quiz
+              </Link>
+            </div>
+            {/* Popular Links */}
+            <div className="pt-2 mt-2 border-t border-slate-100">
+              <p className="px-4 py-1 text-[0.65rem] font-semibold uppercase tracking-wide text-slate-400">Popular</p>
+              {popularLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setMenuOpen(false)}
+                  className="block px-4 py-2 text-xs text-slate-500 hover:text-green-700 transition-colors"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </nav>
+        </div>
+      )}
+    </header>
   );
 }
