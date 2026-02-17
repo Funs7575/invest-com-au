@@ -13,7 +13,7 @@ export default function PrivacyPage() {
       <div className="container-custom max-w-3xl">
         <h1 className="text-3xl font-extrabold mb-2">Privacy Policy</h1>
         <p className="text-sm text-slate-500 mb-8">
-          Last updated: 15 February 2026
+          Last updated: 17 February 2026
         </p>
 
         <div className="prose prose-slate max-w-none text-sm leading-relaxed space-y-6">
@@ -118,7 +118,44 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-lg font-bold mb-2">
-              5. Third-Party Disclosure
+              5. Affiliate Link Tracking
+            </h2>
+            <p className="text-slate-600 mb-2">
+              When you click a &quot;Visit&quot; or &quot;Get Started&quot; button
+              for a broker or financial product, your click is routed through our
+              redirect service at <code className="text-xs bg-slate-100 px-1 rounded">/go/[broker]</code>.
+              This allows us to:
+            </p>
+            <ul className="list-disc pl-5 text-slate-600 space-y-1">
+              <li>
+                <strong>Record the click</strong> — we store a hashed (irreversible)
+                version of your IP address, the page you clicked from, your browser
+                user-agent string, and a timestamp. We do not store your raw IP address.
+              </li>
+              <li>
+                <strong>Generate a click ID</strong> — a unique anonymous identifier
+                appended to the destination URL for commission attribution.
+                This ID cannot be used to identify you personally.
+              </li>
+              <li>
+                <strong>Redirect you</strong> — after recording the click, you are
+                immediately redirected (HTTP 302) to the partner&apos;s website. We
+                set <code className="text-xs bg-slate-100 px-1 rounded">Referrer-Policy: no-referrer</code> to
+                prevent the partner from seeing which specific page you came from.
+              </li>
+            </ul>
+            <p className="text-slate-600 mt-2">
+              All affiliate links on this site are marked with{" "}
+              <code className="text-xs bg-slate-100 px-1 rounded">rel=&quot;sponsored&quot;</code> in
+              accordance with Google&apos;s guidelines for paid and affiliate links.
+              This has no effect on your browsing experience but informs search
+              engines about the commercial nature of the link.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-bold mb-2">
+              6. Third-Party Disclosure
             </h2>
             <p className="text-slate-600 mb-2">
               We may share limited information with the following third parties:
@@ -141,7 +178,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-lg font-bold mb-2">6. Data Security</h2>
+            <h2 className="text-lg font-bold mb-2">7. Data Security</h2>
             <p className="text-slate-600">
               We take reasonable steps to protect your personal information from
               misuse, interference, loss, and unauthorised access. Email
@@ -154,7 +191,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-lg font-bold mb-2">
-              7. Your Rights Under the Privacy Act
+              8. Your Rights Under the Privacy Act
             </h2>
             <p className="text-slate-600 mb-2">
               Under the Australian Privacy Act 1988, you have the right to:
@@ -191,7 +228,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-lg font-bold mb-2">
-              8. Email Communications (Spam Act 2003)
+              9. Email Communications (Spam Act 2003)
             </h2>
             <p className="text-slate-600">
               All commercial electronic messages sent by Invest.com.au comply
@@ -206,7 +243,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-lg font-bold mb-2">
-              9. Changes to This Policy
+              10. Changes to This Policy
             </h2>
             <p className="text-slate-600">
               We may update this Privacy Policy from time to time. Any changes
@@ -217,7 +254,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-lg font-bold mb-2">10. Contact Us</h2>
+            <h2 className="text-lg font-bold mb-2">11. Contact Us</h2>
             <p className="text-slate-600">
               If you have any questions about this Privacy Policy, or wish to
               make a complaint about how we have handled your personal

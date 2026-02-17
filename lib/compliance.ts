@@ -19,10 +19,15 @@ export const ADVERTISER_DISCLOSURE_SHORT =
 /** Full general advice warning — used on every page with financial content */
 export const GENERAL_ADVICE_WARNING =
   "The information on Invest.com.au is general in nature and does not take into account " +
-  "your personal financial situation. It is not financial advice. Consider whether the " +
-  "information is appropriate to your needs, and where appropriate, seek professional " +
-  "advice from a financial adviser. Past performance is not a reliable indicator of " +
-  "future performance.";
+  "your personal financial situation. It is not financial advice. Before making a decision, " +
+  "consider the Product Disclosure Statement (PDS) and Target Market Determination (TMD) " +
+  "for any financial product. Consider whether the information is appropriate to your needs, " +
+  "and where appropriate, seek professional advice from a financial adviser. " +
+  "Past performance is not a reliable indicator of future performance.";
+
+/** PDS/TMD consideration — short version for inline placement near CTAs */
+export const PDS_CONSIDERATION =
+  "Consider the PDS and TMD before making a decision.";
 
 /** Short risk warning — placed near every outbound CTA button */
 export const RISK_WARNING_CTA =
