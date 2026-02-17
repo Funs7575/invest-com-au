@@ -58,6 +58,7 @@ export interface Article {
   related_brokers?: string[];
   related_calc?: string;
   evergreen: boolean;
+  status?: string;
   published_at?: string;
   author_name?: string;
   author_title?: string;

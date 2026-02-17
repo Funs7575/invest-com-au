@@ -36,6 +36,7 @@ const navSections = [
       { href: "/admin/site-settings", label: "Site Settings", icon: "⚙️" },
       { href: "/admin/calculator-config", label: "Calculator Config", icon: "🧮" },
       { href: "/admin/export-import", label: "Export / Import", icon: "💾" },
+      { href: "/admin/audit-log", label: "Audit Log", icon: "📋" },
     ],
   },
 ];

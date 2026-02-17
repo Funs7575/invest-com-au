@@ -17,6 +17,7 @@ export default function AdminArticlesPage() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
   const [deleteTarget, setDeleteTarget] = useState<Article | null>(null);
+  const [statusFilter, setStatusFilter] = useState<"all" | "published" | "draft">("all");
 
   const supabase = createClient();
   const { toast } = useToast();
@@ -70,6 +71,7 @@ export default function AdminArticlesPage() {
       related_brokers: formData.get("related_brokers") ? (formData.get("related_brokers") as string).split(",").map(t => t.trim()).filter(Boolean) : [],
       related_calc: formData.get("related_calc") || null,
       evergreen: formData.get("evergreen") === "on",
+      status: formData.get("status") || "published",
       published_at: formData.get("published_at") || new Date().toISOString(),
       updated_at: new Date().toISOString(),
       author_name: formData.get("author_name") || null,
@@ -110,27 +112,43 @@ export default function AdminArticlesPage() {
     load();
   };
 
+  const toggleStatus = async (article: Article) => {
+    const newStatus = article.status === "draft" ? "published" : "draft";
+    const { error } = await supabase.from("articles").update({ status: newStatus, updated_at: new Date().toISOString() }).eq("id", article.id);
+    if (error) {
+      toast("Failed to update status", "error");
+    } else {
+      toast(`Article ${newStatus === "published" ? "published" : "moved to draft"}`, "success");
+      load();
+    }
+  };
+
   const showForm = editing || creating;
   const formArticle = editing || {} as Partial<Article>;
 
-  const filteredArticles = articles.filter((a) =>
-    a.title.toLowerCase().includes(search.toLowerCase()) ||
-    a.slug.toLowerCase().includes(search.toLowerCase()) ||
-    (a.category || "").toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredArticles = articles.filter((a) => {
+    const matchesSearch = a.title.toLowerCase().includes(search.toLowerCase()) ||
+      a.slug.toLowerCase().includes(search.toLowerCase()) ||
+      (a.category || "").toLowerCase().includes(search.toLowerCase());
+    const matchesStatus = statusFilter === "all" || (a.status || "published") === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
 
   // Reset page when search changes
-  useEffect(() => { setPage(0); }, [search]);
+  useEffect(() => { setPage(0); }, [search, statusFilter]);
 
   const totalPages = Math.ceil(filteredArticles.length / PAGE_SIZE);
   const paginatedArticles = filteredArticles.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+
+  const draftCount = articles.filter(a => a.status === "draft").length;
+  const publishedCount = articles.filter(a => (a.status || "published") === "published").length;
 
   return (
     <AdminShell>
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Articles</h1>
-          <p className="text-sm text-slate-500 mt-1">{articles.length} articles</p>
+          <p className="text-sm text-slate-500 mt-1">{publishedCount} published, {draftCount} draft</p>
         </div>
         {!showForm && (
           <button
@@ -147,7 +165,7 @@ export default function AdminArticlesPage() {
           onSubmit={(e) => { e.preventDefault(); handleSave(new FormData(e.currentTarget)); }}
           className="bg-white border border-slate-200 rounded-lg p-6 space-y-4"
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block text-xs font-medium text-slate-500 mb-1">Title <span className="text-red-600">*</span></label>
               <input name="title" defaultValue={formArticle.title} required className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
@@ -155,6 +173,13 @@ export default function AdminArticlesPage() {
             <div>
               <label className="block text-xs font-medium text-slate-500 mb-1">Slug <span className="text-red-600">*</span></label>
               <input name="slug" defaultValue={formArticle.slug} required className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-slate-500 mb-1">Status</label>
+              <select name="status" defaultValue={formArticle.status || "published"} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30">
+                <option value="published">Published</option>
+                <option value="draft">Draft</option>
+              </select>
             </div>
           </div>
 
@@ -232,23 +257,38 @@ export default function AdminArticlesPage() {
         </form>
       ) : (
         <>
-          <div className="mb-4">
+          {/* Search + Status Filter */}
+          <div className="flex flex-col sm:flex-row gap-3 mb-4">
             <input
               type="text"
               placeholder="Search articles by title, slug, or category..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-green-700/30"
+              className="flex-1 bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-green-700/30"
             />
+            <div className="flex bg-white border border-slate-200 rounded-lg overflow-hidden shrink-0">
+              {(["all", "published", "draft"] as const).map((s) => (
+                <button
+                  key={s}
+                  onClick={() => setStatusFilter(s)}
+                  className={`px-3 py-2 text-xs font-medium transition-colors ${
+                    statusFilter === s ? "bg-green-700 text-white" : "text-slate-500 hover:bg-slate-50"
+                  }`}
+                >
+                  {s === "all" ? `All (${articles.length})` : s === "published" ? `Published (${publishedCount})` : `Draft (${draftCount})`}
+                </button>
+              ))}
+            </div>
           </div>
+
           <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
             <table className="w-full">
               <thead className="bg-slate-50">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Article</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Author</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Category</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Read Time</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase hidden md:table-cell">Author</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase hidden md:table-cell">Category</th>
                   <th className="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Actions</th>
                 </tr>
               </thead>
@@ -259,10 +299,22 @@ export default function AdminArticlesPage() {
                       <div className="text-sm font-semibold text-slate-900">{article.title}</div>
                       <div className="text-xs text-slate-500">{article.slug}</div>
                     </td>
-                    <td className="px-4 py-3 text-sm text-slate-600">{article.author_name || "Team"}</td>
-                    <td className="px-4 py-3 text-sm text-slate-600">{article.category || "—"}</td>
-                    <td className="px-4 py-3 text-sm text-slate-600">{article.read_time ? `${article.read_time} min` : "—"}</td>
+                    <td className="px-4 py-3">
+                      <button
+                        onClick={() => toggleStatus(article)}
+                        className={`text-xs px-2 py-1 rounded-full font-medium transition-colors ${
+                          (article.status || "published") === "published"
+                            ? "bg-green-50 text-green-600 hover:bg-green-100"
+                            : "bg-amber-50 text-amber-600 hover:bg-amber-100"
+                        }`}
+                      >
+                        {(article.status || "published") === "published" ? "Published" : "Draft"}
+                      </button>
+                    </td>
+                    <td className="px-4 py-3 text-sm text-slate-600 hidden md:table-cell">{article.author_name || "Team"}</td>
+                    <td className="px-4 py-3 text-sm text-slate-600 hidden md:table-cell">{article.category || "\u2014"}</td>
                     <td className="px-4 py-3 text-right space-x-2">
+                      <a href={`/article/${article.slug}`} target="_blank" rel="noopener noreferrer" className="text-xs text-green-600 hover:text-green-700">Preview</a>
                       <button onClick={() => setEditing(article)} className="text-xs text-amber-600 hover:text-amber-700">Edit</button>
                       <button onClick={() => setDeleteTarget(article)} className="text-xs text-red-600 hover:text-red-300">Delete</button>
                     </td>

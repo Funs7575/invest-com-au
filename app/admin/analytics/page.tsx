@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import AdminShell from "@/components/AdminShell";
 
@@ -43,6 +43,8 @@ interface PageStat {
   count: number;
 }
 
+type DateRange = "7d" | "30d" | "90d" | "all" | "custom";
+
 export default function AdminAnalyticsPage() {
   const [recentClicks, setRecentClicks] = useState<ClickRow[]>([]);
   const [brokerStats, setBrokerStats] = useState<BrokerClickStat[]>([]);
@@ -57,7 +59,46 @@ export default function AdminAnalyticsPage() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);
   const [activeTab, setActiveTab] = useState<"overview" | "revenue" | "log">("overview");
+  const [dateRange, setDateRange] = useState<DateRange>("30d");
+  const [customFrom, setCustomFrom] = useState("");
+  const [customTo, setCustomTo] = useState("");
+  const [exporting, setExporting] = useState(false);
   const PAGE_SIZE = 25;
+
+  const getDateFilter = useCallback(() => {
+    const now = new Date();
+    switch (dateRange) {
+      case "7d": {
+        const d = new Date(now);
+        d.setDate(d.getDate() - 7);
+        return d.toISOString();
+      }
+      case "30d": {
+        const d = new Date(now);
+        d.setDate(d.getDate() - 30);
+        return d.toISOString();
+      }
+      case "90d": {
+        const d = new Date(now);
+        d.setDate(d.getDate() - 90);
+        return d.toISOString();
+      }
+      case "custom":
+        return customFrom ? new Date(customFrom).toISOString() : null;
+      case "all":
+      default:
+        return null;
+    }
+  }, [dateRange, customFrom]);
+
+  const getDateFilterEnd = useCallback(() => {
+    if (dateRange === "custom" && customTo) {
+      const d = new Date(customTo);
+      d.setHours(23, 59, 59, 999);
+      return d.toISOString();
+    }
+    return null;
+  }, [dateRange, customTo]);
 
   useEffect(() => {
     const supabase = createClient();
@@ -70,8 +111,27 @@ export default function AdminAnalyticsPage() {
       monthStart.setDate(1);
       monthStart.setHours(0, 0, 0, 0);
 
+      const dateFrom = getDateFilter();
+      const dateTo = getDateFilterEnd();
+      const daysBack = dateRange === "7d" ? 7 : dateRange === "90d" ? 90 : dateRange === "custom" ? 90 : 30;
+
+      // Build filtered click count query
+      let filteredCountQuery = supabase.from("affiliate_clicks").select("id", { count: "exact", head: true });
+      if (dateFrom) filteredCountQuery = filteredCountQuery.gte("clicked_at", dateFrom);
+      if (dateTo) filteredCountQuery = filteredCountQuery.lte("clicked_at", dateTo);
+
+      // Build recent clicks query with date filter
+      let recentQuery = supabase
+        .from("affiliate_clicks")
+        .select("id, broker_name, broker_slug, source, page, layer, clicked_at")
+        .order("clicked_at", { ascending: false })
+        .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
+      if (dateFrom) recentQuery = recentQuery.gte("clicked_at", dateFrom);
+      if (dateTo) recentQuery = recentQuery.lte("clicked_at", dateTo);
+
       const [
         recentRes,
+        _filteredCount,
         totalRes,
         todayRes,
         monthRes,
@@ -81,11 +141,8 @@ export default function AdminAnalyticsPage() {
         dailyStatsRes,
         revenueStatsRes,
       ] = await Promise.all([
-        supabase
-          .from("affiliate_clicks")
-          .select("id, broker_name, broker_slug, source, page, layer, clicked_at")
-          .order("clicked_at", { ascending: false })
-          .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1),
+        recentQuery,
+        filteredCountQuery,
         supabase
           .from("affiliate_clicks")
           .select("id", { count: "exact", head: true }),
@@ -102,7 +159,7 @@ export default function AdminAnalyticsPage() {
           .select("id", { count: "exact", head: true }),
         supabase.rpc("get_click_stats_by_broker"),
         supabase.rpc("get_click_stats_by_source"),
-        supabase.rpc("get_daily_click_stats", { days_back: 30 }),
+        supabase.rpc("get_daily_click_stats", { days_back: daysBack }),
         supabase.rpc("get_revenue_stats_by_broker"),
       ]);
 
@@ -152,31 +209,73 @@ export default function AdminAnalyticsPage() {
         );
       }
 
-      // Compute page stats from recent clicks (client-side for now)
+      // Compute page stats
       if (recentRes.data) {
-        const pageMap: Record<string, number> = {};
-        // We use the full click log to compute page stats - fetch all for this
-        const allPagesRes = await supabase
+        let allPagesQuery = supabase
           .from("affiliate_clicks")
           .select("page")
           .not("page", "is", null);
+        if (dateFrom) allPagesQuery = allPagesQuery.gte("clicked_at", dateFrom);
+        if (dateTo) allPagesQuery = allPagesQuery.lte("clicked_at", dateTo);
+
+        const allPagesRes = await allPagesQuery;
         if (allPagesRes.data) {
+          const pageMap: Record<string, number> = {};
           allPagesRes.data.forEach((r: { page: string }) => {
             const p = r.page || "(unknown)";
             pageMap[p] = (pageMap[p] || 0) + 1;
           });
+          const sorted = Object.entries(pageMap)
+            .map(([pg, count]) => ({ page: pg, count }))
+            .sort((a, b) => b.count - a.count);
+          setPageStats(sorted);
         }
-        const sorted = Object.entries(pageMap)
-          .map(([pg, count]) => ({ page: pg, count }))
-          .sort((a, b) => b.count - a.count);
-        setPageStats(sorted);
       }
 
       setLoading(false);
     }
 
     load();
-  }, [page]);
+  }, [page, dateRange, customFrom, customTo, getDateFilter, getDateFilterEnd]);
+
+  // CSV Export
+  const handleExportCSV = async () => {
+    setExporting(true);
+    const supabase = createClient();
+    const dateFrom = getDateFilter();
+    const dateTo = getDateFilterEnd();
+
+    let query = supabase
+      .from("affiliate_clicks")
+      .select("id, broker_name, broker_slug, source, page, layer, clicked_at")
+      .order("clicked_at", { ascending: false })
+      .limit(10000);
+    if (dateFrom) query = query.gte("clicked_at", dateFrom);
+    if (dateTo) query = query.lte("clicked_at", dateTo);
+
+    const { data } = await query;
+    if (data && data.length > 0) {
+      const headers = ["ID", "Broker", "Slug", "Source", "Page", "Layer", "Clicked At"];
+      const rows = data.map((r) => [
+        r.id,
+        `"${(r.broker_name || "").replace(/"/g, '""')}"`,
+        r.broker_slug || "",
+        r.source || "",
+        `"${(r.page || "").replace(/"/g, '""')}"`,
+        r.layer || "",
+        r.clicked_at,
+      ].join(","));
+      const csv = [headers.join(","), ...rows].join("\n");
+      const blob = new Blob([csv], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `clicks-export-${new Date().toISOString().split("T")[0]}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+    setExporting(false);
+  };
 
   const totalPages = Math.ceil(totalClicks / PAGE_SIZE);
   const totalRevenue = revenueStats.reduce((sum, r) => sum + r.estimated_revenue, 0);
@@ -223,9 +322,17 @@ export default function AdminAnalyticsPage() {
   const formatCurrency = (val: number) =>
     val >= 1000 ? `$${(val / 1000).toFixed(1)}k` : `$${val.toFixed(2)}`;
 
+  const dateRangeOptions: { value: DateRange; label: string }[] = [
+    { value: "7d", label: "7 days" },
+    { value: "30d", label: "30 days" },
+    { value: "90d", label: "90 days" },
+    { value: "all", label: "All time" },
+    { value: "custom", label: "Custom" },
+  ];
+
   return (
     <AdminShell>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold text-slate-900">Analytics & Revenue</h1>
         <div className="flex bg-white border border-slate-200 rounded-lg overflow-hidden">
           {(["overview", "revenue", "log"] as const).map((tab) => (
@@ -234,14 +341,49 @@ export default function AdminAnalyticsPage() {
               onClick={() => setActiveTab(tab)}
               className={`px-4 py-2 text-sm font-medium transition-colors ${
                 activeTab === tab
-                  ? "bg-green-700 text-slate-900"
-                  : "text-slate-500 hover:text-slate-900 hover:bg-slate-200"
+                  ? "bg-green-700 text-white"
+                  : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
               }`}
             >
               {tab === "overview" ? "Overview" : tab === "revenue" ? "Revenue" : "Click Log"}
             </button>
           ))}
         </div>
+      </div>
+
+      {/* Date Range Filter */}
+      <div className="flex flex-wrap items-center gap-2 mb-6">
+        <span className="text-xs text-slate-500 font-medium">Range:</span>
+        {dateRangeOptions.map((opt) => (
+          <button
+            key={opt.value}
+            onClick={() => setDateRange(opt.value)}
+            className={`px-3 py-1.5 text-xs rounded-lg font-medium transition-colors ${
+              dateRange === opt.value
+                ? "bg-green-700 text-white"
+                : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
+            }`}
+          >
+            {opt.label}
+          </button>
+        ))}
+        {dateRange === "custom" && (
+          <div className="flex items-center gap-2 ml-2">
+            <input
+              type="date"
+              value={customFrom}
+              onChange={(e) => setCustomFrom(e.target.value)}
+              className="bg-white border border-slate-300 rounded-lg px-2 py-1 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30"
+            />
+            <span className="text-xs text-slate-400">to</span>
+            <input
+              type="date"
+              value={customTo}
+              onChange={(e) => setCustomTo(e.target.value)}
+              className="bg-white border border-slate-300 rounded-lg px-2 py-1 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30"
+            />
+          </div>
+        )}
       </div>
 
       {/* Summary Cards — always visible */}
@@ -281,7 +423,7 @@ export default function AdminAnalyticsPage() {
           {/* Daily Click Trend Chart */}
           <div className="bg-white border border-slate-200 rounded-lg overflow-hidden mb-8">
             <div className="px-4 py-3 border-b border-slate-200">
-              <h2 className="text-lg font-semibold text-slate-900">Click Trend (Last 30 Days)</h2>
+              <h2 className="text-lg font-semibold text-slate-900">Click Trend ({dateRange === "7d" ? "Last 7 Days" : dateRange === "90d" ? "Last 90 Days" : dateRange === "custom" ? "Custom Range" : dateRange === "all" ? "Last 30 Days" : "Last 30 Days"})</h2>
             </div>
             {loading ? (
               <div className="p-4 h-48 animate-pulse bg-slate-200/20" />
@@ -493,12 +635,12 @@ export default function AdminAnalyticsPage() {
                   <div className="text-3xl font-bold text-emerald-600">
                     {formatCurrency(totalRevenue)}
                   </div>
-                  <div className="text-xs text-slate-500 mt-1">Based on EPC × clicks</div>
+                  <div className="text-xs text-slate-500 mt-1">Based on EPC x clicks</div>
                 </div>
                 <div className="bg-white border border-slate-200 rounded-lg p-5">
                   <div className="text-sm text-slate-500 mb-1">Top Revenue Broker</div>
                   <div className="text-xl font-bold text-slate-900">
-                    {topRevenueBroker ? topRevenueBroker.broker_name : "—"}
+                    {topRevenueBroker ? topRevenueBroker.broker_name : "\u2014"}
                   </div>
                   <div className="text-sm text-emerald-600 mt-1">
                     {topRevenueBroker ? formatCurrency(topRevenueBroker.estimated_revenue) : "$0.00"}
@@ -560,7 +702,7 @@ export default function AdminAnalyticsPage() {
                           </span>
                           {(isTrendUp || isTrendDown) && (
                             <span className={`ml-1 text-xs ${isTrendUp ? "text-emerald-500" : "text-red-500"}`}>
-                              {isTrendUp ? "↑" : "↓"}
+                              {isTrendUp ? "\u2191" : "\u2193"}
                             </span>
                           )}
                         </td>
@@ -570,7 +712,7 @@ export default function AdminAnalyticsPage() {
                 </tbody>
               </table>
               <div className="px-4 py-2 bg-slate-50 text-[0.65rem] text-slate-400 border-t border-slate-200">
-                Projections based on avg. daily clicks ({avgDailyClicks.toFixed(1)} from 30d, {avgDailyClicksRecent.toFixed(1)} from last 7d) × avg. EPC (${avgEpc.toFixed(2)}).
+                Projections based on avg. daily clicks ({avgDailyClicks.toFixed(1)} from 30d, {avgDailyClicksRecent.toFixed(1)} from last 7d) x avg. EPC (${avgEpc.toFixed(2)}).
                 These are estimates and actual revenue depends on affiliate conversions.
               </div>
             </div>
@@ -655,7 +797,7 @@ export default function AdminAnalyticsPage() {
                     <td className="px-4 py-2 text-sm text-right text-amber-600 font-bold">
                       {revenueStats.reduce((s, r) => s + r.clicks, 0)}
                     </td>
-                    <td className="px-4 py-2 text-sm text-right text-slate-600">—</td>
+                    <td className="px-4 py-2 text-sm text-right text-slate-600">\u2014</td>
                     <td className="px-4 py-2 text-sm text-right text-emerald-600 font-bold">
                       {formatCurrency(totalRevenue)}
                     </td>
@@ -673,25 +815,34 @@ export default function AdminAnalyticsPage() {
         <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
           <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
             <h2 className="text-lg font-semibold text-slate-900">Click Log</h2>
-            <div className="flex items-center gap-2 text-sm">
+            <div className="flex items-center gap-3">
               <button
-                onClick={() => setPage(Math.max(0, page - 1))}
-                disabled={page === 0}
-                className="px-3 py-1 bg-slate-200 rounded text-slate-600 hover:bg-slate-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                onClick={handleExportCSV}
+                disabled={exporting}
+                className="px-3 py-1.5 text-xs font-medium bg-white border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
               >
-                Prev
+                {exporting ? "Exporting..." : "Export CSV"}
               </button>
-              <span className="text-slate-500">
-                Page {page + 1}
-                {totalPages > 0 ? ` of ${totalPages}` : ""}
-              </span>
-              <button
-                onClick={() => setPage(page + 1)}
-                disabled={recentClicks.length < PAGE_SIZE}
-                className="px-3 py-1 bg-slate-200 rounded text-slate-600 hover:bg-slate-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-              >
-                Next
-              </button>
+              <div className="flex items-center gap-2 text-sm">
+                <button
+                  onClick={() => setPage(Math.max(0, page - 1))}
+                  disabled={page === 0}
+                  className="px-3 py-1 bg-slate-100 rounded text-slate-600 hover:bg-slate-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                >
+                  Prev
+                </button>
+                <span className="text-slate-500">
+                  Page {page + 1}
+                  {totalPages > 0 ? ` of ${totalPages}` : ""}
+                </span>
+                <button
+                  onClick={() => setPage(page + 1)}
+                  disabled={recentClicks.length < PAGE_SIZE}
+                  className="px-3 py-1 bg-slate-100 rounded text-slate-600 hover:bg-slate-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                >
+                  Next
+                </button>
+              </div>
             </div>
           </div>
           {loading ? (
@@ -733,11 +884,11 @@ export default function AdminAnalyticsPage() {
                   {recentClicks.map((click) => (
                     <tr key={click.id} className="hover:bg-slate-50">
                       <td className="px-4 py-2 text-sm text-slate-900">{click.broker_name}</td>
-                      <td className="px-4 py-2 text-xs text-slate-600">{click.source || "—"}</td>
+                      <td className="px-4 py-2 text-xs text-slate-600">{click.source || "\u2014"}</td>
                       <td className="px-4 py-2 text-xs text-slate-500 max-w-[200px] truncate">
                         {click.page}
                       </td>
-                      <td className="px-4 py-2 text-xs text-slate-500">{click.layer || "—"}</td>
+                      <td className="px-4 py-2 text-xs text-slate-500">{click.layer || "\u2014"}</td>
                       <td className="px-4 py-2 text-xs text-slate-500 whitespace-nowrap">
                         {new Date(click.clicked_at).toLocaleString()}
                       </td>

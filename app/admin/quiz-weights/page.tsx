@@ -25,6 +25,11 @@ const WEIGHT_FIELDS: { key: keyof QuizWeight; label: string }[] = [
   { key: "priority_weight", label: "Priority" },
 ];
 
+interface SimResult {
+  broker_slug: string;
+  score: number;
+}
+
 export default function QuizWeightsPage() {
   const supabase = createClient();
   const [weights, setWeights] = useState<QuizWeight[]>([]);
@@ -33,6 +38,12 @@ export default function QuizWeightsPage() {
   const [saving, setSaving] = useState(false);
   const [savedId, setSavedId] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [showSimulator, setShowSimulator] = useState(false);
+  const [simGoal, setSimGoal] = useState("goal_long");
+  const [simExperience, setSimExperience] = useState(1);
+  const [simBudget, setSimBudget] = useState(1);
+  const [simPriority, setSimPriority] = useState(1);
+  const [simResults, setSimResults] = useState<SimResult[]>([]);
 
   useEffect(() => {
     fetchWeights();
@@ -131,12 +142,28 @@ export default function QuizWeightsPage() {
     setSaving(false);
   }
 
+  function runSimulation() {
+    const results: SimResult[] = weights.map((w) => {
+      const goalScore = w[simGoal as keyof QuizWeight] as number || 0;
+      const score = goalScore + (w.experience_boost * simExperience) + (w.budget_match * simBudget) + (w.priority_weight * simPriority);
+      return { broker_slug: w.broker_slug, score };
+    });
+    results.sort((a, b) => b.score - a.score);
+    setSimResults(results);
+  }
+
   return (
     <AdminShell>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-slate-900">Quiz Weights</h1>
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => setShowSimulator(!showSimulator)}
+              className="px-4 py-2 bg-white border border-slate-200 text-slate-600 font-medium rounded-lg hover:bg-slate-50 text-sm transition-colors"
+            >
+              {showSimulator ? "Hide Simulator" : "Simulate Quiz"}
+            </button>
             {modified.size > 0 && (
               <span className="text-amber-600 text-sm">
                 {modified.size} row(s) modified
@@ -152,8 +179,92 @@ export default function QuizWeightsPage() {
           </div>
         </div>
 
+        {/* Quiz Simulator */}
+        {showSimulator && (
+          <div className="bg-white border border-slate-200 rounded-lg p-6">
+            <h2 className="text-lg font-semibold text-slate-900 mb-4">Quiz Simulator</h2>
+            <p className="text-sm text-slate-500 mb-4">Preview how brokers rank with different quiz inputs.</p>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+              <div>
+                <label className="block text-xs font-medium text-slate-500 mb-1">Goal</label>
+                <select
+                  value={simGoal}
+                  onChange={(e) => setSimGoal(e.target.value)}
+                  className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30"
+                >
+                  <option value="goal_daily">Daily Trading</option>
+                  <option value="goal_long">Long-Term Investing</option>
+                  <option value="goal_smsf">SMSF</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-500 mb-1">Experience (0-2)</label>
+                <input
+                  type="number"
+                  min="0"
+                  max="2"
+                  step="0.5"
+                  value={simExperience}
+                  onChange={(e) => setSimExperience(parseFloat(e.target.value) || 0)}
+                  className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-500 mb-1">Budget (0-2)</label>
+                <input
+                  type="number"
+                  min="0"
+                  max="2"
+                  step="0.5"
+                  value={simBudget}
+                  onChange={(e) => setSimBudget(parseFloat(e.target.value) || 0)}
+                  className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-500 mb-1">Priority (0-2)</label>
+                <input
+                  type="number"
+                  min="0"
+                  max="2"
+                  step="0.5"
+                  value={simPriority}
+                  onChange={(e) => setSimPriority(parseFloat(e.target.value) || 0)}
+                  className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30"
+                />
+              </div>
+            </div>
+            <button
+              onClick={runSimulation}
+              disabled={weights.length === 0}
+              className="px-4 py-2 bg-green-700 text-white font-medium rounded-lg hover:bg-green-800 text-sm transition-colors disabled:opacity-40"
+            >
+              Run Simulation
+            </button>
+
+            {simResults.length > 0 && (
+              <div className="mt-4 border-t border-slate-200 pt-4">
+                <h3 className="text-sm font-semibold text-slate-900 mb-2">Results (Top 5)</h3>
+                <div className="space-y-2">
+                  {simResults.slice(0, 5).map((r, i) => (
+                    <div key={r.broker_slug} className="flex items-center justify-between bg-slate-50 rounded-lg px-4 py-2">
+                      <div className="flex items-center gap-3">
+                        <span className={`text-sm font-bold ${i === 0 ? "text-amber-500" : i === 1 ? "text-slate-400" : i === 2 ? "text-amber-700" : "text-slate-500"}`}>
+                          #{i + 1}
+                        </span>
+                        <span className="text-sm text-slate-900 font-medium">{r.broker_slug}</span>
+                      </div>
+                      <span className="text-sm font-semibold text-green-600">{r.score.toFixed(1)}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {successMessage && (
-          <div className="bg-green-900/50 border border-green-700 text-green-300 px-4 py-3 rounded-lg">
+          <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
             {successMessage}
           </div>
         )}

@@ -209,6 +209,7 @@ export default function AdminScenariosPage() {
                     <td className="px-4 py-3 text-2xl">{scenario.icon || "—"}</td>
                     <td className="px-4 py-3 text-sm text-slate-600">{scenario.brokers?.length || 0} brokers</td>
                     <td className="px-4 py-3 text-right space-x-2">
+                      <a href={`/scenario/${scenario.slug}`} target="_blank" rel="noopener noreferrer" className="text-xs text-green-600 hover:text-green-700">Preview</a>
                       <button onClick={() => setEditing(scenario)} className="text-xs text-amber-600 hover:text-amber-700">Edit</button>
                       <button onClick={() => setDeleteTarget(scenario)} className="text-xs text-red-600 hover:text-red-300">Delete</button>
                     </td>

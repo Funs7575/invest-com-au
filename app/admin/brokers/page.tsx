@@ -19,6 +19,8 @@ export default function AdminBrokersPage() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
   const [deleteTarget, setDeleteTarget] = useState<Broker | null>(null);
+  const [selected, setSelected] = useState<Set<number>>(new Set());
+  const [bulkAction, setBulkAction] = useState<string>("");
 
   const supabase = createClient();
   const { toast } = useToast();
@@ -124,6 +126,34 @@ export default function AdminBrokersPage() {
     load();
   };
 
+  const handleBulkAction = async () => {
+    if (selected.size === 0 || !bulkAction) return;
+    const ids = Array.from(selected);
+
+    if (bulkAction === "activate" || bulkAction === "deactivate") {
+      const status = bulkAction === "activate" ? "active" : "inactive";
+      const { error } = await supabase.from("brokers").update({ status, updated_at: new Date().toISOString() }).in("id", ids);
+      if (error) { toast("Bulk update failed", "error"); }
+      else { toast(`${ids.length} broker(s) set to ${status}`, "success"); }
+    } else if (bulkAction === "delete") {
+      const { error } = await supabase.from("brokers").delete().in("id", ids);
+      if (error) { toast("Bulk delete failed", "error"); }
+      else { toast(`${ids.length} broker(s) deleted`, "success"); }
+    }
+    setSelected(new Set());
+    setBulkAction("");
+    load();
+  };
+
+  const toggleSelect = (id: number) => {
+    setSelected(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
   const showForm = editing || creating;
   const formBroker = editing || {} as Partial<Broker>;
 
@@ -134,6 +164,14 @@ export default function AdminBrokersPage() {
 
   const totalPages = Math.ceil(filteredBrokers.length / PAGE_SIZE);
   const paginatedBrokers = filteredBrokers.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+
+  const toggleSelectAll = () => {
+    if (selected.size === paginatedBrokers.length) {
+      setSelected(new Set());
+    } else {
+      setSelected(new Set(paginatedBrokers.map(b => b.id)));
+    }
+  };
 
   useEffect(() => { setPage(0); }, [search]);
 
@@ -156,10 +194,51 @@ export default function AdminBrokersPage() {
           <div className="mb-4">
             <input type="text" placeholder="Search brokers by name or slug..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
           </div>
-          <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+
+          {/* Bulk Action Bar */}
+          {selected.size > 0 && (
+            <div className="mb-4 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 flex items-center justify-between">
+              <span className="text-sm text-blue-700 font-medium">{selected.size} broker{selected.size !== 1 ? "s" : ""} selected</span>
+              <div className="flex items-center gap-2">
+                <select
+                  value={bulkAction}
+                  onChange={(e) => setBulkAction(e.target.value)}
+                  className="bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30"
+                >
+                  <option value="">Choose action...</option>
+                  <option value="activate">Set Active</option>
+                  <option value="deactivate">Set Inactive</option>
+                  <option value="delete">Delete Selected</option>
+                </select>
+                <button
+                  onClick={handleBulkAction}
+                  disabled={!bulkAction}
+                  className="px-3 py-1.5 text-xs font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                >
+                  Apply
+                </button>
+                <button
+                  onClick={() => setSelected(new Set())}
+                  className="px-3 py-1.5 text-xs text-slate-500 hover:text-slate-900 transition-colors"
+                >
+                  Clear
+                </button>
+              </div>
+            </div>
+          )}
+
+          <div className="bg-white border border-slate-200 rounded-lg overflow-x-auto">
             <table className="w-full">
               <thead className="bg-slate-50">
                 <tr>
+                  <th className="px-3 py-3 w-8">
+                    <input
+                      type="checkbox"
+                      checked={paginatedBrokers.length > 0 && selected.size === paginatedBrokers.length}
+                      onChange={toggleSelectAll}
+                      className="w-4 h-4 rounded border-slate-300"
+                    />
+                  </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Broker</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Rating</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">ASX Fee</th>
@@ -170,7 +249,15 @@ export default function AdminBrokersPage() {
               </thead>
               <tbody className="divide-y divide-slate-200">
                 {paginatedBrokers.map((broker) => (
-                  <tr key={broker.id} className="hover:bg-slate-50">
+                  <tr key={broker.id} className={`hover:bg-slate-50 ${selected.has(broker.id) ? "bg-blue-50/50" : ""}`}>
+                    <td className="px-3 py-3 w-8">
+                      <input
+                        type="checkbox"
+                        checked={selected.has(broker.id)}
+                        onChange={() => toggleSelect(broker.id)}
+                        className="w-4 h-4 rounded border-slate-300"
+                      />
+                    </td>
                     <td className="px-4 py-3">
                       <div className="text-sm font-semibold text-slate-900">{broker.name}</div>
                       <div className="text-xs text-slate-500">{broker.slug}</div>
@@ -190,6 +277,7 @@ export default function AdminBrokersPage() {
                       <span className={`text-xs px-2 py-1 rounded-full font-medium ${broker.status === "active" ? "bg-green-50 text-green-600" : "bg-slate-600 text-slate-600"}`}>{broker.status}</span>
                     </td>
                     <td className="px-4 py-3 text-right space-x-2">
+                      <a href={`/broker/${broker.slug}`} target="_blank" rel="noopener noreferrer" className="text-xs text-green-600 hover:text-green-700">Preview</a>
                       <button onClick={() => setEditing(broker)} className="text-xs text-amber-600 hover:text-amber-700">Edit</button>
                       <button onClick={() => setDeleteTarget(broker)} className="text-xs text-red-600 hover:text-red-300">Delete</button>
                     </td>
