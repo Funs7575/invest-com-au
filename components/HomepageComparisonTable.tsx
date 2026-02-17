@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import type { Broker } from "@/lib/types";
-import { trackClick, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
+import { getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import RiskWarningInline from "@/components/RiskWarningInline";
 
@@ -161,15 +161,6 @@ export default function HomepageComparisonTable({
                       href={getAffiliateLink(broker)}
                       target="_blank"
                       rel={AFFILIATE_REL}
-                      onClick={() =>
-                        trackClick(
-                          broker.slug,
-                          broker.name,
-                          "homepage-table",
-                          "/",
-                          "homepage"
-                        )
-                      }
                       className="inline-block px-4 py-2 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-600 hover:shadow-md transition-all active:scale-[0.97]"
                     >
                       {getBenefitCta(broker, "compare")}
@@ -259,15 +250,6 @@ export default function HomepageComparisonTable({
               href={getAffiliateLink(broker)}
               target="_blank"
               rel={AFFILIATE_REL}
-              onClick={() =>
-                trackClick(
-                  broker.slug,
-                  broker.name,
-                  "homepage-mobile-card",
-                  "/",
-                  "homepage"
-                )
-              }
               className="block w-full text-center py-3 bg-green-700 text-white font-bold rounded-lg mt-4 hover:bg-green-800 transition-colors"
             >
               {getBenefitCta(broker, "compare")}

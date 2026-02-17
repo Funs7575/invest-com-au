@@ -27,7 +27,7 @@ export default function IntlBrokersEnhanced({
       </div>
 
       {/* Phase 1: Comparison Table */}
-      <BrokerComparisonTable brokers={brokers} context="article" />
+      <BrokerComparisonTable brokers={brokers} />
 
       {/* Phase 4: Fee Bar Chart */}
       <FeeBarChart brokers={brokers} tradeAmount={10000} />

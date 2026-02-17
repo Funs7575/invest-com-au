@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { Broker } from "@/lib/types";
-import { trackClick, getAffiliateLink, formatPercent, AFFILIATE_REL } from "@/lib/tracking";
+import { getAffiliateLink, formatPercent, AFFILIATE_REL } from "@/lib/tracking";
 
 function FxBadge({ rate }: { rate: number }) {
   const color =
@@ -45,10 +45,8 @@ function Stars({ rating }: { rating: number }) {
 
 export default function BrokerComparisonTable({
   brokers,
-  context = "article",
 }: {
   brokers: Broker[];
-  context?: string;
 }) {
   const [sortBy, setSortBy] = useState<"fx_rate" | "rating" | "us_fee_value">(
     "fx_rate"
@@ -172,15 +170,6 @@ export default function BrokerComparisonTable({
                     href={getAffiliateLink(b)}
                     target="_blank"
                     rel={AFFILIATE_REL}
-                    onClick={() =>
-                      trackClick(
-                        b.slug,
-                        b.name,
-                        "comparison-table",
-                        `/article/best-intl-brokers`,
-                        context
-                      )
-                    }
                     className="inline-block px-4 py-2 bg-green-700 text-white text-xs font-bold rounded-lg hover:bg-green-800 hover:scale-105 transition-all"
                   >
                     Go to Site &rarr;
@@ -250,15 +239,6 @@ export default function BrokerComparisonTable({
               href={getAffiliateLink(b)}
               target="_blank"
               rel={AFFILIATE_REL}
-              onClick={() =>
-                trackClick(
-                  b.slug,
-                  b.name,
-                  "comparison-table-mobile",
-                  `/article/best-intl-brokers`,
-                  context
-                )
-              }
               className="block w-full text-center px-4 py-2.5 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors"
             >
               Go to Site &rarr;
