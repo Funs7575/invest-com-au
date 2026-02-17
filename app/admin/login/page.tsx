@@ -9,6 +9,7 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [failCount, setFailCount] = useState(0);
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -17,21 +18,36 @@ export default function AdminLoginPage() {
     setError("");
 
     try {
-      const supabase = createClient();
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      // Server-side rate-limited auth check
+      const res = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-      if (error) {
-        setError(error.message);
+      const data = await res.json();
+
+      if (!res.ok) {
+        setFailCount((c) => c + 1);
+        setError(data.error || "Login failed");
         setLoading(false);
-      } else {
-        // Use router.refresh() to re-run middleware with fresh auth cookies,
-        // then push to /admin. This prevents the redirect loop that occurs
-        // when window.location.href fires before cookies are fully synced.
-        router.refresh();
-        router.push("/admin");
+        return;
       }
+
+      // Server validated credentials — now set the session client-side
+      // so the middleware auth cookies are synced
+      const supabase = createClient();
+      if (data.session) {
+        await supabase.auth.setSession({
+          access_token: data.session.access_token,
+          refresh_token: data.session.refresh_token,
+        });
+      }
+
+      setFailCount(0);
+      router.refresh();
+      router.push("/admin");
     } catch (err) {
-      // Network errors (fetch failures, CORS, ad blockers) throw raw errors
       setError(
         err instanceof Error
           ? `Connection error: ${err.message}. Check your network or try disabling ad blockers.`
@@ -53,6 +69,12 @@ export default function AdminLoginPage() {
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg px-4 py-3">
               {error}
+            </div>
+          )}
+
+          {failCount >= 3 && (
+            <div className="bg-amber-50 border border-amber-200 text-amber-700 text-sm rounded-lg px-4 py-3">
+              Multiple failed attempts detected. Your IP may be temporarily locked out after {5 - failCount > 0 ? 5 - failCount : 0} more attempt{5 - failCount !== 1 ? "s" : ""}.
             </div>
           )}
 
