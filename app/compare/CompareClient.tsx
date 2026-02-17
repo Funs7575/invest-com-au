@@ -7,6 +7,7 @@ import { Search, X } from "lucide-react";
 import type { Broker } from "@/lib/types";
 import { trackClick, trackEvent, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
 import BrokerCard from "@/components/BrokerCard";
+import CompactDisclosure from "@/components/CompactDisclosure";
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 import { getMostRecentFeeCheck } from "@/lib/utils";
 
@@ -225,11 +226,16 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         </div>
 
         {/* Quiz prompt inline */}
-        <div className="flex items-center gap-2 mb-6 text-xs text-slate-500">
+        <div className="flex items-center gap-2 mb-4 text-xs text-slate-500">
           <span>Not sure which to pick?</span>
           <Link href="/quiz" className="text-green-700 font-semibold hover:text-green-800 transition-colors">
             Take the 60-sec quiz →
           </Link>
+        </div>
+
+        {/* Compact legal disclosures — collapsed accordion */}
+        <div className="mb-6 border border-slate-100 rounded-lg px-4">
+          <CompactDisclosure />
         </div>
 
         {/* Desktop Table */}

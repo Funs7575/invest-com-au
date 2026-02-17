@@ -5,6 +5,7 @@ import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import RiskWarningInline from "@/components/RiskWarningInline";
+import CompactDisclosure from "@/components/CompactDisclosure";
 import StickyCTABar from "@/components/StickyCTABar";
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 
@@ -115,9 +116,14 @@ export default function BrokerReviewClient({
           </a>
           <RiskWarningInline />
         </div>
-        <p className="text-xs text-slate-400 mb-4">
+        <p className="text-xs text-slate-400 mb-3">
           {ADVERTISER_DISCLOSURE_SHORT}
         </p>
+
+        {/* Compact legal disclosures — collapsed accordion */}
+        <div className="mb-4 border border-slate-100 rounded-lg px-4">
+          <CompactDisclosure />
+        </div>
 
         {/* Author Byline & Dates — E-E-A-T visible signals */}
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 mb-4 pb-4 border-b border-slate-100">
