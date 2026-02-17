@@ -184,27 +184,27 @@ export default async function HomePage() {
                 <div className="text-3xl mb-2">🎯</div>
                 <h3 className="font-bold mb-1">Broker Quiz</h3>
                 <p className="text-sm text-slate-600">
-                  Answer 5 questions and filter brokers based on your priorities.
+                  Answer 5 questions to find the best broker for your situation.
                 </p>
               </Link>
               <Link
-                href="/versus"
+                href="/article/how-to-invest-australia"
                 className="block border border-slate-200 rounded-xl p-6 hover-lift"
               >
-                <div className="text-3xl mb-2">⚔️</div>
-                <h3 className="font-bold mb-1">Head-to-Head</h3>
+                <div className="text-3xl mb-2">📖</div>
+                <h3 className="font-bold mb-1">How to Invest</h3>
                 <p className="text-sm text-slate-600">
-                  Compare any two brokers side-by-side on fees, features, and safety.
+                  New to investing? Our beginner guide walks you through everything step by step.
                 </p>
               </Link>
               <Link
-                href="/calculators"
+                href="/article/best-etfs-australia"
                 className="block border border-slate-200 rounded-xl p-6 hover-lift"
               >
-                <div className="text-3xl mb-2">🧮</div>
-                <h3 className="font-bold mb-1">Fee Calculators</h3>
+                <div className="text-3xl mb-2">📊</div>
+                <h3 className="font-bold mb-1">Best ETFs 2026</h3>
                 <p className="text-sm text-slate-600">
-                  Calculate your real costs — brokerage, FX fees, and franking credits.
+                  The most popular Australian and international ETFs compared.
                 </p>
               </Link>
             </div>

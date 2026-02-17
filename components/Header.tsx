@@ -4,20 +4,17 @@ import { useState } from "react";
 import Link from "next/link";
 
 const navItems = [
-  { name: "Brokers", href: "/compare" },
-  { name: "Versus", href: "/versus" },
+  { name: "Compare", href: "/compare" },
   { name: "Reviews", href: "/reviews" },
-  { name: "Calculators", href: "/calculators" },
-  { name: "Articles", href: "/articles" },
-  { name: "Scenarios", href: "/scenarios" },
-  { name: "About", href: "/about" },
+  { name: "Guides", href: "/articles" },
+  { name: "Tools", href: "/calculators" },
 ];
 
 const popularLinks = [
-  { label: "Stake vs CommSec", href: "/versus?vs=stake,commsec" },
-  { label: "Franking Calculator", href: "/calculators?calc=franking" },
-  { label: "How to Buy Shares", href: "/article/how-to-buy-shares" },
-  { label: "SMSF Brokers", href: "/scenario/smsf" },
+  { label: "Best Brokers 2026", href: "/article/best-share-trading-platforms-australia" },
+  { label: "How to Invest", href: "/article/how-to-invest-australia" },
+  { label: "Best ETFs", href: "/article/best-etfs-australia" },
+  { label: "CommSec vs Stake", href: "/versus?vs=commsec,stake" },
 ];
 
 export default function Header() {

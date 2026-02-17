@@ -67,7 +67,7 @@ export default function Footer() {
             <h4 className="text-white font-semibold mb-4">Compare</h4>
             <ul className="space-y-2 text-sm">
               <li><Link href="/compare" className="hover:text-white transition-colors">All Brokers</Link></li>
-              <li><Link href="/versus" className="hover:text-white transition-colors">Versus Tool</Link></li>
+              <li><Link href="/versus" className="hover:text-white transition-colors">Head-to-Head</Link></li>
               <li><Link href="/reviews" className="hover:text-white transition-colors">Reviews</Link></li>
               <li><Link href="/quiz" className="hover:text-white transition-colors">Broker Quiz</Link></li>
             </ul>
@@ -76,9 +76,9 @@ export default function Footer() {
           <div>
             <h4 className="text-white font-semibold mb-4">Learn</h4>
             <ul className="space-y-2 text-sm">
-              <li><Link href="/articles" className="hover:text-white transition-colors">Articles</Link></li>
-              <li><Link href="/calculators" className="hover:text-white transition-colors">Calculators</Link></li>
-              <li><Link href="/scenarios" className="hover:text-white transition-colors">Scenarios</Link></li>
+              <li><Link href="/articles" className="hover:text-white transition-colors">Guides &amp; Articles</Link></li>
+              <li><Link href="/calculators" className="hover:text-white transition-colors">Tools &amp; Calculators</Link></li>
+              <li><Link href="/scenarios" className="hover:text-white transition-colors">Best Broker For...</Link></li>
             </ul>
           </div>
 
