@@ -352,7 +352,7 @@ export default function QuizPage() {
                     className="border border-slate-200 rounded-xl p-4 hover:shadow-md transition-shadow"
                     style={{ borderLeftWidth: '4px', borderLeftColor: r.broker.color || '#e2e8f0' }}
                   >
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3">
                       <div
                         className="w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold shrink-0"
                         style={{ background: `${r.broker.color}20`, color: r.broker.color }}
@@ -368,12 +368,21 @@ export default function QuizPage() {
                         target="_blank"
                         rel={AFFILIATE_REL}
                         onClick={() => trackClick(r.broker!.slug, r.broker!.name, `quiz-result-${i + 2}`, '/quiz', 'quiz')}
-                        className="shrink-0 px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
+                        className="hidden sm:inline-flex shrink-0 px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
                       >
                         {getBenefitCta(r.broker, 'quiz')}
                       </a>
-                      <RiskWarningInline />
                     </div>
+                    <a
+                      href={getAffiliateLink(r.broker)}
+                      target="_blank"
+                      rel={AFFILIATE_REL}
+                      onClick={() => trackClick(r.broker!.slug, r.broker!.name, `quiz-result-${i + 2}`, '/quiz', 'quiz')}
+                      className="sm:hidden block w-full text-center mt-3 px-4 py-2.5 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors"
+                    >
+                      {getBenefitCta(r.broker, 'quiz')}
+                    </a>
+                    <RiskWarningInline />
                     {/* Match reasons for runner-ups too */}
                     <div className="mt-2 flex flex-wrap gap-1.5">
                       {getMatchReasons(answers, r.broker).slice(0, 2).map((reason, ri) => (
