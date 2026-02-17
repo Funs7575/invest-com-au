@@ -6,7 +6,7 @@ import RiskWarningInline from "@/components/RiskWarningInline";
 
 export default function BrokerCard({ broker, badge, context = 'compare' }: { broker: Broker; badge?: string; context?: 'compare' | 'review' | 'calculator' | 'versus' | 'quiz' }) {
   return (
-    <div className={`rounded-xl border p-4 bg-white ${badge ? 'border-green-700 ring-1 ring-green-700/30' : 'border-slate-200'}`}>
+    <div className={`group rounded-xl border p-4 bg-white transition-shadow duration-200 hover:shadow-md ${badge ? 'border-green-700 ring-1 ring-green-700/30' : 'border-slate-200'}`}>
       {badge && (
         <div className="text-[0.6rem] font-extrabold uppercase tracking-wide text-green-700 mb-2">{badge}</div>
       )}
@@ -52,6 +52,7 @@ export default function BrokerCard({ broker, badge, context = 'compare' }: { bro
       </a>
       <RiskWarningInline />
 
+      {/* Primary metrics — always visible */}
       <div className="grid grid-cols-2 gap-2">
         <div className="bg-slate-50 rounded-md p-2">
           <div className="text-[0.6rem] uppercase text-slate-500 font-medium">ASX Fee</div>
@@ -71,6 +72,22 @@ export default function BrokerCard({ broker, badge, context = 'compare' }: { bro
             {broker.chess_sponsored ? '✓ Yes' : '✗ No'}
           </div>
         </div>
+      </div>
+
+      {/* Secondary metrics — revealed on hover/focus */}
+      <div className="grid grid-cols-2 gap-2 mt-2 max-h-0 overflow-hidden opacity-0 group-hover:max-h-24 group-hover:opacity-100 group-focus-within:max-h-24 group-focus-within:opacity-100 transition-all duration-300">
+        <div className="bg-slate-50 rounded-md p-2">
+          <div className="text-[0.6rem] uppercase text-slate-500 font-medium">SMSF</div>
+          <div className={`text-sm font-semibold ${broker.smsf_support ? 'text-green-600' : 'text-red-500'}`}>
+            {broker.smsf_support ? '✓ Yes' : '✗ No'}
+          </div>
+        </div>
+        {broker.tagline && (
+          <div className="bg-slate-50 rounded-md p-2 col-span-2">
+            <div className="text-[0.6rem] uppercase text-slate-500 font-medium">About</div>
+            <div className="text-xs text-slate-600 line-clamp-2">{broker.tagline}</div>
+          </div>
+        )}
       </div>
     </div>
   );

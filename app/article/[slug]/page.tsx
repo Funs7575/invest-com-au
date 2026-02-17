@@ -8,6 +8,7 @@ import IntlBrokersEnhanced from "@/components/IntlBrokersEnhanced";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import ComparisonTableSkeleton from "@/components/ComparisonTableSkeleton";
 import AuthorByline from "@/components/AuthorByline";
+import OnThisPage from "@/components/OnThisPage";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 
@@ -282,7 +283,19 @@ export default async function ArticlePage({
           >
             {/* Article Column */}
             <div className={isEnhanced ? "flex-1 min-w-0" : ""}>
-              {/* Table of Contents */}
+              {/* Sticky "On this page" jump nav */}
+              {a.sections && a.sections.length > 1 && (
+                <OnThisPage
+                  items={a.sections.map(
+                    (section: { heading: string; body: string }, i: number) => ({
+                      id: `section-${i}`,
+                      label: section.heading,
+                    })
+                  )}
+                />
+              )}
+
+              {/* Inline Table of Contents (for quick overview) */}
               {a.sections && a.sections.length > 1 && (
                 <nav className="border border-slate-200 rounded-xl p-6 mb-10 bg-slate-50">
                   <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500 mb-3">

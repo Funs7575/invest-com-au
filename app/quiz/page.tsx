@@ -38,6 +38,8 @@ export default function QuizPage() {
   const [brokers, setBrokers] = useState<Broker[]>([]);
   const [weights, setWeights] = useState<Record<string, Record<string, number>>>(fallbackScores);
   const [copied, setCopied] = useState(false);
+  const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  const [animating, setAnimating] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
@@ -82,11 +84,19 @@ export default function QuizPage() {
   }, [step, questions.length, brokers.length]);
 
   const handleAnswer = (key: string) => {
+    if (animating) return;
     if (step === 0) {
       trackEvent('quiz_start', { first_answer: key }, '/quiz');
     }
-    setAnswers([...answers, key]);
-    setStep(step + 1);
+    // Show selected confirmation then advance
+    setSelectedKey(key);
+    setAnimating(true);
+    setTimeout(() => {
+      setAnswers([...answers, key]);
+      setStep(step + 1);
+      setSelectedKey(null);
+      setAnimating(false);
+    }, 350);
   };
 
   const handleShareResult = async () => {
@@ -460,19 +470,33 @@ export default function QuizPage() {
           </div>
         </div>
 
-        <h1 className="text-2xl md:text-3xl font-extrabold mb-8 mt-6">{current.question_text}</h1>
+        <div key={step} className="motion-safe:quiz-question-enter">
+          <h1 className="text-2xl md:text-3xl font-extrabold mb-8 mt-6">{current.question_text}</h1>
 
-        <div className="space-y-3">
-          {current.options.map((opt: { label: string; key: string }) => (
-            <button
-              key={opt.label}
-              onClick={() => handleAnswer(opt.key)}
-              aria-label={`Select: ${opt.label}`}
-              className="w-full text-left border border-slate-200 rounded-xl px-6 py-4 hover:border-green-700 hover:bg-green-700/5 transition-all font-medium text-sm md:text-base"
-            >
-              {opt.label}
-            </button>
-          ))}
+          <div className="space-y-3">
+            {current.options.map((opt: { label: string; key: string }) => (
+              <button
+                key={opt.label}
+                onClick={() => handleAnswer(opt.key)}
+                disabled={animating}
+                aria-label={`Select: ${opt.label}`}
+                className={`w-full text-left border rounded-xl px-6 py-4 transition-all font-medium text-sm md:text-base ${
+                  selectedKey === opt.key
+                    ? "border-green-700 bg-green-700/5 scale-[0.98]"
+                    : "border-slate-200 hover:border-green-700 hover:bg-green-700/5"
+                } ${animating && selectedKey !== opt.key ? "opacity-50" : ""}`}
+              >
+                <span className="flex items-center gap-3">
+                  {selectedKey === opt.key && (
+                    <svg className="w-5 h-5 text-green-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                    </svg>
+                  )}
+                  {opt.label}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
 
         {step > 0 && (

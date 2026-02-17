@@ -145,7 +145,14 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
     return picks;
   }, [sorted]);
 
-  const sortArrow = (col: SortCol) => sortCol === col ? (sortDir === 1 ? ' ↑' : ' ↓') : ' ⇅';
+  const sortArrow = (col: SortCol) => {
+    if (sortCol !== col) return <span className="ml-1 opacity-40 inline-block transition-transform">⇅</span>;
+    return (
+      <span className={`ml-1 inline-block transition-transform duration-200 ${sortDir === 1 ? "" : "rotate-180"}`}>
+        ↑
+      </span>
+    );
+  };
 
   return (
     <div className="py-12">
@@ -192,10 +199,10 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               onClick={() => setActiveFilter(f.key)}
               role="tab"
               aria-selected={activeFilter === f.key}
-              className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
+              className={`px-4 py-2 text-sm font-medium rounded-full transition-all duration-200 ${
                 activeFilter === f.key
-                  ? 'bg-green-700 text-white'
-                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  ? 'bg-green-700 text-white shadow-sm scale-105'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:scale-[1.02]'
               }`}
             >
               {f.label}
@@ -284,7 +291,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               {sorted.map(broker => (
                 <tr
                   key={broker.id}
-                  className={`hover:bg-slate-50 ${editorPicks[broker.slug] ? 'bg-green-50/40' : ''}`}
+                  className={`hover:bg-slate-50 transition-colors duration-150 ${editorPicks[broker.slug] ? 'bg-green-50/40' : ''}`}
                 >
                   <td className="px-3 py-3">
                     <input

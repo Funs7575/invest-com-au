@@ -8,6 +8,7 @@ import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import { getScenarioContent } from "@/lib/scenario-content";
 import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
+import OnThisPage from "@/components/OnThisPage";
 
 export async function generateMetadata({
   params,
@@ -155,9 +156,21 @@ export default async function ScenarioPage({
         {/* Author Byline */}
         <AuthorByline variant="light" />
 
+        {/* Sticky On This Page nav */}
+        {(() => {
+          const tocItems: { id: string; label: string }[] = [];
+          if (s.problem) tocItems.push({ id: "the-problem", label: "The Problem" });
+          if (s.solution) tocItems.push({ id: "the-solution", label: "The Solution" });
+          if (s.considerations?.length) tocItems.push({ id: "key-considerations", label: "Key Considerations" });
+          if (recBrokers.length > 0) tocItems.push({ id: "brokers-to-compare", label: "Brokers to Compare" });
+          if (guide?.sections) guide.sections.forEach((sec, i) => tocItems.push({ id: `guide-${i}`, label: sec.heading }));
+          if (guide?.faqs?.length) tocItems.push({ id: "faqs", label: "FAQ" });
+          return tocItems.length > 2 ? <OnThisPage items={tocItems} /> : null;
+        })()}
+
         {/* The Problem */}
         {s.problem && (
-          <div className="bg-red-50 border border-red-200 rounded-xl p-6 mb-6">
+          <div id="the-problem" className="bg-red-50 border border-red-200 rounded-xl p-6 mb-6 scroll-mt-24">
             <h2 className="font-extrabold text-lg mb-2 text-red-800">
               The Problem
             </h2>
@@ -167,7 +180,7 @@ export default async function ScenarioPage({
 
         {/* The Solution */}
         {s.solution && (
-          <div className="bg-green-50 border border-green-200 rounded-xl p-6 mb-8">
+          <div id="the-solution" className="bg-green-50 border border-green-200 rounded-xl p-6 mb-8 scroll-mt-24">
             <h2 className="font-extrabold text-lg mb-2 text-green-800">
               The Solution
             </h2>
@@ -178,7 +191,7 @@ export default async function ScenarioPage({
         {/* Key Considerations */}
         {s.considerations && s.considerations.length > 0 && (
           <>
-            <h2 className="text-xl font-extrabold mb-3 text-brand">
+            <h2 id="key-considerations" className="text-xl font-extrabold mb-3 text-brand scroll-mt-24">
               Key Considerations
             </h2>
             <ul className="mb-8 space-y-2">
@@ -207,7 +220,7 @@ export default async function ScenarioPage({
         {/* Brokers Worth Comparing */}
         {recBrokers.length > 0 && (
           <>
-            <h2 className="text-xl font-extrabold mb-3 text-brand">
+            <h2 id="brokers-to-compare" className="text-xl font-extrabold mb-3 text-brand scroll-mt-24">
               Brokers Worth Comparing
             </h2>
             <p className="text-xs text-slate-400 mb-3">{ADVERTISER_DISCLOSURE_SHORT}</p>
@@ -274,7 +287,7 @@ export default async function ScenarioPage({
               {/* Guide sections */}
               <div className="space-y-8 mb-8">
                 {guide.sections.map((section, i) => (
-                  <section key={i}>
+                  <section key={i} id={`guide-${i}`} className="scroll-mt-24">
                     <h2 className="text-xl font-extrabold mb-2 text-brand">{section.heading}</h2>
                     <p className="text-slate-700 leading-relaxed">{section.body}</p>
                   </section>
@@ -288,7 +301,7 @@ export default async function ScenarioPage({
 
               {/* FAQ section */}
               {guide.faqs.length > 0 && (
-                <div className="mb-8">
+                <div id="faqs" className="mb-8 scroll-mt-24">
                   <h2 className="text-xl font-extrabold mb-4 text-brand">Frequently Asked Questions</h2>
                   <div className="space-y-3">
                     {guide.faqs.map((faq, i) => (

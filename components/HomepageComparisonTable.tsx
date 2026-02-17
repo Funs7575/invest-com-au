@@ -176,12 +176,12 @@ export default function HomepageComparisonTable({
         </table>
       </div>
 
-      {/* Mobile Cards */}
-      <div className="md:hidden space-y-3">
+      {/* Mobile Cards — horizontal snap scroll */}
+      <div className="md:hidden flex gap-3 overflow-x-auto snap-x-proximity pb-4 -mx-4 px-4">
         {displayBrokers.map((broker, i) => (
           <div
             key={broker.id}
-            className={`rounded-xl border p-4 bg-white ${
+            className={`rounded-xl border p-4 bg-white shrink-0 w-[85vw] max-w-[320px] ${
               editorPicks[broker.slug]
                 ? "border-green-700 ring-1 ring-green-700/30"
                 : "border-slate-200"

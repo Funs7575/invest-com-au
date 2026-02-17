@@ -11,11 +11,11 @@ const tickerData = [
 
 export default function MarketTicker() {
   return (
-    <div className="bg-green-900 border-b border-green-800 overflow-hidden relative">
+    <div className="bg-green-900 border-b border-green-800 overflow-hidden relative ticker-strip" tabIndex={0} aria-label="Market ticker — hover or focus to pause">
       <div className="flex items-center">
         {/* Scrolling content — duplicated for seamless loop */}
         <div
-          className="flex items-center gap-8 py-2 px-4 whitespace-nowrap"
+          className="flex items-center gap-8 py-2 px-4 whitespace-nowrap ticker-track"
           style={{
             animation: "marquee 30s linear infinite",
           }}
