@@ -6,23 +6,24 @@ import { createClient } from "@/lib/supabase/client";
 
 interface QuizWeight {
   id: string;
+  broker_id: number;
   broker_slug: string;
-  goal_daily: number;
-  goal_long: number;
-  goal_smsf: number;
-  experience_boost: number;
-  budget_match: number;
-  priority_weight: number;
+  beginner_weight: number;
+  low_fee_weight: number;
+  us_shares_weight: number;
+  smsf_weight: number;
+  crypto_weight: number;
+  advanced_weight: number;
   updated_at: string;
 }
 
 const WEIGHT_FIELDS: { key: keyof QuizWeight; label: string }[] = [
-  { key: "goal_daily", label: "Goal: Daily" },
-  { key: "goal_long", label: "Goal: Long" },
-  { key: "goal_smsf", label: "Goal: SMSF" },
-  { key: "experience_boost", label: "Exp. Boost" },
-  { key: "budget_match", label: "Budget Match" },
-  { key: "priority_weight", label: "Priority" },
+  { key: "beginner_weight", label: "Beginner" },
+  { key: "low_fee_weight", label: "Low Fee" },
+  { key: "us_shares_weight", label: "US Shares" },
+  { key: "smsf_weight", label: "SMSF" },
+  { key: "crypto_weight", label: "Crypto" },
+  { key: "advanced_weight", label: "Advanced" },
 ];
 
 interface SimResult {
@@ -39,10 +40,14 @@ export default function QuizWeightsPage() {
   const [savedId, setSavedId] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [showSimulator, setShowSimulator] = useState(false);
-  const [simGoal, setSimGoal] = useState("goal_long");
-  const [simExperience, setSimExperience] = useState(1);
-  const [simBudget, setSimBudget] = useState(1);
-  const [simPriority, setSimPriority] = useState(1);
+  const [simWeights, setSimWeights] = useState<Record<string, number>>({
+    beginner_weight: 1,
+    low_fee_weight: 1,
+    us_shares_weight: 1,
+    smsf_weight: 0,
+    crypto_weight: 0,
+    advanced_weight: 0,
+  });
   const [simResults, setSimResults] = useState<SimResult[]>([]);
 
   useEffect(() => {
@@ -78,12 +83,12 @@ export default function QuizWeightsPage() {
     const { error } = await supabase
       .from("quiz_weights")
       .update({
-        goal_daily: row.goal_daily,
-        goal_long: row.goal_long,
-        goal_smsf: row.goal_smsf,
-        experience_boost: row.experience_boost,
-        budget_match: row.budget_match,
-        priority_weight: row.priority_weight,
+        beginner_weight: row.beginner_weight,
+        low_fee_weight: row.low_fee_weight,
+        us_shares_weight: row.us_shares_weight,
+        smsf_weight: row.smsf_weight,
+        crypto_weight: row.crypto_weight,
+        advanced_weight: row.advanced_weight,
         updated_at: new Date().toISOString(),
       })
       .eq("id", id);
@@ -116,12 +121,12 @@ export default function QuizWeightsPage() {
       const { error } = await supabase
         .from("quiz_weights")
         .update({
-          goal_daily: row.goal_daily,
-          goal_long: row.goal_long,
-          goal_smsf: row.goal_smsf,
-          experience_boost: row.experience_boost,
-          budget_match: row.budget_match,
-          priority_weight: row.priority_weight,
+          beginner_weight: row.beginner_weight,
+          low_fee_weight: row.low_fee_weight,
+          us_shares_weight: row.us_shares_weight,
+          smsf_weight: row.smsf_weight,
+          crypto_weight: row.crypto_weight,
+          advanced_weight: row.advanced_weight,
           updated_at: new Date().toISOString(),
         })
         .eq("id", id);
@@ -144,8 +149,10 @@ export default function QuizWeightsPage() {
 
   function runSimulation() {
     const results: SimResult[] = weights.map((w) => {
-      const goalScore = w[simGoal as keyof QuizWeight] as number || 0;
-      const score = goalScore + (w.experience_boost * simExperience) + (w.budget_match * simBudget) + (w.priority_weight * simPriority);
+      let score = 0;
+      for (const f of WEIGHT_FIELDS) {
+        score += (w[f.key] as number || 0) * (simWeights[f.key] || 0);
+      }
       return { broker_slug: w.broker_slug, score };
     });
     results.sort((a, b) => b.score - a.score);
@@ -183,56 +190,22 @@ export default function QuizWeightsPage() {
         {showSimulator && (
           <div className="bg-white border border-slate-200 rounded-lg p-6">
             <h2 className="text-lg font-semibold text-slate-900 mb-4">Quiz Simulator</h2>
-            <p className="text-sm text-slate-500 mb-4">Preview how brokers rank with different quiz inputs.</p>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-              <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Goal</label>
-                <select
-                  value={simGoal}
-                  onChange={(e) => setSimGoal(e.target.value)}
-                  className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30"
-                >
-                  <option value="goal_daily">Daily Trading</option>
-                  <option value="goal_long">Long-Term Investing</option>
-                  <option value="goal_smsf">SMSF</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Experience (0-2)</label>
-                <input
-                  type="number"
-                  min="0"
-                  max="2"
-                  step="0.5"
-                  value={simExperience}
-                  onChange={(e) => setSimExperience(parseFloat(e.target.value) || 0)}
-                  className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Budget (0-2)</label>
-                <input
-                  type="number"
-                  min="0"
-                  max="2"
-                  step="0.5"
-                  value={simBudget}
-                  onChange={(e) => setSimBudget(parseFloat(e.target.value) || 0)}
-                  className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Priority (0-2)</label>
-                <input
-                  type="number"
-                  min="0"
-                  max="2"
-                  step="0.5"
-                  value={simPriority}
-                  onChange={(e) => setSimPriority(parseFloat(e.target.value) || 0)}
-                  className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30"
-                />
-              </div>
+            <p className="text-sm text-slate-500 mb-4">Set multipliers for each weight category to see how brokers rank. Higher multiplier = more importance.</p>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-4">
+              {WEIGHT_FIELDS.map((f) => (
+                <div key={f.key}>
+                  <label className="block text-xs font-medium text-slate-500 mb-1">{f.label} (0-3)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="3"
+                    step="0.5"
+                    value={simWeights[f.key] || 0}
+                    onChange={(e) => setSimWeights({ ...simWeights, [f.key]: parseFloat(e.target.value) || 0 })}
+                    className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30"
+                  />
+                </div>
+              ))}
             </div>
             <button
               onClick={runSimulation}
@@ -282,7 +255,7 @@ export default function QuizWeightsPage() {
                 <thead className="bg-slate-50">
                   <tr>
                     <th className="text-left px-4 py-3 text-sm font-medium text-slate-600 whitespace-nowrap">
-                      Broker Slug
+                      Broker
                     </th>
                     {WEIGHT_FIELDS.map((f) => (
                       <th
@@ -310,7 +283,7 @@ export default function QuizWeightsPage() {
                         <td key={f.key} className="px-4 py-3">
                           <input
                             type="number"
-                            step="0.1"
+                            step="1"
                             value={row[f.key] as number}
                             onChange={(e) =>
                               handleChange(
