@@ -39,9 +39,10 @@ function AnimatedNumber({ value, prefix = "$", decimals = 2 }: { value: number; 
    Types & constants
    ────────────────────────────────────────────── */
 interface Props { brokers: Broker[] }
-type CalcId = "fx" | "switching" | "cgt" | "franking" | "chess";
+type CalcId = "trade-cost" | "fx" | "switching" | "cgt" | "franking" | "chess";
 
 const CALCS: { id: CalcId; emoji: string; title: string; subtitle: string }[] = [
+  { id: "trade-cost", emoji: "\u{1F4B5}", title: "Trade Cost", subtitle: "What does a trade really cost at each broker?" },
   { id: "fx", emoji: "\u{1F1FA}\u{1F1F8}", title: "US Share Costs", subtitle: "What do international trades really cost?" },
   { id: "switching", emoji: "\u{1F504}", title: "Compare Fees", subtitle: "Is it worth switching brokers?" },
   { id: "cgt", emoji: "\u{1F4C5}", title: "Tax on Profits", subtitle: "Estimate capital gains tax" },
@@ -60,7 +61,7 @@ export default function CalculatorsClient({ brokers }: Props) {
   const searchParams = useSearchParams();
   const initialCalc = searchParams.get("calc") as CalcId | null;
   const hasScrolled = useRef(false);
-  const [activeCalc, setActiveCalc] = useState<CalcId>(initialCalc || "fx");
+  const [activeCalc, setActiveCalc] = useState<CalcId>(initialCalc || "trade-cost");
 
   useEffect(() => {
     if (initialCalc && !hasScrolled.current) {
@@ -86,7 +87,7 @@ export default function CalculatorsClient({ brokers }: Props) {
         </div>
 
         {/* ── Pill Navigation ──────────────────────── */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-10" role="tablist" aria-label="Calculator selection">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-10" role="tablist" aria-label="Calculator selection">
           {CALCS.map((c) => (
             <button
               key={c.id}
@@ -111,6 +112,7 @@ export default function CalculatorsClient({ brokers }: Props) {
 
         {/* ── Active Calculator ────────────────────── */}
         <div id="calc-container" className="scroll-mt-24 min-h-[400px]" role="tabpanel">
+          {activeCalc === "trade-cost" && <TradeCostCalculator brokers={nonCryptoBrokers} />}
           {activeCalc === "franking" && <FrankingCalculator />}
           {activeCalc === "switching" && <SwitchingCostCalculator brokers={nonCryptoBrokers} />}
           {activeCalc === "fx" && <FxFeeCalculator brokers={nonCryptoBrokers} />}
@@ -140,6 +142,171 @@ export default function CalculatorsClient({ brokers }: Props) {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   0) Trade Cost Calculator — what does a trade really cost?
+   ────────────────────────────────────────────── */
+function TradeCostCalculator({ brokers }: { brokers: Broker[] }) {
+  const [tradeAmount, setTradeAmount] = useState("5000");
+  const [market, setMarket] = useState<"asx" | "us">("asx");
+
+  const amount = parseFloat(tradeAmount) || 0;
+
+  const results = useMemo(() => {
+    return brokers
+      .map((b) => {
+        if (market === "asx") {
+          const brokerage = b.asx_fee_value ?? null;
+          if (brokerage === null || brokerage >= 999) return null;
+          return { broker: b, brokerage, fxCost: 0, totalCost: brokerage, pctOfTrade: amount > 0 ? (brokerage / amount) * 100 : 0 };
+        } else {
+          const brokerage = b.us_fee_value ?? null;
+          if (brokerage === null || brokerage >= 999) return null;
+          const fxCost = amount * ((b.fx_rate ?? 0) / 100);
+          const total = brokerage + fxCost;
+          return { broker: b, brokerage, fxCost, totalCost: total, pctOfTrade: amount > 0 ? (total / amount) * 100 : 0 };
+        }
+      })
+      .filter(Boolean)
+      .sort((a, b) => a!.totalCost - b!.totalCost) as { broker: Broker; brokerage: number; fxCost: number; totalCost: number; pctOfTrade: number }[];
+  }, [brokers, market, amount]);
+
+  const cheapest = results[0]?.totalCost ?? 0;
+  const mostExpensive = results[results.length - 1]?.totalCost ?? 1;
+
+  return (
+    <div className="bg-white rounded-2xl border border-slate-200 p-6 md:p-8">
+      <h2 className="text-2xl font-bold mb-1">Trade Cost Calculator</h2>
+      <p className="text-sm text-slate-500 mb-6">
+        Enter your trade amount to see what each broker would actually charge you — including hidden FX fees on US trades.
+      </p>
+
+      {/* Inputs */}
+      <div className="flex flex-col sm:flex-row gap-4 mb-6">
+        <div className="flex-1">
+          <label className="block text-xs font-semibold text-slate-600 mb-1">Trade Amount (AUD)</label>
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
+            <input
+              type="number"
+              value={tradeAmount}
+              onChange={(e) => setTradeAmount(e.target.value)}
+              className="w-full pl-8 pr-4 py-3 border border-slate-200 rounded-lg text-lg font-semibold focus:outline-none focus:border-green-700 focus:ring-1 focus:ring-green-700"
+              min={0}
+              step={500}
+              aria-label="Trade amount in AUD"
+            />
+          </div>
+        </div>
+        <div>
+          <label className="block text-xs font-semibold text-slate-600 mb-1">Market</label>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setMarket("asx")}
+              className={`px-5 py-3 rounded-lg text-sm font-semibold transition-colors ${
+                market === "asx" ? "bg-green-700 text-white" : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+              }`}
+            >
+              🇦🇺 ASX
+            </button>
+            <button
+              onClick={() => setMarket("us")}
+              className={`px-5 py-3 rounded-lg text-sm font-semibold transition-colors ${
+                market === "us" ? "bg-green-700 text-white" : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+              }`}
+            >
+              🇺🇸 US
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Quick amount buttons */}
+      <div className="flex flex-wrap gap-2 mb-6">
+        {["500", "1000", "2000", "5000", "10000", "25000"].map((v) => (
+          <button
+            key={v}
+            onClick={() => setTradeAmount(v)}
+            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+              tradeAmount === v ? "bg-green-100 text-green-700 border border-green-300" : "bg-slate-50 text-slate-600 border border-slate-200 hover:bg-slate-100"
+            }`}
+          >
+            ${parseInt(v).toLocaleString()}
+          </button>
+        ))}
+      </div>
+
+      {/* Results table */}
+      {results.length > 0 ? (
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-slate-200">
+                <th className="text-left text-xs font-semibold text-slate-500 pb-2 pr-4">Broker</th>
+                <th className="text-right text-xs font-semibold text-slate-500 pb-2 px-2">Brokerage</th>
+                {market === "us" && <th className="text-right text-xs font-semibold text-slate-500 pb-2 px-2">FX Cost</th>}
+                <th className="text-right text-xs font-semibold text-slate-500 pb-2 px-2">Total Cost</th>
+                <th className="text-right text-xs font-semibold text-slate-500 pb-2 px-2">% of Trade</th>
+                <th className="text-left text-xs font-semibold text-slate-500 pb-2 pl-4">Cost Bar</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {results.map((r, i) => {
+                const barWidth = mostExpensive > 0 ? Math.max((r.totalCost / mostExpensive) * 100, 2) : 0;
+                const isCheapest = r.totalCost === cheapest;
+                return (
+                  <tr key={r.broker.slug} className={isCheapest ? "bg-green-50/60" : ""}>
+                    <td className="py-3 pr-4">
+                      <span className="font-semibold text-sm">{r.broker.name}</span>
+                      {isCheapest && <span className="ml-2 text-[0.6rem] font-bold text-green-600 uppercase">Cheapest</span>}
+                    </td>
+                    <td className="py-3 px-2 text-right text-sm font-mono">
+                      <AnimatedNumber value={r.brokerage} />
+                    </td>
+                    {market === "us" && (
+                      <td className="py-3 px-2 text-right text-sm font-mono text-slate-500">
+                        <AnimatedNumber value={r.fxCost} />
+                      </td>
+                    )}
+                    <td className="py-3 px-2 text-right text-sm font-mono font-bold">
+                      <AnimatedNumber value={r.totalCost} />
+                    </td>
+                    <td className="py-3 px-2 text-right text-xs text-slate-500">
+                      {r.pctOfTrade.toFixed(2)}%
+                    </td>
+                    <td className="py-3 pl-4 w-40">
+                      <div className="h-4 bg-slate-100 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full transition-all duration-500 ${isCheapest ? "bg-green-500" : "bg-amber-400"}`}
+                          style={{ width: `${barWidth}%` }}
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <p className="text-center py-8 text-slate-500">No brokers support {market === "asx" ? "ASX" : "US"} trading.</p>
+      )}
+
+      {/* Savings callout */}
+      {results.length >= 2 && (
+        <div className="mt-6 bg-green-50 border border-green-200 rounded-xl p-4 text-center">
+          <p className="text-sm text-green-800">
+            <strong>Potential savings:</strong> Choosing the cheapest broker saves you{" "}
+            <strong>
+              ${(results[results.length - 1].totalCost - results[0].totalCost).toFixed(2)}
+            </strong>{" "}
+            per {market === "asx" ? "ASX" : "US"} trade compared to the most expensive option.
+          </p>
+        </div>
+      )}
     </div>
   );
 }
