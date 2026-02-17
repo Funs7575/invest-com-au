@@ -39,14 +39,14 @@ function AnimatedNumber({ value, prefix = "$", decimals = 2 }: { value: number; 
    Types & constants
    ────────────────────────────────────────────── */
 interface Props { brokers: Broker[] }
-type CalcId = "franking" | "switching" | "fx" | "cgt" | "chess";
+type CalcId = "fx" | "switching" | "cgt" | "franking" | "chess";
 
 const CALCS: { id: CalcId; emoji: string; title: string; subtitle: string }[] = [
-  { id: "franking", emoji: "\u{1F4B0}", title: "Franking Credits", subtitle: "Grossed-up dividend yield" },
-  { id: "switching", emoji: "\u{1F504}", title: "Switching Cost", subtitle: "Is it worth switching brokers?" },
-  { id: "fx", emoji: "\u{1F1FA}\u{1F1F8}", title: "FX Fee Calculator", subtitle: "Compare currency conversion costs" },
-  { id: "cgt", emoji: "\u{1F4C5}", title: "CGT Estimator", subtitle: "Capital gains tax estimate" },
-  { id: "chess", emoji: "\u{1F512}", title: "CHESS Lookup", subtitle: "Sponsorship model by broker" },
+  { id: "fx", emoji: "\u{1F1FA}\u{1F1F8}", title: "US Share Costs", subtitle: "What do international trades really cost?" },
+  { id: "switching", emoji: "\u{1F504}", title: "Compare Fees", subtitle: "Is it worth switching brokers?" },
+  { id: "cgt", emoji: "\u{1F4C5}", title: "Tax on Profits", subtitle: "Estimate capital gains tax" },
+  { id: "franking", emoji: "\u{1F4B0}", title: "Dividend Tax", subtitle: "Franking credits after tax" },
+  { id: "chess", emoji: "\u{1F512}", title: "Share Safety", subtitle: "Is your broker CHESS sponsored?" },
 ];
 
 const CORPORATE_TAX_RATE = 0.3;
@@ -60,7 +60,7 @@ export default function CalculatorsClient({ brokers }: Props) {
   const searchParams = useSearchParams();
   const initialCalc = searchParams.get("calc") as CalcId | null;
   const hasScrolled = useRef(false);
-  const [activeCalc, setActiveCalc] = useState<CalcId>(initialCalc || "franking");
+  const [activeCalc, setActiveCalc] = useState<CalcId>(initialCalc || "fx");
 
   useEffect(() => {
     if (initialCalc && !hasScrolled.current) {
@@ -78,9 +78,9 @@ export default function CalculatorsClient({ brokers }: Props) {
       <div className="container-custom">
         {/* Page header */}
         <div className="text-center mb-10">
-          <h1 className="text-3xl md:text-4xl font-extrabold text-brand tracking-tight mb-3">Investment Calculators</h1>
+          <h1 className="text-3xl md:text-4xl font-extrabold text-brand tracking-tight mb-3">Investing Tools</h1>
           <p className="text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed">
-            Free tools to help Australian investors understand costs, compare brokers, and plan smarter.
+            Free tools to help you compare broker fees, estimate tax, and make smarter investing decisions.
           </p>
           <AuthorByline variant="light" />
         </div>
@@ -125,14 +125,14 @@ export default function CalculatorsClient({ brokers }: Props) {
             <Link href="/compare" className="text-xs px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-white transition-colors">
               Compare All Brokers →
             </Link>
-            <Link href="/scenario/beginner" className="text-xs px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-white transition-colors">
-              Best for Beginners →
+            <Link href="/article/best-share-trading-platforms-australia" className="text-xs px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-white transition-colors">
+              Best Platforms 2026 →
             </Link>
-            <Link href="/scenario/smsf" className="text-xs px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-white transition-colors">
-              SMSF Brokers →
+            <Link href="/article/how-to-invest-australia" className="text-xs px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-white transition-colors">
+              How to Invest →
             </Link>
-            <Link href="/article/how-to-buy-shares" className="text-xs px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-white transition-colors">
-              How to Buy Shares →
+            <Link href="/article/best-etfs-australia" className="text-xs px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-white transition-colors">
+              Best ETFs 2026 →
             </Link>
             <Link href="/quiz" className="text-xs px-3 py-1.5 border border-green-200 text-green-700 rounded-lg hover:bg-green-50 transition-colors">
               Take the Broker Quiz →
