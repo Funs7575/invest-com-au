@@ -40,7 +40,9 @@ export function trackEvent(
 }
 
 export function getAffiliateLink(broker: Broker): string {
-  return broker.affiliate_url || `/broker/${broker.slug}`;
+  // Route through /go/ redirect layer for server-side tracking & link hygiene
+  if (broker.affiliate_url) return `/go/${broker.slug}`;
+  return `/broker/${broker.slug}`;
 }
 
 export function getBenefitCta(broker: Broker, context: 'compare' | 'review' | 'calculator' | 'versus' | 'quiz'): string {
