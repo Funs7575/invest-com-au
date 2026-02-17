@@ -10,11 +10,12 @@ import BrokerCard from "@/components/BrokerCard";
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 import { getMostRecentFeeCheck } from "@/lib/utils";
 
-type FilterType = 'all' | 'chess' | 'free' | 'us' | 'smsf' | 'low-fx' | 'crypto';
+type FilterType = 'all' | 'beginner' | 'chess' | 'free' | 'us' | 'smsf' | 'low-fx' | 'crypto';
 type SortCol = 'name' | 'asx_fee_value' | 'us_fee_value' | 'fx_rate' | 'rating';
 
 const filters: { key: FilterType; label: string }[] = [
   { key: 'all', label: 'All Brokers' },
+  { key: 'beginner', label: 'Beginner' },
   { key: 'chess', label: 'CHESS Only' },
   { key: 'free', label: '$0 Trades' },
   { key: 'us', label: 'US Shares' },
@@ -62,10 +63,14 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
     });
   }
 
-  // Read ?q= param from URL (e.g. from homepage search bar)
+  // Read ?q= and ?filter= params from URL
   useEffect(() => {
     const q = searchParams.get("q");
     if (q) setSearchQuery(q);
+    const f = searchParams.get("filter");
+    if (f && filters.some(fl => fl.key === f)) {
+      setActiveFilter(f as FilterType);
+    }
   }, [searchParams]);
 
   function handleSort(col: SortCol) {
@@ -80,6 +85,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   const filtered = useMemo(() => {
     let list = [...brokers];
     switch (activeFilter) {
+      case 'beginner': list = list.filter(b => !b.is_crypto && (b.asx_fee_value ?? 999) <= 10 && (b.rating ?? 0) >= 4.0); break;
       case 'chess': list = list.filter(b => b.chess_sponsored); break;
       case 'free': list = list.filter(b => (b.asx_fee_value === 0) || (b.us_fee_value === 0)); break;
       case 'us': list = list.filter(b => b.us_fee_value != null && b.us_fee_value <= 5); break;
