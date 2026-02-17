@@ -44,8 +44,15 @@ function InfoTip({ text }: { text: string }) {
 
 export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   const searchParams = useSearchParams();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeFilter, setActiveFilter] = useState<FilterType>('all');
+
+  // Derive initial filter/query from URL params
+  const urlFilter = searchParams.get("filter");
+  const initialFilter: FilterType = (urlFilter && filters.some(fl => fl.key === urlFilter))
+    ? urlFilter as FilterType : 'all';
+  const urlQuery = searchParams.get("q") || "";
+
+  const [searchQuery, setSearchQuery] = useState(urlQuery);
+  const [activeFilter, setActiveFilter] = useState<FilterType>(initialFilter);
   const [sortCol, setSortCol] = useState<SortCol>('rating');
   const [sortDir, setSortDir] = useState<1 | -1>(-1);
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -63,13 +70,15 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
     });
   }
 
-  // Read ?q= and ?filter= params from URL
+  // Sync filter/query when URL params change (e.g. browser back/forward)
   useEffect(() => {
-    const q = searchParams.get("q");
-    if (q) setSearchQuery(q);
+    const q = searchParams.get("q") || "";
+    setSearchQuery(q);
     const f = searchParams.get("filter");
     if (f && filters.some(fl => fl.key === f)) {
       setActiveFilter(f as FilterType);
+    } else if (!f) {
+      setActiveFilter('all');
     }
   }, [searchParams]);
 
