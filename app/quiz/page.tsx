@@ -398,15 +398,15 @@ export default function QuizPage() {
           )}
 
           {/* Bottom CTA card */}
-          <div className="bg-slate-900 text-white rounded-xl p-6 mb-6 text-center">
+          <div className="bg-amber-400 text-slate-900 rounded-xl p-6 mb-6 text-center">
             <h3 className="text-lg font-bold mb-1">Still not sure?</h3>
-            <p className="text-sm text-slate-300 mb-4">Compare all brokers side-by-side or read our detailed reviews.</p>
+            <p className="text-sm text-slate-700 mb-4">Compare all brokers side-by-side or read our detailed reviews.</p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <a href="/compare" className="px-5 py-2.5 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors">
+              <a href="/compare" className="px-5 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 transition-colors">
                 Compare All Brokers →
               </a>
               {topMatch?.broker && (
-                <a href={`/broker/${topMatch.broker.slug}`} className="px-5 py-2.5 border border-slate-600 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 transition-colors">
+                <a href={`/broker/${topMatch.broker.slug}`} className="px-5 py-2.5 border border-slate-700 text-slate-900 text-sm font-semibold rounded-lg hover:bg-amber-300 transition-colors">
                   Read {topMatch.broker.name} Review →
                 </a>
               )}
