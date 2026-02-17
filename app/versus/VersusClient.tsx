@@ -131,7 +131,11 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
     ? selected.map(br => br.name).join(" vs ")
     : "Broker vs Broker";
 
-  const gridCols = selected.length <= 2 ? "md:grid-cols-2" : selected.length === 3 ? "md:grid-cols-3" : "md:grid-cols-4";
+  const gridCols = selected.length <= 2
+    ? "md:grid-cols-2"
+    : selected.length === 3
+      ? "sm:grid-cols-2 lg:grid-cols-3"
+      : "sm:grid-cols-2 lg:grid-cols-4";
 
   return (
     <div className="py-12">
@@ -145,7 +149,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
           <span className="text-brand">{allSelected ? title : "Versus"}</span>
         </div>
 
-        <h1 className="text-3xl md:text-4xl font-extrabold mb-2">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold mb-2 break-words">
           {allSelected ? `${title}: The Honest Truth (2026)` : "Broker vs Broker"}
         </h1>
         <p className="text-slate-600 mb-8">
@@ -203,14 +207,14 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
         {allSelected && overallWinner && (
           <>
             {/* Winner Banner */}
-            <div className="rounded-xl p-5 flex items-center gap-4 flex-wrap mb-2" style={{ background: "linear-gradient(135deg, #f59e0b, #d97706)" }}>
+            <div className="rounded-xl p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-2" style={{ background: "linear-gradient(135deg, #f59e0b, #d97706)" }}>
               <div
                 className="w-14 h-14 rounded-xl flex items-center justify-center text-lg font-extrabold shrink-0"
                 style={{ background: `${overallWinner.color}30` }}
               >
                 {overallWinner.icon || overallWinner.name.charAt(0)}
               </div>
-              <div className="flex-1 min-w-[200px]">
+              <div className="flex-1 min-w-0">
                 <div className="text-[0.6rem] uppercase font-extrabold tracking-wider opacity-70">Our Pick</div>
                 <div className="text-xl font-extrabold">{overallWinner.name}</div>
                 <div className="text-sm opacity-80">
@@ -223,7 +227,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                 target="_blank"
                 rel={AFFILIATE_REL}
                 onClick={() => trackClick(overallWinner.slug, overallWinner.name, "versus-winner", "/versus", "versus")}
-                className="shrink-0 px-6 py-3 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-800 transition-colors"
+                className="shrink-0 w-full sm:w-auto text-center px-6 py-3 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-800 transition-colors"
               >
                 {getBenefitCta(overallWinner, "versus")}
               </a>
@@ -247,13 +251,13 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
 
             {/* Head-to-Head Table */}
             <h2 className="text-xl font-extrabold mb-3">Head-to-Head Comparison</h2>
-            <div className="overflow-x-auto mb-8">
+            <div className="overflow-x-auto mb-8 -mx-4 px-4 sm:mx-0 sm:px-0">
               <table className="w-full border border-slate-200 rounded-lg">
                 <thead className="bg-slate-50">
                   <tr>
-                    <th className="px-4 py-3 text-left text-sm font-semibold">Feature</th>
+                    <th className="px-4 py-3 text-left text-sm font-semibold sticky left-0 bg-slate-50 z-10">Feature</th>
                     {selected.map(br => (
-                      <th key={br.slug} className="px-4 py-3 text-center text-sm font-bold">{br.name}</th>
+                      <th key={br.slug} className="px-4 py-3 text-center text-sm font-bold whitespace-nowrap">{br.name}</th>
                     ))}
                   </tr>
                 </thead>
@@ -262,11 +266,11 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                     const bestIdx = getBestIndex(row.numValues, row.best);
                     return (
                       <tr key={i} className="hover:bg-slate-50">
-                        <td className="px-4 py-3 text-sm font-medium text-slate-600">{row.label}</td>
+                        <td className="px-4 py-3 text-sm font-medium text-slate-600 sticky left-0 bg-white z-10">{row.label}</td>
                         {row.values.map((val, j) => (
                           <td
                             key={j}
-                            className={`px-4 py-3 text-sm text-center font-semibold ${
+                            className={`px-4 py-3 text-sm text-center font-semibold whitespace-nowrap ${
                               bestIdx === j ? "text-green-700 bg-green-50" : ""
                             }`}
                           >
@@ -285,7 +289,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
             <div className={`grid grid-cols-1 ${gridCols} gap-6 mb-8`}>
               {selected.map(br => (
                 <div key={br.slug} className="border border-slate-200 rounded-xl p-4">
-                  <h3 className="text-lg font-bold mb-3">{br.name}</h3>
+                  <h3 className="text-lg font-bold mb-3 break-words">{br.name}</h3>
                   <div className="mb-3">
                     <h4 className="text-xs font-semibold text-green-700 mb-2">Pros</h4>
                     <ul className="space-y-1">
