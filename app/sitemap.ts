@@ -5,7 +5,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app";
   const supabase = await createClient();
 
-  // Static pages
+  // Static pages with tiered priorities
+  const highPriority = new Set(["/compare", "/quiz", "/reviews"]);
+  const medPriority = new Set(["/versus", "/calculators", "/articles", "/scenarios", "/switch"]);
+  // Everything else (about, how-we-earn, privacy, methodology, terms, etc.) → 0.4
+
   const staticPages = [
     "", "/compare", "/versus", "/reviews", "/calculators",
     "/articles", "/scenarios", "/quiz", "/about", "/how-we-earn", "/privacy",
@@ -13,8 +17,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ].map((path) => ({
     url: `${baseUrl}${path}`,
     lastModified: new Date(),
-    changeFrequency: "weekly" as const,
-    priority: path === "" ? 1 : 0.8,
+    changeFrequency: (path === "" || highPriority.has(path) ? "weekly" : "monthly") as "weekly" | "monthly",
+    priority: path === "" ? 1.0 : highPriority.has(path) ? 0.9 : medPriority.has(path) ? 0.7 : 0.4,
   }));
 
   // Dynamic broker pages
