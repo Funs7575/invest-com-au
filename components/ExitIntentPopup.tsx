@@ -1,60 +1,96 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { trackEvent } from "@/lib/tracking";
+
+const MIN_ENGAGEMENT_MS = 15_000; // Must be on page 15s before popup can fire
+const MOBILE_INACTIVITY_MS = 30_000; // 30s inactivity on mobile
+const MOBILE_SCROLL_DEPTH = 0.35; // Must scroll 35%+ of page on mobile
 
 export default function ExitIntentPopup() {
   const [visible, setVisible] = useState(false);
   const [email, setEmail] = useState("");
   const [consent, setConsent] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [emailSent, setEmailSent] = useState(false);
+  const pageLoadTime = useRef(Date.now());
+  const maxScrollDepth = useRef(0);
+
+  const isEngagedEnough = useCallback(() => {
+    const timeOnPage = Date.now() - pageLoadTime.current;
+    return timeOnPage >= MIN_ENGAGEMENT_MS;
+  }, []);
 
   const showPopup = useCallback(() => {
-    // Don't show if already shown this session, or if dismissed permanently
     if (typeof window === "undefined") return;
     if (sessionStorage.getItem("exitIntentShown") === "true") return;
     if (localStorage.getItem("exitIntentDismissed") === "true") return;
-    // Don't show on admin pages or quiz (mid-flow)
     if (window.location.pathname.startsWith("/admin")) return;
     if (window.location.pathname === "/quiz") return;
+    if (!isEngagedEnough()) return;
 
     setVisible(true);
     sessionStorage.setItem("exitIntentShown", "true");
-  }, []);
+  }, [isEngagedEnough]);
 
   useEffect(() => {
-    // Exit intent: mouse leaves viewport at top
+    // Track scroll depth for mobile trigger
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (docHeight > 0) {
+        const depth = scrollTop / docHeight;
+        if (depth > maxScrollDepth.current) {
+          maxScrollDepth.current = depth;
+        }
+      }
+    };
+
+    // Desktop: exit intent when mouse leaves viewport at top
     const handleMouseLeave = (e: MouseEvent) => {
       if (e.clientY <= 0) {
         showPopup();
       }
     };
 
-    // Mobile fallback: show after 45 seconds of inactivity or back button
+    // Mobile: show after inactivity, but only if user has scrolled enough
     let inactivityTimer: ReturnType<typeof setTimeout>;
     const resetInactivity = () => {
       clearTimeout(inactivityTimer);
       inactivityTimer = setTimeout(() => {
-        // Only on mobile
-        if (window.innerWidth < 768) {
+        if (window.innerWidth < 768 && maxScrollDepth.current >= MOBILE_SCROLL_DEPTH) {
           showPopup();
         }
-      }, 45000);
+      }, MOBILE_INACTIVITY_MS);
+    };
+
+    // Mobile: also trigger on back-button / visibility change (user switching tabs)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden" && window.innerWidth < 768) {
+        // User is leaving — mark for next visit or show on return
+        if (isEngagedEnough() && maxScrollDepth.current >= MOBILE_SCROLL_DEPTH) {
+          showPopup();
+        }
+      }
     };
 
     document.addEventListener("mouseleave", handleMouseLeave);
     document.addEventListener("touchstart", resetInactivity, { passive: true });
+    document.addEventListener("scroll", handleScroll, { passive: true });
     document.addEventListener("scroll", resetInactivity, { passive: true });
+    document.addEventListener("visibilitychange", handleVisibilityChange);
     resetInactivity();
 
     return () => {
       document.removeEventListener("mouseleave", handleMouseLeave);
       document.removeEventListener("touchstart", resetInactivity);
+      document.removeEventListener("scroll", handleScroll);
       document.removeEventListener("scroll", resetInactivity);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
       clearTimeout(inactivityTimer);
     };
-  }, [showPopup]);
+  }, [showPopup, isEngagedEnough]);
 
   const handleDismiss = useCallback(() => {
     setVisible(false);
@@ -82,7 +118,9 @@ export default function ExitIntentPopup() {
         body: JSON.stringify({ email, source: "exit-intent" }),
       });
       if (res.ok) {
+        const data = await res.json();
         setStatus("success");
+        setEmailSent(!!data.emailSent);
         setEmail("");
         trackEvent('pdf_opt_in', { source: 'exit-intent' });
       } else {
@@ -133,10 +171,14 @@ export default function ExitIntentPopup() {
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
             {status === "success" ? (
               <div className="text-center py-4">
-                <div className="text-3xl mb-2">✅</div>
-                <h3 className="font-bold text-lg mb-1">Check Your Inbox!</h3>
+                <div className="text-3xl mb-2">{emailSent ? '✅' : '📧'}</div>
+                <h3 className="font-bold text-lg mb-1">
+                  {emailSent ? 'Check Your Inbox!' : 'You\'re Signed Up!'}
+                </h3>
                 <p className="text-sm text-slate-600 mb-4">
-                  We&apos;ve sent the fee comparison PDF to your email.
+                  {emailSent
+                    ? 'We\'ve sent the fee comparison to your email.'
+                    : 'We\'ll send you the fee comparison shortly.'}
                 </p>
                 <Link
                   href="/quiz"

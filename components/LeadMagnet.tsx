@@ -8,6 +8,7 @@ export default function LeadMagnet() {
   const [email, setEmail] = useState("");
   const [consent, setConsent] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [emailSent, setEmailSent] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -21,7 +22,9 @@ export default function LeadMagnet() {
         body: JSON.stringify({ email, source: "lead-magnet-fee-audit" }),
       });
       if (res.ok) {
+        const data = await res.json();
         setStatus("success");
+        setEmailSent(!!data.emailSent);
         setEmail("");
         trackEvent('pdf_opt_in', { source: 'lead-magnet' });
       } else {
@@ -45,11 +48,14 @@ export default function LeadMagnet() {
 
       {status === "success" ? (
         <div className="bg-green-100 border border-green-200 rounded-lg p-4 text-center">
-          <div className="text-lg font-bold mb-1 text-green-900">Check your inbox!</div>
+          <div className="text-lg font-bold mb-1 text-green-900">
+            {emailSent ? 'Check your inbox!' : 'You\'re signed up!'}
+          </div>
           <p className="text-sm text-slate-600">
-            We&apos;ve sent the 2026 Fee Audit PDF to your email.
+            {emailSent
+              ? 'We\'ve sent the 2026 Fee Audit to your email.'
+              : 'We\'ll send you the 2026 Fee Audit shortly.'}
           </p>
-
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-3">
