@@ -135,10 +135,10 @@ export default function QuizWeightsPage() {
     <AdminShell>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-white">Quiz Weights</h1>
+          <h1 className="text-2xl font-bold text-slate-900">Quiz Weights</h1>
           <div className="flex items-center gap-3">
             {modified.size > 0 && (
-              <span className="text-amber-400 text-sm">
+              <span className="text-amber-600 text-sm">
                 {modified.size} row(s) modified
               </span>
             )}
@@ -158,25 +158,25 @@ export default function QuizWeightsPage() {
           </div>
         )}
 
-        <div className="bg-slate-800 border border-slate-700 rounded-lg overflow-hidden">
+        <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
           {loading ? (
-            <div className="p-8 text-center text-slate-400">Loading quiz weights...</div>
+            <div className="p-8 text-center text-slate-500">Loading quiz weights...</div>
           ) : weights.length === 0 ? (
-            <div className="p-8 text-center text-slate-400">
+            <div className="p-8 text-center text-slate-500">
               No quiz weights found. Add rows to the quiz_weights table to get started.
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-slate-700/50">
+                <thead className="bg-slate-50">
                   <tr>
-                    <th className="text-left px-4 py-3 text-sm font-medium text-slate-300 whitespace-nowrap">
+                    <th className="text-left px-4 py-3 text-sm font-medium text-slate-600 whitespace-nowrap">
                       Broker Slug
                     </th>
                     {WEIGHT_FIELDS.map((f) => (
                       <th
                         key={f.key}
-                        className="text-left px-4 py-3 text-sm font-medium text-slate-300 whitespace-nowrap"
+                        className="text-left px-4 py-3 text-sm font-medium text-slate-600 whitespace-nowrap"
                       >
                         {f.label}
                       </th>
@@ -184,15 +184,15 @@ export default function QuizWeightsPage() {
                     <th className="px-4 py-3"></th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-700">
+                <tbody className="divide-y divide-slate-200">
                   {weights.map((row) => (
                     <tr
                       key={row.id}
-                      className={`hover:bg-slate-700/30 ${
+                      className={`hover:bg-slate-50 ${
                         modified.has(row.id) ? "bg-amber-500/5" : ""
                       }`}
                     >
-                      <td className="px-4 py-3 text-white font-medium whitespace-nowrap">
+                      <td className="px-4 py-3 text-slate-900 font-medium whitespace-nowrap">
                         {row.broker_slug}
                       </td>
                       {WEIGHT_FIELDS.map((f) => (
@@ -208,7 +208,7 @@ export default function QuizWeightsPage() {
                                 parseFloat(e.target.value) || 0
                               )
                             }
-                            className="w-20 bg-slate-700 border border-slate-600 text-white rounded px-2 py-1 text-sm text-center focus:outline-none focus:border-amber-500"
+                            className="w-20 bg-white border border-slate-300 text-slate-900 rounded px-2 py-1 text-sm text-center focus:outline-none focus:border-amber-500"
                           />
                         </td>
                       ))}
@@ -222,7 +222,7 @@ export default function QuizWeightsPage() {
                             Save
                           </button>
                           {savedId === row.id && (
-                            <span className="text-green-400 text-sm">Saved!</span>
+                            <span className="text-green-600 text-sm">Saved!</span>
                           )}
                         </div>
                       </td>

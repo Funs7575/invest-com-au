@@ -157,22 +157,22 @@ export default function AdminDashboard() {
   }, []);
 
   const cards = [
-    { label: "Brokers", value: stats?.brokers, href: "/admin/brokers", color: "bg-blue-500/10 text-blue-400" },
-    { label: "Articles", value: stats?.articles, href: "/admin/articles", color: "bg-green-500/10 text-green-400" },
-    { label: "Scenarios", value: stats?.scenarios, href: "/admin/scenarios", color: "bg-purple-500/10 text-purple-400" },
-    { label: "Total Clicks", value: stats?.clicks, href: "/admin/analytics", color: "bg-amber-500/10 text-amber-400" },
-    { label: "Clicks Today", value: stats?.clicksToday, href: "/admin/analytics", color: "bg-red-500/10 text-red-400" },
-    { label: "Email Captures", value: stats?.emails, href: "#", color: "bg-cyan-500/10 text-cyan-400" },
+    { label: "Brokers", value: stats?.brokers, href: "/admin/brokers", color: "bg-blue-50 text-blue-600" },
+    { label: "Articles", value: stats?.articles, href: "/admin/articles", color: "bg-green-50 text-green-600" },
+    { label: "Scenarios", value: stats?.scenarios, href: "/admin/scenarios", color: "bg-purple-50 text-purple-600" },
+    { label: "Total Clicks", value: stats?.clicks, href: "/admin/analytics", color: "bg-amber-50 text-amber-600" },
+    { label: "Clicks Today", value: stats?.clicksToday, href: "/admin/analytics", color: "bg-red-50 text-red-600" },
+    { label: "Email Captures", value: stats?.emails, href: "#", color: "bg-cyan-50 text-cyan-600" },
   ];
 
   return (
     <AdminShell>
-      <h1 className="text-2xl font-bold text-white mb-6">Dashboard</h1>
+      <h1 className="text-2xl font-bold text-slate-900 mb-6">Dashboard</h1>
 
       {/* Health summary banner */}
       {!loading && health.length > 0 && !health[0].message.includes("passed") && (
-        <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg px-4 py-2 mb-4 flex items-center gap-2">
-          <span className="text-amber-400">⚠</span>
+        <div className="bg-amber-50 border border-amber-500/20 rounded-lg px-4 py-2 mb-4 flex items-center gap-2">
+          <span className="text-amber-600">⚠</span>
           <span className="text-sm text-amber-300">
             {health.length} content issue{health.length !== 1 ? "s" : ""} need attention
           </span>
@@ -183,37 +183,37 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 mb-8">
         {loading
           ? Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="bg-slate-800 border border-slate-700 rounded-lg p-4 animate-pulse">
-                <div className="h-8 w-16 bg-slate-700 rounded mb-2" />
-                <div className="h-4 w-20 bg-slate-700 rounded" />
+              <div key={i} className="bg-white border border-slate-200 rounded-lg p-4 animate-pulse">
+                <div className="h-8 w-16 bg-slate-200 rounded mb-2" />
+                <div className="h-4 w-20 bg-slate-200 rounded" />
               </div>
             ))
           : cards.map((card) => (
               <Link
                 key={card.label}
                 href={card.href}
-                className="bg-slate-800 border border-slate-700 rounded-lg p-4 hover:border-slate-600 transition-colors"
+                className="bg-white border border-slate-200 rounded-lg p-4 hover:border-slate-300 transition-colors"
               >
                 <div className={`text-3xl font-bold ${card.color}`}>
                   {card.value ?? 0}
                 </div>
-                <div className="text-sm text-slate-400 mt-1">{card.label}</div>
+                <div className="text-sm text-slate-500 mt-1">{card.label}</div>
               </Link>
             ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Content Health Check */}
-        <div className="bg-slate-800 border border-slate-700 rounded-lg p-6">
-          <h2 className="text-lg font-semibold text-white mb-4">Content Health</h2>
+        <div className="bg-white border border-slate-200 rounded-lg p-6">
+          <h2 className="text-lg font-semibold text-slate-900 mb-4">Content Health</h2>
           {loading ? (
             <div className="space-y-3">
               {Array.from({ length: 4 }).map((_, i) => (
                 <div key={i} className="animate-pulse flex items-start gap-2">
-                  <div className="h-3 w-3 bg-slate-700 rounded-full mt-1 shrink-0" />
+                  <div className="h-3 w-3 bg-slate-100 rounded-full mt-1 shrink-0" />
                   <div className="flex-1 space-y-1">
-                    <div className="h-4 w-full bg-slate-700 rounded" />
-                    <div className="h-3 w-16 bg-slate-700 rounded" />
+                    <div className="h-4 w-full bg-slate-200 rounded" />
+                    <div className="h-3 w-16 bg-slate-200 rounded" />
                   </div>
                 </div>
               ))}
@@ -222,13 +222,13 @@ export default function AdminDashboard() {
             <div className="space-y-2">
               {health.map((issue, i) => (
                 <div key={i} className="flex items-start gap-2">
-                  <span className={`shrink-0 mt-0.5 ${issue.type === "error" ? "text-red-400" : "text-amber-400"}`}>
+                  <span className={`shrink-0 mt-0.5 ${issue.type === "error" ? "text-red-600" : "text-amber-600"}`}>
                     {issue.type === "error" ? "●" : "●"}
                   </span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-slate-300">{issue.message}</p>
+                    <p className="text-sm text-slate-600">{issue.message}</p>
                     {issue.link && (
-                      <Link href={issue.link} className="text-xs text-amber-400 hover:text-amber-300">
+                      <Link href={issue.link} className="text-xs text-amber-600 hover:text-amber-700">
                         Fix →
                       </Link>
                     )}
@@ -240,20 +240,20 @@ export default function AdminDashboard() {
         </div>
 
         {/* Recent Clicks */}
-        <div className="bg-slate-800 border border-slate-700 rounded-lg p-6">
+        <div className="bg-white border border-slate-200 rounded-lg p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-white">Recent Clicks</h2>
-            <Link href="/admin/analytics" className="text-xs text-amber-400 hover:text-amber-300">View All →</Link>
+            <h2 className="text-lg font-semibold text-slate-900">Recent Clicks</h2>
+            <Link href="/admin/analytics" className="text-xs text-amber-600 hover:text-amber-700">View All →</Link>
           </div>
           {loading ? (
             <div className="space-y-3">
               {Array.from({ length: 5 }).map((_, i) => (
                 <div key={i} className="animate-pulse flex items-center justify-between">
                   <div className="space-y-1">
-                    <div className="h-4 w-28 bg-slate-700 rounded" />
-                    <div className="h-3 w-36 bg-slate-700 rounded" />
+                    <div className="h-4 w-28 bg-slate-200 rounded" />
+                    <div className="h-3 w-36 bg-slate-200 rounded" />
                   </div>
-                  <div className="h-3 w-12 bg-slate-700 rounded" />
+                  <div className="h-3 w-12 bg-slate-200 rounded" />
                 </div>
               ))}
             </div>
@@ -264,10 +264,10 @@ export default function AdminDashboard() {
               {recentClicks.map((click) => (
                 <div key={click.id} className="flex items-center justify-between text-sm">
                   <div className="min-w-0">
-                    <div className="text-white font-medium truncate">{click.broker_name}</div>
+                    <div className="text-slate-900 font-medium truncate">{click.broker_name}</div>
                     <div className="text-xs text-slate-500 truncate">{click.source} · {click.page}</div>
                   </div>
-                  <div className="text-xs text-slate-400 shrink-0 ml-2">
+                  <div className="text-xs text-slate-500 shrink-0 ml-2">
                     {new Date(click.clicked_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                   </div>
                 </div>
@@ -277,27 +277,48 @@ export default function AdminDashboard() {
         </div>
 
         {/* Revenue Overview */}
-        <div className="bg-slate-800 border border-slate-700 rounded-lg p-6">
+        <div className="bg-white border border-slate-200 rounded-lg p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-white">Revenue Overview</h2>
-            <Link href="/admin/analytics" className="text-xs text-amber-400 hover:text-amber-300">Details →</Link>
+            <h2 className="text-lg font-semibold text-slate-900">Revenue Overview</h2>
+            <Link href="/admin/analytics" className="text-xs text-amber-600 hover:text-amber-700">Details →</Link>
           </div>
           {loading ? (
             <div className="space-y-3">
               {Array.from({ length: 4 }).map((_, i) => (
                 <div key={i} className="animate-pulse">
-                  <div className="h-4 w-full bg-slate-700 rounded mb-1" />
-                  <div className="h-3 w-20 bg-slate-700 rounded" />
+                  <div className="h-4 w-full bg-slate-200 rounded mb-1" />
+                  <div className="h-3 w-20 bg-slate-200 rounded" />
                 </div>
               ))}
             </div>
           ) : (
             <>
-              <div className="bg-slate-700/30 rounded-lg p-4 mb-4">
-                <div className="text-sm text-slate-400 mb-1">Total Est. Revenue</div>
-                <div className="text-3xl font-bold text-emerald-400">
+              <div className="bg-slate-50 rounded-lg p-4 mb-4">
+                <div className="text-sm text-slate-500 mb-1">Total Est. Revenue</div>
+                <div className="text-3xl font-bold text-emerald-600">
                   ${revenueStats.reduce((s, r) => s + r.estimated_revenue, 0).toFixed(2)}
                 </div>
+                {stats && stats.clicks > 0 && revenueStats.length > 0 && (() => {
+                  const totalRev = revenueStats.reduce((s, r) => s + r.estimated_revenue, 0);
+                  const epcAvg = totalRev / revenueStats.reduce((s, r) => s + r.clicks, 0) || 0;
+                  const dailyClicks = stats.clicks / 30;
+                  return (
+                    <div className="mt-2 pt-2 border-t border-slate-200 space-y-1">
+                      <div className="flex justify-between text-xs">
+                        <span className="text-slate-500">Monthly est.</span>
+                        <span className="text-emerald-600 font-semibold">
+                          ${(dailyClicks * 30 * epcAvg).toFixed(0)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-xs">
+                        <span className="text-slate-500">Annual est.</span>
+                        <span className="text-emerald-600 font-semibold">
+                          ${(dailyClicks * 365 * epcAvg).toFixed(0)}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
 
               {revenueStats.length > 0 ? (
@@ -305,8 +326,8 @@ export default function AdminDashboard() {
                   <div className="text-xs text-slate-500 uppercase font-medium">Top Brokers by Revenue</div>
                   {revenueStats.slice(0, 3).map((r) => (
                     <div key={r.broker_slug} className="flex items-center justify-between text-sm">
-                      <span className="text-slate-300 truncate">{r.broker_name}</span>
-                      <span className="text-emerald-400 font-semibold ml-2 shrink-0">
+                      <span className="text-slate-600 truncate">{r.broker_name}</span>
+                      <span className="text-emerald-600 font-semibold ml-2 shrink-0">
                         ${r.estimated_revenue.toFixed(2)}
                       </span>
                     </div>
@@ -316,14 +337,14 @@ export default function AdminDashboard() {
                 <p className="text-sm text-slate-500 mb-4">No revenue data yet. Set EPC values in Affiliate Links.</p>
               )}
 
-              <div className="pt-3 border-t border-slate-700 space-y-2">
-                <Link href="/admin/affiliate-links" className="block px-3 py-2 bg-slate-700/50 rounded text-slate-300 hover:bg-slate-700 transition-colors text-sm">
+              <div className="pt-3 border-t border-slate-200 space-y-2">
+                <Link href="/admin/affiliate-links" className="block px-3 py-2 bg-slate-50 rounded text-slate-600 hover:bg-slate-200 transition-colors text-sm">
                   🔗 Affiliate Links & Revenue
                 </Link>
-                <Link href="/admin/brokers" className="block px-3 py-2 bg-slate-700/50 rounded text-slate-300 hover:bg-slate-700 transition-colors text-sm">
+                <Link href="/admin/brokers" className="block px-3 py-2 bg-slate-50 rounded text-slate-600 hover:bg-slate-200 transition-colors text-sm">
                   🏦 Manage Brokers
                 </Link>
-                <a href="/" target="_blank" rel="noopener noreferrer" className="block px-3 py-2 bg-slate-700/50 rounded text-slate-300 hover:bg-slate-700 transition-colors text-sm">
+                <a href="/" target="_blank" rel="noopener noreferrer" className="block px-3 py-2 bg-slate-50 rounded text-slate-600 hover:bg-slate-200 transition-colors text-sm">
                   🌐 View Live Site
                 </a>
               </div>

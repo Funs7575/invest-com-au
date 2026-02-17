@@ -91,7 +91,7 @@ export default function SiteSettingsPage() {
           value={value}
           onChange={(e) => updateSetting(field.key, e.target.value)}
           rows={3}
-          className="w-full bg-slate-700 border border-slate-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500"
+          className="w-full bg-white border border-slate-300 text-slate-900 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-700"
         />
       );
     }
@@ -101,7 +101,7 @@ export default function SiteSettingsPage() {
         type={field.type}
         value={value}
         onChange={(e) => updateSetting(field.key, e.target.value)}
-        className="w-full bg-slate-700 border border-slate-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500"
+        className="w-full bg-white border border-slate-300 text-slate-900 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-700"
       />
     );
   }
@@ -111,15 +111,15 @@ export default function SiteSettingsPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-white">Site Settings</h1>
-            <p className="text-slate-400 mt-1">
+            <h1 className="text-2xl font-bold text-slate-900">Site Settings</h1>
+            <p className="text-slate-500 mt-1">
               Manage global site configuration and metadata.
             </p>
           </div>
           <button
             onClick={saveAll}
             disabled={saving || loading}
-            className="bg-amber-500 hover:bg-amber-600 text-black font-medium px-6 py-2 rounded-lg transition-colors disabled:opacity-50"
+            className="bg-amber-500 hover:bg-green-700 text-black font-medium px-6 py-2 rounded-lg transition-colors disabled:opacity-50"
           >
             {saving ? "Saving..." : "Save All"}
           </button>
@@ -138,9 +138,9 @@ export default function SiteSettingsPage() {
         )}
 
         {loading ? (
-          <div className="text-slate-400">Loading settings...</div>
+          <div className="text-slate-500">Loading settings...</div>
         ) : (
-          <div className="bg-slate-800 border border-slate-700 rounded-xl p-6">
+          <div className="bg-white border border-slate-200 rounded-xl p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {SETTING_FIELDS.map((field) => (
                 <div
@@ -151,7 +151,7 @@ export default function SiteSettingsPage() {
                       : ""
                   }
                 >
-                  <label className="block text-sm font-medium text-slate-300 mb-1">
+                  <label className="block text-sm font-medium text-slate-600 mb-1">
                     {field.label}
                   </label>
                   {renderField(field)}
@@ -162,11 +162,11 @@ export default function SiteSettingsPage() {
               ))}
             </div>
 
-            <div className="mt-6 pt-4 border-t border-slate-700 flex items-center gap-3">
+            <div className="mt-6 pt-4 border-t border-slate-200 flex items-center gap-3">
               <button
                 onClick={saveAll}
                 disabled={saving}
-                className="bg-amber-500 hover:bg-amber-600 text-black font-medium px-6 py-2 rounded-lg transition-colors disabled:opacity-50"
+                className="bg-amber-500 hover:bg-green-700 text-black font-medium px-6 py-2 rounded-lg transition-colors disabled:opacity-50"
               >
                 {saving ? "Saving..." : "Save All"}
               </button>
@@ -175,8 +175,8 @@ export default function SiteSettingsPage() {
                 <span
                   className={`text-sm ${
                     message.type === "success"
-                      ? "text-green-400"
-                      : "text-red-400"
+                      ? "text-green-600"
+                      : "text-red-600"
                   }`}
                 >
                   {message.text}

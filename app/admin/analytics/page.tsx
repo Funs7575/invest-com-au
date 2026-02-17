@@ -187,10 +187,25 @@ export default function AdminAnalyticsPage() {
       : 0;
   const maxDailyClicks = dailyStats.length > 0 ? Math.max(...dailyStats.map((d) => d.clicks)) : 0;
 
+  // Revenue projections based on recent click velocity
+  const totalDailyClicks = dailyStats.reduce((s, d) => s + d.clicks, 0);
+  const daysWithData = dailyStats.filter((d) => d.clicks > 0).length || 1;
+  const avgDailyClicks = totalDailyClicks / daysWithData;
+  const recentWeekClicks = dailyStats.slice(-7).reduce((s, d) => s + d.clicks, 0);
+  const avgDailyClicksRecent = recentWeekClicks / Math.min(7, dailyStats.length || 1);
+  const dailyRevenue = avgDailyClicks * avgEpc;
+  const dailyRevenueRecent = avgDailyClicksRecent * avgEpc;
+  const projections = {
+    daily: { clicks30d: avgDailyClicks, clicks7d: avgDailyClicksRecent, rev30d: dailyRevenue, rev7d: dailyRevenueRecent },
+    weekly: { clicks30d: avgDailyClicks * 7, clicks7d: avgDailyClicksRecent * 7, rev30d: dailyRevenue * 7, rev7d: dailyRevenueRecent * 7 },
+    monthly: { clicks30d: avgDailyClicks * 30, clicks7d: avgDailyClicksRecent * 30, rev30d: dailyRevenue * 30, rev7d: dailyRevenueRecent * 30 },
+    annual: { clicks30d: avgDailyClicks * 365, clicks7d: avgDailyClicksRecent * 365, rev30d: dailyRevenue * 365, rev7d: dailyRevenueRecent * 365 },
+  };
+
   const SkeletonCard = () => (
-    <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 animate-pulse">
-      <div className="h-8 w-16 bg-slate-700 rounded mb-2" />
-      <div className="h-4 w-24 bg-slate-700 rounded" />
+    <div className="bg-white border border-slate-200 rounded-lg p-4 animate-pulse">
+      <div className="h-8 w-16 bg-slate-200 rounded mb-2" />
+      <div className="h-4 w-24 bg-slate-200 rounded" />
     </div>
   );
 
@@ -198,8 +213,8 @@ export default function AdminAnalyticsPage() {
     <div className="p-4 space-y-3">
       {Array.from({ length: count }).map((_, i) => (
         <div key={i} className="animate-pulse flex justify-between">
-          <div className="h-4 w-32 bg-slate-700 rounded" />
-          <div className="h-4 w-12 bg-slate-700 rounded" />
+          <div className="h-4 w-32 bg-slate-200 rounded" />
+          <div className="h-4 w-12 bg-slate-200 rounded" />
         </div>
       ))}
     </div>
@@ -211,16 +226,16 @@ export default function AdminAnalyticsPage() {
   return (
     <AdminShell>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-white">Analytics & Revenue</h1>
-        <div className="flex bg-slate-800 border border-slate-700 rounded-lg overflow-hidden">
+        <h1 className="text-2xl font-bold text-slate-900">Analytics & Revenue</h1>
+        <div className="flex bg-white border border-slate-200 rounded-lg overflow-hidden">
           {(["overview", "revenue", "log"] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`px-4 py-2 text-sm font-medium transition-colors ${
                 activeTab === tab
-                  ? "bg-amber-600 text-white"
-                  : "text-slate-400 hover:text-white hover:bg-slate-700"
+                  ? "bg-green-700 text-slate-900"
+                  : "text-slate-500 hover:text-slate-900 hover:bg-slate-200"
               }`}
             >
               {tab === "overview" ? "Overview" : tab === "revenue" ? "Revenue" : "Click Log"}
@@ -240,21 +255,21 @@ export default function AdminAnalyticsPage() {
           </>
         ) : (
           <>
-            <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
-              <div className="text-3xl font-bold text-amber-400">{totalClicks}</div>
-              <div className="text-sm text-slate-400">Total Clicks</div>
+            <div className="bg-white border border-slate-200 rounded-lg p-4">
+              <div className="text-3xl font-bold text-amber-600">{totalClicks}</div>
+              <div className="text-sm text-slate-500">Total Clicks</div>
             </div>
-            <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
-              <div className="text-3xl font-bold text-green-400">{clicksToday}</div>
-              <div className="text-sm text-slate-400">Today</div>
+            <div className="bg-white border border-slate-200 rounded-lg p-4">
+              <div className="text-3xl font-bold text-green-600">{clicksToday}</div>
+              <div className="text-sm text-slate-500">Today</div>
             </div>
-            <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
-              <div className="text-3xl font-bold text-emerald-400">{formatCurrency(totalRevenue)}</div>
-              <div className="text-sm text-slate-400">Est. Revenue</div>
+            <div className="bg-white border border-slate-200 rounded-lg p-4">
+              <div className="text-3xl font-bold text-emerald-600">{formatCurrency(totalRevenue)}</div>
+              <div className="text-sm text-slate-500">Est. Revenue</div>
             </div>
-            <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
-              <div className="text-3xl font-bold text-cyan-400">{emailCaptures}</div>
-              <div className="text-sm text-slate-400">Email Captures</div>
+            <div className="bg-white border border-slate-200 rounded-lg p-4">
+              <div className="text-3xl font-bold text-cyan-600">{emailCaptures}</div>
+              <div className="text-sm text-slate-500">Email Captures</div>
             </div>
           </>
         )}
@@ -264,12 +279,12 @@ export default function AdminAnalyticsPage() {
       {activeTab === "overview" && (
         <>
           {/* Daily Click Trend Chart */}
-          <div className="bg-slate-800 border border-slate-700 rounded-lg overflow-hidden mb-8">
-            <div className="px-4 py-3 border-b border-slate-700">
-              <h2 className="text-lg font-semibold text-white">Click Trend (Last 30 Days)</h2>
+          <div className="bg-white border border-slate-200 rounded-lg overflow-hidden mb-8">
+            <div className="px-4 py-3 border-b border-slate-200">
+              <h2 className="text-lg font-semibold text-slate-900">Click Trend (Last 30 Days)</h2>
             </div>
             {loading ? (
-              <div className="p-4 h-48 animate-pulse bg-slate-700/20" />
+              <div className="p-4 h-48 animate-pulse bg-slate-200/20" />
             ) : dailyStats.length === 0 ? (
               <div className="p-8 text-center text-slate-500">No click data yet. Clicks will appear here once tracked.</div>
             ) : (
@@ -285,7 +300,7 @@ export default function AdminAnalyticsPage() {
                       >
                         <div className="flex flex-col items-center justify-end h-40">
                           {/* Tooltip */}
-                          <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-900 border border-slate-600 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
+                          <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 border border-slate-700 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
                             {new Date(d.day + "T00:00:00").toLocaleDateString("en-AU", {
                               month: "short",
                               day: "numeric",
@@ -293,7 +308,7 @@ export default function AdminAnalyticsPage() {
                             : {d.clicks}
                           </div>
                           <div
-                            className="w-full bg-amber-500 rounded-t transition-all hover:bg-amber-400"
+                            className="w-full bg-green-600 rounded-t transition-all hover:bg-green-500"
                             style={{
                               height: `${Math.max(heightPct, 2)}%`,
                               minHeight: d.clicks > 0 ? "4px" : "2px",
@@ -326,9 +341,9 @@ export default function AdminAnalyticsPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
             {/* Per-Broker Clicks */}
-            <div className="bg-slate-800 border border-slate-700 rounded-lg overflow-hidden">
-              <div className="px-4 py-3 border-b border-slate-700">
-                <h2 className="text-lg font-semibold text-white">Clicks by Broker</h2>
+            <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+              <div className="px-4 py-3 border-b border-slate-200">
+                <h2 className="text-lg font-semibold text-slate-900">Clicks by Broker</h2>
               </div>
               {loading ? (
                 <SkeletonRows count={6} />
@@ -336,27 +351,27 @@ export default function AdminAnalyticsPage() {
                 <div className="p-8 text-center text-slate-500">No click data yet.</div>
               ) : (
                 <table className="w-full">
-                  <thead className="bg-slate-700/50">
+                  <thead className="bg-slate-50">
                     <tr>
-                      <th className="px-4 py-2 text-left text-xs font-semibold text-slate-400 uppercase">
+                      <th className="px-4 py-2 text-left text-xs font-semibold text-slate-500 uppercase">
                         Broker
                       </th>
-                      <th className="px-4 py-2 text-right text-xs font-semibold text-slate-400 uppercase">
+                      <th className="px-4 py-2 text-right text-xs font-semibold text-slate-500 uppercase">
                         Clicks
                       </th>
-                      <th className="px-4 py-2 text-right text-xs font-semibold text-slate-400 uppercase">
+                      <th className="px-4 py-2 text-right text-xs font-semibold text-slate-500 uppercase">
                         Share
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-700">
+                  <tbody className="divide-y divide-slate-200">
                     {brokerStats.map((stat) => (
-                      <tr key={stat.broker_slug} className="hover:bg-slate-700/30">
-                        <td className="px-4 py-2 text-sm text-white">{stat.broker_name}</td>
-                        <td className="px-4 py-2 text-sm text-right text-amber-400 font-semibold">
+                      <tr key={stat.broker_slug} className="hover:bg-slate-50">
+                        <td className="px-4 py-2 text-sm text-slate-900">{stat.broker_name}</td>
+                        <td className="px-4 py-2 text-sm text-right text-amber-600 font-semibold">
                           {stat.count}
                         </td>
-                        <td className="px-4 py-2 text-sm text-right text-slate-400">
+                        <td className="px-4 py-2 text-sm text-right text-slate-500">
                           {totalClicks > 0 ? ((stat.count / totalClicks) * 100).toFixed(1) : 0}%
                         </td>
                       </tr>
@@ -367,9 +382,9 @@ export default function AdminAnalyticsPage() {
             </div>
 
             {/* Top Sources */}
-            <div className="bg-slate-800 border border-slate-700 rounded-lg overflow-hidden">
-              <div className="px-4 py-3 border-b border-slate-700">
-                <h2 className="text-lg font-semibold text-white">Top Sources</h2>
+            <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+              <div className="px-4 py-3 border-b border-slate-200">
+                <h2 className="text-lg font-semibold text-slate-900">Top Sources</h2>
               </div>
               {loading ? (
                 <SkeletonRows count={6} />
@@ -382,12 +397,12 @@ export default function AdminAnalyticsPage() {
                     return (
                       <div key={stat.source}>
                         <div className="flex justify-between text-sm mb-1">
-                          <span className="text-slate-300">{stat.source}</span>
-                          <span className="text-white font-semibold">
+                          <span className="text-slate-600">{stat.source}</span>
+                          <span className="text-slate-900 font-semibold">
                             {stat.count} ({pct.toFixed(1)}%)
                           </span>
                         </div>
-                        <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
+                        <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                           <div
                             className="h-full bg-amber-500 rounded-full transition-all"
                             style={{ width: `${pct}%` }}
@@ -402,9 +417,9 @@ export default function AdminAnalyticsPage() {
           </div>
 
           {/* Clicks by Page */}
-          <div className="bg-slate-800 border border-slate-700 rounded-lg overflow-hidden mb-8">
-            <div className="px-4 py-3 border-b border-slate-700">
-              <h2 className="text-lg font-semibold text-white">Clicks by Page</h2>
+          <div className="bg-white border border-slate-200 rounded-lg overflow-hidden mb-8">
+            <div className="px-4 py-3 border-b border-slate-200">
+              <h2 className="text-lg font-semibold text-slate-900">Clicks by Page</h2>
             </div>
             {loading ? (
               <SkeletonRows count={6} />
@@ -412,38 +427,38 @@ export default function AdminAnalyticsPage() {
               <div className="p-8 text-center text-slate-500">No click data yet.</div>
             ) : (
               <table className="w-full">
-                <thead className="bg-slate-700/50">
+                <thead className="bg-slate-50">
                   <tr>
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-slate-400 uppercase">
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-slate-500 uppercase">
                       Page
                     </th>
-                    <th className="px-4 py-2 text-right text-xs font-semibold text-slate-400 uppercase">
+                    <th className="px-4 py-2 text-right text-xs font-semibold text-slate-500 uppercase">
                       Clicks
                     </th>
-                    <th className="px-4 py-2 text-right text-xs font-semibold text-slate-400 uppercase">
+                    <th className="px-4 py-2 text-right text-xs font-semibold text-slate-500 uppercase">
                       Share
                     </th>
-                    <th className="px-4 py-2 text-right text-xs font-semibold text-slate-400 uppercase">
+                    <th className="px-4 py-2 text-right text-xs font-semibold text-slate-500 uppercase">
                       Bar
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-700">
+                <tbody className="divide-y divide-slate-200">
                   {pageStats.slice(0, 15).map((stat) => {
                     const pct = totalClicks > 0 ? (stat.count / totalClicks) * 100 : 0;
                     return (
-                      <tr key={stat.page} className="hover:bg-slate-700/30">
-                        <td className="px-4 py-2 text-sm text-white max-w-xs truncate">
+                      <tr key={stat.page} className="hover:bg-slate-50">
+                        <td className="px-4 py-2 text-sm text-slate-900 max-w-xs truncate">
                           {stat.page}
                         </td>
-                        <td className="px-4 py-2 text-sm text-right text-amber-400 font-semibold">
+                        <td className="px-4 py-2 text-sm text-right text-amber-600 font-semibold">
                           {stat.count}
                         </td>
-                        <td className="px-4 py-2 text-sm text-right text-slate-400">
+                        <td className="px-4 py-2 text-sm text-right text-slate-500">
                           {pct.toFixed(1)}%
                         </td>
                         <td className="px-4 py-2 w-32">
-                          <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
+                          <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                             <div
                               className="h-full bg-blue-500 rounded-full"
                               style={{ width: `${pct}%` }}
@@ -473,45 +488,108 @@ export default function AdminAnalyticsPage() {
               </>
             ) : (
               <>
-                <div className="bg-slate-800 border border-slate-700 rounded-lg p-5">
-                  <div className="text-sm text-slate-400 mb-1">Total Estimated Revenue</div>
-                  <div className="text-3xl font-bold text-emerald-400">
+                <div className="bg-white border border-slate-200 rounded-lg p-5">
+                  <div className="text-sm text-slate-500 mb-1">Total Estimated Revenue</div>
+                  <div className="text-3xl font-bold text-emerald-600">
                     {formatCurrency(totalRevenue)}
                   </div>
                   <div className="text-xs text-slate-500 mt-1">Based on EPC × clicks</div>
                 </div>
-                <div className="bg-slate-800 border border-slate-700 rounded-lg p-5">
-                  <div className="text-sm text-slate-400 mb-1">Top Revenue Broker</div>
-                  <div className="text-xl font-bold text-white">
+                <div className="bg-white border border-slate-200 rounded-lg p-5">
+                  <div className="text-sm text-slate-500 mb-1">Top Revenue Broker</div>
+                  <div className="text-xl font-bold text-slate-900">
                     {topRevenueBroker ? topRevenueBroker.broker_name : "—"}
                   </div>
-                  <div className="text-sm text-emerald-400 mt-1">
+                  <div className="text-sm text-emerald-600 mt-1">
                     {topRevenueBroker ? formatCurrency(topRevenueBroker.estimated_revenue) : "$0.00"}
                   </div>
                 </div>
-                <div className="bg-slate-800 border border-slate-700 rounded-lg p-5">
-                  <div className="text-sm text-slate-400 mb-1">Average EPC</div>
-                  <div className="text-3xl font-bold text-blue-400">${avgEpc.toFixed(2)}</div>
+                <div className="bg-white border border-slate-200 rounded-lg p-5">
+                  <div className="text-sm text-slate-500 mb-1">Average EPC</div>
+                  <div className="text-3xl font-bold text-blue-600">${avgEpc.toFixed(2)}</div>
                   <div className="text-xs text-slate-500 mt-1">Across all brokers</div>
                 </div>
               </>
             )}
           </div>
 
+          {/* Revenue Projections */}
+          {!loading && dailyStats.length > 0 && (
+            <div className="bg-white border border-slate-200 rounded-lg overflow-hidden mb-8">
+              <div className="px-4 py-3 border-b border-slate-200">
+                <h2 className="text-lg font-semibold text-slate-900">Revenue Projections</h2>
+                <p className="text-xs text-slate-500 mt-0.5">Estimated based on click velocity and average EPC (${avgEpc.toFixed(2)})</p>
+              </div>
+              <table className="w-full">
+                <thead className="bg-slate-50">
+                  <tr>
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-slate-500 uppercase">Period</th>
+                    <th className="px-4 py-2 text-right text-xs font-semibold text-slate-500 uppercase">
+                      <div>Est. Clicks</div>
+                      <div className="text-[0.6rem] font-normal normal-case text-slate-400">30-day avg</div>
+                    </th>
+                    <th className="px-4 py-2 text-right text-xs font-semibold text-slate-500 uppercase">
+                      <div>Est. Revenue</div>
+                      <div className="text-[0.6rem] font-normal normal-case text-slate-400">30-day avg</div>
+                    </th>
+                    <th className="px-4 py-2 text-right text-xs font-semibold text-slate-500 uppercase">
+                      <div>Est. Clicks</div>
+                      <div className="text-[0.6rem] font-normal normal-case text-slate-400">7-day trend</div>
+                    </th>
+                    <th className="px-4 py-2 text-right text-xs font-semibold text-slate-500 uppercase">
+                      <div>Est. Revenue</div>
+                      <div className="text-[0.6rem] font-normal normal-case text-slate-400">7-day trend</div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-200">
+                  {(["daily", "weekly", "monthly", "annual"] as const).map((period) => {
+                    const p = projections[period];
+                    const label = { daily: "Daily", weekly: "Weekly", monthly: "Monthly", annual: "Annual" }[period];
+                    const isTrendUp = p.rev7d > p.rev30d;
+                    const isTrendDown = p.rev7d < p.rev30d * 0.9;
+                    return (
+                      <tr key={period} className={`hover:bg-slate-50 ${period === "monthly" ? "bg-green-50/50" : ""}`}>
+                        <td className="px-4 py-3 text-sm font-medium text-slate-900">{label}</td>
+                        <td className="px-4 py-3 text-sm text-right text-slate-600">{Math.round(p.clicks30d).toLocaleString()}</td>
+                        <td className="px-4 py-3 text-sm text-right font-semibold text-emerald-600">{formatCurrency(p.rev30d)}</td>
+                        <td className="px-4 py-3 text-sm text-right text-slate-600">{Math.round(p.clicks7d).toLocaleString()}</td>
+                        <td className="px-4 py-3 text-sm text-right font-semibold">
+                          <span className={isTrendUp ? "text-emerald-600" : isTrendDown ? "text-red-600" : "text-emerald-600"}>
+                            {formatCurrency(p.rev7d)}
+                          </span>
+                          {(isTrendUp || isTrendDown) && (
+                            <span className={`ml-1 text-xs ${isTrendUp ? "text-emerald-500" : "text-red-500"}`}>
+                              {isTrendUp ? "↑" : "↓"}
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+              <div className="px-4 py-2 bg-slate-50 text-[0.65rem] text-slate-400 border-t border-slate-200">
+                Projections based on avg. daily clicks ({avgDailyClicks.toFixed(1)} from 30d, {avgDailyClicksRecent.toFixed(1)} from last 7d) × avg. EPC (${avgEpc.toFixed(2)}).
+                These are estimates and actual revenue depends on affiliate conversions.
+              </div>
+            </div>
+          )}
+
           {/* Revenue Per Broker Table */}
-          <div className="bg-slate-800 border border-slate-700 rounded-lg overflow-hidden mb-8">
-            <div className="px-4 py-3 border-b border-slate-700">
-              <h2 className="text-lg font-semibold text-white">Revenue by Broker</h2>
+          <div className="bg-white border border-slate-200 rounded-lg overflow-hidden mb-8">
+            <div className="px-4 py-3 border-b border-slate-200">
+              <h2 className="text-lg font-semibold text-slate-900">Revenue by Broker</h2>
             </div>
             {loading ? (
               <SkeletonRows count={8} />
             ) : revenueStats.length === 0 ? (
               <div className="p-8 text-center text-slate-500">
                 <div className="text-4xl mb-3">💰</div>
-                <div className="font-medium text-slate-400 mb-1">No revenue data yet</div>
+                <div className="font-medium text-slate-500 mb-1">No revenue data yet</div>
                 <div className="text-sm">
                   Set EPC values in{" "}
-                  <a href="/admin/affiliate-links" className="text-amber-400 hover:underline">
+                  <a href="/admin/affiliate-links" className="text-amber-600 hover:underline">
                     Affiliate Links
                   </a>{" "}
                   and track clicks to see estimated revenue.
@@ -519,50 +597,50 @@ export default function AdminAnalyticsPage() {
               </div>
             ) : (
               <table className="w-full">
-                <thead className="bg-slate-700/50">
+                <thead className="bg-slate-50">
                   <tr>
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-slate-400 uppercase">
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-slate-500 uppercase">
                       Broker
                     </th>
-                    <th className="px-4 py-2 text-right text-xs font-semibold text-slate-400 uppercase">
+                    <th className="px-4 py-2 text-right text-xs font-semibold text-slate-500 uppercase">
                       Clicks
                     </th>
-                    <th className="px-4 py-2 text-right text-xs font-semibold text-slate-400 uppercase">
+                    <th className="px-4 py-2 text-right text-xs font-semibold text-slate-500 uppercase">
                       EPC
                     </th>
-                    <th className="px-4 py-2 text-right text-xs font-semibold text-slate-400 uppercase">
+                    <th className="px-4 py-2 text-right text-xs font-semibold text-slate-500 uppercase">
                       Est. Revenue
                     </th>
-                    <th className="px-4 py-2 text-right text-xs font-semibold text-slate-400 uppercase">
+                    <th className="px-4 py-2 text-right text-xs font-semibold text-slate-500 uppercase">
                       Share
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-700">
+                <tbody className="divide-y divide-slate-200">
                   {revenueStats.map((stat) => {
                     const revPct =
                       totalRevenue > 0 ? (stat.estimated_revenue / totalRevenue) * 100 : 0;
                     return (
-                      <tr key={stat.broker_slug} className="hover:bg-slate-700/30">
-                        <td className="px-4 py-2 text-sm text-white">{stat.broker_name}</td>
-                        <td className="px-4 py-2 text-sm text-right text-amber-400 font-semibold">
+                      <tr key={stat.broker_slug} className="hover:bg-slate-50">
+                        <td className="px-4 py-2 text-sm text-slate-900">{stat.broker_name}</td>
+                        <td className="px-4 py-2 text-sm text-right text-amber-600 font-semibold">
                           {stat.clicks}
                         </td>
-                        <td className="px-4 py-2 text-sm text-right text-slate-300">
+                        <td className="px-4 py-2 text-sm text-right text-slate-600">
                           ${stat.estimated_epc.toFixed(2)}
                         </td>
-                        <td className="px-4 py-2 text-sm text-right text-emerald-400 font-semibold">
+                        <td className="px-4 py-2 text-sm text-right text-emerald-600 font-semibold">
                           {formatCurrency(stat.estimated_revenue)}
                         </td>
                         <td className="px-4 py-2 text-sm text-right">
                           <div className="flex items-center justify-end gap-2">
-                            <div className="w-16 h-2 bg-slate-700 rounded-full overflow-hidden">
+                            <div className="w-16 h-2 bg-slate-100 rounded-full overflow-hidden">
                               <div
                                 className="h-full bg-emerald-500 rounded-full"
                                 style={{ width: `${revPct}%` }}
                               />
                             </div>
-                            <span className="text-slate-400 text-xs w-10 text-right">
+                            <span className="text-slate-500 text-xs w-10 text-right">
                               {revPct.toFixed(0)}%
                             </span>
                           </div>
@@ -571,17 +649,17 @@ export default function AdminAnalyticsPage() {
                     );
                   })}
                 </tbody>
-                <tfoot className="bg-slate-700/30">
+                <tfoot className="bg-slate-100">
                   <tr>
-                    <td className="px-4 py-2 text-sm font-semibold text-white">Total</td>
-                    <td className="px-4 py-2 text-sm text-right text-amber-400 font-bold">
+                    <td className="px-4 py-2 text-sm font-semibold text-slate-900">Total</td>
+                    <td className="px-4 py-2 text-sm text-right text-amber-600 font-bold">
                       {revenueStats.reduce((s, r) => s + r.clicks, 0)}
                     </td>
-                    <td className="px-4 py-2 text-sm text-right text-slate-300">—</td>
-                    <td className="px-4 py-2 text-sm text-right text-emerald-400 font-bold">
+                    <td className="px-4 py-2 text-sm text-right text-slate-600">—</td>
+                    <td className="px-4 py-2 text-sm text-right text-emerald-600 font-bold">
                       {formatCurrency(totalRevenue)}
                     </td>
-                    <td className="px-4 py-2 text-sm text-right text-slate-400">100%</td>
+                    <td className="px-4 py-2 text-sm text-right text-slate-500">100%</td>
                   </tr>
                 </tfoot>
               </table>
@@ -592,25 +670,25 @@ export default function AdminAnalyticsPage() {
 
       {/* ===== CLICK LOG TAB ===== */}
       {activeTab === "log" && (
-        <div className="bg-slate-800 border border-slate-700 rounded-lg overflow-hidden">
-          <div className="px-4 py-3 border-b border-slate-700 flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-white">Click Log</h2>
+        <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
+          <div className="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-slate-900">Click Log</h2>
             <div className="flex items-center gap-2 text-sm">
               <button
                 onClick={() => setPage(Math.max(0, page - 1))}
                 disabled={page === 0}
-                className="px-3 py-1 bg-slate-700 rounded text-slate-300 hover:bg-slate-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                className="px-3 py-1 bg-slate-200 rounded text-slate-600 hover:bg-slate-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               >
                 Prev
               </button>
-              <span className="text-slate-400">
+              <span className="text-slate-500">
                 Page {page + 1}
                 {totalPages > 0 ? ` of ${totalPages}` : ""}
               </span>
               <button
                 onClick={() => setPage(page + 1)}
                 disabled={recentClicks.length < PAGE_SIZE}
-                className="px-3 py-1 bg-slate-700 rounded text-slate-300 hover:bg-slate-600 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                className="px-3 py-1 bg-slate-200 rounded text-slate-600 hover:bg-slate-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               >
                 Next
               </button>
@@ -620,10 +698,10 @@ export default function AdminAnalyticsPage() {
             <div className="p-4 space-y-2">
               {Array.from({ length: 8 }).map((_, i) => (
                 <div key={i} className="animate-pulse flex gap-4">
-                  <div className="h-4 w-24 bg-slate-700 rounded" />
-                  <div className="h-4 w-20 bg-slate-700 rounded" />
-                  <div className="h-4 w-32 bg-slate-700 rounded" />
-                  <div className="h-4 w-16 bg-slate-700 rounded" />
+                  <div className="h-4 w-24 bg-slate-200 rounded" />
+                  <div className="h-4 w-20 bg-slate-200 rounded" />
+                  <div className="h-4 w-32 bg-slate-200 rounded" />
+                  <div className="h-4 w-16 bg-slate-200 rounded" />
                 </div>
               ))}
             </div>
@@ -632,35 +710,35 @@ export default function AdminAnalyticsPage() {
           ) : (
             <div className="overflow-auto">
               <table className="w-full">
-                <thead className="bg-slate-700/50">
+                <thead className="bg-slate-50">
                   <tr>
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-slate-400 uppercase">
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-slate-500 uppercase">
                       Broker
                     </th>
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-slate-400 uppercase">
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-slate-500 uppercase">
                       Source
                     </th>
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-slate-400 uppercase">
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-slate-500 uppercase">
                       Page
                     </th>
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-slate-400 uppercase">
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-slate-500 uppercase">
                       Layer
                     </th>
-                    <th className="px-4 py-2 text-left text-xs font-semibold text-slate-400 uppercase">
+                    <th className="px-4 py-2 text-left text-xs font-semibold text-slate-500 uppercase">
                       Time
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-700">
+                <tbody className="divide-y divide-slate-200">
                   {recentClicks.map((click) => (
-                    <tr key={click.id} className="hover:bg-slate-700/30">
-                      <td className="px-4 py-2 text-sm text-white">{click.broker_name}</td>
-                      <td className="px-4 py-2 text-xs text-slate-300">{click.source || "—"}</td>
-                      <td className="px-4 py-2 text-xs text-slate-400 max-w-[200px] truncate">
+                    <tr key={click.id} className="hover:bg-slate-50">
+                      <td className="px-4 py-2 text-sm text-slate-900">{click.broker_name}</td>
+                      <td className="px-4 py-2 text-xs text-slate-600">{click.source || "—"}</td>
+                      <td className="px-4 py-2 text-xs text-slate-500 max-w-[200px] truncate">
                         {click.page}
                       </td>
-                      <td className="px-4 py-2 text-xs text-slate-400">{click.layer || "—"}</td>
-                      <td className="px-4 py-2 text-xs text-slate-400 whitespace-nowrap">
+                      <td className="px-4 py-2 text-xs text-slate-500">{click.layer || "—"}</td>
+                      <td className="px-4 py-2 text-xs text-slate-500 whitespace-nowrap">
                         {new Date(click.clicked_at).toLocaleString()}
                       </td>
                     </tr>

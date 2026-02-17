@@ -173,7 +173,7 @@ export default function QuizQuestionsPage() {
     <AdminShell>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-white">Quiz Questions</h1>
+          <h1 className="text-2xl font-bold text-slate-900">Quiz Questions</h1>
           {!showForm && (
             <button
               onClick={handleCreate}
@@ -186,14 +186,14 @@ export default function QuizQuestionsPage() {
 
         {/* Create/Edit Form */}
         {showForm && (
-          <div className="bg-slate-800 border border-slate-700 rounded-lg p-6 space-y-5">
-            <h2 className="text-lg font-semibold text-white">
+          <div className="bg-white border border-slate-200 rounded-lg p-6 space-y-5">
+            <h2 className="text-lg font-semibold text-slate-900">
               {editingId ? "Edit Question" : "New Question"}
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-1">
+                <label className="block text-sm font-medium text-slate-600 mb-1">
                   Order Index
                 </label>
                 <input
@@ -205,7 +205,7 @@ export default function QuizQuestionsPage() {
                       order_index: parseInt(e.target.value) || 0,
                     }))
                   }
-                  className="w-full bg-slate-700 border border-slate-600 text-white rounded px-3 py-2 text-sm focus:outline-none focus:border-amber-500"
+                  className="w-full bg-white border border-slate-300 text-slate-900 rounded px-3 py-2 text-sm focus:outline-none focus:border-amber-500"
                 />
               </div>
               <div className="flex items-end">
@@ -216,15 +216,15 @@ export default function QuizQuestionsPage() {
                     onChange={(e) =>
                       setForm((prev) => ({ ...prev, active: e.target.checked }))
                     }
-                    className="w-4 h-4 rounded border-slate-600 bg-slate-700 text-amber-500 focus:ring-amber-500"
+                    className="w-4 h-4 rounded border-slate-300 bg-slate-200 text-amber-500 focus:ring-green-700"
                   />
-                  <span className="text-sm text-slate-300">Active</span>
+                  <span className="text-sm text-slate-600">Active</span>
                 </label>
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1">
+              <label className="block text-sm font-medium text-slate-600 mb-1">
                 Question Text
               </label>
               <textarea
@@ -233,7 +233,7 @@ export default function QuizQuestionsPage() {
                   setForm((prev) => ({ ...prev, question_text: e.target.value }))
                 }
                 rows={3}
-                className="w-full bg-slate-700 border border-slate-600 text-white rounded px-3 py-2 text-sm focus:outline-none focus:border-amber-500"
+                className="w-full bg-white border border-slate-300 text-slate-900 rounded px-3 py-2 text-sm focus:outline-none focus:border-amber-500"
                 placeholder="Enter your question text..."
               />
             </div>
@@ -241,10 +241,10 @@ export default function QuizQuestionsPage() {
             {/* Options Editor */}
             <div>
               <div className="flex items-center justify-between mb-3">
-                <label className="text-sm font-medium text-slate-300">Options</label>
+                <label className="text-sm font-medium text-slate-600">Options</label>
                 <button
                   onClick={handleAddOption}
-                  className="px-3 py-1 bg-slate-700 text-slate-300 text-sm rounded hover:bg-slate-600 transition-colors border border-slate-600"
+                  className="px-3 py-1 bg-slate-200 text-slate-600 text-sm rounded hover:bg-slate-200 transition-colors border border-slate-300"
                 >
                   + Add Option
                 </button>
@@ -262,7 +262,7 @@ export default function QuizQuestionsPage() {
                         handleOptionChange(index, "label", e.target.value)
                       }
                       placeholder="Label (display text)"
-                      className="flex-1 bg-slate-700 border border-slate-600 text-white rounded px-3 py-2 text-sm focus:outline-none focus:border-amber-500"
+                      className="flex-1 bg-white border border-slate-300 text-slate-900 rounded px-3 py-2 text-sm focus:outline-none focus:border-amber-500"
                     />
                     <input
                       type="text"
@@ -271,12 +271,12 @@ export default function QuizQuestionsPage() {
                         handleOptionChange(index, "key", e.target.value)
                       }
                       placeholder="Key (value)"
-                      className="w-40 bg-slate-700 border border-slate-600 text-white rounded px-3 py-2 text-sm focus:outline-none focus:border-amber-500"
+                      className="w-40 bg-white border border-slate-300 text-slate-900 rounded px-3 py-2 text-sm focus:outline-none focus:border-amber-500"
                     />
                     <button
                       onClick={() => handleRemoveOption(index)}
                       disabled={form.options.length <= 1}
-                      className="p-2 text-red-400 hover:text-red-300 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                      className="p-2 text-red-600 hover:text-red-300 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                       title="Remove option"
                     >
                       <svg
@@ -311,7 +311,7 @@ export default function QuizQuestionsPage() {
               </button>
               <button
                 onClick={handleCancel}
-                className="px-4 py-2 bg-slate-700 text-slate-300 rounded hover:bg-slate-600 transition-colors"
+                className="px-4 py-2 bg-slate-200 text-slate-600 rounded hover:bg-slate-200 transition-colors"
               >
                 Cancel
               </button>
@@ -320,50 +320,50 @@ export default function QuizQuestionsPage() {
         )}
 
         {/* Questions Table */}
-        <div className="bg-slate-800 border border-slate-700 rounded-lg overflow-hidden">
+        <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
           {loading ? (
-            <div className="p-8 text-center text-slate-400">
+            <div className="p-8 text-center text-slate-500">
               Loading quiz questions...
             </div>
           ) : questions.length === 0 ? (
-            <div className="p-8 text-center text-slate-400">
+            <div className="p-8 text-center text-slate-500">
               No quiz questions found. Create your first question above.
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-slate-700/50">
+                <thead className="bg-slate-50">
                   <tr>
-                    <th className="text-left px-4 py-3 text-sm font-medium text-slate-300 w-16">
+                    <th className="text-left px-4 py-3 text-sm font-medium text-slate-600 w-16">
                       Order
                     </th>
-                    <th className="text-left px-4 py-3 text-sm font-medium text-slate-300">
+                    <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">
                       Question
                     </th>
-                    <th className="text-left px-4 py-3 text-sm font-medium text-slate-300 w-24">
+                    <th className="text-left px-4 py-3 text-sm font-medium text-slate-600 w-24">
                       Options
                     </th>
-                    <th className="text-left px-4 py-3 text-sm font-medium text-slate-300 w-24">
+                    <th className="text-left px-4 py-3 text-sm font-medium text-slate-600 w-24">
                       Status
                     </th>
                     <th className="px-4 py-3 w-40"></th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-700">
+                <tbody className="divide-y divide-slate-200">
                   {questions.map((question) => (
-                    <tr key={question.id} className="hover:bg-slate-700/30">
-                      <td className="px-4 py-3 text-white font-mono text-center">
+                    <tr key={question.id} className="hover:bg-slate-50">
+                      <td className="px-4 py-3 text-slate-900 font-mono text-center">
                         {question.order_index}
                       </td>
-                      <td className="px-4 py-3 text-white">
+                      <td className="px-4 py-3 text-slate-900">
                         <p className="line-clamp-2">{question.question_text}</p>
                       </td>
-                      <td className="px-4 py-3 text-slate-300 text-center">
+                      <td className="px-4 py-3 text-slate-600 text-center">
                         {question.options ? question.options.length : 0}
                       </td>
                       <td className="px-4 py-3">
                         {question.active ? (
-                          <span className="inline-flex items-center gap-1 text-green-400 text-sm">
+                          <span className="inline-flex items-center gap-1 text-green-600 text-sm">
                             <span className="w-2 h-2 bg-green-400 rounded-full"></span>
                             Active
                           </span>
@@ -378,7 +378,7 @@ export default function QuizQuestionsPage() {
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => handleEdit(question)}
-                            className="px-3 py-1 bg-slate-700 text-slate-300 text-sm rounded hover:bg-slate-600 transition-colors"
+                            className="px-3 py-1 bg-slate-200 text-slate-600 text-sm rounded hover:bg-slate-200 transition-colors"
                           >
                             Edit
                           </button>
@@ -387,13 +387,13 @@ export default function QuizQuestionsPage() {
                               <button
                                 onClick={() => handleDelete(question.id)}
                                 disabled={saving}
-                                className="px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-500 disabled:opacity-50 transition-colors"
+                                className="px-3 py-1 bg-red-600 text-slate-900 text-sm rounded hover:bg-red-500 disabled:opacity-50 transition-colors"
                               >
                                 Confirm
                               </button>
                               <button
                                 onClick={() => setDeleteConfirmId(null)}
-                                className="px-3 py-1 bg-slate-700 text-slate-300 text-sm rounded hover:bg-slate-600 transition-colors"
+                                className="px-3 py-1 bg-slate-200 text-slate-600 text-sm rounded hover:bg-slate-200 transition-colors"
                               >
                                 No
                               </button>
@@ -401,7 +401,7 @@ export default function QuizQuestionsPage() {
                           ) : (
                             <button
                               onClick={() => setDeleteConfirmId(question.id)}
-                              className="px-3 py-1 bg-red-900/50 text-red-400 text-sm rounded hover:bg-red-900 transition-colors"
+                              className="px-3 py-1 bg-red-900/50 text-red-600 text-sm rounded hover:bg-red-900 transition-colors"
                             >
                               Delete
                             </button>

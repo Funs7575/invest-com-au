@@ -113,13 +113,13 @@ export default function AdminScenariosPage() {
     <AdminShell>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-white">Scenarios</h1>
-          <p className="text-sm text-slate-400 mt-1">{scenarios.length} scenarios</p>
+          <h1 className="text-2xl font-bold text-slate-900">Scenarios</h1>
+          <p className="text-sm text-slate-500 mt-1">{scenarios.length} scenarios</p>
         </div>
         {!showForm && (
           <button
             onClick={() => setCreating(true)}
-            className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold rounded-lg px-4 py-2 text-sm transition-colors"
+            className="bg-amber-500 hover:bg-green-700 text-slate-900 font-semibold rounded-lg px-4 py-2 text-sm transition-colors"
           >
             + Add Scenario
           </button>
@@ -129,53 +129,53 @@ export default function AdminScenariosPage() {
       {showForm ? (
         <form
           onSubmit={(e) => { e.preventDefault(); handleSave(new FormData(e.currentTarget)); }}
-          className="bg-slate-800 border border-slate-700 rounded-lg p-6 space-y-4"
+          className="bg-white border border-slate-200 rounded-lg p-6 space-y-4"
         >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1">Title <span className="text-red-400">*</span></label>
-              <input name="title" defaultValue={formScenario.title} required className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
+              <label className="block text-xs font-medium text-slate-500 mb-1">Title <span className="text-red-600">*</span></label>
+              <input name="title" defaultValue={formScenario.title} required className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1">Slug <span className="text-red-400">*</span></label>
-              <input name="slug" defaultValue={formScenario.slug} required className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
+              <label className="block text-xs font-medium text-slate-500 mb-1">Slug <span className="text-red-600">*</span></label>
+              <input name="slug" defaultValue={formScenario.slug} required className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1">Icon (emoji)</label>
-              <input name="icon" defaultValue={formScenario.icon} className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
+              <label className="block text-xs font-medium text-slate-500 mb-1">Icon (emoji)</label>
+              <input name="icon" defaultValue={formScenario.icon} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1">Hero Title</label>
-            <input name="hero_title" defaultValue={formScenario.hero_title} className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
+            <label className="block text-xs font-medium text-slate-500 mb-1">Hero Title</label>
+            <input name="hero_title" defaultValue={formScenario.hero_title} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1">Problem</label>
-            <textarea name="problem" defaultValue={formScenario.problem} rows={4} className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
+            <label className="block text-xs font-medium text-slate-500 mb-1">Problem</label>
+            <textarea name="problem" defaultValue={formScenario.problem} rows={4} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1">Solution</label>
-            <textarea name="solution" defaultValue={formScenario.solution} rows={4} className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
+            <label className="block text-xs font-medium text-slate-500 mb-1">Solution</label>
+            <textarea name="solution" defaultValue={formScenario.solution} rows={4} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1">Brokers (slugs, comma-separated)</label>
-            <input name="brokers" defaultValue={formScenario.brokers?.join(", ")} className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
+            <label className="block text-xs font-medium text-slate-500 mb-1">Brokers (slugs, comma-separated)</label>
+            <input name="brokers" defaultValue={formScenario.brokers?.join(", ")} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1">Considerations (one per line)</label>
-            <textarea name="considerations" defaultValue={formScenario.considerations?.join("\n")} rows={4} className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
+            <label className="block text-xs font-medium text-slate-500 mb-1">Considerations (one per line)</label>
+            <textarea name="considerations" defaultValue={formScenario.considerations?.join("\n")} rows={4} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
           </div>
 
           <div className="flex gap-3 pt-2">
-            <button type="submit" disabled={saving} className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold rounded-lg px-6 py-2.5 text-sm transition-colors disabled:opacity-50">
+            <button type="submit" disabled={saving} className="bg-amber-500 hover:bg-green-700 text-slate-900 font-semibold rounded-lg px-6 py-2.5 text-sm transition-colors disabled:opacity-50">
               {saving ? "Saving..." : editing ? "Update Scenario" : "Create Scenario"}
             </button>
-            <button type="button" onClick={() => { setEditing(null); setCreating(false); }} className="text-slate-400 hover:text-white px-4 py-2.5 text-sm">Cancel</button>
+            <button type="button" onClick={() => { setEditing(null); setCreating(false); }} className="text-slate-500 hover:text-slate-900 px-4 py-2.5 text-sm">Cancel</button>
           </div>
         </form>
       ) : (
@@ -186,31 +186,31 @@ export default function AdminScenariosPage() {
               placeholder="Search scenarios by title or slug..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+              className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-green-700/30"
             />
           </div>
-          <div className="bg-slate-800 border border-slate-700 rounded-lg overflow-hidden">
+          <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
             <table className="w-full">
-              <thead className="bg-slate-700/50">
+              <thead className="bg-slate-50">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Scenario</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Icon</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Brokers</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-slate-400 uppercase">Actions</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Scenario</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Icon</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Brokers</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-700">
+              <tbody className="divide-y divide-slate-200">
                 {paginatedScenarios.map((scenario) => (
-                  <tr key={scenario.id} className="hover:bg-slate-700/30">
+                  <tr key={scenario.id} className="hover:bg-slate-50">
                     <td className="px-4 py-3">
-                      <div className="text-sm font-semibold text-white">{scenario.title}</div>
-                      <div className="text-xs text-slate-400">{scenario.slug}</div>
+                      <div className="text-sm font-semibold text-slate-900">{scenario.title}</div>
+                      <div className="text-xs text-slate-500">{scenario.slug}</div>
                     </td>
                     <td className="px-4 py-3 text-2xl">{scenario.icon || "—"}</td>
-                    <td className="px-4 py-3 text-sm text-slate-300">{scenario.brokers?.length || 0} brokers</td>
+                    <td className="px-4 py-3 text-sm text-slate-600">{scenario.brokers?.length || 0} brokers</td>
                     <td className="px-4 py-3 text-right space-x-2">
-                      <button onClick={() => setEditing(scenario)} className="text-xs text-amber-400 hover:text-amber-300">Edit</button>
-                      <button onClick={() => setDeleteTarget(scenario)} className="text-xs text-red-400 hover:text-red-300">Delete</button>
+                      <button onClick={() => setEditing(scenario)} className="text-xs text-amber-600 hover:text-amber-700">Edit</button>
+                      <button onClick={() => setDeleteTarget(scenario)} className="text-xs text-red-600 hover:text-red-300">Delete</button>
                     </td>
                   </tr>
                 ))}
@@ -224,17 +224,17 @@ export default function AdminScenariosPage() {
               <button
                 onClick={() => setPage(p => Math.max(0, p - 1))}
                 disabled={page === 0}
-                className="px-3 py-1.5 text-sm text-slate-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                className="px-3 py-1.5 text-sm text-slate-500 hover:text-slate-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               >
                 &larr; Prev
               </button>
-              <span className="text-sm text-slate-400">
+              <span className="text-sm text-slate-500">
                 Page {page + 1} of {totalPages}
               </span>
               <button
                 onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
                 disabled={page >= totalPages - 1}
-                className="px-3 py-1.5 text-sm text-slate-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                className="px-3 py-1.5 text-sm text-slate-500 hover:text-slate-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               >
                 Next &rarr;
               </button>

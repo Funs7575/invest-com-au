@@ -113,12 +113,12 @@ export default function DealOfMonthPage() {
     <AdminShell>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-white">Deal of the Month</h1>
+          <h1 className="text-2xl font-bold text-slate-900">Deal of the Month</h1>
           {dealBroker && (
             <button
               onClick={() => setClearConfirmOpen(true)}
               disabled={saving}
-              className="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded hover:bg-red-500 disabled:opacity-50 transition-colors"
+              className="px-4 py-2 bg-red-600 text-slate-900 text-sm font-medium rounded hover:bg-red-500 disabled:opacity-50 transition-colors"
             >
               Clear Deal
             </button>
@@ -126,19 +126,19 @@ export default function DealOfMonthPage() {
         </div>
 
         {/* Current Deal */}
-        <div className="bg-slate-800 border border-slate-700 rounded-lg p-6">
-          <h2 className="text-lg font-semibold text-white mb-4">Current Deal</h2>
+        <div className="bg-white border border-slate-200 rounded-lg p-6">
+          <h2 className="text-lg font-semibold text-slate-900 mb-4">Current Deal</h2>
           {dealBroker ? (
             <div className="space-y-4">
-              <div className="flex items-center gap-4 bg-amber-500/10 border border-amber-500/30 rounded-lg p-4">
+              <div className="flex items-center gap-4 bg-amber-50 border border-amber-500/30 rounded-lg p-4">
                 <div className="w-3 h-3 bg-amber-500 rounded-full"></div>
                 <div>
-                  <p className="text-white font-bold text-lg">{dealBroker.name}</p>
-                  <p className="text-slate-400 text-sm">slug: {dealBroker.slug}</p>
+                  <p className="text-slate-900 font-bold text-lg">{dealBroker.name}</p>
+                  <p className="text-slate-500 text-sm">slug: {dealBroker.slug}</p>
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
+                <label className="block text-sm font-medium text-slate-600 mb-2">
                   Deal Text
                 </label>
                 <div className="flex gap-3">
@@ -150,7 +150,7 @@ export default function DealOfMonthPage() {
                       setDealTextEdited(true);
                     }}
                     placeholder="e.g. Get $0 brokerage for 30 days!"
-                    className="flex-1 bg-slate-700 border border-slate-600 text-white rounded px-3 py-2 text-sm focus:outline-none focus:border-amber-500"
+                    className="flex-1 bg-white border border-slate-300 text-slate-900 rounded px-3 py-2 text-sm focus:outline-none focus:border-amber-500"
                   />
                   <button
                     onClick={handleSaveDealText}
@@ -163,17 +163,17 @@ export default function DealOfMonthPage() {
               </div>
             </div>
           ) : (
-            <p className="text-slate-400">
+            <p className="text-slate-500">
               No broker is currently set as the Deal of the Month. Select one below.
             </p>
           )}
         </div>
 
         {/* Broker Selection */}
-        <div className="bg-slate-800 border border-slate-700 rounded-lg p-6">
-          <h2 className="text-lg font-semibold text-white mb-4">Select a Broker</h2>
+        <div className="bg-white border border-slate-200 rounded-lg p-6">
+          <h2 className="text-lg font-semibold text-slate-900 mb-4">Select a Broker</h2>
           {loading ? (
-            <p className="text-slate-400">Loading brokers...</p>
+            <p className="text-slate-500">Loading brokers...</p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {brokers.map((broker) => {
@@ -185,14 +185,14 @@ export default function DealOfMonthPage() {
                     disabled={saving}
                     className={`text-left p-4 rounded-lg border transition-colors ${
                       isDeal
-                        ? "bg-amber-500/10 border-amber-500 ring-1 ring-amber-500"
-                        : "bg-slate-900 border-slate-700 hover:border-slate-500 hover:bg-slate-700/50"
+                        ? "bg-amber-50 border-amber-500 ring-1 ring-amber-500"
+                        : "bg-slate-900 border-slate-200 hover:border-slate-500 hover:bg-slate-50"
                     } disabled:opacity-50`}
                   >
-                    <p className={`font-medium ${isDeal ? "text-amber-400" : "text-white"}`}>
+                    <p className={`font-medium ${isDeal ? "text-amber-600" : "text-slate-900"}`}>
                       {broker.name}
                     </p>
-                    <p className="text-slate-400 text-sm mt-1">{broker.slug}</p>
+                    <p className="text-slate-500 text-sm mt-1">{broker.slug}</p>
                     {isDeal && (
                       <span className="inline-block mt-2 text-xs bg-amber-500 text-black font-bold px-2 py-0.5 rounded">
                         CURRENT DEAL

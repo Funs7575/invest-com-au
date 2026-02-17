@@ -62,21 +62,21 @@ export default function ConfirmDialog({
       <div className="absolute inset-0 bg-black/60" onClick={onCancel} />
 
       {/* Dialog */}
-      <div className="relative bg-slate-800 border border-slate-700 rounded-xl shadow-2xl max-w-sm w-full p-6">
+      <div className="relative bg-white border border-slate-200 rounded-xl shadow-2xl max-w-sm w-full p-6">
         <div className="flex items-start gap-4">
           <div className={`text-2xl ${iconColors[variant]}`}>
             {variant === "danger" ? "⚠️" : variant === "warning" ? "⚡" : "ℹ️"}
           </div>
           <div className="flex-1">
-            <h3 className="text-lg font-bold text-white mb-1">{title}</h3>
-            <p className="text-sm text-slate-400 leading-relaxed">{message}</p>
+            <h3 className="text-lg font-bold text-slate-900 mb-1">{title}</h3>
+            <p className="text-sm text-slate-500 leading-relaxed">{message}</p>
           </div>
         </div>
 
         <div className="flex justify-end gap-3 mt-6">
           <button
             onClick={onCancel}
-            className="px-4 py-2 text-sm text-slate-400 hover:text-white transition-colors"
+            className="px-4 py-2 text-sm text-slate-500 hover:text-slate-900 transition-colors"
           >
             {cancelLabel}
           </button>

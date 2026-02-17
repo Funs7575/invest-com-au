@@ -104,7 +104,7 @@ export default function CalculatorConfigPage() {
       case "franking":
         return (
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">
+            <label className="block text-sm font-medium text-slate-600 mb-1">
               Corporate Tax Rate (%)
             </label>
             <input
@@ -114,7 +114,7 @@ export default function CalculatorConfigPage() {
               onChange={(e) =>
                 updateConfig(calcType, "corporate_tax_rate", parseFloat(e.target.value) || 0)
               }
-              className="w-full bg-slate-700 border border-slate-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="w-full bg-white border border-slate-300 text-slate-900 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-700"
             />
           </div>
         );
@@ -122,7 +122,7 @@ export default function CalculatorConfigPage() {
       case "switching":
         return (
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1">
+            <label className="block text-sm font-medium text-slate-600 mb-1">
               Transfer Fee ($)
             </label>
             <input
@@ -132,7 +132,7 @@ export default function CalculatorConfigPage() {
               onChange={(e) =>
                 updateConfig(calcType, "transfer_fee", parseFloat(e.target.value) || 0)
               }
-              className="w-full bg-slate-700 border border-slate-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="w-full bg-white border border-slate-300 text-slate-900 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-700"
             />
           </div>
         );
@@ -140,10 +140,10 @@ export default function CalculatorConfigPage() {
       case "fx":
         return (
           <div>
-            <p className="text-slate-400 text-sm">
+            <p className="text-slate-500 text-sm">
               FX calculator configuration. Add custom fields as needed in the JSON config.
             </p>
-            <label className="block text-sm font-medium text-slate-300 mb-1 mt-3">
+            <label className="block text-sm font-medium text-slate-600 mb-1 mt-3">
               Raw Config (JSON)
             </label>
             <textarea
@@ -164,7 +164,7 @@ export default function CalculatorConfigPage() {
                 }
               }}
               rows={5}
-              className="w-full bg-slate-700 border border-slate-600 text-white rounded-lg px-3 py-2 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="w-full bg-white border border-slate-300 text-slate-900 rounded-lg px-3 py-2 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-green-700"
             />
           </div>
         );
@@ -172,18 +172,18 @@ export default function CalculatorConfigPage() {
       case "cgt":
         return (
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-slate-600 mb-2">
               Tax Brackets (display only)
             </label>
             {Array.isArray(config.tax_brackets) && config.tax_brackets.length > 0 ? (
               <div className="overflow-x-auto">
                 <table className="w-full text-sm text-left">
                   <thead>
-                    <tr className="border-b border-slate-600">
+                    <tr className="border-b border-slate-300">
                       {Object.keys(config.tax_brackets[0] || {}).map((key) => (
                         <th
                           key={key}
-                          className="px-3 py-2 text-slate-300 font-medium"
+                          className="px-3 py-2 text-slate-600 font-medium"
                         >
                           {key}
                         </th>
@@ -195,12 +195,12 @@ export default function CalculatorConfigPage() {
                       (bracket: Record<string, any>, idx: number) => (
                         <tr
                           key={idx}
-                          className="border-b border-slate-700"
+                          className="border-b border-slate-200"
                         >
                           {Object.values(bracket).map((val, vIdx) => (
                             <td
                               key={vIdx}
-                              className="px-3 py-2 text-slate-400"
+                              className="px-3 py-2 text-slate-500"
                             >
                               {String(val)}
                             </td>
@@ -222,10 +222,10 @@ export default function CalculatorConfigPage() {
       case "chess":
         return (
           <div>
-            <p className="text-slate-400 text-sm">
+            <p className="text-slate-500 text-sm">
               CHESS calculator configuration. Add custom fields as needed in the JSON config.
             </p>
-            <label className="block text-sm font-medium text-slate-300 mb-1 mt-3">
+            <label className="block text-sm font-medium text-slate-600 mb-1 mt-3">
               Raw Config (JSON)
             </label>
             <textarea
@@ -246,7 +246,7 @@ export default function CalculatorConfigPage() {
                 }
               }}
               rows={5}
-              className="w-full bg-slate-700 border border-slate-600 text-white rounded-lg px-3 py-2 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
+              className="w-full bg-white border border-slate-300 text-slate-900 rounded-lg px-3 py-2 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-green-700"
             />
           </div>
         );
@@ -260,23 +260,23 @@ export default function CalculatorConfigPage() {
     <AdminShell>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-white">Calculator Config</h1>
-          <p className="text-slate-400 mt-1">
+          <h1 className="text-2xl font-bold text-slate-900">Calculator Config</h1>
+          <p className="text-slate-500 mt-1">
             Configure parameters for each calculator type.
           </p>
         </div>
 
         {loading ? (
-          <div className="text-slate-400">Loading configurations...</div>
+          <div className="text-slate-500">Loading configurations...</div>
         ) : (
           <div className="space-y-6">
             {CALC_TYPES.map((calcType) => (
               <div
                 key={calcType}
-                className="bg-slate-800 border border-slate-700 rounded-xl p-6"
+                className="bg-white border border-slate-200 rounded-xl p-6"
               >
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-semibold text-white capitalize">
+                  <h2 className="text-lg font-semibold text-slate-900 capitalize">
                     {calcType} Calculator
                   </h2>
                 </div>
@@ -289,7 +289,7 @@ export default function CalculatorConfigPage() {
                   <button
                     onClick={() => saveConfig(calcType)}
                     disabled={saving[calcType]}
-                    className="bg-amber-500 hover:bg-amber-600 text-black font-medium px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+                    className="bg-amber-500 hover:bg-green-700 text-black font-medium px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
                   >
                     {saving[calcType] ? "Saving..." : "Save"}
                   </button>
@@ -298,8 +298,8 @@ export default function CalculatorConfigPage() {
                     <span
                       className={`text-sm ${
                         messages[calcType].type === "success"
-                          ? "text-green-400"
-                          : "text-red-400"
+                          ? "text-green-600"
+                          : "text-red-600"
                       }`}
                     >
                       {messages[calcType].text}

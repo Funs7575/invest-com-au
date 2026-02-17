@@ -180,18 +180,18 @@ export default function ExportImportPage() {
     <AdminShell>
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-white">Export / Import</h1>
-          <p className="text-slate-400 mt-1">
+          <h1 className="text-2xl font-bold text-slate-900">Export / Import</h1>
+          <p className="text-slate-500 mt-1">
             Backup and restore your site data.
           </p>
         </div>
 
         {/* Export Section */}
-        <div className="bg-slate-800 border border-slate-700 rounded-xl p-6">
-          <h2 className="text-lg font-semibold text-white mb-2">
+        <div className="bg-white border border-slate-200 rounded-xl p-6">
+          <h2 className="text-lg font-semibold text-slate-900 mb-2">
             Export Data
           </h2>
-          <p className="text-slate-400 text-sm mb-4">
+          <p className="text-slate-500 text-sm mb-4">
             Download a full JSON backup of all site data including brokers,
             articles, scenarios, quiz data, calculator configs, and site
             settings.
@@ -201,13 +201,13 @@ export default function ExportImportPage() {
             <button
               onClick={handleExport}
               disabled={exporting}
-              className="bg-amber-500 hover:bg-amber-600 text-black font-medium px-6 py-2 rounded-lg transition-colors disabled:opacity-50"
+              className="bg-amber-500 hover:bg-green-700 text-black font-medium px-6 py-2 rounded-lg transition-colors disabled:opacity-50"
             >
               {exporting ? "Exporting..." : "Export All Data"}
             </button>
 
             {exportMessage && (
-              <span className="text-sm text-green-400">{exportMessage}</span>
+              <span className="text-sm text-green-600">{exportMessage}</span>
             )}
           </div>
 
@@ -217,7 +217,7 @@ export default function ExportImportPage() {
               {EXPORT_TABLES.map((t) => (
                 <span
                   key={t}
-                  className="inline-block bg-slate-700 text-slate-300 px-2 py-0.5 rounded text-xs mr-1 mb-1"
+                  className="inline-block bg-slate-200 text-slate-600 px-2 py-0.5 rounded text-xs mr-1 mb-1"
                 >
                   {t}
                 </span>
@@ -227,8 +227,8 @@ export default function ExportImportPage() {
         </div>
 
         {/* Import Section */}
-        <div className="bg-slate-800 border border-slate-700 rounded-xl p-6">
-          <h2 className="text-lg font-semibold text-white mb-2">
+        <div className="bg-white border border-slate-200 rounded-xl p-6">
+          <h2 className="text-lg font-semibold text-slate-900 mb-2">
             Import Data
           </h2>
 
@@ -239,23 +239,23 @@ export default function ExportImportPage() {
             </p>
           </div>
 
-          <p className="text-slate-400 text-sm mb-4">
+          <p className="text-slate-500 text-sm mb-4">
             Upload a previously exported JSON backup file to restore data.
           </p>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium text-slate-300 mb-2">
+            <label className="block text-sm font-medium text-slate-600 mb-2">
               Select Backup File
             </label>
             <input
               type="file"
               accept=".json"
               onChange={handleFileSelect}
-              className="block w-full text-sm text-slate-400
+              className="block w-full text-sm text-slate-500
                 file:mr-4 file:py-2 file:px-4
                 file:rounded-lg file:border-0
                 file:text-sm file:font-medium
-                file:bg-slate-700 file:text-slate-300
+                file:bg-slate-200 file:text-slate-600
                 hover:file:bg-slate-600
                 file:cursor-pointer cursor-pointer"
             />
@@ -264,17 +264,17 @@ export default function ExportImportPage() {
           {/* Preview */}
           {importPreview && (
             <div className="mb-4">
-              <h3 className="text-sm font-medium text-slate-300 mb-2">
+              <h3 className="text-sm font-medium text-slate-600 mb-2">
                 Import Preview
               </h3>
-              <div className="bg-slate-900 border border-slate-700 rounded-lg overflow-hidden">
+              <div className="bg-slate-800 border border-slate-700 rounded-lg overflow-hidden">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-slate-700">
-                      <th className="px-4 py-2 text-left text-slate-400 font-medium">
+                    <tr className="border-b border-slate-200">
+                      <th className="px-4 py-2 text-left text-slate-500 font-medium">
                         Table
                       </th>
-                      <th className="px-4 py-2 text-right text-slate-400 font-medium">
+                      <th className="px-4 py-2 text-right text-slate-500 font-medium">
                         Records
                       </th>
                     </tr>
@@ -282,17 +282,17 @@ export default function ExportImportPage() {
                   <tbody>
                     {Object.entries(importPreview).map(([table, count]) => (
                       <tr key={table} className="border-b border-slate-800">
-                        <td className="px-4 py-2 text-slate-300">{table}</td>
-                        <td className="px-4 py-2 text-right text-slate-300">
+                        <td className="px-4 py-2 text-slate-600">{table}</td>
+                        <td className="px-4 py-2 text-right text-slate-600">
                           {count}
                         </td>
                       </tr>
                     ))}
-                    <tr className="bg-slate-800/50">
-                      <td className="px-4 py-2 text-white font-medium">
+                    <tr className="bg-white/50">
+                      <td className="px-4 py-2 text-slate-900 font-medium">
                         Total
                       </td>
-                      <td className="px-4 py-2 text-right text-white font-medium">
+                      <td className="px-4 py-2 text-right text-slate-900 font-medium">
                         {Object.values(importPreview).reduce(
                           (sum, c) => sum + c,
                           0
@@ -308,17 +308,17 @@ export default function ExportImportPage() {
           {/* Import Status */}
           {importStatuses.length > 0 && (
             <div className="mb-4">
-              <h3 className="text-sm font-medium text-slate-300 mb-2">
+              <h3 className="text-sm font-medium text-slate-600 mb-2">
                 Import Progress
               </h3>
               <div className="space-y-2">
                 {importStatuses.map((status) => (
                   <div
                     key={status.table}
-                    className="flex items-center justify-between bg-slate-900 border border-slate-700 rounded-lg px-4 py-2"
+                    className="flex items-center justify-between bg-slate-800 border border-slate-700 rounded-lg px-4 py-2"
                   >
                     <div className="flex items-center gap-3">
-                      <span className="text-slate-300 text-sm">
+                      <span className="text-slate-600 text-sm">
                         {status.table}
                       </span>
                       <span className="text-slate-500 text-xs">
@@ -330,16 +330,16 @@ export default function ExportImportPage() {
                         <span className="text-slate-500 text-xs">Pending</span>
                       )}
                       {status.status === "importing" && (
-                        <span className="text-amber-400 text-xs">
+                        <span className="text-amber-600 text-xs">
                           Importing...
                         </span>
                       )}
                       {status.status === "done" && (
-                        <span className="text-green-400 text-xs">Done</span>
+                        <span className="text-green-600 text-xs">Done</span>
                       )}
                       {status.status === "error" && (
                         <span
-                          className="text-red-400 text-xs"
+                          className="text-red-600 text-xs"
                           title={status.message}
                         >
                           Error: {status.message}
@@ -367,14 +367,14 @@ export default function ExportImportPage() {
               <button
                 onClick={handleImport}
                 disabled={importing}
-                className="bg-amber-500 hover:bg-amber-600 text-black font-medium px-6 py-2 rounded-lg transition-colors disabled:opacity-50"
+                className="bg-amber-500 hover:bg-green-700 text-black font-medium px-6 py-2 rounded-lg transition-colors disabled:opacity-50"
               >
                 {importing ? "Importing..." : "Confirm Import"}
               </button>
               <button
                 onClick={resetImport}
                 disabled={importing}
-                className="bg-slate-700 hover:bg-slate-600 text-slate-300 font-medium px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+                className="bg-slate-200 hover:bg-slate-200 text-slate-600 font-medium px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
               >
                 Cancel
               </button>
@@ -384,7 +384,7 @@ export default function ExportImportPage() {
           {importComplete && (
             <button
               onClick={resetImport}
-              className="bg-slate-700 hover:bg-slate-600 text-slate-300 font-medium px-4 py-2 rounded-lg transition-colors"
+              className="bg-slate-200 hover:bg-slate-200 text-slate-600 font-medium px-4 py-2 rounded-lg transition-colors"
             >
               Reset
             </button>

@@ -129,13 +129,13 @@ export default function AdminArticlesPage() {
     <AdminShell>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-white">Articles</h1>
-          <p className="text-sm text-slate-400 mt-1">{articles.length} articles</p>
+          <h1 className="text-2xl font-bold text-slate-900">Articles</h1>
+          <p className="text-sm text-slate-500 mt-1">{articles.length} articles</p>
         </div>
         {!showForm && (
           <button
             onClick={() => setCreating(true)}
-            className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold rounded-lg px-4 py-2 text-sm transition-colors"
+            className="bg-amber-500 hover:bg-green-700 text-slate-900 font-semibold rounded-lg px-4 py-2 text-sm transition-colors"
           >
             + Add Article
           </button>
@@ -145,89 +145,89 @@ export default function AdminArticlesPage() {
       {showForm ? (
         <form
           onSubmit={(e) => { e.preventDefault(); handleSave(new FormData(e.currentTarget)); }}
-          className="bg-slate-800 border border-slate-700 rounded-lg p-6 space-y-4"
+          className="bg-white border border-slate-200 rounded-lg p-6 space-y-4"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1">Title <span className="text-red-400">*</span></label>
-              <input name="title" defaultValue={formArticle.title} required className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
+              <label className="block text-xs font-medium text-slate-500 mb-1">Title <span className="text-red-600">*</span></label>
+              <input name="title" defaultValue={formArticle.title} required className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1">Slug <span className="text-red-400">*</span></label>
-              <input name="slug" defaultValue={formArticle.slug} required className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
+              <label className="block text-xs font-medium text-slate-500 mb-1">Slug <span className="text-red-600">*</span></label>
+              <input name="slug" defaultValue={formArticle.slug} required className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1">Excerpt</label>
-            <textarea name="excerpt" defaultValue={formArticle.excerpt} rows={2} className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
+            <label className="block text-xs font-medium text-slate-500 mb-1">Excerpt</label>
+            <textarea name="excerpt" defaultValue={formArticle.excerpt} rows={2} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1">Category</label>
-              <input name="category" defaultValue={formArticle.category} className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
+              <label className="block text-xs font-medium text-slate-500 mb-1">Category</label>
+              <input name="category" defaultValue={formArticle.category} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1">Read Time (min)</label>
-              <input name="read_time" type="number" defaultValue={formArticle.read_time?.toString()} className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
+              <label className="block text-xs font-medium text-slate-500 mb-1">Read Time (min)</label>
+              <input name="read_time" type="number" defaultValue={formArticle.read_time?.toString()} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1">Tags (comma-separated)</label>
-              <input name="tags" defaultValue={formArticle.tags?.join(", ")} className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
+              <label className="block text-xs font-medium text-slate-500 mb-1">Tags (comma-separated)</label>
+              <input name="tags" defaultValue={formArticle.tags?.join(", ")} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1">Content</label>
-            <textarea name="content" defaultValue={formArticle.content} rows={8} className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
+            <label className="block text-xs font-medium text-slate-500 mb-1">Content</label>
+            <textarea name="content" defaultValue={formArticle.content} rows={8} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1">Sections (JSON array)</label>
-            <textarea name="sections" defaultValue={formArticle.sections ? JSON.stringify(formArticle.sections, null, 2) : ""} rows={6} className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white font-mono text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
+            <label className="block text-xs font-medium text-slate-500 mb-1">Sections (JSON array)</label>
+            <textarea name="sections" defaultValue={formArticle.sections ? JSON.stringify(formArticle.sections, null, 2) : ""} rows={6} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-green-700/30" />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1">Related Brokers (slugs, comma-separated)</label>
-              <input name="related_brokers" defaultValue={formArticle.related_brokers?.join(", ")} className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
+              <label className="block text-xs font-medium text-slate-500 mb-1">Related Brokers (slugs, comma-separated)</label>
+              <input name="related_brokers" defaultValue={formArticle.related_brokers?.join(", ")} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1">Related Calculator</label>
-              <input name="related_calc" defaultValue={formArticle.related_calc} className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
+              <label className="block text-xs font-medium text-slate-500 mb-1">Related Calculator</label>
+              <input name="related_calc" defaultValue={formArticle.related_calc} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1">Author Name</label>
-              <input name="author_name" defaultValue={formArticle.author_name} placeholder="Market Research Team" className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
+              <label className="block text-xs font-medium text-slate-500 mb-1">Author Name</label>
+              <input name="author_name" defaultValue={formArticle.author_name} placeholder="Market Research Team" className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1">Author Title</label>
-              <input name="author_title" defaultValue={formArticle.author_title} placeholder="Invest.com.au" className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
+              <label className="block text-xs font-medium text-slate-500 mb-1">Author Title</label>
+              <input name="author_title" defaultValue={formArticle.author_title} placeholder="Invest.com.au" className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1">Author LinkedIn URL</label>
-              <input name="author_linkedin" defaultValue={formArticle.author_linkedin} placeholder="https://linkedin.com/in/..." className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
+              <label className="block text-xs font-medium text-slate-500 mb-1">Author LinkedIn URL</label>
+              <input name="author_linkedin" defaultValue={formArticle.author_linkedin} placeholder="https://linkedin.com/in/..." className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1">Author Twitter URL</label>
-              <input name="author_twitter" defaultValue={formArticle.author_twitter} placeholder="https://x.com/..." className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500/50" />
+              <label className="block text-xs font-medium text-slate-500 mb-1">Author Twitter URL</label>
+              <input name="author_twitter" defaultValue={formArticle.author_twitter} placeholder="https://x.com/..." className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
             </div>
           </div>
 
           <label className="flex items-center gap-2 cursor-pointer">
-            <input type="checkbox" name="evergreen" defaultChecked={formArticle.evergreen} className="w-4 h-4 rounded bg-slate-700 border-slate-600" />
-            <span className="text-sm text-slate-300">Evergreen content</span>
+            <input type="checkbox" name="evergreen" defaultChecked={formArticle.evergreen} className="w-4 h-4 rounded bg-slate-200 border-slate-300" />
+            <span className="text-sm text-slate-600">Evergreen content</span>
           </label>
 
           <div className="flex gap-3 pt-2">
-            <button type="submit" disabled={saving} className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold rounded-lg px-6 py-2.5 text-sm transition-colors disabled:opacity-50">
+            <button type="submit" disabled={saving} className="bg-amber-500 hover:bg-green-700 text-slate-900 font-semibold rounded-lg px-6 py-2.5 text-sm transition-colors disabled:opacity-50">
               {saving ? "Saving..." : editing ? "Update Article" : "Create Article"}
             </button>
-            <button type="button" onClick={() => { setEditing(null); setCreating(false); }} className="text-slate-400 hover:text-white px-4 py-2.5 text-sm">Cancel</button>
+            <button type="button" onClick={() => { setEditing(null); setCreating(false); }} className="text-slate-500 hover:text-slate-900 px-4 py-2.5 text-sm">Cancel</button>
           </div>
         </form>
       ) : (
@@ -238,33 +238,33 @@ export default function AdminArticlesPage() {
               placeholder="Search articles by title, slug, or category..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50"
+              className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-green-700/30"
             />
           </div>
-          <div className="bg-slate-800 border border-slate-700 rounded-lg overflow-hidden">
+          <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
             <table className="w-full">
-              <thead className="bg-slate-700/50">
+              <thead className="bg-slate-50">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Article</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Author</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Category</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-400 uppercase">Read Time</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold text-slate-400 uppercase">Actions</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Article</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Author</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Category</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Read Time</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-700">
+              <tbody className="divide-y divide-slate-200">
                 {paginatedArticles.map((article) => (
-                  <tr key={article.id} className="hover:bg-slate-700/30">
+                  <tr key={article.id} className="hover:bg-slate-50">
                     <td className="px-4 py-3">
-                      <div className="text-sm font-semibold text-white">{article.title}</div>
-                      <div className="text-xs text-slate-400">{article.slug}</div>
+                      <div className="text-sm font-semibold text-slate-900">{article.title}</div>
+                      <div className="text-xs text-slate-500">{article.slug}</div>
                     </td>
-                    <td className="px-4 py-3 text-sm text-slate-300">{article.author_name || "Team"}</td>
-                    <td className="px-4 py-3 text-sm text-slate-300">{article.category || "—"}</td>
-                    <td className="px-4 py-3 text-sm text-slate-300">{article.read_time ? `${article.read_time} min` : "—"}</td>
+                    <td className="px-4 py-3 text-sm text-slate-600">{article.author_name || "Team"}</td>
+                    <td className="px-4 py-3 text-sm text-slate-600">{article.category || "—"}</td>
+                    <td className="px-4 py-3 text-sm text-slate-600">{article.read_time ? `${article.read_time} min` : "—"}</td>
                     <td className="px-4 py-3 text-right space-x-2">
-                      <button onClick={() => setEditing(article)} className="text-xs text-amber-400 hover:text-amber-300">Edit</button>
-                      <button onClick={() => setDeleteTarget(article)} className="text-xs text-red-400 hover:text-red-300">Delete</button>
+                      <button onClick={() => setEditing(article)} className="text-xs text-amber-600 hover:text-amber-700">Edit</button>
+                      <button onClick={() => setDeleteTarget(article)} className="text-xs text-red-600 hover:text-red-300">Delete</button>
                     </td>
                   </tr>
                 ))}
@@ -278,17 +278,17 @@ export default function AdminArticlesPage() {
               <button
                 onClick={() => setPage(p => Math.max(0, p - 1))}
                 disabled={page === 0}
-                className="px-3 py-1.5 text-sm text-slate-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                className="px-3 py-1.5 text-sm text-slate-500 hover:text-slate-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               >
                 &larr; Prev
               </button>
-              <span className="text-sm text-slate-400">
+              <span className="text-sm text-slate-500">
                 Page {page + 1} of {totalPages}
               </span>
               <button
                 onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
                 disabled={page >= totalPages - 1}
-                className="px-3 py-1.5 text-sm text-slate-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                className="px-3 py-1.5 text-sm text-slate-500 hover:text-slate-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               >
                 Next &rarr;
               </button>

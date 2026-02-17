@@ -111,19 +111,19 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   );
 
   return (
-    <div className="min-h-screen bg-slate-900 md:flex">
+    <div className="min-h-screen bg-slate-50 md:flex">
       {/* Mobile top bar */}
-      <div className="md:hidden bg-slate-800 border-b border-slate-700 px-4 py-3 flex items-center justify-between sticky top-0 z-50">
+      <div className="md:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between sticky top-0 z-50">
         <button
           onClick={() => setMobileOpen(true)}
-          className="text-white p-1 -ml-1"
+          className="text-slate-700 p-1 -ml-1"
           aria-label="Open navigation"
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
-        <span className="text-white font-bold text-sm">Invest.com.au Admin</span>
+        <span className="text-slate-900 font-bold text-sm">Invest.com.au Admin</span>
         <div className="w-6" /> {/* Spacer for centering */}
       </div>
 
