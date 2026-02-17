@@ -7,7 +7,7 @@ import { Search } from "lucide-react";
 export default function ArticleSearchInput() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const current = searchParams.get("q") || "";
 
   const handleChange = useCallback(
