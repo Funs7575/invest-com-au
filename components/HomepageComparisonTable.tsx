@@ -9,10 +9,11 @@ import RiskWarningInline from "@/components/RiskWarningInline";
 const TAB_OPTIONS = ["All Platforms", "Share Trading", "Crypto Exchanges", "SMSF"] as const;
 type TabOption = (typeof TAB_OPTIONS)[number];
 
-function deriveCategory(broker: Broker): string {
-  if (broker.is_crypto) return "Crypto Exchanges";
-  if (broker.smsf_support) return "SMSF";
-  return "Share Trading";
+function getCategories(broker: Broker): string[] {
+  if (broker.is_crypto) return ["Crypto Exchanges"];
+  const cats: string[] = ["Share Trading"];
+  if (broker.smsf_support) cats.push("SMSF");
+  return cats;
 }
 
 export default function HomepageComparisonTable({
@@ -29,7 +30,7 @@ export default function HomepageComparisonTable({
     const base =
       activeTab === "All Platforms"
         ? brokers
-        : brokers.filter((b) => deriveCategory(b) === activeTab);
+        : brokers.filter((b) => getCategories(b).includes(activeTab));
     return [...base]
       .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
       .slice(0, 8);

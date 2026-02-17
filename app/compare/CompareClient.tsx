@@ -82,7 +82,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
     switch (activeFilter) {
       case 'chess': list = list.filter(b => b.chess_sponsored); break;
       case 'free': list = list.filter(b => (b.asx_fee_value === 0) || (b.us_fee_value === 0)); break;
-      case 'us': list = list.filter(b => b.us_fee_value != null && b.us_fee_value < 999); break;
+      case 'us': list = list.filter(b => b.us_fee_value != null && b.us_fee_value <= 5); break;
       case 'smsf': list = list.filter(b => b.smsf_support); break;
       case 'low-fx': list = list.filter(b => b.fx_rate != null && b.fx_rate > 0 && b.fx_rate < 0.5); break;
       case 'crypto': list = list.filter(b => b.is_crypto); break;
