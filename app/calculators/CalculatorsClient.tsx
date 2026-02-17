@@ -13,10 +13,15 @@ import AuthorByline from "@/components/AuthorByline";
    ────────────────────────────────────────────── */
 function AnimatedNumber({ value, prefix = "$", decimals = 2 }: { value: number; prefix?: string; decimals?: number }) {
   const [display, setDisplay] = useState(value);
+  const [flash, setFlash] = useState(false);
   const ref = useRef(value);
   useEffect(() => {
     const start = ref.current;
     const end = value;
+    if (start !== end) {
+      setFlash(true);
+      setTimeout(() => setFlash(false), 600);
+    }
     const duration = 400;
     const t0 = performance.now();
     function tick(now: number) {
@@ -28,7 +33,7 @@ function AnimatedNumber({ value, prefix = "$", decimals = 2 }: { value: number; 
     ref.current = end;
   }, [value]);
   return (
-    <span>
+    <span className={`inline-block transition-colors duration-300 ${flash ? "text-green-700" : ""}`}>
       {prefix}
       {display.toLocaleString("en-AU", { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}
     </span>
@@ -275,7 +280,7 @@ function TradeCostCalculator({ brokers }: { brokers: Broker[] }) {
                       <AnimatedNumber value={r.totalCost} />
                     </td>
                     <td className="py-3 px-2 text-right text-xs text-slate-500">
-                      {r.pctOfTrade.toFixed(2)}%
+                      <AnimatedNumber value={r.pctOfTrade} prefix="" />%
                     </td>
                     <td className="py-3 pl-4 w-40">
                       <div className="h-4 bg-slate-100 rounded-full overflow-hidden">
@@ -297,11 +302,11 @@ function TradeCostCalculator({ brokers }: { brokers: Broker[] }) {
 
       {/* Savings callout */}
       {results.length >= 2 && (
-        <div className="mt-6 bg-green-50 border border-green-200 rounded-xl p-4 text-center">
+        <div className="mt-6 bg-green-50 border border-green-200 rounded-xl p-4 text-center motion-safe:animate-[fadeIn_0.4s_ease-out]">
           <p className="text-sm text-green-800">
             <strong>Potential savings:</strong> Choosing the cheapest broker saves you{" "}
-            <strong>
-              ${(results[results.length - 1].totalCost - results[0].totalCost).toFixed(2)}
+            <strong className="text-green-700">
+              <AnimatedNumber value={results[results.length - 1].totalCost - results[0].totalCost} />
             </strong>{" "}
             per {market === "asx" ? "ASX" : "US"} trade compared to the most expensive option.
           </p>
