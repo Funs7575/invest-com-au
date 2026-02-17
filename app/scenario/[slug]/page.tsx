@@ -6,6 +6,8 @@ import { getAffiliateLink, AFFILIATE_REL } from "@/lib/tracking";
 import AuthorByline from "@/components/AuthorByline";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
+import { getScenarioContent } from "@/lib/scenario-content";
+import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
 
 export async function generateMetadata({
   params,
@@ -78,6 +80,9 @@ export default async function ScenarioPage({
     recBrokers = (data as Broker[]) || [];
   }
 
+  // Get rich guide content if available
+  const guide = getScenarioContent(slug);
+
   // JSON-LD structured data — FAQ format for rich snippets
   const jsonLd = {
     "@context": "https://schema.org",
@@ -93,6 +98,11 @@ export default async function ScenarioPage({
         name: `What's the best approach for ${s.title.toLowerCase()}?`,
         acceptedAnswer: { "@type": "Answer", text: s.solution },
       }] : []),
+      ...(guide?.faqs?.map(faq => ({
+        "@type": "Question",
+        name: faq.question,
+        acceptedAnswer: { "@type": "Answer", text: faq.answer },
+      })) || []),
     ],
   };
 
@@ -254,6 +264,65 @@ export default async function ScenarioPage({
             </div>
           </>
         )}
+
+        {/* Rich editorial guide content */}
+        {(() => {
+          const guide = getScenarioContent(slug);
+          if (!guide) return null;
+          return (
+            <>
+              {/* Guide sections */}
+              <div className="space-y-8 mb-8">
+                {guide.sections.map((section, i) => (
+                  <section key={i}>
+                    <h2 className="text-xl font-extrabold mb-2 text-brand">{section.heading}</h2>
+                    <p className="text-slate-700 leading-relaxed">{section.body}</p>
+                  </section>
+                ))}
+              </div>
+
+              {/* Contextual lead magnet */}
+              <div className="mb-8">
+                <ContextualLeadMagnet segment={slug === "smsf" ? "smsf-checklist" : slug === "expats" ? "us-shares-guide" : "fee-audit"} />
+              </div>
+
+              {/* FAQ section */}
+              {guide.faqs.length > 0 && (
+                <div className="mb-8">
+                  <h2 className="text-xl font-extrabold mb-4 text-brand">Frequently Asked Questions</h2>
+                  <div className="space-y-3">
+                    {guide.faqs.map((faq, i) => (
+                      <details key={i} className="border border-slate-200 rounded-lg">
+                        <summary className="px-4 py-3 font-semibold text-sm cursor-pointer hover:bg-slate-50 transition-colors">
+                          {faq.question}
+                        </summary>
+                        <p className="px-4 pb-4 text-sm text-slate-600 leading-relaxed">
+                          {faq.answer}
+                        </p>
+                      </details>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Related links */}
+              <div className="bg-slate-50 rounded-xl p-5 mb-8">
+                <h3 className="text-sm font-bold text-slate-700 mb-3">Related Guides</h3>
+                <div className="flex flex-wrap gap-2">
+                  {guide.relatedLinks.map((link, i) => (
+                    <Link
+                      key={i}
+                      href={link.href}
+                      className="px-3 py-1.5 bg-white border border-slate-200 rounded-full text-sm text-slate-700 hover:border-green-700 hover:text-green-700 transition-colors"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </>
+          );
+        })()}
 
         {/* Bottom CTA */}
         <div className="bg-slate-50 border border-slate-200 rounded-xl p-8 text-center">
