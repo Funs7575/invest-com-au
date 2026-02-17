@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import type { Broker } from "@/lib/types";
-import { trackClick, getAffiliateLink, getBenefitCta, renderStars } from "@/lib/tracking";
+import { trackClick, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import RiskWarningInline from "@/components/RiskWarningInline";
 import StickyCTABar from "@/components/StickyCTABar";
@@ -107,7 +107,7 @@ export default function BrokerReviewClient({
           <a
             href={getAffiliateLink(b)}
             target="_blank"
-            rel="noopener noreferrer nofollow"
+            rel={AFFILIATE_REL}
             onClick={() => trackClick(b.slug, b.name, 'review-header', `/broker/${b.slug}`, 'review')}
             className="shrink-0 px-6 py-3 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors"
           >
@@ -162,7 +162,7 @@ export default function BrokerReviewClient({
             <a
               href={getAffiliateLink(b)}
               target="_blank"
-              rel="noopener noreferrer nofollow"
+              rel={AFFILIATE_REL}
               onClick={() => trackClick(b.slug, b.name, 'review-deal-banner', `/broker/${b.slug}`, 'review')}
               className="shrink-0 px-5 py-2.5 bg-amber-600 text-white text-sm font-bold rounded-lg hover:bg-amber-700 transition-all hover:shadow-md active:scale-[0.98]"
             >
@@ -301,7 +301,7 @@ export default function BrokerReviewClient({
           <a
             href={getAffiliateLink(b)}
             target="_blank"
-            rel="noopener noreferrer nofollow"
+            rel={AFFILIATE_REL}
             onClick={() => trackClick(b.slug, b.name, 'review-inline-1', `/broker/${b.slug}`, 'review')}
             className="shrink-0 px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
           >
@@ -373,7 +373,7 @@ export default function BrokerReviewClient({
           <a
             href={getAffiliateLink(b)}
             target="_blank"
-            rel="noopener noreferrer nofollow"
+            rel={AFFILIATE_REL}
             onClick={() => trackClick(b.slug, b.name, 'review-inline-2', `/broker/${b.slug}`, 'review')}
             className="shrink-0 px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
           >
@@ -442,7 +442,7 @@ export default function BrokerReviewClient({
           <a
             href={getAffiliateLink(b)}
             target="_blank"
-            rel="noopener noreferrer nofollow"
+            rel={AFFILIATE_REL}
             onClick={() => trackClick(b.slug, b.name, 'review-bottom', `/broker/${b.slug}`, 'review')}
             className="inline-block px-8 py-3.5 bg-green-700 text-white font-bold rounded-lg hover:bg-green-600 hover:shadow-lg transition-all active:scale-[0.98] text-lg"
           >

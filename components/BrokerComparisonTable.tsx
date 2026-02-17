@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { Broker } from "@/lib/types";
-import { trackClick, getAffiliateLink, formatPercent } from "@/lib/tracking";
+import { trackClick, getAffiliateLink, formatPercent, AFFILIATE_REL } from "@/lib/tracking";
 
 function FxBadge({ rate }: { rate: number }) {
   const color =
@@ -171,7 +171,7 @@ export default function BrokerComparisonTable({
                   <a
                     href={getAffiliateLink(b)}
                     target="_blank"
-                    rel="noopener noreferrer nofollow"
+                    rel={AFFILIATE_REL}
                     onClick={() =>
                       trackClick(
                         b.slug,
@@ -249,7 +249,7 @@ export default function BrokerComparisonTable({
             <a
               href={getAffiliateLink(b)}
               target="_blank"
-              rel="noopener noreferrer nofollow"
+              rel={AFFILIATE_REL}
               onClick={() =>
                 trackClick(
                   b.slug,

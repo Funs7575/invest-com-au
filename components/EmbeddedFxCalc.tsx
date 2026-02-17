@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import type { Broker } from "@/lib/types";
-import { trackClick, getAffiliateLink, formatPercent } from "@/lib/tracking";
+import { trackClick, getAffiliateLink, formatPercent, AFFILIATE_REL } from "@/lib/tracking";
 
 function AnimatedNumber({ value, prefix = "$" }: { value: number; prefix?: string }) {
   const [display, setDisplay] = useState(value);
@@ -179,7 +179,7 @@ export default function EmbeddedFxCalc({ brokers }: { brokers: Broker[] }) {
           <a
             href={getAffiliateLink(cheapest)}
             target="_blank"
-            rel="noopener noreferrer nofollow"
+            rel={AFFILIATE_REL}
             onClick={() =>
               trackClick(
                 cheapest.slug,

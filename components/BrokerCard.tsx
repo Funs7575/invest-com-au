@@ -1,7 +1,7 @@
 "use client";
 
 import type { Broker } from "@/lib/types";
-import { trackClick, getAffiliateLink, getBenefitCta, renderStars } from "@/lib/tracking";
+import { trackClick, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
 import RiskWarningInline from "@/components/RiskWarningInline";
 
 export default function BrokerCard({ broker, badge, context = 'compare' }: { broker: Broker; badge?: string; context?: 'compare' | 'review' | 'calculator' | 'versus' | 'quiz' }) {
@@ -44,7 +44,7 @@ export default function BrokerCard({ broker, badge, context = 'compare' }: { bro
       <a
         href={getAffiliateLink(broker)}
         target="_blank"
-        rel="noopener noreferrer nofollow"
+        rel={AFFILIATE_REL}
         onClick={() => trackClick(broker.slug, broker.name, 'compare-mobile', window.location.pathname, context)}
         className="block w-full text-center text-sm px-3 py-2.5 font-bold rounded-lg transition-all mb-3 bg-green-700 text-white hover:bg-green-800 hover:shadow-md active:scale-[0.98]"
       >

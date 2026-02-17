@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Broker } from "@/lib/types";
-import { trackClick, trackEvent, getAffiliateLink, getBenefitCta, renderStars } from "@/lib/tracking";
+import { trackClick, trackEvent, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
 import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import RiskWarningInline from "@/components/RiskWarningInline";
 
@@ -250,7 +250,7 @@ export default function QuizPage() {
               <a
                 href={getAffiliateLink(topMatch.broker)}
                 target="_blank"
-                rel="noopener noreferrer nofollow"
+                rel={AFFILIATE_REL}
                 onClick={() => trackClick(topMatch.broker!.slug, topMatch.broker!.name, 'quiz-result-1', '/quiz', 'quiz')}
                 className="block w-full text-center px-6 py-3.5 text-white font-bold rounded-lg transition-all text-lg shadow-lg hover:shadow-xl hover:scale-[1.02]"
                 style={{
@@ -315,7 +315,7 @@ export default function QuizPage() {
                           <a
                             href={getAffiliateLink(r.broker)}
                             target="_blank"
-                            rel="noopener noreferrer nofollow"
+                            rel={AFFILIATE_REL}
                             onClick={() => trackClick(r.broker!.slug, r.broker!.name, `quiz-compare-${i + 1}`, '/quiz', 'quiz')}
                             className="inline-block px-3 py-1.5 bg-green-700 text-white text-xs font-semibold rounded-md hover:bg-green-800 transition-colors"
                           >
@@ -356,7 +356,7 @@ export default function QuizPage() {
                       <a
                         href={getAffiliateLink(r.broker)}
                         target="_blank"
-                        rel="noopener noreferrer nofollow"
+                        rel={AFFILIATE_REL}
                         onClick={() => trackClick(r.broker!.slug, r.broker!.name, `quiz-result-${i + 2}`, '/quiz', 'quiz')}
                         className="shrink-0 px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
                       >

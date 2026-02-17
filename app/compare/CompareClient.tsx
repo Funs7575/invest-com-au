@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Search, X } from "lucide-react";
 import type { Broker } from "@/lib/types";
-import { trackClick, trackEvent, getAffiliateLink, getBenefitCta, renderStars } from "@/lib/tracking";
+import { trackClick, trackEvent, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
 import BrokerCard from "@/components/BrokerCard";
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 import { getMostRecentFeeCheck } from "@/lib/utils";
@@ -173,7 +173,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               <a
                 href={getAffiliateLink(dealBroker)}
                 target="_blank"
-                rel="noopener noreferrer nofollow"
+                rel={AFFILIATE_REL}
                 onClick={() => trackClick(dealBroker.slug, dealBroker.name, 'compare-deal-banner', '/compare', 'compare')}
                 className="shrink-0 px-4 py-2 bg-amber-600 text-white text-sm font-semibold rounded-lg hover:bg-amber-700 transition-colors"
               >
@@ -320,7 +320,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                     <a
                       href={getAffiliateLink(broker)}
                       target="_blank"
-                      rel="noopener noreferrer nofollow"
+                      rel={AFFILIATE_REL}
                       onClick={() => trackClick(broker.slug, broker.name, 'compare-table', '/compare', 'compare')}
                       className="inline-block px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
                     >

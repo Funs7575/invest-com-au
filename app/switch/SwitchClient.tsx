@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import type { Broker } from "@/lib/types";
-import { getAffiliateLink, trackClick } from "@/lib/tracking";
+import { getAffiliateLink, trackClick, AFFILIATE_REL } from "@/lib/tracking";
 import RiskWarningInline from "@/components/RiskWarningInline";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 
@@ -158,7 +158,7 @@ export default function SwitchClient({ brokers }: { brokers: Broker[] }) {
               <a
                 href={getAffiliateLink(targetBroker)}
                 target="_blank"
-                rel="noopener noreferrer nofollow"
+                rel={AFFILIATE_REL}
                 onClick={() => trackClick(targetBroker.slug, targetBroker.name, 'switch-cta', '/switch', 'calculator')}
                 className="inline-block px-6 py-3 bg-green-700 text-white font-bold rounded-lg hover:bg-green-600 transition-all"
               >

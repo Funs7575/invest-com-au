@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import type { Broker } from "@/lib/types";
-import { trackClick, getAffiliateLink, getBenefitCta } from "@/lib/tracking";
+import { trackClick, getAffiliateLink, getBenefitCta, AFFILIATE_REL } from "@/lib/tracking";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import RiskWarningInline from "@/components/RiskWarningInline";
 
@@ -27,7 +27,7 @@ export default function CTAStack({
       <a
         href={getAffiliateLink(broker)}
         target="_blank"
-        rel="noopener noreferrer nofollow"
+        rel={AFFILIATE_REL}
         onClick={() => trackClick(broker.slug, broker.name, 'cta-stack-primary', window.location.pathname, context)}
         className="inline-block px-8 py-3.5 bg-green-700 text-white font-bold rounded-lg hover:bg-green-600 hover:shadow-lg transition-all active:scale-[0.98] text-lg mb-3"
       >

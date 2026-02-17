@@ -1,6 +1,9 @@
 import type { Broker } from './types';
 import { getSessionId } from './session';
 
+/** Standard rel attribute for all outbound affiliate links */
+export const AFFILIATE_REL = "noopener noreferrer nofollow sponsored";
+
 export function trackClick(brokerSlug: string, brokerName: string, source: string, page: string, layer?: string) {
   const sessionId = getSessionId();
   fetch('/api/track-click', {

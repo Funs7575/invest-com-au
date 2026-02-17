@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import type { Broker } from "@/lib/types";
-import { trackClick, getAffiliateLink, getBenefitCta } from "@/lib/tracking";
+import { trackClick, getAffiliateLink, getBenefitCta, AFFILIATE_REL } from "@/lib/tracking";
 import { ADVERTISER_DISCLOSURE_SHORT, RISK_WARNING_CTA } from "@/lib/compliance";
 
 export default function StickyCTABar({ broker, detail, context = 'review' }: { broker: Broker; detail: string; context?: 'review' | 'versus' | 'calculator' }) {
@@ -44,7 +44,7 @@ export default function StickyCTABar({ broker, detail, context = 'review' }: { b
           <a
             href={getAffiliateLink(broker)}
             target="_blank"
-            rel="noopener noreferrer nofollow"
+            rel={AFFILIATE_REL}
             onClick={() => trackClick(broker.slug, broker.name, 'sticky-cta', window.location.pathname, context)}
             className="shrink-0 px-5 py-2.5 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-600 hover:shadow-lg transition-all active:scale-[0.97]"
           >

@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import type { Broker } from "@/lib/types";
-import { trackClick, getAffiliateLink, getBenefitCta, formatPercent } from "@/lib/tracking";
+import { trackClick, getAffiliateLink, getBenefitCta, formatPercent, AFFILIATE_REL } from "@/lib/tracking";
 import StickyCTABar from "@/components/StickyCTABar";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 
@@ -221,7 +221,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
               <a
                 href={getAffiliateLink(overallWinner)}
                 target="_blank"
-                rel="noopener noreferrer nofollow"
+                rel={AFFILIATE_REL}
                 onClick={() => trackClick(overallWinner.slug, overallWinner.name, "versus-winner", "/versus", "versus")}
                 className="shrink-0 px-6 py-3 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-800 transition-colors"
               >
@@ -309,7 +309,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                   <a
                     href={getAffiliateLink(br)}
                     target="_blank"
-                    rel="noopener noreferrer nofollow"
+                    rel={AFFILIATE_REL}
                     onClick={() => trackClick(br.slug, br.name, "versus-cta", "/versus", "versus")}
                     className="inline-block w-full text-center px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
                   >

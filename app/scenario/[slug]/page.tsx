@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { Scenario, Broker } from "@/lib/types";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getAffiliateLink } from "@/lib/tracking";
+import { getAffiliateLink, AFFILIATE_REL } from "@/lib/tracking";
 import AuthorByline from "@/components/AuthorByline";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
@@ -243,7 +243,7 @@ export default async function ScenarioPage({
                     <a
                       href={getAffiliateLink(b)}
                       target="_blank"
-                      rel="noopener noreferrer nofollow"
+                      rel={AFFILIATE_REL}
                       className="px-3 py-2 text-sm bg-green-700 text-white rounded-lg hover:bg-green-800 transition-colors"
                     >
                       {b.cta_text || `Visit ${b.name}`}

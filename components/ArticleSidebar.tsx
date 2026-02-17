@@ -1,7 +1,7 @@
 "use client";
 
 import type { Broker } from "@/lib/types";
-import { trackClick, getAffiliateLink, formatPercent } from "@/lib/tracking";
+import { trackClick, getAffiliateLink, formatPercent, AFFILIATE_REL } from "@/lib/tracking";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import RiskWarningInline from "@/components/RiskWarningInline";
 
@@ -86,7 +86,7 @@ export default function ArticleSidebar({
             <a
               href={getAffiliateLink(broker)}
               target="_blank"
-              rel="noopener noreferrer nofollow"
+              rel={AFFILIATE_REL}
               onClick={() =>
                 trackClick(
                   broker.slug,

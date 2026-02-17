@@ -1,7 +1,7 @@
 "use client";
 
 import type { Broker } from "@/lib/types";
-import { trackClick, getAffiliateLink, getBenefitCta } from "@/lib/tracking";
+import { trackClick, getAffiliateLink, getBenefitCta, AFFILIATE_REL } from "@/lib/tracking";
 
 export default function ArticleDetailClient({
   broker,
@@ -37,7 +37,7 @@ export default function ArticleDetailClient({
       <a
         href={getAffiliateLink(broker)}
         target="_blank"
-        rel="noopener noreferrer nofollow"
+        rel={AFFILIATE_REL}
         onClick={() =>
           trackClick(
             broker.slug,
