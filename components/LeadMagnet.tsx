@@ -33,20 +33,20 @@ export default function LeadMagnet() {
   }
 
   return (
-    <div className="rounded-xl p-6 bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950 text-white shadow-lg">
-      <div className="text-xs font-bold uppercase tracking-wider mb-2 text-amber-400">
+    <div className="rounded-xl p-6 bg-green-50 border border-green-200 shadow-sm">
+      <div className="text-xs font-bold uppercase tracking-wider mb-2 text-green-700">
         Free Download
       </div>
-      <h3 className="text-xl font-extrabold mb-2">2026 Fee Audit PDF</h3>
-      <p className="text-sm text-slate-300 mb-4 leading-relaxed">
+      <h3 className="text-xl font-extrabold mb-2 text-slate-900">2026 Fee Audit PDF</h3>
+      <p className="text-sm text-slate-600 mb-4 leading-relaxed">
         See exactly what every Australian broker charges — brokerage, FX fees,
         inactivity fees, and hidden costs. Compare side-by-side in one document.
       </p>
 
       {status === "success" ? (
-        <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 text-center">
-          <div className="text-lg font-bold mb-1">Check your inbox!</div>
-          <p className="text-sm text-slate-300">
+        <div className="bg-green-100 border border-green-200 rounded-lg p-4 text-center">
+          <div className="text-lg font-bold mb-1 text-green-900">Check your inbox!</div>
+          <p className="text-sm text-slate-600">
             We&apos;ve sent the 2026 Fee Audit PDF to your email.
           </p>
 
@@ -59,7 +59,7 @@ export default function LeadMagnet() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full px-4 py-2.5 rounded-lg text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-400/50"
+            className="w-full px-4 py-2.5 rounded-lg border border-green-200 text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-green-700/30 focus:border-green-700"
           />
           <label className="flex items-start gap-2 cursor-pointer">
             <input
@@ -67,12 +67,12 @@ export default function LeadMagnet() {
               checked={consent}
               onChange={(e) => setConsent(e.target.checked)}
               required
-              className="mt-0.5 w-4 h-4 rounded border-white/50 accent-amber-500 shrink-0"
+              className="mt-0.5 w-4 h-4 rounded border-green-300 accent-green-700 shrink-0"
             />
-            <span className="text-[0.65rem] text-slate-300 leading-tight">
+            <span className="text-[0.65rem] text-slate-500 leading-tight">
               I agree to receive the Fee Audit PDF and occasional updates from Invest.com.au.
               View our{" "}
-              <Link href="/privacy" className="underline hover:text-white">
+              <Link href="/privacy" className="underline hover:text-green-700">
                 Privacy Policy
               </Link>
               . You can unsubscribe at any time.
@@ -86,7 +86,7 @@ export default function LeadMagnet() {
             {status === "loading" ? "Sending..." : "Get the Free PDF"}
           </button>
           {status === "error" && (
-            <p className="text-xs text-red-200 text-center">
+            <p className="text-xs text-red-500 text-center">
               Something went wrong. Please try again.
             </p>
           )}

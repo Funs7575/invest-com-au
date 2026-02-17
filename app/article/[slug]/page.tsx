@@ -489,18 +489,18 @@ export default async function ArticlePage({
               )}
 
               {/* Bottom CTA */}
-              <div className="mt-12 bg-brand rounded-xl p-8 text-center text-white">
-                <h3 className="text-2xl font-extrabold mb-2">
+              <div className="mt-12 bg-green-50 border border-green-200 rounded-xl p-8 text-center">
+                <h3 className="text-2xl font-extrabold mb-2 text-slate-900">
                   Find the Right Broker
                 </h3>
-                <p className="text-slate-300 mb-6 max-w-lg mx-auto">
+                <p className="text-slate-600 mb-6 max-w-lg mx-auto">
                   Compare fees, features, and platforms across every major
                   Australian broker — or use our quiz to filter in 60 seconds.
                 </p>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                   <Link
                     href="/compare"
-                    className="px-6 py-3 bg-white text-brand text-sm font-bold rounded-lg hover:bg-slate-100 transition-colors"
+                    className="px-6 py-3 bg-amber-500 text-slate-900 text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors"
                   >
                     Compare All Brokers
                   </Link>

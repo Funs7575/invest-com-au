@@ -361,11 +361,11 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
 
         {/* Bottom conversion section */}
         <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-slate-900 text-white rounded-xl p-6">
+          <div className="bg-white border border-slate-200 rounded-xl p-6">
             <div className="text-2xl mb-2">🎯</div>
-            <h3 className="text-lg font-bold mb-1">Filter by Your Priorities</h3>
-            <p className="text-sm text-slate-300 mb-4">Answer 4 quick questions and narrow down brokers based on what matters to you.</p>
-            <Link href="/quiz" className="inline-block px-5 py-2.5 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors">
+            <h3 className="text-lg font-bold text-slate-900 mb-1">Filter by Your Priorities</h3>
+            <p className="text-sm text-slate-600 mb-4">Answer 4 quick questions and narrow down brokers based on what matters to you.</p>
+            <Link href="/quiz" className="inline-block px-5 py-2.5 bg-amber-500 text-slate-900 text-sm font-semibold rounded-lg hover:bg-amber-600 transition-colors">
               Take the Quiz →
             </Link>
           </div>

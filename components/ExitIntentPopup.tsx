@@ -120,10 +120,10 @@ export default function ExitIntentPopup() {
         </button>
 
         {/* Dark accent header */}
-        <div className="bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950 px-6 pt-6 pb-8 text-white text-center">
+        <div className="bg-gradient-to-br from-green-700 via-green-800 to-green-900 px-6 pt-6 pb-8 text-white text-center">
           <div className="text-4xl mb-3">📊</div>
           <h2 id="exit-popup-title" className="text-xl font-extrabold mb-1">Wait — Before You Go</h2>
-          <p className="text-sm text-amber-300">
+          <p className="text-sm text-green-200">
             Get our free 2026 broker fee comparison PDF. See exactly what every platform charges.
           </p>
         </div>
@@ -167,7 +167,7 @@ export default function ExitIntentPopup() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full px-4 py-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500"
+                  className="w-full px-4 py-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-green-700/30 focus:border-green-700"
                 />
                 <label className="flex items-start gap-2 cursor-pointer">
                   <input
@@ -175,11 +175,11 @@ export default function ExitIntentPopup() {
                     checked={consent}
                     onChange={(e) => setConsent(e.target.checked)}
                     required
-                    className="mt-0.5 w-4 h-4 rounded accent-amber-500 shrink-0"
+                    className="mt-0.5 w-4 h-4 rounded accent-green-700 shrink-0"
                   />
                   <span className="text-[0.65rem] text-slate-500 leading-tight">
                     I agree to receive the PDF and occasional broker updates.{" "}
-                    <Link href="/privacy" className="underline hover:text-amber-600">
+                    <Link href="/privacy" className="underline hover:text-green-700">
                       Privacy Policy
                     </Link>
                   </span>
@@ -204,7 +204,7 @@ export default function ExitIntentPopup() {
           <div className="text-center mt-3">
             <Link
               href="/quiz"
-              className="text-sm text-slate-500 hover:text-amber-600 transition-colors"
+              className="text-sm text-slate-500 hover:text-green-700 transition-colors"
             >
               Or take our free 60-second broker quiz →
             </Link>
