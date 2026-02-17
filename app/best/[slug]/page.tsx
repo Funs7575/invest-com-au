@@ -19,7 +19,19 @@ import { trackClick } from "@/lib/tracking";
 import BrokerCard from "@/components/BrokerCard";
 import RiskWarningInline from "@/components/RiskWarningInline";
 import CompactDisclosure from "@/components/CompactDisclosure";
+import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
+import type { LeadSegment } from "@/components/ContextualLeadMagnet";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
+
+const SLUG_TO_SEGMENT: Record<string, LeadSegment> = {
+  beginners: "beginner-guide",
+  "us-shares": "us-shares-guide",
+  "low-fees": "fee-audit",
+  "chess-sponsored": "fee-audit",
+  smsf: "smsf-checklist",
+  crypto: "fee-audit",
+  "low-fx-fees": "us-shares-guide",
+};
 
 // ── Static params for ISR ──
 export async function generateStaticParams() {
@@ -344,6 +356,11 @@ export default async function BestBrokerPage({
                 <p className="text-slate-600 leading-relaxed">{section.body}</p>
               </section>
             ))}
+          </div>
+
+          {/* Contextual lead magnet */}
+          <div className="mb-10">
+            <ContextualLeadMagnet segment={SLUG_TO_SEGMENT[slug] || "fee-audit"} />
           </div>
 
           {/* FAQ section */}

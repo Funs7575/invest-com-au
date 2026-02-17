@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { Broker } from "@/lib/types";
 import { getAffiliateLink, trackClick, AFFILIATE_REL } from "@/lib/tracking";
 import RiskWarningInline from "@/components/RiskWarningInline";
+import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 
 const TRANSFER_COST_PER_HOLDING = 54; // Industry standard CHESS transfer
@@ -176,6 +177,11 @@ export default function SwitchClient({ brokers }: { brokers: Broker[] }) {
             <p className="text-sm">We'll generate a personalised switching checklist too.</p>
           </div>
         )}
+
+        {/* Contextual lead magnet */}
+        <div className="mt-8">
+          <ContextualLeadMagnet segment="switching-checklist" />
+        </div>
       </div>
     </div>
   );
