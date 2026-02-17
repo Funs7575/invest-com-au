@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import type { MetadataRoute } from "next";
+import { getAllCategorySlugs } from "@/lib/best-broker-categories";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app";
@@ -58,5 +59,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  return [...staticPages, ...brokerPages, ...articlePages, ...scenarioPages];
+  // Best Broker for X hub pages
+  const bestPages = [
+    { url: `${baseUrl}/best`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.9 },
+    ...getAllCategorySlugs().map((slug) => ({
+      url: `${baseUrl}/best/${slug}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    })),
+  ];
+
+  return [...staticPages, ...bestPages, ...brokerPages, ...articlePages, ...scenarioPages];
 }
