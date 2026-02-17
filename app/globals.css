@@ -84,3 +84,16 @@ body {
     box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   }
 }
+
+/* ── WCAG 2.2 AA: Focus-visible indicators ──────────────── */
+/* Global focus ring for keyboard navigation — overrides Tailwind's
+   focus:outline-none utilities without touching every component file. */
+*:focus-visible {
+  outline: 2px solid var(--color-green-700) !important;
+  outline-offset: 2px !important;
+}
+
+/* Remove outline for mouse/touch users (only when NOT using keyboard) */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
