@@ -7,6 +7,8 @@ import { Search, X } from "lucide-react";
 import type { Broker } from "@/lib/types";
 import { trackClick, trackEvent, getAffiliateLink, getBenefitCta, renderStars } from "@/lib/tracking";
 import BrokerCard from "@/components/BrokerCard";
+import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
+import { getMostRecentFeeCheck } from "@/lib/utils";
 
 type FilterType = 'all' | 'chess' | 'free' | 'us' | 'smsf' | 'low-fx' | 'crypto';
 type SortCol = 'name' | 'asx_fee_value' | 'us_fee_value' | 'fx_rate' | 'rating';
@@ -134,7 +136,8 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
       <div className="container-custom">
         <h1 className="text-3xl md:text-4xl font-bold mb-2">Compare Australian Brokers</h1>
         <p className="text-slate-600 mb-6">
-          Side-by-side comparison of fees, features, and safety. Updated February 2026.
+          Side-by-side comparison of fees, features, and safety.{" "}
+          <FeesFreshnessIndicator lastChecked={getMostRecentFeeCheck(brokers)} variant="inline" />
         </p>
 
         {/* Deal of the Month Banner */}

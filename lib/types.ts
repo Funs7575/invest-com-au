@@ -41,6 +41,8 @@ export interface Broker {
   fee_source_tcs_url?: string;
   fee_verified_date?: string;
   fee_changelog?: { date: string; field: string; old_value: string; new_value: string }[];
+  fee_last_checked?: string;
+  fee_page_hash?: string;
   created_at: string;
   updated_at: string;
 }

@@ -18,3 +18,13 @@ export function slugify(text: string): string {
 export function cn(...classes: (string | undefined | null | false)[]): string {
   return classes.filter(Boolean).join(' ');
 }
+
+export function getMostRecentFeeCheck(brokers: { fee_last_checked?: string | null }[]): string | null {
+  let latest: string | null = null;
+  for (const b of brokers) {
+    if (b.fee_last_checked && (!latest || b.fee_last_checked > latest)) {
+      latest = b.fee_last_checked;
+    }
+  }
+  return latest;
+}

@@ -9,6 +9,8 @@ import ScrollFadeIn from "@/components/ScrollFadeIn";
 import LeadMagnet from "@/components/LeadMagnet";
 import SocialProofBar from "@/components/SocialProofBar";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
+import { getMostRecentFeeCheck } from "@/lib/utils";
 
 export const metadata = {
   title: "Compare Australian Brokers",
@@ -127,13 +129,7 @@ export default async function HomePage() {
               <h2 className="text-2xl md:text-3xl font-bold">
                 Top Rated Brokers
               </h2>
-              <span className="text-sm text-slate-500">
-                Updated{" "}
-                {new Date().toLocaleDateString("en-AU", {
-                  month: "long",
-                  year: "numeric",
-                })}
-              </span>
+              <FeesFreshnessIndicator lastChecked={getMostRecentFeeCheck((brokers as Broker[]) || [])} variant="badge" />
             </div>
             <HomepageComparisonTable brokers={(brokers as Broker[]) || []} defaultTab="Share Trading" />
             <div className="text-center mt-6">

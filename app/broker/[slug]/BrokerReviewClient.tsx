@@ -6,6 +6,7 @@ import { trackClick, getAffiliateLink, getBenefitCta, renderStars } from "@/lib/
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import RiskWarningInline from "@/components/RiskWarningInline";
 import StickyCTABar from "@/components/StickyCTABar";
+import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 
 function FeeVerdict({ value, thresholds }: { value: number | undefined; thresholds: [number, number] }) {
   if (value == null) return <span className="px-2 py-0.5 bg-slate-100 text-slate-500 text-xs font-semibold rounded-full">N/A</span>;
@@ -181,6 +182,9 @@ export default function BrokerReviewClient({ broker: b, similar }: { broker: Bro
             <Link href="/how-we-verify" className="text-green-700 hover:underline">
               How we verify fees
             </Link>
+            {b.fee_last_checked && (
+              <FeesFreshnessIndicator lastChecked={b.fee_last_checked} variant="inline" />
+            )}
           </div>
           {b.fee_changelog && b.fee_changelog.length > 0 && (
             <details className="mt-3">
