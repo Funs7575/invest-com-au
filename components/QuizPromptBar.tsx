@@ -32,7 +32,7 @@ export default function QuizPromptBar() {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 bg-[#0c1a14] text-white border-t border-green-900/40">
+    <div className="fixed bottom-0 left-0 right-0 z-40 bg-green-800 text-white border-t border-green-700/40">
       <div className="container-custom py-3 flex items-center justify-between gap-4">
         <p className="text-sm">
           <span className="hidden sm:inline">Not sure which broker to pick? </span>

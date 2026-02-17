@@ -8,9 +8,9 @@ export default function Footer() {
   const [disclaimerOpen, setDisclaimerOpen] = useState(false);
 
   return (
-    <footer className="bg-[#0c1a14] text-slate-300 mt-20">
+    <footer className="bg-green-800 text-slate-300 mt-20">
       {/* Collapsible Compliance Blocks */}
-      <div className="border-b border-green-900/40">
+      <div className="border-b border-green-700/40">
         <div className="container-custom">
           <button
             onClick={() => setDisclaimerOpen(!disclaimerOpen)}
@@ -32,19 +32,19 @@ export default function Footer() {
             style={{ maxHeight: disclaimerOpen ? "600px" : "0" }}
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-400 leading-relaxed pb-6">
-              <div className="border border-green-800/30 rounded-lg p-4">
+              <div className="border border-green-700/30 rounded-lg p-4">
                 <h4 className="font-semibold text-green-200/80 mb-1">General Advice Warning</h4>
                 <p>{GENERAL_ADVICE_WARNING}</p>
               </div>
-              <div className="border border-green-800/30 rounded-lg p-4">
+              <div className="border border-green-700/30 rounded-lg p-4">
                 <h4 className="font-semibold text-green-200/80 mb-1">Affiliate Disclosure</h4>
                 <p>{ADVERTISER_DISCLOSURE}</p>
               </div>
-              <div className="border border-green-800/30 rounded-lg p-4">
+              <div className="border border-green-700/30 rounded-lg p-4">
                 <h4 className="font-semibold text-green-200/80 mb-1">Crypto Warning</h4>
                 <p>{CRYPTO_WARNING}</p>
               </div>
-              <div className="border border-green-800/30 rounded-lg p-4">
+              <div className="border border-green-700/30 rounded-lg p-4">
                 <h4 className="font-semibold text-green-200/80 mb-1">Regulatory Note</h4>
                 <p>{REGULATORY_NOTE}</p>
               </div>
@@ -95,7 +95,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-green-900/40 mt-8 pt-8 text-sm text-center">
+        <div className="border-t border-green-700/40 mt-8 pt-8 text-sm text-center">
           <p>&copy; {new Date().getFullYear()} Invest.com.au. All rights reserved.</p>
         </div>
       </div>

@@ -63,7 +63,7 @@ export default function AboutPage() {
 
           {/* Editorial Independence Pledge */}
           <section className="mb-10">
-            <div className="bg-[#0c1a14] text-white rounded-xl p-6 md:p-8">
+            <div className="bg-green-800 text-white rounded-xl p-6 md:p-8">
               <h2 className="text-2xl font-extrabold mb-4">Editorial Independence Pledge</h2>
               <div className="space-y-3 text-slate-200 leading-relaxed">
                 <p>
