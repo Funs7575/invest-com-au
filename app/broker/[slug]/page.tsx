@@ -2,7 +2,14 @@ import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
 import { notFound } from "next/navigation";
 import BrokerReviewClient from "./BrokerReviewClient";
-import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
+import {
+  absoluteUrl,
+  breadcrumbJsonLd,
+  brokerReviewJsonLd,
+  reviewArticleJsonLd,
+  SITE_NAME,
+  REVIEW_AUTHOR,
+} from "@/lib/seo";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -65,41 +72,46 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
     .order('rating', { ascending: false })
     .limit(3);
 
-  // JSON-LD structured data for rich search results
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: `${b.name} Trading Platform`,
-    description: b.tagline || `Review of ${b.name} share trading platform`,
-    brand: { "@type": "Brand", name: b.name },
-    review: {
-      "@type": "Review",
-      author: { "@type": "Organization", name: "Invest.com.au" },
-      reviewRating: {
-        "@type": "Rating",
-        ratingValue: b.rating || 0,
-        bestRating: 5,
-      },
-    },
-  };
-
+  // JSON-LD structured data — FinancialProduct + Review + Article + Breadcrumb
+  const financialProductLd = brokerReviewJsonLd(b);
+  const articleLd = reviewArticleJsonLd(b);
   const breadcrumbLd = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
     { name: "Reviews", url: absoluteUrl("/reviews") },
     { name: b.name },
   ]);
 
+  // Dates for visible byline (must match structured data)
+  const datePublished = b.created_at
+    ? new Date(b.created_at).toLocaleDateString("en-AU", { year: "numeric", month: "long", day: "numeric" })
+    : null;
+  const dateModified = b.updated_at
+    ? new Date(b.updated_at).toLocaleDateString("en-AU", { year: "numeric", month: "long", day: "numeric" })
+    : null;
+
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(financialProductLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }}
       />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
-      <BrokerReviewClient broker={b} similar={(similar as Broker[]) || []} />
+      <BrokerReviewClient
+        broker={b}
+        similar={(similar as Broker[]) || []}
+        authorName={REVIEW_AUTHOR.name}
+        authorTitle={REVIEW_AUTHOR.jobTitle}
+        authorUrl={REVIEW_AUTHOR.url}
+        datePublished={datePublished}
+        dateModified={dateModified}
+      />
     </>
   );
 }

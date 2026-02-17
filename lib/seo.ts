@@ -28,3 +28,169 @@ export function breadcrumbJsonLd(
     })),
   };
 }
+
+/* ─── E-E-A-T: Review author & editorial info ─── */
+
+export const REVIEW_AUTHOR = {
+  name: "Invest.com.au Editorial Team",
+  jobTitle: "Financial Product Analysts",
+  description:
+    "Our editorial team researches, tests, and reviews Australian share trading platforms. Every review follows a standardised methodology covering fees, safety (CHESS sponsorship), platform quality, and account features.",
+  url: absoluteUrl("/about"),
+};
+
+export const REVIEW_METHODOLOGY_URL = absoluteUrl("/how-we-verify");
+
+/**
+ * Build FinancialProduct + Review JSON-LD for a broker review page.
+ * Follows Google's review snippet guidelines for YMYL content.
+ */
+export function brokerReviewJsonLd(broker: {
+  name: string;
+  slug: string;
+  tagline?: string;
+  rating?: number;
+  asx_fee?: string;
+  regulated_by?: string;
+  year_founded?: number;
+  updated_at: string;
+  created_at: string;
+  pros?: string[];
+  cons?: string[];
+  fee_verified_date?: string;
+}) {
+  const datePublished = broker.created_at
+    ? new Date(broker.created_at).toISOString().split("T")[0]
+    : "2025-01-01";
+  const dateModified = broker.updated_at
+    ? new Date(broker.updated_at).toISOString().split("T")[0]
+    : datePublished;
+
+  // Build a concise reviewBody from pros/cons
+  const prosText = broker.pros?.length
+    ? `Pros: ${broker.pros.slice(0, 3).join("; ")}.`
+    : "";
+  const consText = broker.cons?.length
+    ? `Cons: ${broker.cons.slice(0, 3).join("; ")}.`
+    : "";
+  const reviewBody = [
+    broker.tagline || `In-depth review of ${broker.name}.`,
+    prosText,
+    consText,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "FinancialProduct",
+    name: `${broker.name} Trading Platform`,
+    description:
+      broker.tagline || `Review of ${broker.name} share trading platform`,
+    brand: { "@type": "Brand", name: broker.name },
+    url: absoluteUrl(`/broker/${broker.slug}`),
+    ...(broker.year_founded
+      ? { foundingDate: String(broker.year_founded) }
+      : {}),
+    ...(broker.regulated_by
+      ? { additionalProperty: {
+          "@type": "PropertyValue",
+          name: "Regulated By",
+          value: broker.regulated_by,
+        }}
+      : {}),
+    ...(broker.asx_fee
+      ? { feesAndCommissionsSpecification: `ASX brokerage: ${broker.asx_fee}` }
+      : {}),
+    review: {
+      "@type": "Review",
+      author: {
+        "@type": "Person",
+        name: REVIEW_AUTHOR.name,
+        jobTitle: REVIEW_AUTHOR.jobTitle,
+        url: REVIEW_AUTHOR.url,
+        worksFor: {
+          "@type": "Organization",
+          name: SITE_NAME,
+          url: SITE_URL,
+        },
+      },
+      publisher: {
+        "@type": "Organization",
+        name: SITE_NAME,
+        url: SITE_URL,
+      },
+      datePublished,
+      dateModified,
+      reviewBody,
+      reviewRating: {
+        "@type": "Rating",
+        ratingValue: broker.rating || 0,
+        bestRating: 5,
+        worstRating: 1,
+      },
+    },
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: broker.rating || 0,
+      bestRating: 5,
+      worstRating: 1,
+      reviewCount: 1,
+    },
+  };
+}
+
+/**
+ * Build Article JSON-LD wrapper for the review page.
+ * Google uses this for authorship and freshness signals.
+ */
+export function reviewArticleJsonLd(broker: {
+  name: string;
+  slug: string;
+  tagline?: string;
+  updated_at: string;
+  created_at: string;
+}) {
+  const datePublished = broker.created_at
+    ? new Date(broker.created_at).toISOString().split("T")[0]
+    : "2025-01-01";
+  const dateModified = broker.updated_at
+    ? new Date(broker.updated_at).toISOString().split("T")[0]
+    : datePublished;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: `${broker.name} Review (2026)`,
+    description:
+      broker.tagline ||
+      `Honest review of ${broker.name}. Fees, pros, cons, and our verdict.`,
+    url: absoluteUrl(`/broker/${broker.slug}`),
+    datePublished,
+    dateModified,
+    author: {
+      "@type": "Person",
+      name: REVIEW_AUTHOR.name,
+      jobTitle: REVIEW_AUTHOR.jobTitle,
+      url: REVIEW_AUTHOR.url,
+      worksFor: {
+        "@type": "Organization",
+        name: SITE_NAME,
+        url: SITE_URL,
+      },
+    },
+    publisher: {
+      "@type": "Organization",
+      name: SITE_NAME,
+      url: SITE_URL,
+      logo: {
+        "@type": "ImageObject",
+        url: absoluteUrl("/icon.png"),
+      },
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": absoluteUrl(`/broker/${broker.slug}`),
+    },
+  };
+}

@@ -28,7 +28,25 @@ function getBestFor(b: Broker): string[] {
   return bestFor;
 }
 
-export default function BrokerReviewClient({ broker: b, similar }: { broker: Broker; similar: Broker[] }) {
+interface BrokerReviewProps {
+  broker: Broker;
+  similar: Broker[];
+  authorName?: string;
+  authorTitle?: string;
+  authorUrl?: string;
+  datePublished?: string | null;
+  dateModified?: string | null;
+}
+
+export default function BrokerReviewClient({
+  broker: b,
+  similar,
+  authorName,
+  authorTitle,
+  authorUrl,
+  datePublished,
+  dateModified,
+}: BrokerReviewProps) {
   const feeRows = [
     { label: 'ASX Brokerage', value: b.asx_fee || 'N/A', numVal: b.asx_fee_value, thresholds: [5, 15] as [number, number], verdict: b.asx_fee_value != null && b.asx_fee_value <= 5 ? 'Low' : b.asx_fee_value != null && b.asx_fee_value <= 15 ? 'Medium' : 'High' },
     { label: 'US Brokerage', value: b.us_fee || 'N/A', numVal: b.us_fee_value, thresholds: [0, 5] as [number, number], verdict: b.us_fee_value === 0 ? 'Free' : b.us_fee_value != null && b.us_fee_value <= 5 ? 'Low' : 'High' },
@@ -101,6 +119,36 @@ export default function BrokerReviewClient({ broker: b, similar }: { broker: Bro
           {ADVERTISER_DISCLOSURE_SHORT}
         </p>
 
+        {/* Author Byline & Dates — E-E-A-T visible signals */}
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 mb-4 pb-4 border-b border-slate-100">
+          {authorName && (
+            <span className="flex items-center gap-1.5">
+              <svg className="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+              Reviewed by{" "}
+              {authorUrl ? (
+                <a href={authorUrl} className="font-semibold text-slate-700 hover:text-green-700 transition-colors">
+                  {authorName}
+                </a>
+              ) : (
+                <span className="font-semibold text-slate-700">{authorName}</span>
+              )}
+              {authorTitle && <span className="text-slate-400">· {authorTitle}</span>}
+            </span>
+          )}
+          {datePublished && (
+            <span className="flex items-center gap-1.5">
+              <svg className="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+              Published: <span className="font-medium text-slate-600">{datePublished}</span>
+            </span>
+          )}
+          {dateModified && dateModified !== datePublished && (
+            <span className="flex items-center gap-1.5">
+              <svg className="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+              Updated: <span className="font-medium text-slate-600">{dateModified}</span>
+            </span>
+          )}
+        </div>
+
         {/* Deal banner */}
         {b.deal && b.deal_text && (
           <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
@@ -154,12 +202,16 @@ export default function BrokerReviewClient({ broker: b, similar }: { broker: Bro
           ))}
         </div>
 
-        {/* Sources & Verification */}
+        {/* Sources & Verification — E-E-A-T transparency signals */}
         <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 mb-8">
           <div className="flex items-center gap-2 mb-3">
             <span className="text-lg">📋</span>
             <h3 className="text-sm font-extrabold text-slate-700">Sources &amp; Verification</h3>
           </div>
+          <p className="text-xs text-slate-500 mb-3">
+            Our review is based on hands-on analysis of {b.name}&apos;s fee schedule, platform features, and regulatory status.
+            We cross-reference data from official pricing pages, Product Disclosure Statements (PDS), and ASIC registers.
+          </p>
           <div className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-slate-500">
             <span>
               Data verified:{" "}
@@ -201,6 +253,13 @@ export default function BrokerReviewClient({ broker: b, similar }: { broker: Bro
               </div>
             </details>
           )}
+          {/* Editorial independence notice */}
+          <div className="mt-3 pt-3 border-t border-slate-200">
+            <p className="text-[0.65rem] text-slate-400 leading-relaxed">
+              <strong className="text-slate-500">Editorial independence:</strong> Our ratings and rankings are determined by our editorial team using a standardised methodology. Affiliate partnerships may influence which brokers we review but never our ratings or recommendations.{" "}
+              <Link href="/how-we-verify" className="text-green-700 hover:underline">Read our full methodology →</Link>
+            </p>
+          </div>
         </div>
 
         {/* Real Cost Example */}
