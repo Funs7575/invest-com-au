@@ -203,11 +203,11 @@ export default async function ArticlePage({
       />
 
       {/* Hero Section */}
-      <section className="bg-white text-slate-900 py-16">
+      <section className="bg-white text-slate-900 pt-8 pb-10 border-b border-slate-200">
         <div className="container-custom">
           <div className={isEnhanced ? "max-w-5xl mx-auto" : "max-w-3xl mx-auto"}>
             {/* Breadcrumb */}
-            <div className="text-sm text-slate-500 mb-6">
+            <div className="text-sm text-slate-500 mb-4">
               <Link href="/" className="hover:text-green-700 transition-colors">
                 Home
               </Link>
@@ -223,7 +223,7 @@ export default async function ArticlePage({
             </div>
 
             {/* Badges */}
-            <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center gap-3 mb-3">
               {a.category && (
                 <span
                   className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${categoryColor}`}
@@ -253,7 +253,7 @@ export default async function ArticlePage({
             </div>
 
             {/* Title */}
-            <h1 className="text-3xl md:text-4xl font-extrabold mb-4 leading-tight">
+            <h1 className="text-3xl md:text-4xl font-extrabold mb-3 leading-tight">
               {a.title}
             </h1>
 
