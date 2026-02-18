@@ -193,23 +193,23 @@ export default function QuizPage() {
     return (
       <div className="py-12">
         <div className="container-custom max-w-2xl mx-auto">
-          <div className="text-center mb-8 motion-safe:result-card-in">
+          <div className="text-center mb-8 result-card-in">
             {/* Confetti burst + emoji */}
-            <div className="relative h-24 mb-4">
-              <div className="confetti-container motion-safe:confetti-active" aria-hidden="true">
-                {Array.from({ length: 20 }).map((_, i) => (
+            <div className="relative h-20 mb-2" aria-hidden="true">
+              <div className="confetti-container confetti-active">
+                {Array.from({ length: 24 }).map((_, i) => (
                   <span key={i} className="confetti-particle" style={{
-                    '--confetti-x': `${-50 + Math.random() * 100}px`,
-                    '--confetti-delay': `${i * 0.05}s`,
-                    '--confetti-fall': `${60 + Math.random() * 40}px`,
+                    '--confetti-x': `${-60 + Math.random() * 120}px`,
+                    '--confetti-delay': `${i * 0.04}s`,
+                    '--confetti-fall': `${50 + Math.random() * 50}px`,
                     '--confetti-rotate': `${Math.random() * 720 - 360}deg`,
-                    '--confetti-color': ['#15803d','#f59e0b','#fbbf24','#16a34a','#0f172a','#ef4444'][i % 6],
-                    left: `${10 + (i / 20) * 80}%`,
+                    '--confetti-color': ['#15803d','#f59e0b','#fbbf24','#16a34a','#ef4444','#6366f1'][i % 6],
+                    left: `${8 + (i / 24) * 84}%`,
                   } as React.CSSProperties} />
                 ))}
               </div>
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-5xl motion-safe:celebrate-emoji">🎉</span>
+                <span className="text-6xl celebrate-emoji">🎉</span>
               </div>
             </div>
             <h1 className="text-3xl font-extrabold mb-2">Your Shortlist</h1>
@@ -236,7 +236,7 @@ export default function QuizPage() {
           {/* Top Match */}
           {topMatch?.broker && (
             <div
-              className="border-2 rounded-xl p-8 mb-6 relative overflow-hidden motion-safe:result-card-in motion-safe:result-card-in-delay-1 shine-effect"
+              className="border-2 rounded-xl p-8 mb-6 relative overflow-hidden result-card-in result-card-in-delay-1 shine-effect"
               style={{
                 borderColor: topMatch.broker.color || '#f59e0b',
                 background: `linear-gradient(135deg, ${topMatch.broker.color}08 0%, ${topMatch.broker.color}15 100%)`,
@@ -249,12 +249,12 @@ export default function QuizPage() {
               />
               {/* Background glow */}
               <div
-                className="absolute inset-0 pointer-events-none motion-safe:top-card-glow"
-                style={{ background: `radial-gradient(ellipse at 50% 0%, ${topMatch.broker.color || '#f59e0b'}12 0%, transparent 70%)` }}
+                className="absolute inset-0 pointer-events-none top-card-glow"
+                style={{ background: `radial-gradient(ellipse at 50% 0%, ${topMatch.broker.color || '#f59e0b'}20 0%, transparent 70%)` }}
                 aria-hidden="true"
               />
               <div
-                className="text-[0.6rem] uppercase font-extrabold tracking-wider mb-4 inline-block px-3 py-1.5 rounded-full motion-safe:badge-pulse"
+                className="text-[0.6rem] uppercase font-extrabold tracking-wider mb-4 inline-block px-3 py-1.5 rounded-full badge-pulse"
                 style={{
                   color: topMatch.broker.color || '#b45309',
                   background: `${topMatch.broker.color || '#f59e0b'}20`,
@@ -326,7 +326,7 @@ export default function QuizPage() {
 
           {/* Quick Comparison Table */}
           {allResults.length > 1 && (
-            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden mb-6 motion-safe:result-card-in motion-safe:result-card-in-delay-2">
+            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden mb-6 result-card-in result-card-in-delay-2">
               <div className="px-4 py-3 bg-slate-50 border-b border-slate-200">
                 <h3 className="text-sm font-bold text-slate-700">Quick Comparison</h3>
               </div>
@@ -385,7 +385,7 @@ export default function QuizPage() {
           )}
 
           {/* Scoring Transparency */}
-          <div className="mb-6 motion-safe:result-card-in motion-safe:result-card-in-delay-3">
+          <div className="mb-6 result-card-in result-card-in-delay-3">
             <button
               onClick={() => setShowScoring(!showScoring)}
               className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-100 transition-colors"
@@ -445,12 +445,12 @@ export default function QuizPage() {
           {/* Runner Ups */}
           {runnerUps.length > 0 && (
             <>
-              <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wide mb-3 motion-safe:result-card-in motion-safe:result-card-in-delay-3">Also Worth Considering</h3>
+              <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wide mb-3 result-card-in result-card-in-delay-3">Also Worth Considering</h3>
               <div className="space-y-3 mb-6">
                 {runnerUps.map((r, i) => r.broker && (
                   <div
                     key={r.slug}
-                    className={`border border-slate-200 rounded-xl p-4 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg motion-safe:result-card-in motion-safe:result-card-in-delay-${i + 4}`}
+                    className={`border border-slate-200 rounded-xl p-4 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg result-card-in result-card-in-delay-${i + 4}`}
                     style={{ borderLeftWidth: '4px', borderLeftColor: r.broker.color || '#e2e8f0' }}
                   >
                     <div className="flex items-center gap-3">
@@ -504,7 +504,7 @@ export default function QuizPage() {
           <CompactDisclaimerLine />
 
           {/* Bottom CTA card */}
-          <div className="bg-amber-400 text-slate-900 rounded-xl p-6 mb-6 text-center motion-safe:result-card-in motion-safe:result-card-in-delay-5">
+          <div className="bg-amber-400 text-slate-900 rounded-xl p-6 mb-6 text-center result-card-in result-card-in-delay-5">
             <h3 className="text-lg font-bold mb-1">Still not sure?</h3>
             <p className="text-sm text-slate-700 mb-4">Compare all brokers side-by-side or read our detailed reviews.</p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -554,25 +554,25 @@ export default function QuizPage() {
     return (
       <div className="py-12">
         <div className="container-custom max-w-2xl mx-auto">
-          <div className="flex flex-col items-center justify-center min-h-[40vh] motion-safe:reveal-screen-in">
+          <div className="flex flex-col items-center justify-center min-h-[40vh] reveal-screen-in">
             {/* Animated analyzing spinner */}
             <div className="relative w-16 h-16 mb-6">
               <div className="absolute inset-0 rounded-full border-4 border-slate-200" />
-              <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-green-700 motion-safe:analyzing-ring-spin" />
+              <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-green-700 analyzing-ring-spin" />
             </div>
 
-            <h2 className="text-xl font-bold mb-2 motion-safe:reveal-text-in">
+            <h2 className="text-xl font-bold mb-2 reveal-text-in">
               Analyzing your answers...
             </h2>
-            <p className="text-slate-500 text-sm motion-safe:reveal-text-in-delay">
+            <p className="text-slate-500 text-sm reveal-text-in-delay">
               Matching you with the best brokers
             </p>
 
             {/* Animated progress dots */}
             <div className="flex gap-2 mt-6">
-              <span className="w-2 h-2 rounded-full bg-green-700 motion-safe:analyzing-dot-1" />
-              <span className="w-2 h-2 rounded-full bg-green-700 motion-safe:analyzing-dot-2" />
-              <span className="w-2 h-2 rounded-full bg-green-700 motion-safe:analyzing-dot-3" />
+              <span className="w-2 h-2 rounded-full bg-green-700 analyzing-dot-1" />
+              <span className="w-2 h-2 rounded-full bg-green-700 analyzing-dot-2" />
+              <span className="w-2 h-2 rounded-full bg-green-700 analyzing-dot-3" />
             </div>
           </div>
         </div>
@@ -616,7 +616,7 @@ export default function QuizPage() {
           </div>
         </div>
 
-        <div key={step} className="motion-safe:quiz-question-enter">
+        <div key={step} className="quiz-question-enter">
           <h1 className="text-2xl md:text-3xl font-extrabold mb-8 mt-6">{current.question_text}</h1>
 
           <div className="space-y-3">
@@ -634,7 +634,7 @@ export default function QuizPage() {
               >
                 <span className="flex items-center gap-3">
                   {selectedKey === opt.key && (
-                    <svg className="w-5 h-5 text-green-600 shrink-0 motion-safe:check-pop" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 text-green-600 shrink-0 check-pop" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                     </svg>
                   )}

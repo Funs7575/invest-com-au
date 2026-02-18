@@ -265,7 +265,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
           <>
             {/* ─── Winner Banner ─── */}
             <div
-              className="rounded-2xl p-6 md:p-8 flex flex-col sm:flex-row items-start sm:items-center gap-5 mb-2 relative overflow-hidden motion-safe:result-card-in"
+              className="rounded-2xl p-6 md:p-8 flex flex-col sm:flex-row items-start sm:items-center gap-5 mb-2 relative overflow-hidden result-card-in"
               style={{ background: `linear-gradient(135deg, ${overallWinner.color}ee, ${overallWinner.color}bb)` }}
             >
               {/* Subtle pattern */}
