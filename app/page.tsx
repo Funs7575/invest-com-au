@@ -94,10 +94,10 @@ export default async function HomePage() {
       {/* Hero Section */}
       <section className="bg-white py-16">
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <h1 className="text-4xl font-extrabold text-green-950">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-green-950">
             Compare {brokerCount}+ Australian Investment Platforms
           </h1>
-          <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="mt-4 text-xl text-gray-600 max-w-2xl mx-auto">
             Stop overpaying. We tracked the hidden fees of every
             ASIC-regulated broker.
           </p>

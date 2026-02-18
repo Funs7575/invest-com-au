@@ -55,7 +55,7 @@ export default function Footer() {
 
       {/* Footer Links */}
       <div className="container-custom py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           <div>
             <h3 className="text-white font-bold mb-4">Invest.com.au</h3>
             <p className="text-sm">

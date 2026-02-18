@@ -90,7 +90,7 @@ export default function HomepageComparisonTable({
       </div>
 
       {/* Desktop Table */}
-      <div className="hidden md:block overflow-x-auto">
+      <div key={activeTab} className="hidden md:block overflow-x-auto motion-safe:tab-content-enter">
         <table className="w-full border border-slate-200 rounded-xl overflow-hidden">
           <thead className="bg-slate-50">
             <tr>
@@ -177,7 +177,7 @@ export default function HomepageComparisonTable({
       </div>
 
       {/* Mobile Cards — horizontal snap scroll */}
-      <div className="md:hidden flex gap-3 overflow-x-auto snap-x-proximity pb-4 -mx-4 px-4">
+      <div key={`mobile-${activeTab}`} className="md:hidden flex gap-3 overflow-x-auto snap-x-proximity pb-4 -mx-4 px-4 motion-safe:tab-content-enter">
         {displayBrokers.map((broker, i) => (
           <div
             key={broker.id}

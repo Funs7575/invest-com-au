@@ -207,7 +207,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
         {allSelected && overallWinner && (
           <>
             {/* Winner Banner */}
-            <div className="rounded-xl p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-2" style={{ background: "linear-gradient(135deg, #f59e0b, #d97706)" }}>
+            <div className="rounded-xl p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4 mb-2 motion-safe:result-card-in winner-pulse" style={{ background: "linear-gradient(135deg, #f59e0b, #d97706)" }}>
               <div
                 className="w-14 h-14 rounded-xl flex items-center justify-center text-lg font-extrabold shrink-0"
                 style={{ background: `${overallWinner.color}30` }}

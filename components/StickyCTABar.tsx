@@ -18,7 +18,7 @@ export default function StickyCTABar({ broker, detail, context = 'review' }: { b
 
   return (
     <div
-      className={`fixed bottom-0 left-0 right-0 z-50 bg-amber-500 border-t border-amber-600/30 shadow-lg transition-transform duration-300 ${
+      className={`fixed bottom-0 left-0 right-0 z-50 bg-amber-500 border-t border-amber-600/30 shadow-lg bounce-in-up ${
         visible ? 'translate-y-0' : 'translate-y-full'
       }`}
     >

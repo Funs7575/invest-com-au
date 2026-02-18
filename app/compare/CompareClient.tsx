@@ -247,7 +247,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         </div>
 
         {/* Desktop Table */}
-        <div className="hidden md:block overflow-x-auto">
+        <div key={`${activeFilter}-${searchQuery}`} className="hidden md:block overflow-x-auto motion-safe:tab-content-enter">
           <table className="w-full border border-slate-200 rounded-lg">
             <thead className="bg-slate-50">
               <tr>
@@ -349,7 +349,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         </div>
 
         {/* Mobile Cards */}
-        <div className="md:hidden space-y-4">
+        <div key={`mobile-${activeFilter}-${searchQuery}`} className="md:hidden space-y-4 motion-safe:tab-content-enter">
           {sorted.map(broker => (
             <BrokerCard
               key={broker.id}
@@ -361,7 +361,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         </div>
 
         {selected.size >= 2 && (
-          <div className="fixed bottom-0 left-0 right-0 z-40 bg-green-700 text-white py-3 shadow-lg">
+          <div className="fixed bottom-0 left-0 right-0 z-40 bg-green-700 text-white py-3 shadow-lg bounce-in-up">
             <div className="container-custom flex items-center justify-between">
               <span className="text-sm font-semibold">
                 {selected.size}/4 brokers selected

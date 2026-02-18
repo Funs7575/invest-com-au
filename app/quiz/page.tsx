@@ -180,8 +180,8 @@ export default function QuizPage() {
     return (
       <div className="py-12">
         <div className="container-custom max-w-2xl mx-auto">
-          <div className="text-center mb-8">
-            <div className="text-5xl mb-4">🎉</div>
+          <div className="text-center mb-8 motion-safe:result-card-in">
+            <div className="text-5xl mb-4 motion-safe:celebrate-emoji">🎉</div>
             <h1 className="text-3xl font-extrabold mb-2">Your Shortlist</h1>
             <p className="text-slate-600">Based on your answers, these brokers scored highest on your selected criteria.</p>
             <div className="flex items-center justify-center gap-1.5 mt-3 text-xs text-slate-400">
@@ -203,7 +203,7 @@ export default function QuizPage() {
           {/* Top Match */}
           {topMatch?.broker && (
             <div
-              className="border-2 rounded-xl p-8 mb-6 relative overflow-hidden"
+              className="border-2 rounded-xl p-8 mb-6 relative overflow-hidden motion-safe:result-card-in motion-safe:result-card-in-delay-1 shine-effect"
               style={{
                 borderColor: topMatch.broker.color || '#f59e0b',
                 background: `linear-gradient(135deg, ${topMatch.broker.color}08 0%, ${topMatch.broker.color}15 100%)`,
@@ -282,7 +282,7 @@ export default function QuizPage() {
 
           {/* Quick Comparison Table */}
           {allResults.length > 1 && (
-            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden mb-6">
+            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden mb-6 motion-safe:result-card-in motion-safe:result-card-in-delay-2">
               <div className="px-4 py-3 bg-slate-50 border-b border-slate-200">
                 <h3 className="text-sm font-bold text-slate-700">Quick Comparison</h3>
               </div>
@@ -344,12 +344,12 @@ export default function QuizPage() {
           {/* Runner Ups */}
           {runnerUps.length > 0 && (
             <>
-              <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wide mb-3">Also Worth Considering</h3>
+              <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wide mb-3 motion-safe:result-card-in motion-safe:result-card-in-delay-3">Also Worth Considering</h3>
               <div className="space-y-3 mb-6">
                 {runnerUps.map((r, i) => r.broker && (
                   <div
                     key={r.slug}
-                    className="border border-slate-200 rounded-xl p-4 hover:shadow-md transition-shadow"
+                    className={`border border-slate-200 rounded-xl p-4 hover:shadow-md transition-shadow motion-safe:result-card-in motion-safe:result-card-in-delay-${i + 4}`}
                     style={{ borderLeftWidth: '4px', borderLeftColor: r.broker.color || '#e2e8f0' }}
                   >
                     <div className="flex items-center gap-3">
@@ -398,7 +398,7 @@ export default function QuizPage() {
           )}
 
           {/* Bottom CTA card */}
-          <div className="bg-amber-400 text-slate-900 rounded-xl p-6 mb-6 text-center">
+          <div className="bg-amber-400 text-slate-900 rounded-xl p-6 mb-6 text-center motion-safe:result-card-in motion-safe:result-card-in-delay-5">
             <h3 className="text-lg font-bold mb-1">Still not sure?</h3>
             <p className="text-sm text-slate-700 mb-4">Compare all brokers side-by-side or read our detailed reviews.</p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -497,7 +497,7 @@ export default function QuizPage() {
               >
                 <span className="flex items-center gap-3">
                   {selectedKey === opt.key && (
-                    <svg className="w-5 h-5 text-green-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 text-green-600 shrink-0 motion-safe:check-pop" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                     </svg>
                   )}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 const BROKER_NAMES = [
   "Stake", "SelfWealth", "CommSec", "CMC Markets", "Moomoo",
@@ -37,6 +37,7 @@ function generateNotification() {
 export default function SocialProofToast() {
   const [notification, setNotification] = useState<{ text: string; minutesAgo: number } | null>(null);
   const [visible, setVisible] = useState(false);
+  const [exiting, setExiting] = useState(false);
 
   useEffect(() => {
     // Don't show on admin pages
@@ -52,9 +53,13 @@ export default function SocialProofToast() {
       setNotification(notif);
       setVisible(true);
 
-      // Auto-hide after 5 seconds
+      // Auto-hide after 5 seconds with exit animation
       setTimeout(() => {
-        setVisible(false);
+        setExiting(true);
+        setTimeout(() => {
+          setVisible(false);
+          setExiting(false);
+        }, 400);
       }, 5000);
     };
 
@@ -83,7 +88,7 @@ export default function SocialProofToast() {
   if (!notification || !visible) return null;
 
   return (
-    <div className="fixed bottom-20 left-4 z-50 animate-in slide-in-from-left fade-in duration-500 max-w-xs">
+    <div className={`fixed bottom-20 left-4 z-50 max-w-xs ${exiting ? 'toast-slide-out' : 'animate-in slide-in-from-left fade-in duration-500'}`}>
       <div className="bg-white rounded-xl shadow-lg border border-slate-200 p-3 flex items-start gap-3">
         <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center shrink-0">
           <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
@@ -96,7 +101,11 @@ export default function SocialProofToast() {
         </div>
         <button
           onClick={() => {
-            setVisible(false);
+            setExiting(true);
+            setTimeout(() => {
+              setVisible(false);
+              setExiting(false);
+            }, 400);
             sessionStorage.setItem("socialProofDismissed", "true");
           }}
           className="shrink-0 text-slate-300 hover:text-slate-500 transition-colors"
