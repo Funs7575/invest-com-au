@@ -277,8 +277,8 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                 return (
                   <div
                     key={br.slug}
-                    className={`relative rounded-2xl p-4 text-center transition-all ${isWinner ? 'ring-2 shadow-md' : 'border border-slate-200'}`}
-                    style={isWinner ? { ringColor: br.color, borderColor: br.color, background: `${br.color}08` } : {}}
+                    className={`relative rounded-2xl p-4 text-center transition-all ${isWinner ? 'shadow-md' : 'border border-slate-200'}`}
+                    style={isWinner ? { outline: `2px solid ${br.color}`, outlineOffset: '-1px', background: `${br.color}08` } : {}}
                   >
                     {isWinner && (
                       <div className="absolute -top-2.5 left-1/2 -translate-x-1/2">
@@ -404,8 +404,8 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                   return (
                     <div
                       key={br.slug}
-                      className={`rounded-2xl overflow-hidden border transition-shadow hover:shadow-md ${isWinner ? 'ring-2' : 'border-slate-200'}`}
-                      style={isWinner ? { ringColor: br.color, borderColor: br.color } : {}}
+                      className={`rounded-2xl overflow-hidden transition-shadow hover:shadow-md ${isWinner ? '' : 'border border-slate-200'}`}
+                      style={isWinner ? { outline: `2px solid ${br.color}`, outlineOffset: '-1px' } : {}}
                     >
                       {/* Broker header */}
                       <div className="px-5 py-4 flex items-center gap-3" style={{ background: `${br.color}10` }}>
