@@ -64,6 +64,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
       if (next.has(slug)) {
         next.delete(slug);
       } else {
+        if (next.size >= 4) return prev; // cap at 4
         next.add(slug);
         trackEvent('compare_select', { broker: slug }, '/compare');
       }
@@ -297,8 +298,9 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                     <input
                       type="checkbox"
                       checked={selected.has(broker.slug)}
+                      disabled={!selected.has(broker.slug) && selected.size >= 4}
                       onChange={() => toggleSelected(broker.slug)}
-                      className="w-4 h-4 accent-green-700 rounded"
+                      className="w-4 h-4 accent-green-700 rounded disabled:opacity-40 disabled:cursor-not-allowed"
                       aria-label={`Select ${broker.name} for comparison`}
                     />
                   </td>
@@ -362,10 +364,10 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           <div className="fixed bottom-0 left-0 right-0 z-40 bg-green-700 text-white py-3 shadow-lg">
             <div className="container-custom flex items-center justify-between">
               <span className="text-sm font-semibold">
-                {selected.size} brokers selected{selected.size > 4 ? ' (max 4)' : ''}
+                {selected.size}/4 brokers selected
               </span>
               <Link
-                href={`/versus?vs=${Array.from(selected).slice(0, 4).join(',')}`}
+                href={`/versus?vs=${Array.from(selected).join(',')}`}
                 className="px-5 py-2 bg-white text-green-700 font-bold text-sm rounded-lg hover:bg-green-50 transition-colors"
               >
                 Compare Side-by-Side →
