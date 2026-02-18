@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import type { Broker, TeamMember } from "@/lib/types";
+import type { Broker } from "@/lib/types";
 import { notFound } from "next/navigation";
 import BrokerReviewClient from "./BrokerReviewClient";
 import {
@@ -53,7 +53,7 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
 
   const { data: broker } = await supabase
     .from('brokers')
-    .select('*, reviewer:team_members!reviewer_id(*)')
+    .select('*')
     .eq('slug', slug)
     .eq('status', 'active')
     .single();
@@ -61,7 +61,6 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
   if (!broker) notFound();
 
   const b = broker as Broker;
-  const brokerReviewer = (b as any).reviewer as TeamMember | null;
 
   // Fetch similar brokers (same crypto/non-crypto type, closest by rating)
   const { data: similar } = await supabase
@@ -74,8 +73,8 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
     .limit(3);
 
   // JSON-LD structured data — FinancialProduct + Review + Article + Breadcrumb
-  const financialProductLd = brokerReviewJsonLd(b, brokerReviewer ?? undefined);
-  const articleLd = reviewArticleJsonLd(b, brokerReviewer ?? undefined);
+  const financialProductLd = brokerReviewJsonLd(b);
+  const articleLd = reviewArticleJsonLd(b);
   const breadcrumbLd = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
     { name: "Reviews", url: absoluteUrl("/reviews") },
@@ -107,9 +106,9 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
       <BrokerReviewClient
         broker={b}
         similar={(similar as Broker[]) || []}
-        authorName={brokerReviewer?.full_name || REVIEW_AUTHOR.name}
+        authorName={REVIEW_AUTHOR.name}
         authorTitle={REVIEW_AUTHOR.jobTitle}
-        authorUrl={brokerReviewer ? `/reviewers/${brokerReviewer.slug}` : REVIEW_AUTHOR.url}
+        authorUrl={REVIEW_AUTHOR.url}
         datePublished={datePublished}
         dateModified={dateModified}
       />

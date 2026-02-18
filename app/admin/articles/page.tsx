@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import AdminShell from "@/components/AdminShell";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { useToast } from "@/components/Toast";
-import type { Article, TeamMember } from "@/lib/types";
+import type { Article } from "@/lib/types";
 
 const PAGE_SIZE = 15;
 
@@ -18,7 +18,6 @@ export default function AdminArticlesPage() {
   const [page, setPage] = useState(0);
   const [deleteTarget, setDeleteTarget] = useState<Article | null>(null);
   const [statusFilter, setStatusFilter] = useState<"all" | "published" | "draft">("all");
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
 
   const supabase = createClient();
   const { toast } = useToast();
@@ -28,12 +27,7 @@ export default function AdminArticlesPage() {
     if (data) setArticles(data);
   };
 
-  const loadTeamMembers = async () => {
-    const { data } = await supabase.from("team_members").select("*").eq("status", "active").order("full_name");
-    if (data) setTeamMembers(data);
-  };
-
-  useEffect(() => { load(); loadTeamMembers(); }, []);
+  useEffect(() => { load(); }, []);
 
   const handleSave = async (formData: FormData) => {
     const title = formData.get("title") as string;
@@ -84,15 +78,6 @@ export default function AdminArticlesPage() {
       author_title: formData.get("author_title") || null,
       author_linkedin: formData.get("author_linkedin") || null,
       author_twitter: formData.get("author_twitter") || null,
-      author_id: formData.get("author_id") ? Number(formData.get("author_id")) : null,
-      reviewer_id: formData.get("reviewer_id") ? Number(formData.get("reviewer_id")) : null,
-      reviewed_at: formData.get("reviewed_at") || null,
-      changelog: (() => {
-        try {
-          const raw = formData.get("changelog") as string;
-          return raw ? JSON.parse(raw) : (editing as any)?.changelog || [];
-        } catch { return (editing as any)?.changelog || []; }
-      })(),
     };
 
     try {
@@ -239,60 +224,24 @@ export default function AdminArticlesPage() {
             </div>
           </div>
 
-          {/* Author/Reviewer (structured — from team_members) */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Author (Team Member)</label>
-              <select name="author_id" defaultValue={formArticle.author_id?.toString() || ""} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30">
-                <option value="">None (use legacy fields)</option>
-                {teamMembers.filter(m => m.role !== 'expert_reviewer').map(m => (
-                  <option key={m.id} value={m.id}>{m.full_name} ({m.role.replace('_', ' ')})</option>
-                ))}
-              </select>
+              <label className="block text-xs font-medium text-slate-500 mb-1">Author Name</label>
+              <input name="author_name" defaultValue={formArticle.author_name} placeholder="Market Research Team" className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Reviewer (Team Member)</label>
-              <select name="reviewer_id" defaultValue={formArticle.reviewer_id?.toString() || ""} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30">
-                <option value="">None</option>
-                {teamMembers.map(m => (
-                  <option key={m.id} value={m.id}>{m.full_name} ({m.role.replace('_', ' ')})</option>
-                ))}
-              </select>
+              <label className="block text-xs font-medium text-slate-500 mb-1">Author Title</label>
+              <input name="author_title" defaultValue={formArticle.author_title} placeholder="Invest.com.au" className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Reviewed At</label>
-              <input name="reviewed_at" type="date" defaultValue={formArticle.reviewed_at ? new Date(formArticle.reviewed_at).toISOString().split('T')[0] : ""} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
+              <label className="block text-xs font-medium text-slate-500 mb-1">Author LinkedIn URL</label>
+              <input name="author_linkedin" defaultValue={formArticle.author_linkedin} placeholder="https://linkedin.com/in/..." className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-slate-500 mb-1">Author Twitter URL</label>
+              <input name="author_twitter" defaultValue={formArticle.author_twitter} placeholder="https://x.com/..." className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
             </div>
           </div>
-
-          {/* Changelog */}
-          <div>
-            <label className="block text-xs font-medium text-slate-500 mb-1">Changelog (JSON array)</label>
-            <textarea name="changelog" defaultValue={formArticle.changelog ? JSON.stringify(formArticle.changelog, null, 2) : "[]"} rows={3} placeholder='[{"date": "2026-02-18", "summary": "Updated fee data for all brokers"}]' className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-green-700/30" />
-          </div>
-
-          {/* Legacy author fields */}
-          <details className="border border-slate-100 rounded-lg">
-            <summary className="px-3 py-2 text-xs font-medium text-slate-400 cursor-pointer hover:text-slate-600">Legacy Author Fields (flat text — used when no team member selected)</summary>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-3">
-              <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Author Name</label>
-                <input name="author_name" defaultValue={formArticle.author_name} placeholder="Market Research Team" className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Author Title</label>
-                <input name="author_title" defaultValue={formArticle.author_title} placeholder="Invest.com.au" className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Author LinkedIn URL</label>
-                <input name="author_linkedin" defaultValue={formArticle.author_linkedin} placeholder="https://linkedin.com/in/..." className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Author Twitter URL</label>
-                <input name="author_twitter" defaultValue={formArticle.author_twitter} placeholder="https://x.com/..." className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
-              </div>
-            </div>
-          </details>
 
           <label className="flex items-center gap-2 cursor-pointer">
             <input type="checkbox" name="evergreen" defaultChecked={formArticle.evergreen} className="w-4 h-4 rounded bg-slate-200 border-slate-300" />

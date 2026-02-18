@@ -1,5 +1,3 @@
-import type { TeamMember } from "./types";
-
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app";
 
@@ -43,92 +41,6 @@ export const REVIEW_AUTHOR = {
 
 export const REVIEW_METHODOLOGY_URL = absoluteUrl("/how-we-verify");
 
-/* ─── E-E-A-T: Role formatting ─── */
-
-const ROLE_LABELS: Record<string, string> = {
-  contributor: "Contributor",
-  staff_writer: "Staff Writer",
-  editor: "Editor",
-  expert_reviewer: "Expert Reviewer",
-};
-
-export function formatRole(role: string): string {
-  return ROLE_LABELS[role] || role;
-}
-
-/* ─── E-E-A-T: ProfilePage JSON-LD for author/reviewer profile pages ─── */
-
-export function profilePageJsonLd(member: TeamMember, pathPrefix: "authors" | "reviewers" = "authors") {
-  const sameAs: string[] = [];
-  if (member.linkedin_url) sameAs.push(member.linkedin_url);
-  if (member.twitter_url) sameAs.push(member.twitter_url);
-  if (member.publications?.length) {
-    member.publications.forEach((p) => sameAs.push(p.url));
-  }
-
-  return {
-    "@context": "https://schema.org",
-    "@type": "ProfilePage",
-    mainEntity: {
-      "@type": "Person",
-      name: member.full_name,
-      url: absoluteUrl(`/${pathPrefix}/${member.slug}`),
-      jobTitle: formatRole(member.role),
-      description: member.short_bio || undefined,
-      ...(sameAs.length ? { sameAs } : {}),
-      ...(member.credentials?.length
-        ? { knowsAbout: member.credentials }
-        : {}),
-      worksFor: {
-        "@type": "Organization",
-        name: SITE_NAME,
-        url: SITE_URL,
-      },
-    },
-  };
-}
-
-/* ─── E-E-A-T: Person block for Article JSON-LD author field ─── */
-
-export function articleAuthorJsonLd(member: TeamMember) {
-  const sameAs: string[] = [];
-  if (member.linkedin_url) sameAs.push(member.linkedin_url);
-  if (member.twitter_url) sameAs.push(member.twitter_url);
-
-  return {
-    "@type": "Person",
-    name: member.full_name,
-    url: absoluteUrl(`/authors/${member.slug}`),
-    jobTitle: formatRole(member.role),
-    ...(sameAs.length ? { sameAs } : {}),
-    worksFor: {
-      "@type": "Organization",
-      name: SITE_NAME,
-      url: SITE_URL,
-    },
-  };
-}
-
-/* ─── E-E-A-T: Person block for reviewer in Review JSON-LD ─── */
-
-export function reviewerPersonJsonLd(member: TeamMember) {
-  const sameAs: string[] = [];
-  if (member.linkedin_url) sameAs.push(member.linkedin_url);
-
-  return {
-    "@type": "Person",
-    name: member.full_name,
-    url: absoluteUrl(`/reviewers/${member.slug}`),
-    jobTitle: formatRole(member.role),
-    ...(sameAs.length ? { sameAs } : {}),
-    worksFor: {
-      "@type": "Organization",
-      name: SITE_NAME,
-      url: SITE_URL,
-    },
-  };
-}
-
 /**
  * Build FinancialProduct + Review JSON-LD for a broker review page.
  * Follows Google's review snippet guidelines for YMYL content.
@@ -146,7 +58,7 @@ export function brokerReviewJsonLd(broker: {
   pros?: string[];
   cons?: string[];
   fee_verified_date?: string;
-}, reviewer?: TeamMember) {
+}) {
   const datePublished = broker.created_at
     ? new Date(broker.created_at).toISOString().split("T")[0]
     : "2025-01-01";
@@ -192,19 +104,17 @@ export function brokerReviewJsonLd(broker: {
       : {}),
     review: {
       "@type": "Review",
-      author: reviewer
-        ? reviewerPersonJsonLd(reviewer)
-        : {
-            "@type": "Person",
-            name: REVIEW_AUTHOR.name,
-            jobTitle: REVIEW_AUTHOR.jobTitle,
-            url: REVIEW_AUTHOR.url,
-            worksFor: {
-              "@type": "Organization",
-              name: SITE_NAME,
-              url: SITE_URL,
-            },
-          },
+      author: {
+        "@type": "Person",
+        name: REVIEW_AUTHOR.name,
+        jobTitle: REVIEW_AUTHOR.jobTitle,
+        url: REVIEW_AUTHOR.url,
+        worksFor: {
+          "@type": "Organization",
+          name: SITE_NAME,
+          url: SITE_URL,
+        },
+      },
       publisher: {
         "@type": "Organization",
         name: SITE_NAME,
@@ -240,27 +150,13 @@ export function reviewArticleJsonLd(broker: {
   tagline?: string;
   updated_at: string;
   created_at: string;
-}, reviewer?: TeamMember) {
+}) {
   const datePublished = broker.created_at
     ? new Date(broker.created_at).toISOString().split("T")[0]
     : "2025-01-01";
   const dateModified = broker.updated_at
     ? new Date(broker.updated_at).toISOString().split("T")[0]
     : datePublished;
-
-  const authorBlock = reviewer
-    ? reviewerPersonJsonLd(reviewer)
-    : {
-        "@type": "Person",
-        name: REVIEW_AUTHOR.name,
-        jobTitle: REVIEW_AUTHOR.jobTitle,
-        url: REVIEW_AUTHOR.url,
-        worksFor: {
-          "@type": "Organization",
-          name: SITE_NAME,
-          url: SITE_URL,
-        },
-      };
 
   return {
     "@context": "https://schema.org",
@@ -272,7 +168,17 @@ export function reviewArticleJsonLd(broker: {
     url: absoluteUrl(`/broker/${broker.slug}`),
     datePublished,
     dateModified,
-    author: authorBlock,
+    author: {
+      "@type": "Person",
+      name: REVIEW_AUTHOR.name,
+      jobTitle: REVIEW_AUTHOR.jobTitle,
+      url: REVIEW_AUTHOR.url,
+      worksFor: {
+        "@type": "Organization",
+        name: SITE_NAME,
+        url: SITE_URL,
+      },
+    },
     publisher: {
       "@type": "Organization",
       name: SITE_NAME,

@@ -1,20 +1,3 @@
-export interface TeamMember {
-  id: number;
-  slug: string;
-  full_name: string;
-  role: 'contributor' | 'staff_writer' | 'editor' | 'expert_reviewer';
-  short_bio?: string;
-  credentials?: string[];
-  disclosure?: string;
-  linkedin_url?: string;
-  twitter_url?: string;
-  publications?: { name: string; url: string }[];
-  avatar_url?: string;
-  status: string;
-  created_at: string;
-  updated_at: string;
-}
-
 export interface Broker {
   id: number;
   name: string;
@@ -61,9 +44,6 @@ export interface Broker {
   fee_changelog?: { date: string; field: string; old_value: string; new_value: string }[];
   fee_last_checked?: string;
   fee_page_hash?: string;
-  reviewer_id?: number;
-  reviewer?: TeamMember;
-  reviewed_at?: string;
   created_at: string;
   updated_at: string;
 }
@@ -87,12 +67,6 @@ export interface Article {
   author_title?: string;
   author_linkedin?: string;
   author_twitter?: string;
-  author_id?: number;
-  author?: TeamMember;
-  reviewer_id?: number;
-  reviewer?: TeamMember;
-  reviewed_at?: string;
-  changelog?: { date: string; summary: string }[];
   created_at: string;
   updated_at: string;
 }
