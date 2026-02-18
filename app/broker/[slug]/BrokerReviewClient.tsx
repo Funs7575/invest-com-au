@@ -438,9 +438,9 @@ export default function BrokerReviewClient({
         )}
 
         {/* Bottom CTA */}
-        <div className="bg-slate-900 text-white rounded-xl p-8 text-center">
+        <div className="bg-amber-400 text-slate-900 rounded-xl p-8 text-center">
           <h2 className="text-2xl font-extrabold mb-2">Ready to try {b.name}?</h2>
-          <p className="text-slate-300 mb-4">
+          <p className="text-slate-700 mb-4">
             {b.deal_text || ((b.asx_fee_value ?? 999) <= 5
               ? `Start trading from just ${b.asx_fee} per trade. Takes under 5 minutes.`
               : 'Open an account and start trading in minutes.')}
@@ -450,12 +450,12 @@ export default function BrokerReviewClient({
             target="_blank"
             rel={AFFILIATE_REL}
             onClick={() => trackClick(b.slug, b.name, 'review-bottom', `/broker/${b.slug}`, 'review')}
-            className="inline-block px-8 py-3.5 bg-green-700 text-white font-bold rounded-lg hover:bg-green-600 hover:shadow-lg transition-all active:scale-[0.98] text-lg"
+            className="inline-block px-8 py-3.5 bg-slate-900 text-white font-bold rounded-lg hover:bg-slate-800 hover:shadow-lg transition-all active:scale-[0.98] text-lg"
           >
             {getBenefitCta(b, 'review')}
           </a>
           <RiskWarningInline />
-          <p className="text-xs text-slate-500 mt-3">{ADVERTISER_DISCLOSURE_SHORT}</p>
+          <p className="text-xs text-slate-600 mt-3">{ADVERTISER_DISCLOSURE_SHORT}</p>
         </div>
 
         {/* Not convinced? Quiz prompt */}
