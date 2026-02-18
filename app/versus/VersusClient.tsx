@@ -165,14 +165,14 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
 
         {/* ───── SELECTORS ───── */}
         <div className="bg-white border border-slate-200 rounded-2xl p-4 md:p-6 mb-8 shadow-sm">
-          <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-end flex-wrap">
+          <div className="flex flex-col md:flex-row gap-3 md:gap-8 items-stretch md:items-end flex-wrap">
             {selectedSlugs.map((slug, index) => {
               const broker = brokers.find(br => br.slug === slug);
               return (
                 <div key={index} className="flex-1 min-w-[180px] relative">
                   {/* VS divider between selectors */}
                   {index > 0 && (
-                    <div className="hidden md:flex absolute -left-6 bottom-3 z-10">
+                    <div className="hidden md:flex absolute -left-8 bottom-3 z-10 pointer-events-none">
                       <span className="w-8 h-8 rounded-full bg-slate-900 text-white text-[0.6rem] font-extrabold flex items-center justify-center shadow-md">VS</span>
                     </div>
                   )}
@@ -265,10 +265,10 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                 >
                   {getBenefitCta(overallWinner, "versus")}
                 </a>
-                <RiskWarningInline />
+                <RiskWarningInline variant="dark" />
               </div>
             </div>
-            <p className="text-[0.65rem] text-slate-400 mb-8">{ADVERTISER_DISCLOSURE_SHORT}</p>
+            <p className="text-[0.65rem] text-slate-500 mb-8">{ADVERTISER_DISCLOSURE_SHORT}</p>
 
             {/* ─── Score Cards ─── */}
             <div className={`grid grid-cols-2 ${gridCols} gap-3 mb-8`}>

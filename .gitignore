@@ -35,3 +35,16 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Large data files
+chat-transcript.jsonl
+*.jsonl
+
+# Screenshots
+Screenshot *.png
+
+# Misc non-project files
+*.html
+broker-comparison-*-admin
+untitled folder*/
+index copy*.html
