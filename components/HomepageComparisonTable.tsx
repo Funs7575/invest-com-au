@@ -91,7 +91,7 @@ export default function HomepageComparisonTable({
 
       {/* Desktop Table */}
       <div key={activeTab} className="hidden md:block overflow-x-auto motion-safe:tab-content-enter">
-        <table className="w-full border border-slate-200 rounded-xl overflow-hidden">
+        <table className="w-full border border-slate-200 rounded-xl overflow-hidden compare-table">
           <thead className="bg-slate-50">
             <tr>
               <th className="px-3 py-3 text-left font-semibold text-xs text-slate-500 w-8">#</th>
@@ -108,7 +108,7 @@ export default function HomepageComparisonTable({
             {displayBrokers.map((broker, i) => (
               <tr
                 key={broker.id}
-                className={`hover:bg-slate-50 transition-colors ${
+                className={`group hover:bg-slate-50 transition-colors ${
                   editorPicks[broker.slug] ? "bg-green-50/40" : ""
                 }`}
               >
@@ -117,7 +117,7 @@ export default function HomepageComparisonTable({
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center font-bold text-green-900 text-sm shrink-0">
+                    <div className="w-10 h-10 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center font-bold text-green-900 text-sm shrink-0 transition-transform duration-200 group-hover:scale-110">
                       {broker.name.substring(0, 2).toUpperCase()}
                     </div>
                     <div>
@@ -161,7 +161,7 @@ export default function HomepageComparisonTable({
                       href={getAffiliateLink(broker)}
                       target="_blank"
                       rel={AFFILIATE_REL}
-                      className="inline-block px-4 py-2 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-600 hover:shadow-md transition-all active:scale-[0.97]"
+                      className="inline-block px-4 py-2 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-600 hover:shadow-md transition-all duration-200 active:scale-[0.97] group-hover:scale-105 group-hover:shadow-[0_0_12px_rgba(21,128,61,0.3)]"
                     >
                       {getBenefitCta(broker, "compare")}
                     </a>
