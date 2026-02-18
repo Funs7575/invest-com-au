@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import type { Broker } from "@/lib/types";
@@ -164,66 +164,97 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
         </p>
 
         {/* ───── SELECTORS ───── */}
-        <div className="bg-white border border-slate-200 rounded-2xl p-4 md:p-6 mb-8 shadow-sm">
-          <div className="flex flex-col md:flex-row gap-3 md:gap-8 items-stretch md:items-end flex-wrap">
+        <div className="bg-gradient-to-br from-slate-50 to-white border border-slate-200 rounded-2xl p-5 md:p-8 mb-8 shadow-sm">
+          <div className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4 flex items-center gap-2">
+            <span>Select brokers to compare</span>
+            <span className="h-px flex-1 bg-slate-200" />
+          </div>
+          <div className="flex flex-col md:flex-row gap-3 md:gap-4 items-stretch md:items-end">
             {selectedSlugs.map((slug, index) => {
               const broker = brokers.find(br => br.slug === slug);
               return (
-                <div key={index} className="flex-1 min-w-[180px] relative">
-                  {/* VS divider between selectors */}
+                <React.Fragment key={index}>
+                  {/* VS divider — inline sibling */}
                   {index > 0 && (
-                    <div className="hidden md:flex absolute -left-8 bottom-3 z-10 pointer-events-none">
-                      <span className="w-8 h-8 rounded-full bg-slate-900 text-white text-[0.6rem] font-extrabold flex items-center justify-center shadow-md">VS</span>
-                    </div>
+                    <>
+                      {/* Desktop VS */}
+                      <div className="hidden md:flex flex-col items-center justify-end pb-3 shrink-0">
+                        <div className="w-px h-6 bg-slate-200" />
+                        <span className="w-9 h-9 rounded-full bg-slate-900 text-white text-[0.65rem] font-extrabold flex items-center justify-center shadow-md my-1">VS</span>
+                        <div className="w-px h-6 bg-slate-200" />
+                      </div>
+                      {/* Mobile VS */}
+                      <div className="md:hidden flex items-center gap-3 py-1">
+                        <div className="h-px flex-1 bg-slate-200" />
+                        <span className="w-8 h-8 rounded-full bg-slate-900 text-white text-[0.6rem] font-extrabold flex items-center justify-center shadow-sm">VS</span>
+                        <div className="h-px flex-1 bg-slate-200" />
+                      </div>
+                    </>
                   )}
-                  {index > 0 && (
-                    <div className="md:hidden flex justify-center -mt-1 mb-1">
-                      <span className="w-7 h-7 rounded-full bg-slate-900 text-white text-[0.55rem] font-extrabold flex items-center justify-center">VS</span>
-                    </div>
-                  )}
-                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
-                    Broker {index + 1}
-                  </label>
-                  <div className="flex gap-1.5">
-                    <div className="relative flex-1">
+
+                  {/* Broker slot — mini-card */}
+                  <div className="flex-1 min-w-0">
+                    <div
+                      className={`rounded-xl border p-3 transition-all ${
+                        broker ? 'bg-white border-slate-200 shadow-sm' : 'bg-slate-50/50 border-dashed border-slate-300'
+                      }`}
+                      style={broker ? { borderLeftWidth: '3px', borderLeftColor: broker.color } : {}}
+                    >
+                      {/* Broker identity header — only when selected */}
                       {broker && (
-                        <div
-                          className="absolute left-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-md flex items-center justify-center text-[0.55rem] font-bold shrink-0"
-                          style={{ background: `${broker.color}25`, color: broker.color }}
-                        >
-                          {broker.icon || broker.name.charAt(0)}
+                        <div className="flex items-center gap-2.5 mb-2.5">
+                          <div
+                            className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold shrink-0"
+                            style={{ background: `${broker.color}18`, color: broker.color }}
+                          >
+                            {broker.icon || broker.name.charAt(0)}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="font-semibold text-sm text-slate-900 truncate">{broker.name}</div>
+                            <div className="text-xs text-slate-400">
+                              {broker.rating?.toFixed(1)}/5{broker.asx_fee ? ` \u00B7 ${broker.asx_fee}` : ''}
+                            </div>
+                          </div>
+                          {selectedSlugs.length > 2 && (
+                            <button
+                              onClick={() => removeSlot(index)}
+                              className="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors shrink-0"
+                              title="Remove broker"
+                            >
+                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                            </button>
+                          )}
                         </div>
                       )}
+                      {/* Select dropdown */}
                       <select
                         value={slug}
                         onChange={(e) => updateSlug(index, e.target.value)}
-                        className={`w-full border border-slate-200 rounded-xl py-3 text-sm font-medium bg-white hover:border-slate-300 focus:border-green-600 focus:ring-1 focus:ring-green-600 transition-colors ${broker ? 'pl-11 pr-4' : 'px-4'}`}
+                        className="w-full border border-slate-200 rounded-lg py-2.5 px-3 text-sm font-medium bg-white hover:border-slate-300 focus:border-green-600 focus:ring-1 focus:ring-green-600 transition-colors"
                       >
-                        <option value="">Select a broker...</option>
+                        <option value="">Choose a broker...</option>
                         {brokers.map(br => (
                           <option key={br.slug} value={br.slug}>{br.name}</option>
                         ))}
                       </select>
                     </div>
-                    {selectedSlugs.length > 2 && (
-                      <button
-                        onClick={() => removeSlot(index)}
-                        className="w-10 flex items-center justify-center text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-xl border border-slate-200 transition-colors"
-                        title="Remove"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                      </button>
-                    )}
                   </div>
-                </div>
+                </React.Fragment>
               );
             })}
+
+            {/* Add broker button */}
             {selectedSlugs.length < MAX_BROKERS && (
               <button
                 onClick={addSlot}
-                className="px-4 py-3 border-2 border-dashed border-slate-200 rounded-xl text-slate-400 hover:border-green-600 hover:text-green-600 hover:bg-green-50/50 text-sm font-semibold transition-all min-w-[140px]"
+                className="w-full md:w-auto px-5 py-4 border-2 border-dashed border-slate-200 rounded-xl text-slate-400 hover:border-green-600 hover:text-green-700 hover:bg-green-50/30 text-sm font-semibold transition-all flex items-center justify-center gap-2"
               >
-                + Add Broker
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+                Add Broker
               </button>
             )}
           </div>
