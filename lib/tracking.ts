@@ -55,20 +55,21 @@ export function getBenefitCta(broker: Broker, context: 'compare' | 'review' | 'c
 
   switch (context) {
     case 'compare':
-      if (broker.asx_fee_value === 0) return `Trade $0 →`;
+      if (broker.asx_fee_value === 0) return `Trade $0 Brokerage →`;
       if (broker.asx_fee_value && broker.asx_fee_value <= 5) return `Trade from ${broker.asx_fee} →`;
-      return `Visit ${broker.name} →`;
+      return `Open Free Account →`;
     case 'review':
       if (broker.deal) return broker.cta_text || `Claim Deal →`;
       return broker.cta_text || `Open ${broker.name} Account →`;
     case 'calculator':
-      return `Try ${broker.name} →`;
+      if (broker.asx_fee_value === 0) return `Try $0 Brokerage →`;
+      return `Try ${broker.name} Free →`;
     case 'versus':
-      return broker.cta_text || `Visit ${broker.name} →`;
+      return broker.cta_text || `Open Free Account →`;
     case 'quiz':
-      return broker.cta_text || `Get Started with ${broker.name} →`;
+      return broker.cta_text || `Get Started Free →`;
     default:
-      return broker.cta_text || `Visit ${broker.name}`;
+      return broker.cta_text || `Learn More →`;
   }
 }
 

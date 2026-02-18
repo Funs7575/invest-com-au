@@ -7,14 +7,21 @@ import { ADVERTISER_DISCLOSURE_SHORT, RISK_WARNING_CTA } from "@/lib/compliance"
 
 export default function StickyCTABar({ broker, detail, context = 'review' }: { broker: Broker; detail: string; context?: 'review' | 'versus' | 'calculator' }) {
   const [visible, setVisible] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
+    // Check if already dismissed this session
+    if (sessionStorage.getItem("stickyCTADismissed") === "true") {
+      setDismissed(true);
+    }
     const handleScroll = () => {
       setVisible(window.scrollY > 500);
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  if (dismissed) return null;
 
   return (
     <div
@@ -50,7 +57,19 @@ export default function StickyCTABar({ broker, detail, context = 'review' }: { b
           >
             {getBenefitCta(broker, context)}
           </a>
-          <span className="hidden sm:inline text-[0.55rem] text-amber-100/70 max-w-[200px] leading-tight">{ADVERTISER_DISCLOSURE_SHORT} {RISK_WARNING_CTA}</span>
+          <span className="hidden sm:inline text-[0.65rem] text-amber-100/80 max-w-[220px] leading-tight">{ADVERTISER_DISCLOSURE_SHORT} {RISK_WARNING_CTA}</span>
+          <button
+            onClick={() => {
+              setDismissed(true);
+              sessionStorage.setItem("stickyCTADismissed", "true");
+            }}
+            className="shrink-0 p-1.5 rounded-full text-white/70 hover:text-white hover:bg-white/10 transition-colors"
+            aria-label="Dismiss"
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+            </svg>
+          </button>
         </div>
       </div>
     </div>

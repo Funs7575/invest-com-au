@@ -14,6 +14,7 @@ export default function DealOfMonthPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [dealText, setDealText] = useState("");
+  const [dealExpiry, setDealExpiry] = useState("");
   const [dealTextEdited, setDealTextEdited] = useState(false);
   const [clearConfirmOpen, setClearConfirmOpen] = useState(false);
 
@@ -34,6 +35,7 @@ export default function DealOfMonthPage() {
       const dealBroker = (data || []).find((b: any) => b.deal === true);
       if (dealBroker) {
         setDealText((dealBroker as any).deal_text || "");
+        setDealExpiry((dealBroker as any).deal_expiry || "");
       }
     }
     setLoading(false);
@@ -76,7 +78,7 @@ export default function DealOfMonthPage() {
     setSaving(true);
     const { error } = await supabase
       .from("brokers")
-      .update({ deal: false, deal_text: "" })
+      .update({ deal: false, deal_text: "", deal_expiry: null })
       .neq("slug", "");
 
     if (error) {
@@ -96,7 +98,7 @@ export default function DealOfMonthPage() {
     setSaving(true);
     const { error } = await supabase
       .from("brokers")
-      .update({ deal_text: dealText })
+      .update({ deal_text: dealText, deal_expiry: dealExpiry || null })
       .eq("slug", dealBroker.slug);
 
     if (error) {
@@ -157,9 +159,28 @@ export default function DealOfMonthPage() {
                     disabled={!dealTextEdited || saving}
                     className="px-4 py-2 bg-amber-500 text-black text-sm font-medium rounded hover:bg-amber-400 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                   >
-                    Save Text
+                    Save
                   </button>
                 </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-600 mb-2">
+                  Deal Expiry Date <span className="text-slate-400 font-normal">(optional)</span>
+                </label>
+                <input
+                  type="date"
+                  value={dealExpiry}
+                  onChange={(e) => {
+                    setDealExpiry(e.target.value);
+                    setDealTextEdited(true);
+                  }}
+                  className="bg-white border border-slate-300 text-slate-900 rounded px-3 py-2 text-sm focus:outline-none focus:border-amber-500"
+                />
+                {dealExpiry && (
+                  <p className="text-xs text-slate-400 mt-1">
+                    Shows &ldquo;expires {new Date(dealExpiry).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })}&rdquo; on deal badges
+                  </p>
+                )}
               </div>
             </div>
           ) : (

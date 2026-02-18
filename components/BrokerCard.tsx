@@ -37,7 +37,14 @@ export default function BrokerCard({ broker, badge, context = 'compare' }: { bro
       {broker.deal && broker.deal_text && (
         <div className="mb-3 flex items-center gap-1.5 px-2.5 py-1.5 bg-amber-50 border border-amber-200 rounded-lg">
           <span className="text-xs">🔥</span>
-          <span className="text-[0.65rem] text-amber-700 font-semibold leading-tight">{broker.deal_text}</span>
+          <div>
+            <span className="text-[0.65rem] text-amber-700 font-semibold leading-tight">{broker.deal_text}</span>
+            {broker.deal_expiry && (
+              <span className="text-[0.6rem] text-amber-500 ml-1">
+                — expires {new Date(broker.deal_expiry).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })}
+              </span>
+            )}
+          </div>
         </div>
       )}
 

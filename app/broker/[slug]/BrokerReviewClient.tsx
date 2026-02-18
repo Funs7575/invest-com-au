@@ -165,6 +165,11 @@ export default function BrokerReviewClient({
               <div>
                 <div className="text-xs font-bold uppercase tracking-wide text-amber-700 mb-0.5">Limited Time Deal</div>
                 <p className="text-sm font-semibold text-slate-700">{b.deal_text}</p>
+                {b.deal_expiry && (
+                  <p className="text-[0.65rem] text-amber-600 mt-0.5">
+                    Expires {new Date(b.deal_expiry).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  </p>
+                )}
               </div>
             </div>
             <a
@@ -263,7 +268,7 @@ export default function BrokerReviewClient({
           )}
           {/* Editorial independence notice */}
           <div className="mt-3 pt-3 border-t border-slate-200">
-            <p className="text-[0.65rem] text-slate-400 leading-relaxed">
+            <p className="text-[0.7rem] text-slate-400 leading-relaxed">
               <strong className="text-slate-500">Editorial independence:</strong> Our ratings and rankings are determined by our editorial team using a standardised methodology. Affiliate partnerships may influence which brokers we review but never our ratings or recommendations.{" "}
               <Link href="/how-we-verify" className="text-green-700 hover:underline">Read our full methodology →</Link>
             </p>

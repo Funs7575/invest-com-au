@@ -142,6 +142,8 @@ export default function QuizPage() {
     return reasons.slice(0, 4);
   };
 
+  const [showScoring, setShowScoring] = useState(false);
+
   const getResults = (): { broker: Broker | null; slug: string; total: number }[] => {
     // Score all brokers based on answers
     const scored = Object.entries(weights).map(([slug, scores]) => {
@@ -184,18 +186,21 @@ export default function QuizPage() {
             <div className="text-5xl mb-4 motion-safe:celebrate-emoji">🎉</div>
             <h1 className="text-3xl font-extrabold mb-2">Your Shortlist</h1>
             <p className="text-slate-600">Based on your answers, these brokers scored highest on your selected criteria.</p>
-            <div className="flex items-center justify-center gap-1.5 mt-3 text-xs text-slate-400">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
+            <div className="flex items-center justify-center gap-3 mt-3 text-xs text-slate-400">
+              <span className="flex items-center gap-1">
+                <svg className="w-3 h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                ASIC-regulated
               </span>
-              {Math.floor(Math.random() * 30) + 40} others got this result today
+              <span className="flex items-center gap-1">
+                <svg className="w-3 h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                Based on your answers
+              </span>
             </div>
           </div>
 
           {/* General Advice Warning */}
           <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 mb-6">
-            <p className="text-[0.65rem] text-slate-500 leading-relaxed">
+            <p className="text-[0.7rem] text-slate-500 leading-relaxed">
               <strong>General Advice Warning:</strong> {GENERAL_ADVICE_WARNING} {ADVERTISER_DISCLOSURE_SHORT}
             </p>
           </div>
@@ -274,6 +279,11 @@ export default function QuizPage() {
                 <div className="mt-3 text-center">
                   <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 border border-amber-200 rounded-full text-xs font-semibold text-amber-700">
                     🔥 {topMatch.broker.deal_text}
+                    {topMatch.broker.deal_expiry && (
+                      <span className="text-[0.65rem] text-amber-500 font-normal ml-1">
+                        (expires {new Date(topMatch.broker.deal_expiry).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })})
+                      </span>
+                    )}
                   </span>
                 </div>
               )}
@@ -340,6 +350,64 @@ export default function QuizPage() {
               </div>
             </div>
           )}
+
+          {/* Scoring Transparency */}
+          <div className="mb-6 motion-safe:result-card-in motion-safe:result-card-in-delay-3">
+            <button
+              onClick={() => setShowScoring(!showScoring)}
+              className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-100 transition-colors"
+            >
+              <span className="flex items-center gap-2 font-medium">
+                <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                How we scored your results
+              </span>
+              <svg className={`w-4 h-4 text-slate-400 transition-transform ${showScoring ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+            </button>
+            {showScoring && (
+              <div className="mt-2 bg-slate-50 border border-slate-200 rounded-lg p-4 text-xs text-slate-600 space-y-3">
+                <p>Each broker has pre-set scores across six categories (beginner-friendliness, low fees, US shares, SMSF, crypto, advanced features). Your quiz answers determine which categories matter most:</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {answers.map((key, i) => {
+                    const keyMap: Record<string, string> = {
+                      crypto: 'Crypto', trade: 'Advanced', income: 'Low Fees', grow: 'Beginner',
+                      beginner: 'Beginner', intermediate: 'Low Fees', pro: 'Advanced',
+                      small: 'Beginner', medium: 'Low Fees', large: 'US Shares', whale: 'Advanced',
+                      fees: 'Low Fees', safety: 'Beginner', tools: 'Advanced', simple: 'Beginner',
+                    };
+                    return (
+                      <span key={i} className="px-2 py-1 bg-white border border-slate-200 rounded-full text-[0.65rem] font-medium">
+                        Your answer → <strong>{keyMap[key] || key}</strong>
+                      </span>
+                    );
+                  })}
+                </div>
+                <div className="space-y-1.5">
+                  {allResults.map((r, i) => {
+                    const maxScore = allResults[0]?.total || 1;
+                    const pct = Math.round((r.total / maxScore) * 100);
+                    return (
+                      <div key={r.slug} className="flex items-center gap-2">
+                        <span className="w-24 truncate font-medium text-slate-700">
+                          {i === 0 && '🏆 '}{r.broker?.name}
+                        </span>
+                        <div className="flex-1 bg-slate-200 rounded-full h-2 overflow-hidden">
+                          <div
+                            className="h-full rounded-full transition-all"
+                            style={{
+                              width: `${pct}%`,
+                              background: i === 0 ? (r.broker?.color || '#16a34a') : '#94a3b8',
+                            }}
+                          />
+                        </div>
+                        <span className="text-[0.65rem] text-slate-500 w-8 text-right">{pct}%</span>
+                      </div>
+                    );
+                  })}
+                </div>
+                <p className="text-[0.6rem] text-slate-400">Scores are weighted by your answers and adjusted slightly by our editorial rating. No broker pays for a higher quiz score.</p>
+              </div>
+            )}
+          </div>
 
           {/* Runner Ups */}
           {runnerUps.length > 0 && (
