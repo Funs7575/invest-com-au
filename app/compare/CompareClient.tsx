@@ -10,6 +10,7 @@ import BrokerCard from "@/components/BrokerCard";
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 import { getMostRecentFeeCheck } from "@/lib/utils";
 import ScrollReveal from "@/components/ScrollReveal";
+import PromoBadge from "@/components/PromoBadge";
 
 type FilterType = 'all' | 'beginner' | 'chess' | 'free' | 'us' | 'smsf' | 'low-fx' | 'crypto';
 type SortCol = 'name' | 'asx_fee_value' | 'us_fee_value' | 'fx_rate' | 'rating';
@@ -308,9 +309,12 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                         {broker.icon || broker.name.charAt(0)}
                       </div>
                       <div>
-                        <a href={`/broker/${broker.slug}`} className="font-semibold text-brand hover:text-green-700 transition-colors">
-                          {broker.name}
-                        </a>
+                        <div className="flex items-center">
+                          <a href={`/broker/${broker.slug}`} className="font-semibold text-brand hover:text-green-700 transition-colors">
+                            {broker.name}
+                          </a>
+                          <PromoBadge broker={broker} />
+                        </div>
                         {editorPicks[broker.slug] && (
                           <div className="text-[0.6rem] font-extrabold text-green-700 uppercase tracking-wide">
                             {editorPicks[broker.slug]}

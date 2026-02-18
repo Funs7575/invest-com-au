@@ -52,6 +52,10 @@ export interface Broker {
   headquarters?: string;
   deal_text?: string;
   deal_expiry?: string;
+  deal_category?: string;
+  deal_terms?: string;
+  deal_source?: string;
+  deal_verified_date?: string;
   commission_type?: string;
   commission_value?: number;
   estimated_epc?: number;

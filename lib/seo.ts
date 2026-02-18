@@ -1,4 +1,4 @@
-import type { TeamMember } from "./types";
+import type { TeamMember, Broker } from "./types";
 
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app";
@@ -286,5 +286,52 @@ export function reviewArticleJsonLd(broker: {
       "@type": "WebPage",
       "@id": absoluteUrl(`/broker/${broker.slug}`),
     },
+  };
+}
+
+/* ─── Deals: Offer JSON-LD for individual deal ─── */
+
+export function dealOfferJsonLd(broker: Broker) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Offer",
+    name: broker.deal_text || `${broker.name} Promotion`,
+    ...(broker.deal_terms ? { description: broker.deal_terms } : {}),
+    ...(broker.deal_expiry ? { validThrough: new Date(broker.deal_expiry).toISOString() } : {}),
+    url: absoluteUrl(`/broker/${broker.slug}`),
+    offeredBy: {
+      "@type": "Organization",
+      name: broker.name,
+    },
+    seller: {
+      "@type": "Organization",
+      name: broker.name,
+    },
+  };
+}
+
+/* ─── Deals: ItemList JSON-LD for /deals hub page ─── */
+
+export function dealsHubJsonLd(dealBrokers: Broker[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Australian Broker Deals & Promotions",
+    description: "Current verified deals and promotions from Australian share trading platforms and crypto exchanges.",
+    numberOfItems: dealBrokers.length,
+    itemListElement: dealBrokers.map((broker, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: {
+        "@type": "Offer",
+        name: broker.deal_text || `${broker.name} Promotion`,
+        url: absoluteUrl(`/broker/${broker.slug}`),
+        ...(broker.deal_expiry ? { validThrough: new Date(broker.deal_expiry).toISOString() } : {}),
+        offeredBy: {
+          "@type": "Organization",
+          name: broker.name,
+        },
+      },
+    })),
   };
 }

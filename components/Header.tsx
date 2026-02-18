@@ -6,6 +6,7 @@ import Link from "next/link";
 const navItems = [
   { name: "Compare", href: "/compare" },
   { name: "Best For", href: "/best" },
+  { name: "Deals", href: "/deals" },
   { name: "Reviews", href: "/reviews" },
   { name: "Guides", href: "/articles" },
   { name: "Tools", href: "/calculators" },

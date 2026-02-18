@@ -5,6 +5,7 @@ import type { Broker } from "@/lib/types";
 import { getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
+import PromoBadge from "@/components/PromoBadge";
 
 const TAB_OPTIONS = ["All Platforms", "Share Trading", "Crypto Exchanges", "SMSF"] as const;
 type TabOption = (typeof TAB_OPTIONS)[number];
@@ -121,12 +122,15 @@ export default function HomepageComparisonTable({
                       {broker.name.substring(0, 2).toUpperCase()}
                     </div>
                     <div>
-                      <a
-                        href={`/broker/${broker.slug}`}
-                        className="font-semibold text-brand hover:text-green-700 transition-colors"
-                      >
-                        {broker.name}
-                      </a>
+                      <div className="flex items-center">
+                        <a
+                          href={`/broker/${broker.slug}`}
+                          className="font-semibold text-brand hover:text-green-700 transition-colors"
+                        >
+                          {broker.name}
+                        </a>
+                        <PromoBadge broker={broker} />
+                      </div>
                       {editorPicks[broker.slug] && (
                         <div className="text-[0.6rem] font-extrabold text-green-700 uppercase tracking-wide">
                           {editorPicks[broker.slug]}
@@ -166,7 +170,7 @@ export default function HomepageComparisonTable({
                       {getBenefitCta(broker, "compare")}
                     </a>
                     {broker.deal && (
-                      <span className="text-[0.55rem] text-amber-600 font-semibold">🔥 Deal</span>
+                      <span className="text-[0.55rem] text-amber-600 font-semibold">Deal</span>
                     )}
                   </div>
                 </td>

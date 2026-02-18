@@ -68,6 +68,7 @@ export default function Footer() {
             <ul className="space-y-2 text-sm">
               <li><Link href="/compare" className="hover:text-white transition-colors">All Brokers</Link></li>
               <li><Link href="/versus" className="hover:text-white transition-colors">Head-to-Head</Link></li>
+              <li><Link href="/deals" className="hover:text-white transition-colors">Current Deals</Link></li>
               <li><Link href="/reviews" className="hover:text-white transition-colors">Reviews</Link></li>
               <li><Link href="/quiz" className="hover:text-white transition-colors">Broker Quiz</Link></li>
             </ul>
