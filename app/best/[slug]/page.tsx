@@ -18,7 +18,6 @@ import { getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/l
 import { trackClick } from "@/lib/tracking";
 import BrokerCard from "@/components/BrokerCard";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
-import CompactDisclosure from "@/components/CompactDisclosure";
 import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
 import ScrollReveal from "@/components/ScrollReveal";
 import type { LeadSegment } from "@/components/ContextualLeadMagnet";
@@ -208,12 +207,7 @@ export default async function BestBrokerPage({
             </span>
           </div>
 
-          {/* Compact disclosure */}
-          <div className="mb-6 border border-slate-100 rounded-lg px-4">
-            <CompactDisclosure />
-          </div>
-
-          {/* Our selection criteria */}
+{/* Our selection criteria */}
           <div className="bg-green-50 border border-green-200 rounded-xl p-5 mb-8">
             <h2 className="text-lg font-bold text-green-900 mb-2">
               How We Selected These Brokers
