@@ -221,10 +221,6 @@ body {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
-@keyframes confettiBurst {
-  0% { opacity: 1; transform: translateY(0) scale(1); }
-  100% { opacity: 0; transform: translateY(-60px) scale(0.5); }
-}
 .celebrate-emoji {
   animation: celebrateEmoji 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
@@ -237,6 +233,92 @@ body {
 .result-card-in-delay-3 { animation-delay: 0.45s; }
 .result-card-in-delay-4 { animation-delay: 0.6s; }
 .result-card-in-delay-5 { animation-delay: 0.75s; }
+
+/* ── Analyzing / reveal transition screen ──────────────── */
+@keyframes revealScreenIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+.reveal-screen-in {
+  animation: revealScreenIn 0.4s ease-out forwards;
+}
+@keyframes analyzingRingSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.analyzing-ring-spin {
+  animation: analyzingRingSpin 1s linear infinite;
+}
+@keyframes revealTextIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.reveal-text-in {
+  opacity: 0;
+  animation: revealTextIn 0.4s ease-out 0.2s forwards;
+}
+.reveal-text-in-delay {
+  opacity: 0;
+  animation: revealTextIn 0.4s ease-out 0.4s forwards;
+}
+@keyframes analyzingDot {
+  0%, 20% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+  80%, 100% { opacity: 0.3; transform: scale(0.8); }
+}
+.analyzing-dot-1 { animation: analyzingDot 1.2s ease-in-out infinite; }
+.analyzing-dot-2 { animation: analyzingDot 1.2s ease-in-out 0.2s infinite; }
+.analyzing-dot-3 { animation: analyzingDot 1.2s ease-in-out 0.4s infinite; }
+
+/* ── CSS Confetti Particles ────────────────────────────── */
+.confetti-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+.confetti-particle {
+  position: absolute;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 1px;
+  opacity: 0;
+  background: var(--confetti-color, #f59e0b);
+}
+.confetti-active .confetti-particle {
+  animation:
+    confettiUp 0.5s cubic-bezier(0.2, 0.8, 0.4, 1) var(--confetti-delay, 0s) forwards,
+    confettiDown 0.8s ease-in calc(var(--confetti-delay, 0s) + 0.5s) forwards;
+}
+@keyframes confettiUp {
+  0% { opacity: 1; transform: translateY(0) translateX(0) rotate(0deg) scale(1); }
+  100% { opacity: 1; transform: translateY(calc(var(--confetti-fall, 80px) * -1)) translateX(var(--confetti-x, 0px)) rotate(var(--confetti-rotate, 360deg)) scale(1); }
+}
+@keyframes confettiDown {
+  0% { opacity: 1; transform: translateY(calc(var(--confetti-fall, 80px) * -1)) translateX(var(--confetti-x, 0px)) rotate(var(--confetti-rotate, 360deg)) scale(1); }
+  100% { opacity: 0; transform: translateY(20px) translateX(calc(var(--confetti-x, 0px) * 1.3)) rotate(calc(var(--confetti-rotate, 360deg) + 180deg)) scale(0.5); }
+}
+
+/* ── Top match badge pulse ─────────────────────────────── */
+@keyframes badgePulse {
+  0%, 100% { box-shadow: 0 0 0 0 transparent; }
+  50% { box-shadow: 0 0 0 8px var(--badge-glow, rgba(245, 158, 11, 0)); }
+}
+.badge-pulse {
+  animation: badgePulse 2s ease-in-out 1s 2;
+}
+
+/* ── Top match background glow ─────────────────────────── */
+@keyframes topCardGlow {
+  0% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+.top-card-glow {
+  opacity: 0;
+  animation: topCardGlow 1.5s ease-out 0.5s forwards;
+}
 
 /* Shine effect on winner cards */
 .shine-effect {

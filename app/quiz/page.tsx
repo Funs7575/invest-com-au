@@ -40,6 +40,7 @@ export default function QuizPage() {
   const [copied, setCopied] = useState(false);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [animating, setAnimating] = useState(false);
+  const [revealing, setRevealing] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
@@ -91,11 +92,21 @@ export default function QuizPage() {
     // Show selected confirmation then advance
     setSelectedKey(key);
     setAnimating(true);
+    const newAnswers = [...answers, key];
+    const isFinal = step + 1 >= questions.length;
+
     setTimeout(() => {
-      setAnswers([...answers, key]);
-      setStep(step + 1);
+      setAnswers(newAnswers);
       setSelectedKey(null);
-      setAnimating(false);
+      if (isFinal) {
+        // Show "Analyzing" transition before revealing results
+        setRevealing(true);
+        setAnimating(false);
+        setTimeout(() => { setRevealing(false); setStep(step + 1); }, 1800);
+      } else {
+        setStep(step + 1);
+        setAnimating(false);
+      }
     }, 350);
   };
 
@@ -183,7 +194,24 @@ export default function QuizPage() {
       <div className="py-12">
         <div className="container-custom max-w-2xl mx-auto">
           <div className="text-center mb-8 motion-safe:result-card-in">
-            <div className="text-5xl mb-4 motion-safe:celebrate-emoji">🎉</div>
+            {/* Confetti burst + emoji */}
+            <div className="relative h-24 mb-4">
+              <div className="confetti-container motion-safe:confetti-active" aria-hidden="true">
+                {Array.from({ length: 20 }).map((_, i) => (
+                  <span key={i} className="confetti-particle" style={{
+                    '--confetti-x': `${-50 + Math.random() * 100}px`,
+                    '--confetti-delay': `${i * 0.05}s`,
+                    '--confetti-fall': `${60 + Math.random() * 40}px`,
+                    '--confetti-rotate': `${Math.random() * 720 - 360}deg`,
+                    '--confetti-color': ['#15803d','#f59e0b','#fbbf24','#16a34a','#0f172a','#ef4444'][i % 6],
+                    left: `${10 + (i / 20) * 80}%`,
+                  } as React.CSSProperties} />
+                ))}
+              </div>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-5xl motion-safe:celebrate-emoji">🎉</span>
+              </div>
+            </div>
             <h1 className="text-3xl font-extrabold mb-2">Your Shortlist</h1>
             <p className="text-slate-600">Based on your answers, these brokers scored highest on your selected criteria.</p>
             <div className="flex items-center justify-center gap-3 mt-3 text-xs text-slate-400">
@@ -219,12 +247,19 @@ export default function QuizPage() {
                 className="absolute top-0 left-0 w-full h-1"
                 style={{ background: topMatch.broker.color || '#f59e0b' }}
               />
+              {/* Background glow */}
               <div
-                className="text-[0.6rem] uppercase font-extrabold tracking-wider mb-4 inline-block px-3 py-1 rounded-full"
+                className="absolute inset-0 pointer-events-none motion-safe:top-card-glow"
+                style={{ background: `radial-gradient(ellipse at 50% 0%, ${topMatch.broker.color || '#f59e0b'}12 0%, transparent 70%)` }}
+                aria-hidden="true"
+              />
+              <div
+                className="text-[0.6rem] uppercase font-extrabold tracking-wider mb-4 inline-block px-3 py-1.5 rounded-full motion-safe:badge-pulse"
                 style={{
                   color: topMatch.broker.color || '#b45309',
                   background: `${topMatch.broker.color || '#f59e0b'}20`,
-                }}
+                  '--badge-glow': `${topMatch.broker.color || '#f59e0b'}40`,
+                } as React.CSSProperties}
               >
                 🏆 #1 on Your Shortlist
               </div>
@@ -415,10 +450,14 @@ export default function QuizPage() {
                 {runnerUps.map((r, i) => r.broker && (
                   <div
                     key={r.slug}
-                    className={`border border-slate-200 rounded-xl p-4 hover:shadow-md transition-shadow motion-safe:result-card-in motion-safe:result-card-in-delay-${i + 4}`}
+                    className={`border border-slate-200 rounded-xl p-4 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg motion-safe:result-card-in motion-safe:result-card-in-delay-${i + 4}`}
                     style={{ borderLeftWidth: '4px', borderLeftColor: r.broker.color || '#e2e8f0' }}
                   >
                     <div className="flex items-center gap-3">
+                      {/* Rank badge */}
+                      <div className="w-6 h-6 rounded-full bg-slate-100 text-slate-500 text-xs font-bold flex items-center justify-center shrink-0">
+                        #{i + 2}
+                      </div>
                       <div
                         className="w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold shrink-0"
                         style={{ background: `${r.broker.color}20`, color: r.broker.color }}
@@ -504,6 +543,37 @@ export default function QuizPage() {
             >
               Restart Quiz →
             </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Analyzing transition screen
+  if (revealing) {
+    return (
+      <div className="py-12">
+        <div className="container-custom max-w-2xl mx-auto">
+          <div className="flex flex-col items-center justify-center min-h-[40vh] motion-safe:reveal-screen-in">
+            {/* Animated analyzing spinner */}
+            <div className="relative w-16 h-16 mb-6">
+              <div className="absolute inset-0 rounded-full border-4 border-slate-200" />
+              <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-green-700 motion-safe:analyzing-ring-spin" />
+            </div>
+
+            <h2 className="text-xl font-bold mb-2 motion-safe:reveal-text-in">
+              Analyzing your answers...
+            </h2>
+            <p className="text-slate-500 text-sm motion-safe:reveal-text-in-delay">
+              Matching you with the best brokers
+            </p>
+
+            {/* Animated progress dots */}
+            <div className="flex gap-2 mt-6">
+              <span className="w-2 h-2 rounded-full bg-green-700 motion-safe:analyzing-dot-1" />
+              <span className="w-2 h-2 rounded-full bg-green-700 motion-safe:analyzing-dot-2" />
+              <span className="w-2 h-2 rounded-full bg-green-700 motion-safe:analyzing-dot-3" />
+            </div>
           </div>
         </div>
       </div>
