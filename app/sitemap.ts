@@ -14,7 +14,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages = [
     "", "/compare", "/versus", "/reviews", "/calculators",
     "/articles", "/scenarios", "/quiz", "/about", "/how-we-earn", "/privacy",
-    "/methodology", "/how-we-verify", "/terms", "/switch",
+    "/methodology", "/how-we-verify", "/terms", "/switch", "/editorial-policy",
   ].map((path) => ({
     url: `${baseUrl}${path}`,
     lastModified: new Date(),
@@ -70,5 +70,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   ];
 
-  return [...staticPages, ...bestPages, ...brokerPages, ...articlePages, ...scenarioPages];
+  // Dynamic team member pages (authors + reviewers)
+  const { data: teamMembers } = await supabase
+    .from("team_members")
+    .select("slug, role, updated_at")
+    .eq("status", "active");
+
+  const authorPages = (teamMembers || []).map((m) => ({
+    url: `${baseUrl}/authors/${m.slug}`,
+    lastModified: m.updated_at ? new Date(m.updated_at) : new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.4,
+  }));
+
+  const reviewerPages = (teamMembers || [])
+    .filter((m) => m.role === "expert_reviewer" || m.role === "editor")
+    .map((m) => ({
+      url: `${baseUrl}/reviewers/${m.slug}`,
+      lastModified: m.updated_at ? new Date(m.updated_at) : new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.4,
+    }));
+
+  return [...staticPages, ...bestPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages];
 }
