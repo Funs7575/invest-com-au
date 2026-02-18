@@ -41,7 +41,7 @@ export default function EditorialPolicyPage() {
         <h1 className="text-3xl md:text-4xl font-extrabold mb-3">
           Editorial Policy
         </h1>
-        <p className="text-lg text-slate-600 mb-10 leading-relaxed">
+        <p className="text-base sm:text-lg text-slate-600 mb-10 leading-relaxed">
           Our commitment to editorial integrity, content accuracy, and
           transparent financial product coverage.
         </p>

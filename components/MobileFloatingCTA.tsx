@@ -35,7 +35,7 @@ export default function MobileFloatingCTA({
           {broker.icon || broker.name.charAt(0)}
         </div>
         <div className="flex-1 min-w-0">
-          <div className="font-bold text-sm text-brand truncate">
+          <div className="font-bold text-sm text-brand truncate" title={broker.name}>
             {broker.name}
           </div>
           <div className="text-xs text-slate-500">

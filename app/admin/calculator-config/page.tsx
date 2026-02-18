@@ -114,7 +114,7 @@ export default function CalculatorConfigPage() {
               onChange={(e) =>
                 updateConfig(calcType, "corporate_tax_rate", parseFloat(e.target.value) || 0)
               }
-              className="w-full bg-white border border-slate-300 text-slate-900 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-700"
+              className="w-full bg-white border border-slate-300 text-slate-900 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500"
             />
           </div>
         );
@@ -132,7 +132,7 @@ export default function CalculatorConfigPage() {
               onChange={(e) =>
                 updateConfig(calcType, "transfer_fee", parseFloat(e.target.value) || 0)
               }
-              className="w-full bg-white border border-slate-300 text-slate-900 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-700"
+              className="w-full bg-white border border-slate-300 text-slate-900 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-500"
             />
           </div>
         );
@@ -164,7 +164,7 @@ export default function CalculatorConfigPage() {
                 }
               }}
               rows={5}
-              className="w-full bg-white border border-slate-300 text-slate-900 rounded-lg px-3 py-2 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-green-700"
+              className="w-full bg-white border border-slate-300 text-slate-900 rounded-lg px-3 py-2 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
             />
           </div>
         );
@@ -246,7 +246,7 @@ export default function CalculatorConfigPage() {
                 }
               }}
               rows={5}
-              className="w-full bg-white border border-slate-300 text-slate-900 rounded-lg px-3 py-2 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-green-700"
+              className="w-full bg-white border border-slate-300 text-slate-900 rounded-lg px-3 py-2 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-amber-500"
             />
           </div>
         );

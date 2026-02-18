@@ -259,7 +259,7 @@ export default function HomepageComparisonTable({
       </div>
 
       {/* Affiliate disclosure */}
-      <div id="advertiser-disclosure" className="text-[0.6rem] text-slate-400 mt-4 text-center">
+      <div id="advertiser-disclosure" className="text-[0.6rem] text-slate-500 mt-4 text-center">
         <p>{ADVERTISER_DISCLOSURE_SHORT}</p>
         <RiskWarningInline />
       </div>

@@ -184,7 +184,7 @@ export default async function ReviewerPage({
 
             {/* Disclosure */}
             {m.disclosure && (
-              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-5">
                 <h3 className="text-sm font-bold text-amber-800 mb-1">
                   Disclosure
                 </h3>
@@ -195,7 +195,7 @@ export default async function ReviewerPage({
             )}
 
             {/* Review Process */}
-            <div className="bg-green-50 border border-green-200 rounded-lg p-5">
+            <div className="bg-green-50 border border-green-200 rounded-xl p-5">
               <h3 className="text-sm font-bold text-green-900 mb-2">
                 Review Process
               </h3>
@@ -264,7 +264,7 @@ export default async function ReviewerPage({
             )}
 
             {/* Contact */}
-            <div className="bg-slate-50 border border-slate-200 rounded-lg p-4">
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-5">
               <h3 className="text-sm font-bold text-slate-900 mb-1">
                 Editorial Contact
               </h3>
@@ -330,7 +330,7 @@ export default async function ReviewerPage({
                 <h2 className="text-lg font-bold text-slate-900 mb-4">
                   Articles Reviewed by {m.full_name}
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {articles.map((article) => (
                     <Link
                       key={article.id}
@@ -345,7 +345,7 @@ export default async function ReviewerPage({
                       <h3 className="text-sm font-bold text-slate-900 mt-1 mb-2 line-clamp-2">
                         {article.title}
                       </h3>
-                      <div className="flex items-center gap-3 text-xs text-slate-400">
+                      <div className="flex items-center gap-3 text-xs text-slate-500">
                         {article.read_time && (
                           <span>{article.read_time} min read</span>
                         )}

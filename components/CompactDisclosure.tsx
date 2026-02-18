@@ -19,7 +19,7 @@ export default function CompactDisclosure() {
         <div key={i}>
           <button
             onClick={() => setOpenIndex(openIndex === i ? null : i)}
-            className="w-full flex items-center justify-between py-2 text-xs text-slate-400 hover:text-slate-300 transition-colors"
+            className="w-full flex items-center justify-between py-2 text-xs text-slate-500 hover:text-slate-700 transition-colors"
             aria-expanded={openIndex === i}
           >
             <span className="font-semibold">{section.title}</span>

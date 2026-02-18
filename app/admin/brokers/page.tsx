@@ -192,7 +192,7 @@ export default function AdminBrokersPage() {
       ) : (
         <>
           <div className="mb-4">
-            <input type="text" placeholder="Search brokers by name or slug..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
+            <input type="text" placeholder="Search brokers by name or slug..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
           </div>
 
           {/* Bulk Action Bar */}
@@ -203,7 +203,7 @@ export default function AdminBrokersPage() {
                 <select
                   value={bulkAction}
                   onChange={(e) => setBulkAction(e.target.value)}
-                  className="bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30"
+                  className="bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
                 >
                   <option value="">Choose action...</option>
                   <option value="activate">Set Active</option>
@@ -403,7 +403,7 @@ function BrokerForm({ broker, saving, onSave, onCancel }: { broker: Partial<Brok
                   type="date"
                   value={newEntry.date}
                   onChange={(e) => setNewEntry(prev => ({ ...prev, date: e.target.value }))}
-                  className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30"
+                  className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
                 />
               </div>
               <div>
@@ -411,7 +411,7 @@ function BrokerForm({ broker, saving, onSave, onCancel }: { broker: Partial<Brok
                 <select
                   value={newEntry.field}
                   onChange={(e) => setNewEntry(prev => ({ ...prev, field: e.target.value }))}
-                  className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30"
+                  className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
                 >
                   <option value="">Select...</option>
                   <option value="ASX Brokerage">ASX Brokerage</option>
@@ -431,7 +431,7 @@ function BrokerForm({ broker, saving, onSave, onCancel }: { broker: Partial<Brok
                   value={newEntry.old_value}
                   onChange={(e) => setNewEntry(prev => ({ ...prev, old_value: e.target.value }))}
                   placeholder="e.g. $9.50"
-                  className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-green-700/30"
+                  className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
                 />
               </div>
               <div>
@@ -441,7 +441,7 @@ function BrokerForm({ broker, saving, onSave, onCancel }: { broker: Partial<Brok
                   value={newEntry.new_value}
                   onChange={(e) => setNewEntry(prev => ({ ...prev, new_value: e.target.value }))}
                   placeholder="e.g. $5.00"
-                  className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-green-700/30"
+                  className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
                 />
               </div>
             </div>
@@ -536,7 +536,7 @@ function Field({ label, name, defaultValue, required, type = "text", placeholder
   return (
     <div>
       <label className="block text-xs font-medium text-slate-500 mb-1">{label}</label>
-      <input name={name} type={type} defaultValue={defaultValue || ""} required={required} placeholder={placeholder} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-green-700/30" {...props} />
+      <input name={name} type={type} defaultValue={defaultValue || ""} required={required} placeholder={placeholder} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/30" {...props} />
     </div>
   );
 }
@@ -545,7 +545,7 @@ function TextArea({ label, name, defaultValue, rows = 3 }: { label: string; name
   return (
     <div>
       <label className="block text-xs font-medium text-slate-500 mb-1">{label}</label>
-      <textarea name={name} defaultValue={defaultValue || ""} rows={rows} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
+      <textarea name={name} defaultValue={defaultValue || ""} rows={rows} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
     </div>
   );
 }

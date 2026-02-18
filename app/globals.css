@@ -326,3 +326,8 @@ body {
 .toast-slide-out {
   animation: slideOutLeft 0.4s ease-in forwards;
 }
+
+/* ── Safe area inset for iOS home bar ────────────────── */
+@utility safe-area-inset-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}

@@ -183,15 +183,15 @@ export default function AdminArticlesPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block text-xs font-medium text-slate-500 mb-1">Title <span className="text-red-600">*</span></label>
-              <input name="title" defaultValue={formArticle.title} required className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
+              <input name="title" defaultValue={formArticle.title} required className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
             </div>
             <div>
               <label className="block text-xs font-medium text-slate-500 mb-1">Slug <span className="text-red-600">*</span></label>
-              <input name="slug" defaultValue={formArticle.slug} required className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
+              <input name="slug" defaultValue={formArticle.slug} required className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
             </div>
             <div>
               <label className="block text-xs font-medium text-slate-500 mb-1">Status</label>
-              <select name="status" defaultValue={formArticle.status || "published"} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30">
+              <select name="status" defaultValue={formArticle.status || "published"} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30">
                 <option value="published">Published</option>
                 <option value="draft">Draft</option>
               </select>
@@ -200,42 +200,42 @@ export default function AdminArticlesPage() {
 
           <div>
             <label className="block text-xs font-medium text-slate-500 mb-1">Excerpt</label>
-            <textarea name="excerpt" defaultValue={formArticle.excerpt} rows={2} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
+            <textarea name="excerpt" defaultValue={formArticle.excerpt} rows={2} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block text-xs font-medium text-slate-500 mb-1">Category</label>
-              <input name="category" defaultValue={formArticle.category} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
+              <input name="category" defaultValue={formArticle.category} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
             </div>
             <div>
               <label className="block text-xs font-medium text-slate-500 mb-1">Read Time (min)</label>
-              <input name="read_time" type="number" defaultValue={formArticle.read_time?.toString()} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
+              <input name="read_time" type="number" defaultValue={formArticle.read_time?.toString()} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
             </div>
             <div>
               <label className="block text-xs font-medium text-slate-500 mb-1">Tags (comma-separated)</label>
-              <input name="tags" defaultValue={formArticle.tags?.join(", ")} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
+              <input name="tags" defaultValue={formArticle.tags?.join(", ")} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
             </div>
           </div>
 
           <div>
             <label className="block text-xs font-medium text-slate-500 mb-1">Content</label>
-            <textarea name="content" defaultValue={formArticle.content} rows={8} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
+            <textarea name="content" defaultValue={formArticle.content} rows={8} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
           </div>
 
           <div>
             <label className="block text-xs font-medium text-slate-500 mb-1">Sections (JSON array)</label>
-            <textarea name="sections" defaultValue={formArticle.sections ? JSON.stringify(formArticle.sections, null, 2) : ""} rows={6} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-green-700/30" />
+            <textarea name="sections" defaultValue={formArticle.sections ? JSON.stringify(formArticle.sections, null, 2) : ""} rows={6} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-medium text-slate-500 mb-1">Related Brokers (slugs, comma-separated)</label>
-              <input name="related_brokers" defaultValue={formArticle.related_brokers?.join(", ")} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
+              <input name="related_brokers" defaultValue={formArticle.related_brokers?.join(", ")} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
             </div>
             <div>
               <label className="block text-xs font-medium text-slate-500 mb-1">Related Calculator</label>
-              <input name="related_calc" defaultValue={formArticle.related_calc} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
+              <input name="related_calc" defaultValue={formArticle.related_calc} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
             </div>
           </div>
 
@@ -243,7 +243,7 @@ export default function AdminArticlesPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block text-xs font-medium text-slate-500 mb-1">Author (Team Member)</label>
-              <select name="author_id" defaultValue={formArticle.author_id?.toString() || ""} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30">
+              <select name="author_id" defaultValue={formArticle.author_id?.toString() || ""} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30">
                 <option value="">None (use legacy fields)</option>
                 {teamMembers.filter(m => m.role !== 'expert_reviewer').map(m => (
                   <option key={m.id} value={m.id}>{m.full_name} ({m.role.replace('_', ' ')})</option>
@@ -252,7 +252,7 @@ export default function AdminArticlesPage() {
             </div>
             <div>
               <label className="block text-xs font-medium text-slate-500 mb-1">Reviewer (Team Member)</label>
-              <select name="reviewer_id" defaultValue={formArticle.reviewer_id?.toString() || ""} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30">
+              <select name="reviewer_id" defaultValue={formArticle.reviewer_id?.toString() || ""} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30">
                 <option value="">None</option>
                 {teamMembers.map(m => (
                   <option key={m.id} value={m.id}>{m.full_name} ({m.role.replace('_', ' ')})</option>
@@ -261,14 +261,14 @@ export default function AdminArticlesPage() {
             </div>
             <div>
               <label className="block text-xs font-medium text-slate-500 mb-1">Reviewed At</label>
-              <input name="reviewed_at" type="date" defaultValue={formArticle.reviewed_at ? new Date(formArticle.reviewed_at).toISOString().split('T')[0] : ""} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
+              <input name="reviewed_at" type="date" defaultValue={formArticle.reviewed_at ? new Date(formArticle.reviewed_at).toISOString().split('T')[0] : ""} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
             </div>
           </div>
 
           {/* Changelog */}
           <div>
             <label className="block text-xs font-medium text-slate-500 mb-1">Changelog (JSON array)</label>
-            <textarea name="changelog" defaultValue={formArticle.changelog ? JSON.stringify(formArticle.changelog, null, 2) : "[]"} rows={3} placeholder='[{"date": "2026-02-18", "summary": "Updated fee data for all brokers"}]' className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-green-700/30" />
+            <textarea name="changelog" defaultValue={formArticle.changelog ? JSON.stringify(formArticle.changelog, null, 2) : "[]"} rows={3} placeholder='[{"date": "2026-02-18", "summary": "Updated fee data for all brokers"}]' className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
           </div>
 
           {/* Legacy author fields */}
@@ -277,19 +277,19 @@ export default function AdminArticlesPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-3">
               <div>
                 <label className="block text-xs font-medium text-slate-500 mb-1">Author Name</label>
-                <input name="author_name" defaultValue={formArticle.author_name} placeholder="Market Research Team" className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
+                <input name="author_name" defaultValue={formArticle.author_name} placeholder="Market Research Team" className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
               </div>
               <div>
                 <label className="block text-xs font-medium text-slate-500 mb-1">Author Title</label>
-                <input name="author_title" defaultValue={formArticle.author_title} placeholder="Invest.com.au" className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
+                <input name="author_title" defaultValue={formArticle.author_title} placeholder="Invest.com.au" className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
               </div>
               <div>
                 <label className="block text-xs font-medium text-slate-500 mb-1">Author LinkedIn URL</label>
-                <input name="author_linkedin" defaultValue={formArticle.author_linkedin} placeholder="https://linkedin.com/in/..." className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
+                <input name="author_linkedin" defaultValue={formArticle.author_linkedin} placeholder="https://linkedin.com/in/..." className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
               </div>
               <div>
                 <label className="block text-xs font-medium text-slate-500 mb-1">Author Twitter URL</label>
-                <input name="author_twitter" defaultValue={formArticle.author_twitter} placeholder="https://x.com/..." className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
+                <input name="author_twitter" defaultValue={formArticle.author_twitter} placeholder="https://x.com/..." className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
               </div>
             </div>
           </details>
@@ -315,7 +315,7 @@ export default function AdminArticlesPage() {
               placeholder="Search articles by title, slug, or category..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="flex-1 bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-green-700/30"
+              className="flex-1 bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
             />
             <div className="flex bg-white border border-slate-200 rounded-lg overflow-hidden shrink-0">
               {(["all", "published", "draft"] as const).map((s) => (

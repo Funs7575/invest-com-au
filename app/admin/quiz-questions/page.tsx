@@ -216,7 +216,7 @@ export default function QuizQuestionsPage() {
                     onChange={(e) =>
                       setForm((prev) => ({ ...prev, active: e.target.checked }))
                     }
-                    className="w-4 h-4 rounded border-slate-300 bg-slate-200 text-amber-500 focus:ring-green-700"
+                    className="w-4 h-4 rounded border-slate-300 bg-slate-200 text-amber-500 focus:ring-amber-500"
                   />
                   <span className="text-sm text-slate-600">Active</span>
                 </label>

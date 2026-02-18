@@ -134,41 +134,41 @@ export default function AdminScenariosPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block text-xs font-medium text-slate-500 mb-1">Title <span className="text-red-600">*</span></label>
-              <input name="title" defaultValue={formScenario.title} required className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
+              <input name="title" defaultValue={formScenario.title} required className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
             </div>
             <div>
               <label className="block text-xs font-medium text-slate-500 mb-1">Slug <span className="text-red-600">*</span></label>
-              <input name="slug" defaultValue={formScenario.slug} required className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
+              <input name="slug" defaultValue={formScenario.slug} required className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
             </div>
             <div>
               <label className="block text-xs font-medium text-slate-500 mb-1">Icon (emoji)</label>
-              <input name="icon" defaultValue={formScenario.icon} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
+              <input name="icon" defaultValue={formScenario.icon} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
             </div>
           </div>
 
           <div>
             <label className="block text-xs font-medium text-slate-500 mb-1">Hero Title</label>
-            <input name="hero_title" defaultValue={formScenario.hero_title} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
+            <input name="hero_title" defaultValue={formScenario.hero_title} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
           </div>
 
           <div>
             <label className="block text-xs font-medium text-slate-500 mb-1">Problem</label>
-            <textarea name="problem" defaultValue={formScenario.problem} rows={4} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
+            <textarea name="problem" defaultValue={formScenario.problem} rows={4} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
           </div>
 
           <div>
             <label className="block text-xs font-medium text-slate-500 mb-1">Solution</label>
-            <textarea name="solution" defaultValue={formScenario.solution} rows={4} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
+            <textarea name="solution" defaultValue={formScenario.solution} rows={4} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
           </div>
 
           <div>
             <label className="block text-xs font-medium text-slate-500 mb-1">Brokers (slugs, comma-separated)</label>
-            <input name="brokers" defaultValue={formScenario.brokers?.join(", ")} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
+            <input name="brokers" defaultValue={formScenario.brokers?.join(", ")} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
           </div>
 
           <div>
             <label className="block text-xs font-medium text-slate-500 mb-1">Considerations (one per line)</label>
-            <textarea name="considerations" defaultValue={formScenario.considerations?.join("\n")} rows={4} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-green-700/30" />
+            <textarea name="considerations" defaultValue={formScenario.considerations?.join("\n")} rows={4} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
           </div>
 
           <div className="flex gap-3 pt-2">
@@ -186,7 +186,7 @@ export default function AdminScenariosPage() {
               placeholder="Search scenarios by title or slug..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-green-700/30"
+              className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
             />
           </div>
           <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">

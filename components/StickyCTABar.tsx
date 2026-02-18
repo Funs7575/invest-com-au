@@ -38,8 +38,8 @@ export default function StickyCTABar({ broker, detail, context = 'review' }: { b
             {broker.icon || broker.name.charAt(0)}
           </div>
           <div className="min-w-0">
-            <div className="font-bold text-sm text-white truncate">{broker.name}</div>
-            <div className="text-xs text-amber-50 truncate">{detail}</div>
+            <div className="font-bold text-sm text-white truncate" title={broker.name}>{broker.name}</div>
+            <div className="text-xs text-amber-50 truncate" title={detail}>{detail}</div>
           </div>
           {broker.deal && (
             <span className="hidden md:inline-flex items-center gap-1 px-2 py-0.5 bg-white/20 border border-white/30 rounded-full text-[0.6rem] text-white font-semibold">

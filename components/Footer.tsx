@@ -16,6 +16,7 @@ export default function Footer() {
             onClick={() => setDisclaimerOpen(!disclaimerOpen)}
             className="w-full flex items-center justify-between py-4 text-sm text-slate-400 hover:text-slate-300 transition-colors"
             aria-expanded={disclaimerOpen}
+            aria-label="Toggle legal disclaimers"
           >
             <span className="font-semibold">Legal &amp; Disclaimers</span>
             <svg
