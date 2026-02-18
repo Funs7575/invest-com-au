@@ -94,15 +94,17 @@ export default async function HomePage() {
       {/* Hero Section */}
       <section className="bg-white py-16">
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-green-950">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-green-950 hero-fade-up hero-fade-up-1">
             Compare {brokerCount}+ Australian Investment Platforms
           </h1>
-          <p className="mt-4 text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="mt-4 text-xl text-gray-600 max-w-2xl mx-auto hero-fade-up hero-fade-up-2">
             Stop overpaying. We tracked the hidden fees of every
             ASIC-regulated broker.
           </p>
-          <AuthorByline />
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 my-6">
+          <div className="hero-fade-up hero-fade-up-3">
+            <AuthorByline />
+          </div>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 my-6 hero-fade-up hero-fade-up-4">
             <Link
               href="/compare"
               className="px-6 py-3 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors text-sm"
@@ -116,8 +118,10 @@ export default async function HomePage() {
               Take the 60-sec Quiz &rarr;
             </Link>
           </div>
-          <HomepageSearchBar />
-          <SocialProofBar />
+          <div className="hero-fade-up hero-fade-up-5">
+            <HomepageSearchBar />
+            <SocialProofBar />
+          </div>
         </div>
       </section>
 
@@ -152,11 +156,12 @@ export default async function HomePage() {
               Compare by Category
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {categoryCards.map((card) => (
+              {categoryCards.map((card, i) => (
                 <Link
                   key={card.title}
                   href={card.href}
-                  className={`block border rounded-xl p-5 hover-lift ${card.color}`}
+                  className={`block border rounded-xl p-5 hover-lift ${card.color} stagger-item`}
+                  style={{ animationDelay: `${0.1 + i * 0.1}s` }}
                 >
                   <div className="text-2xl mb-2">{card.emoji}</div>
                   <h3 className="font-bold mb-1">{card.title}</h3>
@@ -175,7 +180,8 @@ export default async function HomePage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
               <Link
                 href="/quiz"
-                className="block border border-slate-200 rounded-xl p-6 hover-lift"
+                className="block border border-slate-200 rounded-xl p-6 hover-lift stagger-item"
+                style={{ animationDelay: '0.1s' }}
               >
                 <div className="text-3xl mb-2">🎯</div>
                 <h3 className="font-bold mb-1">Broker Quiz</h3>
@@ -185,7 +191,8 @@ export default async function HomePage() {
               </Link>
               <Link
                 href="/article/how-to-invest-australia"
-                className="block border border-slate-200 rounded-xl p-6 hover-lift"
+                className="block border border-slate-200 rounded-xl p-6 hover-lift stagger-item"
+                style={{ animationDelay: '0.2s' }}
               >
                 <div className="text-3xl mb-2">📖</div>
                 <h3 className="font-bold mb-1">How to Invest</h3>
@@ -195,7 +202,8 @@ export default async function HomePage() {
               </Link>
               <Link
                 href="/article/best-etfs-australia"
-                className="block border border-slate-200 rounded-xl p-6 hover-lift"
+                className="block border border-slate-200 rounded-xl p-6 hover-lift stagger-item"
+                style={{ animationDelay: '0.3s' }}
               >
                 <div className="text-3xl mb-2">📊</div>
                 <h3 className="font-bold mb-1">Best ETFs 2026</h3>

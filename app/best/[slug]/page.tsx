@@ -20,6 +20,7 @@ import BrokerCard from "@/components/BrokerCard";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import CompactDisclosure from "@/components/CompactDisclosure";
 import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
+import ScrollReveal from "@/components/ScrollReveal";
 import type { LeadSegment } from "@/components/ContextualLeadMagnet";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 
@@ -214,14 +215,14 @@ export default async function BestBrokerPage({
             <h2 className="text-lg font-bold text-green-900 mb-2">
               How We Selected These Brokers
             </h2>
-            <ul className="space-y-1.5">
+            <ScrollReveal animation="scroll-check-stagger" as="ul" className="space-y-1.5">
               {cat.criteria.map((c, i) => (
                 <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
                   <span className="text-green-600 font-bold mt-0.5">✓</span>
                   {c}
                 </li>
               ))}
-            </ul>
+            </ScrollReveal>
             <p className="text-xs text-slate-500 mt-3">
               Methodology:{" "}
               <Link href="/how-we-verify" className="text-green-700 hover:text-green-800 underline">
@@ -280,7 +281,7 @@ export default async function BestBrokerPage({
 
           {/* Desktop table */}
           <div className="hidden md:block overflow-x-auto mb-8">
-            <table className="w-full border border-slate-200 rounded-lg">
+            <ScrollReveal animation="table-row-stagger" as="table" className="w-full border border-slate-200 rounded-lg">
               <thead className="bg-slate-50">
                 <tr>
                   <th className="px-4 py-3 text-left font-semibold text-sm">#</th>
@@ -332,7 +333,7 @@ export default async function BestBrokerPage({
                   </tr>
                 ))}
               </tbody>
-            </table>
+            </ScrollReveal>
           </div>
 
           {/* Mobile cards */}

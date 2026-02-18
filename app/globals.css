@@ -410,6 +410,172 @@ body {
   animation: slideOutLeft 0.4s ease-in forwards;
 }
 
+/* ── Hero entrance stagger ─────────────────────────── */
+@keyframes heroFadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.hero-fade-up {
+  opacity: 0;
+  animation: heroFadeUp 0.6s ease-out forwards;
+}
+.hero-fade-up-1 { animation-delay: 0.05s; }
+.hero-fade-up-2 { animation-delay: 0.15s; }
+.hero-fade-up-3 { animation-delay: 0.25s; }
+.hero-fade-up-4 { animation-delay: 0.35s; }
+.hero-fade-up-5 { animation-delay: 0.45s; }
+
+/* ── Slide-in from left/right (pros/cons) ───────────── */
+@keyframes slideFromLeft {
+  from { opacity: 0; transform: translateX(-30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideFromRight {
+  from { opacity: 0; transform: translateX(30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.scroll-slide-left {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+.scroll-slide-right {
+  opacity: 0;
+  transform: translateX(30px);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+.scroll-slide-left.is-visible,
+.scroll-slide-right.is-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ── Stagger children with scroll trigger ────────────── */
+.scroll-stagger-children {
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+}
+.scroll-stagger-children.is-visible {
+  opacity: 1;
+}
+.scroll-stagger-children.is-visible > * {
+  animation: staggerFadeIn 0.4s ease-out forwards;
+  opacity: 0;
+}
+.scroll-stagger-children.is-visible > *:nth-child(1) { animation-delay: 0.05s; }
+.scroll-stagger-children.is-visible > *:nth-child(2) { animation-delay: 0.1s; }
+.scroll-stagger-children.is-visible > *:nth-child(3) { animation-delay: 0.15s; }
+.scroll-stagger-children.is-visible > *:nth-child(4) { animation-delay: 0.2s; }
+.scroll-stagger-children.is-visible > *:nth-child(5) { animation-delay: 0.25s; }
+.scroll-stagger-children.is-visible > *:nth-child(6) { animation-delay: 0.3s; }
+.scroll-stagger-children.is-visible > *:nth-child(7) { animation-delay: 0.35s; }
+.scroll-stagger-children.is-visible > *:nth-child(8) { animation-delay: 0.4s; }
+.scroll-stagger-children.is-visible > *:nth-child(9) { animation-delay: 0.45s; }
+.scroll-stagger-children.is-visible > *:nth-child(10) { animation-delay: 0.5s; }
+.scroll-stagger-children.is-visible > *:nth-child(11) { animation-delay: 0.55s; }
+.scroll-stagger-children.is-visible > *:nth-child(12) { animation-delay: 0.6s; }
+
+/* ── Check-pop stagger (criteria lists) ──────────────── */
+.scroll-check-stagger.is-visible > * {
+  opacity: 0;
+  animation: staggerFadeIn 0.35s ease-out forwards;
+}
+.scroll-check-stagger.is-visible > *:nth-child(1) { animation-delay: 0.1s; }
+.scroll-check-stagger.is-visible > *:nth-child(2) { animation-delay: 0.2s; }
+.scroll-check-stagger.is-visible > *:nth-child(3) { animation-delay: 0.3s; }
+.scroll-check-stagger.is-visible > *:nth-child(4) { animation-delay: 0.4s; }
+.scroll-check-stagger.is-visible > *:nth-child(5) { animation-delay: 0.5s; }
+.scroll-check-stagger.is-visible > *:nth-child(6) { animation-delay: 0.6s; }
+
+/* ── Table row stagger ─────────────────────────────── */
+.table-row-stagger tbody tr {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.35s ease-out, transform 0.35s ease-out;
+}
+.table-row-stagger.is-visible tbody tr {
+  opacity: 1;
+  transform: translateY(0);
+}
+.table-row-stagger.is-visible tbody tr:nth-child(1) { transition-delay: 0.03s; }
+.table-row-stagger.is-visible tbody tr:nth-child(2) { transition-delay: 0.06s; }
+.table-row-stagger.is-visible tbody tr:nth-child(3) { transition-delay: 0.09s; }
+.table-row-stagger.is-visible tbody tr:nth-child(4) { transition-delay: 0.12s; }
+.table-row-stagger.is-visible tbody tr:nth-child(5) { transition-delay: 0.15s; }
+.table-row-stagger.is-visible tbody tr:nth-child(6) { transition-delay: 0.18s; }
+.table-row-stagger.is-visible tbody tr:nth-child(7) { transition-delay: 0.21s; }
+.table-row-stagger.is-visible tbody tr:nth-child(8) { transition-delay: 0.24s; }
+.table-row-stagger.is-visible tbody tr:nth-child(9) { transition-delay: 0.27s; }
+.table-row-stagger.is-visible tbody tr:nth-child(10) { transition-delay: 0.3s; }
+.table-row-stagger.is-visible tbody tr:nth-child(11) { transition-delay: 0.33s; }
+.table-row-stagger.is-visible tbody tr:nth-child(12) { transition-delay: 0.36s; }
+
+/* ── Fee row stagger ─────────────────────────────────── */
+.fee-row-stagger > div {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+.fee-row-stagger.is-visible > div {
+  opacity: 1;
+  transform: translateY(0);
+}
+.fee-row-stagger.is-visible > div:nth-child(1) { transition-delay: 0.05s; }
+.fee-row-stagger.is-visible > div:nth-child(2) { transition-delay: 0.1s; }
+.fee-row-stagger.is-visible > div:nth-child(3) { transition-delay: 0.15s; }
+.fee-row-stagger.is-visible > div:nth-child(4) { transition-delay: 0.2s; }
+
+/* ── Accordion smooth open ─────────────────────────── */
+details summary {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+details[open] summary {
+  margin-bottom: 0.25rem;
+}
+details > :not(summary) {
+  animation: staggerFadeIn 0.25s ease-out;
+}
+
+/* ── Filter pill smooth transition ──────────────────── */
+.filter-pill {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Lead magnet entrance ─────────────────────────────── */
+@keyframes leadMagnetIn {
+  from { opacity: 0; transform: translateY(16px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.lead-magnet-enter {
+  opacity: 0;
+  transform: translateY(16px) scale(0.98);
+  transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+.lead-magnet-enter.is-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* ── Versus grid-row stagger (for CSS grid based rows) ── */
+.versus-row-stagger > div {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.35s ease-out, transform 0.35s ease-out;
+}
+.versus-row-stagger.is-visible > div {
+  opacity: 1;
+  transform: translateY(0);
+}
+.versus-row-stagger.is-visible > div:nth-child(1) { transition-delay: 0.03s; }
+.versus-row-stagger.is-visible > div:nth-child(2) { transition-delay: 0.06s; }
+.versus-row-stagger.is-visible > div:nth-child(3) { transition-delay: 0.09s; }
+.versus-row-stagger.is-visible > div:nth-child(4) { transition-delay: 0.12s; }
+.versus-row-stagger.is-visible > div:nth-child(5) { transition-delay: 0.15s; }
+.versus-row-stagger.is-visible > div:nth-child(6) { transition-delay: 0.18s; }
+.versus-row-stagger.is-visible > div:nth-child(7) { transition-delay: 0.21s; }
+.versus-row-stagger.is-visible > div:nth-child(8) { transition-delay: 0.24s; }
+
 /* ── Safe area inset for iOS home bar ────────────────── */
 @utility safe-area-inset-bottom {
   padding-bottom: env(safe-area-inset-bottom);

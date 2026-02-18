@@ -8,6 +8,8 @@ import CompactDisclosure from "@/components/CompactDisclosure";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import StickyCTABar from "@/components/StickyCTABar";
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
+import CountUp from "@/components/CountUp";
+import ScrollReveal from "@/components/ScrollReveal";
 
 function FeeVerdict({ value, thresholds }: { value: number | undefined; thresholds: [number, number] }) {
   if (value == null) return <span className="px-2 py-0.5 bg-slate-100 text-slate-500 text-xs font-semibold rounded-full">N/A</span>;
@@ -202,7 +204,7 @@ export default function BrokerReviewClient({
         {/* Fee Audit */}
         <h2 className="text-2xl font-extrabold mb-2">Fee Audit</h2>
         <p className="text-slate-600 mb-4 text-sm">We&apos;ve audited {b.name}&apos;s fee structure so you don&apos;t have to read the PDS.</p>
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden mb-8">
+        <ScrollReveal animation="fee-row-stagger" className="bg-white border border-slate-200 rounded-xl overflow-hidden mb-8">
           {feeRows.map((row, i) => (
             <div key={i} className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100 last:border-b-0">
               <span className="text-sm font-medium text-slate-700">{row.label}</span>
@@ -212,7 +214,7 @@ export default function BrokerReviewClient({
               </div>
             </div>
           ))}
-        </div>
+        </ScrollReveal>
 
         {/* Sources & Verification — E-E-A-T transparency signals */}
         <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 mb-8">
@@ -284,7 +286,9 @@ export default function BrokerReviewClient({
             {costScenarios.map((s, i) => (
               <div key={i} className="bg-slate-50 rounded-lg p-4 text-center">
                 <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-1">{s.label}</p>
-                <p className="text-2xl font-extrabold text-brand">${s.cost.toFixed(2)}</p>
+                <p className="text-2xl font-extrabold text-brand">
+                  <CountUp end={s.cost} prefix="$" decimals={2} duration={1200} />
+                </p>
                 <p className="text-xs text-slate-400 mt-1">
                   {((s.cost / s.amount) * 100).toFixed(2)}% of trade
                   {s.type === "us" && b.fx_rate != null && (
@@ -344,7 +348,7 @@ export default function BrokerReviewClient({
         {/* Pros & Cons */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           {b.pros && b.pros.length > 0 && (
-            <div className="bg-green-50 rounded-xl p-6">
+            <ScrollReveal animation="scroll-slide-left" className="bg-green-50 rounded-xl p-6">
               <h3 className="text-green-800 font-bold mb-3">What We Like</h3>
               <ul className="space-y-2">
                 {b.pros.map((pro: string, i: number) => (
@@ -354,10 +358,10 @@ export default function BrokerReviewClient({
                   </li>
                 ))}
               </ul>
-            </div>
+            </ScrollReveal>
           )}
           {b.cons && b.cons.length > 0 && (
-            <div className="bg-red-50 rounded-xl p-6">
+            <ScrollReveal animation="scroll-slide-right" className="bg-red-50 rounded-xl p-6">
               <h3 className="text-red-800 font-bold mb-3">What We Don&apos;t</h3>
               <ul className="space-y-2">
                 {b.cons.map((con: string, i: number) => (
@@ -367,7 +371,7 @@ export default function BrokerReviewClient({
                   </li>
                 ))}
               </ul>
-            </div>
+            </ScrollReveal>
           )}
         </div>
 
@@ -422,7 +426,7 @@ export default function BrokerReviewClient({
           <>
             <h2 className="text-xl font-extrabold mb-2">Similar Brokers</h2>
             <p className="text-sm text-slate-600 mb-4">If {b.name} isn&apos;t quite right, consider these alternatives:</p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+            <ScrollReveal animation="scroll-stagger-children" className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
               {similar.map(s => (
                 <Link
                   key={s.slug}
@@ -441,7 +445,7 @@ export default function BrokerReviewClient({
                   <span className="inline-block mt-2 text-xs px-3 py-1 border border-slate-200 rounded-md">Compare →</span>
                 </Link>
               ))}
-            </div>
+            </ScrollReveal>
           </>
         )}
 

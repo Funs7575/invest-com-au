@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import type { Broker } from "@/lib/types";
 import { absoluteUrl } from "@/lib/seo";
+import ScrollReveal from "@/components/ScrollReveal";
 
 export const metadata = {
   title: "Broker Reviews",
@@ -57,21 +58,21 @@ export default async function ReviewsPage() {
 
         {/* Share Trading Brokers */}
         <h2 className="text-xl font-extrabold mb-4">Share Trading Brokers</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+        <ScrollReveal animation="scroll-stagger-children" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {shareBrokers.map((broker: Broker) => (
             <BrokerReviewCard key={broker.id} broker={broker} />
           ))}
-        </div>
+        </ScrollReveal>
 
         {/* Crypto Exchanges */}
         {cryptoBrokers.length > 0 && (
           <>
             <h2 className="text-xl font-extrabold mb-4">Crypto Exchanges</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <ScrollReveal animation="scroll-stagger-children" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {cryptoBrokers.map((broker: Broker) => (
                 <BrokerReviewCard key={broker.id} broker={broker} />
               ))}
-            </div>
+            </ScrollReveal>
           </>
         )}
       </div>

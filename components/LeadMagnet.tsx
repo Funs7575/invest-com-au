@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { trackEvent } from "@/lib/tracking";
 
@@ -9,6 +9,18 @@ export default function LeadMagnet() {
   const [consent, setConsent] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [emailSent, setEmailSent] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { el.classList.add("is-visible"); observer.unobserve(el); } },
+      { threshold: 0.15 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -36,7 +48,7 @@ export default function LeadMagnet() {
   }
 
   return (
-    <div className="rounded-xl p-6 bg-green-50 border border-green-200 shadow-sm">
+    <div ref={ref} className="rounded-xl p-6 bg-green-50 border border-green-200 shadow-sm lead-magnet-enter">
       <div className="text-xs font-bold uppercase tracking-wider mb-2 text-green-700">
         Free Download
       </div>

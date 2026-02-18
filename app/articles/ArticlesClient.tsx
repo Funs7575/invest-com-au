@@ -67,7 +67,7 @@ export default function ArticlesClient({ articles }: { articles: Article[] }) {
           onClick={() => setActiveCategory("all")}
           role="tab"
           aria-selected={activeCategory === "all"}
-          className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
+          className={`px-4 py-2 text-sm font-medium rounded-full filter-pill ${
             activeCategory === "all"
               ? "bg-green-700 text-white"
               : "bg-slate-100 text-slate-700 hover:bg-slate-200"
@@ -81,7 +81,7 @@ export default function ArticlesClient({ articles }: { articles: Article[] }) {
             onClick={() => setActiveCategory(cat)}
             role="tab"
             aria-selected={activeCategory === cat}
-            className={`px-4 py-2 text-sm font-medium rounded-full capitalize transition-colors ${
+            className={`px-4 py-2 text-sm font-medium rounded-full capitalize filter-pill ${
               activeCategory === cat
                 ? "bg-green-700 text-white"
                 : "bg-slate-100 text-slate-700 hover:bg-slate-200"
@@ -93,7 +93,7 @@ export default function ArticlesClient({ articles }: { articles: Article[] }) {
       </div>
 
       {/* Articles Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div key={`${activeCategory}-${searchQuery}`} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {displayItems.map((item, idx) => {
           if (item === "lead-magnet") {
             return (
@@ -110,7 +110,8 @@ export default function ArticlesClient({ articles }: { articles: Article[] }) {
           return (
             <div
               key={article.id}
-              className="border border-slate-200 rounded-xl bg-white hover:shadow-lg transition-shadow flex flex-col"
+              className="border border-slate-200 rounded-xl bg-white hover:shadow-lg transition-shadow flex flex-col stagger-item"
+              style={{ animationDelay: `${0.05 + (idx % 6) * 0.08}s` }}
             >
               <div className="p-6 flex flex-col flex-1">
                 {/* Badges Row */}

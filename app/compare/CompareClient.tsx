@@ -10,6 +10,7 @@ import BrokerCard from "@/components/BrokerCard";
 import CompactDisclosure from "@/components/CompactDisclosure";
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 import { getMostRecentFeeCheck } from "@/lib/utils";
+import ScrollReveal from "@/components/ScrollReveal";
 
 type FilterType = 'all' | 'beginner' | 'chess' | 'free' | 'us' | 'smsf' | 'low-fx' | 'crypto';
 type SortCol = 'name' | 'asx_fee_value' | 'us_fee_value' | 'fx_rate' | 'rating';
@@ -200,7 +201,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               onClick={() => setActiveFilter(f.key)}
               role="tab"
               aria-selected={activeFilter === f.key}
-              className={`px-4 py-2 text-sm font-medium rounded-full transition-all duration-200 ${
+              className={`px-4 py-2 text-sm font-medium rounded-full filter-pill ${
                 activeFilter === f.key
                   ? 'bg-green-700 text-white shadow-sm scale-105'
                   : 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:scale-[1.02]'
@@ -247,8 +248,8 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         </div>
 
         {/* Desktop Table */}
-        <div key={`${activeFilter}-${searchQuery}`} className="hidden md:block overflow-x-auto motion-safe:tab-content-enter">
-          <table className="w-full border border-slate-200 rounded-lg">
+        <div key={`${activeFilter}-${searchQuery}`} className="hidden md:block overflow-x-auto tab-content-enter">
+          <ScrollReveal key={`table-${activeFilter}-${searchQuery}-${sortCol}-${sortDir}`} animation="table-row-stagger" as="table" className="w-full border border-slate-200 rounded-lg">
             <thead className="bg-slate-50">
               <tr>
                 <th className="px-3 py-3 w-10"></th>
@@ -355,11 +356,11 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </ScrollReveal>
         </div>
 
         {/* Mobile Cards */}
-        <div key={`mobile-${activeFilter}-${searchQuery}`} className="md:hidden space-y-4 motion-safe:tab-content-enter">
+        <div key={`mobile-${activeFilter}-${searchQuery}`} className="md:hidden space-y-4 tab-content-enter">
           {sorted.map(broker => (
             <BrokerCard
               key={broker.id}

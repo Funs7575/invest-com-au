@@ -7,6 +7,7 @@ import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, formatPercent, AFFILIATE_REL } from "@/lib/tracking";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import StickyCTABar from "@/components/StickyCTABar";
+import ScrollReveal from "@/components/ScrollReveal";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 
 const MAX_BROKERS = 4;
@@ -301,7 +302,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
             <p className="text-[0.65rem] text-slate-500 mb-8">{ADVERTISER_DISCLOSURE_SHORT}</p>
 
             {/* ─── Score Cards ─── */}
-            <div className={`grid grid-cols-2 ${gridCols} gap-3 mb-8`}>
+            <ScrollReveal animation="scroll-stagger-children" className={`grid grid-cols-2 ${gridCols} gap-3 mb-8`}>
               {selected.map(br => {
                 const isWinner = br.slug === overallWinner?.slug;
                 return (
@@ -331,12 +332,12 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                   </div>
                 );
               })}
-            </div>
+            </ScrollReveal>
 
             {/* ─── Category Breakdown ─── */}
             <div className="mb-8">
               <h2 className="text-xl font-extrabold mb-4">Category Breakdown</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <ScrollReveal animation="scroll-stagger-children" className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {verdicts.map((v, i) => (
                   <div key={i} className="bg-white border border-slate-200 rounded-xl p-4 flex items-center gap-3 hover:shadow-sm transition-shadow">
                     <span className="text-2xl shrink-0">{v.emoji}</span>
@@ -363,13 +364,13 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                     )}
                   </div>
                 ))}
-              </div>
+              </ScrollReveal>
             </div>
 
             {/* ─── Head-to-Head Table ─── */}
             <div className="mb-8">
               <h2 className="text-xl font-extrabold mb-4">Head-to-Head Comparison</h2>
-              <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+              <ScrollReveal animation="scroll-fade-in" className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
                 <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
                   {/* Broker headers */}
                   <div className="grid border-b border-slate-100" style={{ gridTemplateColumns: `180px repeat(${selected.length}, 1fr)` }}>
@@ -396,8 +397,8 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                     return (
                       <div
                         key={i}
-                        className={`grid items-center ${i < featureRows.length - 1 ? 'border-b border-slate-100' : ''} hover:bg-slate-50/50 transition-colors`}
-                        style={{ gridTemplateColumns: `180px repeat(${selected.length}, 1fr)` }}
+                        className={`grid items-center ${i < featureRows.length - 1 ? 'border-b border-slate-100' : ''} hover:bg-slate-50/50 transition-colors stagger-item`}
+                        style={{ gridTemplateColumns: `180px repeat(${selected.length}, 1fr)`, animationDelay: `${0.1 + i * 0.06}s` }}
                       >
                         <div className="px-4 py-3.5 flex items-center gap-2">
                           <span className="text-base">{row.icon}</span>
@@ -422,13 +423,13 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                     );
                   })}
                 </div>
-              </div>
+              </ScrollReveal>
             </div>
 
             {/* ─── Pros & Cons ─── */}
             <div className="mb-8">
               <h2 className="text-xl font-extrabold mb-4">Pros & Cons</h2>
-              <div className={`grid grid-cols-1 ${gridCols} gap-4`}>
+              <ScrollReveal animation="scroll-stagger-children" className={`grid grid-cols-1 ${gridCols} gap-4`}>
                 {selected.map(br => {
                   const isWinner = br.slug === overallWinner?.slug;
                   return (
@@ -495,12 +496,12 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                     </div>
                   );
                 })}
-              </div>
+              </ScrollReveal>
               <CompactDisclaimerLine />
             </div>
 
             {/* ─── Bottom CTA ─── */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <ScrollReveal animation="scroll-stagger-children" className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-6">
                 <div className="text-2xl mb-2">🔀</div>
                 <h2 className="text-lg font-extrabold text-green-900 mb-1">Thinking of switching?</h2>
@@ -517,7 +518,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                   Take the Quiz →
                 </Link>
               </div>
-            </div>
+            </ScrollReveal>
 
             <StickyCTABar broker={overallWinner} detail={`Winner: ${overallWinner.name} · ${overallWinner.rating}/5`} context="versus" />
           </>
