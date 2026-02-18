@@ -107,13 +107,13 @@ export default async function HomePage() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 my-6 hero-fade-up hero-fade-up-4">
             <Link
               href="/compare"
-              className="px-6 py-3 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors text-sm"
+              className="px-6 py-3 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 hover:scale-105 hover:shadow-[0_0_12px_rgba(21,128,61,0.3)] transition-all duration-200 text-sm"
             >
               Compare All Brokers &rarr;
             </Link>
             <Link
               href="/quiz"
-              className="px-6 py-3 border border-green-700 text-green-700 font-semibold rounded-lg hover:bg-green-50 transition-colors text-sm"
+              className="px-6 py-3 border border-green-700 text-green-700 font-semibold rounded-lg hover:bg-green-50 hover:scale-105 transition-all duration-200 text-sm"
             >
               Take the 60-sec Quiz &rarr;
             </Link>
@@ -139,7 +139,7 @@ export default async function HomePage() {
             <div className="text-center mt-6">
               <Link
                 href="/compare"
-                className="inline-block px-6 py-3 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors text-sm"
+                className="inline-block px-6 py-3 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 hover:scale-105 hover:shadow-[0_0_12px_rgba(21,128,61,0.3)] transition-all duration-200 text-sm"
               >
                 View All {brokerCount}+ Brokers →
               </Link>

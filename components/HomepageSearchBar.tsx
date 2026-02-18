@@ -30,7 +30,7 @@ export default function HomepageSearchBar() {
         />
         <button
           onClick={handleSearch}
-          className="absolute right-2 top-1/2 -translate-y-1/2 bg-green-700 hover:bg-green-800 text-white font-semibold px-6 py-2.5 rounded-xl transition-colors"
+          className="absolute right-2 top-1/2 -translate-y-1/2 bg-green-700 hover:bg-green-800 hover:scale-105 hover:shadow-[0_0_12px_rgba(21,128,61,0.3)] text-white font-semibold px-6 py-2.5 rounded-xl transition-all duration-200"
         >
           Compare
         </button>

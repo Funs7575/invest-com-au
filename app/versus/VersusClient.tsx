@@ -506,7 +506,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                 <div className="text-2xl mb-2">🔀</div>
                 <h2 className="text-lg font-extrabold text-green-900 mb-1">Thinking of switching?</h2>
                 <p className="text-slate-600 mb-4 text-sm">Use our Switching Cost Simulator to see exactly how much you&apos;d save.</p>
-                <Link href="/calculators?calc=switching" className="inline-block px-5 py-2.5 bg-green-700 text-white font-semibold rounded-xl hover:bg-green-800 transition-colors text-sm">
+                <Link href="/calculators?calc=switching" className="inline-block px-5 py-2.5 bg-green-700 text-white font-semibold rounded-xl hover:bg-green-800 hover:scale-105 hover:shadow-[0_0_12px_rgba(21,128,61,0.3)] transition-all duration-200 text-sm">
                   Calculate Savings →
                 </Link>
               </div>

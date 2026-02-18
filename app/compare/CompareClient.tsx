@@ -413,7 +413,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             <div className="text-2xl mb-2">📊</div>
             <h3 className="text-lg font-bold text-green-900 mb-1">Free Fee Comparison PDF</h3>
             <p className="text-sm text-slate-600 mb-4">Download our 2026 fee audit — every broker&apos;s brokerage, FX fees, and hidden costs in one document.</p>
-            <Link href="/#email-capture" className="inline-block px-5 py-2.5 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors">
+            <Link href="/#email-capture" className="inline-block px-5 py-2.5 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 hover:scale-105 hover:shadow-[0_0_12px_rgba(21,128,61,0.3)] transition-all duration-200">
               Get Free PDF →
             </Link>
           </div>
