@@ -119,7 +119,7 @@ export default async function ArticlesPage({
             return (
               <div
                 key={article.id}
-                className="border border-slate-200 rounded-xl bg-white hover:shadow-lg transition-shadow flex flex-col"
+                className="border border-slate-200 rounded-xl bg-white hover:shadow-lg hover:scale-[1.02] transition-all flex flex-col"
               >
                 <div className="p-6 flex flex-col flex-1">
                   {/* Badges Row */}

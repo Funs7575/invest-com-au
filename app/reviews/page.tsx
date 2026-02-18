@@ -85,7 +85,7 @@ function BrokerReviewCard({ broker }: { broker: Broker }) {
   return (
     <Link
       href={`/broker/${broker.slug}`}
-      className="border border-slate-200 rounded-xl overflow-hidden hover-lift transition-all"
+      className="border border-slate-200 rounded-xl overflow-hidden hover-lift hover:scale-[1.02] transition-all"
     >
       <div className="p-6">
         <div className="flex items-start gap-3 mb-3">
