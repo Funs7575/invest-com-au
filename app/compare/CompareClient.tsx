@@ -243,7 +243,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
 
         {/* Desktop Table */}
         <div key={`${activeFilter}-${searchQuery}`} className="hidden md:block overflow-x-auto tab-content-enter">
-          <ScrollReveal key={`table-${activeFilter}-${searchQuery}-${sortCol}-${sortDir}`} animation="table-row-stagger" as="table" className="w-full border border-slate-200 rounded-lg">
+          <ScrollReveal key={`table-${activeFilter}-${searchQuery}-${sortCol}-${sortDir}`} animation="table-row-stagger" as="table" className="w-full border border-slate-200 rounded-lg compare-table">
             <thead className="bg-slate-50">
               <tr>
                 <th className="px-3 py-3 w-10"></th>
@@ -287,7 +287,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               {sorted.map(broker => (
                 <tr
                   key={broker.id}
-                  className={`hover:bg-slate-50 transition-colors duration-150 ${editorPicks[broker.slug] ? 'bg-green-50/40' : ''}`}
+                  className={`group hover:bg-slate-50 transition-colors duration-150 ${editorPicks[broker.slug] ? 'bg-green-50/40' : ''}`}
                 >
                   <td className="px-3 py-3">
                     <input
@@ -302,7 +302,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2.5">
                       <div
-                        className="w-8 h-8 rounded-lg flex items-center justify-center text-[0.6rem] font-bold shrink-0"
+                        className="w-8 h-8 rounded-lg flex items-center justify-center text-[0.6rem] font-bold shrink-0 transition-transform duration-200 group-hover:scale-110"
                         style={{ background: `${broker.color}18`, color: broker.color }}
                       >
                         {broker.icon || broker.name.charAt(0)}
@@ -342,7 +342,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                       target="_blank"
                       rel={AFFILIATE_REL}
                       onClick={() => trackClick(broker.slug, broker.name, 'compare-table', '/compare', 'compare')}
-                      className="inline-block px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
+                      className="inline-block px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-all duration-200 group-hover:scale-105 group-hover:shadow-[0_0_12px_rgba(21,128,61,0.3)]"
                     >
                       {getBenefitCta(broker, 'compare')}
                     </a>

@@ -510,6 +510,20 @@ body {
 .table-row-stagger.is-visible tbody tr:nth-child(11) { transition-delay: 0.33s; }
 .table-row-stagger.is-visible tbody tr:nth-child(12) { transition-delay: 0.36s; }
 
+/* ── Compare table row hover micro-animations ────────── */
+.compare-table tbody tr td {
+  transition: box-shadow 0.2s ease;
+}
+.compare-table tbody tr:hover td {
+  box-shadow: 0 4px 12px -4px rgba(0, 0, 0, 0.08);
+}
+.compare-table tbody tr:hover td:first-child {
+  box-shadow: -2px 4px 12px -4px rgba(0, 0, 0, 0.08);
+}
+.compare-table tbody tr:hover td:last-child {
+  box-shadow: 2px 4px 12px -4px rgba(0, 0, 0, 0.08);
+}
+
 /* ── Fee row stagger ─────────────────────────────────── */
 .fee-row-stagger > div {
   opacity: 0;
