@@ -91,7 +91,7 @@ export default function BrokerReviewClient({
           >
             {b.icon || b.name.charAt(0)}
           </div>
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             <h1 className="text-3xl md:text-4xl font-extrabold">{b.name} Review (2026)</h1>
             <p className="text-slate-600 mt-1">{b.tagline}</p>
             <div className="flex items-center gap-3 mt-2 flex-wrap">
@@ -105,16 +105,18 @@ export default function BrokerReviewClient({
               )}
             </div>
           </div>
-          <a
-            href={getAffiliateLink(b)}
-            target="_blank"
-            rel={AFFILIATE_REL}
-            onClick={() => trackClick(b.slug, b.name, 'review-header', `/broker/${b.slug}`, 'review')}
-            className="shrink-0 px-6 py-3 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors"
-          >
-            {getBenefitCta(b, 'review')}
-          </a>
-          <RiskWarningInline />
+          <div className="shrink-0 flex flex-col items-start md:items-end">
+            <a
+              href={getAffiliateLink(b)}
+              target="_blank"
+              rel={AFFILIATE_REL}
+              onClick={() => trackClick(b.slug, b.name, 'review-header', `/broker/${b.slug}`, 'review')}
+              className="px-6 py-3 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors"
+            >
+              {getBenefitCta(b, 'review')}
+            </a>
+            <RiskWarningInline />
+          </div>
         </div>
         <p className="text-xs text-slate-400 mb-3">
           {ADVERTISER_DISCLOSURE_SHORT}
@@ -296,7 +298,7 @@ export default function BrokerReviewClient({
 
         {/* Inline CTA 1 */}
         <div className="bg-green-50 border border-green-200 rounded-xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
-          <p className="text-sm">
+          <p className="text-sm flex-1">
             <strong>Like what you see?</strong>{' '}
             {(b.asx_fee_value ?? 999) <= 5
               ? `${b.name} offers some of the lowest fees in Australia.`
@@ -304,16 +306,18 @@ export default function BrokerReviewClient({
               ? `${b.name} is CHESS sponsored — your shares, your name.`
               : `See if ${b.name} fits your needs.`}
           </p>
-          <a
-            href={getAffiliateLink(b)}
-            target="_blank"
-            rel={AFFILIATE_REL}
-            onClick={() => trackClick(b.slug, b.name, 'review-inline-1', `/broker/${b.slug}`, 'review')}
-            className="shrink-0 px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
-          >
-            {getBenefitCta(b, 'review')}
-          </a>
-          <RiskWarningInline />
+          <div className="shrink-0 flex flex-col items-start sm:items-end">
+            <a
+              href={getAffiliateLink(b)}
+              target="_blank"
+              rel={AFFILIATE_REL}
+              onClick={() => trackClick(b.slug, b.name, 'review-inline-1', `/broker/${b.slug}`, 'review')}
+              className="px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
+            >
+              {getBenefitCta(b, 'review')}
+            </a>
+            <RiskWarningInline />
+          </div>
         </div>
 
         {/* Safety Check */}
@@ -366,7 +370,7 @@ export default function BrokerReviewClient({
 
         {/* Inline CTA 2 */}
         <div className="bg-green-50 border border-green-200 rounded-xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
-          <p className="text-sm">
+          <p className="text-sm flex-1">
             <strong>Ready to decide?</strong>{' '}
             {b.deal
               ? b.deal_text
@@ -376,21 +380,23 @@ export default function BrokerReviewClient({
               ? `Start trading from just ${b.asx_fee} per trade.`
               : 'Open an account in minutes.'}
           </p>
-          <a
-            href={getAffiliateLink(b)}
-            target="_blank"
-            rel={AFFILIATE_REL}
-            onClick={() => trackClick(b.slug, b.name, 'review-inline-2', `/broker/${b.slug}`, 'review')}
-            className="shrink-0 px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
-          >
-            {getBenefitCta(b, 'review')}
-          </a>
-          <RiskWarningInline />
+          <div className="shrink-0 flex flex-col items-start sm:items-end">
+            <a
+              href={getAffiliateLink(b)}
+              target="_blank"
+              rel={AFFILIATE_REL}
+              onClick={() => trackClick(b.slug, b.name, 'review-inline-2', `/broker/${b.slug}`, 'review')}
+              className="px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
+            >
+              {getBenefitCta(b, 'review')}
+            </a>
+            <RiskWarningInline />
+          </div>
         </div>
 
         {/* Details Grid */}
         <h2 className="text-2xl font-extrabold mb-3">Details</h2>
-        <div className="grid grid-cols-2 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
           <div className="bg-slate-50 rounded-lg p-4">
             <p className="text-[0.65rem] uppercase text-slate-500 tracking-wide font-medium mb-1">Platforms</p>
             <p className="text-sm font-medium">{b.platforms?.join(', ') || 'N/A'}</p>
