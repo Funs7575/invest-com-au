@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import type { Article, Broker } from "@/lib/types";
+import type { Article, Broker, TeamMember } from "@/lib/types";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import ArticleDetailClient from "./ArticleDetailClient";
@@ -9,7 +9,7 @@ import ArticleSidebar from "@/components/ArticleSidebar";
 import ComparisonTableSkeleton from "@/components/ComparisonTableSkeleton";
 import AuthorByline from "@/components/AuthorByline";
 import OnThisPage from "@/components/OnThisPage";
-import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd, articleAuthorJsonLd, SITE_NAME } from "@/lib/seo";
 import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -86,13 +86,15 @@ export default async function ArticlePage({
 
   const { data: article } = await supabase
     .from("articles")
-    .select("*")
+    .select("*, author:team_members!author_id(*), reviewer:team_members!reviewer_id(*)")
     .eq("slug", slug)
     .single();
 
   if (!article) notFound();
 
   const a = article as Article;
+  const articleAuthor = (a as any).author as TeamMember | null;
+  const articleReviewer = (a as any).reviewer as TeamMember | null;
   const isEnhanced = ENHANCED_SLUGS.includes(slug);
 
   // Fetch related brokers
@@ -140,7 +142,21 @@ export default async function ArticlePage({
   const calcInfo = a.related_calc ? CALC_NAMES[a.related_calc] : null;
   const pagePath = `/article/${slug}`;
 
-  // JSON-LD schema for all articles
+  // JSON-LD schema for all articles — prefer structured author over flat fields
+  const authorBlock = articleAuthor
+    ? articleAuthorJsonLd(articleAuthor)
+    : a.author_name && a.author_name !== "Market Research Team"
+      ? {
+          "@type": "Person" as const,
+          name: a.author_name,
+          ...(a.author_linkedin ? { url: a.author_linkedin } : {}),
+        }
+      : {
+          "@type": "Organization" as const,
+          name: "Invest.com.au",
+          url: absoluteUrl("/"),
+        };
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -148,18 +164,16 @@ export default async function ArticlePage({
     description: a.excerpt,
     datePublished: a.published_at,
     dateModified: a.updated_at,
-    author:
-      a.author_name && a.author_name !== "Market Research Team"
-        ? {
+    author: authorBlock,
+    ...(articleReviewer
+      ? {
+          reviewedBy: {
             "@type": "Person",
-            name: a.author_name,
-            ...(a.author_linkedin ? { url: a.author_linkedin } : {}),
-          }
-        : {
-            "@type": "Organization",
-            name: "Invest.com.au",
-            url: absoluteUrl("/"),
+            name: articleReviewer.full_name,
+            url: absoluteUrl(`/reviewers/${articleReviewer.slug}`),
           },
+        }
+      : {}),
     publisher: {
       "@type": "Organization",
       name: "Invest.com.au",
@@ -266,6 +280,11 @@ export default async function ArticlePage({
                   : undefined
               }
               variant="dark"
+              author={articleAuthor ?? undefined}
+              reviewer={articleReviewer ?? undefined}
+              reviewedAt={a.reviewed_at ?? undefined}
+              changelog={a.changelog ?? undefined}
+              showMethodologyLink
             />
           </div>
         </div>
