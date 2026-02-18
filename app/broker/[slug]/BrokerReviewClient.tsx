@@ -84,39 +84,39 @@ export default function BrokerReviewClient({
         </div>
 
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-start gap-6 mb-4">
-          <div
-            className="w-16 h-16 rounded-xl flex items-center justify-center text-2xl font-bold shrink-0"
-            style={{ background: `${b.color}20`, color: b.color }}
-          >
-            {b.icon || b.name.charAt(0)}
-          </div>
-          <div className="flex-1 min-w-0">
-            <h1 className="text-3xl md:text-4xl font-extrabold">{b.name} Review (2026)</h1>
-            <p className="text-slate-600 mt-1">{b.tagline}</p>
-            <div className="flex items-center gap-3 mt-2 flex-wrap">
-              <span className="text-amber text-sm">{renderStars(b.rating || 0)}</span>
-              <span className="text-sm text-slate-500">{b.rating}/5</span>
-              {b.chess_sponsored && (
-                <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded-full">CHESS Sponsored</span>
-              )}
-              {b.deal && (
-                <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded-full">Deal of the Month</span>
-              )}
+        <div className="mb-4">
+          <div className="flex items-start gap-4 mb-3">
+            <div
+              className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl font-bold shrink-0"
+              style={{ background: `${b.color}20`, color: b.color }}
+            >
+              {b.icon || b.name.charAt(0)}
+            </div>
+            <div className="min-w-0">
+              <h1 className="text-3xl md:text-4xl font-extrabold">{b.name} Review (2026)</h1>
+              <p className="text-slate-600 mt-1">{b.tagline}</p>
             </div>
           </div>
-          <div className="shrink-0 flex flex-col items-start md:items-end">
-            <a
-              href={getAffiliateLink(b)}
-              target="_blank"
-              rel={AFFILIATE_REL}
-              onClick={() => trackClick(b.slug, b.name, 'review-header', `/broker/${b.slug}`, 'review')}
-              className="px-6 py-3 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors"
-            >
-              {getBenefitCta(b, 'review')}
-            </a>
-            <RiskWarningInline />
+          <div className="flex items-center gap-3 flex-wrap mb-4">
+            <span className="text-amber text-sm">{renderStars(b.rating || 0)}</span>
+            <span className="text-sm text-slate-500">{b.rating}/5</span>
+            {b.chess_sponsored && (
+              <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded-full">CHESS Sponsored</span>
+            )}
+            {b.deal && (
+              <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded-full">Deal of the Month</span>
+            )}
           </div>
+          <a
+            href={getAffiliateLink(b)}
+            target="_blank"
+            rel={AFFILIATE_REL}
+            onClick={() => trackClick(b.slug, b.name, 'review-header', `/broker/${b.slug}`, 'review')}
+            className="inline-block px-6 py-3 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors"
+          >
+            {getBenefitCta(b, 'review')}
+          </a>
+          <RiskWarningInline />
         </div>
         <p className="text-xs text-slate-400 mb-3">
           {ADVERTISER_DISCLOSURE_SHORT}
