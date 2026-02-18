@@ -182,7 +182,7 @@ export default function AdminBrokersPage() {
         <div className="flex items-center gap-3">
           <span className="text-xs text-slate-500">{filteredBrokers.length} broker{filteredBrokers.length !== 1 ? "s" : ""}</span>
           {!showForm && (
-            <button onClick={() => setCreating(true)} className="bg-amber-500 hover:bg-green-700 text-slate-900 font-semibold rounded-lg px-4 py-2 text-sm transition-colors">+ Add Broker</button>
+            <button onClick={() => setCreating(true)} className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold rounded-lg px-4 py-2 text-sm transition-colors">+ Add Broker</button>
           )}
         </div>
       </div>
@@ -274,7 +274,7 @@ export default function AdminBrokersPage() {
                       )}
                     </td>
                     <td className="px-4 py-3">
-                      <span className={`text-xs px-2 py-1 rounded-full font-medium ${broker.status === "active" ? "bg-green-50 text-green-600" : "bg-slate-600 text-slate-600"}`}>{broker.status}</span>
+                      <span className={`text-xs px-2 py-1 rounded-full font-medium ${broker.status === "active" ? "bg-green-50 text-green-600" : "bg-slate-100 text-slate-600"}`}>{broker.status}</span>
                     </td>
                     <td className="px-4 py-3 text-right space-x-2">
                       <a href={`/broker/${broker.slug}`} target="_blank" rel="noopener noreferrer" className="text-xs text-green-600 hover:text-green-700">Preview</a>
@@ -290,8 +290,8 @@ export default function AdminBrokersPage() {
             <div className="flex items-center justify-between mt-4">
               <span className="text-xs text-slate-500">Page {page + 1} of {totalPages}</span>
               <div className="flex gap-2">
-                <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0} className="px-3 py-1.5 text-xs bg-slate-200 text-slate-600 rounded-lg hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">&larr; Prev</button>
-                <button onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))} disabled={page >= totalPages - 1} className="px-3 py-1.5 text-xs bg-slate-200 text-slate-600 rounded-lg hover:bg-slate-200 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">Next &rarr;</button>
+                <button onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0} className="px-3 py-1.5 text-xs bg-slate-200 text-slate-600 rounded-lg hover:bg-slate-300 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">&larr; Prev</button>
+                <button onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))} disabled={page >= totalPages - 1} className="px-3 py-1.5 text-xs bg-slate-200 text-slate-600 rounded-lg hover:bg-slate-300 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">Next &rarr;</button>
               </div>
             </div>
           )}
@@ -514,7 +514,7 @@ function BrokerForm({ broker, saving, onSave, onCancel }: { broker: Partial<Brok
 
       {/* Save */}
       <div className="flex gap-3 pt-2">
-        <button type="submit" disabled={saving} className="bg-amber-500 hover:bg-green-700 text-slate-900 font-semibold rounded-lg px-6 py-2.5 text-sm transition-colors disabled:opacity-50">{saving ? "Saving..." : broker.id ? "Update Broker" : "Create Broker"}</button>
+        <button type="submit" disabled={saving} className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold rounded-lg px-6 py-2.5 text-sm transition-colors disabled:opacity-50">{saving ? "Saving..." : broker.id ? "Update Broker" : "Create Broker"}</button>
         <button type="button" onClick={onCancel} className="text-slate-500 hover:text-slate-900 px-4 py-2.5 text-sm transition-colors">Cancel</button>
       </div>
     </form>

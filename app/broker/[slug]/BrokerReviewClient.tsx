@@ -302,27 +302,27 @@ export default function BrokerReviewClient({
         </div>
 
         {/* Inline CTA 1 */}
-        <div className="bg-green-50 border border-green-200 rounded-xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
-          <p className="text-sm flex-1">
-            <strong>Like what you see?</strong>{' '}
-            {(b.asx_fee_value ?? 999) <= 5
-              ? `${b.name} offers some of the lowest fees in Australia.`
-              : b.chess_sponsored
-              ? `${b.name} is CHESS sponsored — your shares, your name.`
-              : `See if ${b.name} fits your needs.`}
-          </p>
-          <div className="shrink-0 flex flex-col items-start sm:items-end">
+        <div className="bg-green-50 border border-green-200 rounded-xl p-5 mb-8">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <p className="text-sm min-w-0 flex-1">
+              <strong>Like what you see?</strong>{' '}
+              {(b.asx_fee_value ?? 999) <= 5
+                ? `${b.name} offers some of the lowest fees in Australia.`
+                : b.chess_sponsored
+                ? `${b.name} is CHESS sponsored — your shares, your name.`
+                : `See if ${b.name} fits your needs.`}
+            </p>
             <a
               href={getAffiliateLink(b)}
               target="_blank"
               rel={AFFILIATE_REL}
               onClick={() => trackClick(b.slug, b.name, 'review-inline-1', `/broker/${b.slug}`, 'review')}
-              className="px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
+              className="shrink-0 px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
             >
               {getBenefitCta(b, 'review')}
             </a>
-            <RiskWarningInline />
           </div>
+          <RiskWarningInline />
         </div>
 
         {/* Safety Check */}
@@ -374,29 +374,29 @@ export default function BrokerReviewClient({
         </div>
 
         {/* Inline CTA 2 */}
-        <div className="bg-green-50 border border-green-200 rounded-xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
-          <p className="text-sm flex-1">
-            <strong>Ready to decide?</strong>{' '}
-            {b.deal
-              ? b.deal_text
-              : (b.asx_fee_value ?? 999) === 0
-              ? 'Trade with $0 brokerage on ASX and US shares.'
-              : (b.asx_fee_value ?? 999) <= 5
-              ? `Start trading from just ${b.asx_fee} per trade.`
-              : 'Open an account in minutes.'}
-          </p>
-          <div className="shrink-0 flex flex-col items-start sm:items-end">
+        <div className="bg-green-50 border border-green-200 rounded-xl p-5 mb-8">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <p className="text-sm min-w-0 flex-1">
+              <strong>Ready to decide?</strong>{' '}
+              {b.deal
+                ? b.deal_text
+                : (b.asx_fee_value ?? 999) === 0
+                ? 'Trade with $0 brokerage on ASX and US shares.'
+                : (b.asx_fee_value ?? 999) <= 5
+                ? `Start trading from just ${b.asx_fee} per trade.`
+                : 'Open an account in minutes.'}
+            </p>
             <a
               href={getAffiliateLink(b)}
               target="_blank"
               rel={AFFILIATE_REL}
               onClick={() => trackClick(b.slug, b.name, 'review-inline-2', `/broker/${b.slug}`, 'review')}
-              className="px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
+              className="shrink-0 px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
             >
               {getBenefitCta(b, 'review')}
             </a>
-            <RiskWarningInline />
           </div>
+          <RiskWarningInline />
         </div>
 
         {/* Details Grid */}

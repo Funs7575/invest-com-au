@@ -119,7 +119,7 @@ export default function SiteSettingsPage() {
           <button
             onClick={saveAll}
             disabled={saving || loading}
-            className="bg-amber-500 hover:bg-green-700 text-black font-medium px-6 py-2 rounded-lg transition-colors disabled:opacity-50"
+            className="bg-amber-500 hover:bg-amber-600 text-black font-medium px-6 py-2 rounded-lg transition-colors disabled:opacity-50"
           >
             {saving ? "Saving..." : "Save All"}
           </button>
@@ -129,8 +129,8 @@ export default function SiteSettingsPage() {
           <div
             className={`px-4 py-3 rounded-lg text-sm ${
               message.type === "success"
-                ? "bg-green-900/50 border border-green-700 text-green-300"
-                : "bg-red-900/50 border border-red-700 text-red-300"
+                ? "bg-green-50 border border-green-200 text-green-700"
+                : "bg-red-50 border border-red-200 text-red-700"
             }`}
           >
             {message.text}
@@ -166,7 +166,7 @@ export default function SiteSettingsPage() {
               <button
                 onClick={saveAll}
                 disabled={saving}
-                className="bg-amber-500 hover:bg-green-700 text-black font-medium px-6 py-2 rounded-lg transition-colors disabled:opacity-50"
+                className="bg-amber-500 hover:bg-amber-600 text-black font-medium px-6 py-2 rounded-lg transition-colors disabled:opacity-50"
               >
                 {saving ? "Saving..." : "Save All"}
               </button>

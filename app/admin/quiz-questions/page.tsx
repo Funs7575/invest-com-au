@@ -244,7 +244,7 @@ export default function QuizQuestionsPage() {
                 <label className="text-sm font-medium text-slate-600">Options</label>
                 <button
                   onClick={handleAddOption}
-                  className="px-3 py-1 bg-slate-200 text-slate-600 text-sm rounded hover:bg-slate-200 transition-colors border border-slate-300"
+                  className="px-3 py-1 bg-slate-200 text-slate-600 text-sm rounded hover:bg-slate-300 transition-colors border border-slate-300"
                 >
                   + Add Option
                 </button>
@@ -311,7 +311,7 @@ export default function QuizQuestionsPage() {
               </button>
               <button
                 onClick={handleCancel}
-                className="px-4 py-2 bg-slate-200 text-slate-600 rounded hover:bg-slate-200 transition-colors"
+                className="px-4 py-2 bg-slate-200 text-slate-600 rounded hover:bg-slate-300 transition-colors"
               >
                 Cancel
               </button>
@@ -378,7 +378,7 @@ export default function QuizQuestionsPage() {
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => handleEdit(question)}
-                            className="px-3 py-1 bg-slate-200 text-slate-600 text-sm rounded hover:bg-slate-200 transition-colors"
+                            className="px-3 py-1 bg-slate-200 text-slate-600 text-sm rounded hover:bg-slate-300 transition-colors"
                           >
                             Edit
                           </button>
@@ -393,7 +393,7 @@ export default function QuizQuestionsPage() {
                               </button>
                               <button
                                 onClick={() => setDeleteConfirmId(null)}
-                                className="px-3 py-1 bg-slate-200 text-slate-600 text-sm rounded hover:bg-slate-200 transition-colors"
+                                className="px-3 py-1 bg-slate-200 text-slate-600 text-sm rounded hover:bg-slate-300 transition-colors"
                               >
                                 No
                               </button>
@@ -401,7 +401,7 @@ export default function QuizQuestionsPage() {
                           ) : (
                             <button
                               onClick={() => setDeleteConfirmId(question.id)}
-                              className="px-3 py-1 bg-red-900/50 text-red-600 text-sm rounded hover:bg-red-900 transition-colors"
+                              className="px-3 py-1 bg-red-50 text-red-600 text-sm rounded hover:bg-red-100 transition-colors"
                             >
                               Delete
                             </button>

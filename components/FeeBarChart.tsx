@@ -39,7 +39,7 @@ export default function FeeBarChart({
           const pct = maxCost > 0 ? (item.cost / maxCost) * 100 : 0;
           return (
             <div key={item.name} className="flex items-center gap-3">
-              <div className="w-24 sm:w-32 text-xs font-semibold text-slate-600 text-right shrink-0 truncate">
+              <div className="w-32 sm:w-44 text-xs font-semibold text-slate-600 text-right shrink-0 truncate">
                 {item.name}
               </div>
               <div className="flex-1 relative h-8">

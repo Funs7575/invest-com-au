@@ -201,7 +201,7 @@ export default function ExportImportPage() {
             <button
               onClick={handleExport}
               disabled={exporting}
-              className="bg-amber-500 hover:bg-green-700 text-black font-medium px-6 py-2 rounded-lg transition-colors disabled:opacity-50"
+              className="bg-amber-500 hover:bg-amber-600 text-black font-medium px-6 py-2 rounded-lg transition-colors disabled:opacity-50"
             >
               {exporting ? "Exporting..." : "Export All Data"}
             </button>
@@ -232,8 +232,8 @@ export default function ExportImportPage() {
             Import Data
           </h2>
 
-          <div className="bg-amber-900/30 border border-amber-700/50 rounded-lg px-4 py-3 mb-4">
-            <p className="text-amber-300 text-sm font-medium">
+          <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 mb-4">
+            <p className="text-amber-700 text-sm font-medium">
               Warning: Importing data will overwrite existing records with
               matching IDs. This action cannot be undone.
             </p>
@@ -267,7 +267,7 @@ export default function ExportImportPage() {
               <h3 className="text-sm font-medium text-slate-600 mb-2">
                 Import Preview
               </h3>
-              <div className="bg-slate-800 border border-slate-700 rounded-lg overflow-hidden">
+              <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-slate-200">
@@ -281,7 +281,7 @@ export default function ExportImportPage() {
                   </thead>
                   <tbody>
                     {Object.entries(importPreview).map(([table, count]) => (
-                      <tr key={table} className="border-b border-slate-800">
+                      <tr key={table} className="border-b border-slate-100">
                         <td className="px-4 py-2 text-slate-600">{table}</td>
                         <td className="px-4 py-2 text-right text-slate-600">
                           {count}
@@ -315,7 +315,7 @@ export default function ExportImportPage() {
                 {importStatuses.map((status) => (
                   <div
                     key={status.table}
-                    className="flex items-center justify-between bg-slate-800 border border-slate-700 rounded-lg px-4 py-2"
+                    className="flex items-center justify-between bg-white border border-slate-200 rounded-lg px-4 py-2"
                   >
                     <div className="flex items-center gap-3">
                       <span className="text-slate-600 text-sm">
@@ -353,7 +353,7 @@ export default function ExportImportPage() {
           )}
 
           {importComplete && (
-            <div className="mb-4 px-4 py-3 rounded-lg bg-green-900/50 border border-green-700 text-green-300 text-sm">
+            <div className="mb-4 px-4 py-3 rounded-lg bg-green-50 border border-green-200 text-green-700 text-sm">
               Import completed.{" "}
               {importStatuses.filter((s) => s.status === "error").length > 0
                 ? `${importStatuses.filter((s) => s.status === "error").length} table(s) had errors.`
@@ -367,14 +367,14 @@ export default function ExportImportPage() {
               <button
                 onClick={handleImport}
                 disabled={importing}
-                className="bg-amber-500 hover:bg-green-700 text-black font-medium px-6 py-2 rounded-lg transition-colors disabled:opacity-50"
+                className="bg-amber-500 hover:bg-amber-600 text-black font-medium px-6 py-2 rounded-lg transition-colors disabled:opacity-50"
               >
                 {importing ? "Importing..." : "Confirm Import"}
               </button>
               <button
                 onClick={resetImport}
                 disabled={importing}
-                className="bg-slate-200 hover:bg-slate-200 text-slate-600 font-medium px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+                className="bg-slate-200 hover:bg-slate-300 text-slate-600 font-medium px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
               >
                 Cancel
               </button>
@@ -384,7 +384,7 @@ export default function ExportImportPage() {
           {importComplete && (
             <button
               onClick={resetImport}
-              className="bg-slate-200 hover:bg-slate-200 text-slate-600 font-medium px-4 py-2 rounded-lg transition-colors"
+              className="bg-slate-200 hover:bg-slate-300 text-slate-600 font-medium px-4 py-2 rounded-lg transition-colors"
             >
               Reset
             </button>

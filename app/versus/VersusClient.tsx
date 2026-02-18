@@ -172,7 +172,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                 <div key={index} className="flex-1 min-w-[180px] relative">
                   {/* VS divider between selectors */}
                   {index > 0 && (
-                    <div className="hidden md:flex absolute -left-5 top-1/2 -translate-y-1 z-10">
+                    <div className="hidden md:flex absolute -left-6 bottom-3 z-10">
                       <span className="w-8 h-8 rounded-full bg-slate-900 text-white text-[0.6rem] font-extrabold flex items-center justify-center shadow-md">VS</span>
                     </div>
                   )}

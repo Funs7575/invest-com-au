@@ -119,7 +119,7 @@ export default function AdminScenariosPage() {
         {!showForm && (
           <button
             onClick={() => setCreating(true)}
-            className="bg-amber-500 hover:bg-green-700 text-slate-900 font-semibold rounded-lg px-4 py-2 text-sm transition-colors"
+            className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold rounded-lg px-4 py-2 text-sm transition-colors"
           >
             + Add Scenario
           </button>
@@ -172,7 +172,7 @@ export default function AdminScenariosPage() {
           </div>
 
           <div className="flex gap-3 pt-2">
-            <button type="submit" disabled={saving} className="bg-amber-500 hover:bg-green-700 text-slate-900 font-semibold rounded-lg px-6 py-2.5 text-sm transition-colors disabled:opacity-50">
+            <button type="submit" disabled={saving} className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold rounded-lg px-6 py-2.5 text-sm transition-colors disabled:opacity-50">
               {saving ? "Saving..." : editing ? "Update Scenario" : "Create Scenario"}
             </button>
             <button type="button" onClick={() => { setEditing(null); setCreating(false); }} className="text-slate-500 hover:text-slate-900 px-4 py-2.5 text-sm">Cancel</button>

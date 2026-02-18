@@ -289,7 +289,7 @@ export default function CalculatorConfigPage() {
                   <button
                     onClick={() => saveConfig(calcType)}
                     disabled={saving[calcType]}
-                    className="bg-amber-500 hover:bg-green-700 text-black font-medium px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+                    className="bg-amber-500 hover:bg-amber-600 text-black font-medium px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
                   >
                     {saving[calcType] ? "Saving..." : "Save"}
                   </button>
