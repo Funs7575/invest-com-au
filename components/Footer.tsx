@@ -15,21 +15,21 @@ export default function Footer() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
-    <footer className="bg-green-800 text-slate-300 mt-20">
-      {/* Per-Section Collapsible Disclaimers */}
-      <div className="border-b border-green-700/40">
+    <>
+      {/* Legal Disclaimers — light background, visually separate from footer */}
+      <div className="bg-slate-50 border-t border-b border-slate-200 mt-20">
         <div className="container-custom">
           <div className="py-2">
-            <p className="text-xs font-semibold text-slate-400 pt-2 pb-1">Legal &amp; Disclaimers</p>
+            <p className="text-xs font-semibold text-slate-500 pt-2 pb-1">Legal &amp; Disclaimers</p>
             {sections.map((section, i) => (
-              <div key={i} className="border-t border-green-700/20">
+              <div key={i} className="border-t border-slate-200">
                 <button
                   onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                  className="w-full flex items-center justify-between py-2.5 text-xs text-slate-400 hover:text-slate-300 transition-colors"
+                  className="w-full flex items-center justify-between py-2.5 text-xs text-slate-500 hover:text-slate-700 transition-colors"
                   aria-expanded={openIndex === i}
                   aria-label={`Toggle ${section.title}`}
                 >
-                  <span className="font-semibold text-green-200/80">{section.title}</span>
+                  <span className="font-semibold text-slate-700">{section.title}</span>
                   <svg
                     className={`w-3 h-3 transition-transform duration-200 ${openIndex === i ? "rotate-180" : ""}`}
                     fill="none"
@@ -43,7 +43,7 @@ export default function Footer() {
                   className="overflow-hidden transition-all duration-200"
                   style={{ maxHeight: openIndex === i ? "300px" : "0" }}
                 >
-                  <p className="text-xs text-slate-400 leading-relaxed pb-3">
+                  <p className="text-xs text-slate-500 leading-relaxed pb-3">
                     {section.content}
                   </p>
                 </div>
@@ -53,54 +53,56 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Footer Links */}
-      <div className="container-custom py-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-          <div>
-            <h3 className="text-white font-bold mb-4">Invest.com.au</h3>
-            <p className="text-sm">
-              Australia&apos;s independent broker comparison platform. No bank bias, just honest reviews.
-            </p>
+      {/* Footer */}
+      <footer className="bg-green-800 text-slate-300">
+        <div className="container-custom py-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div>
+              <h3 className="text-white font-bold mb-4">Invest.com.au</h3>
+              <p className="text-sm">
+                Australia&apos;s independent broker comparison platform. No bank bias, just honest reviews.
+              </p>
+            </div>
+
+            <div>
+              <h4 className="text-white font-semibold mb-4">Compare</h4>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="/compare" className="hover:text-white transition-colors">All Brokers</Link></li>
+                <li><Link href="/versus" className="hover:text-white transition-colors">Head-to-Head</Link></li>
+                <li><Link href="/deals" className="hover:text-white transition-colors">Current Deals</Link></li>
+                <li><Link href="/reviews" className="hover:text-white transition-colors">Reviews</Link></li>
+                <li><Link href="/quiz" className="hover:text-white transition-colors">Broker Quiz</Link></li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="text-white font-semibold mb-4">Learn</h4>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="/articles" className="hover:text-white transition-colors">Guides &amp; Articles</Link></li>
+                <li><Link href="/calculators" className="hover:text-white transition-colors">Tools &amp; Calculators</Link></li>
+                <li><Link href="/scenarios" className="hover:text-white transition-colors">Best Broker For...</Link></li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="text-white font-semibold mb-4">About</h4>
+              <ul className="space-y-2 text-sm">
+                <li><Link href="/about" className="hover:text-white transition-colors">About Us</Link></li>
+                <li><Link href="/editorial-policy" className="hover:text-white transition-colors">Editorial Policy</Link></li>
+                <li><Link href="/how-we-earn" className="hover:text-white transition-colors">How We Earn</Link></li>
+                <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
+                <li><Link href="/methodology" className="hover:text-white transition-colors">Methodology</Link></li>
+                <li><Link href="/how-we-verify" className="hover:text-white transition-colors">How We Verify Fees</Link></li>
+                <li><Link href="/terms" className="hover:text-white transition-colors">Terms of Use</Link></li>
+              </ul>
+            </div>
           </div>
 
-          <div>
-            <h4 className="text-white font-semibold mb-4">Compare</h4>
-            <ul className="space-y-2 text-sm">
-              <li><Link href="/compare" className="hover:text-white transition-colors">All Brokers</Link></li>
-              <li><Link href="/versus" className="hover:text-white transition-colors">Head-to-Head</Link></li>
-              <li><Link href="/deals" className="hover:text-white transition-colors">Current Deals</Link></li>
-              <li><Link href="/reviews" className="hover:text-white transition-colors">Reviews</Link></li>
-              <li><Link href="/quiz" className="hover:text-white transition-colors">Broker Quiz</Link></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="text-white font-semibold mb-4">Learn</h4>
-            <ul className="space-y-2 text-sm">
-              <li><Link href="/articles" className="hover:text-white transition-colors">Guides &amp; Articles</Link></li>
-              <li><Link href="/calculators" className="hover:text-white transition-colors">Tools &amp; Calculators</Link></li>
-              <li><Link href="/scenarios" className="hover:text-white transition-colors">Best Broker For...</Link></li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="text-white font-semibold mb-4">About</h4>
-            <ul className="space-y-2 text-sm">
-              <li><Link href="/about" className="hover:text-white transition-colors">About Us</Link></li>
-              <li><Link href="/editorial-policy" className="hover:text-white transition-colors">Editorial Policy</Link></li>
-              <li><Link href="/how-we-earn" className="hover:text-white transition-colors">How We Earn</Link></li>
-              <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
-              <li><Link href="/methodology" className="hover:text-white transition-colors">Methodology</Link></li>
-              <li><Link href="/how-we-verify" className="hover:text-white transition-colors">How We Verify Fees</Link></li>
-              <li><Link href="/terms" className="hover:text-white transition-colors">Terms of Use</Link></li>
-            </ul>
+          <div className="border-t border-green-700/40 mt-8 pt-8 text-sm text-center">
+            <p>&copy; {new Date().getFullYear()} Invest.com.au. All rights reserved.</p>
           </div>
         </div>
-
-        <div className="border-t border-green-700/40 mt-8 pt-8 text-sm text-center">
-          <p>&copy; {new Date().getFullYear()} Invest.com.au. All rights reserved.</p>
-        </div>
-      </div>
-    </footer>
+      </footer>
+    </>
   );
 }
