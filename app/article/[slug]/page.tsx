@@ -203,11 +203,11 @@ export default async function ArticlePage({
       />
 
       {/* Hero Section */}
-      <section className="bg-white text-slate-900 pt-8 pb-10 border-b border-slate-200">
+      <section className="bg-white text-slate-900 pt-6 pb-8 border-b border-slate-200">
         <div className="container-custom">
           <div className={isEnhanced ? "max-w-5xl mx-auto" : "max-w-3xl mx-auto"}>
             {/* Breadcrumb */}
-            <div className="text-sm text-slate-500 mb-4">
+            <div className="text-sm text-slate-500 mb-3">
               <Link href="/" className="hover:text-green-700 transition-colors">
                 Home
               </Link>
