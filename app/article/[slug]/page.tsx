@@ -202,24 +202,24 @@ export default async function ArticlePage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
 
-      {/* Dark Hero Section */}
-      <section className="bg-brand text-white py-16">
+      {/* Hero Section */}
+      <section className="bg-white text-slate-900 py-16">
         <div className="container-custom">
           <div className={isEnhanced ? "max-w-5xl mx-auto" : "max-w-3xl mx-auto"}>
             {/* Breadcrumb */}
-            <div className="text-sm text-slate-400 mb-6">
-              <Link href="/" className="hover:text-white transition-colors">
+            <div className="text-sm text-slate-500 mb-6">
+              <Link href="/" className="hover:text-green-700 transition-colors">
                 Home
               </Link>
               <span className="mx-2">/</span>
               <Link
                 href="/articles"
-                className="hover:text-white transition-colors"
+                className="hover:text-green-700 transition-colors"
               >
                 Articles
               </Link>
               <span className="mx-2">/</span>
-              <span className="text-slate-300">{a.title}</span>
+              <span className="text-slate-900">{a.title}</span>
             </div>
 
             {/* Badges */}
@@ -232,12 +232,12 @@ export default async function ArticlePage({
                 </span>
               )}
               {a.read_time && (
-                <span className="text-xs text-slate-400">
+                <span className="text-xs text-slate-500">
                   {a.read_time} min read
                 </span>
               )}
               {a.published_at && (
-                <span className="text-xs text-slate-400">
+                <span className="text-xs text-slate-500">
                   {new Date(a.published_at).toLocaleDateString("en-AU", {
                     year: "numeric",
                     month: "long",
@@ -259,7 +259,7 @@ export default async function ArticlePage({
 
             {/* Excerpt */}
             {a.excerpt && (
-              <p className="text-lg text-slate-300 leading-relaxed max-w-3xl">
+              <p className="text-lg text-slate-600 leading-relaxed max-w-3xl">
                 {a.excerpt}
               </p>
             )}
@@ -279,7 +279,7 @@ export default async function ArticlePage({
                     })
                   : undefined
               }
-              variant="dark"
+              variant="light"
               author={articleAuthor ?? undefined}
               reviewer={articleReviewer ?? undefined}
               reviewedAt={a.reviewed_at ?? undefined}
