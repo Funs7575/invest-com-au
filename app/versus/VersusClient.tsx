@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, formatPercent, AFFILIATE_REL } from "@/lib/tracking";
-import RiskWarningInline from "@/components/RiskWarningInline";
+import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import StickyCTABar from "@/components/StickyCTABar";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 
@@ -265,7 +265,6 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                 >
                   {getBenefitCta(overallWinner, "versus")}
                 </a>
-                <RiskWarningInline variant="dark" />
               </div>
             </div>
             <p className="text-[0.65rem] text-slate-500 mb-8">{ADVERTISER_DISCLOSURE_SHORT}</p>
@@ -461,12 +460,12 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                         >
                           {getBenefitCta(br, 'versus')}
                         </a>
-                        <RiskWarningInline />
                       </div>
                     </div>
                   );
                 })}
               </div>
+              <CompactDisclaimerLine />
             </div>
 
             {/* ─── Bottom CTA ─── */}

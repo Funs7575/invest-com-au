@@ -4,52 +4,51 @@ import { useState } from "react";
 import Link from "next/link";
 import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE, CRYPTO_WARNING, REGULATORY_NOTE } from "@/lib/compliance";
 
+const sections = [
+  { title: "General Advice Warning", content: GENERAL_ADVICE_WARNING },
+  { title: "Affiliate Disclosure", content: ADVERTISER_DISCLOSURE },
+  { title: "Crypto Warning", content: CRYPTO_WARNING },
+  { title: "Regulatory Note", content: REGULATORY_NOTE },
+];
+
 export default function Footer() {
-  const [disclaimerOpen, setDisclaimerOpen] = useState(false);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
     <footer className="bg-green-800 text-slate-300 mt-20">
-      {/* Collapsible Compliance Blocks */}
+      {/* Per-Section Collapsible Disclaimers */}
       <div className="border-b border-green-700/40">
         <div className="container-custom">
-          <button
-            onClick={() => setDisclaimerOpen(!disclaimerOpen)}
-            className="w-full flex items-center justify-between py-4 text-sm text-slate-400 hover:text-slate-300 transition-colors"
-            aria-expanded={disclaimerOpen}
-            aria-label="Toggle legal disclaimers"
-          >
-            <span className="font-semibold">Legal &amp; Disclaimers</span>
-            <svg
-              className={`w-4 h-4 transition-transform duration-300 ${disclaimerOpen ? "rotate-180" : ""}`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
-          <div
-            className="overflow-hidden transition-all duration-300"
-            style={{ maxHeight: disclaimerOpen ? "600px" : "0" }}
-          >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-400 leading-relaxed pb-6">
-              <div className="border border-green-700/30 rounded-lg p-4">
-                <h4 className="font-semibold text-green-200/80 mb-1">General Advice Warning</h4>
-                <p>{GENERAL_ADVICE_WARNING}</p>
+          <div className="py-2">
+            <p className="text-xs font-semibold text-slate-400 pt-2 pb-1">Legal &amp; Disclaimers</p>
+            {sections.map((section, i) => (
+              <div key={i} className="border-t border-green-700/20">
+                <button
+                  onClick={() => setOpenIndex(openIndex === i ? null : i)}
+                  className="w-full flex items-center justify-between py-2.5 text-xs text-slate-400 hover:text-slate-300 transition-colors"
+                  aria-expanded={openIndex === i}
+                  aria-label={`Toggle ${section.title}`}
+                >
+                  <span className="font-semibold text-green-200/80">{section.title}</span>
+                  <svg
+                    className={`w-3 h-3 transition-transform duration-200 ${openIndex === i ? "rotate-180" : ""}`}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                <div
+                  className="overflow-hidden transition-all duration-200"
+                  style={{ maxHeight: openIndex === i ? "300px" : "0" }}
+                >
+                  <p className="text-xs text-slate-400 leading-relaxed pb-3">
+                    {section.content}
+                  </p>
+                </div>
               </div>
-              <div className="border border-green-700/30 rounded-lg p-4">
-                <h4 className="font-semibold text-green-200/80 mb-1">Affiliate Disclosure</h4>
-                <p>{ADVERTISER_DISCLOSURE}</p>
-              </div>
-              <div className="border border-green-700/30 rounded-lg p-4">
-                <h4 className="font-semibold text-green-200/80 mb-1">Crypto Warning</h4>
-                <p>{CRYPTO_WARNING}</p>
-              </div>
-              <div className="border border-green-700/30 rounded-lg p-4">
-                <h4 className="font-semibold text-green-200/80 mb-1">Regulatory Note</h4>
-                <p>{REGULATORY_NOTE}</p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>

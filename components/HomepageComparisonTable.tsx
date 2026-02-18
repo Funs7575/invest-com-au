@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import type { Broker } from "@/lib/types";
 import { getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
-import RiskWarningInline from "@/components/RiskWarningInline";
+import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 
 const TAB_OPTIONS = ["All Platforms", "Share Trading", "Crypto Exchanges", "SMSF"] as const;
 type TabOption = (typeof TAB_OPTIONS)[number];
@@ -261,7 +261,7 @@ export default function HomepageComparisonTable({
       {/* Affiliate disclosure */}
       <div id="advertiser-disclosure" className="text-[0.6rem] text-slate-500 mt-4 text-center">
         <p>{ADVERTISER_DISCLOSURE_SHORT}</p>
-        <RiskWarningInline />
+        <CompactDisclaimerLine />
       </div>
     </div>
   );

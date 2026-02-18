@@ -4,8 +4,8 @@ import Link from "next/link";
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
-import RiskWarningInline from "@/components/RiskWarningInline";
 import CompactDisclosure from "@/components/CompactDisclosure";
+import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import StickyCTABar from "@/components/StickyCTABar";
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 
@@ -116,7 +116,6 @@ export default function BrokerReviewClient({
           >
             {getBenefitCta(b, 'review')}
           </a>
-          <RiskWarningInline />
         </div>
         <p className="text-xs text-slate-400 mb-3">
           {ADVERTISER_DISCLOSURE_SHORT}
@@ -322,7 +321,6 @@ export default function BrokerReviewClient({
               {getBenefitCta(b, 'review')}
             </a>
           </div>
-          <RiskWarningInline />
         </div>
 
         {/* Safety Check */}
@@ -396,7 +394,6 @@ export default function BrokerReviewClient({
               {getBenefitCta(b, 'review')}
             </a>
           </div>
-          <RiskWarningInline />
         </div>
 
         {/* Details Grid */}
@@ -465,7 +462,6 @@ export default function BrokerReviewClient({
           >
             {getBenefitCta(b, 'review')}
           </a>
-          <RiskWarningInline />
           <p className="text-xs text-slate-600 mt-3">{ADVERTISER_DISCLOSURE_SHORT}</p>
         </div>
 
@@ -480,6 +476,7 @@ export default function BrokerReviewClient({
               Compare All Brokers →
             </Link>
           </div>
+          <CompactDisclaimerLine />
         </div>
       </div>
 

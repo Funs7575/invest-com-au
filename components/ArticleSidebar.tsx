@@ -3,7 +3,6 @@
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, formatPercent, AFFILIATE_REL } from "@/lib/tracking";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
-import RiskWarningInline from "@/components/RiskWarningInline";
 
 function Stars({ rating }: { rating: number }) {
   const full = Math.floor(rating);
@@ -117,7 +116,6 @@ export default function ArticleSidebar({
             Learn more
           </a>
         </p>
-        <RiskWarningInline />
       </div>
     </div>
   );

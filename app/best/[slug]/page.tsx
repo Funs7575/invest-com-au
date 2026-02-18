@@ -17,7 +17,7 @@ import {
 import { getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
 import { trackClick } from "@/lib/tracking";
 import BrokerCard from "@/components/BrokerCard";
-import RiskWarningInline from "@/components/RiskWarningInline";
+import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import CompactDisclosure from "@/components/CompactDisclosure";
 import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
 import type { LeadSegment } from "@/components/ContextualLeadMagnet";
@@ -270,7 +270,6 @@ export default async function BestBrokerPage({
                   {getBenefitCta(topPick, "compare")}
                 </a>
               </div>
-              <RiskWarningInline />
             </div>
           )}
 
@@ -347,6 +346,7 @@ export default async function BestBrokerPage({
               />
             ))}
           </div>
+          <CompactDisclaimerLine />
 
           {/* Editorial sections */}
           <div className="space-y-8 mb-10">

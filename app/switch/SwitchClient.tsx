@@ -4,7 +4,6 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import type { Broker } from "@/lib/types";
 import { getAffiliateLink, trackClick, AFFILIATE_REL } from "@/lib/tracking";
-import RiskWarningInline from "@/components/RiskWarningInline";
 import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 
@@ -165,7 +164,6 @@ export default function SwitchClient({ brokers }: { brokers: Broker[] }) {
               >
                 Open {targetBroker.name} Account →
               </a>
-              <RiskWarningInline />
               <p className="text-xs text-slate-500 mt-2">{ADVERTISER_DISCLOSURE_SHORT}</p>
             </div>
           </>

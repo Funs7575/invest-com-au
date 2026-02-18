@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import type { Broker } from "@/lib/types";
 import { trackClick, trackEvent, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
 import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
-import RiskWarningInline from "@/components/RiskWarningInline";
+import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 
 type WeightKey = "beginner" | "low_fee" | "us_shares" | "smsf" | "crypto" | "advanced";
 
@@ -274,7 +274,6 @@ export default function QuizPage() {
               >
                 {getBenefitCta(topMatch.broker, 'quiz')}
               </a>
-              <RiskWarningInline />
               {topMatch.broker.deal && topMatch.broker.deal_text && (
                 <div className="mt-3 text-center">
                   <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 border border-amber-200 rounded-full text-xs font-semibold text-amber-700">
@@ -341,7 +340,6 @@ export default function QuizPage() {
                           >
                             Visit →
                           </a>
-                          <RiskWarningInline />
                         </td>
                       </tr>
                     ))}
@@ -450,7 +448,6 @@ export default function QuizPage() {
                     >
                       {getBenefitCta(r.broker, 'quiz')}
                     </a>
-                    <RiskWarningInline />
                     {/* Match reasons for runner-ups too */}
                     <div className="mt-2 flex flex-wrap gap-1.5">
                       {getMatchReasons(answers, r.broker).slice(0, 2).map((reason, ri) => (
@@ -464,6 +461,8 @@ export default function QuizPage() {
               </div>
             </>
           )}
+
+          <CompactDisclaimerLine />
 
           {/* Bottom CTA card */}
           <div className="bg-amber-400 text-slate-900 rounded-xl p-6 mb-6 text-center motion-safe:result-card-in motion-safe:result-card-in-delay-5">

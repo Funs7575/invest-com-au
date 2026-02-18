@@ -4,7 +4,6 @@ import Link from "next/link";
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, AFFILIATE_REL } from "@/lib/tracking";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
-import RiskWarningInline from "@/components/RiskWarningInline";
 
 export default function CTAStack({
   broker,
@@ -33,7 +32,6 @@ export default function CTAStack({
       >
         {getBenefitCta(broker, context)}
       </a>
-      <RiskWarningInline />
 
       {/* Secondary — cross-links */}
       <div className="flex flex-wrap items-center justify-center gap-3 mt-4 text-sm">

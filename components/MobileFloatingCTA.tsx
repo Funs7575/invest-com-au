@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, AFFILIATE_REL } from "@/lib/tracking";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
-import RiskWarningInline from "@/components/RiskWarningInline";
 
 export default function MobileFloatingCTA({
   broker,
@@ -68,7 +67,6 @@ export default function MobileFloatingCTA({
       </div>
       <div className="px-4 pb-1.5 text-[0.55rem] text-slate-400 text-center">
         {ADVERTISER_DISCLOSURE_SHORT}
-        <RiskWarningInline />
       </div>
     </div>
   );
