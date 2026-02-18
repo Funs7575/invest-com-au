@@ -305,14 +305,24 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                     />
                   </td>
                   <td className="px-4 py-3">
-                    <a href={`/broker/${broker.slug}`} className="font-semibold text-brand hover:text-green-700 transition-colors">
-                      {broker.name}
-                    </a>
-                    {editorPicks[broker.slug] && (
-                      <div className="text-[0.6rem] font-extrabold text-green-700 uppercase tracking-wide">
-                        {editorPicks[broker.slug]}
+                    <div className="flex items-center gap-2.5">
+                      <div
+                        className="w-8 h-8 rounded-lg flex items-center justify-center text-[0.6rem] font-bold shrink-0"
+                        style={{ background: `${broker.color}18`, color: broker.color }}
+                      >
+                        {broker.icon || broker.name.charAt(0)}
                       </div>
-                    )}
+                      <div>
+                        <a href={`/broker/${broker.slug}`} className="font-semibold text-brand hover:text-green-700 transition-colors">
+                          {broker.name}
+                        </a>
+                        {editorPicks[broker.slug] && (
+                          <div className="text-[0.6rem] font-extrabold text-green-700 uppercase tracking-wide">
+                            {editorPicks[broker.slug]}
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </td>
                   <td className="px-4 py-3 text-sm">{broker.asx_fee || 'N/A'}</td>
                   <td className="px-4 py-3 text-sm">{broker.us_fee || 'N/A'}</td>
