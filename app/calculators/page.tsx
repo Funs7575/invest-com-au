@@ -12,6 +12,7 @@ export const metadata = {
     description: "Free tools for Australian investors: compare broker fees, estimate tax, calculate FX costs on US shares.",
     images: [{ url: "/api/og?title=Investing+Tools&subtitle=Compare+fees,+estimate+tax+%26+more&type=default", width: 1200, height: 630 }],
   },
+  twitter: { card: "summary_large_image" as const },
   alternates: { canonical: "/calculators" },
 };
 

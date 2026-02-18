@@ -11,6 +11,7 @@ export const metadata = {
     description: "Find the best broker for your specific situation: SMSF, kids, expats, day trading, and more.",
     images: [{ url: "/api/og?title=Investing+Scenarios&subtitle=Find+the+best+broker+for+your+situation&type=scenario", width: 1200, height: 630 }],
   },
+  twitter: { card: "summary_large_image" as const },
   alternates: { canonical: "/scenarios" },
 };
 

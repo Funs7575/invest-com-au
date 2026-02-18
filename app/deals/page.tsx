@@ -11,6 +11,21 @@ export const metadata: Metadata = {
   description:
     "Current verified deals and promotions from Australian share trading platforms and crypto exchanges. Updated regularly with expiry dates and terms.",
   alternates: { canonical: "/deals" },
+  openGraph: {
+    title: "Broker Deals & Promotions (2026) — Verified Offers",
+    description:
+      "Current verified deals and promotions from Australian share trading platforms and crypto exchanges. Updated regularly.",
+    url: "/deals",
+    images: [
+      {
+        url: "/api/og?title=Broker+Deals+%26+Promotions&subtitle=Verified+Offers+from+Australian+Platforms&type=default",
+        width: 1200,
+        height: 630,
+        alt: "Broker Deals & Promotions",
+      },
+    ],
+  },
+  twitter: { card: "summary_large_image" },
 };
 
 export default async function DealsPage() {

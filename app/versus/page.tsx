@@ -12,6 +12,7 @@ export const metadata = {
     description: "Compare two Australian brokers side by side. See fees, features, CHESS sponsorship, and our honest pick.",
     images: [{ url: "/api/og?title=Broker+vs+Broker&subtitle=Compare+any+two+brokers+side-by-side&type=default", width: 1200, height: 630 }],
   },
+  twitter: { card: "summary_large_image" as const },
   alternates: { canonical: "/versus" },
 };
 

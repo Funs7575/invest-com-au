@@ -11,6 +11,7 @@ export const metadata = {
     description: "Side-by-side comparison of fees, features, and safety for Australian share trading platforms.",
     images: [{ url: "/api/og?title=Compare+Australian+Brokers&subtitle=Fees,+features+%26+safety+side-by-side&type=default", width: 1200, height: 630 }],
   },
+  twitter: { card: "summary_large_image" as const },
   alternates: { canonical: "/compare" },
 };
 

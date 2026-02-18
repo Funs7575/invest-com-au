@@ -8,6 +8,21 @@ export const metadata: Metadata = {
   description:
     "Find the best Australian broker for your needs. Guides for beginners, US shares, low fees, CHESS-sponsored, SMSF, crypto, and low FX fees.",
   alternates: { canonical: "/best" },
+  openGraph: {
+    title: "Best Brokers in Australia (2026) — By Category",
+    description:
+      "Find the best Australian broker for your needs. Guides for beginners, US shares, low fees, CHESS-sponsored, SMSF, crypto, and low FX fees.",
+    url: "/best",
+    images: [
+      {
+        url: "/api/og?title=Best+Brokers+in+Australia&subtitle=By+Category+—+Beginners%2C+US+Shares%2C+Low+Fees+%26+More&type=best",
+        width: 1200,
+        height: 630,
+        alt: "Best Brokers in Australia by Category",
+      },
+    ],
+  },
+  twitter: { card: "summary_large_image" },
 };
 
 const categoryIcons: Record<string, string> = {

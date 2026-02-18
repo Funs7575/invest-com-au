@@ -12,6 +12,7 @@ export const metadata = {
     description: "In-depth, honest reviews of every major Australian share trading platform. Fees, pros, cons, and our verdict.",
     images: [{ url: "/api/og?title=Broker+Reviews&subtitle=Honest+reviews+of+every+Australian+broker&type=default", width: 1200, height: 630 }],
   },
+  twitter: { card: "summary_large_image" as const },
   alternates: { canonical: "/reviews" },
 };
 

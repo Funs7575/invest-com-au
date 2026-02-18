@@ -31,6 +31,7 @@ export async function generateMetadata({
     member.short_bio ||
     `${member.full_name} is a ${formatRole(member.role).toLowerCase()} at ${SITE_NAME}. They review and fact-check financial product content.`;
 
+  const ogImageUrl = `/api/og?title=${encodeURIComponent(member.full_name)}&subtitle=${encodeURIComponent(formatRole(member.role) + " at " + SITE_NAME)}&type=default`;
   return {
     title,
     description,
@@ -39,7 +40,9 @@ export async function generateMetadata({
       title,
       description,
       url: absoluteUrl(`/reviewers/${slug}`),
+      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: member.full_name }],
     },
+    twitter: { card: "summary_large_image" as const },
     alternates: {
       canonical: `/reviewers/${slug}`,
     },

@@ -48,6 +48,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const cat = getCategoryBySlug(slug);
   if (!cat) return {};
+  const ogImageUrl = `/api/og?title=${encodeURIComponent(cat.h1)}&subtitle=${encodeURIComponent(cat.metaDescription.slice(0, 80))}&type=best`;
   return {
     title: cat.title,
     description: cat.metaDescription,
@@ -56,7 +57,9 @@ export async function generateMetadata({
       title: cat.title,
       description: cat.metaDescription,
       url: absoluteUrl(`/best/${slug}`),
+      images: [{ url: ogImageUrl, width: 1200, height: 630, alt: cat.h1 }],
     },
+    twitter: { card: "summary_large_image" as const },
   };
 }
 

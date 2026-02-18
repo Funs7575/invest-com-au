@@ -21,7 +21,9 @@ export async function GET(request: NextRequest) {
         ? "Guide"
         : type === "scenario"
           ? "Investing Scenario"
-          : null;
+          : type === "best"
+            ? "Best Broker Guide"
+            : null;
 
   return new ImageResponse(
     (

@@ -11,6 +11,7 @@ export const metadata = {
     description: "Generate a step-by-step switching plan between Australian brokers.",
     images: [{ url: "/api/og?title=Switching+Plan+Generator&subtitle=Calculate+Your+Annual+Savings&type=default", width: 1200, height: 630 }],
   },
+  twitter: { card: "summary_large_image" as const },
   alternates: { canonical: "/switch" },
 };
 
