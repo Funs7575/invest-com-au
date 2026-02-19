@@ -446,7 +446,7 @@ export default function QuizPage() {
           {runnerUps.length > 0 && (
             <>
               <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wide mb-3 result-card-in result-card-in-delay-3">Also Worth Considering</h3>
-              <div className="space-y-3 mb-6">
+              <div className="space-y-3 mb-8">
                 {runnerUps.map((r, i) => r.broker && (
                   <div
                     key={r.slug}
@@ -508,10 +508,12 @@ export default function QuizPage() {
             </>
           )}
 
-          <CompactDisclaimerLine />
+          <div className="my-6">
+            <CompactDisclaimerLine />
+          </div>
 
           {/* Bottom CTA card */}
-          <div className="bg-amber-400 text-slate-900 rounded-xl p-6 mb-6 text-center result-card-in result-card-in-delay-5">
+          <div className="bg-amber-400 text-slate-900 rounded-xl p-6 mt-2 mb-8 text-center result-card-in result-card-in-delay-5">
             <h3 className="text-lg font-bold mb-1">Still not sure?</h3>
             <p className="text-sm text-slate-700 mb-4">Compare all brokers side-by-side or read our detailed reviews.</p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -527,7 +529,7 @@ export default function QuizPage() {
           </div>
 
           {/* Share & Restart */}
-          <div className="flex items-center justify-center gap-4">
+          <div className="flex items-center justify-center gap-4 mt-2">
             <button
               onClick={handleShareResult}
               className="text-sm text-slate-500 hover:text-brand transition-colors flex items-center gap-1.5 px-4 py-2 border border-slate-200 rounded-lg hover:border-slate-300"
