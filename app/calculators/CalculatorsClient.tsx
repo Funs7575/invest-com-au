@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
 import type { Broker } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
-import { trackClick, trackEvent, getAffiliateLink, getBenefitCta } from "@/lib/tracking";
+import { trackClick, trackEvent, getAffiliateLink, getBenefitCta, AFFILIATE_REL } from "@/lib/tracking";
 import { useSearchParams } from "next/navigation";
 import AuthorByline from "@/components/AuthorByline";
 
@@ -256,6 +256,7 @@ function TradeCostCalculator({ brokers }: { brokers: Broker[] }) {
                 <th className="text-right text-xs font-semibold text-slate-500 pb-2 px-2">Total Cost</th>
                 <th className="text-right text-xs font-semibold text-slate-500 pb-2 px-2">% of Trade</th>
                 <th className="text-left text-xs font-semibold text-slate-500 pb-2 pl-4">Cost Bar</th>
+                <th className="text-right text-xs font-semibold text-slate-500 pb-2 pl-2"><span className="sr-only">Action</span></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -289,6 +290,21 @@ function TradeCostCalculator({ brokers }: { brokers: Broker[] }) {
                           style={{ width: `${barWidth}%` }}
                         />
                       </div>
+                    </td>
+                    <td className="py-3 pl-2 text-right">
+                      <a
+                        href={getAffiliateLink(r.broker)}
+                        target="_blank"
+                        rel={AFFILIATE_REL}
+                        onClick={() => trackClick(r.broker.slug, r.broker.name, "calculator-trade-cost", "/calculators", "cta")}
+                        className={`inline-block px-3 py-1.5 text-xs font-bold rounded-lg transition-all duration-200 whitespace-nowrap active:scale-[0.97] ${
+                          isCheapest
+                            ? "bg-green-700 text-white hover:bg-green-800 hover:shadow-[0_0_10px_rgba(21,128,61,0.3)]"
+                            : "bg-slate-100 text-slate-700 hover:bg-green-700 hover:text-white"
+                        }`}
+                      >
+                        {isCheapest ? getBenefitCta(r.broker, "calculator") : "Try →"}
+                      </a>
                     </td>
                   </tr>
                 );
@@ -676,6 +692,21 @@ function FxFeeCalculator({ brokers }: { brokers: Broker[] }) {
                   {rate}%
                 </span>
               </div>
+              <div className="w-20 shrink-0 text-right">
+                <a
+                  href={getAffiliateLink(broker)}
+                  target="_blank"
+                  rel={AFFILIATE_REL}
+                  onClick={() => trackClick(broker.slug, broker.name, "calculator-fx", "/calculators", "cta")}
+                  className={`inline-block px-2.5 py-1 text-[0.65rem] font-bold rounded-md transition-all duration-200 whitespace-nowrap active:scale-[0.97] ${
+                    isCheapest
+                      ? "bg-green-700 text-white hover:bg-green-800"
+                      : "bg-slate-100 text-slate-600 hover:bg-green-700 hover:text-white"
+                  }`}
+                >
+                  {isCheapest ? "Try Free →" : "Try →"}
+                </a>
+              </div>
             </div>
           );
         })}
@@ -923,6 +954,7 @@ function ChessLookup({ brokers }: { brokers: Broker[] }) {
                     <th className="text-left px-4 py-2.5 font-semibold text-slate-700">Broker</th>
                     <th className="text-left px-4 py-2.5 font-semibold text-slate-700">Model</th>
                     <th className="text-right px-4 py-2.5 font-semibold text-slate-700">ASX Fee</th>
+                    <th className="text-right px-4 py-2.5 font-semibold text-slate-700"><span className="sr-only">Action</span></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -942,6 +974,17 @@ function ChessLookup({ brokers }: { brokers: Broker[] }) {
                         )}
                       </td>
                       <td className="px-4 py-2.5 text-right text-slate-700">{b.asx_fee || "N/A"}</td>
+                      <td className="px-4 py-2.5 text-right">
+                        <a
+                          href={getAffiliateLink(b)}
+                          target="_blank"
+                          rel={AFFILIATE_REL}
+                          onClick={() => trackClick(b.slug, b.name, "calculator-chess", "/calculators", "cta")}
+                          className="inline-block px-2.5 py-1 text-[0.65rem] font-bold rounded-md bg-slate-100 text-slate-600 hover:bg-green-700 hover:text-white transition-all duration-200 whitespace-nowrap active:scale-[0.97]"
+                        >
+                          Try →
+                        </a>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
