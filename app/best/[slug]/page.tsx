@@ -33,6 +33,8 @@ const SLUG_TO_SEGMENT: Record<string, LeadSegment> = {
   "low-fx-fees": "us-shares-guide",
 };
 
+export const revalidate = 3600; // ISR: revalidate every hour
+
 // ── Static params for ISR ──
 export async function generateStaticParams() {
   return getAllCategorySlugs().map((slug) => ({ slug }));

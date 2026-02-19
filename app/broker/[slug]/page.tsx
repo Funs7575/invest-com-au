@@ -11,6 +11,8 @@ import {
   REVIEW_AUTHOR,
 } from "@/lib/seo";
 
+export const revalidate = 3600; // ISR: revalidate every hour
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const supabase = await createClient();

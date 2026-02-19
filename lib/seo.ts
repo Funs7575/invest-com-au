@@ -289,6 +289,36 @@ export function reviewArticleJsonLd(broker: {
   };
 }
 
+/* ─── FAQ JSON-LD for article sections ─── */
+
+/**
+ * Build FAQPage JSON-LD from article sections.
+ * Google uses this for rich FAQ snippets in search results.
+ * Only includes sections whose headings look like questions.
+ */
+export function articleFaqJsonLd(
+  sections: { heading: string; body: string }[]
+) {
+  // Filter for question-like headings (contains "?" or starts with common question words)
+  const questionPattern = /\?$|^(what|how|why|when|where|which|who|can|do|does|is|are|should|will)\b/i;
+  const faqSections = sections.filter((s) => questionPattern.test(s.heading.trim()));
+
+  if (faqSections.length < 2) return null; // Need at least 2 Q&A pairs
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqSections.map((s) => ({
+      "@type": "Question",
+      name: s.heading,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: s.body.slice(0, 500), // Truncate to avoid oversized schema
+      },
+    })),
+  };
+}
+
 /* ─── Deals: Offer JSON-LD for individual deal ─── */
 
 export function dealOfferJsonLd(broker: Broker) {

@@ -72,6 +72,8 @@ const bestForCards = [
   { emoji: "🌏", title: "Lowest FX Fees", description: "Save on currency conversion for international trades", href: "/best/low-fx-fees", color: "bg-sky-50 border-sky-200 text-sky-800" },
 ];
 
+export const revalidate = 3600; // ISR: revalidate every hour
+
 export default async function HomePage() {
   const supabase = await createClient();
 

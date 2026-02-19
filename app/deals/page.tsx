@@ -28,6 +28,8 @@ export const metadata: Metadata = {
   twitter: { card: "summary_large_image" },
 };
 
+export const revalidate = 1800; // ISR: revalidate every 30 minutes (deals change frequently)
+
 export default async function DealsPage() {
   const supabase = await createClient();
   const { data: allBrokers } = await supabase

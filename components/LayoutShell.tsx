@@ -1,14 +1,17 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import dynamic from "next/dynamic";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import CookieBanner from "@/components/CookieBanner";
-import BackToTop from "@/components/BackToTop";
-import QuizPromptBar from "@/components/QuizPromptBar";
-import ExitIntentPopup from "@/components/ExitIntentPopup";
-import SocialProofToast from "@/components/SocialProofToast";
 import DisclosureBanner from "@/components/DisclosureBanner";
+
+// Lazy-load below-fold and event-driven components
+const CookieBanner = dynamic(() => import("@/components/CookieBanner"), { ssr: false });
+const BackToTop = dynamic(() => import("@/components/BackToTop"), { ssr: false });
+const QuizPromptBar = dynamic(() => import("@/components/QuizPromptBar"), { ssr: false });
+const ExitIntentPopup = dynamic(() => import("@/components/ExitIntentPopup"), { ssr: false });
+const SocialProofToast = dynamic(() => import("@/components/SocialProofToast"), { ssr: false });
 
 export default function LayoutShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

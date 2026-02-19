@@ -9,8 +9,10 @@ import ArticleSidebar from "@/components/ArticleSidebar";
 import ComparisonTableSkeleton from "@/components/ComparisonTableSkeleton";
 import AuthorByline from "@/components/AuthorByline";
 import OnThisPage from "@/components/OnThisPage";
-import { absoluteUrl, breadcrumbJsonLd, articleAuthorJsonLd, SITE_NAME } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd, articleAuthorJsonLd, articleFaqJsonLd, SITE_NAME } from "@/lib/seo";
 import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
+
+export const revalidate = 3600; // ISR: revalidate every hour
 
 const CATEGORY_COLORS: Record<string, string> = {
   tax: "bg-purple-100 text-purple-700",
@@ -190,6 +192,9 @@ export default async function ArticlePage({
     { name: a.title },
   ]);
 
+  // FAQ JSON-LD — only generated if sections have question-style headings
+  const faqLd = a.sections ? articleFaqJsonLd(a.sections) : null;
+
   return (
     <div>
       {/* Schema.org JSON-LD */}
@@ -201,6 +206,12 @@ export default async function ArticlePage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
+      {faqLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
+        />
+      )}
 
       {/* Hero Section */}
       <section className="bg-white text-slate-900 pt-6 pb-8 border-b border-slate-200">

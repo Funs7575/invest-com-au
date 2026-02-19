@@ -16,6 +16,8 @@ export const metadata = {
   alternates: { canonical: "/reviews" },
 };
 
+export const revalidate = 3600; // ISR: revalidate every hour
+
 export default async function ReviewsPage() {
   const supabase = await createClient();
 

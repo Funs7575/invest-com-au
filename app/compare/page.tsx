@@ -15,6 +15,8 @@ export const metadata = {
   alternates: { canonical: "/compare" },
 };
 
+export const revalidate = 3600; // ISR: revalidate every hour
+
 export default async function ComparePage() {
   const supabase = await createClient();
 

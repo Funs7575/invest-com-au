@@ -34,6 +34,8 @@ const CATEGORY_COLORS: Record<string, string> = {
   news: "bg-red-100 text-red-700",
 };
 
+export const revalidate = 3600; // ISR: revalidate every hour
+
 export default async function ArticlesPage({
   searchParams,
 }: {
