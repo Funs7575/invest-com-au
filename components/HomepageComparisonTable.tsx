@@ -6,6 +6,8 @@ import { getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/l
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import PromoBadge from "@/components/PromoBadge";
+import SponsorBadge from "@/components/SponsorBadge";
+import { sortWithSponsorship, isSponsored } from "@/lib/sponsorship";
 
 const TAB_OPTIONS = ["All Platforms", "Share Trading", "Crypto Exchanges", "SMSF"] as const;
 type TabOption = (typeof TAB_OPTIONS)[number];
@@ -32,22 +34,22 @@ export default function HomepageComparisonTable({
       activeTab === "All Platforms"
         ? brokers
         : brokers.filter((b) => getCategories(b).includes(activeTab));
-    return [...base]
-      .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
-      .slice(0, 8);
+    return sortWithSponsorship(base).slice(0, 8);
   }, [brokers, activeTab]);
 
   // Compute editor picks from the displayed list
   const editorPicks = useMemo(() => {
     const picks: Record<string, string> = {};
-    if (displayBrokers.length > 0) {
-      const cheapest = displayBrokers.reduce((a, b) =>
+    // Exclude sponsored brokers from computed badge assignments
+    const eligible = displayBrokers.filter((b) => !isSponsored(b));
+    if (eligible.length > 0) {
+      const cheapest = eligible.reduce((a, b) =>
         (a.asx_fee_value ?? 999) <= (b.asx_fee_value ?? 999) ? a : b
       );
-      const bestOverall = displayBrokers.reduce((a, b) =>
+      const bestOverall = eligible.reduce((a, b) =>
         (a.rating ?? 0) >= (b.rating ?? 0) ? a : b
       );
-      const bestValue = displayBrokers
+      const bestValue = eligible
         .filter((b) => b.chess_sponsored && (b.asx_fee_value ?? 999) <= 5)
         .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))[0];
 
@@ -110,7 +112,11 @@ export default function HomepageComparisonTable({
               <tr
                 key={broker.id}
                 className={`group hover:bg-slate-50 transition-colors ${
-                  editorPicks[broker.slug] ? "bg-green-50/40" : ""
+                  isSponsored(broker)
+                    ? "bg-blue-50/30 border-l-2 border-l-blue-400"
+                    : editorPicks[broker.slug]
+                    ? "bg-green-50/40"
+                    : ""
                 }`}
               >
                 <td className="px-3 py-3 text-sm text-slate-400 font-medium">
@@ -122,7 +128,7 @@ export default function HomepageComparisonTable({
                       {broker.name.substring(0, 2).toUpperCase()}
                     </div>
                     <div>
-                      <div className="flex items-center">
+                      <div className="flex items-center gap-1.5">
                         <a
                           href={`/broker/${broker.slug}`}
                           className="font-semibold text-brand hover:text-green-700 transition-colors"
@@ -130,8 +136,9 @@ export default function HomepageComparisonTable({
                           {broker.name}
                         </a>
                         <PromoBadge broker={broker} />
+                        <SponsorBadge broker={broker} />
                       </div>
-                      {editorPicks[broker.slug] && (
+                      {!isSponsored(broker) && editorPicks[broker.slug] && (
                         <div className="text-[0.6rem] font-extrabold text-green-700 uppercase tracking-wide">
                           {editorPicks[broker.slug]}
                         </div>
@@ -186,16 +193,20 @@ export default function HomepageComparisonTable({
           <div
             key={broker.id}
             className={`rounded-xl border p-4 bg-white shrink-0 w-[85vw] max-w-[320px] ${
-              editorPicks[broker.slug]
+              isSponsored(broker)
+                ? "border-blue-400 ring-1 ring-blue-400/30 bg-blue-50/20"
+                : editorPicks[broker.slug]
                 ? "border-green-700 ring-1 ring-green-700/30"
                 : "border-slate-200"
             }`}
           >
-            {editorPicks[broker.slug] && (
+            {isSponsored(broker) ? (
+              <div className="mb-2"><SponsorBadge broker={broker} /></div>
+            ) : editorPicks[broker.slug] ? (
               <div className="text-[0.6rem] font-extrabold uppercase tracking-wide text-green-700 mb-2">
                 {editorPicks[broker.slug]}
               </div>
-            )}
+            ) : null}
             <div className="flex items-center gap-3 mb-3">
               <div className="text-xs font-bold text-slate-400 w-5">#{i + 1}</div>
               <div className="w-10 h-10 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center font-bold text-green-900 text-sm shrink-0">

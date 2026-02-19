@@ -11,6 +11,8 @@ import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 import { getMostRecentFeeCheck } from "@/lib/utils";
 import ScrollReveal from "@/components/ScrollReveal";
 import PromoBadge from "@/components/PromoBadge";
+import SponsorBadge from "@/components/SponsorBadge";
+import { getSponsorSortPriority, isSponsored } from "@/lib/sponsorship";
 
 type FilterType = 'all' | 'beginner' | 'chess' | 'free' | 'us' | 'smsf' | 'low-fx' | 'crypto';
 type SortCol = 'name' | 'asx_fee_value' | 'us_fee_value' | 'fx_rate' | 'rating';
@@ -120,6 +122,12 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
 
   const sorted = useMemo(() => {
     return [...filtered].sort((a, b) => {
+      // Sponsored brokers always float to top
+      const aPriority = getSponsorSortPriority(a.sponsorship_tier);
+      const bPriority = getSponsorSortPriority(b.sponsorship_tier);
+      if (aPriority !== bPriority) return aPriority - bPriority;
+
+      // Then apply user's selected sort
       const av = a[sortCol] ?? 999;
       const bv = b[sortCol] ?? 999;
       if (typeof av === 'string' && typeof bv === 'string') {
@@ -132,7 +140,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   // Compute editor picks
   const editorPicks = useMemo(() => {
     const picks: Record<string, string> = {};
-    const nonCrypto = sorted.filter(b => !b.is_crypto);
+    const nonCrypto = sorted.filter(b => !b.is_crypto && !isSponsored(b));
     if (nonCrypto.length > 0) {
       const cheapest = nonCrypto.reduce((a, b) => (a.asx_fee_value ?? 999) <= (b.asx_fee_value ?? 999) ? a : b);
       const bestOverall = nonCrypto.reduce((a, b) => (a.rating ?? 0) >= (b.rating ?? 0) ? a : b);
@@ -288,7 +296,13 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               {sorted.map(broker => (
                 <tr
                   key={broker.id}
-                  className={`group hover:bg-slate-50 transition-colors duration-150 ${editorPicks[broker.slug] ? 'bg-green-50/40' : ''}`}
+                  className={`group hover:bg-slate-50 transition-colors duration-150 ${
+                    isSponsored(broker)
+                      ? 'bg-blue-50/30 border-l-2 border-l-blue-400'
+                      : editorPicks[broker.slug]
+                      ? 'bg-green-50/40'
+                      : ''
+                  }`}
                 >
                   <td className="px-3 py-3">
                     <input
@@ -309,13 +323,14 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                         {broker.icon || broker.name.charAt(0)}
                       </div>
                       <div>
-                        <div className="flex items-center">
+                        <div className="flex items-center gap-1.5">
                           <a href={`/broker/${broker.slug}`} className="font-semibold text-brand hover:text-green-700 transition-colors">
                             {broker.name}
                           </a>
                           <PromoBadge broker={broker} />
+                          <SponsorBadge broker={broker} />
                         </div>
-                        {editorPicks[broker.slug] && (
+                        {!isSponsored(broker) && editorPicks[broker.slug] && (
                           <div className="text-[0.6rem] font-extrabold text-green-700 uppercase tracking-wide">
                             {editorPicks[broker.slug]}
                           </div>
@@ -363,7 +378,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             <BrokerCard
               key={broker.id}
               broker={broker}
-              badge={editorPicks[broker.slug]}
+              badge={isSponsored(broker) ? undefined : editorPicks[broker.slug]}
               context="compare"
             />
           ))}

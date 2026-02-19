@@ -38,6 +38,14 @@ export const CRYPTO_WARNING =
   "Cryptocurrency is highly speculative and not legal tender. You could lose all of " +
   "your investment. Only invest what you can afford to lose.";
 
+/** Sponsored placement disclosure — shown near sponsored broker badges */
+export const SPONSORED_DISCLOSURE =
+  "This broker has a paid placement on this page. Placement does not affect our independent editorial ratings or review methodology.";
+
+/** Short sponsored disclosure for inline use */
+export const SPONSORED_DISCLOSURE_SHORT =
+  "Paid placement. Ratings are independent.";
+
 /** Regulatory note */
 export const REGULATORY_NOTE =
   "Invest.com.au is not a financial product issuer, credit provider, or financial adviser. " +

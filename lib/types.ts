@@ -56,6 +56,9 @@ export interface Broker {
   deal_terms?: string;
   deal_source?: string;
   deal_verified_date?: string;
+  sponsorship_tier?: 'featured_partner' | 'editors_pick' | 'deal_of_month' | null;
+  sponsorship_start?: string;
+  sponsorship_end?: string;
   commission_type?: string;
   commission_value?: number;
   estimated_epc?: number;

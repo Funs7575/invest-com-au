@@ -86,6 +86,10 @@ export default function AdminBrokersPage() {
       platforms: formData.get("platforms") ? (formData.get("platforms") as string).split("\n").filter(Boolean) : [],
       markets: formData.get("markets") ? (formData.get("markets") as string).split("\n").filter(Boolean) : [],
       payment_methods: formData.get("payment_methods") ? (formData.get("payment_methods") as string).split("\n").filter(Boolean) : [],
+      // Sponsorship fields
+      sponsorship_tier: formData.get("sponsorship_tier") || null,
+      sponsorship_start: formData.get("sponsorship_start") || null,
+      sponsorship_end: formData.get("sponsorship_end") || null,
       // Fee verification fields
       fee_source_url: formData.get("fee_source_url") || null,
       fee_source_tcs_url: formData.get("fee_source_tcs_url") || null,
@@ -243,6 +247,7 @@ export default function AdminBrokersPage() {
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Rating</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">ASX Fee</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase hidden md:table-cell">Verified</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase hidden lg:table-cell">Tier</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Status</th>
                   <th className="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Actions</th>
                 </tr>
@@ -271,6 +276,21 @@ export default function AdminBrokersPage() {
                         </span>
                       ) : (
                         <span className="text-xs px-2 py-1 rounded-full font-medium bg-amber-50 text-amber-600">Pending</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 hidden lg:table-cell">
+                      {broker.sponsorship_tier ? (
+                        <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                          broker.sponsorship_tier === "featured_partner" ? "bg-blue-50 text-blue-700" :
+                          broker.sponsorship_tier === "editors_pick" ? "bg-green-50 text-green-700" :
+                          "bg-amber-50 text-amber-700"
+                        }`}>
+                          {broker.sponsorship_tier === "featured_partner" ? "Featured" :
+                           broker.sponsorship_tier === "editors_pick" ? "Editor's" :
+                           "Deal"}
+                        </span>
+                      ) : (
+                        <span className="text-xs text-slate-400">&mdash;</span>
                       )}
                     </td>
                     <td className="px-4 py-3">
@@ -478,6 +498,25 @@ function BrokerForm({ broker, saving, onSave, onCancel }: { broker: Partial<Brok
         <Checkbox label="Crypto" name="is_crypto" defaultChecked={broker.is_crypto} />
         <Checkbox label="Deal" name="deal" defaultChecked={broker.deal} />
         <Checkbox label="Editor's Pick" name="editors_pick" defaultChecked={broker.editors_pick} />
+      </div>
+
+      {/* Sponsorship */}
+      <SectionHeading title="Sponsorship" badge={broker.sponsorship_tier ? "Active" : undefined} badgeColor="green" />
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-xs font-medium text-slate-500 mb-1">Tier</label>
+            <select name="sponsorship_tier" defaultValue={broker.sponsorship_tier || ""} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30">
+              <option value="">None</option>
+              <option value="featured_partner">Featured Partner ($1,500/mo)</option>
+              <option value="editors_pick">Editor&apos;s Pick ($800/mo)</option>
+              <option value="deal_of_month">Deal of the Month ($2,000/mo)</option>
+            </select>
+          </div>
+          <Field label="Start Date" name="sponsorship_start" defaultValue={broker.sponsorship_start || ""} type="date" />
+          <Field label="End Date" name="sponsorship_end" defaultValue={broker.sponsorship_end || ""} type="date" />
+        </div>
+        <p className="text-xs text-slate-500">Sponsored brokers are pinned to the top of comparison tables with a visible &ldquo;Sponsored&rdquo; / &ldquo;Promoted&rdquo; disclosure badge. Placement does not affect editorial ratings.</p>
       </div>
 
       {/* Affiliate & CTA */}

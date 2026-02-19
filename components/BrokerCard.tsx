@@ -2,13 +2,23 @@
 
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
+import SponsorBadge from "@/components/SponsorBadge";
+import { isSponsored } from "@/lib/sponsorship";
 
 export default function BrokerCard({ broker, badge, context = 'compare' }: { broker: Broker; badge?: string; context?: 'compare' | 'review' | 'calculator' | 'versus' | 'quiz' }) {
   return (
-    <div className={`group rounded-xl border p-4 bg-white transition-shadow duration-200 hover:shadow-md ${badge ? 'border-green-700 ring-1 ring-green-700/30' : 'border-slate-200'}`}>
-      {badge && (
+    <div className={`group rounded-xl border p-4 bg-white transition-shadow duration-200 hover:shadow-md ${
+      isSponsored(broker)
+        ? 'border-blue-400 ring-1 ring-blue-400/30 bg-blue-50/20'
+        : badge
+        ? 'border-green-700 ring-1 ring-green-700/30'
+        : 'border-slate-200'
+    }`}>
+      {isSponsored(broker) ? (
+        <div className="mb-2"><SponsorBadge broker={broker} /></div>
+      ) : badge ? (
         <div className="text-[0.6rem] font-extrabold uppercase tracking-wide text-green-700 mb-2">{badge}</div>
-      )}
+      ) : null}
       <div className="flex items-center gap-3 mb-3">
         <div
           className="w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold shrink-0"
