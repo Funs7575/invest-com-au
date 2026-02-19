@@ -142,6 +142,34 @@ function buildFeeComparisonEmail(brokers: BrokerRow[]): string {
 </html>`;
 }
 
+/** Sync contact to Resend for marketing (fire-and-forget) */
+async function syncToResendContacts(
+  email: string,
+  source: string,
+  firstName?: string | null,
+): Promise<void> {
+  const resendApiKey = process.env.RESEND_API_KEY;
+  if (!resendApiKey) return;
+
+  try {
+    await fetch('https://api.resend.com/contacts', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${resendApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email,
+        ...(firstName ? { first_name: firstName } : {}),
+        unsubscribed: false,
+        properties: { source, signed_up: new Date().toISOString().split('T')[0] },
+      }),
+    });
+  } catch (err) {
+    console.error('Resend contact sync failed (non-blocking):', err);
+  }
+}
+
 async function sendFeeComparisonEmail(toEmail: string, brokers: BrokerRow[]): Promise<boolean> {
   const resendApiKey = process.env.RESEND_API_KEY;
   if (!resendApiKey) {
@@ -188,7 +216,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
 
-  const { email, source } = body as { email?: string; source?: string };
+  const { email, source, name } = body as { email?: string; source?: string; name?: string };
 
   // Validate email properly
   if (!isValidEmail(email as string)) {
@@ -211,11 +239,13 @@ export async function POST(request: NextRequest) {
   // Sanitize and truncate inputs
   const sanitizedEmail = (email as string).trim().toLowerCase().slice(0, 254);
   const sanitizedSource = (typeof source === 'string' ? source : 'website').slice(0, 100);
+  const sanitizedName = (typeof name === 'string' ? name.trim().slice(0, 100) : null) || null;
 
   // Save email to database
   const { error } = await supabase.from('email_captures').insert({
     email: sanitizedEmail,
     source: sanitizedSource,
+    ...(sanitizedName ? { name: sanitizedName } : {}),
   });
 
   if (error) {
@@ -238,6 +268,9 @@ export async function POST(request: NextRequest) {
   } catch (err) {
     console.error('Error fetching brokers or sending email:', err);
   }
+
+  // Sync to Resend Contacts for marketing (fire-and-forget)
+  syncToResendContacts(sanitizedEmail, sanitizedSource, sanitizedName).catch(() => {});
 
   return NextResponse.json({ success: true, emailSent });
 }

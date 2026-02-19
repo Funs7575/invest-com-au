@@ -36,6 +36,7 @@ function hashIP(ip: string): string {
 const ALLOWED_EVENTS = new Set([
   'quiz_start',
   'quiz_complete',
+  'quiz_lead_capture',
   'calculator_use',
   'pdf_opt_in',
   'compare_select',

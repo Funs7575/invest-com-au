@@ -29,6 +29,7 @@ const navSections = [
       { href: "/admin/affiliate-links", label: "Affiliate Links", icon: "🔗" },
       { href: "/admin/deal-of-month", label: "Deal of Month", icon: "🔥" },
       { href: "/admin/quiz-weights", label: "Quiz Weights", icon: "⚖️" },
+      { href: "/admin/subscribers", label: "Subscribers", icon: "📧" },
     ],
   },
   {

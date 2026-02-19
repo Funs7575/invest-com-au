@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import type { Broker } from "@/lib/types";
 import { trackClick, trackEvent, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
@@ -41,6 +42,11 @@ export default function QuizPage() {
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [animating, setAnimating] = useState(false);
   const [revealing, setRevealing] = useState(false);
+  const [emailGate, setEmailGate] = useState(false);
+  const [gateEmail, setGateEmail] = useState("");
+  const [gateName, setGateName] = useState("");
+  const [gateConsent, setGateConsent] = useState(false);
+  const [gateStatus, setGateStatus] = useState<"idle" | "loading" | "error">("idle");
 
   useEffect(() => {
     const supabase = createClient();
@@ -99,10 +105,10 @@ export default function QuizPage() {
       setAnswers(newAnswers);
       setSelectedKey(null);
       if (isFinal) {
-        // Show "Analyzing" transition before revealing results
+        // Show "Analyzing" transition, then email gate
         setRevealing(true);
         setAnimating(false);
-        setTimeout(() => { setRevealing(false); setStep(step + 1); }, 1800);
+        setTimeout(() => { setRevealing(false); setEmailGate(true); }, 1800);
       } else {
         setStep(step + 1);
         setAnimating(false);
@@ -182,6 +188,128 @@ export default function QuizPage() {
     scored.sort((a, b) => b.total - a.total);
     return scored.slice(0, 3);
   };
+
+  // Email gate submit handler
+  const handleGateSubmit = async () => {
+    if (!gateEmail || !gateEmail.includes("@") || !gateConsent) return;
+    setGateStatus("loading");
+    try {
+      const results = getResults();
+      const res = await fetch("/api/quiz-lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: gateEmail,
+          name: gateName || undefined,
+          answers,
+          top_match_slug: results[0]?.slug || null,
+        }),
+      });
+      if (!res.ok) throw new Error("Failed");
+      trackEvent("quiz_lead_capture", { source: "quiz", answers, top_match: results[0]?.slug }, "/quiz");
+      trackEvent("pdf_opt_in", { source: "quiz" }, "/quiz");
+    } catch {
+      // Still show results even if API fails
+      console.error("Quiz lead capture failed");
+    }
+    setGateStatus("idle");
+    setEmailGate(false);
+    setStep(step + 1);
+  };
+
+  const handleGateSkip = () => {
+    setEmailGate(false);
+    setStep(step + 1);
+  };
+
+  // Email gate screen — shown after analyzing, before results
+  if (emailGate) {
+    return (
+      <div className="py-12">
+        <div className="container-custom max-w-md mx-auto">
+          <div className="text-center mb-6 result-card-in">
+            <div className="text-5xl mb-4">📧</div>
+            <h1 className="text-2xl font-extrabold mb-2">Get Your Personalised Results</h1>
+            <p className="text-slate-600 text-sm">
+              We&apos;ll email your broker shortlist so you can compare later — plus our free fee comparison PDF.
+            </p>
+          </div>
+
+          <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm result-card-in result-card-in-delay-1">
+            <div className="space-y-3">
+              <div>
+                <label className="block text-xs font-medium text-slate-500 mb-1">Email *</label>
+                <input
+                  type="email"
+                  placeholder="you@email.com"
+                  value={gateEmail}
+                  onChange={(e) => setGateEmail(e.target.value)}
+                  className="w-full px-4 py-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-green-700/30 focus:border-green-700"
+                  autoFocus
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-500 mb-1">First name <span className="text-slate-400">(optional)</span></label>
+                <input
+                  type="text"
+                  placeholder="Jane"
+                  value={gateName}
+                  onChange={(e) => setGateName(e.target.value)}
+                  className="w-full px-4 py-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-green-700/30 focus:border-green-700"
+                />
+              </div>
+              <label className="flex items-start gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={gateConsent}
+                  onChange={(e) => setGateConsent(e.target.checked)}
+                  className="mt-0.5 w-4 h-4 rounded accent-green-700 shrink-0"
+                />
+                <span className="text-[0.65rem] text-slate-500 leading-tight">
+                  I agree to receive my results and occasional broker updates.{" "}
+                  <Link href="/privacy" className="underline hover:text-green-700">Privacy Policy</Link>
+                </span>
+              </label>
+              <button
+                onClick={handleGateSubmit}
+                disabled={gateStatus === "loading" || !gateEmail.includes("@") || !gateConsent}
+                className="w-full px-4 py-3 bg-amber-500 text-slate-900 text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-60"
+              >
+                {gateStatus === "loading" ? "Sending..." : "Send My Results →"}
+              </button>
+              {gateStatus === "error" && (
+                <p className="text-xs text-red-500 text-center">Something went wrong. Please try again.</p>
+              )}
+            </div>
+
+            <div className="flex items-center gap-3 mt-3 justify-center text-[0.65rem] text-slate-400">
+              <span className="flex items-center gap-1">
+                <svg className="w-3 h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                Free PDF
+              </span>
+              <span className="flex items-center gap-1">
+                <svg className="w-3 h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                No spam
+              </span>
+              <span className="flex items-center gap-1">
+                <svg className="w-3 h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                Unsubscribe anytime
+              </span>
+            </div>
+          </div>
+
+          <div className="text-center mt-4">
+            <button
+              onClick={handleGateSkip}
+              className="text-sm text-slate-400 hover:text-slate-600 transition-colors"
+            >
+              Skip — show my results now →
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Results screen
   if (step >= questions.length) {
