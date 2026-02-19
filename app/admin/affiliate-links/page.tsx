@@ -21,7 +21,7 @@ export default function AffiliateLinksPage() {
   const [loading, setLoading] = useState(true);
   const [savedSlug, setSavedSlug] = useState<string | null>(null);
   const [edits, setEdits] = useState<Record<string, EditableFields>>({});
-  const [activeTab, setActiveTab] = useState<"links" | "revenue">("links");
+  const [activeTab, setActiveTab] = useState<"links" | "revenue" | "health">("links");
 
   useEffect(() => {
     fetchData();
@@ -116,8 +116,93 @@ export default function AffiliateLinksPage() {
         brokers.filter((b) => b.estimated_epc && b.estimated_epc > 0).length
       : 0;
 
+  // Health stats
+  const linksOk = brokers.filter((b) => b.link_status === "ok").length;
+  const linksBroken = brokers.filter(
+    (b) => b.link_status === "broken" || b.link_status === "server_error" || b.link_status === "timeout"
+  ).length;
+  const dealsExpiringSoon = brokers.filter((b) => {
+    if (!b.deal || !b.deal_expiry) return false;
+    const expiry = new Date(b.deal_expiry);
+    const inWeek = new Date();
+    inWeek.setDate(inWeek.getDate() + 7);
+    return expiry <= inWeek && expiry >= new Date();
+  }).length;
+
   const formatCurrency = (val: number) =>
     val >= 1000 ? `$${(val / 1000).toFixed(1)}k` : `$${val.toFixed(2)}`;
+
+  function getLinkStatusBadge(status?: string) {
+    switch (status) {
+      case "ok":
+        return (
+          <span className="inline-flex items-center gap-1 text-green-600 text-xs font-medium">
+            <span className="w-2 h-2 bg-green-400 rounded-full" />
+            Healthy
+          </span>
+        );
+      case "broken":
+        return (
+          <span className="inline-flex items-center gap-1 text-red-600 text-xs font-medium">
+            <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+            Broken
+          </span>
+        );
+      case "server_error":
+        return (
+          <span className="inline-flex items-center gap-1 text-red-600 text-xs font-medium">
+            <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+            Server Error
+          </span>
+        );
+      case "timeout":
+        return (
+          <span className="inline-flex items-center gap-1 text-amber-600 text-xs font-medium">
+            <span className="w-2 h-2 bg-amber-500 rounded-full" />
+            Timeout
+          </span>
+        );
+      case "redirect":
+        return (
+          <span className="inline-flex items-center gap-1 text-blue-600 text-xs font-medium">
+            <span className="w-2 h-2 bg-blue-500 rounded-full" />
+            Redirect
+          </span>
+        );
+      case "no_url":
+        return (
+          <span className="inline-flex items-center gap-1 text-slate-400 text-xs font-medium">
+            <span className="w-2 h-2 bg-slate-300 rounded-full" />
+            No URL
+          </span>
+        );
+      default:
+        return (
+          <span className="inline-flex items-center gap-1 text-slate-400 text-xs font-medium">
+            <span className="w-2 h-2 bg-slate-300 rounded-full" />
+            Unchecked
+          </span>
+        );
+    }
+  }
+
+  function getDealExpiryBadge(broker: Broker) {
+    if (!broker.deal || !broker.deal_expiry) return null;
+    const expiry = new Date(broker.deal_expiry);
+    const now = new Date();
+    const daysLeft = Math.ceil((expiry.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+
+    if (daysLeft < 0) {
+      return <span className="text-xs font-medium text-red-600 bg-red-50 px-2 py-0.5 rounded-full">Expired</span>;
+    }
+    if (daysLeft <= 3) {
+      return <span className="text-xs font-medium text-red-600 bg-red-50 px-2 py-0.5 rounded-full">{daysLeft}d left</span>;
+    }
+    if (daysLeft <= 7) {
+      return <span className="text-xs font-medium text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">{daysLeft}d left</span>;
+    }
+    return <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded-full">{daysLeft}d left</span>;
+  }
 
   return (
     <AdminShell>
@@ -145,6 +230,21 @@ export default function AffiliateLinksPage() {
             >
               Revenue Config
             </button>
+            <button
+              onClick={() => setActiveTab("health")}
+              className={`px-4 py-2 text-sm font-medium transition-colors ${
+                activeTab === "health"
+                  ? "bg-green-700 text-slate-900"
+                  : "text-slate-500 hover:text-slate-900 hover:bg-slate-200"
+              }`}
+            >
+              Link Health
+              {linksBroken > 0 && (
+                <span className="ml-1.5 inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-red-500 rounded-full">
+                  {linksBroken}
+                </span>
+              )}
+            </button>
           </div>
         </div>
 
@@ -169,7 +269,7 @@ export default function AffiliateLinksPage() {
                 <p className="text-2xl font-bold text-amber-600">{totalClicksAll}</p>
               </div>
             </>
-          ) : (
+          ) : activeTab === "revenue" ? (
             <>
               <div className="bg-white border border-slate-200 rounded-lg p-4">
                 <p className="text-slate-500 text-sm">Est. Revenue</p>
@@ -182,6 +282,21 @@ export default function AffiliateLinksPage() {
               <div className="bg-white border border-slate-200 rounded-lg p-4">
                 <p className="text-slate-500 text-sm">Total Clicks</p>
                 <p className="text-2xl font-bold text-amber-600">{totalClicksAll}</p>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="bg-white border border-slate-200 rounded-lg p-4">
+                <p className="text-slate-500 text-sm">Links Healthy</p>
+                <p className="text-2xl font-bold text-green-600">{linksOk}</p>
+              </div>
+              <div className={`border rounded-lg p-4 ${linksBroken > 0 ? "bg-red-50 border-red-200" : "bg-white border-slate-200"}`}>
+                <p className="text-slate-500 text-sm">Broken / Errored</p>
+                <p className={`text-2xl font-bold ${linksBroken > 0 ? "text-red-600" : "text-slate-400"}`}>{linksBroken}</p>
+              </div>
+              <div className={`border rounded-lg p-4 ${dealsExpiringSoon > 0 ? "bg-amber-50 border-amber-200" : "bg-white border-slate-200"}`}>
+                <p className="text-slate-500 text-sm">Deals Expiring &le;7d</p>
+                <p className={`text-2xl font-bold ${dealsExpiringSoon > 0 ? "text-amber-600" : "text-slate-400"}`}>{dealsExpiringSoon}</p>
               </div>
             </>
           )}
@@ -205,7 +320,7 @@ export default function AffiliateLinksPage() {
                       <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">Status</th>
                       <th className="px-4 py-3"></th>
                     </tr>
-                  ) : (
+                  ) : activeTab === "revenue" ? (
                     <tr>
                       <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">Broker</th>
                       <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">Commission Type</th>
@@ -214,6 +329,16 @@ export default function AffiliateLinksPage() {
                       <th className="text-right px-4 py-3 text-sm font-medium text-slate-600">Clicks</th>
                       <th className="text-right px-4 py-3 text-sm font-medium text-slate-600">Est. Revenue</th>
                       <th className="px-4 py-3"></th>
+                    </tr>
+                  ) : (
+                    <tr>
+                      <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">Broker</th>
+                      <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">Affiliate URL</th>
+                      <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">Link Health</th>
+                      <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">HTTP Code</th>
+                      <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">Last Checked</th>
+                      <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">Deal Status</th>
+                      <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">Deal Expiry</th>
                     </tr>
                   )}
                 </thead>
@@ -279,8 +404,22 @@ export default function AffiliateLinksPage() {
                                 </span>
                               )}
                             </td>
+                            <td className="px-4 py-3">
+                              <div className="flex items-center gap-2">
+                                <button
+                                  onClick={() => handleSave(broker)}
+                                  disabled={!edits[broker.slug]}
+                                  className="px-3 py-1 bg-amber-500 text-black text-sm font-medium rounded hover:bg-amber-400 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                                >
+                                  Save
+                                </button>
+                                {savedSlug === broker.slug && (
+                                  <span className="text-green-600 text-sm">Saved!</span>
+                                )}
+                              </div>
+                            </td>
                           </>
-                        ) : (
+                        ) : activeTab === "revenue" ? (
                           <>
                             <td className="px-4 py-3">
                               <select
@@ -329,23 +468,76 @@ export default function AffiliateLinksPage() {
                                 {formatCurrency(estRev)}
                               </span>
                             </td>
+                            <td className="px-4 py-3">
+                              <div className="flex items-center gap-2">
+                                <button
+                                  onClick={() => handleSave(broker)}
+                                  disabled={!edits[broker.slug]}
+                                  className="px-3 py-1 bg-amber-500 text-black text-sm font-medium rounded hover:bg-amber-400 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                                >
+                                  Save
+                                </button>
+                                {savedSlug === broker.slug && (
+                                  <span className="text-green-600 text-sm">Saved!</span>
+                                )}
+                              </div>
+                            </td>
+                          </>
+                        ) : (
+                          <>
+                            <td className="px-4 py-3">
+                              <span className="text-xs text-slate-500 font-mono truncate block max-w-[200px]" title={broker.affiliate_url || ""}>
+                                {broker.affiliate_url || "—"}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3">
+                              {getLinkStatusBadge(broker.link_status)}
+                            </td>
+                            <td className="px-4 py-3">
+                              <span className="text-xs text-slate-600 font-mono">
+                                {broker.link_status_code ?? "—"}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3">
+                              <span className="text-xs text-slate-500">
+                                {broker.link_last_checked
+                                  ? new Date(broker.link_last_checked).toLocaleDateString("en-AU", {
+                                      day: "numeric",
+                                      month: "short",
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                    })
+                                  : "Never"}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3">
+                              {broker.deal ? (
+                                <span className="inline-flex items-center gap-1 text-green-600 text-xs font-medium">
+                                  <span className="w-2 h-2 bg-green-400 rounded-full" />
+                                  Active
+                                </span>
+                              ) : (
+                                <span className="text-xs text-slate-400">No deal</span>
+                              )}
+                            </td>
+                            <td className="px-4 py-3">
+                              {broker.deal_expiry ? (
+                                <div className="flex items-center gap-2">
+                                  <span className="text-xs text-slate-600">
+                                    {new Date(broker.deal_expiry).toLocaleDateString("en-AU", {
+                                      day: "numeric",
+                                      month: "short",
+                                      year: "numeric",
+                                    })}
+                                  </span>
+                                  {getDealExpiryBadge(broker)}
+                                </div>
+                              ) : (
+                                <span className="text-xs text-slate-400">No expiry</span>
+                              )}
+                            </td>
                           </>
                         )}
-
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={() => handleSave(broker)}
-                              disabled={!edits[broker.slug]}
-                              className="px-3 py-1 bg-amber-500 text-black text-sm font-medium rounded hover:bg-amber-400 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                            >
-                              Save
-                            </button>
-                            {savedSlug === broker.slug && (
-                              <span className="text-green-600 text-sm">Saved!</span>
-                            )}
-                          </div>
-                        </td>
                       </tr>
                     );
                   })}

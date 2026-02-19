@@ -68,6 +68,9 @@ export interface Broker {
   fee_changelog?: { date: string; field: string; old_value: string; new_value: string }[];
   fee_last_checked?: string;
   fee_page_hash?: string;
+  link_status?: string;
+  link_status_code?: number;
+  link_last_checked?: string;
   reviewer_id?: number;
   reviewer?: TeamMember;
   reviewed_at?: string;
