@@ -10,6 +10,7 @@ import {
   SITE_NAME,
   REVIEW_AUTHOR,
 } from "@/lib/seo";
+import { scoreBrokerSimilarity } from "@/lib/internal-links";
 
 export const revalidate = 3600; // ISR: revalidate every hour
 
@@ -65,15 +66,26 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
   const b = broker as Broker;
   const brokerReviewer = (b as any).reviewer as TeamMember | null;
 
-  // Fetch similar brokers (same crypto/non-crypto type, closest by rating)
-  const { data: similar } = await supabase
+  // Fetch similar brokers using multi-attribute similarity scoring
+  const { data: allOtherBrokers } = await supabase
     .from('brokers')
     .select('*')
     .eq('status', 'active')
-    .eq('is_crypto', b.is_crypto)
-    .neq('slug', slug)
-    .order('rating', { ascending: false })
-    .limit(3);
+    .neq('slug', slug);
+
+  const similar = ((allOtherBrokers as Broker[]) || [])
+    .map((c) => ({ broker: c, score: scoreBrokerSimilarity(b, c) }))
+    .filter(({ score }) => score >= 0)
+    .sort((a, bItem) => bItem.score - a.score)
+    .slice(0, 3)
+    .map(({ broker: br }) => br);
+
+  // Fetch articles that mention this broker
+  const { data: brokerArticles } = await supabase
+    .from('articles')
+    .select('id, title, slug, category, read_time')
+    .contains('related_brokers', [slug])
+    .limit(4);
 
   // JSON-LD structured data — FinancialProduct + Review + Article + Breadcrumb
   const financialProductLd = brokerReviewJsonLd(b, brokerReviewer ?? undefined);
@@ -108,7 +120,8 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
       />
       <BrokerReviewClient
         broker={b}
-        similar={(similar as Broker[]) || []}
+        similar={similar}
+        relatedArticles={(brokerArticles || []) as { id: number; title: string; slug: string; category?: string; read_time?: number }[]}
         authorName={brokerReviewer?.full_name || REVIEW_AUTHOR.name}
         authorTitle={REVIEW_AUTHOR.jobTitle}
         authorUrl={brokerReviewer ? `/reviewers/${brokerReviewer.slug}` : REVIEW_AUTHOR.url}

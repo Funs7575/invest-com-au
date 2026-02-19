@@ -11,17 +11,9 @@ import AuthorByline from "@/components/AuthorByline";
 import OnThisPage from "@/components/OnThisPage";
 import { absoluteUrl, breadcrumbJsonLd, articleAuthorJsonLd, articleFaqJsonLd, SITE_NAME } from "@/lib/seo";
 import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
+import { CATEGORY_COLORS, getBestPagesForArticle } from "@/lib/internal-links";
 
 export const revalidate = 3600; // ISR: revalidate every hour
-
-const CATEGORY_COLORS: Record<string, string> = {
-  tax: "bg-purple-100 text-purple-700",
-  beginners: "bg-blue-100 text-blue-700",
-  smsf: "bg-green-100 text-green-700",
-  strategy: "bg-amber-100 text-amber-700",
-  news: "bg-red-100 text-red-700",
-  reviews: "bg-teal-100 text-teal-700",
-};
 
 const CALC_NAMES: Record<string, { name: string; icon: string }> = {
   "calc-franking": { name: "Franking Credits Calculator", icon: "💰" },
@@ -530,6 +522,31 @@ export default async function ArticlePage({
                   </div>
                 </div>
               )}
+
+              {/* Best Broker Guide Links */}
+              {(() => {
+                const bestPages = getBestPagesForArticle(a.category, a.tags);
+                if (bestPages.length === 0) return null;
+                return (
+                  <div className="mt-8 bg-slate-50 rounded-xl p-5">
+                    <h3 className="text-lg font-bold mb-1">Best Broker Guides</h3>
+                    <p className="text-sm text-slate-500 mb-3">
+                      See which brokers top our rankings for topics covered in this article.
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {bestPages.map((bp) => (
+                        <Link
+                          key={bp.slug}
+                          href={bp.href}
+                          className="px-3 py-1.5 bg-white border border-slate-200 rounded-full text-sm text-slate-700 hover:border-green-700 hover:text-green-700 transition-colors"
+                        >
+                          {bp.h1.replace(" in Australia", "")}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
 
               {/* Bottom CTA */}
               <div className="mt-12 bg-green-50 border border-green-200 rounded-xl p-8 text-center">

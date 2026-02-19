@@ -22,6 +22,8 @@ import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
 import ScrollReveal from "@/components/ScrollReveal";
 import type { LeadSegment } from "@/components/ContextualLeadMagnet";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
+import { getArticleFiltersForBestPage, CATEGORY_COLORS } from "@/lib/internal-links";
+import type { Article } from "@/lib/types";
 
 const SLUG_TO_SEGMENT: Record<string, LeadSegment> = {
   beginners: "beginner-guide",
@@ -82,6 +84,25 @@ export default async function BestBrokerPage({
   const allBrokers = (brokers as Broker[]) || [];
   const filtered = allBrokers.filter(cat.filter).sort(cat.sort);
   const topPick = filtered[0] || null;
+
+  // ── Fetch related articles for this category ──
+  const articleFilters = getArticleFiltersForBestPage(slug);
+  let relatedArticles: Pick<Article, "id" | "title" | "slug" | "category" | "read_time">[] = [];
+  const orParts: string[] = [];
+  if (articleFilters.categories.length > 0) {
+    orParts.push(`category.in.(${articleFilters.categories.join(",")})`);
+  }
+  if (articleFilters.tags.length > 0) {
+    orParts.push(`tags.ov.{${articleFilters.tags.join(",")}}`);
+  }
+  if (orParts.length > 0) {
+    const { data: articleData } = await supabase
+      .from("articles")
+      .select("id, title, slug, category, read_time")
+      .or(orParts.join(","))
+      .limit(3);
+    relatedArticles = articleData || [];
+  }
 
   // ── JSON-LD: Article + ItemList + FAQ + Breadcrumb ──
   const articleJsonLd = {
@@ -378,6 +399,35 @@ export default async function BestBrokerPage({
                     </p>
                   </details>
                 ))}
+              </div>
+            </div>
+          )}
+
+          {/* Related Articles */}
+          {relatedArticles.length > 0 && (
+            <div className="mb-10">
+              <h3 className="text-lg font-bold mb-4">Related Articles</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {relatedArticles.map((ra) => {
+                  const color = CATEGORY_COLORS[ra.category || ""] || "bg-slate-100 text-slate-700";
+                  return (
+                    <Link
+                      key={ra.id}
+                      href={`/article/${ra.slug}`}
+                      className="border border-slate-200 rounded-xl p-5 hover:shadow-lg hover:scale-[1.02] transition-all bg-white flex flex-col"
+                    >
+                      {ra.category && (
+                        <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full self-start mb-2 ${color}`}>
+                          {ra.category}
+                        </span>
+                      )}
+                      <h4 className="text-sm font-bold mb-2 line-clamp-2 flex-1">{ra.title}</h4>
+                      {ra.read_time && (
+                        <span className="text-xs text-slate-400">{ra.read_time} min read</span>
+                      )}
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           )}

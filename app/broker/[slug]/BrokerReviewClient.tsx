@@ -30,9 +30,18 @@ function getBestFor(b: Broker): string[] {
   return bestFor;
 }
 
+interface RelatedArticle {
+  id: number;
+  title: string;
+  slug: string;
+  category?: string;
+  read_time?: number;
+}
+
 interface BrokerReviewProps {
   broker: Broker;
   similar: Broker[];
+  relatedArticles?: RelatedArticle[];
   authorName?: string;
   authorTitle?: string;
   authorUrl?: string;
@@ -40,9 +49,19 @@ interface BrokerReviewProps {
   dateModified?: string | null;
 }
 
+const CATEGORY_COLORS: Record<string, string> = {
+  tax: "bg-purple-100 text-purple-700",
+  beginners: "bg-blue-100 text-blue-700",
+  smsf: "bg-green-100 text-green-700",
+  strategy: "bg-amber-100 text-amber-700",
+  news: "bg-red-100 text-red-700",
+  reviews: "bg-teal-100 text-teal-700",
+};
+
 export default function BrokerReviewClient({
   broker: b,
   similar,
+  relatedArticles,
   authorName,
   authorTitle,
   authorUrl,
@@ -441,6 +460,38 @@ export default function BrokerReviewClient({
                 </Link>
               ))}
             </ScrollReveal>
+          </>
+        )}
+
+        {/* Related Articles */}
+        {relatedArticles && relatedArticles.length > 0 && (
+          <>
+            <h2 className="text-xl font-extrabold mb-2">Guides Featuring {b.name}</h2>
+            <p className="text-sm text-slate-600 mb-4">
+              Our editorial team has covered {b.name} in these articles:
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
+              {relatedArticles.map((article) => {
+                const color = CATEGORY_COLORS[article.category || ""] || "bg-slate-100 text-slate-700";
+                return (
+                  <Link
+                    key={article.id}
+                    href={`/article/${article.slug}`}
+                    className="border border-slate-200 rounded-xl p-4 hover:shadow-md transition-shadow flex flex-col"
+                  >
+                    {article.category && (
+                      <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full self-start mb-1 ${color}`}>
+                        {article.category}
+                      </span>
+                    )}
+                    <h3 className="text-sm font-bold line-clamp-2 flex-1">{article.title}</h3>
+                    {article.read_time && (
+                      <span className="text-xs text-slate-400 mt-2">{article.read_time} min read</span>
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
           </>
         )}
 
