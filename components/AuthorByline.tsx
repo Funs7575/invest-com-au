@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Linkedin, Twitter } from "lucide-react";
 import type { TeamMember } from "@/lib/types";
 import { formatRole } from "@/lib/seo";
@@ -77,9 +78,11 @@ export default function AuthorByline({
       <div className="flex items-center gap-3">
         {/* Avatar */}
         {author?.avatar_url ? (
-          <img
+          <Image
             src={author.avatar_url}
             alt={displayName}
+            width={48}
+            height={48}
             className="w-12 h-12 rounded-full object-cover shrink-0"
           />
         ) : (

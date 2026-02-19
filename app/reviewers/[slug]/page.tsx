@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { TeamMember, Article, Broker } from "@/lib/types";
 import {
@@ -129,9 +130,11 @@ export default async function ReviewerPage({
             <div className="flex items-start gap-6">
               {/* Avatar */}
               {m.avatar_url ? (
-                <img
+                <Image
                   src={m.avatar_url}
                   alt={m.full_name}
+                  width={80}
+                  height={80}
                   className="w-20 h-20 rounded-full object-cover border-2 border-white/20 shrink-0"
                 />
               ) : (
