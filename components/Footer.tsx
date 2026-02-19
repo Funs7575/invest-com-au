@@ -27,6 +27,7 @@ export default function Footer() {
                   onClick={() => setOpenIndex(openIndex === i ? null : i)}
                   className="w-full flex items-center justify-between py-2.5 text-xs text-slate-500 hover:text-slate-700 transition-colors"
                   aria-expanded={openIndex === i}
+                  aria-controls={`disclaimer-${i}`}
                   aria-label={`Toggle ${section.title}`}
                 >
                   <span className="font-semibold text-slate-700">{section.title}</span>
@@ -35,11 +36,14 @@ export default function Footer() {
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
+                    aria-hidden="true"
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
                 <div
+                  id={`disclaimer-${i}`}
+                  role="region"
                   className="overflow-hidden transition-all duration-200"
                   style={{ maxHeight: openIndex === i ? "300px" : "0" }}
                 >

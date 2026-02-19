@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const navItems = [
   { name: "Compare", href: "/compare" },
@@ -21,6 +22,7 @@ const popularLinks = [
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-slate-200">
@@ -31,16 +33,20 @@ export default function Header() {
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-6">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="text-sm font-medium text-slate-700 hover:text-green-800 transition-colors"
-              >
-                {item.name}
-              </Link>
-            ))}
+          <nav className="hidden md:flex items-center gap-6" aria-label="Main navigation">
+            {navItems.map((item) => {
+              const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`text-sm font-medium transition-colors ${isActive ? "text-green-800 font-bold" : "text-slate-700 hover:text-green-800"}`}
+                  {...(isActive ? { "aria-current": "page" as const } : {})}
+                >
+                  {item.name}
+                </Link>
+              );
+            })}
             <Link
               href="/quiz"
               className="px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
@@ -53,14 +59,15 @@ export default function Header() {
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="md:hidden p-2 text-slate-700 hover:text-green-800 transition-colors"
-            aria-label="Toggle menu"
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
           >
             {menuOpen ? (
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             ) : (
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             )}
@@ -71,17 +78,21 @@ export default function Header() {
       {/* Mobile Slide-out Menu */}
       {menuOpen && (
         <div className="md:hidden border-t border-slate-200 bg-white">
-          <nav className="container-custom py-4 space-y-1">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setMenuOpen(false)}
-                className="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-green-50 hover:text-green-800 rounded-lg transition-colors"
-              >
-                {item.name}
-              </Link>
-            ))}
+          <nav className="container-custom py-4 space-y-1" aria-label="Mobile navigation">
+            {navItems.map((item) => {
+              const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMenuOpen(false)}
+                  className={`block px-4 py-3 text-sm font-medium rounded-lg transition-colors ${isActive ? "bg-green-50 text-green-800 font-bold" : "text-slate-700 hover:bg-green-50 hover:text-green-800"}`}
+                  {...(isActive ? { "aria-current": "page" as const } : {})}
+                >
+                  {item.name}
+                </Link>
+              );
+            })}
             <div className="pt-2 mt-2 border-t border-slate-100">
               <Link
                 href="/quiz"
