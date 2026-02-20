@@ -110,16 +110,6 @@ export default function QuizPage() {
     });
   }, []);
 
-  useEffect(() => {
-    if (step >= questions.length && step > 0 && brokers.length > 0) {
-      trackEvent('quiz_complete', {
-        answers,
-        top_broker: results[0]?.slug || null,
-        results_count: results.length,
-      }, '/quiz');
-    }
-  }, [step, questions.length, brokers.length, results, answers]);
-
   const handleAnswer = (key: string) => {
     if (animating) return;
     if (step === 0) {
@@ -236,6 +226,17 @@ export default function QuizPage() {
     () => results.some(r => r.broker?.is_crypto),
     [results]
   );
+
+  // Track quiz completion when user reaches results
+  useEffect(() => {
+    if (step >= questions.length && step > 0 && brokers.length > 0) {
+      trackEvent('quiz_complete', {
+        answers,
+        top_broker: results[0]?.slug || null,
+        results_count: results.length,
+      }, '/quiz');
+    }
+  }, [step, questions.length, brokers.length, results, answers]);
 
   // Email gate submit handler
   const handleGateSubmit = async () => {
