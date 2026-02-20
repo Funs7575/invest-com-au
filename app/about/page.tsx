@@ -1,6 +1,11 @@
 import Link from "next/link";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
-import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import {
+  GENERAL_ADVICE_WARNING,
+  COMPANY_LEGAL_NAME,
+  COMPANY_ACN,
+  COMPANY_ABN,
+} from "@/lib/compliance";
 
 export const metadata = {
   title: "About Us",
@@ -60,7 +65,8 @@ export default function AboutPage() {
             <h2 className="text-2xl font-extrabold text-brand mb-3">Who We Are</h2>
             <div className="space-y-4 text-slate-700 leading-relaxed">
               <p className="text-lg">
-                Invest.com.au is Australia&apos;s independent broker comparison platform. We help
+                {COMPANY_LEGAL_NAME} (ACN {COMPANY_ACN}, ABN {COMPANY_ABN}),
+                trading as Invest.com.au, is Australia&apos;s independent broker comparison platform. We help
                 everyday Australians find the right share trading platform without bank bias or paid rankings.
               </p>
               <p>

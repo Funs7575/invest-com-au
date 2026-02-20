@@ -1,14 +1,25 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import type { Broker } from "@/lib/types";
 import { trackClick, trackEvent, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
-import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
+import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE_SHORT, CRYPTO_WARNING } from "@/lib/compliance";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
+import RiskWarningInline from "@/components/RiskWarningInline";
 
 type WeightKey = "beginner" | "low_fee" | "us_shares" | "smsf" | "crypto" | "advanced";
+
+interface QuizWeight {
+  broker_slug: string;
+  beginner_weight: number;
+  low_fee_weight: number;
+  us_shares_weight: number;
+  smsf_weight: number;
+  crypto_weight: number;
+  advanced_weight: number;
+}
 
 // Fallback questions if DB fetch fails
 const fallbackQuestions = [
@@ -47,48 +58,67 @@ export default function QuizPage() {
   const [gateName, setGateName] = useState("");
   const [gateConsent, setGateConsent] = useState(false);
   const [gateStatus, setGateStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [fetchError, setFetchError] = useState<string | null>(null);
+  const mountedRef = useRef(true);
+  const questionHeadingRef = useRef<HTMLHeadingElement>(null);
 
+  // Cleanup ref for unmount protection (P0 #4)
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => { mountedRef.current = false; };
+  }, []);
+
+  // Parallelised Supabase queries with error handling (P0 #3, P1 #10)
   useEffect(() => {
     const supabase = createClient();
 
-    // Fetch brokers
-    supabase.from('brokers').select('*').eq('status', 'active').order('rating', { ascending: false })
-      .then(({ data }) => { if (data) setBrokers(data); });
+    Promise.all([
+      supabase.from('brokers').select('*').eq('status', 'active').order('rating', { ascending: false }),
+      supabase.from('quiz_questions').select('*').eq('active', true).order('order_index'),
+      supabase.from('quiz_weights').select('*'),
+    ]).then(([brokerRes, questionsRes, weightsRes]) => {
+      if (!mountedRef.current) return;
 
-    // Fetch quiz questions from DB
-    supabase.from('quiz_questions').select('*').eq('active', true).order('order_index')
-      .then(({ data }) => { if (data && data.length > 0) setQuestions(data); });
+      if (brokerRes.error) {
+        setFetchError("Failed to load broker data. Using cached results.");
+      } else if (brokerRes.data) {
+        setBrokers(brokerRes.data);
+      }
 
-    // Fetch quiz weights from DB
-    supabase.from('quiz_weights').select('*')
-      .then(({ data }) => {
-        if (data && data.length > 0) {
-          const w: Record<string, Record<string, number>> = {};
-          data.forEach((row: any) => {
-            w[row.broker_slug] = {
-              beginner: row.beginner_weight || 0,
-              low_fee: row.low_fee_weight || 0,
-              us_shares: row.us_shares_weight || 0,
-              smsf: row.smsf_weight || 0,
-              crypto: row.crypto_weight || 0,
-              advanced: row.advanced_weight || 0,
-            };
-          });
-          setWeights(w);
-        }
-      });
+      if (questionsRes.data && questionsRes.data.length > 0) {
+        setQuestions(questionsRes.data);
+      }
+
+      if (weightsRes.data && weightsRes.data.length > 0) {
+        const w: Record<string, Record<string, number>> = {};
+        weightsRes.data.forEach((row: QuizWeight) => {
+          w[row.broker_slug] = {
+            beginner: row.beginner_weight || 0,
+            low_fee: row.low_fee_weight || 0,
+            us_shares: row.us_shares_weight || 0,
+            smsf: row.smsf_weight || 0,
+            crypto: row.crypto_weight || 0,
+            advanced: row.advanced_weight || 0,
+          };
+        });
+        setWeights(w);
+      }
+    }).catch(() => {
+      if (mountedRef.current) {
+        setFetchError("Failed to load quiz data. Using cached results.");
+      }
+    });
   }, []);
 
   useEffect(() => {
     if (step >= questions.length && step > 0 && brokers.length > 0) {
-      const results = getResults();
       trackEvent('quiz_complete', {
         answers,
         top_broker: results[0]?.slug || null,
         results_count: results.length,
       }, '/quiz');
     }
-  }, [step, questions.length, brokers.length]);
+  }, [step, questions.length, brokers.length, results, answers]);
 
   const handleAnswer = (key: string) => {
     if (animating) return;
@@ -102,16 +132,25 @@ export default function QuizPage() {
     const isFinal = step + 1 >= questions.length;
 
     setTimeout(() => {
+      if (!mountedRef.current) return; // P0 #4: prevent state update after unmount
       setAnswers(newAnswers);
       setSelectedKey(null);
       if (isFinal) {
         // Show "Analyzing" transition, then email gate
         setRevealing(true);
         setAnimating(false);
-        setTimeout(() => { setRevealing(false); setEmailGate(true); }, 1800);
+        setTimeout(() => {
+          if (!mountedRef.current) return;
+          setRevealing(false);
+          setEmailGate(true);
+        }, 1800);
       } else {
         setStep(step + 1);
         setAnimating(false);
+        // P1 #8: Focus management — move focus to next question heading
+        requestAnimationFrame(() => {
+          questionHeadingRef.current?.focus();
+        });
       }
     }, 350);
   };
@@ -161,13 +200,12 @@ export default function QuizPage() {
 
   const [showScoring, setShowScoring] = useState(false);
 
-  const getResults = (): { broker: Broker | null; slug: string; total: number }[] => {
-    // Score all brokers based on answers
+  // P1 #5: Memoize results to avoid recalculating on every render
+  const results = useMemo(() => {
     const scored = Object.entries(weights).map(([slug, scores]) => {
       let total = 0;
 
       answers.forEach(key => {
-        // Map answer keys to weight categories
         const keyMap: Record<string, WeightKey> = {
           crypto: 'crypto', trade: 'advanced', income: 'low_fee', grow: 'beginner',
           beginner: 'beginner', intermediate: 'low_fee', pro: 'advanced',
@@ -178,23 +216,32 @@ export default function QuizPage() {
         total += (scores[weightKey] || 0);
       });
 
-      // Rating multiplier
       const broker = brokers.find(b => b.slug === slug);
       if (broker?.rating) total *= (1 + (broker.rating - 4) * 0.1);
 
       return { slug, total, broker: broker || null };
     });
 
-    scored.sort((a, b) => b.total - a.total);
+    // P2 #14: Tiebreaker — sort by score, then rating, then name
+    scored.sort((a, b) =>
+      b.total - a.total
+      || (b.broker?.rating ?? 0) - (a.broker?.rating ?? 0)
+      || (a.broker?.name ?? '').localeCompare(b.broker?.name ?? '')
+    );
     return scored.slice(0, 3);
-  };
+  }, [answers, weights, brokers]);
+
+  // Check if any result is a crypto broker (for crypto warning)
+  const hasCryptoResult = useMemo(
+    () => results.some(r => r.broker?.is_crypto),
+    [results]
+  );
 
   // Email gate submit handler
   const handleGateSubmit = async () => {
     if (!gateEmail || !gateEmail.includes("@") || !gateConsent) return;
     setGateStatus("loading");
     try {
-      const results = getResults();
       const res = await fetch("/api/quiz-lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -209,8 +256,9 @@ export default function QuizPage() {
       trackEvent("quiz_lead_capture", { source: "quiz", answers, top_match: results[0]?.slug }, "/quiz");
       trackEvent("pdf_opt_in", { source: "quiz" }, "/quiz");
     } catch {
-      // Still show results even if API fails
-      console.error("Quiz lead capture failed");
+      // P0 #2: Set error state so user sees feedback
+      setGateStatus("error");
+      return; // Stay on gate so user can retry
     }
     setGateStatus("idle");
     setEmailGate(false);
@@ -218,6 +266,7 @@ export default function QuizPage() {
   };
 
   const handleGateSkip = () => {
+    setGateStatus("idle");
     setEmailGate(false);
     setStep(step + 1);
   };
@@ -313,7 +362,6 @@ export default function QuizPage() {
 
   // Results screen
   if (step >= questions.length) {
-    const results = getResults();
     const topMatch = results[0];
     const runnerUps = results.slice(1);
     const allResults = results.filter(r => r.broker);
@@ -437,6 +485,7 @@ export default function QuizPage() {
               >
                 {getBenefitCta(topMatch.broker, 'quiz')}
               </a>
+              <RiskWarningInline />
               {topMatch.broker.deal && topMatch.broker.deal_text && (
                 <div className="mt-3 text-center">
                   <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 border border-amber-200 rounded-full text-xs font-semibold text-amber-700">
@@ -462,12 +511,12 @@ export default function QuizPage() {
                 <table className="w-full text-sm">
                   <thead>
                     <tr className="border-b border-slate-100">
-                      <th className="px-4 py-2 text-left text-xs text-slate-500 font-medium">Broker</th>
-                      <th className="px-3 py-2 text-center text-xs text-slate-500 font-medium">ASX Fee</th>
-                      <th className="px-3 py-2 text-center text-xs text-slate-500 font-medium">FX Rate</th>
-                      <th className="px-3 py-2 text-center text-xs text-slate-500 font-medium">CHESS</th>
-                      <th className="px-3 py-2 text-center text-xs text-slate-500 font-medium">Rating</th>
-                      <th className="px-3 py-2 text-center text-xs text-slate-500 font-medium"></th>
+                      <th scope="col" className="px-4 py-2 text-left text-xs text-slate-500 font-medium">Broker</th>
+                      <th scope="col" className="px-3 py-2 text-center text-xs text-slate-500 font-medium">ASX Fee</th>
+                      <th scope="col" className="px-3 py-2 text-center text-xs text-slate-500 font-medium">FX Rate</th>
+                      <th scope="col" className="px-3 py-2 text-center text-xs text-slate-500 font-medium">CHESS</th>
+                      <th scope="col" className="px-3 py-2 text-center text-xs text-slate-500 font-medium">Rating</th>
+                      <th scope="col" className="px-3 py-2 text-center text-xs text-slate-500 font-medium"><span className="sr-only">Action</span></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -503,6 +552,7 @@ export default function QuizPage() {
                           >
                             Visit →
                           </a>
+                          <RiskWarningInline />
                         </td>
                       </tr>
                     ))}
@@ -615,6 +665,7 @@ export default function QuizPage() {
                     >
                       {getBenefitCta(r.broker, 'quiz')}
                     </a>
+                    <RiskWarningInline />
                     {/* Match reasons for runner-ups too */}
                     <div className="mt-2 flex flex-wrap gap-1.5">
                       {getMatchReasons(answers, r.broker).slice(0, 2).map((reason, ri) => (
@@ -636,6 +687,15 @@ export default function QuizPage() {
             </>
           )}
 
+          {/* P1 #7: Crypto warning when results include a crypto broker */}
+          {hasCryptoResult && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
+              <p className="text-[0.7rem] text-amber-700 leading-relaxed">
+                <strong>Crypto Warning:</strong> {CRYPTO_WARNING}
+              </p>
+            </div>
+          )}
+
           <div className="my-6">
             <CompactDisclaimerLine />
           </div>
@@ -645,11 +705,19 @@ export default function QuizPage() {
             <h3 className="text-lg font-bold mb-1">Still not sure?</h3>
             <p className="text-sm text-slate-700 mb-4">Compare all brokers side-by-side or read our detailed reviews.</p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <a href="/compare" className="px-5 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 transition-colors">
+              <a
+                href="/compare"
+                onClick={() => trackEvent('quiz_internal_cta', { target: 'compare' }, '/quiz')}
+                className="px-5 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 transition-colors"
+              >
                 Compare All Brokers →
               </a>
               {topMatch?.broker && (
-                <a href={`/broker/${topMatch.broker.slug}`} className="px-5 py-2.5 border border-slate-700 text-slate-900 text-sm font-semibold rounded-lg hover:bg-amber-300 transition-colors">
+                <a
+                  href={`/broker/${topMatch.broker.slug}`}
+                  onClick={() => trackEvent('quiz_internal_cta', { target: 'review', broker: topMatch.broker!.slug }, '/quiz')}
+                  className="px-5 py-2.5 border border-slate-700 text-slate-900 text-sm font-semibold rounded-lg hover:bg-amber-300 transition-colors"
+                >
                   Read {topMatch.broker.name} Review →
                 </a>
               )}
@@ -723,6 +791,13 @@ export default function QuizPage() {
   return (
     <div className="py-12">
       <div className="container-custom max-w-2xl mx-auto">
+        {/* Data fetch error notice */}
+        {fetchError && (
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4 text-xs text-amber-700">
+            {fetchError}
+          </div>
+        )}
+
         {/* Progress dots */}
         <div className="flex items-center justify-center gap-2 mb-8">
           {questions.map((_, i) => (
@@ -753,16 +828,24 @@ export default function QuizPage() {
           </div>
         </div>
 
-        <div key={step} className="quiz-question-enter">
-          <h1 className="text-2xl md:text-3xl font-extrabold mb-8 mt-6">{current.question_text}</h1>
+        <div key={step} className="quiz-question-enter" aria-live="polite">
+          <h1
+            ref={questionHeadingRef}
+            tabIndex={-1}
+            className="text-2xl md:text-3xl font-extrabold mb-8 mt-6 outline-none"
+          >
+            {current.question_text}
+          </h1>
 
-          <div className="space-y-3">
+          <div className="space-y-3" role="radiogroup" aria-label={current.question_text}>
             {current.options.map((opt: { label: string; key: string }) => (
               <button
                 key={opt.label}
                 onClick={() => handleAnswer(opt.key)}
                 disabled={animating}
-                aria-label={`Select: ${opt.label}`}
+                role="radio"
+                aria-checked={selectedKey === opt.key}
+                aria-label={opt.label}
                 className={`w-full text-left border rounded-xl px-6 py-4 transition-all font-medium text-sm md:text-base ${
                   selectedKey === opt.key
                     ? "border-green-700 bg-green-700/5 scale-[0.98]"

@@ -46,8 +46,14 @@ export const SPONSORED_DISCLOSURE =
 export const SPONSORED_DISCLOSURE_SHORT =
   "Paid placement. Ratings are independent.";
 
+/** Company registration details (from ASIC extract 20/02/2026) */
+export const COMPANY_LEGAL_NAME = "Invest.com.au Pty Ltd";
+export const COMPANY_ACN = "093 882 421";
+export const COMPANY_ABN = "90 093 882 421";
+
 /** Regulatory note */
 export const REGULATORY_NOTE =
-  "Invest.com.au is not a financial product issuer, credit provider, or financial adviser. " +
+  `${COMPANY_LEGAL_NAME} (ACN ${COMPANY_ACN}, ABN ${COMPANY_ABN}) is not a financial product issuer, ` +
+  "credit provider, or financial adviser. " +
   "We are an information service. Always verify information with the product issuer before " +
   "making a decision.";

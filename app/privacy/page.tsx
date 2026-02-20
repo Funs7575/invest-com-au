@@ -20,7 +20,8 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-lg font-bold mb-2">1. About This Policy</h2>
             <p className="text-slate-600">
-              Invest.com.au (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;)
+              Invest.com.au Pty Ltd (ACN 093 882 421, ABN 90 093 882 421)
+              (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;)
               is committed to protecting your personal information in accordance
               with the Australian Privacy Act 1988 (Cth) and the Australian
               Privacy Principles (APPs). This policy explains how we collect,

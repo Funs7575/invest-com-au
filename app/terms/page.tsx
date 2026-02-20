@@ -3,6 +3,9 @@ import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 import {
   GENERAL_ADVICE_WARNING,
   ADVERTISER_DISCLOSURE,
+  COMPANY_LEGAL_NAME,
+  COMPANY_ACN,
+  COMPANY_ABN,
 } from "@/lib/compliance";
 
 export const metadata = {
@@ -42,7 +45,8 @@ export default function TermsPage() {
               <section className="bg-slate-50 border border-slate-200 rounded-xl p-6">
                 <h2 className="text-lg font-bold mb-2">1. Scope of Service</h2>
                 <p className="text-sm text-slate-600 leading-relaxed">
-                  {SITE_NAME} is an information service that provides
+                  {COMPANY_LEGAL_NAME} (ACN {COMPANY_ACN}, ABN {COMPANY_ABN}),
+                  trading as {SITE_NAME}, is an information service that provides
                   comparisons, reviews, and educational content about Australian
                   investment platforms. We are not a financial product issuer,
                   credit provider, or financial adviser.

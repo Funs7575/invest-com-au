@@ -11,7 +11,7 @@ const CookieBanner = dynamic(() => import("@/components/CookieBanner"), { ssr: f
 const BackToTop = dynamic(() => import("@/components/BackToTop"), { ssr: false });
 const QuizPromptBar = dynamic(() => import("@/components/QuizPromptBar"), { ssr: false });
 const ExitIntentPopup = dynamic(() => import("@/components/ExitIntentPopup"), { ssr: false });
-const SocialProofToast = dynamic(() => import("@/components/SocialProofToast"), { ssr: false });
+
 
 export default function LayoutShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -39,7 +39,6 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
       <BackToTop />
       <QuizPromptBar />
       <ExitIntentPopup />
-      <SocialProofToast />
     </>
   );
 }

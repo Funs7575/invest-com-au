@@ -14,6 +14,7 @@ interface SettingField {
 const SETTING_FIELDS: SettingField[] = [
   { key: "site_title", label: "Site Title", type: "text" },
   { key: "meta_description", label: "Meta Description", type: "textarea" },
+  { key: "acn", label: "ACN", type: "text" },
   { key: "abn", label: "ABN", type: "text" },
   { key: "contact_email", label: "Contact Email", type: "text" },
   { key: "visitor_count", label: "Visitor Count", type: "number" },

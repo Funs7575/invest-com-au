@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE, CRYPTO_WARNING, REGULATORY_NOTE } from "@/lib/compliance";
+import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE, CRYPTO_WARNING, REGULATORY_NOTE, COMPANY_LEGAL_NAME, COMPANY_ACN, COMPANY_ABN } from "@/lib/compliance";
 
 const sections = [
   { title: "General Advice Warning", content: GENERAL_ADVICE_WARNING },
@@ -102,8 +102,9 @@ export default function Footer() {
             </div>
           </div>
 
-          <div className="border-t border-green-700/40 mt-8 pt-8 text-sm text-center">
-            <p>&copy; {new Date().getFullYear()} Invest.com.au. All rights reserved.</p>
+          <div className="border-t border-green-700/40 mt-8 pt-8 text-sm text-center space-y-1">
+            <p>&copy; {new Date().getFullYear()} {COMPANY_LEGAL_NAME}. All rights reserved.</p>
+            <p className="text-xs text-slate-400">ACN {COMPANY_ACN} | ABN {COMPANY_ABN}</p>
           </div>
         </div>
       </footer>
