@@ -2,7 +2,6 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
 import type { Article } from "@/lib/types";
-import MarketTicker from "@/components/MarketTicker";
 import HomepageSearchBar from "@/components/HomepageSearchBar";
 import HomepageComparisonTable from "@/components/HomepageComparisonTable";
 import AuthorByline from "@/components/AuthorByline";
@@ -31,37 +30,6 @@ export const metadata = {
   },
   alternates: { canonical: "/" },
 };
-
-const categoryCards = [
-  {
-    title: "Beginners",
-    description: "Low minimum deposits, easy platforms, educational resources",
-    href: "/compare?filter=beginner",
-    emoji: "🌱",
-    color: "bg-green-50 border-green-200 text-green-800",
-  },
-  {
-    title: "Lowest Fees",
-    description: "$0 brokerage and low-cost options for active traders",
-    href: "/compare?filter=free",
-    emoji: "💰",
-    color: "bg-amber-50 border-amber-200 text-amber-800",
-  },
-  {
-    title: "SMSF",
-    description: "CHESS-sponsored brokers with SMSF account support",
-    href: "/compare?filter=smsf",
-    emoji: "🏦",
-    color: "bg-blue-50 border-blue-200 text-blue-800",
-  },
-  {
-    title: "Crypto",
-    description: "Australian-regulated crypto exchanges for BTC, ETH & more",
-    href: "/compare?filter=crypto",
-    emoji: "₿",
-    color: "bg-purple-50 border-purple-200 text-purple-800",
-  },
-];
 
 const bestForCards = [
   { emoji: "🌱", title: "Best for Beginners", description: "Low fees, simple platforms, educational resources", href: "/best/beginners", color: "bg-green-50 border-green-200 text-green-800" },
@@ -116,9 +84,6 @@ export default async function HomePage() {
         }}
       />
 
-      {/* Market Ticker */}
-      <MarketTicker />
-
       {/* Hero Section */}
       <section className="bg-white py-16">
         <div className="max-w-4xl mx-auto px-4 text-center">
@@ -126,8 +91,8 @@ export default async function HomePage() {
             Compare {brokerCount}+ Australian Investment Platforms
           </h1>
           <p className="mt-4 text-xl text-gray-600 max-w-2xl mx-auto hero-fade-up hero-fade-up-2">
-            Stop overpaying. We tracked the hidden fees of every
-            ASIC-regulated broker.
+            We compare the fees and features of every major Australian
+            broker — so you don&apos;t have to.
           </p>
           <div className="hero-fade-up hero-fade-up-3">
             <AuthorByline />
@@ -149,6 +114,42 @@ export default async function HomePage() {
           <div className="hero-fade-up hero-fade-up-5">
             <HomepageSearchBar />
             <SocialProofBar />
+          </div>
+        </div>
+      </section>
+
+      {/* Where Should I Start? — Intent-based routing for different user types */}
+      <section className="py-10 bg-slate-50 border-y border-slate-100">
+        <div className="container-custom">
+          <h2 className="text-center text-lg font-bold text-slate-800 mb-6">Where should I start?</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
+            <Link
+              href="/quiz"
+              className="block bg-white border border-slate-200 rounded-xl p-5 text-center hover:border-green-300 hover:shadow-md transition-all duration-200 group"
+            >
+              <div className="text-3xl mb-2">🆕</div>
+              <h3 className="font-bold text-sm mb-1 group-hover:text-green-800 transition-colors">I&apos;m new to investing</h3>
+              <p className="text-xs text-slate-500 mb-3">Take our 60-second quiz to find the right broker for you.</p>
+              <span className="text-xs font-semibold text-green-700">Start Quiz &rarr;</span>
+            </Link>
+            <Link
+              href="/switch"
+              className="block bg-white border border-slate-200 rounded-xl p-5 text-center hover:border-green-300 hover:shadow-md transition-all duration-200 group"
+            >
+              <div className="text-3xl mb-2">🔄</div>
+              <h3 className="font-bold text-sm mb-1 group-hover:text-green-800 transition-colors">I want to switch brokers</h3>
+              <p className="text-xs text-slate-500 mb-3">See how much you could save by switching to a cheaper platform.</p>
+              <span className="text-xs font-semibold text-green-700">Compare Fees &rarr;</span>
+            </Link>
+            <Link
+              href="/compare"
+              className="block bg-white border border-slate-200 rounded-xl p-5 text-center hover:border-green-300 hover:shadow-md transition-all duration-200 group"
+            >
+              <div className="text-3xl mb-2">🔍</div>
+              <h3 className="font-bold text-sm mb-1 group-hover:text-green-800 transition-colors">I know what I want</h3>
+              <p className="text-xs text-slate-500 mb-3">Compare all brokers side by side on fees, features, and safety.</p>
+              <span className="text-xs font-semibold text-green-700">Compare All &rarr;</span>
+            </Link>
           </div>
         </div>
       </section>
@@ -231,31 +232,6 @@ export default async function HomePage() {
               >
                 Browse All Categories &rarr;
               </Link>
-            </div>
-          </div>
-        </section>
-      </ScrollFadeIn>
-
-      {/* Category Filter Cards */}
-      <ScrollFadeIn>
-        <section className="py-12">
-          <div className="container-custom">
-            <h2 className="text-2xl font-bold mb-6 text-center">
-              Quick Compare by Type
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {categoryCards.map((card, i) => (
-                <Link
-                  key={card.title}
-                  href={card.href}
-                  className={`block border rounded-xl p-5 hover-lift ${card.color} stagger-item`}
-                  style={{ animationDelay: `${0.1 + i * 0.1}s` }}
-                >
-                  <div className="text-2xl mb-2">{card.emoji}</div>
-                  <h3 className="font-bold mb-1">{card.title}</h3>
-                  <p className="text-sm opacity-80">{card.description}</p>
-                </Link>
-              ))}
             </div>
           </div>
         </section>

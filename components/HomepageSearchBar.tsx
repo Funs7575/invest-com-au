@@ -25,7 +25,7 @@ export default function HomepageSearchBar() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-          placeholder="Search PDS data (e.g. Swyftx fees, SMSF features)..."
+          placeholder="Search brokers, fees, or features..."
           className="w-full h-16 pl-12 pr-32 rounded-2xl border-2 border-gray-100 shadow-xl text-lg focus:border-green-500 focus:outline-none"
         />
         <button

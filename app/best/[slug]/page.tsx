@@ -23,6 +23,7 @@ import ScrollReveal from "@/components/ScrollReveal";
 import type { LeadSegment } from "@/components/ContextualLeadMagnet";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import { getArticleFiltersForBestPage, CATEGORY_COLORS } from "@/lib/internal-links";
+import JargonTooltip from "@/components/JargonTooltip";
 import type { Article } from "@/lib/types";
 
 const SLUG_TO_SEGMENT: Record<string, LeadSegment> = {
@@ -306,10 +307,10 @@ export default async function BestBrokerPage({
                 <tr>
                   <th className="px-4 py-3 text-left font-semibold text-sm">#</th>
                   <th className="px-4 py-3 text-left font-semibold text-sm">Broker</th>
-                  <th className="px-4 py-3 text-left font-semibold text-sm">ASX Fee</th>
-                  <th className="px-4 py-3 text-left font-semibold text-sm">US Fee</th>
-                  <th className="px-4 py-3 text-left font-semibold text-sm">FX Rate</th>
-                  <th className="px-4 py-3 text-center font-semibold text-sm">CHESS</th>
+                  <th className="px-4 py-3 text-left font-semibold text-sm"><JargonTooltip term="ASX Fee" /></th>
+                  <th className="px-4 py-3 text-left font-semibold text-sm"><JargonTooltip term="US Fee" /></th>
+                  <th className="px-4 py-3 text-left font-semibold text-sm"><JargonTooltip term="FX Rate" /></th>
+                  <th className="px-4 py-3 text-center font-semibold text-sm"><JargonTooltip term="CHESS" /></th>
                   <th className="px-4 py-3 text-center font-semibold text-sm">Rating</th>
                   <th className="px-4 py-3"></th>
                 </tr>

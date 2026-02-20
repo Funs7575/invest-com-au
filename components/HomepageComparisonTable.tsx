@@ -8,6 +8,7 @@ import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import PromoBadge from "@/components/PromoBadge";
 import SponsorBadge from "@/components/SponsorBadge";
 import { sortWithSponsorship, isSponsored } from "@/lib/sponsorship";
+import JargonTooltip from "@/components/JargonTooltip";
 
 const TAB_OPTIONS = ["All Platforms", "Share Trading", "Crypto Exchanges", "SMSF"] as const;
 type TabOption = (typeof TAB_OPTIONS)[number];
@@ -99,10 +100,10 @@ export default function HomepageComparisonTable({
             <tr>
               <th className="px-3 py-3 text-left font-semibold text-xs text-slate-500 w-8">#</th>
               <th className="px-4 py-3 text-left font-semibold text-sm">Broker</th>
-              <th className="px-4 py-3 text-left font-semibold text-sm">ASX Fee</th>
-              <th className="px-4 py-3 text-left font-semibold text-sm">US Fee</th>
-              <th className="px-4 py-3 text-left font-semibold text-sm">FX Rate</th>
-              <th className="px-4 py-3 text-center font-semibold text-sm">CHESS</th>
+              <th className="px-4 py-3 text-left font-semibold text-sm"><JargonTooltip term="ASX Fee" /></th>
+              <th className="px-4 py-3 text-left font-semibold text-sm"><JargonTooltip term="US Fee" /></th>
+              <th className="px-4 py-3 text-left font-semibold text-sm"><JargonTooltip term="FX Rate" /></th>
+              <th className="px-4 py-3 text-center font-semibold text-sm"><JargonTooltip term="CHESS" /></th>
               <th className="px-4 py-3 text-center font-semibold text-sm">Rating</th>
               <th className="px-4 py-3 text-center font-semibold text-sm"></th>
             </tr>
@@ -229,19 +230,19 @@ export default function HomepageComparisonTable({
             <div className="grid grid-cols-2 gap-2 mb-3">
               <div className="bg-slate-50 rounded-md p-2">
                 <div className="text-[0.6rem] uppercase text-slate-500 font-medium">
-                  ASX Fee
+                  <JargonTooltip term="ASX Fee" className="text-[0.6rem]" />
                 </div>
                 <div className="text-sm font-semibold">{broker.asx_fee || "N/A"}</div>
               </div>
               <div className="bg-slate-50 rounded-md p-2">
                 <div className="text-[0.6rem] uppercase text-slate-500 font-medium">
-                  US Fee
+                  <JargonTooltip term="US Fee" className="text-[0.6rem]" />
                 </div>
                 <div className="text-sm font-semibold">{broker.us_fee || "N/A"}</div>
               </div>
               <div className="bg-slate-50 rounded-md p-2">
                 <div className="text-[0.6rem] uppercase text-slate-500 font-medium">
-                  FX Rate
+                  <JargonTooltip term="FX Rate" className="text-[0.6rem]" />
                 </div>
                 <div className="text-sm font-semibold">
                   {broker.fx_rate != null ? `${broker.fx_rate}%` : "N/A"}
@@ -249,7 +250,7 @@ export default function HomepageComparisonTable({
               </div>
               <div className="bg-slate-50 rounded-md p-2">
                 <div className="text-[0.6rem] uppercase text-slate-500 font-medium">
-                  CHESS
+                  <JargonTooltip term="CHESS" className="text-[0.6rem]" />
                 </div>
                 <div
                   className={`text-sm font-semibold ${

@@ -29,10 +29,10 @@ const filters: { key: FilterType; label: string }[] = [
 ];
 
 const feeTooltips: Record<string, string> = {
-  asx_fee_value: "The brokerage you pay per ASX trade. Lower is better.",
-  us_fee_value: "Cost per US share trade (excl. FX). Some brokers charge $0.",
-  fx_rate: "Currency conversion markup on international trades. Big 4 banks charge ~0.7%.",
-  chess: "CHESS = your shares registered in your name. Safer if the broker fails.",
+  asx_fee_value: "The fee your broker charges each time you buy or sell Australian shares.",
+  us_fee_value: "The fee to buy or sell US shares — like Apple, Tesla, or US ETFs.",
+  fx_rate: "The currency conversion markup when you buy shares in a foreign currency. Lower is better.",
+  chess: "Shares registered in your name on the ASX register — not held by your broker. Safer if the broker goes bust.",
 };
 
 function InfoTip({ text }: { text: string }) {

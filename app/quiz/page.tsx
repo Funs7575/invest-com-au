@@ -126,13 +126,13 @@ export default function QuizPage() {
       setAnswers(newAnswers);
       setSelectedKey(null);
       if (isFinal) {
-        // Show "Analyzing" transition, then email gate
+        // Show "Analyzing" transition, then go straight to results
         setRevealing(true);
         setAnimating(false);
         setTimeout(() => {
           if (!mountedRef.current) return;
           setRevealing(false);
-          setEmailGate(true);
+          setStep(step + 1);
         }, 1800);
       } else {
         setStep(step + 1);
@@ -272,94 +272,7 @@ export default function QuizPage() {
     setStep(step + 1);
   };
 
-  // Email gate screen — shown after analyzing, before results
-  if (emailGate) {
-    return (
-      <div className="py-12">
-        <div className="container-custom max-w-md mx-auto">
-          <div className="text-center mb-6 result-card-in">
-            <div className="text-5xl mb-4">📧</div>
-            <h1 className="text-2xl font-extrabold mb-2">Get Your Personalised Results</h1>
-            <p className="text-slate-600 text-sm">
-              We&apos;ll email your broker shortlist so you can compare later — plus our free fee comparison PDF.
-            </p>
-          </div>
-
-          <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm result-card-in result-card-in-delay-1">
-            <div className="space-y-3">
-              <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">Email *</label>
-                <input
-                  type="email"
-                  placeholder="you@email.com"
-                  value={gateEmail}
-                  onChange={(e) => setGateEmail(e.target.value)}
-                  className="w-full px-4 py-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-green-700/30 focus:border-green-700"
-                  autoFocus
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1">First name <span className="text-slate-400">(optional)</span></label>
-                <input
-                  type="text"
-                  placeholder="Jane"
-                  value={gateName}
-                  onChange={(e) => setGateName(e.target.value)}
-                  className="w-full px-4 py-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-green-700/30 focus:border-green-700"
-                />
-              </div>
-              <label className="flex items-start gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={gateConsent}
-                  onChange={(e) => setGateConsent(e.target.checked)}
-                  className="mt-0.5 w-4 h-4 rounded accent-green-700 shrink-0"
-                />
-                <span className="text-[0.65rem] text-slate-500 leading-tight">
-                  I agree to receive my results and occasional broker updates.{" "}
-                  <Link href="/privacy" className="underline hover:text-green-700">Privacy Policy</Link>
-                </span>
-              </label>
-              <button
-                onClick={handleGateSubmit}
-                disabled={gateStatus === "loading" || !gateEmail.includes("@") || !gateConsent}
-                className="w-full px-4 py-3 bg-amber-500 text-slate-900 text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-60"
-              >
-                {gateStatus === "loading" ? "Sending..." : "Send My Results →"}
-              </button>
-              {gateStatus === "error" && (
-                <p className="text-xs text-red-500 text-center">Something went wrong. Please try again.</p>
-              )}
-            </div>
-
-            <div className="flex items-center gap-3 mt-3 justify-center text-[0.65rem] text-slate-400">
-              <span className="flex items-center gap-1">
-                <svg className="w-3 h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-                Free PDF
-              </span>
-              <span className="flex items-center gap-1">
-                <svg className="w-3 h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-                No spam
-              </span>
-              <span className="flex items-center gap-1">
-                <svg className="w-3 h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-                Unsubscribe anytime
-              </span>
-            </div>
-          </div>
-
-          <div className="text-center mt-4">
-            <button
-              onClick={handleGateSkip}
-              className="text-sm text-slate-400 hover:text-slate-600 transition-colors"
-            >
-              Skip — show my results now →
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Email gate no longer blocks results — email capture moved below results
 
   // Results screen
   if (step >= questions.length) {
@@ -694,6 +607,49 @@ export default function QuizPage() {
               <p className="text-[0.7rem] text-amber-700 leading-relaxed">
                 <strong>Crypto Warning:</strong> {CRYPTO_WARNING}
               </p>
+            </div>
+          )}
+
+          {/* Email capture — non-blocking, below results */}
+          {!emailGate && (
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 mb-6 result-card-in result-card-in-delay-5">
+              <div className="flex items-start gap-4">
+                <div className="text-3xl shrink-0">📧</div>
+                <div className="flex-1">
+                  <h3 className="font-bold text-sm mb-1">Get your results emailed</h3>
+                  <p className="text-xs text-slate-500 mb-3">We&apos;ll send your broker shortlist so you can compare later — plus our free fee comparison PDF.</p>
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <input
+                      type="email"
+                      placeholder="you@email.com"
+                      value={gateEmail}
+                      onChange={(e) => setGateEmail(e.target.value)}
+                      className="flex-1 px-3 py-2 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-green-700/30 focus:border-green-700"
+                    />
+                    <button
+                      onClick={async () => {
+                        if (!gateEmail || !gateEmail.includes("@")) return;
+                        setGateConsent(true);
+                        await handleGateSubmit();
+                        setEmailGate(true); // Hide the form after sending
+                      }}
+                      disabled={gateStatus === "loading" || !gateEmail.includes("@")}
+                      className="px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors disabled:opacity-60 shrink-0"
+                    >
+                      {gateStatus === "loading" ? "Sending..." : "Email Me"}
+                    </button>
+                  </div>
+                  {gateStatus === "error" && (
+                    <p className="text-xs text-red-500 mt-1">Something went wrong. Please try again.</p>
+                  )}
+                  <p className="text-[0.65rem] text-slate-400 mt-2">No spam. Unsubscribe anytime. <Link href="/privacy" className="underline hover:text-green-700">Privacy Policy</Link></p>
+                </div>
+              </div>
+            </div>
+          )}
+          {emailGate && (
+            <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-6 text-center">
+              <span className="text-sm text-green-700 font-medium">✓ Results sent to {gateEmail}</span>
             </div>
           )}
 

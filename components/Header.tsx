@@ -6,11 +6,11 @@ import { usePathname } from "next/navigation";
 
 const navItems = [
   { name: "Compare", href: "/compare" },
-  { name: "Best For", href: "/best" },
+  { name: "Best Brokers", href: "/best" },
   { name: "Deals", href: "/deals" },
   { name: "Reviews", href: "/reviews" },
-  { name: "Guides", href: "/articles" },
-  { name: "Tools", href: "/calculators" },
+  { name: "Learn", href: "/articles" },
+  { name: "Calculators", href: "/calculators" },
 ];
 
 const popularLinks = [
@@ -48,6 +48,12 @@ export default function Header() {
               );
             })}
             <Link
+              href="/article/how-to-invest-australia"
+              className="text-sm text-green-700 font-medium hover:text-green-900 transition-colors"
+            >
+              New to investing?
+            </Link>
+            <Link
               href="/quiz"
               className="px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
             >
@@ -79,6 +85,13 @@ export default function Header() {
       {menuOpen && (
         <div className="md:hidden border-t border-slate-200 bg-white">
           <nav className="container-custom py-4 space-y-1" aria-label="Mobile navigation">
+            <Link
+              href="/article/how-to-invest-australia"
+              onClick={() => setMenuOpen(false)}
+              className="block px-4 py-3 text-sm font-semibold text-green-700 bg-green-50 rounded-lg transition-colors"
+            >
+              New to investing? Start here &rarr;
+            </Link>
             {navItems.map((item) => {
               const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
               return (
