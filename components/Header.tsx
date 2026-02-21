@@ -28,8 +28,41 @@ export default function Header() {
     <header className="sticky top-0 z-50 bg-white border-b border-slate-200">
       <div className="container-custom">
         <div className="flex items-center justify-between h-16">
-          <Link href="/" className="text-xl font-bold text-green-800">
-            Invest<span className="text-amber-500">.com.au</span>
+          <Link href="/" className="flex items-center gap-2 text-xl font-bold text-green-800">
+            <svg
+              viewBox="0 0 36 36"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-8 h-8 shrink-0"
+              aria-hidden="true"
+            >
+              {/* Background circle */}
+              <circle cx="18" cy="18" r="17" fill="#166534" />
+              {/* Kangaroo - stylized, facing right */}
+              <g transform="translate(7, 5) scale(0.85)">
+                {/* Body */}
+                <ellipse cx="14" cy="17" rx="5" ry="7" fill="white" />
+                {/* Tail - sweeping curve */}
+                <path d="M9 19 C5 16, 3 12, 5 8" stroke="white" strokeWidth="2.2" strokeLinecap="round" fill="none" />
+                {/* Head */}
+                <circle cx="17.5" cy="8.5" r="3.5" fill="white" />
+                {/* Ear */}
+                <ellipse cx="19" cy="5" rx="1.2" ry="2.5" fill="white" transform="rotate(15, 19, 5)" />
+                {/* Eye */}
+                <circle cx="18.8" cy="8" r="0.8" fill="#166534" />
+                {/* Front arm */}
+                <path d="M16 14 L19 17" stroke="white" strokeWidth="2" strokeLinecap="round" />
+                {/* Back leg - strong */}
+                <path d="M12 22 C11 25, 10 27, 8 28" stroke="white" strokeWidth="2.5" strokeLinecap="round" />
+                {/* Front leg */}
+                <path d="M15 22 C15.5 25, 16 27, 17 28" stroke="white" strokeWidth="2.2" strokeLinecap="round" />
+                {/* Foot - back */}
+                <path d="M8 28 L5 28" stroke="white" strokeWidth="2" strokeLinecap="round" />
+                {/* Foot - front */}
+                <path d="M17 28 L20 28" stroke="white" strokeWidth="2" strokeLinecap="round" />
+              </g>
+            </svg>
+            <span>Invest<span className="text-amber-500">.com.au</span></span>
           </Link>
 
           {/* Desktop Nav */}
