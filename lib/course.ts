@@ -1,5 +1,3 @@
-import { createClient } from "@/lib/supabase/server";
-
 export const COURSE_SLUG = "investing-101";
 
 export const COURSE_CONFIG = {
@@ -92,8 +90,10 @@ export const COURSE_MODULES: CourseModule[] = [
 
 /**
  * Server-side: check if user has purchased the course.
+ * Import is dynamic to avoid pulling server-only code into client bundles.
  */
 export async function hasCourseAccess(userId: string): Promise<boolean> {
+  const { createClient } = await import("@/lib/supabase/server");
   const supabase = await createClient();
   const { data } = await supabase
     .from("course_purchases")
