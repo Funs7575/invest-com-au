@@ -66,8 +66,44 @@ export default function LessonClient({
   };
 
   return (
-    <div className="flex gap-8">
-      {/* Sidebar — course outline */}
+    <div className="flex flex-col lg:flex-row gap-8">
+      {/* Mobile course nav — collapsible outline (visible below lg) */}
+      <details className="lg:hidden mb-6 rounded-xl border border-slate-200 bg-white w-full">
+        <summary className="flex items-center justify-between cursor-pointer px-4 py-3 text-sm font-semibold text-slate-700">
+          <span>Course Outline — Module {moduleInfo.index}: {moduleInfo.title}</span>
+          <svg className="w-4 h-4 text-slate-400 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+        </summary>
+        <div className="px-4 pb-3 space-y-2 max-h-64 overflow-y-auto">
+          {modules.map((mod) => (
+            <div key={mod.index}>
+              <p className="text-[0.65rem] font-bold uppercase tracking-wide text-slate-400 mb-1">
+                Module {mod.index}: {mod.title}
+              </p>
+              <ul className="space-y-0.5 mb-2">
+                {mod.lessons.map((l) => {
+                  const isCurrent = l.slug === lessonInfo.slug;
+                  return (
+                    <li key={l.slug}>
+                      <Link
+                        href={`/course/${l.slug}`}
+                        className={`block px-2 py-1 rounded text-xs transition-colors ${
+                          isCurrent
+                            ? "bg-green-50 text-green-800 font-bold"
+                            : "text-slate-600 hover:bg-slate-50"
+                        }`}
+                      >
+                        {l.title}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </details>
+
+      {/* Sidebar — course outline (desktop) */}
       <aside className="hidden lg:block w-64 shrink-0">
         <div className="sticky top-20">
           {/* Progress bar */}
@@ -160,7 +196,9 @@ export default function LessonClient({
           />
         ) : (
           <div className="bg-slate-50 border border-slate-200 rounded-xl p-8 text-center">
-            <div className="text-3xl mb-3">📝</div>
+            <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
+              <svg className="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+            </div>
             <p className="text-sm text-slate-500">
               Lesson content is being prepared. Check back soon!
             </p>

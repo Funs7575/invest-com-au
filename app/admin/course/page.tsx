@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import AdminShell from "@/components/AdminShell";
 import { useToast } from "@/components/Toast";
@@ -13,30 +13,30 @@ export default function AdminCoursePage() {
   const [saving, setSaving] = useState(false);
   const [tab, setTab] = useState<"lessons" | "purchases">("lessons");
 
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
   const { toast } = useToast();
 
-  const loadLessons = async () => {
+  const loadLessons = useCallback(async () => {
     const { data } = await supabase
       .from("course_lessons")
       .select("*")
       .order("module_index")
       .order("lesson_index");
     if (data) setLessons(data as CourseLesson[]);
-  };
+  }, [supabase]);
 
-  const loadPurchases = async () => {
+  const loadPurchases = useCallback(async () => {
     const { data } = await supabase
       .from("course_purchases")
       .select("*")
       .order("purchased_at", { ascending: false });
     if (data) setPurchases(data as CoursePurchase[]);
-  };
+  }, [supabase]);
 
   useEffect(() => {
     loadLessons();
     loadPurchases();
-  }, []);
+  }, [loadLessons, loadPurchases]);
 
   const handleSave = async () => {
     if (!editing) return;
@@ -298,11 +298,11 @@ export default function AdminCoursePage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
-                    <th className="text-left px-4 py-2 text-xs font-medium text-slate-500">User ID</th>
-                    <th className="text-left px-4 py-2 text-xs font-medium text-slate-500">Course</th>
-                    <th className="text-right px-4 py-2 text-xs font-medium text-slate-500">Amount</th>
-                    <th className="text-left px-4 py-2 text-xs font-medium text-slate-500">Stripe Payment</th>
-                    <th className="text-left px-4 py-2 text-xs font-medium text-slate-500">Date</th>
+                    <th scope="col" className="text-left px-4 py-2 text-xs font-medium text-slate-500">User ID</th>
+                    <th scope="col" className="text-left px-4 py-2 text-xs font-medium text-slate-500">Course</th>
+                    <th scope="col" className="text-right px-4 py-2 text-xs font-medium text-slate-500">Amount</th>
+                    <th scope="col" className="text-left px-4 py-2 text-xs font-medium text-slate-500">Stripe Payment</th>
+                    <th scope="col" className="text-left px-4 py-2 text-xs font-medium text-slate-500">Date</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
