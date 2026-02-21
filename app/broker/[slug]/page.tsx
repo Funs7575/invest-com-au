@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import type { Broker, TeamMember, UserReview, BrokerReviewStats, SwitchStory } from "@/lib/types";
 import { notFound } from "next/navigation";
@@ -159,19 +160,21 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
           dangerouslySetInnerHTML={{ __html: JSON.stringify(aggregateRatingLd) }}
         />
       )}
-      <BrokerReviewClient
-        broker={b}
-        similar={similar}
-        relatedArticles={(brokerArticles || []) as { id: number; title: string; slug: string; category?: string; read_time?: number }[]}
-        authorName={brokerReviewer?.full_name || REVIEW_AUTHOR.name}
-        authorTitle={REVIEW_AUTHOR.jobTitle}
-        authorUrl={brokerReviewer ? `/reviewers/${brokerReviewer.slug}` : REVIEW_AUTHOR.url}
-        datePublished={datePublished}
-        dateModified={dateModified}
-        userReviews={(userReviews || []) as UserReview[]}
-        userReviewStats={(reviewStats as BrokerReviewStats) || null}
-        switchStories={(switchStoriesRaw || []) as SwitchStory[]}
-      />
+      <Suspense fallback={null}>
+        <BrokerReviewClient
+          broker={b}
+          similar={similar}
+          relatedArticles={(brokerArticles || []) as { id: number; title: string; slug: string; category?: string; read_time?: number }[]}
+          authorName={brokerReviewer?.full_name || REVIEW_AUTHOR.name}
+          authorTitle={REVIEW_AUTHOR.jobTitle}
+          authorUrl={brokerReviewer ? `/reviewers/${brokerReviewer.slug}` : REVIEW_AUTHOR.url}
+          datePublished={datePublished}
+          dateModified={dateModified}
+          userReviews={(userReviews || []) as UserReview[]}
+          userReviewStats={(reviewStats as BrokerReviewStats) || null}
+          switchStories={(switchStoriesRaw || []) as SwitchStory[]}
+        />
+      </Suspense>
     </>
   );
 }

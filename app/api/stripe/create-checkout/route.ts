@@ -38,8 +38,15 @@ export async function POST(request: NextRequest) {
     let customerId = profile?.stripe_customer_id;
 
     if (!customerId) {
+      if (!user.email) {
+        return NextResponse.json(
+          { error: "Email address is required for checkout" },
+          { status: 400 }
+        );
+      }
+
       const customer = await getStripe().customers.create({
-        email: user.email!,
+        email: user.email,
         metadata: { supabase_user_id: user.id },
       });
       customerId = customer.id;

@@ -4,7 +4,11 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/account";
+  const nextRaw = searchParams.get("next") ?? "/account";
+
+  // Prevent open redirect — only allow relative paths on the same origin
+  const next =
+    nextRaw.startsWith("/") && !nextRaw.startsWith("//") ? nextRaw : "/account";
 
   if (code) {
     const supabase = await createClient();

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import ProPageClient from "./ProPageClient";
 
 export const metadata: Metadata = {
@@ -22,5 +23,9 @@ export const metadata: Metadata = {
 };
 
 export default function ProPage() {
-  return <ProPageClient />;
+  return (
+    <Suspense fallback={<div className="py-16 text-center animate-pulse"><div className="h-8 w-48 bg-slate-200 rounded mx-auto" /></div>}>
+      <ProPageClient />
+    </Suspense>
+  );
 }

@@ -3,15 +3,25 @@ import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "crypto";
 
 // ── In-memory rate limiter (30 redirects / 60s per IP) ──────────
+// Note: In serverless environments each container has its own Map.
+// This provides best-effort rate limiting per warm instance. For
+// stricter limits, consider a distributed store (e.g. Upstash Redis).
 const redirectMap = new Map<string, { count: number; resetAt: number }>();
 const WINDOW_MS = 60_000;
 const MAX_REDIRECTS = 30;
+const MAX_MAP_SIZE = 10_000; // Prevent unbounded memory growth
 
 function isRateLimited(ip: string): boolean {
   const now = Date.now();
   const entry = redirectMap.get(ip);
 
   if (!entry || now > entry.resetAt) {
+    // Lazy cleanup: evict stale entries when map grows too large
+    if (redirectMap.size > MAX_MAP_SIZE) {
+      for (const [key, e] of redirectMap.entries()) {
+        if (now > e.resetAt) redirectMap.delete(key);
+      }
+    }
     redirectMap.set(ip, { count: 1, resetAt: now + WINDOW_MS });
     return false;
   }
@@ -19,14 +29,6 @@ function isRateLimited(ip: string): boolean {
   entry.count++;
   return entry.count > MAX_REDIRECTS;
 }
-
-// Clean up stale entries every 2 minutes
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, entry] of redirectMap.entries()) {
-    if (now > entry.resetAt) redirectMap.delete(key);
-  }
-}, 120_000);
 
 function hashIP(ip: string): string {
   const salt = process.env.IP_HASH_SALT || "invest-com-au-2026";

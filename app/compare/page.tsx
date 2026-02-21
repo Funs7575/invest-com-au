@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
 import CompareClient from "./CompareClient";
@@ -49,7 +50,9 @@ export default async function ComparePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <CompareClient brokers={activeBrokers} />
+      <Suspense fallback={null}>
+        <CompareClient brokers={activeBrokers} />
+      </Suspense>
     </>
   );
 }

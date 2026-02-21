@@ -3,15 +3,24 @@ import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "crypto";
 
 // ── In-memory rate limiter (5 attempts / 60s per IP) ──────────
+// Note: best-effort per serverless instance; stale entries are
+// cleaned lazily when the map exceeds MAX_MAP_SIZE.
 const loginAttempts = new Map<string, { count: number; resetAt: number }>();
 const WINDOW_MS = 60_000;
 const MAX_ATTEMPTS = 5;
+const MAX_MAP_SIZE = 1_000;
 
 function isLocked(ipHash: string): { locked: boolean; remaining: number } {
   const now = Date.now();
   const entry = loginAttempts.get(ipHash);
 
   if (!entry || now > entry.resetAt) {
+    // Lazy cleanup when map grows too large
+    if (loginAttempts.size > MAX_MAP_SIZE) {
+      for (const [key, e] of loginAttempts.entries()) {
+        if (now > e.resetAt) loginAttempts.delete(key);
+      }
+    }
     loginAttempts.set(ipHash, { count: 1, resetAt: now + WINDOW_MS });
     return { locked: false, remaining: MAX_ATTEMPTS - 1 };
   }
@@ -23,14 +32,6 @@ function isLocked(ipHash: string): { locked: boolean; remaining: number } {
   }
   return { locked: false, remaining: MAX_ATTEMPTS - entry.count };
 }
-
-// Clean up stale entries every 2 minutes
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, entry] of loginAttempts.entries()) {
-    if (now > entry.resetAt) loginAttempts.delete(key);
-  }
-}, 120_000);
 
 function hashIP(ip: string): string {
   const salt = process.env.IP_HASH_SALT || "invest-com-au-2026";

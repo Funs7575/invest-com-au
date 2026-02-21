@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import type { CourseLesson } from "@/lib/types";
 import type { CourseModule } from "@/lib/course";
+import { sanitizeHtml } from "@/lib/sanitize-html";
 
 interface LessonInfo {
   index: number;
@@ -192,7 +193,7 @@ export default function LessonClient({
         {lesson?.content ? (
           <article
             className="prose prose-slate max-w-none prose-headings:font-bold prose-a:text-green-700 prose-a:no-underline hover:prose-a:underline prose-img:rounded-lg"
-            dangerouslySetInnerHTML={{ __html: lesson.content }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(lesson.content) }}
           />
         ) : (
           <div className="bg-slate-50 border border-slate-200 rounded-xl p-8 text-center">

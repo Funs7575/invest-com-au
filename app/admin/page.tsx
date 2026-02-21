@@ -173,7 +173,7 @@ export default function AdminDashboard() {
       {!loading && health.length > 0 && !health[0].message.includes("passed") && (
         <div className="bg-amber-50 border border-amber-500/20 rounded-lg px-4 py-2 mb-4 flex items-center gap-2">
           <span className="text-amber-600">⚠</span>
-          <span className="text-sm text-amber-300">
+          <span className="text-sm text-amber-800">
             {health.length} content issue{health.length !== 1 ? "s" : ""} need attention
           </span>
         </div>
