@@ -28,38 +28,44 @@ export default function Header() {
     <header className="sticky top-0 z-50 bg-white border-b border-slate-200">
       <div className="container-custom">
         <div className="flex items-center justify-between h-16">
-          <Link href="/" className="flex items-center gap-2 text-xl font-bold text-green-800">
+          <Link href="/" className="flex items-center gap-1.5 text-xl font-bold text-green-800">
             <svg
-              viewBox="0 0 36 36"
+              viewBox="0 0 40 40"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
-              className="w-8 h-8 shrink-0"
+              className="w-9 h-9 shrink-0"
               aria-hidden="true"
             >
-              {/* Background circle */}
-              <circle cx="18" cy="18" r="17" fill="#166534" />
-              {/* Kangaroo - stylized, facing right */}
-              <g transform="translate(7, 5) scale(0.85)">
-                {/* Body */}
-                <ellipse cx="14" cy="17" rx="5" ry="7" fill="white" />
-                {/* Tail - sweeping curve */}
-                <path d="M9 19 C5 16, 3 12, 5 8" stroke="white" strokeWidth="2.2" strokeLinecap="round" fill="none" />
+              {/* Green circle background */}
+              <circle cx="20" cy="20" r="19" fill="#166534" />
+              {/* Gold inner ring accent */}
+              <circle cx="20" cy="20" r="16.5" fill="none" stroke="#f59e0b" strokeWidth="0.7" opacity="0.4" />
+              {/* Kangaroo — gold, facing right, built from clean shapes */}
+              <g fill="#f59e0b">
                 {/* Head */}
-                <circle cx="17.5" cy="8.5" r="3.5" fill="white" />
+                <circle cx="24" cy="11.5" r="3" />
                 {/* Ear */}
-                <ellipse cx="19" cy="5" rx="1.2" ry="2.5" fill="white" transform="rotate(15, 19, 5)" />
-                {/* Eye */}
-                <circle cx="18.8" cy="8" r="0.8" fill="#166534" />
-                {/* Front arm */}
-                <path d="M16 14 L19 17" stroke="white" strokeWidth="2" strokeLinecap="round" />
-                {/* Back leg - strong */}
-                <path d="M12 22 C11 25, 10 27, 8 28" stroke="white" strokeWidth="2.5" strokeLinecap="round" />
+                <ellipse cx="25.5" cy="8" rx="1" ry="2.3" transform="rotate(10,25.5,8)" />
+                {/* Eye (green, cutout) */}
+                <circle cx="25" cy="11" r="0.7" fill="#166534" />
+                {/* Snout bump */}
+                <ellipse cx="26.5" cy="12.5" rx="1.2" ry="0.9" />
+                {/* Neck */}
+                <rect x="21.5" y="13" width="3.5" height="3" rx="1.5" />
+                {/* Body — large teardrop */}
+                <ellipse cx="19" cy="21" rx="5.5" ry="6.5" />
+                {/* Tail — thick sweeping curve */}
+                <path d="M13.5 22 C10 19, 8.5 15, 10 10" stroke="#f59e0b" strokeWidth="2.8" strokeLinecap="round" fill="none" />
+                {/* Arms — small */}
+                <path d="M22.5 18 L25.5 21" stroke="#f59e0b" strokeWidth="2" strokeLinecap="round" />
+                {/* Back leg — powerful */}
+                <path d="M16 26 C14.5 29, 13 31, 11 32" stroke="#f59e0b" strokeWidth="3" strokeLinecap="round" />
+                {/* Back foot */}
+                <path d="M11 32 L8 32" stroke="#f59e0b" strokeWidth="2.2" strokeLinecap="round" />
                 {/* Front leg */}
-                <path d="M15 22 C15.5 25, 16 27, 17 28" stroke="white" strokeWidth="2.2" strokeLinecap="round" />
-                {/* Foot - back */}
-                <path d="M8 28 L5 28" stroke="white" strokeWidth="2" strokeLinecap="round" />
-                {/* Foot - front */}
-                <path d="M17 28 L20 28" stroke="white" strokeWidth="2" strokeLinecap="round" />
+                <path d="M21 26 C21.5 29, 22 31, 23 32" stroke="#f59e0b" strokeWidth="2.5" strokeLinecap="round" />
+                {/* Front foot */}
+                <path d="M23 32 L26 32" stroke="#f59e0b" strokeWidth="2.2" strokeLinecap="round" />
               </g>
             </svg>
             <span>Invest<span className="text-amber-500">.com.au</span></span>
