@@ -300,8 +300,7 @@ export default function QuizPage() {
                 ))}
               </div>
               <div className="absolute inset-0 flex items-center justify-center">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/kangaroo-icon.svg" alt="" className="w-14 h-14 celebrate-emoji" />
+                <Icon name="trophy" size={56} className="celebrate-emoji text-amber-500" />
               </div>
             </div>
             <h1 className="text-3xl font-extrabold mb-2">Your Shortlist</h1>
