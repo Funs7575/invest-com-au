@@ -117,7 +117,7 @@ export default function BrokerReviewClient({
         {reviewVerified && (
           <div className="bg-green-100 border border-green-200 rounded-xl p-4 mb-6 text-center">
             <p className="text-sm font-semibold text-green-900">
-              Your review has been verified! It will appear on this page once approved by our team.
+              Thanks — your review has been verified! It should appear on this page shortly.
             </p>
           </div>
         )}
