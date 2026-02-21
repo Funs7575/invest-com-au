@@ -204,3 +204,26 @@ export interface BrokerReviewStats {
   review_count: number;
   average_rating: number;
 }
+
+export interface SwitchStory {
+  id: number;
+  source_broker_id: number;
+  source_broker_slug: string;
+  dest_broker_id: number;
+  dest_broker_slug: string;
+  display_name: string;
+  email?: string;
+  title: string;
+  body: string;
+  reason?: string | null;
+  source_rating: number;
+  dest_rating: number;
+  estimated_savings?: string | null;
+  time_with_source?: string | null;
+  status: 'pending' | 'verified' | 'approved' | 'rejected';
+  verification_token?: string;
+  verified_at?: string | null;
+  moderation_note?: string | null;
+  created_at: string;
+  updated_at?: string;
+}

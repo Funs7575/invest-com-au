@@ -8,12 +8,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Static pages with tiered priorities
   const highPriority = new Set(["/compare", "/quiz", "/reviews", "/deals"]);
-  const medPriority = new Set(["/versus", "/calculators", "/articles", "/scenarios", "/switch"]);
+  const medPriority = new Set(["/versus", "/calculators", "/articles", "/scenarios", "/switch", "/stories"]);
   // Everything else (about, how-we-earn, privacy, methodology, terms, etc.) → 0.4
 
   const staticPages = [
     "", "/compare", "/versus", "/reviews", "/calculators",
-    "/articles", "/scenarios", "/quiz", "/deals", "/about", "/how-we-earn", "/privacy",
+    "/articles", "/scenarios", "/quiz", "/deals", "/stories", "/about", "/how-we-earn", "/privacy",
     "/methodology", "/how-we-verify", "/terms", "/switch", "/editorial-policy",
   ].map((path) => ({
     url: `${baseUrl}${path}`,

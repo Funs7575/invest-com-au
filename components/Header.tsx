@@ -9,6 +9,7 @@ const navItems = [
   { name: "Best Brokers", href: "/best" },
   { name: "Deals", href: "/deals" },
   { name: "Reviews", href: "/reviews" },
+  { name: "Stories", href: "/stories" },
   { name: "Learn", href: "/articles" },
   { name: "Calculators", href: "/calculators" },
 ];

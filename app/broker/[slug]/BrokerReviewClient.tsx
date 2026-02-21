@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import type { Broker, UserReview, BrokerReviewStats } from "@/lib/types";
+import type { Broker, UserReview, BrokerReviewStats, SwitchStory } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
@@ -12,6 +12,7 @@ import CountUp from "@/components/CountUp";
 import ScrollReveal from "@/components/ScrollReveal";
 import Icon from "@/components/Icon";
 import UserReviewsList from "@/components/UserReviewsList";
+import SwitchStoriesList from "@/components/SwitchStoriesList";
 
 function FeeVerdict({ value, thresholds }: { value: number | undefined; thresholds: [number, number] }) {
   if (value == null) return <span className="px-2 py-0.5 bg-slate-100 text-slate-500 text-xs font-semibold rounded-full">N/A</span>;
@@ -52,6 +53,7 @@ interface BrokerReviewProps {
   dateModified?: string | null;
   userReviews?: UserReview[];
   userReviewStats?: BrokerReviewStats | null;
+  switchStories?: SwitchStory[];
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -74,6 +76,7 @@ export default function BrokerReviewClient({
   dateModified,
   userReviews = [],
   userReviewStats = null,
+  switchStories = [],
 }: BrokerReviewProps) {
   const feeRows = [
     { label: 'ASX Brokerage', value: b.asx_fee || 'N/A', numVal: b.asx_fee_value, thresholds: [5, 15] as [number, number], verdict: b.asx_fee_value != null && b.asx_fee_value <= 5 ? 'Low' : b.asx_fee_value != null && b.asx_fee_value <= 15 ? 'Medium' : 'High' },
@@ -84,6 +87,7 @@ export default function BrokerReviewClient({
 
   const searchParams = useSearchParams();
   const reviewVerified = searchParams.get('review_verified') === '1';
+  const storyVerified = searchParams.get('story_verified') === '1';
 
   const stickyDetail = `${b.asx_fee || 'N/A'} ASX · ${b.chess_sponsored ? 'CHESS' : 'Custodial'} · ${b.rating}/5`;
   const bestFor = getBestFor(b);
@@ -118,6 +122,15 @@ export default function BrokerReviewClient({
           <div className="bg-green-100 border border-green-200 rounded-xl p-4 mb-6 text-center">
             <p className="text-sm font-semibold text-green-900">
               Thanks — your review has been verified! It should appear on this page shortly.
+            </p>
+          </div>
+        )}
+
+        {/* Story Verified Banner */}
+        {storyVerified && (
+          <div className="bg-green-100 border border-green-200 rounded-xl p-4 mb-6 text-center">
+            <p className="text-sm font-semibold text-green-900">
+              Thanks — your switching story has been verified! It should appear on this page shortly.
             </p>
           </div>
         )}
@@ -415,6 +428,13 @@ export default function BrokerReviewClient({
         <UserReviewsList
           reviews={userReviews}
           stats={userReviewStats}
+          brokerSlug={b.slug}
+          brokerName={b.name}
+        />
+
+        {/* Switch Stories Section */}
+        <SwitchStoriesList
+          stories={switchStories}
           brokerSlug={b.slug}
           brokerName={b.name}
         />

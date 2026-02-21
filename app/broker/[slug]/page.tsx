@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import type { Broker, TeamMember, UserReview, BrokerReviewStats } from "@/lib/types";
+import type { Broker, TeamMember, UserReview, BrokerReviewStats, SwitchStory } from "@/lib/types";
 import { notFound } from "next/navigation";
 import BrokerReviewClient from "./BrokerReviewClient";
 import {
@@ -80,8 +80,8 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
     .slice(0, 3)
     .map(({ broker: br }) => br);
 
-  // Fetch articles that mention this broker + user reviews (in parallel)
-  const [{ data: brokerArticles }, { data: userReviews }, { data: reviewStats }] = await Promise.all([
+  // Fetch articles that mention this broker + user reviews + switch stories (in parallel)
+  const [{ data: brokerArticles }, { data: userReviews }, { data: reviewStats }, { data: switchStoriesRaw }] = await Promise.all([
     supabase
       .from('articles')
       .select('id, title, slug, category, read_time')
@@ -99,6 +99,13 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
       .select('broker_id, review_count, average_rating')
       .eq('broker_id', b.id)
       .single(),
+    supabase
+      .from('switch_stories')
+      .select('id, source_broker_id, source_broker_slug, dest_broker_id, dest_broker_slug, display_name, title, body, reason, source_rating, dest_rating, estimated_savings, time_with_source, status, created_at')
+      .or(`source_broker_slug.eq.${slug},dest_broker_slug.eq.${slug}`)
+      .eq('status', 'approved')
+      .order('created_at', { ascending: false })
+      .limit(10),
   ]);
 
   // JSON-LD structured data — FinancialProduct + Review + Article + Breadcrumb
@@ -163,6 +170,7 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
         dateModified={dateModified}
         userReviews={(userReviews || []) as UserReview[]}
         userReviewStats={(reviewStats as BrokerReviewStats) || null}
+        switchStories={(switchStoriesRaw || []) as SwitchStory[]}
       />
     </>
   );

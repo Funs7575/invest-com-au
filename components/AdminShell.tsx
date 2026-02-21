@@ -22,6 +22,7 @@ const navSections = [
       { href: "/admin/scenarios", label: "Scenarios", icon: "🎯" },
       { href: "/admin/quiz-questions", label: "Quiz Questions", icon: "❓" },
       { href: "/admin/user-reviews", label: "User Reviews", icon: "⭐" },
+      { href: "/admin/switch-stories", label: "Switch Stories", icon: "🔄" },
     ],
   },
   {
