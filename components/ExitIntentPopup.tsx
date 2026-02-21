@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { trackEvent } from "@/lib/tracking";
 import Icon from "@/components/Icon";
+import { useSubscription } from "@/lib/hooks/useSubscription";
 
 const MIN_ENGAGEMENT_MS = 15_000; // Must be on page 15s before popup can fire
 const MOBILE_INACTIVITY_MS = 30_000; // 30s inactivity on mobile
@@ -17,6 +18,7 @@ export default function ExitIntentPopup() {
   const [emailSent, setEmailSent] = useState(false);
   const pageLoadTime = useRef(Date.now());
   const maxScrollDepth = useRef(0);
+  const { isPro } = useSubscription();
 
   const isEngagedEnough = useCallback(() => {
     const timeOnPage = Date.now() - pageLoadTime.current;
@@ -25,6 +27,7 @@ export default function ExitIntentPopup() {
 
   const showPopup = useCallback(() => {
     if (typeof window === "undefined") return;
+    if (isPro) return; // Ad-free: skip popup for Pro users
     if (sessionStorage.getItem("exitIntentShown") === "true") return;
     if (localStorage.getItem("exitIntentDismissed") === "true") return;
     if (window.location.pathname.startsWith("/admin")) return;
@@ -33,7 +36,7 @@ export default function ExitIntentPopup() {
 
     setVisible(true);
     sessionStorage.setItem("exitIntentShown", "true");
-  }, [isEngagedEnough]);
+  }, [isEngagedEnough, isPro]);
 
   useEffect(() => {
     // Track scroll depth for mobile trigger

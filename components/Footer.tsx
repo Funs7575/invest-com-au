@@ -85,6 +85,7 @@ export default function Footer() {
                 <li><Link href="/articles" className="hover:text-white transition-colors">Guides &amp; Articles</Link></li>
                 <li><Link href="/calculators" className="hover:text-white transition-colors">Tools &amp; Calculators</Link></li>
                 <li><Link href="/scenarios" className="hover:text-white transition-colors">Best Broker For...</Link></li>
+                <li><Link href="/pro" className="hover:text-white transition-colors text-amber-400">Investor Pro ✦</Link></li>
               </ul>
             </div>
 

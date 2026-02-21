@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useUser } from "@/lib/hooks/useUser";
 
 const navItems = [
   { name: "Compare", href: "/compare" },
@@ -24,6 +25,7 @@ const popularLinks = [
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
+  const { user, loading } = useUser();
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-slate-200">
@@ -67,6 +69,28 @@ export default function Header() {
             >
               Broker Quiz
             </Link>
+            {/* Pro / Account */}
+            {!loading && (
+              user ? (
+                <Link
+                  href="/account"
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold rounded-full transition-colors border border-slate-200 text-slate-700 hover:bg-slate-50"
+                  title="My Account"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  Account
+                </Link>
+              ) : (
+                <Link
+                  href="/pro"
+                  className="px-3 py-1.5 bg-amber-500/10 text-amber-700 text-sm font-semibold rounded-full hover:bg-amber-500/20 transition-colors border border-amber-500/20"
+                >
+                  Pro
+                </Link>
+              )
+            )}
           </nav>
 
           {/* Mobile Hamburger */}
@@ -122,6 +146,35 @@ export default function Header() {
               >
                 Take The Quiz
               </Link>
+              <Link
+                href="/pro"
+                onClick={() => setMenuOpen(false)}
+                className="block px-4 py-3 text-sm font-semibold text-amber-700 hover:bg-amber-50 rounded-lg transition-colors"
+              >
+                Investor Pro ✦
+              </Link>
+            </div>
+            {/* Auth */}
+            <div className="pt-2 mt-2 border-t border-slate-100">
+              {!loading && (
+                user ? (
+                  <Link
+                    href="/account"
+                    onClick={() => setMenuOpen(false)}
+                    className="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 rounded-lg transition-colors"
+                  >
+                    My Account
+                  </Link>
+                ) : (
+                  <Link
+                    href="/auth/login"
+                    onClick={() => setMenuOpen(false)}
+                    className="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 rounded-lg transition-colors"
+                  >
+                    Sign In
+                  </Link>
+                )
+              )}
             </div>
             {/* Popular Links */}
             <div className="pt-2 mt-2 border-t border-slate-100">

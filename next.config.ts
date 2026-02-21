@@ -68,7 +68,8 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline'; " +
               "img-src 'self' data: https: https://www.googletagmanager.com; " +
               "font-src 'self'; " +
-              "connect-src 'self' https://*.supabase.co https://va.vercel-scripts.com https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://*.analytics.google.com; " +
+              "connect-src 'self' https://*.supabase.co https://va.vercel-scripts.com https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://*.analytics.google.com https://api.stripe.com; " +
+              "frame-src https://js.stripe.com https://hooks.stripe.com; " +
               "frame-ancestors 'none'; " +
               "base-uri 'self'; " +
               "form-action 'self'",

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { trackEvent } from "@/lib/tracking";
+import { useSubscription } from "@/lib/hooks/useSubscription";
 
 export type LeadSegment = "fee-audit" | "smsf-checklist" | "us-shares-guide" | "switching-checklist" | "beginner-guide";
 
@@ -75,6 +76,10 @@ export default function ContextualLeadMagnet({ segment = "fee-audit" }: { segmen
   const [email, setEmail] = useState("");
   const [consent, setConsent] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const { isPro } = useSubscription();
+
+  // Ad-free: hide lead magnets for Pro users
+  if (isPro) return null;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
