@@ -3,6 +3,8 @@
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, renderStars, AFFILIATE_REL } from "@/lib/tracking";
 import { RISK_WARNING_CTA } from "@/lib/compliance";
+import { isSponsored } from "@/lib/sponsorship";
+import SponsorBadge from "@/components/SponsorBadge";
 
 export default function DealCard({ broker }: { broker: Broker }) {
   const expiryFormatted = broker.deal_expiry
@@ -31,12 +33,15 @@ export default function DealCard({ broker }: { broker: Broker }) {
           {broker.icon || broker.name.charAt(0)}
         </div>
         <div className="flex-1 min-w-0">
-          <a
-            href={`/broker/${broker.slug}`}
-            className="font-bold text-sm hover:text-green-700 transition-colors"
-          >
-            {broker.name}
-          </a>
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <a
+              href={`/broker/${broker.slug}`}
+              className="font-bold text-sm hover:text-green-700 transition-colors"
+            >
+              {broker.name}
+            </a>
+            {isSponsored(broker) && <SponsorBadge broker={broker} />}
+          </div>
           <div className="text-xs text-amber">
             {renderStars(broker.rating || 0)}{" "}
             <span className="text-slate-500">{broker.rating}/5</span>

@@ -5,10 +5,12 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import type { Broker } from "@/lib/types";
 import { trackClick, trackEvent, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
-import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE_SHORT, CRYPTO_WARNING } from "@/lib/compliance";
+import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE_SHORT, CRYPTO_WARNING, SPONSORED_DISCLOSURE_SHORT } from "@/lib/compliance";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import RiskWarningInline from "@/components/RiskWarningInline";
 import Icon from "@/components/Icon";
+import { applyQuizSponsorBoost, isSponsored } from "@/lib/sponsorship";
+import SponsorBadge from "@/components/SponsorBadge";
 
 type WeightKey = "beginner" | "low_fee" | "us_shares" | "smsf" | "crypto" | "advanced";
 
@@ -219,7 +221,11 @@ export default function QuizPage() {
       || (b.broker?.rating ?? 0) - (a.broker?.rating ?? 0)
       || (a.broker?.name ?? '').localeCompare(b.broker?.name ?? '')
     );
-    return scored.slice(0, 3);
+
+    // Apply subtle sponsor boost: a featured_partner in positions 1-5
+    // gets swapped up by 1 position (preserves trust — max 1 slot)
+    const boosted = applyQuizSponsorBoost(scored, 1, 5);
+    return boosted.slice(0, 3);
   }, [answers, weights, brokers]);
 
   // Check if any result is a crypto broker (for crypto warning)
@@ -324,6 +330,15 @@ export default function QuizPage() {
             </p>
           </div>
 
+          {/* Sponsored broker disclosure */}
+          {allResults.some(r => r.broker && isSponsored(r.broker)) && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-6">
+              <p className="text-[0.7rem] text-blue-700 leading-relaxed">
+                <strong>Sponsor Disclosure:</strong> Sponsored partners may receive a minor position boost if they already score in the top 5. {SPONSORED_DISCLOSURE_SHORT}
+              </p>
+            </div>
+          )}
+
           {/* Top Match */}
           {topMatch?.broker && (
             <div
@@ -362,7 +377,10 @@ export default function QuizPage() {
                   {topMatch.broker.icon || topMatch.broker.name.charAt(0)}
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-3xl font-extrabold">{topMatch.broker.name}</h2>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h2 className="text-3xl font-extrabold">{topMatch.broker.name}</h2>
+                    {isSponsored(topMatch.broker) && <SponsorBadge broker={topMatch.broker} />}
+                  </div>
                   <div className="text-sm text-amber">{renderStars(topMatch.broker.rating || 0)} <span className="text-slate-500">{topMatch.broker.rating}/5</span></div>
                 </div>
               </div>
@@ -530,7 +548,7 @@ export default function QuizPage() {
                     );
                   })}
                 </div>
-                <p className="text-[0.6rem] text-slate-400">Scores are weighted by your answers and adjusted slightly by our editorial rating. No broker pays for a higher quiz score.</p>
+                <p className="text-[0.6rem] text-slate-400">Scores are editorially set and weighted by your answers. Sponsored partners may receive a minor position boost if they already score in the top 5.</p>
               </div>
             )}
           </div>
@@ -558,7 +576,10 @@ export default function QuizPage() {
                         {r.broker.icon || r.broker.name.charAt(0)}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-bold text-sm">{r.broker.name}</h3>
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <h3 className="font-bold text-sm">{r.broker.name}</h3>
+                          {isSponsored(r.broker) && <SponsorBadge broker={r.broker} />}
+                        </div>
                         <div className="text-xs text-slate-500">{r.broker.asx_fee} · {r.broker.chess_sponsored ? 'CHESS' : 'Custodial'} · {r.broker.rating}/5</div>
                       </div>
                       <a

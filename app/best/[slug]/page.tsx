@@ -21,8 +21,10 @@ import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
 import ScrollReveal from "@/components/ScrollReveal";
 import type { LeadSegment } from "@/components/ContextualLeadMagnet";
-import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
+import { ADVERTISER_DISCLOSURE_SHORT, SPONSORED_DISCLOSURE_SHORT } from "@/lib/compliance";
 import { getArticleFiltersForBestPage, CATEGORY_COLORS } from "@/lib/internal-links";
+import { boostFeaturedPartner, isSponsored } from "@/lib/sponsorship";
+import SponsorBadge from "@/components/SponsorBadge";
 import JargonTooltip from "@/components/JargonTooltip";
 import type { Article } from "@/lib/types";
 
@@ -83,8 +85,12 @@ export default async function BestBrokerPage({
     .eq("status", "active");
 
   const allBrokers = (brokers as Broker[]) || [];
-  const filtered = allBrokers.filter(cat.filter).sort(cat.sort);
+  const filtered = boostFeaturedPartner(
+    allBrokers.filter(cat.filter).sort(cat.sort),
+    0
+  );
   const topPick = filtered[0] || null;
+  const hasSponsored = filtered.some(isSponsored);
 
   // ── Fetch related articles for this category ──
   const articleFilters = getArticleFiltersForBestPage(slug);
@@ -214,6 +220,11 @@ export default async function BestBrokerPage({
           <p className="text-xs text-slate-400 mb-2">
             {ADVERTISER_DISCLOSURE_SHORT}
           </p>
+          {hasSponsored && (
+            <p className="text-xs text-blue-500 mb-2">
+              {SPONSORED_DISCLOSURE_SHORT}
+            </p>
+          )}
 
           {/* Author byline */}
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 mb-4 pb-4 border-b border-slate-100">
@@ -259,6 +270,7 @@ export default async function BestBrokerPage({
                 <span className="text-xs font-bold uppercase tracking-wide text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">
                   Our Top Pick
                 </span>
+                {isSponsored(topPick) && <SponsorBadge broker={topPick} />}
               </div>
               <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                 <div className="flex-1">
@@ -320,9 +332,12 @@ export default async function BestBrokerPage({
                   <tr key={broker.id} className={`hover:bg-slate-50 ${i === 0 ? "bg-amber-50/40" : ""}`}>
                     <td className="px-4 py-3 text-sm font-semibold text-slate-400">{i + 1}</td>
                     <td className="px-4 py-3">
-                      <Link href={`/broker/${broker.slug}`} className="font-semibold text-brand hover:text-green-700 transition-colors">
-                        {broker.name}
-                      </Link>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <Link href={`/broker/${broker.slug}`} className="font-semibold text-brand hover:text-green-700 transition-colors">
+                          {broker.name}
+                        </Link>
+                        {isSponsored(broker) && <SponsorBadge broker={broker} />}
+                      </div>
                       {i === 0 && (
                         <div className="text-[0.6rem] font-extrabold text-amber-600 uppercase tracking-wide">
                           Top Pick

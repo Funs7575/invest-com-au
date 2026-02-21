@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
 import { absoluteUrl, breadcrumbJsonLd, dealsHubJsonLd, REVIEW_AUTHOR } from "@/lib/seo";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
+import { sortWithSponsorship } from "@/lib/sponsorship";
 import DealsClient from "./DealsClient";
 
 export const metadata: Metadata = {
@@ -39,7 +40,7 @@ export default async function DealsPage() {
     .eq("deal", true)
     .order("rating", { ascending: false });
 
-  const dealBrokers: Broker[] = (allBrokers || []) as Broker[];
+  const dealBrokers: Broker[] = sortWithSponsorship((allBrokers || []) as Broker[]);
 
   const breadcrumbs = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },

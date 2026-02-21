@@ -34,3 +34,50 @@ export function sortWithSponsorship(brokers: Broker[]): Broker[] {
 export function isSponsored(broker: Broker): boolean {
   return !!broker.sponsorship_tier;
 }
+
+/**
+ * Boost a featured_partner broker within a pre-filtered, pre-sorted list.
+ * Moves the broker to `targetPosition` (0-indexed) IF they already
+ * passed the category filter (i.e. they are in the list) and are below target.
+ * Returns a new array — does not mutate input.
+ */
+export function boostFeaturedPartner(
+  brokers: Broker[],
+  targetPosition: number = 0
+): Broker[] {
+  const result = [...brokers];
+  const sponsoredIdx = result.findIndex(
+    (b) => b.sponsorship_tier === "featured_partner"
+  );
+  if (sponsoredIdx === -1 || sponsoredIdx <= targetPosition) return result;
+  const [sponsored] = result.splice(sponsoredIdx, 1);
+  result.splice(targetPosition, 0, sponsored);
+  return result;
+}
+
+/**
+ * Subtle quiz boost: if a featured_partner scored in positions
+ * minRank through maxRank (0-indexed), swap it up by 1 position.
+ * Only boosts by 1 slot to maintain trust.
+ */
+export function applyQuizSponsorBoost<
+  T extends { broker: Broker | null }
+>(items: T[], minRank: number = 1, maxRank: number = 5): T[] {
+  const result = [...items];
+  const idx = result.findIndex(
+    (r, i) =>
+      i >= minRank &&
+      i <= maxRank &&
+      r.broker?.sponsorship_tier === "featured_partner"
+  );
+  if (idx === -1 || idx < 1) return result;
+  [result[idx - 1], result[idx]] = [result[idx], result[idx - 1]];
+  return result;
+}
+
+/** Monthly pricing per sponsorship tier (AUD) */
+export const TIER_PRICING: Record<string, { monthly: number; label: string }> = {
+  featured_partner: { monthly: 1500, label: "Featured Partner" },
+  editors_pick: { monthly: 800, label: "Editor\u2019s Pick" },
+  deal_of_month: { monthly: 2000, label: "Deal of the Month" },
+};
