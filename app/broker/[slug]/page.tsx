@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import type { Broker, TeamMember } from "@/lib/types";
+import type { Broker, TeamMember, UserReview, BrokerReviewStats } from "@/lib/types";
 import { notFound } from "next/navigation";
 import BrokerReviewClient from "./BrokerReviewClient";
 import {
@@ -80,12 +80,26 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
     .slice(0, 3)
     .map(({ broker: br }) => br);
 
-  // Fetch articles that mention this broker
-  const { data: brokerArticles } = await supabase
-    .from('articles')
-    .select('id, title, slug, category, read_time')
-    .contains('related_brokers', [slug])
-    .limit(4);
+  // Fetch articles that mention this broker + user reviews (in parallel)
+  const [{ data: brokerArticles }, { data: userReviews }, { data: reviewStats }] = await Promise.all([
+    supabase
+      .from('articles')
+      .select('id, title, slug, category, read_time')
+      .contains('related_brokers', [slug])
+      .limit(4),
+    supabase
+      .from('user_reviews')
+      .select('id, broker_id, broker_slug, display_name, rating, title, body, pros, cons, status, created_at')
+      .eq('broker_slug', slug)
+      .eq('status', 'approved')
+      .order('created_at', { ascending: false })
+      .limit(20),
+    supabase
+      .from('broker_review_stats')
+      .select('broker_id, review_count, average_rating')
+      .eq('broker_id', b.id)
+      .single(),
+  ]);
 
   // JSON-LD structured data — FinancialProduct + Review + Article + Breadcrumb
   const financialProductLd = brokerReviewJsonLd(b, brokerReviewer ?? undefined);
@@ -95,6 +109,20 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
     { name: "Reviews", url: absoluteUrl("/reviews") },
     { name: b.name },
   ]);
+
+  // AggregateRating JSON-LD for user reviews (star ratings in Google results)
+  const aggregateRatingLd = reviewStats && reviewStats.review_count > 0 ? {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": `${b.name} Trading Platform`,
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": reviewStats.average_rating.toFixed(1),
+      "bestRating": "5",
+      "worstRating": "1",
+      "ratingCount": reviewStats.review_count,
+    },
+  } : null;
 
   // Dates for visible byline (must match structured data)
   const datePublished = b.created_at
@@ -118,6 +146,12 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
+      {aggregateRatingLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(aggregateRatingLd) }}
+        />
+      )}
       <BrokerReviewClient
         broker={b}
         similar={similar}
@@ -127,6 +161,8 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
         authorUrl={brokerReviewer ? `/reviewers/${brokerReviewer.slug}` : REVIEW_AUTHOR.url}
         datePublished={datePublished}
         dateModified={dateModified}
+        userReviews={(userReviews || []) as UserReview[]}
+        userReviewStats={(reviewStats as BrokerReviewStats) || null}
       />
     </>
   );

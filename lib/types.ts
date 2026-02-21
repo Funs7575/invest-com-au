@@ -179,3 +179,28 @@ export interface SiteSettings {
   value?: string;
   updated_at: string;
 }
+
+export interface UserReview {
+  id: number;
+  broker_id: number;
+  broker_slug: string;
+  display_name: string;
+  email?: string;
+  rating: number;
+  title: string;
+  body: string;
+  pros?: string | null;
+  cons?: string | null;
+  status: 'pending' | 'verified' | 'approved' | 'rejected';
+  verification_token?: string;
+  verified_at?: string | null;
+  moderation_note?: string | null;
+  created_at: string;
+  updated_at?: string;
+}
+
+export interface BrokerReviewStats {
+  broker_id: number;
+  review_count: number;
+  average_rating: number;
+}

@@ -1,7 +1,8 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import type { Broker } from "@/lib/types";
+import type { Broker, UserReview, BrokerReviewStats } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
@@ -10,6 +11,7 @@ import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 import CountUp from "@/components/CountUp";
 import ScrollReveal from "@/components/ScrollReveal";
 import Icon from "@/components/Icon";
+import UserReviewsList from "@/components/UserReviewsList";
 
 function FeeVerdict({ value, thresholds }: { value: number | undefined; thresholds: [number, number] }) {
   if (value == null) return <span className="px-2 py-0.5 bg-slate-100 text-slate-500 text-xs font-semibold rounded-full">N/A</span>;
@@ -48,6 +50,8 @@ interface BrokerReviewProps {
   authorUrl?: string;
   datePublished?: string | null;
   dateModified?: string | null;
+  userReviews?: UserReview[];
+  userReviewStats?: BrokerReviewStats | null;
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -68,6 +72,8 @@ export default function BrokerReviewClient({
   authorUrl,
   datePublished,
   dateModified,
+  userReviews = [],
+  userReviewStats = null,
 }: BrokerReviewProps) {
   const feeRows = [
     { label: 'ASX Brokerage', value: b.asx_fee || 'N/A', numVal: b.asx_fee_value, thresholds: [5, 15] as [number, number], verdict: b.asx_fee_value != null && b.asx_fee_value <= 5 ? 'Low' : b.asx_fee_value != null && b.asx_fee_value <= 15 ? 'Medium' : 'High' },
@@ -75,6 +81,9 @@ export default function BrokerReviewClient({
     { label: 'FX Rate', value: b.fx_rate != null ? `${b.fx_rate}%` : 'N/A', numVal: b.fx_rate, thresholds: [0.3, 0.5] as [number, number], verdict: b.fx_rate != null && b.fx_rate <= 0.3 ? 'Excellent' : b.fx_rate != null && b.fx_rate <= 0.5 ? 'Fair' : 'Expensive' },
     { label: 'Inactivity Fee', value: b.inactivity_fee || 'None', numVal: b.inactivity_fee === 'None' || !b.inactivity_fee ? 0 : 1, thresholds: [0, 0] as [number, number], verdict: b.inactivity_fee === 'None' || !b.inactivity_fee ? 'None' : 'Watch out' },
   ];
+
+  const searchParams = useSearchParams();
+  const reviewVerified = searchParams.get('review_verified') === '1';
 
   const stickyDetail = `${b.asx_fee || 'N/A'} ASX · ${b.chess_sponsored ? 'CHESS' : 'Custodial'} · ${b.rating}/5`;
   const bestFor = getBestFor(b);
@@ -103,6 +112,15 @@ export default function BrokerReviewClient({
           <span className="mx-2">/</span>
           <span className="text-brand">{b.name}</span>
         </div>
+
+        {/* Review Verified Banner */}
+        {reviewVerified && (
+          <div className="bg-green-100 border border-green-200 rounded-xl p-4 mb-6 text-center">
+            <p className="text-sm font-semibold text-green-900">
+              Your review has been verified! It will appear on this page once approved by our team.
+            </p>
+          </div>
+        )}
 
         {/* Header */}
         <div className="mb-4">
@@ -392,6 +410,14 @@ export default function BrokerReviewClient({
             </ScrollReveal>
           )}
         </div>
+
+        {/* User Reviews Section */}
+        <UserReviewsList
+          reviews={userReviews}
+          stats={userReviewStats}
+          brokerSlug={b.slug}
+          brokerName={b.name}
+        />
 
         {/* Inline CTA 2 */}
         <div className="bg-green-50 border border-green-200 rounded-xl p-5 mb-8">

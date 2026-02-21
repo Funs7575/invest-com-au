@@ -21,6 +21,7 @@ const navSections = [
       { href: "/admin/team-members", label: "Team Members", icon: "👥" },
       { href: "/admin/scenarios", label: "Scenarios", icon: "🎯" },
       { href: "/admin/quiz-questions", label: "Quiz Questions", icon: "❓" },
+      { href: "/admin/user-reviews", label: "User Reviews", icon: "⭐" },
     ],
   },
   {
