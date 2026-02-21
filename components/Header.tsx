@@ -29,45 +29,13 @@ export default function Header() {
       <div className="container-custom">
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center gap-1.5 text-xl font-bold text-green-800">
-            <svg
-              viewBox="0 0 40 40"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/kangaroo-icon.svg"
+              alt=""
               className="w-9 h-9 shrink-0"
               aria-hidden="true"
-            >
-              {/* Green circle background */}
-              <circle cx="20" cy="20" r="19" fill="#166534" />
-              {/* Gold inner ring accent */}
-              <circle cx="20" cy="20" r="16.5" fill="none" stroke="#f59e0b" strokeWidth="0.7" opacity="0.4" />
-              {/* Kangaroo — gold, facing right, built from clean shapes */}
-              <g fill="#f59e0b">
-                {/* Head */}
-                <circle cx="24" cy="11.5" r="3" />
-                {/* Ear */}
-                <ellipse cx="25.5" cy="8" rx="1" ry="2.3" transform="rotate(10,25.5,8)" />
-                {/* Eye (green, cutout) */}
-                <circle cx="25" cy="11" r="0.7" fill="#166534" />
-                {/* Snout bump */}
-                <ellipse cx="26.5" cy="12.5" rx="1.2" ry="0.9" />
-                {/* Neck */}
-                <rect x="21.5" y="13" width="3.5" height="3" rx="1.5" />
-                {/* Body — large teardrop */}
-                <ellipse cx="19" cy="21" rx="5.5" ry="6.5" />
-                {/* Tail — thick sweeping curve */}
-                <path d="M13.5 22 C10 19, 8.5 15, 10 10" stroke="#f59e0b" strokeWidth="2.8" strokeLinecap="round" fill="none" />
-                {/* Arms — small */}
-                <path d="M22.5 18 L25.5 21" stroke="#f59e0b" strokeWidth="2" strokeLinecap="round" />
-                {/* Back leg — powerful */}
-                <path d="M16 26 C14.5 29, 13 31, 11 32" stroke="#f59e0b" strokeWidth="3" strokeLinecap="round" />
-                {/* Back foot */}
-                <path d="M11 32 L8 32" stroke="#f59e0b" strokeWidth="2.2" strokeLinecap="round" />
-                {/* Front leg */}
-                <path d="M21 26 C21.5 29, 22 31, 23 32" stroke="#f59e0b" strokeWidth="2.5" strokeLinecap="round" />
-                {/* Front foot */}
-                <path d="M23 32 L26 32" stroke="#f59e0b" strokeWidth="2.2" strokeLinecap="round" />
-              </g>
-            </svg>
+            />
             <span>Invest<span className="text-amber-500">.com.au</span></span>
           </Link>
 
