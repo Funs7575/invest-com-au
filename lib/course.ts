@@ -89,23 +89,6 @@ export const COURSE_MODULES: CourseModule[] = [
 ];
 
 /**
- * Server-side: check if user has purchased the course.
- * Import is dynamic to avoid pulling server-only code into client bundles.
- */
-export async function hasCourseAccess(userId: string): Promise<boolean> {
-  const { createClient } = await import("@/lib/supabase/server");
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("course_purchases")
-    .select("id")
-    .eq("user_id", userId)
-    .eq("course_slug", COURSE_SLUG)
-    .limit(1)
-    .maybeSingle();
-  return !!data;
-}
-
-/**
  * Flatten all lessons into a single ordered list for prev/next navigation.
  */
 export function getAllLessonSlugs(): string[] {
