@@ -256,41 +256,41 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           <ScrollReveal key={`table-${activeFilter}-${searchQuery}-${sortCol}-${sortDir}`} animation="table-row-stagger" as="table" className="w-full border border-slate-200 rounded-lg compare-table">
             <thead className="bg-slate-50">
               <tr>
-                <th className="px-3 py-3 w-10"></th>
-                <th className="px-4 py-3 text-left font-semibold text-sm" aria-sort={sortCol === 'name' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
+                <th scope="col" className="px-3 py-3 w-10"></th>
+                <th scope="col" className="px-4 py-3 text-left font-semibold text-sm" aria-sort={sortCol === 'name' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
                   <button onClick={() => handleSort('name')} className="hover:text-green-700 transition-colors" aria-label="Sort by broker name">
                     Broker{sortArrow('name')}
                   </button>
                 </th>
-                <th className="px-4 py-3 text-left font-semibold text-sm" aria-sort={sortCol === 'asx_fee_value' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
+                <th scope="col" className="px-4 py-3 text-left font-semibold text-sm" aria-sort={sortCol === 'asx_fee_value' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
                   <button onClick={() => handleSort('asx_fee_value')} className="hover:text-green-700 transition-colors" aria-label="Sort by ASX fee">
                     ASX Fee{sortArrow('asx_fee_value')}
                   </button>
                   <InfoTip text={feeTooltips.asx_fee_value} />
                 </th>
-                <th className="px-4 py-3 text-left font-semibold text-sm" aria-sort={sortCol === 'us_fee_value' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
+                <th scope="col" className="px-4 py-3 text-left font-semibold text-sm" aria-sort={sortCol === 'us_fee_value' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
                   <button onClick={() => handleSort('us_fee_value')} className="hover:text-green-700 transition-colors" aria-label="Sort by US fee">
                     US Fee{sortArrow('us_fee_value')}
                   </button>
                   <InfoTip text={feeTooltips.us_fee_value} />
                 </th>
-                <th className="px-4 py-3 text-left font-semibold text-sm" aria-sort={sortCol === 'fx_rate' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
+                <th scope="col" className="px-4 py-3 text-left font-semibold text-sm" aria-sort={sortCol === 'fx_rate' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
                   <button onClick={() => handleSort('fx_rate')} className="hover:text-green-700 transition-colors" aria-label="Sort by FX rate">
                     FX Rate{sortArrow('fx_rate')}
                   </button>
                   <InfoTip text={feeTooltips.fx_rate} />
                 </th>
-                <th className="px-4 py-3 text-center font-semibold text-sm">
+                <th scope="col" className="px-4 py-3 text-center font-semibold text-sm">
                   CHESS
                   <InfoTip text={feeTooltips.chess} />
                 </th>
-                <th className="px-4 py-3 text-center font-semibold text-sm">SMSF</th>
-                <th className="px-4 py-3 text-center font-semibold text-sm" aria-sort={sortCol === 'rating' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
+                <th scope="col" className="px-4 py-3 text-center font-semibold text-sm">SMSF</th>
+                <th scope="col" className="px-4 py-3 text-center font-semibold text-sm" aria-sort={sortCol === 'rating' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
                   <button onClick={() => handleSort('rating')} className="hover:text-green-700 transition-colors" aria-label="Sort by rating">
                     Rating{sortArrow('rating')}
                   </button>
                 </th>
-                <th className="px-4 py-3 text-center font-semibold text-sm"></th>
+                <th scope="col" className="px-4 py-3 text-center font-semibold text-sm"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200">

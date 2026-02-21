@@ -74,6 +74,7 @@ export default function LeadMagnet() {
           <input
             type="email"
             placeholder="you@email.com"
+            aria-label="Email address for fee audit PDF"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -87,7 +88,7 @@ export default function LeadMagnet() {
               required
               className="mt-0.5 w-4 h-4 rounded border-green-300 accent-green-700 shrink-0"
             />
-            <span className="text-[0.65rem] text-slate-500 leading-tight">
+            <span className="text-xs text-slate-500 leading-tight">
               I agree to receive the Fee Audit PDF and occasional updates from Invest.com.au.
               View our{" "}
               <Link href="/privacy" className="underline hover:text-green-700">

@@ -47,7 +47,7 @@ export default function Header() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`text-sm font-medium transition-colors ${isActive ? "text-green-800 font-bold" : "text-slate-700 hover:text-green-800"}`}
+                  className={`text-sm font-medium transition-colors rounded focus:outline-none focus:ring-2 focus:ring-green-700/40 ${isActive ? "text-green-800 font-bold" : "text-slate-700 hover:text-green-800"}`}
                   {...(isActive ? { "aria-current": "page" as const } : {})}
                 >
                   {item.name}
@@ -56,13 +56,13 @@ export default function Header() {
             })}
             <Link
               href="/article/how-to-invest-australia"
-              className="text-sm text-green-700 font-medium hover:text-green-900 transition-colors"
+              className="text-sm text-green-700 font-medium hover:text-green-900 rounded focus:outline-none focus:ring-2 focus:ring-green-700/40 transition-colors"
             >
               New to investing?
             </Link>
             <Link
               href="/quiz"
-              className="px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
+              className="px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-700/40 focus:ring-offset-2 transition-colors"
             >
               Broker Quiz
             </Link>
@@ -71,7 +71,7 @@ export default function Header() {
           {/* Mobile Hamburger */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="md:hidden p-2 text-slate-700 hover:text-green-800 transition-colors"
+            className="md:hidden p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-700 hover:text-green-800 focus:outline-none focus:ring-2 focus:ring-green-700/40 rounded-lg transition-colors"
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
           >
@@ -130,7 +130,7 @@ export default function Header() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setMenuOpen(false)}
-                  className="block px-4 py-2 text-xs text-slate-500 hover:text-green-700 transition-colors"
+                  className="block px-4 py-3 text-sm text-slate-600 hover:text-green-700 transition-colors"
                 >
                   {link.label}
                 </Link>

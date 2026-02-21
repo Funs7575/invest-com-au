@@ -207,6 +207,7 @@ export default function ExitIntentPopup() {
                 <input
                   type="email"
                   placeholder="you@email.com"
+                  aria-label="Email address for fee audit"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -220,7 +221,7 @@ export default function ExitIntentPopup() {
                     required
                     className="mt-0.5 w-4 h-4 rounded accent-green-700 shrink-0"
                   />
-                  <span className="text-[0.65rem] text-slate-500 leading-tight">
+                  <span className="text-xs text-slate-500 leading-tight">
                     I agree to receive the PDF and occasional broker updates.{" "}
                     <Link href="/privacy" className="underline hover:text-green-700">
                       Privacy Policy

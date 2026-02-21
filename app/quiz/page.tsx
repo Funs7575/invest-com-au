@@ -623,6 +623,7 @@ export default function QuizPage() {
                     <input
                       type="email"
                       placeholder="you@email.com"
+                      aria-label="Email address for quiz results"
                       value={gateEmail}
                       onChange={(e) => setGateEmail(e.target.value)}
                       className="flex-1 px-3 py-2 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-green-700/30 focus:border-green-700"
@@ -643,7 +644,7 @@ export default function QuizPage() {
                   {gateStatus === "error" && (
                     <p className="text-xs text-red-500 mt-1">Something went wrong. Please try again.</p>
                   )}
-                  <p className="text-[0.65rem] text-slate-400 mt-2">No spam. Unsubscribe anytime. <Link href="/privacy" className="underline hover:text-green-700">Privacy Policy</Link></p>
+                  <p className="text-xs text-slate-400 mt-2">No spam. Unsubscribe anytime. <Link href="/privacy" className="underline hover:text-green-700">Privacy Policy</Link></p>
                 </div>
               </div>
             </div>

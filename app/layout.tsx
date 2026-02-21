@@ -58,7 +58,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en-AU">
       <body className={inter.className}>
         <GoogleAnalytics />
         <LayoutShell>{children}</LayoutShell>
