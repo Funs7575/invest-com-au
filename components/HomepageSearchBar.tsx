@@ -19,18 +19,18 @@ export default function HomepageSearchBar() {
   return (
     <div className="max-w-2xl mx-auto relative mt-8">
       <div className="relative">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           placeholder="Search brokers, fees, or features..."
-          className="w-full h-16 pl-12 pr-32 rounded-2xl border-2 border-gray-100 shadow-xl text-lg focus:border-green-500 focus:outline-none"
+          className="w-full h-14 pl-12 pr-32 rounded-xl bg-white/95 backdrop-blur-sm border-2 border-white/20 shadow-2xl text-base text-slate-900 placeholder:text-slate-400 focus:border-green-400 focus:bg-white focus:outline-none transition-all duration-200"
         />
         <button
           onClick={handleSearch}
-          className="absolute right-2 top-1/2 -translate-y-1/2 bg-green-700 hover:bg-green-800 hover:scale-105 hover:shadow-[0_0_12px_rgba(21,128,61,0.3)] text-white font-semibold px-6 py-2.5 rounded-xl transition-all duration-200"
+          className="absolute right-2 top-1/2 -translate-y-1/2 bg-green-700 hover:bg-green-800 hover:scale-105 hover:shadow-[0_0_12px_rgba(21,128,61,0.3)] text-white font-bold px-5 py-2.5 rounded-lg transition-all duration-200 text-sm"
         >
           Compare
         </button>

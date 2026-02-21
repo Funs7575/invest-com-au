@@ -9,6 +9,7 @@ import StickyCTABar from "@/components/StickyCTABar";
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 import CountUp from "@/components/CountUp";
 import ScrollReveal from "@/components/ScrollReveal";
+import Icon from "@/components/Icon";
 
 function FeeVerdict({ value, thresholds }: { value: number | undefined; thresholds: [number, number] }) {
   if (value == null) return <span className="px-2 py-0.5 bg-slate-100 text-slate-500 text-xs font-semibold rounded-full">N/A</span>;
@@ -176,7 +177,7 @@ export default function BrokerReviewClient({
         {b.deal && b.deal_text && (
           <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <span className="text-2xl">🔥</span>
+              <Icon name="flame" size={24} className="text-amber-500 shrink-0" />
               <div>
                 <div className="text-xs font-bold uppercase tracking-wide text-amber-700 mb-0.5">Limited Time Deal</div>
                 <p className="text-sm font-semibold text-slate-700">{b.deal_text}</p>
@@ -202,7 +203,7 @@ export default function BrokerReviewClient({
         {/* Who Is This Best For? */}
         <div className="bg-green-50 border border-green-200 rounded-xl p-6 mb-8">
           <div className="flex items-center gap-2 mb-3">
-            <span className="text-xl">🎯</span>
+            <Icon name="target" size={20} className="text-green-700 shrink-0" />
             <h2 className="text-lg font-extrabold text-green-900">Who Is {b.name} Best For?</h2>
           </div>
           <ul className="space-y-2">
@@ -233,7 +234,7 @@ export default function BrokerReviewClient({
         {/* Sources & Verification — E-E-A-T transparency signals */}
         <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 mb-8">
           <div className="flex items-center gap-2 mb-3">
-            <span className="text-lg">📋</span>
+            <Icon name="clipboard-list" size={18} className="text-slate-500 shrink-0" />
             <h3 className="text-sm font-extrabold text-slate-700">Sources &amp; Verification</h3>
           </div>
           <p className="text-xs text-slate-500 mb-3">
@@ -293,7 +294,7 @@ export default function BrokerReviewClient({
         {/* Real Cost Example */}
         <div className="border border-slate-200 rounded-xl p-6 mb-8">
           <div className="flex items-center gap-2 mb-4">
-            <span className="text-xl">🧮</span>
+            <Icon name="calculator" size={20} className="text-slate-600 shrink-0" />
             <h2 className="text-lg font-extrabold">What Would a Typical Trade Cost?</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -345,7 +346,10 @@ export default function BrokerReviewClient({
         <h2 className="text-2xl font-extrabold mb-3">Safety &amp; Scam Check</h2>
         <div className={`rounded-xl p-6 mb-8 border ${b.chess_sponsored ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
           <div className="flex items-center gap-3 mb-3">
-            <span className="text-3xl">{b.chess_sponsored ? '✅' : '⚠️'}</span>
+            {b.chess_sponsored
+              ? <Icon name="check-circle" size={28} className="text-green-600 shrink-0" />
+              : <Icon name="alert-triangle" size={28} className="text-red-500 shrink-0" />
+            }
             <h3 className="text-lg font-bold">
               {b.chess_sponsored
                 ? 'CHESS Sponsored — You Own Your Shares'

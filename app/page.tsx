@@ -12,6 +12,7 @@ import DealCard from "@/components/DealCard";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 import { getMostRecentFeeCheck } from "@/lib/utils";
+import Icon from "@/components/Icon";
 
 export const metadata = {
   title: "Compare Australian Brokers",
@@ -32,12 +33,12 @@ export const metadata = {
 };
 
 const bestForCards = [
-  { emoji: "🌱", title: "Best for Beginners", description: "Low fees, simple platforms, educational resources", href: "/best/beginners", color: "bg-green-50 border-green-200 text-green-800" },
-  { emoji: "🇺🇸", title: "Best for US Shares", description: "Low FX fees and $0 US brokerage compared", href: "/best/us-shares", color: "bg-blue-50 border-blue-200 text-blue-800" },
-  { emoji: "💰", title: "Cheapest Brokers", description: "$0 brokerage and verified low-cost options", href: "/best/low-fees", color: "bg-amber-50 border-amber-200 text-amber-800" },
-  { emoji: "🔐", title: "CHESS-Sponsored", description: "Your shares held in your name on the ASX register", href: "/best/chess-sponsored", color: "bg-emerald-50 border-emerald-200 text-emerald-800" },
-  { emoji: "🏦", title: "Best for SMSF", description: "Compliant custody and SMSF account support", href: "/best/smsf", color: "bg-violet-50 border-violet-200 text-violet-800" },
-  { emoji: "🌏", title: "Lowest FX Fees", description: "Save on currency conversion for international trades", href: "/best/low-fx-fees", color: "bg-sky-50 border-sky-200 text-sky-800" },
+  { icon: "sprout", title: "Best for Beginners", description: "Low fees, simple platforms, educational resources", href: "/best/beginners", color: "bg-green-50 border-green-200 text-green-800" },
+  { icon: "globe", title: "Best for US Shares", description: "Low FX fees and $0 US brokerage compared", href: "/best/us-shares", color: "bg-blue-50 border-blue-200 text-blue-800" },
+  { icon: "coins", title: "Cheapest Brokers", description: "$0 brokerage and verified low-cost options", href: "/best/low-fees", color: "bg-amber-50 border-amber-200 text-amber-800" },
+  { icon: "shield-check", title: "CHESS-Sponsored", description: "Your shares held in your name on the ASX register", href: "/best/chess-sponsored", color: "bg-emerald-50 border-emerald-200 text-emerald-800" },
+  { icon: "building", title: "Best for SMSF", description: "Compliant custody and SMSF account support", href: "/best/smsf", color: "bg-violet-50 border-violet-200 text-violet-800" },
+  { icon: "arrow-left-right", title: "Lowest FX Fees", description: "Save on currency conversion for international trades", href: "/best/low-fx-fees", color: "bg-sky-50 border-sky-200 text-sky-800" },
 ];
 
 export const revalidate = 3600; // ISR: revalidate every hour
@@ -85,70 +86,114 @@ export default async function HomePage() {
       />
 
       {/* Hero Section */}
-      <section className="bg-white py-16">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-green-950 hero-fade-up hero-fade-up-1">
-            Compare {brokerCount}+ Australian Investment Platforms
-          </h1>
-          <p className="mt-4 text-xl text-gray-600 max-w-2xl mx-auto hero-fade-up hero-fade-up-2">
-            We compare the fees and features of every major Australian
-            broker — so you don&apos;t have to.
-          </p>
-          <div className="hero-fade-up hero-fade-up-3">
-            <AuthorByline />
+      <section className="relative bg-gradient-to-b from-green-950 via-green-900 to-green-800 py-16 md:py-20 overflow-hidden">
+        {/* Subtle grid pattern overlay */}
+        <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'40\' height=\'40\' viewBox=\'0 0 40 40\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M0 0h40v40H0V0zm1 1v38h38V1H1z\' fill=\'%23fff\' fill-opacity=\'1\' fill-rule=\'evenodd\'/%3E%3C/svg%3E")' }} />
+        <div className="relative max-w-4xl mx-auto px-4 text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-xs font-medium text-green-200 mb-6 hero-fade-up hero-fade-up-1 border border-white/10">
+            <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+            Updated {new Date().toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" })} &middot; {brokerCount} brokers verified
           </div>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 my-6 hero-fade-up hero-fade-up-4">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white hero-fade-up hero-fade-up-1 leading-tight">
+            Find the Right Broker<br className="hidden sm:block" /> for Your Money
+          </h1>
+          <p className="mt-5 text-lg md:text-xl text-green-100/80 max-w-2xl mx-auto hero-fade-up hero-fade-up-2 leading-relaxed">
+            Compare fees, features, and safety across {brokerCount}+ ASIC-regulated Australian investment platforms — independent, transparent, and free.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-8 mb-2 hero-fade-up hero-fade-up-3">
             <Link
               href="/compare"
-              className="px-6 py-3 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 hover:scale-105 hover:shadow-[0_0_12px_rgba(21,128,61,0.3)] transition-all duration-200 text-sm"
+              className="px-7 py-3.5 bg-white text-green-900 font-bold rounded-xl hover:bg-green-50 hover:scale-105 hover:shadow-lg transition-all duration-200 text-sm"
             >
               Compare All Brokers &rarr;
             </Link>
             <Link
               href="/quiz"
-              className="px-6 py-3 border border-green-700 text-green-700 font-semibold rounded-lg hover:bg-green-50 hover:scale-105 transition-all duration-200 text-sm"
+              className="px-7 py-3.5 border-2 border-white/30 text-white font-semibold rounded-xl hover:bg-white/10 hover:border-white/50 hover:scale-105 transition-all duration-200 text-sm backdrop-blur-sm"
             >
               Take the 60-sec Quiz &rarr;
             </Link>
           </div>
-          <div className="hero-fade-up hero-fade-up-5">
+          <div className="hero-fade-up hero-fade-up-4">
             <HomepageSearchBar />
-            <SocialProofBar />
+          </div>
+          {/* Trust signals row */}
+          <div className="flex items-center justify-center gap-5 sm:gap-8 pt-6 text-xs text-green-200/70 flex-wrap hero-fade-up hero-fade-up-5">
+            <span className="flex items-center gap-1.5">
+              <svg className="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+              ASIC-regulated only
+            </span>
+            <span className="flex items-center gap-1.5">
+              <svg className="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+              100% independent ratings
+            </span>
+            <span className="flex items-center gap-1.5">
+              <svg className="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" /></svg>
+              Fees verified daily
+            </span>
+            <span className="flex items-center gap-1.5">
+              <svg className="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" /></svg>
+              Always free
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* Broker Logo Strip — instant credibility */}
+      <section className="py-5 bg-white border-b border-slate-100">
+        <div className="container-custom">
+          <p className="text-[0.65rem] uppercase tracking-widest text-slate-400 text-center mb-4 font-medium">Brokers we compare</p>
+          <div className="flex items-center justify-center gap-6 sm:gap-10 flex-wrap opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500">
+            {(brokers as Broker[])?.slice(0, 8).map((broker) => (
+              <div key={broker.id} className="flex items-center gap-2 text-sm font-bold text-slate-600">
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-white text-[0.6rem] font-bold`} style={{ backgroundColor: broker.color || '#64748b' }}>
+                  {broker.name?.slice(0, 2).toUpperCase()}
+                </div>
+                <span className="hidden sm:inline">{broker.name}</span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Where Should I Start? — Intent-based routing for different user types */}
-      <section className="py-10 bg-slate-50 border-y border-slate-100">
+      <section className="py-12 bg-white">
         <div className="container-custom">
-          <h2 className="text-center text-lg font-bold text-slate-800 mb-6">Where should I start?</h2>
+          <h2 className="text-center text-xl font-bold text-slate-900 mb-2">Not sure where to start?</h2>
+          <p className="text-center text-sm text-slate-500 mb-8">Pick what describes you best</p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
             <Link
               href="/quiz"
-              className="block bg-white border border-slate-200 rounded-xl p-5 text-center hover:border-green-300 hover:shadow-md transition-all duration-200 group"
+              className="block bg-gradient-to-br from-green-50 to-white border-2 border-green-100 rounded-2xl p-6 text-center hover:border-green-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group"
             >
-              <div className="text-3xl mb-2">🆕</div>
+              <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-green-200 transition-colors">
+                <Icon name="lightbulb" size={24} className="text-green-700" />
+              </div>
               <h3 className="font-bold text-sm mb-1 group-hover:text-green-800 transition-colors">I&apos;m new to investing</h3>
               <p className="text-xs text-slate-500 mb-3">Take our 60-second quiz to find the right broker for you.</p>
-              <span className="text-xs font-semibold text-green-700">Start Quiz &rarr;</span>
+              <span className="text-xs font-bold text-green-700 bg-green-50 px-3 py-1 rounded-full">Start Quiz &rarr;</span>
             </Link>
             <Link
               href="/switch"
-              className="block bg-white border border-slate-200 rounded-xl p-5 text-center hover:border-green-300 hover:shadow-md transition-all duration-200 group"
+              className="block bg-gradient-to-br from-blue-50 to-white border-2 border-blue-100 rounded-2xl p-6 text-center hover:border-blue-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group"
             >
-              <div className="text-3xl mb-2">🔄</div>
-              <h3 className="font-bold text-sm mb-1 group-hover:text-green-800 transition-colors">I want to switch brokers</h3>
+              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-blue-200 transition-colors">
+                <Icon name="arrow-right-left" size={24} className="text-blue-700" />
+              </div>
+              <h3 className="font-bold text-sm mb-1 group-hover:text-blue-800 transition-colors">I want to switch brokers</h3>
               <p className="text-xs text-slate-500 mb-3">See how much you could save by switching to a cheaper platform.</p>
-              <span className="text-xs font-semibold text-green-700">Compare Fees &rarr;</span>
+              <span className="text-xs font-bold text-blue-700 bg-blue-50 px-3 py-1 rounded-full">Compare Fees &rarr;</span>
             </Link>
             <Link
               href="/compare"
-              className="block bg-white border border-slate-200 rounded-xl p-5 text-center hover:border-green-300 hover:shadow-md transition-all duration-200 group"
+              className="block bg-gradient-to-br from-amber-50 to-white border-2 border-amber-100 rounded-2xl p-6 text-center hover:border-amber-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group"
             >
-              <div className="text-3xl mb-2">🔍</div>
-              <h3 className="font-bold text-sm mb-1 group-hover:text-green-800 transition-colors">I know what I want</h3>
+              <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-amber-200 transition-colors">
+                <Icon name="search" size={24} className="text-amber-700" />
+              </div>
+              <h3 className="font-bold text-sm mb-1 group-hover:text-amber-800 transition-colors">I know what I want</h3>
               <p className="text-xs text-slate-500 mb-3">Compare all brokers side by side on fees, features, and safety.</p>
-              <span className="text-xs font-semibold text-green-700">Compare All &rarr;</span>
+              <span className="text-xs font-bold text-amber-700 bg-amber-50 px-3 py-1 rounded-full">Compare All &rarr;</span>
             </Link>
           </div>
         </div>
@@ -156,21 +201,26 @@ export default async function HomePage() {
 
       {/* Comparison Table */}
       <ScrollFadeIn>
-        <section className="py-12 md:py-16">
+        <section className="py-12 md:py-16 bg-slate-50">
           <div className="container-custom">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl md:text-3xl font-bold">
-                Top Rated Brokers
-              </h2>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-3">
+              <div>
+                <h2 className="text-2xl md:text-3xl font-bold text-slate-900">
+                  Top Rated Brokers
+                </h2>
+                <p className="text-sm text-slate-500 mt-1">Ranked by fees, features, and user experience</p>
+              </div>
               <FeesFreshnessIndicator lastChecked={getMostRecentFeeCheck((brokers as Broker[]) || [])} variant="badge" />
             </div>
-            <HomepageComparisonTable brokers={(brokers as Broker[]) || []} defaultTab="Share Trading" />
-            <div className="text-center mt-6">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+              <HomepageComparisonTable brokers={(brokers as Broker[]) || []} defaultTab="Share Trading" />
+            </div>
+            <div className="text-center mt-8">
               <Link
                 href="/compare"
-                className="inline-block px-6 py-3 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 hover:scale-105 hover:shadow-[0_0_12px_rgba(21,128,61,0.3)] transition-all duration-200 text-sm"
+                className="inline-block px-7 py-3.5 bg-green-700 text-white font-bold rounded-xl hover:bg-green-800 hover:scale-105 hover:shadow-[0_0_16px_rgba(21,128,61,0.3)] transition-all duration-200 text-sm"
               >
-                View All {brokerCount}+ Brokers →
+                View All {brokerCount}+ Brokers &rarr;
               </Link>
             </div>
           </div>
@@ -219,7 +269,7 @@ export default async function HomePage() {
                   className={`block border rounded-xl p-5 hover-lift ${card.color} stagger-item`}
                   style={{ animationDelay: `${0.05 + i * 0.07}s` }}
                 >
-                  <div className="text-2xl mb-2">{card.emoji}</div>
+                  <Icon name={card.icon} size={24} className="mb-2 opacity-80" />
                   <h3 className="font-bold mb-1">{card.title}</h3>
                   <p className="text-sm opacity-80">{card.description}</p>
                 </Link>
@@ -283,39 +333,47 @@ export default async function HomePage() {
 
       {/* Tools Quick Links */}
       <ScrollFadeIn>
-        <section className="py-12 bg-slate-50">
+        <section className="py-14 bg-white">
           <div className="container-custom">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+            <h2 className="text-center text-2xl font-bold text-slate-900 mb-2">Free Research Tools</h2>
+            <p className="text-center text-sm text-slate-500 mb-8">Everything you need to make a smarter decision</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
               <Link
                 href="/quiz"
-                className="block border border-slate-200 bg-white rounded-xl p-6 hover-lift stagger-item"
+                className="block bg-gradient-to-br from-green-50 to-white border-2 border-green-100 rounded-2xl p-7 text-center hover:border-green-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group stagger-item"
                 style={{ animationDelay: '0.1s' }}
               >
-                <div className="text-3xl mb-2">🎯</div>
-                <h3 className="font-bold mb-1">Broker Quiz</h3>
-                <p className="text-sm text-slate-600">
+                <div className="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-green-200 transition-colors">
+                  <Icon name="target" size={28} className="text-green-700" />
+                </div>
+                <h3 className="font-bold text-lg mb-2">Broker Quiz</h3>
+                <p className="text-sm text-slate-500">
                   Answer 4 questions to find the best broker for your situation.
                 </p>
               </Link>
               <Link
                 href="/calculators"
-                className="block border border-slate-200 bg-white rounded-xl p-6 hover-lift stagger-item"
+                className="block bg-gradient-to-br from-blue-50 to-white border-2 border-blue-100 rounded-2xl p-7 text-center hover:border-blue-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group stagger-item"
                 style={{ animationDelay: '0.2s' }}
               >
-                <div className="text-3xl mb-2">🧮</div>
-                <h3 className="font-bold mb-1">Fee Calculators</h3>
-                <p className="text-sm text-slate-600">
+                <div className="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-200 transition-colors">
+                  <Icon name="calculator" size={28} className="text-blue-700" />
+                </div>
+                <h3 className="font-bold text-lg mb-2">Fee Calculators</h3>
+                <p className="text-sm text-slate-500">
                   Calculate trade costs, FX fees, CGT, and franking credits in seconds.
                 </p>
               </Link>
               <Link
                 href="/versus"
-                className="block border border-slate-200 bg-white rounded-xl p-6 hover-lift stagger-item"
+                className="block bg-gradient-to-br from-amber-50 to-white border-2 border-amber-100 rounded-2xl p-7 text-center hover:border-amber-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group stagger-item"
                 style={{ animationDelay: '0.3s' }}
               >
-                <div className="text-3xl mb-2">⚔️</div>
-                <h3 className="font-bold mb-1">Head-to-Head</h3>
-                <p className="text-sm text-slate-600">
+                <div className="w-14 h-14 bg-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-amber-200 transition-colors">
+                  <Icon name="swords" size={28} className="text-amber-700" />
+                </div>
+                <h3 className="font-bold text-lg mb-2">Head-to-Head</h3>
+                <p className="text-sm text-slate-500">
                   Pick two brokers and see who wins on fees, features, and safety.
                 </p>
               </Link>
@@ -326,24 +384,24 @@ export default async function HomePage() {
 
       {/* Trust Stats Bar */}
       <ScrollFadeIn>
-        <section className="py-10 bg-white border-y border-slate-100">
+        <section className="py-12 bg-gradient-to-r from-green-900 to-green-800">
           <div className="container-custom">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
               <div>
-                <div className="text-3xl md:text-4xl font-extrabold text-green-800">{brokerCount}+</div>
-                <div className="text-xs text-slate-500 mt-1 font-medium">Brokers Compared</div>
+                <div className="text-3xl md:text-4xl font-extrabold text-white">{brokerCount}+</div>
+                <div className="text-xs text-green-200/70 mt-1 font-medium">Brokers Compared</div>
               </div>
               <div>
-                <div className="text-3xl md:text-4xl font-extrabold text-green-800">$0</div>
-                <div className="text-xs text-slate-500 mt-1 font-medium">Cost to Use</div>
+                <div className="text-3xl md:text-4xl font-extrabold text-white">$0</div>
+                <div className="text-xs text-green-200/70 mt-1 font-medium">Always Free to Use</div>
               </div>
               <div>
-                <div className="text-3xl md:text-4xl font-extrabold text-green-800">Daily</div>
-                <div className="text-xs text-slate-500 mt-1 font-medium">Fee Verification</div>
+                <div className="text-3xl md:text-4xl font-extrabold text-white">Daily</div>
+                <div className="text-xs text-green-200/70 mt-1 font-medium">Fee Verification</div>
               </div>
               <div>
-                <div className="text-3xl md:text-4xl font-extrabold text-green-800">100%</div>
-                <div className="text-xs text-slate-500 mt-1 font-medium">Independent Ratings</div>
+                <div className="text-3xl md:text-4xl font-extrabold text-white">100%</div>
+                <div className="text-xs text-green-200/70 mt-1 font-medium">Independent Ratings</div>
               </div>
             </div>
           </div>

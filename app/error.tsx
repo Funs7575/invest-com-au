@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect } from "react";
+import Icon from "@/components/Icon";
 
 export default function Error({
   error,
@@ -17,7 +18,7 @@ export default function Error({
   return (
     <div className="min-h-[60vh] flex items-center justify-center px-4">
       <div className="text-center max-w-md">
-        <div className="text-5xl mb-4">⚠️</div>
+        <Icon name="alert-triangle" size={48} className="text-slate-300 mx-auto mb-4" />
         <h1 className="text-2xl font-extrabold text-slate-900 mb-2">
           Something went wrong
         </h1>

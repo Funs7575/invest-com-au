@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import type { Broker } from "@/lib/types";
 import DealCard from "@/components/DealCard";
+import Icon from "@/components/Icon";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 
 const TAB_OPTIONS = [
@@ -74,7 +75,7 @@ export default function DealsClient({ deals }: { deals: Broker[] }) {
         </div>
       ) : (
         <div className="text-center py-12">
-          <div className="text-3xl mb-3">🔍</div>
+          <Icon name="search" size={28} className="text-slate-300 mx-auto mb-3" />
           <p className="text-sm text-slate-500">
             No deals in this category right now. Try &quot;All Deals&quot; to see
             everything available.

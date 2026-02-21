@@ -13,6 +13,7 @@ import ScrollReveal from "@/components/ScrollReveal";
 import PromoBadge from "@/components/PromoBadge";
 import SponsorBadge from "@/components/SponsorBadge";
 import { getSponsorSortPriority, isSponsored } from "@/lib/sponsorship";
+import Icon from "@/components/Icon";
 
 type FilterType = 'all' | 'beginner' | 'chess' | 'free' | 'us' | 'smsf' | 'low-fx' | 'crypto';
 type SortCol = 'name' | 'asx_fee_value' | 'us_fee_value' | 'fx_rate' | 'rating';
@@ -180,7 +181,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           return (
             <div className="mb-6 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
               <div className="flex items-center gap-3">
-                <div className="text-2xl">🔥</div>
+                <Icon name="flame" size={24} className="text-amber-500 shrink-0" />
                 <div>
                   <div className="text-xs font-bold uppercase tracking-wide text-amber-700 mb-0.5">Deal of the Month</div>
                   <p className="text-sm text-slate-700">
@@ -421,7 +422,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         {/* Bottom conversion section */}
         <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="bg-white border border-slate-200 rounded-xl p-6">
-            <div className="text-2xl mb-2">🎯</div>
+            <Icon name="target" size={24} className="text-slate-600 mb-2" />
             <h3 className="text-lg font-bold text-slate-900 mb-1">Filter by Your Priorities</h3>
             <p className="text-sm text-slate-600 mb-4">Answer 4 quick questions and narrow down brokers based on what matters to you.</p>
             <Link href="/quiz" className="inline-block px-5 py-2.5 bg-amber-500 text-slate-900 text-sm font-semibold rounded-lg hover:bg-amber-600 transition-colors">
@@ -429,7 +430,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             </Link>
           </div>
           <div className="bg-green-50 border border-green-200 rounded-xl p-6">
-            <div className="text-2xl mb-2">📊</div>
+            <Icon name="bar-chart" size={24} className="text-green-700 mb-2" />
             <h3 className="text-lg font-bold text-green-900 mb-1">Free Fee Comparison PDF</h3>
             <p className="text-sm text-slate-600 mb-4">Download our 2026 fee audit — every broker&apos;s brokerage, FX fees, and hidden costs in one document.</p>
             <Link href="/#email-capture" className="inline-block px-5 py-2.5 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 hover:scale-105 hover:shadow-[0_0_12px_rgba(21,128,61,0.3)] transition-all duration-200">

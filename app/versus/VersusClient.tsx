@@ -9,6 +9,7 @@ import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import StickyCTABar from "@/components/StickyCTABar";
 import ScrollReveal from "@/components/ScrollReveal";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
+import Icon from "@/components/Icon";
 
 const MAX_BROKERS = 4;
 
@@ -81,13 +82,13 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
   const featureRows = useMemo(() => {
     if (selected.length < 2) return [];
     return [
-      { label: "ASX Brokerage", icon: "💵", key: "asx_fee" as const, values: selected.map(br => br.asx_fee || "N/A"), numValues: selected.map(br => br.asx_fee_value ?? 999), best: "low" as const },
-      { label: "US Brokerage", icon: "🇺🇸", key: "us_fee" as const, values: selected.map(br => br.us_fee || "N/A"), numValues: selected.map(br => br.us_fee_value ?? 999), best: "low" as const },
-      { label: "FX Rate", icon: "💱", key: "fx_rate" as const, values: selected.map(br => br.fx_rate != null ? formatPercent(br.fx_rate) : "N/A"), numValues: selected.map(br => br.fx_rate ?? 999), best: "low" as const },
-      { label: "CHESS Sponsored", icon: "🛡️", key: "chess" as const, values: selected.map(br => br.chess_sponsored ? "Yes" : "No"), numValues: selected.map(br => br.chess_sponsored ? 1 : 0), best: "high" as const },
-      { label: "SMSF Support", icon: "🏦", key: "smsf" as const, values: selected.map(br => br.smsf_support ? "Yes" : "No"), numValues: selected.map(br => br.smsf_support ? 1 : 0), best: "high" as const },
-      { label: "Inactivity Fee", icon: "⏸️", key: "inactivity" as const, values: selected.map(br => br.inactivity_fee || "None"), numValues: selected.map(br => br.inactivity_fee ? 1 : 0), best: "low" as const },
-      { label: "Our Rating", icon: "⭐", key: "rating" as const, values: selected.map(br => `${br.rating ?? "N/A"}/5`), numValues: selected.map(br => br.rating ?? 0), best: "high" as const },
+      { label: "ASX Brokerage", icon: "dollar-sign", key: "asx_fee" as const, values: selected.map(br => br.asx_fee || "N/A"), numValues: selected.map(br => br.asx_fee_value ?? 999), best: "low" as const },
+      { label: "US Brokerage", icon: "globe", key: "us_fee" as const, values: selected.map(br => br.us_fee || "N/A"), numValues: selected.map(br => br.us_fee_value ?? 999), best: "low" as const },
+      { label: "FX Rate", icon: "arrow-left-right", key: "fx_rate" as const, values: selected.map(br => br.fx_rate != null ? formatPercent(br.fx_rate) : "N/A"), numValues: selected.map(br => br.fx_rate ?? 999), best: "low" as const },
+      { label: "CHESS Sponsored", icon: "shield-check", key: "chess" as const, values: selected.map(br => br.chess_sponsored ? "Yes" : "No"), numValues: selected.map(br => br.chess_sponsored ? 1 : 0), best: "high" as const },
+      { label: "SMSF Support", icon: "building", key: "smsf" as const, values: selected.map(br => br.smsf_support ? "Yes" : "No"), numValues: selected.map(br => br.smsf_support ? 1 : 0), best: "high" as const },
+      { label: "Inactivity Fee", icon: "pause-circle", key: "inactivity" as const, values: selected.map(br => br.inactivity_fee || "None"), numValues: selected.map(br => br.inactivity_fee ? 1 : 0), best: "low" as const },
+      { label: "Our Rating", icon: "star", key: "rating" as const, values: selected.map(br => `${br.rating ?? "N/A"}/5`), numValues: selected.map(br => br.rating ?? 0), best: "high" as const },
     ];
   }, [selected]);
 
@@ -106,17 +107,17 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
 
   const verdicts = useMemo(() => {
     if (selected.length < 2) return [];
-    const categories: { cat: string; emoji: string; numValues: number[]; best: "low" | "high" }[] = [
-      { cat: "Cheapest ASX Trading", emoji: "💰", numValues: selected.map(br => br.asx_fee_value ?? 999), best: "low" },
-      { cat: "Best for US Shares", emoji: "🇺🇸", numValues: selected.map(br => br.fx_rate ?? 999), best: "low" },
-      { cat: "Safety (CHESS)", emoji: "🛡️", numValues: selected.map(br => br.chess_sponsored ? 1 : 0), best: "high" },
-      { cat: "SMSF Support", emoji: "🏦", numValues: selected.map(br => br.smsf_support ? 1 : 0), best: "high" },
+    const categories: { cat: string; icon: string; numValues: number[]; best: "low" | "high" }[] = [
+      { cat: "Cheapest ASX Trading", icon: "coins", numValues: selected.map(br => br.asx_fee_value ?? 999), best: "low" },
+      { cat: "Best for US Shares", icon: "globe", numValues: selected.map(br => br.fx_rate ?? 999), best: "low" },
+      { cat: "Safety (CHESS)", icon: "shield-check", numValues: selected.map(br => br.chess_sponsored ? 1 : 0), best: "high" },
+      { cat: "SMSF Support", icon: "building", numValues: selected.map(br => br.smsf_support ? 1 : 0), best: "high" },
     ];
     return categories.map(c => {
       const bestIdx = getBestIndex(c.numValues, c.best);
       return {
         cat: c.cat,
-        emoji: c.emoji,
+        icon: c.icon,
         winner: bestIdx >= 0 ? selected[bestIdx] : null,
         isTie: bestIdx < 0,
       };
@@ -340,7 +341,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
               <ScrollReveal animation="scroll-stagger-children" className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {verdicts.map((v, i) => (
                   <div key={i} className="bg-white border border-slate-200 rounded-xl p-4 flex items-center gap-3 hover:shadow-sm transition-shadow">
-                    <span className="text-2xl shrink-0">{v.emoji}</span>
+                    <Icon name={v.icon} size={20} className="text-slate-400 shrink-0" />
                     <div className="flex-1 min-w-0">
                       <div className="text-xs font-semibold text-slate-400 uppercase tracking-wide">{v.cat}</div>
                       {v.isTie ? (
@@ -401,7 +402,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                         style={{ gridTemplateColumns: `180px repeat(${selected.length}, 1fr)`, animationDelay: `${0.1 + i * 0.06}s` }}
                       >
                         <div className="px-4 py-3.5 flex items-center gap-2">
-                          <span className="text-base">{row.icon}</span>
+                          <Icon name={row.icon} size={16} className="text-slate-400 shrink-0" />
                           <span className="text-sm font-medium text-slate-600">{row.label}</span>
                         </div>
                         {row.values.map((val, j) => (
@@ -503,7 +504,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
             {/* ─── Bottom CTA ─── */}
             <ScrollReveal animation="scroll-stagger-children" className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-6">
-                <div className="text-2xl mb-2">🔀</div>
+                <Icon name="shuffle" size={24} className="text-green-700 mb-2" />
                 <h2 className="text-lg font-extrabold text-green-900 mb-1">Thinking of switching?</h2>
                 <p className="text-slate-600 mb-4 text-sm">Use our Switching Cost Simulator to see exactly how much you&apos;d save.</p>
                 <Link href="/calculators?calc=switching" className="inline-block px-5 py-2.5 bg-green-700 text-white font-semibold rounded-xl hover:bg-green-800 hover:scale-105 hover:shadow-[0_0_12px_rgba(21,128,61,0.3)] transition-all duration-200 text-sm">
@@ -511,7 +512,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                 </Link>
               </div>
               <div className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-6">
-                <div className="text-2xl mb-2">🎯</div>
+                <Icon name="target" size={24} className="text-amber-600 mb-2" />
                 <h2 className="text-lg font-extrabold text-amber-900 mb-1">Not sure which to pick?</h2>
                 <p className="text-slate-600 mb-4 text-sm">Answer 4 quick questions and we&apos;ll narrow it down for you.</p>
                 <Link href="/quiz" className="inline-block px-5 py-2.5 bg-amber-500 text-slate-900 font-semibold rounded-xl hover:bg-amber-600 transition-colors text-sm">
@@ -527,7 +528,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
         {/* ─── Empty State ─── */}
         {!allSelected && brokers.length > 0 && (
           <div className="text-center py-16">
-            <div className="text-6xl mb-4">⚔️</div>
+            <Icon name="swords" size={48} className="text-slate-300 mx-auto mb-4" />
             <h2 className="text-2xl font-extrabold mb-2">Compare brokers head-to-head</h2>
             <p className="text-slate-500 text-lg mb-2">Select at least two brokers above to see fees, features, and our verdict.</p>
 

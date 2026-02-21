@@ -1,19 +1,20 @@
 import Link from "next/link";
+import Icon from "@/components/Icon";
 
 const popularPages = [
-  { title: "Compare Brokers", description: "Side-by-side fee comparison of 40+ platforms", href: "/compare", emoji: "📊" },
-  { title: "Head-to-Head", description: "Pick two brokers and see who wins", href: "/versus", emoji: "⚔️" },
-  { title: "Calculators", description: "Franking credits, FX fees, CGT & more", href: "/calculators", emoji: "🧮" },
-  { title: "Broker Quiz", description: "Get matched in 60 seconds", href: "/quiz", emoji: "🎯" },
-  { title: "Articles", description: "Guides on buying shares, fees & more", href: "/articles", emoji: "📰" },
-  { title: "Scenarios", description: "Best brokers for beginners, SMSF, etc.", href: "/scenarios", emoji: "🏦" },
+  { title: "Compare Brokers", description: "Side-by-side fee comparison of 40+ platforms", href: "/compare", icon: "bar-chart" },
+  { title: "Head-to-Head", description: "Pick two brokers and see who wins", href: "/versus", icon: "swords" },
+  { title: "Calculators", description: "Franking credits, FX fees, CGT & more", href: "/calculators", icon: "calculator" },
+  { title: "Broker Quiz", description: "Get matched in 60 seconds", href: "/quiz", icon: "target" },
+  { title: "Articles", description: "Guides on buying shares, fees & more", href: "/articles", icon: "file-text" },
+  { title: "Scenarios", description: "Best brokers for beginners, SMSF, etc.", href: "/scenarios", icon: "building" },
 ];
 
 export default function NotFound() {
   return (
     <div className="min-h-[70vh] flex items-center justify-center px-4 py-16">
       <div className="text-center max-w-2xl w-full">
-        <div className="text-6xl mb-4">🔍</div>
+        <Icon name="search" size={48} className="text-slate-300 mx-auto mb-4" />
         <h1 className="text-3xl font-bold mb-2">Page Not Found</h1>
         <p className="text-slate-600 mb-6">
           The page you&apos;re looking for doesn&apos;t exist or has been moved.
@@ -45,7 +46,7 @@ export default function NotFound() {
                 href={page.href}
                 className="block border border-slate-200 rounded-xl p-4 text-left hover-lift"
               >
-                <div className="text-2xl mb-1">{page.emoji}</div>
+                <Icon name={page.icon} size={24} className="text-green-700 mb-1" />
                 <h3 className="font-bold text-sm mb-0.5">{page.title}</h3>
                 <p className="text-xs text-slate-500">{page.description}</p>
               </Link>

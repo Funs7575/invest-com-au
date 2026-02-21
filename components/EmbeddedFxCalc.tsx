@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, formatPercent, AFFILIATE_REL } from "@/lib/tracking";
+import Icon from "@/components/Icon";
 
 function AnimatedNumber({ value, prefix = "$" }: { value: number; prefix?: string }) {
   const [display, setDisplay] = useState(value);
@@ -55,7 +56,7 @@ export default function EmbeddedFxCalc({ brokers }: { brokers: Broker[] }) {
       {/* Header */}
       <div className="bg-brand text-white px-6 py-4">
         <div className="flex items-center gap-2">
-          <span className="text-xl">🇺🇸</span>
+          <Icon name="globe" size={20} className="text-green-200 shrink-0" />
           <h3 className="font-extrabold text-base">
             FX Cost Calculator — How Much Are You Really Paying?
           </h3>

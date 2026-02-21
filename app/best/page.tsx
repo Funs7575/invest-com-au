@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { getAllCategories } from "@/lib/best-broker-categories";
 import { absoluteUrl, breadcrumbJsonLd, REVIEW_AUTHOR } from "@/lib/seo";
+import Icon from "@/components/Icon";
 
 export const metadata: Metadata = {
   title: "Best Brokers in Australia (2026) — By Category",
@@ -26,13 +27,13 @@ export const metadata: Metadata = {
 };
 
 const categoryIcons: Record<string, string> = {
-  beginners: "🎯",
-  "us-shares": "🇺🇸",
-  "low-fees": "💰",
-  "chess-sponsored": "🛡️",
-  smsf: "🏛️",
-  crypto: "₿",
-  "low-fx-fees": "🌐",
+  beginners: "target",
+  "us-shares": "globe",
+  "low-fees": "coins",
+  "chess-sponsored": "shield-check",
+  smsf: "building",
+  crypto: "bitcoin",
+  "low-fx-fees": "arrow-left-right",
 };
 
 export default function BestBrokersHub() {
@@ -78,9 +79,7 @@ export default function BestBrokersHub() {
                 className="group block p-5 border border-slate-200 rounded-xl hover:border-green-700 hover:shadow-md transition-all"
               >
                 <div className="flex items-start gap-3">
-                  <span className="text-2xl">
-                    {categoryIcons[cat.slug] || "📊"}
-                  </span>
+                  <Icon name={categoryIcons[cat.slug] || "bar-chart"} size={24} className="text-green-700 shrink-0 mt-0.5" />
                   <div>
                     <h2 className="text-lg font-bold group-hover:text-green-700 transition-colors">
                       {cat.h1.replace(" in Australia", "")}

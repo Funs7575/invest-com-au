@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Icon from "@/components/Icon";
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -64,8 +65,8 @@ export default function ConfirmDialog({
       {/* Dialog */}
       <div className="relative bg-white border border-slate-200 rounded-xl shadow-2xl max-w-sm w-full p-6">
         <div className="flex items-start gap-4">
-          <div className={`text-2xl ${iconColors[variant]}`}>
-            {variant === "danger" ? "⚠️" : variant === "warning" ? "⚡" : "ℹ️"}
+          <div className={`${iconColors[variant]}`}>
+            {variant === "danger" ? <Icon name="alert-triangle" size={24} /> : variant === "warning" ? <Icon name="zap" size={24} /> : <Icon name="info" size={24} />}
           </div>
           <div className="flex-1">
             <h3 className="text-lg font-bold text-slate-900 mb-1">{title}</h3>

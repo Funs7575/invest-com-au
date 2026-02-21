@@ -6,6 +6,7 @@ import type { Broker } from "@/lib/types";
 import { getAffiliateLink, trackClick, AFFILIATE_REL } from "@/lib/tracking";
 import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
+import Icon from "@/components/Icon";
 
 const TRANSFER_COST_PER_HOLDING = 54; // Industry standard CHESS transfer
 
@@ -108,7 +109,7 @@ export default function SwitchClient({ brokers }: { brokers: Broker[] }) {
           <>
             <div className={`rounded-xl p-6 mb-8 border ${savings.annualSavings > 0 ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
               <h2 className="text-lg font-extrabold mb-4">
-                {savings.annualSavings > 0 ? '💰 You could save' : '⚠️ You would pay more'}
+                {savings.annualSavings > 0 ? <><Icon name="coins" size={18} className="inline -mt-0.5 text-green-600" /> You could save</> : <><Icon name="alert-triangle" size={18} className="inline -mt-0.5 text-red-500" /> You would pay more</>}
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                 <div>

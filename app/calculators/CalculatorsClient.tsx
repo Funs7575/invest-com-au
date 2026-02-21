@@ -7,6 +7,7 @@ import { formatCurrency } from "@/lib/utils";
 import { trackClick, trackEvent, getAffiliateLink, getBenefitCta, AFFILIATE_REL } from "@/lib/tracking";
 import { useSearchParams } from "next/navigation";
 import AuthorByline from "@/components/AuthorByline";
+import Icon from "@/components/Icon";
 
 /* ──────────────────────────────────────────────
    Animated number – smooth counting transitions
@@ -46,13 +47,13 @@ function AnimatedNumber({ value, prefix = "$", decimals = 2 }: { value: number; 
 interface Props { brokers: Broker[] }
 type CalcId = "trade-cost" | "fx" | "switching" | "cgt" | "franking" | "chess";
 
-const CALCS: { id: CalcId; emoji: string; title: string; subtitle: string }[] = [
-  { id: "trade-cost", emoji: "\u{1F4B5}", title: "Trade Cost", subtitle: "What does a trade really cost at each broker?" },
-  { id: "fx", emoji: "\u{1F1FA}\u{1F1F8}", title: "US Share Costs", subtitle: "What do international trades really cost?" },
-  { id: "switching", emoji: "\u{1F504}", title: "Compare Fees", subtitle: "Is it worth switching brokers?" },
-  { id: "cgt", emoji: "\u{1F4C5}", title: "Tax on Profits", subtitle: "Estimate capital gains tax" },
-  { id: "franking", emoji: "\u{1F4B0}", title: "Dividend Tax", subtitle: "Franking credits after tax" },
-  { id: "chess", emoji: "\u{1F512}", title: "Share Safety", subtitle: "Is your broker CHESS sponsored?" },
+const CALCS: { id: CalcId; icon: string; title: string; subtitle: string }[] = [
+  { id: "trade-cost", icon: "dollar-sign", title: "Trade Cost", subtitle: "What does a trade really cost at each broker?" },
+  { id: "fx", icon: "globe", title: "US Share Costs", subtitle: "What do international trades really cost?" },
+  { id: "switching", icon: "arrow-right-left", title: "Compare Fees", subtitle: "Is it worth switching brokers?" },
+  { id: "cgt", icon: "calendar", title: "Tax on Profits", subtitle: "Estimate capital gains tax" },
+  { id: "franking", icon: "coins", title: "Dividend Tax", subtitle: "Franking credits after tax" },
+  { id: "chess", icon: "shield-check", title: "Share Safety", subtitle: "Is your broker CHESS sponsored?" },
 ];
 
 const CORPORATE_TAX_RATE = 0.3;
@@ -106,7 +107,7 @@ export default function CalculatorsClient({ brokers }: Props) {
                   : "bg-white border-slate-200 hover:border-green-600/40 hover:shadow-sm"
               }`}
             >
-              <span className={`text-2xl mb-2 transition-transform ${activeCalc === c.id ? "scale-110" : "group-hover:scale-105"}`}>{c.emoji}</span>
+              <Icon name={c.icon} size={24} className={`mb-2 transition-transform ${activeCalc === c.id ? "scale-110 text-green-700" : "text-slate-500 group-hover:scale-105"}`} />
               <span className={`text-sm font-bold mb-0.5 leading-tight ${activeCalc === c.id ? "text-green-800" : "text-slate-900"}`}>
                 {c.title}
               </span>
@@ -215,7 +216,7 @@ function TradeCostCalculator({ brokers }: { brokers: Broker[] }) {
                 market === "asx" ? "bg-green-700 text-white" : "bg-slate-100 text-slate-700 hover:bg-slate-200"
               }`}
             >
-              🇦🇺 ASX
+              ASX
             </button>
             <button
               onClick={() => setMarket("us")}
@@ -223,7 +224,7 @@ function TradeCostCalculator({ brokers }: { brokers: Broker[] }) {
                 market === "us" ? "bg-green-700 text-white" : "bg-slate-100 text-slate-700 hover:bg-slate-200"
               }`}
             >
-              🇺🇸 US
+              US
             </button>
           </div>
         </div>
@@ -370,7 +371,7 @@ function FrankingCalculator() {
   return (
     <CalcSection
       id="franking"
-      emoji={"\u{1F4B0}"}
+      iconName="coins"
       title="Franking Credits Calculator"
       desc="Calculate the true after-tax value of franked dividends. Uses corporate tax rate of 30%."
     >
@@ -447,7 +448,7 @@ function FrankingCalculator() {
             </div>
           ) : (
             <div className="border-2 border-dashed border-slate-200 rounded-xl p-12 text-center h-full flex flex-col items-center justify-center">
-              <span className="text-5xl mb-4">📊</span>
+              <Icon name="bar-chart" size={48} className="text-slate-300 mx-auto mb-4" />
               <h3 className="text-lg font-bold text-slate-900 mb-1">Enter a Dividend Yield</h3>
               <p className="text-sm text-slate-500 max-w-xs">Type a value on the left to see your franking credit waterfall chart.</p>
             </div>
@@ -495,7 +496,7 @@ function SwitchingCostCalculator({ brokers }: { brokers: Broker[] }) {
   return (
     <CalcSection
       id="switching"
-      emoji={"\u{1F504}"}
+      iconName="arrow-right-left"
       title="Switching Cost Simulator"
       desc="See if switching brokers is worth it after factoring in the $54 CHESS transfer fee."
     >
@@ -572,7 +573,7 @@ function SwitchingCostCalculator({ brokers }: { brokers: Broker[] }) {
             </div>
           ) : (
             <div className="border-2 border-dashed border-slate-200 rounded-xl p-12 text-center h-full flex flex-col items-center justify-center">
-              <span className="text-5xl mb-4">⚖️</span>
+              <Icon name="scale" size={48} className="text-slate-300 mx-auto mb-4" />
               <h3 className="text-lg font-bold text-slate-900 mb-1">Compare Two Brokers</h3>
               <p className="text-sm text-slate-500 max-w-xs">Select your current and target broker on the left to see the cost analysis.</p>
             </div>
@@ -616,7 +617,7 @@ function FxFeeCalculator({ brokers }: { brokers: Broker[] }) {
   return (
     <CalcSection
       id="fx"
-      emoji={"\u{1F1FA}\u{1F1F8}"}
+      iconName="globe"
       title="FX Fee Calculator"
       desc="See what every broker charges you in currency conversion fees on international trades."
     >
@@ -770,7 +771,7 @@ function CgtCalculator() {
   return (
     <CalcSection
       id="cgt"
-      emoji={"\u{1F4C5}"}
+      iconName="calendar"
       title="CGT Estimator"
       desc="Estimate capital gains tax and see how the 50% CGT discount affects your tax bill. Not financial advice."
     >
@@ -870,7 +871,7 @@ function CgtCalculator() {
             </div>
           ) : (
             <div className="border-2 border-dashed border-slate-200 rounded-xl p-12 text-center h-full flex flex-col items-center justify-center">
-              <span className="text-5xl mb-4">📅</span>
+              <Icon name="calendar" size={48} className="text-slate-300 mx-auto mb-4" />
               <h3 className="text-lg font-bold text-slate-900 mb-1">Enter a Capital Gain</h3>
               <p className="text-sm text-slate-500 max-w-xs">Type your gain amount to see the tax comparison with and without the 50% discount.</p>
             </div>
@@ -902,7 +903,7 @@ function ChessLookup({ brokers }: { brokers: Broker[] }) {
   return (
     <CalcSection
       id="chess"
-      emoji={"\u{1F512}"}
+      iconName="shield-check"
       title="CHESS Sponsorship Lookup"
       desc="Check if a broker uses CHESS sponsorship or a custodial model, and what it means for you."
     >
@@ -922,7 +923,10 @@ function ChessLookup({ brokers }: { brokers: Broker[] }) {
             }`}
           >
             <div className="flex items-start gap-4">
-              <span className="text-4xl">{broker.chess_sponsored ? "\u{2705}" : "\u{1F6E1}\u{FE0F}"}</span>
+              {broker.chess_sponsored
+                ? <Icon name="check-circle" size={36} className="text-green-600 shrink-0" />
+                : <Icon name="shield-check" size={36} className="text-amber-500 shrink-0" />
+              }
               <div className="flex-1">
                 <h4 className="text-lg font-bold text-slate-900 mb-1">
                   {broker.name} &mdash; {broker.chess_sponsored ? "CHESS Sponsored" : "Custodial Model"}
@@ -1001,13 +1005,13 @@ function ChessLookup({ brokers }: { brokers: Broker[] }) {
    Shared UI Components
    ────────────────────────────────────────────── */
 
-function CalcSection({ id, emoji, title, desc, children }: {
-  id: string; emoji: string; title: string; desc: string; children: React.ReactNode;
+function CalcSection({ id, iconName, title, desc, children }: {
+  id: string; iconName: string; title: string; desc: string; children: React.ReactNode;
 }) {
   return (
     <section id={id} className="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-sm">
       <div className="flex items-start gap-3 mb-1">
-        <span className="text-2xl">{emoji}</span>
+        <Icon name={iconName} size={24} className="text-green-700 shrink-0 mt-0.5" />
         <h2 className="text-xl font-extrabold text-slate-900">{title}</h2>
       </div>
       <p className="text-sm text-slate-500 mb-6 ml-10">{desc}</p>

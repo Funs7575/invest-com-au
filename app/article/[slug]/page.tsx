@@ -12,15 +12,16 @@ import OnThisPage from "@/components/OnThisPage";
 import { absoluteUrl, breadcrumbJsonLd, articleAuthorJsonLd, articleFaqJsonLd, SITE_NAME } from "@/lib/seo";
 import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import { CATEGORY_COLORS, getBestPagesForArticle } from "@/lib/internal-links";
+import Icon from "@/components/Icon";
 
 export const revalidate = 3600; // ISR: revalidate every hour
 
-const CALC_NAMES: Record<string, { name: string; icon: string }> = {
-  "calc-franking": { name: "Franking Credits Calculator", icon: "💰" },
-  "calc-switching": { name: "Switching Cost Simulator", icon: "🔄" },
-  "calc-fx": { name: "FX Fee Calculator", icon: "🇺🇸" },
-  "calc-cgt": { name: "CGT Estimator", icon: "📅" },
-  "calc-chess": { name: "CHESS Lookup Tool", icon: "🔒" },
+const CALC_NAMES: Record<string, { name: string; iconName: string }> = {
+  "calc-franking": { name: "Franking Credits Calculator", iconName: "coins" },
+  "calc-switching": { name: "Switching Cost Simulator", iconName: "arrow-right-left" },
+  "calc-fx": { name: "FX Fee Calculator", iconName: "globe" },
+  "calc-cgt": { name: "CGT Estimator", iconName: "calendar" },
+  "calc-chess": { name: "CHESS Lookup Tool", iconName: "shield-check" },
 };
 
 const ENHANCED_SLUGS = ["best-intl-brokers"];
@@ -467,7 +468,7 @@ export default async function ArticlePage({
               {calcInfo && a.related_calc && (
                 <div className="mt-8 border border-green-200 rounded-xl p-6 bg-green-50">
                   <div className="flex items-start gap-4">
-                    <div className="text-3xl">{calcInfo.icon}</div>
+                    <Icon name={calcInfo.iconName} size={28} className="text-green-700 shrink-0 mt-1" />
                     <div className="flex-1">
                       <h3 className="text-lg font-bold mb-1">
                         Related Calculator

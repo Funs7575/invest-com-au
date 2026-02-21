@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { trackEvent } from "@/lib/tracking";
+import Icon from "@/components/Icon";
 
 const MIN_ENGAGEMENT_MS = 15_000; // Must be on page 15s before popup can fire
 const MOBILE_INACTIVITY_MS = 30_000; // 30s inactivity on mobile
@@ -159,7 +160,7 @@ export default function ExitIntentPopup() {
 
         {/* Dark accent header */}
         <div className="bg-gradient-to-br from-green-700 via-green-800 to-green-900 px-6 pt-6 pb-8 text-white text-center">
-          <div className="text-4xl mb-3">📊</div>
+          <Icon name="bar-chart" size={36} className="text-green-200 mx-auto mb-3" />
           <h2 id="exit-popup-title" className="text-xl font-extrabold mb-1">Wait — Before You Go</h2>
           <p className="text-sm text-green-200">
             Get our free 2026 broker fee comparison PDF. See exactly what every platform charges.
@@ -171,7 +172,7 @@ export default function ExitIntentPopup() {
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
             {status === "success" ? (
               <div className="text-center py-4">
-                <div className="text-3xl mb-2">{emailSent ? '✅' : '📧'}</div>
+                <div className="mb-2">{emailSent ? <Icon name="check-circle" size={28} className="text-green-600 mx-auto" /> : <Icon name="mail" size={28} className="text-green-700 mx-auto" />}</div>
                 <h3 className="font-bold text-lg mb-1">
                   {emailSent ? 'Check Your Inbox!' : 'You\'re Signed Up!'}
                 </h3>

@@ -8,6 +8,7 @@ import { trackClick, trackEvent, getAffiliateLink, getBenefitCta, renderStars, A
 import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE_SHORT, CRYPTO_WARNING } from "@/lib/compliance";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import RiskWarningInline from "@/components/RiskWarningInline";
+import Icon from "@/components/Icon";
 
 type WeightKey = "beginner" | "low_fee" | "us_shares" | "smsf" | "crypto" | "advanced";
 
@@ -299,7 +300,7 @@ export default function QuizPage() {
                 ))}
               </div>
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-6xl celebrate-emoji">🎉</span>
+                <Icon name="party-popper" size={56} className="celebrate-emoji text-green-600" />
               </div>
             </div>
             <h1 className="text-3xl font-extrabold mb-2">Your Shortlist</h1>
@@ -351,7 +352,7 @@ export default function QuizPage() {
                   '--badge-glow': `${topMatch.broker.color || '#f59e0b'}40`,
                 } as React.CSSProperties}
               >
-                🏆 #1 on Your Shortlist
+                <Icon name="trophy" size={14} className="inline -mt-0.5" /> #1 on Your Shortlist
               </div>
               <div className="flex items-center gap-4 mb-4">
                 <div
@@ -403,7 +404,7 @@ export default function QuizPage() {
               {topMatch.broker.deal && topMatch.broker.deal_text && (
                 <div className="mt-3 text-center">
                   <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 border border-amber-200 rounded-full text-xs font-semibold text-amber-700">
-                    🔥 {topMatch.broker.deal_text}
+                    <Icon name="flame" size={14} className="inline text-amber-500" /> {topMatch.broker.deal_text}
                     {topMatch.broker.deal_expiry && (
                       <span className="text-[0.65rem] text-amber-500 font-normal ml-1">
                         (expires {new Date(topMatch.broker.deal_expiry).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })})
@@ -513,7 +514,7 @@ export default function QuizPage() {
                     return (
                       <div key={r.slug} className="flex items-center gap-2">
                         <span className="w-24 truncate font-medium text-slate-700">
-                          {i === 0 && '🏆 '}{r.broker?.name}
+                          {i === 0 && <><Icon name="trophy" size={12} className="inline -mt-0.5 mr-0.5" /> </>}{r.broker?.name}
                         </span>
                         <div className="flex-1 bg-slate-200 rounded-full h-2 overflow-hidden">
                           <div
@@ -591,7 +592,7 @@ export default function QuizPage() {
                     {r.broker.deal && r.broker.deal_text && (
                       <div className="mt-2">
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-50 border border-amber-200 rounded-full text-[0.6rem] font-semibold text-amber-700">
-                          🔥 {r.broker.deal_text}
+                          <Icon name="flame" size={10} className="inline text-amber-500" /> {r.broker.deal_text}
                         </span>
                       </div>
                     )}
@@ -614,7 +615,7 @@ export default function QuizPage() {
           {!emailGate && (
             <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 mb-6 result-card-in result-card-in-delay-5">
               <div className="flex items-start gap-4">
-                <div className="text-3xl shrink-0">📧</div>
+                <Icon name="mail" size={28} className="text-green-700 shrink-0" />
                 <div className="flex-1">
                   <h3 className="font-bold text-sm mb-1">Get your results emailed</h3>
                   <p className="text-xs text-slate-500 mb-3">We&apos;ll send your broker shortlist so you can compare later — plus our free fee comparison PDF.</p>

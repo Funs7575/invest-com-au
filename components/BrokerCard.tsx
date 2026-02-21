@@ -3,6 +3,7 @@
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
 import SponsorBadge from "@/components/SponsorBadge";
+import Icon from "@/components/Icon";
 import { isSponsored } from "@/lib/sponsorship";
 
 export default function BrokerCard({ broker, badge, context = 'compare' }: { broker: Broker; badge?: string; context?: 'compare' | 'review' | 'calculator' | 'versus' | 'quiz' }) {
@@ -45,7 +46,7 @@ export default function BrokerCard({ broker, badge, context = 'compare' }: { bro
       {/* Deal badge */}
       {broker.deal && broker.deal_text && (
         <div className="mb-3 flex items-center gap-1.5 px-2.5 py-1.5 bg-amber-50 border border-amber-200 rounded-lg">
-          <span className="text-xs">🔥</span>
+          <Icon name="flame" size={12} className="text-amber-500 shrink-0" />
           <div>
             <span className="text-[0.65rem] text-amber-700 font-semibold leading-tight">{broker.deal_text}</span>
             {broker.deal_expiry && (

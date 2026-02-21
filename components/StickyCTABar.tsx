@@ -43,7 +43,7 @@ export default function StickyCTABar({ broker, detail, context = 'review' }: { b
           </div>
           {broker.deal && (
             <span className="hidden md:inline-flex items-center gap-1 px-2 py-0.5 bg-white/20 border border-white/30 rounded-full text-[0.6rem] text-white font-semibold">
-              🔥 Deal Available
+              Deal Available
             </span>
           )}
         </div>
