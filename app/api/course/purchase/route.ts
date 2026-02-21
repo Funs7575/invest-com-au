@@ -1,0 +1,109 @@
+import { getStripe } from "@/lib/stripe";
+import { COURSE_CONFIG } from "@/lib/course";
+import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { NextRequest, NextResponse } from "next/server";
+
+export async function POST(request: NextRequest) {
+  try {
+    // Authenticate user
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
+
+    const admin = createAdminClient();
+
+    // Check if already purchased (prevent double-buy)
+    const { data: existingPurchase } = await admin
+      .from("course_purchases")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("course_slug", COURSE_CONFIG.slug)
+      .limit(1)
+      .maybeSingle();
+
+    if (existingPurchase) {
+      return NextResponse.json(
+        { error: "You already own this course" },
+        { status: 400 }
+      );
+    }
+
+    // Check if Pro subscriber → use discounted price
+    const { data: activeSub } = await admin
+      .from("subscriptions")
+      .select("id, status")
+      .eq("user_id", user.id)
+      .in("status", ["active", "trialing"])
+      .limit(1)
+      .maybeSingle();
+
+    const isPro = !!activeSub;
+    const priceId = isPro
+      ? COURSE_CONFIG.stripeProPriceId
+      : COURSE_CONFIG.stripePriceId;
+
+    if (!priceId) {
+      return NextResponse.json(
+        { error: "Course pricing not configured" },
+        { status: 400 }
+      );
+    }
+
+    // Get or create Stripe customer
+    const { data: profile } = await admin
+      .from("profiles")
+      .select("stripe_customer_id")
+      .eq("id", user.id)
+      .single();
+
+    let customerId = profile?.stripe_customer_id;
+
+    if (!customerId) {
+      const customer = await getStripe().customers.create({
+        email: user.email!,
+        metadata: { supabase_user_id: user.id },
+      });
+      customerId = customer.id;
+
+      await admin
+        .from("profiles")
+        .update({
+          stripe_customer_id: customerId,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", user.id);
+    }
+
+    // Create Checkout Session (one-time payment, NOT subscription)
+    const siteUrl =
+      process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app";
+
+    const session = await getStripe().checkout.sessions.create({
+      customer: customerId,
+      mode: "payment",
+      line_items: [{ price: priceId, quantity: 1 }],
+      success_url: `${siteUrl}/course?purchased=true`,
+      cancel_url: `${siteUrl}/course?checkout=cancelled`,
+      metadata: {
+        type: "course",
+        course_slug: COURSE_CONFIG.slug,
+        supabase_user_id: user.id,
+      },
+      allow_promotion_codes: true,
+    });
+
+    return NextResponse.json({ url: session.url });
+  } catch (err) {
+    console.error("Course purchase checkout error:", err);
+    return NextResponse.json(
+      { error: "Failed to create checkout session" },
+      { status: 500 }
+    );
+  }
+}

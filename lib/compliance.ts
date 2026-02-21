@@ -57,3 +57,8 @@ export const REGULATORY_NOTE =
   "credit provider, or financial adviser. " +
   "We are an information service. Always verify information with the product issuer before " +
   "making a decision.";
+
+/** Course affiliate disclosure — shown on course pages near broker CTAs */
+export const COURSE_AFFILIATE_DISCLOSURE =
+  "This course contains links to broker platforms. We may earn a commission if you sign up through these links. " +
+  "This does not affect our educational content or recommendations.";

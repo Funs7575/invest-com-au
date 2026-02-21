@@ -227,3 +227,35 @@ export interface SwitchStory {
   created_at: string;
   updated_at?: string;
 }
+
+export interface CourseLesson {
+  id: number;
+  course_slug: string;
+  module_index: number;
+  module_title: string;
+  lesson_index: number;
+  title: string;
+  slug: string;
+  content?: string;
+  duration_minutes: number;
+  related_brokers?: string[];
+  is_free_preview: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface CoursePurchase {
+  id: number;
+  user_id: string;
+  course_slug: string;
+  stripe_payment_id?: string;
+  amount_paid: number;
+  purchased_at: string;
+}
+
+export interface CourseProgress {
+  id: number;
+  user_id: string;
+  lesson_id: number;
+  completed_at: string;
+}

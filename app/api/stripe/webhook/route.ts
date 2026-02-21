@@ -104,6 +104,37 @@ export async function POST(request: NextRequest) {
         break;
       }
 
+      case "checkout.session.completed": {
+        const session = event.data.object as Stripe.Checkout.Session;
+
+        // Handle one-time course purchases
+        if (session.metadata?.type === "course" && session.mode === "payment") {
+          const userId = session.metadata.supabase_user_id;
+          const courseSlug = session.metadata.course_slug || "investing-101";
+
+          if (userId) {
+            const supabase = createAdminClient();
+            const { error } = await supabase
+              .from("course_purchases")
+              .upsert(
+                {
+                  user_id: userId,
+                  course_slug: courseSlug,
+                  stripe_payment_id: session.payment_intent as string,
+                  amount_paid: session.amount_total || 0,
+                  purchased_at: new Date().toISOString(),
+                },
+                { onConflict: "user_id,course_slug" }
+              );
+
+            if (error) {
+              console.error("Course purchase upsert error:", error.message);
+            }
+          }
+        }
+        break;
+      }
+
       default:
         // Unhandled event type — log for debugging
         break;
