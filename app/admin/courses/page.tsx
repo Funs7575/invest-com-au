@@ -70,7 +70,12 @@ export default function AdminCoursesPage() {
       .select("id, slug, title, status, price, pro_price, revenue_share_percent, featured, sort_order, created_at, creator:team_members(id, full_name)")
       .order("sort_order", { ascending: true });
 
-    setCourses((coursesData as CourseRow[]) || []);
+    // Supabase returns joined relations as arrays; normalise to single object
+    const normalized = ((coursesData as unknown as any[]) || []).map((c) => ({
+      ...c,
+      creator: Array.isArray(c.creator) ? c.creator[0] ?? null : c.creator ?? null,
+    })) as CourseRow[];
+    setCourses(normalized);
 
     // Fetch team members for creator dropdown
     const { data: members } = await supabase
@@ -97,7 +102,7 @@ export default function AdminCoursesPage() {
       } else {
         grouped.set(r.creator_id, {
           creator_id: r.creator_id,
-          creator_name: r.creator?.full_name || "Unknown",
+          creator_name: (Array.isArray(r.creator) ? r.creator[0]?.full_name : r.creator?.full_name) || "Unknown",
           total_revenue: r.total_amount,
           creator_share: r.creator_amount,
           platform_share: r.platform_amount,
