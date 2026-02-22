@@ -19,21 +19,22 @@ export function useCourseAccess(courseSlug: string = "investing-101") {
     }
 
     const supabase = createClient();
-    supabase
-      .from("course_purchases")
-      .select("id")
-      .eq("user_id", user.id)
-      .eq("course_slug", courseSlug)
-      .limit(1)
-      .maybeSingle()
-      .then(({ data }) => {
+    (async () => {
+      try {
+        const { data } = await supabase
+          .from("course_purchases")
+          .select("id")
+          .eq("user_id", user.id)
+          .eq("course_slug", courseSlug)
+          .limit(1)
+          .maybeSingle();
         setHasCourse(!!data);
-        setLoading(false);
-      })
-      .catch(() => {
+      } catch {
         setHasCourse(false);
+      } finally {
         setLoading(false);
-      });
+      }
+    })();
   }, [user, userLoading, courseSlug]);
 
   return { user, hasCourse, loading: loading || userLoading };
