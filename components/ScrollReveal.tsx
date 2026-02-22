@@ -1,14 +1,14 @@
 "use client";
 
-import { useRef, useEffect, type ReactNode } from "react";
+import { useRef, useEffect, useState, type ReactNode } from "react";
 
 /**
  * Generic scroll-triggered animation wrapper.
  * Adds `is-visible` class when the element enters the viewport.
- * Works with CSS classes like:
- *   scroll-fade-in, scroll-slide-left, scroll-slide-right,
- *   scroll-stagger-children, scroll-check-stagger,
- *   table-row-stagger, fee-row-stagger
+ *
+ * Important: The animation class is only applied after hydration to prevent
+ * content from being invisible during SSR (the CSS sets opacity:0 by default).
+ * This ensures content is always visible on first paint.
  */
 export default function ScrollReveal({
   children,
@@ -26,8 +26,15 @@ export default function ScrollReveal({
   threshold?: number;
 }) {
   const ref = useRef<HTMLElement>(null);
+  const [mounted, setMounted] = useState(false);
+
+  // Only apply the animation class after hydration so SSR content is visible
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
+    if (!mounted) return;
     const el = ref.current;
     if (!el) return;
 
@@ -43,13 +50,16 @@ export default function ScrollReveal({
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, [threshold]);
+  }, [threshold, mounted]);
 
   const delayClass = delay ? `delay-${delay}` : "";
+  // Before hydration: no animation class → content visible (no opacity:0)
+  // After hydration: animation class applied → scroll-trigger works
+  const animClass = mounted ? `${animation} ${delayClass}` : "";
 
   return (
     // @ts-expect-error - dynamic tag element
-    <Tag ref={ref} className={`${animation} ${delayClass} ${className}`}>
+    <Tag ref={ref} className={`${animClass} ${className}`.trim()}>
       {children}
     </Tag>
   );

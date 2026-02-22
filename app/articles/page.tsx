@@ -32,6 +32,7 @@ const CATEGORY_COLORS: Record<string, string> = {
   smsf: "bg-green-100 text-green-700",
   strategy: "bg-amber-100 text-amber-700",
   news: "bg-red-100 text-red-700",
+  reviews: "bg-slate-100 text-slate-700",
 };
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -40,6 +41,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   smsf: "SMSF",
   strategy: "Strategy",
   news: "News",
+  reviews: "Reviews",
 };
 
 export const revalidate = 3600; // ISR: revalidate every hour
