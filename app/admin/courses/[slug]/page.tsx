@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
+import React, { useEffect, useState, use } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
@@ -566,7 +566,8 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
           </thead>
           <tbody className="divide-y divide-slate-100">
             {lessons.map((l) => (
-              <tr key={l.id} className="hover:bg-slate-50 transition-colors">
+              <React.Fragment key={l.id}>
+              <tr className="hover:bg-slate-50 transition-colors">
                 <td className="px-4 py-3 text-slate-500 text-xs">
                   {l.module_index}. {l.module_title}
                 </td>
@@ -719,6 +720,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
                   </td>
                 </tr>
               )}
+              </React.Fragment>
             ))}
             {lessons.length === 0 && (
               <tr>
