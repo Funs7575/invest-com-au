@@ -51,7 +51,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
   const [saving, setSaving] = useState(false);
   const [showAddLesson, setShowAddLesson] = useState(false);
   const [editingLessonId, setEditingLessonId] = useState<number | null>(null);
-  const { showToast } = useToast();
+  const { toast: showToast } = useToast();
 
   // Course edit form
   const [courseForm, setCourseForm] = useState<Partial<CourseData>>({});

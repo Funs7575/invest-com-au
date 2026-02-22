@@ -37,7 +37,7 @@ export default function AdminCoursesPage() {
   const [showCreate, setShowCreate] = useState(false);
   const [creators, setCreators] = useState<{ id: number; full_name: string }[]>([]);
   const [saving, setSaving] = useState(false);
-  const { showToast } = useToast();
+  const { toast: showToast } = useToast();
 
   // New course form state
   const [form, setForm] = useState({
