@@ -22,11 +22,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!course || course.status !== "published") return {};
 
   return {
-    title: `${course.title} — ${SITE_NAME}`,
+    title: course.title,
     description: course.description || course.subtitle || "",
     alternates: { canonical: `/courses/${slug}` },
     openGraph: {
-      title: `${course.title} — ${SITE_NAME}`,
+      title: course.title,
       description: course.subtitle || course.description || "",
       url: `/courses/${slug}`,
       images: [

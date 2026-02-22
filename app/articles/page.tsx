@@ -34,6 +34,14 @@ const CATEGORY_COLORS: Record<string, string> = {
   news: "bg-red-100 text-red-700",
 };
 
+const CATEGORY_LABELS: Record<string, string> = {
+  tax: "Tax",
+  beginners: "Beginners",
+  smsf: "SMSF",
+  strategy: "Strategy",
+  news: "News",
+};
+
 export const revalidate = 3600; // ISR: revalidate every hour
 
 export default async function ArticlesPage({
@@ -131,7 +139,7 @@ export default async function ArticlesPage({
                       <span
                         className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${categoryColor}`}
                       >
-                        {article.category}
+                        {CATEGORY_LABELS[article.category || ""] || article.category}
                       </span>
                     )}
                     <span

@@ -5,6 +5,14 @@ import { useSearchParams } from "next/navigation";
 
 const CATEGORIES = ["tax", "beginners", "smsf", "strategy", "news"] as const;
 
+const CATEGORY_LABELS: Record<string, string> = {
+  tax: "Tax",
+  beginners: "Beginners",
+  smsf: "SMSF",
+  strategy: "Strategy",
+  news: "News",
+};
+
 export default function ArticleCategoryFilter() {
   const searchParams = useSearchParams();
   const activeCategory = searchParams.get("category") || "all";
@@ -46,7 +54,7 @@ export default function ArticleCategoryFilter() {
               : "bg-slate-100 text-slate-700 hover:bg-slate-200"
           }`}
         >
-          {cat}
+          {CATEGORY_LABELS[cat] || cat}
         </Link>
       ))}
     </div>

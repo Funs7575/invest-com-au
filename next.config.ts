@@ -90,6 +90,16 @@ const nextConfig: NextConfig = {
         destination: "/courses/investing-101/:slug",
         permanent: true,
       },
+      {
+        source: "/learn",
+        destination: "/articles",
+        permanent: true,
+      },
+      {
+        source: "/new-to-investing",
+        destination: "/article/how-to-invest-australia",
+        permanent: false,
+      },
     ];
   },
 };

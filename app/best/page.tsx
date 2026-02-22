@@ -72,11 +72,15 @@ export default function BestBrokersHub() {
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
-            {categories.map((cat) => (
+            {categories.map((cat, idx) => (
               <Link
                 key={cat.slug}
                 href={`/best/${cat.slug}`}
-                className="group block p-5 border border-slate-200 rounded-xl hover:border-green-700 hover:shadow-md transition-all"
+                className={`group block p-5 border border-slate-200 rounded-xl hover:border-green-700 hover:shadow-md transition-all${
+                  categories.length % 2 !== 0 && idx === categories.length - 1
+                    ? " md:col-span-2 md:max-w-md md:mx-auto"
+                    : ""
+                }`}
               >
                 <div className="flex items-start gap-3">
                   <Icon name={categoryIcons[cat.slug] || "bar-chart"} size={24} className="text-green-700 shrink-0 mt-0.5" />

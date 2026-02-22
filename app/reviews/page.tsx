@@ -54,6 +54,13 @@ export default async function ReviewsPage() {
     />
     <div className="py-12">
       <div className="container-custom">
+        {/* Breadcrumb */}
+        <nav className="text-sm text-slate-500 mb-6">
+          <Link href="/" className="hover:text-green-700">Home</Link>
+          <span className="mx-2">/</span>
+          <span className="text-green-700">Reviews</span>
+        </nav>
+
         <h1 className="text-3xl md:text-4xl font-extrabold mb-2">Broker Reviews</h1>
         <p className="text-slate-600 mb-8">
           In-depth reviews of every broker we cover. Real fees, real analysis, no fluff.
