@@ -179,7 +179,9 @@ export default async function CoursesPage() {
           {/* Featured courses */}
           {featured.length > 0 && (
             <div className="mb-12">
-              <h2 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">
+              <h2 className={`text-sm font-bold text-slate-400 uppercase tracking-wider mb-4 ${
+                featured.length <= 2 ? "text-center" : ""
+              }`}>
                 Featured
               </h2>
               <div className={`grid gap-6 ${
