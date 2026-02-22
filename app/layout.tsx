@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import LayoutShell from "@/components/LayoutShell";
@@ -52,6 +52,13 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: "#166534",
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -59,6 +66,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en-AU">
+      {/* Inline script adds .js-ready immediately so CSS animations only run when JS is available.
+          Without this, hero-fade-up starts at opacity:0 and stays invisible until JS loads. */}
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js-ready')" }} />
+      </head>
       <body className={inter.className}>
         <GoogleAnalytics />
         <LayoutShell>{children}</LayoutShell>

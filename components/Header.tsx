@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useUser } from "@/lib/hooks/useUser";
@@ -10,10 +10,14 @@ const navItems = [
   { name: "Best Brokers", href: "/best" },
   { name: "Deals", href: "/deals" },
   { name: "Reviews", href: "/reviews" },
-  { name: "Stories", href: "/stories" },
   { name: "Learn", href: "/articles" },
+];
+
+const moreLinks = [
   { name: "Courses", href: "/courses" },
   { name: "Calculators", href: "/calculators" },
+  { name: "Head-to-Head", href: "/versus" },
+  { name: "Stories", href: "/stories" },
 ];
 
 const popularLinks = [
@@ -25,8 +29,21 @@ const popularLinks = [
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const moreRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const { user, loading } = useUser();
+
+  // Close "More" dropdown on outside click
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (moreRef.current && !moreRef.current.contains(e.target as Node)) {
+        setMoreOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-slate-200">
@@ -58,12 +75,32 @@ export default function Header() {
                 </Link>
               );
             })}
-            <Link
-              href="/article/how-to-invest-australia"
-              className="text-sm text-green-700 font-medium hover:text-green-900 rounded focus:outline-none focus:ring-2 focus:ring-green-700/40 transition-colors"
-            >
-              New to investing?
-            </Link>
+            {/* More dropdown */}
+            <div ref={moreRef} className="relative">
+              <button
+                onClick={() => setMoreOpen(!moreOpen)}
+                className="text-sm font-medium text-slate-700 hover:text-green-800 transition-colors rounded focus:outline-none focus:ring-2 focus:ring-green-700/40 flex items-center gap-1"
+                aria-expanded={moreOpen}
+                aria-haspopup="true"
+              >
+                More
+                <svg className={`w-3.5 h-3.5 transition-transform ${moreOpen ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+              </button>
+              {moreOpen && (
+                <div className="absolute top-full right-0 mt-2 w-44 bg-white border border-slate-200 rounded-xl shadow-lg py-1 z-50">
+                  {moreLinks.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setMoreOpen(false)}
+                      className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-green-50 hover:text-green-800 transition-colors"
+                    >
+                      {item.name}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
             <Link
               href="/quiz"
               className="px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-700/40 focus:ring-offset-2 transition-colors"
@@ -139,6 +176,19 @@ export default function Header() {
                 </Link>
               );
             })}
+            <div className="pt-2 mt-2 border-t border-slate-100">
+              <p className="px-4 py-1 text-[0.65rem] font-semibold uppercase tracking-wide text-slate-400">Tools</p>
+              {moreLinks.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMenuOpen(false)}
+                  className="block px-4 py-3 text-sm text-slate-700 hover:bg-green-50 hover:text-green-800 rounded-lg transition-colors"
+                >
+                  {item.name}
+                </Link>
+              ))}
+            </div>
             <div className="pt-2 mt-2 border-t border-slate-100">
               <Link
                 href="/quiz"

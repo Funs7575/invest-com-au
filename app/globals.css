@@ -414,11 +414,12 @@ body {
 }
 
 /* ── Hero entrance stagger ─────────────────────────── */
+/* Only animate when JS is ready — prevents invisible hero on SSR/slow loads */
 @keyframes heroFadeUp {
   from { opacity: 0; transform: translateY(24px); }
   to { opacity: 1; transform: translateY(0); }
 }
-.hero-fade-up {
+.js-ready .hero-fade-up {
   opacity: 0;
   animation: heroFadeUp 0.6s ease-out forwards;
 }
@@ -592,6 +593,13 @@ details > :not(summary) {
 .versus-row-stagger.is-visible > div:nth-child(6) { transition-delay: 0.18s; }
 .versus-row-stagger.is-visible > div:nth-child(7) { transition-delay: 0.21s; }
 .versus-row-stagger.is-visible > div:nth-child(8) { transition-delay: 0.24s; }
+
+/* ── Hide scrollbar for horizontal scroll containers ──── */
+@utility scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
 
 /* ── Safe area inset for iOS home bar ────────────────── */
 @utility safe-area-inset-bottom {

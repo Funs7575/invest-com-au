@@ -202,15 +202,15 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           );
         })()}
 
-        {/* Filter Pills */}
-        <div className="flex flex-wrap gap-2 mb-4" role="tablist" aria-label="Broker filter">
+        {/* Filter Pills — horizontal scroll on mobile, wrap on desktop */}
+        <div className="flex md:flex-wrap gap-2 mb-4 overflow-x-auto pb-2 md:pb-0 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide" role="tablist" aria-label="Broker filter">
           {filters.map(f => (
             <button
               key={f.key}
               onClick={() => setActiveFilter(f.key)}
               role="tab"
               aria-selected={activeFilter === f.key}
-              className={`px-4 py-2 text-sm font-medium rounded-full filter-pill ${
+              className={`shrink-0 px-4 py-2 text-sm font-medium rounded-full filter-pill ${
                 activeFilter === f.key
                   ? 'bg-green-700 text-white shadow-sm scale-105'
                   : 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:scale-[1.02]'

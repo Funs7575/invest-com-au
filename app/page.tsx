@@ -4,10 +4,8 @@ import type { Broker } from "@/lib/types";
 import type { Article } from "@/lib/types";
 import HomepageSearchBar from "@/components/HomepageSearchBar";
 import HomepageComparisonTable from "@/components/HomepageComparisonTable";
-import AuthorByline from "@/components/AuthorByline";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
 import LeadMagnet from "@/components/LeadMagnet";
-import SocialProofBar from "@/components/SocialProofBar";
 import DealCard from "@/components/DealCard";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
@@ -156,49 +154,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Where Should I Start? — Intent-based routing for different user types */}
-      <section className="py-12 bg-white">
-        <div className="container-custom">
-          <h2 className="text-center text-xl font-bold text-slate-900 mb-2">Not sure where to start?</h2>
-          <p className="text-center text-sm text-slate-500 mb-8">Pick what describes you best</p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
-            <Link
-              href="/quiz"
-              className="block bg-gradient-to-br from-green-50 to-white border-2 border-green-100 rounded-2xl p-6 text-center hover:border-green-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group"
-            >
-              <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-green-200 transition-colors">
-                <Icon name="lightbulb" size={24} className="text-green-700" />
-              </div>
-              <h3 className="font-bold text-sm mb-1 group-hover:text-green-800 transition-colors">I&apos;m new to investing</h3>
-              <p className="text-xs text-slate-500 mb-3">Take our 60-second quiz to find the right broker for you.</p>
-              <span className="text-xs font-bold text-green-700 bg-green-50 px-3 py-1 rounded-full">Start Quiz &rarr;</span>
-            </Link>
-            <Link
-              href="/switch"
-              className="block bg-gradient-to-br from-blue-50 to-white border-2 border-blue-100 rounded-2xl p-6 text-center hover:border-blue-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group"
-            >
-              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-blue-200 transition-colors">
-                <Icon name="arrow-right-left" size={24} className="text-blue-700" />
-              </div>
-              <h3 className="font-bold text-sm mb-1 group-hover:text-blue-800 transition-colors">I want to switch brokers</h3>
-              <p className="text-xs text-slate-500 mb-3">See how much you could save by switching to a cheaper platform.</p>
-              <span className="text-xs font-bold text-blue-700 bg-blue-50 px-3 py-1 rounded-full">Compare Fees &rarr;</span>
-            </Link>
-            <Link
-              href="/compare"
-              className="block bg-gradient-to-br from-amber-50 to-white border-2 border-amber-100 rounded-2xl p-6 text-center hover:border-amber-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group"
-            >
-              <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-amber-200 transition-colors">
-                <Icon name="search" size={24} className="text-amber-700" />
-              </div>
-              <h3 className="font-bold text-sm mb-1 group-hover:text-amber-800 transition-colors">I know what I want</h3>
-              <p className="text-xs text-slate-500 mb-3">Compare all brokers side by side on fees, features, and safety.</p>
-              <span className="text-xs font-bold text-amber-700 bg-amber-50 px-3 py-1 rounded-full">Compare All &rarr;</span>
-            </Link>
-          </div>
-        </div>
-      </section>
-
       {/* Comparison Table */}
       <ScrollFadeIn>
         <section className="py-12 md:py-16 bg-slate-50">
@@ -330,83 +285,6 @@ export default async function HomePage() {
           </section>
         </ScrollFadeIn>
       )}
-
-      {/* Tools Quick Links */}
-      <ScrollFadeIn>
-        <section className="py-14 bg-white">
-          <div className="container-custom">
-            <h2 className="text-center text-2xl font-bold text-slate-900 mb-2">Free Research Tools</h2>
-            <p className="text-center text-sm text-slate-500 mb-8">Everything you need to make a smarter decision</p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-              <Link
-                href="/quiz"
-                className="block bg-gradient-to-br from-green-50 to-white border-2 border-green-100 rounded-2xl p-7 text-center hover:border-green-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group stagger-item"
-                style={{ animationDelay: '0.1s' }}
-              >
-                <div className="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-green-200 transition-colors">
-                  <Icon name="target" size={28} className="text-green-700" />
-                </div>
-                <h3 className="font-bold text-lg mb-2">Broker Quiz</h3>
-                <p className="text-sm text-slate-500">
-                  Answer 4 questions to find the best broker for your situation.
-                </p>
-              </Link>
-              <Link
-                href="/calculators"
-                className="block bg-gradient-to-br from-blue-50 to-white border-2 border-blue-100 rounded-2xl p-7 text-center hover:border-blue-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group stagger-item"
-                style={{ animationDelay: '0.2s' }}
-              >
-                <div className="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-200 transition-colors">
-                  <Icon name="calculator" size={28} className="text-blue-700" />
-                </div>
-                <h3 className="font-bold text-lg mb-2">Fee Calculators</h3>
-                <p className="text-sm text-slate-500">
-                  Calculate trade costs, FX fees, CGT, and franking credits in seconds.
-                </p>
-              </Link>
-              <Link
-                href="/versus"
-                className="block bg-gradient-to-br from-amber-50 to-white border-2 border-amber-100 rounded-2xl p-7 text-center hover:border-amber-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-200 group stagger-item"
-                style={{ animationDelay: '0.3s' }}
-              >
-                <div className="w-14 h-14 bg-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-amber-200 transition-colors">
-                  <Icon name="swords" size={28} className="text-amber-700" />
-                </div>
-                <h3 className="font-bold text-lg mb-2">Head-to-Head</h3>
-                <p className="text-sm text-slate-500">
-                  Pick two brokers and see who wins on fees, features, and safety.
-                </p>
-              </Link>
-            </div>
-          </div>
-        </section>
-      </ScrollFadeIn>
-
-      {/* Trust Stats Bar */}
-      <ScrollFadeIn>
-        <section className="py-12 bg-gradient-to-r from-green-900 to-green-800">
-          <div className="container-custom">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-              <div>
-                <div className="text-3xl md:text-4xl font-extrabold text-white">{brokerCount}+</div>
-                <div className="text-xs text-green-200/70 mt-1 font-medium">Brokers Compared</div>
-              </div>
-              <div>
-                <div className="text-3xl md:text-4xl font-extrabold text-white">$0</div>
-                <div className="text-xs text-green-200/70 mt-1 font-medium">Always Free to Use</div>
-              </div>
-              <div>
-                <div className="text-3xl md:text-4xl font-extrabold text-white">Daily</div>
-                <div className="text-xs text-green-200/70 mt-1 font-medium">Fee Verification</div>
-              </div>
-              <div>
-                <div className="text-3xl md:text-4xl font-extrabold text-white">100%</div>
-                <div className="text-xs text-green-200/70 mt-1 font-medium">Independent Ratings</div>
-              </div>
-            </div>
-          </div>
-        </section>
-      </ScrollFadeIn>
 
       {/* Email Capture */}
       <ScrollFadeIn>

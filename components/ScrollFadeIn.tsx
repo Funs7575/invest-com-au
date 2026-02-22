@@ -1,7 +1,11 @@
 "use client";
 
-import { useRef, useEffect, type ReactNode } from "react";
+import { useRef, useEffect, useState, type ReactNode } from "react";
 
+/**
+ * Scroll-triggered fade-in wrapper.
+ * Animation class deferred until after hydration so SSR content stays visible.
+ */
 export default function ScrollFadeIn({
   children,
   delay,
@@ -12,8 +16,14 @@ export default function ScrollFadeIn({
   className?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
     const el = ref.current;
     if (!el) return;
 
@@ -29,12 +39,13 @@ export default function ScrollFadeIn({
 
     observer.observe(el);
     return () => observer.disconnect();
-  }, []);
+  }, [mounted]);
 
   const delayClass = delay ? `delay-${delay}` : "";
+  const animClass = mounted ? `scroll-fade-in ${delayClass}` : "";
 
   return (
-    <div ref={ref} className={`scroll-fade-in ${delayClass} ${className}`}>
+    <div ref={ref} className={`${animClass} ${className}`.trim()}>
       {children}
     </div>
   );
