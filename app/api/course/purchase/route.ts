@@ -15,15 +15,23 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    // Read course_slug from request body (default to investing-101 for backward compat)
-    let courseSlug = "investing-101";
+    // Read course_slug from request body
+    let courseSlug: string;
     try {
       const body = await request.json();
       if (body.course_slug && typeof body.course_slug === "string") {
         courseSlug = body.course_slug;
+      } else {
+        return NextResponse.json(
+          { error: "course_slug is required" },
+          { status: 400 }
+        );
       }
     } catch {
-      // Empty body — use default
+      return NextResponse.json(
+        { error: "Invalid request body" },
+        { status: 400 }
+      );
     }
 
     const admin = createAdminClient();

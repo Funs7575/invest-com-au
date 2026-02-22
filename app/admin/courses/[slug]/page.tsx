@@ -298,23 +298,37 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
             />
           </div>
 
+          <div>
+            <label className="block text-xs font-semibold text-slate-700 mb-1">Description</label>
+            <textarea
+              value={courseForm.description || ""}
+              onChange={(e) => setCourseForm({ ...courseForm, description: e.target.value })}
+              rows={3}
+              className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"
+            />
+          </div>
+
           <div className="grid md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Price (cents)</label>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">Price (AUD)</label>
               <input
                 type="number"
-                value={courseForm.price || 0}
-                onChange={(e) => setCourseForm({ ...courseForm, price: parseInt(e.target.value) || 0 })}
+                step="0.01"
+                value={courseForm.price ? (courseForm.price / 100).toFixed(2) : "0"}
+                onChange={(e) => setCourseForm({ ...courseForm, price: Math.round(parseFloat(e.target.value || "0") * 100) })}
                 className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"
+                placeholder="297.00"
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Pro Price (cents)</label>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">Pro Price (AUD)</label>
               <input
                 type="number"
-                value={courseForm.pro_price || ""}
-                onChange={(e) => setCourseForm({ ...courseForm, pro_price: e.target.value ? parseInt(e.target.value) : null })}
+                step="0.01"
+                value={courseForm.pro_price ? (courseForm.pro_price / 100).toFixed(2) : ""}
+                onChange={(e) => setCourseForm({ ...courseForm, pro_price: e.target.value ? Math.round(parseFloat(e.target.value) * 100) : null })}
                 className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"
+                placeholder="197.00"
               />
             </div>
             <div>
@@ -347,6 +361,40 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
                 type="text"
                 value={courseForm.stripe_pro_price_id || ""}
                 onChange={(e) => setCourseForm({ ...courseForm, stripe_pro_price_id: e.target.value })}
+                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"
+              />
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">Estimated Hours</label>
+              <input
+                type="number"
+                step="0.5"
+                value={courseForm.estimated_hours || ""}
+                onChange={(e) => setCourseForm({ ...courseForm, estimated_hours: e.target.value ? parseFloat(e.target.value) : null })}
+                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"
+                placeholder="3.0"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">Revenue Share %</label>
+              <input
+                type="number"
+                min="0"
+                max="100"
+                value={courseForm.revenue_share_percent || 0}
+                onChange={(e) => setCourseForm({ ...courseForm, revenue_share_percent: parseInt(e.target.value) || 0 })}
+                className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">Guarantee</label>
+              <input
+                type="text"
+                value={courseForm.guarantee || ""}
+                onChange={(e) => setCourseForm({ ...courseForm, guarantee: e.target.value })}
                 className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"
               />
             </div>
@@ -504,7 +552,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
       )}
 
       {/* Lessons list */}
-      <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+      <div className="bg-white border border-slate-200 rounded-xl overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="bg-slate-50">
             <tr>
@@ -542,6 +590,25 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
                   )}
                 </td>
                 <td className="px-4 py-3 text-right space-x-2">
+                  <button
+                    onClick={() => {
+                      setEditingLessonId(editingLessonId === l.id ? null : l.id);
+                      setLessonForm({
+                        title: l.title,
+                        slug: l.slug,
+                        module_index: String(l.module_index),
+                        module_title: l.module_title,
+                        lesson_index: String(l.lesson_index),
+                        video_url: l.video_url || "",
+                        duration_minutes: String(l.duration_minutes),
+                        is_free_preview: l.is_free_preview,
+                        content: l.content || "",
+                      });
+                    }}
+                    className="text-green-600 hover:text-green-800 text-xs font-medium"
+                  >
+                    {editingLessonId === l.id ? "Cancel" : "Edit"}
+                  </button>
                   <Link
                     href={`/courses/${slug}/${l.slug}`}
                     target="_blank"
@@ -557,6 +624,101 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
                   </button>
                 </td>
               </tr>
+              {editingLessonId === l.id && (
+                <tr>
+                  <td colSpan={6} className="px-4 py-4 bg-slate-50">
+                    <div className="space-y-3">
+                      <div className="grid md:grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 mb-1">Title</label>
+                          <input
+                            type="text"
+                            value={lessonForm.title}
+                            onChange={(e) => setLessonForm({ ...lessonForm, title: e.target.value })}
+                            className="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-sm"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 mb-1">Video URL</label>
+                          <input
+                            type="url"
+                            value={lessonForm.video_url}
+                            onChange={(e) => setLessonForm({ ...lessonForm, video_url: e.target.value })}
+                            className="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-sm"
+                            placeholder="https://youtube.com/watch?v=..."
+                          />
+                        </div>
+                      </div>
+                      <div className="grid md:grid-cols-4 gap-3">
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 mb-1">Module #</label>
+                          <input
+                            type="number"
+                            min="1"
+                            value={lessonForm.module_index}
+                            onChange={(e) => setLessonForm({ ...lessonForm, module_index: e.target.value })}
+                            className="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-sm"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 mb-1">Module Title</label>
+                          <input
+                            type="text"
+                            value={lessonForm.module_title}
+                            onChange={(e) => setLessonForm({ ...lessonForm, module_title: e.target.value })}
+                            className="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-sm"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-700 mb-1">Lesson #</label>
+                          <input
+                            type="number"
+                            min="1"
+                            value={lessonForm.lesson_index}
+                            onChange={(e) => setLessonForm({ ...lessonForm, lesson_index: e.target.value })}
+                            className="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-sm"
+                          />
+                        </div>
+                        <div className="flex items-end">
+                          <label className="flex items-center gap-2 text-sm pb-1.5">
+                            <input
+                              type="checkbox"
+                              checked={lessonForm.is_free_preview}
+                              onChange={(e) => setLessonForm({ ...lessonForm, is_free_preview: e.target.checked })}
+                            />
+                            Free Preview
+                          </label>
+                        </div>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-700 mb-1">Content (HTML)</label>
+                        <textarea
+                          value={lessonForm.content}
+                          onChange={(e) => setLessonForm({ ...lessonForm, content: e.target.value })}
+                          rows={4}
+                          className="w-full border border-slate-200 rounded-lg px-3 py-1.5 text-sm font-mono"
+                        />
+                      </div>
+                      <button
+                        onClick={() => handleUpdateLesson(l.id, {
+                          title: lessonForm.title,
+                          slug: lessonForm.slug,
+                          module_index: parseInt(lessonForm.module_index),
+                          module_title: lessonForm.module_title,
+                          lesson_index: parseInt(lessonForm.lesson_index),
+                          video_url: lessonForm.video_url || null,
+                          duration_minutes: parseInt(lessonForm.duration_minutes) || 10,
+                          is_free_preview: lessonForm.is_free_preview,
+                          content: lessonForm.content || null,
+                        })}
+                        className="px-4 py-2 bg-green-700 text-white text-xs font-bold rounded-lg hover:bg-green-800 transition-colors"
+                      >
+                        Save Changes
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              )}
             ))}
             {lessons.length === 0 && (
               <tr>

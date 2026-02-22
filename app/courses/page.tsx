@@ -54,7 +54,7 @@ function CourseCard({ course }: { course: Course }) {
         </div>
       ) : (
         <div className="aspect-[16/9] bg-gradient-to-br from-green-600 to-emerald-700 flex items-center justify-center">
-          <span className="text-4xl">🎓</span>
+          <span className="text-4xl" aria-hidden="true">🎓</span>
         </div>
       )}
 
@@ -157,7 +157,7 @@ export default async function CoursesPage() {
       <div className="py-12">
         <div className="container-custom max-w-6xl">
           {/* Breadcrumb */}
-          <nav className="text-sm text-slate-500 mb-6">
+          <nav aria-label="Breadcrumb" className="text-sm text-slate-500 mb-6">
             <Link href="/" className="hover:text-green-700">
               Home
             </Link>

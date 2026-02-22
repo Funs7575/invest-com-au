@@ -29,6 +29,10 @@ export function useCourseAccess(courseSlug: string = "investing-101") {
       .then(({ data }) => {
         setHasCourse(!!data);
         setLoading(false);
+      })
+      .catch(() => {
+        setHasCourse(false);
+        setLoading(false);
       });
   }, [user, userLoading, courseSlug]);
 

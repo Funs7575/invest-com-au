@@ -82,7 +82,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
       <div className="py-12">
         <div className="container-custom max-w-5xl">
           {/* Breadcrumb */}
-          <nav className="text-sm text-slate-500 mb-6">
+          <nav aria-label="Breadcrumb" className="text-sm text-slate-500 mb-6">
             <Link href="/" className="hover:text-green-700">Home</Link>
             <span className="mx-2">/</span>
             <Link href="/courses" className="hover:text-green-700">Courses</Link>
@@ -220,7 +220,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
               Pay once and get every lesson, future updates
               {course.guarantee ? `, and a ${course.guarantee.toLowerCase().replace(".", "")}` : ""}
             </p>
-            <CoursePageClient course={course} />
+            <CoursePageClient course={course} firstLessonSlug={lessons[0]?.slug} />
           </div>
 
           {/* Creator bio */}

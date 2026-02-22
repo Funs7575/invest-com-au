@@ -15,11 +15,18 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const lessonId = body.lesson_id;
-    const courseSlug = body.course_slug || "investing-101";
+    const courseSlug = body.course_slug;
 
     if (!lessonId || typeof lessonId !== "number") {
       return NextResponse.json(
         { error: "lesson_id is required" },
+        { status: 400 }
+      );
+    }
+
+    if (!courseSlug || typeof courseSlug !== "string") {
+      return NextResponse.json(
+        { error: "course_slug is required" },
         { status: 400 }
       );
     }

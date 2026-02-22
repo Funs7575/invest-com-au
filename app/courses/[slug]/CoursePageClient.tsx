@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { useSubscription } from "@/lib/hooks/useSubscription";
 import { useCourseAccess } from "@/lib/hooks/useCourseAccess";
 import type { Course } from "@/lib/types";
@@ -8,13 +9,24 @@ import Link from "next/link";
 
 interface Props {
   course: Course;
+  firstLessonSlug?: string;
 }
 
-export default function CoursePageClient({ course }: Props) {
+export default function CoursePageClient({ course, firstLessonSlug }: Props) {
+  const searchParams = useSearchParams();
   const { user, isPro, loading: subLoading } = useSubscription();
   const { hasCourse, loading: courseLoading } = useCourseAccess(course.slug);
   const [purchasing, setPurchasing] = useState(false);
   const [error, setError] = useState("");
+  const [showPurchaseSuccess, setShowPurchaseSuccess] = useState(false);
+
+  useEffect(() => {
+    if (searchParams.get("purchased") === "true") {
+      setShowPurchaseSuccess(true);
+      // Clean up URL without reload
+      window.history.replaceState({}, "", `/courses/${course.slug}`);
+    }
+  }, [searchParams, course.slug]);
 
   const loading = subLoading || courseLoading;
   const priceInCents = isPro && course.pro_price ? course.pro_price : course.price;
@@ -51,9 +63,15 @@ export default function CoursePageClient({ course }: Props) {
   };
 
   // Already purchased — show access CTA
-  if (!loading && hasCourse) {
+  if (!loading && (hasCourse || showPurchaseSuccess)) {
     return (
-      <div className="max-w-md mx-auto rounded-2xl border-2 border-green-300 bg-gradient-to-b from-green-50 to-white p-8 text-center">
+      <div className="max-w-md mx-auto">
+        {showPurchaseSuccess && (
+          <div className="mb-4 rounded-xl bg-green-50 border border-green-200 p-4 text-center">
+            <p className="text-sm font-semibold text-green-800">Purchase successful! Welcome to the course.</p>
+          </div>
+        )}
+        <div className="rounded-2xl border-2 border-green-300 bg-gradient-to-b from-green-50 to-white p-8 text-center">
         <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
           <svg className="w-6 h-6 text-green-700" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
         </div>
@@ -62,11 +80,12 @@ export default function CoursePageClient({ course }: Props) {
           Continue where you left off or start from the beginning.
         </p>
         <Link
-          href={`/courses/${course.slug}`}
+          href={`/courses/${course.slug}/${firstLessonSlug || ""}`}
           className="inline-block w-full py-3 bg-green-700 text-white font-bold rounded-lg hover:bg-green-800 hover:scale-105 hover:shadow-[0_0_12px_rgba(21,128,61,0.3)] transition-all duration-200"
         >
           Go to Lessons →
         </Link>
+        </div>
       </div>
     );
   }

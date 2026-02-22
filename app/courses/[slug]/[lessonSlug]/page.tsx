@@ -72,10 +72,13 @@ export default async function LessonPage({ params }: PageProps) {
     if (purchased) {
       hasAccess = true;
 
+      // Only fetch progress for lessons in THIS course
+      const courseLessonIds = lessons.map((l) => l.id);
       const { data: progress } = await supabase
         .from("course_progress")
         .select("lesson_id")
-        .eq("user_id", user.id);
+        .eq("user_id", user.id)
+        .in("lesson_id", courseLessonIds);
       completedLessonIds = (progress || []).map((p: { lesson_id: number }) => p.lesson_id);
     }
   }
@@ -111,7 +114,7 @@ export default async function LessonPage({ params }: PageProps) {
       <div className="py-8">
         <div className="container-custom max-w-6xl">
           {/* Breadcrumb */}
-          <nav className="text-sm text-slate-500 mb-6">
+          <nav aria-label="Breadcrumb" className="text-sm text-slate-500 mb-6">
             <Link href="/" className="hover:text-green-700">Home</Link>
             <span className="mx-2">/</span>
             <Link href="/courses" className="hover:text-green-700">Courses</Link>

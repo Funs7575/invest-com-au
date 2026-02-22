@@ -51,6 +51,7 @@ export default function LessonClient({
     lesson ? completedLessonIds.includes(lesson.id) : false
   );
   const [marking, setMarking] = useState(false);
+  const [markError, setMarkError] = useState("");
 
   // Calculate overall progress
   const totalLessonsInModules = modules.reduce((s, m) => s + m.lessons.length, 0);
@@ -60,6 +61,7 @@ export default function LessonClient({
   const handleMarkComplete = async () => {
     if (!lesson) return;
     setMarking(true);
+    setMarkError("");
     try {
       const res = await fetch("/api/course/progress", {
         method: "POST",
@@ -68,9 +70,11 @@ export default function LessonClient({
       });
       if (res.ok) {
         setCompleted(true);
+      } else {
+        setMarkError("Failed to save progress. Please try again.");
       }
     } catch {
-      // Silently fail
+      setMarkError("Failed to save progress. Please try again.");
     }
     setMarking(false);
   };
@@ -246,13 +250,18 @@ export default function LessonClient({
                   Lesson completed
                 </div>
               ) : (
-                <button
-                  onClick={handleMarkComplete}
-                  disabled={marking}
-                  className="px-5 py-2.5 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors disabled:opacity-50"
-                >
-                  {marking ? "Saving..." : "Mark as Complete"}
-                </button>
+                <>
+                  <button
+                    onClick={handleMarkComplete}
+                    disabled={marking}
+                    className="px-5 py-2.5 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors disabled:opacity-50"
+                  >
+                    {marking ? "Saving..." : "Mark as Complete"}
+                  </button>
+                  {markError && (
+                    <p className="text-xs text-red-600 mt-2">{markError}</p>
+                  )}
+                </>
               )}
             </div>
           )}
