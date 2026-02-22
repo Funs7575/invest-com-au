@@ -173,7 +173,7 @@ export default function HomepageComparisonTable({
                       href={getAffiliateLink(broker)}
                       target="_blank"
                       rel={AFFILIATE_REL}
-                      className="inline-block px-4 py-2 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-600 hover:shadow-md transition-all duration-200 active:scale-[0.97] group-hover:scale-105 group-hover:shadow-[0_0_12px_rgba(21,128,61,0.3)]"
+                      className="inline-block px-4 py-2 bg-amber-600 text-white text-sm font-bold rounded-lg hover:bg-amber-700 hover:shadow-md transition-all duration-200 active:scale-[0.97] group-hover:scale-105 group-hover:shadow-[0_0_12px_rgba(217,119,6,0.3)]"
                     >
                       {getBenefitCta(broker, "compare")}
                     </a>
@@ -266,7 +266,7 @@ export default function HomepageComparisonTable({
               href={getAffiliateLink(broker)}
               target="_blank"
               rel={AFFILIATE_REL}
-              className="block w-full text-center py-3 bg-green-700 text-white font-bold rounded-lg mt-4 hover:bg-green-800 transition-colors"
+              className="block w-full text-center py-3 bg-amber-600 text-white font-bold rounded-lg mt-4 hover:bg-amber-700 transition-colors"
             >
               {getBenefitCta(broker, "compare")}
             </a>
@@ -275,7 +275,7 @@ export default function HomepageComparisonTable({
       </div>
 
       {/* Affiliate disclosure */}
-      <div id="advertiser-disclosure" className="text-[0.6rem] text-slate-500 mt-4 text-center">
+      <div id="advertiser-disclosure" className="text-xs text-slate-500 mt-4 text-center">
         <p>{ADVERTISER_DISCLOSURE_SHORT}</p>
         <CompactDisclaimerLine />
       </div>

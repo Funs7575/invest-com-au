@@ -49,6 +49,7 @@ interface BrokerReviewProps {
   authorName?: string;
   authorTitle?: string;
   authorUrl?: string;
+  authorAvatarUrl?: string;
   datePublished?: string | null;
   dateModified?: string | null;
   userReviews?: UserReview[];
@@ -72,6 +73,7 @@ export default function BrokerReviewClient({
   authorName,
   authorTitle,
   authorUrl,
+  authorAvatarUrl,
   datePublished,
   dateModified,
   userReviews = [],
@@ -164,7 +166,7 @@ export default function BrokerReviewClient({
             target="_blank"
             rel={AFFILIATE_REL}
             onClick={() => trackClick(b.slug, b.name, 'review-header', `/broker/${b.slug}`, 'review')}
-            className="inline-block px-6 py-3 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors"
+            className="inline-block px-6 py-3 bg-amber-600 text-white font-semibold rounded-lg hover:bg-amber-700 transition-colors"
           >
             {getBenefitCta(b, 'review')}
           </a>
@@ -178,7 +180,11 @@ export default function BrokerReviewClient({
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 mb-4 pb-4 border-b border-slate-100">
           {authorName && (
             <span className="flex items-center gap-1.5">
-              <svg className="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+              {authorAvatarUrl ? (
+                <img src={authorAvatarUrl} alt={authorName} className="w-6 h-6 rounded-full object-cover" />
+              ) : (
+                <svg className="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+              )}
               Reviewed by{" "}
               {authorUrl ? (
                 <a href={authorUrl} className="font-semibold text-slate-700 hover:text-green-700 transition-colors">
@@ -315,7 +321,7 @@ export default function BrokerReviewClient({
           )}
           {/* Editorial independence notice */}
           <div className="mt-3 pt-3 border-t border-slate-200">
-            <p className="text-[0.7rem] text-slate-400 leading-relaxed">
+            <p className="text-xs text-slate-400 leading-relaxed">
               <strong className="text-slate-500">Editorial independence:</strong> Our ratings and rankings are determined by our editorial team using a standardised methodology. Affiliate partnerships may influence which brokers we review but never our ratings or recommendations.{" "}
               <Link href="/how-we-verify" className="text-green-700 hover:underline">Read our full methodology →</Link>
             </p>
@@ -366,7 +372,7 @@ export default function BrokerReviewClient({
               target="_blank"
               rel={AFFILIATE_REL}
               onClick={() => trackClick(b.slug, b.name, 'review-inline-1', `/broker/${b.slug}`, 'review')}
-              className="shrink-0 px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
+              className="shrink-0 px-4 py-2 bg-amber-600 text-white text-sm font-semibold rounded-lg hover:bg-amber-700 transition-colors"
             >
               {getBenefitCta(b, 'review')}
             </a>
@@ -457,7 +463,7 @@ export default function BrokerReviewClient({
               target="_blank"
               rel={AFFILIATE_REL}
               onClick={() => trackClick(b.slug, b.name, 'review-inline-2', `/broker/${b.slug}`, 'review')}
-              className="shrink-0 px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
+              className="shrink-0 px-4 py-2 bg-amber-600 text-white text-sm font-semibold rounded-lg hover:bg-amber-700 transition-colors"
             >
               {getBenefitCta(b, 'review')}
             </a>

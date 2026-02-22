@@ -17,7 +17,6 @@ const moreLinks = [
   { name: "Courses", href: "/courses" },
   { name: "Calculators", href: "/calculators" },
   { name: "Head-to-Head", href: "/versus" },
-  { name: "Stories", href: "/stories" },
 ];
 
 const popularLinks = [
@@ -112,7 +111,7 @@ export default function Header() {
               user ? (
                 <Link
                   href="/account"
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-semibold rounded-full transition-colors border border-slate-200 text-slate-700 hover:bg-slate-50"
+                  className="flex items-center gap-1.5 px-3.5 py-2 min-h-[44px] text-sm font-semibold rounded-full transition-colors border border-slate-200 text-slate-700 hover:bg-slate-50"
                   title="My Account"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -123,7 +122,7 @@ export default function Header() {
               ) : (
                 <Link
                   href="/pro"
-                  className="px-3 py-1.5 bg-amber-500/10 text-amber-700 text-sm font-semibold rounded-full hover:bg-amber-500/20 transition-colors border border-amber-500/20"
+                  className="px-3.5 py-2 min-h-[44px] flex items-center bg-amber-500/10 text-amber-700 text-sm font-semibold rounded-full hover:bg-amber-500/20 transition-colors border border-amber-500/20"
                 >
                   Pro
                 </Link>

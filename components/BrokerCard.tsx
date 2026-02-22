@@ -63,7 +63,7 @@ export default function BrokerCard({ broker, badge, context = 'compare' }: { bro
         target="_blank"
         rel={AFFILIATE_REL}
         onClick={() => trackClick(broker.slug, broker.name, 'compare-mobile', window.location.pathname, context)}
-        className="block w-full text-center text-sm px-3 py-2.5 font-bold rounded-lg transition-all duration-200 mb-3 bg-green-700 text-white hover:bg-green-800 hover:shadow-[0_0_12px_rgba(21,128,61,0.3)] hover:scale-105 active:scale-[0.98]"
+        className="block w-full text-center text-sm px-3 py-2.5 font-bold rounded-lg transition-all duration-200 mb-3 bg-amber-600 text-white hover:bg-amber-700 hover:shadow-[0_0_12px_rgba(217,119,6,0.3)] hover:scale-105 active:scale-[0.98]"
       >
         {getBenefitCta(broker, context)}
       </a>

@@ -34,11 +34,11 @@ export function breadcrumbJsonLd(
 /* ─── E-E-A-T: Review author & editorial info ─── */
 
 export const REVIEW_AUTHOR = {
-  name: "Invest.com.au Editorial Team",
-  jobTitle: "Financial Product Analysts",
+  name: "Finn Webster",
+  jobTitle: "Founder & Lead Editor",
   description:
-    "Our editorial team researches, tests, and reviews Australian share trading platforms. Every review follows a standardised methodology covering fees, safety (CHESS sponsorship), platform quality, and account features.",
-  url: absoluteUrl("/about"),
+    "Finn is the founder and lead editor at Invest.com.au. He has personally tested over 20 Australian brokers, comparing fees, platforms, and CHESS sponsorship status to help everyday Australians make smarter investment decisions.",
+  url: absoluteUrl("/reviewers/finn-webster"),
 };
 
 export const REVIEW_METHODOLOGY_URL = absoluteUrl("/how-we-verify");

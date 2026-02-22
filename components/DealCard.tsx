@@ -66,7 +66,7 @@ export default function DealCard({ broker }: { broker: Broker }) {
 
       {/* Deal terms (fine print) */}
       {broker.deal_terms && (
-        <p className="text-[0.6rem] text-slate-400 mb-3 leading-relaxed">
+        <p className="text-xs text-slate-400 mb-3 leading-relaxed">
           {broker.deal_terms}
         </p>
       )}
@@ -92,13 +92,13 @@ export default function DealCard({ broker }: { broker: Broker }) {
         onClick={() =>
           trackClick(broker.slug, broker.name, "deals-hub", "/deals", "compare")
         }
-        className="block w-full text-center py-2.5 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 hover:scale-105 hover:shadow-[0_0_12px_rgba(21,128,61,0.3)] transition-all duration-200 active:scale-[0.98]"
+        className="block w-full text-center py-2.5 bg-amber-600 text-white text-sm font-bold rounded-lg hover:bg-amber-700 hover:scale-105 hover:shadow-[0_0_12px_rgba(217,119,6,0.3)] transition-all duration-200 active:scale-[0.98]"
       >
         Claim Deal →
       </a>
 
       {/* Risk warning */}
-      <p className="text-[0.5rem] text-slate-400 text-center mt-2">
+      <p className="text-xs text-slate-400 text-center mt-2">
         {RISK_WARNING_CTA}
       </p>
     </div>

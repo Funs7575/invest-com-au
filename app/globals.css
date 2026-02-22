@@ -195,7 +195,8 @@ body {
   from { opacity: 1; transform: translateX(0); }
   to { opacity: 0; transform: translateX(-30px); }
 }
-.quiz-question-enter {
+/* Only animate when JS is ready — prevents invisible quiz on SSR */
+.js-ready .quiz-question-enter {
   animation: slideInRight 0.35s ease-out forwards;
 }
 .quiz-answer-selected {
@@ -228,7 +229,8 @@ body {
 .celebrate-emoji {
   animation: celebrateEmoji 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
-.result-card-in {
+/* Only animate when JS is ready — prevents invisible result cards on SSR */
+.js-ready .result-card-in {
   opacity: 0;
   animation: resultCardIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
@@ -257,11 +259,11 @@ body {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
-.reveal-text-in {
+.js-ready .reveal-text-in {
   opacity: 0;
   animation: revealTextIn 0.4s ease-out 0.2s forwards;
 }
-.reveal-text-in-delay {
+.js-ready .reveal-text-in-delay {
   opacity: 0;
   animation: revealTextIn 0.4s ease-out 0.4s forwards;
 }
@@ -356,7 +358,8 @@ body {
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
 }
-.stagger-item {
+/* Only hide & animate when JS is ready — prevents invisible cards on SSR */
+.js-ready .stagger-item {
   opacity: 0;
   animation: staggerFadeIn 0.4s ease-out forwards;
 }

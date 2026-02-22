@@ -172,8 +172,8 @@ export default async function LessonPage({ params }: PageProps) {
 
           {/* Compliance */}
           <div className="mt-12 space-y-2 text-center">
-            <p className="text-[0.6rem] text-slate-400">{GENERAL_ADVICE_WARNING}</p>
-            <p className="text-[0.6rem] text-slate-400">{COURSE_AFFILIATE_DISCLOSURE}</p>
+            <p className="text-xs text-slate-400">{GENERAL_ADVICE_WARNING}</p>
+            <p className="text-xs text-slate-400">{COURSE_AFFILIATE_DISCLOSURE}</p>
           </div>
         </div>
       </div>

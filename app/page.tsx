@@ -300,7 +300,7 @@ export default async function HomePage() {
       {/* General Advice Warning */}
       <section className="py-6 bg-white border-t border-slate-100">
         <div className="container-custom">
-          <p className="text-[0.7rem] text-slate-400 text-center leading-relaxed max-w-3xl mx-auto">
+          <p className="text-xs text-slate-400 text-center leading-relaxed max-w-3xl mx-auto">
             <strong className="text-slate-500">General Advice Warning:</strong>{" "}
             {GENERAL_ADVICE_WARNING}
           </p>

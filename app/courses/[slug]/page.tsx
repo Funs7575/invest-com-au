@@ -297,9 +297,9 @@ export default async function CourseDetailPage({ params }: PageProps) {
 
           {/* Compliance */}
           <div className="space-y-3 text-center">
-            <p className="text-[0.6rem] text-slate-400">{GENERAL_ADVICE_WARNING}</p>
-            <p className="text-[0.6rem] text-slate-400">{COURSE_AFFILIATE_DISCLOSURE}</p>
-            <p className="text-[0.6rem] text-slate-400">{ADVERTISER_DISCLOSURE_SHORT}</p>
+            <p className="text-xs text-slate-400">{GENERAL_ADVICE_WARNING}</p>
+            <p className="text-xs text-slate-400">{COURSE_AFFILIATE_DISCLOSURE}</p>
+            <p className="text-xs text-slate-400">{ADVERTISER_DISCLOSURE_SHORT}</p>
             <p className="text-xs text-slate-400 mt-4">
               {course.creator ? (
                 <>Course by <span className="font-medium">{course.creator.full_name}</span>. </>

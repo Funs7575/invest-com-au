@@ -168,6 +168,7 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
           authorName={brokerReviewer?.full_name || REVIEW_AUTHOR.name}
           authorTitle={REVIEW_AUTHOR.jobTitle}
           authorUrl={brokerReviewer ? `/reviewers/${brokerReviewer.slug}` : REVIEW_AUTHOR.url}
+          authorAvatarUrl={brokerReviewer?.avatar_url || undefined}
           datePublished={datePublished}
           dateModified={dateModified}
           userReviews={(userReviews || []) as UserReview[]}

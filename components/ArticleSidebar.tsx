@@ -95,7 +95,7 @@ export default function ArticleSidebar({
                   "article"
                 )
               }
-              className="block w-full text-center px-4 py-3 bg-green-700 text-white font-bold text-sm rounded-lg hover:bg-green-800 hover:scale-[1.02] transition-all"
+              className="block w-full text-center px-4 py-3 bg-amber-600 text-white font-bold text-sm rounded-lg hover:bg-amber-700 hover:scale-[1.02] transition-all"
             >
               Open Account &rarr;
             </a>
@@ -110,7 +110,7 @@ export default function ArticleSidebar({
         </div>
 
         {/* Disclaimer */}
-        <p className="text-[0.6rem] text-slate-400 mt-3 leading-relaxed px-1">
+        <p className="text-xs text-slate-400 mt-3 leading-relaxed px-1">
           {ADVERTISER_DISCLOSURE_SHORT}{" "}
           <a href="/how-we-earn" className="underline hover:text-slate-600">
             Learn more

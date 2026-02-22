@@ -48,7 +48,7 @@ export default function DisclosureBanner({
 
   // "inline" variant — expandable
   return (
-    <div className="text-[0.6rem] text-slate-500 leading-relaxed">
+    <div className="text-xs text-slate-500 leading-relaxed">
       <span>{ADVERTISER_DISCLOSURE_SHORT}</span>{" "}
       <button
         onClick={() => setExpanded(!expanded)}

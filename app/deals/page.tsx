@@ -109,7 +109,7 @@ export default async function DealsPage() {
           )}
 
           {/* Affiliate disclosure */}
-          <div id="advertiser-disclosure" className="text-[0.6rem] text-slate-500 mt-8 text-center">
+          <div id="advertiser-disclosure" className="text-xs text-slate-500 mt-8 text-center">
             <p>{ADVERTISER_DISCLOSURE_SHORT}</p>
           </div>
 

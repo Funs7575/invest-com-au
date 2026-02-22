@@ -11,6 +11,11 @@ const nextConfig: NextConfig = {
         hostname: "guggzyqceattncjwvgyc.supabase.co",
         pathname: "/storage/**",
       },
+      {
+        protocol: "https",
+        hostname: "ui-avatars.com",
+        pathname: "/api/**",
+      },
     ],
   },
   async headers() {

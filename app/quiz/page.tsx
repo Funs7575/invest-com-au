@@ -325,7 +325,7 @@ export default function QuizPage() {
 
           {/* General Advice Warning */}
           <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 mb-6">
-            <p className="text-[0.7rem] text-slate-500 leading-relaxed">
+            <p className="text-xs text-slate-500 leading-relaxed">
               <strong>General Advice Warning:</strong> {GENERAL_ADVICE_WARNING} {ADVERTISER_DISCLOSURE_SHORT}
             </p>
           </div>
@@ -333,7 +333,7 @@ export default function QuizPage() {
           {/* Sponsored broker disclosure */}
           {allResults.some(r => r.broker && isSponsored(r.broker)) && (
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-6">
-              <p className="text-[0.7rem] text-blue-700 leading-relaxed">
+              <p className="text-xs text-blue-700 leading-relaxed">
                 <strong>Sponsor Disclosure:</strong> Sponsored partners may receive a minor position boost if they already score in the top 5. {SPONSORED_DISCLOSURE_SHORT}
               </p>
             </div>
@@ -481,7 +481,7 @@ export default function QuizPage() {
                             target="_blank"
                             rel={AFFILIATE_REL}
                             onClick={() => trackClick(r.broker!.slug, r.broker!.name, `quiz-compare-${i + 1}`, '/quiz', 'quiz')}
-                            className="inline-block px-3 py-1.5 bg-green-700 text-white text-xs font-semibold rounded-md hover:bg-green-800 transition-colors"
+                            className="inline-block px-3 py-1.5 bg-amber-600 text-white text-xs font-semibold rounded-md hover:bg-amber-700 transition-colors"
                           >
                             Visit →
                           </a>
@@ -548,7 +548,7 @@ export default function QuizPage() {
                     );
                   })}
                 </div>
-                <p className="text-[0.6rem] text-slate-400">Scores are editorially set and weighted by your answers. Sponsored partners may receive a minor position boost if they already score in the top 5.</p>
+                <p className="text-xs text-slate-400">Scores are editorially set and weighted by your answers. Sponsored partners may receive a minor position boost if they already score in the top 5.</p>
               </div>
             )}
           </div>
@@ -587,7 +587,7 @@ export default function QuizPage() {
                         target="_blank"
                         rel={AFFILIATE_REL}
                         onClick={() => trackClick(r.broker!.slug, r.broker!.name, `quiz-result-${i + 2}`, '/quiz', 'quiz')}
-                        className="hidden sm:inline-flex shrink-0 px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
+                        className="hidden sm:inline-flex shrink-0 px-4 py-2 bg-amber-600 text-white text-sm font-semibold rounded-lg hover:bg-amber-700 transition-colors"
                       >
                         {getBenefitCta(r.broker, 'quiz')}
                       </a>
@@ -597,7 +597,7 @@ export default function QuizPage() {
                       target="_blank"
                       rel={AFFILIATE_REL}
                       onClick={() => trackClick(r.broker!.slug, r.broker!.name, `quiz-result-${i + 2}`, '/quiz', 'quiz')}
-                      className="sm:hidden block w-full text-center mt-3 px-4 py-2.5 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors"
+                      className="sm:hidden block w-full text-center mt-3 px-4 py-2.5 bg-amber-600 text-white text-sm font-bold rounded-lg hover:bg-amber-700 transition-colors"
                     >
                       {getBenefitCta(r.broker, 'quiz')}
                     </a>
@@ -626,7 +626,7 @@ export default function QuizPage() {
           {/* P1 #7: Crypto warning when results include a crypto broker */}
           {hasCryptoResult && (
             <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
-              <p className="text-[0.7rem] text-amber-700 leading-relaxed">
+              <p className="text-xs text-amber-700 leading-relaxed">
                 <strong>Crypto Warning:</strong> {CRYPTO_WARNING}
               </p>
             </div>
