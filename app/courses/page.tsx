@@ -182,7 +182,13 @@ export default async function CoursesPage() {
               <h2 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">
                 Featured
               </h2>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className={`grid gap-6 ${
+                featured.length === 1
+                  ? "max-w-md mx-auto"
+                  : featured.length === 2
+                    ? "md:grid-cols-2 max-w-3xl mx-auto"
+                    : "md:grid-cols-2 lg:grid-cols-3"
+              }`}>
                 {featured.map((c) => (
                   <CourseCard key={c.id} course={c} />
                 ))}
@@ -198,7 +204,13 @@ export default async function CoursesPage() {
                   All Courses
                 </h2>
               )}
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className={`grid gap-6 ${
+                rest.length === 1
+                  ? "max-w-md mx-auto"
+                  : rest.length === 2
+                    ? "md:grid-cols-2 max-w-3xl mx-auto"
+                    : "md:grid-cols-2 lg:grid-cols-3"
+              }`}>
                 {rest.map((c) => (
                   <CourseCard key={c.id} course={c} />
                 ))}

@@ -86,7 +86,7 @@ export default async function HomePage() {
       />
 
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-b from-green-950 via-green-900 to-green-800 py-16 md:py-20 overflow-hidden">
+      <section className="relative bg-gradient-to-b from-green-950 via-green-900 to-green-800 py-10 md:py-14 overflow-hidden">
         {/* Subtle grid pattern overlay */}
         <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'40\' height=\'40\' viewBox=\'0 0 40 40\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M0 0h40v40H0V0zm1 1v38h38V1H1z\' fill=\'%23fff\' fill-opacity=\'1\' fill-rule=\'evenodd\'/%3E%3C/svg%3E")' }} />
         <div className="relative max-w-4xl mx-auto px-4 text-center">
