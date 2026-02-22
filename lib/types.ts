@@ -2,7 +2,7 @@ export interface TeamMember {
   id: number;
   slug: string;
   full_name: string;
-  role: 'contributor' | 'staff_writer' | 'editor' | 'expert_reviewer';
+  role: 'contributor' | 'staff_writer' | 'editor' | 'expert_reviewer' | 'course_creator';
   short_bio?: string;
   credentials?: string[];
   disclosure?: string;
@@ -228,6 +228,32 @@ export interface SwitchStory {
   updated_at?: string;
 }
 
+export interface Course {
+  id: number;
+  slug: string;
+  title: string;
+  subtitle?: string;
+  description?: string;
+  creator_id?: number;
+  creator?: TeamMember;
+  price: number;
+  pro_price?: number;
+  currency: string;
+  stripe_price_id?: string;
+  stripe_pro_price_id?: string;
+  revenue_share_percent: number;
+  estimated_hours?: number;
+  level: 'beginner' | 'intermediate' | 'advanced';
+  cover_image_url?: string;
+  guarantee?: string;
+  status: 'draft' | 'published' | 'archived';
+  published_at?: string;
+  featured: boolean;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface CourseLesson {
   id: number;
   course_slug: string;
@@ -237,6 +263,8 @@ export interface CourseLesson {
   title: string;
   slug: string;
   content?: string;
+  video_url?: string;
+  video_duration_seconds?: number;
   duration_minutes: number;
   related_brokers?: string[];
   is_free_preview: boolean;
@@ -248,9 +276,24 @@ export interface CoursePurchase {
   id: number;
   user_id: string;
   course_slug: string;
+  course_id?: number;
   stripe_payment_id?: string;
   amount_paid: number;
   purchased_at: string;
+}
+
+export interface CourseRevenue {
+  id: number;
+  course_id: number;
+  purchase_id: number;
+  creator_id: number;
+  total_amount: number;
+  creator_amount: number;
+  platform_amount: number;
+  revenue_share_percent: number;
+  status: 'pending' | 'paid' | 'void';
+  paid_at?: string;
+  created_at: string;
 }
 
 export interface CourseProgress {

@@ -1,5 +1,4 @@
 import { getStripe } from "@/lib/stripe";
-import { COURSE_CONFIG } from "@/lib/course";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
@@ -16,14 +15,39 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
+    // Read course_slug from request body (default to investing-101 for backward compat)
+    let courseSlug = "investing-101";
+    try {
+      const body = await request.json();
+      if (body.course_slug && typeof body.course_slug === "string") {
+        courseSlug = body.course_slug;
+      }
+    } catch {
+      // Empty body — use default
+    }
+
     const admin = createAdminClient();
+
+    // Look up course from DB
+    const { data: course } = await admin
+      .from("courses")
+      .select("*")
+      .eq("slug", courseSlug)
+      .maybeSingle();
+
+    if (!course || course.status !== "published") {
+      return NextResponse.json(
+        { error: "Course not found" },
+        { status: 404 }
+      );
+    }
 
     // Check if already purchased (prevent double-buy)
     const { data: existingPurchase } = await admin
       .from("course_purchases")
       .select("id")
       .eq("user_id", user.id)
-      .eq("course_slug", COURSE_CONFIG.slug)
+      .eq("course_slug", courseSlug)
       .limit(1)
       .maybeSingle();
 
@@ -44,9 +68,21 @@ export async function POST(request: NextRequest) {
       .maybeSingle();
 
     const isPro = !!activeSub;
-    const priceId = isPro
-      ? COURSE_CONFIG.stripeProPriceId
-      : COURSE_CONFIG.stripePriceId;
+
+    // Get stripe price ID from DB, fallback to env vars for investing-101
+    let priceId: string | null = null;
+    if (isPro && course.stripe_pro_price_id) {
+      priceId = course.stripe_pro_price_id;
+    } else if (course.stripe_price_id) {
+      priceId = course.stripe_price_id;
+    }
+
+    // Fallback for investing-101 during transition
+    if (!priceId && courseSlug === "investing-101") {
+      priceId = isPro
+        ? process.env.STRIPE_COURSE_PRO_PRICE_ID || null
+        : process.env.STRIPE_COURSE_PRICE_ID || null;
+    }
 
     if (!priceId) {
       return NextResponse.json(
@@ -95,11 +131,11 @@ export async function POST(request: NextRequest) {
       customer: customerId,
       mode: "payment",
       line_items: [{ price: priceId, quantity: 1 }],
-      success_url: `${siteUrl}/course?purchased=true`,
-      cancel_url: `${siteUrl}/course?checkout=cancelled`,
+      success_url: `${siteUrl}/courses/${courseSlug}?purchased=true`,
+      cancel_url: `${siteUrl}/courses/${courseSlug}?checkout=cancelled`,
       metadata: {
         type: "course",
-        course_slug: COURSE_CONFIG.slug,
+        course_slug: courseSlug,
         supabase_user_id: user.id,
       },
       allow_promotion_codes: true,

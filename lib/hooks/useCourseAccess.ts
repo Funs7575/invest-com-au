@@ -3,9 +3,8 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useUser } from "./useUser";
-import { COURSE_SLUG } from "@/lib/course";
 
-export function useCourseAccess() {
+export function useCourseAccess(courseSlug: string = "investing-101") {
   const { user, loading: userLoading } = useUser();
   const [hasCourse, setHasCourse] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -24,14 +23,14 @@ export function useCourseAccess() {
       .from("course_purchases")
       .select("id")
       .eq("user_id", user.id)
-      .eq("course_slug", COURSE_SLUG)
+      .eq("course_slug", courseSlug)
       .limit(1)
       .maybeSingle()
       .then(({ data }) => {
         setHasCourse(!!data);
         setLoading(false);
       });
-  }, [user, userLoading]);
+  }, [user, userLoading, courseSlug]);
 
   return { user, hasCourse, loading: loading || userLoading };
 }

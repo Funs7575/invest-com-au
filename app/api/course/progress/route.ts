@@ -1,6 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { COURSE_SLUG } from "@/lib/course";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -16,6 +15,7 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const lessonId = body.lesson_id;
+    const courseSlug = body.course_slug || "investing-101";
 
     if (!lessonId || typeof lessonId !== "number") {
       return NextResponse.json(
@@ -26,12 +26,12 @@ export async function POST(request: NextRequest) {
 
     const admin = createAdminClient();
 
-    // Verify user has purchased the course
+    // Verify user has purchased this specific course
     const { data: purchase } = await admin
       .from("course_purchases")
       .select("id")
       .eq("user_id", user.id)
-      .eq("course_slug", COURSE_SLUG)
+      .eq("course_slug", courseSlug)
       .limit(1)
       .maybeSingle();
 

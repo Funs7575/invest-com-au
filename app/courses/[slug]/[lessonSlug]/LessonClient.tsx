@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { CourseLesson } from "@/lib/types";
 import type { CourseModule } from "@/lib/course";
 import { sanitizeHtml } from "@/lib/sanitize-html";
+import VideoEmbed from "@/components/VideoEmbed";
 
 interface LessonInfo {
   index: number;
@@ -18,12 +19,16 @@ interface Props {
   lessonInfo: LessonInfo;
   moduleInfo: { index: number; title: string };
   modules: CourseModule[];
+  courseSlug: string;
   prevSlug: string | null;
   nextSlug: string | null;
   lessonIdMap: Record<string, number>;
   completedLessonIds: number[];
   isFreePreview: boolean;
   isLoggedIn: boolean;
+  totalLessons: number;
+  courseTitle: string;
+  creator?: { fullName: string; avatarUrl?: string };
 }
 
 export default function LessonClient({
@@ -31,12 +36,16 @@ export default function LessonClient({
   lessonInfo,
   moduleInfo,
   modules,
+  courseSlug,
   prevSlug,
   nextSlug,
   lessonIdMap,
   completedLessonIds,
   isFreePreview,
   isLoggedIn,
+  totalLessons,
+  courseTitle,
+  creator,
 }: Props) {
   const [completed, setCompleted] = useState(
     lesson ? completedLessonIds.includes(lesson.id) : false
@@ -44,9 +53,9 @@ export default function LessonClient({
   const [marking, setMarking] = useState(false);
 
   // Calculate overall progress
-  const totalLessons = modules.reduce((s, m) => s + m.lessons.length, 0);
+  const totalLessonsInModules = modules.reduce((s, m) => s + m.lessons.length, 0);
   const completedCount = completedLessonIds.length + (completed && lesson && !completedLessonIds.includes(lesson.id) ? 1 : 0);
-  const progressPercent = totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
+  const progressPercent = totalLessonsInModules > 0 ? Math.round((completedCount / totalLessonsInModules) * 100) : 0;
 
   const handleMarkComplete = async () => {
     if (!lesson) return;
@@ -55,7 +64,7 @@ export default function LessonClient({
       const res = await fetch("/api/course/progress", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lesson_id: lesson.id }),
+        body: JSON.stringify({ lesson_id: lesson.id, course_slug: courseSlug }),
       });
       if (res.ok) {
         setCompleted(true);
@@ -68,7 +77,7 @@ export default function LessonClient({
 
   return (
     <div className="flex flex-col lg:flex-row gap-8">
-      {/* Mobile course nav — collapsible outline (visible below lg) */}
+      {/* Mobile course nav */}
       <details className="lg:hidden mb-6 rounded-xl border border-slate-200 bg-white w-full">
         <summary className="flex items-center justify-between cursor-pointer px-4 py-3 text-sm font-semibold text-slate-700">
           <span>Course Outline — Module {moduleInfo.index}: {moduleInfo.title}</span>
@@ -86,7 +95,7 @@ export default function LessonClient({
                   return (
                     <li key={l.slug}>
                       <Link
-                        href={`/course/${l.slug}`}
+                        href={`/courses/${courseSlug}/${l.slug}`}
                         className={`block px-2 py-1 rounded text-xs transition-colors ${
                           isCurrent
                             ? "bg-green-50 text-green-800 font-bold"
@@ -138,7 +147,7 @@ export default function LessonClient({
                     return (
                       <li key={l.slug}>
                         <Link
-                          href={`/course/${l.slug}`}
+                          href={`/courses/${courseSlug}/${l.slug}`}
                           className={`flex items-center gap-2 px-2 py-1.5 rounded text-xs transition-colors ${
                             isCurrent
                               ? "bg-green-50 text-green-800 font-bold"
@@ -189,6 +198,11 @@ export default function LessonClient({
 
         <h1 className="text-2xl md:text-3xl font-extrabold mb-6">{lessonInfo.title}</h1>
 
+        {/* Video embed */}
+        {lesson?.video_url && (
+          <VideoEmbed url={lesson.video_url} title={lessonInfo.title} />
+        )}
+
         {/* Lesson content */}
         {lesson?.content ? (
           <article
@@ -206,9 +220,22 @@ export default function LessonClient({
           </div>
         )}
 
+        {/* Creator attribution */}
+        {creator && (
+          <div className="mt-8 flex items-center gap-3 text-xs text-slate-400">
+            {creator.avatarUrl ? (
+              <img src={creator.avatarUrl} alt={creator.fullName} className="w-5 h-5 rounded-full object-cover" />
+            ) : (
+              <div className="w-5 h-5 rounded-full bg-slate-200 flex items-center justify-center text-[0.4rem] font-bold text-slate-500">
+                {creator.fullName.charAt(0)}
+              </div>
+            )}
+            <span>Lesson by {creator.fullName}</span>
+          </div>
+        )}
+
         {/* Mark complete + navigation */}
         <div className="mt-10 pt-6 border-t border-slate-200">
-          {/* Mark complete button */}
           {isLoggedIn && !isFreePreview && lesson && (
             <div className="mb-6">
               {completed ? (
@@ -216,7 +243,7 @@ export default function LessonClient({
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>
-                  Lesson completed ✓
+                  Lesson completed
                 </div>
               ) : (
                 <button
@@ -224,17 +251,16 @@ export default function LessonClient({
                   disabled={marking}
                   className="px-5 py-2.5 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors disabled:opacity-50"
                 >
-                  {marking ? "Saving..." : "Mark as Complete ✓"}
+                  {marking ? "Saving..." : "Mark as Complete"}
                 </button>
               )}
             </div>
           )}
 
-          {/* Prev / Next */}
           <div className="flex items-center justify-between">
             {prevSlug ? (
               <Link
-                href={`/course/${prevSlug}`}
+                href={`/courses/${courseSlug}/${prevSlug}`}
                 className="flex items-center gap-2 text-sm text-slate-600 hover:text-green-700 transition-colors"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -246,7 +272,7 @@ export default function LessonClient({
 
             {nextSlug ? (
               <Link
-                href={`/course/${nextSlug}`}
+                href={`/courses/${courseSlug}/${nextSlug}`}
                 className="flex items-center gap-2 text-sm font-semibold text-green-700 hover:text-green-800 transition-colors"
               >
                 Next Lesson
@@ -256,7 +282,7 @@ export default function LessonClient({
               </Link>
             ) : (
               <Link
-                href="/course"
+                href={`/courses/${courseSlug}`}
                 className="flex items-center gap-2 text-sm font-semibold text-green-700 hover:text-green-800 transition-colors"
               >
                 Back to Course Overview
@@ -273,10 +299,10 @@ export default function LessonClient({
           <div className="mt-8 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-6 text-center">
             <h3 className="font-bold text-slate-700 mb-1">Enjoying the free preview?</h3>
             <p className="text-sm text-slate-500 mb-4">
-              Get all {modules.reduce((s, m) => s + m.lessons.length, 0)} lessons with lifetime access.
+              Get all {totalLessons} lessons with lifetime access.
             </p>
             <Link
-              href="/course#pricing"
+              href={`/courses/${courseSlug}#pricing`}
               className="inline-block px-6 py-2.5 bg-green-700 text-white font-bold text-sm rounded-lg hover:bg-green-800 hover:scale-105 transition-all duration-200"
             >
               Get Full Course →

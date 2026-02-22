@@ -1,4 +1,4 @@
-import type { TeamMember, Broker } from "./types";
+import type { TeamMember, Broker, Course } from "./types";
 
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app";
@@ -50,6 +50,7 @@ const ROLE_LABELS: Record<string, string> = {
   staff_writer: "Staff Writer",
   editor: "Editor",
   expert_reviewer: "Expert Reviewer",
+  course_creator: "Course Creator",
 };
 
 export function formatRole(role: string): string {
@@ -363,5 +364,51 @@ export function dealsHubJsonLd(dealBrokers: Broker[]) {
         },
       },
     })),
+  };
+}
+
+/* ─── Course JSON-LD ─── */
+
+export function courseJsonLd(
+  course: Course,
+  totalLessons: number,
+  totalModules: number
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    name: course.title,
+    description: course.description || course.subtitle || "",
+    provider: {
+      "@type": "Organization",
+      name: SITE_NAME,
+      url: absoluteUrl("/"),
+    },
+    ...(course.creator
+      ? {
+          instructor: {
+            "@type": "Person",
+            name: course.creator.full_name,
+            url: absoluteUrl(`/authors/${course.creator.slug}`),
+          },
+        }
+      : {}),
+    hasCourseInstance: {
+      "@type": "CourseInstance",
+      courseMode: "online",
+      ...(course.estimated_hours
+        ? { courseWorkload: `PT${Math.round(course.estimated_hours)}H` }
+        : {}),
+    },
+    offers: {
+      "@type": "Offer",
+      price: (course.price / 100).toFixed(2),
+      priceCurrency: course.currency,
+      availability: "https://schema.org/InStock",
+      url: absoluteUrl(`/courses/${course.slug}`),
+    },
+    numberOfCredits: totalModules,
+    educationalLevel: course.level === "beginner" ? "Beginner" : course.level === "intermediate" ? "Intermediate" : "Advanced",
+    inLanguage: "en-AU",
   };
 }

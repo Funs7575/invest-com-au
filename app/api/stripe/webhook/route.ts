@@ -114,21 +114,55 @@ export async function POST(request: NextRequest) {
 
           if (userId) {
             const supabase = createAdminClient();
-            const { error } = await supabase
+
+            // Look up course for course_id + revenue tracking
+            const { data: course } = await supabase
+              .from("courses")
+              .select("id, creator_id, revenue_share_percent")
+              .eq("slug", courseSlug)
+              .maybeSingle();
+
+            const { data: purchase, error } = await supabase
               .from("course_purchases")
               .upsert(
                 {
                   user_id: userId,
                   course_slug: courseSlug,
+                  course_id: course?.id || null,
                   stripe_payment_id: session.payment_intent as string,
                   amount_paid: session.amount_total || 0,
                   purchased_at: new Date().toISOString(),
                 },
                 { onConflict: "user_id,course_slug" }
-              );
+              )
+              .select("id")
+              .single();
 
             if (error) {
               console.error("Course purchase upsert error:", error.message);
+            }
+
+            // Insert revenue tracking row if course has a creator
+            if (purchase && course?.creator_id && course.revenue_share_percent > 0) {
+              const totalAmount = session.amount_total || 0;
+              const creatorAmount = Math.round(totalAmount * (course.revenue_share_percent / 100));
+              const platformAmount = totalAmount - creatorAmount;
+
+              const { error: revenueError } = await supabase
+                .from("course_revenue")
+                .insert({
+                  course_id: course.id,
+                  purchase_id: purchase.id,
+                  creator_id: course.creator_id,
+                  total_amount: totalAmount,
+                  creator_amount: creatorAmount,
+                  platform_amount: platformAmount,
+                  revenue_share_percent: course.revenue_share_percent,
+                });
+
+              if (revenueError) {
+                console.error("Course revenue insert error:", revenueError.message);
+              }
             }
           }
         }

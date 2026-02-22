@@ -69,12 +69,26 @@ const nextConfig: NextConfig = {
               "img-src 'self' data: https: https://www.googletagmanager.com; " +
               "font-src 'self'; " +
               "connect-src 'self' https://*.supabase.co https://va.vercel-scripts.com https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://*.analytics.google.com https://api.stripe.com; " +
-              "frame-src https://js.stripe.com https://hooks.stripe.com; " +
+              "frame-src https://js.stripe.com https://hooks.stripe.com https://www.youtube-nocookie.com https://player.vimeo.com; " +
               "frame-ancestors 'none'; " +
               "base-uri 'self'; " +
               "form-action 'self'",
           },
         ],
+      },
+    ];
+  },
+  async redirects() {
+    return [
+      {
+        source: "/course",
+        destination: "/courses/investing-101",
+        permanent: true,
+      },
+      {
+        source: "/course/:slug",
+        destination: "/courses/investing-101/:slug",
+        permanent: true,
       },
     ];
   },
