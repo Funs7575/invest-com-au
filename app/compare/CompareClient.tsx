@@ -13,7 +13,7 @@ import { getMostRecentFeeCheck } from "@/lib/utils";
 import ScrollReveal from "@/components/ScrollReveal";
 import PromoBadge from "@/components/PromoBadge";
 import SponsorBadge from "@/components/SponsorBadge";
-import { getSponsorSortPriority, isSponsored } from "@/lib/sponsorship";
+import { getSponsorSortPriority, isSponsored, getPlacementWinners, type PlacementWinner } from "@/lib/sponsorship";
 import Icon from "@/components/Icon";
 
 type FilterType = 'all' | 'beginner' | 'chess' | 'free' | 'us' | 'smsf' | 'low-fx' | 'crypto';
@@ -62,6 +62,26 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   const [sortCol, setSortCol] = useState<SortCol>('rating');
   const [sortDir, setSortDir] = useState<1 | -1>(-1);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+
+  // Marketplace campaign allocation
+  const [campaignWinners, setCampaignWinners] = useState<PlacementWinner[]>([]);
+  const [cpcCampaigns, setCpcCampaigns] = useState<PlacementWinner[]>([]);
+
+  useEffect(() => {
+    // Fetch featured placement winners
+    getPlacementWinners("compare-top").then(setCampaignWinners);
+    // Fetch CPC campaigns for click attribution
+    getPlacementWinners("compare-cpc").then(setCpcCampaigns);
+  }, []);
+
+  // Build a map of broker_slug → campaign_id for CPC attribution
+  const cpcCampaignMap = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const w of cpcCampaigns) {
+      if (!map.has(w.broker_slug)) map.set(w.broker_slug, w.campaign_id);
+    }
+    return map;
+  }, [cpcCampaigns]);
 
   function toggleSelected(slug: string) {
     setSelected(prev => {
@@ -123,8 +143,16 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   }, [brokers, activeFilter, searchQuery]);
 
   const sorted = useMemo(() => {
-    return [...filtered].sort((a, b) => {
-      // Sponsored brokers always float to top
+    // Campaign winners from marketplace get priority over sponsorship tiers
+    const campaignWinnerSlugs = new Set(campaignWinners.map(w => w.broker_slug));
+
+    const baseSorted = [...filtered].sort((a, b) => {
+      // Campaign winners get top priority (position 0)
+      const aIsCampaignWinner = campaignWinnerSlugs.has(a.slug) ? 0 : 1;
+      const bIsCampaignWinner = campaignWinnerSlugs.has(b.slug) ? 0 : 1;
+      if (aIsCampaignWinner !== bIsCampaignWinner) return aIsCampaignWinner - bIsCampaignWinner;
+
+      // Then sponsored brokers
       const aPriority = getSponsorSortPriority(a.sponsorship_tier);
       const bPriority = getSponsorSortPriority(b.sponsorship_tier);
       if (aPriority !== bPriority) return aPriority - bPriority;
@@ -137,7 +165,9 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
       }
       return ((av as number) - (bv as number)) * sortDir;
     });
-  }, [filtered, sortCol, sortDir]);
+
+    return baseSorted;
+  }, [filtered, sortCol, sortDir, campaignWinners]);
 
   // Compute editor picks
   const editorPicks = useMemo(() => {
@@ -330,7 +360,10 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                             {broker.name}
                           </a>
                           <PromoBadge broker={broker} />
-                          <SponsorBadge broker={broker} />
+                          {campaignWinners.some(w => w.broker_slug === broker.slug) && (
+                            <span className="text-[0.55rem] font-bold px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded-full uppercase tracking-wide">Sponsored</span>
+                          )}
+                          {!campaignWinners.some(w => w.broker_slug === broker.slug) && <SponsorBadge broker={broker} />}
                         </div>
                         {!isSponsored(broker) && editorPicks[broker.slug] && (
                           <div className="text-[0.6rem] font-extrabold text-green-700 uppercase tracking-wide">
@@ -359,7 +392,11 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                   </td>
                   <td className="px-4 py-3 text-center">
                     <a
-                      href={getAffiliateLink(broker)}
+                      href={(() => {
+                        const link = getAffiliateLink(broker);
+                        const cid = cpcCampaignMap.get(broker.slug);
+                        return cid ? `${link}${link.includes('?') ? '&' : '?'}cid=${cid}` : link;
+                      })()}
                       target="_blank"
                       rel={AFFILIATE_REL}
                       onClick={() => trackClick(broker.slug, broker.name, 'compare-table', '/compare', 'compare')}

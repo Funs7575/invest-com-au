@@ -172,7 +172,53 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  // ── 4. Send alert email if anything expired ──
+  // ── 4. Auto-complete marketplace campaigns whose end_date has passed ──
+  const today = now.slice(0, 10); // YYYY-MM-DD
+  const { data: expiredCampaigns, error: campaignErr } = await supabase
+    .from("campaigns")
+    .select("id, broker_slug, name, end_date")
+    .in("status", ["active", "approved"])
+    .not("end_date", "is", null)
+    .lt("end_date", today);
+
+  if (!campaignErr) {
+    for (const campaign of expiredCampaigns || []) {
+      const { error: updateErr } = await supabase
+        .from("campaigns")
+        .update({ status: "completed", updated_at: now })
+        .eq("id", campaign.id);
+
+      if (updateErr) {
+        results.push({
+          slug: campaign.broker_slug,
+          type: "campaign_expire_error",
+          detail: updateErr.message,
+        });
+        continue;
+      }
+
+      await supabase.from("admin_audit_log").insert({
+        action: "auto_expire",
+        entity_type: "campaign",
+        entity_id: String(campaign.id),
+        entity_name: campaign.name,
+        details: {
+          broker_slug: campaign.broker_slug,
+          end_date: campaign.end_date,
+          reason: "campaign end_date passed",
+        },
+        admin_email: "system@cron",
+      });
+
+      results.push({
+        slug: campaign.broker_slug,
+        type: "campaign_completed",
+        detail: `Campaign "${campaign.name}" auto-completed (ended: ${campaign.end_date})`,
+      });
+    }
+  }
+
+  // ── 5. Send alert email if anything expired ──
   if (results.length > 0) {
     await sendExpiryAlert(results);
   }
@@ -181,6 +227,7 @@ export async function GET(req: NextRequest) {
     dealsExpired: results.filter((r) => r.type === "deal_expired").length,
     sponsorsExpired: results.filter((r) => r.type === "sponsorship_expired").length,
     proDealsExpired: results.filter((r) => r.type === "pro_deal_expired").length,
+    campaignsCompleted: results.filter((r) => r.type === "campaign_completed").length,
     errors: results.filter((r) => r.type.includes("error")).length,
     results,
     timestamp: now,

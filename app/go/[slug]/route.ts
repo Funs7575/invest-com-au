@@ -96,6 +96,38 @@ export async function GET(
     destination.searchParams.set("click_id", inserted.click_id);
   }
 
+  // ── Marketplace CPC attribution ──
+  // If a campaign_id was passed via ?cid= query param, record the CPC click
+  const cid = request.nextUrl.searchParams.get("cid");
+  if (cid) {
+    try {
+      const campaignId = parseInt(cid, 10);
+      if (!isNaN(campaignId)) {
+        const { recordCpcClick } = await import("@/lib/marketplace/allocation");
+
+        // Look up campaign rate
+        const { data: campaign } = await supabase
+          .from("campaigns")
+          .select("rate_cents, status, broker_slug")
+          .eq("id", campaignId)
+          .eq("status", "active")
+          .maybeSingle();
+
+        if (campaign && campaign.broker_slug === slug) {
+          await recordCpcClick(campaignId, slug, campaign.rate_cents, {
+            click_id: inserted?.click_id || undefined,
+            page: referer.slice(0, 500) || `/go/${slug}`,
+            ip_hash: ipHash,
+            user_agent: userAgent.slice(0, 200),
+          });
+        }
+      }
+    } catch (err) {
+      // Non-blocking: CPC billing failure should not prevent redirect
+      console.error("CPC click recording error:", err);
+    }
+  }
+
   // 302 redirect with no-index and no-cache headers
   const response = NextResponse.redirect(destination.toString(), 302);
   response.headers.set("X-Robots-Tag", "noindex, nofollow");

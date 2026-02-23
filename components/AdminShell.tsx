@@ -30,6 +30,14 @@ const navSections = [
     ],
   },
   {
+    label: "Marketplace",
+    items: [
+      { href: "/admin/marketplace", label: "Overview", icon: "🏪" },
+      { href: "/admin/marketplace/campaigns", label: "Campaigns", icon: "📣" },
+      { href: "/admin/marketplace/brokers", label: "Broker Accounts", icon: "🤝" },
+    ],
+  },
+  {
     label: "Monetisation",
     items: [
       { href: "/admin/affiliate-links", label: "Affiliate Links", icon: "🔗" },

@@ -9,7 +9,7 @@ import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE_SHORT, CRYPTO_WARNING, SP
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import RiskWarningInline from "@/components/RiskWarningInline";
 import Icon from "@/components/Icon";
-import { applyQuizSponsorBoost, isSponsored } from "@/lib/sponsorship";
+import { applyQuizSponsorBoost, isSponsored, getPlacementWinners, type PlacementWinner } from "@/lib/sponsorship";
 import SponsorBadge from "@/components/SponsorBadge";
 import CohortInsights from "@/components/CohortInsights";
 
@@ -63,6 +63,7 @@ export default function QuizPage() {
   const [gateConsent, setGateConsent] = useState(false);
   const [gateStatus, setGateStatus] = useState<"idle" | "loading" | "error">("idle");
   const [fetchError, setFetchError] = useState<string | null>(null);
+  const [quizCampaignWinners, setQuizCampaignWinners] = useState<PlacementWinner[]>([]);
   const mountedRef = useRef(true);
   const questionHeadingRef = useRef<HTMLHeadingElement>(null);
 
@@ -70,6 +71,13 @@ export default function QuizPage() {
   useEffect(() => {
     mountedRef.current = true;
     return () => { mountedRef.current = false; };
+  }, []);
+
+  // Fetch marketplace campaign winners for quiz-boost placement
+  useEffect(() => {
+    getPlacementWinners("quiz-boost").then((winners) => {
+      if (mountedRef.current) setQuizCampaignWinners(winners);
+    });
   }, []);
 
   // Parallelised Supabase queries with error handling (P0 #3, P1 #10)
@@ -225,9 +233,24 @@ export default function QuizPage() {
 
     // Apply subtle sponsor boost: a featured_partner in positions 1-5
     // gets swapped up by 1 position (preserves trust — max 1 slot)
-    const boosted = applyQuizSponsorBoost(scored, 1, 5);
+    let boosted = applyQuizSponsorBoost(scored, 1, 5);
+
+    // Apply marketplace campaign boost: if a quiz-boost campaign winner
+    // exists in the scored list (positions 1-5), swap them up by 1 position
+    if (quizCampaignWinners.length > 0) {
+      const campaignSlugs = new Set(quizCampaignWinners.map(w => w.broker_slug));
+      const campaignIdx = boosted.findIndex(
+        (r, i) => i >= 1 && i <= 5 && r.broker && campaignSlugs.has(r.broker.slug)
+      );
+      if (campaignIdx > 0) {
+        const temp = boosted[campaignIdx];
+        boosted[campaignIdx] = boosted[campaignIdx - 1];
+        boosted[campaignIdx - 1] = temp;
+      }
+    }
+
     return boosted.slice(0, 3);
-  }, [answers, weights, brokers]);
+  }, [answers, weights, brokers, quizCampaignWinners]);
 
   // Check if any result is a crypto broker (for crypto warning)
   const hasCryptoResult = useMemo(

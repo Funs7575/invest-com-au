@@ -471,3 +471,114 @@ export interface ProDeal {
   created_at: string;
   updated_at: string;
 }
+
+// ─── Broker Marketplace OS ───
+
+export interface BrokerAccount {
+  id: string;
+  auth_user_id: string;
+  broker_slug: string;
+  email: string;
+  full_name: string;
+  role: 'owner' | 'manager' | 'viewer';
+  company_name?: string;
+  phone?: string;
+  status: 'pending' | 'active' | 'suspended';
+  last_login_at?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface BrokerWallet {
+  id: number;
+  broker_slug: string;
+  balance_cents: number;
+  lifetime_deposited_cents: number;
+  lifetime_spent_cents: number;
+  currency: string;
+  updated_at: string;
+}
+
+export interface WalletTransaction {
+  id: number;
+  broker_slug: string;
+  type: 'deposit' | 'spend' | 'refund' | 'adjustment';
+  amount_cents: number;
+  balance_after_cents: number;
+  description?: string;
+  reference_type?: string;
+  reference_id?: string;
+  stripe_payment_intent_id?: string;
+  created_by?: string;
+  created_at: string;
+}
+
+export interface MarketplacePlacement {
+  id: number;
+  slug: string;
+  name: string;
+  page: string;
+  position: string;
+  inventory_type: 'featured' | 'cpc';
+  max_slots: number;
+  base_rate_cents?: number;
+  description?: string;
+  is_active: boolean;
+}
+
+export interface Campaign {
+  id: number;
+  broker_slug: string;
+  placement_id: number;
+  name: string;
+  inventory_type: 'featured' | 'cpc';
+  rate_cents: number;
+  daily_budget_cents?: number;
+  total_budget_cents?: number;
+  total_spent_cents: number;
+  start_date: string;
+  end_date?: string;
+  status: 'pending_review' | 'approved' | 'active' | 'paused' | 'budget_exhausted' | 'completed' | 'rejected' | 'cancelled';
+  review_notes?: string;
+  reviewed_by?: string;
+  reviewed_at?: string;
+  priority: number;
+  created_at: string;
+  updated_at: string;
+  placement?: MarketplacePlacement;
+}
+
+export interface CampaignEvent {
+  id: number;
+  campaign_id: number;
+  broker_slug: string;
+  event_type: 'impression' | 'click' | 'conversion';
+  click_id?: string;
+  page?: string;
+  cost_cents: number;
+  created_at: string;
+}
+
+export interface CampaignDailyStats {
+  id: number;
+  campaign_id: number;
+  broker_slug: string;
+  stat_date: string;
+  impressions: number;
+  clicks: number;
+  conversions: number;
+  spend_cents: number;
+}
+
+export interface MarketplaceInvoice {
+  id: number;
+  broker_slug: string;
+  amount_cents: number;
+  type: 'wallet_topup' | 'manual_adjustment';
+  status: 'pending' | 'paid' | 'failed' | 'refunded';
+  stripe_payment_intent_id?: string;
+  stripe_checkout_session_id?: string;
+  description?: string;
+  paid_at?: string;
+  created_at: string;
+}

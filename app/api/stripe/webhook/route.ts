@@ -167,6 +167,59 @@ export async function POST(request: NextRequest) {
           }
         }
 
+        // Handle marketplace wallet top-ups
+        if (session.metadata?.type === "wallet_topup" && session.mode === "payment") {
+          const brokerSlug = session.metadata.broker_slug;
+          const amountCents = parseInt(session.metadata.amount_cents || "0", 10);
+          const invoiceId = session.metadata.invoice_id;
+
+          if (brokerSlug && amountCents > 0) {
+            try {
+              const { creditWallet } = await import("@/lib/marketplace/wallet");
+              const supabase = createAdminClient();
+
+              await creditWallet(
+                brokerSlug,
+                amountCents,
+                `Wallet top-up — $${(amountCents / 100).toFixed(2)}`,
+                {
+                  type: "wallet_topup",
+                  id: invoiceId || session.id,
+                  stripe_payment_intent_id: session.payment_intent as string,
+                },
+                "stripe_webhook"
+              );
+
+              // Update invoice status to paid
+              if (invoiceId) {
+                await supabase
+                  .from("marketplace_invoices")
+                  .update({
+                    status: "paid",
+                    stripe_payment_intent_id: session.payment_intent as string,
+                    paid_at: new Date().toISOString(),
+                  })
+                  .eq("id", parseInt(invoiceId, 10));
+              }
+
+              // Audit log
+              await supabase.from("admin_audit_log").insert({
+                action: "wallet_topup",
+                entity_type: "broker_wallet",
+                entity_id: brokerSlug,
+                entity_name: brokerSlug,
+                details: {
+                  amount_cents: amountCents,
+                  stripe_session: session.id,
+                },
+                admin_email: "stripe_webhook",
+              });
+            } catch (err) {
+              console.error("Wallet top-up credit error:", err);
+            }
+          }
+        }
+
         // Handle consultation bookings
         if (session.metadata?.type === "consultation" && session.mode === "payment") {
           const userId = session.metadata.supabase_user_id;

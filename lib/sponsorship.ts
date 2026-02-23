@@ -81,3 +81,42 @@ export const TIER_PRICING: Record<string, { monthly: number; label: string }> = 
   editors_pick: { monthly: 800, label: "Editor\u2019s Pick" },
   deal_of_month: { monthly: 2000, label: "Deal of the Month" },
 };
+
+/**
+ * Campaign-aware placement winners.
+ * Returns { slug, campaignId }[] for a placement, or empty array if no
+ * active campaigns — callers should fall back to sponsorship_tier sorting.
+ *
+ * This is a client-callable helper that fetches from the allocation API.
+ */
+export interface PlacementWinner {
+  broker_slug: string;
+  campaign_id: number;
+  inventory_type: "featured" | "cpc";
+  rate_cents: number;
+}
+
+export async function getPlacementWinners(
+  placementSlug: string,
+  brokerSlugs?: string[]
+): Promise<PlacementWinner[]> {
+  try {
+    const params = new URLSearchParams({ placement: placementSlug });
+    if (brokerSlugs && brokerSlugs.length > 0) {
+      params.set("brokers", brokerSlugs.join(","));
+    }
+
+    const res = await fetch(`/api/marketplace/allocation?${params.toString()}`);
+    if (!res.ok) return [];
+
+    const data = await res.json();
+    return (data.winners || []).map((w: any) => ({
+      broker_slug: w.broker_slug,
+      campaign_id: w.campaign_id,
+      inventory_type: w.inventory_type,
+      rate_cents: w.rate_cents,
+    }));
+  } catch {
+    return [];
+  }
+}
