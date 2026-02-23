@@ -12,6 +12,7 @@ import Icon from "@/components/Icon";
 import { applyQuizSponsorBoost, isSponsored, getPlacementWinners, type PlacementWinner } from "@/lib/sponsorship";
 import SponsorBadge from "@/components/SponsorBadge";
 import CohortInsights from "@/components/CohortInsights";
+import ProUpsellBanner from "@/components/ProUpsellBanner";
 
 type WeightKey = "beginner" | "low_fee" | "us_shares" | "smsf" | "crypto" | "advanced";
 
@@ -691,7 +692,7 @@ export default function QuizPage() {
                       aria-label="Email address for quiz results"
                       value={gateEmail}
                       onChange={(e) => setGateEmail(e.target.value)}
-                      className="flex-1 px-3 py-2 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
+                      className="flex-1 px-3 py-2 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-700/30 focus:border-blue-700"
                     />
                     <button
                       onClick={async () => {
@@ -719,6 +720,11 @@ export default function QuizPage() {
               <span className="text-sm text-slate-700 font-medium">✓ Results sent to {gateEmail}</span>
             </div>
           )}
+
+          {/* Pro upsell — shown below results */}
+          <div className="mb-6 result-card-in result-card-in-delay-5">
+            <ProUpsellBanner variant="inline" />
+          </div>
 
           <div className="my-6">
             <CompactDisclaimerLine />
@@ -787,7 +793,7 @@ export default function QuizPage() {
             {/* Animated analyzing spinner */}
             <div className="relative w-16 h-16 mb-6">
               <div className="absolute inset-0 rounded-full border-4 border-slate-200" />
-              <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-slate-900 analyzing-ring-spin" />
+              <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-blue-700 analyzing-ring-spin" />
             </div>
 
             <h2 className="text-xl font-bold mb-2 reveal-text-in">
@@ -799,9 +805,9 @@ export default function QuizPage() {
 
             {/* Animated progress dots */}
             <div className="flex gap-2 mt-6">
-              <span className="w-2 h-2 rounded-full bg-slate-900 analyzing-dot-1" />
-              <span className="w-2 h-2 rounded-full bg-slate-900 analyzing-dot-2" />
-              <span className="w-2 h-2 rounded-full bg-slate-900 analyzing-dot-3" />
+              <span className="w-2 h-2 rounded-full bg-blue-700 analyzing-dot-1" />
+              <span className="w-2 h-2 rounded-full bg-blue-700 analyzing-dot-2" />
+              <span className="w-2 h-2 rounded-full bg-blue-700 analyzing-dot-3" />
             </div>
           </div>
         </div>
@@ -828,7 +834,7 @@ export default function QuizPage() {
             <div
               key={i}
               className={`w-3 h-3 rounded-full transition-colors ${
-                i < step ? 'bg-slate-900' : i === step ? 'bg-slate-900 ring-2 ring-slate-700/30 ring-offset-2' : 'bg-slate-200'
+                i < step ? 'bg-blue-700' : i === step ? 'bg-blue-700 ring-2 ring-blue-700/30 ring-offset-2' : 'bg-slate-200'
               }`}
             />
           ))}
@@ -848,7 +854,7 @@ export default function QuizPage() {
             aria-valuemax={questions.length}
             aria-label={`Question ${step + 1} of ${questions.length}`}
           >
-            <div className="h-full bg-slate-900 rounded-full transition-all duration-500" style={{ width: `${((step + 1) / questions.length) * 100}%` }} />
+            <div className="h-full bg-blue-700 rounded-full transition-all duration-500" style={{ width: `${((step + 1) / questions.length) * 100}%` }} />
           </div>
         </div>
 

@@ -84,7 +84,7 @@ export default function HomepageComparisonTable({
             aria-selected={activeTab === tab}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               activeTab === tab
-                ? "bg-slate-900 text-white"
+                ? "bg-blue-700 text-white"
                 : "bg-gray-100 text-gray-600 hover:bg-gray-200"
             }`}
           >
@@ -109,19 +109,27 @@ export default function HomepageComparisonTable({
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200">
-            {displayBrokers.map((broker, i) => (
+            {displayBrokers.map((broker, i) => {
+              const isTopRated = i === 0 && !isSponsored(broker);
+              return (
               <tr
                 key={broker.id}
                 className={`group hover:bg-slate-50 transition-colors ${
                   isSponsored(broker)
                     ? "bg-blue-50/30 border-l-2 border-l-blue-400"
+                    : isTopRated
+                    ? "bg-amber-50/40 border-l-2 border-l-amber-400"
                     : editorPicks[broker.slug]
                     ? "bg-slate-50/40"
                     : ""
                 }`}
               >
                 <td className="px-3 py-3 text-sm text-slate-400 font-medium">
-                  {i + 1}
+                  {isTopRated ? (
+                    <span className="text-amber-500" title="Top Rated">🏆</span>
+                  ) : (
+                    i + 1
+                  )}
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
@@ -183,19 +191,24 @@ export default function HomepageComparisonTable({
                   </div>
                 </td>
               </tr>
-            ))}
+              );
+            })}
           </tbody>
         </table>
       </div>
 
       {/* Mobile Cards — horizontal snap scroll */}
       <div key={`mobile-${activeTab}`} className="md:hidden flex gap-3 overflow-x-auto snap-x-proximity pb-4 -mx-4 px-4 motion-safe:tab-content-enter">
-        {displayBrokers.map((broker, i) => (
+        {displayBrokers.map((broker, i) => {
+          const isTopRatedMobile = i === 0 && !isSponsored(broker);
+          return (
           <div
             key={broker.id}
             className={`rounded-xl border p-4 bg-white shrink-0 w-[85vw] max-w-[320px] ${
               isSponsored(broker)
                 ? "border-blue-400 ring-1 ring-blue-400/30 bg-blue-50/20"
+                : isTopRatedMobile
+                ? "border-amber-400 ring-1 ring-amber-400/30 bg-amber-50/20"
                 : editorPicks[broker.slug]
                 ? "border-slate-700 ring-1 ring-slate-700/30"
                 : "border-slate-200"
@@ -203,6 +216,10 @@ export default function HomepageComparisonTable({
           >
             {isSponsored(broker) ? (
               <div className="mb-2"><SponsorBadge broker={broker} /></div>
+            ) : isTopRatedMobile ? (
+              <div className="text-[0.6rem] font-extrabold uppercase tracking-wide text-amber-600 mb-2">
+                🏆 Top Rated
+              </div>
             ) : editorPicks[broker.slug] ? (
               <div className="text-[0.6rem] font-extrabold uppercase tracking-wide text-slate-700 mb-2">
                 {editorPicks[broker.slug]}
@@ -271,7 +288,8 @@ export default function HomepageComparisonTable({
               {getBenefitCta(broker, "compare")}
             </a>
           </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* Affiliate disclosure */}

@@ -35,7 +35,7 @@ export default function ArticleSearchInput() {
         defaultValue={current}
         onChange={handleChange}
         placeholder="Search articles..."
-        className="w-full md:w-80 pl-10 pr-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400"
+        className="w-full md:w-80 pl-10 pr-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700/40"
         aria-label="Search articles"
       />
     </div>

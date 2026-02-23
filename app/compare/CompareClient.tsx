@@ -12,6 +12,7 @@ import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 import { getMostRecentFeeCheck } from "@/lib/utils";
 import ScrollReveal from "@/components/ScrollReveal";
 import PromoBadge from "@/components/PromoBadge";
+import ProUpsellBanner from "@/components/ProUpsellBanner";
 import SponsorBadge from "@/components/SponsorBadge";
 import { getSponsorSortPriority, isSponsored, getPlacementWinners, type PlacementWinner } from "@/lib/sponsorship";
 import Icon from "@/components/Icon";
@@ -243,7 +244,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               aria-selected={activeFilter === f.key}
               className={`shrink-0 px-4 py-2 text-sm font-medium rounded-full filter-pill ${
                 activeFilter === f.key
-                  ? 'bg-slate-900 text-white shadow-sm scale-105'
+                  ? 'bg-blue-700 text-white shadow-sm scale-105'
                   : 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:scale-[1.02]'
               }`}
             >
@@ -260,7 +261,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search brokers by name..."
-            className="w-full md:w-80 px-4 py-2.5 pl-10 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400"
+            className="w-full md:w-80 px-4 py-2.5 pl-10 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700"
             aria-label="Search brokers by name"
           />
           {searchQuery && (
@@ -277,7 +278,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         {/* Quiz prompt inline */}
         <div className="flex items-center gap-2 mb-4 text-xs text-slate-500">
           <span>Not sure which to pick?</span>
-          <Link href="/quiz" className="text-slate-700 font-semibold hover:text-slate-900 transition-colors">
+          <Link href="/quiz" className="text-blue-700 font-semibold hover:text-blue-800 transition-colors">
             Take the 60-sec quiz →
           </Link>
         </div>
@@ -400,7 +401,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                       target="_blank"
                       rel={AFFILIATE_REL}
                       onClick={() => trackClick(broker.slug, broker.name, 'compare-table', '/compare', 'compare')}
-                      className="inline-block px-4 py-2 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 transition-all duration-200 group-hover:scale-105 group-hover:shadow-[0_0_12px_rgba(21,128,61,0.3)]"
+                      className="inline-block px-4 py-2 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 transition-all duration-200 group-hover:scale-105 group-hover:shadow-lg"
                     >
                       {getBenefitCta(broker, 'compare')}
                     </a>
@@ -487,7 +488,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                 <p className="text-lg font-medium mb-2">No brokers match &ldquo;{searchQuery}&rdquo;</p>
                 <button
                   onClick={() => setSearchQuery("")}
-                  className="text-slate-700 font-semibold hover:text-slate-900 transition-colors"
+                  className="text-blue-700 font-semibold hover:text-blue-800 transition-colors"
                 >
                   Clear search
                 </button>
@@ -498,8 +499,13 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           </div>
         )}
 
+        {/* Pro upsell */}
+        <div className="mt-8">
+          <ProUpsellBanner variant="compact" />
+        </div>
+
         {/* Bottom conversion section */}
-        <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="bg-white border border-slate-200 rounded-xl p-6">
             <Icon name="target" size={24} className="text-slate-600 mb-2" />
             <h3 className="text-lg font-bold text-slate-900 mb-1">Filter by Your Priorities</h3>
@@ -512,7 +518,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             <Icon name="bar-chart" size={24} className="text-slate-700 mb-2" />
             <h3 className="text-lg font-bold text-slate-900 mb-1">Free Fee Comparison PDF</h3>
             <p className="text-sm text-slate-600 mb-4">Download our 2026 fee audit — every broker&apos;s brokerage, FX fees, and hidden costs in one document.</p>
-            <Link href="/#email-capture" className="inline-block px-5 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 hover:scale-105 hover:shadow-[0_0_12px_rgba(21,128,61,0.3)] transition-all duration-200">
+            <Link href="/#email-capture" className="inline-block px-5 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 hover:scale-105 hover:shadow-lg transition-all duration-200">
               Get Free PDF →
             </Link>
           </div>

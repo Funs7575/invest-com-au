@@ -101,16 +101,16 @@ export default async function HomePage() {
           </div>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-6 mb-2 hero-fade-up hero-fade-up-4">
             <Link
-              href="/compare"
+              href="/quiz"
               className="px-7 py-3.5 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 hover:scale-105 hover:shadow-lg transition-all duration-200 text-sm"
             >
-              Compare All Brokers &rarr;
+              Find My Broker — 60sec Quiz &rarr;
             </Link>
             <Link
-              href="/quiz"
+              href="/compare"
               className="px-7 py-3.5 border-2 border-slate-300 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 hover:border-slate-400 hover:scale-105 transition-all duration-200 text-sm"
             >
-              Take the 60-sec Quiz &rarr;
+              Compare All Brokers &rarr;
             </Link>
           </div>
           {/* Trust signals row */}

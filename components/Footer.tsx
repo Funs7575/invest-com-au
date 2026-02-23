@@ -59,18 +59,18 @@ export default function Footer() {
 
       {/* Footer */}
       <footer className="bg-slate-800 text-slate-300">
-        <div className="container-custom py-12">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="text-white font-bold mb-4">Invest.com.au</h3>
-              <p className="text-sm">
+        <div className="container-custom py-8 md:py-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+            <div className="col-span-2 md:col-span-1">
+              <h3 className="text-white font-bold mb-3 md:mb-4">Invest.com.au</h3>
+              <p className="text-sm leading-relaxed">
                 Australia&apos;s independent broker comparison platform. No bank bias, just honest reviews.
               </p>
             </div>
 
             <div>
-              <h4 className="text-white font-semibold mb-4">Compare</h4>
-              <ul className="space-y-2 text-sm">
+              <h4 className="text-white font-semibold mb-3 md:mb-4 text-sm">Compare</h4>
+              <ul className="space-y-1.5 md:space-y-2 text-sm">
                 <li><Link href="/compare" className="hover:text-white transition-colors">All Brokers</Link></li>
                 <li><Link href="/versus" className="hover:text-white transition-colors">Head-to-Head</Link></li>
                 <li><Link href="/deals" className="hover:text-white transition-colors">Current Deals</Link></li>
@@ -80,30 +80,30 @@ export default function Footer() {
             </div>
 
             <div>
-              <h4 className="text-white font-semibold mb-4">Learn</h4>
-              <ul className="space-y-2 text-sm">
+              <h4 className="text-white font-semibold mb-3 md:mb-4 text-sm">Learn</h4>
+              <ul className="space-y-1.5 md:space-y-2 text-sm">
                 <li><Link href="/articles" className="hover:text-white transition-colors">Guides &amp; Articles</Link></li>
-                <li><Link href="/calculators" className="hover:text-white transition-colors">Tools &amp; Calculators</Link></li>
+                <li><Link href="/calculators" className="hover:text-white transition-colors">Calculators</Link></li>
                 <li><Link href="/scenarios" className="hover:text-white transition-colors">Best Broker For...</Link></li>
                 <li><Link href="/pro" className="hover:text-white transition-colors text-amber-400">Investor Pro ✦</Link></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="text-white font-semibold mb-4">About</h4>
-              <ul className="space-y-2 text-sm">
+              <h4 className="text-white font-semibold mb-3 md:mb-4 text-sm">About</h4>
+              <ul className="space-y-1.5 md:space-y-2 text-sm">
                 <li><Link href="/about" className="hover:text-white transition-colors">About Us</Link></li>
                 <li><Link href="/editorial-policy" className="hover:text-white transition-colors">Editorial Policy</Link></li>
                 <li><Link href="/how-we-earn" className="hover:text-white transition-colors">How We Earn</Link></li>
                 <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
                 <li><Link href="/methodology" className="hover:text-white transition-colors">Methodology</Link></li>
-                <li><Link href="/how-we-verify" className="hover:text-white transition-colors">How We Verify Fees</Link></li>
+                <li><Link href="/how-we-verify" className="hover:text-white transition-colors">How We Verify</Link></li>
                 <li><Link href="/terms" className="hover:text-white transition-colors">Terms of Use</Link></li>
               </ul>
             </div>
           </div>
 
-          <div className="border-t border-slate-700/40 mt-8 pt-8 text-sm text-center space-y-1">
+          <div className="border-t border-slate-700/40 mt-6 md:mt-8 pt-6 md:pt-8 text-sm text-center space-y-1">
             <p>&copy; {new Date().getFullYear()} {COMPANY_LEGAL_NAME}. All rights reserved.</p>
             <p className="text-xs text-slate-400">ACN {COMPANY_ACN} | ABN {COMPANY_ABN}</p>
           </div>

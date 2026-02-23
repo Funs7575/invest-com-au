@@ -66,7 +66,7 @@ export default function Header() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`text-sm font-medium transition-colors rounded focus:outline-none focus:ring-2 focus:ring-slate-400/40 ${isActive ? "text-slate-900 font-bold" : "text-slate-700 hover:text-slate-900"}`}
+                  className={`text-sm font-medium transition-colors rounded focus:outline-none focus:ring-2 focus:ring-blue-700/40 ${isActive ? "text-blue-700 font-bold" : "text-slate-700 hover:text-slate-900"}`}
                   {...(isActive ? { "aria-current": "page" as const } : {})}
                 >
                   {item.name}
@@ -77,7 +77,7 @@ export default function Header() {
             <div ref={moreRef} className="relative">
               <button
                 onClick={() => setMoreOpen(!moreOpen)}
-                className="text-sm font-medium text-slate-700 hover:text-slate-900 transition-colors rounded focus:outline-none focus:ring-2 focus:ring-slate-400/40 flex items-center gap-1"
+                className="text-sm font-medium text-slate-700 hover:text-slate-900 transition-colors rounded focus:outline-none focus:ring-2 focus:ring-blue-700/40 flex items-center gap-1"
                 aria-expanded={moreOpen}
                 aria-haspopup="true"
               >
@@ -101,7 +101,7 @@ export default function Header() {
             </div>
             <Link
               href="/quiz"
-              className="px-4 py-2 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400/40 focus:ring-offset-2 transition-colors"
+              className="px-4 py-2 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-700/40 focus:ring-offset-2 transition-colors"
             >
               Broker Quiz
             </Link>
@@ -132,7 +132,7 @@ export default function Header() {
           {/* Mobile Hamburger */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="md:hidden p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-700 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-400/40 rounded-lg transition-colors"
+            className="md:hidden p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-700 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-700/40 rounded-lg transition-colors"
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
           >
@@ -167,7 +167,7 @@ export default function Header() {
                   key={item.href}
                   href={item.href}
                   onClick={() => setMenuOpen(false)}
-                  className={`block px-4 py-3 text-sm font-medium rounded-lg transition-colors ${isActive ? "bg-slate-100 text-slate-900 font-bold" : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"}`}
+                  className={`block px-4 py-3 text-sm font-medium rounded-lg transition-colors ${isActive ? "bg-blue-50 text-blue-700 font-bold" : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"}`}
                   {...(isActive ? { "aria-current": "page" as const } : {})}
                 >
                   {item.name}

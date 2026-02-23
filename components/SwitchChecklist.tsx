@@ -86,7 +86,7 @@ export default function SwitchChecklist({
         </div>
         <div className="h-2.5 bg-slate-200 rounded-full overflow-hidden">
           <div
-            className="h-full bg-slate-900 rounded-full transition-all duration-500"
+            className="h-full bg-blue-700 rounded-full transition-all duration-500"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -398,7 +398,7 @@ function StepItem({
         <div
           className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
             isChecked
-              ? "bg-slate-900 border-slate-900"
+              ? "bg-blue-700 border-blue-700"
               : "border-slate-300 hover:border-slate-500"
           }`}
         >

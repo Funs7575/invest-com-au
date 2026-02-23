@@ -207,7 +207,7 @@ function TradeCostCalculator({ brokers }: { brokers: Broker[] }) {
               type="number"
               value={tradeAmount}
               onChange={(e) => setTradeAmount(e.target.value)}
-              className="w-full pl-8 pr-4 py-3 border border-slate-200 rounded-lg text-lg font-semibold focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400"
+              className="w-full pl-8 pr-4 py-3 border border-slate-200 rounded-lg text-lg font-semibold focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700"
               min={0}
               step={500}
               aria-label="Trade amount in AUD"
@@ -220,7 +220,7 @@ function TradeCostCalculator({ brokers }: { brokers: Broker[] }) {
             <button
               onClick={() => setMarket("asx")}
               className={`px-5 py-3 rounded-lg text-sm font-semibold transition-colors ${
-                market === "asx" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                market === "asx" ? "bg-blue-700 text-white" : "bg-slate-100 text-slate-700 hover:bg-slate-200"
               }`}
             >
               ASX
@@ -228,7 +228,7 @@ function TradeCostCalculator({ brokers }: { brokers: Broker[] }) {
             <button
               onClick={() => setMarket("us")}
               className={`px-5 py-3 rounded-lg text-sm font-semibold transition-colors ${
-                market === "us" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                market === "us" ? "bg-blue-700 text-white" : "bg-slate-100 text-slate-700 hover:bg-slate-200"
               }`}
             >
               US
@@ -1132,7 +1132,7 @@ function InputField({ label, value, onChange, placeholder, prefix, suffix }: {
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className={`w-full bg-white border border-slate-200 rounded-lg py-2.5 shadow-sm focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400 transition-all font-medium ${prefix ? "pl-7" : "pl-4"} ${suffix ? "pr-10" : "pr-4"}`}
+          className={`w-full bg-white border border-slate-200 rounded-lg py-2.5 shadow-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700 transition-all font-medium ${prefix ? "pl-7" : "pl-4"} ${suffix ? "pr-10" : "pr-4"}`}
         />
         {suffix && <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium text-sm">{suffix}</div>}
       </div>
@@ -1149,7 +1149,7 @@ function SelectField({ label, value, onChange, placeholder, children }: {
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 shadow-sm focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400 transition-all font-medium"
+        className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 shadow-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700 transition-all font-medium"
       >
         <option value="">{placeholder}</option>
         {children}

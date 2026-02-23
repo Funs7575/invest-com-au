@@ -124,7 +124,7 @@ export default function SwitchClient({ brokers, transferGuides }: Props) {
             <select
               value={currentSlug}
               onChange={(e) => setCurrentSlug(e.target.value)}
-              className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400"
+              className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700"
             >
               <option value="">Select your current broker...</option>
               {brokers.map((b) => (
@@ -141,7 +141,7 @@ export default function SwitchClient({ brokers, transferGuides }: Props) {
             <select
               value={targetSlug}
               onChange={(e) => setTargetSlug(e.target.value)}
-              className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400"
+              className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700"
             >
               <option value="">Select target broker...</option>
               {brokers
@@ -165,7 +165,7 @@ export default function SwitchClient({ brokers, transferGuides }: Props) {
               onChange={(e) =>
                 setHoldings(Math.max(1, parseInt(e.target.value) || 1))
               }
-              className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400"
+              className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700"
             />
           </div>
           <div>
@@ -182,7 +182,7 @@ export default function SwitchClient({ brokers, transferGuides }: Props) {
                   Math.max(0, parseInt(e.target.value) || 0)
                 )
               }
-              className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400"
+              className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700"
             />
           </div>
         </div>
@@ -288,7 +288,7 @@ export default function SwitchClient({ brokers, transferGuides }: Props) {
                       key={i}
                       className="flex items-start gap-3 p-3 bg-white border border-slate-200 rounded-lg"
                     >
-                      <div className="w-6 h-6 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
+                      <div className="w-6 h-6 rounded-full bg-blue-700 text-white flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
                         {i + 1}
                       </div>
                       <span className="text-sm text-slate-700">{step}</span>

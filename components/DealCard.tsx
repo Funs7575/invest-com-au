@@ -7,13 +7,20 @@ import { isSponsored } from "@/lib/sponsorship";
 import SponsorBadge from "@/components/SponsorBadge";
 
 export default function DealCard({ broker }: { broker: Broker }) {
-  const expiryFormatted = broker.deal_expiry
-    ? new Date(broker.deal_expiry).toLocaleDateString("en-AU", {
+  const expiryDate = broker.deal_expiry ? new Date(broker.deal_expiry) : null;
+  const expiryFormatted = expiryDate
+    ? expiryDate.toLocaleDateString("en-AU", {
         day: "numeric",
         month: "short",
         year: "numeric",
       })
     : null;
+
+  // Calculate days remaining for urgency indicator
+  const daysRemaining = expiryDate
+    ? Math.max(0, Math.ceil((expiryDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+    : null;
+  const isUrgent = daysRemaining !== null && daysRemaining <= 14;
 
   const verifiedFormatted = broker.deal_verified_date
     ? new Date(broker.deal_verified_date).toLocaleDateString("en-AU", {
@@ -58,8 +65,12 @@ export default function DealCard({ broker }: { broker: Broker }) {
       <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-3 mb-3">
         <p className="text-sm font-semibold text-slate-700">{broker.deal_text}</p>
         {expiryFormatted && (
-          <p className="text-[0.65rem] text-amber-600 mt-1">
-            Expires {expiryFormatted}
+          <p className={`text-[0.65rem] mt-1 font-medium ${isUrgent ? "text-red-600" : "text-amber-600"}`}>
+            {isUrgent && daysRemaining !== null ? (
+              <>{daysRemaining === 0 ? "Expires today!" : `Only ${daysRemaining} day${daysRemaining === 1 ? "" : "s"} left!`}</>
+            ) : (
+              <>Expires {expiryFormatted}</>
+            )}
           </p>
         )}
       </div>

@@ -21,14 +21,14 @@ export default function DisclosureBanner({
           {ADVERTISER_DISCLOSURE_SHORT}{" "}
           <Link
             href="/how-we-earn"
-            className="text-slate-700 hover:text-slate-900 underline transition-colors"
+            className="text-blue-700 hover:text-blue-800 underline transition-colors"
           >
             How we earn
           </Link>
           {" · "}
           <Link
             href="/methodology"
-            className="text-slate-700 hover:text-slate-900 underline transition-colors"
+            className="text-blue-700 hover:text-blue-800 underline transition-colors"
           >
             Methodology
           </Link>
@@ -61,7 +61,7 @@ export default function DisclosureBanner({
           {ADVERTISER_DISCLOSURE}{" "}
           <Link
             href="/how-we-earn"
-            className="text-slate-700 hover:text-slate-900 underline"
+            className="text-blue-700 hover:text-blue-800 underline"
           >
             How we earn
           </Link>

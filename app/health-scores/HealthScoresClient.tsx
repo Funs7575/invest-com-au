@@ -160,7 +160,7 @@ export default function HealthScoresClient({
               setSelectedSlug(e.target.value);
               if (e.target.value) trackEvent("health_score_select", { broker: e.target.value }, "/health-scores");
             }}
-            className="w-full md:w-80 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400"
+            className="w-full md:w-80 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700"
           >
             <option value="">Choose a broker...</option>
             {brokers.map((b) => (

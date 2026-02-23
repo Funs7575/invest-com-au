@@ -234,7 +234,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                       <select
                         value={slug}
                         onChange={(e) => updateSlug(index, e.target.value)}
-                        className="w-full border border-slate-200 rounded-lg py-2.5 px-3 text-sm font-medium bg-white hover:border-slate-300 focus:border-slate-400 focus:ring-1 focus:ring-slate-400 transition-colors"
+                        className="w-full border border-slate-200 rounded-lg py-2.5 px-3 text-sm font-medium bg-white hover:border-slate-300 focus:border-blue-700 focus:ring-1 focus:ring-blue-700 transition-colors"
                       >
                         <option value="">Choose a broker...</option>
                         {brokers.map(br => (

@@ -58,7 +58,7 @@ export default function AlertsClient({ alerts }: { alerts: RegulatoryAlert[] }) 
               onClick={() => setFilter(t.key)}
               className={`px-3 py-1.5 text-xs font-semibold rounded-full transition-colors ${
                 filter === t.key
-                  ? "bg-slate-900 text-white"
+                  ? "bg-blue-700 text-white"
                   : "bg-slate-100 text-slate-600 hover:bg-slate-200"
               }`}
             >

@@ -72,7 +72,7 @@ export default function OnThisPage({ items }: { items: TocItem[] }) {
                 onClick={() => handleClick(id)}
                 className={`block w-full text-left pl-3 py-1 text-xs leading-snug transition-all duration-200 ${
                   activeId === id
-                    ? "text-slate-700 font-semibold border-l-2 border-slate-700 -ml-[2px]"
+                    ? "text-blue-700 font-semibold border-l-2 border-blue-700 -ml-[2px]"
                     : "text-slate-500 hover:text-slate-700"
                 }`}
               >
@@ -128,7 +128,7 @@ export default function OnThisPage({ items }: { items: TocItem[] }) {
                     onClick={() => handleClick(id)}
                     className={`block w-full text-left px-3 py-2 text-sm rounded-lg transition-all duration-200 ${
                       activeId === id
-                        ? "bg-slate-50 text-slate-700 font-semibold"
+                        ? "bg-blue-50 text-blue-700 font-semibold"
                         : "text-slate-600 hover:bg-slate-50"
                     }`}
                   >
