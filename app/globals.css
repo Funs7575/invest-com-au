@@ -608,3 +608,11 @@ details > :not(summary) {
 @utility safe-area-inset-bottom {
   padding-bottom: env(safe-area-inset-bottom);
 }
+
+/* ── Print styles for PDF export ─────────────────────── */
+@media print {
+  header, footer, nav, .no-print { display: none !important; }
+  body { font-size: 12pt; color: #000; background: #fff; }
+  .print-only { display: block !important; }
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+}

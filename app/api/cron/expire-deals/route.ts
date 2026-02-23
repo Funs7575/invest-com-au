@@ -127,7 +127,52 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  // ── 3. Send alert email if anything expired ──
+  // ── 3. Expire Pro deals where end_date has passed ──
+  const { data: expiredProDeals, error: proDealsErr } = await supabase
+    .from("pro_deals")
+    .select("id, broker_slug, title, end_date")
+    .eq("status", "active")
+    .not("end_date", "is", null)
+    .lt("end_date", now);
+
+  if (!proDealsErr) {
+    for (const deal of expiredProDeals || []) {
+      const { error: updateErr } = await supabase
+        .from("pro_deals")
+        .update({ status: "expired", updated_at: now })
+        .eq("id", deal.id);
+
+      if (updateErr) {
+        results.push({
+          slug: deal.broker_slug,
+          type: "pro_deal_expire_error",
+          detail: updateErr.message,
+        });
+        continue;
+      }
+
+      await supabase.from("admin_audit_log").insert({
+        action: "auto_expire",
+        entity_type: "pro_deal",
+        entity_id: String(deal.id),
+        entity_name: deal.title,
+        details: {
+          broker_slug: deal.broker_slug,
+          end_date: deal.end_date,
+          reason: "end_date passed",
+        },
+        admin_email: "system@cron",
+      });
+
+      results.push({
+        slug: deal.broker_slug,
+        type: "pro_deal_expired",
+        detail: `Pro deal "${deal.title}" expired (was: ${deal.end_date})`,
+      });
+    }
+  }
+
+  // ── 4. Send alert email if anything expired ──
   if (results.length > 0) {
     await sendExpiryAlert(results);
   }
@@ -135,6 +180,7 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({
     dealsExpired: results.filter((r) => r.type === "deal_expired").length,
     sponsorsExpired: results.filter((r) => r.type === "sponsorship_expired").length,
+    proDealsExpired: results.filter((r) => r.type === "pro_deal_expired").length,
     errors: results.filter((r) => r.type.includes("error")).length,
     results,
     timestamp: now,

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Search, X } from "lucide-react";
 import type { Broker } from "@/lib/types";
 import { trackClick, trackEvent, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
+import { downloadCSV } from "@/lib/csv-export";
 import BrokerCard from "@/components/BrokerCard";
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 import { getMostRecentFeeCheck } from "@/lib/utils";
@@ -384,6 +385,47 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             />
           ))}
         </div>
+
+        {/* Export Buttons */}
+        {sorted.length > 0 && (
+          <div className="flex flex-wrap gap-2 mt-4 no-print">
+            <button
+              onClick={() => {
+                const headers = ["Broker", "ASX Fee", "US Fee", "FX Rate (%)", "CHESS", "SMSF", "Rating"];
+                const rows = sorted.map(b => [
+                  b.name,
+                  b.asx_fee || "N/A",
+                  b.us_fee || "N/A",
+                  b.fx_rate != null ? String(b.fx_rate) : "N/A",
+                  b.chess_sponsored ? "Yes" : "No",
+                  b.smsf_support ? "Yes" : "No",
+                  b.rating != null ? String(b.rating) : "N/A",
+                ]);
+                downloadCSV("broker-comparison.csv", headers, rows);
+                trackEvent("export_csv", { page: "compare", count: String(sorted.length) }, "/compare");
+              }}
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors text-slate-600"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Export CSV
+            </button>
+            <button
+              onClick={() => {
+                const slugs = sorted.map(b => b.slug).join(",");
+                window.open(`/export/comparison?brokers=${slugs}`, "_blank");
+                trackEvent("export_pdf", { page: "compare", count: String(sorted.length) }, "/compare");
+              }}
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors text-slate-600"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+              </svg>
+              Export PDF
+            </button>
+          </div>
+        )}
 
         {selected.size >= 2 && (
           <div className="fixed bottom-0 left-0 right-0 z-40 bg-green-700 text-white py-3 shadow-lg bounce-in-up">

@@ -61,6 +61,42 @@ const features = [
     description: "Book 1-on-1 sessions with investment experts at reduced Pro rates",
   },
   {
+    name: "Fee benchmarking radar chart",
+    free: false,
+    pro: true,
+    description: "Full dimension breakdown with comparison mode across all 6 fee dimensions",
+  },
+  {
+    name: "Broker health & risk scores",
+    free: false,
+    pro: true,
+    description: "Full safety breakdown with 5 dimensions, AFSL verification, and detailed notes",
+  },
+  {
+    name: "Regulatory & tax change alerts",
+    free: false,
+    pro: true,
+    description: "Curated ASIC/ATO/Treasury changes with detailed action items",
+  },
+  {
+    name: "Quarterly industry reports",
+    free: false,
+    pro: true,
+    description: "In-depth quarterly analysis with fee changes, new entrants, and market trends",
+  },
+  {
+    name: "Exclusive Pro deals",
+    free: false,
+    pro: true,
+    description: "Special broker sign-up bonuses and reduced fees only for Pro members",
+  },
+  {
+    name: "PDF & CSV exports",
+    free: false,
+    pro: true,
+    description: "Export broker comparisons and fee impact reports as branded PDFs or CSV files",
+  },
+  {
     name: "Ad-free experience",
     free: false,
     pro: true,

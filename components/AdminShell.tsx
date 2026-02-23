@@ -23,6 +23,10 @@ const navSections = [
       { href: "/admin/quiz-questions", label: "Quiz Questions", icon: "❓" },
       { href: "/admin/user-reviews", label: "User Reviews", icon: "⭐" },
       { href: "/admin/switch-stories", label: "Switch Stories", icon: "🔄" },
+      { href: "/admin/broker-transfer-guides", label: "Transfer Guides", icon: "📋" },
+      { href: "/admin/health-scores", label: "Health Scores", icon: "🛡️" },
+      { href: "/admin/regulatory-alerts", label: "Reg. Alerts", icon: "📢" },
+      { href: "/admin/quarterly-reports", label: "Quarterly Reports", icon: "📊" },
     ],
   },
   {
@@ -34,6 +38,7 @@ const navSections = [
       { href: "/admin/pro-subscribers", label: "Pro Members", icon: "💎" },
       { href: "/admin/courses", label: "Courses", icon: "🎓" },
       { href: "/admin/consultations", label: "Consultations", icon: "📞" },
+      { href: "/admin/pro-deals", label: "Pro Deals", icon: "🎁" },
       { href: "/admin/subscribers", label: "Subscribers", icon: "📧" },
     ],
   },

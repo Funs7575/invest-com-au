@@ -334,3 +334,140 @@ export interface ConsultationBooking {
   status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
   booked_at: string;
 }
+
+// ─── Feature 4: Fee Benchmarking ───
+
+export type BenchmarkDimension = 'asxFees' | 'usFees' | 'fxRate' | 'platformRating' | 'features' | 'costStability';
+
+export interface BrokerBenchmark {
+  slug: string;
+  name: string;
+  color: string;
+  icon?: string;
+  percentiles: Record<BenchmarkDimension, number>;
+  ranks: Record<BenchmarkDimension, number>;
+  overallPercentile: number;
+}
+
+// ─── Feature 5: Cohort Analysis ───
+
+export interface CohortStats {
+  cohort_label: string;
+  total_count: number;
+  sufficient_data: boolean;
+  broker_distribution: {
+    broker_slug: string;
+    broker_name?: string;
+    count: number;
+    percentage: number;
+  }[];
+}
+
+// ─── Feature 6: Broker Transfer Guides ───
+
+export interface TransferStep {
+  title: string;
+  description: string;
+  time_estimate: string;
+  warning?: string;
+}
+
+export interface BrokerTransferGuide {
+  id: number;
+  broker_slug: string;
+  transfer_type: 'outbound' | 'inbound';
+  steps: TransferStep[];
+  chess_transfer_fee: number;
+  supports_in_specie: boolean;
+  in_specie_notes?: string;
+  special_requirements: string[];
+  estimated_timeline_days: number;
+  exit_fees?: string;
+  helpful_links: { label: string; url: string }[];
+  created_at: string;
+  updated_at: string;
+}
+
+// ─── Feature 8: Broker Health & Risk Score ───
+
+export interface BrokerHealthScore {
+  id: number;
+  broker_slug: string;
+  overall_score: number;
+  regulatory_score: number;
+  regulatory_notes?: string;
+  client_money_score: number;
+  client_money_notes?: string;
+  financial_stability_score: number;
+  financial_stability_notes?: string;
+  platform_reliability_score: number;
+  platform_reliability_notes?: string;
+  insurance_score: number;
+  insurance_notes?: string;
+  afsl_number?: string;
+  afsl_status?: string;
+  last_reviewed_at?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// ─── Feature 9: Regulatory & Tax Change Alerts ───
+
+export interface RegulatoryAlert {
+  id: number;
+  title: string;
+  slug: string;
+  body?: string;
+  source_url?: string;
+  source_name?: string;
+  alert_type: 'tax' | 'regulatory' | 'super' | 'reporting';
+  severity: 'info' | 'important' | 'urgent';
+  effective_date?: string;
+  impact_summary?: string;
+  action_items: { text: string; url?: string }[];
+  status: 'draft' | 'published';
+  published_at?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// ─── Feature 10: Quarterly Industry Reports ───
+
+export interface QuarterlyReport {
+  id: number;
+  title: string;
+  slug: string;
+  quarter: string;
+  year: number;
+  cover_image_url?: string;
+  executive_summary?: string;
+  sections: { heading: string; body: string }[];
+  key_findings: string[];
+  fee_changes_summary: { broker: string; field: string; old_value: string; new_value: string }[];
+  new_entrants: string[];
+  status: 'draft' | 'published';
+  published_at?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// ─── Feature 11: Exclusive Pro Deals ───
+
+export interface ProDeal {
+  id: number;
+  broker_slug: string;
+  title: string;
+  description?: string;
+  deal_value?: string;
+  redemption_code?: string;
+  redemption_url?: string;
+  redemption_instructions?: string;
+  terms?: string;
+  start_date?: string;
+  end_date?: string;
+  status: 'active' | 'expired' | 'upcoming';
+  featured: boolean;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}

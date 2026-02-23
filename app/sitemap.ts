@@ -8,13 +8,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Static pages with tiered priorities
   const highPriority = new Set(["/compare", "/quiz", "/reviews", "/deals", "/pro"]);
-  const medPriority = new Set(["/versus", "/calculators", "/articles", "/scenarios", "/switch", "/stories"]);
+  const medPriority = new Set(["/versus", "/calculators", "/articles", "/scenarios", "/switch", "/stories", "/benchmark", "/health-scores", "/alerts", "/reports"]);
   // Everything else (about, how-we-earn, privacy, methodology, terms, etc.) → 0.4
 
   const staticPages = [
     "", "/compare", "/versus", "/reviews", "/calculators",
     "/articles", "/scenarios", "/quiz", "/deals", "/stories", "/about", "/how-we-earn", "/privacy",
-    "/methodology", "/how-we-verify", "/terms", "/switch", "/editorial-policy", "/pro",
+    "/methodology", "/how-we-verify", "/terms", "/switch", "/editorial-policy", "/pro", "/benchmark",
+    "/health-scores", "/alerts", "/reports",
   ].map((path) => ({
     url: `${baseUrl}${path}`,
     lastModified: new Date(),
@@ -92,5 +93,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.4,
     }));
 
-  return [...staticPages, ...bestPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages];
+  // Dynamic regulatory alert pages
+  const { data: alerts } = await supabase
+    .from("regulatory_alerts")
+    .select("slug, updated_at")
+    .eq("status", "published");
+
+  const alertPages = (alerts || []).map((a) => ({
+    url: `${baseUrl}/alerts/${a.slug}`,
+    lastModified: a.updated_at ? new Date(a.updated_at) : new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
+
+  // Dynamic quarterly report pages
+  const { data: reports } = await supabase
+    .from("quarterly_reports")
+    .select("slug, updated_at")
+    .eq("status", "published");
+
+  const reportPages = (reports || []).map((r) => ({
+    url: `${baseUrl}/reports/${r.slug}`,
+    lastModified: r.updated_at ? new Date(r.updated_at) : new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
+
+  return [...staticPages, ...bestPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages];
 }

@@ -1,15 +1,23 @@
 import { createClient } from "@/lib/supabase/server";
-import type { Broker } from "@/lib/types";
+import type { Broker, BrokerTransferGuide } from "@/lib/types";
 import SwitchClient from "./SwitchClient";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 
 export const metadata = {
-  title: "Switching Plan Generator — Calculate Your Savings",
-  description: "Generate a step-by-step switching plan between Australian brokers. See how much you'll save on fees per year.",
+  title: "Broker Switch Planner — Personalised Migration Checklist",
+  description:
+    "Generate a personalised switching checklist between Australian brokers. See savings, CHESS transfer steps, CGT implications, and a 'nothing missed' migration plan.",
   openGraph: {
-    title: `Switching Plan Generator — ${SITE_NAME}`,
-    description: "Generate a step-by-step switching plan between Australian brokers.",
-    images: [{ url: "/api/og?title=Switching+Plan+Generator&subtitle=Calculate+Your+Annual+Savings&type=default", width: 1200, height: 630 }],
+    title: `Broker Switch Planner — ${SITE_NAME}`,
+    description:
+      "Personalised broker migration checklist with CHESS transfer steps, CGT guidance, and savings calculator.",
+    images: [
+      {
+        url: "/api/og?title=Broker+Switch+Planner&subtitle=Personalised+Migration+Checklist&type=default",
+        width: 1200,
+        height: 630,
+      },
+    ],
   },
   twitter: { card: "summary_large_image" as const },
   alternates: { canonical: "/switch" },
@@ -17,11 +25,15 @@ export const metadata = {
 
 export default async function SwitchPage() {
   const supabase = await createClient();
-  const { data: brokers } = await supabase
-    .from("brokers")
-    .select("*")
-    .eq("status", "active")
-    .order("name");
+
+  const [brokersRes, guidesRes] = await Promise.all([
+    supabase
+      .from("brokers")
+      .select("*")
+      .eq("status", "active")
+      .order("name"),
+    supabase.from("broker_transfer_guides").select("*"),
+  ]);
 
   const breadcrumbLd = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
@@ -34,7 +46,10 @@ export default async function SwitchPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
-      <SwitchClient brokers={(brokers as Broker[]) || []} />
+      <SwitchClient
+        brokers={(brokersRes.data as Broker[]) || []}
+        transferGuides={(guidesRes.data as BrokerTransferGuide[]) || []}
+      />
     </>
   );
 }

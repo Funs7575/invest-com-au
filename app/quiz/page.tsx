@@ -11,6 +11,7 @@ import RiskWarningInline from "@/components/RiskWarningInline";
 import Icon from "@/components/Icon";
 import { applyQuizSponsorBoost, isSponsored } from "@/lib/sponsorship";
 import SponsorBadge from "@/components/SponsorBadge";
+import CohortInsights from "@/components/CohortInsights";
 
 type WeightKey = "beginner" | "low_fee" | "us_shares" | "smsf" | "crypto" | "advanced";
 
@@ -492,6 +493,26 @@ export default function QuizPage() {
                   </tbody>
                 </table>
               </div>
+            </div>
+          )}
+
+          {/* Cohort Insights — "People Like Me" */}
+          {answers.length >= 3 && (
+            <div className="mb-6 result-card-in result-card-in-delay-3">
+              <CohortInsights
+                experience={(() => {
+                  const expMap: Record<string, string> = { beginner: "beginner", intermediate: "intermediate", pro: "pro" };
+                  return expMap[answers[1]] || "beginner";
+                })()}
+                range={(() => {
+                  const rangeMap: Record<string, string> = { small: "small", medium: "medium", large: "large", whale: "whale" };
+                  return rangeMap[answers[2]] || "medium";
+                })()}
+                interest={(() => {
+                  const intMap: Record<string, string> = { crypto: "crypto", trade: "trade", income: "income", grow: "grow" };
+                  return intMap[answers[0]] || undefined;
+                })()}
+              />
             </div>
           )}
 
