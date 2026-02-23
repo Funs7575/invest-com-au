@@ -14,7 +14,6 @@ const navItems = [
 ];
 
 const moreLinks = [
-  { name: "Courses", href: "/courses" },
   { name: "Calculators", href: "/calculators" },
   { name: "Head-to-Head", href: "/versus" },
 ];

@@ -55,10 +55,10 @@ const features = [
     description: "Curated monthly email with market insights and fee trends",
   },
   {
-    name: "Discounted expert consultations",
+    name: "Expert-led investing courses",
     free: false,
     pro: true,
-    description: "Book 1-on-1 sessions with investment experts at reduced Pro rates",
+    description: "Access premium investing courses from Australian market professionals",
   },
   {
     name: "Fee benchmarking radar chart",

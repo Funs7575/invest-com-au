@@ -1,8 +1,10 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 import { getPublishedCourses } from "@/lib/course";
 import type { Course } from "@/lib/types";
+import CoursesGate from "./CoursesGate";
 
 export const metadata: Metadata = {
   title: "Courses — Learn to Invest in Australia",
@@ -154,81 +156,85 @@ export default async function CoursesPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(catalogJsonLd) }}
       />
 
-      <div className="py-12">
-        <div className="container-custom max-w-6xl">
-          {/* Breadcrumb */}
-          <nav aria-label="Breadcrumb" className="text-sm text-slate-500 mb-6">
-            <Link href="/" className="hover:text-green-700">
-              Home
-            </Link>
-            <span className="mx-2">/</span>
-            <span className="text-green-700">Courses</span>
-          </nav>
+      <Suspense>
+        <CoursesGate>
+          <div className="py-12">
+            <div className="container-custom max-w-6xl">
+              {/* Breadcrumb */}
+              <nav aria-label="Breadcrumb" className="text-sm text-slate-500 mb-6">
+                <Link href="/" className="hover:text-green-700">
+                  Home
+                </Link>
+                <span className="mx-2">/</span>
+                <span className="text-green-700">Courses</span>
+              </nav>
 
-          {/* Hero */}
-          <div className="text-center mb-12">
-            <h1 className="text-3xl md:text-5xl font-extrabold mb-4">
-              Learn to Invest
-            </h1>
-            <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-              Expert-led courses built for Australian investors. From beginner
-              basics to advanced strategies.
-            </p>
-          </div>
-
-          {/* Featured courses */}
-          {featured.length > 0 && (
-            <div className="mb-12">
-              <h2 className={`text-sm font-bold text-slate-400 uppercase tracking-wider mb-4 ${
-                featured.length <= 2 ? "text-center" : ""
-              }`}>
-                Featured
-              </h2>
-              <div className={`grid gap-6 ${
-                featured.length === 1
-                  ? "max-w-md mx-auto"
-                  : featured.length === 2
-                    ? "md:grid-cols-2 max-w-3xl mx-auto"
-                    : "md:grid-cols-2 lg:grid-cols-3"
-              }`}>
-                {featured.map((c) => (
-                  <CourseCard key={c.id} course={c} />
-                ))}
+              {/* Hero */}
+              <div className="text-center mb-12">
+                <h1 className="text-3xl md:text-5xl font-extrabold mb-4">
+                  Learn to Invest
+                </h1>
+                <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+                  Expert-led courses built for Australian investors. From beginner
+                  basics to advanced strategies.
+                </p>
               </div>
-            </div>
-          )}
 
-          {/* All courses */}
-          {rest.length > 0 && (
-            <div>
+              {/* Featured courses */}
               {featured.length > 0 && (
-                <h2 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">
-                  All Courses
-                </h2>
+                <div className="mb-12">
+                  <h2 className={`text-sm font-bold text-slate-400 uppercase tracking-wider mb-4 ${
+                    featured.length <= 2 ? "text-center" : ""
+                  }`}>
+                    Featured
+                  </h2>
+                  <div className={`grid gap-6 ${
+                    featured.length === 1
+                      ? "max-w-md mx-auto"
+                      : featured.length === 2
+                        ? "md:grid-cols-2 max-w-3xl mx-auto"
+                        : "md:grid-cols-2 lg:grid-cols-3"
+                  }`}>
+                    {featured.map((c) => (
+                      <CourseCard key={c.id} course={c} />
+                    ))}
+                  </div>
+                </div>
               )}
-              <div className={`grid gap-6 ${
-                rest.length === 1
-                  ? "max-w-md mx-auto"
-                  : rest.length === 2
-                    ? "md:grid-cols-2 max-w-3xl mx-auto"
-                    : "md:grid-cols-2 lg:grid-cols-3"
-              }`}>
-                {rest.map((c) => (
-                  <CourseCard key={c.id} course={c} />
-                ))}
-              </div>
-            </div>
-          )}
 
-          {courses.length === 0 && (
-            <div className="text-center py-16">
-              <p className="text-slate-500">
-                No courses available yet. Check back soon!
-              </p>
+              {/* All courses */}
+              {rest.length > 0 && (
+                <div>
+                  {featured.length > 0 && (
+                    <h2 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4">
+                      All Courses
+                    </h2>
+                  )}
+                  <div className={`grid gap-6 ${
+                    rest.length === 1
+                      ? "max-w-md mx-auto"
+                      : rest.length === 2
+                        ? "md:grid-cols-2 max-w-3xl mx-auto"
+                        : "md:grid-cols-2 lg:grid-cols-3"
+                  }`}>
+                    {rest.map((c) => (
+                      <CourseCard key={c.id} course={c} />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {courses.length === 0 && (
+                <div className="text-center py-16">
+                  <p className="text-slate-500">
+                    No courses available yet. Check back soon!
+                  </p>
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      </div>
+          </div>
+        </CoursesGate>
+      </Suspense>
     </>
   );
 }

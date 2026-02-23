@@ -37,7 +37,6 @@ const navSections = [
       { href: "/admin/quiz-weights", label: "Quiz Weights", icon: "⚖️" },
       { href: "/admin/pro-subscribers", label: "Pro Members", icon: "💎" },
       { href: "/admin/courses", label: "Courses", icon: "🎓" },
-      { href: "/admin/consultations", label: "Consultations", icon: "📞" },
       { href: "/admin/pro-deals", label: "Pro Deals", icon: "🎁" },
       { href: "/admin/subscribers", label: "Subscribers", icon: "📧" },
     ],

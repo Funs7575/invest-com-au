@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import {
@@ -11,6 +12,7 @@ import {
 import { getCourse, getCourseLessons, groupLessonsIntoModules } from "@/lib/course";
 import { GENERAL_ADVICE_WARNING, COURSE_AFFILIATE_DISCLOSURE, ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import CoursePageClient from "./CoursePageClient";
+import CoursesGate from "../CoursesGate";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -79,6 +81,8 @@ export default async function CourseDetailPage({ params }: PageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
+      <Suspense>
+        <CoursesGate>
       <div className="py-12">
         <div className="container-custom max-w-5xl">
           {/* Breadcrumb */}
@@ -311,6 +315,8 @@ export default async function CourseDetailPage({ params }: PageProps) {
           </div>
         </div>
       </div>
+        </CoursesGate>
+      </Suspense>
     </>
   );
 }
