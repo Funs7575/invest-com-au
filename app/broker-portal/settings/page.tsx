@@ -14,6 +14,17 @@ export default function SettingsPage() {
   const [companyName, setCompanyName] = useState("");
   const [phone, setPhone] = useState("");
 
+  // Terms acceptance
+  const [termsChecked, setTermsChecked] = useState(false);
+
+  // API key
+  const [showApiKey, setShowApiKey] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  // Low-balance alerts
+  const [alertEnabled, setAlertEnabled] = useState(true);
+  const [alertThreshold, setAlertThreshold] = useState(100);
+
   useEffect(() => {
     const load = async () => {
       const supabase = createClient();
@@ -32,6 +43,18 @@ export default function SettingsPage() {
         setFullName(a.full_name);
         setCompanyName(a.company_name || "");
         setPhone(a.phone || "");
+
+        // Fetch wallet for low-balance alert settings
+        const { data: wallet } = await supabase
+          .from("broker_wallets")
+          .select("low_balance_alert_enabled, low_balance_threshold_cents")
+          .eq("broker_slug", a.broker_slug)
+          .maybeSingle();
+
+        if (wallet) {
+          setAlertEnabled(wallet.low_balance_alert_enabled ?? true);
+          setAlertThreshold((wallet.low_balance_threshold_cents ?? 10000) / 100);
+        }
       }
       setLoading(false);
     };
@@ -55,6 +78,39 @@ export default function SettingsPage() {
       })
       .eq("id", account.id);
 
+    setSaving(false);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 3000);
+  };
+
+  const handleAcceptTerms = async () => {
+    if (!account) return;
+    setSaving(true);
+    const supabase = createClient();
+    const now = new Date().toISOString();
+    await supabase
+      .from("broker_accounts")
+      .update({
+        terms_accepted_at: now,
+        terms_version: "1.0",
+        updated_at: now,
+      })
+      .eq("id", account.id);
+    setAccount({ ...account, terms_accepted_at: now, terms_version: "1.0" } as BrokerAccount);
+    setSaving(false);
+  };
+
+  const handleSaveAlerts = async () => {
+    if (!account) return;
+    setSaving(true);
+    const supabase = createClient();
+    await supabase
+      .from("broker_wallets")
+      .update({
+        low_balance_alert_enabled: alertEnabled,
+        low_balance_threshold_cents: alertThreshold * 100,
+      })
+      .eq("broker_slug", account.broker_slug);
     setSaving(false);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
@@ -170,6 +226,87 @@ export default function SettingsPage() {
             partners@invest.com.au
           </a>
         </p>
+      </div>
+
+      {/* Terms Acceptance */}
+      <div className="bg-white rounded-xl border border-slate-200 p-6">
+        <h3 className="text-base font-bold text-slate-900 mb-4">Marketplace Terms</h3>
+        {account?.terms_accepted_at ? (
+          <div className="flex items-center gap-2 text-green-700 bg-green-50 rounded-lg px-4 py-3">
+            <span>✅</span>
+            <span className="text-sm">Terms accepted on {new Date(account.terms_accepted_at).toLocaleDateString("en-AU")}</span>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            <p className="text-sm text-slate-600">You must accept the marketplace terms before creating campaigns.</p>
+            <label className="flex items-start gap-2">
+              <input type="checkbox" checked={termsChecked} onChange={(e) => setTermsChecked(e.target.checked)} className="mt-1" />
+              <span className="text-sm text-slate-700">I accept the <a href="/terms" className="text-green-700 underline">Marketplace Terms and Conditions</a> (v1.0)</span>
+            </label>
+            <button
+              onClick={handleAcceptTerms}
+              disabled={!termsChecked || saving}
+              className="px-4 py-2 bg-green-700 text-white rounded-lg text-sm font-medium disabled:opacity-50"
+            >
+              Accept Terms
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Postback API Key */}
+      <div className="bg-white rounded-xl border border-slate-200 p-6">
+        <h3 className="text-base font-bold text-slate-900 mb-4">Postback API Key</h3>
+        <p className="text-sm text-slate-600 mb-3">Use this key to report conversions via the postback API.</p>
+        <div className="flex items-center gap-2">
+          <code className="flex-1 bg-slate-100 px-3 py-2 rounded text-xs font-mono text-slate-700 truncate">
+            {showApiKey ? account?.postback_api_key : "••••••••••••••••••••••••"}
+          </code>
+          <button onClick={() => setShowApiKey(!showApiKey)} className="px-3 py-2 text-xs bg-slate-200 rounded hover:bg-slate-300">
+            {showApiKey ? "Hide" : "Show"}
+          </button>
+          <button
+            onClick={() => { navigator.clipboard.writeText(account?.postback_api_key || ""); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
+            className="px-3 py-2 text-xs bg-green-100 text-green-800 rounded hover:bg-green-200"
+          >
+            {copied ? "Copied!" : "Copy"}
+          </button>
+        </div>
+      </div>
+
+      {/* Low-Balance Alerts */}
+      <div className="bg-white rounded-xl border border-slate-200 p-6">
+        <h3 className="text-base font-bold text-slate-900 mb-4">Low Balance Alerts</h3>
+        <div className="space-y-4">
+          <label className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              checked={alertEnabled}
+              onChange={(e) => setAlertEnabled(e.target.checked)}
+              className="w-4 h-4"
+            />
+            <span className="text-sm text-slate-700">Email me when my wallet balance is low</span>
+          </label>
+          {alertEnabled && (
+            <div>
+              <label className="block text-sm text-slate-600 mb-1">Alert when balance drops below</label>
+              <div className="flex items-center gap-2">
+                <span className="text-slate-500">$</span>
+                <input
+                  type="number"
+                  value={alertThreshold}
+                  onChange={(e) => setAlertThreshold(Number(e.target.value))}
+                  className="w-32 border border-slate-300 rounded-lg px-3 py-2 text-sm"
+                  min={10}
+                  step={10}
+                />
+              </div>
+            </div>
+          )}
+          <button onClick={handleSaveAlerts} disabled={saving} className="px-4 py-2 bg-green-700 text-white rounded-lg text-sm font-medium disabled:opacity-50">
+            Save Alert Preferences
+          </button>
+        </div>
       </div>
     </div>
   );

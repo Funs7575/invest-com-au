@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { downloadCSV } from "@/lib/csv-export";
 import type { CampaignDailyStats, Campaign } from "@/lib/types";
 
 export default function ReportsPage() {
@@ -96,6 +97,21 @@ export default function ReportsPage() {
               {d}d
             </button>
           ))}
+          <button
+            onClick={() => {
+              const headers = ["Date", "Clicks", "Impressions", "Spend ($)"];
+              const rows = dailyTotals.map((d) => [
+                d.date,
+                String(d.clicks),
+                String(d.impressions),
+                (d.spend / 100).toFixed(2),
+              ]);
+              downloadCSV(`report-${days}d.csv`, headers, rows);
+            }}
+            className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors"
+          >
+            Export CSV
+          </button>
         </div>
       </div>
 

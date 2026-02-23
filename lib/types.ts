@@ -135,6 +135,9 @@ export interface AffiliateClick {
   ip_hash?: string;
   click_id?: string;
   session_id?: string;
+  scenario?: string;
+  device_type?: string;
+  placement_type?: string;
   clicked_at: string;
 }
 
@@ -485,6 +488,11 @@ export interface BrokerAccount {
   phone?: string;
   status: 'pending' | 'active' | 'suspended';
   last_login_at?: string;
+  terms_accepted_at?: string;
+  terms_version?: string;
+  postback_api_key?: string;
+  package_id?: number;
+  package_started_at?: string;
   created_at: string;
   updated_at: string;
 }
@@ -496,6 +504,13 @@ export interface BrokerWallet {
   lifetime_deposited_cents: number;
   lifetime_spent_cents: number;
   currency: string;
+  auto_topup_enabled: boolean;
+  auto_topup_threshold_cents?: number;
+  auto_topup_amount_cents?: number;
+  stripe_payment_method_id?: string;
+  low_balance_alert_enabled: boolean;
+  low_balance_threshold_cents?: number;
+  last_low_balance_alert_at?: string;
   updated_at: string;
 }
 
@@ -555,6 +570,10 @@ export interface CampaignEvent {
   event_type: 'impression' | 'click' | 'conversion';
   click_id?: string;
   page?: string;
+  placement_id?: number;
+  scenario?: string;
+  device_type?: string;
+  conversion_value_cents?: number;
   cost_cents: number;
   created_at: string;
 }
@@ -579,6 +598,78 @@ export interface MarketplaceInvoice {
   stripe_payment_intent_id?: string;
   stripe_checkout_session_id?: string;
   description?: string;
+  invoice_number?: string;
+  line_items?: { description: string; amount_cents: number; quantity: number }[];
+  tax_cents?: number;
+  subtotal_cents?: number;
+  broker_company_name?: string;
+  broker_email?: string;
+  broker_abn?: string;
   paid_at?: string;
   created_at: string;
+}
+
+// ─── Allocation Decision Logging ───
+
+export interface AllocationDecision {
+  id: number;
+  placement_slug: string;
+  page?: string;
+  scenario?: string;
+  device_type?: string;
+  candidates: { broker_slug: string; campaign_id: number; rate_cents: number }[];
+  winners: { broker_slug: string; campaign_id: number; rate_cents: number; inventory_type: string }[];
+  rejection_log: { broker_slug: string; campaign_id: number; reason: string }[];
+  winner_count: number;
+  candidate_count: number;
+  fallback_used: boolean;
+  duration_ms?: number;
+  created_at: string;
+}
+
+// ─── Conversion Events ───
+
+export interface ConversionEvent {
+  id: number;
+  click_id?: string;
+  broker_slug: string;
+  campaign_id?: number;
+  event_type: 'opened' | 'funded' | 'first_trade' | 'custom';
+  conversion_value_cents: number;
+  metadata?: Record<string, unknown>;
+  source: 'postback' | 'manual' | 'webhook';
+  created_at: string;
+}
+
+// ─── Broker Packages ───
+
+export interface BrokerPackage {
+  id: number;
+  slug: string;
+  name: string;
+  tier: 'starter' | 'growth' | 'dominance' | 'enterprise';
+  description?: string;
+  monthly_fee_cents: number;
+  included_placements: { placement_slug: string; inventory_type: string; rate_cents_override?: number }[];
+  cpc_rate_discount_pct: number;
+  featured_slots_included: number;
+  share_of_voice_pct?: number;
+  support_level: string;
+  is_active: boolean;
+  sort_order: number;
+}
+
+// ─── Broker Data Changes ───
+
+export interface BrokerDataChange {
+  id: number;
+  broker_id?: number;
+  broker_slug: string;
+  field_name: string;
+  old_value?: string;
+  new_value?: string;
+  change_type: 'update' | 'add' | 'remove';
+  changed_at: string;
+  changed_by: string;
+  source: 'manual' | 'auto_detect' | 'fee_check' | 'admin';
 }

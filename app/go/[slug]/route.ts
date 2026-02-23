@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "crypto";
+import { detectDeviceType } from "@/lib/device-detect";
 
 // ── In-memory rate limiter (30 redirects / 60s per IP) ──────────
 // Note: In serverless environments each container has its own Map.
@@ -73,8 +74,12 @@ export async function GET(
 
   // Insert server-side click record and get click_id
   const userAgent = request.headers.get("user-agent") || "";
+  const deviceType = detectDeviceType(userAgent);
   const ipHash = hashIP(ip);
   const referer = request.headers.get("referer") || "";
+
+  const scenario = request.nextUrl.searchParams.get("scenario");
+  const placementParam = request.nextUrl.searchParams.get("placement");
 
   const { data: inserted } = await supabase
     .from("affiliate_clicks")
@@ -86,6 +91,9 @@ export async function GET(
       page: referer.slice(0, 500) || "/go/" + slug,
       user_agent: userAgent.slice(0, 500),
       ip_hash: ipHash,
+      device_type: deviceType,
+      scenario: scenario?.slice(0, 200) || null,
+      placement_type: placementParam?.slice(0, 100) || null,
     })
     .select("click_id")
     .single();
@@ -119,6 +127,8 @@ export async function GET(
             page: referer.slice(0, 500) || `/go/${slug}`,
             ip_hash: ipHash,
             user_agent: userAgent.slice(0, 200),
+            device_type: deviceType,
+            scenario: scenario?.slice(0, 200) || undefined,
           });
         }
       }

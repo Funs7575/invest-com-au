@@ -11,6 +11,10 @@
     {
       "path": "/api/cron/check-affiliate-links",
       "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/cron/marketplace-stats",
+      "schedule": "0 1 * * *"
     }
   ]
 }

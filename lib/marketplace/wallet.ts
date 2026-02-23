@@ -146,6 +146,12 @@ export async function debitWallet(
     .single();
 
   if (txnErr) throw new Error(`Transaction insert failed: ${txnErr.message}`);
+
+  // Check if auto-topup should be triggered
+  checkAutoTopup(brokerSlug, newBalance).catch((err) =>
+    console.error("Auto-topup check failed:", err)
+  );
+
   return txn as WalletTransaction;
 }
 
@@ -241,4 +247,80 @@ export async function adjustWallet(
 
   if (txnErr) throw new Error(`Transaction insert failed: ${txnErr.message}`);
   return txn as WalletTransaction;
+}
+
+/**
+ * Check if auto-topup should be triggered after a debit.
+ * Fire-and-forget — never blocks the debit operation.
+ */
+async function checkAutoTopup(brokerSlug: string, currentBalance: number): Promise<void> {
+  const supabase = getAdminClient();
+
+  const { data: wallet } = await supabase
+    .from("broker_wallets")
+    .select("auto_topup_enabled, auto_topup_threshold_cents, auto_topup_amount_cents, stripe_payment_method_id")
+    .eq("broker_slug", brokerSlug)
+    .maybeSingle();
+
+  if (
+    !wallet?.auto_topup_enabled ||
+    !wallet.stripe_payment_method_id ||
+    !wallet.auto_topup_threshold_cents ||
+    !wallet.auto_topup_amount_cents
+  ) {
+    return;
+  }
+
+  if (currentBalance > wallet.auto_topup_threshold_cents) {
+    return; // Balance still above threshold
+  }
+
+  // Trigger auto top-up via Stripe off-session payment
+  try {
+    const { getStripe } = await import("@/lib/stripe");
+    const stripe = getStripe();
+
+    // Find or get the Stripe customer for this broker
+    const { data: account } = await supabase
+      .from("broker_accounts")
+      .select("email, company_name")
+      .eq("broker_slug", brokerSlug)
+      .limit(1)
+      .maybeSingle();
+
+    // Create invoice record first
+    const { data: invoice } = await supabase
+      .from("marketplace_invoices")
+      .insert({
+        broker_slug: brokerSlug,
+        amount_cents: wallet.auto_topup_amount_cents,
+        type: "wallet_topup",
+        status: "pending",
+        description: `Auto top-up — $${(wallet.auto_topup_amount_cents / 100).toFixed(2)}`,
+        broker_company_name: account?.company_name || null,
+        broker_email: account?.email || null,
+      })
+      .select("id")
+      .single();
+
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: wallet.auto_topup_amount_cents,
+      currency: "aud",
+      payment_method: wallet.stripe_payment_method_id,
+      confirm: true,
+      off_session: true,
+      metadata: {
+        type: "auto_topup",
+        broker_slug: brokerSlug,
+        invoice_id: invoice?.id ? String(invoice.id) : "",
+      },
+    });
+
+    console.log(
+      `Auto top-up triggered for ${brokerSlug}: $${(wallet.auto_topup_amount_cents / 100).toFixed(2)}, PI: ${paymentIntent.id}`
+    );
+  } catch (err) {
+    console.error(`Auto top-up payment failed for ${brokerSlug}:`, err);
+    // Don't throw — this is fire-and-forget
+  }
 }

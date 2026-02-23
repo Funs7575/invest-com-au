@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 import { createHash } from 'crypto';
+import { detectDeviceType } from '@/lib/device-detect';
 
 // In-memory rate limiter (per-IP, resets on cold start)
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -46,13 +47,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
 
-  const { broker_name, broker_slug, source, page, layer, session_id } = body as {
+  const { broker_name, broker_slug, source, page, layer, session_id, scenario, placement_type } = body as {
     broker_name?: string;
     broker_slug?: string;
     source?: string;
     page?: string;
     layer?: string;
     session_id?: string;
+    scenario?: string;
+    placement_type?: string;
   };
 
   if (!broker_slug || typeof broker_slug !== 'string') {
@@ -81,6 +84,7 @@ export async function POST(request: NextRequest) {
 
   const userAgent = request.headers.get('user-agent') || '';
   const ipHash = hashIP(ip);
+  const deviceType = detectDeviceType(userAgent);
 
   const { data: inserted, error } = await supabase.from('affiliate_clicks').insert({
     broker_id: broker?.id || null,
@@ -92,6 +96,9 @@ export async function POST(request: NextRequest) {
     user_agent: userAgent.slice(0, 500),
     ip_hash: ipHash,
     session_id: (typeof session_id === 'string' ? session_id : null)?.slice(0, 100) || null,
+    device_type: deviceType,
+    scenario: (typeof scenario === 'string' ? scenario : null)?.slice(0, 200) || null,
+    placement_type: (typeof placement_type === 'string' ? placement_type : null)?.slice(0, 100) || null,
   }).select('click_id').single();
 
   if (error) {

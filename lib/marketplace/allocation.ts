@@ -17,22 +17,48 @@ export interface WinningCampaign {
   placement_slug: string;
 }
 
+/** Context passed from callers for decision logging & attribution */
+export interface AllocationContext {
+  page?: string;
+  scenario?: string;
+  device_type?: string;
+}
+
+interface RejectionEntry {
+  broker_slug: string;
+  campaign_id: number;
+  reason: string;
+}
+
+interface CandidateEntry {
+  broker_slug: string;
+  campaign_id: number;
+  rate_cents: number;
+}
+
 /**
  * Resolve the winning campaign(s) for a given placement.
  *
  * Algorithm:
  * 1. Find active campaigns for this placement
- * 2. Filter out budget-exhausted and wallet-empty campaigns
+ * 2. Filter out budget-exhausted, expired, daily-capped, and wallet-empty campaigns
  * 3. Rank by rate_cents DESC → priority DESC → created_at ASC
  * 4. Return top N (max_slots)
  * 5. Fallback: if no campaigns, returns empty array (callers fall back to sponsorship_tier)
+ *
+ * EVERY call is logged to allocation_decisions for auditability.
  */
 export async function getWinningCampaigns(
   placementSlug: string,
-  brokerSlugs?: string[]
+  brokerSlugs?: string[],
+  context?: AllocationContext
 ): Promise<WinningCampaign[]> {
+  const startTime = typeof performance !== "undefined" ? performance.now() : Date.now();
   const supabase = getAdminClient();
   const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+
+  const rejections: RejectionEntry[] = [];
+  const allCandidates: CandidateEntry[] = [];
 
   // 1. Look up placement
   const { data: placement } = await supabase
@@ -42,7 +68,22 @@ export async function getWinningCampaigns(
     .eq("is_active", true)
     .maybeSingle();
 
-  if (!placement) return [];
+  if (!placement) {
+    logDecision(supabase, {
+      placement_slug: placementSlug,
+      page: context?.page,
+      scenario: context?.scenario,
+      device_type: context?.device_type,
+      candidates: [],
+      winners: [],
+      rejection_log: [{ broker_slug: "", campaign_id: 0, reason: "placement_not_found" }],
+      winner_count: 0,
+      candidate_count: 0,
+      fallback_used: true,
+      duration_ms: Math.round((typeof performance !== "undefined" ? performance.now() : Date.now()) - startTime),
+    });
+    return [];
+  }
 
   // 2. Query active campaigns for this placement
   let query = supabase
@@ -60,19 +101,63 @@ export async function getWinningCampaigns(
   }
 
   const { data: campaigns } = await query;
-  if (!campaigns || campaigns.length === 0) return [];
 
-  // 3. Filter out budget-exhausted campaigns
+  if (!campaigns || campaigns.length === 0) {
+    logDecision(supabase, {
+      placement_slug: placementSlug,
+      page: context?.page,
+      scenario: context?.scenario,
+      device_type: context?.device_type,
+      candidates: [],
+      winners: [],
+      rejection_log: [],
+      winner_count: 0,
+      candidate_count: 0,
+      fallback_used: true,
+      duration_ms: Math.round((typeof performance !== "undefined" ? performance.now() : Date.now()) - startTime),
+    });
+    return [];
+  }
+
+  // Record all candidates
+  for (const c of campaigns as Campaign[]) {
+    allCandidates.push({
+      broker_slug: c.broker_slug,
+      campaign_id: c.id,
+      rate_cents: c.rate_cents,
+    });
+  }
+
+  // 3. Filter out budget-exhausted and expired campaigns
   const eligible: Campaign[] = [];
   for (const c of campaigns as Campaign[]) {
-    // Total budget check
-    if (c.total_budget_cents && c.total_spent_cents >= c.total_budget_cents) continue;
-    // End date check
-    if (c.end_date && c.end_date < today) continue;
+    if (c.total_budget_cents && c.total_spent_cents >= c.total_budget_cents) {
+      rejections.push({ broker_slug: c.broker_slug, campaign_id: c.id, reason: "total_budget_exhausted" });
+      continue;
+    }
+    if (c.end_date && c.end_date < today) {
+      rejections.push({ broker_slug: c.broker_slug, campaign_id: c.id, reason: "end_date_passed" });
+      continue;
+    }
     eligible.push(c);
   }
 
-  if (eligible.length === 0) return [];
+  if (eligible.length === 0) {
+    logDecision(supabase, {
+      placement_slug: placementSlug,
+      page: context?.page,
+      scenario: context?.scenario,
+      device_type: context?.device_type,
+      candidates: allCandidates,
+      winners: [],
+      rejection_log: rejections,
+      winner_count: 0,
+      candidate_count: allCandidates.length,
+      fallback_used: true,
+      duration_ms: Math.round((typeof performance !== "undefined" ? performance.now() : Date.now()) - startTime),
+    });
+    return [];
+  }
 
   // 4. Check daily budget (query today's spend from campaign_events)
   const todayStart = today + "T00:00:00.000Z";
@@ -91,12 +176,30 @@ export async function getWinningCampaigns(
         0
       );
 
-      if (todaySpend >= c.daily_budget_cents) continue;
+      if (todaySpend >= c.daily_budget_cents) {
+        rejections.push({ broker_slug: c.broker_slug, campaign_id: c.id, reason: "daily_budget_hit" });
+        continue;
+      }
     }
     withBudget.push(c);
   }
 
-  if (withBudget.length === 0) return [];
+  if (withBudget.length === 0) {
+    logDecision(supabase, {
+      placement_slug: placementSlug,
+      page: context?.page,
+      scenario: context?.scenario,
+      device_type: context?.device_type,
+      candidates: allCandidates,
+      winners: [],
+      rejection_log: rejections,
+      winner_count: 0,
+      candidate_count: allCandidates.length,
+      fallback_used: true,
+      duration_ms: Math.round((typeof performance !== "undefined" ? performance.now() : Date.now()) - startTime),
+    });
+    return [];
+  }
 
   // 5. Check wallet balance > 0
   const brokerSlugsToCheck = [...new Set(withBudget.map((c) => c.broker_slug))];
@@ -107,21 +210,71 @@ export async function getWinningCampaigns(
     .gt("balance_cents", 0);
 
   const fundedSlugs = new Set((wallets || []).map((w: { broker_slug: string }) => w.broker_slug));
-  const funded = withBudget.filter((c) => fundedSlugs.has(c.broker_slug));
+  const funded: Campaign[] = [];
 
-  if (funded.length === 0) return [];
+  for (const c of withBudget) {
+    if (!fundedSlugs.has(c.broker_slug)) {
+      rejections.push({ broker_slug: c.broker_slug, campaign_id: c.id, reason: "zero_wallet_balance" });
+    } else {
+      funded.push(c);
+    }
+  }
+
+  if (funded.length === 0) {
+    logDecision(supabase, {
+      placement_slug: placementSlug,
+      page: context?.page,
+      scenario: context?.scenario,
+      device_type: context?.device_type,
+      candidates: allCandidates,
+      winners: [],
+      rejection_log: rejections,
+      winner_count: 0,
+      candidate_count: allCandidates.length,
+      fallback_used: true,
+      duration_ms: Math.round((typeof performance !== "undefined" ? performance.now() : Date.now()) - startTime),
+    });
+    return [];
+  }
 
   // 6. Return top N winners
   const maxSlots = (placement as MarketplacePlacement).max_slots || 1;
   const winners = funded.slice(0, maxSlots);
 
-  return winners.map((c) => ({
+  // Log losers (campaigns that passed all filters but didn't get a slot)
+  for (let i = maxSlots; i < funded.length; i++) {
+    rejections.push({ broker_slug: funded[i].broker_slug, campaign_id: funded[i].id, reason: "outbid_no_slot" });
+  }
+
+  const winnerResult = winners.map((c) => ({
     campaign_id: c.id,
     broker_slug: c.broker_slug,
-    inventory_type: c.inventory_type,
+    inventory_type: c.inventory_type as "featured" | "cpc",
     rate_cents: c.rate_cents,
     placement_slug: placementSlug,
   }));
+
+  // Log the full decision
+  logDecision(supabase, {
+    placement_slug: placementSlug,
+    page: context?.page,
+    scenario: context?.scenario,
+    device_type: context?.device_type,
+    candidates: allCandidates,
+    winners: winnerResult.map((w) => ({
+      broker_slug: w.broker_slug,
+      campaign_id: w.campaign_id,
+      rate_cents: w.rate_cents,
+      inventory_type: w.inventory_type,
+    })),
+    rejection_log: rejections,
+    winner_count: winnerResult.length,
+    candidate_count: allCandidates.length,
+    fallback_used: false,
+    duration_ms: Math.round((typeof performance !== "undefined" ? performance.now() : Date.now()) - startTime),
+  });
+
+  return winnerResult;
 }
 
 /**
@@ -130,7 +283,8 @@ export async function getWinningCampaigns(
 export async function recordImpression(
   campaignId: number,
   brokerSlug: string,
-  page?: string
+  page?: string,
+  extra?: { placement_id?: number; scenario?: string; device_type?: string }
 ): Promise<void> {
   const supabase = getAdminClient();
   await supabase.from("campaign_events").insert({
@@ -139,13 +293,16 @@ export async function recordImpression(
     event_type: "impression",
     cost_cents: 0,
     page: page || null,
+    placement_id: extra?.placement_id || null,
+    scenario: extra?.scenario || null,
+    device_type: extra?.device_type || null,
   });
 }
 
 /**
  * Record a click event for a CPC campaign.
- * Debits the wallet and updates campaign total_spent.
- * Returns true if the click was recorded + billed, false if insufficient funds.
+ * Checks daily pacing before debit. Debits wallet and updates campaign total_spent.
+ * Returns true if the click was recorded + billed, false if insufficient funds or daily cap hit.
  */
 export async function recordCpcClick(
   campaignId: number,
@@ -157,9 +314,39 @@ export async function recordCpcClick(
     ip_hash?: string;
     user_agent?: string;
     session_id?: string;
+    placement_id?: number;
+    scenario?: string;
+    device_type?: string;
   }
 ): Promise<boolean> {
   const supabase = getAdminClient();
+
+  // Check daily pacing before debiting
+  const { data: campaign } = await supabase
+    .from("campaigns")
+    .select("daily_budget_cents, total_spent_cents, total_budget_cents")
+    .eq("id", campaignId)
+    .single();
+
+  if (!campaign) return false;
+
+  if (campaign.daily_budget_cents) {
+    const todayStart = new Date().toISOString().slice(0, 10) + "T00:00:00.000Z";
+    const { data: todayEvents } = await supabase
+      .from("campaign_events")
+      .select("cost_cents")
+      .eq("campaign_id", campaignId)
+      .gte("created_at", todayStart);
+
+    const todaySpend = (todayEvents || []).reduce(
+      (sum: number, e: { cost_cents: number }) => sum + (e.cost_cents || 0),
+      0
+    );
+
+    if (todaySpend + rateCents > campaign.daily_budget_cents) {
+      return false; // Daily cap would be exceeded
+    }
+  }
 
   // Try to debit wallet
   try {
@@ -174,7 +361,7 @@ export async function recordCpcClick(
     return false;
   }
 
-  // Insert campaign event
+  // Insert campaign event with full attribution data
   await supabase.from("campaign_events").insert({
     campaign_id: campaignId,
     broker_slug: brokerSlug,
@@ -184,30 +371,25 @@ export async function recordCpcClick(
     ip_hash: clickData.ip_hash || null,
     user_agent: clickData.user_agent || null,
     session_id: clickData.session_id || null,
+    placement_id: clickData.placement_id || null,
+    scenario: clickData.scenario || null,
+    device_type: clickData.device_type || null,
     cost_cents: rateCents,
   });
 
   // Update campaign total_spent
-  const { data: campaign } = await supabase
-    .from("campaigns")
-    .select("total_spent_cents, total_budget_cents")
-    .eq("id", campaignId)
-    .single();
+  const newSpent = (campaign.total_spent_cents || 0) + rateCents;
+  const updates: Record<string, unknown> = {
+    total_spent_cents: newSpent,
+    updated_at: new Date().toISOString(),
+  };
 
-  if (campaign) {
-    const newSpent = (campaign.total_spent_cents || 0) + rateCents;
-    const updates: Record<string, any> = {
-      total_spent_cents: newSpent,
-      updated_at: new Date().toISOString(),
-    };
-
-    // Auto-pause if budget exhausted
-    if (campaign.total_budget_cents && newSpent >= campaign.total_budget_cents) {
-      updates.status = "budget_exhausted";
-    }
-
-    await supabase.from("campaigns").update(updates).eq("id", campaignId);
+  // Auto-pause if total budget exhausted
+  if (campaign.total_budget_cents && newSpent >= campaign.total_budget_cents) {
+    updates.status = "budget_exhausted";
   }
+
+  await supabase.from("campaigns").update(updates).eq("id", campaignId);
 
   return true;
 }
@@ -240,21 +422,68 @@ export async function getActiveCpcCampaign(
   const { data } = await query;
   if (!data || data.length === 0) return null;
 
-  const c = data[0] as any;
+  const c = data[0] as Record<string, unknown>;
   // Check budget not exhausted
-  if (c.total_budget_cents && c.total_spent_cents >= c.total_budget_cents) return null;
+  if (
+    typeof c.total_budget_cents === "number" &&
+    typeof c.total_spent_cents === "number" &&
+    c.total_spent_cents >= c.total_budget_cents
+  )
+    return null;
   // Check end date
-  if (c.end_date && c.end_date < today) return null;
+  if (typeof c.end_date === "string" && c.end_date < today) return null;
 
   const placementData = Array.isArray(c.marketplace_placements)
-    ? c.marketplace_placements[0]
-    : c.marketplace_placements;
+    ? (c.marketplace_placements as Record<string, unknown>[])[0]
+    : (c.marketplace_placements as Record<string, unknown>);
 
   return {
-    campaign_id: c.id,
-    broker_slug: c.broker_slug,
+    campaign_id: c.id as number,
+    broker_slug: c.broker_slug as string,
     inventory_type: "cpc",
-    rate_cents: c.rate_cents,
-    placement_slug: placementData?.slug || "",
+    rate_cents: c.rate_cents as number,
+    placement_slug: (placementData?.slug as string) || "",
   };
+}
+
+// ── Decision Logger (fire-and-forget) ──────────────────────────────
+
+interface DecisionLogData {
+  placement_slug: string;
+  page?: string;
+  scenario?: string;
+  device_type?: string;
+  candidates: CandidateEntry[];
+  winners: { broker_slug: string; campaign_id: number; rate_cents: number; inventory_type?: string }[];
+  rejection_log: RejectionEntry[];
+  winner_count: number;
+  candidate_count: number;
+  fallback_used: boolean;
+  duration_ms: number;
+}
+
+function logDecision(
+  supabase: ReturnType<typeof createClient>,
+  data: DecisionLogData
+): void {
+  // Fire-and-forget — allocation latency must not increase
+  supabase
+    .from("allocation_decisions")
+    .insert({
+      placement_slug: data.placement_slug,
+      page: data.page || null,
+      scenario: data.scenario || null,
+      device_type: data.device_type || null,
+      candidates: JSON.stringify(data.candidates),
+      winners: JSON.stringify(data.winners),
+      rejection_log: JSON.stringify(data.rejection_log),
+      winner_count: data.winner_count,
+      candidate_count: data.candidate_count,
+      fallback_used: data.fallback_used,
+      duration_ms: data.duration_ms,
+    })
+    .then(() => {})
+    .catch((err: unknown) => {
+      console.error("Failed to log allocation decision:", err);
+    });
 }

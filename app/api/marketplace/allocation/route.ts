@@ -1,4 +1,4 @@
-import { getWinningCampaigns } from "@/lib/marketplace/allocation";
+import { getWinningCampaigns, AllocationContext } from "@/lib/marketplace/allocation";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
@@ -15,12 +15,18 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Missing placement parameter" }, { status: 400 });
     }
 
+    const page = searchParams.get("page");
+    const scenario = searchParams.get("scenario");
+
     const brokersParam = searchParams.get("brokers");
     const brokerSlugs = brokersParam
       ? brokersParam.split(",").filter(Boolean)
       : undefined;
 
-    const winners = await getWinningCampaigns(placement, brokerSlugs);
+    const winners = await getWinningCampaigns(placement, brokerSlugs, {
+      page: page || undefined,
+      scenario: scenario || undefined,
+    });
 
     return NextResponse.json({
       placement,

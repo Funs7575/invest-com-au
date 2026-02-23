@@ -4,12 +4,12 @@ import { getSessionId } from './session';
 /** Standard rel attribute for all outbound affiliate links */
 export const AFFILIATE_REL = "noopener noreferrer nofollow sponsored";
 
-export function trackClick(brokerSlug: string, brokerName: string, source: string, page: string, layer?: string) {
+export function trackClick(brokerSlug: string, brokerName: string, source: string, page: string, layer?: string, scenario?: string, placement?: string) {
   const sessionId = getSessionId();
   fetch('/api/track-click', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ broker_slug: brokerSlug, broker_name: brokerName, source, page, layer, session_id: sessionId }),
+    body: JSON.stringify({ broker_slug: brokerSlug, broker_name: brokerName, source, page, layer, session_id: sessionId, scenario, placement_type: placement }),
   })
     .then((res) => res.json())
     .then((data) => {

@@ -10,6 +10,8 @@ const navItems = [
   { href: "/broker-portal/campaigns", label: "Campaigns", icon: "📣" },
   { href: "/broker-portal/wallet", label: "Wallet", icon: "💰" },
   { href: "/broker-portal/reports", label: "Reports", icon: "📈" },
+  { href: "/broker-portal/invoices", label: "Invoices", icon: "🧾" },
+  { href: "/broker-portal/conversions", label: "Conversions", icon: "🎯" },
   { href: "/broker-portal/settings", label: "Settings", icon: "⚙️" },
 ];
 

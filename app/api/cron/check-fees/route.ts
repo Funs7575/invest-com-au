@@ -73,6 +73,20 @@ export async function GET(req: NextRequest) {
         })
         .eq("id", broker.id);
 
+      // Log change to broker_data_changes for the public "What Changed" feed
+      if (changed) {
+        await supabase.from("broker_data_changes").insert({
+          broker_id: broker.id,
+          broker_slug: broker.slug,
+          field_name: "fee_page",
+          old_value: broker.fee_page_hash,
+          new_value: pageHash,
+          change_type: "update",
+          changed_by: "system",
+          source: "fee_check",
+        });
+      }
+
       results.push({
         slug: broker.slug,
         status: "ok",
