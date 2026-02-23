@@ -2,7 +2,7 @@ export interface TeamMember {
   id: number;
   slug: string;
   full_name: string;
-  role: 'contributor' | 'staff_writer' | 'editor' | 'expert_reviewer' | 'course_creator';
+  role: 'contributor' | 'staff_writer' | 'editor' | 'expert_reviewer' | 'course_creator' | 'consultant';
   short_bio?: string;
   credentials?: string[];
   disclosure?: string;
@@ -301,4 +301,36 @@ export interface CourseProgress {
   user_id: string;
   lesson_id: number;
   completed_at: string;
+}
+
+export interface Consultation {
+  id: number;
+  slug: string;
+  title: string;
+  description?: string;
+  consultant_id: number;
+  consultant?: TeamMember;
+  duration_minutes: number;
+  price: number;
+  pro_price?: number;
+  stripe_price_id?: string;
+  stripe_pro_price_id?: string;
+  cal_link: string;
+  category: string;
+  status: 'draft' | 'published' | 'archived';
+  featured: boolean;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ConsultationBooking {
+  id: number;
+  user_id: string;
+  consultation_id: number;
+  stripe_payment_id?: string;
+  amount_paid: number;
+  cal_booking_uid?: string;
+  status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
+  booked_at: string;
 }

@@ -166,6 +166,42 @@ export async function POST(request: NextRequest) {
             }
           }
         }
+
+        // Handle consultation bookings
+        if (session.metadata?.type === "consultation" && session.mode === "payment") {
+          const userId = session.metadata.supabase_user_id;
+          const consultationSlug = session.metadata.consultation_slug;
+
+          if (userId && consultationSlug) {
+            const supabase = createAdminClient();
+
+            const { data: consultation } = await supabase
+              .from("consultations")
+              .select("id")
+              .eq("slug", consultationSlug)
+              .maybeSingle();
+
+            if (consultation) {
+              const { error: bookingError } = await supabase
+                .from("consultation_bookings")
+                .upsert(
+                  {
+                    user_id: userId,
+                    consultation_id: consultation.id,
+                    stripe_payment_id: session.payment_intent as string,
+                    amount_paid: session.amount_total || 0,
+                    status: "confirmed",
+                    booked_at: new Date().toISOString(),
+                  },
+                  { onConflict: "user_id,consultation_id" }
+                );
+
+              if (bookingError) {
+                console.error("Consultation booking upsert error:", bookingError.message);
+              }
+            }
+          }
+        }
         break;
       }
 

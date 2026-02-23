@@ -55,6 +55,12 @@ const features = [
     description: "Curated monthly email with market insights and fee trends",
   },
   {
+    name: "Discounted expert consultations",
+    free: false,
+    pro: true,
+    description: "Book 1-on-1 sessions with investment experts at reduced Pro rates",
+  },
+  {
     name: "Ad-free experience",
     free: false,
     pro: true,
