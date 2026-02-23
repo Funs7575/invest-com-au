@@ -21,7 +21,7 @@ export default function IntlBrokersEnhanced({
       {/* Affiliate Disclaimer */}
       <div className="bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 mb-8 text-xs text-slate-500 leading-relaxed">
         <strong>Disclosure:</strong> {ADVERTISER_DISCLOSURE_SHORT}{" "}
-        <a href="/how-we-earn" className="text-green-700 underline hover:text-green-800">
+        <a href="/how-we-earn" className="text-slate-700 underline hover:text-slate-900">
           How we earn money
         </a>
       </div>

@@ -107,7 +107,7 @@ export default function HowWeEarnPage() {
 
           {/* Support Us */}
           <section className="mb-10">
-            <div className="bg-green-700/5 border border-green-700/20 rounded-xl p-6">
+            <div className="bg-slate-700/5 border border-slate-700/20 rounded-xl p-6">
               <h3 className="font-extrabold text-lg mb-2">Want to support us?</h3>
               <p className="text-sm text-slate-700 leading-relaxed">
                 If you find our site useful, using our affiliate links is the best way to support us
@@ -124,14 +124,14 @@ export default function HowWeEarnPage() {
             <p className="text-slate-700 leading-relaxed">
               Have questions about how we operate? Want to report an error or suggest a broker we should review?
               Get in touch at{" "}
-              <a href="mailto:hello@invest.com.au" className="text-green-700 hover:underline font-semibold">
+              <a href="mailto:hello@invest.com.au" className="text-slate-700 hover:underline font-semibold">
                 hello@invest.com.au
               </a>.
             </p>
           </section>
 
           <div className="text-center">
-            <Link href="/about" className="text-green-700 font-semibold hover:underline">
+            <Link href="/about" className="text-slate-700 font-semibold hover:underline">
               &larr; Back to About
             </Link>
           </div>

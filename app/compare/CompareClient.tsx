@@ -243,7 +243,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               aria-selected={activeFilter === f.key}
               className={`shrink-0 px-4 py-2 text-sm font-medium rounded-full filter-pill ${
                 activeFilter === f.key
-                  ? 'bg-green-700 text-white shadow-sm scale-105'
+                  ? 'bg-slate-900 text-white shadow-sm scale-105'
                   : 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:scale-[1.02]'
               }`}
             >
@@ -260,7 +260,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search brokers by name..."
-            className="w-full md:w-80 px-4 py-2.5 pl-10 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-green-700 focus:ring-1 focus:ring-green-700"
+            className="w-full md:w-80 px-4 py-2.5 pl-10 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400"
             aria-label="Search brokers by name"
           />
           {searchQuery && (
@@ -277,7 +277,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         {/* Quiz prompt inline */}
         <div className="flex items-center gap-2 mb-4 text-xs text-slate-500">
           <span>Not sure which to pick?</span>
-          <Link href="/quiz" className="text-green-700 font-semibold hover:text-green-800 transition-colors">
+          <Link href="/quiz" className="text-slate-700 font-semibold hover:text-slate-900 transition-colors">
             Take the 60-sec quiz →
           </Link>
         </div>
@@ -289,24 +289,24 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               <tr>
                 <th scope="col" className="px-3 py-3 w-10"></th>
                 <th scope="col" className="px-4 py-3 text-left font-semibold text-sm" aria-sort={sortCol === 'name' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
-                  <button onClick={() => handleSort('name')} className="hover:text-green-700 transition-colors" aria-label="Sort by broker name">
+                  <button onClick={() => handleSort('name')} className="hover:text-slate-900 transition-colors" aria-label="Sort by broker name">
                     Broker{sortArrow('name')}
                   </button>
                 </th>
                 <th scope="col" className="px-4 py-3 text-left font-semibold text-sm" aria-sort={sortCol === 'asx_fee_value' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
-                  <button onClick={() => handleSort('asx_fee_value')} className="hover:text-green-700 transition-colors" aria-label="Sort by ASX fee">
+                  <button onClick={() => handleSort('asx_fee_value')} className="hover:text-slate-900 transition-colors" aria-label="Sort by ASX fee">
                     ASX Fee{sortArrow('asx_fee_value')}
                   </button>
                   <InfoTip text={feeTooltips.asx_fee_value} />
                 </th>
                 <th scope="col" className="px-4 py-3 text-left font-semibold text-sm" aria-sort={sortCol === 'us_fee_value' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
-                  <button onClick={() => handleSort('us_fee_value')} className="hover:text-green-700 transition-colors" aria-label="Sort by US fee">
+                  <button onClick={() => handleSort('us_fee_value')} className="hover:text-slate-900 transition-colors" aria-label="Sort by US fee">
                     US Fee{sortArrow('us_fee_value')}
                   </button>
                   <InfoTip text={feeTooltips.us_fee_value} />
                 </th>
                 <th scope="col" className="px-4 py-3 text-left font-semibold text-sm" aria-sort={sortCol === 'fx_rate' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
-                  <button onClick={() => handleSort('fx_rate')} className="hover:text-green-700 transition-colors" aria-label="Sort by FX rate">
+                  <button onClick={() => handleSort('fx_rate')} className="hover:text-slate-900 transition-colors" aria-label="Sort by FX rate">
                     FX Rate{sortArrow('fx_rate')}
                   </button>
                   <InfoTip text={feeTooltips.fx_rate} />
@@ -317,7 +317,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                 </th>
                 <th scope="col" className="px-4 py-3 text-center font-semibold text-sm">SMSF</th>
                 <th scope="col" className="px-4 py-3 text-center font-semibold text-sm" aria-sort={sortCol === 'rating' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
-                  <button onClick={() => handleSort('rating')} className="hover:text-green-700 transition-colors" aria-label="Sort by rating">
+                  <button onClick={() => handleSort('rating')} className="hover:text-slate-900 transition-colors" aria-label="Sort by rating">
                     Rating{sortArrow('rating')}
                   </button>
                 </th>
@@ -342,7 +342,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                       checked={selected.has(broker.slug)}
                       disabled={!selected.has(broker.slug) && selected.size >= 4}
                       onChange={() => toggleSelected(broker.slug)}
-                      className="w-4 h-4 accent-green-700 rounded disabled:opacity-40 disabled:cursor-not-allowed"
+                      className="w-4 h-4 accent-slate-700 rounded disabled:opacity-40 disabled:cursor-not-allowed"
                       aria-label={`Select ${broker.name} for comparison`}
                     />
                   </td>
@@ -356,7 +356,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                       </div>
                       <div>
                         <div className="flex items-center gap-1.5">
-                          <a href={`/broker/${broker.slug}`} className="font-semibold text-brand hover:text-green-700 transition-colors">
+                          <a href={`/broker/${broker.slug}`} className="font-semibold text-brand hover:text-slate-900 transition-colors">
                             {broker.name}
                           </a>
                           <PromoBadge broker={broker} />
@@ -366,7 +366,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                           {!campaignWinners.some(w => w.broker_slug === broker.slug) && <SponsorBadge broker={broker} />}
                         </div>
                         {!isSponsored(broker) && editorPicks[broker.slug] && (
-                          <div className="text-[0.6rem] font-extrabold text-green-700 uppercase tracking-wide">
+                          <div className="text-[0.6rem] font-extrabold text-slate-700 uppercase tracking-wide">
                             {editorPicks[broker.slug]}
                           </div>
                         )}
@@ -400,7 +400,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                       target="_blank"
                       rel={AFFILIATE_REL}
                       onClick={() => trackClick(broker.slug, broker.name, 'compare-table', '/compare', 'compare')}
-                      className="inline-block px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-all duration-200 group-hover:scale-105 group-hover:shadow-[0_0_12px_rgba(21,128,61,0.3)]"
+                      className="inline-block px-4 py-2 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 transition-all duration-200 group-hover:scale-105 group-hover:shadow-[0_0_12px_rgba(21,128,61,0.3)]"
                     >
                       {getBenefitCta(broker, 'compare')}
                     </a>
@@ -465,14 +465,14 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         )}
 
         {selected.size >= 2 && (
-          <div className="fixed bottom-0 left-0 right-0 z-40 bg-green-700 text-white py-3 shadow-lg bounce-in-up">
+          <div className="fixed bottom-0 left-0 right-0 z-40 bg-slate-900 text-white py-3 shadow-lg bounce-in-up">
             <div className="container-custom flex items-center justify-between">
               <span className="text-sm font-semibold">
                 {selected.size}/4 brokers selected
               </span>
               <Link
                 href={`/versus?vs=${Array.from(selected).join(',')}`}
-                className="px-5 py-2 bg-white text-green-700 font-bold text-sm rounded-lg hover:bg-green-50 transition-colors"
+                className="px-5 py-2 bg-white text-slate-700 font-bold text-sm rounded-lg hover:bg-slate-50 transition-colors"
               >
                 Compare Side-by-Side →
               </Link>
@@ -487,7 +487,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                 <p className="text-lg font-medium mb-2">No brokers match &ldquo;{searchQuery}&rdquo;</p>
                 <button
                   onClick={() => setSearchQuery("")}
-                  className="text-green-700 font-semibold hover:text-green-800 transition-colors"
+                  className="text-slate-700 font-semibold hover:text-slate-900 transition-colors"
                 >
                   Clear search
                 </button>
@@ -508,11 +508,11 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               Take the Quiz →
             </Link>
           </div>
-          <div className="bg-green-50 border border-green-200 rounded-xl p-6">
-            <Icon name="bar-chart" size={24} className="text-green-700 mb-2" />
-            <h3 className="text-lg font-bold text-green-900 mb-1">Free Fee Comparison PDF</h3>
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-6">
+            <Icon name="bar-chart" size={24} className="text-slate-700 mb-2" />
+            <h3 className="text-lg font-bold text-slate-900 mb-1">Free Fee Comparison PDF</h3>
             <p className="text-sm text-slate-600 mb-4">Download our 2026 fee audit — every broker&apos;s brokerage, FX fees, and hidden costs in one document.</p>
-            <Link href="/#email-capture" className="inline-block px-5 py-2.5 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 hover:scale-105 hover:shadow-[0_0_12px_rgba(21,128,61,0.3)] transition-all duration-200">
+            <Link href="/#email-capture" className="inline-block px-5 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 hover:scale-105 hover:shadow-[0_0_12px_rgba(21,128,61,0.3)] transition-all duration-200">
               Get Free PDF →
             </Link>
           </div>

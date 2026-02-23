@@ -249,17 +249,17 @@ export default async function AuthorPage({
                 For corrections, questions, or feedback:{" "}
                 <a
                   href="mailto:editorial@invest.com.au"
-                  className="text-green-700 hover:underline"
+                  className="text-slate-700 hover:underline"
                 >
                   editorial@invest.com.au
                 </a>
               </p>
               <p className="text-sm text-slate-500 mt-1">
-                <Link href="/editorial-policy" className="text-green-700 hover:underline">
+                <Link href="/editorial-policy" className="text-slate-700 hover:underline">
                   Read our editorial policy
                 </Link>
                 {" "}&middot;{" "}
-                <Link href="/methodology" className="text-green-700 hover:underline">
+                <Link href="/methodology" className="text-slate-700 hover:underline">
                   Our methodology
                 </Link>
               </p>

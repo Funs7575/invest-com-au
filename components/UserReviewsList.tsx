@@ -119,8 +119,8 @@ export default function UserReviewsList({ reviews, stats, brokerSlug, brokerName
               {(review.pros || review.cons) && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
                   {review.pros && (
-                    <div className="bg-green-50 rounded-lg p-3">
-                      <p className="text-xs font-bold text-green-700 mb-1">Pros</p>
+                    <div className="bg-slate-50 rounded-lg p-3">
+                      <p className="text-xs font-bold text-slate-700 mb-1">Pros</p>
                       <p className="text-xs text-slate-700 leading-relaxed">{review.pros}</p>
                     </div>
                   )}

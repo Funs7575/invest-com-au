@@ -64,11 +64,11 @@ export default async function DealsPage() {
         <div className="container-custom max-w-5xl">
           {/* Breadcrumb */}
           <nav className="text-sm text-slate-500 mb-6">
-            <Link href="/" className="hover:text-green-700">
+            <Link href="/" className="hover:text-slate-900">
               Home
             </Link>
             <span className="mx-2">/</span>
-            <span className="text-green-700">Deals & Promotions</span>
+            <span className="text-slate-700">Deals & Promotions</span>
           </nav>
 
           <h1 className="text-3xl md:text-4xl font-extrabold mb-3">
@@ -101,7 +101,7 @@ export default async function DealsPage() {
               </p>
               <Link
                 href="/compare"
-                className="inline-block px-6 py-3 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 hover:scale-105 hover:shadow-[0_0_12px_rgba(21,128,61,0.3)] transition-all duration-200"
+                className="inline-block px-6 py-3 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-800 hover:scale-105 transition-all duration-200"
               >
                 Compare Brokers →
               </Link>
@@ -117,11 +117,11 @@ export default async function DealsPage() {
           <div className="mt-6 text-xs text-slate-400 text-center">
             <p>
               Deals verified by{" "}
-              <a href={REVIEW_AUTHOR.url} className="underline hover:text-green-700">
+              <a href={REVIEW_AUTHOR.url} className="underline hover:text-slate-900">
                 {REVIEW_AUTHOR.name}
               </a>
               . We check deal availability against official broker websites.{" "}
-              <Link href="/how-we-earn" className="underline hover:text-green-700">
+              <Link href="/how-we-earn" className="underline hover:text-slate-900">
                 How we earn
               </Link>
             </p>

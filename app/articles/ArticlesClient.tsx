@@ -56,7 +56,7 @@ export default function ArticlesClient({ articles }: { articles: Article[] }) {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search articles..."
-          className="w-full md:w-80 pl-10 pr-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-green-700 focus:ring-1 focus:ring-green-700"
+          className="w-full md:w-80 pl-10 pr-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400"
           aria-label="Search articles"
         />
       </div>
@@ -69,7 +69,7 @@ export default function ArticlesClient({ articles }: { articles: Article[] }) {
           aria-selected={activeCategory === "all"}
           className={`px-4 py-2 text-sm font-medium rounded-full filter-pill ${
             activeCategory === "all"
-              ? "bg-green-700 text-white"
+              ? "bg-slate-900 text-white"
               : "bg-slate-100 text-slate-700 hover:bg-slate-200"
           }`}
         >
@@ -83,7 +83,7 @@ export default function ArticlesClient({ articles }: { articles: Article[] }) {
             aria-selected={activeCategory === cat}
             className={`px-4 py-2 text-sm font-medium rounded-full capitalize filter-pill ${
               activeCategory === cat
-                ? "bg-green-700 text-white"
+                ? "bg-slate-900 text-white"
                 : "bg-slate-100 text-slate-700 hover:bg-slate-200"
             }`}
           >
@@ -152,7 +152,7 @@ export default function ArticlesClient({ articles }: { articles: Article[] }) {
                 {/* CTA */}
                 <Link
                   href={`/article/${article.slug}`}
-                  className="text-sm font-semibold text-green-700 hover:text-green-800 transition-colors mt-auto"
+                  className="text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors mt-auto"
                 >
                   Read Guide &rarr;
                 </Link>

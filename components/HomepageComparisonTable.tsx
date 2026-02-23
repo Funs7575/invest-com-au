@@ -84,7 +84,7 @@ export default function HomepageComparisonTable({
             aria-selected={activeTab === tab}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
               activeTab === tab
-                ? "bg-green-800 text-white"
+                ? "bg-slate-900 text-white"
                 : "bg-gray-100 text-gray-600 hover:bg-gray-200"
             }`}
           >
@@ -116,7 +116,7 @@ export default function HomepageComparisonTable({
                   isSponsored(broker)
                     ? "bg-blue-50/30 border-l-2 border-l-blue-400"
                     : editorPicks[broker.slug]
-                    ? "bg-green-50/40"
+                    ? "bg-slate-50/40"
                     : ""
                 }`}
               >
@@ -125,14 +125,14 @@ export default function HomepageComparisonTable({
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center font-bold text-green-900 text-sm shrink-0 transition-transform duration-200 group-hover:scale-110">
+                    <div className="w-10 h-10 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center font-bold text-slate-900 text-sm shrink-0 transition-transform duration-200 group-hover:scale-110">
                       {broker.name.substring(0, 2).toUpperCase()}
                     </div>
                     <div>
                       <div className="flex items-center gap-1.5">
                         <a
                           href={`/broker/${broker.slug}`}
-                          className="font-semibold text-brand hover:text-green-700 transition-colors"
+                          className="font-semibold text-brand hover:text-slate-900 transition-colors"
                         >
                           {broker.name}
                         </a>
@@ -140,7 +140,7 @@ export default function HomepageComparisonTable({
                         <SponsorBadge broker={broker} />
                       </div>
                       {!isSponsored(broker) && editorPicks[broker.slug] && (
-                        <div className="text-[0.6rem] font-extrabold text-green-700 uppercase tracking-wide">
+                        <div className="text-[0.6rem] font-extrabold text-slate-700 uppercase tracking-wide">
                           {editorPicks[broker.slug]}
                         </div>
                       )}
@@ -197,26 +197,26 @@ export default function HomepageComparisonTable({
               isSponsored(broker)
                 ? "border-blue-400 ring-1 ring-blue-400/30 bg-blue-50/20"
                 : editorPicks[broker.slug]
-                ? "border-green-700 ring-1 ring-green-700/30"
+                ? "border-slate-700 ring-1 ring-slate-700/30"
                 : "border-slate-200"
             }`}
           >
             {isSponsored(broker) ? (
               <div className="mb-2"><SponsorBadge broker={broker} /></div>
             ) : editorPicks[broker.slug] ? (
-              <div className="text-[0.6rem] font-extrabold uppercase tracking-wide text-green-700 mb-2">
+              <div className="text-[0.6rem] font-extrabold uppercase tracking-wide text-slate-700 mb-2">
                 {editorPicks[broker.slug]}
               </div>
             ) : null}
             <div className="flex items-center gap-3 mb-3">
               <div className="text-xs font-bold text-slate-400 w-5">#{i + 1}</div>
-              <div className="w-10 h-10 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center font-bold text-green-900 text-sm shrink-0">
+              <div className="w-10 h-10 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center font-bold text-slate-900 text-sm shrink-0">
                 {broker.name.substring(0, 2).toUpperCase()}
               </div>
               <div className="flex-1 min-w-0">
                 <a
                   href={`/broker/${broker.slug}`}
-                  className="font-bold text-sm hover:text-green-700 transition-colors"
+                  className="font-bold text-sm hover:text-slate-900 transition-colors"
                 >
                   {broker.name}
                 </a>

@@ -175,7 +175,7 @@ export default async function ArticlesPage({
                   {/* CTA */}
                   <Link
                     href={`/article/${article.slug}`}
-                    className="text-sm font-semibold text-green-700 hover:text-green-800 transition-colors mt-auto"
+                    className="text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors mt-auto"
                   >
                     Read Guide &rarr;
                   </Link>

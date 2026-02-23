@@ -35,7 +35,7 @@ export default function CoursesGate({ children }: { children: React.ReactNode })
           </p>
           <Link
             href="/pro"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-green-700 text-white font-bold text-sm rounded-xl hover:bg-green-800 transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 text-white font-bold text-sm rounded-xl hover:bg-slate-800 transition-colors"
           >
             {user ? "Upgrade to Pro" : "Sign In & Subscribe"}
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -45,7 +45,7 @@ export default function CoursesGate({ children }: { children: React.ReactNode })
           {!user && (
             <p className="text-xs text-slate-400 mt-3">
               Already a Pro member?{" "}
-              <Link href="/auth/login?next=/courses" className="text-green-700 underline hover:text-green-800">
+              <Link href="/auth/login?next=/courses" className="text-slate-700 underline hover:text-slate-900">
                 Sign in
               </Link>
             </p>

@@ -91,7 +91,7 @@ export default function HowWeVerifyPage() {
           {/* Update Cadence */}
           <section className="mb-10">
             <h2 className="text-2xl font-extrabold text-brand mb-3">Update Cadence</h2>
-            <div className="bg-green-700/5 border border-green-700/20 rounded-xl p-6 leading-relaxed text-slate-700">
+            <div className="bg-slate-700/5 border border-slate-700/20 rounded-xl p-6 leading-relaxed text-slate-700">
               <p>
                 Verified quarterly at minimum, and immediately upon known changes. When a broker
                 announces a fee change, we update our records as soon as the new pricing is
@@ -112,7 +112,7 @@ export default function HowWeVerifyPage() {
                   key={step.number}
                   className="border border-slate-200 rounded-xl p-5 flex items-start gap-4"
                 >
-                  <div className="shrink-0 w-12 h-12 rounded-lg bg-green-700 flex items-center justify-center">
+                  <div className="shrink-0 w-12 h-12 rounded-lg bg-slate-900 flex items-center justify-center">
                     <span className="text-white font-extrabold text-lg">{step.number}</span>
                   </div>
                   <div className="flex-1 min-w-0">
@@ -154,7 +154,7 @@ export default function HowWeVerifyPage() {
               <p className="mt-4">
                 <Link
                   href="/methodology"
-                  className="text-green-700 font-semibold hover:underline"
+                  className="text-slate-700 font-semibold hover:underline"
                 >
                   Read our full scoring methodology &rarr;
                 </Link>
@@ -163,16 +163,16 @@ export default function HowWeVerifyPage() {
           </section>
 
           {/* Fee Change Alerts Signup */}
-          <div className="bg-green-50 border border-green-200 rounded-xl p-6 mb-8 text-center">
-            <h2 className="text-lg font-extrabold text-green-900 mb-2">Get Notified of Fee Changes</h2>
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-6 mb-8 text-center">
+            <h2 className="text-lg font-extrabold text-slate-900 mb-2">Get Notified of Fee Changes</h2>
             <p className="text-sm text-slate-600 mb-4">Be the first to know when broker fees change. Join our mailing list.</p>
-            <Link href="/#email-capture" className="inline-block px-5 py-2.5 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors">
+            <Link href="/#email-capture" className="inline-block px-5 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 transition-colors">
               Subscribe to Fee Alerts →
             </Link>
           </div>
 
           {/* CTA */}
-          <section className="bg-green-700/5 border border-green-700/20 rounded-xl p-6 md:p-8 text-center">
+          <section className="bg-slate-700/5 border border-slate-700/20 rounded-xl p-6 md:p-8 text-center">
             <h3 className="font-extrabold text-xl mb-2">Find the right broker for you</h3>
             <p className="text-slate-600 mb-6 leading-relaxed">
               Now that you know how we verify fees, use our tools to find the broker that
@@ -181,13 +181,13 @@ export default function HowWeVerifyPage() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link
                 href="/quiz"
-                className="inline-block px-8 py-3 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors"
+                className="inline-block px-8 py-3 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-800 transition-colors"
               >
                 Take the Broker Quiz
               </Link>
               <Link
                 href="/compare"
-                className="inline-block px-8 py-3 border border-green-700 text-green-700 font-semibold rounded-lg hover:bg-green-700 hover:text-white transition-colors"
+                className="inline-block px-8 py-3 border border-slate-700 text-slate-700 font-semibold rounded-lg hover:bg-slate-700 hover:text-white transition-colors"
               >
                 Compare Brokers
               </Link>

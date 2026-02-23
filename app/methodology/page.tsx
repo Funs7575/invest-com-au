@@ -246,7 +246,7 @@ export default function MethodologyPage() {
             <div className="text-center">
               <Link
                 href="/how-we-verify"
-                className="inline-block px-8 py-3 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors"
+                className="inline-block px-8 py-3 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-800 transition-colors"
               >
                 Read how we verify fee data &rarr;
               </Link>

@@ -201,15 +201,15 @@ export default async function BestBrokerPage({
         <div className="container-custom max-w-4xl">
           {/* Breadcrumb */}
           <nav className="text-sm text-slate-500 mb-6">
-            <Link href="/" className="hover:text-green-700">
+            <Link href="/" className="hover:text-slate-900">
               Home
             </Link>
             <span className="mx-2">/</span>
-            <Link href="/best" className="hover:text-green-700">
+            <Link href="/best" className="hover:text-slate-900">
               Best Brokers
             </Link>
             <span className="mx-2">/</span>
-            <span className="text-green-700">{cat.h1.replace("Best ", "").replace(" in Australia", "")}</span>
+            <span className="text-slate-700">{cat.h1.replace("Best ", "").replace(" in Australia", "")}</span>
           </nav>
 
           {/* Header */}
@@ -231,7 +231,7 @@ export default async function BestBrokerPage({
             <span className="flex items-center gap-1.5">
               <svg className="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
               Reviewed by{" "}
-              <Link href="/reviewers/editorial-team" className="font-semibold text-slate-700 hover:text-green-700 transition-colors">
+              <Link href="/reviewers/editorial-team" className="font-semibold text-slate-700 hover:text-slate-900 transition-colors">
                 {REVIEW_AUTHOR.name}
               </Link>
               <span className="text-slate-400">· {REVIEW_AUTHOR.jobTitle}</span>
@@ -243,8 +243,8 @@ export default async function BestBrokerPage({
           </div>
 
 {/* Our selection criteria */}
-          <div className="bg-green-50 border border-green-200 rounded-xl p-5 mb-8">
-            <h2 className="text-lg font-bold text-green-900 mb-2">
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 mb-8">
+            <h2 className="text-lg font-bold text-slate-900 mb-2">
               How We Selected These Brokers
             </h2>
             <ScrollReveal animation="scroll-check-stagger" as="ul" className="space-y-1.5">
@@ -257,7 +257,7 @@ export default async function BestBrokerPage({
             </ScrollReveal>
             <p className="text-xs text-slate-500 mt-3">
               Methodology:{" "}
-              <Link href="/how-we-verify" className="text-green-700 hover:text-green-800 underline">
+              <Link href="/how-we-verify" className="text-slate-700 hover:text-slate-900 underline">
                 How we verify fees and rank brokers
               </Link>
             </p>
@@ -275,7 +275,7 @@ export default async function BestBrokerPage({
               <div className="flex flex-col sm:flex-row sm:items-center gap-4">
                 <div className="flex-1">
                   <h3 className="text-xl font-bold">
-                    <Link href={`/broker/${topPick.slug}`} className="hover:text-green-700 transition-colors">
+                    <Link href={`/broker/${topPick.slug}`} className="hover:text-slate-900 transition-colors">
                       {topPick.name}
                     </Link>
                   </h3>
@@ -333,7 +333,7 @@ export default async function BestBrokerPage({
                     <td className="px-4 py-3 text-sm font-semibold text-slate-400">{i + 1}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1.5 flex-wrap">
-                        <Link href={`/broker/${broker.slug}`} className="font-semibold text-brand hover:text-green-700 transition-colors">
+                        <Link href={`/broker/${broker.slug}`} className="font-semibold text-brand hover:text-slate-900 transition-colors">
                           {broker.name}
                         </Link>
                         {isSponsored(broker) && <SponsorBadge broker={broker} />}
@@ -456,7 +456,7 @@ export default async function BestBrokerPage({
                 <Link
                   key={i}
                   href={link.href}
-                  className="px-3 py-1.5 bg-white border border-slate-200 rounded-full text-sm text-slate-700 hover:border-green-700 hover:text-green-700 transition-colors"
+                  className="px-3 py-1.5 bg-white border border-slate-200 rounded-full text-sm text-slate-700 hover:border-slate-700 hover:text-slate-900 transition-colors"
                 >
                   {link.label}
                 </Link>
@@ -474,7 +474,7 @@ export default async function BestBrokerPage({
                 <Link
                   key={otherCat.slug}
                   href={`/best/${otherCat.slug}`}
-                  className="block p-3 border border-slate-200 rounded-lg hover:border-green-700 hover:bg-green-50/50 transition-colors"
+                  className="block p-3 border border-slate-200 rounded-lg hover:border-slate-700 hover:bg-slate-50/50 transition-colors"
                 >
                   <span className="text-sm font-semibold text-slate-800">
                     {otherCat.h1.replace(" in Australia", "")}

@@ -11,9 +11,9 @@ const TIER_CONFIG = {
   editors_pick: {
     label: "Editor\u2019s Pick",
     disclosure: "Promoted",
-    bgClass: "bg-green-50 border-green-200",
-    textClass: "text-green-700",
-    disclosureClass: "text-green-500",
+    bgClass: "bg-slate-50 border-slate-200",
+    textClass: "text-slate-700",
+    disclosureClass: "text-slate-500",
   },
   deal_of_month: {
     label: "Deal of the Month",

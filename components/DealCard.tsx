@@ -36,7 +36,7 @@ export default function DealCard({ broker }: { broker: Broker }) {
           <div className="flex items-center gap-1.5 flex-wrap">
             <a
               href={`/broker/${broker.slug}`}
-              className="font-bold text-sm hover:text-green-700 transition-colors"
+              className="font-bold text-sm hover:text-slate-900 transition-colors"
             >
               {broker.name}
             </a>

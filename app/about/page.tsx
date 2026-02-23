@@ -83,7 +83,7 @@ export default function AboutPage() {
 
           {/* Editorial Independence Pledge */}
           <section className="mb-10">
-            <div className="bg-green-800 text-white rounded-xl p-6 md:p-8">
+            <div className="bg-slate-800 text-white rounded-xl p-6 md:p-8">
               <h2 className="text-2xl font-extrabold mb-4">Editorial Independence Pledge</h2>
               <div className="space-y-3 text-slate-200 leading-relaxed">
                 <p>
@@ -135,7 +135,7 @@ export default function AboutPage() {
               ))}
             </div>
             <div className="mt-4">
-              <Link href="/methodology" className="text-sm text-green-700 font-semibold hover:text-green-800 transition-colors">
+              <Link href="/methodology" className="text-sm text-slate-700 font-semibold hover:text-slate-900 transition-colors">
                 Read our full methodology →
               </Link>
             </div>
@@ -187,7 +187,7 @@ export default function AboutPage() {
 
           {/* Bottom CTA */}
           <div className="mt-10 text-center">
-            <Link href="/compare" className="inline-block px-8 py-3 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors">
+            <Link href="/compare" className="inline-block px-8 py-3 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-800 transition-colors">
               Compare All Brokers
             </Link>
           </div>

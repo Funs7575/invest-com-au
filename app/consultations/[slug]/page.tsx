@@ -121,11 +121,11 @@ export default async function ConsultationDetailPage({ params }: PageProps) {
         <div className="container-custom max-w-5xl">
           {/* Breadcrumb */}
           <nav aria-label="Breadcrumb" className="text-sm text-slate-500 mb-6">
-            <Link href="/" className="hover:text-green-700">
+            <Link href="/" className="hover:text-slate-900">
               Home
             </Link>
             <span className="mx-2">/</span>
-            <Link href="/consultations" className="hover:text-green-700">
+            <Link href="/consultations" className="hover:text-slate-900">
               Consultations
             </Link>
             <span className="mx-2">/</span>
@@ -263,7 +263,7 @@ export default async function ConsultationDetailPage({ params }: PageProps) {
                       key={faq.q}
                       className="group rounded-xl border border-slate-200 bg-white"
                     >
-                      <summary className="flex items-center justify-between cursor-pointer p-4 text-sm font-semibold text-slate-700 hover:text-green-700 transition-colors">
+                      <summary className="flex items-center justify-between cursor-pointer p-4 text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors">
                         {faq.q}
                         <svg
                           className="w-4 h-4 shrink-0 text-slate-400 group-open:rotate-180 transition-transform"
@@ -305,7 +305,7 @@ export default async function ConsultationDetailPage({ params }: PageProps) {
             <p className="text-xs text-slate-400 mt-4">
               <Link
                 href="/how-we-earn"
-                className="underline hover:text-green-700"
+                className="underline hover:text-slate-900"
               >
                 How we earn
               </Link>

@@ -22,7 +22,7 @@ export default function NotFound() {
         <div className="flex gap-3 justify-center mb-12">
           <Link
             href="/"
-            className="px-6 py-2.5 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors"
+            className="px-6 py-2.5 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-800 transition-colors"
           >
             Go Home
           </Link>
@@ -46,7 +46,7 @@ export default function NotFound() {
                 href={page.href}
                 className="block border border-slate-200 rounded-xl p-4 text-left hover-lift"
               >
-                <Icon name={page.icon} size={24} className="text-green-700 mb-1" />
+                <Icon name={page.icon} size={24} className="text-slate-700 mb-1" />
                 <h3 className="font-bold text-sm mb-0.5">{page.title}</h3>
                 <p className="text-xs text-slate-500">{page.description}</p>
               </Link>

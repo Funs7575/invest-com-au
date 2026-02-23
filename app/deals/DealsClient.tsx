@@ -56,7 +56,7 @@ export default function DealsClient({ deals }: { deals: Broker[] }) {
               aria-selected={activeTab === tab}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 activeTab === tab
-                  ? "bg-green-800 text-white"
+                  ? "bg-slate-900 text-white"
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200"
               }`}
             >

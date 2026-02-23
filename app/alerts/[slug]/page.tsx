@@ -85,16 +85,16 @@ export default async function AlertDetailPage({ params }: { params: Promise<{ sl
           )}
 
           {alert.action_items && alert.action_items.length > 0 && (
-            <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-6">
-              <h3 className="text-sm font-bold text-green-800 mb-2">Action Items</h3>
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-6">
+              <h3 className="text-sm font-bold text-slate-800 mb-2">Action Items</h3>
               <ul className="space-y-2">
                 {alert.action_items.map((item, i) => (
-                  <li key={i} className="text-sm text-green-700 flex items-start gap-2">
+                  <li key={i} className="text-sm text-slate-700 flex items-start gap-2">
                     <span className="text-green-500 shrink-0 mt-0.5">✓</span>
                     <span>
                       {item.text}
                       {item.url && (
-                        <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-green-800 hover:underline ml-1 font-medium">
+                        <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-slate-800 hover:underline ml-1 font-medium">
                           Learn more →
                         </a>
                       )}
@@ -107,7 +107,7 @@ export default async function AlertDetailPage({ params }: { params: Promise<{ sl
 
           {alert.source_url && (
             <a href={alert.source_url} target="_blank" rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-sm text-green-700 hover:underline mb-6">
+              className="inline-flex items-center gap-1.5 text-sm text-slate-700 hover:underline mb-6">
               Source: {alert.source_name || "View original"} →
             </a>
           )}
@@ -117,7 +117,7 @@ export default async function AlertDetailPage({ params }: { params: Promise<{ sl
           </div>
 
           <div className="mt-6">
-            <Link href="/alerts" className="text-sm text-green-700 hover:underline">← Back to all alerts</Link>
+            <Link href="/alerts" className="text-sm text-slate-700 hover:underline">← Back to all alerts</Link>
           </div>
         </div>
       </div>

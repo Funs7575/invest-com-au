@@ -52,11 +52,11 @@ export default function EmbeddedFxCalc({ brokers }: { brokers: Broker[] }) {
   const savings = big4Cost - cheapestCost;
 
   return (
-    <div className="my-10 border-2 border-green-700/30 rounded-2xl overflow-hidden bg-gradient-to-b from-green-50/50 to-white">
+    <div className="my-10 border-2 border-slate-700/30 rounded-2xl overflow-hidden bg-gradient-to-b from-slate-50/50 to-white">
       {/* Header */}
       <div className="bg-brand text-white px-6 py-4">
         <div className="flex items-center gap-2">
-          <Icon name="globe" size={20} className="text-green-200 shrink-0" />
+          <Icon name="globe" size={20} className="text-slate-200 shrink-0" />
           <h3 className="font-extrabold text-base">
             FX Cost Calculator — How Much Are You Really Paying?
           </h3>
@@ -84,7 +84,7 @@ export default function EmbeddedFxCalc({ brokers }: { brokers: Broker[] }) {
             step={500}
             value={amount}
             onChange={(e) => setAmount(Number(e.target.value))}
-            className="w-full h-2 rounded-full appearance-none cursor-pointer accent-green-700"
+            className="w-full h-2 rounded-full appearance-none cursor-pointer accent-slate-700"
             style={{
               background: `linear-gradient(to right, #15803d ${
                 ((amount - 1000) / 49000) * 100
@@ -190,7 +190,7 @@ export default function EmbeddedFxCalc({ brokers }: { brokers: Broker[] }) {
                 "calculator"
               )
             }
-            className="block w-full text-center px-6 py-3 bg-green-700 text-white font-bold rounded-lg hover:bg-green-800 hover:scale-[1.02] transition-all"
+            className="block w-full text-center px-6 py-3 bg-slate-900 text-white font-bold rounded-lg hover:bg-slate-800 hover:scale-[1.02] transition-all"
           >
             Open {cheapest.name} Account — {formatPercent(cheapest.fx_rate ?? 0)}{" "}
             FX &rarr;

@@ -115,13 +115,13 @@ export default async function LessonPage({ params }: PageProps) {
         <div className="container-custom max-w-6xl">
           {/* Breadcrumb */}
           <nav aria-label="Breadcrumb" className="text-sm text-slate-500 mb-6">
-            <Link href="/" className="hover:text-green-700">Home</Link>
+            <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="mx-2">/</span>
-            <Link href="/courses" className="hover:text-green-700">Courses</Link>
+            <Link href="/courses" className="hover:text-slate-900">Courses</Link>
             <span className="mx-2">/</span>
-            <Link href={`/courses/${courseSlug}`} className="hover:text-green-700">{course.title}</Link>
+            <Link href={`/courses/${courseSlug}`} className="hover:text-slate-900">{course.title}</Link>
             <span className="mx-2">/</span>
-            <span className="text-green-700">{info.lesson.title}</span>
+            <span className="text-slate-700">{info.lesson.title}</span>
           </nav>
 
           {!hasAccess ? (
@@ -139,7 +139,7 @@ export default async function LessonPage({ params }: PageProps) {
               </p>
               <Link
                 href={`/courses/${courseSlug}#pricing`}
-                className="inline-block px-8 py-3 bg-green-700 text-white font-bold rounded-lg hover:bg-green-800 hover:scale-105 hover:shadow-[0_0_12px_rgba(21,128,61,0.3)] transition-all duration-200"
+                className="inline-block px-8 py-3 bg-slate-900 text-white font-bold rounded-lg hover:bg-slate-800 hover:scale-105 transition-all duration-200"
               >
                 Unlock Course — ${priceDisplay}
               </Link>

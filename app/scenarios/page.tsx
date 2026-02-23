@@ -51,7 +51,7 @@ export default async function ScenariosPage() {
                 )}
                 <div className="flex items-center justify-between">
                   <h2 className="text-xl font-bold mb-2">{scenario.title}</h2>
-                  <span className="text-slate-300 group-hover:text-green-700 transition-colors text-lg">→</span>
+                  <span className="text-slate-300 group-hover:text-slate-700 transition-colors text-lg">→</span>
                 </div>
                 {scenario.hero_title && (
                   <p className="text-slate-600">{scenario.hero_title}</p>

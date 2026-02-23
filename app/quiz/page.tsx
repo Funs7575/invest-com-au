@@ -488,7 +488,7 @@ export default function QuizPage() {
                               {r.broker.icon || r.broker.name.charAt(0)}
                             </div>
                             <span className="font-semibold text-xs">{r.broker.name}</span>
-                            {i === 0 && <span className="text-[0.5rem] px-1.5 py-0.5 bg-green-100 text-green-700 rounded-full font-bold">TOP</span>}
+                            {i === 0 && <span className="text-[0.5rem] px-1.5 py-0.5 bg-slate-100 text-slate-700 rounded-full font-bold">TOP</span>}
                           </div>
                         </td>
                         <td className="px-3 py-2.5 text-center text-xs">{r.broker.asx_fee || 'N/A'}</td>
@@ -680,7 +680,7 @@ export default function QuizPage() {
           {!emailGate && (
             <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 mb-6 result-card-in result-card-in-delay-5">
               <div className="flex items-start gap-4">
-                <Icon name="mail" size={28} className="text-green-700 shrink-0" />
+                <Icon name="mail" size={28} className="text-slate-700 shrink-0" />
                 <div className="flex-1">
                   <h3 className="font-bold text-sm mb-1">Get your results emailed</h3>
                   <p className="text-xs text-slate-500 mb-3">We&apos;ll send your broker shortlist so you can compare later — plus our free fee comparison PDF.</p>
@@ -691,7 +691,7 @@ export default function QuizPage() {
                       aria-label="Email address for quiz results"
                       value={gateEmail}
                       onChange={(e) => setGateEmail(e.target.value)}
-                      className="flex-1 px-3 py-2 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-green-700/30 focus:border-green-700"
+                      className="flex-1 px-3 py-2 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
                     />
                     <button
                       onClick={async () => {
@@ -701,7 +701,7 @@ export default function QuizPage() {
                         setEmailGate(true); // Hide the form after sending
                       }}
                       disabled={gateStatus === "loading" || !gateEmail.includes("@")}
-                      className="px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors disabled:opacity-60 shrink-0"
+                      className="px-4 py-2 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-60 shrink-0"
                     >
                       {gateStatus === "loading" ? "Sending..." : "Email Me"}
                     </button>
@@ -709,14 +709,14 @@ export default function QuizPage() {
                   {gateStatus === "error" && (
                     <p className="text-xs text-red-500 mt-1">Something went wrong. Please try again.</p>
                   )}
-                  <p className="text-xs text-slate-400 mt-2">No spam. Unsubscribe anytime. <Link href="/privacy" className="underline hover:text-green-700">Privacy Policy</Link></p>
+                  <p className="text-xs text-slate-400 mt-2">No spam. Unsubscribe anytime. <Link href="/privacy" className="underline hover:text-slate-900">Privacy Policy</Link></p>
                 </div>
               </div>
             </div>
           )}
           {emailGate && (
-            <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-6 text-center">
-              <span className="text-sm text-green-700 font-medium">✓ Results sent to {gateEmail}</span>
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-6 text-center">
+              <span className="text-sm text-slate-700 font-medium">✓ Results sent to {gateEmail}</span>
             </div>
           )}
 
@@ -787,7 +787,7 @@ export default function QuizPage() {
             {/* Animated analyzing spinner */}
             <div className="relative w-16 h-16 mb-6">
               <div className="absolute inset-0 rounded-full border-4 border-slate-200" />
-              <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-green-700 analyzing-ring-spin" />
+              <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-slate-900 analyzing-ring-spin" />
             </div>
 
             <h2 className="text-xl font-bold mb-2 reveal-text-in">
@@ -799,9 +799,9 @@ export default function QuizPage() {
 
             {/* Animated progress dots */}
             <div className="flex gap-2 mt-6">
-              <span className="w-2 h-2 rounded-full bg-green-700 analyzing-dot-1" />
-              <span className="w-2 h-2 rounded-full bg-green-700 analyzing-dot-2" />
-              <span className="w-2 h-2 rounded-full bg-green-700 analyzing-dot-3" />
+              <span className="w-2 h-2 rounded-full bg-slate-900 analyzing-dot-1" />
+              <span className="w-2 h-2 rounded-full bg-slate-900 analyzing-dot-2" />
+              <span className="w-2 h-2 rounded-full bg-slate-900 analyzing-dot-3" />
             </div>
           </div>
         </div>
@@ -828,7 +828,7 @@ export default function QuizPage() {
             <div
               key={i}
               className={`w-3 h-3 rounded-full transition-colors ${
-                i < step ? 'bg-green-700' : i === step ? 'bg-green-700 ring-2 ring-green-700/30 ring-offset-2' : 'bg-slate-200'
+                i < step ? 'bg-slate-900' : i === step ? 'bg-slate-900 ring-2 ring-slate-700/30 ring-offset-2' : 'bg-slate-200'
               }`}
             />
           ))}
@@ -848,7 +848,7 @@ export default function QuizPage() {
             aria-valuemax={questions.length}
             aria-label={`Question ${step + 1} of ${questions.length}`}
           >
-            <div className="h-full bg-green-700 rounded-full transition-all duration-500" style={{ width: `${((step + 1) / questions.length) * 100}%` }} />
+            <div className="h-full bg-slate-900 rounded-full transition-all duration-500" style={{ width: `${((step + 1) / questions.length) * 100}%` }} />
           </div>
         </div>
 
@@ -872,8 +872,8 @@ export default function QuizPage() {
                 aria-label={opt.label}
                 className={`w-full text-left border rounded-xl px-6 py-4 transition-all font-medium text-sm md:text-base ${
                   selectedKey === opt.key
-                    ? "border-green-700 bg-green-700/5 scale-[0.98]"
-                    : "border-slate-200 hover:border-green-700 hover:bg-green-700/5"
+                    ? "border-slate-700 bg-slate-700/5 scale-[0.98]"
+                    : "border-slate-200 hover:border-slate-700 hover:bg-slate-700/5"
                 } ${animating && selectedKey !== opt.key ? "opacity-50" : ""}`}
               >
                 <span className="flex items-center gap-3">

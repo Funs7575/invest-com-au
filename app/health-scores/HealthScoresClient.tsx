@@ -93,7 +93,7 @@ function DimensionBar({ score, label, note, weight, isPro }: {
         <>
           <button
             onClick={() => setExpanded(!expanded)}
-            className="text-xs text-green-700 hover:underline"
+            className="text-xs text-slate-700 hover:underline"
           >
             {expanded ? "Hide details" : "Show details"}
           </button>
@@ -160,7 +160,7 @@ export default function HealthScoresClient({
               setSelectedSlug(e.target.value);
               if (e.target.value) trackEvent("health_score_select", { broker: e.target.value }, "/health-scores");
             }}
-            className="w-full md:w-80 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-green-700 focus:ring-1 focus:ring-green-700"
+            className="w-full md:w-80 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400"
           >
             <option value="">Choose a broker...</option>
             {brokers.map((b) => (
@@ -191,7 +191,7 @@ export default function HealthScoresClient({
                         href={`https://connectonline.asic.gov.au/RegistrySearch/faces/landing/SearchRegisters.jspx`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-green-700 hover:underline"
+                        className="text-slate-700 hover:underline"
                       >
                         Verify on ASIC →
                       </a>
@@ -243,7 +243,7 @@ export default function HealthScoresClient({
                       <div className="bg-white/90 border border-slate-200 rounded-xl p-5 text-center shadow-lg">
                         <p className="text-sm font-bold text-slate-900 mb-1">Full Safety Breakdown</p>
                         <p className="text-xs text-slate-500 mb-3">See all 5 dimensions with detailed notes</p>
-                        <Link href="/pro" className="inline-block px-4 py-2 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors">
+                        <Link href="/pro" className="inline-block px-4 py-2 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors">
                           Upgrade to Pro
                         </Link>
                       </div>

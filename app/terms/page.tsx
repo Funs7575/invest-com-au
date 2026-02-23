@@ -75,7 +75,7 @@ export default function TermsPage() {
                   &mdash; see our{" "}
                   <Link
                     href="/about"
-                    className="text-green-700 hover:text-green-800 underline"
+                    className="text-slate-700 hover:text-slate-900 underline"
                   >
                     verification process
                   </Link>
@@ -167,7 +167,7 @@ export default function TermsPage() {
                   Questions about these terms? Email us at{" "}
                   <a
                     href="mailto:hello@invest.com.au"
-                    className="text-green-700 hover:text-green-800 underline"
+                    className="text-slate-700 hover:text-slate-900 underline"
                   >
                     hello@invest.com.au
                   </a>
@@ -180,7 +180,7 @@ export default function TermsPage() {
             <div className="mt-10 text-center">
               <Link
                 href="/privacy"
-                className="text-green-700 font-semibold hover:underline"
+                className="text-slate-700 font-semibold hover:underline"
               >
                 Read our Privacy Policy &rarr;
               </Link>

@@ -219,7 +219,7 @@ export default function PrivacyPage() {
               To exercise any of these rights, contact us at{" "}
               <a
                 href="mailto:privacy@invest.com.au"
-                className="text-green-700 hover:text-green-800 underline"
+                className="text-slate-700 hover:text-slate-900 underline"
               >
                 privacy@invest.com.au
               </a>
@@ -262,7 +262,7 @@ export default function PrivacyPage() {
               information, please contact us at{" "}
               <a
                 href="mailto:privacy@invest.com.au"
-                className="text-green-700 hover:text-green-800 underline"
+                className="text-slate-700 hover:text-slate-900 underline"
               >
                 privacy@invest.com.au
               </a>
@@ -275,7 +275,7 @@ export default function PrivacyPage() {
                 href="https://www.oaic.gov.au/privacy/privacy-complaints"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-green-700 hover:text-green-800 underline"
+                className="text-slate-700 hover:text-slate-900 underline"
               >
                 Office of the Australian Information Commissioner (OAIC)
               </a>

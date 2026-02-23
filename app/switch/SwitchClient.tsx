@@ -124,7 +124,7 @@ export default function SwitchClient({ brokers, transferGuides }: Props) {
             <select
               value={currentSlug}
               onChange={(e) => setCurrentSlug(e.target.value)}
-              className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-green-700 focus:ring-1 focus:ring-green-700"
+              className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400"
             >
               <option value="">Select your current broker...</option>
               {brokers.map((b) => (
@@ -141,7 +141,7 @@ export default function SwitchClient({ brokers, transferGuides }: Props) {
             <select
               value={targetSlug}
               onChange={(e) => setTargetSlug(e.target.value)}
-              className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-green-700 focus:ring-1 focus:ring-green-700"
+              className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400"
             >
               <option value="">Select target broker...</option>
               {brokers
@@ -165,7 +165,7 @@ export default function SwitchClient({ brokers, transferGuides }: Props) {
               onChange={(e) =>
                 setHoldings(Math.max(1, parseInt(e.target.value) || 1))
               }
-              className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-green-700 focus:ring-1 focus:ring-green-700"
+              className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400"
             />
           </div>
           <div>
@@ -182,7 +182,7 @@ export default function SwitchClient({ brokers, transferGuides }: Props) {
                   Math.max(0, parseInt(e.target.value) || 0)
                 )
               }
-              className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-green-700 focus:ring-1 focus:ring-green-700"
+              className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400"
             />
           </div>
         </div>
@@ -193,7 +193,7 @@ export default function SwitchClient({ brokers, transferGuides }: Props) {
             <div
               className={`rounded-xl p-6 mb-8 border ${
                 savings.annualSavings > 0
-                  ? "bg-green-50 border-green-200"
+                  ? "bg-slate-50 border-slate-200"
                   : "bg-red-50 border-red-200"
               }`}
             >
@@ -231,7 +231,7 @@ export default function SwitchClient({ brokers, transferGuides }: Props) {
                   <p className="text-xs text-slate-500 uppercase font-medium mb-1">
                     New Annual Cost
                   </p>
-                  <p className="text-xl font-extrabold text-green-700">
+                  <p className="text-xl font-extrabold text-slate-700">
                     ${savings.targetAnnualFee.toFixed(0)}
                   </p>
                 </div>
@@ -242,7 +242,7 @@ export default function SwitchClient({ brokers, transferGuides }: Props) {
                   <p
                     className={`text-xl font-extrabold ${
                       savings.annualSavings > 0
-                        ? "text-green-700"
+                        ? "text-slate-700"
                         : "text-red-600"
                     }`}
                   >
@@ -288,7 +288,7 @@ export default function SwitchClient({ brokers, transferGuides }: Props) {
                       key={i}
                       className="flex items-start gap-3 p-3 bg-white border border-slate-200 rounded-lg"
                     >
-                      <div className="w-6 h-6 rounded-full bg-green-700 text-white flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
+                      <div className="w-6 h-6 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
                         {i + 1}
                       </div>
                       <span className="text-sm text-slate-700">{step}</span>
@@ -320,7 +320,7 @@ export default function SwitchClient({ brokers, transferGuides }: Props) {
                     "calculator"
                   )
                 }
-                className="inline-block px-6 py-3 bg-green-700 text-white font-bold rounded-lg hover:bg-green-600 transition-all"
+                className="inline-block px-6 py-3 bg-slate-700 text-white font-bold rounded-lg hover:bg-slate-600 transition-all"
               >
                 Open {targetBroker.name} Account →
               </a>

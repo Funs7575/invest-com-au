@@ -31,11 +31,11 @@ export default function EditorialPolicyPage() {
       <div className="container-custom max-w-3xl">
         {/* Breadcrumb */}
         <nav className="text-sm text-slate-500 mb-8">
-          <Link href="/" className="hover:text-green-700">
+          <Link href="/" className="hover:text-slate-900">
             Home
           </Link>
           <span className="mx-2">/</span>
-          <span className="text-green-700">Editorial Policy</span>
+          <span className="text-slate-700">Editorial Policy</span>
         </nav>
 
         <h1 className="text-3xl md:text-4xl font-extrabold mb-3">
@@ -100,8 +100,8 @@ export default function EditorialPolicyPage() {
           </section>
 
           {/* 3. How Ratings Work */}
-          <section className="bg-green-50 border border-green-200 rounded-xl p-6">
-            <h2 className="text-xl font-bold mb-3 text-green-900">
+          <section className="bg-slate-50 border border-slate-200 rounded-xl p-6">
+            <h2 className="text-xl font-bold mb-3 text-slate-900">
               How Our Ratings Work
             </h2>
             <p className="text-slate-700 leading-relaxed mb-3">
@@ -118,9 +118,9 @@ export default function EditorialPolicyPage() {
               ].map((item) => (
                 <div
                   key={item.factor}
-                  className="bg-white border border-green-100 rounded-lg p-3 text-center"
+                  className="bg-white border border-slate-100 rounded-lg p-3 text-center"
                 >
-                  <div className="text-lg font-bold text-green-700">
+                  <div className="text-lg font-bold text-slate-700">
                     {item.weight}
                   </div>
                   <div className="text-xs text-slate-600">{item.factor}</div>
@@ -129,7 +129,7 @@ export default function EditorialPolicyPage() {
             </div>
             <Link
               href="/methodology"
-              className="text-green-700 font-semibold hover:underline text-sm"
+              className="text-slate-700 font-semibold hover:underline text-sm"
             >
               Full methodology breakdown &rarr;
             </Link>
@@ -182,7 +182,7 @@ export default function EditorialPolicyPage() {
                 Email{" "}
                 <a
                   href="mailto:editorial@invest.com.au"
-                  className="text-green-700 font-medium hover:underline"
+                  className="text-slate-700 font-medium hover:underline"
                 >
                   editorial@invest.com.au
                 </a>{" "}
@@ -293,7 +293,7 @@ export default function EditorialPolicyPage() {
               content standards, contact us at{" "}
               <a
                 href="mailto:editorial@invest.com.au"
-                className="text-green-700 font-medium hover:underline"
+                className="text-slate-700 font-medium hover:underline"
               >
                 editorial@invest.com.au
               </a>

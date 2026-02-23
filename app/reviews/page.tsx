@@ -56,9 +56,9 @@ export default async function ReviewsPage() {
       <div className="container-custom">
         {/* Breadcrumb */}
         <nav className="text-sm text-slate-500 mb-6">
-          <Link href="/" className="hover:text-green-700">Home</Link>
+          <Link href="/" className="hover:text-slate-900">Home</Link>
           <span className="mx-2">/</span>
-          <span className="text-green-700">Reviews</span>
+          <span className="text-slate-700">Reviews</span>
         </nav>
 
         <h1 className="text-3xl md:text-4xl font-extrabold mb-2">Broker Reviews</h1>
@@ -139,7 +139,7 @@ function BrokerReviewCard({ broker }: { broker: Broker }) {
         </div>
       </div>
       <div className="px-6 py-3 bg-slate-50 border-t border-slate-200 text-center">
-        <span className="text-sm font-semibold text-green-700">Read Full Review →</span>
+        <span className="text-sm font-semibold text-slate-700">Read Full Review →</span>
       </div>
     </Link>
   );

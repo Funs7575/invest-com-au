@@ -51,7 +51,7 @@ function AnimatedNumber({
   }, [value]);
   return (
     <span
-      className={`inline-block transition-colors duration-300 ${flash ? "text-green-700" : ""}`}
+      className={`inline-block transition-colors duration-300 ${flash ? "text-slate-700" : ""}`}
     >
       {prefix}
       {display.toLocaleString("en-AU", {
@@ -93,7 +93,7 @@ function InputField({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className={`w-full bg-white border border-slate-200 rounded-lg py-2.5 shadow-sm focus:outline-none focus:border-green-700 focus:ring-1 focus:ring-green-700 transition-all font-medium ${prefix ? "pl-7" : "pl-4"} ${suffix ? "pr-10" : "pr-4"}`}
+          className={`w-full bg-white border border-slate-200 rounded-lg py-2.5 shadow-sm focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400 transition-all font-medium ${prefix ? "pl-7" : "pl-4"} ${suffix ? "pr-10" : "pr-4"}`}
         />
         {suffix && (
           <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 font-medium text-sm">
@@ -126,7 +126,7 @@ function SelectField({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 shadow-sm focus:outline-none focus:border-green-700 focus:ring-1 focus:ring-green-700 transition-all font-medium"
+        className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 shadow-sm focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400 transition-all font-medium"
       >
         <option value="">{placeholder}</option>
         {children}
@@ -338,7 +338,7 @@ export default function FeeImpactClient({ brokers }: Props) {
       <div className="container-custom">
         {/* Page header */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full mb-4">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-700 text-xs font-bold rounded-full mb-4">
             <Icon name="calculator" size={14} />
             PRO TOOL
           </div>
@@ -418,7 +418,7 @@ export default function FeeImpactClient({ brokers }: Props) {
                 <button
                   onClick={handleSaveProfile}
                   disabled={saving}
-                  className="mt-4 w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-brand text-white font-bold text-sm rounded-lg hover:bg-green-800 transition-colors disabled:opacity-50"
+                  className="mt-4 w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-brand text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50"
                 >
                   {saving ? (
                     "Saving..."
@@ -443,7 +443,7 @@ export default function FeeImpactClient({ brokers }: Props) {
               )}
               {!isPro && user && (
                 <p className="mt-3 text-xs text-slate-400 text-center">
-                  <Link href="/pro" className="text-green-700 hover:underline font-medium">Upgrade to Pro</Link> to save your trading profile
+                  <Link href="/pro" className="text-slate-700 hover:underline font-medium">Upgrade to Pro</Link> to save your trading profile
                 </p>
               )}
             </div>
@@ -732,7 +732,7 @@ export default function FeeImpactClient({ brokers }: Props) {
                             </p>
                             <Link
                               href="/pro"
-                              className="inline-flex items-center gap-2 px-5 py-2.5 bg-brand text-white font-bold text-sm rounded-lg hover:bg-green-800 transition-colors"
+                              className="inline-flex items-center gap-2 px-5 py-2.5 bg-brand text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors"
                             >
                               Upgrade to Pro
                               <svg
@@ -875,7 +875,7 @@ export default function FeeImpactClient({ brokers }: Props) {
             </Link>
             <Link
               href="/quiz"
-              className="text-xs px-3 py-1.5 border border-green-200 text-green-700 rounded-lg hover:bg-green-50 transition-colors"
+              className="text-xs px-3 py-1.5 border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors"
             >
               Take the Broker Quiz →
             </Link>

@@ -119,7 +119,7 @@ export default function AuthorByline({
           </p>
           <p
             className={`text-sm font-medium ${
-              isDark ? "text-green-400" : "text-green-700"
+              isDark ? "text-slate-400" : "text-slate-700"
             }`}
           >
             Data verified: {displayDate}

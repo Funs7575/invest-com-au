@@ -44,7 +44,7 @@ export default function ReportsClient({ reports }: { reports: QuarterlyReport[] 
             <Link
               key={r.id}
               href={`/reports/${r.slug}`}
-              className="block bg-white border border-slate-200 rounded-xl p-5 hover:border-green-300 hover:shadow-md transition-all"
+              className="block bg-white border border-slate-200 rounded-xl p-5 hover:border-slate-300 hover:shadow-md transition-all"
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">

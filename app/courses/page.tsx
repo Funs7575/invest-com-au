@@ -43,7 +43,7 @@ function CourseCard({ course }: { course: Course }) {
   return (
     <Link
       href={`/courses/${course.slug}`}
-      className="group rounded-2xl border border-slate-200 bg-white overflow-hidden hover:shadow-lg hover:border-green-200 transition-all duration-200"
+      className="group rounded-2xl border border-slate-200 bg-white overflow-hidden hover:shadow-lg hover:border-slate-300 transition-all duration-200"
     >
       {/* Cover image or gradient */}
       {course.cover_image_url ? (
@@ -55,7 +55,7 @@ function CourseCard({ course }: { course: Course }) {
           />
         </div>
       ) : (
-        <div className="aspect-[16/9] bg-gradient-to-br from-green-600 to-emerald-700 flex items-center justify-center">
+        <div className="aspect-[16/9] bg-gradient-to-br from-slate-600 to-slate-700 flex items-center justify-center">
           <span className="text-4xl" aria-hidden="true">🎓</span>
         </div>
       )}
@@ -70,7 +70,7 @@ function CourseCard({ course }: { course: Course }) {
           )}
         </div>
 
-        <h2 className="font-bold text-slate-900 mb-1 group-hover:text-green-700 transition-colors line-clamp-2">
+        <h2 className="font-bold text-slate-900 mb-1 group-hover:text-slate-700 transition-colors line-clamp-2">
           {course.title}
         </h2>
 
@@ -107,7 +107,7 @@ function CourseCard({ course }: { course: Course }) {
               <span>~{course.estimated_hours}h</span>
             )}
           </div>
-          <span className="text-lg font-extrabold text-green-700">
+          <span className="text-lg font-extrabold text-slate-700">
             ${priceDisplay}
           </span>
         </div>
@@ -162,11 +162,11 @@ export default async function CoursesPage() {
             <div className="container-custom max-w-6xl">
               {/* Breadcrumb */}
               <nav aria-label="Breadcrumb" className="text-sm text-slate-500 mb-6">
-                <Link href="/" className="hover:text-green-700">
+                <Link href="/" className="hover:text-slate-900">
                   Home
                 </Link>
                 <span className="mx-2">/</span>
-                <span className="text-green-700">Courses</span>
+                <span className="text-slate-700">Courses</span>
               </nav>
 
               {/* Hero */}

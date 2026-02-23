@@ -40,7 +40,7 @@ export default function ProDealsClient({
             </p>
             <Link
               href="/pro"
-              className="inline-block px-6 py-3 bg-green-700 text-white font-bold rounded-lg hover:bg-green-800 transition-colors"
+              className="inline-block px-6 py-3 bg-slate-900 text-white font-bold rounded-lg hover:bg-slate-800 transition-colors"
             >
               Upgrade to Pro →
             </Link>
@@ -171,7 +171,7 @@ export default function ProDealsClient({
                               href={deal.redemption_url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-block px-4 py-2 bg-green-700 text-white text-xs font-bold rounded-lg hover:bg-green-800 transition-colors"
+                              className="inline-block px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800 transition-colors"
                             >
                               Claim Deal →
                             </a>
@@ -180,7 +180,7 @@ export default function ProDealsClient({
                       ) : (
                         <button
                           onClick={() => revealDeal(deal)}
-                          className="w-full px-4 py-2.5 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors"
+                          className="w-full px-4 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors"
                         >
                           Reveal Deal
                         </button>

@@ -138,7 +138,7 @@ export default async function ReviewerPage({
                   className="w-20 h-20 rounded-full object-cover border-2 border-white/20 shrink-0"
                 />
               ) : (
-                <div className="w-20 h-20 rounded-full bg-green-600 flex items-center justify-center text-2xl font-bold text-white shrink-0">
+                <div className="w-20 h-20 rounded-full bg-slate-600 flex items-center justify-center text-2xl font-bold text-white shrink-0">
                   {initials}
                 </div>
               )}
@@ -147,7 +147,7 @@ export default async function ReviewerPage({
                 <h1 className="text-3xl md:text-4xl font-extrabold mb-2">
                   {m.full_name}
                 </h1>
-                <span className="inline-block text-sm font-medium bg-white/10 text-green-400 px-3 py-1 rounded-full">
+                <span className="inline-block text-sm font-medium bg-white/10 text-slate-300 px-3 py-1 rounded-full">
                   {formatRole(m.role)}
                 </span>
               </div>
@@ -201,19 +201,19 @@ export default async function ReviewerPage({
             )}
 
             {/* Review Process */}
-            <div className="bg-green-50 border border-green-200 rounded-xl p-5">
-              <h3 className="text-sm font-bold text-green-900 mb-2">
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-5">
+              <h3 className="text-sm font-bold text-slate-900 mb-2">
                 Review Process
               </h3>
-              <p className="text-sm text-green-800/80 leading-relaxed">
+              <p className="text-sm text-slate-600 leading-relaxed">
                 As an expert reviewer, {m.full_name.split(" ")[0]} independently
                 validates fee claims, checks compliance disclosures, and signs off
                 on content accuracy before publication. All reviews follow our{" "}
-                <Link href="/methodology" className="text-green-700 font-medium hover:underline">
+                <Link href="/methodology" className="text-slate-700 font-medium hover:underline">
                   6-factor methodology
                 </Link>{" "}
                 and{" "}
-                <Link href="/how-we-verify" className="text-green-700 font-medium hover:underline">
+                <Link href="/how-we-verify" className="text-slate-700 font-medium hover:underline">
                   fee verification process
                 </Link>
                 .
@@ -278,17 +278,17 @@ export default async function ReviewerPage({
                 For corrections, questions, or feedback:{" "}
                 <a
                   href="mailto:editorial@invest.com.au"
-                  className="text-green-700 hover:underline"
+                  className="text-slate-700 hover:underline"
                 >
                   editorial@invest.com.au
                 </a>
               </p>
               <p className="text-sm text-slate-500 mt-1">
-                <Link href="/editorial-policy" className="text-green-700 hover:underline">
+                <Link href="/editorial-policy" className="text-slate-700 hover:underline">
                   Read our editorial policy
                 </Link>
                 {" "}&middot;{" "}
-                <Link href="/methodology" className="text-green-700 hover:underline">
+                <Link href="/methodology" className="text-slate-700 hover:underline">
                   Our methodology
                 </Link>
               </p>

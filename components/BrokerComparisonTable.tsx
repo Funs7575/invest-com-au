@@ -136,7 +136,7 @@ export default function BrokerComparisonTable({
                       </div>
                       <div className="flex gap-1.5 mt-0.5">
                         {b.chess_sponsored && (
-                          <span className="text-[0.6rem] font-semibold bg-green-100 text-green-700 px-1.5 py-0.5 rounded">
+                          <span className="text-[0.6rem] font-semibold bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded">
                             CHESS
                           </span>
                         )}
@@ -172,7 +172,7 @@ export default function BrokerComparisonTable({
                     href={getAffiliateLink(b)}
                     target="_blank"
                     rel={AFFILIATE_REL}
-                    className="inline-block px-4 py-2 bg-green-700 text-white text-xs font-bold rounded-lg hover:bg-green-800 hover:scale-105 transition-all"
+                    className="inline-block px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800 hover:scale-105 transition-all"
                   >
                     Go to Site &rarr;
                   </a>
@@ -201,7 +201,7 @@ export default function BrokerComparisonTable({
                 <div className="font-bold text-sm text-brand">{b.name}</div>
                 <div className="flex gap-1.5 mt-0.5">
                   {b.chess_sponsored && (
-                    <span className="text-[0.6rem] font-semibold bg-green-100 text-green-700 px-1.5 py-0.5 rounded">
+                    <span className="text-[0.6rem] font-semibold bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded">
                       CHESS
                     </span>
                   )}
@@ -241,7 +241,7 @@ export default function BrokerComparisonTable({
               href={getAffiliateLink(b)}
               target="_blank"
               rel={AFFILIATE_REL}
-              className="block w-full text-center px-4 py-2.5 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors"
+              className="block w-full text-center px-4 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors"
             >
               Go to Site &rarr;
             </a>

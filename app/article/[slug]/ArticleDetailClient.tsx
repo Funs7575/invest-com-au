@@ -24,7 +24,7 @@ export default function ArticleDetailClient({
       <div className="flex-1 min-w-0">
         <a
           href={`/broker/${broker.slug}`}
-          className="font-bold text-sm hover:text-green-700 transition-colors"
+          className="font-bold text-sm hover:text-slate-900 transition-colors"
         >
           {broker.name}
         </a>
@@ -47,7 +47,7 @@ export default function ArticleDetailClient({
             broker.layer
           )
         }
-        className="shrink-0 px-4 py-2 bg-green-700 text-white text-xs font-bold rounded-lg hover:bg-green-800 transition-colors"
+        className="shrink-0 px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800 transition-colors"
       >
         {getBenefitCta(broker, "review")}
       </a>

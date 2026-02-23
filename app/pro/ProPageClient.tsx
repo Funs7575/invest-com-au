@@ -264,8 +264,8 @@ export default function ProPageClient() {
           </div>
 
           {/* Pro */}
-          <div className="bg-white border-2 border-green-700 rounded-2xl p-6 relative">
-            <div className="absolute -top-3 left-6 px-3 py-0.5 bg-green-700 text-white text-xs font-bold rounded-full">
+          <div className="bg-white border-2 border-slate-700 rounded-2xl p-6 relative">
+            <div className="absolute -top-3 left-6 px-3 py-0.5 bg-slate-700 text-white text-xs font-bold rounded-full">
               RECOMMENDED
             </div>
             <h3 className="text-lg font-bold text-slate-900 mb-1">Investor Pro</h3>
@@ -286,7 +286,7 @@ export default function ProPageClient() {
             <button
               onClick={handleSubscribe}
               disabled={loading || authLoading}
-              className="block w-full text-center px-4 py-2.5 bg-green-700 text-white text-sm font-semibold rounded-xl hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-700/40 focus:ring-offset-2 transition-colors disabled:opacity-50"
+              className="block w-full text-center px-4 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-xl hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400/40 focus:ring-offset-2 transition-colors disabled:opacity-50"
             >
               {authLoading
                 ? "Loading..."

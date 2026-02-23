@@ -162,10 +162,10 @@ export default function ExitIntentPopup() {
         </button>
 
         {/* Dark accent header */}
-        <div className="bg-gradient-to-br from-green-700 via-green-800 to-green-900 px-6 pt-6 pb-8 text-white text-center">
-          <Icon name="bar-chart" size={36} className="text-green-200 mx-auto mb-3" />
+        <div className="bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 px-6 pt-6 pb-8 text-white text-center">
+          <Icon name="bar-chart" size={36} className="text-slate-200 mx-auto mb-3" />
           <h2 id="exit-popup-title" className="text-xl font-extrabold mb-1">Wait — Before You Go</h2>
-          <p className="text-sm text-green-200">
+          <p className="text-sm text-slate-200">
             Get our free 2026 broker fee comparison PDF. See exactly what every platform charges.
           </p>
         </div>
@@ -175,7 +175,7 @@ export default function ExitIntentPopup() {
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
             {status === "success" ? (
               <div className="text-center py-4">
-                <div className="mb-2">{emailSent ? <Icon name="check-circle" size={28} className="text-green-600 mx-auto" /> : <Icon name="mail" size={28} className="text-green-700 mx-auto" />}</div>
+                <div className="mb-2">{emailSent ? <Icon name="check-circle" size={28} className="text-slate-600 mx-auto" /> : <Icon name="mail" size={28} className="text-slate-700 mx-auto" />}</div>
                 <h3 className="font-bold text-lg mb-1">
                   {emailSent ? 'Check Your Inbox!' : 'You\'re Signed Up!'}
                 </h3>
@@ -214,7 +214,7 @@ export default function ExitIntentPopup() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="w-full px-4 py-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-green-700/30 focus:border-green-700"
+                  className="w-full px-4 py-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
                 />
                 <label className="flex items-start gap-2 cursor-pointer">
                   <input
@@ -222,11 +222,11 @@ export default function ExitIntentPopup() {
                     checked={consent}
                     onChange={(e) => setConsent(e.target.checked)}
                     required
-                    className="mt-0.5 w-4 h-4 rounded accent-green-700 shrink-0"
+                    className="mt-0.5 w-4 h-4 rounded accent-slate-700 shrink-0"
                   />
                   <span className="text-xs text-slate-500 leading-tight">
                     I agree to receive the PDF and occasional broker updates.{" "}
-                    <Link href="/privacy" className="underline hover:text-green-700">
+                    <Link href="/privacy" className="underline hover:text-slate-900">
                       Privacy Policy
                     </Link>
                   </span>
@@ -251,7 +251,7 @@ export default function ExitIntentPopup() {
           <div className="text-center mt-3">
             <Link
               href="/quiz"
-              className="text-sm text-slate-500 hover:text-green-700 transition-colors"
+              className="text-sm text-slate-500 hover:text-slate-900 transition-colors"
             >
               Or take our free 60-second broker quiz →
             </Link>

@@ -58,7 +58,7 @@ export default function Footer() {
       </div>
 
       {/* Footer */}
-      <footer className="bg-green-800 text-slate-300">
+      <footer className="bg-slate-800 text-slate-300">
         <div className="container-custom py-12">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div>
@@ -103,7 +103,7 @@ export default function Footer() {
             </div>
           </div>
 
-          <div className="border-t border-green-700/40 mt-8 pt-8 text-sm text-center space-y-1">
+          <div className="border-t border-slate-700/40 mt-8 pt-8 text-sm text-center space-y-1">
             <p>&copy; {new Date().getFullYear()} {COMPANY_LEGAL_NAME}. All rights reserved.</p>
             <p className="text-xs text-slate-400">ACN {COMPANY_ACN} | ABN {COMPANY_ABN}</p>
           </div>

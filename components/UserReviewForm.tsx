@@ -71,9 +71,9 @@ export default function UserReviewForm({ brokerSlug, brokerName }: UserReviewFor
 
   if (status === "success") {
     return (
-      <div className="bg-green-50 border border-green-200 rounded-xl p-6 text-center">
+      <div className="bg-slate-50 border border-slate-200 rounded-xl p-6 text-center">
         <div className="text-2xl mb-2">📧</div>
-        <h4 className="text-lg font-bold text-green-900 mb-1">Check your inbox!</h4>
+        <h4 className="text-lg font-bold text-slate-900 mb-1">Check your inbox!</h4>
         <p className="text-sm text-slate-600">
           We&apos;ve sent a verification email to <strong>{email}</strong>.
           Click the link to confirm your review — it&apos;ll appear on this page once approved.
@@ -119,7 +119,7 @@ export default function UserReviewForm({ brokerSlug, brokerName }: UserReviewFor
             placeholder="e.g. Sarah M."
             maxLength={50}
             required
-            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-green-700/30 focus:border-green-700"
+            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
           />
         </div>
         <div>
@@ -134,7 +134,7 @@ export default function UserReviewForm({ brokerSlug, brokerName }: UserReviewFor
             placeholder="you@email.com"
             maxLength={254}
             required
-            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-green-700/30 focus:border-green-700"
+            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
           />
           <p className="text-xs text-slate-400 mt-1">For verification only — never displayed.</p>
         </div>
@@ -153,7 +153,7 @@ export default function UserReviewForm({ brokerSlug, brokerName }: UserReviewFor
           placeholder="Summarise your experience in a few words"
           maxLength={120}
           required
-          className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-green-700/30 focus:border-green-700"
+          className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
         />
       </div>
 
@@ -170,7 +170,7 @@ export default function UserReviewForm({ brokerSlug, brokerName }: UserReviewFor
           rows={4}
           maxLength={2000}
           required
-          className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-green-700/30 focus:border-green-700 resize-y"
+          className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400 resize-y"
         />
         <p className="text-xs text-slate-400 mt-1 text-right">{body.length}/2000</p>
       </div>
@@ -188,7 +188,7 @@ export default function UserReviewForm({ brokerSlug, brokerName }: UserReviewFor
             placeholder="What did you like?"
             rows={2}
             maxLength={500}
-            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-green-700/30 focus:border-green-700 resize-y"
+            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400 resize-y"
           />
         </div>
         <div>
@@ -202,7 +202,7 @@ export default function UserReviewForm({ brokerSlug, brokerName }: UserReviewFor
             placeholder="What could be improved?"
             rows={2}
             maxLength={500}
-            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-green-700/30 focus:border-green-700 resize-y"
+            className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400 resize-y"
           />
         </div>
       </div>
@@ -214,11 +214,11 @@ export default function UserReviewForm({ brokerSlug, brokerName }: UserReviewFor
           checked={consent}
           onChange={(e) => setConsent(e.target.checked)}
           required
-          className="mt-0.5 w-4 h-4 rounded border-green-300 accent-green-700 shrink-0"
+          className="mt-0.5 w-4 h-4 rounded border-slate-300 accent-slate-700 shrink-0"
         />
         <span className="text-xs text-slate-500 leading-tight">
           I confirm this review is based on my genuine experience. I agree to the{" "}
-          <Link href="/privacy" className="underline hover:text-green-700">
+          <Link href="/privacy" className="underline hover:text-slate-900">
             Privacy Policy
           </Link>
           . My email will only be used for verification.
@@ -235,7 +235,7 @@ export default function UserReviewForm({ brokerSlug, brokerName }: UserReviewFor
         <button
           type="submit"
           disabled={status === "loading"}
-          className="px-5 py-2.5 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors disabled:opacity-60"
+          className="px-5 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-60"
         >
           {status === "loading" ? "Submitting..." : "Submit Review"}
         </button>

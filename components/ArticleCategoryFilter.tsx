@@ -36,7 +36,7 @@ export default function ArticleCategoryFilter() {
         scroll={false}
         className={`shrink-0 px-4 py-2 text-sm font-medium rounded-full transition-colors ${
           activeCategory === "all"
-            ? "bg-green-700 text-white"
+            ? "bg-slate-900 text-white"
             : "bg-slate-100 text-slate-700 hover:bg-slate-200"
         }`}
       >
@@ -51,7 +51,7 @@ export default function ArticleCategoryFilter() {
           scroll={false}
           className={`shrink-0 px-4 py-2 text-sm font-medium rounded-full transition-colors ${
             activeCategory === cat
-              ? "bg-green-700 text-white"
+              ? "bg-slate-900 text-white"
               : "bg-slate-100 text-slate-700 hover:bg-slate-200"
           }`}
         >

@@ -95,7 +95,7 @@ export default function TradingGateway({ brokers }: TradingGatewayProps) {
                 <select
                   value={market}
                   onChange={(e) => setMarket(e.target.value)}
-                  className="bg-green-700 text-white font-bold px-4 py-2 rounded-lg border-2 border-green-800 focus:outline-none focus:ring-2 focus:ring-green-400"
+                  className="bg-slate-900 text-white font-bold px-4 py-2 rounded-lg border-2 border-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400"
                 >
                   <option value="asx">ASX shares</option>
                   <option value="us">US shares</option>
@@ -105,7 +105,7 @@ export default function TradingGateway({ brokers }: TradingGatewayProps) {
                 <select
                   value={feeType}
                   onChange={(e) => setFeeType(e.target.value)}
-                  className="bg-green-700 text-white font-bold px-4 py-2 rounded-lg border-2 border-green-800 focus:outline-none focus:ring-2 focus:ring-green-400"
+                  className="bg-slate-900 text-white font-bold px-4 py-2 rounded-lg border-2 border-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400"
                 >
                   <option value="any">any fees</option>
                   <option value="free">$0 fees</option>
@@ -115,7 +115,7 @@ export default function TradingGateway({ brokers }: TradingGatewayProps) {
                 <select
                   value={budget}
                   onChange={(e) => setBudget(e.target.value)}
-                  className="bg-green-700 text-white font-bold px-4 py-2 rounded-lg border-2 border-green-800 focus:outline-none focus:ring-2 focus:ring-green-400"
+                  className="bg-slate-900 text-white font-bold px-4 py-2 rounded-lg border-2 border-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400"
                 >
                   <option value="any">any budget</option>
                   <option value="beginner">beginner budget ($0-$500)</option>
@@ -144,7 +144,7 @@ export default function TradingGateway({ brokers }: TradingGatewayProps) {
                       <div className="flex-1">
                         <div className="text-white font-bold">{broker.name}</div>
                         {broker.deal && (
-                          <div className="text-xs text-green-400 font-semibold uppercase tracking-wide">
+                          <div className="text-xs text-slate-400 font-semibold uppercase tracking-wide">
                             Deal Active
                           </div>
                         )}
@@ -169,13 +169,13 @@ export default function TradingGateway({ brokers }: TradingGatewayProps) {
                       )}
                     </div>
 
-                    <div className="flex items-center gap-2 text-xs text-green-400">
-                      <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                    <div className="flex items-center gap-2 text-xs text-slate-400">
+                      <span className="w-2 h-2 bg-slate-400 rounded-full animate-pulse"></span>
                       Available now
                     </div>
 
                     <div className="mt-4">
-                      <span className="text-xs text-green-400 hover:underline">
+                      <span className="text-xs text-slate-400 hover:underline">
                         View Details →
                       </span>
                     </div>

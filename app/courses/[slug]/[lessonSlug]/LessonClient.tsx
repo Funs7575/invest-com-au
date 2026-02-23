@@ -102,7 +102,7 @@ export default function LessonClient({
                         href={`/courses/${courseSlug}/${l.slug}`}
                         className={`block px-2 py-1 rounded text-xs transition-colors ${
                           isCurrent
-                            ? "bg-green-50 text-green-800 font-bold"
+                            ? "bg-slate-100 text-slate-800 font-bold"
                             : "text-slate-600 hover:bg-slate-50"
                         }`}
                       >
@@ -154,8 +154,8 @@ export default function LessonClient({
                           href={`/courses/${courseSlug}/${l.slug}`}
                           className={`flex items-center gap-2 px-2 py-1.5 rounded text-xs transition-colors ${
                             isCurrent
-                              ? "bg-green-50 text-green-800 font-bold"
-                              : "text-slate-600 hover:bg-slate-50 hover:text-green-700"
+                              ? "bg-slate-100 text-slate-800 font-bold"
+                              : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                           }`}
                         >
                           {isCompleted ? (
@@ -210,7 +210,7 @@ export default function LessonClient({
         {/* Lesson content */}
         {lesson?.content ? (
           <article
-            className="prose prose-slate max-w-none prose-headings:font-bold prose-a:text-green-700 prose-a:no-underline hover:prose-a:underline prose-img:rounded-lg"
+            className="prose prose-slate max-w-none prose-headings:font-bold prose-a:text-slate-700 prose-a:no-underline hover:prose-a:underline prose-img:rounded-lg"
             dangerouslySetInnerHTML={{ __html: sanitizeHtml(lesson.content) }}
           />
         ) : (
@@ -254,7 +254,7 @@ export default function LessonClient({
                   <button
                     onClick={handleMarkComplete}
                     disabled={marking}
-                    className="px-5 py-2.5 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors disabled:opacity-50"
+                    className="px-5 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50"
                   >
                     {marking ? "Saving..." : "Mark as Complete"}
                   </button>
@@ -270,7 +270,7 @@ export default function LessonClient({
             {prevSlug ? (
               <Link
                 href={`/courses/${courseSlug}/${prevSlug}`}
-                className="flex items-center gap-2 text-sm text-slate-600 hover:text-green-700 transition-colors"
+                className="flex items-center gap-2 text-sm text-slate-600 hover:text-slate-900 transition-colors"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -282,7 +282,7 @@ export default function LessonClient({
             {nextSlug ? (
               <Link
                 href={`/courses/${courseSlug}/${nextSlug}`}
-                className="flex items-center gap-2 text-sm font-semibold text-green-700 hover:text-green-800 transition-colors"
+                className="flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors"
               >
                 Next Lesson
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -292,7 +292,7 @@ export default function LessonClient({
             ) : (
               <Link
                 href={`/courses/${courseSlug}`}
-                className="flex items-center gap-2 text-sm font-semibold text-green-700 hover:text-green-800 transition-colors"
+                className="flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors"
               >
                 Back to Course Overview
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -312,7 +312,7 @@ export default function LessonClient({
             </p>
             <Link
               href={`/courses/${courseSlug}#pricing`}
-              className="inline-block px-6 py-2.5 bg-green-700 text-white font-bold text-sm rounded-lg hover:bg-green-800 hover:scale-105 transition-all duration-200"
+              className="inline-block px-6 py-2.5 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 hover:scale-105 transition-all duration-200"
             >
               Get Full Course →
             </Link>

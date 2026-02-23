@@ -58,7 +58,7 @@ export default function AlertsClient({ alerts }: { alerts: RegulatoryAlert[] }) 
               onClick={() => setFilter(t.key)}
               className={`px-3 py-1.5 text-xs font-semibold rounded-full transition-colors ${
                 filter === t.key
-                  ? "bg-green-700 text-white"
+                  ? "bg-slate-900 text-white"
                   : "bg-slate-100 text-slate-600 hover:bg-slate-200"
               }`}
             >
@@ -135,7 +135,7 @@ export default function AlertsClient({ alerts }: { alerts: RegulatoryAlert[] }) 
                                   <span>
                                     {item.text}
                                     {item.url && (
-                                      <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-green-700 hover:underline ml-1">→</a>
+                                      <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-slate-700 hover:underline ml-1">→</a>
                                     )}
                                   </span>
                                 </li>
@@ -149,7 +149,7 @@ export default function AlertsClient({ alerts }: { alerts: RegulatoryAlert[] }) 
                                 ))}
                               </div>
                               <div className="absolute inset-0 flex items-center justify-center">
-                                <Link href="/pro" className="px-3 py-1.5 bg-green-700 text-white text-xs font-bold rounded-lg hover:bg-green-800">
+                                <Link href="/pro" className="px-3 py-1.5 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800">
                                   Unlock Action Items — Pro
                                 </Link>
                               </div>
@@ -163,7 +163,7 @@ export default function AlertsClient({ alerts }: { alerts: RegulatoryAlert[] }) 
                           href={alert.source_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-block text-xs text-green-700 hover:underline"
+                          className="inline-block text-xs text-slate-700 hover:underline"
                         >
                           Source: {alert.source_name || "View source"} →
                         </a>

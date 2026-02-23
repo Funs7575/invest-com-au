@@ -64,7 +64,7 @@ export default function ConsultationsClient({ consultations }: Props) {
               }}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                 activeCategory === cat.id
-                  ? "bg-green-700 text-white"
+                  ? "bg-slate-900 text-white"
                   : "bg-slate-100 text-slate-600 hover:bg-slate-200"
               }`}
             >
@@ -138,7 +138,7 @@ function ConsultationCard({
             className="w-12 h-12 rounded-full object-cover"
           />
         ) : (
-          <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-lg font-bold text-green-700">
+          <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-lg font-bold text-slate-700">
             {c.consultant?.full_name?.charAt(0) || "?"}
           </div>
         )}
@@ -177,7 +177,7 @@ function ConsultationCard({
                 <span className="text-sm text-slate-400 line-through">
                   ${fullPriceDisplay}
                 </span>
-                <span className="text-2xl font-extrabold text-green-800">
+                <span className="text-2xl font-extrabold text-slate-800">
                   ${priceDisplay}
                 </span>
                 <span className="px-1.5 py-0.5 text-[0.6rem] font-bold bg-amber-100 text-amber-700 rounded-full">
@@ -185,7 +185,7 @@ function ConsultationCard({
                 </span>
               </>
             ) : (
-              <span className="text-2xl font-extrabold text-green-800">
+              <span className="text-2xl font-extrabold text-slate-800">
                 ${fullPriceDisplay}
               </span>
             )}
@@ -195,7 +195,7 @@ function ConsultationCard({
 
         <Link
           href={`/consultations/${c.slug}`}
-          className="block w-full py-2.5 text-center bg-green-700 text-white font-bold rounded-lg hover:bg-green-800 hover:scale-[1.02] transition-all duration-200 text-sm"
+          className="block w-full py-2.5 text-center bg-slate-900 text-white font-bold rounded-lg hover:bg-slate-800 hover:scale-[1.02] transition-all duration-200 text-sm"
         >
           Book Now →
         </Link>

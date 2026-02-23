@@ -73,7 +73,7 @@ export default function SwitchStoriesList({ stories, brokerSlug, brokerName }: S
                   {formatBrokerName(story.source_broker_slug)}
                 </span>
                 <span className="text-slate-400">→</span>
-                <span className={`px-2 py-0.5 rounded-full font-medium ${isSwitchTo ? "bg-green-50 text-green-700" : "bg-slate-100 text-slate-600"}`}>
+                <span className={`px-2 py-0.5 rounded-full font-medium ${isSwitchTo ? "bg-slate-50 text-slate-700" : "bg-slate-100 text-slate-600"}`}>
                   {formatBrokerName(story.dest_broker_slug)}
                 </span>
               </div>
@@ -109,7 +109,7 @@ export default function SwitchStoriesList({ stories, brokerSlug, brokerName }: S
               {/* Badges */}
               <div className="flex flex-wrap gap-2 mb-3">
                 {story.estimated_savings && (
-                  <span className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-full border border-green-200">
+                  <span className="text-xs bg-slate-50 text-slate-700 px-2 py-0.5 rounded-full border border-slate-200">
                     Saves {story.estimated_savings}
                   </span>
                 )}

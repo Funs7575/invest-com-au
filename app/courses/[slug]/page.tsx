@@ -87,11 +87,11 @@ export default async function CourseDetailPage({ params }: PageProps) {
         <div className="container-custom max-w-5xl">
           {/* Breadcrumb */}
           <nav aria-label="Breadcrumb" className="text-sm text-slate-500 mb-6">
-            <Link href="/" className="hover:text-green-700">Home</Link>
+            <Link href="/" className="hover:text-slate-900">Home</Link>
             <span className="mx-2">/</span>
-            <Link href="/courses" className="hover:text-green-700">Courses</Link>
+            <Link href="/courses" className="hover:text-slate-900">Courses</Link>
             <span className="mx-2">/</span>
-            <span className="text-green-700">{course.title}</span>
+            <span className="text-slate-700">{course.title}</span>
           </nav>
 
           {/* Hero */}
@@ -143,7 +143,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
                     className="w-8 h-8 rounded-full object-cover"
                   />
                 ) : (
-                  <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-sm font-bold text-green-700">
+                  <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-sm font-bold text-slate-700">
                     {course.creator.full_name.charAt(0)}
                   </div>
                 )}
@@ -167,7 +167,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
                   className="rounded-xl border border-slate-200 bg-white p-5 hover:shadow-md transition-shadow"
                 >
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="w-8 h-8 rounded-lg bg-green-100 text-green-700 flex items-center justify-center text-sm font-bold">
+                    <div className="w-8 h-8 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center text-sm font-bold">
                       {mod.index}
                     </div>
                     <h3 className="font-bold text-sm">{mod.title}</h3>
@@ -178,7 +178,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
                         {lesson.isFreePreview ? (
                           <Link
                             href={`/courses/${slug}/${lesson.slug}`}
-                            className="flex items-center gap-2 hover:text-green-700 transition-colors"
+                            className="flex items-center gap-2 hover:text-slate-900 transition-colors"
                           >
                             <span className="w-4 h-4 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-[0.5rem]">▶</span>
                             {lesson.title}
@@ -203,14 +203,14 @@ export default async function CourseDetailPage({ params }: PageProps) {
 
           {/* Free preview CTA */}
           {freePreviewCount > 0 && firstFreePreview && (
-            <div className="text-center mb-16 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-8">
+            <div className="text-center mb-16 bg-gradient-to-r from-slate-50 to-slate-100 border border-slate-200 rounded-2xl p-8">
               <h2 className="text-xl font-bold mb-2">Try Before You Buy</h2>
               <p className="text-sm text-slate-600 mb-4">
                 {freePreviewCount} lesson{freePreviewCount > 1 ? "s are" : " is"} completely free — no sign-up required.
               </p>
               <Link
                 href={`/courses/${slug}/${firstFreePreview.slug}`}
-                className="inline-block px-6 py-3 bg-green-700 text-white font-bold rounded-lg hover:bg-green-800 hover:scale-105 hover:shadow-[0_0_12px_rgba(21,128,61,0.3)] transition-all duration-200"
+                className="inline-block px-6 py-3 bg-slate-900 text-white font-bold rounded-lg hover:bg-slate-800 hover:scale-105 transition-all duration-200"
               >
                 Start Free Preview →
               </Link>
@@ -239,7 +239,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
                     className="w-16 h-16 rounded-full object-cover shrink-0"
                   />
                 ) : (
-                  <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center text-xl font-bold text-green-700 shrink-0">
+                  <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center text-xl font-bold text-slate-700 shrink-0">
                     {course.creator.full_name.charAt(0)}
                   </div>
                 )}
@@ -255,10 +255,10 @@ export default async function CourseDetailPage({ params }: PageProps) {
                   )}
                   <div className="flex gap-3 mt-3">
                     {course.creator.linkedin_url && (
-                      <a href={course.creator.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-xs text-green-700 hover:underline">LinkedIn</a>
+                      <a href={course.creator.linkedin_url} target="_blank" rel="noopener noreferrer" className="text-xs text-slate-700 hover:underline">LinkedIn</a>
                     )}
                     {course.creator.twitter_url && (
-                      <a href={course.creator.twitter_url} target="_blank" rel="noopener noreferrer" className="text-xs text-green-700 hover:underline">Twitter</a>
+                      <a href={course.creator.twitter_url} target="_blank" rel="noopener noreferrer" className="text-xs text-slate-700 hover:underline">Twitter</a>
                     )}
                   </div>
                 </div>
@@ -289,7 +289,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
                 },
               ].map((faq) => (
                 <details key={faq.q} className="group rounded-xl border border-slate-200 bg-white">
-                  <summary className="flex items-center justify-between cursor-pointer p-4 text-sm font-semibold text-slate-700 hover:text-green-700 transition-colors">
+                  <summary className="flex items-center justify-between cursor-pointer p-4 text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors">
                     {faq.q}
                     <svg className="w-4 h-4 shrink-0 text-slate-400 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                   </summary>
@@ -308,9 +308,9 @@ export default async function CourseDetailPage({ params }: PageProps) {
               {course.creator ? (
                 <>Course by <span className="font-medium">{course.creator.full_name}</span>. </>
               ) : (
-                <>Course content by <a href={REVIEW_AUTHOR.url} className="underline hover:text-green-700">{REVIEW_AUTHOR.name}</a>. </>
+                <>Course content by <a href={REVIEW_AUTHOR.url} className="underline hover:text-slate-900">{REVIEW_AUTHOR.name}</a>. </>
               )}
-              <Link href="/how-we-earn" className="underline hover:text-green-700">How we earn</Link>
+              <Link href="/how-we-earn" className="underline hover:text-slate-900">How we earn</Link>
             </p>
           </div>
         </div>

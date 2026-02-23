@@ -85,7 +85,7 @@ export default function ReportDetailClient({ report }: { report: QuarterlyReport
                     <p className="text-xs text-slate-500 mb-3">
                       Get access to all {report.sections.length} sections, fee change analysis, and new entrant coverage.
                     </p>
-                    <Link href="/pro" className="inline-block px-4 py-2 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors">
+                    <Link href="/pro" className="inline-block px-4 py-2 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors">
                       Upgrade to Pro
                     </Link>
                   </div>
@@ -141,7 +141,7 @@ export default function ReportDetailClient({ report }: { report: QuarterlyReport
         )}
 
         <div className="flex gap-3 mt-6">
-          <Link href="/reports" className="text-sm text-green-700 hover:underline">← All Reports</Link>
+          <Link href="/reports" className="text-sm text-slate-700 hover:underline">← All Reports</Link>
         </div>
       </div>
     </div>

@@ -48,8 +48,8 @@ export default function LeadMagnet() {
   }
 
   return (
-    <div ref={ref} className="rounded-xl p-6 bg-green-50 border border-green-200 shadow-sm lead-magnet-enter">
-      <div className="text-xs font-bold uppercase tracking-wider mb-2 text-green-700">
+    <div ref={ref} className="rounded-xl p-6 bg-slate-50 border border-slate-200 shadow-sm lead-magnet-enter">
+      <div className="text-xs font-bold uppercase tracking-wider mb-2 text-slate-700">
         Free Download
       </div>
       <h3 className="text-xl font-extrabold mb-2 text-slate-900">2026 Fee Audit PDF</h3>
@@ -59,8 +59,8 @@ export default function LeadMagnet() {
       </p>
 
       {status === "success" ? (
-        <div className="bg-green-100 border border-green-200 rounded-lg p-4 text-center">
-          <div className="text-lg font-bold mb-1 text-green-900">
+        <div className="bg-slate-100 border border-slate-200 rounded-lg p-4 text-center">
+          <div className="text-lg font-bold mb-1 text-slate-900">
             {emailSent ? 'Check your inbox!' : 'You\'re signed up!'}
           </div>
           <p className="text-sm text-slate-600">
@@ -78,7 +78,7 @@ export default function LeadMagnet() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full px-4 py-2.5 rounded-lg border border-green-200 text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-green-700/30 focus:border-green-700"
+            className="w-full px-4 py-2.5 rounded-lg border border-slate-200 text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
           />
           <label className="flex items-start gap-2 cursor-pointer">
             <input
@@ -86,12 +86,12 @@ export default function LeadMagnet() {
               checked={consent}
               onChange={(e) => setConsent(e.target.checked)}
               required
-              className="mt-0.5 w-4 h-4 rounded border-green-300 accent-green-700 shrink-0"
+              className="mt-0.5 w-4 h-4 rounded border-slate-300 accent-slate-700 shrink-0"
             />
             <span className="text-xs text-slate-500 leading-tight">
               I agree to receive the Fee Audit PDF and occasional updates from Invest.com.au.
               View our{" "}
-              <Link href="/privacy" className="underline hover:text-green-700">
+              <Link href="/privacy" className="underline hover:text-slate-900">
                 Privacy Policy
               </Link>
               . You can unsubscribe at any time.

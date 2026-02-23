@@ -81,7 +81,7 @@ export default function CoursePageClient({ course, firstLessonSlug }: Props) {
         </p>
         <Link
           href={`/courses/${course.slug}/${firstLessonSlug || ""}`}
-          className="inline-block w-full py-3 bg-green-700 text-white font-bold rounded-lg hover:bg-green-800 hover:scale-105 hover:shadow-[0_0_12px_rgba(21,128,61,0.3)] transition-all duration-200"
+          className="inline-block w-full py-3 bg-green-700 text-white font-bold rounded-lg hover:bg-green-800 hover:scale-105 hover:shadow-lg transition-all duration-200"
         >
           Go to Lessons →
         </Link>
@@ -103,7 +103,7 @@ export default function CoursePageClient({ course, firstLessonSlug }: Props) {
   }
 
   return (
-    <div className="max-w-md mx-auto rounded-2xl border-2 border-green-300 bg-gradient-to-b from-green-50 to-white p-8 text-center">
+    <div className="max-w-md mx-auto rounded-2xl border-2 border-slate-300 bg-gradient-to-b from-slate-50 to-white p-8 text-center">
       {isPro && proPriceDisplay && (
         <div className="inline-block px-3 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-full mb-4">
           Pro Discount Applied
@@ -114,10 +114,10 @@ export default function CoursePageClient({ course, firstLessonSlug }: Props) {
         {isPro && proPriceDisplay ? (
           <>
             <span className="text-lg text-slate-400 line-through mr-2">${fullPriceDisplay}</span>
-            <span className="text-4xl font-extrabold text-green-800">${proPriceDisplay}</span>
+            <span className="text-4xl font-extrabold text-slate-800">${proPriceDisplay}</span>
           </>
         ) : (
-          <span className="text-4xl font-extrabold text-green-800">${fullPriceDisplay}</span>
+          <span className="text-4xl font-extrabold text-slate-800">${fullPriceDisplay}</span>
         )}
         <span className="text-sm text-slate-500 ml-1">{course.currency}</span>
       </div>
@@ -136,7 +136,7 @@ export default function CoursePageClient({ course, firstLessonSlug }: Props) {
       <button
         onClick={handlePurchase}
         disabled={purchasing}
-        className="w-full py-3 bg-green-700 text-white font-bold rounded-lg hover:bg-green-800 hover:scale-105 hover:shadow-[0_0_12px_rgba(21,128,61,0.3)] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
+        className="w-full py-3 bg-slate-900 text-white font-bold rounded-lg hover:bg-slate-800 hover:scale-105 hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
       >
         {purchasing
           ? "Redirecting to checkout..."
@@ -148,7 +148,7 @@ export default function CoursePageClient({ course, firstLessonSlug }: Props) {
       {!user && (
         <p className="text-xs text-slate-400 mt-3">
           Already have an account?{" "}
-          <Link href={`/auth/login?next=/courses/${course.slug}`} className="text-green-700 underline hover:text-green-800">
+          <Link href={`/auth/login?next=/courses/${course.slug}`} className="text-slate-700 underline hover:text-slate-900">
             Sign in
           </Link>
         </p>

@@ -212,13 +212,13 @@ export default async function ArticlePage({
           <div className={isEnhanced ? "max-w-5xl mx-auto" : "max-w-3xl mx-auto"}>
             {/* Breadcrumb */}
             <div className="text-sm text-slate-500 mb-3">
-              <Link href="/" className="hover:text-green-700 transition-colors">
+              <Link href="/" className="hover:text-slate-900 transition-colors">
                 Home
               </Link>
               <span className="mx-2">/</span>
               <Link
                 href="/articles"
-                className="hover:text-green-700 transition-colors"
+                className="hover:text-slate-900 transition-colors"
               >
                 Articles
               </Link>
@@ -250,7 +250,7 @@ export default async function ArticlePage({
                 </span>
               )}
               {isEnhanced && (
-                <span className="text-xs font-semibold bg-green-700/20 text-green-700 px-2.5 py-0.5 rounded-full">
+                <span className="text-xs font-semibold bg-slate-700/20 text-slate-700 px-2.5 py-0.5 rounded-full">
                   Updated Feb 2026
                 </span>
               )}
@@ -333,9 +333,9 @@ export default async function ArticlePage({
                         <li key={i}>
                           <a
                             href={`#section-${i}`}
-                            className="text-sm text-slate-700 hover:text-green-700 transition-colors flex items-start gap-2"
+                            className="text-sm text-slate-700 hover:text-slate-900 transition-colors flex items-start gap-2"
                           >
-                            <span className="text-green-700 font-semibold shrink-0">
+                            <span className="text-slate-700 font-semibold shrink-0">
                               {i + 1}.
                             </span>
                             {section.heading}
@@ -394,9 +394,9 @@ export default async function ArticlePage({
 
               {/* Early CTA — surfaces broker comparison before users drop off */}
               {relatedBrokers.length > 0 && (
-                <div className="bg-green-50 border border-green-200 rounded-xl p-5 mb-10 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 mb-10 flex flex-col sm:flex-row items-start sm:items-center gap-4">
                   <div className="flex-1">
-                    <h3 className="font-bold text-green-900 mb-1">Ready to act?</h3>
+                    <h3 className="font-bold text-slate-900 mb-1">Ready to act?</h3>
                     <p className="text-sm text-slate-600">
                       Compare the brokers mentioned in this article, or use our quiz to filter in 60 seconds.
                     </p>
@@ -404,13 +404,13 @@ export default async function ArticlePage({
                   <div className="flex gap-2 shrink-0">
                     <Link
                       href="/compare"
-                      className="px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
+                      className="px-4 py-2 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 transition-colors"
                     >
                       Compare Brokers &rarr;
                     </Link>
                     <Link
                       href="/quiz"
-                      className="px-4 py-2 border border-green-700 text-green-700 text-sm font-semibold rounded-lg hover:bg-green-100 transition-colors"
+                      className="px-4 py-2 border border-slate-700 text-slate-700 text-sm font-semibold rounded-lg hover:bg-slate-100 transition-colors"
                     >
                       Take the Quiz
                     </Link>
@@ -466,9 +466,9 @@ export default async function ArticlePage({
 
               {/* Related Calculator CTA */}
               {calcInfo && a.related_calc && (
-                <div className="mt-8 border border-green-200 rounded-xl p-6 bg-green-50">
+                <div className="mt-8 border border-slate-200 rounded-xl p-6 bg-slate-50">
                   <div className="flex items-start gap-4">
-                    <Icon name={calcInfo.iconName} size={28} className="text-green-700 shrink-0 mt-1" />
+                    <Icon name={calcInfo.iconName} size={28} className="text-slate-700 shrink-0 mt-1" />
                     <div className="flex-1">
                       <h3 className="text-lg font-bold mb-1">
                         Related Calculator
@@ -478,7 +478,7 @@ export default async function ArticlePage({
                       </p>
                       <Link
                         href={`/calculators?calc=${a.related_calc}`}
-                        className="inline-block px-5 py-2.5 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors"
+                        className="inline-block px-5 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors"
                       >
                         Open {calcInfo.name} &rarr;
                       </Link>
@@ -539,7 +539,7 @@ export default async function ArticlePage({
                         <Link
                           key={bp.slug}
                           href={bp.href}
-                          className="px-3 py-1.5 bg-white border border-slate-200 rounded-full text-sm text-slate-700 hover:border-green-700 hover:text-green-700 transition-colors"
+                          className="px-3 py-1.5 bg-white border border-slate-200 rounded-full text-sm text-slate-700 hover:border-slate-700 hover:text-slate-900 transition-colors"
                         >
                           {bp.h1.replace(" in Australia", "")}
                         </Link>
@@ -550,7 +550,7 @@ export default async function ArticlePage({
               })()}
 
               {/* Bottom CTA */}
-              <div className="mt-12 bg-green-50 border border-green-200 rounded-xl p-8 text-center">
+              <div className="mt-12 bg-slate-50 border border-slate-200 rounded-xl p-8 text-center">
                 <h3 className="text-2xl font-extrabold mb-2 text-slate-900">
                   Find the Right Broker
                 </h3>
@@ -567,7 +567,7 @@ export default async function ArticlePage({
                   </Link>
                   <Link
                     href="/quiz"
-                    className="px-6 py-3 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors"
+                    className="px-6 py-3 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors"
                   >
                     Take the Quiz
                   </Link>
@@ -580,7 +580,7 @@ export default async function ArticlePage({
                   <strong>General Advice Warning:</strong> {GENERAL_ADVICE_WARNING} {ADVERTISER_DISCLOSURE_SHORT}{" "}
                   <Link
                     href="/how-we-earn"
-                    className="text-green-700 hover:underline"
+                    className="text-slate-700 hover:underline"
                   >
                     How we earn money
                   </Link>

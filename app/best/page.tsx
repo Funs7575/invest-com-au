@@ -55,11 +55,11 @@ export default function BestBrokersHub() {
         <div className="container-custom max-w-4xl">
           {/* Breadcrumb */}
           <nav className="text-sm text-slate-500 mb-6">
-            <Link href="/" className="hover:text-green-700">
+            <Link href="/" className="hover:text-slate-900">
               Home
             </Link>
             <span className="mx-2">/</span>
-            <span className="text-green-700">Best Brokers</span>
+            <span className="text-slate-700">Best Brokers</span>
           </nav>
 
           <h1 className="text-3xl md:text-4xl font-extrabold mb-3">
@@ -76,16 +76,16 @@ export default function BestBrokersHub() {
               <Link
                 key={cat.slug}
                 href={`/best/${cat.slug}`}
-                className={`group block p-5 border border-slate-200 rounded-xl hover:border-green-700 hover:shadow-md transition-all${
+                className={`group block p-5 border border-slate-200 rounded-xl hover:border-slate-700 hover:shadow-md transition-all${
                   categories.length % 2 !== 0 && idx === categories.length - 1
                     ? " md:col-span-2 md:max-w-md md:mx-auto"
                     : ""
                 }`}
               >
                 <div className="flex items-start gap-3">
-                  <Icon name={categoryIcons[cat.slug] || "bar-chart"} size={24} className="text-green-700 shrink-0 mt-0.5" />
+                  <Icon name={categoryIcons[cat.slug] || "bar-chart"} size={24} className="text-slate-700 shrink-0 mt-0.5" />
                   <div>
-                    <h2 className="text-lg font-bold group-hover:text-green-700 transition-colors">
+                    <h2 className="text-lg font-bold group-hover:text-slate-900 transition-colors">
                       {cat.h1.replace(" in Australia", "")}
                     </h2>
                     <p className="text-sm text-slate-500 mt-1 line-clamp-2">
@@ -98,8 +98,8 @@ export default function BestBrokersHub() {
           </div>
 
           {/* CTA */}
-          <div className="bg-green-50 border border-green-200 rounded-xl p-6 text-center">
-            <h3 className="text-lg font-bold text-green-900 mb-2">
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-6 text-center">
+            <h3 className="text-lg font-bold text-slate-900 mb-2">
               Still not sure?
             </h3>
             <p className="text-sm text-slate-600 mb-4">
@@ -108,7 +108,7 @@ export default function BestBrokersHub() {
             </p>
             <Link
               href="/quiz"
-              className="inline-block px-6 py-3 bg-green-700 text-white font-semibold rounded-lg hover:bg-green-800 transition-colors"
+              className="inline-block px-6 py-3 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-800 transition-colors"
             >
               Take the 60-Second Quiz →
             </Link>
@@ -118,11 +118,11 @@ export default function BestBrokersHub() {
           <div className="mt-8 text-xs text-slate-400 text-center">
             <p>
               All guides are reviewed by{" "}
-              <a href={REVIEW_AUTHOR.url} className="underline hover:text-green-700">
+              <a href={REVIEW_AUTHOR.url} className="underline hover:text-slate-900">
                 {REVIEW_AUTHOR.name}
               </a>
               . Fees verified against official broker pricing pages.{" "}
-              <Link href="/how-we-verify" className="underline hover:text-green-700">
+              <Link href="/how-we-verify" className="underline hover:text-slate-900">
                 Our methodology
               </Link>
             </p>

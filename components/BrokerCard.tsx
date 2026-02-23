@@ -12,13 +12,13 @@ export default function BrokerCard({ broker, badge, context = 'compare' }: { bro
       isSponsored(broker)
         ? 'border-blue-400 ring-1 ring-blue-400/30 bg-blue-50/20'
         : badge
-        ? 'border-green-700 ring-1 ring-green-700/30'
+        ? 'border-slate-700 ring-1 ring-slate-700/30'
         : 'border-slate-200'
     }`}>
       {isSponsored(broker) ? (
         <div className="mb-2"><SponsorBadge broker={broker} /></div>
       ) : badge ? (
-        <div className="text-[0.6rem] font-extrabold uppercase tracking-wide text-green-700 mb-2">{badge}</div>
+        <div className="text-[0.6rem] font-extrabold uppercase tracking-wide text-slate-700 mb-2">{badge}</div>
       ) : null}
       <div className="flex items-center gap-3 mb-3">
         <div
@@ -28,7 +28,7 @@ export default function BrokerCard({ broker, badge, context = 'compare' }: { bro
           {broker.icon || broker.name.charAt(0)}
         </div>
         <div className="flex-1 min-w-0">
-          <a href={`/broker/${broker.slug}`} className="font-bold text-sm hover:text-green-700 transition-colors">
+          <a href={`/broker/${broker.slug}`} className="font-bold text-sm hover:text-slate-900 transition-colors">
             {broker.name}
           </a>
           <div className="text-xs text-amber">

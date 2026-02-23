@@ -66,7 +66,7 @@ export default function StoriesClient({ stories, brokers }: StoriesClientProps) 
         {!showForm ? (
           <button
             onClick={() => setShowForm(true)}
-            className="mb-6 px-5 py-2.5 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors"
+            className="mb-6 px-5 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors"
           >
             Share Your Switching Story
           </button>
@@ -82,7 +82,7 @@ export default function StoriesClient({ stories, brokers }: StoriesClientProps) 
           placeholder="Search by broker name, title, or author..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-green-700/30 focus:border-green-700 mb-6"
+          className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400 mb-6"
         />
 
         {/* Stories */}
@@ -99,7 +99,7 @@ export default function StoriesClient({ stories, brokers }: StoriesClientProps) 
                     {formatBrokerName(story.source_broker_slug)}
                   </span>
                   <span className="text-slate-400">→</span>
-                  <span className="px-2 py-0.5 rounded-full font-medium bg-green-50 text-green-700">
+                  <span className="px-2 py-0.5 rounded-full font-medium bg-slate-50 text-slate-700">
                     {formatBrokerName(story.dest_broker_slug)}
                   </span>
                 </div>
@@ -135,7 +135,7 @@ export default function StoriesClient({ stories, brokers }: StoriesClientProps) 
                 {/* Badges + meta */}
                 <div className="flex flex-wrap items-center gap-2">
                   {story.estimated_savings && (
-                    <span className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-full border border-green-200">
+                    <span className="text-xs bg-slate-50 text-slate-700 px-2 py-0.5 rounded-full border border-slate-200">
                       Saves {story.estimated_savings}
                     </span>
                   )}
@@ -158,7 +158,7 @@ export default function StoriesClient({ stories, brokers }: StoriesClientProps) 
                 <div className="mt-3 pt-3 border-t border-slate-100">
                   <Link
                     href={`/broker/${story.dest_broker_slug}#switch-stories`}
-                    className="text-xs text-green-700 font-medium hover:underline"
+                    className="text-xs text-slate-700 font-medium hover:underline"
                   >
                     See more about {formatBrokerName(story.dest_broker_slug)} →
                   </Link>

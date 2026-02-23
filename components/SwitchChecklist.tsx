@@ -86,13 +86,13 @@ export default function SwitchChecklist({
         </div>
         <div className="h-2.5 bg-slate-200 rounded-full overflow-hidden">
           <div
-            className="h-full bg-green-700 rounded-full transition-all duration-500"
+            className="h-full bg-slate-900 rounded-full transition-all duration-500"
             style={{ width: `${progress}%` }}
           />
         </div>
         {progress === 100 && (
           <div className="mt-3 text-center">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-100 text-green-800 text-sm font-bold rounded-full">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 text-slate-800 text-sm font-bold rounded-full">
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                 <path
                   fillRule="evenodd"
@@ -125,7 +125,7 @@ export default function SwitchChecklist({
             <span className="truncate">Transfer ({outboundDays}d)</span>
           </div>
           <div
-            className="bg-green-100 flex items-center justify-center text-[0.65rem] font-semibold text-green-700 px-2 min-w-0"
+            className="bg-slate-100 flex items-center justify-center text-[0.65rem] font-semibold text-slate-700 px-2 min-w-0"
             style={{ flex: 1 }}
           >
             <span className="truncate">Verify (1d)</span>
@@ -203,7 +203,7 @@ export default function SwitchChecklist({
       {/* Phase 3: Verify */}
       <div>
         <h3 className="text-sm font-bold text-slate-700 mb-3 flex items-center gap-2">
-          <span className="w-6 h-6 rounded-full bg-green-100 text-green-700 text-xs flex items-center justify-center font-bold">
+          <span className="w-6 h-6 rounded-full bg-slate-100 text-slate-700 text-xs flex items-center justify-center font-bold">
             3
           </span>
           Verify &amp; Finalise
@@ -244,17 +244,17 @@ export default function SwitchChecklist({
       {/* In-specie section */}
       {(outboundGuide?.supports_in_specie ||
         inboundGuide?.supports_in_specie) && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-          <h4 className="text-sm font-bold text-green-800 mb-1">
+        <div className="bg-slate-50 border border-slate-200 rounded-lg p-4">
+          <h4 className="text-sm font-bold text-slate-800 mb-1">
             ✅ In-Specie Transfer Available
           </h4>
-          <p className="text-xs text-green-700 mb-2">
+          <p className="text-xs text-slate-700 mb-2">
             Both brokers support in-specie (direct) transfers, meaning your
             shares move without being sold. This avoids triggering a Capital
             Gains Tax event.
           </p>
           {outboundGuide?.in_specie_notes && (
-            <p className="text-xs text-green-600 italic">
+            <p className="text-xs text-slate-600 italic">
               {outboundGuide.in_specie_notes}
             </p>
           )}
@@ -306,11 +306,11 @@ export default function SwitchChecklist({
         </button>
         {cgtExpanded && (
           <div className="p-4 space-y-3">
-            <div className="bg-green-50 rounded-lg p-3">
-              <h5 className="text-xs font-bold text-green-800 mb-1">
+            <div className="bg-slate-50 rounded-lg p-3">
+              <h5 className="text-xs font-bold text-slate-800 mb-1">
                 In-Specie Transfer (Recommended)
               </h5>
-              <p className="text-xs text-green-700">
+              <p className="text-xs text-slate-700">
                 Transfers your shares directly without selling. No CGT event is
                 triggered. Your cost base and acquisition dates remain unchanged.
               </p>
@@ -351,7 +351,7 @@ export default function SwitchChecklist({
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-green-700 hover:bg-green-50 hover:border-green-200 transition-colors"
+                className="text-xs px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-700 hover:bg-slate-50 hover:border-slate-200 transition-colors"
               >
                 {link.label} →
               </a>
@@ -386,7 +386,7 @@ function StepItem({
     <div
       className={`flex items-start gap-3 p-3 rounded-lg border transition-all ${
         isChecked
-          ? "bg-green-50 border-green-200"
+          ? "bg-slate-50 border-slate-200"
           : "bg-white border-slate-200"
       }`}
     >
@@ -398,8 +398,8 @@ function StepItem({
         <div
           className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
             isChecked
-              ? "bg-green-700 border-green-700"
-              : "border-slate-300 hover:border-green-500"
+              ? "bg-slate-900 border-slate-900"
+              : "border-slate-300 hover:border-slate-500"
           }`}
         >
           {isChecked && (
@@ -423,7 +423,7 @@ function StepItem({
         <div
           className={`text-sm font-medium ${
             isChecked
-              ? "text-green-800 line-through opacity-70"
+              ? "text-slate-800 line-through opacity-70"
               : "text-slate-900"
           }`}
         >

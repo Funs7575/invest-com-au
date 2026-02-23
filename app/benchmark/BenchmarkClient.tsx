@@ -283,7 +283,7 @@ export default function BenchmarkClient({ brokers }: { brokers: Broker[] }) {
             <select
               value={selectedSlug}
               onChange={(e) => handleSelect(e.target.value)}
-              className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-green-700 focus:ring-1 focus:ring-green-700"
+              className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400"
             >
               <option value="">Choose a broker...</option>
               {brokers.map((b) => (
@@ -304,7 +304,7 @@ export default function BenchmarkClient({ brokers }: { brokers: Broker[] }) {
               <select
                 value={compareSlug}
                 onChange={(e) => setCompareSlug(e.target.value)}
-                className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-green-700 focus:ring-1 focus:ring-green-700"
+                className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400"
               >
                 <option value="">None</option>
                 {brokers
@@ -480,7 +480,7 @@ export default function BenchmarkClient({ brokers }: { brokers: Broker[] }) {
                       </p>
                       <Link
                         href="/pro"
-                        className="inline-block px-4 py-2 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors"
+                        className="inline-block px-4 py-2 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors"
                       >
                         Upgrade to Pro
                       </Link>

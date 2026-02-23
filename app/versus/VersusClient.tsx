@@ -234,7 +234,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                       <select
                         value={slug}
                         onChange={(e) => updateSlug(index, e.target.value)}
-                        className="w-full border border-slate-200 rounded-lg py-2.5 px-3 text-sm font-medium bg-white hover:border-slate-300 focus:border-green-600 focus:ring-1 focus:ring-green-600 transition-colors"
+                        className="w-full border border-slate-200 rounded-lg py-2.5 px-3 text-sm font-medium bg-white hover:border-slate-300 focus:border-slate-400 focus:ring-1 focus:ring-slate-400 transition-colors"
                       >
                         <option value="">Choose a broker...</option>
                         {brokers.map(br => (
@@ -251,7 +251,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
             {selectedSlugs.length < MAX_BROKERS && (
               <button
                 onClick={addSlot}
-                className="w-full md:w-auto px-5 py-4 border-2 border-dashed border-slate-200 rounded-xl text-slate-400 hover:border-green-600 hover:text-green-700 hover:bg-green-50/30 text-sm font-semibold transition-all flex items-center justify-center gap-2"
+                className="w-full md:w-auto px-5 py-4 border-2 border-dashed border-slate-200 rounded-xl text-slate-400 hover:border-slate-600 hover:text-slate-700 hover:bg-slate-50/30 text-sm font-semibold transition-all flex items-center justify-center gap-2"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -503,11 +503,11 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
 
             {/* ─── Bottom CTA ─── */}
             <ScrollReveal animation="scroll-stagger-children" className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-6">
-                <Icon name="shuffle" size={24} className="text-green-700 mb-2" />
-                <h2 className="text-lg font-extrabold text-green-900 mb-1">Thinking of switching?</h2>
+              <div className="bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200 rounded-2xl p-6">
+                <Icon name="shuffle" size={24} className="text-slate-700 mb-2" />
+                <h2 className="text-lg font-extrabold text-slate-900 mb-1">Thinking of switching?</h2>
                 <p className="text-slate-600 mb-4 text-sm">Use our Switching Cost Simulator to see exactly how much you&apos;d save.</p>
-                <Link href="/calculators?calc=switching" className="inline-block px-5 py-2.5 bg-green-700 text-white font-semibold rounded-xl hover:bg-green-800 hover:scale-105 hover:shadow-[0_0_12px_rgba(21,128,61,0.3)] transition-all duration-200 text-sm">
+                <Link href="/calculators?calc=switching" className="inline-block px-5 py-2.5 bg-slate-900 text-white font-semibold rounded-xl hover:bg-slate-800 hover:scale-105 transition-all duration-200 text-sm">
                   Calculate Savings →
                 </Link>
               </div>
@@ -539,7 +539,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                   <Link
                     key={c.href}
                     href={c.href}
-                    className="px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-sm font-medium text-slate-600 hover:border-green-600 hover:text-green-700 hover:bg-green-50 hover:shadow-sm transition-all"
+                    className="px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-sm font-medium text-slate-600 hover:border-slate-600 hover:text-slate-700 hover:bg-slate-50 hover:shadow-sm transition-all"
                   >
                     {c.label}
                   </Link>
