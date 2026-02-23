@@ -88,16 +88,17 @@ export default function ConversionsPage() {
   };
 
   const handleExport = () => {
-    const rows = conversions.map((c) => ({
-      ID: String(c.id),
-      Click_ID: c.click_id || "",
-      Event_Type: c.event_type,
-      Value: `$${((c.conversion_value_cents || 0) / 100).toFixed(2)}`,
-      Source: c.source,
-      Campaign_ID: c.campaign_id ? String(c.campaign_id) : "",
-      Date: new Date(c.created_at).toISOString(),
-    }));
-    downloadCSV(rows, `conversions-${brokerSlug}-${range}.csv`);
+    const headers = ["ID", "Click ID", "Event Type", "Value", "Source", "Campaign ID", "Date"];
+    const rows = conversions.map((c) => [
+      String(c.id),
+      c.click_id || "",
+      c.event_type,
+      `$${((c.conversion_value_cents || 0) / 100).toFixed(2)}`,
+      c.source,
+      c.campaign_id ? String(c.campaign_id) : "",
+      new Date(c.created_at).toISOString(),
+    ]);
+    downloadCSV(`conversions-${brokerSlug}-${range}.csv`, headers, rows);
   };
 
   return (
