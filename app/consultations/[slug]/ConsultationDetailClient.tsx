@@ -18,7 +18,6 @@ export default function ConsultationDetailClient({ consultation }: Props) {
   const [purchasing, setPurchasing] = useState(false);
   const [error, setError] = useState("");
   const [showBookingSuccess, setShowBookingSuccess] = useState(false);
-  const [calLoaded, setCalLoaded] = useState(false);
 
   // Check for ?booked=true from Stripe redirect
   useEffect(() => {
@@ -57,21 +56,6 @@ export default function ConsultationDetailClient({ consultation }: Props) {
   useEffect(() => {
     fetchBooking();
   }, [fetchBooking]);
-
-  // Load Cal.com embed dynamically when needed
-  useEffect(() => {
-    if ((booking || showBookingSuccess) && !calLoaded) {
-      // Dynamically load Cal embed script
-      const script = document.createElement("script");
-      script.src = "https://cal.com/embed.js";
-      script.async = true;
-      script.onload = () => setCalLoaded(true);
-      document.head.appendChild(script);
-      return () => {
-        document.head.removeChild(script);
-      };
-    }
-  }, [booking, showBookingSuccess, calLoaded]);
 
   const loading = subLoading || bookingLoading;
   const priceInCents =
@@ -154,12 +138,12 @@ export default function ConsultationDetailClient({ consultation }: Props) {
               Pick a Time
             </h4>
           </div>
-          <div className="min-h-[400px]">
-            {/* Cal.com inline embed via data attributes */}
-            <cal-inline
-              data-cal-link={consultation.cal_link}
-              data-cal-config='{"layout":"month_view","theme":"light"}'
-              style={{ width: "100%", height: "100%", overflow: "auto" }}
+          <div className="min-h-[500px]">
+            <iframe
+              src={`https://cal.com/${consultation.cal_link}?embed=true&layout=month_view&theme=light`}
+              style={{ width: "100%", height: "500px", border: "none" }}
+              title="Schedule your consultation"
+              allow="camera; microphone"
             />
           </div>
         </div>
@@ -290,17 +274,3 @@ export default function ConsultationDetailClient({ consultation }: Props) {
   );
 }
 
-// Extend JSX to support cal-inline custom element
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      "cal-inline": React.DetailedHTMLProps<
-        React.HTMLAttributes<HTMLElement> & {
-          "data-cal-link"?: string;
-          "data-cal-config"?: string;
-        },
-        HTMLElement
-      >;
-    }
-  }
-}
