@@ -468,23 +468,25 @@ function logDecision(
   data: DecisionLogData
 ): void {
   // Fire-and-forget — allocation latency must not increase
-  supabase
-    .from("allocation_decisions")
-    .insert({
-      placement_slug: data.placement_slug,
-      page: data.page || null,
-      scenario: data.scenario || null,
-      device_type: data.device_type || null,
-      candidates: JSON.stringify(data.candidates),
-      winners: JSON.stringify(data.winners),
-      rejection_log: JSON.stringify(data.rejection_log),
-      winner_count: data.winner_count,
-      candidate_count: data.candidate_count,
-      fallback_used: data.fallback_used,
-      duration_ms: data.duration_ms,
-    })
-    .then(() => {})
-    .catch((err: unknown) => {
+  (async () => {
+    try {
+      await supabase
+        .from("allocation_decisions")
+        .insert({
+          placement_slug: data.placement_slug,
+          page: data.page || null,
+          scenario: data.scenario || null,
+          device_type: data.device_type || null,
+          candidates: JSON.stringify(data.candidates),
+          winners: JSON.stringify(data.winners),
+          rejection_log: JSON.stringify(data.rejection_log),
+          winner_count: data.winner_count,
+          candidate_count: data.candidate_count,
+          fallback_used: data.fallback_used,
+          duration_ms: data.duration_ms,
+        });
+    } catch (err) {
       console.error("Failed to log allocation decision:", err);
-    });
+    }
+  })();
 }
