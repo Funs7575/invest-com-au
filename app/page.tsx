@@ -84,45 +84,43 @@ export default async function HomePage() {
       />
 
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-b from-green-950 via-green-900 to-green-800 py-10 md:py-14 overflow-hidden">
-        {/* Subtle grid pattern overlay */}
-        <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'40\' height=\'40\' viewBox=\'0 0 40 40\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M0 0h40v40H0V0zm1 1v38h38V1H1z\' fill=\'%23fff\' fill-opacity=\'1\' fill-rule=\'evenodd\'/%3E%3C/svg%3E")' }} />
+      <section className="relative bg-white border-b border-slate-100 py-10 md:py-14 overflow-hidden">
         <div className="relative max-w-4xl mx-auto px-4 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white/10 backdrop-blur-sm rounded-full text-xs font-medium text-green-200 mb-6 hero-fade-up hero-fade-up-1 border border-white/10">
-            <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-full text-xs font-medium text-slate-600 mb-6 hero-fade-up hero-fade-up-1 border border-slate-200">
+            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
             Updated {new Date().toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" })} &middot; {brokerCount} brokers verified
           </div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white hero-fade-up hero-fade-up-1 leading-tight">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 hero-fade-up hero-fade-up-1 leading-tight">
             Find the Right Broker<br className="hidden sm:block" /> for Your Money
           </h1>
-          <p className="mt-5 text-lg md:text-xl text-green-100/80 max-w-2xl mx-auto hero-fade-up hero-fade-up-2 leading-relaxed">
+          <p className="mt-5 text-lg md:text-xl text-slate-500 max-w-2xl mx-auto hero-fade-up hero-fade-up-2 leading-relaxed">
             Compare fees, features, and safety across {brokerCount}+ ASIC-regulated Australian investment platforms — independent, transparent, and free.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-8 mb-2 hero-fade-up hero-fade-up-3">
+          <div className="hero-fade-up hero-fade-up-3">
+            <HomepageSearchBar />
+          </div>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-6 mb-2 hero-fade-up hero-fade-up-4">
             <Link
               href="/compare"
-              className="px-7 py-3.5 bg-white text-green-900 font-bold rounded-xl hover:bg-green-50 hover:scale-105 hover:shadow-lg transition-all duration-200 text-sm"
+              className="px-7 py-3.5 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 hover:scale-105 hover:shadow-lg transition-all duration-200 text-sm"
             >
               Compare All Brokers &rarr;
             </Link>
             <Link
               href="/quiz"
-              className="px-7 py-3.5 border-2 border-white/30 text-white font-semibold rounded-xl hover:bg-white/10 hover:border-white/50 hover:scale-105 transition-all duration-200 text-sm backdrop-blur-sm"
+              className="px-7 py-3.5 border-2 border-slate-300 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 hover:border-slate-400 hover:scale-105 transition-all duration-200 text-sm"
             >
               Take the 60-sec Quiz &rarr;
             </Link>
           </div>
-          <div className="hero-fade-up hero-fade-up-4">
-            <HomepageSearchBar />
-          </div>
           {/* Trust signals row */}
-          <div className="flex items-center justify-center gap-5 sm:gap-8 pt-6 text-xs text-green-200/70 flex-wrap hero-fade-up hero-fade-up-5">
+          <div className="flex items-center justify-center gap-5 sm:gap-8 pt-6 text-xs text-slate-400 flex-wrap hero-fade-up hero-fade-up-5">
             <span className="flex items-center gap-1.5">
-              <svg className="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+              <svg className="w-4 h-4 text-slate-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
               ASIC-regulated only
             </span>
             <span className="flex items-center gap-1.5">
-              <svg className="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+              <svg className="w-4 h-4 text-slate-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
               100% independent ratings
             </span>
             <span className="flex items-center gap-1.5">
@@ -130,7 +128,7 @@ export default async function HomePage() {
               Fees verified daily
             </span>
             <span className="flex items-center gap-1.5">
-              <svg className="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" /></svg>
+              <svg className="w-4 h-4 text-slate-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" /></svg>
               Always free
             </span>
           </div>
@@ -173,7 +171,7 @@ export default async function HomePage() {
             <div className="text-center mt-8">
               <Link
                 href="/compare"
-                className="inline-block px-7 py-3.5 bg-green-700 text-white font-bold rounded-xl hover:bg-green-800 hover:scale-105 hover:shadow-[0_0_16px_rgba(21,128,61,0.3)] transition-all duration-200 text-sm"
+                className="inline-block px-7 py-3.5 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 hover:scale-105 hover:shadow-lg transition-all duration-200 text-sm"
               >
                 View All {brokerCount}+ Brokers &rarr;
               </Link>
@@ -192,7 +190,7 @@ export default async function HomePage() {
                   <h2 className="text-2xl font-bold">Current Broker Deals</h2>
                   <p className="text-sm text-slate-500 mt-1">Verified promotions from Australian trading platforms</p>
                 </div>
-                <Link href="/deals" className="text-sm font-semibold text-green-700 hover:text-green-800 transition-colors">
+                <Link href="/deals" className="text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors">
                   View All Deals &rarr;
                 </Link>
               </div>
@@ -233,7 +231,7 @@ export default async function HomePage() {
             <div className="text-center mt-6">
               <Link
                 href="/best"
-                className="text-sm font-semibold text-green-700 hover:text-green-800 transition-colors"
+                className="text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors"
               >
                 Browse All Categories &rarr;
               </Link>
@@ -252,7 +250,7 @@ export default async function HomePage() {
                   <h2 className="text-2xl font-bold">Investing Guides & Articles</h2>
                   <p className="text-sm text-slate-500 mt-1">Expert guides to help you make smarter decisions</p>
                 </div>
-                <Link href="/articles" className="text-sm font-semibold text-green-700 hover:text-green-800 transition-colors">
+                <Link href="/articles" className="text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors">
                   View All Articles &rarr;
                 </Link>
               </div>
@@ -261,14 +259,14 @@ export default async function HomePage() {
                   <Link
                     key={article.id}
                     href={`/article/${article.slug}`}
-                    className="block border border-slate-200 rounded-xl p-5 hover:shadow-md hover:border-green-200 transition-all duration-200 group"
+                    className="block border border-slate-200 rounded-xl p-5 hover:shadow-md hover:border-slate-300 transition-all duration-200 group"
                   >
                     {article.category && (
-                      <span className="inline-block text-[0.6rem] font-bold uppercase tracking-wider text-green-700 bg-green-50 border border-green-200 px-2 py-0.5 rounded-full mb-3">
+                      <span className="inline-block text-[0.6rem] font-bold uppercase tracking-wider text-slate-600 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full mb-3">
                         {article.category}
                       </span>
                     )}
-                    <h3 className="font-bold text-slate-900 group-hover:text-green-800 transition-colors mb-2 leading-snug">
+                    <h3 className="font-bold text-slate-900 group-hover:text-slate-600 transition-colors mb-2 leading-snug">
                       {article.title}
                     </h3>
                     {article.excerpt && (
@@ -276,7 +274,7 @@ export default async function HomePage() {
                     )}
                     <div className="flex items-center gap-3 text-xs text-slate-400">
                       {article.read_time && <span>{article.read_time} min read</span>}
-                      <span className="text-green-600 font-semibold group-hover:translate-x-0.5 transition-transform">Read Guide &rarr;</span>
+                      <span className="text-slate-900 font-semibold group-hover:translate-x-0.5 transition-transform">Read Guide &rarr;</span>
                     </div>
                   </Link>
                 ))}

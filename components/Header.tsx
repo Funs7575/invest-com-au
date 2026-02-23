@@ -47,7 +47,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 bg-white border-b border-slate-200">
       <div className="container-custom">
         <div className="flex items-center justify-between h-16">
-          <Link href="/" className="flex items-center gap-1.5 text-xl font-bold text-green-800">
+          <Link href="/" className="flex items-center gap-1.5 text-xl font-bold text-slate-900">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/kangaroo-icon.svg"
@@ -66,7 +66,7 @@ export default function Header() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`text-sm font-medium transition-colors rounded focus:outline-none focus:ring-2 focus:ring-green-700/40 ${isActive ? "text-green-800 font-bold" : "text-slate-700 hover:text-green-800"}`}
+                  className={`text-sm font-medium transition-colors rounded focus:outline-none focus:ring-2 focus:ring-slate-400/40 ${isActive ? "text-slate-900 font-bold" : "text-slate-700 hover:text-slate-900"}`}
                   {...(isActive ? { "aria-current": "page" as const } : {})}
                 >
                   {item.name}
@@ -77,7 +77,7 @@ export default function Header() {
             <div ref={moreRef} className="relative">
               <button
                 onClick={() => setMoreOpen(!moreOpen)}
-                className="text-sm font-medium text-slate-700 hover:text-green-800 transition-colors rounded focus:outline-none focus:ring-2 focus:ring-green-700/40 flex items-center gap-1"
+                className="text-sm font-medium text-slate-700 hover:text-slate-900 transition-colors rounded focus:outline-none focus:ring-2 focus:ring-slate-400/40 flex items-center gap-1"
                 aria-expanded={moreOpen}
                 aria-haspopup="true"
               >
@@ -91,7 +91,7 @@ export default function Header() {
                       key={item.href}
                       href={item.href}
                       onClick={() => setMoreOpen(false)}
-                      className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-green-50 hover:text-green-800 transition-colors"
+                      className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors"
                     >
                       {item.name}
                     </Link>
@@ -101,7 +101,7 @@ export default function Header() {
             </div>
             <Link
               href="/quiz"
-              className="px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-700/40 focus:ring-offset-2 transition-colors"
+              className="px-4 py-2 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-400/40 focus:ring-offset-2 transition-colors"
             >
               Broker Quiz
             </Link>
@@ -132,7 +132,7 @@ export default function Header() {
           {/* Mobile Hamburger */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="md:hidden p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-700 hover:text-green-800 focus:outline-none focus:ring-2 focus:ring-green-700/40 rounded-lg transition-colors"
+            className="md:hidden p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-700 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-400/40 rounded-lg transition-colors"
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
           >
@@ -156,7 +156,7 @@ export default function Header() {
             <Link
               href="/article/how-to-invest-australia"
               onClick={() => setMenuOpen(false)}
-              className="block px-4 py-3 text-sm font-semibold text-green-700 bg-green-50 rounded-lg transition-colors"
+              className="block px-4 py-3 text-sm font-semibold text-slate-900 bg-slate-100 rounded-lg transition-colors"
             >
               New to investing? Start here &rarr;
             </Link>
@@ -167,7 +167,7 @@ export default function Header() {
                   key={item.href}
                   href={item.href}
                   onClick={() => setMenuOpen(false)}
-                  className={`block px-4 py-3 text-sm font-medium rounded-lg transition-colors ${isActive ? "bg-green-50 text-green-800 font-bold" : "text-slate-700 hover:bg-green-50 hover:text-green-800"}`}
+                  className={`block px-4 py-3 text-sm font-medium rounded-lg transition-colors ${isActive ? "bg-slate-100 text-slate-900 font-bold" : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"}`}
                   {...(isActive ? { "aria-current": "page" as const } : {})}
                 >
                   {item.name}
@@ -181,7 +181,7 @@ export default function Header() {
                   key={item.href}
                   href={item.href}
                   onClick={() => setMenuOpen(false)}
-                  className="block px-4 py-3 text-sm text-slate-700 hover:bg-green-50 hover:text-green-800 rounded-lg transition-colors"
+                  className="block px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-lg transition-colors"
                 >
                   {item.name}
                 </Link>
@@ -191,7 +191,7 @@ export default function Header() {
               <Link
                 href="/quiz"
                 onClick={() => setMenuOpen(false)}
-                className="block px-4 py-3 text-sm font-semibold text-green-700 hover:bg-green-50 rounded-lg transition-colors"
+                className="block px-4 py-3 text-sm font-semibold text-slate-900 hover:bg-slate-50 rounded-lg transition-colors"
               >
                 Take The Quiz
               </Link>
@@ -233,7 +233,7 @@ export default function Header() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setMenuOpen(false)}
-                  className="block px-4 py-3 text-sm text-slate-600 hover:text-green-700 transition-colors"
+                  className="block px-4 py-3 text-sm text-slate-600 hover:text-slate-900 transition-colors"
                 >
                   {link.label}
                 </Link>

@@ -27,11 +27,11 @@ export default function HomepageSearchBar() {
           onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           placeholder="Search brokers, fees, or features..."
           aria-label="Search brokers by name, fees, or features"
-          className="w-full h-14 pl-12 pr-32 rounded-xl bg-white/95 backdrop-blur-sm border-2 border-white/20 shadow-2xl text-base text-slate-900 placeholder:text-slate-400 focus:border-green-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-700/30 transition-all duration-200"
+          className="w-full h-14 pl-12 pr-32 rounded-xl bg-white border-2 border-slate-200 shadow-sm text-base text-slate-900 placeholder:text-slate-400 focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/30 transition-all duration-200"
         />
         <button
           onClick={handleSearch}
-          className="absolute right-2 top-1/2 -translate-y-1/2 bg-green-700 hover:bg-green-800 hover:scale-105 hover:shadow-[0_0_12px_rgba(21,128,61,0.3)] text-white font-bold px-5 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/50 transition-all duration-200 text-sm"
+          className="absolute right-2 top-1/2 -translate-y-1/2 bg-slate-900 hover:bg-slate-800 hover:scale-105 text-white font-bold px-5 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400/50 transition-all duration-200 text-sm"
         >
           Compare
         </button>
