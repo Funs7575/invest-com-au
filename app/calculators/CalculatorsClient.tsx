@@ -45,15 +45,16 @@ function AnimatedNumber({ value, prefix = "$", decimals = 2 }: { value: number; 
    Types & constants
    ────────────────────────────────────────────── */
 interface Props { brokers: Broker[] }
-type CalcId = "trade-cost" | "fx" | "switching" | "cgt" | "franking" | "chess";
+type CalcId = "trade-cost" | "fx" | "switching" | "cgt" | "franking" | "chess" | "fee-impact";
 
-const CALCS: { id: CalcId; icon: string; title: string; subtitle: string }[] = [
+const CALCS: { id: CalcId; icon: string; title: string; subtitle: string; badge?: string }[] = [
   { id: "trade-cost", icon: "dollar-sign", title: "Trade Cost", subtitle: "What does a trade really cost at each broker?" },
   { id: "fx", icon: "globe", title: "US Share Costs", subtitle: "What do international trades really cost?" },
   { id: "switching", icon: "arrow-right-left", title: "Compare Fees", subtitle: "Is it worth switching brokers?" },
   { id: "cgt", icon: "calendar", title: "Tax on Profits", subtitle: "Estimate capital gains tax" },
   { id: "franking", icon: "coins", title: "Dividend Tax", subtitle: "Franking credits after tax" },
   { id: "chess", icon: "shield-check", title: "Share Safety", subtitle: "Is your broker CHESS sponsored?" },
+  { id: "fee-impact", icon: "calculator", title: "Fee Impact", subtitle: "Your total annual broker fees", badge: "PRO" },
 ];
 
 const CORPORATE_TAX_RATE = 0.3;
@@ -93,7 +94,7 @@ export default function CalculatorsClient({ brokers }: Props) {
         </div>
 
         {/* ── Pill Navigation ──────────────────────── */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-10" role="tablist" aria-label="Calculator selection">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3 mb-10" role="tablist" aria-label="Calculator selection">
           {CALCS.map((c) => (
             <button
               key={c.id}
@@ -107,6 +108,11 @@ export default function CalculatorsClient({ brokers }: Props) {
                   : "bg-white border-slate-200 hover:border-green-600/40 hover:shadow-sm"
               }`}
             >
+              {c.badge && (
+                <span className="absolute top-2 right-2 px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-bold rounded-full leading-none">
+                  {c.badge}
+                </span>
+              )}
               <Icon name={c.icon} size={24} className={`mb-2 transition-transform ${activeCalc === c.id ? "scale-110 text-green-700" : "text-slate-500 group-hover:scale-105"}`} />
               <span className={`text-sm font-bold mb-0.5 leading-tight ${activeCalc === c.id ? "text-green-800" : "text-slate-900"}`}>
                 {c.title}
@@ -124,6 +130,7 @@ export default function CalculatorsClient({ brokers }: Props) {
           {activeCalc === "fx" && <FxFeeCalculator brokers={nonCryptoBrokers} />}
           {activeCalc === "cgt" && <CgtCalculator />}
           {activeCalc === "chess" && <ChessLookup brokers={nonCryptoBrokers} />}
+          {activeCalc === "fee-impact" && <FeeImpactTeaser brokers={nonCryptoBrokers} />}
         </div>
 
         {/* Related Resources */}
@@ -997,6 +1004,98 @@ function ChessLookup({ brokers }: { brokers: Broker[] }) {
           </div>
         </div>
       )}
+    </CalcSection>
+  );
+}
+
+/* ──────────────────────────────────────────────
+   6) Fee Impact Teaser — links to full /fee-impact page
+   ────────────────────────────────────────────── */
+function FeeImpactTeaser({ brokers }: { brokers: Broker[] }) {
+  const [trades, setTrades] = useState("4");
+  const tpm = parseFloat(trades) || 0;
+
+  const topThree = useMemo(() => {
+    return brokers
+      .map((b) => {
+        const fee = b.asx_fee_value ?? null;
+        if (fee === null || fee >= 999) return null;
+        return { broker: b, annual: tpm * 12 * fee };
+      })
+      .filter(Boolean)
+      .sort((a, b) => a!.annual - b!.annual)
+      .slice(0, 3) as { broker: Broker; annual: number }[];
+  }, [brokers, tpm]);
+
+  return (
+    <CalcSection
+      id="fee-impact"
+      iconName="calculator"
+      title="Personal Fee Impact Calculator"
+      desc="See your total annual broker fees based on your real trading habits — brokerage, FX, and inactivity charges."
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="lg:col-span-4 space-y-5">
+          <InputField label="ASX Trades per Month" value={trades} onChange={setTrades} placeholder="4" />
+
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-bold rounded-full">PRO</span>
+              <span className="font-bold text-amber-900">Full Calculator</span>
+            </div>
+            <p className="text-amber-800 text-xs leading-relaxed mb-3">
+              The full version includes US trades, FX fees, inactivity charges, and ranks every broker — not just the top 3.
+            </p>
+            <Link
+              href="/fee-impact"
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-brand text-white font-bold text-xs rounded-lg hover:bg-green-800 transition-colors"
+            >
+              Open Full Calculator →
+            </Link>
+          </div>
+        </div>
+
+        <div className="lg:col-span-8">
+          {topThree.length > 0 ? (
+            <div className="space-y-3">
+              <h3 className="text-sm font-bold text-slate-700 mb-2">Top 3 Cheapest (ASX Only)</h3>
+              {topThree.map((r, i) => (
+                <div
+                  key={r.broker.slug}
+                  className={`flex items-center gap-4 px-4 py-3 rounded-xl border ${
+                    i === 0 ? "bg-green-50 border-green-200" : "bg-white border-slate-200"
+                  }`}
+                >
+                  <span className="text-xs font-bold text-slate-400 w-5">#{i + 1}</span>
+                  <div
+                    className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold shrink-0"
+                    style={{ background: `${r.broker.color}20`, color: r.broker.color }}
+                  >
+                    {r.broker.icon || r.broker.name.charAt(0)}
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-bold text-sm text-slate-900">{r.broker.name}</div>
+                    <div className="text-xs text-slate-500">{r.broker.asx_fee || "N/A"}/trade</div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-lg font-extrabold text-slate-900">{formatCurrency(r.annual)}</div>
+                    <div className="text-xs text-slate-500">/year</div>
+                  </div>
+                </div>
+              ))}
+              <p className="text-xs text-slate-400 mt-2">
+                This preview only shows ASX brokerage. <Link href="/fee-impact" className="text-green-700 hover:underline font-medium">Open the full calculator</Link> to include US trades, FX fees, and inactivity charges.
+              </p>
+            </div>
+          ) : (
+            <div className="border-2 border-dashed border-slate-200 rounded-xl p-12 text-center flex flex-col items-center justify-center h-full">
+              <Icon name="calculator" size={48} className="text-slate-300 mx-auto mb-4" />
+              <h3 className="text-lg font-bold text-slate-900 mb-1">Enter Your Trades</h3>
+              <p className="text-sm text-slate-500 max-w-xs">Type the number of ASX trades you make per month to see your cheapest options.</p>
+            </div>
+          )}
+        </div>
+      </div>
     </CalcSection>
   );
 }

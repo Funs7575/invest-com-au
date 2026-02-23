@@ -31,6 +31,12 @@ const features = [
     description: "Find your perfect broker match in 60 seconds",
   },
   {
+    name: "Personal fee impact calculator",
+    free: false,
+    pro: true,
+    description: "See your total annual broker fees across every broker — free users see top 3 only",
+  },
+  {
     name: "Fee alert notifications",
     free: false,
     pro: true,
