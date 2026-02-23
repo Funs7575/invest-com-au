@@ -462,8 +462,9 @@ interface DecisionLogData {
   duration_ms: number;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function logDecision(
-  supabase: ReturnType<typeof createClient>,
+  supabase: any,
   data: DecisionLogData
 ): void {
   // Fire-and-forget — allocation latency must not increase
