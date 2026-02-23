@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
-import SiteHeader from "@/components/SiteHeader";
-import SiteFooter from "@/components/SiteFooter";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 interface DataChange {
   id: number;
@@ -93,7 +93,7 @@ export default function WhatsNewPage() {
 
   return (
     <>
-      <SiteHeader />
+      <Header />
       <main className="max-w-3xl mx-auto px-4 py-12">
         <div className="mb-8">
           <h1 className="text-3xl font-extrabold text-slate-900">
@@ -181,7 +181,7 @@ export default function WhatsNewPage() {
           </div>
         )}
       </main>
-      <SiteFooter />
+      <Footer />
     </>
   );
 }
