@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import type { Broker, UserReview, BrokerReviewStats, SwitchStory } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
-import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
+import { ADVERTISER_DISCLOSURE_SHORT, GENERAL_ADVICE_WARNING, PDS_CONSIDERATION } from "@/lib/compliance";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import StickyCTABar from "@/components/StickyCTABar";
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
@@ -212,10 +212,15 @@ export default function BrokerReviewClient({
             {getBenefitCta(b, 'review')}
           </a>
         </div>
-        <p className="text-xs text-slate-400 mb-3">
+        <p className="text-xs text-slate-400 mb-1">
           {ADVERTISER_DISCLOSURE_SHORT}
         </p>
-
+        <p className="text-xs text-slate-400 mb-3">
+          {PDS_CONSIDERATION}{" "}
+          <a href="#important-info" className="text-blue-700 hover:underline">
+            Important information, fees &amp; exit policy →
+          </a>
+        </p>
 
         {/* Author Byline & Dates — E-E-A-T visible signals */}
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 mb-4 pb-4 border-b border-slate-100">
@@ -469,6 +474,75 @@ export default function BrokerReviewClient({
               </ul>
             </ScrollReveal>
           )}
+        </div>
+
+        {/* Important Information — exit/closure policy, regulatory, risk warnings */}
+        <div id="important-info" className="bg-slate-50 border border-slate-200 rounded-xl p-5 mb-8 scroll-mt-20">
+          <div className="flex items-center gap-2 mb-3">
+            <Icon name="clipboard-list" size={18} className="text-slate-500 shrink-0" />
+            <h2 className="text-lg font-extrabold text-slate-900">Important Information</h2>
+          </div>
+          <div className="space-y-3 text-sm text-slate-700">
+            {/* Account & Exit */}
+            <div>
+              <h3 className="font-semibold text-slate-800 mb-1">Account Closure &amp; Switching</h3>
+              <ul className="space-y-1 text-xs text-slate-600">
+                <li className="flex items-start gap-2">
+                  <span className="text-slate-400 mt-0.5">•</span>
+                  <span>You can close your {b.name} account at any time by contacting their support team.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-slate-400 mt-0.5">•</span>
+                  <span>
+                    {b.chess_sponsored
+                      ? `CHESS-sponsored shares can be transferred to another broker via a HIN transfer (typically 3–5 business days). ${b.name} may charge a transfer-out fee.`
+                      : `As a custodial broker, transferring shares to another platform may require selling and rebuying. Check ${b.name}'s transfer options before opening an account.`}
+                  </span>
+                </li>
+                {b.inactivity_fee && b.inactivity_fee !== 'None' && (
+                  <li className="flex items-start gap-2">
+                    <span className="text-amber-500 mt-0.5">⚠</span>
+                    <span><strong>Inactivity fee:</strong> {b.inactivity_fee}. If you stop trading, this fee may apply to your account.</span>
+                  </li>
+                )}
+                <li className="flex items-start gap-2">
+                  <span className="text-slate-400 mt-0.5">•</span>
+                  <span>
+                    No cooling-off period applies to brokerage accounts in Australia. Once you open an account and place a trade, standard terms apply.{" "}
+                    <Link href="/switch" className="text-blue-700 hover:underline">Use our switch planner →</Link>
+                  </span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Regulatory */}
+            <div>
+              <h3 className="font-semibold text-slate-800 mb-1">Regulatory Status</h3>
+              <ul className="space-y-1 text-xs text-slate-600">
+                <li className="flex items-start gap-2">
+                  <span className="text-slate-400 mt-0.5">•</span>
+                  <span>
+                    {b.regulated_by
+                      ? `${b.name} is regulated by ${b.regulated_by}.`
+                      : `Check ${b.name}'s AFSL status on the ASIC register before investing.`}
+                    {b.year_founded && ` Founded in ${b.year_founded}.`}
+                    {b.headquarters && ` Headquartered in ${b.headquarters}.`}
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-slate-400 mt-0.5">•</span>
+                  <span>Client funds are subject to the protections outlined in their Financial Services Guide (FSG) and Product Disclosure Statement (PDS).</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* General Advice Warning */}
+            <div className="pt-2 border-t border-slate-200">
+              <p className="text-xs text-slate-500 leading-relaxed">
+                <strong className="text-slate-600">General Advice Warning:</strong> {GENERAL_ADVICE_WARNING}
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* User Reviews Section */}

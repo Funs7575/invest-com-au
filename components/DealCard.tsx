@@ -2,7 +2,6 @@
 
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, renderStars, AFFILIATE_REL } from "@/lib/tracking";
-import { RISK_WARNING_CTA } from "@/lib/compliance";
 import { isSponsored } from "@/lib/sponsorship";
 import SponsorBadge from "@/components/SponsorBadge";
 
@@ -108,10 +107,6 @@ export default function DealCard({ broker }: { broker: Broker }) {
         Claim Deal →
       </a>
 
-      {/* Risk warning */}
-      <p className="text-xs text-slate-400 text-center mt-2">
-        {RISK_WARNING_CTA}
-      </p>
     </div>
   );
 }

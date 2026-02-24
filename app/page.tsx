@@ -7,6 +7,7 @@ import HomepageComparisonTable from "@/components/HomepageComparisonTable";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
 import LeadMagnet from "@/components/LeadMagnet";
 import DealCard from "@/components/DealCard";
+import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 import { getMostRecentFeeCheck } from "@/lib/utils";
@@ -207,6 +208,9 @@ export default async function HomePage() {
                 {(dealBrokers as Broker[]).map((broker) => (
                   <DealCard key={broker.id} broker={broker} />
                 ))}
+              </div>
+              <div className="mt-4">
+                <CompactDisclaimerLine />
               </div>
             </div>
           </section>

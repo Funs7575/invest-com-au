@@ -47,14 +47,14 @@ export default function DealsClient({ deals }: { deals: Broker[] }) {
     <div>
       {/* Filter Tabs — only show if there are multiple categories */}
       {availableTabs.length > 2 && (
-        <div className="flex flex-wrap gap-2 mb-6" role="tablist" aria-label="Deal category filter">
+        <div className="flex md:flex-wrap gap-2 mb-6 overflow-x-auto md:overflow-x-visible scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0" role="tablist" aria-label="Deal category filter">
           {availableTabs.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               role="tab"
               aria-selected={activeTab === tab}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`whitespace-nowrap shrink-0 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 activeTab === tab
                   ? "bg-blue-700 text-white"
                   : "bg-gray-100 text-gray-600 hover:bg-gray-200"
