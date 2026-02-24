@@ -17,7 +17,7 @@ function getParam(sp: URLSearchParams, key: string): string | null {
 }
 
 function useUrlSync(params: Record<string, string>, delay = 500) {
-  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastSerialized = useRef<string>("");
   const paramsKey = JSON.stringify(params);
 
