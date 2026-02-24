@@ -205,22 +205,35 @@ export default async function HomePage() {
                   View All Deals &rarr;
                 </Link>
               </div>
-              {/* Mobile: show 1 deal + link to more. Desktop: show all */}
+              {/* Desktop: grid of all deals */}
               <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {(dealBrokers as Broker[]).map((broker) => (
                   <DealCard key={broker.id} broker={broker} />
                 ))}
               </div>
-              <div className="md:hidden space-y-4">
-                <DealCard broker={(dealBrokers as Broker[])[0]} />
-                {(dealBrokers as Broker[]).length > 1 && (
+              {/* Mobile: horizontal snap-scroll carousel */}
+              <div className="md:hidden">
+                <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-4 scrollbar-hide -mx-4 px-4">
+                  {(dealBrokers as Broker[]).map((broker) => (
+                    <div key={broker.id} className="w-[85vw] shrink-0 snap-start">
+                      <DealCard broker={broker} />
+                    </div>
+                  ))}
+                </div>
+                {/* Dot indicators */}
+                <div className="flex justify-center gap-1.5 mt-1">
+                  {(dealBrokers as Broker[]).map((_, i) => (
+                    <div key={i} className={`w-1.5 h-1.5 rounded-full ${i === 0 ? 'bg-amber-500' : 'bg-slate-300'}`} />
+                  ))}
+                </div>
+                <div className="text-center mt-3">
                   <Link
                     href="/deals"
-                    className="block text-center py-3 border-2 border-slate-200 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+                    className="text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors"
                   >
-                    View {(dealBrokers as Broker[]).length - 1} More Deal{(dealBrokers as Broker[]).length > 2 ? 's' : ''} &rarr;
+                    View All Deals &rarr;
                   </Link>
-                )}
+                </div>
               </div>
               <div className="mt-4">
                 <CompactDisclaimerLine />
