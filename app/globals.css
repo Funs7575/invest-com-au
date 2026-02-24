@@ -177,15 +177,6 @@ body {
   scroll-snap-align: start;
 }
 
-/* ── Vertical section snap on mobile homepage ──────────── */
-@media (max-width: 639px) {
-  html:has(.snap-y-sections) {
-    scroll-snap-type: y proximity;
-  }
-  .snap-section {
-    scroll-snap-align: start;
-  }
-}
 
 /* ── Back to top progress ring ─────────────────────────── */
 @keyframes progressRing {

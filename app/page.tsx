@@ -78,7 +78,7 @@ export default async function HomePage() {
     : new Date().toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" });
 
   return (
-    <div className="snap-y-sections">
+    <div>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -94,7 +94,7 @@ export default async function HomePage() {
       />
 
       {/* Hero Section */}
-      <section className="snap-section relative bg-white border-b border-slate-100 py-6 md:py-14 overflow-hidden">
+      <section className="relative bg-white border-b border-slate-100 py-6 md:py-14 overflow-hidden">
         <div className="relative max-w-4xl mx-auto px-4 text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-full text-xs font-medium text-slate-600 mb-3 md:mb-6 hero-fade-up hero-fade-up-1 border border-slate-200">
             <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
@@ -175,7 +175,7 @@ export default async function HomePage() {
       </section>
 
       {/* Comparison Table */}
-      <ScrollFadeIn className="snap-section">
+      <ScrollFadeIn>
         <section className="min-h-[100svh] sm:min-h-0 py-6 sm:py-8 md:py-16 bg-slate-50 flex flex-col">
           <div className="container-custom flex-1 flex flex-col">
             <div className="mb-3 sm:mb-5 md:mb-8">
@@ -205,7 +205,7 @@ export default async function HomePage() {
 
       {/* Active Deals Section */}
       {(dealBrokers as Broker[])?.length > 0 && (
-        <ScrollFadeIn className="snap-section">
+        <ScrollFadeIn>
           <section className="py-8 md:py-12 bg-gradient-to-b from-amber-50/50 to-white">
             <div className="container-custom">
               <div className="flex items-center justify-between mb-4 md:mb-6">
@@ -256,7 +256,7 @@ export default async function HomePage() {
       )}
 
       {/* Best For Hub */}
-      <ScrollFadeIn className="snap-section">
+      <ScrollFadeIn>
         <section className="py-8 md:py-12 bg-slate-50">
           <div className="container-custom">
             <div className="text-center mb-5 md:mb-8">
@@ -315,7 +315,7 @@ export default async function HomePage() {
 
       {/* Featured Articles */}
       {(articles as Article[])?.length > 0 && (
-        <ScrollFadeIn className="snap-section">
+        <ScrollFadeIn>
           <section className="py-8 md:py-12 bg-white">
             <div className="container-custom">
               <div className="flex items-center justify-between mb-4 md:mb-6">
@@ -387,7 +387,7 @@ export default async function HomePage() {
       )}
 
       {/* Email Capture */}
-      <ScrollFadeIn className="snap-section">
+      <ScrollFadeIn>
         <section className="py-8 md:py-12 bg-slate-50">
           <div className="container-custom">
             <div className="max-w-xl mx-auto">
