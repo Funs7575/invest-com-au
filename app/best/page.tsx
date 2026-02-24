@@ -7,12 +7,12 @@ import Icon from "@/components/Icon";
 export const metadata: Metadata = {
   title: "Best Brokers in Australia (2026) — By Category",
   description:
-    "Find the best Australian broker for your needs. Guides for beginners, US shares, low fees, CHESS-sponsored, SMSF, crypto, and low FX fees.",
+    "Find the best Australian broker for your needs. 20 category guides covering beginners, low fees, ETFs, dividends, day trading, international shares, and more.",
   alternates: { canonical: "/best" },
   openGraph: {
     title: "Best Brokers in Australia (2026) — By Category",
     description:
-      "Find the best Australian broker for your needs. Guides for beginners, US shares, low fees, CHESS-sponsored, SMSF, crypto, and low FX fees.",
+      "Find the best Australian broker for your needs. 20 category guides covering beginners, low fees, ETFs, dividends, day trading, international shares, and more.",
     url: "/best",
     images: [
       {
@@ -34,6 +34,19 @@ const categoryIcons: Record<string, string> = {
   smsf: "building",
   crypto: "bitcoin",
   "low-fx-fees": "arrow-left-right",
+  "free-brokerage": "gift",
+  "under-5-dollars": "tag",
+  "no-inactivity-fee": "clock",
+  "international-shares": "globe",
+  "day-trading": "zap",
+  "dividend-investing": "trending-up",
+  "etf-investing": "pie-chart",
+  "mobile-app": "smartphone",
+  "fractional-shares": "scissors",
+  "joint-accounts": "users",
+  "trust-accounts": "briefcase",
+  children: "baby",
+  "low-minimum-deposit": "piggy-bank",
 };
 
 export default function BestBrokersHub() {

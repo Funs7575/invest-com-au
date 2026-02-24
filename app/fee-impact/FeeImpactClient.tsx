@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import Link from "next/link";
 import type { Broker } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
@@ -13,8 +13,73 @@ import {
 } from "@/lib/tracking";
 import { downloadCSV } from "@/lib/csv-export";
 import { useSubscription } from "@/lib/hooks/useSubscription";
+import { useSearchParams } from "next/navigation";
 import Icon from "@/components/Icon";
 import AuthorByline from "@/components/AuthorByline";
+
+/* ──────────────────────────────────────────────
+   URL state sync helpers
+   ────────────────────────────────────────────── */
+function getParam(sp: URLSearchParams, key: string): string | null {
+  return sp.get(key);
+}
+
+function useUrlSync(params: Record<string, string>, delay = 500) {
+  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const lastSerialized = useRef<string>("");
+  const paramsKey = JSON.stringify(params);
+
+  useEffect(() => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      if (typeof window === "undefined") return;
+      const url = new URL(window.location.href);
+      const parsed = JSON.parse(paramsKey) as Record<string, string>;
+      for (const [k, v] of Object.entries(parsed)) {
+        if (v) {
+          url.searchParams.set(k, v);
+        } else {
+          url.searchParams.delete(k);
+        }
+      }
+      const serialized = url.searchParams.toString();
+      if (serialized !== lastSerialized.current) {
+        lastSerialized.current = serialized;
+        window.history.replaceState(null, "", url.toString());
+      }
+    }, delay);
+    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+  }, [paramsKey, delay]);
+}
+
+function ShareResultsButton() {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = useCallback(() => {
+    if (typeof window === "undefined") return;
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }, []);
+
+  return (
+    <div className="mt-4 flex items-center gap-3 text-xs">
+      <button
+        onClick={handleCopy}
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-slate-500 hover:text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+      >
+        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+        </svg>
+        {copied ? "Copied!" : "Share Results"}
+      </button>
+      <Link href="/methodology" className="text-slate-400 hover:text-slate-600 transition-colors">
+        How we calculated this →
+      </Link>
+    </div>
+  );
+}
 
 /* ──────────────────────────────────────────────
    Shared UI Components (copied from CalculatorsClient)
@@ -188,15 +253,18 @@ interface Props {
 
 export default function FeeImpactClient({ brokers }: Props) {
   const { user, isPro, loading: authLoading } = useSubscription();
+  const searchParams = useSearchParams();
 
-  const [asxTrades, setAsxTrades] = useState("4");
-  const [usTrades, setUsTrades] = useState("0");
-  const [avgTradeSize, setAvgTradeSize] = useState("5000");
-  const [portfolioValue, setPortfolioValue] = useState("");
-  const [currentBrokerSlug, setCurrentBrokerSlug] = useState("");
+  const [asxTrades, setAsxTrades] = useState(() => getParam(searchParams, "asx") || "4");
+  const [usTrades, setUsTrades] = useState(() => getParam(searchParams, "us") || "0");
+  const [avgTradeSize, setAvgTradeSize] = useState(() => getParam(searchParams, "size") || "5000");
+  const [portfolioValue, setPortfolioValue] = useState(() => getParam(searchParams, "pv") || "");
+  const [currentBrokerSlug, setCurrentBrokerSlug] = useState(() => getParam(searchParams, "broker") || "");
   const [profileLoaded, setProfileLoaded] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<"idle" | "saved" | "error">("idle");
+
+  useUrlSync({ asx: asxTrades, us: usTrades, size: avgTradeSize, pv: portfolioValue, broker: currentBrokerSlug });
 
   // Load saved profile on mount
   useEffect(() => {
@@ -828,6 +896,8 @@ export default function FeeImpactClient({ brokers }: Props) {
                     offers. This calculator is for educational purposes only
                     and does not constitute financial advice.
                   </p>
+
+                  <ShareResultsButton />
                 </div>
               ) : (
                 <div className="border-2 border-dashed border-slate-200 rounded-xl p-12 text-center h-full flex flex-col items-center justify-center">

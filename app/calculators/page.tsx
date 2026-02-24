@@ -1,20 +1,66 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import CalculatorsClient from "./CalculatorsClient";
 
-export const metadata = {
-  title: "Investing Tools & Calculators",
-  description:
-    "Free tools for Australian investors: compare broker fees, estimate capital gains tax, calculate FX costs on US shares, and check CHESS sponsorship.",
-  openGraph: {
-    title: "Investing Tools & Calculators — Invest.com.au",
-    description: "Free tools for Australian investors: compare broker fees, estimate tax, calculate FX costs on US shares.",
-    images: [{ url: "/api/og?title=Investing+Tools&subtitle=Compare+fees,+estimate+tax+%26+more&type=default", width: 1200, height: 630 }],
-  },
-  twitter: { card: "summary_large_image" as const },
-  alternates: { canonical: "/calculators" },
+/* ──────────────────────────────────────────────
+   Dynamic metadata based on searchParams
+   ────────────────────────────────────────────── */
+
+const CALC_TITLES: Record<string, string> = {
+  "trade-cost": "Trade Cost Calculator",
+  fx: "FX Cost Calculator",
+  switching: "Broker Switching Simulator",
+  cgt: "Capital Gains Tax Estimator",
+  franking: "Franking Credits Calculator",
+  chess: "CHESS Sponsorship Lookup",
+  "fee-impact": "Fee Impact Calculator",
 };
+
+type Props = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
+
+export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  const params = await searchParams;
+  const calc = typeof params.calc === "string" ? params.calc : undefined;
+  const calcTitle = calc ? CALC_TITLES[calc] : undefined;
+
+  // Build a dynamic subtitle from params
+  let subtitle = "";
+  if (calc === "trade-cost" && params.tc_amt) {
+    subtitle = ` — $${Number(params.tc_amt).toLocaleString("en-AU")} ${params.tc_mkt === "us" ? "US" : "ASX"} Trade`;
+  } else if (calc === "fx" && params.fx_amt) {
+    subtitle = ` — $${Number(params.fx_amt).toLocaleString("en-AU")} Conversion`;
+  } else if (calc === "cgt" && params.cg_amt) {
+    subtitle = ` — $${Number(params.cg_amt).toLocaleString("en-AU")} Gain`;
+  } else if (calc === "franking" && params.fr_dy) {
+    subtitle = ` — ${params.fr_dy}% Yield`;
+  }
+
+  const title = calcTitle
+    ? `${calcTitle}${subtitle} — Invest.com.au`
+    : "Investing Tools & Calculators";
+
+  const description = calcTitle
+    ? `Use the free ${calcTitle} to compare broker fees and make smarter investing decisions.`
+    : "Free tools for Australian investors: compare broker fees, estimate capital gains tax, calculate FX costs on US shares, and check CHESS sponsorship.";
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title: calcTitle ? `${calcTitle}${subtitle} — Invest.com.au` : "Investing Tools & Calculators — Invest.com.au",
+      description: calcTitle
+        ? `Use the free ${calcTitle} to compare broker fees and make smarter investing decisions.`
+        : "Free tools for Australian investors: compare broker fees, estimate tax, calculate FX costs on US shares.",
+      images: [{ url: `/api/og?title=${encodeURIComponent(calcTitle || "Investing Tools")}&subtitle=${encodeURIComponent(subtitle ? subtitle.replace(" — ", "") : "Compare fees, estimate tax & more")}&type=default`, width: 1200, height: 630 }],
+    },
+    twitter: { card: "summary_large_image" as const },
+    alternates: { canonical: "/calculators" },
+  };
+}
 
 export default async function CalculatorsPage() {
   const supabase = await createClient();

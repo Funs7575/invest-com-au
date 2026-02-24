@@ -17,6 +17,11 @@ export default function UserReviewForm({ brokerSlug, brokerName }: UserReviewFor
   const [body, setBody] = useState("");
   const [pros, setPros] = useState("");
   const [cons, setCons] = useState("");
+  const [feesRating, setFeesRating] = useState(0);
+  const [platformRating, setPlatformRating] = useState(0);
+  const [supportRating, setSupportRating] = useState(0);
+  const [reliabilityRating, setReliabilityRating] = useState(0);
+  const [experienceMonths, setExperienceMonths] = useState<number | null>(null);
   const [consent, setConsent] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
@@ -53,6 +58,11 @@ export default function UserReviewForm({ brokerSlug, brokerName }: UserReviewFor
           body: body.trim(),
           pros: pros.trim() || null,
           cons: cons.trim() || null,
+          fees_rating: feesRating || null,
+          platform_rating: platformRating || null,
+          support_rating: supportRating || null,
+          reliability_rating: reliabilityRating || null,
+          experience_months: experienceMonths,
         }),
       });
 
@@ -103,6 +113,54 @@ export default function UserReviewForm({ brokerSlug, brokerName }: UserReviewFor
           Your Rating <span className="text-red-500">*</span>
         </label>
         <StarRatingInput value={rating} onChange={setRating} size="lg" />
+      </div>
+
+      {/* Dimension Ratings */}
+      <div className="bg-slate-50 rounded-lg p-3">
+        <p className="text-xs font-medium text-slate-500 mb-2">Rate specific aspects <span className="text-slate-400 font-normal">(optional)</span></p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2">
+          {([
+            { label: "Fee Accuracy", value: feesRating, setter: setFeesRating },
+            { label: "Platform & App", value: platformRating, setter: setPlatformRating },
+            { label: "Customer Support", value: supportRating, setter: setSupportRating },
+            { label: "Reliability", value: reliabilityRating, setter: setReliabilityRating },
+          ] as const).map((dim) => (
+            <div key={dim.label} className="flex items-center gap-2">
+              <span className="text-xs text-slate-600 w-28 shrink-0">{dim.label}</span>
+              <div className="flex items-center gap-0.5">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => dim.setter(star === dim.value ? 0 : star)}
+                    className={`text-base leading-none ${star <= dim.value ? "text-amber-400" : "text-slate-200"} hover:scale-110 transition-transform`}
+                    aria-label={`${dim.label} ${star} star${star !== 1 ? "s" : ""}`}
+                  >
+                    ★
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-3">
+          <label htmlFor="review-experience" className="text-xs text-slate-600">
+            How long have you used this broker?
+          </label>
+          <select
+            id="review-experience"
+            value={experienceMonths ?? ""}
+            onChange={(e) => setExperienceMonths(e.target.value ? Number(e.target.value) : null)}
+            className="mt-1 w-full sm:w-auto px-3 py-1.5 rounded-lg border border-slate-200 text-xs text-slate-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-700/40 focus:border-blue-700"
+          >
+            <option value="">Select...</option>
+            <option value="2">Less than 3 months</option>
+            <option value="5">3-6 months</option>
+            <option value="9">6-12 months</option>
+            <option value="18">1-2 years</option>
+            <option value="30">2+ years</option>
+          </select>
+        </div>
       </div>
 
       {/* Name & Email row */}

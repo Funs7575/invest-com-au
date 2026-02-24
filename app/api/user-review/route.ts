@@ -92,7 +92,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
 
-  const { broker_slug, display_name, email, rating, title, body: reviewBody, pros, cons } = body as {
+  const {
+    broker_slug, display_name, email, rating, title, body: reviewBody, pros, cons,
+    fees_rating, platform_rating, support_rating, reliability_rating, experience_months,
+  } = body as {
     broker_slug?: string;
     display_name?: string;
     email?: string;
@@ -101,6 +104,11 @@ export async function POST(request: NextRequest) {
     body?: string;
     pros?: string | null;
     cons?: string | null;
+    fees_rating?: number | null;
+    platform_rating?: number | null;
+    support_rating?: number | null;
+    reliability_rating?: number | null;
+    experience_months?: number | null;
   };
 
   // Validate required fields
@@ -121,6 +129,23 @@ export async function POST(request: NextRequest) {
   }
   if (!reviewBody || typeof reviewBody !== 'string' || reviewBody.trim().length < 10) {
     return NextResponse.json({ error: 'Review body is required (min 10 characters)' }, { status: 400 });
+  }
+
+  // Validate optional dimension ratings (1-5 if provided)
+  for (const [fieldName, fieldValue] of [
+    ['fees_rating', fees_rating],
+    ['platform_rating', platform_rating],
+    ['support_rating', support_rating],
+    ['reliability_rating', reliability_rating],
+  ] as const) {
+    if (fieldValue != null && (typeof fieldValue !== 'number' || !Number.isInteger(fieldValue) || fieldValue < 1 || fieldValue > 5)) {
+      return NextResponse.json({ error: `${fieldName} must be 1-5 if provided` }, { status: 400 });
+    }
+  }
+
+  // Validate optional experience_months
+  if (experience_months != null && (typeof experience_months !== 'number' || !Number.isInteger(experience_months) || experience_months < 1)) {
+    return NextResponse.json({ error: 'experience_months must be a positive integer if provided' }, { status: 400 });
   }
 
   // Rate limit
@@ -185,6 +210,11 @@ export async function POST(request: NextRequest) {
     body: sanitizedBody,
     pros: sanitizedPros,
     cons: sanitizedCons,
+    fees_rating: fees_rating || null,
+    platform_rating: platform_rating || null,
+    support_rating: support_rating || null,
+    reliability_rating: reliability_rating || null,
+    experience_months: experience_months || null,
     verification_token: verificationToken,
     status: 'pending',
   });

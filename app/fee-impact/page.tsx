@@ -1,28 +1,66 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import FeeImpactClient from "./FeeImpactClient";
 import { absoluteUrl } from "@/lib/seo";
 
-export const metadata = {
-  title: "Personal Fee Impact Calculator — See Your Annual Broker Costs",
-  description:
-    "Enter your trading habits to see exactly what you pay in broker fees each year — brokerage, FX fees, and inactivity charges across every Australian broker.",
-  openGraph: {
-    title: "Personal Fee Impact Calculator — Invest.com.au",
-    description:
-      "Calculate your total annual broker fees and see how much you could save by switching.",
-    images: [
-      {
-        url: "/api/og?title=Fee+Impact+Calculator&subtitle=See+your+annual+broker+costs&type=default",
-        width: 1200,
-        height: 630,
-      },
-    ],
-  },
-  twitter: { card: "summary_large_image" as const },
-  alternates: { canonical: "/fee-impact" },
+/* ──────────────────────────────────────────────
+   Dynamic metadata based on searchParams
+   ────────────────────────────────────────────── */
+
+type Props = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
+
+export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+  const params = await searchParams;
+  const hasParams = params.asx || params.us || params.size;
+
+  let subtitle = "";
+  if (params.asx && Number(params.asx) > 0) {
+    subtitle += `${params.asx} ASX`;
+  }
+  if (params.us && Number(params.us) > 0) {
+    subtitle += `${subtitle ? " + " : ""}${params.us} US`;
+  }
+  if (subtitle) {
+    subtitle = ` — ${subtitle} trades/mo`;
+  }
+  if (params.size && Number(params.size) > 0) {
+    subtitle += ` @ $${Number(params.size).toLocaleString("en-AU")}`;
+  }
+
+  const title = hasParams
+    ? `Fee Impact Calculator${subtitle} — Invest.com.au`
+    : "Personal Fee Impact Calculator — See Your Annual Broker Costs";
+
+  const description = hasParams
+    ? `See your total annual broker fees for${subtitle.replace(" — ", " ")} across every Australian broker.`
+    : "Enter your trading habits to see exactly what you pay in broker fees each year — brokerage, FX fees, and inactivity charges across every Australian broker.";
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title: hasParams
+        ? `Fee Impact Calculator${subtitle} — Invest.com.au`
+        : "Personal Fee Impact Calculator — Invest.com.au",
+      description: hasParams
+        ? `See your total annual broker fees for${subtitle.replace(" — ", " ")} across every Australian broker.`
+        : "Calculate your total annual broker fees and see how much you could save by switching.",
+      images: [
+        {
+          url: `/api/og?title=${encodeURIComponent("Fee Impact Calculator")}&subtitle=${encodeURIComponent(subtitle ? subtitle.replace(" — ", "") : "See your annual broker costs")}&type=default`,
+          width: 1200,
+          height: 630,
+        },
+      ],
+    },
+    twitter: { card: "summary_large_image" as const },
+    alternates: { canonical: "/fee-impact" },
+  };
+}
 
 function jsonLd() {
   return {

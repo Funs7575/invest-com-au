@@ -83,6 +83,29 @@ export default function UserReviewsList({ reviews, stats, brokerSlug, brokerName
               ))}
             </div>
           </div>
+
+          {/* Dimension Ratings */}
+          {stats && (stats.avg_fees_rating || stats.avg_platform_rating || stats.avg_support_rating || stats.avg_reliability_rating) && (
+            <div className="grid grid-cols-2 gap-x-6 gap-y-1 mt-3">
+              {[
+                { label: "Fees", value: stats.avg_fees_rating },
+                { label: "Platform", value: stats.avg_platform_rating },
+                { label: "Support", value: stats.avg_support_rating },
+                { label: "Reliability", value: stats.avg_reliability_rating },
+              ].filter(d => d.value != null).map((d) => (
+                <div key={d.label} className="flex items-center gap-2 text-xs">
+                  <span className="text-slate-500 w-16">{d.label}</span>
+                  <div className="flex-1 bg-slate-100 rounded-full h-1.5">
+                    <div
+                      className="bg-amber-400 h-1.5 rounded-full"
+                      style={{ width: `${((d.value || 0) / 5) * 100}%` }}
+                    />
+                  </div>
+                  <span className="text-slate-600 font-medium w-7 text-right">{d.value?.toFixed(1)}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       ) : (
         <div className="bg-slate-50 rounded-xl p-5 mb-5 text-center">

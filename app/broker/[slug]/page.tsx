@@ -81,8 +81,8 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
     .slice(0, 3)
     .map(({ broker: br }) => br);
 
-  // Fetch articles that mention this broker + user reviews + switch stories (in parallel)
-  const [{ data: brokerArticles }, { data: userReviews }, { data: reviewStats }, { data: switchStoriesRaw }] = await Promise.all([
+  // Fetch articles that mention this broker + user reviews + switch stories + fee history (in parallel)
+  const [{ data: brokerArticles }, { data: userReviews }, { data: reviewStats }, { data: switchStoriesRaw }, { data: feeHistoryRaw }] = await Promise.all([
     supabase
       .from('articles')
       .select('id, title, slug, category, read_time')
@@ -97,7 +97,7 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
       .limit(20),
     supabase
       .from('broker_review_stats')
-      .select('broker_id, review_count, average_rating')
+      .select('broker_id, review_count, average_rating, avg_fees_rating, avg_platform_rating, avg_support_rating, avg_reliability_rating')
       .eq('broker_id', b.id)
       .single(),
     supabase
@@ -107,6 +107,12 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
       .eq('status', 'approved')
       .order('created_at', { ascending: false })
       .limit(10),
+    supabase
+      .from('broker_data_changes')
+      .select('id, field_name, old_value, new_value, change_type, changed_at')
+      .eq('broker_slug', slug)
+      .order('changed_at', { ascending: false })
+      .limit(20),
   ]);
 
   // JSON-LD structured data — FinancialProduct + Review + Article + Breadcrumb
@@ -174,6 +180,7 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
           userReviews={(userReviews || []) as UserReview[]}
           userReviewStats={(reviewStats as BrokerReviewStats) || null}
           switchStories={(switchStoriesRaw || []) as SwitchStory[]}
+          feeHistory={(feeHistoryRaw || []) as { id: number; field_name: string; old_value: string | null; new_value: string | null; change_type: string; changed_at: string }[]}
         />
       </Suspense>
     </>

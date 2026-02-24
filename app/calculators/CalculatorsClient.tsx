@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import Link from "next/link";
 import type { Broker } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
@@ -8,6 +8,73 @@ import { trackClick, trackEvent, getAffiliateLink, getBenefitCta, AFFILIATE_REL 
 import { useSearchParams } from "next/navigation";
 import AuthorByline from "@/components/AuthorByline";
 import Icon from "@/components/Icon";
+
+/* ──────────────────────────────────────────────
+   URL state sync helpers
+   ────────────────────────────────────────────── */
+function getParam(sp: URLSearchParams, key: string): string | null {
+  return sp.get(key);
+}
+
+function useUrlSync(params: Record<string, string>, delay = 500) {
+  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const lastSerialized = useRef<string>("");
+  const paramsKey = JSON.stringify(params);
+
+  useEffect(() => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      if (typeof window === "undefined") return;
+      const url = new URL(window.location.href);
+      const parsed = JSON.parse(paramsKey) as Record<string, string>;
+      for (const [k, v] of Object.entries(parsed)) {
+        if (v) {
+          url.searchParams.set(k, v);
+        } else {
+          url.searchParams.delete(k);
+        }
+      }
+      const serialized = url.searchParams.toString();
+      if (serialized !== lastSerialized.current) {
+        lastSerialized.current = serialized;
+        window.history.replaceState(null, "", url.toString());
+      }
+    }, delay);
+    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
+  }, [paramsKey, delay]);
+}
+
+/* ──────────────────────────────────────────────
+   Share Results button
+   ────────────────────────────────────────────── */
+function ShareResultsButton() {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = useCallback(() => {
+    if (typeof window === "undefined") return;
+    navigator.clipboard.writeText(window.location.href).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }, []);
+
+  return (
+    <div className="mt-4 flex items-center gap-3 text-xs">
+      <button
+        onClick={handleCopy}
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-slate-500 hover:text-slate-700 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+      >
+        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+        </svg>
+        {copied ? "Copied!" : "Share Results"}
+      </button>
+      <Link href="/methodology" className="text-slate-400 hover:text-slate-600 transition-colors">
+        How we calculated this →
+      </Link>
+    </div>
+  );
+}
 
 /* ──────────────────────────────────────────────
    Animated number – smooth counting transitions
@@ -70,6 +137,15 @@ export default function CalculatorsClient({ brokers }: Props) {
   const hasScrolled = useRef(false);
   const [activeCalc, setActiveCalc] = useState<CalcId>(initialCalc || "trade-cost");
 
+  // Sync active tab to URL
+  const handleSetActiveCalc = useCallback((id: CalcId) => {
+    setActiveCalc(id);
+    if (typeof window === "undefined") return;
+    const url = new URL(window.location.href);
+    url.searchParams.set("calc", id);
+    window.history.replaceState(null, "", url.toString());
+  }, []);
+
   useEffect(() => {
     if (initialCalc && !hasScrolled.current) {
       hasScrolled.current = true;
@@ -98,7 +174,7 @@ export default function CalculatorsClient({ brokers }: Props) {
           {CALCS.map((c) => (
             <button
               key={c.id}
-              onClick={() => setActiveCalc(c.id)}
+              onClick={() => handleSetActiveCalc(c.id)}
               role="tab"
               aria-selected={activeCalc === c.id}
               aria-controls="calc-container"
@@ -124,13 +200,13 @@ export default function CalculatorsClient({ brokers }: Props) {
 
         {/* ── Active Calculator ────────────────────── */}
         <div id="calc-container" className="scroll-mt-24 min-h-[400px]" role="tabpanel">
-          {activeCalc === "trade-cost" && <TradeCostCalculator brokers={nonCryptoBrokers} />}
-          {activeCalc === "franking" && <FrankingCalculator />}
-          {activeCalc === "switching" && <SwitchingCostCalculator brokers={nonCryptoBrokers} />}
-          {activeCalc === "fx" && <FxFeeCalculator brokers={nonCryptoBrokers} />}
-          {activeCalc === "cgt" && <CgtCalculator />}
-          {activeCalc === "chess" && <ChessLookup brokers={nonCryptoBrokers} />}
-          {activeCalc === "fee-impact" && <FeeImpactTeaser brokers={nonCryptoBrokers} />}
+          {activeCalc === "trade-cost" && <TradeCostCalculator brokers={nonCryptoBrokers} searchParams={searchParams} />}
+          {activeCalc === "franking" && <FrankingCalculator searchParams={searchParams} />}
+          {activeCalc === "switching" && <SwitchingCostCalculator brokers={nonCryptoBrokers} searchParams={searchParams} />}
+          {activeCalc === "fx" && <FxFeeCalculator brokers={nonCryptoBrokers} searchParams={searchParams} />}
+          {activeCalc === "cgt" && <CgtCalculator searchParams={searchParams} />}
+          {activeCalc === "chess" && <ChessLookup brokers={nonCryptoBrokers} searchParams={searchParams} />}
+          {activeCalc === "fee-impact" && <FeeImpactTeaser brokers={nonCryptoBrokers} searchParams={searchParams} />}
         </div>
 
         {/* Related Resources */}
@@ -162,9 +238,11 @@ export default function CalculatorsClient({ brokers }: Props) {
 /* ──────────────────────────────────────────────
    0) Trade Cost Calculator — what does a trade really cost?
    ────────────────────────────────────────────── */
-function TradeCostCalculator({ brokers }: { brokers: Broker[] }) {
-  const [tradeAmount, setTradeAmount] = useState("5000");
-  const [market, setMarket] = useState<"asx" | "us">("asx");
+function TradeCostCalculator({ brokers, searchParams }: { brokers: Broker[]; searchParams: URLSearchParams }) {
+  const [tradeAmount, setTradeAmount] = useState(() => getParam(searchParams, "tc_amt") || "5000");
+  const [market, setMarket] = useState<"asx" | "us">(() => (getParam(searchParams, "tc_mkt") === "us" ? "us" : "asx"));
+
+  useUrlSync({ calc: "trade-cost", tc_amt: tradeAmount, tc_mkt: market });
 
   const amount = parseFloat(tradeAmount) || 0;
 
@@ -336,6 +414,8 @@ function TradeCostCalculator({ brokers }: { brokers: Broker[] }) {
           </p>
         </div>
       )}
+
+      <ShareResultsButton />
     </div>
   );
 }
@@ -343,10 +423,15 @@ function TradeCostCalculator({ brokers }: { brokers: Broker[] }) {
 /* ──────────────────────────────────────────────
    1) Franking Credits Calculator
    ────────────────────────────────────────────── */
-function FrankingCalculator() {
-  const [dividendYield, setDividendYield] = useState("4.5");
-  const [frankingPct, setFrankingPct] = useState("100");
-  const [marginalRate, setMarginalRate] = useState(32.5);
+function FrankingCalculator({ searchParams }: { searchParams: URLSearchParams }) {
+  const [dividendYield, setDividendYield] = useState(() => getParam(searchParams, "fr_dy") || "4.5");
+  const [frankingPct, setFrankingPct] = useState(() => getParam(searchParams, "fr_fp") || "100");
+  const [marginalRate, setMarginalRate] = useState(() => {
+    const v = parseFloat(getParam(searchParams, "fr_mr") || "");
+    return isNaN(v) ? 32.5 : v;
+  });
+
+  useUrlSync({ calc: "franking", fr_dy: dividendYield, fr_fp: frankingPct, fr_mr: String(marginalRate) });
 
   // Track calculator usage (debounced)
   useEffect(() => {
@@ -462,6 +547,7 @@ function FrankingCalculator() {
           )}
         </div>
       </div>
+      <ShareResultsButton />
     </CalcSection>
   );
 }
@@ -469,11 +555,13 @@ function FrankingCalculator() {
 /* ──────────────────────────────────────────────
    2) Switching Cost Simulator
    ────────────────────────────────────────────── */
-function SwitchingCostCalculator({ brokers }: { brokers: Broker[] }) {
-  const [currentSlug, setCurrentSlug] = useState("");
-  const [newSlug, setNewSlug] = useState("");
-  const [tradesPerMonth, setTradesPerMonth] = useState("4");
-  const [portfolioValue, setPortfolioValue] = useState("");
+function SwitchingCostCalculator({ brokers, searchParams }: { brokers: Broker[]; searchParams: URLSearchParams }) {
+  const [currentSlug, setCurrentSlug] = useState(() => getParam(searchParams, "sw_cur") || "");
+  const [newSlug, setNewSlug] = useState(() => getParam(searchParams, "sw_new") || "");
+  const [tradesPerMonth, setTradesPerMonth] = useState(() => getParam(searchParams, "sw_tpm") || "4");
+  const [portfolioValue, setPortfolioValue] = useState(() => getParam(searchParams, "sw_pv") || "");
+
+  useUrlSync({ calc: "switching", sw_cur: currentSlug, sw_new: newSlug, sw_tpm: tradesPerMonth, sw_pv: portfolioValue });
 
   // Track calculator usage (debounced)
   useEffect(() => {
@@ -587,6 +675,7 @@ function SwitchingCostCalculator({ brokers }: { brokers: Broker[] }) {
           )}
         </div>
       </div>
+      <ShareResultsButton />
     </CalcSection>
   );
 }
@@ -594,9 +683,14 @@ function SwitchingCostCalculator({ brokers }: { brokers: Broker[] }) {
 /* ──────────────────────────────────────────────
    3) FX Fee Calculator
    ────────────────────────────────────────────── */
-function FxFeeCalculator({ brokers }: { brokers: Broker[] }) {
-  const [amount, setAmount] = useState(10000);
+function FxFeeCalculator({ brokers, searchParams }: { brokers: Broker[]; searchParams: URLSearchParams }) {
+  const [amount, setAmount] = useState(() => {
+    const v = parseInt(getParam(searchParams, "fx_amt") || "", 10);
+    return isNaN(v) ? 10000 : v;
+  });
   const tradeAmount = amount;
+
+  useUrlSync({ calc: "fx", fx_amt: String(amount) });
 
   // Track calculator usage (debounced)
   useEffect(() => {
@@ -740,6 +834,8 @@ function FxFeeCalculator({ brokers }: { brokers: Broker[] }) {
           </a>
         </div>
       )}
+
+      <ShareResultsButton />
     </CalcSection>
   );
 }
@@ -747,10 +843,15 @@ function FxFeeCalculator({ brokers }: { brokers: Broker[] }) {
 /* ──────────────────────────────────────────────
    4) CGT Estimator
    ────────────────────────────────────────────── */
-function CgtCalculator() {
-  const [gainAmount, setGainAmount] = useState("");
-  const [marginalRate, setMarginalRate] = useState(32.5);
-  const [held12Months, setHeld12Months] = useState(true);
+function CgtCalculator({ searchParams }: { searchParams: URLSearchParams }) {
+  const [gainAmount, setGainAmount] = useState(() => getParam(searchParams, "cg_amt") || "");
+  const [marginalRate, setMarginalRate] = useState(() => {
+    const v = parseFloat(getParam(searchParams, "cg_mr") || "");
+    return isNaN(v) ? 32.5 : v;
+  });
+  const [held12Months, setHeld12Months] = useState(() => getParam(searchParams, "cg_12m") !== "0");
+
+  useUrlSync({ calc: "cgt", cg_amt: gainAmount, cg_mr: String(marginalRate), cg_12m: held12Months ? "1" : "0" });
 
   // Track calculator usage (debounced)
   useEffect(() => {
@@ -885,6 +986,7 @@ function CgtCalculator() {
           )}
         </div>
       </div>
+      <ShareResultsButton />
     </CalcSection>
   );
 }
@@ -892,9 +994,11 @@ function CgtCalculator() {
 /* ──────────────────────────────────────────────
    5) CHESS Lookup
    ────────────────────────────────────────────── */
-function ChessLookup({ brokers }: { brokers: Broker[] }) {
-  const [selectedSlug, setSelectedSlug] = useState("");
+function ChessLookup({ brokers, searchParams }: { brokers: Broker[]; searchParams: URLSearchParams }) {
+  const [selectedSlug, setSelectedSlug] = useState(() => getParam(searchParams, "ch_bk") || "");
   const broker = brokers.find((b) => b.slug === selectedSlug);
+
+  useUrlSync({ calc: "chess", ch_bk: selectedSlug });
 
   // Track calculator usage (debounced)
   useEffect(() => {
@@ -1004,6 +1108,7 @@ function ChessLookup({ brokers }: { brokers: Broker[] }) {
           </div>
         </div>
       )}
+      <ShareResultsButton />
     </CalcSection>
   );
 }
@@ -1011,9 +1116,11 @@ function ChessLookup({ brokers }: { brokers: Broker[] }) {
 /* ──────────────────────────────────────────────
    6) Fee Impact Teaser — links to full /fee-impact page
    ────────────────────────────────────────────── */
-function FeeImpactTeaser({ brokers }: { brokers: Broker[] }) {
-  const [trades, setTrades] = useState("4");
+function FeeImpactTeaser({ brokers, searchParams }: { brokers: Broker[]; searchParams: URLSearchParams }) {
+  const [trades, setTrades] = useState(() => getParam(searchParams, "fi_tpm") || "4");
   const tpm = parseFloat(trades) || 0;
+
+  useUrlSync({ calc: "fee-impact", fi_tpm: trades });
 
   const topThree = useMemo(() => {
     return brokers
@@ -1096,6 +1203,7 @@ function FeeImpactTeaser({ brokers }: { brokers: Broker[] }) {
           )}
         </div>
       </div>
+      <ShareResultsButton />
     </CalcSection>
   );
 }

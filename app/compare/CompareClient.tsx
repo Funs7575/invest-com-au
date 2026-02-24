@@ -201,9 +201,17 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
     <div className="py-12">
       <div className="container-custom">
         <h1 className="text-3xl md:text-4xl font-bold mb-2">Compare Australian Brokers</h1>
-        <p className="text-slate-600 mb-6">
+        <p className="text-slate-600 mb-2">
           Side-by-side comparison of fees, features, and safety.{" "}
           <FeesFreshnessIndicator lastChecked={getMostRecentFeeCheck(brokers)} variant="inline" />
+        </p>
+        <p className="text-xs text-slate-400 mb-6">
+          Fees verified against official broker pricing pages.{" "}
+          <Link href="/how-we-verify" className="underline hover:text-slate-600">How we verify</Link>
+          {" · "}
+          <Link href="/methodology" className="underline hover:text-slate-600">Our methodology</Link>
+          {" · "}
+          <Link href="/how-we-earn" className="underline hover:text-slate-600">How we earn money</Link>
         </p>
 
         {/* Deal of the Month Banner */}
@@ -502,6 +510,18 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         {/* Pro upsell */}
         <div className="mt-8">
           <ProUpsellBanner variant="compact" />
+        </div>
+
+        {/* Trust signals */}
+        <div className="mt-8 text-xs text-slate-400 text-center">
+          <p>
+            All fees verified against official broker pricing pages.{" "}
+            <Link href="/how-we-verify" className="underline hover:text-slate-600">Fee verification process</Link>
+            {" · "}
+            <Link href="/methodology" className="underline hover:text-slate-600">How we rank brokers</Link>
+            {" · "}
+            <Link href="/how-we-earn" className="underline hover:text-slate-600">How we earn money</Link>
+          </p>
         </div>
 
         {/* Bottom conversion section */}

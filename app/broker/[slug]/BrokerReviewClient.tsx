@@ -55,6 +55,27 @@ interface BrokerReviewProps {
   userReviews?: UserReview[];
   userReviewStats?: BrokerReviewStats | null;
   switchStories?: SwitchStory[];
+  feeHistory: { id: number; field_name: string; old_value: string | null; new_value: string | null; change_type: string; changed_at: string }[];
+}
+
+const FIELD_LABELS: Record<string, string> = {
+  asx_fee: "ASX Brokerage Fee",
+  asx_fee_value: "ASX Fee (Numeric)",
+  us_fee: "US Share Fee",
+  us_fee_value: "US Fee (Numeric)",
+  fx_rate: "FX Conversion Rate",
+  inactivity_fee: "Inactivity Fee",
+  chess_sponsored: "CHESS Sponsorship",
+  smsf_support: "SMSF Support",
+  rating: "Editor Rating",
+  deal: "Active Deal",
+  deal_text: "Deal Details",
+  deal_expiry: "Deal Expiry",
+  min_deposit: "Minimum Deposit",
+};
+
+function formatFieldName(name: string): string {
+  return FIELD_LABELS[name] || name.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -79,6 +100,7 @@ export default function BrokerReviewClient({
   userReviews = [],
   userReviewStats = null,
   switchStories = [],
+  feeHistory,
 }: BrokerReviewProps) {
   const feeRows = [
     { label: 'ASX Brokerage', value: b.asx_fee || 'N/A', numVal: b.asx_fee_value, thresholds: [5, 15] as [number, number], verdict: b.asx_fee_value != null && b.asx_fee_value <= 5 ? 'Low' : b.asx_fee_value != null && b.asx_fee_value <= 15 ? 'Medium' : 'High' },
@@ -444,6 +466,50 @@ export default function BrokerReviewClient({
           brokerSlug={b.slug}
           brokerName={b.name}
         />
+
+        {/* Fee Change History */}
+        {feeHistory.length > 0 && (
+          <section className="mb-10">
+            <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+              <Icon name="clock" size={20} className="text-slate-400" />
+              Fee Change History
+            </h2>
+            <p className="text-sm text-slate-500 mb-4">
+              Tracking every fee and data change for {b.name}. Changes detected automatically via fee page monitoring.
+            </p>
+            <div className="space-y-2">
+              {feeHistory.map((c) => (
+                <div key={c.id} className="flex items-start gap-3 bg-white border border-slate-200 rounded-lg px-4 py-3">
+                  <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded mt-0.5 ${
+                    c.change_type === 'update' ? 'bg-blue-50 text-blue-700' :
+                    c.change_type === 'add' ? 'bg-green-50 text-green-700' :
+                    'bg-red-50 text-red-700'
+                  }`}>
+                    {c.change_type}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <span className="text-sm font-medium text-slate-700">{formatFieldName(c.field_name)}</span>
+                    {c.change_type === 'update' && (
+                      <div className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
+                        <span className="line-through text-red-400 truncate max-w-[180px]">{c.old_value || '\u2014'}</span>
+                        <span className="text-slate-300">{'\u2192'}</span>
+                        <span className="text-blue-700 font-medium truncate max-w-[180px]">{c.new_value || '\u2014'}</span>
+                      </div>
+                    )}
+                    {c.change_type === 'add' && <p className="text-xs text-green-700 mt-0.5">{c.new_value}</p>}
+                    {c.change_type === 'remove' && <p className="text-xs text-red-500 line-through mt-0.5">{c.old_value}</p>}
+                  </div>
+                  <span className="text-xs text-slate-400 whitespace-nowrap">
+                    {new Date(c.changed_at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-slate-400 mt-3">
+              Changes detected via automated fee page monitoring. <Link href="/whats-new" className="underline hover:text-slate-600">View all changes {'\u2192'}</Link>
+            </p>
+          </section>
+        )}
 
         {/* Inline CTA 2 */}
         <div className="bg-green-50 border border-green-200 rounded-xl p-5 mb-8">

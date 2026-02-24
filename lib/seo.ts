@@ -412,3 +412,44 @@ export function courseJsonLd(
     inLanguage: "en-AU",
   };
 }
+
+/* ─── QAPage JSON-LD for broker Q&A sections ─── */
+
+export function qaPageJsonLd(
+  questions: { question: string; answers: { answer: string; is_accepted: boolean; display_name?: string }[] }[],
+  pageName: string,
+  pageUrl: string,
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "QAPage",
+    name: pageName,
+    mainEntity: questions.map((q) => ({
+      "@type": "Question",
+      name: q.question,
+      ...(q.answers.find((a) => a.is_accepted)
+        ? {
+            acceptedAnswer: {
+              "@type": "Answer",
+              text: q.answers.find((a) => a.is_accepted)!.answer,
+              author: {
+                "@type": "Person",
+                name: q.answers.find((a) => a.is_accepted)!.display_name || "Editorial Team",
+              },
+            },
+          }
+        : q.answers.length > 0
+          ? {
+              suggestedAnswer: q.answers.map((a) => ({
+                "@type": "Answer",
+                text: a.answer,
+                author: {
+                  "@type": "Person",
+                  name: a.display_name || "Editorial Team",
+                },
+              })),
+            }
+          : {}),
+    })),
+  };
+}

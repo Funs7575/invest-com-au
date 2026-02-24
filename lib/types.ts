@@ -194,6 +194,11 @@ export interface UserReview {
   body: string;
   pros?: string | null;
   cons?: string | null;
+  fees_rating?: number;
+  platform_rating?: number;
+  support_rating?: number;
+  reliability_rating?: number;
+  experience_months?: number;
   status: 'pending' | 'verified' | 'approved' | 'rejected';
   verification_token?: string;
   verified_at?: string | null;
@@ -206,6 +211,10 @@ export interface BrokerReviewStats {
   broker_id: number;
   review_count: number;
   average_rating: number;
+  avg_fees_rating?: number;
+  avg_platform_rating?: number;
+  avg_support_rating?: number;
+  avg_reliability_rating?: number;
 }
 
 export interface SwitchStory {
