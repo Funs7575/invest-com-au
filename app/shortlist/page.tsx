@@ -2,10 +2,9 @@ import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ShortlistClient from "./ShortlistClient";
-import { SITE_NAME } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: `My Brokers — Shortlist — ${SITE_NAME}`,
+  title: "My Brokers — Shortlist",
   description:
     "Your saved brokers. Compare your shortlisted Australian trading platforms side by side.",
   robots: { index: false, follow: false },
