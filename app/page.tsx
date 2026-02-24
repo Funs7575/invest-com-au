@@ -166,14 +166,15 @@ export default async function HomePage() {
       <ScrollFadeIn>
         <section className="py-12 md:py-16 bg-slate-50">
           <div className="container-custom">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-3">
-              <div>
-                <h2 className="text-2xl md:text-3xl font-bold text-slate-900">
-                  Top Rated Brokers
-                </h2>
-                <p className="text-sm text-slate-500 mt-1">Ranked by fees, features, and user experience</p>
-              </div>
-              <FeesFreshnessIndicator lastChecked={getMostRecentFeeCheck((brokers as Broker[]) || [])} variant="badge" />
+            <div className="mb-8">
+              <h2 className="text-2xl md:text-3xl font-bold text-slate-900">
+                Top Rated Brokers
+              </h2>
+              <p className="text-sm text-slate-500 mt-1">
+                Ranked by fees, features, and user experience
+                <span className="mx-2 text-slate-300">&middot;</span>
+                <FeesFreshnessIndicator lastChecked={getMostRecentFeeCheck((brokers as Broker[]) || [])} variant="inline" />
+              </p>
             </div>
             <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
               <HomepageComparisonTable brokers={(brokers as Broker[]) || []} defaultTab="Share Trading" />

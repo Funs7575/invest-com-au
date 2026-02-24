@@ -17,19 +17,20 @@ export function FeesFreshnessIndicator({
   const diffDays = Math.floor(diffHours / 24);
 
   let label: string;
-  if (diffMins < 60) label = `${diffMins}m ago`;
-  else if (diffHours < 48) label = `${diffHours}h ago`;
-  else label = `${diffDays}d ago`;
+  if (diffMins < 60) label = `${diffMins} min ago`;
+  else if (diffHours < 24) label = `${diffHours} hours ago`;
+  else if (diffDays === 1) label = "yesterday";
+  else label = `${diffDays} days ago`;
 
-  // green < 12h, amber < 48h, red >= 48h
+  // green < 24h, amber < 72h, red >= 72h
   let dotColor: string;
   let textColor: string;
   let bgColor: string;
-  if (diffHours < 12) {
+  if (diffHours < 24) {
     dotColor = "bg-green-500";
-    textColor = "text-slate-700";
+    textColor = "text-slate-600";
     bgColor = "bg-slate-50 border-slate-200";
-  } else if (diffHours < 48) {
+  } else if (diffHours < 72) {
     dotColor = "bg-amber-500";
     textColor = "text-amber-700";
     bgColor = "bg-amber-50 border-amber-200";
