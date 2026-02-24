@@ -353,7 +353,7 @@ function TradeCostCalculator({ brokers, searchParams }: { brokers: Broker[]; sea
                   <tr key={r.broker.slug} className={isCheapest ? "bg-green-50/60" : ""}>
                     <td className="py-3 pr-4">
                       <span className="font-semibold text-sm">{r.broker.name}</span>
-                      {isCheapest && <span className="ml-2 text-[0.6rem] font-bold text-green-600 uppercase">Cheapest</span>}
+                      {isCheapest && <span className="ml-2 text-[0.65rem] font-bold text-green-600 uppercase">Cheapest</span>}
                     </td>
                     <td className="py-3 px-2 text-right text-sm font-mono">
                       <AnimatedNumber value={r.brokerage} />

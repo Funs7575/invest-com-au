@@ -28,7 +28,7 @@ function levelBadge(level: string) {
   };
   return (
     <span
-      className={`text-[0.6rem] px-2 py-0.5 rounded-full font-semibold uppercase tracking-wide ${
+      className={`text-[0.65rem] px-2 py-0.5 rounded-full font-semibold uppercase tracking-wide ${
         styles[level] || styles.beginner
       }`}
     >
@@ -64,7 +64,7 @@ function CourseCard({ course }: { course: Course }) {
         <div className="flex items-center gap-2 mb-2">
           {levelBadge(course.level)}
           {course.featured && (
-            <span className="text-[0.6rem] px-2 py-0.5 rounded-full font-semibold bg-amber-50 text-amber-700 uppercase tracking-wide">
+            <span className="text-[0.65rem] px-2 py-0.5 rounded-full font-semibold bg-amber-50 text-amber-700 uppercase tracking-wide">
               Featured
             </span>
           )}

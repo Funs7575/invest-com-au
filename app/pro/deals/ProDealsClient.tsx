@@ -131,12 +131,12 @@ export default function ProDealsClient({
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1 flex-wrap">
                           {deal.featured && (
-                            <span className="text-[0.6rem] px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full font-bold">
+                            <span className="text-[0.65rem] px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full font-bold">
                               FEATURED
                             </span>
                           )}
                           {deal.deal_value && (
-                            <span className="text-[0.6rem] px-2 py-0.5 bg-green-100 text-green-700 rounded-full font-bold">
+                            <span className="text-[0.65rem] px-2 py-0.5 bg-green-100 text-green-700 rounded-full font-bold">
                               {deal.deal_value}
                             </span>
                           )}

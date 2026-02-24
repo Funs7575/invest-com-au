@@ -55,7 +55,7 @@ export default function DealCard({ broker }: { broker: Broker }) {
           </div>
         </div>
         {broker.deal_category && (
-          <span className="text-[0.6rem] px-2 py-0.5 bg-slate-100 text-slate-500 rounded-full font-medium uppercase tracking-wide shrink-0">
+          <span className="text-[0.65rem] px-2 py-0.5 bg-slate-100 text-slate-500 rounded-full font-medium uppercase tracking-wide shrink-0">
             {broker.deal_category}
           </span>
         )}
@@ -88,7 +88,7 @@ export default function DealCard({ broker }: { broker: Broker }) {
           <svg className="w-3.5 h-3.5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
           </svg>
-          <span className="text-[0.6rem] text-slate-500">
+          <span className="text-[0.65rem] text-slate-500">
             Verified {verifiedFormatted}
             {broker.deal_source && <> via {broker.deal_source}</>}
           </span>
@@ -103,7 +103,7 @@ export default function DealCard({ broker }: { broker: Broker }) {
         onClick={() =>
           trackClick(broker.slug, broker.name, "deals-hub", "/deals", "compare")
         }
-        className="block w-full text-center py-2.5 bg-amber-600 text-white text-sm font-bold rounded-lg hover:bg-amber-700 hover:scale-105 hover:shadow-[0_0_12px_rgba(217,119,6,0.3)] transition-all duration-200 active:scale-[0.98]"
+        className="block w-full text-center py-3 bg-amber-600 text-white text-sm font-bold rounded-lg hover:bg-amber-700 hover:scale-105 hover:shadow-[0_0_12px_rgba(217,119,6,0.3)] transition-all duration-200 active:scale-[0.98]"
       >
         Claim Deal →
       </a>

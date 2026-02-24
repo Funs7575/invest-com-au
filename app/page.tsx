@@ -111,13 +111,13 @@ export default async function HomePage() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-6 mb-2 hero-fade-up hero-fade-up-4">
             <Link
               href="/quiz"
-              className="px-7 py-3.5 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 hover:scale-105 hover:shadow-lg transition-all duration-200 text-sm"
+              className="px-5 md:px-7 py-3.5 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 hover:scale-105 hover:shadow-lg transition-all duration-200 text-sm w-full sm:w-auto text-center"
             >
               Find My Broker — 60sec Quiz &rarr;
             </Link>
             <Link
               href="/compare"
-              className="px-7 py-3.5 border-2 border-slate-300 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 hover:border-slate-400 hover:scale-105 transition-all duration-200 text-sm"
+              className="px-5 md:px-7 py-3.5 border-2 border-slate-300 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 hover:border-slate-400 hover:scale-105 transition-all duration-200 text-sm w-full sm:w-auto text-center"
             >
               Compare All Brokers &rarr;
             </Link>
@@ -151,7 +151,7 @@ export default async function HomePage() {
           <div className="flex items-center justify-center gap-6 sm:gap-10 flex-wrap opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500">
             {(brokers as Broker[])?.slice(0, 8).map((broker) => (
               <div key={broker.id} className="flex items-center gap-2 text-sm font-bold text-slate-600">
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-white text-[0.6rem] font-bold`} style={{ backgroundColor: broker.color || '#64748b' }}>
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-white text-[0.65rem] font-bold`} style={{ backgroundColor: broker.color || '#64748b' }}>
                   {broker.name?.slice(0, 2).toUpperCase()}
                 </div>
                 <span className="hidden sm:inline">{broker.name}</span>
@@ -180,7 +180,7 @@ export default async function HomePage() {
             <div className="text-center mt-8">
               <Link
                 href="/compare"
-                className="inline-block px-7 py-3.5 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 hover:scale-105 hover:shadow-lg transition-all duration-200 text-sm"
+                className="inline-block px-5 md:px-7 py-3.5 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 hover:scale-105 hover:shadow-lg transition-all duration-200 text-sm"
               >
                 View All {brokerCount}+ Brokers &rarr;
               </Link>
@@ -223,12 +223,12 @@ export default async function HomePage() {
                 Every investor is different. Our category guides filter and rank brokers for your specific situation.
               </p>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
               {bestForCards.map((card, i) => (
                 <Link
                   key={card.title}
                   href={card.href}
-                  className={`block border rounded-xl p-5 hover-lift ${card.color} stagger-item`}
+                  className={`block border rounded-xl p-4 md:p-5 hover-lift ${card.color} stagger-item`}
                   style={{ animationDelay: `${0.05 + i * 0.07}s` }}
                 >
                   <Icon name={card.icon} size={24} className="mb-2 opacity-80" />
@@ -263,15 +263,15 @@ export default async function HomePage() {
                   View All Articles &rarr;
                 </Link>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-5">
                 {(articles as Article[]).slice(0, 6).map((article) => (
                   <Link
                     key={article.id}
                     href={`/article/${article.slug}`}
-                    className="block border border-slate-200 rounded-xl p-5 hover:shadow-md hover:border-slate-300 transition-all duration-200 group"
+                    className="block border border-slate-200 rounded-xl p-4 md:p-5 hover:shadow-md hover:border-slate-300 transition-all duration-200 group"
                   >
                     {article.category && (
-                      <span className="inline-block text-[0.6rem] font-bold uppercase tracking-wider text-slate-600 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full mb-3">
+                      <span className="inline-block text-[0.65rem] font-bold uppercase tracking-wider text-slate-600 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full mb-3">
                         {article.category}
                       </span>
                     )}

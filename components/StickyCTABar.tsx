@@ -25,11 +25,11 @@ export default function StickyCTABar({ broker, detail, context = 'review' }: { b
 
   return (
     <div
-      className={`fixed bottom-0 left-0 right-0 z-50 bg-amber-500 border-t border-amber-600/30 shadow-lg bounce-in-up ${
+      className={`fixed bottom-0 left-0 right-0 z-50 bg-amber-500 border-t border-amber-600/30 shadow-lg bounce-in-up safe-area-inset-bottom ${
         visible ? 'translate-y-0' : 'translate-y-full'
       }`}
     >
-      <div className="container-custom py-3 flex items-center justify-between gap-4">
+      <div className="container-custom py-3 flex items-center justify-between gap-3 md:gap-4">
         <div className="flex items-center gap-3 min-w-0">
           <div
             className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold shrink-0"
@@ -42,7 +42,7 @@ export default function StickyCTABar({ broker, detail, context = 'review' }: { b
             <div className="text-xs text-amber-50 truncate" title={detail}>{detail}</div>
           </div>
           {broker.deal && (
-            <span className="hidden md:inline-flex items-center gap-1 px-2 py-0.5 bg-white/20 border border-white/30 rounded-full text-[0.6rem] text-white font-semibold">
+            <span className="hidden md:inline-flex items-center gap-1 px-2 py-0.5 bg-white/20 border border-white/30 rounded-full text-[0.65rem] text-white font-semibold">
               Deal Available
             </span>
           )}
@@ -53,7 +53,7 @@ export default function StickyCTABar({ broker, detail, context = 'review' }: { b
             target="_blank"
             rel={AFFILIATE_REL}
             onClick={() => trackClick(broker.slug, broker.name, 'sticky-cta', window.location.pathname, context)}
-            className="shrink-0 px-5 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 hover:shadow-lg transition-all active:scale-[0.97]"
+            className="shrink-0 px-4 py-3 md:px-5 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 hover:shadow-lg transition-all active:scale-[0.97]"
           >
             {getBenefitCta(broker, context)}
           </a>

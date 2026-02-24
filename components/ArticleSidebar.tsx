@@ -33,7 +33,7 @@ export default function ArticleSidebar({
         <div className="border border-slate-200 rounded-xl bg-white shadow-lg overflow-hidden">
           {/* Header */}
           <div className="bg-gradient-to-br from-slate-700 via-slate-800 to-slate-900 px-5 py-3">
-            <div className="text-[0.6rem] font-extrabold uppercase tracking-wider text-slate-200">
+            <div className="text-[0.65rem] font-extrabold uppercase tracking-wider text-slate-200">
               Top Pick
             </div>
           </div>

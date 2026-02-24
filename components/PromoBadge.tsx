@@ -18,7 +18,7 @@ export default function PromoBadge({ broker }: { broker: Broker }) {
       <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2.5 py-1.5 bg-slate-800 text-white text-xs rounded-lg opacity-0 pointer-events-none group-hover/promo:opacity-100 transition-opacity z-10 max-w-[220px] whitespace-normal text-center leading-tight">
         {broker.deal_text}
         {expiryFormatted && (
-          <span className="block text-[0.6rem] text-slate-300 mt-0.5">
+          <span className="block text-[0.65rem] text-slate-300 mt-0.5">
             Expires {expiryFormatted}
           </span>
         )}

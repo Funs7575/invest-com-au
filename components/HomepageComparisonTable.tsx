@@ -82,7 +82,7 @@ export default function HomepageComparisonTable({
             onClick={() => setActiveTab(tab)}
             role="tab"
             aria-selected={activeTab === tab}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`px-4 py-2.5 md:py-2 rounded-lg text-sm font-medium transition-colors ${
               activeTab === tab
                 ? "bg-blue-700 text-white"
                 : "bg-gray-100 text-gray-600 hover:bg-gray-200"
@@ -148,7 +148,7 @@ export default function HomepageComparisonTable({
                         <SponsorBadge broker={broker} />
                       </div>
                       {!isSponsored(broker) && editorPicks[broker.slug] && (
-                        <div className="text-[0.6rem] font-extrabold text-slate-700 uppercase tracking-wide">
+                        <div className="text-[0.65rem] font-extrabold text-slate-700 uppercase tracking-wide">
                           {editorPicks[broker.slug]}
                         </div>
                       )}
@@ -198,13 +198,13 @@ export default function HomepageComparisonTable({
       </div>
 
       {/* Mobile Cards — horizontal snap scroll */}
-      <div key={`mobile-${activeTab}`} className="md:hidden flex gap-3 overflow-x-auto snap-x-proximity pb-4 -mx-4 px-4 motion-safe:tab-content-enter">
+      <div key={`mobile-${activeTab}`} className="md:hidden flex gap-3 overflow-x-auto snap-x snap-mandatory pb-4 -mx-4 px-4 motion-safe:tab-content-enter">
         {displayBrokers.map((broker, i) => {
           const isTopRatedMobile = i === 0 && !isSponsored(broker);
           return (
           <div
             key={broker.id}
-            className={`rounded-xl border p-4 bg-white shrink-0 w-[85vw] max-w-[320px] ${
+            className={`rounded-xl border p-4 bg-white shrink-0 w-[80vw] max-w-[320px] snap-start ${
               isSponsored(broker)
                 ? "border-blue-400 ring-1 ring-blue-400/30 bg-blue-50/20"
                 : isTopRatedMobile
@@ -217,11 +217,11 @@ export default function HomepageComparisonTable({
             {isSponsored(broker) ? (
               <div className="mb-2"><SponsorBadge broker={broker} /></div>
             ) : isTopRatedMobile ? (
-              <div className="text-[0.6rem] font-extrabold uppercase tracking-wide text-amber-600 mb-2">
+              <div className="text-[0.65rem] font-extrabold uppercase tracking-wide text-amber-600 mb-2">
                 🏆 Top Rated
               </div>
             ) : editorPicks[broker.slug] ? (
-              <div className="text-[0.6rem] font-extrabold uppercase tracking-wide text-slate-700 mb-2">
+              <div className="text-[0.65rem] font-extrabold uppercase tracking-wide text-slate-700 mb-2">
                 {editorPicks[broker.slug]}
               </div>
             ) : null}
@@ -246,28 +246,28 @@ export default function HomepageComparisonTable({
 
             <div className="grid grid-cols-2 gap-2 mb-3">
               <div className="bg-slate-50 rounded-md p-2">
-                <div className="text-[0.6rem] uppercase text-slate-500 font-medium">
-                  <JargonTooltip term="ASX Fee" className="text-[0.6rem]" />
+                <div className="text-[0.65rem] uppercase text-slate-500 font-medium">
+                  <JargonTooltip term="ASX Fee" className="text-[0.65rem]" />
                 </div>
                 <div className="text-sm font-semibold">{broker.asx_fee || "N/A"}</div>
               </div>
               <div className="bg-slate-50 rounded-md p-2">
-                <div className="text-[0.6rem] uppercase text-slate-500 font-medium">
-                  <JargonTooltip term="US Fee" className="text-[0.6rem]" />
+                <div className="text-[0.65rem] uppercase text-slate-500 font-medium">
+                  <JargonTooltip term="US Fee" className="text-[0.65rem]" />
                 </div>
                 <div className="text-sm font-semibold">{broker.us_fee || "N/A"}</div>
               </div>
               <div className="bg-slate-50 rounded-md p-2">
-                <div className="text-[0.6rem] uppercase text-slate-500 font-medium">
-                  <JargonTooltip term="FX Rate" className="text-[0.6rem]" />
+                <div className="text-[0.65rem] uppercase text-slate-500 font-medium">
+                  <JargonTooltip term="FX Rate" className="text-[0.65rem]" />
                 </div>
                 <div className="text-sm font-semibold">
                   {broker.fx_rate != null ? `${broker.fx_rate}%` : "N/A"}
                 </div>
               </div>
               <div className="bg-slate-50 rounded-md p-2">
-                <div className="text-[0.6rem] uppercase text-slate-500 font-medium">
-                  <JargonTooltip term="CHESS" className="text-[0.6rem]" />
+                <div className="text-[0.65rem] uppercase text-slate-500 font-medium">
+                  <JargonTooltip term="CHESS" className="text-[0.65rem]" />
                 </div>
                 <div
                   className={`text-sm font-semibold ${

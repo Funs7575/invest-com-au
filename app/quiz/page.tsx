@@ -385,7 +385,7 @@ export default function QuizPage() {
                 aria-hidden="true"
               />
               <div
-                className="text-[0.6rem] uppercase font-extrabold tracking-wider mb-4 inline-block px-3 py-1.5 rounded-full badge-pulse"
+                className="text-[0.65rem] uppercase font-extrabold tracking-wider mb-4 inline-block px-3 py-1.5 rounded-full badge-pulse"
                 style={{
                   color: topMatch.broker.color || '#b45309',
                   background: `${topMatch.broker.color || '#f59e0b'}20`,
@@ -650,14 +650,14 @@ export default function QuizPage() {
                     {/* Match reasons for runner-ups too */}
                     <div className="mt-2 flex flex-wrap gap-1.5">
                       {getMatchReasons(answers, r.broker).slice(0, 2).map((reason, ri) => (
-                        <span key={ri} className="text-[0.6rem] px-2 py-0.5 bg-slate-50 text-slate-500 rounded-full">
+                        <span key={ri} className="text-[0.65rem] px-2 py-0.5 bg-slate-50 text-slate-500 rounded-full">
                           ✓ {reason}
                         </span>
                       ))}
                     </div>
                     {r.broker.deal && r.broker.deal_text && (
                       <div className="mt-2">
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-50 border border-amber-200 rounded-full text-[0.6rem] font-semibold text-amber-700">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-50 border border-amber-200 rounded-full text-[0.65rem] font-semibold text-amber-700">
                           <Icon name="flame" size={10} className="inline text-amber-500" /> {r.broker.deal_text}
                         </span>
                       </div>

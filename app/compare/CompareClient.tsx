@@ -250,7 +250,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               onClick={() => setActiveFilter(f.key)}
               role="tab"
               aria-selected={activeFilter === f.key}
-              className={`shrink-0 px-4 py-2 text-sm font-medium rounded-full filter-pill ${
+              className={`shrink-0 px-4 py-2.5 md:py-2 text-sm font-medium rounded-full filter-pill ${
                 activeFilter === f.key
                   ? 'bg-blue-700 text-white shadow-sm scale-105'
                   : 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:scale-[1.02]'
@@ -358,7 +358,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2.5">
                       <div
-                        className="w-8 h-8 rounded-lg flex items-center justify-center text-[0.6rem] font-bold shrink-0 transition-transform duration-200 group-hover:scale-110"
+                        className="w-8 h-8 rounded-lg flex items-center justify-center text-[0.65rem] font-bold shrink-0 transition-transform duration-200 group-hover:scale-110"
                         style={{ background: `${broker.color}18`, color: broker.color }}
                       >
                         {broker.icon || broker.name.charAt(0)}
@@ -375,7 +375,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                           {!campaignWinners.some(w => w.broker_slug === broker.slug) && <SponsorBadge broker={broker} />}
                         </div>
                         {!isSponsored(broker) && editorPicks[broker.slug] && (
-                          <div className="text-[0.6rem] font-extrabold text-slate-700 uppercase tracking-wide">
+                          <div className="text-[0.65rem] font-extrabold text-slate-700 uppercase tracking-wide">
                             {editorPicks[broker.slug]}
                           </div>
                         )}

@@ -40,7 +40,7 @@ export default function ProUpsellBanner({ variant = "inline" }: { variant?: Vari
         href="/pro"
         className="flex items-center gap-2 px-3 py-2 bg-amber-50 border border-amber-200 rounded-lg text-sm hover:bg-amber-100 transition-colors group"
       >
-        <span className="text-[0.6rem] font-bold uppercase tracking-wide text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded">
+        <span className="text-[0.65rem] font-bold uppercase tracking-wide text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded">
           {copy.badge}
         </span>
         <span className="text-slate-700 font-medium">{copy.headline}</span>
@@ -54,7 +54,7 @@ export default function ProUpsellBanner({ variant = "inline" }: { variant?: Vari
   if (variant === "sidebar") {
     return (
       <div className="rounded-xl p-4 bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200">
-        <div className="text-[0.6rem] font-bold uppercase tracking-wide text-amber-600 mb-1">{copy.badge}</div>
+        <div className="text-[0.65rem] font-bold uppercase tracking-wide text-amber-600 mb-1">{copy.badge}</div>
         <h4 className="font-bold text-slate-900 mb-1 text-sm">{copy.headline}</h4>
         <p className="text-xs text-slate-600 mb-3 leading-relaxed">{copy.sub}</p>
         <Link
@@ -73,7 +73,7 @@ export default function ProUpsellBanner({ variant = "inline" }: { variant?: Vari
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-[0.6rem] font-bold uppercase tracking-wide text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded">
+            <span className="text-[0.65rem] font-bold uppercase tracking-wide text-amber-600 bg-amber-100 px-1.5 py-0.5 rounded">
               {copy.badge}
             </span>
           </div>

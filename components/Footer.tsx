@@ -70,7 +70,7 @@ export default function Footer() {
 
             <div>
               <h4 className="text-white font-semibold mb-3 md:mb-4 text-sm">Compare</h4>
-              <ul className="space-y-1.5 md:space-y-2 text-sm">
+              <ul className="space-y-2.5 md:space-y-2 text-sm">
                 <li><Link href="/compare" className="hover:text-white transition-colors">All Brokers</Link></li>
                 <li><Link href="/versus" className="hover:text-white transition-colors">Head-to-Head</Link></li>
                 <li><Link href="/deals" className="hover:text-white transition-colors">Current Deals</Link></li>
@@ -81,7 +81,7 @@ export default function Footer() {
 
             <div>
               <h4 className="text-white font-semibold mb-3 md:mb-4 text-sm">Learn</h4>
-              <ul className="space-y-1.5 md:space-y-2 text-sm">
+              <ul className="space-y-2.5 md:space-y-2 text-sm">
                 <li><Link href="/articles" className="hover:text-white transition-colors">Guides &amp; Articles</Link></li>
                 <li><Link href="/calculators" className="hover:text-white transition-colors">Calculators</Link></li>
                 <li><Link href="/scenarios" className="hover:text-white transition-colors">Best Broker For...</Link></li>
@@ -91,7 +91,7 @@ export default function Footer() {
 
             <div>
               <h4 className="text-white font-semibold mb-3 md:mb-4 text-sm">About</h4>
-              <ul className="space-y-1.5 md:space-y-2 text-sm">
+              <ul className="space-y-2.5 md:space-y-2 text-sm">
                 <li><Link href="/about" className="hover:text-white transition-colors">About Us</Link></li>
                 <li><Link href="/editorial-policy" className="hover:text-white transition-colors">Editorial Policy</Link></li>
                 <li><Link href="/how-we-earn" className="hover:text-white transition-colors">How We Earn</Link></li>

@@ -387,7 +387,7 @@ export default async function BestBrokerPage({
                         {isSponsored(broker) && <SponsorBadge broker={broker} />}
                       </div>
                       {i === 0 && (
-                        <div className="text-[0.6rem] font-extrabold text-amber-600 uppercase tracking-wide">
+                        <div className="text-[0.65rem] font-extrabold text-amber-600 uppercase tracking-wide">
                           Top Pick
                         </div>
                       )}

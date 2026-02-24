@@ -91,14 +91,14 @@ export default function AlertsClient({ alerts }: { alerts: RegulatoryAlert[] }) 
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1 flex-wrap">
-                          <span className={`text-[0.6rem] px-2 py-0.5 rounded-full font-bold ${TYPE_STYLES[alert.alert_type] || TYPE_STYLES.reporting}`}>
+                          <span className={`text-[0.65rem] px-2 py-0.5 rounded-full font-bold ${TYPE_STYLES[alert.alert_type] || TYPE_STYLES.reporting}`}>
                             {alert.alert_type.toUpperCase()}
                           </span>
-                          <span className={`text-[0.6rem] px-2 py-0.5 rounded-full font-bold ${sev.bg} ${sev.text} border ${sev.border}`}>
+                          <span className={`text-[0.65rem] px-2 py-0.5 rounded-full font-bold ${sev.bg} ${sev.text} border ${sev.border}`}>
                             {alert.severity.toUpperCase()}
                           </span>
                           {alert.effective_date && (
-                            <span className="text-[0.6rem] text-slate-400">
+                            <span className="text-[0.65rem] text-slate-400">
                               Effective: {new Date(alert.effective_date).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}
                             </span>
                           )}

@@ -82,7 +82,7 @@ export default function AskQuestionForm({ brokerSlug, brokerName, pageType = "br
       {!isOpen ? (
         <button
           onClick={() => setIsOpen(true)}
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2.5 md:py-2 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-colors"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -98,17 +98,17 @@ export default function AskQuestionForm({ brokerSlug, brokerName, pageType = "br
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
             placeholder="e.g., Does this broker support DRP for ASX shares?"
-            className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
+            className="w-full px-4 py-2.5 md:px-3 md:py-2 text-base md:text-sm border border-slate-200 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
             rows={3}
             maxLength={500}
           />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
             <input
               type="text"
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
               placeholder="Your name"
-              className="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
+              className="px-4 py-2.5 md:px-3 md:py-2 text-base md:text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
               maxLength={100}
             />
             <input
@@ -116,7 +116,7 @@ export default function AskQuestionForm({ brokerSlug, brokerName, pageType = "br
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Email (optional — for answer notification)"
-              className="px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
+              className="px-4 py-2.5 md:px-3 md:py-2 text-base md:text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
             />
           </div>
           {errorMsg && (
@@ -126,7 +126,7 @@ export default function AskQuestionForm({ brokerSlug, brokerName, pageType = "br
             <button
               type="submit"
               disabled={status === "submitting"}
-              className="px-4 py-2 text-sm font-semibold text-white bg-slate-900 rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50"
+              className="px-4 py-2.5 md:py-2 text-sm font-semibold text-white bg-slate-900 rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50"
             >
               {status === "submitting" ? "Submitting..." : "Submit Question"}
             </button>

@@ -18,7 +18,7 @@ export default function BrokerCard({ broker, badge, context = 'compare' }: { bro
       {isSponsored(broker) ? (
         <div className="mb-2"><SponsorBadge broker={broker} /></div>
       ) : badge ? (
-        <div className="text-[0.6rem] font-extrabold uppercase tracking-wide text-slate-700 mb-2">{badge}</div>
+        <div className="text-[0.65rem] font-extrabold uppercase tracking-wide text-slate-700 mb-2">{badge}</div>
       ) : null}
       <div className="flex items-center gap-3 mb-3">
         <div
@@ -50,7 +50,7 @@ export default function BrokerCard({ broker, badge, context = 'compare' }: { bro
           <div>
             <span className="text-[0.65rem] text-amber-700 font-semibold leading-tight">{broker.deal_text}</span>
             {broker.deal_expiry && (
-              <span className="text-[0.6rem] text-amber-500 ml-1">
+              <span className="text-[0.65rem] text-amber-500 ml-1">
                 — expires {new Date(broker.deal_expiry).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })}
               </span>
             )}
@@ -63,43 +63,43 @@ export default function BrokerCard({ broker, badge, context = 'compare' }: { bro
         target="_blank"
         rel={AFFILIATE_REL}
         onClick={() => trackClick(broker.slug, broker.name, 'compare-mobile', window.location.pathname, context)}
-        className="block w-full text-center text-sm px-3 py-2.5 font-bold rounded-lg transition-all duration-200 mb-3 bg-amber-600 text-white hover:bg-amber-700 hover:shadow-[0_0_12px_rgba(217,119,6,0.3)] hover:scale-105 active:scale-[0.98]"
+        className="block w-full text-center text-sm px-3 py-3 font-bold rounded-lg transition-all duration-200 mb-3 bg-amber-600 text-white hover:bg-amber-700 hover:shadow-[0_0_12px_rgba(217,119,6,0.3)] hover:scale-105 active:scale-[0.98]"
       >
         {getBenefitCta(broker, context)}
       </a>
       {/* Primary metrics — always visible */}
       <div className="grid grid-cols-2 gap-2">
         <div className="bg-slate-50 rounded-md p-2">
-          <div className="text-[0.6rem] uppercase text-slate-500 font-medium">ASX Fee</div>
+          <div className="text-[0.65rem] uppercase text-slate-500 font-medium">ASX Fee</div>
           <div className="text-sm font-semibold">{broker.asx_fee || 'N/A'}</div>
         </div>
         <div className="bg-slate-50 rounded-md p-2">
-          <div className="text-[0.6rem] uppercase text-slate-500 font-medium">US Fee</div>
+          <div className="text-[0.65rem] uppercase text-slate-500 font-medium">US Fee</div>
           <div className="text-sm font-semibold">{broker.us_fee || 'N/A'}</div>
         </div>
         <div className="bg-slate-50 rounded-md p-2">
-          <div className="text-[0.6rem] uppercase text-slate-500 font-medium">FX Rate</div>
+          <div className="text-[0.65rem] uppercase text-slate-500 font-medium">FX Rate</div>
           <div className="text-sm font-semibold">{broker.fx_rate != null ? `${broker.fx_rate}%` : 'N/A'}</div>
         </div>
         <div className="bg-slate-50 rounded-md p-2">
-          <div className="text-[0.6rem] uppercase text-slate-500 font-medium">CHESS</div>
+          <div className="text-[0.65rem] uppercase text-slate-500 font-medium">CHESS</div>
           <div className={`text-sm font-semibold ${broker.chess_sponsored ? 'text-green-600' : 'text-red-500'}`}>
             {broker.chess_sponsored ? '✓ Yes' : '✗ No'}
           </div>
         </div>
       </div>
 
-      {/* Secondary metrics — revealed on hover/focus */}
-      <div className="grid grid-cols-2 gap-2 mt-2 max-h-0 overflow-hidden opacity-0 group-hover:max-h-24 group-hover:opacity-100 group-focus-within:max-h-24 group-focus-within:opacity-100 transition-all duration-300">
+      {/* Secondary metrics — always visible on mobile, hover reveal on desktop */}
+      <div className="grid grid-cols-2 gap-2 mt-2 max-h-24 opacity-100 md:max-h-0 md:overflow-hidden md:opacity-0 md:group-hover:max-h-24 md:group-hover:opacity-100 md:group-focus-within:max-h-24 md:group-focus-within:opacity-100 transition-all duration-300">
         <div className="bg-slate-50 rounded-md p-2">
-          <div className="text-[0.6rem] uppercase text-slate-500 font-medium">SMSF</div>
+          <div className="text-[0.65rem] uppercase text-slate-500 font-medium">SMSF</div>
           <div className={`text-sm font-semibold ${broker.smsf_support ? 'text-green-600' : 'text-red-500'}`}>
             {broker.smsf_support ? '✓ Yes' : '✗ No'}
           </div>
         </div>
         {broker.tagline && (
           <div className="bg-slate-50 rounded-md p-2 col-span-2">
-            <div className="text-[0.6rem] uppercase text-slate-500 font-medium">About</div>
+            <div className="text-[0.65rem] uppercase text-slate-500 font-medium">About</div>
             <div className="text-xs text-slate-600 line-clamp-2">{broker.tagline}</div>
           </div>
         )}

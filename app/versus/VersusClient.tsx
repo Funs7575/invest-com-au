@@ -188,7 +188,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                       {/* Mobile VS */}
                       <div className="md:hidden flex items-center gap-3 py-1">
                         <div className="h-px flex-1 bg-slate-200" />
-                        <span className="w-8 h-8 rounded-full bg-slate-900 text-white text-[0.6rem] font-extrabold flex items-center justify-center shadow-sm">VS</span>
+                        <span className="w-8 h-8 rounded-full bg-slate-900 text-white text-[0.65rem] font-extrabold flex items-center justify-center shadow-sm">VS</span>
                         <div className="h-px flex-1 bg-slate-200" />
                       </div>
                     </>
