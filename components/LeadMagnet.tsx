@@ -48,12 +48,12 @@ export default function LeadMagnet() {
   }
 
   return (
-    <div ref={ref} className="rounded-xl p-6 bg-slate-50 border border-slate-200 shadow-sm lead-magnet-enter">
-      <div className="text-xs font-bold uppercase tracking-wider mb-2 text-slate-700">
+    <div ref={ref} className="rounded-xl p-4 md:p-6 bg-slate-50 border border-slate-200 shadow-sm lead-magnet-enter">
+      <div className="text-xs font-bold uppercase tracking-wider mb-1.5 md:mb-2 text-slate-700">
         Free Download
       </div>
-      <h3 className="text-xl font-extrabold mb-2 text-slate-900">2026 Fee Audit PDF</h3>
-      <p className="text-sm text-slate-600 mb-4 leading-relaxed">
+      <h3 className="text-lg md:text-xl font-extrabold mb-1.5 md:mb-2 text-slate-900">2026 Fee Audit PDF</h3>
+      <p className="text-sm text-slate-600 mb-3 md:mb-4 leading-relaxed">
         See exactly what every Australian broker charges — brokerage, FX fees,
         inactivity fees, and hidden costs. Compare side-by-side in one document.
       </p>

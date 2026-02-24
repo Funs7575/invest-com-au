@@ -166,8 +166,8 @@ export default async function HomePage() {
       <ScrollFadeIn>
         <section className="py-8 md:py-16 bg-slate-50">
           <div className="container-custom">
-            <div className="mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold text-slate-900">
+            <div className="mb-5 md:mb-8">
+              <h2 className="text-xl md:text-3xl font-bold text-slate-900">
                 Top Rated Brokers
               </h2>
               <p className="text-sm text-slate-500 mt-1">
@@ -179,10 +179,10 @@ export default async function HomePage() {
             <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
               <HomepageComparisonTable brokers={(brokers as Broker[]) || []} defaultTab="Share Trading" />
             </div>
-            <div className="text-center mt-8">
+            <div className="text-center mt-5 md:mt-8">
               <Link
                 href="/compare"
-                className="inline-block px-5 md:px-7 py-3.5 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 hover:scale-105 hover:shadow-lg transition-all duration-200 text-sm"
+                className="inline-block px-5 md:px-7 py-3 md:py-3.5 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 hover:scale-105 hover:shadow-lg transition-all duration-200 text-sm"
               >
                 View All {brokerCount}+ Brokers &rarr;
               </Link>
@@ -194,11 +194,11 @@ export default async function HomePage() {
       {/* Active Deals Section */}
       {(dealBrokers as Broker[])?.length > 0 && (
         <ScrollFadeIn>
-          <section className="py-12 bg-gradient-to-b from-amber-50/50 to-white">
+          <section className="py-8 md:py-12 bg-gradient-to-b from-amber-50/50 to-white">
             <div className="container-custom">
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center justify-between mb-4 md:mb-6">
                 <div>
-                  <h2 className="text-2xl font-bold">Current Broker Deals</h2>
+                  <h2 className="text-xl md:text-2xl font-bold">Current Broker Deals</h2>
                   <p className="text-sm text-slate-500 mt-1">Verified promotions from Australian trading platforms</p>
                 </div>
                 <Link href="/deals" className="text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors min-h-[44px] flex items-center px-2">
@@ -245,12 +245,12 @@ export default async function HomePage() {
 
       {/* Best For Hub */}
       <ScrollFadeIn>
-        <section className="py-12 bg-slate-50">
+        <section className="py-8 md:py-12 bg-slate-50">
           <div className="container-custom">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold">Find the Best Broker for You</h2>
-              <p className="text-slate-500 mt-2 max-w-lg mx-auto">
-                Every investor is different. Our category guides filter and rank brokers for your specific situation.
+            <div className="text-center mb-5 md:mb-8">
+              <h2 className="text-xl md:text-3xl font-bold">Find the Best Broker for You</h2>
+              <p className="text-sm md:text-base text-slate-500 mt-1 md:mt-2 max-w-lg mx-auto">
+                Our category guides rank brokers for your specific situation.
               </p>
             </div>
             {/* Mobile: 3 cards. Desktop: all 6 */}
@@ -268,7 +268,7 @@ export default async function HomePage() {
                 </Link>
               ))}
             </div>
-            <div className="text-center mt-6">
+            <div className="text-center mt-4 md:mt-6">
               <Link
                 href="/best"
                 className="inline-flex items-center min-h-[44px] px-4 text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors"
@@ -283,11 +283,11 @@ export default async function HomePage() {
       {/* Featured Articles */}
       {(articles as Article[])?.length > 0 && (
         <ScrollFadeIn>
-          <section className="py-12 bg-white">
+          <section className="py-8 md:py-12 bg-white">
             <div className="container-custom">
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center justify-between mb-4 md:mb-6">
                 <div>
-                  <h2 className="text-2xl font-bold">Investing Guides & Articles</h2>
+                  <h2 className="text-xl md:text-2xl font-bold">Investing Guides & Articles</h2>
                   <p className="text-sm text-slate-500 mt-1">Expert guides to help you make smarter decisions</p>
                 </div>
                 <Link href="/articles" className="text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors min-h-[44px] flex items-center px-2">
@@ -324,7 +324,7 @@ export default async function HomePage() {
 
       {/* Email Capture */}
       <ScrollFadeIn>
-        <section className="py-12 bg-slate-50">
+        <section className="py-8 md:py-12 bg-slate-50">
           <div className="container-custom">
             <div className="max-w-xl mx-auto">
               <LeadMagnet />

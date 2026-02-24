@@ -17,7 +17,7 @@ export default function Footer() {
   return (
     <>
       {/* Legal Disclaimers — light background, visually separate from footer */}
-      <div className="bg-slate-50 border-t border-b border-slate-200 mt-20">
+      <div className="bg-slate-50 border-t border-b border-slate-200 mt-10 md:mt-20">
         <div className="container-custom">
           <div className="py-2">
             <p className="text-xs font-semibold text-slate-500 pt-2 pb-1">Legal &amp; Disclaimers</p>
@@ -59,8 +59,8 @@ export default function Footer() {
 
       {/* Footer */}
       <footer className="bg-slate-800 text-slate-300">
-        <div className="container-custom py-8 md:py-12">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+        <div className="container-custom py-6 md:py-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-8">
             <div className="col-span-2 md:col-span-1">
               <h3 className="text-white font-bold mb-3 md:mb-4">Invest.com.au</h3>
               <p className="text-sm leading-relaxed">
@@ -103,7 +103,7 @@ export default function Footer() {
             </div>
           </div>
 
-          <div className="border-t border-slate-700/40 mt-6 md:mt-8 pt-6 md:pt-8 text-sm text-center space-y-1">
+          <div className="border-t border-slate-700/40 mt-5 md:mt-8 pt-5 md:pt-8 text-sm text-center space-y-1">
             <p>&copy; {new Date().getFullYear()} {COMPANY_LEGAL_NAME}. All rights reserved.</p>
             <p className="text-xs text-slate-400">ACN {COMPANY_ACN} | ABN {COMPANY_ABN}</p>
           </div>
