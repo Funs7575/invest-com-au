@@ -8,10 +8,13 @@ import {
   breadcrumbJsonLd,
   brokerReviewJsonLd,
   reviewArticleJsonLd,
+  qaPageJsonLd,
   SITE_NAME,
   REVIEW_AUTHOR,
 } from "@/lib/seo";
 import { scoreBrokerSimilarity } from "@/lib/internal-links";
+import QASection from "@/components/QASection";
+import AskQuestionForm from "@/components/AskQuestionForm";
 
 export const revalidate = 3600; // ISR: revalidate every hour
 
@@ -82,7 +85,7 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
     .map(({ broker: br }) => br);
 
   // Fetch articles that mention this broker + user reviews + switch stories + fee history (in parallel)
-  const [{ data: brokerArticles }, { data: userReviews }, { data: reviewStats }, { data: switchStoriesRaw }, { data: feeHistoryRaw }] = await Promise.all([
+  const [{ data: brokerArticles }, { data: userReviews }, { data: reviewStats }, { data: switchStoriesRaw }, { data: feeHistoryRaw }, { data: questionsRaw }] = await Promise.all([
     supabase
       .from('articles')
       .select('id, title, slug, category, read_time')
@@ -113,6 +116,13 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
       .eq('broker_slug', slug)
       .order('changed_at', { ascending: false })
       .limit(20),
+    supabase
+      .from('broker_questions')
+      .select('id, question, display_name, created_at, broker_answers(id, answer, answered_by, author_slug, display_name, is_accepted, created_at)')
+      .eq('broker_slug', slug)
+      .eq('status', 'approved')
+      .order('created_at', { ascending: false })
+      .limit(10),
   ]);
 
   // JSON-LD structured data — FinancialProduct + Review + Article + Breadcrumb
@@ -137,6 +147,28 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
       "ratingCount": reviewStats.review_count,
     },
   } : null;
+
+  // Format Q&A data for QASection component
+  const questions = (questionsRaw || []).map((q: any) => ({
+    id: q.id,
+    question: q.question,
+    display_name: q.display_name,
+    created_at: q.created_at,
+    answers: (q.broker_answers || [])
+      .filter((a: any) => a.status === undefined || a.status === 'approved')
+      .map((a: any) => ({
+        id: a.id,
+        answer: a.answer,
+        answered_by: a.answered_by,
+        author_slug: a.author_slug,
+        display_name: a.display_name,
+        is_accepted: a.is_accepted,
+        created_at: a.created_at,
+      })),
+  }));
+
+  // Q&A JSON-LD
+  const qaLd = questions.length > 0 ? qaPageJsonLd(questions, `${b.name} Q&A`, absoluteUrl(`/broker/${slug}`)) : null;
 
   // Dates for visible byline (must match structured data)
   const datePublished = b.created_at
@@ -166,6 +198,12 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
           dangerouslySetInnerHTML={{ __html: JSON.stringify(aggregateRatingLd) }}
         />
       )}
+      {qaLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(qaLd) }}
+        />
+      )}
       <Suspense fallback={null}>
         <BrokerReviewClient
           broker={b}
@@ -183,6 +221,22 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
           feeHistory={(feeHistoryRaw || []) as { id: number; field_name: string; old_value: string | null; new_value: string | null; change_type: string; changed_at: string }[]}
         />
       </Suspense>
+      {/* Q&A Section */}
+      <div className="container-custom max-w-4xl">
+        <QASection
+          questions={questions}
+          brokerSlug={b.slug}
+          brokerName={b.name}
+          pageType="broker"
+          pageSlug={b.slug}
+        />
+        <AskQuestionForm
+          brokerSlug={b.slug}
+          brokerName={b.name}
+          pageType="broker"
+          pageSlug={b.slug}
+        />
+      </div>
     </>
   );
 }

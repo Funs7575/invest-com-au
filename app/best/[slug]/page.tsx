@@ -10,10 +10,13 @@ import {
 import {
   absoluteUrl,
   breadcrumbJsonLd,
+  qaPageJsonLd,
   REVIEW_AUTHOR,
   SITE_NAME,
   SITE_URL,
 } from "@/lib/seo";
+import QASection from "@/components/QASection";
+import AskQuestionForm from "@/components/AskQuestionForm";
 import { getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
 import { trackClick } from "@/lib/tracking";
 import BrokerCard from "@/components/BrokerCard";
@@ -111,6 +114,34 @@ export default async function BestBrokerPage({
     relatedArticles = articleData || [];
   }
 
+  // ── Fetch Q&A for this best-broker page ──
+  const { data: questionsRaw } = await supabase
+    .from("broker_questions")
+    .select("id, question, display_name, created_at, broker_answers(id, answer, answered_by, author_slug, display_name, is_accepted, created_at)")
+    .eq("page_type", "best")
+    .eq("page_slug", slug)
+    .eq("status", "approved")
+    .order("created_at", { ascending: false })
+    .limit(10);
+
+  const questions = (questionsRaw || []).map((q: any) => ({
+    id: q.id,
+    question: q.question,
+    display_name: q.display_name,
+    created_at: q.created_at,
+    answers: (q.broker_answers || [])
+      .filter((a: any) => a.status === undefined || a.status === "approved")
+      .map((a: any) => ({
+        id: a.id,
+        answer: a.answer,
+        answered_by: a.answered_by,
+        author_slug: a.author_slug,
+        display_name: a.display_name,
+        is_accepted: a.is_accepted,
+        created_at: a.created_at,
+      })),
+  }));
+
   // ── JSON-LD: Article + ItemList + FAQ + Breadcrumb ──
   const articleJsonLd = {
     "@context": "https://schema.org",
@@ -169,6 +200,8 @@ export default async function BestBrokerPage({
     { name: cat.h1 },
   ]);
 
+  const qaLd = questions.length > 0 ? qaPageJsonLd(questions, `${cat.h1} Q&A`, absoluteUrl(`/best/${slug}`)) : null;
+
   const allCategories = getAllCategorySlugs()
     .map(getCategoryBySlug)
     .filter((c) => c && c.slug !== slug) as NonNullable<
@@ -196,6 +229,12 @@ export default async function BestBrokerPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
       />
+      {qaLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(qaLd) }}
+        />
+      )}
 
       <div className="py-12">
         <div className="container-custom max-w-4xl">
@@ -463,6 +502,21 @@ export default async function BestBrokerPage({
               ))}
             </div>
           </div>
+
+          {/* Community Q&A */}
+          <QASection
+            questions={questions}
+            brokerSlug={slug}
+            brokerName={cat.h1.replace("Best ", "").replace(" in Australia", "")}
+            pageType="best"
+            pageSlug={slug}
+          />
+          <AskQuestionForm
+            brokerSlug={slug}
+            brokerName={cat.h1.replace("Best ", "").replace(" in Australia", "")}
+            pageType="best"
+            pageSlug={slug}
+          />
 
           {/* Cross-links to other best-for categories */}
           <div className="border-t border-slate-100 pt-8">
