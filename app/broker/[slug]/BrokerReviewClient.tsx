@@ -74,7 +74,12 @@ const FIELD_LABELS: Record<string, string> = {
   deal_text: "Deal Details",
   deal_expiry: "Deal Expiry",
   min_deposit: "Minimum Deposit",
+  fee_page: "Fee Page",
+  fee_detected_change: "Fee Page",
 };
+
+/** Fields where old/new values are internal hashes, not human-readable */
+const HASH_FIELDS = new Set(["fee_page", "fee_detected_change"]);
 
 function formatFieldName(name: string): string {
   return FIELD_LABELS[name] || name.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
@@ -591,15 +596,21 @@ export default function BrokerReviewClient({
                     </span>
                     <div className="flex-1 min-w-0">
                       <span className="text-sm font-medium text-slate-700">{formatFieldName(c.field_name)}</span>
-                      {c.change_type === 'update' && (
-                        <div className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
-                          <span className="line-through text-red-400 truncate max-w-[180px]">{c.old_value || '\u2014'}</span>
-                          <span className="text-slate-300">{'\u2192'}</span>
-                          <span className="text-blue-700 font-medium truncate max-w-[180px]">{c.new_value || '\u2014'}</span>
-                        </div>
+                      {HASH_FIELDS.has(c.field_name) ? (
+                        <p className="text-xs text-slate-500 mt-0.5">Change detected on pricing page</p>
+                      ) : (
+                        <>
+                          {c.change_type === 'update' && (
+                            <div className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
+                              <span className="line-through text-red-400 truncate max-w-[180px]">{c.old_value || '\u2014'}</span>
+                              <span className="text-slate-300">{'\u2192'}</span>
+                              <span className="text-blue-700 font-medium truncate max-w-[180px]">{c.new_value || '\u2014'}</span>
+                            </div>
+                          )}
+                          {c.change_type === 'add' && <p className="text-xs text-green-700 mt-0.5">{c.new_value}</p>}
+                          {c.change_type === 'remove' && <p className="text-xs text-red-500 line-through mt-0.5">{c.old_value}</p>}
+                        </>
                       )}
-                      {c.change_type === 'add' && <p className="text-xs text-green-700 mt-0.5">{c.new_value}</p>}
-                      {c.change_type === 'remove' && <p className="text-xs text-red-500 line-through mt-0.5">{c.old_value}</p>}
                     </div>
                     <span className="text-xs text-slate-400 whitespace-nowrap">
                       {new Date(c.changed_at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })}

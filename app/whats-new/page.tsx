@@ -45,8 +45,12 @@ const FIELD_LABELS: Record<string, string> = {
   deal_text: "Deal Details",
   deal_expiry: "Deal Expiry",
   min_deposit: "Minimum Deposit",
-  fee_detected_change: "Fee Page Changed",
+  fee_page: "Fee Page",
+  fee_detected_change: "Fee Page",
 };
+
+/** Fields where old/new values are internal hashes, not human-readable */
+const HASH_FIELDS = new Set(["fee_page", "fee_detected_change"]);
 
 function formatFieldName(name: string): string {
   return (
@@ -144,8 +148,9 @@ export default async function WhatsNewPage() {
           "@type": "ListItem",
           position: i + 1,
           name: `${formatBrokerName(c.broker_slug)}: ${formatFieldName(c.field_name)} ${c.change_type}`,
-          description:
-            c.change_type === "update"
+          description: HASH_FIELDS.has(c.field_name)
+            ? `Change detected on pricing page on ${formatDate(c.changed_at)}`
+            : c.change_type === "update"
               ? `Changed from "${c.old_value || "—"}" to "${c.new_value || "—"}" on ${formatDate(c.changed_at)}`
               : c.change_type === "add"
                 ? `Added: ${c.new_value || "—"} on ${formatDate(c.changed_at)}`
@@ -249,26 +254,32 @@ export default async function WhatsNewPage() {
                             {formatFieldName(c.field_name)}
                           </span>
                         </div>
-                        {c.change_type === "update" && (
-                          <div className="text-xs text-slate-500 mt-1 flex items-center gap-1">
-                            <span className="line-through text-red-400 truncate max-w-[180px]">
-                              {c.old_value || "—"}
-                            </span>
-                            <span className="text-slate-300">&rarr;</span>
-                            <span className="text-blue-700 font-medium truncate max-w-[180px]">
-                              {c.new_value || "—"}
-                            </span>
-                          </div>
-                        )}
-                        {c.change_type === "add" && (
-                          <p className="text-xs text-green-700 mt-1">
-                            {c.new_value}
-                          </p>
-                        )}
-                        {c.change_type === "remove" && (
-                          <p className="text-xs text-red-500 line-through mt-1">
-                            {c.old_value}
-                          </p>
+                        {HASH_FIELDS.has(c.field_name) ? (
+                          <p className="text-xs text-slate-500 mt-1">Change detected on pricing page</p>
+                        ) : (
+                          <>
+                            {c.change_type === "update" && (
+                              <div className="text-xs text-slate-500 mt-1 flex items-center gap-1">
+                                <span className="line-through text-red-400 truncate max-w-[180px]">
+                                  {c.old_value || "—"}
+                                </span>
+                                <span className="text-slate-300">&rarr;</span>
+                                <span className="text-blue-700 font-medium truncate max-w-[180px]">
+                                  {c.new_value || "—"}
+                                </span>
+                              </div>
+                            )}
+                            {c.change_type === "add" && (
+                              <p className="text-xs text-green-700 mt-1">
+                                {c.new_value}
+                              </p>
+                            )}
+                            {c.change_type === "remove" && (
+                              <p className="text-xs text-red-500 line-through mt-1">
+                                {c.old_value}
+                              </p>
+                            )}
+                          </>
                         )}
                       </div>
                       <div className="text-xs text-slate-400 whitespace-nowrap">
