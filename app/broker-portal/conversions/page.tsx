@@ -144,7 +144,7 @@ export default function ConversionsPage() {
       {/* Funnel KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 portal-stagger">
         <div className="bg-white rounded-xl border border-slate-200 p-4">
-          <p className="text-[0.65rem] text-slate-500 uppercase tracking-wider font-bold">
+          <p className="text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
             Total
           </p>
           <p className="text-2xl font-extrabold text-slate-900 mt-1">
@@ -152,7 +152,7 @@ export default function ConversionsPage() {
           </p>
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-4">
-          <p className="text-[0.65rem] text-slate-500 uppercase tracking-wider font-bold">
+          <p className="text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
             Total Value
           </p>
           <p className="text-2xl font-extrabold text-slate-900 mt-1">
@@ -160,7 +160,7 @@ export default function ConversionsPage() {
           </p>
         </div>
         <div className="bg-blue-50 rounded-xl border border-blue-200 p-4">
-          <p className="text-[0.65rem] text-blue-600 uppercase tracking-wider font-bold">
+          <p className="text-[0.69rem] text-blue-600 uppercase tracking-wider font-bold">
             Opened
           </p>
           <p className="text-2xl font-extrabold text-blue-800 mt-1">
@@ -168,7 +168,7 @@ export default function ConversionsPage() {
           </p>
         </div>
         <div className="bg-green-50 rounded-xl border border-green-200 p-4">
-          <p className="text-[0.65rem] text-green-600 uppercase tracking-wider font-bold">
+          <p className="text-[0.69rem] text-green-600 uppercase tracking-wider font-bold">
             Funded
           </p>
           <p className="text-2xl font-extrabold text-green-800 mt-1">
@@ -176,7 +176,7 @@ export default function ConversionsPage() {
           </p>
         </div>
         <div className="bg-purple-50 rounded-xl border border-purple-200 p-4">
-          <p className="text-[0.65rem] text-purple-600 uppercase tracking-wider font-bold">
+          <p className="text-[0.69rem] text-purple-600 uppercase tracking-wider font-bold">
             First Trade
           </p>
           <p className="text-2xl font-extrabold text-purple-800 mt-1">
@@ -218,7 +218,7 @@ export default function ConversionsPage() {
                     }`}
                     style={{ height: `${height}%` }}
                   />
-                  <span className="text-[0.6rem] text-slate-500 text-center">
+                  <span className="text-[0.69rem] text-slate-500 text-center">
                     {EVENT_LABELS[stage]}
                   </span>
                 </div>
@@ -261,22 +261,22 @@ export default function ConversionsPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-100 text-left">
-                <th className="px-4 py-3 text-[0.65rem] text-slate-500 uppercase tracking-wider font-bold">
+                <th className="px-4 py-3 text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
                   Date
                 </th>
-                <th className="px-4 py-3 text-[0.65rem] text-slate-500 uppercase tracking-wider font-bold">
+                <th className="px-4 py-3 text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
                   Event
                 </th>
-                <th className="px-4 py-3 text-[0.65rem] text-slate-500 uppercase tracking-wider font-bold">
+                <th className="px-4 py-3 text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
                   Click ID
                 </th>
-                <th className="px-4 py-3 text-[0.65rem] text-slate-500 uppercase tracking-wider font-bold">
+                <th className="px-4 py-3 text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
                   Value
                 </th>
-                <th className="px-4 py-3 text-[0.65rem] text-slate-500 uppercase tracking-wider font-bold">
+                <th className="px-4 py-3 text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
                   Campaign
                 </th>
-                <th className="px-4 py-3 text-[0.65rem] text-slate-500 uppercase tracking-wider font-bold">
+                <th className="px-4 py-3 text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
                   Source
                 </th>
               </tr>

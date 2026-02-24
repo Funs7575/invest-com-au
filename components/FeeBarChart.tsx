@@ -65,7 +65,7 @@ export default function FeeBarChart({
           );
         })}
       </div>
-      <p className="text-[0.65rem] text-slate-400 mt-3 text-center">
+      <p className="text-[0.69rem] text-slate-400 mt-3 text-center">
         Based on a ${tradeAmount.toLocaleString("en-AU")} AUD &rarr; USD conversion. Big 4 rate: 0.70%.
       </p>
     </div>

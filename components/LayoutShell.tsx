@@ -33,7 +33,7 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
       <DisclosureBanner variant="header" />
 
       <Header />
-      <main id="main-content" className="min-h-screen pb-16 sm:pb-0">{children}</main>
+      <main id="main-content" className="min-h-screen pb-20 sm:pb-0">{children}</main>
       <Footer />
       <CookieBanner />
       <BackToTop />

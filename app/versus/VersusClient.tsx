@@ -182,13 +182,13 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                       {/* Desktop VS */}
                       <div className="hidden md:flex flex-col items-center justify-end pb-3 shrink-0">
                         <div className="w-px h-6 bg-slate-200" />
-                        <span className="w-9 h-9 rounded-full bg-slate-900 text-white text-[0.65rem] font-extrabold flex items-center justify-center shadow-md my-1">VS</span>
+                        <span className="w-9 h-9 rounded-full bg-slate-900 text-white text-[0.69rem] font-extrabold flex items-center justify-center shadow-md my-1">VS</span>
                         <div className="w-px h-6 bg-slate-200" />
                       </div>
                       {/* Mobile VS */}
                       <div className="md:hidden flex items-center gap-3 py-1">
                         <div className="h-px flex-1 bg-slate-200" />
-                        <span className="w-8 h-8 rounded-full bg-slate-900 text-white text-[0.65rem] font-extrabold flex items-center justify-center shadow-sm">VS</span>
+                        <span className="w-8 h-8 rounded-full bg-slate-900 text-white text-[0.69rem] font-extrabold flex items-center justify-center shadow-sm">VS</span>
                         <div className="h-px flex-1 bg-slate-200" />
                       </div>
                     </>
@@ -280,7 +280,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                   {overallWinner.icon || overallWinner.name.charAt(0)}
                 </div>
                 <div>
-                  <div className="text-[0.65rem] uppercase font-extrabold tracking-widest text-white/70 mb-0.5">Our Pick</div>
+                  <div className="text-[0.69rem] uppercase font-extrabold tracking-widest text-white/70 mb-0.5">Our Pick</div>
                   <div className="text-2xl md:text-3xl font-extrabold text-white">{overallWinner.name}</div>
                   <div className="text-sm text-white/80 mt-0.5">
                     Highest rated at {overallWinner.rating}/5 · Won {winCounts[overallWinner.slug] || 0}/{verdicts.length} categories
@@ -300,7 +300,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                 </a>
               </div>
             </div>
-            <p className="text-[0.65rem] text-slate-500 mb-8">{ADVERTISER_DISCLOSURE_SHORT}</p>
+            <p className="text-[0.69rem] text-slate-500 mb-8">{ADVERTISER_DISCLOSURE_SHORT}</p>
 
             {/* ─── Score Cards ─── */}
             <ScrollReveal animation="scroll-stagger-children" className={`grid grid-cols-2 ${gridCols} gap-3 mb-8`}>
@@ -314,7 +314,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                   >
                     {isWinner && (
                       <div className="absolute -top-2.5 left-1/2 -translate-x-1/2">
-                        <span className="px-2.5 py-0.5 text-[0.55rem] font-extrabold uppercase tracking-wider rounded-full text-white shadow-sm" style={{ background: br.color }}>
+                        <span className="px-2.5 py-0.5 text-[0.69rem] font-extrabold uppercase tracking-wider rounded-full text-white shadow-sm" style={{ background: br.color }}>
                           Winner
                         </span>
                       </div>
@@ -327,7 +327,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                     </div>
                     <div className="font-bold text-sm mb-0.5">{br.name}</div>
                     <div className="text-xl font-extrabold" style={{ color: br.color }}>{br.rating}/5</div>
-                    <div className="text-[0.65rem] text-slate-400 mt-1">
+                    <div className="text-[0.69rem] text-slate-400 mt-1">
                       {winCounts[br.slug] || 0} category {(winCounts[br.slug] || 0) === 1 ? 'win' : 'wins'}
                     </div>
                   </div>
@@ -387,7 +387,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                             {br.icon || br.name.charAt(0)}
                           </div>
                           <div className="font-bold text-sm">{br.name}</div>
-                          {isWinner && <div className="text-[0.55rem] font-extrabold text-green-600 uppercase tracking-wider mt-0.5">Winner</div>}
+                          {isWinner && <div className="text-[0.69rem] font-extrabold text-green-600 uppercase tracking-wider mt-0.5">Winner</div>}
                         </div>
                       );
                     })}
@@ -451,11 +451,11 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                           <h3 className="font-bold text-sm break-words">{br.name}</h3>
                           <div className="text-xs text-slate-500">{br.rating}/5 · {br.asx_fee}</div>
                         </div>
-                        {isWinner && <span className="ml-auto px-2 py-0.5 text-[0.55rem] font-extrabold uppercase rounded-full text-white shrink-0" style={{ background: br.color }}>Winner</span>}
+                        {isWinner && <span className="ml-auto px-2 py-0.5 text-[0.69rem] font-extrabold uppercase rounded-full text-white shrink-0" style={{ background: br.color }}>Winner</span>}
                       </div>
                       {/* Pros */}
                       <div className="px-5 py-3 border-b border-slate-100">
-                        <h4 className="text-[0.65rem] font-bold uppercase tracking-wider text-green-600 mb-2 flex items-center gap-1">
+                        <h4 className="text-[0.69rem] font-bold uppercase tracking-wider text-green-600 mb-2 flex items-center gap-1">
                           <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
                           Pros
                         </h4>
@@ -469,7 +469,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                       </div>
                       {/* Cons */}
                       <div className="px-5 py-3">
-                        <h4 className="text-[0.65rem] font-bold uppercase tracking-wider text-red-500 mb-2 flex items-center gap-1">
+                        <h4 className="text-[0.69rem] font-bold uppercase tracking-wider text-red-500 mb-2 flex items-center gap-1">
                           <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" /></svg>
                           Cons
                         </h4>

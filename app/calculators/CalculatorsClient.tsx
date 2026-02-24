@@ -353,7 +353,7 @@ function TradeCostCalculator({ brokers, searchParams }: { brokers: Broker[]; sea
                   <tr key={r.broker.slug} className={isCheapest ? "bg-green-50/60" : ""}>
                     <td className="py-3 pr-4">
                       <span className="font-semibold text-sm">{r.broker.name}</span>
-                      {isCheapest && <span className="ml-2 text-[0.65rem] font-bold text-green-600 uppercase">Cheapest</span>}
+                      {isCheapest && <span className="ml-2 text-[0.69rem] font-bold text-green-600 uppercase">Cheapest</span>}
                     </td>
                     <td className="py-3 px-2 text-right text-sm font-mono">
                       <AnimatedNumber value={r.brokerage} />
@@ -800,7 +800,7 @@ function FxFeeCalculator({ brokers, searchParams }: { brokers: Broker[]; searchP
                   target="_blank"
                   rel={AFFILIATE_REL}
                   onClick={() => trackClick(broker.slug, broker.name, "calculator-fx", "/calculators", "cta")}
-                  className={`inline-block px-2.5 py-1 text-[0.65rem] font-bold rounded-md transition-all duration-200 whitespace-nowrap active:scale-[0.97] ${
+                  className={`inline-block px-2.5 py-1 text-[0.69rem] font-bold rounded-md transition-all duration-200 whitespace-nowrap active:scale-[0.97] ${
                     isCheapest
                       ? "bg-slate-900 text-white hover:bg-slate-800"
                       : "bg-slate-100 text-slate-600 hover:bg-slate-900 hover:text-white"
@@ -1095,7 +1095,7 @@ function ChessLookup({ brokers, searchParams }: { brokers: Broker[]; searchParam
                           target="_blank"
                           rel={AFFILIATE_REL}
                           onClick={() => trackClick(b.slug, b.name, "calculator-chess", "/calculators", "cta")}
-                          className="inline-block px-2.5 py-1 text-[0.65rem] font-bold rounded-md bg-slate-100 text-slate-600 hover:bg-slate-900 hover:text-white transition-all duration-200 whitespace-nowrap active:scale-[0.97]"
+                          className="inline-block px-2.5 py-1 text-[0.69rem] font-bold rounded-md bg-slate-100 text-slate-600 hover:bg-slate-900 hover:text-white transition-all duration-200 whitespace-nowrap active:scale-[0.97]"
                         >
                           Try →
                         </a>

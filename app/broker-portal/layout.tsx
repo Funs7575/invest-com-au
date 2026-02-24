@@ -85,14 +85,14 @@ export default function BrokerPortalLayout({ children }: { children: React.React
           </div>
           <div>
             <span className="text-sm font-bold text-white">Invest.com.au</span>
-            <p className="text-[0.6rem] text-amber-400 font-semibold uppercase tracking-widest">Partner Portal</p>
+            <p className="text-[0.69rem] text-amber-400 font-semibold uppercase tracking-widest">Partner Portal</p>
           </div>
         </Link>
       </div>
 
       {/* Wallet balance */}
       <div className="p-4 border-b border-slate-700/50">
-        <p className="text-[0.65rem] text-slate-400 uppercase tracking-wider font-bold mb-1">Wallet Balance</p>
+        <p className="text-[0.69rem] text-slate-400 uppercase tracking-wider font-bold mb-1">Wallet Balance</p>
         <p className="text-xl font-extrabold text-white">
           <CountUp end={balanceCents / 100} prefix="$" decimals={2} duration={1000} />
         </p>

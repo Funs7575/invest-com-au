@@ -168,7 +168,7 @@ export default function Header() {
               );
             })}
             <div className="pt-2 mt-2 border-t border-slate-100">
-              <p className="px-4 py-1 text-[0.65rem] font-semibold uppercase tracking-wide text-slate-400">Tools</p>
+              <p className="px-4 py-1 text-[0.69rem] font-semibold uppercase tracking-wide text-slate-400">Tools</p>
               {moreLinks.map((item) => (
                 <Link
                   key={item.href}
@@ -220,7 +220,7 @@ export default function Header() {
             </div>
             {/* Popular Links */}
             <div className="pt-2 mt-2 border-t border-slate-100">
-              <p className="px-4 py-1 text-[0.65rem] font-semibold uppercase tracking-wide text-slate-400">Popular</p>
+              <p className="px-4 py-1 text-[0.69rem] font-semibold uppercase tracking-wide text-slate-400">Popular</p>
               {popularLinks.map((link) => (
                 <Link
                   key={link.href}

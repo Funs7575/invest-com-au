@@ -538,7 +538,7 @@ export default function BenchmarkClient({ brokers }: { brokers: Broker[] }) {
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
                         <div
-                          className="w-6 h-6 rounded flex items-center justify-center text-[0.55rem] font-bold shrink-0"
+                          className="w-6 h-6 rounded flex items-center justify-center text-[0.69rem] font-bold shrink-0"
                           style={{
                             background: `${b.color}20`,
                             color: b.color,

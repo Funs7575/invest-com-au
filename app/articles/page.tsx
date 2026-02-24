@@ -132,8 +132,19 @@ export default async function ArticlesPage({
             return (
               <div
                 key={article.id}
-                className="border border-slate-200 rounded-xl bg-white hover:shadow-lg hover:scale-[1.02] transition-all flex flex-col"
+                className="border border-slate-200 rounded-xl bg-white hover:shadow-lg hover:scale-[1.02] transition-all flex flex-col overflow-hidden"
               >
+                {/* Cover Image */}
+                {article.cover_image_url ? (
+                  <Link href={`/article/${article.slug}`} className="block aspect-[16/9] overflow-hidden bg-slate-100">
+                    <img
+                      src={article.cover_image_url}
+                      alt={article.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      loading="lazy"
+                    />
+                  </Link>
+                ) : null}
                 <div className="p-6 flex flex-col flex-1">
                   {/* Badges Row */}
                   <div className="flex items-center gap-2 mb-3">

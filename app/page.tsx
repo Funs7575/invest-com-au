@@ -60,7 +60,7 @@ export default async function HomePage() {
       .limit(3),
     supabase
       .from("articles")
-      .select("id, title, slug, excerpt, category, read_time, tags")
+      .select("id, title, slug, excerpt, category, read_time, tags, cover_image_url")
       .eq("status", "published")
       .order("created_at", { ascending: false })
       .limit(6),
@@ -148,12 +148,12 @@ export default async function HomePage() {
       {/* Broker Logo Strip — instant credibility */}
       <section className="py-2.5 md:py-4 bg-white border-b border-slate-100">
         <div className="container-custom">
-          <p className="text-[0.65rem] uppercase tracking-widest text-slate-400 text-center mb-2 md:mb-3 font-medium">Brokers we compare</p>
+          <p className="text-[0.69rem] uppercase tracking-widest text-slate-400 text-center mb-2 md:mb-3 font-medium">Brokers we compare</p>
           {/* Desktop: centered wrap row */}
           <div className="hidden sm:flex items-center justify-center gap-8 flex-wrap opacity-70">
             {(brokers as Broker[])?.slice(0, 6).map((broker) => (
               <div key={broker.id} className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-[0.65rem] font-bold shrink-0" style={{ backgroundColor: broker.color || '#64748b' }}>
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-[0.69rem] font-bold shrink-0" style={{ backgroundColor: broker.color || '#64748b' }}>
                   {broker.name?.slice(0, 2).toUpperCase()}
                 </div>
                 <span className="text-sm font-semibold text-slate-500">{broker.name}</span>
@@ -164,7 +164,7 @@ export default async function HomePage() {
           <div className="sm:hidden flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-4 px-4 opacity-70">
             {(brokers as Broker[])?.slice(0, 6).map((broker) => (
               <div key={broker.id} className="flex items-center gap-1.5 shrink-0 snap-start">
-                <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-[0.6rem] font-bold shrink-0" style={{ backgroundColor: broker.color || '#64748b' }}>
+                <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-[0.69rem] font-bold shrink-0" style={{ backgroundColor: broker.color || '#64748b' }}>
                   {broker.name?.slice(0, 2).toUpperCase()}
                 </div>
                 <span className="text-xs font-semibold text-slate-500 whitespace-nowrap">{broker.name}</span>
@@ -228,7 +228,7 @@ export default async function HomePage() {
                 <div className="relative">
                   <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-4 scrollbar-hide -mx-4 px-4">
                     {(dealBrokers as Broker[]).map((broker) => (
-                      <div key={broker.id} className="w-[82vw] shrink-0 snap-start">
+                      <div key={broker.id} className="w-[80vw] shrink-0 snap-start">
                         <DealCard broker={broker} />
                       </div>
                     ))}
@@ -284,7 +284,7 @@ export default async function HomePage() {
                   <Link
                     key={card.title}
                     href={card.href}
-                    className={`border rounded-xl p-4 active:scale-[0.98] transition-all ${card.color} w-[72vw] shrink-0 snap-start`}
+                    className={`border rounded-xl p-4 active:scale-[0.98] transition-all ${card.color} w-[70vw] shrink-0 snap-start`}
                   >
                     <Icon name={card.icon} size={22} className="mb-1.5 opacity-80" />
                     <h3 className="font-bold mb-0.5 text-sm">{card.title}</h3>
@@ -326,20 +326,27 @@ export default async function HomePage() {
                   <Link
                     key={article.id}
                     href={`/article/${article.slug}`}
-                    className="border border-slate-200 rounded-xl p-5 hover:shadow-md hover:border-slate-300 transition-all duration-200 group"
+                    className="border border-slate-200 rounded-xl overflow-hidden hover:shadow-md hover:border-slate-300 transition-all duration-200 group flex flex-col"
                   >
-                    {article.category && (
-                      <span className="inline-block text-[0.65rem] font-bold uppercase tracking-wider text-slate-600 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full mb-3">
-                        {article.category}
-                      </span>
+                    {article.cover_image_url && (
+                      <div className="aspect-[16/9] overflow-hidden bg-slate-100">
+                        <img src={article.cover_image_url} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+                      </div>
                     )}
-                    <h3 className="font-bold text-slate-900 group-hover:text-slate-600 transition-colors mb-2 leading-snug">
-                      {article.title}
-                    </h3>
-                    <p className="text-sm text-slate-500 line-clamp-2 mb-3">{article.excerpt}</p>
-                    <div className="flex items-center gap-3 text-xs text-slate-400">
-                      {article.read_time && <span>{article.read_time} min read</span>}
-                      <span className="text-slate-900 font-semibold group-hover:translate-x-0.5 transition-transform">Read Guide &rarr;</span>
+                    <div className="p-5 flex flex-col flex-1">
+                      {article.category && (
+                        <span className="inline-block self-start text-[0.69rem] font-bold uppercase tracking-wider text-slate-600 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full mb-3">
+                          {article.category}
+                        </span>
+                      )}
+                      <h3 className="font-bold text-slate-900 group-hover:text-slate-600 transition-colors mb-2 leading-snug">
+                        {article.title}
+                      </h3>
+                      <p className="text-sm text-slate-500 line-clamp-2 mb-3 flex-1">{article.excerpt}</p>
+                      <div className="flex items-center gap-3 text-xs text-slate-400">
+                        {article.read_time && <span>{article.read_time} min read</span>}
+                        <span className="text-slate-900 font-semibold group-hover:translate-x-0.5 transition-transform">Read Guide &rarr;</span>
+                      </div>
                     </div>
                   </Link>
                 ))}
@@ -351,19 +358,26 @@ export default async function HomePage() {
                     <Link
                       key={article.id}
                       href={`/article/${article.slug}`}
-                      className="border border-slate-200 rounded-xl p-4 hover:shadow-md transition-all duration-200 group w-[78vw] shrink-0 snap-start"
+                      className="border border-slate-200 rounded-xl overflow-hidden hover:shadow-md transition-all duration-200 group w-[80vw] shrink-0 snap-start flex flex-col"
                     >
-                      {article.category && (
-                        <span className="inline-block text-[0.65rem] font-bold uppercase tracking-wider text-slate-600 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full mb-2">
-                          {article.category}
-                        </span>
+                      {article.cover_image_url && (
+                        <div className="aspect-[16/9] overflow-hidden bg-slate-100">
+                          <img src={article.cover_image_url} alt={article.title} className="w-full h-full object-cover" loading="lazy" />
+                        </div>
                       )}
-                      <h3 className="font-bold text-sm text-slate-900 group-hover:text-slate-600 transition-colors mb-1.5 leading-snug line-clamp-2">
-                        {article.title}
-                      </h3>
-                      <div className="flex items-center gap-3 text-xs text-slate-400">
-                        {article.read_time && <span>{article.read_time} min read</span>}
-                        <span className="text-slate-900 font-semibold">Read Guide &rarr;</span>
+                      <div className="p-4 flex flex-col flex-1">
+                        {article.category && (
+                          <span className="inline-block self-start text-[0.69rem] font-bold uppercase tracking-wider text-slate-600 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full mb-2">
+                            {article.category}
+                          </span>
+                        )}
+                        <h3 className="font-bold text-sm text-slate-900 group-hover:text-slate-600 transition-colors mb-1.5 leading-snug line-clamp-2">
+                          {article.title}
+                        </h3>
+                        <div className="flex items-center gap-3 text-xs text-slate-400">
+                          {article.read_time && <span>{article.read_time} min read</span>}
+                          <span className="text-slate-900 font-semibold">Read Guide &rarr;</span>
+                        </div>
                       </div>
                     </Link>
                   ))}

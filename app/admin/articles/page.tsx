@@ -76,6 +76,7 @@ export default function AdminArticlesPage() {
       read_time: formData.get("read_time") ? Number(formData.get("read_time")) : null,
       related_brokers: formData.get("related_brokers") ? (formData.get("related_brokers") as string).split(",").map(t => t.trim()).filter(Boolean) : [],
       related_calc: formData.get("related_calc") || null,
+      cover_image_url: formData.get("cover_image_url") || null,
       evergreen: formData.get("evergreen") === "on",
       status: formData.get("status") || "published",
       published_at: formData.get("published_at") || new Date().toISOString(),
@@ -236,6 +237,13 @@ export default function AdminArticlesPage() {
             <div>
               <label className="block text-xs font-medium text-slate-500 mb-1">Related Calculator</label>
               <input name="related_calc" defaultValue={formArticle.related_calc} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-xs font-medium text-slate-500 mb-1">Cover Image URL</label>
+              <input name="cover_image_url" defaultValue={formArticle.cover_image_url || ""} placeholder="https://images.unsplash.com/..." className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+              {formArticle.cover_image_url && (
+                <img src={formArticle.cover_image_url} alt="Cover preview" className="mt-2 rounded-lg h-24 object-cover" />
+              )}
             </div>
           </div>
 

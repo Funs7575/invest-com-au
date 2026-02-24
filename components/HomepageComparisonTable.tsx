@@ -87,7 +87,7 @@ export default function HomepageComparisonTable({
           </div>
           <a
             href="#advertiser-disclosure"
-            className="hidden md:inline text-[0.65rem] text-slate-400 underline hover:text-slate-600 transition-colors shrink-0 ml-4"
+            className="hidden md:inline text-[0.69rem] text-slate-400 underline hover:text-slate-600 transition-colors shrink-0 ml-4"
           >
             Advertiser Disclosure
           </a>
@@ -99,14 +99,14 @@ export default function HomepageComparisonTable({
         <table className="w-full compare-table">
           <thead>
             <tr className="border-y border-slate-100">
-              <th scope="col" className="pl-5 pr-2 py-2 text-left font-semibold text-[0.65rem] uppercase tracking-wider text-slate-400 w-10">#</th>
-              <th scope="col" className="px-3 py-2 text-left font-semibold text-[0.65rem] uppercase tracking-wider text-slate-400 w-[28%]">Broker</th>
-              <th scope="col" className="px-3 py-2 text-left font-semibold text-[0.65rem] uppercase tracking-wider text-slate-400"><JargonTooltip term="ASX Fee" /></th>
-              <th scope="col" className="px-3 py-2 text-left font-semibold text-[0.65rem] uppercase tracking-wider text-slate-400"><JargonTooltip term="US Fee" /></th>
-              <th scope="col" className="px-3 py-2 text-left font-semibold text-[0.65rem] uppercase tracking-wider text-slate-400 whitespace-nowrap"><JargonTooltip term="FX Rate" /></th>
-              <th scope="col" className="px-3 py-2 text-center font-semibold text-[0.65rem] uppercase tracking-wider text-slate-400"><JargonTooltip term="CHESS" /></th>
-              <th scope="col" className="px-3 py-2 text-center font-semibold text-[0.65rem] uppercase tracking-wider text-slate-400">Rating</th>
-              <th scope="col" className="px-3 py-2 pr-5 text-center font-semibold text-[0.65rem] uppercase tracking-wider text-slate-400 w-[155px]"></th>
+              <th scope="col" className="pl-5 pr-2 py-2 text-left font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400 w-10">#</th>
+              <th scope="col" className="px-3 py-2 text-left font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400 w-[28%]">Broker</th>
+              <th scope="col" className="px-3 py-2 text-left font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400"><JargonTooltip term="ASX Fee" /></th>
+              <th scope="col" className="px-3 py-2 text-left font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400"><JargonTooltip term="US Fee" /></th>
+              <th scope="col" className="px-3 py-2 text-left font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400 whitespace-nowrap"><JargonTooltip term="FX Rate" /></th>
+              <th scope="col" className="px-3 py-2 text-center font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400"><JargonTooltip term="CHESS" /></th>
+              <th scope="col" className="px-3 py-2 text-center font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400">Rating</th>
+              <th scope="col" className="px-3 py-2 pr-5 text-center font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400 w-[155px]"></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -149,7 +149,7 @@ export default function HomepageComparisonTable({
                         <SponsorBadge broker={broker} />
                       </div>
                       {!isSponsored(broker) && editorPicks[broker.slug] && (
-                        <div className="text-[0.6rem] font-bold text-slate-500 uppercase tracking-wide">
+                        <div className="text-[0.69rem] font-bold text-slate-500 uppercase tracking-wide">
                           {editorPicks[broker.slug]}
                         </div>
                       )}
@@ -190,7 +190,7 @@ export default function HomepageComparisonTable({
                       {getBenefitCta(broker, "compare")}
                     </a>
                     {broker.deal && (
-                      <span className="text-[0.55rem] text-amber-600 font-semibold">Deal</span>
+                      <span className="text-[0.69rem] text-amber-600 font-semibold">Deal</span>
                     )}
                   </div>
                 </td>
@@ -231,7 +231,7 @@ export default function HomepageComparisonTable({
                   <span className="text-xs text-amber">{renderStars(broker.rating || 0)}</span>
                   <span className="text-xs text-slate-400">{broker.rating}/5</span>
                   {!isSponsored(broker) && editorPicks[broker.slug] && (
-                    <span className="text-[0.6rem] font-bold uppercase text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded">
+                    <span className="text-[0.69rem] font-bold uppercase text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded">
                       {editorPicks[broker.slug]}
                     </span>
                   )}
@@ -240,8 +240,8 @@ export default function HomepageComparisonTable({
               <ShortlistButton slug={broker.slug} name={broker.name} size="sm" />
             </div>
             {/* Row 2: Key fees + CTA */}
-            <div className="flex items-center gap-2 mt-2.5 ml-10">
-              <div className="flex items-center gap-3 flex-1 text-xs text-slate-500">
+            <div className="flex items-center gap-2 mt-2.5 ml-[2.65rem]">
+              <div className="flex items-center gap-2.5 flex-1 text-xs text-slate-500">
                 <span><span className="font-semibold text-slate-700">{broker.asx_fee || "N/A"}</span> ASX</span>
                 <span><span className="font-semibold text-slate-700">{broker.us_fee || "N/A"}</span> US</span>
                 {broker.chess_sponsored && (
@@ -252,7 +252,7 @@ export default function HomepageComparisonTable({
                 href={getAffiliateLink(broker)}
                 target="_blank"
                 rel={AFFILIATE_REL}
-                className="shrink-0 px-3.5 py-2 bg-amber-500 text-white text-xs font-bold rounded-lg hover:bg-amber-600 active:scale-[0.97] transition-all"
+                className="shrink-0 px-3.5 py-2.5 bg-amber-500 text-white text-xs font-bold rounded-lg hover:bg-amber-600 active:scale-[0.97] transition-all"
               >
                 Visit
               </a>

@@ -136,12 +136,12 @@ export default function BrokerComparisonTable({
                       </div>
                       <div className="flex gap-1.5 mt-0.5">
                         {b.chess_sponsored && (
-                          <span className="text-[0.65rem] font-semibold bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded">
+                          <span className="text-[0.69rem] font-semibold bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded">
                             CHESS
                           </span>
                         )}
                         {i === 0 && sortBy === "fx_rate" && (
-                          <span className="text-[0.65rem] font-semibold bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">
+                          <span className="text-[0.69rem] font-semibold bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">
                             LOWEST FX
                           </span>
                         )}
@@ -201,12 +201,12 @@ export default function BrokerComparisonTable({
                 <div className="font-bold text-sm text-brand">{b.name}</div>
                 <div className="flex gap-1.5 mt-0.5">
                   {b.chess_sponsored && (
-                    <span className="text-[0.65rem] font-semibold bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded">
+                    <span className="text-[0.69rem] font-semibold bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded">
                       CHESS
                     </span>
                   )}
                   {i === 0 && sortBy === "fx_rate" && (
-                    <span className="text-[0.65rem] font-semibold bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">
+                    <span className="text-[0.69rem] font-semibold bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded">
                       LOWEST FX
                     </span>
                   )}

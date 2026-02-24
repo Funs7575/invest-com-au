@@ -31,7 +31,7 @@ export default function SponsorBadge({ broker }: { broker: Broker }) {
 
   return (
     <span
-      className={`inline-flex items-center gap-1 px-2 py-0.5 border rounded-full text-[0.65rem] font-bold ${config.bgClass} ${config.textClass}`}
+      className={`inline-flex items-center gap-1 px-2 py-0.5 border rounded-full text-[0.69rem] font-bold ${config.bgClass} ${config.textClass}`}
     >
       {config.label}
       <span className={`${config.disclosureClass} font-medium`}>

@@ -643,6 +643,14 @@ details > :not(summary) {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
+/* ── Small-screen container padding ──────────────────── */
+@media (max-width: 359px) {
+  .container-custom {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+}
+
 /* ── Broker Portal animations ────────────────────────── */
 
 /* Auto-triggering staggered entrance for KPI cards, grids, lists */

@@ -90,7 +90,7 @@ export default function LessonClient({
         <div className="px-4 pb-3 space-y-2 max-h-64 overflow-y-auto">
           {modules.map((mod) => (
             <div key={mod.index}>
-              <p className="text-[0.65rem] font-bold uppercase tracking-wide text-slate-400 mb-1">
+              <p className="text-[0.69rem] font-bold uppercase tracking-wide text-slate-400 mb-1">
                 Module {mod.index}: {mod.title}
               </p>
               <ul className="space-y-0.5 mb-2">
@@ -139,7 +139,7 @@ export default function LessonClient({
           <nav className="space-y-3 max-h-[calc(100vh-8rem)] overflow-y-auto pr-2">
             {modules.map((mod) => (
               <div key={mod.index}>
-                <p className="text-[0.65rem] font-bold uppercase tracking-wide text-slate-400 mb-1">
+                <p className="text-[0.69rem] font-bold uppercase tracking-wide text-slate-400 mb-1">
                   Module {mod.index}: {mod.title}
                 </p>
                 <ul className="space-y-0.5">
@@ -194,7 +194,7 @@ export default function LessonClient({
           <span className="text-xs text-slate-300">·</span>
           <span className="text-xs text-slate-400">{moduleInfo.title}</span>
           {isFreePreview && (
-            <span className="text-[0.55rem] px-2 py-0.5 bg-green-50 text-green-600 rounded-full font-medium">
+            <span className="text-[0.69rem] px-2 py-0.5 bg-green-50 text-green-600 rounded-full font-medium">
               FREE PREVIEW
             </span>
           )}

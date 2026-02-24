@@ -43,7 +43,7 @@ const feeTooltips: Record<string, string> = {
 function InfoTip({ text }: { text: string }) {
   return (
     <span className="relative group ml-1 inline-flex">
-      <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-slate-200 text-slate-500 text-[0.55rem] font-bold cursor-help">?</span>
+      <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-slate-200 text-slate-500 text-[0.69rem] font-bold cursor-help">?</span>
       <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2.5 py-1.5 bg-slate-800 text-white text-xs rounded-lg whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-10 max-w-[220px] whitespace-normal text-center leading-tight">
         {text}
       </span>
@@ -405,7 +405,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2.5">
                       <div
-                        className="w-8 h-8 rounded-lg flex items-center justify-center text-[0.65rem] font-bold shrink-0 transition-transform duration-200 group-hover:scale-110"
+                        className="w-8 h-8 rounded-lg flex items-center justify-center text-[0.69rem] font-bold shrink-0 transition-transform duration-200 group-hover:scale-110"
                         style={{ background: `${broker.color}18`, color: broker.color }}
                       >
                         {broker.icon || broker.name.charAt(0)}
@@ -417,12 +417,12 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                           </a>
                           <PromoBadge broker={broker} />
                           {campaignWinners.some(w => w.broker_slug === broker.slug) && (
-                            <span className="text-[0.55rem] font-bold px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded-full uppercase tracking-wide">Sponsored</span>
+                            <span className="text-[0.69rem] font-bold px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded-full uppercase tracking-wide">Sponsored</span>
                           )}
                           {!campaignWinners.some(w => w.broker_slug === broker.slug) && <SponsorBadge broker={broker} />}
                         </div>
                         {!isSponsored(broker) && editorPicks[broker.slug] && (
-                          <div className="text-[0.65rem] font-extrabold text-slate-700 uppercase tracking-wide">
+                          <div className="text-[0.69rem] font-extrabold text-slate-700 uppercase tracking-wide">
                             {editorPicks[broker.slug]}
                           </div>
                         )}

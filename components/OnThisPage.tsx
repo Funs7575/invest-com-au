@@ -62,7 +62,7 @@ export default function OnThisPage({ items }: { items: TocItem[] }) {
         className="hidden xl:block fixed top-24 right-4 w-52 max-h-[calc(100vh-120px)] overflow-y-auto z-30"
         aria-label="On this page"
       >
-        <p className="text-[0.65rem] font-bold uppercase tracking-wider text-slate-400 mb-2">
+        <p className="text-[0.69rem] font-bold uppercase tracking-wider text-slate-400 mb-2">
           On this page
         </p>
         <ul className="space-y-0.5 border-l-2 border-slate-100">

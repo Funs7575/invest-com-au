@@ -113,19 +113,19 @@ export default function SwitchChecklist({
         </h3>
         <div className="flex gap-0.5 h-9 rounded-lg overflow-hidden">
           <div
-            className="bg-blue-100 flex items-center justify-center text-[0.65rem] font-semibold text-blue-700 px-2 min-w-0"
+            className="bg-blue-100 flex items-center justify-center text-[0.69rem] font-semibold text-blue-700 px-2 min-w-0"
             style={{ flex: inboundDays }}
           >
             <span className="truncate">Open Account ({inboundDays}d)</span>
           </div>
           <div
-            className="bg-amber-100 flex items-center justify-center text-[0.65rem] font-semibold text-amber-700 px-2 min-w-0"
+            className="bg-amber-100 flex items-center justify-center text-[0.69rem] font-semibold text-amber-700 px-2 min-w-0"
             style={{ flex: outboundDays }}
           >
             <span className="truncate">Transfer ({outboundDays}d)</span>
           </div>
           <div
-            className="bg-slate-100 flex items-center justify-center text-[0.65rem] font-semibold text-slate-700 px-2 min-w-0"
+            className="bg-slate-100 flex items-center justify-center text-[0.69rem] font-semibold text-slate-700 px-2 min-w-0"
             style={{ flex: 1 }}
           >
             <span className="truncate">Verify (1d)</span>
@@ -325,7 +325,7 @@ export default function SwitchChecklist({
                 around the end of financial year (30 June).
               </p>
             </div>
-            <p className="text-[0.65rem] text-slate-400 italic">
+            <p className="text-[0.69rem] text-slate-400 italic">
               This is general information only and does not constitute tax
               advice. Consult a registered tax agent for advice specific to your
               situation.
@@ -430,7 +430,7 @@ function StepItem({
           {step.title}
         </div>
         <p className="text-xs text-slate-500 mt-0.5">{step.description}</p>
-        <span className="text-[0.65rem] text-slate-400 mt-1 inline-block">
+        <span className="text-[0.69rem] text-slate-400 mt-1 inline-block">
           ⏱ {step.time_estimate}
         </span>
         {step.warning && (

@@ -16,22 +16,29 @@ export default function DisclosureBanner({
 
   if (variant === "header") {
     return (
-      <div className="bg-slate-50 border-b border-slate-200 py-2 text-center text-xs text-slate-600">
+      <div className="bg-slate-50 border-b border-slate-200 py-1.5 md:py-2 text-center text-[0.69rem] md:text-xs text-slate-500">
         <div className="container-custom">
-          {ADVERTISER_DISCLOSURE_SHORT}{" "}
-          <Link
-            href="/how-we-earn"
-            className="text-blue-700 hover:text-blue-800 underline transition-colors"
-          >
-            How we earn
-          </Link>
-          {" · "}
-          <Link
-            href="/methodology"
-            className="text-blue-700 hover:text-blue-800 underline transition-colors"
-          >
-            Methodology
-          </Link>
+          {/* Mobile: short one-liner. Desktop: full disclosure + links */}
+          <span className="md:hidden">
+            Partner-supported site.{" "}
+            <Link href="/how-we-earn" className="text-blue-700 underline">Learn more</Link>
+          </span>
+          <span className="hidden md:inline">
+            {ADVERTISER_DISCLOSURE_SHORT}{" "}
+            <Link
+              href="/how-we-earn"
+              className="text-blue-700 hover:text-blue-800 underline transition-colors"
+            >
+              How we earn
+            </Link>
+            {" · "}
+            <Link
+              href="/methodology"
+              className="text-blue-700 hover:text-blue-800 underline transition-colors"
+            >
+              Methodology
+            </Link>
+          </span>
         </div>
       </div>
     );

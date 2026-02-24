@@ -46,7 +46,7 @@ export default function ReportDetailClient({ report }: { report: QuarterlyReport
             <ul className="space-y-2">
               {report.key_findings.map((finding, i) => (
                 <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
-                  <span className="w-5 h-5 rounded-full bg-green-100 text-green-700 text-[0.65rem] flex items-center justify-center shrink-0 mt-0.5 font-bold">
+                  <span className="w-5 h-5 rounded-full bg-green-100 text-green-700 text-[0.69rem] flex items-center justify-center shrink-0 mt-0.5 font-bold">
                     {i + 1}
                   </span>
                   {finding}

@@ -270,7 +270,7 @@ export default function BrokerReviewClient({
                 <div className="text-xs font-bold uppercase tracking-wide text-amber-700 mb-0.5">Limited Time Deal</div>
                 <p className="text-sm font-semibold text-slate-700">{b.deal_text}</p>
                 {b.deal_expiry && (
-                  <p className="text-[0.65rem] text-amber-600 mt-0.5">
+                  <p className="text-[0.69rem] text-amber-600 mt-0.5">
                     Expires {new Date(b.deal_expiry).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })}
                   </p>
                 )}
@@ -654,19 +654,19 @@ export default function BrokerReviewClient({
         <h2 id="details" className="text-2xl font-extrabold mb-3 scroll-mt-20">Details</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
           <div className="bg-slate-50 rounded-lg p-4">
-            <p className="text-[0.65rem] uppercase text-slate-500 tracking-wide font-medium mb-1">Platforms</p>
+            <p className="text-[0.69rem] uppercase text-slate-500 tracking-wide font-medium mb-1">Platforms</p>
             <p className="text-sm font-medium">{b.platforms?.join(', ') || 'N/A'}</p>
           </div>
           <div className="bg-slate-50 rounded-lg p-4">
-            <p className="text-[0.65rem] uppercase text-slate-500 tracking-wide font-medium mb-1">Payment Methods</p>
+            <p className="text-[0.69rem] uppercase text-slate-500 tracking-wide font-medium mb-1">Payment Methods</p>
             <p className="text-sm font-medium">{b.payment_methods?.join(', ') || 'N/A'}</p>
           </div>
           <div className="bg-slate-50 rounded-lg p-4">
-            <p className="text-[0.65rem] uppercase text-slate-500 tracking-wide font-medium mb-1">SMSF Support</p>
+            <p className="text-[0.69rem] uppercase text-slate-500 tracking-wide font-medium mb-1">SMSF Support</p>
             <p className="text-sm font-medium">{b.smsf_support ? 'Yes' : 'No'}</p>
           </div>
           <div className="bg-slate-50 rounded-lg p-4">
-            <p className="text-[0.65rem] uppercase text-slate-500 tracking-wide font-medium mb-1">Min Deposit</p>
+            <p className="text-[0.69rem] uppercase text-slate-500 tracking-wide font-medium mb-1">Min Deposit</p>
             <p className="text-sm font-medium">{b.min_deposit || '$0'}</p>
           </div>
         </div>

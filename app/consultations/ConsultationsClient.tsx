@@ -180,7 +180,7 @@ function ConsultationCard({
                 <span className="text-2xl font-extrabold text-slate-800">
                   ${priceDisplay}
                 </span>
-                <span className="px-1.5 py-0.5 text-[0.65rem] font-bold bg-amber-100 text-amber-700 rounded-full">
+                <span className="px-1.5 py-0.5 text-[0.69rem] font-bold bg-amber-100 text-amber-700 rounded-full">
                   PRO
                 </span>
               </>

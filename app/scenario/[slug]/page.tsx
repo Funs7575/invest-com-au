@@ -241,7 +241,7 @@ export default async function ScenarioPage({
                     {b.tagline && (
                       <p className="text-xs text-slate-600">{b.tagline}</p>
                     )}
-                    <div className="flex gap-3 mt-1 text-[0.65rem] text-slate-500">
+                    <div className="flex gap-3 mt-1 text-[0.69rem] text-slate-500">
                       {b.asx_fee && <span>ASX: {b.asx_fee}</span>}
                       {b.rating && (
                         <span>

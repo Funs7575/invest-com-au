@@ -131,12 +131,12 @@ export default function ProDealsClient({
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1 flex-wrap">
                           {deal.featured && (
-                            <span className="text-[0.65rem] px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full font-bold">
+                            <span className="text-[0.69rem] px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full font-bold">
                               FEATURED
                             </span>
                           )}
                           {deal.deal_value && (
-                            <span className="text-[0.65rem] px-2 py-0.5 bg-green-100 text-green-700 rounded-full font-bold">
+                            <span className="text-[0.69rem] px-2 py-0.5 bg-green-100 text-green-700 rounded-full font-bold">
                               {deal.deal_value}
                             </span>
                           )}
@@ -196,19 +196,19 @@ export default function ProDealsClient({
                             termsExpanded ? next.delete(deal.id) : next.add(deal.id);
                             return next;
                           })}
-                          className="text-[0.65rem] text-slate-400 hover:text-slate-600"
+                          className="text-[0.69rem] text-slate-400 hover:text-slate-600"
                         >
                           {termsExpanded ? "Hide terms" : "View terms & conditions"}
                         </button>
                         {termsExpanded && (
-                          <p className="text-[0.65rem] text-slate-400 mt-1 leading-relaxed">{deal.terms}</p>
+                          <p className="text-[0.69rem] text-slate-400 mt-1 leading-relaxed">{deal.terms}</p>
                         )}
                       </div>
                     )}
 
                     {/* Expiry */}
                     {deal.end_date && (
-                      <p className="text-[0.65rem] text-slate-400 mt-2">
+                      <p className="text-[0.69rem] text-slate-400 mt-2">
                         Expires {new Date(deal.end_date).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}
                       </p>
                     )}

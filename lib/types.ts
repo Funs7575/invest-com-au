@@ -90,6 +90,7 @@ export interface Article {
   read_time?: number;
   related_brokers?: string[];
   related_calc?: string;
+  cover_image_url?: string;
   evergreen: boolean;
   status?: string;
   published_at?: string;

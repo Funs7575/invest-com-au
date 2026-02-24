@@ -127,14 +127,14 @@ export default function PackagesPage() {
             >
               {isCurrent && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className="bg-slate-900 text-white text-[0.6rem] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                  <span className="bg-slate-900 text-white text-[0.69rem] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
                     Current Plan
                   </span>
                 </div>
               )}
 
               <div className="mb-4">
-                <span className={`inline-block px-2 py-0.5 rounded text-[0.65rem] font-bold uppercase tracking-wider ${colors.badge}`}>
+                <span className={`inline-block px-2 py-0.5 rounded text-[0.69rem] font-bold uppercase tracking-wider ${colors.badge}`}>
                   {pkg.tier}
                 </span>
               </div>

@@ -42,7 +42,7 @@ export default function StickyCTABar({ broker, detail, context = 'review' }: { b
             <div className="text-xs text-amber-50 truncate" title={detail}>{detail}</div>
           </div>
           {broker.deal && (
-            <span className="hidden md:inline-flex items-center gap-1 px-2 py-0.5 bg-white/20 border border-white/30 rounded-full text-[0.65rem] text-white font-semibold">
+            <span className="hidden md:inline-flex items-center gap-1 px-2 py-0.5 bg-white/20 border border-white/30 rounded-full text-[0.69rem] text-white font-semibold">
               Deal Available
             </span>
           )}
@@ -57,13 +57,13 @@ export default function StickyCTABar({ broker, detail, context = 'review' }: { b
           >
             {getBenefitCta(broker, context)}
           </a>
-          <span className="hidden sm:inline text-[0.65rem] text-amber-100/80 max-w-[220px] leading-tight">{ADVERTISER_DISCLOSURE_SHORT} {RISK_WARNING_CTA}</span>
+          <span className="hidden sm:inline text-[0.69rem] text-amber-100/80 max-w-[220px] leading-tight">{ADVERTISER_DISCLOSURE_SHORT} {RISK_WARNING_CTA}</span>
           <button
             onClick={() => {
               setDismissed(true);
               sessionStorage.setItem("stickyCTADismissed", "true");
             }}
-            className="shrink-0 p-1.5 rounded-full text-white/70 hover:text-white hover:bg-white/10 transition-colors"
+            className="shrink-0 p-2.5 rounded-full text-white/70 hover:text-white hover:bg-white/10 transition-colors"
             aria-label="Dismiss"
           >
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">

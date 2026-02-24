@@ -128,13 +128,13 @@ function BrokerReviewCard({ broker }: { broker: Broker }) {
 
         <div className="flex flex-wrap gap-2 mt-4">
           {broker.chess_sponsored && (
-            <span className="px-2 py-0.5 bg-green-50 text-green-700 text-[0.65rem] rounded border border-green-200 font-semibold">CHESS</span>
+            <span className="px-2 py-0.5 bg-green-50 text-green-700 text-[0.69rem] rounded border border-green-200 font-semibold">CHESS</span>
           )}
           {broker.smsf_support && (
-            <span className="px-2 py-0.5 bg-blue-50 text-blue-700 text-[0.65rem] rounded border border-blue-200 font-semibold">SMSF</span>
+            <span className="px-2 py-0.5 bg-blue-50 text-blue-700 text-[0.69rem] rounded border border-blue-200 font-semibold">SMSF</span>
           )}
           {broker.deal && (
-            <span className="px-2 py-0.5 bg-amber-50 text-amber-700 text-[0.65rem] rounded border border-amber-200 font-semibold">Deal</span>
+            <span className="px-2 py-0.5 bg-amber-50 text-amber-700 text-[0.69rem] rounded border border-amber-200 font-semibold">Deal</span>
           )}
         </div>
       </div>

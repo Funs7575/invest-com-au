@@ -54,7 +54,7 @@ export default function DealCard({ broker }: { broker: Broker }) {
           </div>
         </div>
         {broker.deal_category && (
-          <span className="text-[0.65rem] px-2 py-0.5 bg-slate-100 text-slate-500 rounded-full font-medium uppercase tracking-wide shrink-0">
+          <span className="text-[0.69rem] px-2 py-0.5 bg-slate-100 text-slate-500 rounded-full font-medium uppercase tracking-wide shrink-0">
             {broker.deal_category}
           </span>
         )}
@@ -64,7 +64,7 @@ export default function DealCard({ broker }: { broker: Broker }) {
       <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-3 mb-3">
         <p className="text-sm font-semibold text-slate-700">{broker.deal_text}</p>
         {expiryFormatted && (
-          <p className={`text-[0.65rem] mt-1 font-medium ${isUrgent ? "text-red-600" : "text-amber-600"}`}>
+          <p className={`text-[0.69rem] mt-1 font-medium ${isUrgent ? "text-red-600" : "text-amber-600"}`}>
             {isUrgent && daysRemaining !== null ? (
               <>{daysRemaining === 0 ? "Expires today!" : `Only ${daysRemaining} day${daysRemaining === 1 ? "" : "s"} left!`}</>
             ) : (
@@ -87,7 +87,7 @@ export default function DealCard({ broker }: { broker: Broker }) {
           <svg className="w-3.5 h-3.5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
           </svg>
-          <span className="text-[0.65rem] text-slate-500">
+          <span className="text-[0.69rem] text-slate-500">
             Verified {verifiedFormatted}
             {broker.deal_source && <> via {broker.deal_source}</>}
           </span>

@@ -385,7 +385,7 @@ export default function QuizPage() {
                 aria-hidden="true"
               />
               <div
-                className="text-[0.65rem] uppercase font-extrabold tracking-wider mb-4 inline-block px-3 py-1.5 rounded-full badge-pulse"
+                className="text-[0.69rem] uppercase font-extrabold tracking-wider mb-4 inline-block px-3 py-1.5 rounded-full badge-pulse"
                 style={{
                   color: topMatch.broker.color || '#b45309',
                   background: `${topMatch.broker.color || '#f59e0b'}20`,
@@ -449,7 +449,7 @@ export default function QuizPage() {
                   <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 border border-amber-200 rounded-full text-xs font-semibold text-amber-700">
                     <Icon name="flame" size={14} className="inline text-amber-500" /> {topMatch.broker.deal_text}
                     {topMatch.broker.deal_expiry && (
-                      <span className="text-[0.65rem] text-amber-500 font-normal ml-1">
+                      <span className="text-[0.69rem] text-amber-500 font-normal ml-1">
                         (expires {new Date(topMatch.broker.deal_expiry).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })})
                       </span>
                     )}
@@ -483,7 +483,7 @@ export default function QuizPage() {
                         <td className="px-4 py-2.5">
                           <div className="flex items-center gap-2">
                             <div
-                              className="w-6 h-6 rounded flex items-center justify-center text-[0.55rem] font-bold shrink-0"
+                              className="w-6 h-6 rounded flex items-center justify-center text-[0.69rem] font-bold shrink-0"
                               style={{ background: `${r.broker.color}20`, color: r.broker.color }}
                             >
                               {r.broker.icon || r.broker.name.charAt(0)}
@@ -564,7 +564,7 @@ export default function QuizPage() {
                       fees: 'Low Fees', safety: 'Beginner', tools: 'Advanced', simple: 'Beginner',
                     };
                     return (
-                      <span key={i} className="px-2 py-1 bg-white border border-slate-200 rounded-full text-[0.65rem] font-medium">
+                      <span key={i} className="px-2 py-1 bg-white border border-slate-200 rounded-full text-[0.69rem] font-medium">
                         Your answer → <strong>{keyMap[key] || key}</strong>
                       </span>
                     );
@@ -588,7 +588,7 @@ export default function QuizPage() {
                             }}
                           />
                         </div>
-                        <span className="text-[0.65rem] text-slate-500 w-8 text-right">{pct}%</span>
+                        <span className="text-[0.69rem] text-slate-500 w-8 text-right">{pct}%</span>
                       </div>
                     );
                   })}
@@ -650,14 +650,14 @@ export default function QuizPage() {
                     {/* Match reasons for runner-ups too */}
                     <div className="mt-2 flex flex-wrap gap-1.5">
                       {getMatchReasons(answers, r.broker).slice(0, 2).map((reason, ri) => (
-                        <span key={ri} className="text-[0.65rem] px-2 py-0.5 bg-slate-50 text-slate-500 rounded-full">
+                        <span key={ri} className="text-[0.69rem] px-2 py-0.5 bg-slate-50 text-slate-500 rounded-full">
                           ✓ {reason}
                         </span>
                       ))}
                     </div>
                     {r.broker.deal && r.broker.deal_text && (
                       <div className="mt-2">
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-50 border border-amber-200 rounded-full text-[0.65rem] font-semibold text-amber-700">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-50 border border-amber-200 rounded-full text-[0.69rem] font-semibold text-amber-700">
                           <Icon name="flame" size={10} className="inline text-amber-500" /> {r.broker.deal_text}
                         </span>
                       </div>

@@ -65,7 +65,7 @@ export default function CohortInsights({ experience, range, interest }: Props) {
           People Like You Also Chose
         </h3>
         {isIllustrative && (
-          <span className="text-[0.65rem] px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full font-medium">
+          <span className="text-[0.69rem] px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full font-medium">
             Illustrative
           </span>
         )}
@@ -107,7 +107,7 @@ export default function CohortInsights({ experience, range, interest }: Props) {
       </div>
 
       {isIllustrative && (
-        <p className="text-[0.65rem] text-slate-400 mt-3 italic">
+        <p className="text-[0.69rem] text-slate-400 mt-3 italic">
           These are editorial estimates, not actual user data. Real cohort
           statistics will appear automatically once we have enough quiz
           responses from similar investor profiles.

@@ -268,6 +268,17 @@ export default async function ArticlePage({
               </p>
             )}
 
+            {/* Cover Image */}
+            {a.cover_image_url && (
+              <div className="mt-4 mb-2 rounded-xl overflow-hidden aspect-[2/1] md:aspect-[5/2] bg-slate-100">
+                <img
+                  src={a.cover_image_url}
+                  alt={a.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
+
             {/* Author Byline */}
             <AuthorByline
               name={a.author_name}
