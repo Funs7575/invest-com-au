@@ -13,6 +13,8 @@ import ScrollReveal from "@/components/ScrollReveal";
 import Icon from "@/components/Icon";
 import UserReviewsList from "@/components/UserReviewsList";
 import SwitchStoriesList from "@/components/SwitchStoriesList";
+import OnThisPage from "@/components/OnThisPage";
+import CollapsibleSection from "@/components/CollapsibleSection";
 
 function FeeVerdict({ value, thresholds }: { value: number | undefined; thresholds: [number, number] }) {
   if (value == null) return <span className="px-2 py-0.5 bg-slate-100 text-slate-500 text-xs font-semibold rounded-full">N/A</span>;
@@ -129,8 +131,25 @@ export default function BrokerReviewClient({
     { label: "$10,000 US Trade", amount: 10000, cost: usCost(10000), type: "us" as const },
   ];
 
+  // Build TOC items dynamically based on available content
+  const tocItems = [
+    { id: "best-for", label: "Best For" },
+    { id: "fees", label: "Fee Audit" },
+    { id: "cost-example", label: "Trade Costs" },
+    { id: "safety", label: "Safety Check" },
+    { id: "pros-cons", label: "Pros & Cons" },
+    ...(userReviews.length > 0 ? [{ id: "reviews", label: "User Reviews" }] : []),
+    ...(switchStories.length > 0 ? [{ id: "switch-stories", label: "Switch Stories" }] : []),
+    ...(feeHistory.length > 0 ? [{ id: "fee-history", label: "Fee History" }] : []),
+    { id: "details", label: "Details" },
+    ...(similar.length > 0 ? [{ id: "similar", label: "Similar Brokers" }] : []),
+    ...(relatedArticles && relatedArticles.length > 0 ? [{ id: "related-articles", label: "Related Guides" }] : []),
+    { id: "questions", label: "Q&A" },
+  ];
+
   return (
     <div className="py-12">
+      <OnThisPage items={tocItems} />
       <div className="container-custom max-w-4xl">
         {/* Breadcrumb */}
         <div className="text-sm text-slate-500 mb-6">
@@ -260,7 +279,7 @@ export default function BrokerReviewClient({
         )}
 
         {/* Who Is This Best For? */}
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-8">
+        <div id="best-for" className="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-8 scroll-mt-20">
           <div className="flex items-center gap-2 mb-3">
             <Icon name="target" size={20} className="text-blue-700 shrink-0" />
             <h2 className="text-lg font-extrabold text-slate-900">Who Is {b.name} Best For?</h2>
@@ -276,7 +295,7 @@ export default function BrokerReviewClient({
         </div>
 
         {/* Fee Audit */}
-        <h2 className="text-2xl font-extrabold mb-2">Fee Audit</h2>
+        <h2 id="fees" className="text-2xl font-extrabold mb-2 scroll-mt-20">Fee Audit</h2>
         <p className="text-slate-600 mb-4 text-sm">We&apos;ve audited {b.name}&apos;s fee structure so you don&apos;t have to read the PDS.</p>
         <ScrollReveal animation="fee-row-stagger" className="bg-white border border-slate-200 rounded-xl overflow-hidden mb-8">
           {feeRows.map((row, i) => (
@@ -351,7 +370,7 @@ export default function BrokerReviewClient({
         </div>
 
         {/* Real Cost Example */}
-        <div className="border border-slate-200 rounded-xl p-6 mb-8">
+        <div id="cost-example" className="border border-slate-200 rounded-xl p-6 mb-8 scroll-mt-20">
           <div className="flex items-center gap-2 mb-4">
             <Icon name="calculator" size={20} className="text-slate-600 shrink-0" />
             <h2 className="text-lg font-extrabold">What Would a Typical Trade Cost?</h2>
@@ -402,7 +421,7 @@ export default function BrokerReviewClient({
         </div>
 
         {/* Safety Check */}
-        <h2 className="text-2xl font-extrabold mb-3">Safety &amp; Scam Check</h2>
+        <h2 id="safety" className="text-2xl font-extrabold mb-3 scroll-mt-20">Safety &amp; Scam Check</h2>
         <div className={`rounded-xl p-6 mb-8 border ${b.chess_sponsored ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
           <div className="flex items-center gap-3 mb-3">
             {b.chess_sponsored
@@ -423,7 +442,7 @@ export default function BrokerReviewClient({
         </div>
 
         {/* Pros & Cons */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div id="pros-cons" className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 scroll-mt-20">
           {b.pros && b.pros.length > 0 && (
             <ScrollReveal animation="scroll-slide-left" className="bg-emerald-50 rounded-xl p-6">
               <h3 className="text-emerald-800 font-bold mb-3">What We Like</h3>
@@ -453,23 +472,31 @@ export default function BrokerReviewClient({
         </div>
 
         {/* User Reviews Section */}
-        <UserReviewsList
-          reviews={userReviews}
-          stats={userReviewStats}
-          brokerSlug={b.slug}
-          brokerName={b.name}
-        />
+        <div id="reviews" className="scroll-mt-20">
+          <CollapsibleSection collapsedHeight={500} totalCount={userReviews.length} itemLabel="reviews">
+            <UserReviewsList
+              reviews={userReviews}
+              stats={userReviewStats}
+              brokerSlug={b.slug}
+              brokerName={b.name}
+            />
+          </CollapsibleSection>
+        </div>
 
         {/* Switch Stories Section */}
-        <SwitchStoriesList
-          stories={switchStories}
-          brokerSlug={b.slug}
-          brokerName={b.name}
-        />
+        <div id="switch-stories" className="scroll-mt-20">
+          <CollapsibleSection collapsedHeight={400} totalCount={switchStories.length} itemLabel="stories">
+            <SwitchStoriesList
+              stories={switchStories}
+              brokerSlug={b.slug}
+              brokerName={b.name}
+            />
+          </CollapsibleSection>
+        </div>
 
         {/* Fee Change History */}
         {feeHistory.length > 0 && (
-          <section className="mb-10">
+          <section id="fee-history" className="mb-10 scroll-mt-20">
             <h2 className="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
               <Icon name="clock" size={20} className="text-slate-400" />
               Fee Change History
@@ -477,37 +504,39 @@ export default function BrokerReviewClient({
             <p className="text-sm text-slate-500 mb-4">
               Tracking every fee and data change for {b.name}. Changes detected automatically via fee page monitoring.
             </p>
-            <div className="space-y-2">
-              {feeHistory.map((c) => (
-                <div key={c.id} className="flex items-start gap-3 bg-white border border-slate-200 rounded-lg px-4 py-3">
-                  <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded mt-0.5 ${
-                    c.change_type === 'update' ? 'bg-blue-50 text-blue-700' :
-                    c.change_type === 'add' ? 'bg-green-50 text-green-700' :
-                    'bg-red-50 text-red-700'
-                  }`}>
-                    {c.change_type}
-                  </span>
-                  <div className="flex-1 min-w-0">
-                    <span className="text-sm font-medium text-slate-700">{formatFieldName(c.field_name)}</span>
-                    {c.change_type === 'update' && (
-                      <div className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
-                        <span className="line-through text-red-400 truncate max-w-[180px]">{c.old_value || '\u2014'}</span>
-                        <span className="text-slate-300">{'\u2192'}</span>
-                        <span className="text-blue-700 font-medium truncate max-w-[180px]">{c.new_value || '\u2014'}</span>
-                      </div>
-                    )}
-                    {c.change_type === 'add' && <p className="text-xs text-green-700 mt-0.5">{c.new_value}</p>}
-                    {c.change_type === 'remove' && <p className="text-xs text-red-500 line-through mt-0.5">{c.old_value}</p>}
+            <CollapsibleSection collapsedHeight={350} totalCount={feeHistory.length} itemLabel="changes">
+              <div className="space-y-2">
+                {feeHistory.map((c) => (
+                  <div key={c.id} className="flex items-start gap-3 bg-white border border-slate-200 rounded-lg px-4 py-3">
+                    <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded mt-0.5 ${
+                      c.change_type === 'update' ? 'bg-blue-50 text-blue-700' :
+                      c.change_type === 'add' ? 'bg-green-50 text-green-700' :
+                      'bg-red-50 text-red-700'
+                    }`}>
+                      {c.change_type}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <span className="text-sm font-medium text-slate-700">{formatFieldName(c.field_name)}</span>
+                      {c.change_type === 'update' && (
+                        <div className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
+                          <span className="line-through text-red-400 truncate max-w-[180px]">{c.old_value || '\u2014'}</span>
+                          <span className="text-slate-300">{'\u2192'}</span>
+                          <span className="text-blue-700 font-medium truncate max-w-[180px]">{c.new_value || '\u2014'}</span>
+                        </div>
+                      )}
+                      {c.change_type === 'add' && <p className="text-xs text-green-700 mt-0.5">{c.new_value}</p>}
+                      {c.change_type === 'remove' && <p className="text-xs text-red-500 line-through mt-0.5">{c.old_value}</p>}
+                    </div>
+                    <span className="text-xs text-slate-400 whitespace-nowrap">
+                      {new Date(c.changed_at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })}
+                    </span>
                   </div>
-                  <span className="text-xs text-slate-400 whitespace-nowrap">
-                    {new Date(c.changed_at).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })}
-                  </span>
-                </div>
-              ))}
-            </div>
-            <p className="text-xs text-slate-400 mt-3">
-              Changes detected via automated fee page monitoring. <Link href="/whats-new" className="underline hover:text-slate-600">View all changes {'\u2192'}</Link>
-            </p>
+                ))}
+              </div>
+              <p className="text-xs text-slate-400 mt-3">
+                Changes detected via automated fee page monitoring. <Link href="/whats-new" className="underline hover:text-slate-600">View all changes {'\u2192'}</Link>
+              </p>
+            </CollapsibleSection>
           </section>
         )}
 
@@ -537,7 +566,7 @@ export default function BrokerReviewClient({
         </div>
 
         {/* Details Grid */}
-        <h2 className="text-2xl font-extrabold mb-3">Details</h2>
+        <h2 id="details" className="text-2xl font-extrabold mb-3 scroll-mt-20">Details</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
           <div className="bg-slate-50 rounded-lg p-4">
             <p className="text-[0.65rem] uppercase text-slate-500 tracking-wide font-medium mb-1">Platforms</p>
@@ -560,7 +589,7 @@ export default function BrokerReviewClient({
         {/* Similar Brokers */}
         {similar.length > 0 && (
           <>
-            <h2 className="text-xl font-extrabold mb-2">Similar Brokers</h2>
+            <h2 id="similar" className="text-xl font-extrabold mb-2 scroll-mt-20">Similar Brokers</h2>
             <p className="text-sm text-slate-600 mb-4">If {b.name} isn&apos;t quite right, consider these alternatives:</p>
             <ScrollReveal animation="scroll-stagger-children" className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
               {similar.map(s => (
@@ -588,7 +617,7 @@ export default function BrokerReviewClient({
         {/* Related Articles */}
         {relatedArticles && relatedArticles.length > 0 && (
           <>
-            <h2 className="text-xl font-extrabold mb-2">Guides Featuring {b.name}</h2>
+            <h2 id="related-articles" className="text-xl font-extrabold mb-2 scroll-mt-20">Guides Featuring {b.name}</h2>
             <p className="text-sm text-slate-600 mb-4">
               Our editorial team has covered {b.name} in these articles:
             </p>

@@ -29,6 +29,7 @@ import { getArticleFiltersForBestPage, CATEGORY_COLORS } from "@/lib/internal-li
 import { boostFeaturedPartner, isSponsored } from "@/lib/sponsorship";
 import SponsorBadge from "@/components/SponsorBadge";
 import JargonTooltip from "@/components/JargonTooltip";
+import OnThisPage from "@/components/OnThisPage";
 import type { Article } from "@/lib/types";
 
 const SLUG_TO_SEGMENT: Record<string, LeadSegment> = {
@@ -243,6 +244,14 @@ export default async function BestBrokerPage({
       )}
 
       <div className="py-12">
+        <OnThisPage items={[
+          ...(topPick ? [{ id: "top-pick", label: "Top Pick" }] : []),
+          { id: "all-brokers", label: "All Brokers" },
+          ...(cat.sections.length > 0 ? [{ id: "editorial", label: "Analysis" }] : []),
+          ...(cat.faqs.length > 0 ? [{ id: "faq", label: "FAQ" }] : []),
+          ...(relatedArticles.length > 0 ? [{ id: "related-articles", label: "Related Articles" }] : []),
+          { id: "questions", label: "Q&A" },
+        ]} />
         <div className="container-custom max-w-4xl">
           {/* Breadcrumb */}
           <nav className="text-sm text-slate-500 mb-6">
@@ -313,7 +322,7 @@ export default async function BestBrokerPage({
 
           {/* Top Pick highlight */}
           {topPick && (
-            <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 mb-8">
+            <div id="top-pick" className="bg-amber-50 border border-amber-200 rounded-xl p-5 mb-8 scroll-mt-20">
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-xs font-bold uppercase tracking-wide text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">
                   Our Top Pick
@@ -356,7 +365,7 @@ export default async function BestBrokerPage({
           )}
 
           {/* All qualifying brokers */}
-          <h2 className="text-2xl font-bold mb-4">
+          <h2 id="all-brokers" className="text-2xl font-bold mb-4 scroll-mt-20">
             All Qualifying Brokers ({filtered.length})
           </h2>
 
@@ -434,7 +443,7 @@ export default async function BestBrokerPage({
           <CompactDisclaimerLine />
 
           {/* Editorial sections */}
-          <div className="space-y-8 mb-10">
+          <div id="editorial" className="space-y-8 mb-10 scroll-mt-20">
             {cat.sections.map((section, i) => (
               <section key={i}>
                 <h2 className="text-xl font-bold mb-2">{section.heading}</h2>
@@ -450,7 +459,7 @@ export default async function BestBrokerPage({
 
           {/* FAQ section */}
           {cat.faqs.length > 0 && (
-            <div className="mb-10">
+            <div id="faq" className="mb-10 scroll-mt-20">
               <h2 className="text-xl font-bold mb-4">Frequently Asked Questions</h2>
               <div className="space-y-4">
                 {cat.faqs.map((faq, i) => (
@@ -469,7 +478,7 @@ export default async function BestBrokerPage({
 
           {/* Related Articles */}
           {relatedArticles.length > 0 && (
-            <div className="mb-10">
+            <div id="related-articles" className="mb-10 scroll-mt-20">
               <h3 className="text-lg font-bold mb-4">Related Articles</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {relatedArticles.map((ra) => {
@@ -513,6 +522,7 @@ export default async function BestBrokerPage({
           </div>
 
           {/* Community Q&A */}
+          <div id="questions" className="scroll-mt-20" />
           <QASection
             questions={questions}
             brokerSlug={slug}

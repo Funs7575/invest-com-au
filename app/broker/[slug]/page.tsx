@@ -222,7 +222,7 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
         />
       </Suspense>
       {/* Q&A Section */}
-      <div className="container-custom max-w-4xl">
+      <div id="questions" className="container-custom max-w-4xl scroll-mt-20">
         <QASection
           questions={questions}
           brokerSlug={b.slug}
