@@ -149,13 +149,25 @@ export default async function HomePage() {
       <section className="py-2.5 md:py-4 bg-white border-b border-slate-100">
         <div className="container-custom">
           <p className="text-[0.65rem] uppercase tracking-widest text-slate-400 text-center mb-2 md:mb-3 font-medium">Brokers we compare</p>
-          <div className="flex items-center justify-center gap-4 sm:gap-8 flex-wrap opacity-70">
+          {/* Desktop: centered wrap row */}
+          <div className="hidden sm:flex items-center justify-center gap-8 flex-wrap opacity-70">
             {(brokers as Broker[])?.slice(0, 6).map((broker) => (
-              <div key={broker.id} className="flex items-center gap-1.5 sm:gap-2">
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-white text-[0.6rem] sm:text-[0.65rem] font-bold shrink-0" style={{ backgroundColor: broker.color || '#64748b' }}>
+              <div key={broker.id} className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-[0.65rem] font-bold shrink-0" style={{ backgroundColor: broker.color || '#64748b' }}>
                   {broker.name?.slice(0, 2).toUpperCase()}
                 </div>
-                <span className="text-xs sm:text-sm font-semibold text-slate-500">{broker.name}</span>
+                <span className="text-sm font-semibold text-slate-500">{broker.name}</span>
+              </div>
+            ))}
+          </div>
+          {/* Mobile: horizontal snap-scroll */}
+          <div className="sm:hidden flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-4 px-4 opacity-70">
+            {(brokers as Broker[])?.slice(0, 6).map((broker) => (
+              <div key={broker.id} className="flex items-center gap-1.5 shrink-0 snap-start">
+                <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-[0.6rem] font-bold shrink-0" style={{ backgroundColor: broker.color || '#64748b' }}>
+                  {broker.name?.slice(0, 2).toUpperCase()}
+                </div>
+                <span className="text-xs font-semibold text-slate-500 whitespace-nowrap">{broker.name}</span>
               </div>
             ))}
           </div>
@@ -253,13 +265,13 @@ export default async function HomePage() {
                 Our category guides rank brokers for your specific situation.
               </p>
             </div>
-            {/* Mobile: 3 cards. Desktop: all 6 */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+            {/* Desktop: grid */}
+            <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
               {bestForCards.map((card, i) => (
                 <Link
                   key={card.title}
                   href={card.href}
-                  className={`border rounded-xl p-4 md:p-5 active:scale-[0.98] transition-all ${card.color} stagger-item ${i >= 3 ? 'hidden sm:block' : 'block'}`}
+                  className={`border rounded-xl p-4 md:p-5 active:scale-[0.98] transition-all ${card.color} stagger-item`}
                   style={{ animationDelay: `${0.05 + i * 0.07}s` }}
                 >
                   <Icon name={card.icon} size={24} className="mb-2 opacity-80" />
@@ -267,6 +279,27 @@ export default async function HomePage() {
                   <p className="text-sm opacity-80">{card.description}</p>
                 </Link>
               ))}
+            </div>
+            {/* Mobile: horizontal snap-scroll showing all 6 */}
+            <div className="sm:hidden">
+              <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-3 scrollbar-hide -mx-4 px-4">
+                {bestForCards.map((card) => (
+                  <Link
+                    key={card.title}
+                    href={card.href}
+                    className={`border rounded-xl p-4 active:scale-[0.98] transition-all ${card.color} w-[72vw] shrink-0 snap-start`}
+                  >
+                    <Icon name={card.icon} size={22} className="mb-1.5 opacity-80" />
+                    <h3 className="font-bold mb-0.5 text-sm">{card.title}</h3>
+                    <p className="text-xs opacity-80 leading-snug">{card.description}</p>
+                  </Link>
+                ))}
+              </div>
+              <div className="flex justify-center gap-1.5 mt-1">
+                {bestForCards.map((_, i) => (
+                  <div key={i} className={`w-1.5 h-1.5 rounded-full ${i === 0 ? 'bg-slate-500' : 'bg-slate-300'}`} />
+                ))}
+              </div>
             </div>
             <div className="text-center mt-4 md:mt-6">
               <Link
@@ -294,12 +327,13 @@ export default async function HomePage() {
                   View All &rarr;
                 </Link>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-5">
-                {(articles as Article[]).slice(0, 6).map((article, i) => (
+              {/* Desktop: grid */}
+              <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {(articles as Article[]).slice(0, 6).map((article) => (
                   <Link
                     key={article.id}
                     href={`/article/${article.slug}`}
-                    className={`border border-slate-200 rounded-xl p-4 md:p-5 hover:shadow-md hover:border-slate-300 transition-all duration-200 group ${i >= 3 ? 'hidden md:block' : 'block'}`}
+                    className="border border-slate-200 rounded-xl p-5 hover:shadow-md hover:border-slate-300 transition-all duration-200 group"
                   >
                     {article.category && (
                       <span className="inline-block text-[0.65rem] font-bold uppercase tracking-wider text-slate-600 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full mb-3">
@@ -309,13 +343,43 @@ export default async function HomePage() {
                     <h3 className="font-bold text-slate-900 group-hover:text-slate-600 transition-colors mb-2 leading-snug">
                       {article.title}
                     </h3>
-                    <p className="text-sm text-slate-500 line-clamp-2 mb-3 hidden md:block">{article.excerpt}</p>
+                    <p className="text-sm text-slate-500 line-clamp-2 mb-3">{article.excerpt}</p>
                     <div className="flex items-center gap-3 text-xs text-slate-400">
                       {article.read_time && <span>{article.read_time} min read</span>}
                       <span className="text-slate-900 font-semibold group-hover:translate-x-0.5 transition-transform">Read Guide &rarr;</span>
                     </div>
                   </Link>
                 ))}
+              </div>
+              {/* Mobile: horizontal snap-scroll showing all 6 */}
+              <div className="md:hidden">
+                <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-3 scrollbar-hide -mx-4 px-4">
+                  {(articles as Article[]).slice(0, 6).map((article) => (
+                    <Link
+                      key={article.id}
+                      href={`/article/${article.slug}`}
+                      className="border border-slate-200 rounded-xl p-4 hover:shadow-md transition-all duration-200 group w-[78vw] shrink-0 snap-start"
+                    >
+                      {article.category && (
+                        <span className="inline-block text-[0.65rem] font-bold uppercase tracking-wider text-slate-600 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full mb-2">
+                          {article.category}
+                        </span>
+                      )}
+                      <h3 className="font-bold text-sm text-slate-900 group-hover:text-slate-600 transition-colors mb-1.5 leading-snug line-clamp-2">
+                        {article.title}
+                      </h3>
+                      <div className="flex items-center gap-3 text-xs text-slate-400">
+                        {article.read_time && <span>{article.read_time} min read</span>}
+                        <span className="text-slate-900 font-semibold">Read Guide &rarr;</span>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+                <div className="flex justify-center gap-1.5 mt-1">
+                  {(articles as Article[]).slice(0, 6).map((_, i) => (
+                    <div key={i} className={`w-1.5 h-1.5 rounded-full ${i === 0 ? 'bg-slate-500' : 'bg-slate-300'}`} />
+                  ))}
+                </div>
               </div>
             </div>
           </section>
