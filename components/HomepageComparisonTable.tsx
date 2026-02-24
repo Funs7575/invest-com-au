@@ -197,104 +197,64 @@ export default function HomepageComparisonTable({
         </table>
       </div>
 
-      {/* Mobile Cards — horizontal snap scroll */}
-      <div key={`mobile-${activeTab}`} className="md:hidden flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-4 px-4 motion-safe:tab-content-enter">
-        {displayBrokers.map((broker, i) => {
+      {/* Mobile: Vertical ranked list — clean, scannable, full-width */}
+      <div key={`mobile-${activeTab}`} className="md:hidden divide-y divide-slate-100 motion-safe:tab-content-enter">
+        {displayBrokers.slice(0, 5).map((broker, i) => {
           const isTopRatedMobile = i === 0 && !isSponsored(broker);
           return (
-          <div
-            key={broker.id}
-            className={`rounded-xl border p-4 bg-white shrink-0 w-[80vw] max-w-[320px] snap-start ${
-              isSponsored(broker)
-                ? "border-blue-400 ring-1 ring-blue-400/30 bg-blue-50/20"
-                : isTopRatedMobile
-                ? "border-amber-400 ring-1 ring-amber-400/30 bg-amber-50/20"
-                : editorPicks[broker.slug]
-                ? "border-slate-700 ring-1 ring-slate-700/30"
-                : "border-slate-200"
-            }`}
-          >
-            {isSponsored(broker) ? (
-              <div className="mb-2"><SponsorBadge broker={broker} /></div>
-            ) : isTopRatedMobile ? (
-              <div className="text-[0.65rem] font-extrabold uppercase tracking-wide text-amber-600 mb-2">
-                🏆 Top Rated
+          <div key={broker.id} className="py-3.5 first:pt-0">
+            {/* Row 1: Rank + Name + Rating + Badge */}
+            <div className="flex items-center gap-3">
+              <div className="w-7 text-center">
+                {isTopRatedMobile ? (
+                  <span className="text-amber-500 text-sm">🏆</span>
+                ) : (
+                  <span className="text-xs font-bold text-slate-400">#{i + 1}</span>
+                )}
               </div>
-            ) : editorPicks[broker.slug] ? (
-              <div className="text-[0.65rem] font-extrabold uppercase tracking-wide text-slate-700 mb-2">
-                {editorPicks[broker.slug]}
-              </div>
-            ) : null}
-            <div className="flex items-center gap-3 mb-3">
-              <div className="text-xs font-bold text-slate-400 w-5">#{i + 1}</div>
-              <div className="w-10 h-10 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center font-bold text-slate-900 text-sm shrink-0">
+              <div className="w-9 h-9 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center font-bold text-slate-900 text-xs shrink-0">
                 {broker.name.substring(0, 2).toUpperCase()}
               </div>
               <div className="flex-1 min-w-0">
-                <a
-                  href={`/broker/${broker.slug}`}
-                  className="font-bold text-sm hover:text-slate-900 transition-colors"
-                >
-                  {broker.name}
-                </a>
-                <div className="text-xs text-amber">
-                  {renderStars(broker.rating || 0)}{" "}
-                  <span className="text-slate-500">{broker.rating}/5</span>
+                <div className="flex items-center gap-1.5">
+                  <a href={`/broker/${broker.slug}`} className="font-bold text-sm text-slate-900 truncate">
+                    {broker.name}
+                  </a>
+                  {isSponsored(broker) && <SponsorBadge broker={broker} />}
+                  <PromoBadge broker={broker} />
+                </div>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <span className="text-xs text-amber">{renderStars(broker.rating || 0)}</span>
+                  <span className="text-xs text-slate-400">{broker.rating}/5</span>
+                  {!isSponsored(broker) && editorPicks[broker.slug] && (
+                    <span className="text-[0.6rem] font-bold uppercase text-blue-700 bg-blue-50 px-1.5 py-0.5 rounded">
+                      {editorPicks[broker.slug]}
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
-
-            <div className="grid grid-cols-2 gap-2 mb-3">
-              <div className="bg-slate-50 rounded-md p-2">
-                <div className="text-[0.65rem] uppercase text-slate-500 font-medium">
-                  <JargonTooltip term="ASX Fee" className="text-[0.65rem]" />
-                </div>
-                <div className="text-sm font-semibold">{broker.asx_fee || "N/A"}</div>
+            {/* Row 2: Key fees + CTA */}
+            <div className="flex items-center gap-2 mt-2.5 ml-10">
+              <div className="flex items-center gap-3 flex-1 text-xs text-slate-500">
+                <span><span className="font-semibold text-slate-700">{broker.asx_fee || "N/A"}</span> ASX</span>
+                <span><span className="font-semibold text-slate-700">{broker.us_fee || "N/A"}</span> US</span>
+                {broker.chess_sponsored && (
+                  <span className="text-green-600 font-semibold">CHESS ✓</span>
+                )}
               </div>
-              <div className="bg-slate-50 rounded-md p-2">
-                <div className="text-[0.65rem] uppercase text-slate-500 font-medium">
-                  <JargonTooltip term="US Fee" className="text-[0.65rem]" />
-                </div>
-                <div className="text-sm font-semibold">{broker.us_fee || "N/A"}</div>
-              </div>
-              <div className="bg-slate-50 rounded-md p-2">
-                <div className="text-[0.65rem] uppercase text-slate-500 font-medium">
-                  <JargonTooltip term="FX Rate" className="text-[0.65rem]" />
-                </div>
-                <div className="text-sm font-semibold">
-                  {broker.fx_rate != null ? `${broker.fx_rate}%` : "N/A"}
-                </div>
-              </div>
-              <div className="bg-slate-50 rounded-md p-2">
-                <div className="text-[0.65rem] uppercase text-slate-500 font-medium">
-                  <JargonTooltip term="CHESS" className="text-[0.65rem]" />
-                </div>
-                <div
-                  className={`text-sm font-semibold ${
-                    broker.chess_sponsored ? "text-green-600" : "text-red-500"
-                  }`}
-                >
-                  {broker.chess_sponsored ? "\u2713 Yes" : "\u2717 No"}
-                </div>
-              </div>
+              <a
+                href={getAffiliateLink(broker)}
+                target="_blank"
+                rel={AFFILIATE_REL}
+                className="shrink-0 px-3.5 py-2 bg-amber-500 text-white text-xs font-bold rounded-lg hover:bg-amber-600 active:scale-[0.97] transition-all"
+              >
+                Visit
+              </a>
             </div>
-
-            <a
-              href={getAffiliateLink(broker)}
-              target="_blank"
-              rel={AFFILIATE_REL}
-              className="block w-full text-center py-3 bg-amber-600 text-white font-bold rounded-lg mt-4 hover:bg-amber-700 transition-colors"
-            >
-              {getBenefitCta(broker, "compare")}
-            </a>
           </div>
           );
         })}
-      </div>
-      {/* Swipe hint — mobile only */}
-      <div className="md:hidden flex items-center justify-center gap-1.5 pb-3 text-xs text-slate-400">
-        <span>Swipe for more</span>
-        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
       </div>
 
       {/* Affiliate disclosure */}
