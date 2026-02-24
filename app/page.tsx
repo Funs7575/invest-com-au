@@ -94,22 +94,22 @@ export default async function HomePage() {
       />
 
       {/* Hero Section */}
-      <section className="relative bg-white border-b border-slate-100 py-10 md:py-14 overflow-hidden">
+      <section className="relative bg-white border-b border-slate-100 py-6 md:py-14 overflow-hidden">
         <div className="relative max-w-4xl mx-auto px-4 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-full text-xs font-medium text-slate-600 mb-6 hero-fade-up hero-fade-up-1 border border-slate-200">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-full text-xs font-medium text-slate-600 mb-3 md:mb-6 hero-fade-up hero-fade-up-1 border border-slate-200">
             <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
             Updated {updatedDateStr} &middot; {brokerCount} brokers verified
           </div>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 hero-fade-up hero-fade-up-1 leading-tight">
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 hero-fade-up hero-fade-up-1 leading-tight">
             Find the Right Broker<br className="hidden sm:block" /> for Your Money
           </h1>
-          <p className="mt-5 text-lg md:text-xl text-slate-500 max-w-2xl mx-auto hero-fade-up hero-fade-up-2 leading-relaxed">
+          <p className="mt-3 md:mt-5 text-base md:text-xl text-slate-500 max-w-2xl mx-auto hero-fade-up hero-fade-up-2 leading-relaxed">
             Compare fees, features, and safety across {brokerCount}+ ASIC-regulated Australian investment platforms — independent, transparent, and free.
           </p>
           <div className="hero-fade-up hero-fade-up-3">
             <HomepageSearchBar />
           </div>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-6 mb-2 hero-fade-up hero-fade-up-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-4 md:mt-6 mb-1 md:mb-2 hero-fade-up hero-fade-up-4">
             <Link
               href="/quiz"
               className="px-5 md:px-7 py-3.5 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 hover:scale-105 hover:shadow-lg transition-all duration-200 text-sm w-full sm:w-auto text-center"
@@ -124,7 +124,7 @@ export default async function HomePage() {
             </Link>
           </div>
           {/* Trust signals — 2×2 grid on mobile, inline row on desktop */}
-          <div className="grid grid-cols-2 sm:flex sm:items-center sm:justify-center gap-3 sm:gap-8 pt-6 text-xs text-slate-400 hero-fade-up hero-fade-up-5">
+          <div className="grid grid-cols-2 sm:flex sm:items-center sm:justify-center gap-3 sm:gap-8 pt-3 md:pt-6 text-xs text-slate-400 hero-fade-up hero-fade-up-5">
             <span className="flex items-center justify-center gap-1.5">
               <svg className="w-4 h-4 text-slate-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
               ASIC-regulated only
@@ -146,9 +146,9 @@ export default async function HomePage() {
       </section>
 
       {/* Broker Logo Strip — instant credibility */}
-      <section className="py-4 bg-white border-b border-slate-100">
+      <section className="py-2.5 md:py-4 bg-white border-b border-slate-100">
         <div className="container-custom">
-          <p className="text-[0.65rem] uppercase tracking-widest text-slate-400 text-center mb-3 font-medium">Brokers we compare</p>
+          <p className="text-[0.65rem] uppercase tracking-widest text-slate-400 text-center mb-2 md:mb-3 font-medium">Brokers we compare</p>
           <div className="flex items-center justify-center gap-4 sm:gap-8 flex-wrap opacity-70">
             {(brokers as Broker[])?.slice(0, 6).map((broker) => (
               <div key={broker.id} className="flex items-center gap-1.5 sm:gap-2">
@@ -164,7 +164,7 @@ export default async function HomePage() {
 
       {/* Comparison Table */}
       <ScrollFadeIn>
-        <section className="py-12 md:py-16 bg-slate-50">
+        <section className="py-8 md:py-16 bg-slate-50">
           <div className="container-custom">
             <div className="mb-8">
               <h2 className="text-2xl md:text-3xl font-bold text-slate-900">

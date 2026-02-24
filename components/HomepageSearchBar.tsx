@@ -17,7 +17,7 @@ export default function HomepageSearchBar() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto relative mt-8">
+    <div className="max-w-2xl mx-auto relative mt-5 md:mt-8">
       <div className="relative">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
         <input
