@@ -59,7 +59,7 @@ function checkBlocklist(story: StoryContent): string | null {
   }
 
   // 5. Repetitive characters (e.g. "aaaaaa" or "!!!!!!")
-  if (/(.)\\1{5,}/.test(allText)) {
+  if (/(.)\1{5,}/.test(allText)) {
     return 'Repetitive characters';
   }
 

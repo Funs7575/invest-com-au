@@ -17,6 +17,14 @@ export const metadata: Metadata = {
     description:
       "Track every broker fee and data change in real time. See when ASX brokerage, FX rates, or platform features change.",
     url: absoluteUrl("/whats-new"),
+    images: [{ url: `/api/og?title=${encodeURIComponent("What Changed")}&subtitle=${encodeURIComponent("Broker Fee & Data Changes — Tracked in Real Time")}&type=default`, width: 1200, height: 630, alt: "Broker Fee & Data Changes" }],
+  },
+  twitter: {
+    card: "summary_large_image" as const,
+    title: `Broker Fee & Data Changes — ${SITE_NAME}`,
+    description:
+      "Track every broker fee and data change in real time. See when ASX brokerage, FX rates, or platform features change.",
+    images: [`/api/og?title=${encodeURIComponent("What Changed")}&subtitle=${encodeURIComponent("Broker Fee & Data Changes — Tracked in Real Time")}&type=default`],
   },
   alternates: { canonical: "/whats-new" },
 };

@@ -177,10 +177,10 @@ export default function BrokerReviewClient({
             <span className="text-amber text-sm">{renderStars(b.rating || 0)}</span>
             <span className="text-sm text-slate-500">{b.rating}/5</span>
             {b.chess_sponsored && (
-              <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded-full">CHESS Sponsored</span>
+              <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">CHESS Sponsored</span>
             )}
             {b.deal && (
-              <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded-full">Deal of the Month</span>
+              <span className="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-semibold rounded-full">Deal of the Month</span>
             )}
           </div>
           <a
@@ -209,7 +209,7 @@ export default function BrokerReviewClient({
               )}
               Reviewed by{" "}
               {authorUrl ? (
-                <a href={authorUrl} className="font-semibold text-slate-700 hover:text-green-700 transition-colors">
+                <a href={authorUrl} className="font-semibold text-slate-700 hover:text-blue-700 transition-colors">
                   {authorName}
                 </a>
               ) : (
@@ -260,15 +260,15 @@ export default function BrokerReviewClient({
         )}
 
         {/* Who Is This Best For? */}
-        <div className="bg-green-50 border border-green-200 rounded-xl p-6 mb-8">
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-8">
           <div className="flex items-center gap-2 mb-3">
-            <Icon name="target" size={20} className="text-green-700 shrink-0" />
-            <h2 className="text-lg font-extrabold text-green-900">Who Is {b.name} Best For?</h2>
+            <Icon name="target" size={20} className="text-blue-700 shrink-0" />
+            <h2 className="text-lg font-extrabold text-slate-900">Who Is {b.name} Best For?</h2>
           </div>
           <ul className="space-y-2">
             {bestFor.map((item, i) => (
               <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
-                <span className="text-green-600 font-bold mt-0.5">✓</span>
+                <span className="text-blue-600 font-bold mt-0.5">✓</span>
                 <span>{item}</span>
               </li>
             ))}
@@ -310,16 +310,16 @@ export default function BrokerReviewClient({
               </strong>
             </span>
             {b.fee_source_url && (
-              <a href={b.fee_source_url} target="_blank" rel="noopener noreferrer" className="text-green-700 hover:underline">
+              <a href={b.fee_source_url} target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:underline">
                 Pricing page ↗
               </a>
             )}
             {b.fee_source_tcs_url && (
-              <a href={b.fee_source_tcs_url} target="_blank" rel="noopener noreferrer" className="text-green-700 hover:underline">
+              <a href={b.fee_source_tcs_url} target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:underline">
                 Terms &amp; Conditions ↗
               </a>
             )}
-            <Link href="/how-we-verify" className="text-green-700 hover:underline">
+            <Link href="/how-we-verify" className="text-blue-700 hover:underline">
               How we verify fees
             </Link>
             {b.fee_last_checked && (
@@ -345,7 +345,7 @@ export default function BrokerReviewClient({
           <div className="mt-3 pt-3 border-t border-slate-200">
             <p className="text-xs text-slate-400 leading-relaxed">
               <strong className="text-slate-500">Editorial independence:</strong> Our ratings and rankings are determined by our editorial team using a standardised methodology. Affiliate partnerships may influence which brokers we review but never our ratings or recommendations.{" "}
-              <Link href="/how-we-verify" className="text-green-700 hover:underline">Read our full methodology →</Link>
+              <Link href="/how-we-verify" className="text-blue-700 hover:underline">Read our full methodology →</Link>
             </p>
           </div>
         </div>
@@ -374,12 +374,12 @@ export default function BrokerReviewClient({
           </div>
           <p className="text-xs text-slate-400 mt-3 text-center">
             Estimates based on published fee schedule. Actual costs may vary.{' '}
-            <Link href="/calculators" className="text-green-700 hover:underline">Try our full calculators →</Link>
+            <Link href="/calculators" className="text-blue-700 hover:underline">Try our full calculators →</Link>
           </p>
         </div>
 
         {/* Inline CTA 1 */}
-        <div className="bg-green-50 border border-green-200 rounded-xl p-5 mb-8">
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 mb-8">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <p className="text-sm min-w-0 flex-1">
               <strong>Like what you see?</strong>{' '}
@@ -425,12 +425,12 @@ export default function BrokerReviewClient({
         {/* Pros & Cons */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           {b.pros && b.pros.length > 0 && (
-            <ScrollReveal animation="scroll-slide-left" className="bg-green-50 rounded-xl p-6">
-              <h3 className="text-green-800 font-bold mb-3">What We Like</h3>
+            <ScrollReveal animation="scroll-slide-left" className="bg-emerald-50 rounded-xl p-6">
+              <h3 className="text-emerald-800 font-bold mb-3">What We Like</h3>
               <ul className="space-y-2">
                 {b.pros.map((pro: string, i: number) => (
                   <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
-                    <span className="text-green-600 font-bold mt-0.5">+</span>
+                    <span className="text-emerald-600 font-bold mt-0.5">+</span>
                     <span>{pro}</span>
                   </li>
                 ))}
@@ -512,7 +512,7 @@ export default function BrokerReviewClient({
         )}
 
         {/* Inline CTA 2 */}
-        <div className="bg-green-50 border border-green-200 rounded-xl p-5 mb-8">
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 mb-8">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <p className="text-sm min-w-0 flex-1">
               <strong>Ready to decide?</strong>{' '}
@@ -641,7 +641,7 @@ export default function BrokerReviewClient({
         <div className="mt-6 text-center">
           <p className="text-sm text-slate-500 mb-2">Want to compare other options?</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link href="/quiz" className="text-sm text-green-700 font-semibold hover:text-green-800 transition-colors border border-green-200 rounded-lg px-4 py-2 hover:bg-green-50">
+            <Link href="/quiz" className="text-sm text-amber-700 font-semibold hover:text-amber-800 transition-colors border border-amber-200 rounded-lg px-4 py-2 hover:bg-amber-50">
               Take Our Broker Quiz →
             </Link>
             <Link href="/compare" className="text-sm text-slate-600 font-semibold hover:text-slate-800 transition-colors border border-slate-200 rounded-lg px-4 py-2 hover:bg-slate-50">
