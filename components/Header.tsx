@@ -47,14 +47,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 bg-white border-b border-slate-200">
       <div className="container-custom">
         <div className="flex items-center justify-between h-16">
-          <Link href="/" className="flex items-center gap-1.5 text-xl font-bold text-slate-900">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/kangaroo-icon.svg"
-              alt=""
-              className="w-9 h-9 shrink-0"
-              aria-hidden="true"
-            />
+          <Link href="/" className="flex items-center text-xl font-bold text-slate-900">
             <span>Invest<span className="text-amber-500">.com.au</span></span>
           </Link>
 

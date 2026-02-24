@@ -137,11 +137,20 @@ export default async function CostScenarioPage({
 
         <AuthorByline
           name={REVIEW_AUTHOR.name}
-          verifiedDate={new Date().toLocaleDateString("en-AU", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })}
+          verifiedDate={
+            brokers.length > 0
+              ? new Date(
+                  brokers.reduce((latest, b) => {
+                    const ts = b.updated_at || "";
+                    return ts > latest ? ts : latest;
+                  }, "")
+                ).toLocaleDateString("en-AU", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })
+              : undefined
+          }
           showMethodologyLink
         />
 

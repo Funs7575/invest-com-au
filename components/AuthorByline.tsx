@@ -57,13 +57,7 @@ export default function AuthorByline({
   const displayTwitter = author?.twitter_url || twitterUrl;
   const authorSlug = author?.slug;
 
-  const displayDate =
-    verifiedDate ||
-    new Date().toLocaleDateString("en-AU", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+  const displayDate = verifiedDate || null;
 
   const initials = getInitials(displayName);
   const hasSocial = displayLinkedin || displayTwitter;
@@ -122,7 +116,7 @@ export default function AuthorByline({
               isDark ? "text-slate-400" : "text-slate-700"
             }`}
           >
-            Data verified: {displayDate}
+            {displayDate ? `Data verified: ${displayDate}` : "Invest.com.au"}
           </p>
         </div>
 

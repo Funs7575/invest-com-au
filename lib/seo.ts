@@ -150,7 +150,7 @@ export function brokerReviewJsonLd(broker: {
 }, reviewer?: TeamMember) {
   const datePublished = broker.created_at
     ? new Date(broker.created_at).toISOString().split("T")[0]
-    : "2025-01-01";
+    : new Date().toISOString().split("T")[0];
   const dateModified = broker.updated_at
     ? new Date(broker.updated_at).toISOString().split("T")[0]
     : datePublished;
@@ -244,7 +244,7 @@ export function reviewArticleJsonLd(broker: {
 }, reviewer?: TeamMember) {
   const datePublished = broker.created_at
     ? new Date(broker.created_at).toISOString().split("T")[0]
-    : "2025-01-01";
+    : new Date().toISOString().split("T")[0];
   const dateModified = broker.updated_at
     ? new Date(broker.updated_at).toISOString().split("T")[0]
     : datePublished;

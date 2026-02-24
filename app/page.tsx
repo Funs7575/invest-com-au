@@ -65,7 +65,16 @@ export default async function HomePage() {
       .limit(6),
   ]);
 
-  const brokerCount = brokers?.length || 40;
+  const brokerCount = brokers?.length || 0;
+
+  // Find the most recent data update across all brokers (for the "Updated" badge)
+  const mostRecentUpdate = (brokers as Broker[])?.reduce((latest: string, b: Broker) => {
+    const ts = b.updated_at || b.fee_last_checked;
+    return ts && ts > latest ? ts : latest;
+  }, "") || "";
+  const updatedDateStr = mostRecentUpdate
+    ? new Date(mostRecentUpdate).toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" })
+    : new Date().toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" });
 
   return (
     <div>
@@ -88,7 +97,7 @@ export default async function HomePage() {
         <div className="relative max-w-4xl mx-auto px-4 text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-full text-xs font-medium text-slate-600 mb-6 hero-fade-up hero-fade-up-1 border border-slate-200">
             <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
-            Updated {new Date().toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" })} &middot; {brokerCount} brokers verified
+            Updated {updatedDateStr} &middot; {brokerCount} brokers verified
           </div>
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 hero-fade-up hero-fade-up-1 leading-tight">
             Find the Right Broker<br className="hidden sm:block" /> for Your Money

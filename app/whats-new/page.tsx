@@ -193,11 +193,15 @@ export default async function WhatsNewPage() {
 
           <AuthorByline
             name={REVIEW_AUTHOR.name}
-            verifiedDate={new Date().toLocaleDateString("en-AU", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
+            verifiedDate={
+              changes.length > 0
+                ? new Date(changes[0].changed_at).toLocaleDateString("en-AU", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })
+                : undefined
+            }
             showMethodologyLink
           />
         </div>
