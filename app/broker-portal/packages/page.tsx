@@ -18,7 +18,7 @@ interface Package {
 
 const TIER_COLORS: Record<string, { bg: string; border: string; badge: string }> = {
   starter: { bg: "bg-slate-50", border: "border-slate-200", badge: "bg-slate-200 text-slate-700" },
-  growth: { bg: "bg-green-50", border: "border-green-200", badge: "bg-green-200 text-green-800" },
+  growth: { bg: "bg-slate-50", border: "border-slate-300", badge: "bg-slate-300 text-slate-800" },
   dominance: { bg: "bg-purple-50", border: "border-purple-200", badge: "bg-purple-200 text-purple-800" },
   enterprise: { bg: "bg-amber-50", border: "border-amber-200", badge: "bg-amber-200 text-amber-800" },
 };
@@ -118,13 +118,13 @@ export default function PackagesPage() {
               key={pkg.id}
               className={`relative rounded-xl border-2 p-6 flex flex-col ${
                 isCurrent
-                  ? "border-green-500 ring-2 ring-green-200"
+                  ? "border-slate-900 ring-2 ring-slate-200"
                   : colors.border
               } ${colors.bg}`}
             >
               {isCurrent && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className="bg-green-600 text-white text-[0.6rem] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                  <span className="bg-slate-900 text-white text-[0.6rem] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
                     Current Plan
                   </span>
                 </div>
@@ -149,7 +149,7 @@ export default function PackagesPage() {
                 ) : isEnterprise ? (
                   <span className="text-lg font-bold text-slate-700">Custom Pricing</span>
                 ) : (
-                  <span className="text-lg font-bold text-green-700">Free</span>
+                  <span className="text-lg font-bold text-slate-700">Free</span>
                 )}
               </div>
 
@@ -158,7 +158,7 @@ export default function PackagesPage() {
               <ul className="space-y-2 mb-6 flex-1">
                 {features.map((f, i) => (
                   <li key={i} className="flex items-start gap-2 text-xs text-slate-700">
-                    <span className="text-green-600 mt-0.5">✓</span>
+                    <span className="text-amber-500 mt-0.5">✓</span>
                     <span>{f}</span>
                   </li>
                 ))}
@@ -167,19 +167,19 @@ export default function PackagesPage() {
               {isEnterprise ? (
                 <a
                   href="mailto:partners@invest.com.au"
-                  className="block w-full text-center px-4 py-2.5 rounded-lg text-sm font-medium bg-amber-600 text-white hover:bg-amber-700 transition-colors"
+                  className="block w-full text-center px-4 py-2.5 rounded-lg text-sm font-medium bg-amber-500 text-slate-900 hover:bg-amber-600 transition-colors"
                 >
                   Contact Us
                 </a>
               ) : isCurrent ? (
-                <div className="w-full text-center px-4 py-2.5 rounded-lg text-sm font-medium bg-green-100 text-green-700">
+                <div className="w-full text-center px-4 py-2.5 rounded-lg text-sm font-medium bg-slate-100 text-slate-700">
                   Active
                 </div>
               ) : (
                 <button
                   onClick={() => handleSelect(pkg.id)}
                   disabled={selecting}
-                  className="w-full px-4 py-2.5 rounded-lg text-sm font-medium bg-green-700 text-white hover:bg-green-800 transition-colors disabled:opacity-50"
+                  className="w-full px-4 py-2.5 rounded-lg text-sm font-medium bg-slate-900 text-white hover:bg-slate-800 transition-colors disabled:opacity-50"
                 >
                   {selecting ? "Selecting..." : "Select Package"}
                 </button>

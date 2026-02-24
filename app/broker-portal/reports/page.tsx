@@ -91,7 +91,7 @@ export default function ReportsPage() {
               key={d}
               onClick={() => setDays(d)}
               className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
-                days === d ? "bg-green-700 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                days === d ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
               }`}
             >
               {d}d
@@ -150,7 +150,7 @@ export default function ReportsPage() {
                       y={chartHeight - barH}
                       width={barWidth}
                       height={barH}
-                      fill="#15803d"
+                      fill="#1e293b"
                       rx={2}
                     />
                     {/* Show label every few bars */}

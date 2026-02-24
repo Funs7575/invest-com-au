@@ -97,10 +97,10 @@ export default function BrokerDashboard() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-white rounded-xl border border-slate-200 p-5">
           <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Wallet Balance</p>
-          <p className="text-2xl font-extrabold text-green-700 mt-1">
+          <p className="text-2xl font-extrabold text-slate-700 mt-1">
             ${(balance / 100).toLocaleString("en-AU", { minimumFractionDigits: 2 })}
           </p>
-          <Link href="/broker-portal/wallet" className="text-xs text-green-700 hover:underline mt-2 inline-block">
+          <Link href="/broker-portal/wallet" className="text-xs text-slate-700 hover:underline mt-2 inline-block">
             Add Funds →
           </Link>
         </div>
@@ -110,7 +110,7 @@ export default function BrokerDashboard() {
           <p className="text-2xl font-extrabold text-slate-900 mt-1">
             {campaigns.filter((c) => c.status === "active").length}
           </p>
-          <Link href="/broker-portal/campaigns" className="text-xs text-green-700 hover:underline mt-2 inline-block">
+          <Link href="/broker-portal/campaigns" className="text-xs text-slate-700 hover:underline mt-2 inline-block">
             View All →
           </Link>
         </div>
@@ -118,7 +118,7 @@ export default function BrokerDashboard() {
         <div className="bg-white rounded-xl border border-slate-200 p-5">
           <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Clicks (7d)</p>
           <p className="text-2xl font-extrabold text-slate-900 mt-1">{recentClicks}</p>
-          <Link href="/broker-portal/reports" className="text-xs text-green-700 hover:underline mt-2 inline-block">
+          <Link href="/broker-portal/reports" className="text-xs text-slate-700 hover:underline mt-2 inline-block">
             See Report →
           </Link>
         </div>
@@ -135,7 +135,7 @@ export default function BrokerDashboard() {
       <div className="flex flex-wrap gap-3">
         <Link
           href="/broker-portal/campaigns/new"
-          className="px-4 py-2 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors"
+          className="px-4 py-2 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors"
         >
           + New Campaign
         </Link>
@@ -151,14 +151,14 @@ export default function BrokerDashboard() {
       <div className="bg-white rounded-xl border border-slate-200">
         <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
           <h2 className="font-bold text-slate-900">Recent Campaigns</h2>
-          <Link href="/broker-portal/campaigns" className="text-xs text-green-700 hover:underline">
+          <Link href="/broker-portal/campaigns" className="text-xs text-slate-700 hover:underline">
             View All
           </Link>
         </div>
         {campaigns.length === 0 ? (
           <div className="p-8 text-center text-sm text-slate-400">
             No campaigns yet.{" "}
-            <Link href="/broker-portal/campaigns/new" className="text-green-700 underline">
+            <Link href="/broker-portal/campaigns/new" className="text-slate-700 underline">
               Create your first campaign
             </Link>
           </div>
@@ -174,7 +174,7 @@ export default function BrokerDashboard() {
                     <p className="text-xs text-slate-500">{placementName}</p>
                   </div>
                   <span className={`text-xs font-bold px-2 py-1 rounded-full ${
-                    c.status === "active" ? "bg-green-50 text-green-700" :
+                    c.status === "active" ? "bg-green-50 text-slate-700" :
                     c.status === "pending_review" ? "bg-amber-50 text-amber-700" :
                     c.status === "approved" ? "bg-blue-50 text-blue-700" :
                     "bg-slate-100 text-slate-500"

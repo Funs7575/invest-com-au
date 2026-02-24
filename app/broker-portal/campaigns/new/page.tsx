@@ -128,7 +128,7 @@ export default function NewCampaignPage() {
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g. Q1 Compare Page Featured"
             required
-            className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-600/20 focus:border-green-600"
+            className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
           />
         </div>
 
@@ -141,7 +141,7 @@ export default function NewCampaignPage() {
                 key={p.id}
                 className={`flex items-start gap-3 p-4 rounded-xl border-2 cursor-pointer transition-colors ${
                   placementId === p.id
-                    ? "border-green-600 bg-green-50"
+                    ? "border-slate-900 bg-slate-50"
                     : "border-slate-200 bg-white hover:border-slate-300"
                 }`}
               >
@@ -156,7 +156,7 @@ export default function NewCampaignPage() {
                       setRateCents((p.base_rate_cents / 100).toFixed(2));
                     }
                   }}
-                  className="mt-1 accent-green-700"
+                  className="mt-1 accent-slate-700"
                 />
                 <div>
                   <p className="text-sm font-semibold text-slate-900">{p.name}</p>
@@ -198,7 +198,7 @@ export default function NewCampaignPage() {
                 value={rateCents}
                 onChange={(e) => setRateCents(e.target.value)}
                 required
-                className="w-full pl-7 pr-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-600/20 focus:border-green-600"
+                className="w-full pl-7 pr-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
               />
             </div>
           </div>
@@ -219,7 +219,7 @@ export default function NewCampaignPage() {
                 min="1"
                 value={dailyBudget}
                 onChange={(e) => setDailyBudget(e.target.value)}
-                className="w-full pl-7 pr-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-600/20 focus:border-green-600"
+                className="w-full pl-7 pr-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
                 placeholder="No limit"
               />
             </div>
@@ -237,7 +237,7 @@ export default function NewCampaignPage() {
                 min="1"
                 value={totalBudget}
                 onChange={(e) => setTotalBudget(e.target.value)}
-                className="w-full pl-7 pr-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-600/20 focus:border-green-600"
+                className="w-full pl-7 pr-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
                 placeholder="No limit"
               />
             </div>
@@ -253,7 +253,7 @@ export default function NewCampaignPage() {
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
               required
-              className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-600/20 focus:border-green-600"
+              className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
             />
           </div>
           <div>
@@ -265,7 +265,7 @@ export default function NewCampaignPage() {
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-600/20 focus:border-green-600"
+              className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
             />
           </div>
         </div>
@@ -275,7 +275,7 @@ export default function NewCampaignPage() {
           <button
             type="submit"
             disabled={submitting}
-            className="px-6 py-2.5 bg-green-700 text-white font-bold text-sm rounded-lg hover:bg-green-800 transition-colors disabled:opacity-50"
+            className="px-6 py-2.5 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50"
           >
             {submitting ? "Submitting..." : "Submit for Review"}
           </button>

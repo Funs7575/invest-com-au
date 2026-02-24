@@ -129,7 +129,7 @@ export default function ConversionsPage() {
             onClick={() => setRange(r)}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
               range === r
-                ? "bg-green-700 text-white"
+                ? "bg-slate-900 text-white"
                 : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
             }`}
           >
@@ -152,7 +152,7 @@ export default function ConversionsPage() {
           <p className="text-[0.65rem] text-slate-500 uppercase tracking-wider font-bold">
             Total Value
           </p>
-          <p className="text-2xl font-extrabold text-green-700 mt-1">
+          <p className="text-2xl font-extrabold text-slate-900 mt-1">
             ${(totalValue / 100).toLocaleString("en-AU", { minimumFractionDigits: 2 })}
           </p>
         </div>

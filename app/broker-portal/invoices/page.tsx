@@ -55,7 +55,7 @@ export default function InvoicesPage() {
 
   const statusBadge = (status: Invoice["status"]) => {
     const map: Record<Invoice["status"], string> = {
-      paid: "bg-green-50 text-green-700",
+      paid: "bg-green-50 text-slate-700",
       pending: "bg-yellow-50 text-yellow-700",
       failed: "bg-red-50 text-red-700",
       refunded: "bg-slate-100 text-slate-600",
@@ -127,7 +127,7 @@ export default function InvoicesPage() {
                       {inv.status === "paid" ? (
                         <Link
                           href={`/broker-portal/invoices/${inv.id}`}
-                          className="text-xs font-bold text-green-700 hover:text-green-800 hover:underline"
+                          className="text-xs font-bold text-slate-700 hover:text-slate-900 hover:underline"
                         >
                           View Receipt
                         </Link>

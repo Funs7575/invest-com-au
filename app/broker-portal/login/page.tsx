@@ -92,7 +92,7 @@ export default function BrokerLoginPage() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-600/20 focus:border-green-600"
+          className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
           placeholder="you@broker.com"
         />
       </div>
@@ -104,7 +104,7 @@ export default function BrokerLoginPage() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-600/20 focus:border-green-600"
+          className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
           placeholder="••••••••"
         />
       </div>
@@ -112,14 +112,14 @@ export default function BrokerLoginPage() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-2.5 bg-green-700 text-white font-bold text-sm rounded-lg hover:bg-green-800 transition-colors disabled:opacity-50"
+        className="w-full py-2.5 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50"
       >
         {loading ? "Signing in..." : "Sign In"}
       </button>
 
       <p className="text-xs text-slate-400 text-center">
         Don&apos;t have an account? Contact{" "}
-        <a href="mailto:partners@invest.com.au" className="text-green-700 underline">
+        <a href="mailto:partners@invest.com.au" className="text-slate-700 underline">
           partners@invest.com.au
         </a>
       </p>

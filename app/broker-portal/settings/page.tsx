@@ -150,7 +150,7 @@ export default function SettingsPage() {
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
             required
-            className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-600/20 focus:border-green-600"
+            className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
           />
         </div>
 
@@ -160,7 +160,7 @@ export default function SettingsPage() {
             type="text"
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
-            className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-600/20 focus:border-green-600"
+            className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
           />
         </div>
 
@@ -170,7 +170,7 @@ export default function SettingsPage() {
             type="tel"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-600/20 focus:border-green-600"
+            className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
             placeholder="+61 4xx xxx xxx"
           />
         </div>
@@ -200,12 +200,12 @@ export default function SettingsPage() {
           <button
             type="submit"
             disabled={saving}
-            className="px-6 py-2.5 bg-green-700 text-white font-bold text-sm rounded-lg hover:bg-green-800 transition-colors disabled:opacity-50"
+            className="px-6 py-2.5 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50"
           >
             {saving ? "Saving..." : "Save Changes"}
           </button>
           {saved && (
-            <span className="text-sm text-green-700 font-medium">✓ Saved</span>
+            <span className="text-sm text-slate-700 font-medium">Saved</span>
           )}
         </div>
       </form>
@@ -222,7 +222,7 @@ export default function SettingsPage() {
         )}
         <p className="text-xs text-slate-400 mt-2">
           Need help? Contact{" "}
-          <a href="mailto:partners@invest.com.au" className="text-green-700 underline">
+          <a href="mailto:partners@invest.com.au" className="text-slate-700 underline">
             partners@invest.com.au
           </a>
         </p>
@@ -232,8 +232,8 @@ export default function SettingsPage() {
       <div className="bg-white rounded-xl border border-slate-200 p-6">
         <h3 className="text-base font-bold text-slate-900 mb-4">Marketplace Terms</h3>
         {account?.terms_accepted_at ? (
-          <div className="flex items-center gap-2 text-green-700 bg-green-50 rounded-lg px-4 py-3">
-            <span>✅</span>
+          <div className="flex items-center gap-2 text-slate-700 bg-slate-50 rounded-lg px-4 py-3">
+            <span>✓</span>
             <span className="text-sm">Terms accepted on {new Date(account.terms_accepted_at).toLocaleDateString("en-AU")}</span>
           </div>
         ) : (
@@ -241,12 +241,12 @@ export default function SettingsPage() {
             <p className="text-sm text-slate-600">You must accept the marketplace terms before creating campaigns.</p>
             <label className="flex items-start gap-2">
               <input type="checkbox" checked={termsChecked} onChange={(e) => setTermsChecked(e.target.checked)} className="mt-1" />
-              <span className="text-sm text-slate-700">I accept the <a href="/terms" className="text-green-700 underline">Marketplace Terms and Conditions</a> (v1.0)</span>
+              <span className="text-sm text-slate-700">I accept the <a href="/terms" className="text-slate-900 underline">Marketplace Terms and Conditions</a> (v1.0)</span>
             </label>
             <button
               onClick={handleAcceptTerms}
               disabled={!termsChecked || saving}
-              className="px-4 py-2 bg-green-700 text-white rounded-lg text-sm font-medium disabled:opacity-50"
+              className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-medium disabled:opacity-50"
             >
               Accept Terms
             </button>
@@ -267,7 +267,7 @@ export default function SettingsPage() {
           </button>
           <button
             onClick={() => { navigator.clipboard.writeText(account?.postback_api_key || ""); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
-            className="px-3 py-2 text-xs bg-green-100 text-green-800 rounded hover:bg-green-200"
+            className="px-3 py-2 text-xs bg-amber-100 text-amber-800 rounded hover:bg-amber-200"
           >
             {copied ? "Copied!" : "Copy"}
           </button>
@@ -303,7 +303,7 @@ export default function SettingsPage() {
               </div>
             </div>
           )}
-          <button onClick={handleSaveAlerts} disabled={saving} className="px-4 py-2 bg-green-700 text-white rounded-lg text-sm font-medium disabled:opacity-50">
+          <button onClick={handleSaveAlerts} disabled={saving} className="px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-medium disabled:opacity-50">
             Save Alert Preferences
           </button>
         </div>

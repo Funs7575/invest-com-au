@@ -73,7 +73,7 @@ export default function InvoiceDetailPage() {
       <div className="space-y-4">
         <Link
           href="/broker-portal/invoices"
-          className="text-sm text-green-700 hover:underline font-medium"
+          className="text-sm text-slate-700 hover:underline font-medium"
         >
           &larr; Back to Invoices
         </Link>
@@ -102,7 +102,7 @@ export default function InvoiceDetailPage() {
 
   const statusBadge = (status: Invoice["status"]) => {
     const map: Record<Invoice["status"], string> = {
-      paid: "bg-green-50 text-green-700",
+      paid: "bg-green-50 text-slate-700",
       pending: "bg-yellow-50 text-yellow-700",
       failed: "bg-red-50 text-red-700",
       refunded: "bg-slate-100 text-slate-600",
@@ -128,13 +128,13 @@ export default function InvoiceDetailPage() {
       <div className="flex items-center justify-between print:hidden">
         <Link
           href="/broker-portal/invoices"
-          className="text-sm text-green-700 hover:underline font-medium"
+          className="text-sm text-slate-700 hover:underline font-medium"
         >
           &larr; Back to Invoices
         </Link>
         <button
           onClick={() => window.print()}
-          className="px-4 py-2 bg-green-700 text-white font-bold text-sm rounded-lg hover:bg-green-800 transition-colors"
+          className="px-4 py-2 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors"
         >
           Print Receipt
         </button>

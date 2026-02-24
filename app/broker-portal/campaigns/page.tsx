@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import type { Campaign } from "@/lib/types";
 
 const STATUS_COLORS: Record<string, string> = {
-  active: "bg-green-50 text-green-700",
+  active: "bg-green-50 text-slate-700",
   approved: "bg-blue-50 text-blue-700",
   pending_review: "bg-amber-50 text-amber-700",
   paused: "bg-slate-100 text-slate-600",
@@ -100,7 +100,7 @@ export default function CampaignsPage() {
         </div>
         <Link
           href="/broker-portal/campaigns/new"
-          className="px-4 py-2 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors"
+          className="px-4 py-2 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors"
         >
           + New Campaign
         </Link>
@@ -114,7 +114,7 @@ export default function CampaignsPage() {
             onClick={() => setFilter(s)}
             className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
               filter === s
-                ? "bg-green-700 text-white"
+                ? "bg-slate-900 text-white"
                 : "bg-slate-100 text-slate-600 hover:bg-slate-200"
             }`}
           >
@@ -132,7 +132,7 @@ export default function CampaignsPage() {
       {filtered.length === 0 ? (
         <div className="bg-white rounded-xl border border-slate-200 p-12 text-center">
           <p className="text-slate-400">No campaigns found.</p>
-          <Link href="/broker-portal/campaigns/new" className="text-sm text-green-700 underline mt-2 inline-block">
+          <Link href="/broker-portal/campaigns/new" className="text-sm text-slate-700 underline mt-2 inline-block">
             Create one →
           </Link>
         </div>
@@ -219,7 +219,7 @@ export default function CampaignsPage() {
                   {c.status === "paused" && (
                     <button
                       onClick={() => handleResume(c.id)}
-                      className="px-3 py-1.5 text-xs font-semibold bg-green-50 text-green-700 rounded-lg hover:bg-green-100"
+                      className="px-3 py-1.5 text-xs font-semibold bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200"
                     >
                       Resume
                     </button>

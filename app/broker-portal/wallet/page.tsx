@@ -91,12 +91,12 @@ export default function WalletPage() {
       </div>
 
       {/* Balance card */}
-      <div className="bg-gradient-to-r from-green-700 to-emerald-600 rounded-2xl p-6 text-white">
-        <p className="text-sm text-green-200 font-medium">Available Balance</p>
+      <div className="bg-gradient-to-r from-slate-800 to-slate-700 rounded-2xl p-6 text-white">
+        <p className="text-sm text-slate-300 font-medium">Available Balance</p>
         <p className="text-4xl font-extrabold mt-1">
           ${(balance / 100).toLocaleString("en-AU", { minimumFractionDigits: 2 })}
         </p>
-        <div className="flex gap-4 mt-3 text-sm text-green-200">
+        <div className="flex gap-4 mt-3 text-sm text-slate-300">
           <span>Deposited: ${((wallet?.lifetime_deposited_cents || 0) / 100).toLocaleString("en-AU", { minimumFractionDigits: 2 })}</span>
           <span>Spent: ${((wallet?.lifetime_spent_cents || 0) / 100).toLocaleString("en-AU", { minimumFractionDigits: 2 })}</span>
         </div>
@@ -111,7 +111,7 @@ export default function WalletPage() {
               key={amt}
               onClick={() => handleTopup(amt)}
               disabled={topupLoading}
-              className="py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-bold text-slate-700 hover:bg-green-50 hover:border-green-200 hover:text-green-700 transition-colors disabled:opacity-50"
+              className="py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-bold text-slate-700 hover:bg-amber-50 hover:border-amber-200 hover:text-amber-700 transition-colors disabled:opacity-50"
             >
               ${amt}
             </button>
@@ -128,7 +128,7 @@ export default function WalletPage() {
               value={customAmount}
               onChange={(e) => setCustomAmount(e.target.value)}
               placeholder="Custom amount (min $50)"
-              className="w-full pl-7 pr-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-600/20 focus:border-green-600"
+              className="w-full pl-7 pr-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400"
             />
           </div>
           <button
@@ -138,7 +138,7 @@ export default function WalletPage() {
               else alert("Amount must be between $50 and $50,000");
             }}
             disabled={topupLoading || !customAmount}
-            className="px-6 py-2.5 bg-green-700 text-white font-bold text-sm rounded-lg hover:bg-green-800 transition-colors disabled:opacity-50"
+            className="px-6 py-2.5 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50"
           >
             {topupLoading ? "Processing..." : "Top Up"}
           </button>
