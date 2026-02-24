@@ -34,7 +34,7 @@ export default function BackToTop() {
     <button
       onClick={handleClick}
       aria-label="Back to top"
-      className="fixed bottom-6 right-6 z-40 w-11 h-11 rounded-full bg-white border border-slate-200 shadow-lg flex items-center justify-center hover:scale-110 active:scale-95 transition-transform motion-safe:animate-[fadeIn_0.3s_ease-out]"
+      className="fixed bottom-24 sm:bottom-6 right-4 sm:right-6 z-40 w-11 h-11 rounded-full bg-white border border-slate-200 shadow-lg flex items-center justify-center hover:scale-110 active:scale-95 transition-transform motion-safe:animate-[fadeIn_0.3s_ease-out]"
     >
       {/* Progress ring */}
       <svg className="absolute inset-0 w-11 h-11 -rotate-90" viewBox="0 0 44 44">

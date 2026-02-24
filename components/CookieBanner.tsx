@@ -53,7 +53,7 @@ export default function CookieBanner() {
               you consent to our use of cookies for analytics and personalization.{" "}
               <Link
                 href="/privacy"
-                className="text-slate-700 underline hover:text-slate-900 transition-colors"
+                className="text-slate-300 underline hover:text-white transition-colors"
               >
                 Learn more in our Privacy Policy
               </Link>
@@ -64,13 +64,13 @@ export default function CookieBanner() {
           <div className="flex gap-3 flex-shrink-0">
             <button
               onClick={handleDecline}
-              className="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white transition-colors"
+              className="px-4 py-2.5 min-h-[44px] text-sm font-medium text-slate-300 hover:text-white transition-colors"
             >
-              Decline Non-Essential
+              Decline
             </button>
             <button
               onClick={handleAccept}
-              className="px-6 py-2 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-800 transition-colors text-sm"
+              className="px-6 py-2.5 min-h-[44px] bg-white text-slate-900 font-semibold rounded-lg hover:bg-slate-100 transition-colors text-sm"
             >
               Accept All
             </button>

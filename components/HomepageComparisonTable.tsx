@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import type { Broker } from "@/lib/types";
 import { getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
-import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
+
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import PromoBadge from "@/components/PromoBadge";
 import SponsorBadge from "@/components/SponsorBadge";
@@ -198,7 +198,7 @@ export default function HomepageComparisonTable({
       </div>
 
       {/* Mobile Cards — horizontal snap scroll */}
-      <div key={`mobile-${activeTab}`} className="md:hidden flex gap-3 overflow-x-auto snap-x snap-mandatory pb-4 -mx-4 px-4 motion-safe:tab-content-enter">
+      <div key={`mobile-${activeTab}`} className="md:hidden flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-4 px-4 motion-safe:tab-content-enter">
         {displayBrokers.map((broker, i) => {
           const isTopRatedMobile = i === 0 && !isSponsored(broker);
           return (
@@ -291,10 +291,14 @@ export default function HomepageComparisonTable({
           );
         })}
       </div>
+      {/* Swipe hint — mobile only */}
+      <div className="md:hidden flex items-center justify-center gap-1.5 pb-3 text-xs text-slate-400">
+        <span>Swipe for more</span>
+        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+      </div>
 
       {/* Affiliate disclosure */}
-      <div id="advertiser-disclosure" className="text-xs text-slate-500 mt-4 text-center">
-        <p>{ADVERTISER_DISCLOSURE_SHORT}</p>
+      <div id="advertiser-disclosure" className="mt-4 text-center">
         <CompactDisclaimerLine />
       </div>
     </div>

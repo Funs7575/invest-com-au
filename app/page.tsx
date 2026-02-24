@@ -8,7 +8,7 @@ import ScrollFadeIn from "@/components/ScrollFadeIn";
 import LeadMagnet from "@/components/LeadMagnet";
 import DealCard from "@/components/DealCard";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
-import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 import { getMostRecentFeeCheck } from "@/lib/utils";
 import Icon from "@/components/Icon";
@@ -123,22 +123,22 @@ export default async function HomePage() {
               Compare All Brokers &rarr;
             </Link>
           </div>
-          {/* Trust signals row */}
-          <div className="flex items-center justify-center gap-5 sm:gap-8 pt-6 text-xs text-slate-400 flex-wrap hero-fade-up hero-fade-up-5">
-            <span className="flex items-center gap-1.5">
-              <svg className="w-4 h-4 text-slate-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+          {/* Trust signals — 2×2 grid on mobile, inline row on desktop */}
+          <div className="grid grid-cols-2 sm:flex sm:items-center sm:justify-center gap-3 sm:gap-8 pt-6 text-xs text-slate-400 hero-fade-up hero-fade-up-5">
+            <span className="flex items-center justify-center gap-1.5">
+              <svg className="w-4 h-4 text-slate-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
               ASIC-regulated only
             </span>
-            <span className="flex items-center gap-1.5">
-              <svg className="w-4 h-4 text-slate-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-              100% independent ratings
+            <span className="flex items-center justify-center gap-1.5">
+              <svg className="w-4 h-4 text-slate-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+              Independent ratings
             </span>
-            <span className="flex items-center gap-1.5">
-              <svg className="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" /></svg>
+            <span className="flex items-center justify-center gap-1.5">
+              <svg className="w-4 h-4 text-amber-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" /></svg>
               Fees verified daily
             </span>
-            <span className="flex items-center gap-1.5">
-              <svg className="w-4 h-4 text-slate-400" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" /></svg>
+            <span className="flex items-center justify-center gap-1.5">
+              <svg className="w-4 h-4 text-slate-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" /></svg>
               Always free
             </span>
           </div>
@@ -146,16 +146,16 @@ export default async function HomePage() {
       </section>
 
       {/* Broker Logo Strip — instant credibility */}
-      <section className="py-5 bg-white border-b border-slate-100">
+      <section className="py-4 bg-white border-b border-slate-100">
         <div className="container-custom">
-          <p className="text-[0.65rem] uppercase tracking-widest text-slate-400 text-center mb-4 font-medium">Brokers we compare</p>
-          <div className="flex items-center justify-center gap-6 sm:gap-10 flex-wrap opacity-60 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-500">
-            {(brokers as Broker[])?.slice(0, 8).map((broker) => (
-              <div key={broker.id} className="flex items-center gap-2 text-sm font-bold text-slate-600">
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-white text-[0.65rem] font-bold`} style={{ backgroundColor: broker.color || '#64748b' }}>
+          <p className="text-[0.65rem] uppercase tracking-widest text-slate-400 text-center mb-3 font-medium">Brokers we compare</p>
+          <div className="flex items-center justify-center gap-4 sm:gap-8 flex-wrap opacity-70">
+            {(brokers as Broker[])?.slice(0, 6).map((broker) => (
+              <div key={broker.id} className="flex items-center gap-1.5 sm:gap-2">
+                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center text-white text-[0.6rem] sm:text-[0.65rem] font-bold shrink-0" style={{ backgroundColor: broker.color || '#64748b' }}>
                   {broker.name?.slice(0, 2).toUpperCase()}
                 </div>
-                <span className="hidden sm:inline">{broker.name}</span>
+                <span className="text-xs sm:text-sm font-semibold text-slate-500">{broker.name}</span>
               </div>
             ))}
           </div>
@@ -200,14 +200,26 @@ export default async function HomePage() {
                   <h2 className="text-2xl font-bold">Current Broker Deals</h2>
                   <p className="text-sm text-slate-500 mt-1">Verified promotions from Australian trading platforms</p>
                 </div>
-                <Link href="/deals" className="text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors">
+                <Link href="/deals" className="text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors min-h-[44px] flex items-center px-2">
                   View All Deals &rarr;
                 </Link>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {/* Mobile: show 1 deal + link to more. Desktop: show all */}
+              <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {(dealBrokers as Broker[]).map((broker) => (
                   <DealCard key={broker.id} broker={broker} />
                 ))}
+              </div>
+              <div className="md:hidden space-y-4">
+                <DealCard broker={(dealBrokers as Broker[])[0]} />
+                {(dealBrokers as Broker[]).length > 1 && (
+                  <Link
+                    href="/deals"
+                    className="block text-center py-3 border-2 border-slate-200 rounded-xl text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+                  >
+                    View {(dealBrokers as Broker[]).length - 1} More Deal{(dealBrokers as Broker[]).length > 2 ? 's' : ''} &rarr;
+                  </Link>
+                )}
               </div>
               <div className="mt-4">
                 <CompactDisclaimerLine />
@@ -227,12 +239,13 @@ export default async function HomePage() {
                 Every investor is different. Our category guides filter and rank brokers for your specific situation.
               </p>
             </div>
+            {/* Mobile: 3 cards. Desktop: all 6 */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
               {bestForCards.map((card, i) => (
                 <Link
                   key={card.title}
                   href={card.href}
-                  className={`block border rounded-xl p-4 md:p-5 hover-lift ${card.color} stagger-item`}
+                  className={`border rounded-xl p-4 md:p-5 active:scale-[0.98] transition-all ${card.color} stagger-item ${i >= 3 ? 'hidden sm:block' : 'block'}`}
                   style={{ animationDelay: `${0.05 + i * 0.07}s` }}
                 >
                   <Icon name={card.icon} size={24} className="mb-2 opacity-80" />
@@ -244,7 +257,7 @@ export default async function HomePage() {
             <div className="text-center mt-6">
               <Link
                 href="/best"
-                className="text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors"
+                className="inline-flex items-center min-h-[44px] px-4 text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors"
               >
                 Browse All Categories &rarr;
               </Link>
@@ -263,16 +276,16 @@ export default async function HomePage() {
                   <h2 className="text-2xl font-bold">Investing Guides & Articles</h2>
                   <p className="text-sm text-slate-500 mt-1">Expert guides to help you make smarter decisions</p>
                 </div>
-                <Link href="/articles" className="text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors">
-                  View All Articles &rarr;
+                <Link href="/articles" className="text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors min-h-[44px] flex items-center px-2">
+                  View All &rarr;
                 </Link>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-5">
-                {(articles as Article[]).slice(0, 6).map((article) => (
+                {(articles as Article[]).slice(0, 6).map((article, i) => (
                   <Link
                     key={article.id}
                     href={`/article/${article.slug}`}
-                    className="block border border-slate-200 rounded-xl p-4 md:p-5 hover:shadow-md hover:border-slate-300 transition-all duration-200 group"
+                    className={`border border-slate-200 rounded-xl p-4 md:p-5 hover:shadow-md hover:border-slate-300 transition-all duration-200 group ${i >= 3 ? 'hidden md:block' : 'block'}`}
                   >
                     {article.category && (
                       <span className="inline-block text-[0.65rem] font-bold uppercase tracking-wider text-slate-600 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full mb-3">
@@ -282,9 +295,7 @@ export default async function HomePage() {
                     <h3 className="font-bold text-slate-900 group-hover:text-slate-600 transition-colors mb-2 leading-snug">
                       {article.title}
                     </h3>
-                    {article.excerpt && (
-                      <p className="text-sm text-slate-500 line-clamp-2 mb-3">{article.excerpt}</p>
-                    )}
+                    <p className="text-sm text-slate-500 line-clamp-2 mb-3 hidden md:block">{article.excerpt}</p>
                     <div className="flex items-center gap-3 text-xs text-slate-400">
                       {article.read_time && <span>{article.read_time} min read</span>}
                       <span className="text-slate-900 font-semibold group-hover:translate-x-0.5 transition-transform">Read Guide &rarr;</span>
@@ -308,15 +319,7 @@ export default async function HomePage() {
         </section>
       </ScrollFadeIn>
 
-      {/* General Advice Warning */}
-      <section className="py-6 bg-white border-t border-slate-100">
-        <div className="container-custom">
-          <p className="text-xs text-slate-400 text-center leading-relaxed max-w-3xl mx-auto">
-            <strong className="text-slate-500">General Advice Warning:</strong>{" "}
-            {GENERAL_ADVICE_WARNING}
-          </p>
-        </div>
-      </section>
+      {/* General Advice Warning is in footer Legal & Disclaimers accordion */}
     </div>
   );
 }
