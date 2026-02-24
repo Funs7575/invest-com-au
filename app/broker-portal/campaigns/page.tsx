@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { useToast } from "@/components/Toast";
+import Icon from "@/components/Icon";
 import type { Campaign } from "@/lib/types";
 
 const STATUS_COLORS: Record<string, string> = {
@@ -21,6 +23,7 @@ export default function CampaignsPage() {
   const [filter, setFilter] = useState("all");
   const [loading, setLoading] = useState(true);
   const [brokerSlug, setBrokerSlug] = useState("");
+  const { toast } = useToast();
 
   useEffect(() => {
     const load = async () => {
@@ -51,36 +54,51 @@ export default function CampaignsPage() {
 
   const handlePause = async (id: number) => {
     const supabase = createClient();
-    await supabase
+    const { error } = await supabase
       .from("campaigns")
       .update({ status: "paused", updated_at: new Date().toISOString() })
       .eq("id", id);
+    if (error) {
+      toast("Failed to pause campaign", "error");
+      return;
+    }
     setCampaigns((prev) =>
       prev.map((c) => (c.id === id ? { ...c, status: "paused" as const } : c))
     );
+    toast("Campaign paused", "success");
   };
 
   const handleResume = async (id: number) => {
     const supabase = createClient();
-    await supabase
+    const { error } = await supabase
       .from("campaigns")
       .update({ status: "active", updated_at: new Date().toISOString() })
       .eq("id", id);
+    if (error) {
+      toast("Failed to resume campaign", "error");
+      return;
+    }
     setCampaigns((prev) =>
       prev.map((c) => (c.id === id ? { ...c, status: "active" as const } : c))
     );
+    toast("Campaign resumed", "success");
   };
 
   const handleCancel = async (id: number) => {
     if (!confirm("Cancel this campaign? This cannot be undone.")) return;
     const supabase = createClient();
-    await supabase
+    const { error } = await supabase
       .from("campaigns")
       .update({ status: "cancelled", updated_at: new Date().toISOString() })
       .eq("id", id);
+    if (error) {
+      toast("Failed to cancel campaign", "error");
+      return;
+    }
     setCampaigns((prev) =>
       prev.map((c) => (c.id === id ? { ...c, status: "cancelled" as const } : c))
     );
+    toast("Campaign cancelled", "success");
   };
 
   const filtered = filter === "all"
@@ -131,13 +149,21 @@ export default function CampaignsPage() {
       {/* Campaign list */}
       {filtered.length === 0 ? (
         <div className="bg-white rounded-xl border border-slate-200 p-12 text-center">
-          <p className="text-slate-400">No campaigns found.</p>
-          <Link href="/broker-portal/campaigns/new" className="text-sm text-slate-700 underline mt-2 inline-block">
-            Create one →
+          <div className="w-12 h-12 rounded-full bg-amber-50 flex items-center justify-center mx-auto mb-3">
+            <Icon name="megaphone" size={20} className="text-amber-500" />
+          </div>
+          <p className="text-sm font-medium text-slate-700 mb-1">
+            {filter === "all" ? "No campaigns yet" : `No ${filter.replace("_", " ")} campaigns`}
+          </p>
+          <p className="text-xs text-slate-400 mb-4">
+            {filter === "all" ? "Create your first campaign to get started." : "Try a different filter or create a new campaign."}
+          </p>
+          <Link href="/broker-portal/campaigns/new" className="inline-block px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800 transition-colors">
+            Create Campaign →
           </Link>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-3 portal-stagger">
           {filtered.map((c) => {
             const p = (c as any).marketplace_placements;
             const placementName = Array.isArray(p) ? p[0]?.name : p?.name || "—";
@@ -189,7 +215,7 @@ export default function CampaignsPage() {
                   <div className="mb-3">
                     <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                       <div
-                        className={`h-full rounded-full transition-all ${
+                        className={`h-full rounded-full progress-bar-animate ${
                           budgetPct >= 90 ? "bg-red-500" : budgetPct >= 70 ? "bg-amber-500" : "bg-green-500"
                         }`}
                         style={{ width: `${budgetPct}%` }}

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { useToast } from "@/components/Toast";
 
 interface Package {
   id: number;
@@ -36,6 +37,7 @@ export default function PackagesPage() {
   const [brokerSlug, setBrokerSlug] = useState("");
   const [loading, setLoading] = useState(true);
   const [selecting, setSelecting] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     const load = async () => {
@@ -82,6 +84,7 @@ export default function PackagesPage() {
 
     setCurrentPackageId(pkgId);
     setSelecting(false);
+    toast("Package updated", "success");
   };
 
   if (loading) {
@@ -106,7 +109,7 @@ export default function PackagesPage() {
         </p>
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 portal-stagger">
         {packages.map((pkg) => {
           const colors = TIER_COLORS[pkg.tier] || TIER_COLORS.starter;
           const features = TIER_FEATURES[pkg.tier] || [];
@@ -116,7 +119,7 @@ export default function PackagesPage() {
           return (
             <div
               key={pkg.id}
-              className={`relative rounded-xl border-2 p-6 flex flex-col ${
+              className={`relative rounded-xl border-2 p-6 flex flex-col hover-lift transition-all ${
                 isCurrent
                   ? "border-slate-900 ring-2 ring-slate-200"
                   : colors.border

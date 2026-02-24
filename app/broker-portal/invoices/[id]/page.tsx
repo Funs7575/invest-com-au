@@ -141,7 +141,7 @@ export default function InvoiceDetailPage() {
       </div>
 
       {/* Invoice card */}
-      <div className="bg-white rounded-xl border border-slate-200 p-8 print:border-0 print:shadow-none print:p-0">
+      <div className="bg-white rounded-xl border border-slate-200 p-8 print:border-0 print:shadow-none print:p-0 portal-page-enter">
         {/* Header */}
         <div className="flex items-start justify-between mb-8">
           <div>

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
+import Icon from "@/components/Icon";
 
 interface Invoice {
   id: number;
@@ -91,11 +92,15 @@ export default function InvoicesPage() {
 
       <div className="bg-white rounded-xl border border-slate-200">
         {invoices.length === 0 ? (
-          <div className="p-8 text-center text-sm text-slate-400">
-            No invoices yet. Top up your wallet to generate an invoice.
+          <div className="p-12 text-center">
+            <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-3">
+              <Icon name="file-text" size={20} className="text-slate-400" />
+            </div>
+            <p className="text-sm font-medium text-slate-700 mb-1">No invoices yet</p>
+            <p className="text-xs text-slate-400">Top up your wallet to generate an invoice.</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto portal-table-stagger">
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">

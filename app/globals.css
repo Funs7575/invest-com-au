@@ -643,6 +643,82 @@ details > :not(summary) {
   padding-bottom: env(safe-area-inset-bottom);
 }
 
+/* ── Broker Portal animations ────────────────────────── */
+
+/* Auto-triggering staggered entrance for KPI cards, grids, lists */
+.portal-stagger > * {
+  opacity: 0;
+  animation: staggerFadeIn 0.4s ease-out forwards;
+}
+.portal-stagger > *:nth-child(1) { animation-delay: 0.04s; }
+.portal-stagger > *:nth-child(2) { animation-delay: 0.1s; }
+.portal-stagger > *:nth-child(3) { animation-delay: 0.16s; }
+.portal-stagger > *:nth-child(4) { animation-delay: 0.22s; }
+.portal-stagger > *:nth-child(5) { animation-delay: 0.28s; }
+.portal-stagger > *:nth-child(6) { animation-delay: 0.34s; }
+.portal-stagger > *:nth-child(n+7) { animation-delay: 0.38s; }
+
+/* Staggered table row entrance */
+.portal-table-stagger tbody tr {
+  opacity: 0;
+  animation: staggerFadeIn 0.3s ease-out forwards;
+}
+.portal-table-stagger tbody tr:nth-child(1) { animation-delay: 0.03s; }
+.portal-table-stagger tbody tr:nth-child(2) { animation-delay: 0.06s; }
+.portal-table-stagger tbody tr:nth-child(3) { animation-delay: 0.09s; }
+.portal-table-stagger tbody tr:nth-child(4) { animation-delay: 0.12s; }
+.portal-table-stagger tbody tr:nth-child(5) { animation-delay: 0.15s; }
+.portal-table-stagger tbody tr:nth-child(6) { animation-delay: 0.18s; }
+.portal-table-stagger tbody tr:nth-child(7) { animation-delay: 0.21s; }
+.portal-table-stagger tbody tr:nth-child(8) { animation-delay: 0.24s; }
+.portal-table-stagger tbody tr:nth-child(n+9) { animation-delay: 0.27s; }
+
+/* Subtle page entrance on navigation */
+.portal-page-enter {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+/* Budget / progress bar grows from left */
+@keyframes progressGrow { from { width: 0; } }
+.progress-bar-animate {
+  animation: progressGrow 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* SVG chart bar grows from baseline */
+@keyframes chartBarGrow { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+.chart-bar-animate {
+  transform-origin: bottom;
+  animation: chartBarGrow 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Sidebar active indicator bar */
+.sidebar-nav-item {
+  position: relative;
+}
+.sidebar-nav-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 0;
+  background: #f59e0b;
+  border-radius: 0 2px 2px 0;
+  transition: height 0.2s ease;
+}
+.sidebar-nav-item.is-active::before {
+  height: 55%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .portal-stagger > *,
+  .portal-table-stagger tbody tr,
+  .portal-page-enter,
+  .progress-bar-animate,
+  .chart-bar-animate { animation: none; opacity: 1; }
+}
+
 /* ── Print styles for PDF export ─────────────────────── */
 @media print {
   header, footer, nav, .no-print { display: none !important; }

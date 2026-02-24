@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { useToast } from "@/components/Toast";
 import type { BrokerAccount } from "@/lib/types";
 
 export default function SettingsPage() {
   const [account, setAccount] = useState<BrokerAccount | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
+  const { toast } = useToast();
 
   const [fullName, setFullName] = useState("");
   const [companyName, setCompanyName] = useState("");
@@ -19,7 +20,6 @@ export default function SettingsPage() {
 
   // API key
   const [showApiKey, setShowApiKey] = useState(false);
-  const [copied, setCopied] = useState(false);
 
   // Low-balance alerts
   const [alertEnabled, setAlertEnabled] = useState(true);
@@ -65,7 +65,6 @@ export default function SettingsPage() {
     e.preventDefault();
     if (!account) return;
     setSaving(true);
-    setSaved(false);
 
     const supabase = createClient();
     await supabase
@@ -79,8 +78,7 @@ export default function SettingsPage() {
       .eq("id", account.id);
 
     setSaving(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+    toast("Settings saved", "success");
   };
 
   const handleAcceptTerms = async () => {
@@ -98,6 +96,7 @@ export default function SettingsPage() {
       .eq("id", account.id);
     setAccount({ ...account, terms_accepted_at: now, terms_version: "1.0" } as BrokerAccount);
     setSaving(false);
+    toast("Terms accepted", "success");
   };
 
   const handleSaveAlerts = async () => {
@@ -112,8 +111,7 @@ export default function SettingsPage() {
       })
       .eq("broker_slug", account.broker_slug);
     setSaving(false);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+    toast("Alert preferences saved", "success");
   };
 
   if (loading) {
@@ -204,9 +202,6 @@ export default function SettingsPage() {
           >
             {saving ? "Saving..." : "Save Changes"}
           </button>
-          {saved && (
-            <span className="text-sm text-slate-700 font-medium">Saved</span>
-          )}
         </div>
       </form>
 
@@ -266,10 +261,10 @@ export default function SettingsPage() {
             {showApiKey ? "Hide" : "Show"}
           </button>
           <button
-            onClick={() => { navigator.clipboard.writeText(account?.postback_api_key || ""); setCopied(true); setTimeout(() => setCopied(false), 2000); }}
+            onClick={() => { navigator.clipboard.writeText(account?.postback_api_key || ""); toast("API key copied", "success"); }}
             className="px-3 py-2 text-xs bg-amber-100 text-amber-800 rounded hover:bg-amber-200"
           >
-            {copied ? "Copied!" : "Copy"}
+            Copy
           </button>
         </div>
       </div>

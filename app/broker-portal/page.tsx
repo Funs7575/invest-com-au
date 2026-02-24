@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import CountUp from "@/components/CountUp";
+import Icon from "@/components/Icon";
 import type { Campaign, BrokerWallet } from "@/lib/types";
 
 export default function BrokerDashboard() {
@@ -11,6 +13,7 @@ export default function BrokerDashboard() {
   const [recentClicks, setRecentClicks] = useState(0);
   const [todaySpend, setTodaySpend] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [firstName, setFirstName] = useState("");
 
   useEffect(() => {
     const load = async () => {
@@ -20,12 +23,13 @@ export default function BrokerDashboard() {
 
       const { data: account } = await supabase
         .from("broker_accounts")
-        .select("broker_slug")
+        .select("broker_slug, full_name")
         .eq("auth_user_id", user.id)
         .maybeSingle();
 
       if (!account) return;
       const slug = account.broker_slug;
+      setFirstName((account.full_name || "").split(" ")[0]);
 
       // Wallet
       const { data: w } = await supabase
@@ -85,48 +89,59 @@ export default function BrokerDashboard() {
   }
 
   const balance = wallet?.balance_cents || 0;
+  const activeCampaignCount = campaigns.filter((c) => c.status === "active").length;
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-extrabold text-slate-900">Dashboard</h1>
+        <h1 className="text-2xl font-extrabold text-slate-900">
+          {firstName ? `Welcome back, ${firstName}` : "Dashboard"}
+        </h1>
         <p className="text-sm text-slate-500">Your advertising overview</p>
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl border border-slate-200 p-5">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 portal-stagger">
+        <div className="bg-white rounded-xl border border-slate-200 p-5 hover-lift">
           <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Wallet Balance</p>
           <p className="text-2xl font-extrabold text-slate-700 mt-1">
-            ${(balance / 100).toLocaleString("en-AU", { minimumFractionDigits: 2 })}
+            <CountUp end={balance / 100} prefix="$" decimals={2} duration={1000} />
           </p>
-          <Link href="/broker-portal/wallet" className="text-xs text-slate-700 hover:underline mt-2 inline-block">
-            Add Funds →
-          </Link>
+          {balance < 5000 ? (
+            <Link href="/broker-portal/wallet" className="text-xs text-amber-600 hover:text-amber-700 font-medium mt-2 inline-block">
+              Low balance — Add Funds →
+            </Link>
+          ) : (
+            <Link href="/broker-portal/wallet" className="text-xs text-slate-500 hover:text-slate-700 mt-2 inline-block">
+              Add Funds →
+            </Link>
+          )}
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-200 p-5">
+        <div className="bg-white rounded-xl border border-slate-200 p-5 hover-lift">
           <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Active Campaigns</p>
           <p className="text-2xl font-extrabold text-slate-900 mt-1">
-            {campaigns.filter((c) => c.status === "active").length}
+            <CountUp end={activeCampaignCount} duration={800} />
           </p>
-          <Link href="/broker-portal/campaigns" className="text-xs text-slate-700 hover:underline mt-2 inline-block">
+          <Link href="/broker-portal/campaigns" className="text-xs text-slate-500 hover:text-slate-700 mt-2 inline-block">
             View All →
           </Link>
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-200 p-5">
+        <div className="bg-white rounded-xl border border-slate-200 p-5 hover-lift">
           <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Clicks (7d)</p>
-          <p className="text-2xl font-extrabold text-slate-900 mt-1">{recentClicks}</p>
-          <Link href="/broker-portal/reports" className="text-xs text-slate-700 hover:underline mt-2 inline-block">
+          <p className="text-2xl font-extrabold text-slate-900 mt-1">
+            <CountUp end={recentClicks} duration={1000} />
+          </p>
+          <Link href="/broker-portal/reports" className="text-xs text-slate-500 hover:text-slate-700 mt-2 inline-block">
             See Report →
           </Link>
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-200 p-5">
+        <div className="bg-white rounded-xl border border-slate-200 p-5 hover-lift">
           <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Today&apos;s Spend</p>
           <p className="text-2xl font-extrabold text-slate-900 mt-1">
-            ${(todaySpend / 100).toFixed(2)}
+            <CountUp end={todaySpend / 100} prefix="$" decimals={2} duration={1000} />
           </p>
         </div>
       </div>
@@ -151,19 +166,34 @@ export default function BrokerDashboard() {
       <div className="bg-white rounded-xl border border-slate-200">
         <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
           <h2 className="font-bold text-slate-900">Recent Campaigns</h2>
-          <Link href="/broker-portal/campaigns" className="text-xs text-slate-700 hover:underline">
+          <Link href="/broker-portal/campaigns" className="text-xs text-slate-500 hover:text-slate-700 hover:underline">
             View All
           </Link>
         </div>
         {campaigns.length === 0 ? (
-          <div className="p-8 text-center text-sm text-slate-400">
-            No campaigns yet.{" "}
-            <Link href="/broker-portal/campaigns/new" className="text-slate-700 underline">
-              Create your first campaign
-            </Link>
+          <div className="p-12 text-center">
+            <div className="w-12 h-12 rounded-full bg-amber-50 flex items-center justify-center mx-auto mb-3">
+              <Icon name="megaphone" size={20} className="text-amber-500" />
+            </div>
+            <p className="text-sm font-medium text-slate-700 mb-1">No campaigns yet</p>
+            <p className="text-xs text-slate-400 mb-4">Launch your first campaign to start driving traffic.</p>
+            <div className="flex items-center justify-center gap-3">
+              <Link
+                href="/broker-portal/campaigns/new"
+                className="px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800 transition-colors"
+              >
+                Create Campaign
+              </Link>
+              <Link
+                href="/broker-portal/packages"
+                className="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-200 transition-colors"
+              >
+                View Packages
+              </Link>
+            </div>
           </div>
         ) : (
-          <div className="divide-y divide-slate-100">
+          <div className="divide-y divide-slate-100 portal-stagger">
             {campaigns.map((c) => {
               const placement = Array.isArray(c.placement) ? c.placement[0] : c.placement;
               const placementName = (placement as any)?.name || (c as any).marketplace_placements?.name || "—";
@@ -194,13 +224,13 @@ export default function BrokerDashboard() {
           <div>
             <p className="text-xs text-slate-500">Lifetime Deposited</p>
             <p className="text-sm font-bold text-slate-700">
-              ${(wallet.lifetime_deposited_cents / 100).toLocaleString("en-AU", { minimumFractionDigits: 2 })}
+              <CountUp end={wallet.lifetime_deposited_cents / 100} prefix="$" decimals={2} duration={1200} />
             </p>
           </div>
           <div>
             <p className="text-xs text-slate-500">Lifetime Spent</p>
             <p className="text-sm font-bold text-slate-700">
-              ${(wallet.lifetime_spent_cents / 100).toLocaleString("en-AU", { minimumFractionDigits: 2 })}
+              <CountUp end={wallet.lifetime_spent_cents / 100} prefix="$" decimals={2} duration={1200} />
             </p>
           </div>
         </div>

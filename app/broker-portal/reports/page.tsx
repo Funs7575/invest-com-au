@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { downloadCSV } from "@/lib/csv-export";
+import CountUp from "@/components/CountUp";
 import type { CampaignDailyStats, Campaign } from "@/lib/types";
 
 export default function ReportsPage() {
@@ -65,8 +66,8 @@ export default function ReportsPage() {
   const totalClicks = stats.reduce((s, r) => s + r.clicks, 0);
   const totalImpressions = stats.reduce((s, r) => s + r.impressions, 0);
   const totalSpend = stats.reduce((s, r) => s + r.spend_cents, 0);
-  const ctr = totalImpressions > 0 ? ((totalClicks / totalImpressions) * 100).toFixed(2) : "0";
-  const avgCpc = totalClicks > 0 ? (totalSpend / totalClicks / 100).toFixed(2) : "0";
+  const ctrNum = totalImpressions > 0 ? (totalClicks / totalImpressions) * 100 : 0;
+  const avgCpcNum = totalClicks > 0 ? totalSpend / totalClicks / 100 : 0;
 
   // SVG bar chart
   const maxClicks = Math.max(...dailyTotals.map((d) => d.clicks), 1);
@@ -116,19 +117,37 @@ export default function ReportsPage() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
-        {[
-          { label: "Total Clicks", value: totalClicks.toLocaleString() },
-          { label: "Impressions", value: totalImpressions.toLocaleString() },
-          { label: "CTR", value: `${ctr}%` },
-          { label: "Total Spend", value: `$${(totalSpend / 100).toFixed(2)}` },
-          { label: "Avg CPC", value: `$${avgCpc}` },
-        ].map((k) => (
-          <div key={k.label} className="bg-white rounded-xl border border-slate-200 p-4">
-            <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">{k.label}</p>
-            <p className="text-xl font-extrabold text-slate-900 mt-1">{k.value}</p>
-          </div>
-        ))}
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 portal-stagger">
+        <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
+          <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Total Clicks</p>
+          <p className="text-xl font-extrabold text-slate-900 mt-1">
+            <CountUp end={totalClicks} duration={1000} />
+          </p>
+        </div>
+        <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
+          <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Impressions</p>
+          <p className="text-xl font-extrabold text-slate-900 mt-1">
+            <CountUp end={totalImpressions} duration={1000} />
+          </p>
+        </div>
+        <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
+          <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">CTR</p>
+          <p className="text-xl font-extrabold text-slate-900 mt-1">
+            <CountUp end={ctrNum} suffix="%" decimals={2} duration={1000} />
+          </p>
+        </div>
+        <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
+          <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Total Spend</p>
+          <p className="text-xl font-extrabold text-slate-900 mt-1">
+            <CountUp end={totalSpend / 100} prefix="$" decimals={2} duration={1000} />
+          </p>
+        </div>
+        <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
+          <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Avg CPC</p>
+          <p className="text-xl font-extrabold text-slate-900 mt-1">
+            <CountUp end={avgCpcNum} prefix="$" decimals={2} duration={1000} />
+          </p>
+        </div>
       </div>
 
       {/* Click Chart */}
@@ -152,7 +171,10 @@ export default function ReportsPage() {
                       height={barH}
                       fill="#1e293b"
                       rx={2}
+                      className="chart-bar-animate"
+                      style={{ animationDelay: `${i * 0.03}s` }}
                     />
+                    <title>{d.date}: {d.clicks} clicks</title>
                     {/* Show label every few bars */}
                     {(i % Math.ceil(dailyTotals.length / 10) === 0) && (
                       <text
@@ -184,7 +206,7 @@ export default function ReportsPage() {
         {campaigns.length === 0 ? (
           <div className="p-8 text-center text-sm text-slate-400">No campaigns.</div>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto portal-table-stagger">
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">

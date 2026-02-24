@@ -1,8 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { downloadCSV } from "@/lib/csv-export";
+import CountUp from "@/components/CountUp";
+import Icon from "@/components/Icon";
 
 interface ConversionRow {
   id: number;
@@ -139,13 +142,13 @@ export default function ConversionsPage() {
       </div>
 
       {/* Funnel KPIs */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 portal-stagger">
         <div className="bg-white rounded-xl border border-slate-200 p-4">
           <p className="text-[0.65rem] text-slate-500 uppercase tracking-wider font-bold">
             Total
           </p>
           <p className="text-2xl font-extrabold text-slate-900 mt-1">
-            {totalConversions}
+            <CountUp end={totalConversions} duration={1000} />
           </p>
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-4">
@@ -153,7 +156,7 @@ export default function ConversionsPage() {
             Total Value
           </p>
           <p className="text-2xl font-extrabold text-slate-900 mt-1">
-            ${(totalValue / 100).toLocaleString("en-AU", { minimumFractionDigits: 2 })}
+            <CountUp end={totalValue / 100} prefix="$" decimals={2} duration={1000} />
           </p>
         </div>
         <div className="bg-blue-50 rounded-xl border border-blue-200 p-4">
@@ -161,7 +164,7 @@ export default function ConversionsPage() {
             Opened
           </p>
           <p className="text-2xl font-extrabold text-blue-800 mt-1">
-            {funnelCounts.opened}
+            <CountUp end={funnelCounts.opened} duration={1000} />
           </p>
         </div>
         <div className="bg-green-50 rounded-xl border border-green-200 p-4">
@@ -169,7 +172,7 @@ export default function ConversionsPage() {
             Funded
           </p>
           <p className="text-2xl font-extrabold text-green-800 mt-1">
-            {funnelCounts.funded}
+            <CountUp end={funnelCounts.funded} duration={1000} />
           </p>
         </div>
         <div className="bg-purple-50 rounded-xl border border-purple-200 p-4">
@@ -177,7 +180,7 @@ export default function ConversionsPage() {
             First Trade
           </p>
           <p className="text-2xl font-extrabold text-purple-800 mt-1">
-            {funnelCounts.first_trade}
+            <CountUp end={funnelCounts.first_trade} duration={1000} />
           </p>
         </div>
       </div>
@@ -206,7 +209,7 @@ export default function ConversionsPage() {
                     {count}
                   </span>
                   <div
-                    className={`w-full rounded-t ${
+                    className={`w-full rounded-t chart-bar-animate ${
                       stage === "opened"
                         ? "bg-blue-400"
                         : stage === "funded"
@@ -237,15 +240,24 @@ export default function ConversionsPage() {
         </div>
       ) : conversions.length === 0 ? (
         <div className="bg-white rounded-xl border border-slate-200 p-12 text-center">
-          <p className="text-slate-500 text-sm">
-            No conversions recorded yet.
+          <div className="w-12 h-12 rounded-full bg-purple-50 flex items-center justify-center mx-auto mb-3">
+            <Icon name="target" size={20} className="text-purple-500" />
+          </div>
+          <p className="text-sm font-medium text-slate-700 mb-1">
+            No conversions recorded yet
           </p>
-          <p className="text-slate-400 text-xs mt-2">
+          <p className="text-slate-400 text-xs mb-4">
             Use the Postback API to report conversion events.
           </p>
+          <Link
+            href="/broker-portal/settings"
+            className="inline-block px-4 py-2 bg-slate-100 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-200 transition-colors"
+          >
+            View API Key in Settings →
+          </Link>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-slate-200 overflow-x-auto">
+        <div className="bg-white rounded-xl border border-slate-200 overflow-x-auto portal-table-stagger">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-100 text-left">

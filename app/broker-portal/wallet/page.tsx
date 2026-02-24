@@ -2,6 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { useToast } from "@/components/Toast";
+import CountUp from "@/components/CountUp";
+import Icon from "@/components/Icon";
 import type { BrokerWallet, WalletTransaction } from "@/lib/types";
 
 const TOPUP_AMOUNTS = [100, 250, 500, 1000, 2500, 5000];
@@ -13,6 +16,7 @@ export default function WalletPage() {
   const [topupLoading, setTopupLoading] = useState(false);
   const [customAmount, setCustomAmount] = useState("");
   const [brokerSlug, setBrokerSlug] = useState("");
+  const { toast } = useToast();
 
   useEffect(() => {
     const load = async () => {
@@ -61,13 +65,14 @@ export default function WalletPage() {
 
       const data = await res.json();
       if (data.url) {
+        toast("Redirecting to Stripe...", "info");
         window.location.href = data.url;
       } else {
-        alert(data.error || "Failed to create checkout session");
+        toast(data.error || "Failed to create checkout session", "error");
         setTopupLoading(false);
       }
     } catch {
-      alert("Network error. Please try again.");
+      toast("Network error. Please try again.", "error");
       setTopupLoading(false);
     }
   };
@@ -94,11 +99,11 @@ export default function WalletPage() {
       <div className="bg-gradient-to-r from-slate-800 to-slate-700 rounded-2xl p-6 text-white">
         <p className="text-sm text-slate-300 font-medium">Available Balance</p>
         <p className="text-4xl font-extrabold mt-1">
-          ${(balance / 100).toLocaleString("en-AU", { minimumFractionDigits: 2 })}
+          <CountUp end={balance / 100} prefix="$" decimals={2} duration={1000} />
         </p>
         <div className="flex gap-4 mt-3 text-sm text-slate-300">
-          <span>Deposited: ${((wallet?.lifetime_deposited_cents || 0) / 100).toLocaleString("en-AU", { minimumFractionDigits: 2 })}</span>
-          <span>Spent: ${((wallet?.lifetime_spent_cents || 0) / 100).toLocaleString("en-AU", { minimumFractionDigits: 2 })}</span>
+          <span>Deposited: <CountUp end={(wallet?.lifetime_deposited_cents || 0) / 100} prefix="$" decimals={2} duration={1200} /></span>
+          <span>Spent: <CountUp end={(wallet?.lifetime_spent_cents || 0) / 100} prefix="$" decimals={2} duration={1200} /></span>
         </div>
       </div>
 
@@ -111,7 +116,7 @@ export default function WalletPage() {
               key={amt}
               onClick={() => handleTopup(amt)}
               disabled={topupLoading}
-              className="py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-bold text-slate-700 hover:bg-amber-50 hover:border-amber-200 hover:text-amber-700 transition-colors disabled:opacity-50"
+              className="py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-bold text-slate-700 hover:bg-amber-50 hover:border-amber-200 hover:text-amber-700 transition-all hover-lift active:scale-95 disabled:opacity-50"
             >
               ${amt}
             </button>
@@ -135,7 +140,7 @@ export default function WalletPage() {
             onClick={() => {
               const amt = parseInt(customAmount, 10);
               if (amt >= 50 && amt <= 50000) handleTopup(amt);
-              else alert("Amount must be between $50 and $50,000");
+              else toast("Amount must be between $50 and $50,000", "error");
             }}
             disabled={topupLoading || !customAmount}
             className="px-6 py-2.5 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50"
@@ -154,11 +159,15 @@ export default function WalletPage() {
           <h2 className="font-bold text-slate-900">Transaction History</h2>
         </div>
         {transactions.length === 0 ? (
-          <div className="p-8 text-center text-sm text-slate-400">
-            No transactions yet.
+          <div className="p-12 text-center">
+            <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-3">
+              <Icon name="wallet" size={20} className="text-slate-400" />
+            </div>
+            <p className="text-sm font-medium text-slate-700 mb-1">No transactions yet</p>
+            <p className="text-xs text-slate-400">Top up your wallet to get started.</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto portal-table-stagger">
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">

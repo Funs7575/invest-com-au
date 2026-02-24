@@ -71,7 +71,7 @@ export default function BrokerLoginPage() {
   };
 
   return (
-    <form onSubmit={handleLogin} className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 space-y-5">
+    <form onSubmit={handleLogin} className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 space-y-5" style={{ animation: "resultCardIn 0.4s ease-out" }}>
       <div>
         <h2 className="text-lg font-bold text-slate-900 mb-1">Sign In</h2>
         <p className="text-sm text-slate-500">

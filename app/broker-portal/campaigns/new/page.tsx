@@ -3,10 +3,12 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { useToast } from "@/components/Toast";
 import type { MarketplacePlacement } from "@/lib/types";
 
 export default function NewCampaignPage() {
   const router = useRouter();
+  const { toast } = useToast();
   const [placements, setPlacements] = useState<MarketplacePlacement[]>([]);
   const [brokerSlug, setBrokerSlug] = useState("");
   const [loading, setLoading] = useState(true);
@@ -94,6 +96,7 @@ export default function NewCampaignPage() {
         return;
       }
 
+      toast("Campaign submitted for review", "success");
       router.push("/broker-portal/campaigns");
     } catch {
       setError("Failed to create campaign.");
@@ -139,7 +142,7 @@ export default function NewCampaignPage() {
             {placements.map((p) => (
               <label
                 key={p.id}
-                className={`flex items-start gap-3 p-4 rounded-xl border-2 cursor-pointer transition-colors ${
+                className={`flex items-start gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all hover-lift ${
                   placementId === p.id
                     ? "border-slate-900 bg-slate-50"
                     : "border-slate-200 bg-white hover:border-slate-300"

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import Icon from "@/components/Icon";
+import CountUp from "@/components/CountUp";
 
 const navItems = [
   { href: "/broker-portal", label: "Dashboard", icon: "bar-chart" },
@@ -71,20 +72,29 @@ export default function BrokerPortalLayout({ children }: { children: React.React
     router.refresh();
   };
 
+  const pageTitle = navItems.find(
+    (item) => pathname === item.href || (item.href !== "/broker-portal" && pathname?.startsWith(item.href))
+  )?.label || "Dashboard";
+
   const SidebarContent = () => (
     <>
       <div className="p-4 border-b border-slate-700/50">
-        <Link href="/broker-portal" className="text-lg font-bold text-white" onClick={() => setMobileOpen(false)}>
-          Invest.com.au
+        <Link href="/broker-portal" className="flex items-center gap-2.5" onClick={() => setMobileOpen(false)}>
+          <div className="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center shrink-0">
+            <span className="text-slate-900 font-extrabold text-sm">I</span>
+          </div>
+          <div>
+            <span className="text-sm font-bold text-white">Invest.com.au</span>
+            <p className="text-[0.6rem] text-amber-400 font-semibold uppercase tracking-widest">Partner Portal</p>
+          </div>
         </Link>
-        <p className="text-xs text-slate-400">Partner Portal</p>
       </div>
 
       {/* Wallet balance */}
       <div className="p-4 border-b border-slate-700/50">
         <p className="text-[0.65rem] text-slate-400 uppercase tracking-wider font-bold mb-1">Wallet Balance</p>
         <p className="text-xl font-extrabold text-white">
-          ${(balanceCents / 100).toLocaleString("en-AU", { minimumFractionDigits: 2 })}
+          <CountUp end={balanceCents / 100} prefix="$" decimals={2} duration={1000} />
         </p>
         <Link
           href="/broker-portal/wallet"
@@ -104,9 +114,9 @@ export default function BrokerPortalLayout({ children }: { children: React.React
               key={item.href}
               href={item.href}
               onClick={() => setMobileOpen(false)}
-              className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`sidebar-nav-item flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
                 isActive
-                  ? "bg-slate-700/50 text-white"
+                  ? "is-active bg-slate-700/50 text-white"
                   : "text-slate-300 hover:bg-slate-700/30 hover:text-white"
               }`}
             >
@@ -152,7 +162,7 @@ export default function BrokerPortalLayout({ children }: { children: React.React
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
           </svg>
         </button>
-        <span className="text-slate-900 font-bold text-sm">Partner Portal</span>
+        <span className="text-slate-900 font-bold text-sm">{pageTitle}</span>
         <span className="text-sm font-bold text-slate-700">
           ${(balanceCents / 100).toFixed(0)}
         </span>
@@ -175,7 +185,7 @@ export default function BrokerPortalLayout({ children }: { children: React.React
 
       {/* Main */}
       <main className="flex-1 overflow-auto">
-        <div className="p-4 md:p-6 lg:p-8">{children}</div>
+        <div key={pathname} className="p-4 md:p-6 lg:p-8 portal-page-enter">{children}</div>
       </main>
     </div>
   );
