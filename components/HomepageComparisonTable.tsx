@@ -99,13 +99,13 @@ export default function HomepageComparisonTable({
           <thead>
             <tr className="border-y border-slate-100">
               <th scope="col" className="pl-5 pr-2 py-2 text-left font-semibold text-[0.65rem] uppercase tracking-wider text-slate-400 w-10">#</th>
-              <th scope="col" className="px-3 py-2 text-left font-semibold text-[0.65rem] uppercase tracking-wider text-slate-400">Broker</th>
-              <th scope="col" className="px-3 py-2 text-left font-semibold text-[0.65rem] uppercase tracking-wider text-slate-400 w-[110px]"><JargonTooltip term="ASX Fee" /></th>
-              <th scope="col" className="px-3 py-2 text-left font-semibold text-[0.65rem] uppercase tracking-wider text-slate-400 w-[110px]"><JargonTooltip term="US Fee" /></th>
-              <th scope="col" className="px-3 py-2 text-left font-semibold text-[0.65rem] uppercase tracking-wider text-slate-400 w-[80px]"><JargonTooltip term="FX Rate" /></th>
-              <th scope="col" className="px-3 py-2 text-center font-semibold text-[0.65rem] uppercase tracking-wider text-slate-400 w-[70px]"><JargonTooltip term="CHESS" /></th>
-              <th scope="col" className="px-3 py-2 text-center font-semibold text-[0.65rem] uppercase tracking-wider text-slate-400 w-[100px]">Rating</th>
-              <th scope="col" className="px-3 py-2 pr-5 text-center font-semibold text-[0.65rem] uppercase tracking-wider text-slate-400 w-[160px]"></th>
+              <th scope="col" className="px-3 py-2 text-left font-semibold text-[0.65rem] uppercase tracking-wider text-slate-400 w-[28%]">Broker</th>
+              <th scope="col" className="px-3 py-2 text-left font-semibold text-[0.65rem] uppercase tracking-wider text-slate-400"><JargonTooltip term="ASX Fee" /></th>
+              <th scope="col" className="px-3 py-2 text-left font-semibold text-[0.65rem] uppercase tracking-wider text-slate-400"><JargonTooltip term="US Fee" /></th>
+              <th scope="col" className="px-3 py-2 text-left font-semibold text-[0.65rem] uppercase tracking-wider text-slate-400 whitespace-nowrap"><JargonTooltip term="FX Rate" /></th>
+              <th scope="col" className="px-3 py-2 text-center font-semibold text-[0.65rem] uppercase tracking-wider text-slate-400"><JargonTooltip term="CHESS" /></th>
+              <th scope="col" className="px-3 py-2 text-center font-semibold text-[0.65rem] uppercase tracking-wider text-slate-400">Rating</th>
+              <th scope="col" className="px-3 py-2 pr-5 text-center font-semibold text-[0.65rem] uppercase tracking-wider text-slate-400 w-[155px]"></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -183,7 +183,7 @@ export default function HomepageComparisonTable({
                       href={getAffiliateLink(broker)}
                       target="_blank"
                       rel={AFFILIATE_REL}
-                      className="inline-block w-full max-w-[140px] text-center px-3 py-1.5 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 hover:shadow-md transition-all duration-200 active:scale-[0.97] group-hover:scale-105 group-hover:shadow-[0_0_12px_rgba(217,119,6,0.3)]"
+                      className="inline-block whitespace-nowrap text-center px-3 py-1.5 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 hover:shadow-md transition-all duration-200 active:scale-[0.97] group-hover:scale-105 group-hover:shadow-[0_0_12px_rgba(217,119,6,0.3)]"
                     >
                       {getBenefitCta(broker, "compare")}
                     </a>
