@@ -176,8 +176,8 @@ export default async function HomePage() {
 
       {/* Comparison Table */}
       <ScrollFadeIn>
-        <section className="min-h-[100svh] sm:min-h-0 py-6 sm:py-8 md:py-16 bg-slate-50 flex flex-col">
-          <div className="container-custom flex-1 flex flex-col">
+        <section className="py-6 sm:py-8 md:py-16 bg-slate-50">
+          <div className="container-custom">
             <div className="mb-3 sm:mb-5 md:mb-8">
               <h2 className="text-xl md:text-3xl font-bold text-slate-900">
                 Top Rated Brokers
@@ -188,7 +188,7 @@ export default async function HomePage() {
                 <FeesFreshnessIndicator lastChecked={getMostRecentFeeCheck((brokers as Broker[]) || [])} variant="inline" />
               </p>
             </div>
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm flex-1 flex flex-col">
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
               <HomepageComparisonTable brokers={(brokers as Broker[]) || []} defaultTab="Share Trading" />
             </div>
             <div className="text-center mt-4 sm:mt-5 md:mt-8">
@@ -225,20 +225,17 @@ export default async function HomePage() {
               </div>
               {/* Mobile: horizontal snap-scroll carousel */}
               <div className="md:hidden">
-                <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-4 scrollbar-hide -mx-4 px-4">
-                  {(dealBrokers as Broker[]).map((broker) => (
-                    <div key={broker.id} className="w-[85vw] shrink-0 snap-start">
-                      <DealCard broker={broker} />
-                    </div>
-                  ))}
+                <div className="relative">
+                  <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-4 scrollbar-hide -mx-4 px-4">
+                    {(dealBrokers as Broker[]).map((broker) => (
+                      <div key={broker.id} className="w-[82vw] shrink-0 snap-start">
+                        <DealCard broker={broker} />
+                      </div>
+                    ))}
+                  </div>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-amber-50/80 to-transparent" />
                 </div>
-                {/* Dot indicators */}
-                <div className="flex justify-center gap-1.5 mt-1">
-                  {(dealBrokers as Broker[]).map((_, i) => (
-                    <div key={i} className={`w-1.5 h-1.5 rounded-full ${i === 0 ? 'bg-amber-500' : 'bg-slate-300'}`} />
-                  ))}
-                </div>
-                <div className="text-center mt-3">
+                <div className="text-center mt-2">
                   <Link
                     href="/deals"
                     className="text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors"
@@ -281,7 +278,7 @@ export default async function HomePage() {
               ))}
             </div>
             {/* Mobile: horizontal snap-scroll showing all 6 */}
-            <div className="sm:hidden">
+            <div className="sm:hidden relative">
               <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-3 scrollbar-hide -mx-4 px-4">
                 {bestForCards.map((card) => (
                   <Link
@@ -295,11 +292,7 @@ export default async function HomePage() {
                   </Link>
                 ))}
               </div>
-              <div className="flex justify-center gap-1.5 mt-1">
-                {bestForCards.map((_, i) => (
-                  <div key={i} className={`w-1.5 h-1.5 rounded-full ${i === 0 ? 'bg-slate-500' : 'bg-slate-300'}`} />
-                ))}
-              </div>
+              <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-slate-50 to-transparent" />
             </div>
             <div className="text-center mt-4 md:mt-6">
               <Link
@@ -352,7 +345,7 @@ export default async function HomePage() {
                 ))}
               </div>
               {/* Mobile: horizontal snap-scroll showing all 6 */}
-              <div className="md:hidden">
+              <div className="md:hidden relative">
                 <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-3 scrollbar-hide -mx-4 px-4">
                   {(articles as Article[]).slice(0, 6).map((article) => (
                     <Link
@@ -375,11 +368,7 @@ export default async function HomePage() {
                     </Link>
                   ))}
                 </div>
-                <div className="flex justify-center gap-1.5 mt-1">
-                  {(articles as Article[]).slice(0, 6).map((_, i) => (
-                    <div key={i} className={`w-1.5 h-1.5 rounded-full ${i === 0 ? 'bg-slate-500' : 'bg-slate-300'}`} />
-                  ))}
-                </div>
+                <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white to-transparent" />
               </div>
             </div>
           </section>

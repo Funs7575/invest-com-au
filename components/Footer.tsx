@@ -17,7 +17,7 @@ export default function Footer() {
   return (
     <>
       {/* Legal Disclaimers — light background, visually separate from footer */}
-      <div className="bg-slate-50 border-t border-b border-slate-200 mt-10 md:mt-20">
+      <div className="bg-slate-50 border-t border-b border-slate-200 mt-6 md:mt-20">
         <div className="container-custom">
           <div className="py-2">
             <p className="text-xs font-semibold text-slate-500 pt-2 pb-1">Legal &amp; Disclaimers</p>
