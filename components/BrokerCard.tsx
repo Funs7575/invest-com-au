@@ -4,6 +4,7 @@ import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
 import SponsorBadge from "@/components/SponsorBadge";
 import Icon from "@/components/Icon";
+import ShortlistButton from "@/components/ShortlistButton";
 import { isSponsored } from "@/lib/sponsorship";
 
 export default function BrokerCard({ broker, badge, context = 'compare' }: { broker: Broker; badge?: string; context?: 'compare' | 'review' | 'calculator' | 'versus' | 'quiz' }) {
@@ -35,6 +36,7 @@ export default function BrokerCard({ broker, badge, context = 'compare' }: { bro
             {renderStars(broker.rating || 0)} <span className="text-slate-500">{broker.rating}/5</span>
           </div>
         </div>
+        <ShortlistButton slug={broker.slug} name={broker.name} size="sm" />
         <a
           href={`/broker/${broker.slug}`}
           className="text-xs px-2 py-1 border border-slate-200 rounded-md hover:bg-slate-50 transition-colors shrink-0"

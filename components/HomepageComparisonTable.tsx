@@ -9,6 +9,7 @@ import PromoBadge from "@/components/PromoBadge";
 import SponsorBadge from "@/components/SponsorBadge";
 import { sortWithSponsorship, isSponsored } from "@/lib/sponsorship";
 import JargonTooltip from "@/components/JargonTooltip";
+import ShortlistButton from "@/components/ShortlistButton";
 
 const TAB_OPTIONS = ["All Platforms", "Share Trading", "Crypto Exchanges", "SMSF"] as const;
 type TabOption = (typeof TAB_OPTIONS)[number];
@@ -153,6 +154,7 @@ export default function HomepageComparisonTable({
                         </div>
                       )}
                     </div>
+                    <ShortlistButton slug={broker.slug} name={broker.name} size="sm" />
                   </div>
                 </td>
                 <td className="px-3 py-2.5 text-sm text-slate-700">{broker.asx_fee || "N/A"}</td>
@@ -235,6 +237,7 @@ export default function HomepageComparisonTable({
                   )}
                 </div>
               </div>
+              <ShortlistButton slug={broker.slug} name={broker.name} size="sm" />
             </div>
             {/* Row 2: Key fees + CTA */}
             <div className="flex items-center gap-2 mt-2.5 ml-10">

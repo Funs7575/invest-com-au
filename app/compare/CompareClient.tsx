@@ -16,6 +16,8 @@ import ProUpsellBanner from "@/components/ProUpsellBanner";
 import SponsorBadge from "@/components/SponsorBadge";
 import { getSponsorSortPriority, isSponsored, getPlacementWinners, type PlacementWinner } from "@/lib/sponsorship";
 import Icon from "@/components/Icon";
+import BottomSheet from "@/components/BottomSheet";
+import ShortlistButton from "@/components/ShortlistButton";
 
 type FilterType = 'all' | 'beginner' | 'chess' | 'free' | 'us' | 'smsf' | 'low-fx' | 'crypto';
 type SortCol = 'name' | 'asx_fee_value' | 'us_fee_value' | 'fx_rate' | 'rating';
@@ -63,6 +65,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   const [sortCol, setSortCol] = useState<SortCol>('rating');
   const [sortDir, setSortDir] = useState<1 | -1>(-1);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   // Marketplace campaign allocation
   const [campaignWinners, setCampaignWinners] = useState<PlacementWinner[]>([]);
@@ -242,15 +245,15 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           );
         })()}
 
-        {/* Filter Pills — horizontal scroll on mobile, wrap on desktop */}
-        <div className="flex md:flex-wrap gap-2 mb-4 overflow-x-auto pb-2 md:pb-0 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide" role="tablist" aria-label="Broker filter">
+        {/* Desktop Filter Pills */}
+        <div className="hidden md:flex md:flex-wrap gap-2 mb-4" role="tablist" aria-label="Broker filter">
           {filters.map(f => (
             <button
               key={f.key}
               onClick={() => setActiveFilter(f.key)}
               role="tab"
               aria-selected={activeFilter === f.key}
-              className={`shrink-0 px-4 py-2.5 md:py-2 text-sm font-medium rounded-full filter-pill ${
+              className={`shrink-0 px-4 py-2 text-sm font-medium rounded-full filter-pill ${
                 activeFilter === f.key
                   ? 'bg-blue-700 text-white shadow-sm scale-105'
                   : 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:scale-[1.02]'
@@ -259,6 +262,50 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               {f.label}
             </button>
           ))}
+        </div>
+
+        {/* Mobile Filter Trigger + Bottom Sheet */}
+        <div className="md:hidden mb-4">
+          <button
+            onClick={() => setSheetOpen(true)}
+            className="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-100 text-slate-700 text-sm font-medium rounded-full filter-pill hover:bg-slate-200 transition-colors"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+              <path strokeLinecap="round" d="M4 6h16M7 12h10M10 18h4" />
+            </svg>
+            Filters{activeFilter !== 'all' ? ` (1)` : ''}
+          </button>
+          <BottomSheet open={sheetOpen} onClose={() => setSheetOpen(false)} title="Filter Brokers">
+            <div className="flex flex-wrap gap-2 mb-6">
+              {filters.map(f => (
+                <button
+                  key={f.key}
+                  onClick={() => setActiveFilter(f.key)}
+                  className={`px-4 py-2.5 text-sm font-medium rounded-full filter-pill ${
+                    activeFilter === f.key
+                      ? 'bg-blue-700 text-white shadow-sm'
+                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  }`}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+            <div className="flex gap-3 pt-2 border-t border-slate-100">
+              <button
+                onClick={() => { setActiveFilter('all'); }}
+                className="flex-1 py-3 min-h-[48px] text-sm font-semibold text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors"
+              >
+                Clear All
+              </button>
+              <button
+                onClick={() => setSheetOpen(false)}
+                className="flex-1 py-3 min-h-[48px] text-sm font-bold text-white bg-slate-900 rounded-xl hover:bg-slate-800 transition-colors"
+              >
+                Apply
+              </button>
+            </div>
+          </BottomSheet>
         </div>
 
         {/* Search Input */}
@@ -380,6 +427,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                           </div>
                         )}
                       </div>
+                      <ShortlistButton slug={broker.slug} name={broker.name} size="sm" />
                     </div>
                   </td>
                   <td className="px-4 py-3 text-sm">{broker.asx_fee || 'N/A'}</td>
