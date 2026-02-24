@@ -175,7 +175,7 @@ export default async function HomePage() {
               </div>
               <FeesFreshnessIndicator lastChecked={getMostRecentFeeCheck((brokers as Broker[]) || [])} variant="badge" />
             </div>
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
               <HomepageComparisonTable brokers={(brokers as Broker[]) || []} defaultTab="Share Trading" />
             </div>
             <div className="text-center mt-8">

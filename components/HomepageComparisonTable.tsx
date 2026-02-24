@@ -64,83 +64,83 @@ export default function HomepageComparisonTable({
 
   return (
     <div>
-      {/* Compliance header */}
-      <div className="flex justify-end mb-2">
-        <a
-          href="#advertiser-disclosure"
-          className="text-xs text-gray-400 underline hover:text-gray-600 transition-colors"
-        >
-          Advertiser Disclosure
-        </a>
-      </div>
-
-      {/* Filter Tabs */}
-      <div className="flex md:flex-wrap gap-2 mb-6 overflow-x-auto md:overflow-x-visible scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0" role="tablist" aria-label="Broker category filter">
-        {TAB_OPTIONS.map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            role="tab"
-            aria-selected={activeTab === tab}
-            className={`whitespace-nowrap shrink-0 px-4 py-2.5 md:py-2 rounded-lg text-sm font-medium transition-colors ${
-              activeTab === tab
-                ? "bg-blue-700 text-white"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-            }`}
+      {/* Filter Tabs + Disclosure row */}
+      <div className="px-4 pt-4 pb-2 md:px-5 md:pt-5">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex md:flex-wrap gap-2 overflow-x-auto md:overflow-x-visible scrollbar-hide" role="tablist" aria-label="Broker category filter">
+            {TAB_OPTIONS.map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                role="tab"
+                aria-selected={activeTab === tab}
+                className={`whitespace-nowrap shrink-0 px-3.5 py-1.5 md:py-1.5 rounded-full text-xs font-semibold transition-colors ${
+                  activeTab === tab
+                    ? "bg-blue-700 text-white"
+                    : "bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-700"
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+          <a
+            href="#advertiser-disclosure"
+            className="hidden md:inline text-[0.65rem] text-slate-400 underline hover:text-slate-600 transition-colors shrink-0 ml-4"
           >
-            {tab}
-          </button>
-        ))}
+            Advertiser Disclosure
+          </a>
+        </div>
       </div>
 
       {/* Desktop Table */}
       <div key={activeTab} className="hidden md:block overflow-x-auto motion-safe:tab-content-enter">
-        <table className="w-full border border-slate-200 rounded-xl overflow-hidden compare-table">
-          <thead className="bg-slate-50">
-            <tr>
-              <th scope="col" className="px-3 py-3 text-left font-semibold text-xs text-slate-500 w-8">#</th>
-              <th scope="col" className="px-4 py-3 text-left font-semibold text-sm">Broker</th>
-              <th scope="col" className="px-4 py-3 text-left font-semibold text-sm"><JargonTooltip term="ASX Fee" /></th>
-              <th scope="col" className="px-4 py-3 text-left font-semibold text-sm"><JargonTooltip term="US Fee" /></th>
-              <th scope="col" className="px-4 py-3 text-left font-semibold text-sm"><JargonTooltip term="FX Rate" /></th>
-              <th scope="col" className="px-4 py-3 text-center font-semibold text-sm"><JargonTooltip term="CHESS" /></th>
-              <th scope="col" className="px-4 py-3 text-center font-semibold text-sm">Rating</th>
-              <th scope="col" className="px-4 py-3 text-center font-semibold text-sm"></th>
+        <table className="w-full compare-table">
+          <thead>
+            <tr className="border-y border-slate-100">
+              <th scope="col" className="pl-5 pr-2 py-2 text-left font-semibold text-[0.65rem] uppercase tracking-wider text-slate-400 w-10">#</th>
+              <th scope="col" className="px-3 py-2 text-left font-semibold text-[0.65rem] uppercase tracking-wider text-slate-400">Broker</th>
+              <th scope="col" className="px-3 py-2 text-left font-semibold text-[0.65rem] uppercase tracking-wider text-slate-400 w-[110px]"><JargonTooltip term="ASX Fee" /></th>
+              <th scope="col" className="px-3 py-2 text-left font-semibold text-[0.65rem] uppercase tracking-wider text-slate-400 w-[110px]"><JargonTooltip term="US Fee" /></th>
+              <th scope="col" className="px-3 py-2 text-left font-semibold text-[0.65rem] uppercase tracking-wider text-slate-400 w-[80px]"><JargonTooltip term="FX Rate" /></th>
+              <th scope="col" className="px-3 py-2 text-center font-semibold text-[0.65rem] uppercase tracking-wider text-slate-400 w-[70px]"><JargonTooltip term="CHESS" /></th>
+              <th scope="col" className="px-3 py-2 text-center font-semibold text-[0.65rem] uppercase tracking-wider text-slate-400 w-[100px]">Rating</th>
+              <th scope="col" className="px-3 py-2 pr-5 text-center font-semibold text-[0.65rem] uppercase tracking-wider text-slate-400 w-[160px]"></th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-200">
+          <tbody className="divide-y divide-slate-100">
             {displayBrokers.map((broker, i) => {
               const isTopRated = i === 0 && !isSponsored(broker);
               return (
               <tr
                 key={broker.id}
-                className={`group hover:bg-slate-50 transition-colors ${
+                className={`group hover:bg-slate-50/80 transition-colors ${
                   isSponsored(broker)
                     ? "bg-blue-50/30 border-l-2 border-l-blue-400"
                     : isTopRated
                     ? "bg-amber-50/40 border-l-2 border-l-amber-400"
                     : editorPicks[broker.slug]
-                    ? "bg-slate-50/40"
+                    ? "bg-slate-50/30"
                     : ""
                 }`}
               >
-                <td className="px-3 py-3 text-sm text-slate-400 font-medium">
+                <td className="pl-5 pr-2 py-2.5 text-xs text-slate-400 font-medium">
                   {isTopRated ? (
-                    <span className="text-amber-500" title="Top Rated">🏆</span>
+                    <span className="text-amber-500 text-sm" title="Top Rated">🏆</span>
                   ) : (
                     i + 1
                   )}
                 </td>
-                <td className="px-4 py-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center font-bold text-slate-900 text-sm shrink-0 transition-transform duration-200 group-hover:scale-110">
+                <td className="px-3 py-2.5">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center font-bold text-slate-900 text-xs shrink-0 transition-transform duration-200 group-hover:scale-110">
                       {broker.name.substring(0, 2).toUpperCase()}
                     </div>
                     <div>
                       <div className="flex items-center gap-1.5">
                         <a
                           href={`/broker/${broker.slug}`}
-                          className="font-semibold text-brand hover:text-slate-900 transition-colors"
+                          className="font-semibold text-sm text-brand hover:text-slate-900 transition-colors"
                         >
                           {broker.name}
                         </a>
@@ -148,40 +148,42 @@ export default function HomepageComparisonTable({
                         <SponsorBadge broker={broker} />
                       </div>
                       {!isSponsored(broker) && editorPicks[broker.slug] && (
-                        <div className="text-[0.65rem] font-extrabold text-slate-700 uppercase tracking-wide">
+                        <div className="text-[0.6rem] font-bold text-slate-500 uppercase tracking-wide">
                           {editorPicks[broker.slug]}
                         </div>
                       )}
                     </div>
                   </div>
                 </td>
-                <td className="px-4 py-3 text-sm">{broker.asx_fee || "N/A"}</td>
-                <td className="px-4 py-3 text-sm">{broker.us_fee || "N/A"}</td>
-                <td className="px-4 py-3 text-sm">
+                <td className="px-3 py-2.5 text-sm text-slate-700">{broker.asx_fee || "N/A"}</td>
+                <td className="px-3 py-2.5 text-sm text-slate-700">{broker.us_fee || "N/A"}</td>
+                <td className="px-3 py-2.5 text-sm text-slate-700">
                   {broker.fx_rate != null ? `${broker.fx_rate}%` : "N/A"}
                 </td>
-                <td className="px-4 py-3 text-center">
+                <td className="px-3 py-2.5 text-center">
                   <span
-                    className={
+                    className={`text-xs font-semibold ${
                       broker.chess_sponsored
-                        ? "text-green-600 font-semibold"
-                        : "text-red-500"
-                    }
+                        ? "text-green-600"
+                        : "text-slate-400"
+                    }`}
                   >
                     {broker.chess_sponsored ? "\u2713 Yes" : "\u2717 No"}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-center">
-                  <span className="text-amber">{renderStars(broker.rating || 0)}</span>
-                  <span className="text-sm text-slate-500 ml-1">{broker.rating}</span>
+                <td className="px-3 py-2.5 text-center">
+                  <div className="flex items-center justify-center gap-1">
+                    <span className="text-amber text-xs">{renderStars(broker.rating || 0)}</span>
+                    <span className="text-xs font-semibold text-slate-600">{broker.rating}</span>
+                  </div>
                 </td>
-                <td className="px-4 py-3 text-center">
-                  <div className="flex flex-col items-center gap-1">
+                <td className="px-3 py-2.5 pr-5 text-center">
+                  <div className="flex flex-col items-center gap-0.5">
                     <a
                       href={getAffiliateLink(broker)}
                       target="_blank"
                       rel={AFFILIATE_REL}
-                      className="inline-block px-4 py-2 bg-amber-600 text-white text-sm font-bold rounded-lg hover:bg-amber-700 hover:shadow-md transition-all duration-200 active:scale-[0.97] group-hover:scale-105 group-hover:shadow-[0_0_12px_rgba(217,119,6,0.3)]"
+                      className="inline-block w-full max-w-[140px] text-center px-3 py-1.5 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 hover:shadow-md transition-all duration-200 active:scale-[0.97] group-hover:scale-105 group-hover:shadow-[0_0_12px_rgba(217,119,6,0.3)]"
                     >
                       {getBenefitCta(broker, "compare")}
                     </a>
@@ -258,7 +260,7 @@ export default function HomepageComparisonTable({
       </div>
 
       {/* Affiliate disclosure */}
-      <div id="advertiser-disclosure" className="mt-4 text-center">
+      <div id="advertiser-disclosure" className="px-4 py-3 md:px-5 border-t border-slate-100 text-center">
         <CompactDisclaimerLine />
       </div>
     </div>
