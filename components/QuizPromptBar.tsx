@@ -7,6 +7,7 @@ import { useShortlist } from "@/lib/hooks/useShortlist";
 
 export default function QuizPromptBar() {
   const [desktopVisible, setDesktopVisible] = useState(false);
+  const [mobileVisible, setMobileVisible] = useState(false);
   const [desktopDismissed, setDesktopDismissed] = useState(false);
   const pathname = usePathname();
   const { count: shortlistCount } = useShortlist();
@@ -22,6 +23,16 @@ export default function QuizPromptBar() {
   // Pages where the desktop scroll-triggered bar should hide
   const isHiddenDesktop =
     pathname === "/quiz" || pathname.startsWith("/admin");
+
+  // Mobile: show after user scrolls past first viewport
+  useEffect(() => {
+    if (isHiddenMobile) return;
+    const handleScroll = () => {
+      setMobileVisible(window.scrollY > window.innerHeight * 0.5);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [isHiddenMobile]);
 
   useEffect(() => {
     if (isHiddenDesktop) return;
@@ -48,7 +59,7 @@ export default function QuizPromptBar() {
   };
 
   const showDesktop = !isHiddenDesktop && !desktopDismissed && desktopVisible;
-  const showMobile = !isHiddenMobile;
+  const showMobile = !isHiddenMobile && mobileVisible;
 
   // If neither should render, bail out
   if (!showDesktop && !showMobile) return null;
@@ -57,7 +68,7 @@ export default function QuizPromptBar() {
     <>
       {/* ── Mobile: Persistent 2-button bottom bar ── */}
       {showMobile && (
-        <div className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm border-t border-slate-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] safe-area-inset-bottom">
+        <div className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm border-t border-slate-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] safe-area-inset-bottom animate-sheet-up">
           <div className="flex items-center gap-2.5 px-4 py-2.5">
             {shortlistCount > 0 && (
               <Link
