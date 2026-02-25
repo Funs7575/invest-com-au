@@ -493,7 +493,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         </div>
 
         {/* Mobile Cards */}
-        <div key={`mobile-${activeFilter}-${searchQuery}`} className={`md:hidden space-y-3 tab-content-enter ${selected.size >= 2 ? 'pb-20' : ''}`}>
+        <div key={`mobile-${activeFilter}-${searchQuery}`} className={`md:hidden space-y-3 tab-content-enter overflow-x-hidden ${selected.size >= 2 ? 'pb-20' : ''}`}>
           {/* Selection hint — shown until first selection */}
           {selected.size === 0 && (
             <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-[0.69rem] text-slate-500">

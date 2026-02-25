@@ -32,7 +32,7 @@ export default function BrokerCard({
         ? 'border-slate-700 ring-1 ring-slate-700/30'
         : 'border-slate-200'
     }`}>
-      {/* Selection checkbox — floating top-left */}
+      {/* Selection checkbox — top-right inside card */}
       {onToggleSelect && (
         <button
           onClick={(e) => {
@@ -42,7 +42,7 @@ export default function BrokerCard({
             onToggleSelect(broker.slug);
           }}
           disabled={selectionDisabled && !isSelected}
-          className={`absolute -top-2.5 -left-2.5 z-10 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-150 shadow-sm ${
+          className={`absolute top-1.5 right-1.5 z-10 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-150 shadow-sm ${
             isSelected
               ? 'bg-slate-900 border-slate-900 scale-110'
               : selectionDisabled
