@@ -1,21 +1,18 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useUser } from "@/lib/hooks/useUser";
 
 const navItems = [
   { name: "Compare", href: "/compare" },
-  { name: "Best Brokers", href: "/best" },
+  { name: "Best", href: "/best" },
   { name: "Deals", href: "/deals" },
   { name: "Reviews", href: "/reviews" },
-  { name: "Learn", href: "/articles" },
-];
-
-const moreLinks = [
   { name: "Calculators", href: "/calculators" },
-  { name: "Head-to-Head", href: "/versus" },
+  { name: "Vs", href: "/versus" },
+  { name: "Learn", href: "/articles" },
 ];
 
 const popularLinks = [
@@ -27,21 +24,8 @@ const popularLinks = [
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [moreOpen, setMoreOpen] = useState(false);
-  const moreRef = useRef<HTMLDivElement | null>(null);
   const pathname = usePathname();
   const { user, loading } = useUser();
-
-  // Close "More" dropdown on outside click
-  useEffect(() => {
-    function handleClick(e: MouseEvent) {
-      if (moreRef.current && !moreRef.current.contains(e.target as Node)) {
-        setMoreOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, []);
 
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-slate-200">
@@ -52,7 +36,7 @@ export default function Header() {
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-5 lg:gap-6 ml-6" aria-label="Main navigation">
+          <nav className="hidden md:flex items-center gap-3.5 lg:gap-5 ml-6" aria-label="Main navigation">
             {navItems.map((item) => {
               const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
               return (
@@ -66,32 +50,6 @@ export default function Header() {
                 </Link>
               );
             })}
-            {/* More dropdown */}
-            <div ref={moreRef} className="relative">
-              <button
-                onClick={() => setMoreOpen(!moreOpen)}
-                className="text-sm font-medium text-slate-700 hover:text-slate-900 transition-colors rounded focus:outline-none focus:ring-2 focus:ring-blue-700/40 flex items-center gap-1"
-                aria-expanded={moreOpen}
-                aria-haspopup="true"
-              >
-                More
-                <svg className={`w-3.5 h-3.5 transition-transform ${moreOpen ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-              </button>
-              {moreOpen && (
-                <div className="absolute top-full right-0 mt-2 w-44 bg-white border border-slate-200 rounded-xl shadow-lg py-1 z-50">
-                  {moreLinks.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={() => setMoreOpen(false)}
-                      className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors"
-                    >
-                      {item.name}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
             <Link
               href="/quiz"
               className="px-4 py-2 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-700/40 focus:ring-offset-2 transition-colors"
@@ -171,21 +129,6 @@ export default function Header() {
                 </Link>
               );
             })}
-
-            {/* Tools */}
-            <div className="pt-1.5 mt-1 border-t border-slate-100">
-              <p className="px-3 pt-1 pb-0.5 text-[0.62rem] font-semibold uppercase tracking-wider text-slate-400">Tools</p>
-              {moreLinks.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setMenuOpen(false)}
-                  className="block px-3 py-2 min-h-[40px] flex items-center text-[0.8rem] text-slate-700 hover:bg-slate-50 rounded-lg transition-colors"
-                >
-                  {item.name}
-                </Link>
-              ))}
-            </div>
 
             {/* Quiz + Pro — side by side buttons */}
             <div className="pt-1.5 mt-1 border-t border-slate-100 flex gap-2 px-3">
