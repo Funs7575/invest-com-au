@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
 import ShortlistClient from "./ShortlistClient";
 
 export const metadata: Metadata = {
@@ -12,18 +10,18 @@ export const metadata: Metadata = {
 
 export default function ShortlistPage() {
   return (
-    <>
-      <Header />
-      <main className="max-w-4xl mx-auto px-4 py-12">
-        <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2">
-          My Brokers
-        </h1>
-        <p className="text-sm text-slate-500 mb-8">
-          Your saved brokers. Tap the heart on any broker to add it here.
-        </p>
-        <ShortlistClient />
-      </main>
-      <Footer />
-    </>
+    <div className="max-w-4xl mx-auto px-4 pt-5 pb-8 md:pt-10 md:pb-12">
+      <div className="flex items-center justify-between mb-4 md:mb-6">
+        <div>
+          <h1 className="text-xl md:text-3xl font-extrabold text-slate-900">
+            My Brokers
+          </h1>
+          <p className="text-xs md:text-sm text-slate-500 mt-0.5">
+            Tap the heart on any broker to save it here.
+          </p>
+        </div>
+      </div>
+      <ShortlistClient />
+    </div>
   );
 }
