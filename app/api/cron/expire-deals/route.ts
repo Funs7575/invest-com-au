@@ -210,6 +210,65 @@ export async function GET(req: NextRequest) {
         admin_email: "system@cron",
       });
 
+      // Notify broker about campaign completion
+      await supabase.from("broker_notifications").insert({
+        broker_slug: campaign.broker_slug,
+        type: "campaign_paused",
+        title: "Campaign Completed",
+        message: `Your campaign "${campaign.name}" has ended (end date: ${campaign.end_date}). View performance in your analytics dashboard.`,
+        link: "/broker-portal/campaigns",
+        is_read: false,
+        email_sent: false,
+      });
+
+      // Send email notification
+      if (process.env.RESEND_API_KEY) {
+        try {
+          const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://invest.com.au";
+          const { data: account } = await supabase
+            .from("broker_accounts")
+            .select("email, full_name")
+            .eq("broker_slug", campaign.broker_slug)
+            .eq("status", "active")
+            .maybeSingle();
+
+          if (account?.email) {
+            await fetch("https://api.resend.com/emails", {
+              method: "POST",
+              headers: {
+                "Authorization": `Bearer ${process.env.RESEND_API_KEY}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                from: "Invest.com.au <partners@invest.com.au>",
+                to: [account.email],
+                subject: `Campaign Completed: ${campaign.name}`,
+                html: `
+                  <div style="font-family: 'Inter', system-ui, sans-serif; max-width: 560px; margin: 0 auto;">
+                    <div style="background: #0f172a; padding: 16px 24px; border-radius: 12px 12px 0 0;">
+                      <span style="color: #f59e0b; font-weight: 800; font-size: 14px;">Invest.com.au</span>
+                      <span style="color: #94a3b8; font-size: 12px;"> · Partner Portal</span>
+                    </div>
+                    <div style="background: #fff; border: 1px solid #e2e8f0; border-top: none; padding: 24px; border-radius: 0 0 12px 12px;">
+                      <h2 style="margin: 0 0 8px; font-size: 18px; color: #0f172a;">Campaign Completed</h2>
+                      <p style="margin: 0 0 16px; font-size: 14px; color: #475569; line-height: 1.6;">
+                        Your campaign <strong>"${campaign.name}"</strong> has reached its end date (${campaign.end_date}) and is now complete.
+                      </p>
+                      <a href="${baseUrl}/broker-portal/analytics" style="display: inline-block; padding: 10px 20px; background: #0f172a; color: #fff; text-decoration: none; border-radius: 8px; font-size: 13px; font-weight: 600;">View Analytics →</a>
+                      <p style="margin: 24px 0 0; font-size: 12px; color: #94a3b8;">
+                        You can create a new campaign anytime from your <a href="${baseUrl}/broker-portal/campaigns" style="color: #64748b;">campaign dashboard</a>.
+                      </p>
+                    </div>
+                  </div>
+                `,
+              }),
+            });
+          }
+        } catch {
+          // Email failed — notification is still saved
+        }
+      }
+
       results.push({
         slug: campaign.broker_slug,
         type: "campaign_completed",

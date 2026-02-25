@@ -17,6 +17,7 @@ const navItems = [
   { href: "/broker-portal/conversions", label: "Conversions", icon: "target" },
   { href: "/broker-portal/creatives", label: "Creatives", icon: "image" },
   { href: "/broker-portal/ab-tests", label: "A/B Tests", icon: "git-branch" },
+  { href: "/broker-portal/webhooks", label: "Webhooks", icon: "link" },
   { href: "/broker-portal/notifications", label: "Notifications", icon: "bell" },
   { href: "/broker-portal/support", label: "Support", icon: "message-circle" },
   { href: "/broker-portal/settings", label: "Settings", icon: "settings" },
