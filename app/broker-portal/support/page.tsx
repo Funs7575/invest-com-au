@@ -152,14 +152,21 @@ export default function SupportPage() {
     if (msg) {
       setMessages(prev => [...prev, msg as SupportMessage]);
 
-      // Update ticket status to waiting_reply if it was resolved
-      if (activeTicket.status === "resolved" || activeTicket.status === "waiting_reply") {
+      // If resolved, reopen the ticket; if waiting_reply, mark as in_progress (broker replied)
+      if (activeTicket.status === "resolved") {
         await supabase
           .from("support_tickets")
           .update({ status: "open", updated_at: new Date().toISOString() })
           .eq("id", activeTicket.id);
         setActiveTicket({ ...activeTicket, status: "open" });
         setTickets(prev => prev.map(t => t.id === activeTicket.id ? { ...t, status: "open" as const } : t));
+      } else if (activeTicket.status === "waiting_reply") {
+        await supabase
+          .from("support_tickets")
+          .update({ status: "in_progress", updated_at: new Date().toISOString() })
+          .eq("id", activeTicket.id);
+        setActiveTicket({ ...activeTicket, status: "in_progress" });
+        setTickets(prev => prev.map(t => t.id === activeTicket.id ? { ...t, status: "in_progress" as const } : t));
       }
     }
 

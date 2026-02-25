@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
 import type { Article } from "@/lib/types";
@@ -125,13 +126,13 @@ export default async function HomePage() {
             </Link>
           </div>
           {/* Trust signals — inline row on mobile (smaller), inline row on desktop */}
-          <div className="flex items-center justify-center flex-wrap gap-x-3 gap-y-1 sm:gap-x-8 pt-2.5 md:pt-6 text-[0.62rem] md:text-xs text-slate-400 hero-fade-up hero-fade-up-5">
+          <div className="flex items-center justify-center flex-wrap gap-x-3 gap-y-1 sm:gap-x-8 pt-2.5 md:pt-6 text-[0.62rem] md:text-xs text-slate-500 hero-fade-up hero-fade-up-5">
             <span className="flex items-center gap-1">
-              <svg className="w-3 h-3 md:w-4 md:h-4 text-slate-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+              <svg className="w-3 h-3 md:w-4 md:h-4 text-slate-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
               ASIC-regulated
             </span>
             <span className="flex items-center gap-1">
-              <svg className="w-3 h-3 md:w-4 md:h-4 text-slate-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+              <svg className="w-3 h-3 md:w-4 md:h-4 text-slate-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
               Independent
             </span>
             <span className="flex items-center gap-1">
@@ -139,7 +140,7 @@ export default async function HomePage() {
               Verified daily
             </span>
             <span className="flex items-center gap-1">
-              <svg className="w-3 h-3 md:w-4 md:h-4 text-slate-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" /></svg>
+              <svg className="w-3 h-3 md:w-4 md:h-4 text-slate-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" /></svg>
               Free
             </span>
           </div>
@@ -149,7 +150,7 @@ export default async function HomePage() {
       {/* Broker Logo Strip — instant credibility */}
       <section className="py-2 md:py-4 bg-white border-b border-slate-100">
         <div className="container-custom">
-          <p className="text-[0.62rem] md:text-[0.69rem] uppercase tracking-widest text-slate-400 text-center mb-1.5 md:mb-3 font-medium">Brokers we compare</p>
+          <p className="text-[0.62rem] md:text-[0.69rem] uppercase tracking-widest text-slate-500 text-center mb-1.5 md:mb-3 font-medium">Brokers we compare</p>
           {/* Desktop: centered wrap row */}
           <div className="hidden sm:flex items-center justify-center gap-8 flex-wrap opacity-70">
             {(brokers as Broker[])?.slice(0, 6).map((broker) => (
@@ -341,8 +342,8 @@ export default async function HomePage() {
                     className="border border-slate-200 rounded-xl overflow-hidden hover:shadow-md hover:border-slate-300 transition-all duration-200 group flex flex-col"
                   >
                     {article.cover_image_url && (
-                      <div className="aspect-[16/9] overflow-hidden bg-slate-100">
-                        <img src={article.cover_image_url} alt={article.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
+                      <div className="aspect-[16/9] overflow-hidden bg-slate-100 relative">
+                        <Image src={article.cover_image_url} alt={article.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
                       </div>
                     )}
                     <div className="p-5 flex flex-col flex-1">
@@ -355,7 +356,7 @@ export default async function HomePage() {
                         {article.title}
                       </h3>
                       <p className="text-sm text-slate-500 line-clamp-2 mb-3 flex-1">{article.excerpt}</p>
-                      <div className="flex items-center gap-3 text-xs text-slate-400">
+                      <div className="flex items-center gap-3 text-xs text-slate-500">
                         {article.read_time && <span>{article.read_time} min read</span>}
                         <span className="text-slate-900 font-semibold group-hover:translate-x-0.5 transition-transform">Read Guide &rarr;</span>
                       </div>
@@ -372,8 +373,8 @@ export default async function HomePage() {
                     className="border border-slate-200 rounded-lg overflow-hidden hover:shadow-md transition-all duration-200 group flex flex-col"
                   >
                     {article.cover_image_url && (
-                      <div className="aspect-[16/9] overflow-hidden bg-slate-100">
-                        <img src={article.cover_image_url} alt={article.title} className="w-full h-full object-cover" loading="lazy" />
+                      <div className="aspect-[16/9] overflow-hidden bg-slate-100 relative">
+                        <Image src={article.cover_image_url} alt={article.title} fill className="object-cover" sizes="50vw" />
                       </div>
                     )}
                     <div className="p-2.5 flex flex-col flex-1">
@@ -385,7 +386,7 @@ export default async function HomePage() {
                       <h3 className="font-bold text-xs text-slate-900 leading-snug line-clamp-2 mb-1">
                         {article.title}
                       </h3>
-                      <div className="flex items-center gap-2 text-[0.62rem] text-slate-400 mt-auto">
+                      <div className="flex items-center gap-2 text-[0.62rem] text-slate-500 mt-auto">
                         {article.read_time && <span>{article.read_time} min</span>}
                         <span className="text-slate-900 font-semibold">Read →</span>
                       </div>

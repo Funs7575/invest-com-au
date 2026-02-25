@@ -72,16 +72,16 @@ export default function CampaignsPage() {
     const supabase = createClient();
     const { error } = await supabase
       .from("campaigns")
-      .update({ status: "active", updated_at: new Date().toISOString() })
+      .update({ status: "approved", updated_at: new Date().toISOString() })
       .eq("id", id);
     if (error) {
       toast("Failed to resume campaign", "error");
       return;
     }
     setCampaigns((prev) =>
-      prev.map((c) => (c.id === id ? { ...c, status: "active" as const } : c))
+      prev.map((c) => (c.id === id ? { ...c, status: "approved" as const } : c))
     );
-    toast("Campaign resumed", "success");
+    toast("Campaign submitted for approval", "success");
   };
 
   const handleCancel = async (id: number) => {
@@ -126,7 +126,7 @@ export default function CampaignsPage() {
 
       {/* Filter tabs */}
       <div className="flex flex-wrap gap-2">
-        {["all", "active", "pending_review", "approved", "paused", "completed"].map((s) => (
+        {["all", "active", "pending_review", "approved", "paused", "budget_exhausted", "rejected", "cancelled", "completed"].map((s) => (
           <button
             key={s}
             onClick={() => setFilter(s)}
@@ -136,7 +136,7 @@ export default function CampaignsPage() {
                 : "bg-slate-100 text-slate-600 hover:bg-slate-200"
             }`}
           >
-            {s === "all" ? "All" : s.replace("_", " ")}
+            {s === "all" ? "All" : s.replace(/_/g, " ")}
             {s !== "all" && (
               <span className="ml-1 opacity-70">
                 ({campaigns.filter((c) => c.status === s).length})
@@ -153,7 +153,7 @@ export default function CampaignsPage() {
             <Icon name="megaphone" size={20} className="text-amber-500" />
           </div>
           <p className="text-sm font-medium text-slate-700 mb-1">
-            {filter === "all" ? "No campaigns yet" : `No ${filter.replace("_", " ")} campaigns`}
+            {filter === "all" ? "No campaigns yet" : `No ${filter.replace(/_/g, " ")} campaigns`}
           </p>
           <p className="text-xs text-slate-400 mb-4">
             {filter === "all" ? "Create your first campaign to get started." : "Try a different filter or create a new campaign."}

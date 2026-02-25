@@ -18,6 +18,7 @@ const navItems = [
   { href: "/broker-portal/creatives", label: "Creatives", icon: "image" },
   { href: "/broker-portal/ab-tests", label: "A/B Tests", icon: "git-branch" },
   { href: "/broker-portal/webhooks", label: "Webhooks", icon: "link" },
+  { href: "/broker-portal/packages", label: "Packages", icon: "package" },
   { href: "/broker-portal/notifications", label: "Notifications", icon: "bell" },
   { href: "/broker-portal/support", label: "Support", icon: "message-circle" },
   { href: "/broker-portal/settings", label: "Settings", icon: "settings" },
@@ -185,7 +186,7 @@ export default function BrokerPortalLayout({ children }: { children: React.React
         </button>
         <span className="text-slate-900 font-bold text-sm">{pageTitle}</span>
         <span className="text-sm font-bold text-slate-700">
-          ${(balanceCents / 100).toFixed(0)}
+          ${(balanceCents / 100).toFixed(2)}
         </span>
       </div>
 

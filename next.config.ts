@@ -69,7 +69,7 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value:
               "default-src 'self'; " +
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com https://www.googletagmanager.com https://www.google-analytics.com https://cal.com; " +
+              "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com https://www.googletagmanager.com https://www.google-analytics.com https://cal.com; " +
               "style-src 'self' 'unsafe-inline'; " +
               "img-src 'self' data: https: https://www.googletagmanager.com; " +
               "font-src 'self'; " +

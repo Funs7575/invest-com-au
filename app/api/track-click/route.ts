@@ -35,6 +35,7 @@ setInterval(() => {
 function hashIP(ip: string): string {
   // Use SHA-256 with a salt for irreversible hashing
   const salt = process.env.IP_HASH_SALT || 'invest-com-au-2026';
+  if (!process.env.IP_HASH_SALT) console.warn('[env] IP_HASH_SALT not set — using default. Set this env var in production.');
   return createHash('sha256').update(salt + ip).digest('hex').slice(0, 16);
 }
 

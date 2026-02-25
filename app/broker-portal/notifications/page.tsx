@@ -42,15 +42,19 @@ export default function NotificationsPage() {
         .limit(100);
 
       setNotifications((data || []) as BrokerNotification[]);
-
-      // Mark all as read
-      await supabase
-        .from("broker_notifications")
-        .update({ is_read: true })
-        .eq("broker_slug", account.broker_slug)
-        .eq("is_read", false);
-
       setLoading(false);
+
+      // Mark as read after a short delay so the user can see which were unread
+      const unreadIds = (data || []).filter((n: any) => !n.is_read).map((n: any) => n.id);
+      if (unreadIds.length > 0) {
+        setTimeout(async () => {
+          await supabase
+            .from("broker_notifications")
+            .update({ is_read: true })
+            .in("id", unreadIds);
+          setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
+        }, 2000);
+      }
     };
     load();
   }, []);

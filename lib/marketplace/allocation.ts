@@ -352,14 +352,19 @@ export async function recordCpcClick(
     }
   }
 
-  // Check daily pacing before debiting
+  // Look up the campaign's actual rate and budget from the DB — never trust caller-supplied rate
   const { data: campaign } = await supabase
     .from("campaigns")
-    .select("daily_budget_cents, total_spent_cents, total_budget_cents")
+    .select("daily_budget_cents, total_spent_cents, total_budget_cents, rate_cents, status")
     .eq("id", campaignId)
     .single();
 
   if (!campaign) return false;
+
+  // Use the campaign's actual rate_cents from the DB, not the caller-supplied value
+  const actualRateCents = campaign.rate_cents;
+  if (!actualRateCents || actualRateCents <= 0) return false;
+  if (campaign.status !== "active") return false;
 
   if (campaign.daily_budget_cents) {
     const todayStart = new Date().toISOString().slice(0, 10) + "T00:00:00.000Z";
@@ -374,16 +379,16 @@ export async function recordCpcClick(
       0
     );
 
-    if (todaySpend + rateCents > campaign.daily_budget_cents) {
+    if (todaySpend + actualRateCents > campaign.daily_budget_cents) {
       return false; // Daily cap would be exceeded
     }
   }
 
-  // Try to debit wallet
+  // Try to debit wallet using the verified rate from the database
   try {
     await debitWallet(
       brokerSlug,
-      rateCents,
+      actualRateCents,
       `CPC click — campaign #${campaignId}`,
       { type: "campaign_click", id: String(campaignId) }
     );
@@ -406,7 +411,7 @@ export async function recordCpcClick(
     placement_id: clickData.placement_id || null,
     scenario: clickData.scenario || null,
     device_type: clickData.device_type || null,
-    cost_cents: rateCents,
+    cost_cents: actualRateCents,
   });
 
   if (insertErr) {
@@ -418,7 +423,7 @@ export async function recordCpcClick(
         const { refundWallet } = await import("./wallet");
         await refundWallet(
           brokerSlug,
-          rateCents,
+          actualRateCents,
           `Refund: duplicate CPC click — campaign #${campaignId}`,
           { type: "duplicate_click_refund", id: clickData.click_id || String(campaignId) }
         );
@@ -432,7 +437,7 @@ export async function recordCpcClick(
   }
 
   // Update campaign total_spent
-  const newSpent = (campaign.total_spent_cents || 0) + rateCents;
+  const newSpent = (campaign.total_spent_cents || 0) + actualRateCents;
   const updates: Record<string, unknown> = {
     total_spent_cents: newSpent,
     updated_at: new Date().toISOString(),

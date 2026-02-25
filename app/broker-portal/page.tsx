@@ -107,7 +107,7 @@ export default function BrokerDashboard() {
           <p className="text-2xl font-extrabold text-slate-700 mt-1">
             <CountUp end={balance / 100} prefix="$" decimals={2} duration={1000} />
           </p>
-          {balance < 5000 ? (
+          {balance < (wallet?.low_balance_threshold_cents || 5000) ? (
             <Link href="/broker-portal/wallet" className="text-xs text-amber-600 hover:text-amber-700 font-medium mt-2 inline-block">
               Low balance — Add Funds →
             </Link>
@@ -209,7 +209,7 @@ export default function BrokerDashboard() {
                     c.status === "approved" ? "bg-blue-50 text-blue-700" :
                     "bg-slate-100 text-slate-500"
                   }`}>
-                    {c.status.replace("_", " ")}
+                    {c.status.replace(/_/g, " ")}
                   </span>
                 </div>
               );

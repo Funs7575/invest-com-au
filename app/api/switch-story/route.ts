@@ -245,6 +245,7 @@ export async function POST(request: NextRequest) {
           subject: `Verify your switching story — Invest.com.au`,
           html,
         }),
+        signal: AbortSignal.timeout(10_000), // 10s timeout
       });
     } catch (err) {
       console.error('Failed to send verification email:', err);

@@ -94,33 +94,45 @@ export default function AskQuestionForm({ brokerSlug, brokerName, pageType = "br
           <h3 className="text-sm font-bold text-slate-900 mb-3">
             Ask about {brokerName}
           </h3>
+          <label htmlFor="aq-question" className="sr-only">Your question</label>
           <textarea
+            id="aq-question"
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
             placeholder="e.g., Does this broker support DRP for ASX shares?"
             className="w-full px-4 py-2.5 md:px-3 md:py-2 text-base md:text-sm border border-slate-200 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
             rows={3}
             maxLength={500}
+            aria-describedby={errorMsg ? "aq-error" : undefined}
           />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
-            <input
-              type="text"
-              value={displayName}
-              onChange={(e) => setDisplayName(e.target.value)}
-              placeholder="Your name"
-              className="px-4 py-2.5 md:px-3 md:py-2 text-base md:text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
-              maxLength={100}
-            />
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email (optional — for answer notification)"
-              className="px-4 py-2.5 md:px-3 md:py-2 text-base md:text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
-            />
+            <div>
+              <label htmlFor="aq-name" className="sr-only">Your name</label>
+              <input
+                id="aq-name"
+                type="text"
+                value={displayName}
+                onChange={(e) => setDisplayName(e.target.value)}
+                placeholder="Your name"
+                className="w-full px-4 py-2.5 md:px-3 md:py-2 text-base md:text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
+                maxLength={100}
+                aria-describedby={errorMsg ? "aq-error" : undefined}
+              />
+            </div>
+            <div>
+              <label htmlFor="aq-email" className="sr-only">Email (optional)</label>
+              <input
+                id="aq-email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Email (optional — for answer notification)"
+                className="w-full px-4 py-2.5 md:px-3 md:py-2 text-base md:text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
+              />
+            </div>
           </div>
           {errorMsg && (
-            <p className="text-xs text-red-600 mt-2">{errorMsg}</p>
+            <p id="aq-error" role="alert" className="text-xs text-red-600 mt-2">{errorMsg}</p>
           )}
           <div className="flex items-center gap-3 mt-3">
             <button

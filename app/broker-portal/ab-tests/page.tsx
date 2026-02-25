@@ -108,6 +108,7 @@ export default function ABTestsPage() {
   };
 
   const declareWinner = async (id: number, winner: "a" | "b") => {
+    if (!confirm(`Declare Variant ${winner.toUpperCase()} as the winner? This will end the test.`)) return;
     const supabase = createClient();
     await supabase.from("ab_tests").update({
       winner,
@@ -237,7 +238,7 @@ export default function ABTestsPage() {
                     <div className="flex items-center gap-2">
                       <h3 className="font-bold text-slate-900">{test.name}</h3>
                       <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${STATUS_STYLES[test.status]}`}>
-                        {test.status.replace("_", " ")}
+                        {test.status.replace(/_/g, " ")}
                       </span>
                       {test.winner && (
                         <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-green-100 text-green-800">

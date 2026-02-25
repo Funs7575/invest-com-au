@@ -101,6 +101,7 @@ export default function CreativesPage() {
   };
 
   const deleteCreative = async (id: number) => {
+    if (!confirm("Delete this creative? This cannot be undone.")) return;
     const supabase = createClient();
     await supabase.from("broker_creatives").delete().eq("id", id);
     setCreatives(prev => prev.filter(c => c.id !== id));
