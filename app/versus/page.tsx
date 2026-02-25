@@ -34,14 +34,17 @@ export default async function VersusPage() {
 
 function VersusLoading() {
   return (
-    <div className="py-12">
-      <div className="container-custom max-w-4xl">
-        <div className="h-5 w-48 bg-slate-200 rounded animate-pulse mb-6" />
-        <div className="h-10 w-96 bg-slate-200 rounded animate-pulse mb-2" />
-        <div className="h-5 w-80 bg-slate-100 rounded animate-pulse mb-8" />
-        <div className="flex flex-col md:flex-row gap-4 mb-8">
-          <div className="flex-1 h-14 bg-slate-200 rounded-lg animate-pulse" />
-          <div className="flex-1 h-14 bg-slate-200 rounded-lg animate-pulse" />
+    <div className="pt-5 pb-8 md:py-12">
+      <div className="container-custom max-w-5xl">
+        <div className="h-3 md:h-5 w-32 md:w-48 bg-slate-200 rounded animate-pulse mb-2 md:mb-6" />
+        <div className="h-6 md:h-10 w-52 md:w-96 bg-slate-200 rounded animate-pulse mb-1 md:mb-2" />
+        <div className="h-3 md:h-5 w-44 md:w-80 bg-slate-100 rounded animate-pulse mb-3 md:mb-8" />
+        <div className="bg-slate-50 border border-slate-200 rounded-xl md:rounded-2xl p-3.5 md:p-8 animate-pulse">
+          <div className="h-3 w-36 bg-slate-200 rounded mb-3" />
+          <div className="flex flex-col md:flex-row gap-2 md:gap-4">
+            <div className="flex-1 h-12 md:h-14 bg-slate-200 rounded-lg" />
+            <div className="flex-1 h-12 md:h-14 bg-slate-200 rounded-lg" />
+          </div>
         </div>
       </div>
     </div>
