@@ -117,7 +117,7 @@ export default function HomepageComparisonTable({
                 onClick={() => setActiveTab(tab)}
                 role="tab"
                 aria-selected={activeTab === tab}
-                className={`whitespace-nowrap shrink-0 px-2.5 md:px-3.5 py-1.5 rounded-full text-[0.69rem] md:text-xs font-semibold transition-colors ${
+                className={`whitespace-nowrap shrink-0 px-3 md:px-3.5 py-2 min-h-[36px] rounded-full text-[0.69rem] md:text-xs font-semibold transition-colors ${
                   activeTab === tab
                     ? "bg-slate-900 text-white"
                     : "bg-slate-100 text-slate-500 hover:bg-slate-200 hover:text-slate-700"
@@ -315,7 +315,7 @@ export default function HomepageComparisonTable({
               href={mobileLink}
               target="_blank"
               rel={AFFILIATE_REL}
-              className="shrink-0 px-3 py-2 bg-amber-500 text-white text-[0.69rem] font-bold rounded-lg hover:bg-amber-600 active:scale-[0.97] transition-all"
+              className="shrink-0 px-3.5 py-2 min-h-[36px] inline-flex items-center bg-amber-500 text-white text-[0.69rem] font-bold rounded-lg hover:bg-amber-600 active:scale-[0.97] transition-all"
             >
               Visit
             </a>

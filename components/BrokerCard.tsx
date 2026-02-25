@@ -42,20 +42,22 @@ export default function BrokerCard({
             onToggleSelect(broker.slug);
           }}
           disabled={selectionDisabled && !isSelected}
-          className={`absolute top-1.5 right-1.5 z-10 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-150 shadow-sm ${
+          className="absolute -top-1 -right-1 z-10 w-10 h-10 flex items-center justify-center"
+          aria-label={isSelected ? `Deselect ${broker.name}` : `Select ${broker.name} for comparison`}
+        >
+          <span className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-150 shadow-sm ${
             isSelected
               ? 'bg-slate-900 border-slate-900 scale-110'
               : selectionDisabled
-              ? 'bg-white border-slate-200 opacity-40 cursor-not-allowed'
-              : 'bg-white border-slate-300 hover:border-slate-500 active:scale-95'
-          }`}
-          aria-label={isSelected ? `Deselect ${broker.name}` : `Select ${broker.name} for comparison`}
-        >
-          {isSelected && (
-            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-            </svg>
-          )}
+              ? 'bg-white border-slate-200 opacity-40'
+              : 'bg-white border-slate-300 active:scale-95'
+          }`}>
+            {isSelected && (
+              <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+              </svg>
+            )}
+          </span>
         </button>
       )}
 
@@ -86,7 +88,7 @@ export default function BrokerCard({
         <ShortlistButton slug={broker.slug} name={broker.name} size="sm" />
         <a
           href={`/broker/${broker.slug}`}
-          className="text-[0.69rem] px-2 py-1 border border-slate-200 rounded-md hover:bg-slate-50 transition-colors shrink-0"
+          className="text-[0.69rem] px-2.5 py-1.5 min-h-[36px] inline-flex items-center border border-slate-200 rounded-md hover:bg-slate-50 transition-colors shrink-0"
         >
           Review
         </a>

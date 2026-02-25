@@ -65,7 +65,7 @@ export default function MobileFloatingCTA({
           Open Account
         </a>
       </div>
-      <div className="px-4 pb-1.5 text-xs text-slate-400 text-center">
+      <div className="px-4 pb-2 text-[0.62rem] text-slate-400 text-center">
         {ADVERTISER_DISCLOSURE_SHORT}
       </div>
     </div>

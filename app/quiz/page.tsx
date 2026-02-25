@@ -880,7 +880,7 @@ export default function QuizPage() {
                 role="radio"
                 aria-checked={selectedKey === opt.key}
                 aria-label={opt.label}
-                className={`w-full text-left border rounded-lg md:rounded-xl px-4 py-3 md:px-6 md:py-4 transition-all font-medium text-xs md:text-base ${
+                className={`w-full text-left border rounded-lg md:rounded-xl px-4 py-3.5 md:px-6 md:py-4 min-h-[48px] transition-all font-medium text-xs md:text-base ${
                   selectedKey === opt.key
                     ? "border-slate-700 bg-slate-700/5 scale-[0.98]"
                     : "border-slate-200 hover:border-slate-700 hover:bg-slate-700/5"

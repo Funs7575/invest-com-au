@@ -161,9 +161,9 @@ export default async function HomePage() {
               </div>
             ))}
           </div>
-          {/* Mobile: inline row, smaller icons */}
-          <div className="sm:hidden flex items-center justify-center gap-2 opacity-70">
-            {(brokers as Broker[])?.slice(0, 6).map((broker) => (
+          {/* Mobile: scrollable row, smaller icons — limited to 5 to prevent overflow */}
+          <div className="sm:hidden flex items-center justify-center gap-2 opacity-70 overflow-x-auto scrollbar-hide px-2">
+            {(brokers as Broker[])?.slice(0, 5).map((broker) => (
               <div key={broker.id} className="flex items-center gap-1 shrink-0">
                 <div className="w-6 h-6 rounded-md flex items-center justify-center text-white text-[0.56rem] font-bold shrink-0" style={{ backgroundColor: broker.color || '#64748b' }}>
                   {broker.name?.slice(0, 2).toUpperCase()}

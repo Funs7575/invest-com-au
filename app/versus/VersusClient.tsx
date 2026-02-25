@@ -220,7 +220,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                           {selectedSlugs.length > 2 && (
                             <button
                               onClick={() => removeSlot(index)}
-                              className="w-6 h-6 md:w-7 md:h-7 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors shrink-0"
+                              className="w-8 h-8 md:w-7 md:h-7 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors shrink-0"
                               title="Remove broker"
                             >
                               <svg className="w-3 h-3 md:w-3.5 md:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -234,7 +234,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                       <select
                         value={slug}
                         onChange={(e) => updateSlug(index, e.target.value)}
-                        className="w-full border border-slate-200 rounded-lg py-2 md:py-2.5 px-2.5 md:px-3 text-xs md:text-sm font-medium bg-white hover:border-slate-300 focus:border-blue-700 focus:ring-1 focus:ring-blue-700 transition-colors"
+                        className="w-full border border-slate-200 rounded-lg py-2.5 md:py-2.5 px-2.5 md:px-3 min-h-[44px] text-xs md:text-sm font-medium bg-white hover:border-slate-300 focus:border-blue-700 focus:ring-1 focus:ring-blue-700 transition-colors"
                       >
                         <option value="">Choose a broker...</option>
                         {brokers.map(br => (
@@ -544,7 +544,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                   <Link
                     key={c.href}
                     href={c.href}
-                    className="px-2.5 py-1.5 md:px-4 md:py-2.5 rounded-lg md:rounded-xl bg-white border border-slate-200 text-[0.69rem] md:text-sm font-medium text-slate-600 hover:border-slate-600 hover:text-slate-700 hover:bg-slate-50 hover:shadow-sm transition-all"
+                    className="px-3 py-2 min-h-[36px] inline-flex items-center md:px-4 md:py-2.5 rounded-lg md:rounded-xl bg-white border border-slate-200 text-[0.69rem] md:text-sm font-medium text-slate-600 hover:border-slate-600 hover:text-slate-700 hover:bg-slate-50 hover:shadow-sm transition-all"
                   >
                     {c.label}
                   </Link>

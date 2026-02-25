@@ -164,7 +164,7 @@ export default function Header() {
                   key={item.href}
                   href={item.href}
                   onClick={() => setMenuOpen(false)}
-                  className={`block px-3 py-2.5 text-[0.8rem] font-medium rounded-lg transition-colors ${isActive ? "bg-blue-50 text-blue-700 font-bold" : "text-slate-700 hover:bg-slate-50"}`}
+                  className={`block px-3 py-2.5 min-h-[44px] flex items-center text-[0.8rem] font-medium rounded-lg transition-colors ${isActive ? "bg-blue-50 text-blue-700 font-bold" : "text-slate-700 hover:bg-slate-50"}`}
                   {...(isActive ? { "aria-current": "page" as const } : {})}
                 >
                   {item.name}
@@ -180,7 +180,7 @@ export default function Header() {
                   key={item.href}
                   href={item.href}
                   onClick={() => setMenuOpen(false)}
-                  className="block px-3 py-2 text-[0.8rem] text-slate-700 hover:bg-slate-50 rounded-lg transition-colors"
+                  className="block px-3 py-2 min-h-[40px] flex items-center text-[0.8rem] text-slate-700 hover:bg-slate-50 rounded-lg transition-colors"
                 >
                   {item.name}
                 </Link>
@@ -192,14 +192,14 @@ export default function Header() {
               <Link
                 href="/quiz"
                 onClick={() => setMenuOpen(false)}
-                className="flex-1 py-2 text-xs font-semibold text-center text-white bg-slate-900 rounded-lg hover:bg-slate-800 transition-colors"
+                className="flex-1 py-2.5 min-h-[44px] flex items-center justify-center text-xs font-semibold text-center text-white bg-slate-900 rounded-lg hover:bg-slate-800 transition-colors"
               >
                 Broker Quiz
               </Link>
               <Link
                 href="/pro"
                 onClick={() => setMenuOpen(false)}
-                className="flex-1 py-2 text-xs font-semibold text-center text-amber-700 bg-amber-50 rounded-lg hover:bg-amber-100 border border-amber-200 transition-colors"
+                className="flex-1 py-2.5 min-h-[44px] flex items-center justify-center text-xs font-semibold text-center text-amber-700 bg-amber-50 rounded-lg hover:bg-amber-100 border border-amber-200 transition-colors"
               >
                 Investor Pro ✦
               </Link>
@@ -212,7 +212,7 @@ export default function Header() {
                   <Link
                     href="/account"
                     onClick={() => setMenuOpen(false)}
-                    className="block px-3 py-2 text-[0.8rem] font-medium text-slate-700 hover:bg-slate-50 rounded-lg transition-colors"
+                    className="block px-3 py-2 min-h-[44px] flex items-center text-[0.8rem] font-medium text-slate-700 hover:bg-slate-50 rounded-lg transition-colors"
                   >
                     My Account
                   </Link>
@@ -220,7 +220,7 @@ export default function Header() {
                   <Link
                     href="/auth/login"
                     onClick={() => setMenuOpen(false)}
-                    className="block px-3 py-2 text-[0.8rem] font-medium text-slate-700 hover:bg-slate-50 rounded-lg transition-colors"
+                    className="block px-3 py-2 min-h-[44px] flex items-center text-[0.8rem] font-medium text-slate-700 hover:bg-slate-50 rounded-lg transition-colors"
                   >
                     Sign In
                   </Link>
@@ -237,7 +237,7 @@ export default function Header() {
                     key={link.href}
                     href={link.href}
                     onClick={() => setMenuOpen(false)}
-                    className="text-[0.69rem] font-medium text-slate-600 bg-slate-50 px-2.5 py-1 rounded-full hover:bg-slate-100 hover:text-slate-900 transition-colors"
+                    className="text-[0.69rem] font-medium text-slate-600 bg-slate-50 px-3 py-1.5 min-h-[36px] inline-flex items-center rounded-full hover:bg-slate-100 hover:text-slate-900 transition-colors"
                   >
                     {link.label}
                   </Link>

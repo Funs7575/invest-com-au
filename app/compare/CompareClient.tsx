@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Search, X } from "lucide-react";
@@ -41,12 +41,38 @@ const feeTooltips: Record<string, string> = {
 };
 
 function InfoTip({ text }: { text: string }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function handleClickOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [open]);
+
   return (
-    <span className="relative group ml-1 inline-flex">
-      <span className="inline-flex items-center justify-center w-3.5 h-3.5 rounded-full bg-slate-200 text-slate-500 text-[0.69rem] font-bold cursor-help">?</span>
-      <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2.5 py-1.5 bg-slate-800 text-white text-xs rounded-lg whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-10 max-w-[220px] whitespace-normal text-center leading-tight">
-        {text}
-      </span>
+    <span ref={ref} className="relative ml-1 inline-flex">
+      <button
+        onClick={() => setOpen(!open)}
+        onMouseEnter={() => setOpen(true)}
+        onMouseLeave={() => setOpen(false)}
+        className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-slate-200 text-slate-500 text-[0.69rem] font-bold cursor-help"
+        aria-label="More info"
+        type="button"
+      >
+        ?
+      </button>
+      {open && (
+        <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 px-2.5 py-1.5 bg-slate-800 text-white text-xs rounded-lg z-10 max-w-[220px] whitespace-normal text-center leading-tight shadow-lg" role="tooltip">
+          {text}
+          <span className="absolute top-full left-1/2 -translate-x-1/2 -mt-px border-4 border-transparent border-t-slate-800" />
+        </span>
+      )}
     </span>
   );
 }
@@ -276,7 +302,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         <div className="md:hidden flex items-center gap-2 mb-3">
           <button
             onClick={() => setSheetOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-100 text-slate-700 text-xs font-semibold rounded-full hover:bg-slate-200 transition-colors shrink-0"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2.5 min-h-[40px] bg-slate-100 text-slate-700 text-xs font-semibold rounded-full hover:bg-slate-200 transition-colors shrink-0"
           >
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
               <path strokeLinecap="round" d="M4 6h16M7 12h10M10 18h4" />
@@ -290,7 +316,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search..."
-              className="w-full px-3 py-2 pl-8 border border-slate-200 rounded-full text-xs focus:outline-none focus:border-slate-400"
+              className="w-full px-3 py-2.5 pl-8 min-h-[40px] border border-slate-200 rounded-full text-xs focus:outline-none focus:border-slate-400"
               aria-label="Search brokers"
             />
             {searchQuery && (
@@ -584,7 +610,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               </div>
               <Link
                 href={`/versus?vs=${Array.from(selected).join(',')}`}
-                className="shrink-0 px-4 py-1.5 md:px-5 md:py-2 bg-white text-slate-700 font-bold text-xs md:text-sm rounded-lg hover:bg-slate-50 transition-colors"
+                className="shrink-0 px-4 py-2 min-h-[36px] inline-flex items-center md:px-5 md:py-2 bg-white text-slate-700 font-bold text-xs md:text-sm rounded-lg hover:bg-slate-50 transition-colors"
               >
                 Compare →
               </Link>
