@@ -1,13 +1,15 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import type { Broker } from "@/lib/types";
 import { getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
 
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import PromoBadge from "@/components/PromoBadge";
 import SponsorBadge from "@/components/SponsorBadge";
-import { sortWithSponsorship, isSponsored } from "@/lib/sponsorship";
+import ImpressionTracker from "@/components/ImpressionTracker";
+import { sortWithSponsorship, isSponsored, getPlacementWinners, type PlacementWinner } from "@/lib/sponsorship";
+import { filterByFrequencyCap } from "@/lib/marketplace/frequency-cap";
 import JargonTooltip from "@/components/JargonTooltip";
 import ShortlistButton from "@/components/ShortlistButton";
 
@@ -29,15 +31,55 @@ export default function HomepageComparisonTable({
   defaultTab?: TabOption;
 }) {
   const [activeTab, setActiveTab] = useState<TabOption>(defaultTab);
+  const [campaignWinners, setCampaignWinners] = useState<PlacementWinner[]>([]);
+  const [cpcCampaigns, setCpcCampaigns] = useState<PlacementWinner[]>([]);
 
-  // Filter by active tab, sort by rating, take top 8
+  // Fetch campaign placement winners
+  useEffect(() => {
+    getPlacementWinners("home-featured").then((winners) => {
+      setCampaignWinners(filterByFrequencyCap(winners, "home-featured", 8));
+    });
+    getPlacementWinners("home-cpc").then((winners) => {
+      setCpcCampaigns(winners);
+    });
+  }, []);
+
+  // Map broker_slug → campaign_id for CPC attribution
+  const cpcCampaignMap = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const w of cpcCampaigns) {
+      if (!map.has(w.broker_slug)) map.set(w.broker_slug, w.campaign_id);
+    }
+    return map;
+  }, [cpcCampaigns]);
+
+  const campaignWinnerSlugs = useMemo(
+    () => new Set(campaignWinners.map((w) => w.broker_slug)),
+    [campaignWinners]
+  );
+
+  // Filter by active tab, sort with campaign winners first, then sponsorship, take top 8
   const displayBrokers = useMemo(() => {
     const base =
       activeTab === "All Platforms"
         ? brokers
         : brokers.filter((b) => getCategories(b).includes(activeTab));
-    return sortWithSponsorship(base).slice(0, 8);
-  }, [brokers, activeTab]);
+
+    // Sort: campaign winners → sponsored → rating
+    const sorted = [...base].sort((a, b) => {
+      const aIsCampaign = campaignWinnerSlugs.has(a.slug) ? 0 : 1;
+      const bIsCampaign = campaignWinnerSlugs.has(b.slug) ? 0 : 1;
+      if (aIsCampaign !== bIsCampaign) return aIsCampaign - bIsCampaign;
+
+      const aPriority = isSponsored(a) ? 1 : 2;
+      const bPriority = isSponsored(b) ? 1 : 2;
+      if (aPriority !== bPriority) return aPriority - bPriority;
+
+      return (b.rating ?? 0) - (a.rating ?? 0);
+    });
+
+    return sorted.slice(0, 8);
+  }, [brokers, activeTab, campaignWinnerSlugs]);
 
   // Compute editor picks from the displayed list
   const editorPicks = useMemo(() => {
@@ -111,12 +153,20 @@ export default function HomepageComparisonTable({
           </thead>
           <tbody className="divide-y divide-slate-100">
             {displayBrokers.map((broker, i) => {
-              const isTopRated = i === 0 && !isSponsored(broker);
+              const isCampaignWinner = campaignWinnerSlugs.has(broker.slug);
+              const isTopRated = i === 0 && !isSponsored(broker) && !isCampaignWinner;
+              const cid = cpcCampaignMap.get(broker.slug);
+              const brokerLink = (() => {
+                const link = getAffiliateLink(broker);
+                return cid ? `${link}${link.includes("?") ? "&" : "?"}cid=${cid}` : link;
+              })();
               return (
               <tr
                 key={broker.id}
                 className={`group hover:bg-slate-50/80 transition-colors ${
-                  isSponsored(broker)
+                  isCampaignWinner
+                    ? "bg-blue-50/30 border-l-2 border-l-blue-400"
+                    : isSponsored(broker)
                     ? "bg-blue-50/30 border-l-2 border-l-blue-400"
                     : isTopRated
                     ? "bg-amber-50/40 border-l-2 border-l-amber-400"
@@ -147,8 +197,11 @@ export default function HomepageComparisonTable({
                         </a>
                         <PromoBadge broker={broker} />
                         <SponsorBadge broker={broker} />
+                        {isCampaignWinner && !isSponsored(broker) && (
+                          <span className="text-[0.62rem] font-bold px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded-full uppercase tracking-wide">Sponsored</span>
+                        )}
                       </div>
-                      {!isSponsored(broker) && editorPicks[broker.slug] && (
+                      {!isSponsored(broker) && !isCampaignWinner && editorPicks[broker.slug] && (
                         <div className="text-[0.69rem] font-bold text-slate-500 uppercase tracking-wide">
                           {editorPicks[broker.slug]}
                         </div>
@@ -182,7 +235,7 @@ export default function HomepageComparisonTable({
                 <td className="px-3 py-2.5 pr-5 text-center">
                   <div className="flex flex-col items-center gap-0.5">
                     <a
-                      href={getAffiliateLink(broker)}
+                      href={brokerLink}
                       target="_blank"
                       rel={AFFILIATE_REL}
                       className="inline-block whitespace-nowrap text-center px-3 py-1.5 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 hover:shadow-md transition-all duration-200 active:scale-[0.97] group-hover:scale-105 group-hover:shadow-[0_0_12px_rgba(217,119,6,0.3)]"
@@ -204,7 +257,13 @@ export default function HomepageComparisonTable({
       {/* Mobile: Compact ranked list */}
       <div key={`mobile-${activeTab}`} className="md:hidden divide-y divide-slate-100 px-3 motion-safe:tab-content-enter">
         {displayBrokers.slice(0, 5).map((broker, i) => {
-          const isTopRatedMobile = i === 0 && !isSponsored(broker);
+          const isCampaignMobile = campaignWinnerSlugs.has(broker.slug);
+          const isTopRatedMobile = i === 0 && !isSponsored(broker) && !isCampaignMobile;
+          const cidMobile = cpcCampaignMap.get(broker.slug);
+          const mobileLink = (() => {
+            const link = getAffiliateLink(broker);
+            return cidMobile ? `${link}${link.includes("?") ? "&" : "?"}cid=${cidMobile}` : link;
+          })();
           return (
           <div key={broker.id} className="flex items-center gap-2 py-2.5 first:pt-1">
             {/* Rank */}
@@ -228,8 +287,11 @@ export default function HomepageComparisonTable({
                   {broker.name}
                 </a>
                 {isSponsored(broker) && <SponsorBadge broker={broker} />}
+                {isCampaignMobile && !isSponsored(broker) && (
+                  <span className="text-[0.56rem] font-bold uppercase text-blue-700 bg-blue-50 px-1 py-px rounded shrink-0">Sponsored</span>
+                )}
                 <PromoBadge broker={broker} />
-                {!isSponsored(broker) && editorPicks[broker.slug] && (
+                {!isSponsored(broker) && !isCampaignMobile && editorPicks[broker.slug] && (
                   <span className="text-[0.56rem] font-bold uppercase text-blue-700 bg-blue-50 px-1 py-px rounded shrink-0">
                     {editorPicks[broker.slug]}
                   </span>
@@ -250,7 +312,7 @@ export default function HomepageComparisonTable({
 
             {/* CTA */}
             <a
-              href={getAffiliateLink(broker)}
+              href={mobileLink}
               target="_blank"
               rel={AFFILIATE_REL}
               className="shrink-0 px-3 py-2 bg-amber-500 text-white text-[0.69rem] font-bold rounded-lg hover:bg-amber-600 active:scale-[0.97] transition-all"
@@ -261,6 +323,11 @@ export default function HomepageComparisonTable({
           );
         })}
       </div>
+
+      {/* Impression tracking for campaign winners */}
+      {campaignWinners.length > 0 && (
+        <ImpressionTracker winners={campaignWinners} placement="home-featured" page="/" />
+      )}
 
       {/* Affiliate disclosure */}
       <div id="advertiser-disclosure" className="px-4 py-3 md:px-5 border-t border-slate-100 text-center">

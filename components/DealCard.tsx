@@ -5,7 +5,15 @@ import { trackClick, getAffiliateLink, renderStars, AFFILIATE_REL } from "@/lib/
 import { isSponsored } from "@/lib/sponsorship";
 import SponsorBadge from "@/components/SponsorBadge";
 
-export default function DealCard({ broker }: { broker: Broker }) {
+export default function DealCard({
+  broker,
+  isFeaturedCampaign = false,
+  campaignId,
+}: {
+  broker: Broker;
+  isFeaturedCampaign?: boolean;
+  campaignId?: number;
+}) {
   const expiryDate = broker.deal_expiry ? new Date(broker.deal_expiry) : null;
   const expiryFormatted = expiryDate
     ? expiryDate.toLocaleDateString("en-AU", {
@@ -28,8 +36,16 @@ export default function DealCard({ broker }: { broker: Broker }) {
       })
     : null;
 
+  // Build CPC-attributed link if campaign ID present
+  const baseLink = getAffiliateLink(broker);
+  const affiliateLink = campaignId
+    ? `${baseLink}${baseLink.includes("?") ? "&" : "?"}cid=${campaignId}&placement=deals`
+    : baseLink;
+
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-3.5 md:p-5 hover:shadow-md transition-shadow duration-200 flex flex-col">
+    <div className={`rounded-xl border bg-white p-3.5 md:p-5 hover:shadow-md transition-shadow duration-200 flex flex-col ${
+      isFeaturedCampaign ? "border-blue-200 ring-1 ring-blue-100" : "border-slate-200"
+    }`}>
       {/* Header: broker info + category */}
       <div className="flex items-center gap-2.5 md:gap-3 mb-2.5 md:mb-3">
         <div
@@ -47,6 +63,9 @@ export default function DealCard({ broker }: { broker: Broker }) {
               {broker.name}
             </a>
             {isSponsored(broker) && <SponsorBadge broker={broker} />}
+            {isFeaturedCampaign && !isSponsored(broker) && (
+              <span className="text-[0.56rem] font-bold px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded-full uppercase tracking-wide">Sponsored</span>
+            )}
           </div>
           <div className="flex items-center gap-2">
             <span className="text-xs text-amber">
@@ -99,11 +118,11 @@ export default function DealCard({ broker }: { broker: Broker }) {
 
       {/* CTA — auto pushed to bottom */}
       <a
-        href={getAffiliateLink(broker)}
+        href={affiliateLink}
         target="_blank"
         rel={AFFILIATE_REL}
         onClick={() =>
-          trackClick(broker.slug, broker.name, "deals-hub", "/deals", "compare")
+          trackClick(broker.slug, broker.name, "deals-hub", "/deals", "compare", undefined, campaignId ? "deals" : undefined)
         }
         className="mt-auto block w-full text-center py-2.5 md:py-3 bg-amber-600 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-amber-700 hover:shadow-[0_0_12px_rgba(217,119,6,0.3)] transition-all duration-200 active:scale-[0.98]"
       >

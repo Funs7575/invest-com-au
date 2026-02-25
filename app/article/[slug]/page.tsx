@@ -6,6 +6,7 @@ import { Suspense } from "react";
 import ArticleDetailClient from "./ArticleDetailClient";
 import IntlBrokersEnhanced from "@/components/IntlBrokersEnhanced";
 import ArticleSidebar from "@/components/ArticleSidebar";
+import SponsoredBrokerWidget from "@/components/SponsoredBrokerWidget";
 import ComparisonTableSkeleton from "@/components/ComparisonTableSkeleton";
 import AuthorByline from "@/components/AuthorByline";
 import OnThisPage from "@/components/OnThisPage";
@@ -120,6 +121,20 @@ export default async function ArticlePage({
       null;
   }
 
+  // Fetch all active brokers for sponsored sidebar widget (used to look up campaign winners)
+  const { data: allActiveBrokers } = await supabase
+    .from("brokers")
+    .select("*")
+    .eq("status", "active")
+    .order("rating", { ascending: false })
+    .limit(50);
+  const allBrokersForWidget = (allActiveBrokers as Broker[]) || [];
+
+  // Determine sidebar top pick for non-enhanced articles
+  const sidebarTopPick = !isEnhanced
+    ? (relatedBrokers.sort((x, y) => (y.rating ?? 0) - (x.rating ?? 0))[0] || allBrokersForWidget[0] || null)
+    : null;
+
   // Fetch related articles
   let relatedArticles: Article[] = [];
   if (a.category) {
@@ -209,7 +224,7 @@ export default async function ArticlePage({
       {/* Hero Section */}
       <section className="bg-white text-slate-900 pt-4 pb-5 md:pt-6 md:pb-8 border-b border-slate-200">
         <div className="container-custom">
-          <div className={isEnhanced ? "max-w-5xl mx-auto" : "max-w-3xl mx-auto"}>
+          <div className="max-w-5xl mx-auto">
             {/* Breadcrumb — hide full title on mobile */}
             <div className="text-xs md:text-sm text-slate-500 mb-2 md:mb-3">
               <Link href="/" className="hover:text-slate-900 transition-colors">
@@ -311,14 +326,10 @@ export default async function ArticlePage({
       <div className="py-6 md:py-12">
         <div className="container-custom">
           <div
-            className={
-              isEnhanced
-                ? "max-w-5xl mx-auto flex flex-col lg:flex-row gap-6 lg:gap-8"
-                : "max-w-3xl mx-auto"
-            }
+            className="max-w-5xl mx-auto flex flex-col lg:flex-row gap-6 lg:gap-8"
           >
             {/* Article Column */}
-            <div className={isEnhanced ? "flex-1 min-w-0" : ""}>
+            <div className="flex-1 min-w-0">
               {/* Sticky "On this page" jump nav */}
               {a.sections && a.sections.length > 1 && (
                 <OnThisPage
@@ -601,9 +612,15 @@ export default async function ArticlePage({
               </div>
             </div>
 
-            {/* Desktop Sidebar (enhanced articles only) */}
-            {isEnhanced && topPick && (
+            {/* Desktop Sidebar — campaign-driven for all articles, editorial fallback */}
+            {isEnhanced && topPick ? (
               <ArticleSidebar broker={topPick} pagePath={pagePath} />
+            ) : (
+              <SponsoredBrokerWidget
+                fallbackBroker={sidebarTopPick}
+                allBrokers={allBrokersForWidget}
+                pagePath={pagePath}
+              />
             )}
           </div>
         </div>

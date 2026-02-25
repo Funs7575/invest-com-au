@@ -1,10 +1,13 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import type { Broker } from "@/lib/types";
 import DealCard from "@/components/DealCard";
 import Icon from "@/components/Icon";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
+import ImpressionTracker from "@/components/ImpressionTracker";
+import { getPlacementWinners, type PlacementWinner } from "@/lib/sponsorship";
+import { filterByFrequencyCap } from "@/lib/marketplace/frequency-cap";
 
 const TAB_OPTIONS = [
   "All Deals",
@@ -27,12 +30,42 @@ const CATEGORY_MAP: Record<TabOption, string | null> = {
 
 export default function DealsClient({ deals }: { deals: Broker[] }) {
   const [activeTab, setActiveTab] = useState<TabOption>("All Deals");
+  const [featuredWinners, setFeaturedWinners] = useState<PlacementWinner[]>([]);
+  const [cpcWinners, setCpcWinners] = useState<PlacementWinner[]>([]);
+
+  // Fetch campaign placement winners for the deals page
+  useEffect(() => {
+    getPlacementWinners("deals-featured").then((winners) => {
+      setFeaturedWinners(filterByFrequencyCap(winners, "deals-featured", 8));
+    });
+    getPlacementWinners("deals-cpc").then(setCpcWinners);
+  }, []);
+
+  const featuredSlugs = useMemo(
+    () => new Set(featuredWinners.map((w) => w.broker_slug)),
+    [featuredWinners]
+  );
+
+  // Map broker_slug → campaign_id for CPC attribution
+  const cpcCampaignMap = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const w of cpcWinners) {
+      if (!map.has(w.broker_slug)) map.set(w.broker_slug, w.campaign_id);
+    }
+    return map;
+  }, [cpcWinners]);
 
   const filteredDeals = useMemo(() => {
     const category = CATEGORY_MAP[activeTab];
-    if (!category) return deals;
-    return deals.filter((b) => b.deal_category === category);
-  }, [deals, activeTab]);
+    const base = !category ? deals : deals.filter((b) => b.deal_category === category);
+
+    // Sort: featured campaign winners first, then original order
+    return [...base].sort((a, b) => {
+      const aFeatured = featuredSlugs.has(a.slug) ? 0 : 1;
+      const bFeatured = featuredSlugs.has(b.slug) ? 0 : 1;
+      return aFeatured - bFeatured;
+    });
+  }, [deals, activeTab, featuredSlugs]);
 
   // Only show tabs that have deals (or "All Deals")
   const availableTabs = useMemo(() => {
@@ -70,7 +103,12 @@ export default function DealsClient({ deals }: { deals: Broker[] }) {
       {filteredDeals.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
           {filteredDeals.map((broker) => (
-            <DealCard key={broker.id} broker={broker} />
+            <DealCard
+              key={broker.id}
+              broker={broker}
+              isFeaturedCampaign={featuredSlugs.has(broker.slug)}
+              campaignId={cpcCampaignMap.get(broker.slug)}
+            />
           ))}
         </div>
       ) : (
@@ -80,6 +118,11 @@ export default function DealsClient({ deals }: { deals: Broker[] }) {
             No deals in this category. Try &quot;All Deals&quot; instead.
           </p>
         </div>
+      )}
+
+      {/* Impression tracking for featured campaign winners */}
+      {featuredWinners.length > 0 && (
+        <ImpressionTracker winners={featuredWinners} placement="deals-featured" page="/deals" />
       )}
 
       {/* Compliance */}
