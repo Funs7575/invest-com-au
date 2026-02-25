@@ -1,7 +1,113 @@
-import { getStripe } from "@/lib/stripe";
+import { getStripe, PLANS } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import type Stripe from "stripe";
+
+// ─── Transactional email helpers ────────────────────────────────────
+
+/** Fire-and-forget email via Resend */
+async function sendTransactionalEmail(
+  to: string,
+  subject: string,
+  html: string,
+  from = "Invest.com.au <hello@invest.com.au>",
+): Promise<void> {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) return;
+
+  try {
+    await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ from, to: [to], subject, html }),
+    });
+  } catch (err) {
+    console.error("Transactional email failed:", err);
+  }
+}
+
+function emailWrapper(heading: string, accentColor: string, body: string): string {
+  return `
+    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 560px; margin: 0 auto; background: #f8fafc; padding: 24px 16px;">
+      <div style="background: ${accentColor}; padding: 20px 24px; border-radius: 12px 12px 0 0; text-align: center;">
+        <span style="color: #fff; font-weight: 800; font-size: 16px;">${heading}</span>
+      </div>
+      <div style="background: #fff; border: 1px solid #e2e8f0; border-top: none; padding: 24px; border-radius: 0 0 12px 12px;">
+        ${body}
+        <p style="color: #94a3b8; font-size: 11px; text-align: center; margin: 24px 0 0 0; line-height: 1.5;">
+          Invest.com.au — Independent investing education &amp; comparison<br>
+          <a href="https://invest.com.au/unsubscribe" style="color: #94a3b8;">Unsubscribe</a>
+        </p>
+      </div>
+    </div>`;
+}
+
+function buildProWelcomeEmail(planInterval: string | null): string {
+  const isYearly = planInterval === "year";
+  const planLabel = isYearly ? PLANS.yearly.label : PLANS.monthly.label;
+
+  return emailWrapper("Welcome to Invest.com.au Pro 🎉", "#15803d", `
+    <h2 style="margin: 0 0 12px; font-size: 18px; color: #0f172a;">You're now a Pro member!</h2>
+    <p style="color: #475569; font-size: 14px; line-height: 1.6; margin: 0 0 16px;">
+      Your <strong>${planLabel}</strong> subscription is active. Here's what you've unlocked:
+    </p>
+    <ul style="color: #334155; font-size: 14px; line-height: 1.8; margin: 0 0 20px; padding-left: 20px;">
+      <li>Ad-free broker comparisons &amp; reviews</li>
+      <li>Exclusive Pro-only research &amp; guides</li>
+      <li>Discounted course &amp; consultation pricing</li>
+      <li>Priority support</li>
+    </ul>
+    <div style="text-align: center; margin: 20px 0;">
+      <a href="https://invest.com.au/account" style="display: inline-block; padding: 12px 28px; background: #15803d; color: #fff; font-weight: 700; font-size: 14px; border-radius: 8px; text-decoration: none;">Go to Your Account →</a>
+    </div>
+  `);
+}
+
+function buildCourseReceiptEmail(courseName: string, courseSlug: string, amountCents: number): string {
+  const amount = (amountCents / 100).toFixed(2);
+
+  return emailWrapper("Course Purchase Confirmed ✅", "#0f172a", `
+    <h2 style="margin: 0 0 12px; font-size: 18px; color: #0f172a;">You're in!</h2>
+    <p style="color: #475569; font-size: 14px; line-height: 1.6; margin: 0 0 16px;">
+      Your purchase of <strong>${courseName}</strong> has been confirmed.
+    </p>
+    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px; margin: 0 0 20px;">
+      <p style="margin: 0; font-size: 13px; color: #334155;"><strong>Amount paid:</strong> A$${amount}</p>
+      <p style="margin: 4px 0 0; font-size: 13px; color: #334155;"><strong>Access:</strong> Lifetime — start anytime</p>
+    </div>
+    <div style="text-align: center; margin: 20px 0;">
+      <a href="https://invest.com.au/courses/${courseSlug}" style="display: inline-block; padding: 12px 28px; background: #0f172a; color: #fff; font-weight: 700; font-size: 14px; border-radius: 8px; text-decoration: none;">Start Learning →</a>
+    </div>
+  `);
+}
+
+function buildConsultationConfirmationEmail(
+  consultationTitle: string,
+  consultationSlug: string,
+  amountCents: number,
+): string {
+  const amount = (amountCents / 100).toFixed(2);
+
+  return emailWrapper("Consultation Booked ✅", "#7c3aed", `
+    <h2 style="margin: 0 0 12px; font-size: 18px; color: #0f172a;">Booking confirmed!</h2>
+    <p style="color: #475569; font-size: 14px; line-height: 1.6; margin: 0 0 16px;">
+      Your <strong>${consultationTitle}</strong> consultation has been booked successfully.
+    </p>
+    <div style="background: #f5f3ff; border: 1px solid #ddd6fe; border-radius: 8px; padding: 16px; margin: 0 0 16px;">
+      <p style="margin: 0; font-size: 13px; color: #334155;"><strong>Amount paid:</strong> A$${amount}</p>
+      <p style="margin: 4px 0 0; font-size: 13px; color: #334155;"><strong>Status:</strong> Confirmed</p>
+    </div>
+    <p style="color: #475569; font-size: 14px; line-height: 1.6; margin: 0 0 20px;">
+      We'll reach out within 1–2 business days to schedule your session. Check your account for updates.
+    </p>
+    <div style="text-align: center; margin: 20px 0;">
+      <a href="https://invest.com.au/consultations/${consultationSlug}" style="display: inline-block; padding: 12px 28px; background: #7c3aed; color: #fff; font-weight: 700; font-size: 14px; border-radius: 8px; text-decoration: none;">View Booking →</a>
+    </div>
+  `);
+}
 
 // Ensure this runs in Node.js runtime (needed for Stripe signature verification)
 export const runtime = "nodejs";
@@ -85,7 +191,29 @@ export async function POST(request: NextRequest) {
 
   try {
     switch (event.type) {
-      case "customer.subscription.created":
+      case "customer.subscription.created": {
+        const newSub = event.data.object as Stripe.Subscription;
+        await upsertSubscription(newSub);
+
+        // Send Pro welcome email on new subscription
+        if (newSub.status === "active" || newSub.status === "trialing") {
+          const custId = typeof newSub.customer === "string" ? newSub.customer : newSub.customer.id;
+          try {
+            const customer = await getStripe().customers.retrieve(custId);
+            if (!("deleted" in customer) && customer.email) {
+              const interval = newSub.items.data[0]?.price?.recurring?.interval || null;
+              sendTransactionalEmail(
+                customer.email,
+                "Welcome to Invest.com.au Pro 🎉",
+                buildProWelcomeEmail(interval),
+              ).catch(() => {});
+            }
+          } catch (err) {
+            console.error("Pro welcome email lookup failed:", err);
+          }
+        }
+        break;
+      }
       case "customer.subscription.updated":
       case "customer.subscription.deleted":
         await upsertSubscription(event.data.object as Stripe.Subscription);
@@ -140,6 +268,26 @@ export async function POST(request: NextRequest) {
 
             if (error) {
               console.error("Course purchase upsert error:", error.message);
+            }
+
+            // Send course receipt email
+            const customerEmail = session.customer_email || session.customer_details?.email;
+            if (customerEmail) {
+              const { data: courseInfo } = await supabase
+                .from("courses")
+                .select("title")
+                .eq("slug", courseSlug)
+                .maybeSingle();
+
+              sendTransactionalEmail(
+                customerEmail,
+                `Course Confirmed: ${courseInfo?.title || courseSlug}`,
+                buildCourseReceiptEmail(
+                  courseInfo?.title || courseSlug,
+                  courseSlug,
+                  session.amount_total || 0,
+                ),
+              ).catch(() => {});
             }
 
             // Insert revenue tracking row if course has a creator
@@ -202,6 +350,26 @@ export async function POST(request: NextRequest) {
 
               if (bookingError) {
                 console.error("Consultation booking upsert error:", bookingError.message);
+              }
+
+              // Send consultation confirmation email
+              const consultCustomerEmail = session.customer_email || session.customer_details?.email;
+              if (consultCustomerEmail) {
+                const { data: consultInfo } = await supabase
+                  .from("consultations")
+                  .select("title")
+                  .eq("slug", consultationSlug)
+                  .maybeSingle();
+
+                sendTransactionalEmail(
+                  consultCustomerEmail,
+                  `Consultation Booked: ${consultInfo?.title || consultationSlug}`,
+                  buildConsultationConfirmationEmail(
+                    consultInfo?.title || consultationSlug,
+                    consultationSlug,
+                    session.amount_total || 0,
+                  ),
+                ).catch(() => {});
               }
             }
           }
