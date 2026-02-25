@@ -48,29 +48,29 @@ export default function LeadMagnet() {
   }
 
   return (
-    <div ref={ref} className="rounded-xl p-4 md:p-6 bg-slate-50 border border-slate-200 shadow-sm lead-magnet-enter">
-      <div className="text-xs font-bold uppercase tracking-wider mb-1.5 md:mb-2 text-slate-700">
+    <div ref={ref} className="rounded-xl p-3.5 md:p-6 bg-slate-50 border border-slate-200 shadow-sm lead-magnet-enter">
+      <div className="text-[0.62rem] md:text-xs font-bold uppercase tracking-wider mb-1 md:mb-2 text-slate-700">
         Free Download
       </div>
-      <h3 className="text-lg md:text-xl font-extrabold mb-1.5 md:mb-2 text-slate-900">2026 Fee Audit PDF</h3>
-      <p className="text-sm text-slate-600 mb-3 md:mb-4 leading-relaxed">
-        See exactly what every Australian broker charges — brokerage, FX fees,
-        inactivity fees, and hidden costs. Compare side-by-side in one document.
+      <h3 className="text-base md:text-xl font-extrabold mb-1 md:mb-2 text-slate-900">2026 Fee Audit PDF</h3>
+      <p className="text-xs md:text-sm text-slate-600 mb-2.5 md:mb-4 leading-relaxed">
+        <span className="hidden md:inline">See exactly what every Australian broker charges — brokerage, FX fees, inactivity fees, and hidden costs. Compare side-by-side in one document.</span>
+        <span className="md:hidden">Every broker&apos;s fees compared side-by-side — brokerage, FX, inactivity &amp; hidden costs.</span>
       </p>
 
       {status === "success" ? (
-        <div className="bg-slate-100 border border-slate-200 rounded-lg p-4 text-center">
-          <div className="text-lg font-bold mb-1 text-slate-900">
+        <div className="bg-slate-100 border border-slate-200 rounded-lg p-3 md:p-4 text-center">
+          <div className="text-sm md:text-lg font-bold mb-0.5 md:mb-1 text-slate-900">
             {emailSent ? 'Check your inbox!' : 'You\'re signed up!'}
           </div>
-          <p className="text-sm text-slate-600">
+          <p className="text-xs md:text-sm text-slate-600">
             {emailSent
               ? 'We\'ve sent the 2026 Fee Audit to your email.'
               : 'We\'ll send you the 2026 Fee Audit shortly.'}
           </p>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="space-y-3">
+        <form onSubmit={handleSubmit} className="space-y-2.5 md:space-y-3">
           <input
             type="email"
             placeholder="you@email.com"
@@ -78,7 +78,7 @@ export default function LeadMagnet() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full px-4 py-2.5 rounded-lg border border-slate-200 text-slate-900 text-base md:text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-700/40 focus:border-blue-700"
+            className="w-full px-3 md:px-4 py-2.5 rounded-lg border border-slate-200 text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-700/40 focus:border-blue-700"
           />
           <label className="flex items-start gap-2 cursor-pointer">
             <input
@@ -88,19 +88,18 @@ export default function LeadMagnet() {
               required
               className="mt-0.5 w-4 h-4 rounded border-slate-300 accent-slate-700 shrink-0"
             />
-            <span className="text-xs text-slate-500 leading-tight">
-              I agree to receive the Fee Audit PDF and occasional updates from Invest.com.au.
-              View our{" "}
+            <span className="text-[0.69rem] md:text-xs text-slate-500 leading-tight">
+              I agree to receive the Fee Audit PDF and updates.{" "}
               <Link href="/privacy" className="underline hover:text-slate-900">
                 Privacy Policy
               </Link>
-              . You can unsubscribe at any time.
+              . Unsubscribe anytime.
             </span>
           </label>
           <button
             type="submit"
             disabled={status === "loading" || !consent}
-            className="w-full px-4 py-3 bg-amber-500 text-slate-900 text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-60"
+            className="w-full px-4 py-2.5 md:py-3 bg-amber-500 text-slate-900 text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-60"
           >
             {status === "loading" ? "Sending..." : "Get the Free PDF"}
           </button>

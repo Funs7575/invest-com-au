@@ -94,61 +94,62 @@ export default async function HomePage() {
       />
 
       {/* Hero Section */}
-      <section className="relative bg-white border-b border-slate-100 py-6 md:py-14 overflow-hidden">
+      <section className="relative bg-white border-b border-slate-100 py-5 md:py-14 overflow-hidden">
         <div className="relative max-w-4xl mx-auto px-4 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-full text-xs font-medium text-slate-600 mb-3 md:mb-6 hero-fade-up hero-fade-up-1 border border-slate-200">
-            <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
-            Updated {updatedDateStr} &middot; {brokerCount} brokers verified
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 md:px-3 md:py-1.5 bg-slate-100 rounded-full text-[0.69rem] md:text-xs font-medium text-slate-600 mb-2.5 md:mb-6 hero-fade-up hero-fade-up-1 border border-slate-200">
+            <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-blue-500 rounded-full animate-pulse" />
+            Updated {updatedDateStr} &middot; {brokerCount} brokers
           </div>
-          <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 hero-fade-up hero-fade-up-1 leading-tight">
+          <h1 className="text-2xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 hero-fade-up hero-fade-up-1 leading-tight">
             Find the Right Broker<br className="hidden sm:block" /> for Your Money
           </h1>
-          <p className="mt-3 md:mt-5 text-base md:text-xl text-slate-500 max-w-2xl mx-auto hero-fade-up hero-fade-up-2 leading-relaxed">
-            Compare fees, features, and safety across {brokerCount}+ ASIC-regulated Australian investment platforms — independent, transparent, and free.
+          <p className="mt-2 md:mt-5 text-sm md:text-xl text-slate-500 max-w-2xl mx-auto hero-fade-up hero-fade-up-2 leading-relaxed">
+            <span className="md:hidden">Compare {brokerCount}+ ASIC-regulated Australian brokers — free &amp; independent.</span>
+            <span className="hidden md:inline">Compare fees, features, and safety across {brokerCount}+ ASIC-regulated Australian investment platforms — independent, transparent, and free.</span>
           </p>
           <div className="hero-fade-up hero-fade-up-3">
             <HomepageSearchBar />
           </div>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-4 md:mt-6 mb-1 md:mb-2 hero-fade-up hero-fade-up-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-3 mt-3 md:mt-6 mb-1 md:mb-2 hero-fade-up hero-fade-up-4">
             <Link
               href="/quiz"
-              className="px-5 md:px-7 py-3.5 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 hover:scale-105 hover:shadow-lg transition-all duration-200 text-sm w-full sm:w-auto text-center"
+              className="px-5 md:px-7 py-3 md:py-3.5 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 hover:scale-105 hover:shadow-lg transition-all duration-200 text-sm w-full sm:w-auto text-center"
             >
               Find My Broker — 60sec Quiz &rarr;
             </Link>
             <Link
               href="/compare"
-              className="px-5 md:px-7 py-3.5 border-2 border-slate-300 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 hover:border-slate-400 hover:scale-105 transition-all duration-200 text-sm w-full sm:w-auto text-center"
+              className="px-5 md:px-7 py-3 md:py-3.5 border-2 border-slate-300 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 hover:border-slate-400 hover:scale-105 transition-all duration-200 text-sm w-full sm:w-auto text-center"
             >
               Compare All Brokers &rarr;
             </Link>
           </div>
-          {/* Trust signals — 2×2 grid on mobile, inline row on desktop */}
-          <div className="grid grid-cols-2 sm:flex sm:items-center sm:justify-center gap-3 sm:gap-8 pt-3 md:pt-6 text-xs text-slate-400 hero-fade-up hero-fade-up-5">
-            <span className="flex items-center justify-center gap-1.5">
-              <svg className="w-4 h-4 text-slate-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-              ASIC-regulated only
+          {/* Trust signals — inline row on mobile (smaller), inline row on desktop */}
+          <div className="flex items-center justify-center flex-wrap gap-x-3 gap-y-1 sm:gap-x-8 pt-2.5 md:pt-6 text-[0.62rem] md:text-xs text-slate-400 hero-fade-up hero-fade-up-5">
+            <span className="flex items-center gap-1">
+              <svg className="w-3 h-3 md:w-4 md:h-4 text-slate-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+              ASIC-regulated
             </span>
-            <span className="flex items-center justify-center gap-1.5">
-              <svg className="w-4 h-4 text-slate-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-              Independent ratings
+            <span className="flex items-center gap-1">
+              <svg className="w-3 h-3 md:w-4 md:h-4 text-slate-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+              Independent
             </span>
-            <span className="flex items-center justify-center gap-1.5">
-              <svg className="w-4 h-4 text-amber-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" /></svg>
-              Fees verified daily
+            <span className="flex items-center gap-1">
+              <svg className="w-3 h-3 md:w-4 md:h-4 text-amber-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" /></svg>
+              Verified daily
             </span>
-            <span className="flex items-center justify-center gap-1.5">
-              <svg className="w-4 h-4 text-slate-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" /></svg>
-              Always free
+            <span className="flex items-center gap-1">
+              <svg className="w-3 h-3 md:w-4 md:h-4 text-slate-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" /></svg>
+              Free
             </span>
           </div>
         </div>
       </section>
 
       {/* Broker Logo Strip — instant credibility */}
-      <section className="py-2.5 md:py-4 bg-white border-b border-slate-100">
+      <section className="py-2 md:py-4 bg-white border-b border-slate-100">
         <div className="container-custom">
-          <p className="text-[0.69rem] uppercase tracking-widest text-slate-400 text-center mb-2 md:mb-3 font-medium">Brokers we compare</p>
+          <p className="text-[0.62rem] md:text-[0.69rem] uppercase tracking-widest text-slate-400 text-center mb-1.5 md:mb-3 font-medium">Brokers we compare</p>
           {/* Desktop: centered wrap row */}
           <div className="hidden sm:flex items-center justify-center gap-8 flex-wrap opacity-70">
             {(brokers as Broker[])?.slice(0, 6).map((broker) => (
@@ -160,14 +161,14 @@ export default async function HomePage() {
               </div>
             ))}
           </div>
-          {/* Mobile: horizontal snap-scroll */}
-          <div className="sm:hidden flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-4 px-4 opacity-70">
+          {/* Mobile: inline row, smaller icons */}
+          <div className="sm:hidden flex items-center justify-center gap-2 opacity-70">
             {(brokers as Broker[])?.slice(0, 6).map((broker) => (
-              <div key={broker.id} className="flex items-center gap-1.5 shrink-0 snap-start">
-                <div className="w-7 h-7 rounded-lg flex items-center justify-center text-white text-[0.69rem] font-bold shrink-0" style={{ backgroundColor: broker.color || '#64748b' }}>
+              <div key={broker.id} className="flex items-center gap-1 shrink-0">
+                <div className="w-6 h-6 rounded-md flex items-center justify-center text-white text-[0.56rem] font-bold shrink-0" style={{ backgroundColor: broker.color || '#64748b' }}>
                   {broker.name?.slice(0, 2).toUpperCase()}
                 </div>
-                <span className="text-xs font-semibold text-slate-500 whitespace-nowrap">{broker.name}</span>
+                <span className="text-[0.62rem] font-semibold text-slate-500 whitespace-nowrap">{broker.name}</span>
               </div>
             ))}
           </div>
@@ -213,14 +214,20 @@ export default async function HomePage() {
       {/* Active Deals Section */}
       {(dealBrokers as Broker[])?.length > 0 && (
         <ScrollFadeIn>
-          <section className="py-8 md:py-12 bg-gradient-to-b from-amber-50/50 to-white">
+          <section className="py-4 md:py-12 bg-gradient-to-b from-amber-50/50 to-white">
             <div className="container-custom">
-              <div className="flex items-center justify-between mb-4 md:mb-6">
+              <div className="flex items-start justify-between gap-2 mb-2.5 md:mb-6">
                 <div>
-                  <h2 className="text-xl md:text-2xl font-bold">Current Broker Deals</h2>
-                  <p className="text-sm text-slate-500 mt-1">Verified promotions from Australian trading platforms</p>
+                  <h2 className="text-lg md:text-2xl font-bold">Current Broker Deals</h2>
+                  <p className="text-[0.69rem] md:text-sm text-slate-500 mt-0.5 md:mt-1">
+                    <span className="hidden md:inline">Verified promotions from Australian trading platforms</span>
+                    <span className="md:hidden">Verified promotions</span>
+                  </p>
                 </div>
-                <Link href="/deals" className="text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors min-h-[44px] flex items-center px-2">
+                <Link href="/deals" className="md:hidden text-[0.69rem] font-semibold text-slate-500 hover:text-slate-900 shrink-0 mt-1">
+                  View all →
+                </Link>
+                <Link href="/deals" className="hidden md:flex text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors min-h-[44px] items-center px-2">
                   View All Deals &rarr;
                 </Link>
               </div>
@@ -233,25 +240,17 @@ export default async function HomePage() {
               {/* Mobile: horizontal snap-scroll carousel */}
               <div className="md:hidden">
                 <div className="relative">
-                  <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-4 scrollbar-hide -mx-4 px-4">
+                  <div className="flex gap-2.5 overflow-x-auto snap-x snap-mandatory pb-3 scrollbar-hide -mx-4 px-4">
                     {(dealBrokers as Broker[]).map((broker) => (
-                      <div key={broker.id} className="w-[80vw] shrink-0 snap-start">
+                      <div key={broker.id} className="w-[75vw] shrink-0 snap-start">
                         <DealCard broker={broker} />
                       </div>
                     ))}
                   </div>
                   <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-amber-50/80 to-transparent" />
                 </div>
-                <div className="text-center mt-2">
-                  <Link
-                    href="/deals"
-                    className="text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors"
-                  >
-                    View All Deals &rarr;
-                  </Link>
-                </div>
               </div>
-              <div className="mt-4">
+              <div className="mt-2 md:mt-4">
                 <CompactDisclaimerLine />
               </div>
             </div>
@@ -261,13 +260,19 @@ export default async function HomePage() {
 
       {/* Best For Hub */}
       <ScrollFadeIn>
-        <section className="py-8 md:py-12 bg-slate-50">
+        <section className="py-4 md:py-12 bg-slate-50">
           <div className="container-custom">
-            <div className="text-center mb-5 md:mb-8">
-              <h2 className="text-xl md:text-3xl font-bold">Find the Best Broker for You</h2>
-              <p className="text-sm md:text-base text-slate-500 mt-1 md:mt-2 max-w-lg mx-auto">
-                Our category guides rank brokers for your specific situation.
-              </p>
+            <div className="flex items-start justify-between gap-2 mb-2.5 md:mb-8">
+              <div>
+                <h2 className="text-lg md:text-3xl font-bold">Find the Best Broker for You</h2>
+                <p className="text-[0.69rem] md:text-base text-slate-500 mt-0.5 md:mt-2">
+                  <span className="hidden md:inline">Our category guides rank brokers for your specific situation.</span>
+                  <span className="md:hidden">Category guides for your situation</span>
+                </p>
+              </div>
+              <Link href="/best" className="md:hidden text-[0.69rem] font-semibold text-slate-500 hover:text-slate-900 shrink-0 mt-1">
+                View all →
+              </Link>
             </div>
             {/* Desktop: grid */}
             <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
@@ -284,24 +289,21 @@ export default async function HomePage() {
                 </Link>
               ))}
             </div>
-            {/* Mobile: horizontal snap-scroll showing all 6 */}
-            <div className="sm:hidden relative">
-              <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-3 scrollbar-hide -mx-4 px-4">
-                {bestForCards.map((card) => (
-                  <Link
-                    key={card.title}
-                    href={card.href}
-                    className={`border rounded-xl p-4 active:scale-[0.98] transition-all ${card.color} w-[70vw] shrink-0 snap-start`}
-                  >
-                    <Icon name={card.icon} size={22} className="mb-1.5 opacity-80" />
-                    <h3 className="font-bold mb-0.5 text-sm">{card.title}</h3>
-                    <p className="text-xs opacity-80 leading-snug">{card.description}</p>
-                  </Link>
-                ))}
-              </div>
-              <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-slate-50 to-transparent" />
+            {/* Mobile: 2-col grid, compact */}
+            <div className="sm:hidden grid grid-cols-2 gap-2">
+              {bestForCards.map((card) => (
+                <Link
+                  key={card.title}
+                  href={card.href}
+                  className={`border rounded-lg p-2.5 active:scale-[0.98] transition-all ${card.color}`}
+                >
+                  <Icon name={card.icon} size={18} className="mb-1 opacity-80" />
+                  <h3 className="font-bold text-xs leading-tight">{card.title}</h3>
+                  <p className="text-[0.62rem] opacity-70 leading-snug mt-0.5 line-clamp-2">{card.description}</p>
+                </Link>
+              ))}
             </div>
-            <div className="text-center mt-4 md:mt-6">
+            <div className="hidden md:block text-center mt-6">
               <Link
                 href="/best"
                 className="inline-flex items-center min-h-[44px] px-4 text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors"
@@ -316,14 +318,17 @@ export default async function HomePage() {
       {/* Featured Articles */}
       {(articles as Article[])?.length > 0 && (
         <ScrollFadeIn>
-          <section className="py-8 md:py-12 bg-white">
+          <section className="py-4 md:py-12 bg-white">
             <div className="container-custom">
-              <div className="flex items-center justify-between mb-4 md:mb-6">
+              <div className="flex items-start justify-between gap-2 mb-2.5 md:mb-6">
                 <div>
-                  <h2 className="text-xl md:text-2xl font-bold">Investing Guides & Articles</h2>
-                  <p className="text-sm text-slate-500 mt-1">Expert guides to help you make smarter decisions</p>
+                  <h2 className="text-lg md:text-2xl font-bold">Investing Guides & Articles</h2>
+                  <p className="text-[0.69rem] md:text-sm text-slate-500 mt-0.5 md:mt-1">Expert guides for smarter decisions</p>
                 </div>
-                <Link href="/articles" className="text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors min-h-[44px] flex items-center px-2">
+                <Link href="/articles" className="md:hidden text-[0.69rem] font-semibold text-slate-500 hover:text-slate-900 shrink-0 mt-1">
+                  View all →
+                </Link>
+                <Link href="/articles" className="hidden md:flex text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors min-h-[44px] items-center px-2">
                   View All &rarr;
                 </Link>
               </div>
@@ -358,38 +363,35 @@ export default async function HomePage() {
                   </Link>
                 ))}
               </div>
-              {/* Mobile: horizontal snap-scroll showing all 6 */}
-              <div className="md:hidden relative">
-                <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-3 scrollbar-hide -mx-4 px-4">
-                  {(articles as Article[]).slice(0, 6).map((article) => (
-                    <Link
-                      key={article.id}
-                      href={`/article/${article.slug}`}
-                      className="border border-slate-200 rounded-xl overflow-hidden hover:shadow-md transition-all duration-200 group w-[80vw] shrink-0 snap-start flex flex-col"
-                    >
-                      {article.cover_image_url && (
-                        <div className="aspect-[16/9] overflow-hidden bg-slate-100">
-                          <img src={article.cover_image_url} alt={article.title} className="w-full h-full object-cover" loading="lazy" />
-                        </div>
-                      )}
-                      <div className="p-4 flex flex-col flex-1">
-                        {article.category && (
-                          <span className="inline-block self-start text-[0.69rem] font-bold uppercase tracking-wider text-slate-600 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full mb-2">
-                            {article.category}
-                          </span>
-                        )}
-                        <h3 className="font-bold text-sm text-slate-900 group-hover:text-slate-600 transition-colors mb-1.5 leading-snug line-clamp-2">
-                          {article.title}
-                        </h3>
-                        <div className="flex items-center gap-3 text-xs text-slate-400">
-                          {article.read_time && <span>{article.read_time} min read</span>}
-                          <span className="text-slate-900 font-semibold">Read Guide &rarr;</span>
-                        </div>
+              {/* Mobile: 2-col compact grid */}
+              <div className="md:hidden grid grid-cols-2 gap-2.5">
+                {(articles as Article[]).slice(0, 4).map((article) => (
+                  <Link
+                    key={article.id}
+                    href={`/article/${article.slug}`}
+                    className="border border-slate-200 rounded-lg overflow-hidden hover:shadow-md transition-all duration-200 group flex flex-col"
+                  >
+                    {article.cover_image_url && (
+                      <div className="aspect-[16/9] overflow-hidden bg-slate-100">
+                        <img src={article.cover_image_url} alt={article.title} className="w-full h-full object-cover" loading="lazy" />
                       </div>
-                    </Link>
-                  ))}
-                </div>
-                <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white to-transparent" />
+                    )}
+                    <div className="p-2.5 flex flex-col flex-1">
+                      {article.category && (
+                        <span className="inline-block self-start text-[0.56rem] font-bold uppercase tracking-wider text-slate-600 bg-slate-100 border border-slate-200 px-1.5 py-px rounded-full mb-1.5">
+                          {article.category}
+                        </span>
+                      )}
+                      <h3 className="font-bold text-xs text-slate-900 leading-snug line-clamp-2 mb-1">
+                        {article.title}
+                      </h3>
+                      <div className="flex items-center gap-2 text-[0.62rem] text-slate-400 mt-auto">
+                        {article.read_time && <span>{article.read_time} min</span>}
+                        <span className="text-slate-900 font-semibold">Read →</span>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
               </div>
             </div>
           </section>
@@ -398,7 +400,7 @@ export default async function HomePage() {
 
       {/* Email Capture */}
       <ScrollFadeIn>
-        <section className="py-8 md:py-12 bg-slate-50">
+        <section className="py-4 md:py-12 bg-slate-50">
           <div className="container-custom">
             <div className="max-w-xl mx-auto">
               <LeadMagnet />

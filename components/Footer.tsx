@@ -17,15 +17,15 @@ export default function Footer() {
   return (
     <>
       {/* Legal Disclaimers — light background, visually separate from footer */}
-      <div className="bg-slate-50 border-t border-b border-slate-200 mt-8 md:mt-20">
+      <div className="bg-slate-50 border-t border-b border-slate-200 mt-4 md:mt-20">
         <div className="container-custom">
-          <div className="py-3">
-            <p className="text-xs font-semibold text-slate-500 pt-2 pb-1">Legal &amp; Disclaimers</p>
+          <div className="py-2 md:py-3">
+            <p className="text-[0.69rem] md:text-xs font-semibold text-slate-500 pt-1 md:pt-2 pb-0.5 md:pb-1">Legal &amp; Disclaimers</p>
             {sections.map((section, i) => (
               <div key={i} className="border-t border-slate-200">
                 <button
                   onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                  className="w-full flex items-center justify-between py-2.5 text-xs text-slate-500 hover:text-slate-700 transition-colors"
+                  className="w-full flex items-center justify-between py-2 md:py-2.5 text-[0.69rem] md:text-xs text-slate-500 hover:text-slate-700 transition-colors"
                   aria-expanded={openIndex === i}
                   aria-controls={`disclaimer-${i}`}
                   aria-label={`Toggle ${section.title}`}
@@ -47,7 +47,7 @@ export default function Footer() {
                   className="overflow-hidden transition-all duration-200"
                   style={{ maxHeight: openIndex === i ? "300px" : "0" }}
                 >
-                  <p className="text-xs text-slate-500 leading-relaxed pb-3">
+                  <p className="text-[0.69rem] md:text-xs text-slate-500 leading-relaxed pb-2 md:pb-3">
                     {section.content}
                   </p>
                 </div>
@@ -59,53 +59,53 @@ export default function Footer() {
 
       {/* Footer */}
       <footer className="bg-slate-800 text-slate-300">
-        <div className="container-custom py-6 md:py-12">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-8">
-            <div className="col-span-2 md:col-span-1">
-              <h3 className="text-white font-bold mb-3 md:mb-4">Invest.com.au</h3>
-              <p className="text-sm leading-relaxed">
-                Australia&apos;s independent broker comparison platform. No bank bias, just honest reviews.
+        <div className="container-custom py-5 md:py-12">
+          <div className="grid grid-cols-3 md:grid-cols-4 gap-4 md:gap-8">
+            <div className="col-span-3 md:col-span-1">
+              <h3 className="text-white font-bold text-sm md:text-base mb-1 md:mb-4">Invest.com.au</h3>
+              <p className="text-xs md:text-sm leading-relaxed">
+                <span className="hidden md:inline">Australia&apos;s independent broker comparison platform. No bank bias, just honest reviews.</span>
+                <span className="md:hidden text-slate-400">Independent broker comparison. No bank bias.</span>
               </p>
             </div>
 
             <div>
-              <h4 className="text-white font-semibold mb-3 md:mb-4 text-sm">Compare</h4>
-              <ul className="space-y-2.5 md:space-y-2 text-sm">
+              <h4 className="text-white font-semibold mb-2 md:mb-4 text-xs md:text-sm">Compare</h4>
+              <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm">
                 <li><Link href="/compare" className="hover:text-white transition-colors">All Brokers</Link></li>
                 <li><Link href="/versus" className="hover:text-white transition-colors">Head-to-Head</Link></li>
-                <li><Link href="/deals" className="hover:text-white transition-colors">Current Deals</Link></li>
+                <li><Link href="/deals" className="hover:text-white transition-colors">Deals</Link></li>
                 <li><Link href="/reviews" className="hover:text-white transition-colors">Reviews</Link></li>
-                <li><Link href="/quiz" className="hover:text-white transition-colors">Broker Quiz</Link></li>
+                <li><Link href="/quiz" className="hover:text-white transition-colors">Quiz</Link></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="text-white font-semibold mb-3 md:mb-4 text-sm">Learn</h4>
-              <ul className="space-y-2.5 md:space-y-2 text-sm">
-                <li><Link href="/articles" className="hover:text-white transition-colors">Guides &amp; Articles</Link></li>
+              <h4 className="text-white font-semibold mb-2 md:mb-4 text-xs md:text-sm">Learn</h4>
+              <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm">
+                <li><Link href="/articles" className="hover:text-white transition-colors">Guides</Link></li>
                 <li><Link href="/calculators" className="hover:text-white transition-colors">Calculators</Link></li>
-                <li><Link href="/scenarios" className="hover:text-white transition-colors">Best Broker For...</Link></li>
-                <li><Link href="/pro" className="hover:text-white transition-colors text-amber-400">Investor Pro ✦</Link></li>
+                <li><Link href="/scenarios" className="hover:text-white transition-colors">Best For...</Link></li>
+                <li><Link href="/pro" className="hover:text-white transition-colors text-amber-400">Pro ✦</Link></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="text-white font-semibold mb-3 md:mb-4 text-sm">About</h4>
-              <ul className="space-y-2.5 md:space-y-2 text-sm">
+              <h4 className="text-white font-semibold mb-2 md:mb-4 text-xs md:text-sm">About</h4>
+              <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm">
                 <li><Link href="/about" className="hover:text-white transition-colors">About Us</Link></li>
-                <li><Link href="/editorial-policy" className="hover:text-white transition-colors">Editorial Policy</Link></li>
+                <li><Link href="/editorial-policy" className="hover:text-white transition-colors">Editorial</Link></li>
                 <li><Link href="/how-we-earn" className="hover:text-white transition-colors">How We Earn</Link></li>
-                <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
+                <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link></li>
                 <li><Link href="/methodology" className="hover:text-white transition-colors">Methodology</Link></li>
-                <li><Link href="/how-we-verify" className="hover:text-white transition-colors">How We Verify</Link></li>
-                <li><Link href="/terms" className="hover:text-white transition-colors">Terms of Use</Link></li>
+                <li><Link href="/terms" className="hover:text-white transition-colors">Terms</Link></li>
               </ul>
             </div>
           </div>
 
-          <div className="border-t border-slate-700/40 mt-5 md:mt-8 pt-5 md:pt-8 text-sm text-center space-y-1">
+          <div className="border-t border-slate-700/40 mt-4 md:mt-8 pt-3 md:pt-8 text-xs md:text-sm text-center space-y-0.5 md:space-y-1">
             <p>&copy; {new Date().getFullYear()} {COMPANY_LEGAL_NAME}. All rights reserved.</p>
-            <p className="text-xs text-slate-400">ACN {COMPANY_ACN} | ABN {COMPANY_ABN}</p>
+            <p className="text-[0.62rem] md:text-xs text-slate-400">ACN {COMPANY_ACN} | ABN {COMPANY_ABN}</p>
           </div>
         </div>
       </footer>
