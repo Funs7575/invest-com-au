@@ -136,13 +136,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Failed to save lead' }, { status: 500 });
   }
 
-  // Also insert into email_captures for unified subscriber list
-  await supabase.from('email_captures').insert({
+  // Upsert into email_captures for unified subscriber list
+  // Uses upsert so returning users get re-added even if they previously unsubscribed
+  await supabase.from('email_captures').upsert({
     email: sanitizedEmail,
     source: 'quiz',
+    newsletter_opt_in: true,
+    unsubscribed: false,
     ...(sanitizedName ? { name: sanitizedName } : {}),
-  }).then(({ error }) => {
-    if (error) console.error('email_captures insert error:', error.message);
+  }, { onConflict: 'email' }).then(({ error }) => {
+    if (error) console.error('email_captures upsert error:', error.message);
   });
 
   // Sync to Resend Contacts with quiz-specific properties

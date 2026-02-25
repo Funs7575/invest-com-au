@@ -159,23 +159,35 @@ export async function getWinningCampaigns(
     return [];
   }
 
-  // 4. Check daily budget (query today's spend from campaign_events)
+  // 4. Check daily budget — single batched query instead of N queries
   const todayStart = today + "T00:00:00.000Z";
   const withBudget: Campaign[] = [];
 
+  // Collect campaign IDs that have daily budgets
+  const dailyBudgetCampaignIds = eligible
+    .filter((c) => c.daily_budget_cents)
+    .map((c) => c.id);
+
+  // Single query: fetch all today's events for all capped campaigns at once
+  const todaySpendMap = new Map<number, number>();
+
+  if (dailyBudgetCampaignIds.length > 0) {
+    const { data: todayEvents } = await supabase
+      .from("campaign_events")
+      .select("campaign_id, cost_cents")
+      .in("campaign_id", dailyBudgetCampaignIds)
+      .gte("created_at", todayStart);
+
+    // Aggregate spend per campaign in JS
+    for (const e of todayEvents || []) {
+      const prev = todaySpendMap.get(e.campaign_id) || 0;
+      todaySpendMap.set(e.campaign_id, prev + (e.cost_cents || 0));
+    }
+  }
+
   for (const c of eligible) {
     if (c.daily_budget_cents) {
-      const { data: todayEvents } = await supabase
-        .from("campaign_events")
-        .select("cost_cents")
-        .eq("campaign_id", c.id)
-        .gte("created_at", todayStart);
-
-      const todaySpend = (todayEvents || []).reduce(
-        (sum: number, e: { cost_cents: number }) => sum + (e.cost_cents || 0),
-        0
-      );
-
+      const todaySpend = todaySpendMap.get(c.id) || 0;
       if (todaySpend >= c.daily_budget_cents) {
         rejections.push({ broker_slug: c.broker_slug, campaign_id: c.id, reason: "daily_budget_hit" });
         continue;
