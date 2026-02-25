@@ -113,20 +113,20 @@ export default function OnThisPage({ items }: { items: TocItem[] }) {
               </p>
               <button
                 onClick={() => setIsExpanded(false)}
-                className="p-1 text-slate-400 hover:text-slate-600"
+                className="p-2 -mr-1 text-slate-400 hover:text-slate-600"
                 aria-label="Close navigation"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
-            <ul className="space-y-1 max-h-60 overflow-y-auto">
+            <ul className="space-y-0.5 max-h-60 overflow-y-auto">
               {items.map(({ id, label }) => (
                 <li key={id}>
                   <button
                     onClick={() => handleClick(id)}
-                    className={`block w-full text-left px-3 py-2 text-sm rounded-lg transition-all duration-200 ${
+                    className={`block w-full text-left px-3 py-2.5 text-sm rounded-lg transition-all duration-200 ${
                       activeId === id
                         ? "bg-blue-50 text-blue-700 font-semibold"
                         : "text-slate-600 hover:bg-slate-50"

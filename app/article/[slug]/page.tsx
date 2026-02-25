@@ -207,63 +207,65 @@ export default async function ArticlePage({
       )}
 
       {/* Hero Section */}
-      <section className="bg-white text-slate-900 pt-6 pb-8 border-b border-slate-200">
+      <section className="bg-white text-slate-900 pt-4 pb-5 md:pt-6 md:pb-8 border-b border-slate-200">
         <div className="container-custom">
           <div className={isEnhanced ? "max-w-5xl mx-auto" : "max-w-3xl mx-auto"}>
-            {/* Breadcrumb */}
-            <div className="text-sm text-slate-500 mb-3">
+            {/* Breadcrumb — hide full title on mobile */}
+            <div className="text-xs md:text-sm text-slate-500 mb-2 md:mb-3">
               <Link href="/" className="hover:text-slate-900 transition-colors">
                 Home
               </Link>
-              <span className="mx-2">/</span>
+              <span className="mx-1.5 md:mx-2">/</span>
               <Link
                 href="/articles"
                 className="hover:text-slate-900 transition-colors"
               >
                 Articles
               </Link>
-              <span className="mx-2">/</span>
-              <span className="text-slate-900">{a.title}</span>
+              <span className="hidden md:inline">
+                <span className="mx-2">/</span>
+                <span className="text-slate-900">{a.title}</span>
+              </span>
             </div>
 
             {/* Badges */}
-            <div className="flex items-center gap-3 mb-3">
+            <div className="flex flex-wrap items-center gap-2 md:gap-3 mb-2 md:mb-3">
               {a.category && (
                 <span
-                  className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${categoryColor}`}
+                  className={`text-[0.69rem] md:text-xs font-semibold px-2 md:px-2.5 py-0.5 rounded-full ${categoryColor}`}
                 >
                   {a.category}
                 </span>
               )}
               {a.read_time && (
-                <span className="text-xs text-slate-500">
+                <span className="text-[0.69rem] md:text-xs text-slate-500">
                   {a.read_time} min read
                 </span>
               )}
               {a.published_at && (
-                <span className="text-xs text-slate-500">
+                <span className="text-[0.69rem] md:text-xs text-slate-500">
                   {new Date(a.published_at).toLocaleDateString("en-AU", {
                     year: "numeric",
-                    month: "long",
+                    month: "short",
                     day: "numeric",
                   })}
                 </span>
               )}
               {isEnhanced && (
-                <span className="text-xs font-semibold bg-slate-700/20 text-slate-700 px-2.5 py-0.5 rounded-full">
+                <span className="text-[0.69rem] md:text-xs font-semibold bg-slate-700/20 text-slate-700 px-2 md:px-2.5 py-0.5 rounded-full">
                   Updated Feb 2026
                 </span>
               )}
             </div>
 
             {/* Title */}
-            <h1 className="text-3xl md:text-4xl font-extrabold mb-3 leading-tight">
+            <h1 className="text-2xl md:text-4xl font-extrabold mb-2 md:mb-3 leading-tight">
               {a.title}
             </h1>
 
-            {/* Excerpt */}
+            {/* Excerpt — smaller on mobile */}
             {a.excerpt && (
-              <p className="text-lg text-slate-600 leading-relaxed max-w-3xl">
+              <p className="text-sm md:text-lg text-slate-600 leading-relaxed max-w-3xl">
                 {a.excerpt}
               </p>
             )}
@@ -306,12 +308,12 @@ export default async function ArticlePage({
       </section>
 
       {/* Main Content */}
-      <div className="py-12">
+      <div className="py-6 md:py-12">
         <div className="container-custom">
           <div
             className={
               isEnhanced
-                ? "max-w-5xl mx-auto flex gap-8"
+                ? "max-w-5xl mx-auto flex flex-col lg:flex-row gap-6 lg:gap-8"
                 : "max-w-3xl mx-auto"
             }
           >
@@ -331,11 +333,11 @@ export default async function ArticlePage({
 
               {/* Inline Table of Contents (for quick overview) */}
               {a.sections && a.sections.length > 1 && (
-                <nav className="border border-slate-200 rounded-xl p-6 mb-10 bg-slate-50">
-                  <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500 mb-3">
+                <nav className="border border-slate-200 rounded-xl p-4 md:p-6 mb-6 md:mb-10 bg-slate-50">
+                  <h2 className="text-xs md:text-sm font-bold uppercase tracking-wider text-slate-500 mb-2 md:mb-3">
                     Table of Contents
                   </h2>
-                  <ol className="space-y-2">
+                  <ol className="space-y-1 md:space-y-2">
                     {a.sections.map(
                       (
                         section: { heading: string; body: string },
@@ -344,7 +346,7 @@ export default async function ArticlePage({
                         <li key={i}>
                           <a
                             href={`#section-${i}`}
-                            className="text-sm text-slate-700 hover:text-slate-900 transition-colors flex items-start gap-2"
+                            className="text-sm text-slate-700 hover:text-slate-900 transition-colors flex items-start gap-2 py-1 md:py-0"
                           >
                             <span className="text-slate-700 font-semibold shrink-0">
                               {i + 1}.
@@ -405,25 +407,25 @@ export default async function ArticlePage({
 
               {/* Early CTA — surfaces broker comparison before users drop off */}
               {relatedBrokers.length > 0 && (
-                <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 mb-10 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 md:p-5 mb-6 md:mb-10 flex flex-col sm:flex-row items-start sm:items-center gap-3 md:gap-4">
                   <div className="flex-1">
-                    <h3 className="font-bold text-slate-900 mb-1">Ready to act?</h3>
-                    <p className="text-sm text-slate-600">
-                      Compare the brokers mentioned in this article, or use our quiz to filter in 60 seconds.
+                    <h3 className="font-bold text-slate-900 mb-0.5 md:mb-1 text-sm md:text-base">Ready to act?</h3>
+                    <p className="text-xs md:text-sm text-slate-600">
+                      Compare brokers from this article or use our quiz.
                     </p>
                   </div>
-                  <div className="flex gap-2 shrink-0">
+                  <div className="flex gap-2 shrink-0 w-full sm:w-auto">
                     <Link
                       href="/compare"
-                      className="px-4 py-2 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 transition-colors"
+                      className="flex-1 sm:flex-none text-center px-4 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 transition-colors"
                     >
-                      Compare Brokers &rarr;
+                      Compare &rarr;
                     </Link>
                     <Link
                       href="/quiz"
-                      className="px-4 py-2 border border-slate-700 text-slate-700 text-sm font-semibold rounded-lg hover:bg-slate-100 transition-colors"
+                      className="flex-1 sm:flex-none text-center px-4 py-2.5 border border-slate-700 text-slate-700 text-sm font-semibold rounded-lg hover:bg-slate-100 transition-colors"
                     >
-                      Take the Quiz
+                      Quiz
                     </Link>
                   </div>
                 </div>
@@ -456,14 +458,14 @@ export default async function ArticlePage({
 
               {/* Brokers to Compare for This Topic */}
               {relatedBrokers.length > 0 && (
-                <div className="mt-12 border border-slate-200 rounded-xl p-6 bg-white">
-                  <h3 className="text-lg font-bold mb-1">
-                    Brokers to Compare for This Topic
+                <div className="mt-8 md:mt-12 border border-slate-200 rounded-xl p-4 md:p-6 bg-white">
+                  <h3 className="text-base md:text-lg font-bold mb-0.5 md:mb-1">
+                    Brokers for This Topic
                   </h3>
-                  <p className="text-sm text-slate-500 mb-5">
+                  <p className="text-xs md:text-sm text-slate-500 mb-3 md:mb-5">
                     Platforms relevant to this guide. {ADVERTISER_DISCLOSURE_SHORT}
                   </p>
-                  <div className="space-y-4">
+                  <div className="space-y-3 md:space-y-4">
                     {relatedBrokers.map((broker) => (
                       <ArticleDetailClient
                         key={broker.id}
@@ -477,21 +479,21 @@ export default async function ArticlePage({
 
               {/* Related Calculator CTA */}
               {calcInfo && a.related_calc && (
-                <div className="mt-8 border border-slate-200 rounded-xl p-6 bg-slate-50">
-                  <div className="flex items-start gap-4">
-                    <Icon name={calcInfo.iconName} size={28} className="text-slate-700 shrink-0 mt-1" />
+                <div className="mt-6 md:mt-8 border border-slate-200 rounded-xl p-4 md:p-6 bg-slate-50">
+                  <div className="flex items-start gap-3 md:gap-4">
+                    <Icon name={calcInfo.iconName} size={24} className="text-slate-700 shrink-0 mt-0.5 md:mt-1" />
                     <div className="flex-1">
-                      <h3 className="text-lg font-bold mb-1">
+                      <h3 className="text-base md:text-lg font-bold mb-0.5 md:mb-1">
                         Related Calculator
                       </h3>
-                      <p className="text-sm text-slate-600 mb-3">
-                        Run the numbers yourself with our {calcInfo.name}.
+                      <p className="text-xs md:text-sm text-slate-600 mb-2 md:mb-3">
+                        Run the numbers with our {calcInfo.name}.
                       </p>
                       <Link
                         href={`/calculators?calc=${a.related_calc}`}
-                        className="inline-block px-5 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors"
+                        className="inline-block px-4 md:px-5 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors"
                       >
-                        Open {calcInfo.name} &rarr;
+                        Open Calculator &rarr;
                       </Link>
                     </div>
                   </div>
@@ -500,9 +502,9 @@ export default async function ArticlePage({
 
               {/* Related Articles */}
               {relatedArticles.length > 0 && (
-                <div className="mt-12">
-                  <h3 className="text-xl font-bold mb-6">Related Articles</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <div className="mt-8 md:mt-12">
+                  <h3 className="text-lg md:text-xl font-bold mb-3 md:mb-6">Related Articles</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-5">
                     {relatedArticles.map((ra) => {
                       const raCategoryColor =
                         CATEGORY_COLORS[ra.category || ""] ||
@@ -511,20 +513,20 @@ export default async function ArticlePage({
                         <Link
                           key={ra.id}
                           href={`/article/${ra.slug}`}
-                          className="border border-slate-200 rounded-xl p-5 hover:shadow-lg hover:scale-[1.02] transition-all bg-white flex flex-col"
+                          className="border border-slate-200 rounded-xl p-4 md:p-5 hover:shadow-md transition-all bg-white flex flex-col"
                         >
                           {ra.category && (
                             <span
-                              className={`text-xs font-semibold px-2.5 py-0.5 rounded-full self-start mb-2 ${raCategoryColor}`}
+                              className={`text-[0.69rem] md:text-xs font-semibold px-2 md:px-2.5 py-0.5 rounded-full self-start mb-1.5 md:mb-2 ${raCategoryColor}`}
                             >
                               {ra.category}
                             </span>
                           )}
-                          <h4 className="text-sm font-bold mb-2 line-clamp-2 flex-1">
+                          <h4 className="text-sm font-bold mb-1 md:mb-2 line-clamp-2 flex-1">
                             {ra.title}
                           </h4>
                           {ra.read_time && (
-                            <span className="text-xs text-slate-400">
+                            <span className="text-[0.69rem] md:text-xs text-slate-400">
                               {ra.read_time} min read
                             </span>
                           )}
@@ -540,17 +542,17 @@ export default async function ArticlePage({
                 const bestPages = getBestPagesForArticle(a.category, a.tags);
                 if (bestPages.length === 0) return null;
                 return (
-                  <div className="mt-8 bg-slate-50 rounded-xl p-5">
-                    <h3 className="text-lg font-bold mb-1">Best Broker Guides</h3>
-                    <p className="text-sm text-slate-500 mb-3">
-                      See which brokers top our rankings for topics covered in this article.
+                  <div className="mt-6 md:mt-8 bg-slate-50 rounded-xl p-4 md:p-5">
+                    <h3 className="text-base md:text-lg font-bold mb-0.5 md:mb-1">Best Broker Guides</h3>
+                    <p className="text-xs md:text-sm text-slate-500 mb-2 md:mb-3">
+                      See which brokers top our rankings for these topics.
                     </p>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-1.5 md:gap-2">
                       {bestPages.map((bp) => (
                         <Link
                           key={bp.slug}
                           href={bp.href}
-                          className="px-3 py-1.5 bg-white border border-slate-200 rounded-full text-sm text-slate-700 hover:border-slate-700 hover:text-slate-900 transition-colors"
+                          className="px-3 py-2 md:py-1.5 bg-white border border-slate-200 rounded-full text-sm text-slate-700 hover:border-slate-700 hover:text-slate-900 transition-colors"
                         >
                           {bp.h1.replace(" in Australia", "")}
                         </Link>
@@ -561,24 +563,23 @@ export default async function ArticlePage({
               })()}
 
               {/* Bottom CTA */}
-              <div className="mt-12 bg-slate-50 border border-slate-200 rounded-xl p-8 text-center">
-                <h3 className="text-2xl font-extrabold mb-2 text-slate-900">
+              <div className="mt-8 md:mt-12 bg-slate-50 border border-slate-200 rounded-xl p-5 md:p-8 text-center">
+                <h3 className="text-xl md:text-2xl font-extrabold mb-1.5 md:mb-2 text-slate-900">
                   Find the Right Broker
                 </h3>
-                <p className="text-slate-600 mb-6 max-w-lg mx-auto">
-                  Compare fees, features, and platforms across every major
-                  Australian broker — or use our quiz to filter in 60 seconds.
+                <p className="text-sm md:text-base text-slate-600 mb-4 md:mb-6 max-w-lg mx-auto">
+                  Compare fees and platforms — or filter in 60 seconds with our quiz.
                 </p>
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 md:gap-3">
                   <Link
                     href="/compare"
-                    className="px-6 py-3 bg-amber-500 text-slate-900 text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors"
+                    className="w-full sm:w-auto px-6 py-3 bg-amber-500 text-slate-900 text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors"
                   >
                     Compare All Brokers
                   </Link>
                   <Link
                     href="/quiz"
-                    className="px-6 py-3 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors"
+                    className="w-full sm:w-auto px-6 py-3 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors"
                   >
                     Take the Quiz
                   </Link>
@@ -586,8 +587,8 @@ export default async function ArticlePage({
               </div>
 
               {/* Disclaimer */}
-              <div className="mt-10 border-t border-slate-200 pt-6">
-                <p className="text-xs text-slate-400 leading-relaxed">
+              <div className="mt-6 md:mt-10 border-t border-slate-200 pt-4 md:pt-6">
+                <p className="text-[0.69rem] md:text-xs text-slate-400 leading-relaxed">
                   <strong>General Advice Warning:</strong> {GENERAL_ADVICE_WARNING} {ADVERTISER_DISCLOSURE_SHORT}{" "}
                   <Link
                     href="/how-we-earn"

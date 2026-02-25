@@ -86,32 +86,30 @@ export default async function ArticlesPage({
   });
 
   return (
-    <div className="py-12">
+    <div className="pt-5 pb-8 md:py-12">
       <div className="container-custom">
         {/* Page Header */}
-        <div className="mb-10">
-          <h1 className="text-4xl font-extrabold mb-3">
-            Investing Guides &amp; Articles
+        <div className="mb-4 md:mb-10">
+          <h1 className="text-2xl md:text-4xl font-extrabold mb-1 md:mb-3">
+            Guides &amp; Articles
           </h1>
-          <p className="text-lg text-slate-600 max-w-2xl">
-            Expert guides to help you make smarter investment decisions — from
-            tax strategies and SMSF tips to beginner walkthroughs and market
-            news.
+          <p className="text-sm md:text-lg text-slate-600 max-w-2xl">
+            Expert guides on tax, SMSF, strategy, and more to help you invest smarter.
           </p>
         </div>
 
         {/* Search — client component (tiny) */}
-        <Suspense fallback={<div className="h-11 mb-4" />}>
+        <Suspense fallback={<div className="h-11 mb-3 md:mb-4" />}>
           <ArticleSearchInput />
         </Suspense>
 
         {/* Category Filter — client component (tiny, uses Link for navigation) */}
-        <Suspense fallback={<div className="h-10 mb-8" />}>
+        <Suspense fallback={<div className="h-10 mb-4 md:mb-8" />}>
           <ArticleCategoryFilter />
         </Suspense>
 
         {/* Articles Grid — fully server-rendered */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {displayItems.map((item, idx) => {
             if (item === "lead-magnet") {
               return (
@@ -145,18 +143,18 @@ export default async function ArticlesPage({
                     />
                   </Link>
                 ) : null}
-                <div className="p-6 flex flex-col flex-1">
+                <div className="p-4 md:p-6 flex flex-col flex-1">
                   {/* Badges Row */}
-                  <div className="flex items-center gap-2 mb-3">
+                  <div className="flex items-center gap-2 mb-2 md:mb-3">
                     {article.category && (
                       <span
-                        className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${categoryColor}`}
+                        className={`text-[0.69rem] md:text-xs font-semibold px-2 md:px-2.5 py-0.5 rounded-full ${categoryColor}`}
                       >
                         {CATEGORY_LABELS[article.category || ""] || article.category}
                       </span>
                     )}
                     <span
-                      className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${
+                      className={`text-[0.69rem] md:text-xs font-semibold px-2 md:px-2.5 py-0.5 rounded-full ${
                         article.evergreen
                           ? "bg-emerald-50 text-emerald-700"
                           : "bg-orange-50 text-orange-700"
@@ -165,20 +163,20 @@ export default async function ArticlesPage({
                       {article.evergreen ? "Evergreen" : "News"}
                     </span>
                     {article.read_time && (
-                      <span className="text-xs text-slate-400 ml-auto">
-                        {article.read_time} min read
+                      <span className="text-[0.69rem] md:text-xs text-slate-400 ml-auto">
+                        {article.read_time} min
                       </span>
                     )}
                   </div>
 
                   {/* Title */}
-                  <h2 className="text-lg font-bold mb-2 line-clamp-2">
+                  <h2 className="text-base md:text-lg font-bold mb-1.5 md:mb-2 line-clamp-2 leading-snug">
                     {article.title}
                   </h2>
 
-                  {/* Excerpt */}
+                  {/* Excerpt — hidden on mobile to save space */}
                   {article.excerpt && (
-                    <p className="text-sm text-slate-600 mb-4 line-clamp-3 flex-1">
+                    <p className="hidden md:block text-sm text-slate-600 mb-4 line-clamp-3 flex-1">
                       {article.excerpt}
                     </p>
                   )}
@@ -186,7 +184,7 @@ export default async function ArticlesPage({
                   {/* CTA */}
                   <Link
                     href={`/article/${article.slug}`}
-                    className="text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors mt-auto"
+                    className="text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors mt-auto py-1"
                   >
                     Read Guide &rarr;
                   </Link>
@@ -198,9 +196,9 @@ export default async function ArticlesPage({
 
         {/* Empty state */}
         {filtered.length === 0 && (
-          <div className="text-center py-16 text-slate-500">
-            <p className="text-lg font-medium mb-2">No articles found</p>
-            <p className="text-sm">
+          <div className="text-center py-10 md:py-16 text-slate-500">
+            <p className="text-base md:text-lg font-medium mb-1 md:mb-2">No articles found</p>
+            <p className="text-xs md:text-sm">
               {q
                 ? "Try a different search term or category."
                 : "Try selecting a different category."}
