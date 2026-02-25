@@ -683,3 +683,81 @@ export interface BrokerDataChange {
   changed_by: string;
   source: 'manual' | 'auto_detect' | 'fee_check' | 'admin';
 }
+
+// ─── Broker Creatives ───
+
+export interface BrokerCreative {
+  id: number;
+  broker_slug: string;
+  type: 'logo' | 'banner' | 'icon' | 'screenshot';
+  label?: string;
+  url: string;
+  width?: number;
+  height?: number;
+  file_size_bytes?: number;
+  is_active: boolean;
+  sort_order: number;
+  uploaded_by?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// ─── A/B Tests ───
+
+export interface ABTest {
+  id: number;
+  broker_slug: string;
+  name: string;
+  type: 'cta_text' | 'deal_text' | 'banner' | 'landing_page';
+  status: 'draft' | 'running' | 'paused' | 'completed';
+  variant_a: Record<string, string>;
+  variant_b: Record<string, string>;
+  traffic_split: number;
+  impressions_a: number;
+  impressions_b: number;
+  clicks_a: number;
+  clicks_b: number;
+  conversions_a: number;
+  conversions_b: number;
+  winner?: 'a' | 'b';
+  start_date?: string;
+  end_date?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+// ─── Broker Notifications ───
+
+export interface BrokerNotification {
+  id: number;
+  broker_slug: string;
+  type: 'low_balance' | 'campaign_approved' | 'campaign_rejected' | 'campaign_paused' | 'budget_exhausted' | 'payment_received' | 'system' | 'support_reply';
+  title: string;
+  message: string;
+  link?: string;
+  is_read: boolean;
+  email_sent: boolean;
+  created_at: string;
+}
+
+// ─── Support Tickets ───
+
+export interface SupportTicket {
+  id: number;
+  broker_slug: string;
+  subject: string;
+  category: 'billing' | 'campaigns' | 'technical' | 'general' | 'account';
+  status: 'open' | 'in_progress' | 'waiting_reply' | 'resolved' | 'closed';
+  priority: 'low' | 'normal' | 'high' | 'urgent';
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SupportMessage {
+  id: number;
+  ticket_id: number;
+  sender_type: 'broker' | 'admin';
+  sender_name?: string;
+  message: string;
+  created_at: string;
+}

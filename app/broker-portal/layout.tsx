@@ -10,10 +10,15 @@ import CountUp from "@/components/CountUp";
 const navItems = [
   { href: "/broker-portal", label: "Dashboard", icon: "bar-chart" },
   { href: "/broker-portal/campaigns", label: "Campaigns", icon: "megaphone" },
+  { href: "/broker-portal/analytics", label: "Analytics", icon: "pie-chart" },
   { href: "/broker-portal/wallet", label: "Wallet", icon: "wallet" },
   { href: "/broker-portal/reports", label: "Reports", icon: "trending-up" },
   { href: "/broker-portal/invoices", label: "Invoices", icon: "file-text" },
   { href: "/broker-portal/conversions", label: "Conversions", icon: "target" },
+  { href: "/broker-portal/creatives", label: "Creatives", icon: "image" },
+  { href: "/broker-portal/ab-tests", label: "A/B Tests", icon: "git-branch" },
+  { href: "/broker-portal/notifications", label: "Notifications", icon: "bell" },
+  { href: "/broker-portal/support", label: "Support", icon: "message-circle" },
   { href: "/broker-portal/settings", label: "Settings", icon: "settings" },
 ];
 
@@ -23,8 +28,9 @@ export default function BrokerPortalLayout({ children }: { children: React.React
   const [mobileOpen, setMobileOpen] = useState(false);
   const [brokerName, setBrokerName] = useState("");
   const [balanceCents, setBalanceCents] = useState(0);
+  const [unreadCount, setUnreadCount] = useState(0);
 
-  const isLogin = pathname?.startsWith("/broker-portal/login");
+  const isLogin = pathname?.startsWith("/broker-portal/login") || pathname?.startsWith("/broker-portal/register");
 
   useEffect(() => {
     if (isLogin) return;
@@ -56,6 +62,15 @@ export default function BrokerPortalLayout({ children }: { children: React.React
         .maybeSingle();
 
       setBalanceCents(wallet?.balance_cents || 0);
+
+      // Fetch unread notifications count
+      const { count } = await supabase
+        .from("broker_notifications")
+        .select("id", { count: "exact", head: true })
+        .eq("broker_slug", account.broker_slug)
+        .eq("is_read", false);
+
+      setUnreadCount(count || 0);
     };
     load();
   }, [pathname, router, isLogin]);
@@ -122,6 +137,11 @@ export default function BrokerPortalLayout({ children }: { children: React.React
             >
               <Icon name={item.icon} size={16} className={isActive ? "text-amber-400" : "text-slate-400"} />
               {item.label}
+              {item.label === "Notifications" && unreadCount > 0 && (
+                <span className="ml-auto bg-amber-500 text-slate-900 text-[0.6rem] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </span>
+              )}
             </Link>
           );
         })}

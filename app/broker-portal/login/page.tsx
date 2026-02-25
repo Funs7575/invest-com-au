@@ -118,9 +118,9 @@ export default function BrokerLoginPage() {
       </button>
 
       <p className="text-xs text-slate-400 text-center">
-        Don&apos;t have an account? Contact{" "}
-        <a href="mailto:partners@invest.com.au" className="text-slate-700 underline">
-          partners@invest.com.au
+        Don&apos;t have an account?{" "}
+        <a href="/broker-portal/register" className="text-slate-700 underline font-medium">
+          Apply to advertise →
         </a>
       </p>
     </form>
