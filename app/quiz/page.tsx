@@ -313,11 +313,11 @@ export default function QuizPage() {
     const allResults = results.filter(r => r.broker);
 
     return (
-      <div className="py-12">
+      <div className="pt-5 pb-8 md:py-12">
         <div className="container-custom max-w-2xl mx-auto">
-          <div className="text-center mb-8 result-card-in">
+          <div className="text-center mb-4 md:mb-8 result-card-in">
             {/* Confetti burst + emoji */}
-            <div className="relative h-20 mb-2" aria-hidden="true">
+            <div className="relative h-14 md:h-20 mb-1 md:mb-2" aria-hidden="true">
               <div className="confetti-container confetti-active">
                 {Array.from({ length: 24 }).map((_, i) => (
                   <span key={i} className="confetti-particle" style={{
@@ -331,34 +331,35 @@ export default function QuizPage() {
                 ))}
               </div>
               <div className="absolute inset-0 flex items-center justify-center">
-                <Icon name="trophy" size={56} className="celebrate-emoji text-amber-500" />
+                <Icon name="trophy" size={36} className="celebrate-emoji text-amber-500 md:hidden" />
+                <Icon name="trophy" size={56} className="celebrate-emoji text-amber-500 hidden md:block" />
               </div>
             </div>
-            <h1 className="text-3xl font-extrabold mb-2">Your Shortlist</h1>
-            <p className="text-slate-600">Based on your answers, these brokers scored highest on your selected criteria.</p>
-            <div className="flex items-center justify-center gap-3 mt-3 text-xs text-slate-400">
+            <h1 className="text-xl md:text-3xl font-extrabold mb-1 md:mb-2">Your Shortlist</h1>
+            <p className="text-[0.69rem] md:text-base text-slate-600">Brokers that scored highest on your criteria.</p>
+            <div className="flex items-center justify-center gap-2 md:gap-3 mt-2 md:mt-3 text-[0.62rem] md:text-xs text-slate-400">
               <span className="flex items-center gap-1">
-                <svg className="w-3 h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                <svg className="w-2.5 h-2.5 md:w-3 md:h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
                 ASIC-regulated
               </span>
               <span className="flex items-center gap-1">
-                <svg className="w-3 h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                <svg className="w-2.5 h-2.5 md:w-3 md:h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
                 Based on your answers
               </span>
             </div>
           </div>
 
           {/* General Advice Warning */}
-          <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 mb-6">
-            <p className="text-xs text-slate-500 leading-relaxed">
+          <div className="bg-slate-50 border border-slate-200 rounded-lg p-2.5 md:p-4 mb-3 md:mb-6">
+            <p className="text-[0.62rem] md:text-xs text-slate-500 leading-relaxed">
               <strong>General Advice Warning:</strong> {GENERAL_ADVICE_WARNING} {ADVERTISER_DISCLOSURE_SHORT}
             </p>
           </div>
 
           {/* Sponsored broker disclosure */}
           {allResults.some(r => r.broker && isSponsored(r.broker)) && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-6">
-              <p className="text-xs text-blue-700 leading-relaxed">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-2.5 md:p-3 mb-3 md:mb-6">
+              <p className="text-[0.62rem] md:text-xs text-blue-700 leading-relaxed">
                 <strong>Sponsor Disclosure:</strong> Sponsored partners may receive a minor position boost if they already score in the top 5. {SPONSORED_DISCLOSURE_SHORT}
               </p>
             </div>
@@ -367,7 +368,7 @@ export default function QuizPage() {
           {/* Top Match */}
           {topMatch?.broker && (
             <div
-              className="border-2 rounded-xl p-8 mb-6 relative overflow-hidden result-card-in result-card-in-delay-1 shine-effect"
+              className="border-2 rounded-xl p-4 md:p-8 mb-3 md:mb-6 relative overflow-hidden result-card-in result-card-in-delay-1 shine-effect"
               style={{
                 borderColor: topMatch.broker.color || '#f59e0b',
                 background: `linear-gradient(135deg, ${topMatch.broker.color}08 0%, ${topMatch.broker.color}15 100%)`,
@@ -385,40 +386,41 @@ export default function QuizPage() {
                 aria-hidden="true"
               />
               <div
-                className="text-[0.69rem] uppercase font-extrabold tracking-wider mb-4 inline-block px-3 py-1.5 rounded-full badge-pulse"
+                className="text-[0.56rem] md:text-[0.69rem] uppercase font-extrabold tracking-wider mb-2.5 md:mb-4 inline-block px-2 py-1 md:px-3 md:py-1.5 rounded-full badge-pulse"
                 style={{
                   color: topMatch.broker.color || '#b45309',
                   background: `${topMatch.broker.color || '#f59e0b'}20`,
                   '--badge-glow': `${topMatch.broker.color || '#f59e0b'}40`,
                 } as React.CSSProperties}
               >
-                <Icon name="trophy" size={14} className="inline -mt-0.5" /> #1 on Your Shortlist
+                <Icon name="trophy" size={12} className="inline -mt-0.5 md:hidden" />
+                <Icon name="trophy" size={14} className="inline -mt-0.5 hidden md:inline" /> #1 on Your Shortlist
               </div>
-              <div className="flex items-center gap-4 mb-4">
+              <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
                 <div
-                  className="w-16 h-16 rounded-xl flex items-center justify-center text-2xl font-bold shrink-0"
+                  className="w-11 h-11 md:w-16 md:h-16 rounded-xl flex items-center justify-center text-lg md:text-2xl font-bold shrink-0"
                   style={{ background: `${topMatch.broker.color}20`, color: topMatch.broker.color }}
                 >
                   {topMatch.broker.icon || topMatch.broker.name.charAt(0)}
                 </div>
                 <div className="flex-1">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h2 className="text-3xl font-extrabold">{topMatch.broker.name}</h2>
+                  <div className="flex items-center gap-1.5 md:gap-2 flex-wrap">
+                    <h2 className="text-xl md:text-3xl font-extrabold">{topMatch.broker.name}</h2>
                     {isSponsored(topMatch.broker) && <SponsorBadge broker={topMatch.broker} />}
                   </div>
-                  <div className="text-sm text-amber">{renderStars(topMatch.broker.rating || 0)} <span className="text-slate-500">{topMatch.broker.rating}/5</span></div>
+                  <div className="text-xs md:text-sm text-amber">{renderStars(topMatch.broker.rating || 0)} <span className="text-slate-500">{topMatch.broker.rating}/5</span></div>
                 </div>
               </div>
-              <p className="text-slate-600 mb-4">{topMatch.broker.tagline}</p>
+              <p className="text-[0.69rem] md:text-base text-slate-600 mb-3 md:mb-4 hidden md:block">{topMatch.broker.tagline}</p>
 
               {/* Why this broker? */}
-              <div className="bg-white/60 rounded-lg p-3 mb-4">
-                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">
+              <div className="bg-white/60 rounded-lg p-2.5 md:p-3 mb-3 md:mb-4">
+                <p className="text-[0.56rem] md:text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1 md:mb-1.5">
                   Why {topMatch.broker.name}?
                 </p>
-                <ul className="space-y-1">
+                <ul className="space-y-0.5 md:space-y-1">
                   {getMatchReasons(answers, topMatch.broker).map((reason, i) => (
-                    <li key={i} className="text-sm text-slate-700 flex items-start gap-2">
+                    <li key={i} className="text-[0.69rem] md:text-sm text-slate-700 flex items-start gap-1.5 md:gap-2">
                       <span className="text-green-600 shrink-0">✓</span>
                       {reason}
                     </li>
@@ -426,17 +428,17 @@ export default function QuizPage() {
                 </ul>
               </div>
 
-              <div className="flex flex-wrap gap-3 text-xs text-slate-500 mb-5">
-                <span className="bg-white/60 px-2 py-1 rounded">ASX: {topMatch.broker.asx_fee}</span>
-                <span className="bg-white/60 px-2 py-1 rounded">CHESS: {topMatch.broker.chess_sponsored ? 'Yes' : 'No'}</span>
-                <span className="bg-white/60 px-2 py-1 rounded">SMSF: {topMatch.broker.smsf_support ? 'Yes' : 'No'}</span>
+              <div className="flex flex-wrap gap-1.5 md:gap-3 text-[0.62rem] md:text-xs text-slate-500 mb-3 md:mb-5">
+                <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">ASX: {topMatch.broker.asx_fee}</span>
+                <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">CHESS: {topMatch.broker.chess_sponsored ? 'Yes' : 'No'}</span>
+                <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">SMSF: {topMatch.broker.smsf_support ? 'Yes' : 'No'}</span>
               </div>
               <a
                 href={getAffiliateLink(topMatch.broker)}
                 target="_blank"
                 rel={AFFILIATE_REL}
                 onClick={() => trackClick(topMatch.broker!.slug, topMatch.broker!.name, 'quiz-result-1', '/quiz', 'quiz')}
-                className="block w-full text-center px-6 py-3.5 text-white font-bold rounded-lg transition-all text-lg shadow-lg hover:shadow-xl hover:scale-[1.02]"
+                className="block w-full text-center px-5 py-3 md:px-6 md:py-3.5 text-white font-bold rounded-lg transition-all text-sm md:text-lg shadow-lg hover:shadow-xl hover:scale-[1.02]"
                 style={{
                   background: topMatch.broker.color || '#f59e0b',
                 }}
@@ -445,11 +447,12 @@ export default function QuizPage() {
               </a>
               <RiskWarningInline />
               {topMatch.broker.deal && topMatch.broker.deal_text && (
-                <div className="mt-3 text-center">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 border border-amber-200 rounded-full text-xs font-semibold text-amber-700">
-                    <Icon name="flame" size={14} className="inline text-amber-500" /> {topMatch.broker.deal_text}
+                <div className="mt-2 md:mt-3 text-center">
+                  <span className="inline-flex items-center gap-1 md:gap-1.5 px-2 py-1 md:px-3 md:py-1.5 bg-amber-50 border border-amber-200 rounded-full text-[0.62rem] md:text-xs font-semibold text-amber-700">
+                    <Icon name="flame" size={12} className="inline text-amber-500 md:hidden" />
+                    <Icon name="flame" size={14} className="inline text-amber-500 hidden md:inline" /> {topMatch.broker.deal_text}
                     {topMatch.broker.deal_expiry && (
-                      <span className="text-[0.69rem] text-amber-500 font-normal ml-1">
+                      <span className="text-[0.56rem] md:text-[0.69rem] text-amber-500 font-normal ml-0.5 md:ml-1">
                         (expires {new Date(topMatch.broker.deal_expiry).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })})
                       </span>
                     )}
@@ -461,52 +464,52 @@ export default function QuizPage() {
 
           {/* Quick Comparison Table */}
           {allResults.length > 1 && (
-            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden mb-6 result-card-in result-card-in-delay-2">
-              <div className="px-4 py-3 bg-slate-50 border-b border-slate-200">
-                <h3 className="text-sm font-bold text-slate-700">Quick Comparison</h3>
+            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden mb-3 md:mb-6 result-card-in result-card-in-delay-2">
+              <div className="px-3 py-2 md:px-4 md:py-3 bg-slate-50 border-b border-slate-200">
+                <h3 className="text-xs md:text-sm font-bold text-slate-700">Quick Comparison</h3>
               </div>
               <div className="overflow-x-auto">
-                <table className="w-full text-sm">
+                <table className="w-full text-xs md:text-sm">
                   <thead>
                     <tr className="border-b border-slate-100">
-                      <th scope="col" className="px-4 py-2 text-left text-xs text-slate-500 font-medium">Broker</th>
-                      <th scope="col" className="px-3 py-2 text-center text-xs text-slate-500 font-medium">ASX Fee</th>
-                      <th scope="col" className="px-3 py-2 text-center text-xs text-slate-500 font-medium">FX Rate</th>
-                      <th scope="col" className="px-3 py-2 text-center text-xs text-slate-500 font-medium">CHESS</th>
-                      <th scope="col" className="px-3 py-2 text-center text-xs text-slate-500 font-medium">Rating</th>
-                      <th scope="col" className="px-3 py-2 text-center text-xs text-slate-500 font-medium"><span className="sr-only">Action</span></th>
+                      <th scope="col" className="px-2.5 md:px-4 py-1.5 md:py-2 text-left text-[0.62rem] md:text-xs text-slate-500 font-medium">Broker</th>
+                      <th scope="col" className="px-2 md:px-3 py-1.5 md:py-2 text-center text-[0.62rem] md:text-xs text-slate-500 font-medium">ASX Fee</th>
+                      <th scope="col" className="px-2 md:px-3 py-1.5 md:py-2 text-center text-[0.62rem] md:text-xs text-slate-500 font-medium hidden md:table-cell">FX Rate</th>
+                      <th scope="col" className="px-2 md:px-3 py-1.5 md:py-2 text-center text-[0.62rem] md:text-xs text-slate-500 font-medium">CHESS</th>
+                      <th scope="col" className="px-2 md:px-3 py-1.5 md:py-2 text-center text-[0.62rem] md:text-xs text-slate-500 font-medium">Rating</th>
+                      <th scope="col" className="px-2 md:px-3 py-1.5 md:py-2 text-center text-[0.62rem] md:text-xs text-slate-500 font-medium"><span className="sr-only">Action</span></th>
                     </tr>
                   </thead>
                   <tbody>
                     {allResults.map((r, i) => r.broker && (
                       <tr key={r.slug} className={`border-b border-slate-50 ${i === 0 ? 'bg-green-50/30' : ''}`}>
-                        <td className="px-4 py-2.5">
-                          <div className="flex items-center gap-2">
+                        <td className="px-2.5 md:px-4 py-2 md:py-2.5">
+                          <div className="flex items-center gap-1.5 md:gap-2">
                             <div
-                              className="w-6 h-6 rounded flex items-center justify-center text-[0.69rem] font-bold shrink-0"
+                              className="w-5 h-5 md:w-6 md:h-6 rounded flex items-center justify-center text-[0.5rem] md:text-[0.69rem] font-bold shrink-0"
                               style={{ background: `${r.broker.color}20`, color: r.broker.color }}
                             >
                               {r.broker.icon || r.broker.name.charAt(0)}
                             </div>
-                            <span className="font-semibold text-xs">{r.broker.name}</span>
-                            {i === 0 && <span className="text-[0.5rem] px-1.5 py-0.5 bg-slate-100 text-slate-700 rounded-full font-bold">TOP</span>}
+                            <span className="font-semibold text-[0.69rem] md:text-xs">{r.broker.name}</span>
+                            {i === 0 && <span className="text-[0.45rem] md:text-[0.5rem] px-1 py-px md:px-1.5 md:py-0.5 bg-slate-100 text-slate-700 rounded-full font-bold">TOP</span>}
                           </div>
                         </td>
-                        <td className="px-3 py-2.5 text-center text-xs">{r.broker.asx_fee || 'N/A'}</td>
-                        <td className="px-3 py-2.5 text-center text-xs">{r.broker.fx_rate != null ? `${r.broker.fx_rate}%` : 'N/A'}</td>
-                        <td className="px-3 py-2.5 text-center">
+                        <td className="px-2 md:px-3 py-2 md:py-2.5 text-center text-[0.62rem] md:text-xs">{r.broker.asx_fee || 'N/A'}</td>
+                        <td className="px-2 md:px-3 py-2 md:py-2.5 text-center text-[0.62rem] md:text-xs hidden md:table-cell">{r.broker.fx_rate != null ? `${r.broker.fx_rate}%` : 'N/A'}</td>
+                        <td className="px-2 md:px-3 py-2 md:py-2.5 text-center text-[0.69rem]">
                           <span className={r.broker.chess_sponsored ? 'text-green-600' : 'text-red-400'}>
                             {r.broker.chess_sponsored ? '✓' : '✗'}
                           </span>
                         </td>
-                        <td className="px-3 py-2.5 text-center text-xs font-semibold">{r.broker.rating}/5</td>
-                        <td className="px-3 py-2.5 text-center">
+                        <td className="px-2 md:px-3 py-2 md:py-2.5 text-center text-[0.62rem] md:text-xs font-semibold">{r.broker.rating}/5</td>
+                        <td className="px-2 md:px-3 py-2 md:py-2.5 text-center">
                           <a
                             href={getAffiliateLink(r.broker)}
                             target="_blank"
                             rel={AFFILIATE_REL}
                             onClick={() => trackClick(r.broker!.slug, r.broker!.name, `quiz-compare-${i + 1}`, '/quiz', 'quiz')}
-                            className="inline-block px-3 py-1.5 bg-amber-600 text-white text-xs font-semibold rounded-md hover:bg-amber-700 transition-colors"
+                            className="inline-block px-2 py-1 md:px-3 md:py-1.5 bg-amber-600 text-white text-[0.62rem] md:text-xs font-semibold rounded-md hover:bg-amber-700 transition-colors"
                           >
                             Visit →
                           </a>
@@ -522,7 +525,7 @@ export default function QuizPage() {
 
           {/* Cohort Insights — "People Like Me" */}
           {answers.length >= 3 && (
-            <div className="mb-6 result-card-in result-card-in-delay-3">
+            <div className="mb-3 md:mb-6 result-card-in result-card-in-delay-3">
               <CohortInsights
                 experience={(() => {
                   const expMap: Record<string, string> = { beginner: "beginner", intermediate: "intermediate", pro: "pro" };
@@ -541,19 +544,19 @@ export default function QuizPage() {
           )}
 
           {/* Scoring Transparency */}
-          <div className="mb-6 result-card-in result-card-in-delay-3">
+          <div className="mb-3 md:mb-6 result-card-in result-card-in-delay-3">
             <button
               onClick={() => setShowScoring(!showScoring)}
-              className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-600 hover:bg-slate-100 transition-colors"
+              className="w-full flex items-center justify-between px-3 py-2.5 md:px-4 md:py-3 bg-slate-50 border border-slate-200 rounded-lg text-xs md:text-sm text-slate-600 hover:bg-slate-100 transition-colors"
             >
-              <span className="flex items-center gap-2 font-medium">
-                <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              <span className="flex items-center gap-1.5 md:gap-2 font-medium">
+                <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 How we scored your results
               </span>
-              <svg className={`w-4 h-4 text-slate-400 transition-transform ${showScoring ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+              <svg className={`w-3.5 h-3.5 md:w-4 md:h-4 text-slate-400 transition-transform ${showScoring ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
             </button>
             {showScoring && (
-              <div className="mt-2 bg-slate-50 border border-slate-200 rounded-lg p-4 text-xs text-slate-600 space-y-3">
+              <div className="mt-2 bg-slate-50 border border-slate-200 rounded-lg p-3 md:p-4 text-[0.69rem] md:text-xs text-slate-600 space-y-2 md:space-y-3">
                 <p>Each broker has pre-set scores across six categories (beginner-friendliness, low fees, US shares, SMSF, crypto, advanced features). Your quiz answers determine which categories matter most:</p>
                 <div className="flex flex-wrap gap-1.5">
                   {answers.map((key, i) => {
@@ -601,31 +604,31 @@ export default function QuizPage() {
           {/* Runner Ups */}
           {runnerUps.length > 0 && (
             <>
-              <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wide mb-3 result-card-in result-card-in-delay-3">Also Worth Considering</h3>
-              <div className="space-y-3 mb-8">
+              <h3 className="text-[0.69rem] md:text-sm font-bold text-slate-500 uppercase tracking-wide mb-2 md:mb-3 result-card-in result-card-in-delay-3">Also Worth Considering</h3>
+              <div className="space-y-2 md:space-y-3 mb-4 md:mb-8">
                 {runnerUps.map((r, i) => r.broker && (
                   <div
                     key={r.slug}
-                    className={`border border-slate-200 rounded-xl p-4 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg result-card-in result-card-in-delay-${i + 4}`}
-                    style={{ borderLeftWidth: '4px', borderLeftColor: r.broker.color || '#e2e8f0' }}
+                    className={`border border-slate-200 rounded-lg md:rounded-xl p-3 md:p-4 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg result-card-in result-card-in-delay-${i + 4}`}
+                    style={{ borderLeftWidth: '3px', borderLeftColor: r.broker.color || '#e2e8f0' }}
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 md:gap-3">
                       {/* Rank badge */}
-                      <div className="w-6 h-6 rounded-full bg-slate-100 text-slate-500 text-xs font-bold flex items-center justify-center shrink-0">
+                      <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-slate-100 text-slate-500 text-[0.62rem] md:text-xs font-bold flex items-center justify-center shrink-0">
                         #{i + 2}
                       </div>
                       <div
-                        className="w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold shrink-0"
+                        className="w-8 h-8 md:w-10 md:h-10 rounded-lg flex items-center justify-center text-xs md:text-sm font-bold shrink-0"
                         style={{ background: `${r.broker.color}20`, color: r.broker.color }}
                       >
                         {r.broker.icon || r.broker.name.charAt(0)}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <h3 className="font-bold text-sm">{r.broker.name}</h3>
+                        <div className="flex items-center gap-1 md:gap-1.5 flex-wrap">
+                          <h3 className="font-bold text-xs md:text-sm">{r.broker.name}</h3>
                           {isSponsored(r.broker) && <SponsorBadge broker={r.broker} />}
                         </div>
-                        <div className="text-xs text-slate-500">{r.broker.asx_fee} · {r.broker.chess_sponsored ? 'CHESS' : 'Custodial'} · {r.broker.rating}/5</div>
+                        <div className="text-[0.62rem] md:text-xs text-slate-500">{r.broker.asx_fee} · {r.broker.chess_sponsored ? 'CHESS' : 'Custodial'} · {r.broker.rating}/5</div>
                       </div>
                       <a
                         href={getAffiliateLink(r.broker)}
@@ -642,22 +645,22 @@ export default function QuizPage() {
                       target="_blank"
                       rel={AFFILIATE_REL}
                       onClick={() => trackClick(r.broker!.slug, r.broker!.name, `quiz-result-${i + 2}`, '/quiz', 'quiz')}
-                      className="sm:hidden block w-full text-center mt-3 px-4 py-2.5 bg-amber-600 text-white text-sm font-bold rounded-lg hover:bg-amber-700 transition-colors"
+                      className="sm:hidden block w-full text-center mt-2 px-3 py-2 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors"
                     >
                       {getBenefitCta(r.broker, 'quiz')}
                     </a>
                     <RiskWarningInline />
                     {/* Match reasons for runner-ups too */}
-                    <div className="mt-2 flex flex-wrap gap-1.5">
+                    <div className="mt-1.5 md:mt-2 flex flex-wrap gap-1 md:gap-1.5">
                       {getMatchReasons(answers, r.broker).slice(0, 2).map((reason, ri) => (
-                        <span key={ri} className="text-[0.69rem] px-2 py-0.5 bg-slate-50 text-slate-500 rounded-full">
+                        <span key={ri} className="text-[0.56rem] md:text-[0.69rem] px-1.5 md:px-2 py-px md:py-0.5 bg-slate-50 text-slate-500 rounded-full">
                           ✓ {reason}
                         </span>
                       ))}
                     </div>
                     {r.broker.deal && r.broker.deal_text && (
-                      <div className="mt-2">
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-50 border border-amber-200 rounded-full text-[0.69rem] font-semibold text-amber-700">
+                      <div className="mt-1.5 md:mt-2">
+                        <span className="inline-flex items-center gap-1 px-1.5 md:px-2 py-px md:py-0.5 bg-amber-50 border border-amber-200 rounded-full text-[0.56rem] md:text-[0.69rem] font-semibold text-amber-700">
                           <Icon name="flame" size={10} className="inline text-amber-500" /> {r.broker.deal_text}
                         </span>
                       </div>
@@ -670,8 +673,8 @@ export default function QuizPage() {
 
           {/* P1 #7: Crypto warning when results include a crypto broker */}
           {hasCryptoResult && (
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
-              <p className="text-xs text-amber-700 leading-relaxed">
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-2.5 md:p-3 mb-3 md:mb-4">
+              <p className="text-[0.62rem] md:text-xs text-amber-700 leading-relaxed">
                 <strong>Crypto Warning:</strong> {CRYPTO_WARNING}
               </p>
             </div>
@@ -679,20 +682,21 @@ export default function QuizPage() {
 
           {/* Email capture — non-blocking, below results */}
           {!emailGate && (
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 mb-6 result-card-in result-card-in-delay-5">
-              <div className="flex items-start gap-4">
-                <Icon name="mail" size={28} className="text-slate-700 shrink-0" />
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 md:p-5 mb-3 md:mb-6 result-card-in result-card-in-delay-5">
+              <div className="flex items-start gap-2.5 md:gap-4">
+                <Icon name="mail" size={20} className="text-slate-700 shrink-0 md:hidden" />
+                <Icon name="mail" size={28} className="text-slate-700 shrink-0 hidden md:block" />
                 <div className="flex-1">
-                  <h3 className="font-bold text-sm mb-1">Get your results emailed</h3>
-                  <p className="text-xs text-slate-500 mb-3">We&apos;ll send your broker shortlist so you can compare later — plus our free fee comparison PDF.</p>
-                  <div className="flex flex-col sm:flex-row gap-2">
+                  <h3 className="font-bold text-xs md:text-sm mb-0.5 md:mb-1">Get your results emailed</h3>
+                  <p className="text-[0.62rem] md:text-xs text-slate-500 mb-2 md:mb-3">We&apos;ll send your shortlist + our free fee comparison PDF.</p>
+                  <div className="flex flex-col sm:flex-row gap-1.5 md:gap-2">
                     <input
                       type="email"
                       placeholder="you@email.com"
                       aria-label="Email address for quiz results"
                       value={gateEmail}
                       onChange={(e) => setGateEmail(e.target.value)}
-                      className="flex-1 px-3 py-2 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-700/30 focus:border-blue-700"
+                      className="flex-1 px-2.5 py-2 md:px-3 rounded-lg border border-slate-200 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-blue-700/30 focus:border-blue-700"
                     />
                     <button
                       onClick={async () => {
@@ -702,79 +706,79 @@ export default function QuizPage() {
                         setEmailGate(true); // Hide the form after sending
                       }}
                       disabled={gateStatus === "loading" || !gateEmail.includes("@")}
-                      className="px-4 py-2 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-60 shrink-0"
+                      className="px-3 py-2 md:px-4 bg-slate-900 text-white text-xs md:text-sm font-semibold rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-60 shrink-0"
                     >
                       {gateStatus === "loading" ? "Sending..." : "Email Me"}
                     </button>
                   </div>
                   {gateStatus === "error" && (
-                    <p className="text-xs text-red-500 mt-1">Something went wrong. Please try again.</p>
+                    <p className="text-[0.62rem] md:text-xs text-red-500 mt-1">Something went wrong. Please try again.</p>
                   )}
-                  <p className="text-xs text-slate-400 mt-2">No spam. Unsubscribe anytime. <Link href="/privacy" className="underline hover:text-slate-900">Privacy Policy</Link></p>
+                  <p className="text-[0.56rem] md:text-xs text-slate-400 mt-1.5 md:mt-2">No spam. Unsubscribe anytime. <Link href="/privacy" className="underline hover:text-slate-900">Privacy Policy</Link></p>
                 </div>
               </div>
             </div>
           )}
           {emailGate && (
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-6 text-center">
-              <span className="text-sm text-slate-700 font-medium">✓ Results sent to {gateEmail}</span>
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 md:p-4 mb-3 md:mb-6 text-center">
+              <span className="text-xs md:text-sm text-slate-700 font-medium">✓ Results sent to {gateEmail}</span>
             </div>
           )}
 
           {/* Pro upsell — shown below results */}
-          <div className="mb-6 result-card-in result-card-in-delay-5">
+          <div className="mb-3 md:mb-6 result-card-in result-card-in-delay-5">
             <ProUpsellBanner variant="inline" />
           </div>
 
-          <div className="my-6">
+          <div className="my-3 md:my-6">
             <CompactDisclaimerLine />
           </div>
 
           {/* Bottom CTA card */}
-          <div className="bg-amber-400 text-slate-900 rounded-xl p-6 mt-2 mb-8 text-center result-card-in result-card-in-delay-5">
-            <h3 className="text-lg font-bold mb-1">Still not sure?</h3>
-            <p className="text-sm text-slate-700 mb-4">Compare all brokers side-by-side or read our detailed reviews.</p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <div className="bg-amber-400 text-slate-900 rounded-xl p-4 md:p-6 mt-1 md:mt-2 mb-4 md:mb-8 text-center result-card-in result-card-in-delay-5">
+            <h3 className="text-sm md:text-lg font-bold mb-0.5 md:mb-1">Still not sure?</h3>
+            <p className="text-[0.69rem] md:text-sm text-slate-700 mb-3 md:mb-4">Compare all brokers or read detailed reviews.</p>
+            <div className="flex flex-row gap-2 md:gap-3 justify-center">
               <a
                 href="/compare"
                 onClick={() => trackEvent('quiz_internal_cta', { target: 'compare' }, '/quiz')}
-                className="px-5 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 transition-colors"
+                className="px-3 py-2 md:px-5 md:py-2.5 bg-slate-900 text-white text-[0.69rem] md:text-sm font-semibold rounded-lg hover:bg-slate-800 transition-colors"
               >
-                Compare All Brokers →
+                Compare All →
               </a>
               {topMatch?.broker && (
                 <a
                   href={`/broker/${topMatch.broker.slug}`}
                   onClick={() => trackEvent('quiz_internal_cta', { target: 'review', broker: topMatch.broker!.slug }, '/quiz')}
-                  className="px-5 py-2.5 border border-slate-700 text-slate-900 text-sm font-semibold rounded-lg hover:bg-amber-300 transition-colors"
+                  className="px-3 py-2 md:px-5 md:py-2.5 border border-slate-700 text-slate-900 text-[0.69rem] md:text-sm font-semibold rounded-lg hover:bg-amber-300 transition-colors"
                 >
-                  Read {topMatch.broker.name} Review →
+                  {topMatch.broker.name} Review →
                 </a>
               )}
             </div>
           </div>
 
           {/* Share & Restart */}
-          <div className="flex items-center justify-center gap-4 mt-2">
+          <div className="flex items-center justify-center gap-3 md:gap-4 mt-1 md:mt-2">
             <button
               onClick={handleShareResult}
-              className="text-sm text-slate-500 hover:text-brand transition-colors flex items-center gap-1.5 px-4 py-2 border border-slate-200 rounded-lg hover:border-slate-300"
+              className="text-[0.69rem] md:text-sm text-slate-500 hover:text-brand transition-colors flex items-center gap-1 md:gap-1.5 px-3 py-1.5 md:px-4 md:py-2 border border-slate-200 rounded-lg hover:border-slate-300"
             >
               {copied ? (
                 <>
-                  <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                   <span className="text-green-600 font-medium">Copied!</span>
                 </>
               ) : (
                 <>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
-                  Share your result
+                  <svg className="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
+                  Share
                 </>
               )}
             </button>
             <button
               onClick={() => { setStep(0); setAnswers([]); }}
-              className="text-sm text-slate-500 hover:text-brand transition-colors"
+              className="text-[0.69rem] md:text-sm text-slate-500 hover:text-brand transition-colors"
             >
               Restart Quiz →
             </button>
@@ -787,27 +791,27 @@ export default function QuizPage() {
   // Analyzing transition screen
   if (revealing) {
     return (
-      <div className="py-12">
+      <div className="pt-5 pb-8 md:py-12">
         <div className="container-custom max-w-2xl mx-auto">
-          <div className="flex flex-col items-center justify-center min-h-[40vh] reveal-screen-in">
+          <div className="flex flex-col items-center justify-center min-h-[30vh] md:min-h-[40vh] reveal-screen-in">
             {/* Animated analyzing spinner */}
-            <div className="relative w-16 h-16 mb-6">
-              <div className="absolute inset-0 rounded-full border-4 border-slate-200" />
-              <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-blue-700 analyzing-ring-spin" />
+            <div className="relative w-12 h-12 md:w-16 md:h-16 mb-4 md:mb-6">
+              <div className="absolute inset-0 rounded-full border-3 md:border-4 border-slate-200" />
+              <div className="absolute inset-0 rounded-full border-3 md:border-4 border-transparent border-t-blue-700 analyzing-ring-spin" />
             </div>
 
-            <h2 className="text-xl font-bold mb-2 reveal-text-in">
+            <h2 className="text-base md:text-xl font-bold mb-1 md:mb-2 reveal-text-in">
               Analyzing your answers...
             </h2>
-            <p className="text-slate-500 text-sm reveal-text-in-delay">
+            <p className="text-slate-500 text-xs md:text-sm reveal-text-in-delay">
               Matching you with the best brokers
             </p>
 
             {/* Animated progress dots */}
-            <div className="flex gap-2 mt-6">
-              <span className="w-2 h-2 rounded-full bg-blue-700 analyzing-dot-1" />
-              <span className="w-2 h-2 rounded-full bg-blue-700 analyzing-dot-2" />
-              <span className="w-2 h-2 rounded-full bg-blue-700 analyzing-dot-3" />
+            <div className="flex gap-1.5 md:gap-2 mt-4 md:mt-6">
+              <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-blue-700 analyzing-dot-1" />
+              <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-blue-700 analyzing-dot-2" />
+              <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-blue-700 analyzing-dot-3" />
             </div>
           </div>
         </div>
@@ -819,21 +823,21 @@ export default function QuizPage() {
   const current = questions[step];
 
   return (
-    <div className="py-12">
+    <div className="pt-5 pb-8 md:py-12">
       <div className="container-custom max-w-2xl mx-auto">
         {/* Data fetch error notice */}
         {fetchError && (
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4 text-xs text-amber-700">
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-2.5 md:p-3 mb-3 md:mb-4 text-[0.62rem] md:text-xs text-amber-700">
             {fetchError}
           </div>
         )}
 
         {/* Progress dots */}
-        <div className="flex items-center justify-center gap-2 mb-8">
+        <div className="flex items-center justify-center gap-1.5 md:gap-2 mb-4 md:mb-8">
           {questions.map((_, i) => (
             <div
               key={i}
-              className={`w-3 h-3 rounded-full transition-colors ${
+              className={`w-2.5 h-2.5 md:w-3 md:h-3 rounded-full transition-colors ${
                 i < step ? 'bg-blue-700' : i === step ? 'bg-blue-700 ring-2 ring-blue-700/30 ring-offset-2' : 'bg-slate-200'
               }`}
             />
@@ -841,13 +845,13 @@ export default function QuizPage() {
         </div>
 
         {/* Progress bar */}
-        <div className="mb-2">
-          <div className="flex justify-between text-xs text-slate-500 mb-1">
+        <div className="mb-1.5 md:mb-2">
+          <div className="flex justify-between text-[0.62rem] md:text-xs text-slate-500 mb-0.5 md:mb-1">
             <span>Question {step + 1} of {questions.length}</span>
             <span>{Math.round(((step + 1) / questions.length) * 100)}%</span>
           </div>
           <div
-            className="h-1.5 bg-slate-100 rounded-full overflow-hidden"
+            className="h-1 md:h-1.5 bg-slate-100 rounded-full overflow-hidden"
             role="progressbar"
             aria-valuenow={step + 1}
             aria-valuemin={1}
@@ -862,12 +866,12 @@ export default function QuizPage() {
           <h1
             ref={questionHeadingRef}
             tabIndex={-1}
-            className="text-2xl md:text-3xl font-extrabold mb-8 mt-6 outline-none"
+            className="text-lg md:text-3xl font-extrabold mb-4 md:mb-8 mt-3 md:mt-6 outline-none"
           >
             {current.question_text}
           </h1>
 
-          <div className="space-y-3" role="radiogroup" aria-label={current.question_text}>
+          <div className="space-y-2 md:space-y-3" role="radiogroup" aria-label={current.question_text}>
             {current.options.map((opt: { label: string; key: string }) => (
               <button
                 key={opt.label}
@@ -876,15 +880,15 @@ export default function QuizPage() {
                 role="radio"
                 aria-checked={selectedKey === opt.key}
                 aria-label={opt.label}
-                className={`w-full text-left border rounded-xl px-6 py-4 transition-all font-medium text-sm md:text-base ${
+                className={`w-full text-left border rounded-lg md:rounded-xl px-4 py-3 md:px-6 md:py-4 transition-all font-medium text-xs md:text-base ${
                   selectedKey === opt.key
                     ? "border-slate-700 bg-slate-700/5 scale-[0.98]"
                     : "border-slate-200 hover:border-slate-700 hover:bg-slate-700/5"
                 } ${animating && selectedKey !== opt.key ? "opacity-50" : ""}`}
               >
-                <span className="flex items-center gap-3">
+                <span className="flex items-center gap-2 md:gap-3">
                   {selectedKey === opt.key && (
-                    <svg className="w-5 h-5 text-green-600 shrink-0 check-pop" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 md:w-5 md:h-5 text-green-600 shrink-0 check-pop" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                     </svg>
                   )}
@@ -898,7 +902,7 @@ export default function QuizPage() {
         {step > 0 && (
           <button
             onClick={() => { setStep(step - 1); setAnswers(answers.slice(0, -1)); }}
-            className="mt-6 text-sm text-slate-400 hover:text-slate-600 transition-colors"
+            className="mt-4 md:mt-6 text-xs md:text-sm text-slate-400 hover:text-slate-600 transition-colors"
           >
             ← Back
           </button>
