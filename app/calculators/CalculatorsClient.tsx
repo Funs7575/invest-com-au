@@ -158,19 +158,51 @@ export default function CalculatorsClient({ brokers }: Props) {
   const nonCryptoBrokers = useMemo(() => brokers.filter((b) => !b.is_crypto), [brokers]);
 
   return (
-    <div className="py-12">
+    <div className="pt-5 pb-8 md:py-12">
       <div className="container-custom">
         {/* Page header */}
-        <div className="text-center mb-10">
-          <h1 className="text-3xl md:text-4xl font-extrabold text-brand tracking-tight mb-3">Investing Tools</h1>
-          <p className="text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed">
-            Free tools to help you compare broker fees, estimate tax, and make smarter investing decisions.
+        <div className="text-center mb-4 md:mb-10">
+          <h1 className="text-2xl md:text-4xl font-extrabold text-brand tracking-tight mb-1 md:mb-3">Investing Tools</h1>
+          <p className="text-sm md:text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed">
+            Free tools to compare fees, estimate tax, and invest smarter.
           </p>
-          <AuthorByline variant="light" />
+          <div className="hidden md:block">
+            <AuthorByline variant="light" />
+          </div>
         </div>
 
         {/* ── Pill Navigation ──────────────────────── */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3 mb-10" role="tablist" aria-label="Calculator selection">
+        {/* Mobile: horizontal snap-scroll strip */}
+        <div className="md:hidden -mx-4 px-4 mb-4" role="tablist" aria-label="Calculator selection">
+          <div className="flex gap-2 overflow-x-auto snap-x snap-mandatory pb-2 scrollbar-hide">
+            {CALCS.map((c) => (
+              <button
+                key={c.id}
+                onClick={() => handleSetActiveCalc(c.id)}
+                role="tab"
+                aria-selected={activeCalc === c.id}
+                aria-controls="calc-container"
+                className={`relative flex items-center gap-2 px-3.5 py-2.5 rounded-full border text-left transition-all shrink-0 snap-start ${
+                  activeCalc === c.id
+                    ? "bg-slate-900 border-slate-900 text-white shadow-md"
+                    : "bg-white border-slate-200 text-slate-700 active:bg-slate-50"
+                }`}
+              >
+                <Icon name={c.icon} size={16} className={activeCalc === c.id ? "text-white" : "text-slate-500"} />
+                <span className="text-sm font-semibold whitespace-nowrap">{c.title}</span>
+                {c.badge && (
+                  <span className={`px-1.5 py-0.5 text-[9px] font-bold rounded-full leading-none ${
+                    activeCalc === c.id ? "bg-amber-400 text-amber-900" : "bg-amber-100 text-amber-700"
+                  }`}>
+                    {c.badge}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+        {/* Desktop: grid cards */}
+        <div className="hidden md:grid md:grid-cols-3 lg:grid-cols-7 gap-3 mb-10" role="tablist" aria-label="Calculator selection">
           {CALCS.map((c) => (
             <button
               key={c.id}
@@ -199,7 +231,7 @@ export default function CalculatorsClient({ brokers }: Props) {
         </div>
 
         {/* ── Active Calculator ────────────────────── */}
-        <div id="calc-container" className="scroll-mt-24 min-h-[400px]" role="tabpanel">
+        <div id="calc-container" className="scroll-mt-20 md:scroll-mt-24 min-h-[280px] md:min-h-[400px]" role="tabpanel">
           {activeCalc === "trade-cost" && <TradeCostCalculator brokers={nonCryptoBrokers} searchParams={searchParams} />}
           {activeCalc === "franking" && <FrankingCalculator searchParams={searchParams} />}
           {activeCalc === "switching" && <SwitchingCostCalculator brokers={nonCryptoBrokers} searchParams={searchParams} />}
@@ -210,23 +242,20 @@ export default function CalculatorsClient({ brokers }: Props) {
         </div>
 
         {/* Related Resources */}
-        <div className="mt-8 bg-slate-50 border border-slate-200 rounded-xl p-6">
-          <h3 className="text-sm font-bold text-slate-700 mb-3">Related Resources</h3>
-          <div className="flex flex-wrap gap-2">
-            <Link href="/compare" className="text-xs px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-white transition-colors">
-              Compare All Brokers →
+        <div className="mt-6 md:mt-8 bg-slate-50 border border-slate-200 rounded-xl p-4 md:p-6">
+          <h3 className="text-xs md:text-sm font-bold text-slate-700 mb-2 md:mb-3">Related Resources</h3>
+          <div className="flex flex-wrap gap-1.5 md:gap-2">
+            <Link href="/compare" className="text-xs px-2.5 py-1.5 border border-slate-200 rounded-lg hover:bg-white transition-colors">
+              Compare Brokers →
             </Link>
-            <Link href="/article/best-share-trading-platforms-australia" className="text-xs px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-white transition-colors">
-              Best Platforms 2026 →
+            <Link href="/article/best-share-trading-platforms-australia" className="text-xs px-2.5 py-1.5 border border-slate-200 rounded-lg hover:bg-white transition-colors">
+              Best Platforms →
             </Link>
-            <Link href="/article/how-to-invest-australia" className="text-xs px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-white transition-colors">
+            <Link href="/article/how-to-invest-australia" className="text-xs px-2.5 py-1.5 border border-slate-200 rounded-lg hover:bg-white transition-colors">
               How to Invest →
             </Link>
-            <Link href="/article/best-etfs-australia" className="text-xs px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-white transition-colors">
-              Best ETFs 2026 →
-            </Link>
-            <Link href="/quiz" className="text-xs px-3 py-1.5 border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors">
-              Take the Broker Quiz →
+            <Link href="/quiz" className="text-xs px-2.5 py-1.5 border border-slate-200 text-slate-700 rounded-lg hover:bg-white transition-colors">
+              Broker Quiz →
             </Link>
           </div>
         </div>
@@ -269,23 +298,23 @@ function TradeCostCalculator({ brokers, searchParams }: { brokers: Broker[]; sea
   const mostExpensive = results[results.length - 1]?.totalCost ?? 1;
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-6 md:p-8">
-      <h2 className="text-2xl font-bold mb-1">Trade Cost Calculator</h2>
-      <p className="text-sm text-slate-500 mb-6">
-        Enter your trade amount to see what each broker would actually charge you — including hidden FX fees on US trades.
+    <div className="bg-white rounded-2xl border border-slate-200 p-4 md:p-8">
+      <h2 className="text-lg md:text-2xl font-bold mb-1">Trade Cost Calculator</h2>
+      <p className="text-xs md:text-sm text-slate-500 mb-4 md:mb-6">
+        See what each broker actually charges — including hidden FX fees on US trades.
       </p>
 
       {/* Inputs */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-6">
+      <div className="flex gap-3 md:gap-4 mb-4 md:mb-6">
         <div className="flex-1">
-          <label className="block text-xs font-semibold text-slate-600 mb-1">Trade Amount (AUD)</label>
+          <label className="block text-xs font-semibold text-slate-600 mb-1">Amount (AUD)</label>
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">$</span>
             <input
               type="number"
               value={tradeAmount}
               onChange={(e) => setTradeAmount(e.target.value)}
-              className="w-full pl-8 pr-4 py-3 border border-slate-200 rounded-lg text-lg font-semibold focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700"
+              className="w-full pl-8 pr-4 py-2.5 md:py-3 border border-slate-200 rounded-lg text-base md:text-lg font-semibold focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700"
               min={0}
               step={500}
               aria-label="Trade amount in AUD"
@@ -294,10 +323,10 @@ function TradeCostCalculator({ brokers, searchParams }: { brokers: Broker[]; sea
         </div>
         <div>
           <label className="block text-xs font-semibold text-slate-600 mb-1">Market</label>
-          <div className="flex gap-2">
+          <div className="flex gap-1.5">
             <button
               onClick={() => setMarket("asx")}
-              className={`px-5 py-3 rounded-lg text-sm font-semibold transition-colors ${
+              className={`px-4 py-2.5 md:px-5 md:py-3 rounded-lg text-sm font-semibold transition-colors ${
                 market === "asx" ? "bg-blue-700 text-white" : "bg-slate-100 text-slate-700 hover:bg-slate-200"
               }`}
             >
@@ -305,7 +334,7 @@ function TradeCostCalculator({ brokers, searchParams }: { brokers: Broker[]; sea
             </button>
             <button
               onClick={() => setMarket("us")}
-              className={`px-5 py-3 rounded-lg text-sm font-semibold transition-colors ${
+              className={`px-4 py-2.5 md:px-5 md:py-3 rounded-lg text-sm font-semibold transition-colors ${
                 market === "us" ? "bg-blue-700 text-white" : "bg-slate-100 text-slate-700 hover:bg-slate-200"
               }`}
             >
@@ -316,12 +345,12 @@ function TradeCostCalculator({ brokers, searchParams }: { brokers: Broker[]; sea
       </div>
 
       {/* Quick amount buttons */}
-      <div className="flex flex-wrap gap-2 mb-6">
+      <div className="flex gap-1.5 md:gap-2 overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 md:flex-wrap mb-4 md:mb-6 pb-1 md:pb-0">
         {["500", "1000", "2000", "5000", "10000", "25000"].map((v) => (
           <button
             key={v}
             onClick={() => setTradeAmount(v)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors shrink-0 ${
               tradeAmount === v ? "bg-slate-100 text-slate-700 border border-slate-300" : "bg-slate-50 text-slate-600 border border-slate-200 hover:bg-slate-100"
             }`}
           >
@@ -330,87 +359,135 @@ function TradeCostCalculator({ brokers, searchParams }: { brokers: Broker[]; sea
         ))}
       </div>
 
-      {/* Results table */}
+      {/* Results — mobile cards / desktop table */}
       {results.length > 0 ? (
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-slate-200">
-                <th className="text-left text-xs font-semibold text-slate-500 pb-2 pr-4">Broker</th>
-                <th className="text-right text-xs font-semibold text-slate-500 pb-2 px-2">Brokerage</th>
-                {market === "us" && <th className="text-right text-xs font-semibold text-slate-500 pb-2 px-2">FX Cost</th>}
-                <th className="text-right text-xs font-semibold text-slate-500 pb-2 px-2">Total Cost</th>
-                <th className="text-right text-xs font-semibold text-slate-500 pb-2 px-2">% of Trade</th>
-                <th className="text-left text-xs font-semibold text-slate-500 pb-2 pl-4">Cost Bar</th>
-                <th className="text-right text-xs font-semibold text-slate-500 pb-2 pl-2"><span className="sr-only">Action</span></th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {results.map((r, i) => {
-                const barWidth = mostExpensive > 0 ? Math.max((r.totalCost / mostExpensive) * 100, 2) : 0;
-                const isCheapest = r.totalCost === cheapest;
-                return (
-                  <tr key={r.broker.slug} className={isCheapest ? "bg-green-50/60" : ""}>
-                    <td className="py-3 pr-4">
-                      <span className="font-semibold text-sm">{r.broker.name}</span>
-                      {isCheapest && <span className="ml-2 text-[0.69rem] font-bold text-green-600 uppercase">Cheapest</span>}
-                    </td>
-                    <td className="py-3 px-2 text-right text-sm font-mono">
-                      <AnimatedNumber value={r.brokerage} />
-                    </td>
-                    {market === "us" && (
-                      <td className="py-3 px-2 text-right text-sm font-mono text-slate-500">
-                        <AnimatedNumber value={r.fxCost} />
-                      </td>
-                    )}
-                    <td className="py-3 px-2 text-right text-sm font-mono font-bold">
+        <>
+          {/* Mobile: card layout */}
+          <div className="md:hidden space-y-2">
+            {results.map((r) => {
+              const barWidth = mostExpensive > 0 ? Math.max((r.totalCost / mostExpensive) * 100, 2) : 0;
+              const isCheapest = r.totalCost === cheapest;
+              return (
+                <div key={r.broker.slug} className={`rounded-xl border p-3 ${isCheapest ? "bg-green-50/60 border-green-200" : "border-slate-200"}`}>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-sm text-slate-900">{r.broker.name}</span>
+                      {isCheapest && <span className="text-[0.69rem] font-bold text-green-600 uppercase">Cheapest</span>}
+                    </div>
+                    <span className="text-lg font-bold text-slate-900">
                       <AnimatedNumber value={r.totalCost} />
-                    </td>
-                    <td className="py-3 px-2 text-right text-xs text-slate-500">
-                      <AnimatedNumber value={r.pctOfTrade} prefix="" />%
-                    </td>
-                    <td className="py-3 pl-4 w-40">
-                      <div className="h-4 bg-slate-100 rounded-full overflow-hidden">
-                        <div
-                          className={`h-full rounded-full transition-all duration-500 ${isCheapest ? "bg-green-500" : "bg-amber-400"}`}
-                          style={{ width: `${barWidth}%` }}
-                        />
-                      </div>
-                    </td>
-                    <td className="py-3 pl-2 text-right">
-                      <a
-                        href={getAffiliateLink(r.broker)}
-                        target="_blank"
-                        rel={AFFILIATE_REL}
-                        onClick={() => trackClick(r.broker.slug, r.broker.name, "calculator-trade-cost", "/calculators", "cta")}
-                        className={`inline-block px-3 py-1.5 text-xs font-bold rounded-lg transition-all duration-200 whitespace-nowrap active:scale-[0.97] ${
-                          isCheapest
-                            ? "bg-slate-900 text-white hover:bg-slate-800"
-                            : "bg-slate-100 text-slate-700 hover:bg-slate-900 hover:text-white"
-                        }`}
-                      >
-                        {isCheapest ? getBenefitCta(r.broker, "calculator") : "Try →"}
-                      </a>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+                    </span>
+                  </div>
+                  <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden mb-2">
+                    <div
+                      className={`h-full rounded-full transition-all duration-500 ${isCheapest ? "bg-green-500" : "bg-amber-400"}`}
+                      style={{ width: `${barWidth}%` }}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div className="flex gap-3 text-xs text-slate-500">
+                      <span>Brokerage: ${r.brokerage.toFixed(2)}</span>
+                      {market === "us" && <span>FX: ${r.fxCost.toFixed(2)}</span>}
+                      <span>{r.pctOfTrade.toFixed(2)}%</span>
+                    </div>
+                    <a
+                      href={getAffiliateLink(r.broker)}
+                      target="_blank"
+                      rel={AFFILIATE_REL}
+                      onClick={() => trackClick(r.broker.slug, r.broker.name, "calculator-trade-cost", "/calculators", "cta")}
+                      className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all whitespace-nowrap active:scale-[0.97] ${
+                        isCheapest ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-700"
+                      }`}
+                    >
+                      {isCheapest ? "Visit" : "Try →"}
+                    </a>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Desktop: table */}
+          <div className="hidden md:block overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-slate-200">
+                  <th className="text-left text-xs font-semibold text-slate-500 pb-2 pr-4">Broker</th>
+                  <th className="text-right text-xs font-semibold text-slate-500 pb-2 px-2">Brokerage</th>
+                  {market === "us" && <th className="text-right text-xs font-semibold text-slate-500 pb-2 px-2">FX Cost</th>}
+                  <th className="text-right text-xs font-semibold text-slate-500 pb-2 px-2">Total Cost</th>
+                  <th className="text-right text-xs font-semibold text-slate-500 pb-2 px-2">% of Trade</th>
+                  <th className="text-left text-xs font-semibold text-slate-500 pb-2 pl-4">Cost Bar</th>
+                  <th className="text-right text-xs font-semibold text-slate-500 pb-2 pl-2"><span className="sr-only">Action</span></th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {results.map((r) => {
+                  const barWidth = mostExpensive > 0 ? Math.max((r.totalCost / mostExpensive) * 100, 2) : 0;
+                  const isCheapest = r.totalCost === cheapest;
+                  return (
+                    <tr key={r.broker.slug} className={isCheapest ? "bg-green-50/60" : ""}>
+                      <td className="py-3 pr-4">
+                        <span className="font-semibold text-sm">{r.broker.name}</span>
+                        {isCheapest && <span className="ml-2 text-[0.69rem] font-bold text-green-600 uppercase">Cheapest</span>}
+                      </td>
+                      <td className="py-3 px-2 text-right text-sm font-mono">
+                        <AnimatedNumber value={r.brokerage} />
+                      </td>
+                      {market === "us" && (
+                        <td className="py-3 px-2 text-right text-sm font-mono text-slate-500">
+                          <AnimatedNumber value={r.fxCost} />
+                        </td>
+                      )}
+                      <td className="py-3 px-2 text-right text-sm font-mono font-bold">
+                        <AnimatedNumber value={r.totalCost} />
+                      </td>
+                      <td className="py-3 px-2 text-right text-xs text-slate-500">
+                        <AnimatedNumber value={r.pctOfTrade} prefix="" />%
+                      </td>
+                      <td className="py-3 pl-4 w-40">
+                        <div className="h-4 bg-slate-100 rounded-full overflow-hidden">
+                          <div
+                            className={`h-full rounded-full transition-all duration-500 ${isCheapest ? "bg-green-500" : "bg-amber-400"}`}
+                            style={{ width: `${barWidth}%` }}
+                          />
+                        </div>
+                      </td>
+                      <td className="py-3 pl-2 text-right">
+                        <a
+                          href={getAffiliateLink(r.broker)}
+                          target="_blank"
+                          rel={AFFILIATE_REL}
+                          onClick={() => trackClick(r.broker.slug, r.broker.name, "calculator-trade-cost", "/calculators", "cta")}
+                          className={`inline-block px-3 py-1.5 text-xs font-bold rounded-lg transition-all duration-200 whitespace-nowrap active:scale-[0.97] ${
+                            isCheapest
+                              ? "bg-slate-900 text-white hover:bg-slate-800"
+                              : "bg-slate-100 text-slate-700 hover:bg-slate-900 hover:text-white"
+                          }`}
+                        >
+                          {isCheapest ? getBenefitCta(r.broker, "calculator") : "Try →"}
+                        </a>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </>
       ) : (
-        <p className="text-center py-8 text-slate-500">No brokers support {market === "asx" ? "ASX" : "US"} trading.</p>
+        <p className="text-center py-6 md:py-8 text-slate-500 text-sm">No brokers support {market === "asx" ? "ASX" : "US"} trading.</p>
       )}
 
       {/* Savings callout */}
       {results.length >= 2 && (
-        <div className="mt-6 bg-slate-50 border border-slate-200 rounded-xl p-4 text-center motion-safe:animate-[fadeIn_0.4s_ease-out]">
-          <p className="text-sm text-slate-800">
-            <strong>Potential savings:</strong> Choosing the cheapest broker saves you{" "}
+        <div className="mt-4 md:mt-6 bg-slate-50 border border-slate-200 rounded-xl p-3 md:p-4 text-center motion-safe:animate-[fadeIn_0.4s_ease-out]">
+          <p className="text-xs md:text-sm text-slate-800">
+            <strong>Savings:</strong> Cheapest broker saves{" "}
             <strong className="text-slate-700">
               <AnimatedNumber value={results[results.length - 1].totalCost - results[0].totalCost} />
             </strong>{" "}
-            per {market === "asx" ? "ASX" : "US"} trade compared to the most expensive option.
+            per {market === "asx" ? "ASX" : "US"} trade vs. the most expensive.
           </p>
         </div>
       )}
@@ -498,23 +575,23 @@ function FrankingCalculator({ searchParams }: { searchParams: URLSearchParams })
         {/* Results visualisation */}
         <div className="lg:col-span-8">
           {showResults ? (
-            <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm h-full">
+            <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-6 shadow-sm h-full">
               {/* Hero number */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 pb-5 border-b border-slate-100">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 md:mb-6 pb-4 md:pb-5 border-b border-slate-100">
                 <div>
-                  <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Net Yield After Tax</span>
-                  <div className="text-4xl font-extrabold text-brand tracking-tight mt-0.5">
+                  <span className="text-[0.69rem] md:text-xs font-bold uppercase tracking-wider text-slate-400">Net Yield After Tax</span>
+                  <div className="text-3xl md:text-4xl font-extrabold text-brand tracking-tight mt-0.5">
                     <AnimatedNumber value={netYield} prefix="" decimals={2} />%
                   </div>
                 </div>
-                <div className="mt-3 sm:mt-0 flex gap-6">
-                  <div className="text-right">
-                    <span className="block text-xs font-bold uppercase text-slate-400">Effective Yield</span>
-                    <span className="text-xl font-bold text-slate-700">{netYield.toFixed(2)}%</span>
+                <div className="mt-2 sm:mt-0 flex gap-4 md:gap-6">
+                  <div className="text-left sm:text-right">
+                    <span className="block text-[0.69rem] md:text-xs font-bold uppercase text-slate-400">Effective</span>
+                    <span className="text-lg md:text-xl font-bold text-slate-700">{netYield.toFixed(2)}%</span>
                   </div>
-                  <div className="text-right">
-                    <span className="block text-xs font-bold uppercase text-slate-400">Grossed-Up</span>
-                    <span className="text-xl font-bold text-slate-700">{grossedUpYield.toFixed(2)}%</span>
+                  <div className="text-left sm:text-right">
+                    <span className="block text-[0.69rem] md:text-xs font-bold uppercase text-slate-400">Grossed-Up</span>
+                    <span className="text-lg md:text-xl font-bold text-slate-700">{grossedUpYield.toFixed(2)}%</span>
                   </div>
                 </div>
               </div>
@@ -539,10 +616,10 @@ function FrankingCalculator({ searchParams }: { searchParams: URLSearchParams })
               )}
             </div>
           ) : (
-            <div className="border-2 border-dashed border-slate-200 rounded-xl p-12 text-center h-full flex flex-col items-center justify-center">
-              <Icon name="bar-chart" size={48} className="text-slate-300 mx-auto mb-4" />
-              <h3 className="text-lg font-bold text-slate-900 mb-1">Enter a Dividend Yield</h3>
-              <p className="text-sm text-slate-500 max-w-xs">Type a value on the left to see your franking credit waterfall chart.</p>
+            <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 md:p-12 text-center h-full flex flex-col items-center justify-center">
+              <Icon name="bar-chart" size={32} className="text-slate-300 mx-auto mb-3 md:mb-4 md:!w-12 md:!h-12" />
+              <h3 className="text-base md:text-lg font-bold text-slate-900 mb-1">Enter a Dividend Yield</h3>
+              <p className="text-xs md:text-sm text-slate-500 max-w-xs">Type a value to see your franking credit waterfall chart.</p>
             </div>
           )}
         </div>
@@ -627,10 +704,10 @@ function SwitchingCostCalculator({ brokers, searchParams }: { brokers: Broker[];
                 <span className={`text-xs font-bold uppercase tracking-wider ${annualSavings > 0 ? "text-green-700" : annualSavings < 0 ? "text-red-600" : "text-slate-500"}`}>
                   {annualSavings > 0 ? "Projected Annual Savings" : annualSavings < 0 ? "You\u2019d Pay More" : "No Difference"}
                 </span>
-                <div className={`text-4xl md:text-5xl font-extrabold tracking-tight mt-1 ${
+                <div className={`text-3xl md:text-5xl font-extrabold tracking-tight mt-1 ${
                   annualSavings > 0 ? "text-green-800" : annualSavings < 0 ? "text-red-600" : "text-slate-700"
                 }`}>
-                  <AnimatedNumber value={Math.abs(annualSavings)} /><span className="text-2xl font-bold text-slate-400">/yr</span>
+                  <AnimatedNumber value={Math.abs(annualSavings)} /><span className="text-xl md:text-2xl font-bold text-slate-400">/yr</span>
                 </div>
                 {breakEvenMonths != null && (
                   <p className="text-sm text-slate-600 mt-2">
@@ -649,9 +726,9 @@ function SwitchingCostCalculator({ brokers, searchParams }: { brokers: Broker[];
 
               {/* CTA */}
               {cheaperBroker && (
-                <div className="flex items-center gap-4 bg-slate-50 border border-slate-200 rounded-xl p-4">
+                <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-4 bg-slate-50 border border-slate-200 rounded-xl p-3 md:p-4">
                   <div className="flex-1">
-                    <p className="text-sm font-semibold text-slate-900">{cheaperBroker.name} is the cheaper option.</p>
+                    <p className="text-xs md:text-sm font-semibold text-slate-900">{cheaperBroker.name} is the cheaper option.</p>
                     <p className="text-xs text-slate-600 mt-0.5">Save {formatCurrency(Math.abs(annualSavings))}/year on brokerage fees.</p>
                   </div>
                   <a
@@ -659,7 +736,7 @@ function SwitchingCostCalculator({ brokers, searchParams }: { brokers: Broker[];
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => trackClick(cheaperBroker.slug, cheaperBroker.name, "calculator-switching", "/calculators", "cta")}
-                    className="px-5 py-2.5 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-800 transition-colors text-sm whitespace-nowrap"
+                    className="w-full md:w-auto text-center px-5 py-2.5 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-800 transition-colors text-sm whitespace-nowrap"
                   >
                     {getBenefitCta(cheaperBroker, "calculator")}
                   </a>
@@ -667,10 +744,10 @@ function SwitchingCostCalculator({ brokers, searchParams }: { brokers: Broker[];
               )}
             </div>
           ) : (
-            <div className="border-2 border-dashed border-slate-200 rounded-xl p-12 text-center h-full flex flex-col items-center justify-center">
-              <Icon name="scale" size={48} className="text-slate-300 mx-auto mb-4" />
-              <h3 className="text-lg font-bold text-slate-900 mb-1">Compare Two Brokers</h3>
-              <p className="text-sm text-slate-500 max-w-xs">Select your current and target broker on the left to see the cost analysis.</p>
+            <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 md:p-12 text-center h-full flex flex-col items-center justify-center">
+              <Icon name="scale" size={32} className="text-slate-300 mx-auto mb-3 md:mb-4 md:!w-12 md:!h-12" />
+              <h3 className="text-base md:text-lg font-bold text-slate-900 mb-1">Compare Two Brokers</h3>
+              <p className="text-xs md:text-sm text-slate-500 max-w-xs">Select your current and target broker to see the cost analysis.</p>
             </div>
           )}
         </div>
@@ -723,10 +800,10 @@ function FxFeeCalculator({ brokers, searchParams }: { brokers: Broker[]; searchP
       desc="See what every broker charges you in currency conversion fees on international trades."
     >
       {/* Slider + amount */}
-      <div className="mb-8">
+      <div className="mb-5 md:mb-8">
         <div className="flex justify-between items-baseline mb-2">
           <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Trade Amount</label>
-          <span className="text-2xl font-extrabold text-brand tracking-tight">${amount.toLocaleString("en-AU")}</span>
+          <span className="text-xl md:text-2xl font-extrabold text-brand tracking-tight">${amount.toLocaleString("en-AU")}</span>
         </div>
         <input
           type="range"
@@ -749,52 +826,52 @@ function FxFeeCalculator({ brokers, searchParams }: { brokers: Broker[]; searchP
 
       {/* Savings hero */}
       {fxBrokers.length > 1 && (
-        <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 text-center mb-8">
-          <span className="text-xs font-bold uppercase tracking-wider text-slate-700">You could save</span>
-          <div className="text-3xl md:text-4xl font-extrabold text-slate-800 tracking-tight mt-0.5">
+        <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 md:p-5 text-center mb-5 md:mb-8">
+          <span className="text-[0.69rem] md:text-xs font-bold uppercase tracking-wider text-slate-700">You could save</span>
+          <div className="text-2xl md:text-4xl font-extrabold text-slate-800 tracking-tight mt-0.5">
             <AnimatedNumber value={savings} />
           </div>
-          <p className="text-sm text-slate-700 mt-1">
-            on a {formatCurrency(tradeAmount)} trade by using <strong>{fxBrokers[0].broker.name}</strong> instead of {fxBrokers[fxBrokers.length - 1].broker.name}
+          <p className="text-xs md:text-sm text-slate-700 mt-1">
+            on a {formatCurrency(tradeAmount)} trade with <strong>{fxBrokers[0].broker.name}</strong>
           </p>
         </div>
       )}
 
       {/* Bar chart */}
-      <div className="space-y-2.5">
+      <div className="space-y-2 md:space-y-2.5">
         {fxBrokers.map(({ broker, rate, fee }) => {
           const isCheapest = broker.slug === cheapest;
           const isMostExpensive = broker.slug === mostExpensive;
           const barWidth = maxFee > 0 ? (fee / maxFee) * 100 : 0;
 
           return (
-            <div key={broker.slug} className="flex items-center gap-3">
-              <div className="w-28 md:w-36 text-xs font-semibold text-slate-600 text-right shrink-0 truncate">
+            <div key={broker.slug} className="flex items-center gap-2 md:gap-3">
+              <div className="w-20 md:w-36 text-[0.69rem] md:text-xs font-semibold text-slate-600 text-right shrink-0 truncate">
                 {broker.name}
               </div>
               <div className="flex-1 relative">
                 <div
-                  className={`h-9 rounded-lg transition-all duration-500 flex items-center pr-3 ${
+                  className={`h-7 md:h-9 rounded-lg transition-all duration-500 flex items-center pr-2 md:pr-3 ${
                     isCheapest ? "bg-slate-700" : isMostExpensive ? "bg-red-400" : "bg-amber"
                   }`}
                   style={{ width: `${Math.max(barWidth, 4)}%` }}
                 >
-                  {barWidth > 18 && (
-                    <span className="text-xs font-bold text-white ml-auto">{formatCurrency(fee)}</span>
+                  {barWidth > 25 && (
+                    <span className="text-[0.69rem] md:text-xs font-bold text-white ml-auto">{formatCurrency(fee)}</span>
                   )}
                 </div>
-                {barWidth <= 18 && (
-                  <span className="absolute left-[calc(4%+8px)] top-1/2 -translate-y-1/2 text-xs font-bold text-slate-700">
+                {barWidth <= 25 && (
+                  <span className="absolute left-[calc(4%+4px)] md:left-[calc(4%+8px)] top-1/2 -translate-y-1/2 text-[0.69rem] md:text-xs font-bold text-slate-700">
                     {formatCurrency(fee)}
                   </span>
                 )}
               </div>
-              <div className="w-14 text-right shrink-0">
-                <span className={`text-xs font-bold ${isCheapest ? "text-slate-800" : isMostExpensive ? "text-red-600" : "text-slate-500"}`}>
+              <div className="w-10 md:w-14 text-right shrink-0">
+                <span className={`text-[0.69rem] md:text-xs font-bold ${isCheapest ? "text-slate-800" : isMostExpensive ? "text-red-600" : "text-slate-500"}`}>
                   {rate}%
                 </span>
               </div>
-              <div className="w-20 shrink-0 text-right">
+              <div className="hidden md:block w-20 shrink-0 text-right">
                 <a
                   href={getAffiliateLink(broker)}
                   target="_blank"
@@ -816,11 +893,11 @@ function FxFeeCalculator({ brokers, searchParams }: { brokers: Broker[]; searchP
 
       {/* CTA */}
       {fxBrokers.length > 0 && (
-        <div className="mt-6 flex items-center gap-4 bg-slate-50 border border-slate-200 rounded-xl p-4">
+        <div className="mt-4 md:mt-6 flex flex-col md:flex-row md:items-center gap-3 md:gap-4 bg-slate-50 border border-slate-200 rounded-xl p-3 md:p-4">
           <div className="flex-1">
-            <p className="text-sm font-semibold text-slate-900">{fxBrokers[0].broker.name} has the lowest FX fee at {fxBrokers[0].rate}%.</p>
+            <p className="text-xs md:text-sm font-semibold text-slate-900">{fxBrokers[0].broker.name} has the lowest FX fee at {fxBrokers[0].rate}%.</p>
             <p className="text-xs text-slate-600 mt-0.5">
-              You save {formatCurrency(savings)} vs the most expensive on a {formatCurrency(tradeAmount)} trade.
+              Save {formatCurrency(savings)} vs most expensive on a {formatCurrency(tradeAmount)} trade.
             </p>
           </div>
           <a
@@ -828,7 +905,7 @@ function FxFeeCalculator({ brokers, searchParams }: { brokers: Broker[]; searchP
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => trackClick(fxBrokers[0].broker.slug, fxBrokers[0].broker.name, "calculator-fx", "/calculators", "cta")}
-            className="px-5 py-2.5 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-800 transition-colors text-sm whitespace-nowrap"
+            className="w-full md:w-auto text-center px-5 py-2.5 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-800 transition-colors text-sm whitespace-nowrap"
           >
             {getBenefitCta(fxBrokers[0].broker, "calculator")}
           </a>
@@ -978,10 +1055,10 @@ function CgtCalculator({ searchParams }: { searchParams: URLSearchParams }) {
               </div>
             </div>
           ) : (
-            <div className="border-2 border-dashed border-slate-200 rounded-xl p-12 text-center h-full flex flex-col items-center justify-center">
-              <Icon name="calendar" size={48} className="text-slate-300 mx-auto mb-4" />
-              <h3 className="text-lg font-bold text-slate-900 mb-1">Enter a Capital Gain</h3>
-              <p className="text-sm text-slate-500 max-w-xs">Type your gain amount to see the tax comparison with and without the 50% discount.</p>
+            <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 md:p-12 text-center h-full flex flex-col items-center justify-center">
+              <Icon name="calendar" size={32} className="text-slate-300 mx-auto mb-3 md:mb-4 md:!w-12 md:!h-12" />
+              <h3 className="text-base md:text-lg font-bold text-slate-900 mb-1">Enter a Capital Gain</h3>
+              <p className="text-xs md:text-sm text-slate-500 max-w-xs">Type your gain amount to see the tax comparison.</p>
             </div>
           )}
         </div>
@@ -1195,10 +1272,10 @@ function FeeImpactTeaser({ brokers, searchParams }: { brokers: Broker[]; searchP
               </p>
             </div>
           ) : (
-            <div className="border-2 border-dashed border-slate-200 rounded-xl p-12 text-center flex flex-col items-center justify-center h-full">
-              <Icon name="calculator" size={48} className="text-slate-300 mx-auto mb-4" />
-              <h3 className="text-lg font-bold text-slate-900 mb-1">Enter Your Trades</h3>
-              <p className="text-sm text-slate-500 max-w-xs">Type the number of ASX trades you make per month to see your cheapest options.</p>
+            <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 md:p-12 text-center flex flex-col items-center justify-center h-full">
+              <Icon name="calculator" size={32} className="text-slate-300 mx-auto mb-3 md:mb-4 md:!w-12 md:!h-12" />
+              <h3 className="text-base md:text-lg font-bold text-slate-900 mb-1">Enter Your Trades</h3>
+              <p className="text-xs md:text-sm text-slate-500 max-w-xs">Type your monthly ASX trades to see cheapest options.</p>
             </div>
           )}
         </div>
@@ -1216,12 +1293,13 @@ function CalcSection({ id, iconName, title, desc, children }: {
   id: string; iconName: string; title: string; desc: string; children: React.ReactNode;
 }) {
   return (
-    <section id={id} className="bg-white border border-slate-200 rounded-2xl p-6 md:p-8 shadow-sm">
-      <div className="flex items-start gap-3 mb-1">
-        <Icon name={iconName} size={24} className="text-slate-700 shrink-0 mt-0.5" />
-        <h2 className="text-xl font-extrabold text-slate-900">{title}</h2>
+    <section id={id} className="bg-white border border-slate-200 rounded-2xl p-4 md:p-8 shadow-sm">
+      <div className="flex items-start gap-2.5 md:gap-3 mb-1">
+        <Icon name={iconName} size={20} className="text-slate-700 shrink-0 mt-0.5 md:hidden" />
+        <Icon name={iconName} size={24} className="text-slate-700 shrink-0 mt-0.5 hidden md:block" />
+        <h2 className="text-lg md:text-xl font-extrabold text-slate-900">{title}</h2>
       </div>
-      <p className="text-sm text-slate-500 mb-6 ml-10">{desc}</p>
+      <p className="text-xs md:text-sm text-slate-500 mb-4 md:mb-6 ml-[30px] md:ml-10">{desc}</p>
       {children}
     </section>
   );

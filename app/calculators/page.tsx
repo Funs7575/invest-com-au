@@ -80,11 +80,18 @@ export default async function CalculatorsPage() {
 
 function CalculatorsLoading() {
   return (
-    <div className="py-12">
+    <div className="pt-5 pb-8 md:py-12">
       <div className="container-custom">
-        <div className="h-10 w-80 bg-slate-200 rounded animate-pulse mb-4" />
-        <div className="h-6 w-96 bg-slate-100 rounded animate-pulse mb-10" />
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-4 mb-14">
+        <div className="h-8 md:h-10 w-48 md:w-80 bg-slate-200 rounded animate-pulse mb-2 md:mb-4 mx-auto" />
+        <div className="h-4 md:h-6 w-64 md:w-96 bg-slate-100 rounded animate-pulse mb-4 md:mb-10 mx-auto" />
+        {/* Mobile: horizontal pills skeleton */}
+        <div className="md:hidden flex gap-2 overflow-hidden mb-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="h-10 w-28 bg-slate-100 rounded-full animate-pulse shrink-0" />
+          ))}
+        </div>
+        {/* Desktop: grid skeleton */}
+        <div className="hidden md:grid md:grid-cols-3 lg:grid-cols-7 gap-4 mb-14">
           {Array.from({ length: 7 }).map((_, i) => (
             <div key={i} className="border border-slate-200 rounded-xl p-5 animate-pulse">
               <div className="h-8 w-8 bg-slate-200 rounded mb-2" />
@@ -93,6 +100,7 @@ function CalculatorsLoading() {
             </div>
           ))}
         </div>
+        <div className="h-64 bg-slate-100 rounded-2xl animate-pulse" />
       </div>
     </div>
   );
