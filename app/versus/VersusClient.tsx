@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useMemo } from "react";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, usePathname } from "next/navigation";
 import Link from "next/link";
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, formatPercent, AFFILIATE_REL } from "@/lib/tracking";
@@ -14,37 +14,61 @@ import Icon from "@/components/Icon";
 const MAX_BROKERS = 4;
 
 const popularComparisons = [
-  { label: "Stake vs CommSec", href: "/versus?vs=stake,commsec" },
-  { label: "CMC vs Moomoo", href: "/versus?vs=cmc-markets,moomoo" },
-  { label: "Interactive Brokers vs Saxo", href: "/versus?vs=interactive-brokers,saxo" },
-  { label: "Stake vs Moomoo", href: "/versus?vs=stake,moomoo" },
-  { label: "SelfWealth vs CMC", href: "/versus?vs=selfwealth,cmc-markets" },
+  { label: "Stake vs CommSec", href: "/versus/stake-vs-commsec" },
+  { label: "CMC vs Moomoo", href: "/versus/cmc-markets-vs-moomoo" },
+  { label: "Interactive Brokers vs Saxo", href: "/versus/interactive-brokers-vs-saxo" },
+  { label: "Stake vs Moomoo", href: "/versus/stake-vs-moomoo" },
+  { label: "SelfWealth vs CMC", href: "/versus/selfwealth-vs-cmc-markets" },
 ];
+
+/** Parse slugs from a path like /versus/stake-vs-commsec */
+function parseSlugsFromPath(pathname: string): string[] {
+  const match = pathname.match(/^\/versus\/(.+)$/);
+  if (!match) return [];
+  return match[1].split("-vs-").filter(Boolean);
+}
 
 export default function VersusClient({ brokers }: { brokers: Broker[] }) {
   const searchParams = useSearchParams();
+  const pathname = usePathname();
 
+  // Determine initial slugs from URL path (/versus/a-vs-b) or query params (?vs=a,b)
+  const pathSlugs = parseSlugsFromPath(pathname);
   const urlVs = searchParams.get("vs");
-  const initialSlugs = urlVs
-    ? urlVs.split(",").filter(Boolean).slice(0, MAX_BROKERS)
-    : [];
-  while (initialSlugs.length < 2) initialSlugs.push("");
 
-  const [selectedSlugs, setSelectedSlugs] = useState<string[]>(initialSlugs);
+  const deriveInitial = (): string[] => {
+    if (pathSlugs.length >= 2) return pathSlugs.slice(0, MAX_BROKERS);
+    if (urlVs) return urlVs.split(",").filter(Boolean).slice(0, MAX_BROKERS);
+    return [];
+  };
+
+  const initial = deriveInitial();
+  while (initial.length < 2) initial.push("");
+
+  const [selectedSlugs, setSelectedSlugs] = useState<string[]>(initial);
 
   useEffect(() => {
+    // Re-derive from path or query params on navigation
+    const fromPath = parseSlugsFromPath(pathname);
+    if (fromPath.length >= 2) {
+      const slugs = fromPath.slice(0, MAX_BROKERS);
+      while (slugs.length < 2) slugs.push("");
+      setSelectedSlugs(slugs);
+      return;
+    }
     const vs = searchParams.get("vs");
     if (vs) {
       const slugs = vs.split(",").filter(Boolean).slice(0, MAX_BROKERS);
       while (slugs.length < 2) slugs.push("");
       setSelectedSlugs(slugs);
+      return;
     }
     const a = searchParams.get("a");
     const b = searchParams.get("b");
     if (a || b) {
       setSelectedSlugs([a || "", b || ""]);
     }
-  }, [searchParams]);
+  }, [searchParams, pathname]);
 
   function updateSlug(index: number, slug: string) {
     setSelectedSlugs(prev => {
