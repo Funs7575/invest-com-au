@@ -145,14 +145,18 @@ export default function Header() {
       {/* Mobile Slide-out Menu */}
       {menuOpen && (
         <div className="md:hidden border-t border-slate-200 bg-white">
-          <nav className="container-custom py-4 space-y-1" aria-label="Mobile navigation">
+          <nav className="container-custom py-3 space-y-px" aria-label="Mobile navigation">
+            {/* Beginner CTA — compact inline */}
             <Link
               href="/article/how-to-invest-australia"
               onClick={() => setMenuOpen(false)}
-              className="block px-4 py-3 text-sm font-semibold text-slate-900 bg-slate-100 rounded-lg transition-colors"
+              className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-900 bg-slate-50 rounded-lg transition-colors"
             >
-              New to investing? Start here &rarr;
+              <span className="shrink-0 w-5 h-5 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center text-[0.6rem] font-bold">?</span>
+              New to investing? Start here →
             </Link>
+
+            {/* Main nav */}
             {navItems.map((item) => {
               const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
               return (
@@ -160,50 +164,55 @@ export default function Header() {
                   key={item.href}
                   href={item.href}
                   onClick={() => setMenuOpen(false)}
-                  className={`block px-4 py-3 text-sm font-medium rounded-lg transition-colors ${isActive ? "bg-blue-50 text-blue-700 font-bold" : "text-slate-700 hover:bg-slate-50 hover:text-slate-900"}`}
+                  className={`block px-3 py-2.5 text-[0.8rem] font-medium rounded-lg transition-colors ${isActive ? "bg-blue-50 text-blue-700 font-bold" : "text-slate-700 hover:bg-slate-50"}`}
                   {...(isActive ? { "aria-current": "page" as const } : {})}
                 >
                   {item.name}
                 </Link>
               );
             })}
-            <div className="pt-2 mt-2 border-t border-slate-100">
-              <p className="px-4 py-1 text-[0.69rem] font-semibold uppercase tracking-wide text-slate-400">Tools</p>
+
+            {/* Tools */}
+            <div className="pt-1.5 mt-1 border-t border-slate-100">
+              <p className="px-3 pt-1 pb-0.5 text-[0.62rem] font-semibold uppercase tracking-wider text-slate-400">Tools</p>
               {moreLinks.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
                   onClick={() => setMenuOpen(false)}
-                  className="block px-4 py-3 text-sm text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-lg transition-colors"
+                  className="block px-3 py-2 text-[0.8rem] text-slate-700 hover:bg-slate-50 rounded-lg transition-colors"
                 >
                   {item.name}
                 </Link>
               ))}
             </div>
-            <div className="pt-2 mt-2 border-t border-slate-100">
+
+            {/* Quiz + Pro — side by side buttons */}
+            <div className="pt-1.5 mt-1 border-t border-slate-100 flex gap-2 px-3">
               <Link
                 href="/quiz"
                 onClick={() => setMenuOpen(false)}
-                className="block px-4 py-3 text-sm font-semibold text-slate-900 hover:bg-slate-50 rounded-lg transition-colors"
+                className="flex-1 py-2 text-xs font-semibold text-center text-white bg-slate-900 rounded-lg hover:bg-slate-800 transition-colors"
               >
-                Take The Quiz
+                Broker Quiz
               </Link>
               <Link
                 href="/pro"
                 onClick={() => setMenuOpen(false)}
-                className="block px-4 py-3 text-sm font-semibold text-amber-700 hover:bg-amber-50 rounded-lg transition-colors"
+                className="flex-1 py-2 text-xs font-semibold text-center text-amber-700 bg-amber-50 rounded-lg hover:bg-amber-100 border border-amber-200 transition-colors"
               >
                 Investor Pro ✦
               </Link>
             </div>
+
             {/* Auth */}
-            <div className="pt-2 mt-2 border-t border-slate-100">
+            <div className="pt-1.5 mt-1 border-t border-slate-100">
               {!loading && (
                 user ? (
                   <Link
                     href="/account"
                     onClick={() => setMenuOpen(false)}
-                    className="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 rounded-lg transition-colors"
+                    className="block px-3 py-2 text-[0.8rem] font-medium text-slate-700 hover:bg-slate-50 rounded-lg transition-colors"
                   >
                     My Account
                   </Link>
@@ -211,26 +220,29 @@ export default function Header() {
                   <Link
                     href="/auth/login"
                     onClick={() => setMenuOpen(false)}
-                    className="block px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 rounded-lg transition-colors"
+                    className="block px-3 py-2 text-[0.8rem] font-medium text-slate-700 hover:bg-slate-50 rounded-lg transition-colors"
                   >
                     Sign In
                   </Link>
                 )
               )}
             </div>
-            {/* Popular Links */}
-            <div className="pt-2 mt-2 border-t border-slate-100">
-              <p className="px-4 py-1 text-[0.69rem] font-semibold uppercase tracking-wide text-slate-400">Popular</p>
-              {popularLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setMenuOpen(false)}
-                  className="block px-4 py-3 text-sm text-slate-600 hover:text-slate-900 transition-colors"
-                >
-                  {link.label}
-                </Link>
-              ))}
+
+            {/* Popular Links — compact row of pills */}
+            <div className="pt-1.5 mt-1 border-t border-slate-100">
+              <p className="px-3 pt-1 pb-1 text-[0.62rem] font-semibold uppercase tracking-wider text-slate-400">Popular</p>
+              <div className="flex flex-wrap gap-1.5 px-3 pb-1">
+                {popularLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMenuOpen(false)}
+                    className="text-[0.69rem] font-medium text-slate-600 bg-slate-50 px-2.5 py-1 rounded-full hover:bg-slate-100 hover:text-slate-900 transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
             </div>
           </nav>
         </div>
