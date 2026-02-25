@@ -493,13 +493,25 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         </div>
 
         {/* Mobile Cards */}
-        <div key={`mobile-${activeFilter}-${searchQuery}`} className="md:hidden space-y-3 tab-content-enter">
+        <div key={`mobile-${activeFilter}-${searchQuery}`} className={`md:hidden space-y-3 tab-content-enter ${selected.size >= 2 ? 'pb-20' : ''}`}>
+          {/* Selection hint — shown until first selection */}
+          {selected.size === 0 && (
+            <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-[0.69rem] text-slate-500">
+              <svg className="w-3.5 h-3.5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Tap circles to select 2–4 brokers for side-by-side comparison
+            </div>
+          )}
           {sorted.map(broker => (
             <BrokerCard
               key={broker.id}
               broker={broker}
               badge={isSponsored(broker) ? undefined : editorPicks[broker.slug]}
               context="compare"
+              isSelected={selected.has(broker.slug)}
+              onToggleSelect={toggleSelected}
+              selectionDisabled={!selected.has(broker.slug) && selected.size >= 4}
             />
           ))}
         </div>
@@ -546,16 +558,35 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         )}
 
         {selected.size >= 2 && (
-          <div className="fixed bottom-0 left-0 right-0 z-40 bg-slate-900 text-white py-3 shadow-lg bounce-in-up">
-            <div className="container-custom flex items-center justify-between">
-              <span className="text-sm font-semibold">
-                {selected.size}/4 brokers selected
-              </span>
+          <div className="fixed bottom-0 left-0 right-0 z-40 bg-slate-900 text-white py-2.5 md:py-3 shadow-lg bounce-in-up" style={{ paddingBottom: 'max(0.625rem, env(safe-area-inset-bottom))' }}>
+            <div className="container-custom flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 min-w-0">
+                {/* Selected broker avatars — mobile only */}
+                <div className="flex -space-x-1.5 shrink-0 md:hidden">
+                  {Array.from(selected).slice(0, 4).map(slug => {
+                    const br = brokers.find(b => b.slug === slug);
+                    if (!br) return null;
+                    return (
+                      <div
+                        key={slug}
+                        className="w-6 h-6 rounded-full border-2 border-slate-900 flex items-center justify-center text-[0.45rem] font-bold shrink-0"
+                        style={{ background: br.color, color: 'white' }}
+                        title={br.name}
+                      >
+                        {br.icon || br.name.charAt(0)}
+                      </div>
+                    );
+                  })}
+                </div>
+                <span className="text-xs md:text-sm font-semibold truncate">
+                  {selected.size}/4 selected
+                </span>
+              </div>
               <Link
                 href={`/versus?vs=${Array.from(selected).join(',')}`}
-                className="px-5 py-2 bg-white text-slate-700 font-bold text-sm rounded-lg hover:bg-slate-50 transition-colors"
+                className="shrink-0 px-4 py-1.5 md:px-5 md:py-2 bg-white text-slate-700 font-bold text-xs md:text-sm rounded-lg hover:bg-slate-50 transition-colors"
               >
-                Compare Side-by-Side →
+                Compare →
               </Link>
             </div>
           </div>

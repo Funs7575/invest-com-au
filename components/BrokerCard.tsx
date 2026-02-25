@@ -7,15 +7,58 @@ import Icon from "@/components/Icon";
 import ShortlistButton from "@/components/ShortlistButton";
 import { isSponsored } from "@/lib/sponsorship";
 
-export default function BrokerCard({ broker, badge, context = 'compare' }: { broker: Broker; badge?: string; context?: 'compare' | 'review' | 'calculator' | 'versus' | 'quiz' }) {
+export default function BrokerCard({
+  broker,
+  badge,
+  context = 'compare',
+  isSelected,
+  onToggleSelect,
+  selectionDisabled,
+}: {
+  broker: Broker;
+  badge?: string;
+  context?: 'compare' | 'review' | 'calculator' | 'versus' | 'quiz';
+  isSelected?: boolean;
+  onToggleSelect?: (slug: string) => void;
+  selectionDisabled?: boolean;
+}) {
   return (
-    <div className={`group rounded-xl border p-3 md:p-4 bg-white transition-shadow duration-200 hover:shadow-md ${
-      isSponsored(broker)
+    <div className={`group relative rounded-xl border p-3 md:p-4 bg-white transition-all duration-200 hover:shadow-md ${
+      isSelected
+        ? 'border-slate-700 ring-2 ring-slate-700/30'
+        : isSponsored(broker)
         ? 'border-blue-400 ring-1 ring-blue-400/30 bg-blue-50/20'
         : badge
         ? 'border-slate-700 ring-1 ring-slate-700/30'
         : 'border-slate-200'
     }`}>
+      {/* Selection checkbox — floating top-left */}
+      {onToggleSelect && (
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (selectionDisabled && !isSelected) return;
+            onToggleSelect(broker.slug);
+          }}
+          disabled={selectionDisabled && !isSelected}
+          className={`absolute -top-2.5 -left-2.5 z-10 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-150 shadow-sm ${
+            isSelected
+              ? 'bg-slate-900 border-slate-900 scale-110'
+              : selectionDisabled
+              ? 'bg-white border-slate-200 opacity-40 cursor-not-allowed'
+              : 'bg-white border-slate-300 hover:border-slate-500 active:scale-95'
+          }`}
+          aria-label={isSelected ? `Deselect ${broker.name}` : `Select ${broker.name} for comparison`}
+        >
+          {isSelected && (
+            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+            </svg>
+          )}
+        </button>
+      )}
+
       {/* Badge row — sponsor or editor pick */}
       {isSponsored(broker) ? (
         <div className="mb-1.5 md:mb-2"><SponsorBadge broker={broker} /></div>
