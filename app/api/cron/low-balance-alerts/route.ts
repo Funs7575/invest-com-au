@@ -66,6 +66,40 @@ export async function GET(req: NextRequest) {
     const balanceFormatted = `$${(wallet.balance_cents / 100).toFixed(2)}`;
     const thresholdFormatted = `$${((wallet.low_balance_threshold_cents || 0) / 100).toFixed(2)}`;
 
+    // Auto-pause active campaigns if wallet balance is $0 or less
+    if (wallet.balance_cents <= 0) {
+      const { data: activeCampaigns } = await supabase
+        .from("campaigns")
+        .select("id, name")
+        .eq("broker_slug", wallet.broker_slug)
+        .eq("status", "active");
+
+      if (activeCampaigns && activeCampaigns.length > 0) {
+        for (const camp of activeCampaigns) {
+          await supabase
+            .from("campaigns")
+            .update({ status: "paused", updated_at: now.toISOString() })
+            .eq("id", camp.id);
+        }
+
+        await supabase.from("broker_notifications").insert({
+          broker_slug: wallet.broker_slug,
+          type: "campaigns_paused",
+          title: `${activeCampaigns.length} Campaign${activeCampaigns.length > 1 ? "s" : ""} Auto-Paused`,
+          message: `Your wallet balance is ${balanceFormatted}. All active campaigns have been paused to prevent charges. Top up your wallet to resume.`,
+          link: "/broker-portal/wallet",
+          is_read: false,
+          email_sent: false,
+        });
+
+        results.push({
+          broker_slug: wallet.broker_slug,
+          action: "campaigns_paused",
+          detail: `${activeCampaigns.length} campaign(s) paused — wallet at ${balanceFormatted}`,
+        });
+      }
+    }
+
     // Create broker notification
     await supabase.from("broker_notifications").insert({
       broker_slug: wallet.broker_slug,

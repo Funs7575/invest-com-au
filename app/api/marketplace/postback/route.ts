@@ -138,6 +138,36 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // Enqueue outbound webhook delivery if broker has a webhook_url configured
+  try {
+    const { data: brokerWebhook } = await supabase
+      .from("broker_accounts")
+      .select("webhook_url")
+      .eq("broker_slug", account.broker_slug)
+      .not("webhook_url", "is", null)
+      .limit(1)
+      .maybeSingle();
+
+    if (brokerWebhook?.webhook_url) {
+      await supabase.from("webhook_delivery_queue").insert({
+        conversion_event_id: conversion?.id,
+        broker_slug: account.broker_slug,
+        webhook_url: brokerWebhook.webhook_url,
+        payload: {
+          event: "conversion",
+          conversion_id: conversion?.id,
+          click_id,
+          event_type,
+          conversion_value_cents: typeof conversion_value_cents === "number" ? conversion_value_cents : 0,
+          metadata: metadata || {},
+          timestamp: conversion?.created_at,
+        },
+      });
+    }
+  } catch {
+    // Webhook enqueue is non-critical — don't fail the postback
+  }
+
   // Update campaign_daily_stats conversions count if we have a campaign
   if (campaignEvent?.campaign_id) {
     const today = new Date().toISOString().slice(0, 10);
