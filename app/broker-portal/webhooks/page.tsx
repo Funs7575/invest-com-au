@@ -7,6 +7,10 @@ import Icon from "@/components/Icon";
 
 export default function WebhooksPage() {
   const [apiKey, setApiKey] = useState("");
+  const [webhookUrl, setWebhookUrl] = useState("");
+  const [webhookInput, setWebhookInput] = useState("");
+  const [webhookSaving, setWebhookSaving] = useState(false);
+  const [webhookSaved, setWebhookSaved] = useState(false);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
   const [showKey, setShowKey] = useState(false);
@@ -22,15 +26,42 @@ export default function WebhooksPage() {
 
       const { data: account } = await supabase
         .from("broker_accounts")
-        .select("postback_api_key")
+        .select("postback_api_key, webhook_url")
         .eq("auth_user_id", user.id)
         .maybeSingle();
 
       if (account?.postback_api_key) setApiKey(account.postback_api_key);
+      if (account?.webhook_url) {
+        setWebhookUrl(account.webhook_url);
+        setWebhookInput(account.webhook_url);
+      }
       setLoading(false);
     };
     load();
   }, []);
+
+  const saveWebhookUrl = async () => {
+    const trimmed = webhookInput.trim();
+    if (trimmed && !trimmed.startsWith("https://")) {
+      toast("Webhook URL must start with https://", "error");
+      return;
+    }
+    setWebhookSaving(true);
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    await supabase
+      .from("broker_accounts")
+      .update({ webhook_url: trimmed || null })
+      .eq("auth_user_id", user.id);
+
+    setWebhookUrl(trimmed);
+    setWebhookSaving(false);
+    setWebhookSaved(true);
+    toast(trimmed ? "Webhook URL saved" : "Webhook URL removed", "success");
+    setTimeout(() => setWebhookSaved(false), 2000);
+  };
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text);
@@ -100,6 +131,61 @@ export default function WebhooksPage() {
             {copied ? "Copied!" : "Copy"}
           </button>
         </div>
+      </div>
+
+      {/* Outbound Webhook URL */}
+      <div className="bg-white rounded-xl border border-slate-200 p-5">
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="font-bold text-slate-900">Outbound Webhook URL</h2>
+          {webhookSaved && <span className="text-xs text-green-600 font-medium">✓ Saved</span>}
+        </div>
+        <p className="text-xs text-slate-500 mb-3">
+          When a conversion is recorded via postback, we&apos;ll automatically send a webhook notification to this URL.
+          Failed deliveries retry with exponential backoff (up to 5 attempts).
+        </p>
+        <div className="flex items-center gap-2">
+          <input
+            type="url"
+            value={webhookInput}
+            onChange={(e) => setWebhookInput(e.target.value)}
+            placeholder="https://yoursite.com/webhooks/invest"
+            className="flex-1 px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-900/20 focus:border-slate-400 transition-colors"
+          />
+          <button
+            onClick={saveWebhookUrl}
+            disabled={webhookSaving || webhookInput === webhookUrl}
+            className="px-4 py-2.5 bg-slate-900 text-white font-bold text-xs rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50 shrink-0"
+          >
+            {webhookSaving ? "Saving..." : "Save"}
+          </button>
+        </div>
+        {webhookUrl && (
+          <div className="mt-2 flex items-center gap-1.5">
+            <span className="w-2 h-2 bg-green-500 rounded-full shrink-0" />
+            <span className="text-xs text-green-700">Active — we&apos;ll POST conversion events to this URL</span>
+          </div>
+        )}
+        {!webhookUrl && !webhookInput && (
+          <p className="mt-2 text-xs text-slate-400">No webhook configured. Conversions will still be recorded but you won&apos;t receive real-time notifications.</p>
+        )}
+
+        {/* Webhook payload example */}
+        <details className="mt-3">
+          <summary className="text-xs font-medium text-slate-500 cursor-pointer hover:text-slate-700">
+            View webhook payload format
+          </summary>
+          <div className="mt-2 bg-slate-900 rounded-lg p-3 font-mono text-xs text-slate-300 overflow-x-auto">
+            <pre>{`{
+  "event": "conversion",
+  "conversion_id": 456,
+  "click_id": "uuid-from-redirect",
+  "event_type": "funded",
+  "conversion_value_cents": 5000,
+  "metadata": {},
+  "timestamp": "2026-02-25T12:00:00.000Z"
+}`}</pre>
+          </div>
+        </details>
       </div>
 
       {/* Endpoint Documentation */}
