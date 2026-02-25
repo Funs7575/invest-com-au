@@ -201,34 +201,42 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   };
 
   return (
-    <div className="py-12">
+    <div className="pt-5 pb-8 md:py-12">
       <div className="container-custom">
-        <h1 className="text-3xl md:text-4xl font-bold mb-2">Compare Australian Brokers</h1>
-        <p className="text-slate-600 mb-2">
-          Side-by-side comparison of fees, features, and safety.{" "}
-          <FeesFreshnessIndicator lastChecked={getMostRecentFeeCheck(brokers)} variant="inline" />
+        {/* Header — compact on mobile */}
+        <div className="flex items-start justify-between gap-2 mb-1 md:mb-2">
+          <h1 className="text-xl md:text-4xl font-extrabold">Compare Brokers</h1>
+          <span className="hidden md:inline">
+            <FeesFreshnessIndicator lastChecked={getMostRecentFeeCheck(brokers)} variant="inline" />
+          </span>
+        </div>
+        <p className="text-xs md:text-base text-slate-500 mb-1.5 md:mb-2">
+          <span className="hidden md:inline">Side-by-side comparison of fees, features, and safety.{" "}</span>
+          <span className="md:hidden">Fees, features &amp; safety side-by-side.</span>
+          <span className="md:hidden ml-1"><FeesFreshnessIndicator lastChecked={getMostRecentFeeCheck(brokers)} variant="inline" /></span>
         </p>
-        <p className="text-xs text-slate-400 mb-6">
-          Fees verified against official broker pricing pages.{" "}
+        <p className="text-[0.62rem] md:text-xs text-slate-400 mb-3 md:mb-6">
           <Link href="/how-we-verify" className="underline hover:text-slate-600">How we verify</Link>
           {" · "}
-          <Link href="/methodology" className="underline hover:text-slate-600">Our methodology</Link>
+          <Link href="/methodology" className="underline hover:text-slate-600">Methodology</Link>
           {" · "}
-          <Link href="/how-we-earn" className="underline hover:text-slate-600">How we earn money</Link>
+          <Link href="/how-we-earn" className="underline hover:text-slate-600">How we earn</Link>
         </p>
 
-        {/* Deal of the Month Banner */}
+        {/* Deal of the Month — compact on mobile */}
         {(() => {
           const dealBroker = brokers.find(b => b.deal && b.deal_text);
           if (!dealBroker) return null;
           return (
-            <div className="mb-6 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <Icon name="flame" size={24} className="text-amber-500 shrink-0" />
-                <div>
-                  <div className="text-xs font-bold uppercase tracking-wide text-amber-700 mb-0.5">Deal of the Month</div>
-                  <p className="text-sm text-slate-700">
-                    <strong>{dealBroker.name}</strong> — {dealBroker.deal_text}
+            <div className="mb-3 md:mb-6 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/80 rounded-lg md:rounded-xl px-3 py-2 md:p-4 flex items-center justify-between gap-2 md:gap-3">
+              <div className="flex items-center gap-2 md:gap-3 min-w-0">
+                <Icon name="flame" size={16} className="text-amber-500 shrink-0 md:hidden" />
+                <Icon name="flame" size={24} className="text-amber-500 shrink-0 hidden md:block" />
+                <div className="min-w-0">
+                  <p className="text-[0.69rem] md:text-sm text-slate-700 leading-snug">
+                    <strong>{dealBroker.name}</strong>
+                    <span className="hidden md:inline"> — {dealBroker.deal_text}</span>
+                    <span className="md:hidden text-slate-500"> — {dealBroker.deal_text}</span>
                   </p>
                 </div>
               </div>
@@ -237,9 +245,9 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                 target="_blank"
                 rel={AFFILIATE_REL}
                 onClick={() => trackClick(dealBroker.slug, dealBroker.name, 'compare-deal-banner', '/compare', 'compare')}
-                className="shrink-0 px-4 py-2 bg-amber-600 text-white text-sm font-semibold rounded-lg hover:bg-amber-700 transition-colors"
+                className="shrink-0 px-3 md:px-4 py-1.5 md:py-2 bg-amber-600 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-amber-700 transition-colors"
               >
-                Claim Deal →
+                Claim →
               </a>
             </div>
           );
@@ -264,17 +272,33 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           ))}
         </div>
 
-        {/* Mobile Filter Trigger + Bottom Sheet */}
-        <div className="md:hidden mb-4">
+        {/* Mobile: Filter + Search inline row */}
+        <div className="md:hidden flex items-center gap-2 mb-3">
           <button
             onClick={() => setSheetOpen(true)}
-            className="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-100 text-slate-700 text-sm font-medium rounded-full filter-pill hover:bg-slate-200 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-2 bg-slate-100 text-slate-700 text-xs font-semibold rounded-full hover:bg-slate-200 transition-colors shrink-0"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
               <path strokeLinecap="round" d="M4 6h16M7 12h10M10 18h4" />
             </svg>
-            Filters{activeFilter !== 'all' ? ` (1)` : ''}
+            {activeFilter !== 'all' ? filters.find(f => f.key === activeFilter)?.label : 'Filter'}
           </button>
+          <div className="relative flex-1">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search..."
+              className="w-full px-3 py-2 pl-8 border border-slate-200 rounded-full text-xs focus:outline-none focus:border-slate-400"
+              aria-label="Search brokers"
+            />
+            {searchQuery && (
+              <button onClick={() => setSearchQuery("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400" aria-label="Clear">
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
           <BottomSheet open={sheetOpen} onClose={() => setSheetOpen(false)} title="Filter Brokers">
             <div className="flex flex-wrap gap-2 mb-6">
               {filters.map(f => (
@@ -308,21 +332,21 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           </BottomSheet>
         </div>
 
-        {/* Search Input */}
-        <div className="relative mb-4">
+        {/* Desktop Search Input */}
+        <div className="hidden md:block relative mb-4">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search brokers by name..."
-            className="w-full md:w-80 px-4 py-2.5 pl-10 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700"
+            className="w-80 px-4 py-2.5 pl-10 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700"
             aria-label="Search brokers by name"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery("")}
-              className="absolute right-3 md:right-auto md:left-[18.5rem] top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              className="absolute left-[18.5rem] top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
               aria-label="Clear search"
             >
               <X className="w-4 h-4" />
@@ -330,8 +354,8 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           )}
         </div>
 
-        {/* Quiz prompt inline */}
-        <div className="flex items-center gap-2 mb-4 text-xs text-slate-500">
+        {/* Quiz prompt — hidden on mobile to save space */}
+        <div className="hidden md:flex items-center gap-2 mb-4 text-xs text-slate-500">
           <span>Not sure which to pick?</span>
           <Link href="/quiz" className="text-blue-700 font-semibold hover:text-blue-800 transition-colors">
             Take the 60-sec quiz →
@@ -469,7 +493,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         </div>
 
         {/* Mobile Cards */}
-        <div key={`mobile-${activeFilter}-${searchQuery}`} className="md:hidden space-y-4 tab-content-enter">
+        <div key={`mobile-${activeFilter}-${searchQuery}`} className="md:hidden space-y-3 tab-content-enter">
           {sorted.map(broker => (
             <BrokerCard
               key={broker.id}
@@ -480,9 +504,9 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           ))}
         </div>
 
-        {/* Export Buttons */}
+        {/* Export Buttons — hide on mobile */}
         {sorted.length > 0 && (
-          <div className="flex flex-wrap gap-2 mt-4 no-print">
+          <div className="hidden md:flex flex-wrap gap-2 mt-4 no-print">
             <button
               onClick={() => {
                 const headers = ["Broker", "ASX Fee", "US Fee", "FX Rate (%)", "CHESS", "SMSF", "Rating"];
@@ -538,56 +562,60 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         )}
 
         {sorted.length === 0 && (
-          <div className="text-center py-12 text-slate-500">
+          <div className="text-center py-8 md:py-12 text-slate-500">
             {searchQuery ? (
               <>
-                <p className="text-lg font-medium mb-2">No brokers match &ldquo;{searchQuery}&rdquo;</p>
+                <p className="text-sm md:text-lg font-medium mb-1.5">No brokers match &ldquo;{searchQuery}&rdquo;</p>
                 <button
                   onClick={() => setSearchQuery("")}
-                  className="text-blue-700 font-semibold hover:text-blue-800 transition-colors"
+                  className="text-blue-700 text-sm font-semibold hover:text-blue-800 transition-colors"
                 >
                   Clear search
                 </button>
               </>
             ) : (
-              "No brokers match this filter. Try a different category."
+              <p className="text-sm">No brokers match this filter. Try a different category.</p>
             )}
           </div>
         )}
 
         {/* Pro upsell */}
-        <div className="mt-8">
+        <div className="mt-6 md:mt-8">
           <ProUpsellBanner variant="compact" />
         </div>
 
         {/* Trust signals */}
-        <div className="mt-8 text-xs text-slate-400 text-center">
+        <div className="mt-4 md:mt-8 text-[0.62rem] md:text-xs text-slate-400 text-center">
           <p>
-            All fees verified against official broker pricing pages.{" "}
-            <Link href="/how-we-verify" className="underline hover:text-slate-600">Fee verification process</Link>
+            Fees verified against official pricing.{" "}
+            <Link href="/how-we-verify" className="underline hover:text-slate-600">Verification</Link>
             {" · "}
-            <Link href="/methodology" className="underline hover:text-slate-600">How we rank brokers</Link>
+            <Link href="/methodology" className="underline hover:text-slate-600">Rankings</Link>
             {" · "}
-            <Link href="/how-we-earn" className="underline hover:text-slate-600">How we earn money</Link>
+            <Link href="/how-we-earn" className="underline hover:text-slate-600">How we earn</Link>
           </p>
         </div>
 
-        {/* Bottom conversion section */}
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-white border border-slate-200 rounded-xl p-6">
-            <Icon name="target" size={24} className="text-slate-600 mb-2" />
-            <h3 className="text-lg font-bold text-slate-900 mb-1">Filter by Your Priorities</h3>
-            <p className="text-sm text-slate-600 mb-4">Answer 4 quick questions and narrow down brokers based on what matters to you.</p>
-            <Link href="/quiz" className="inline-block px-5 py-2.5 bg-amber-500 text-slate-900 text-sm font-semibold rounded-lg hover:bg-amber-600 transition-colors">
-              Take the Quiz →
+        {/* Bottom conversion — compact on mobile */}
+        <div className="mt-5 md:mt-8 grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+          <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-6 flex items-center md:block gap-3">
+            <Icon name="target" size={20} className="text-slate-600 shrink-0 md:mb-2" />
+            <div className="flex-1 min-w-0">
+              <h3 className="text-sm md:text-lg font-bold text-slate-900 mb-0.5 md:mb-1">Find Your Broker</h3>
+              <p className="text-xs text-slate-500 md:mb-4 hidden md:block">Answer 4 quick questions and narrow down brokers.</p>
+            </div>
+            <Link href="/quiz" className="shrink-0 px-3 md:px-5 py-2 md:py-2.5 bg-amber-500 text-slate-900 text-xs md:text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors md:inline-block">
+              Quiz →
             </Link>
           </div>
-          <div className="bg-slate-50 border border-slate-200 rounded-xl p-6">
-            <Icon name="bar-chart" size={24} className="text-slate-700 mb-2" />
-            <h3 className="text-lg font-bold text-slate-900 mb-1">Free Fee Comparison PDF</h3>
-            <p className="text-sm text-slate-600 mb-4">Download our 2026 fee audit — every broker&apos;s brokerage, FX fees, and hidden costs in one document.</p>
-            <Link href="/#email-capture" className="inline-block px-5 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 hover:scale-105 hover:shadow-lg transition-all duration-200">
-              Get Free PDF →
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 md:p-6 flex items-center md:block gap-3">
+            <Icon name="bar-chart" size={20} className="text-slate-700 shrink-0 md:mb-2" />
+            <div className="flex-1 min-w-0">
+              <h3 className="text-sm md:text-lg font-bold text-slate-900 mb-0.5 md:mb-1">Free Fee PDF</h3>
+              <p className="text-xs text-slate-500 md:mb-4 hidden md:block">Every broker&apos;s fees and hidden costs in one document.</p>
+            </div>
+            <Link href="/#email-capture" className="shrink-0 px-3 md:px-5 py-2 md:py-2.5 bg-slate-900 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors md:inline-block">
+              Get PDF →
             </Link>
           </div>
         </div>
