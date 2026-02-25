@@ -331,13 +331,13 @@ export default async function ArticlePage({
                 />
               )}
 
-              {/* Inline Table of Contents (for quick overview) */}
+              {/* Inline Table of Contents — hidden on mobile where floating TOC serves the same purpose */}
               {a.sections && a.sections.length > 1 && (
-                <nav className="border border-slate-200 rounded-xl p-4 md:p-6 mb-6 md:mb-10 bg-slate-50">
-                  <h2 className="text-xs md:text-sm font-bold uppercase tracking-wider text-slate-500 mb-2 md:mb-3">
+                <nav className="hidden md:block border border-slate-200 rounded-xl p-6 mb-10 bg-slate-50">
+                  <h2 className="text-sm font-bold uppercase tracking-wider text-slate-500 mb-3">
                     Table of Contents
                   </h2>
-                  <ol className="space-y-1 md:space-y-2">
+                  <ol className="space-y-2">
                     {a.sections.map(
                       (
                         section: { heading: string; body: string },
@@ -346,7 +346,7 @@ export default async function ArticlePage({
                         <li key={i}>
                           <a
                             href={`#section-${i}`}
-                            className="text-sm text-slate-700 hover:text-slate-900 transition-colors flex items-start gap-2 py-1 md:py-0"
+                            className="text-sm text-slate-700 hover:text-slate-900 transition-colors flex items-start gap-2"
                           >
                             <span className="text-slate-700 font-semibold shrink-0">
                               {i + 1}.
