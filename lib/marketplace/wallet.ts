@@ -78,24 +78,8 @@ export async function creditWallet(
   const wallet = await getOrCreateWallet(brokerSlug);
   const newBalance = wallet.balance_cents + amountCents;
 
-  // Optimistic concurrency: only update if balance hasn't changed
-  const { data: updated, error: updateErr } = await supabase
-    .from("broker_wallets")
-    .update({
-      balance_cents: newBalance,
-      lifetime_deposited_cents: wallet.lifetime_deposited_cents + amountCents,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", wallet.id)
-    .eq("balance_cents", wallet.balance_cents) // Optimistic lock
-    .select("*")
-    .maybeSingle();
-
-  if (updateErr || !updated) {
-    throw new Error("Wallet credit failed — balance may have changed concurrently");
-  }
-
-  // Insert immutable transaction (unique index on stripe_payment_intent_id catches races)
+  // Insert transaction FIRST — if this fails (e.g. duplicate PI), balance is untouched.
+  // The unique index on stripe_payment_intent_id catches races.
   const { data: txn, error: txnErr } = await supabase
     .from("wallet_transactions")
     .insert({
@@ -113,6 +97,26 @@ export async function creditWallet(
     .single();
 
   if (txnErr) throw new Error(`Transaction insert failed: ${txnErr.message}`);
+
+  // Then update balance with optimistic lock
+  const { data: updated, error: updateErr } = await supabase
+    .from("broker_wallets")
+    .update({
+      balance_cents: newBalance,
+      lifetime_deposited_cents: wallet.lifetime_deposited_cents + amountCents,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", wallet.id)
+    .eq("balance_cents", wallet.balance_cents) // Optimistic lock
+    .select("*")
+    .maybeSingle();
+
+  if (updateErr || !updated) {
+    // Rollback the transaction record since balance update failed
+    await supabase.from("wallet_transactions").delete().eq("id", txn.id);
+    throw new Error("Wallet credit failed — balance may have changed concurrently");
+  }
+
   return txn as WalletTransaction;
 }
 
@@ -137,24 +141,7 @@ export async function debitWallet(
 
   const newBalance = wallet.balance_cents - amountCents;
 
-  // Optimistic concurrency: only update if balance hasn't changed
-  const { data: updated, error: updateErr } = await supabase
-    .from("broker_wallets")
-    .update({
-      balance_cents: newBalance,
-      lifetime_spent_cents: wallet.lifetime_spent_cents + amountCents,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", wallet.id)
-    .eq("balance_cents", wallet.balance_cents) // Optimistic lock
-    .select("*")
-    .maybeSingle();
-
-  if (updateErr || !updated) {
-    throw new Error("Wallet debit failed — balance may have changed concurrently");
-  }
-
-  // Insert immutable transaction
+  // Insert transaction FIRST — if this fails, balance is untouched.
   const { data: txn, error: txnErr } = await supabase
     .from("wallet_transactions")
     .insert({
@@ -171,6 +158,25 @@ export async function debitWallet(
     .single();
 
   if (txnErr) throw new Error(`Transaction insert failed: ${txnErr.message}`);
+
+  // Then update balance with optimistic lock
+  const { data: updated, error: updateErr } = await supabase
+    .from("broker_wallets")
+    .update({
+      balance_cents: newBalance,
+      lifetime_spent_cents: wallet.lifetime_spent_cents + amountCents,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", wallet.id)
+    .eq("balance_cents", wallet.balance_cents) // Optimistic lock
+    .select("*")
+    .maybeSingle();
+
+  if (updateErr || !updated) {
+    // Rollback the transaction record since balance update failed
+    await supabase.from("wallet_transactions").delete().eq("id", txn.id);
+    throw new Error("Wallet debit failed — balance may have changed concurrently");
+  }
 
   // Check if auto-topup should be triggered
   checkAutoTopup(brokerSlug, newBalance).catch((err) =>

@@ -53,6 +53,15 @@ const INTEREST_MAP: Record<string, string> = {
   grow: 'Long-Term Growth',
 };
 
+/** Escape HTML special chars to prevent XSS in email templates */
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 /** Send personalized quiz results email */
 async function sendQuizResultsEmail(
   email: string,
@@ -89,7 +98,7 @@ async function sendQuizResultsEmail(
     .order('rating', { ascending: false })
     .limit(2);
 
-  const greeting = firstName ? `Hi ${firstName},` : 'Hi there,';
+  const greeting = firstName ? `Hi ${escapeHtml(firstName)},` : 'Hi there,';
   const brokerColor = broker.color || '#0f172a';
   const ratingDisplay = broker.rating ? `${broker.rating}/5` : '';
 
@@ -133,7 +142,7 @@ async function sendQuizResultsEmail(
           <p style="margin: 0 0 4px; font-size: 12px; font-weight: 700; color: ${brokerColor}; text-transform: uppercase; letter-spacing: 1px;">🥇 Your #1 Match</p>
           <h2 style="margin: 0 0 6px; font-size: 22px; color: #0f172a;">${broker.name}</h2>
           ${ratingDisplay ? `<p style="margin: 0 0 8px; font-size: 14px; color: #15803d; font-weight: 700;">⭐ ${ratingDisplay}</p>` : ''}
-          ${broker.tagline ? `<p style="margin: 0 0 12px; font-size: 13px; color: #64748b;">${broker.tagline}</p>` : ''}
+          ${broker.tagline ? `<p style="margin: 0 0 12px; font-size: 13px; color: #64748b;">${escapeHtml(broker.tagline)}</p>` : ''}
           <div style="display: flex; justify-content: center; gap: 24px; margin: 12px 0;">
             <div>
               <p style="margin: 0; font-size: 11px; color: #94a3b8; text-transform: uppercase;">ASX Fee</p>

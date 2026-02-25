@@ -2,6 +2,15 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextResponse } from "next/server";
 
+/** Escape HTML special chars to prevent XSS in email templates */
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 /** Fire-and-forget answer notification email via Resend */
 async function notifyQuestionAsker(
   answerId: number,
@@ -29,13 +38,17 @@ async function notifyQuestionAsker(
   if (!question?.email) return; // No email provided — can't notify
 
   const brokerSlug = question.broker_slug;
-  const questionSnippet = question.question.length > 80
-    ? question.question.slice(0, 77) + "..."
-    : question.question;
-  const answerSnippet = answer.answer.length > 200
-    ? answer.answer.slice(0, 197) + "..."
-    : answer.answer;
-  const answeredBy = answer.display_name || "the community";
+  const questionSnippet = escapeHtml(
+    question.question.length > 80
+      ? question.question.slice(0, 77) + "..."
+      : question.question,
+  );
+  const answerSnippet = escapeHtml(
+    answer.answer.length > 200
+      ? answer.answer.slice(0, 197) + "..."
+      : answer.answer,
+  );
+  const answeredBy = escapeHtml(answer.display_name || "the community");
 
   const pageUrl = `https://invest.com.au/broker/${brokerSlug}#questions`;
 
@@ -46,7 +59,7 @@ async function notifyQuestionAsker(
       </div>
       <div style="background: #fff; border: 1px solid #e2e8f0; border-top: none; padding: 24px; border-radius: 0 0 12px 12px;">
         <p style="color: #475569; font-size: 14px; line-height: 1.6; margin: 0 0 16px;">
-          Hi ${question.display_name || "there"},
+          Hi ${escapeHtml(question.display_name || "there")},
         </p>
         <p style="color: #475569; font-size: 14px; line-height: 1.6; margin: 0 0 20px;">
           Someone has answered your question. Here's a preview:

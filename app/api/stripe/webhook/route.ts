@@ -5,6 +5,15 @@ import type Stripe from "stripe";
 
 // ─── Transactional email helpers ────────────────────────────────────
 
+/** Escape HTML special chars to prevent XSS in email templates */
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 /** Fire-and-forget email via Resend */
 async function sendTransactionalEmail(
   to: string,
@@ -72,7 +81,7 @@ function buildCourseReceiptEmail(courseName: string, courseSlug: string, amountC
   return emailWrapper("Course Purchase Confirmed ✅", "#0f172a", `
     <h2 style="margin: 0 0 12px; font-size: 18px; color: #0f172a;">You're in!</h2>
     <p style="color: #475569; font-size: 14px; line-height: 1.6; margin: 0 0 16px;">
-      Your purchase of <strong>${courseName}</strong> has been confirmed.
+      Your purchase of <strong>${escapeHtml(courseName)}</strong> has been confirmed.
     </p>
     <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px; margin: 0 0 20px;">
       <p style="margin: 0; font-size: 13px; color: #334155;"><strong>Amount paid:</strong> A$${amount}</p>
@@ -94,7 +103,7 @@ function buildConsultationConfirmationEmail(
   return emailWrapper("Consultation Booked ✅", "#7c3aed", `
     <h2 style="margin: 0 0 12px; font-size: 18px; color: #0f172a;">Booking confirmed!</h2>
     <p style="color: #475569; font-size: 14px; line-height: 1.6; margin: 0 0 16px;">
-      Your <strong>${consultationTitle}</strong> consultation has been booked successfully.
+      Your <strong>${escapeHtml(consultationTitle)}</strong> consultation has been booked successfully.
     </p>
     <div style="background: #f5f3ff; border: 1px solid #ddd6fe; border-radius: 8px; padding: 16px; margin: 0 0 16px;">
       <p style="margin: 0; font-size: 13px; color: #334155;"><strong>Amount paid:</strong> A$${amount}</p>
@@ -243,10 +252,10 @@ export async function POST(request: NextRequest) {
           if (userId) {
             const supabase = createAdminClient();
 
-            // Look up course for course_id + revenue tracking
+            // Look up course for course_id, revenue tracking, and confirmation email
             const { data: course } = await supabase
               .from("courses")
-              .select("id, creator_id, revenue_share_percent")
+              .select("id, title, creator_id, revenue_share_percent")
               .eq("slug", courseSlug)
               .maybeSingle();
 
@@ -273,20 +282,11 @@ export async function POST(request: NextRequest) {
             // Send course receipt email
             const customerEmail = session.customer_email || session.customer_details?.email;
             if (customerEmail) {
-              const { data: courseInfo } = await supabase
-                .from("courses")
-                .select("title")
-                .eq("slug", courseSlug)
-                .maybeSingle();
-
+              const courseName = course?.title || courseSlug;
               sendTransactionalEmail(
                 customerEmail,
-                `Course Confirmed: ${courseInfo?.title || courseSlug}`,
-                buildCourseReceiptEmail(
-                  courseInfo?.title || courseSlug,
-                  courseSlug,
-                  session.amount_total || 0,
-                ),
+                `Course Confirmed: ${courseName}`,
+                buildCourseReceiptEmail(courseName, courseSlug, session.amount_total || 0),
               ).catch(() => {});
             }
 
@@ -329,7 +329,7 @@ export async function POST(request: NextRequest) {
 
             const { data: consultation } = await supabase
               .from("consultations")
-              .select("id")
+              .select("id, title")
               .eq("slug", consultationSlug)
               .maybeSingle();
 
@@ -355,20 +355,11 @@ export async function POST(request: NextRequest) {
               // Send consultation confirmation email
               const consultCustomerEmail = session.customer_email || session.customer_details?.email;
               if (consultCustomerEmail) {
-                const { data: consultInfo } = await supabase
-                  .from("consultations")
-                  .select("title")
-                  .eq("slug", consultationSlug)
-                  .maybeSingle();
-
+                const consultTitle = consultation.title || consultationSlug;
                 sendTransactionalEmail(
                   consultCustomerEmail,
-                  `Consultation Booked: ${consultInfo?.title || consultationSlug}`,
-                  buildConsultationConfirmationEmail(
-                    consultInfo?.title || consultationSlug,
-                    consultationSlug,
-                    session.amount_total || 0,
-                  ),
+                  `Consultation Booked: ${consultTitle}`,
+                  buildConsultationConfirmationEmail(consultTitle, consultationSlug, session.amount_total || 0),
                 ).catch(() => {});
               }
             }
