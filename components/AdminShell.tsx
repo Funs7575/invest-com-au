@@ -36,6 +36,9 @@ const navSections = [
       { href: "/admin/marketplace", label: "Overview", icon: "🏪" },
       { href: "/admin/marketplace/campaigns", label: "Campaigns", icon: "📣" },
       { href: "/admin/marketplace/brokers", label: "Broker Accounts", icon: "🤝" },
+      { href: "/admin/marketplace/placements", label: "Placements", icon: "📍" },
+      { href: "/admin/marketplace/sponsor-billing", label: "Sponsor Billing", icon: "💰" },
+      { href: "/admin/marketplace/reconciliation", label: "Reconciliation", icon: "🔍" },
     ],
   },
   {

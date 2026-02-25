@@ -73,15 +73,67 @@ export default function AdminCampaignsPage() {
 
     await supabase.from("campaigns").update(updates).eq("id", campaignId);
 
+    const campaign = campaigns.find((c) => c.id === campaignId);
+
     // Log to audit
+    const { data: { user } } = await supabase.auth.getUser();
     await supabase.from("admin_audit_log").insert({
       action: `campaign_${newStatus}`,
       entity_type: "campaign",
       entity_id: String(campaignId),
-      entity_name: campaigns.find((c) => c.id === campaignId)?.name || "",
+      entity_name: campaign?.name || "",
       details: { new_status: newStatus, ...extraFields },
-      admin_email: (await supabase.auth.getUser()).data.user?.email || "admin",
+      admin_email: user?.email || "admin",
     });
+
+    // Send notification to broker (fire-and-forget)
+    if (campaign && ["approved", "rejected", "paused", "budget_exhausted"].includes(newStatus)) {
+      const notifTypes: Record<string, string> = {
+        approved: "campaign_approved",
+        rejected: "campaign_rejected",
+        paused: "campaign_paused",
+        budget_exhausted: "budget_exhausted",
+      };
+      const notifTitles: Record<string, string> = {
+        approved: `Campaign "${campaign.name}" Approved`,
+        rejected: `Campaign "${campaign.name}" Rejected`,
+        paused: `Campaign "${campaign.name}" Paused`,
+        budget_exhausted: `Campaign "${campaign.name}" — Budget Exhausted`,
+      };
+      const notifMessages: Record<string, string> = {
+        approved: `Your campaign "${campaign.name}" has been approved and is ready to go live.${reviewNotes[campaignId] ? ` Note: ${reviewNotes[campaignId]}` : ""}`,
+        rejected: `Your campaign "${campaign.name}" was not approved.${reviewNotes[campaignId] ? ` Reason: ${reviewNotes[campaignId]}` : " Please review and resubmit."}`,
+        paused: `Your campaign "${campaign.name}" has been paused by an administrator.`,
+        budget_exhausted: `Your campaign "${campaign.name}" has exhausted its budget. Top up your wallet to resume.`,
+      };
+
+      supabase.from("broker_notifications").insert({
+        broker_slug: campaign.broker_slug,
+        type: notifTypes[newStatus],
+        title: notifTitles[newStatus],
+        message: notifMessages[newStatus],
+        link: "/broker-portal/campaigns",
+        is_read: false,
+        email_sent: false,
+      }).then(() => {
+        // Also send email notification
+        fetch("/api/marketplace/notify", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-internal-key": "browser-admin",
+          },
+          body: JSON.stringify({
+            broker_slug: campaign.broker_slug,
+            type: notifTypes[newStatus],
+            title: notifTitles[newStatus],
+            message: notifMessages[newStatus],
+            link: "/broker-portal/campaigns",
+            send_email: true,
+          }),
+        }).catch(() => {});
+      });
+    }
 
     await loadCampaigns();
     setActionLoading(null);
