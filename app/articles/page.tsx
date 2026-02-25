@@ -89,33 +89,32 @@ export default async function ArticlesPage({
     <div className="pt-5 pb-8 md:py-12">
       <div className="container-custom">
         {/* Page Header */}
-        <div className="mb-4 md:mb-10">
-          <h1 className="text-2xl md:text-4xl font-extrabold mb-1 md:mb-3">
+        <div className="mb-2.5 md:mb-10">
+          <h1 className="text-lg md:text-4xl font-extrabold mb-0.5 md:mb-3">
             Guides &amp; Articles
           </h1>
-          <p className="text-sm md:text-lg text-slate-600 max-w-2xl">
-            Expert guides on tax, SMSF, strategy, and more to help you invest smarter.
+          <p className="text-[0.69rem] md:text-lg text-slate-600 max-w-2xl">
+            Expert guides on tax, SMSF, strategy &amp; more
           </p>
         </div>
 
-        {/* Search — client component (tiny) */}
-        <Suspense fallback={<div className="h-11 mb-3 md:mb-4" />}>
+        {/* Search + Category Filter row on mobile */}
+        <Suspense fallback={<div className="h-10 mb-2 md:mb-4" />}>
           <ArticleSearchInput />
         </Suspense>
 
-        {/* Category Filter — client component (tiny, uses Link for navigation) */}
-        <Suspense fallback={<div className="h-10 mb-4 md:mb-8" />}>
+        <Suspense fallback={<div className="h-8 mb-3 md:mb-8" />}>
           <ArticleCategoryFilter />
         </Suspense>
 
         {/* Articles Grid — fully server-rendered */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2.5 md:gap-6">
           {displayItems.map((item, idx) => {
             if (item === "lead-magnet") {
               return (
                 <div
                   key={`lead-magnet-${idx}`}
-                  className="md:col-span-2 lg:col-span-3"
+                  className="col-span-2 lg:col-span-3"
                 >
                   <LeadMagnet />
                 </div>
@@ -128,33 +127,34 @@ export default async function ArticlesPage({
               "bg-slate-100 text-slate-700";
 
             return (
-              <div
+              <Link
                 key={article.id}
-                className="border border-slate-200 rounded-xl bg-white hover:shadow-lg hover:scale-[1.02] transition-all flex flex-col overflow-hidden"
+                href={`/article/${article.slug}`}
+                className="border border-slate-200 rounded-lg md:rounded-xl bg-white hover:shadow-lg hover:scale-[1.01] transition-all flex flex-col overflow-hidden group"
               >
                 {/* Cover Image */}
                 {article.cover_image_url ? (
-                  <Link href={`/article/${article.slug}`} className="block aspect-[16/9] overflow-hidden bg-slate-100">
+                  <div className="aspect-[16/9] overflow-hidden bg-slate-100">
                     <img
                       src={article.cover_image_url}
                       alt={article.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       loading="lazy"
                     />
-                  </Link>
+                  </div>
                 ) : null}
-                <div className="p-4 md:p-6 flex flex-col flex-1">
+                <div className="p-2.5 md:p-6 flex flex-col flex-1">
                   {/* Badges Row */}
-                  <div className="flex items-center gap-2 mb-2 md:mb-3">
+                  <div className="flex items-center gap-1 md:gap-2 mb-1 md:mb-3">
                     {article.category && (
                       <span
-                        className={`text-[0.69rem] md:text-xs font-semibold px-2 md:px-2.5 py-0.5 rounded-full ${categoryColor}`}
+                        className={`text-[0.56rem] md:text-xs font-semibold px-1.5 md:px-2.5 py-px md:py-0.5 rounded-full ${categoryColor}`}
                       >
                         {CATEGORY_LABELS[article.category || ""] || article.category}
                       </span>
                     )}
                     <span
-                      className={`text-[0.69rem] md:text-xs font-semibold px-2 md:px-2.5 py-0.5 rounded-full ${
+                      className={`hidden md:inline text-xs font-semibold px-2.5 py-0.5 rounded-full ${
                         article.evergreen
                           ? "bg-emerald-50 text-emerald-700"
                           : "bg-orange-50 text-orange-700"
@@ -163,14 +163,14 @@ export default async function ArticlesPage({
                       {article.evergreen ? "Evergreen" : "News"}
                     </span>
                     {article.read_time && (
-                      <span className="text-[0.69rem] md:text-xs text-slate-400 ml-auto">
+                      <span className="text-[0.56rem] md:text-xs text-slate-400 ml-auto">
                         {article.read_time} min
                       </span>
                     )}
                   </div>
 
                   {/* Title */}
-                  <h2 className="text-base md:text-lg font-bold mb-1.5 md:mb-2 line-clamp-2 leading-snug">
+                  <h2 className="text-xs md:text-lg font-bold mb-1 md:mb-2 line-clamp-2 leading-snug">
                     {article.title}
                   </h2>
 
@@ -182,25 +182,22 @@ export default async function ArticlesPage({
                   )}
 
                   {/* CTA */}
-                  <Link
-                    href={`/article/${article.slug}`}
-                    className="text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors mt-auto py-1"
-                  >
-                    Read Guide &rarr;
-                  </Link>
+                  <span className="text-[0.62rem] md:text-sm font-semibold text-slate-700 group-hover:text-slate-900 transition-colors mt-auto">
+                    Read →
+                  </span>
                 </div>
-              </div>
+              </Link>
             );
           })}
         </div>
 
         {/* Empty state */}
         {filtered.length === 0 && (
-          <div className="text-center py-10 md:py-16 text-slate-500">
-            <p className="text-base md:text-lg font-medium mb-1 md:mb-2">No articles found</p>
+          <div className="text-center py-8 md:py-16 text-slate-500">
+            <p className="text-sm md:text-lg font-medium mb-1 md:mb-2">No articles found</p>
             <p className="text-xs md:text-sm">
               {q
-                ? "Try a different search term or category."
+                ? "Try a different search or category."
                 : "Try selecting a different category."}
             </p>
           </div>

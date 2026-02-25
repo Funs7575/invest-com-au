@@ -28,14 +28,14 @@ export default function ArticleSearchInput() {
   );
 
   return (
-    <div className="relative mb-4">
-      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+    <div className="relative mb-2 md:mb-4">
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 md:w-4 md:h-4 text-slate-400" />
       <input
         type="text"
         defaultValue={current}
         onChange={handleChange}
         placeholder="Search articles..."
-        className="w-full md:w-80 pl-10 pr-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700/40"
+        className="w-full md:w-80 pl-9 md:pl-10 pr-3 md:pr-4 py-2 md:py-2.5 border border-slate-200 rounded-lg text-xs md:text-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700/40"
         aria-label="Search articles"
       />
     </div>
