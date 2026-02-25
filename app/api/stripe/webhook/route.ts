@@ -258,6 +258,167 @@ export async function POST(request: NextRequest) {
         break;
       }
 
+      case "charge.refunded": {
+        const charge = event.data.object as Stripe.Charge;
+        const paymentIntentId =
+          typeof charge.payment_intent === "string"
+            ? charge.payment_intent
+            : charge.payment_intent?.id || null;
+        const refundedAmountCents = charge.amount_refunded;
+        const supabase = createAdminClient();
+
+        if (!paymentIntentId) break;
+
+        // 1. Check if this was a course purchase — revoke access
+        const { data: coursePurchase } = await supabase
+          .from("course_purchases")
+          .select("id, user_id, course_slug, amount_paid")
+          .eq("stripe_payment_id", paymentIntentId)
+          .maybeSingle();
+
+        if (coursePurchase) {
+          await supabase
+            .from("course_purchases")
+            .update({ refunded: true, refunded_at: new Date().toISOString() })
+            .eq("id", coursePurchase.id);
+
+          // Delete associated revenue record
+          await supabase
+            .from("course_revenue")
+            .delete()
+            .eq("purchase_id", coursePurchase.id);
+
+          console.log(`Course purchase refunded: ${coursePurchase.course_slug} for user ${coursePurchase.user_id}`);
+        }
+
+        // 2. Check if this was a wallet top-up — reverse the credit
+        const { data: walletTxn } = await supabase
+          .from("wallet_transactions")
+          .select("id, broker_slug, amount_cents")
+          .eq("stripe_payment_intent_id", paymentIntentId)
+          .eq("type", "deposit")
+          .maybeSingle();
+
+        if (walletTxn) {
+          try {
+            const { debitWallet } = await import("@/lib/marketplace/wallet");
+            const reverseAmount = Math.min(refundedAmountCents, walletTxn.amount_cents);
+
+            await debitWallet(
+              walletTxn.broker_slug,
+              reverseAmount,
+              `Stripe refund reversal — $${(reverseAmount / 100).toFixed(2)}`,
+              { type: "stripe_refund", id: charge.id }
+            );
+
+            // Notify broker
+            await supabase.from("broker_notifications").insert({
+              broker_slug: walletTxn.broker_slug,
+              type: "wallet_refund",
+              title: "Wallet Top-Up Reversed",
+              message: `A refund of $${(reverseAmount / 100).toFixed(2)} was processed. Your wallet balance has been adjusted.`,
+              link: "/broker-portal/wallet",
+              is_read: false,
+              email_sent: false,
+            });
+
+            console.log(`Wallet refund reversed: ${walletTxn.broker_slug} — $${(reverseAmount / 100).toFixed(2)}`);
+          } catch (err) {
+            console.error("Wallet refund reversal failed:", err);
+          }
+        }
+
+        // 3. Check if this was a consultation booking — cancel it
+        const { data: booking } = await supabase
+          .from("consultation_bookings")
+          .select("id, user_id, consultation_id")
+          .eq("stripe_payment_id", paymentIntentId)
+          .maybeSingle();
+
+        if (booking) {
+          await supabase
+            .from("consultation_bookings")
+            .update({ status: "refunded", refunded_at: new Date().toISOString() })
+            .eq("id", booking.id);
+
+          console.log(`Consultation booking refunded: #${booking.id}`);
+        }
+
+        // Audit log
+        await supabase.from("admin_audit_log").insert({
+          action: "stripe_refund",
+          entity_type: "charge",
+          entity_id: charge.id,
+          entity_name: paymentIntentId,
+          details: {
+            amount_refunded_cents: refundedAmountCents,
+            course_purchase_revoked: !!coursePurchase,
+            wallet_reversed: !!walletTxn,
+            consultation_cancelled: !!booking,
+          },
+          admin_email: "stripe_webhook",
+        });
+
+        break;
+      }
+
+      case "charge.dispute.created": {
+        const dispute = event.data.object as Stripe.Dispute;
+        const chargeId =
+          typeof dispute.charge === "string" ? dispute.charge : dispute.charge?.id;
+        const supabase = createAdminClient();
+
+        // Alert admin immediately — disputes need manual attention
+        if (process.env.RESEND_API_KEY) {
+          try {
+            await fetch("https://api.resend.com/emails", {
+              method: "POST",
+              headers: {
+                "Authorization": `Bearer ${process.env.RESEND_API_KEY}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                from: "Invest.com.au <alerts@invest.com.au>",
+                to: ["hello@invest.com.au"],
+                subject: `⚠️ Stripe Dispute Created — $${(dispute.amount / 100).toFixed(2)}`,
+                html: `
+                  <div style="font-family: system-ui, sans-serif; max-width: 560px; margin: 0 auto;">
+                    <div style="background: #dc2626; padding: 16px 24px; border-radius: 12px 12px 0 0;">
+                      <span style="color: #fff; font-weight: 800; font-size: 14px;">⚠️ Dispute Alert</span>
+                    </div>
+                    <div style="background: #fff; border: 1px solid #e2e8f0; border-top: none; padding: 24px; border-radius: 0 0 12px 12px;">
+                      <p style="margin: 0 0 12px; font-size: 14px; color: #0f172a;"><strong>Amount:</strong> $${(dispute.amount / 100).toFixed(2)}</p>
+                      <p style="margin: 0 0 12px; font-size: 14px; color: #0f172a;"><strong>Reason:</strong> ${dispute.reason}</p>
+                      <p style="margin: 0 0 12px; font-size: 14px; color: #0f172a;"><strong>Charge:</strong> ${chargeId}</p>
+                      <p style="margin: 0 0 16px; font-size: 14px; color: #0f172a;"><strong>Status:</strong> ${dispute.status}</p>
+                      <a href="https://dashboard.stripe.com/disputes/${dispute.id}" style="display: inline-block; padding: 10px 20px; background: #0f172a; color: #fff; text-decoration: none; border-radius: 8px; font-size: 13px; font-weight: 600;">View in Stripe →</a>
+                    </div>
+                  </div>
+                `,
+              }),
+            });
+          } catch {
+            // Non-critical
+          }
+        }
+
+        // Audit log
+        await supabase.from("admin_audit_log").insert({
+          action: "stripe_dispute",
+          entity_type: "dispute",
+          entity_id: dispute.id,
+          entity_name: chargeId || "unknown",
+          details: {
+            amount_cents: dispute.amount,
+            reason: dispute.reason,
+            status: dispute.status,
+          },
+          admin_email: "stripe_webhook",
+        });
+
+        break;
+      }
+
       default:
         // Unhandled event type — log for debugging
         break;
