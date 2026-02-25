@@ -176,22 +176,29 @@ export default async function HomePage() {
 
       {/* Comparison Table */}
       <ScrollFadeIn>
-        <section className="py-6 sm:py-8 md:py-16 bg-slate-50">
+        <section className="py-4 sm:py-8 md:py-16 bg-slate-50">
           <div className="container-custom">
-            <div className="mb-3 sm:mb-5 md:mb-8">
-              <h2 className="text-xl md:text-3xl font-bold text-slate-900">
-                Top Rated Brokers
-              </h2>
-              <p className="text-sm text-slate-500 mt-1">
-                Ranked by fees, features, and user experience
-                <span className="mx-2 text-slate-300">&middot;</span>
-                <FeesFreshnessIndicator lastChecked={getMostRecentFeeCheck((brokers as Broker[]) || [])} variant="inline" />
-              </p>
+            <div className="flex items-start justify-between gap-2 mb-2 sm:mb-5 md:mb-8">
+              <div>
+                <h2 className="text-lg md:text-3xl font-bold text-slate-900">
+                  Top Rated Brokers
+                </h2>
+                <p className="text-[0.69rem] md:text-sm text-slate-500 mt-0.5 md:mt-1">
+                  <span className="hidden md:inline">Ranked by fees, features, and user experience<span className="mx-2 text-slate-300">&middot;</span></span>
+                  <FeesFreshnessIndicator lastChecked={getMostRecentFeeCheck((brokers as Broker[]) || [])} variant="inline" />
+                </p>
+              </div>
+              <Link
+                href="/compare"
+                className="md:hidden text-[0.69rem] font-semibold text-slate-500 hover:text-slate-900 shrink-0 mt-1"
+              >
+                View all →
+              </Link>
             </div>
             <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
               <HomepageComparisonTable brokers={(brokers as Broker[]) || []} defaultTab="Share Trading" />
             </div>
-            <div className="text-center mt-4 sm:mt-5 md:mt-8">
+            <div className="hidden sm:block text-center mt-5 md:mt-8">
               <Link
                 href="/compare"
                 className="inline-block px-5 md:px-7 py-3 md:py-3.5 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 hover:scale-105 hover:shadow-lg transition-all duration-200 text-sm"
