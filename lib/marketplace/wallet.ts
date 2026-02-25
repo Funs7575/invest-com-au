@@ -43,6 +43,10 @@ export async function getWalletBalance(brokerSlug: string): Promise<number> {
 /**
  * Credit (add funds to) a broker's wallet.
  * Creates an immutable transaction record and updates the balance.
+ *
+ * IDEMPOTENT: If a stripe_payment_intent_id is provided, duplicate calls
+ * (e.g. Stripe webhook retries) will return the existing transaction instead
+ * of double-crediting. A unique partial index on wallet_transactions enforces this.
  */
 export async function creditWallet(
   brokerSlug: string,
@@ -54,23 +58,44 @@ export async function creditWallet(
   if (amountCents <= 0) throw new Error("Credit amount must be positive");
 
   const supabase = getAdminClient();
-  const wallet = await getOrCreateWallet(brokerSlug);
 
+  // ── Idempotency check: if this Stripe PI was already credited, return existing txn ──
+  if (reference?.stripe_payment_intent_id) {
+    const { data: existing } = await supabase
+      .from("wallet_transactions")
+      .select("*")
+      .eq("stripe_payment_intent_id", reference.stripe_payment_intent_id)
+      .maybeSingle();
+
+    if (existing) {
+      console.log(
+        `Idempotent credit: PI ${reference.stripe_payment_intent_id} already processed (txn #${existing.id})`
+      );
+      return existing as WalletTransaction;
+    }
+  }
+
+  const wallet = await getOrCreateWallet(brokerSlug);
   const newBalance = wallet.balance_cents + amountCents;
 
-  // Update wallet balance + lifetime deposited
-  const { error: updateErr } = await supabase
+  // Optimistic concurrency: only update if balance hasn't changed
+  const { data: updated, error: updateErr } = await supabase
     .from("broker_wallets")
     .update({
       balance_cents: newBalance,
       lifetime_deposited_cents: wallet.lifetime_deposited_cents + amountCents,
       updated_at: new Date().toISOString(),
     })
-    .eq("id", wallet.id);
+    .eq("id", wallet.id)
+    .eq("balance_cents", wallet.balance_cents) // Optimistic lock
+    .select("*")
+    .maybeSingle();
 
-  if (updateErr) throw new Error(`Wallet credit failed: ${updateErr.message}`);
+  if (updateErr || !updated) {
+    throw new Error("Wallet credit failed — balance may have changed concurrently");
+  }
 
-  // Insert immutable transaction
+  // Insert immutable transaction (unique index on stripe_payment_intent_id catches races)
   const { data: txn, error: txnErr } = await supabase
     .from("wallet_transactions")
     .insert({

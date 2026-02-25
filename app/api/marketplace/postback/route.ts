@@ -92,6 +92,24 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // ── Idempotency: check if this click_id + event_type was already recorded ──
+  const { data: existingConversion } = await supabase
+    .from("conversion_events")
+    .select("id, created_at")
+    .eq("click_id", click_id)
+    .eq("event_type", event_type)
+    .maybeSingle();
+
+  if (existingConversion) {
+    // Already recorded — return success without creating duplicate
+    return NextResponse.json({
+      success: true,
+      already_recorded: true,
+      conversion_id: existingConversion.id,
+      created_at: existingConversion.created_at,
+    });
+  }
+
   // Find associated campaign (if any) via campaign_events
   const { data: campaignEvent } = await supabase
     .from("campaign_events")
@@ -111,7 +129,7 @@ export async function POST(request: NextRequest) {
     .digest("hex")
     .slice(0, 16);
 
-  // Insert conversion event
+  // Insert conversion event (unique index on click_id,event_type catches races)
   const { data: conversion, error } = await supabase
     .from("conversion_events")
     .insert({
@@ -131,6 +149,23 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (error) {
+    // Unique constraint violation = race condition duplicate
+    if (error.code === "23505") {
+      const { data: raced } = await supabase
+        .from("conversion_events")
+        .select("id, created_at")
+        .eq("click_id", click_id)
+        .eq("event_type", event_type)
+        .maybeSingle();
+
+      return NextResponse.json({
+        success: true,
+        already_recorded: true,
+        conversion_id: raced?.id,
+        created_at: raced?.created_at,
+      });
+    }
+
     console.error("Postback insert error:", error.message);
     return NextResponse.json(
       { error: "Failed to record conversion" },

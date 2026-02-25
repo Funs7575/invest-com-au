@@ -303,6 +303,10 @@ export async function recordImpression(
  * Record a click event for a CPC campaign.
  * Checks daily pacing before debit. Debits wallet and updates campaign total_spent.
  * Returns true if the click was recorded + billed, false if insufficient funds or daily cap hit.
+ *
+ * IDEMPOTENT: If the same click_id was already billed as a CPC click, returns true
+ * without double-charging. A unique partial index on campaign_events(click_id)
+ * WHERE event_type='click' enforces this at the DB level.
  */
 export async function recordCpcClick(
   campaignId: number,
@@ -320,6 +324,21 @@ export async function recordCpcClick(
   }
 ): Promise<boolean> {
   const supabase = getAdminClient();
+
+  // ── Idempotency: if this click_id was already billed, don't double-charge ──
+  if (clickData.click_id) {
+    const { data: existingClick } = await supabase
+      .from("campaign_events")
+      .select("id")
+      .eq("click_id", clickData.click_id)
+      .eq("event_type", "click")
+      .maybeSingle();
+
+    if (existingClick) {
+      console.log(`Idempotent CPC: click_id ${clickData.click_id} already billed (event #${existingClick.id})`);
+      return true; // Already billed — don't charge again
+    }
+  }
 
   // Check daily pacing before debiting
   const { data: campaign } = await supabase
@@ -362,7 +381,8 @@ export async function recordCpcClick(
   }
 
   // Insert campaign event with full attribution data
-  await supabase.from("campaign_events").insert({
+  // The unique index on click_id WHERE event_type='click' catches any race condition
+  const { error: insertErr } = await supabase.from("campaign_events").insert({
     campaign_id: campaignId,
     broker_slug: brokerSlug,
     event_type: "click",
@@ -376,6 +396,28 @@ export async function recordCpcClick(
     device_type: clickData.device_type || null,
     cost_cents: rateCents,
   });
+
+  if (insertErr) {
+    // If unique constraint violation, the click was already recorded (race condition)
+    // Refund the wallet debit we just made
+    if (insertErr.code === "23505") {
+      console.log(`CPC race condition: click_id ${clickData.click_id} duplicate insert, refunding debit`);
+      try {
+        const { refundWallet } = await import("./wallet");
+        await refundWallet(
+          brokerSlug,
+          rateCents,
+          `Refund: duplicate CPC click — campaign #${campaignId}`,
+          { type: "duplicate_click_refund", id: clickData.click_id || String(campaignId) }
+        );
+      } catch (refundErr) {
+        console.error("Failed to refund duplicate CPC debit:", refundErr);
+      }
+      return true;
+    }
+    console.error("Campaign event insert error:", insertErr.message);
+    return false;
+  }
 
   // Update campaign total_spent
   const newSpent = (campaign.total_spent_cents || 0) + rateCents;
