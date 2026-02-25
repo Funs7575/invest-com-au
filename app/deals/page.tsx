@@ -60,48 +60,45 @@ export default async function DealsPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemList) }}
       />
 
-      <div className="py-12">
+      <div className="pt-5 pb-8 md:py-12">
         <div className="container-custom max-w-5xl">
           {/* Breadcrumb */}
-          <nav className="text-sm text-slate-500 mb-6">
+          <nav className="text-xs md:text-sm text-slate-500 mb-2 md:mb-6">
             <Link href="/" className="hover:text-slate-900">
               Home
             </Link>
-            <span className="mx-2">/</span>
-            <span className="text-slate-700">Deals & Promotions</span>
+            <span className="mx-1.5 md:mx-2">/</span>
+            <span className="text-slate-700">Deals</span>
           </nav>
 
-          <h1 className="text-3xl md:text-4xl font-extrabold mb-3">
-            Broker Deals & Promotions
-          </h1>
-          <p className="text-slate-600 mb-2 max-w-2xl">
-            Current verified offers from Australian trading platforms. Every deal is
-            checked against the broker&apos;s website before being listed.
-          </p>
-
-          {/* Compliance */}
-          <div className="flex justify-end mb-6">
+          {/* Header — compact on mobile */}
+          <div className="flex items-start justify-between gap-3 mb-1 md:mb-3">
+            <h1 className="text-2xl md:text-4xl font-extrabold">
+              Deals & Promotions
+            </h1>
             <a
               href="#advertiser-disclosure"
-              className="text-xs text-gray-400 underline hover:text-gray-600 transition-colors"
+              className="text-[0.69rem] text-gray-400 underline hover:text-gray-600 transition-colors shrink-0 mt-1.5"
             >
-              Advertiser Disclosure
+              Disclosure
             </a>
           </div>
+          <p className="text-xs md:text-base text-slate-500 mb-4 md:mb-6 max-w-2xl">
+            Verified offers from Australian trading platforms, updated regularly.
+          </p>
 
           {dealBrokers.length > 0 ? (
             <DealsClient deals={dealBrokers} />
           ) : (
-            <div className="text-center py-16">
-              <div className="text-4xl mb-4">📭</div>
-              <h2 className="text-xl font-bold text-slate-700 mb-2">No Active Deals Right Now</h2>
-              <p className="text-sm text-slate-500 mb-6 max-w-md mx-auto">
-                We regularly update this page with verified broker promotions.
+            <div className="text-center py-10 md:py-16">
+              <div className="text-3xl md:text-4xl mb-3">📭</div>
+              <h2 className="text-lg md:text-xl font-bold text-slate-700 mb-1.5">No Active Deals</h2>
+              <p className="text-xs md:text-sm text-slate-500 mb-4 md:mb-6 max-w-md mx-auto">
                 Check back soon or compare brokers by fees instead.
               </p>
               <Link
                 href="/compare"
-                className="inline-block px-6 py-3 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-800 hover:scale-105 transition-all duration-200"
+                className="inline-block px-5 py-2.5 md:px-6 md:py-3 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 transition-all"
               >
                 Compare Brokers →
               </Link>
@@ -109,18 +106,18 @@ export default async function DealsPage() {
           )}
 
           {/* Affiliate disclosure */}
-          <div id="advertiser-disclosure" className="text-xs text-slate-500 mt-8 text-center">
+          <div id="advertiser-disclosure" className="text-[0.69rem] md:text-xs text-slate-500 mt-6 md:mt-8 text-center">
             <p>{ADVERTISER_DISCLOSURE_SHORT}</p>
           </div>
 
           {/* E-E-A-T footer */}
-          <div className="mt-6 text-xs text-slate-400 text-center">
+          <div className="mt-3 md:mt-6 text-[0.69rem] md:text-xs text-slate-400 text-center">
             <p>
-              Deals verified by{" "}
+              Verified by{" "}
               <a href={REVIEW_AUTHOR.url} className="underline hover:text-slate-900">
                 {REVIEW_AUTHOR.name}
               </a>
-              . We check deal availability against official broker websites.{" "}
+              .{" "}
               <Link href="/how-we-earn" className="underline hover:text-slate-900">
                 How we earn
               </Link>

@@ -29,11 +29,11 @@ export default function DealCard({ broker }: { broker: Broker }) {
     : null;
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5 hover:shadow-md transition-shadow duration-200">
-      {/* Header: broker info */}
-      <div className="flex items-center gap-3 mb-3">
+    <div className="rounded-xl border border-slate-200 bg-white p-3.5 md:p-5 hover:shadow-md transition-shadow duration-200 flex flex-col">
+      {/* Header: broker info + category */}
+      <div className="flex items-center gap-2.5 md:gap-3 mb-2.5 md:mb-3">
         <div
-          className="w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold shrink-0"
+          className="w-9 h-9 md:w-10 md:h-10 rounded-lg flex items-center justify-center text-xs md:text-sm font-bold shrink-0"
           style={{ background: `${broker.color}20`, color: broker.color }}
         >
           {broker.icon || broker.name.charAt(0)}
@@ -48,53 +48,56 @@ export default function DealCard({ broker }: { broker: Broker }) {
             </a>
             {isSponsored(broker) && <SponsorBadge broker={broker} />}
           </div>
-          <div className="text-xs text-amber">
-            {renderStars(broker.rating || 0)}{" "}
-            <span className="text-slate-500">{broker.rating}/5</span>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-amber">
+              {renderStars(broker.rating || 0)}
+            </span>
+            <span className="text-[0.69rem] text-slate-400">{broker.rating}/5</span>
           </div>
         </div>
         {broker.deal_category && (
-          <span className="text-[0.69rem] px-2 py-0.5 bg-slate-100 text-slate-500 rounded-full font-medium uppercase tracking-wide shrink-0">
+          <span className="text-[0.62rem] md:text-[0.69rem] px-1.5 md:px-2 py-0.5 bg-slate-100 text-slate-500 rounded-full font-medium uppercase tracking-wide shrink-0">
             {broker.deal_category}
           </span>
         )}
       </div>
 
-      {/* Deal text — prominent */}
-      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-lg p-3 mb-3">
-        <p className="text-sm font-semibold text-slate-700">{broker.deal_text}</p>
+      {/* Deal highlight — compact amber box */}
+      <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/80 rounded-lg px-3 py-2 md:p-3 mb-2 md:mb-3">
+        <p className="text-[0.8rem] md:text-sm font-semibold text-slate-700 leading-snug">{broker.deal_text}</p>
         {expiryFormatted && (
-          <p className={`text-[0.69rem] mt-1 font-medium ${isUrgent ? "text-red-600" : "text-amber-600"}`}>
+          <p className={`text-[0.62rem] md:text-[0.69rem] mt-0.5 md:mt-1 font-medium ${isUrgent ? "text-red-600" : "text-amber-600"}`}>
             {isUrgent && daysRemaining !== null ? (
-              <>{daysRemaining === 0 ? "Expires today!" : `Only ${daysRemaining} day${daysRemaining === 1 ? "" : "s"} left!`}</>
+              <>{daysRemaining === 0 ? "Expires today!" : `${daysRemaining}d left`}</>
             ) : (
-              <>Expires {expiryFormatted}</>
+              <>Exp. {expiryFormatted}</>
             )}
           </p>
         )}
       </div>
 
-      {/* Deal terms (fine print) */}
-      {broker.deal_terms && (
-        <p className="text-xs text-slate-400 mb-3 leading-relaxed">
-          {broker.deal_terms}
-        </p>
-      )}
-
-      {/* Verified badge */}
-      {verifiedFormatted && (
-        <div className="flex items-center gap-1.5 mb-3">
-          <svg className="w-3.5 h-3.5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-          </svg>
-          <span className="text-[0.69rem] text-slate-500">
-            Verified {verifiedFormatted}
-            {broker.deal_source && <> via {broker.deal_source}</>}
-          </span>
+      {/* Terms + verified — inline on mobile to save vertical space */}
+      {(broker.deal_terms || verifiedFormatted) && (
+        <div className="flex items-start gap-2 mb-2 md:mb-3">
+          {broker.deal_terms && (
+            <p className="text-[0.62rem] md:text-xs text-slate-400 leading-relaxed flex-1 line-clamp-2">
+              {broker.deal_terms}
+            </p>
+          )}
+          {verifiedFormatted && (
+            <span className="flex items-center gap-1 shrink-0">
+              <svg className="w-3 h-3 md:w-3.5 md:h-3.5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              <span className="text-[0.62rem] md:text-[0.69rem] text-slate-500">
+                {verifiedFormatted}
+              </span>
+            </span>
+          )}
         </div>
       )}
 
-      {/* CTA */}
+      {/* CTA — auto pushed to bottom */}
       <a
         href={getAffiliateLink(broker)}
         target="_blank"
@@ -102,11 +105,10 @@ export default function DealCard({ broker }: { broker: Broker }) {
         onClick={() =>
           trackClick(broker.slug, broker.name, "deals-hub", "/deals", "compare")
         }
-        className="block w-full text-center py-3 bg-amber-600 text-white text-sm font-bold rounded-lg hover:bg-amber-700 hover:scale-105 hover:shadow-[0_0_12px_rgba(217,119,6,0.3)] transition-all duration-200 active:scale-[0.98]"
+        className="mt-auto block w-full text-center py-2.5 md:py-3 bg-amber-600 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-amber-700 hover:shadow-[0_0_12px_rgba(217,119,6,0.3)] transition-all duration-200 active:scale-[0.98]"
       >
         Claim Deal →
       </a>
-
     </div>
   );
 }

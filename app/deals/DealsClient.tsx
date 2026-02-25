@@ -45,19 +45,19 @@ export default function DealsClient({ deals }: { deals: Broker[] }) {
 
   return (
     <div>
-      {/* Filter Tabs — only show if there are multiple categories */}
+      {/* Filter Tabs — horizontal scroll on mobile, wrap on desktop */}
       {availableTabs.length > 2 && (
-        <div className="flex md:flex-wrap gap-2 mb-6 overflow-x-auto md:overflow-x-visible scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0" role="tablist" aria-label="Deal category filter">
+        <div className="flex gap-1.5 md:gap-2 mb-4 md:mb-6 overflow-x-auto md:overflow-x-visible md:flex-wrap scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 pb-1" role="tablist" aria-label="Deal category filter">
           {availableTabs.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
               role="tab"
               aria-selected={activeTab === tab}
-              className={`whitespace-nowrap shrink-0 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+              className={`whitespace-nowrap shrink-0 px-3 md:px-4 py-2 md:py-2.5 rounded-full md:rounded-lg text-xs md:text-sm font-semibold transition-colors ${
                 activeTab === tab
-                  ? "bg-blue-700 text-white"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  ? "bg-slate-900 text-white"
+                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
               }`}
             >
               {tab}
@@ -68,23 +68,22 @@ export default function DealsClient({ deals }: { deals: Broker[] }) {
 
       {/* Deals Grid */}
       {filteredDeals.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
           {filteredDeals.map((broker) => (
             <DealCard key={broker.id} broker={broker} />
           ))}
         </div>
       ) : (
-        <div className="text-center py-12">
-          <Icon name="search" size={28} className="text-slate-300 mx-auto mb-3" />
-          <p className="text-sm text-slate-500">
-            No deals in this category right now. Try &quot;All Deals&quot; to see
-            everything available.
+        <div className="text-center py-8 md:py-12">
+          <Icon name="search" size={24} className="text-slate-300 mx-auto mb-2" />
+          <p className="text-xs md:text-sm text-slate-500">
+            No deals in this category. Try &quot;All Deals&quot; instead.
           </p>
         </div>
       )}
 
       {/* Compliance */}
-      <div className="mt-6">
+      <div className="mt-4 md:mt-6">
         <CompactDisclaimerLine />
       </div>
     </div>
