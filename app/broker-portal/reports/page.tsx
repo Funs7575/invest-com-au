@@ -6,14 +6,21 @@ import { downloadCSV } from "@/lib/csv-export";
 import CountUp from "@/components/CountUp";
 import type { CampaignDailyStats, Campaign } from "@/lib/types";
 
+type DateMode = "preset" | "custom";
+
 export default function ReportsPage() {
   const [stats, setStats] = useState<CampaignDailyStats[]>([]);
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState(true);
   const [days, setDays] = useState(30);
+  const [dateMode, setDateMode] = useState<DateMode>("preset");
+  const [customFrom, setCustomFrom] = useState(() => new Date(Date.now() - 30 * 86400000).toISOString().slice(0, 10));
+  const [customTo, setCustomTo] = useState(() => new Date().toISOString().slice(0, 10));
+  const [drillCampaignId, setDrillCampaignId] = useState<number | null>(null);
 
   useEffect(() => {
     const load = async () => {
+      setLoading(true);
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
@@ -26,20 +33,26 @@ export default function ReportsPage() {
 
       if (!account) return;
 
-      const since = new Date(Date.now() - days * 86400000).toISOString().slice(0, 10);
+      const since = dateMode === "custom"
+        ? customFrom
+        : new Date(Date.now() - days * 86400000).toISOString().slice(0, 10);
 
-      const { data: s } = await supabase
+      const until = dateMode === "custom" ? customTo : new Date().toISOString().slice(0, 10);
+
+      const query = supabase
         .from("campaign_daily_stats")
         .select("*")
         .eq("broker_slug", account.broker_slug)
         .gte("stat_date", since)
+        .lte("stat_date", until)
         .order("stat_date", { ascending: true });
 
+      const { data: s } = await query;
       setStats((s || []) as CampaignDailyStats[]);
 
       const { data: c } = await supabase
         .from("campaigns")
-        .select("id, name, status, inventory_type, total_spent_cents")
+        .select("id, name, status, inventory_type, total_spent_cents, placement_id")
         .eq("broker_slug", account.broker_slug)
         .order("created_at", { ascending: false });
 
@@ -47,27 +60,52 @@ export default function ReportsPage() {
       setLoading(false);
     };
     load();
-  }, [days]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [days, dateMode, customFrom, customTo]);
+
+  // Filtered stats based on drill-down
+  const filteredStats = useMemo(() => {
+    if (drillCampaignId === null) return stats;
+    return stats.filter(s => s.campaign_id === drillCampaignId);
+  }, [stats, drillCampaignId]);
 
   // Aggregate stats by date
   const dailyTotals = useMemo(() => {
-    const map = new Map<string, { date: string; clicks: number; impressions: number; spend: number }>();
-    for (const s of stats) {
-      const existing = map.get(s.stat_date) || { date: s.stat_date, clicks: 0, impressions: 0, spend: 0 };
+    const map = new Map<string, { date: string; clicks: number; impressions: number; spend: number; conversions: number }>();
+    for (const s of filteredStats) {
+      const existing = map.get(s.stat_date) || { date: s.stat_date, clicks: 0, impressions: 0, spend: 0, conversions: 0 };
       existing.clicks += s.clicks;
       existing.impressions += s.impressions;
       existing.spend += s.spend_cents;
+      existing.conversions += s.conversions;
       map.set(s.stat_date, existing);
     }
     return Array.from(map.values()).sort((a, b) => a.date.localeCompare(b.date));
-  }, [stats]);
+  }, [filteredStats]);
 
   // Totals
-  const totalClicks = stats.reduce((s, r) => s + r.clicks, 0);
-  const totalImpressions = stats.reduce((s, r) => s + r.impressions, 0);
-  const totalSpend = stats.reduce((s, r) => s + r.spend_cents, 0);
+  const totalClicks = filteredStats.reduce((s, r) => s + r.clicks, 0);
+  const totalImpressions = filteredStats.reduce((s, r) => s + r.impressions, 0);
+  const totalSpend = filteredStats.reduce((s, r) => s + r.spend_cents, 0);
+  const totalConversions = filteredStats.reduce((s, r) => s + r.conversions, 0);
   const ctrNum = totalImpressions > 0 ? (totalClicks / totalImpressions) * 100 : 0;
   const avgCpcNum = totalClicks > 0 ? totalSpend / totalClicks / 100 : 0;
+  const convRate = totalClicks > 0 ? (totalConversions / totalClicks) * 100 : 0;
+
+  // Per-campaign breakdown with drill-down
+  const campaignBreakdown = useMemo(() => {
+    return campaigns.map(c => {
+      const campStats = stats.filter(s => s.campaign_id === c.id);
+      const clicks = campStats.reduce((s, r) => s + r.clicks, 0);
+      const imps = campStats.reduce((s, r) => s + r.impressions, 0);
+      const spend = campStats.reduce((s, r) => s + r.spend_cents, 0);
+      const convs = campStats.reduce((s, r) => s + r.conversions, 0);
+      const ctr = imps > 0 ? (clicks / imps) * 100 : 0;
+      const cpc = clicks > 0 ? spend / clicks / 100 : 0;
+      return { ...c, clicks, impressions: imps, spend, conversions: convs, ctr, cpc };
+    }).filter(c => c.clicks > 0 || c.impressions > 0 || c.spend > 0)
+      .sort((a, b) => b.spend - a.spend);
+  }, [campaigns, stats]);
 
   // SVG bar chart
   const maxClicks = Math.max(...dailyTotals.map((d) => d.clicks), 1);
@@ -75,39 +113,86 @@ export default function ReportsPage() {
   const chartHeight = 160;
   const barWidth = dailyTotals.length > 0 ? Math.max(4, (chartWidth - 40) / dailyTotals.length - 2) : 8;
 
+  const drillCampaign = drillCampaignId !== null ? campaigns.find(c => c.id === drillCampaignId) : null;
+
   if (loading) {
     return <div className="h-8 bg-slate-100 rounded w-48 animate-pulse" />;
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900">Reports</h1>
           <p className="text-sm text-slate-500">Campaign performance analytics</p>
         </div>
-        <div className="flex gap-2">
-          {[7, 30, 90].map((d) => (
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Date mode toggle */}
+          <div className="flex gap-1 bg-slate-100 rounded-lg p-0.5">
             <button
-              key={d}
-              onClick={() => setDays(d)}
-              className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
-                days === d ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+              onClick={() => setDateMode("preset")}
+              className={`px-2.5 py-1 text-[0.69rem] font-semibold rounded-md transition-colors ${
+                dateMode === "preset" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500"
               }`}
             >
-              {d}d
+              Preset
             </button>
-          ))}
+            <button
+              onClick={() => setDateMode("custom")}
+              className={`px-2.5 py-1 text-[0.69rem] font-semibold rounded-md transition-colors ${
+                dateMode === "custom" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500"
+              }`}
+            >
+              Custom
+            </button>
+          </div>
+
+          {dateMode === "preset" ? (
+            <div className="flex gap-1">
+              {[7, 30, 90].map((d) => (
+                <button
+                  key={d}
+                  onClick={() => setDays(d)}
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
+                    days === d ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                  }`}
+                >
+                  {d}d
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <input
+                type="date"
+                value={customFrom}
+                onChange={(e) => setCustomFrom(e.target.value)}
+                className="px-2.5 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400/30"
+              />
+              <span className="text-xs text-slate-400">to</span>
+              <input
+                type="date"
+                value={customTo}
+                onChange={(e) => setCustomTo(e.target.value)}
+                className="px-2.5 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400/30"
+              />
+            </div>
+          )}
+
           <button
             onClick={() => {
-              const headers = ["Date", "Clicks", "Impressions", "Spend ($)"];
+              const headers = ["Date", "Clicks", "Impressions", "Conversions", "Spend ($)", "CTR (%)", "Conv Rate (%)"];
               const rows = dailyTotals.map((d) => [
                 d.date,
                 String(d.clicks),
                 String(d.impressions),
+                String(d.conversions),
                 (d.spend / 100).toFixed(2),
+                d.impressions > 0 ? ((d.clicks / d.impressions) * 100).toFixed(2) : "0",
+                d.clicks > 0 ? ((d.conversions / d.clicks) * 100).toFixed(2) : "0",
               ]);
-              downloadCSV(`report-${days}d.csv`, headers, rows);
+              const label = dateMode === "custom" ? `${customFrom}_${customTo}` : `${days}d`;
+              downloadCSV(`report-${label}.csv`, headers, rows);
             }}
             className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors"
           >
@@ -116,49 +201,55 @@ export default function ReportsPage() {
         </div>
       </div>
 
+      {/* Drill-down indicator */}
+      {drillCampaign && (
+        <div className="bg-slate-900 text-white rounded-xl px-4 py-3 flex items-center justify-between bounce-in-up">
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-slate-400">Drill-down:</span>
+            <span className="text-sm font-bold">{drillCampaign.name}</span>
+            <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+              drillCampaign.inventory_type === "featured" ? "bg-purple-500/20 text-purple-300" : "bg-blue-500/20 text-blue-300"
+            }`}>{drillCampaign.inventory_type}</span>
+          </div>
+          <button
+            onClick={() => setDrillCampaignId(null)}
+            className="text-xs text-slate-400 hover:text-white transition-colors"
+          >
+            Clear filter ×
+          </button>
+        </div>
+      )}
+
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 portal-stagger">
-        <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
-          <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Total Clicks</p>
-          <p className="text-xl font-extrabold text-slate-900 mt-1">
-            <CountUp end={totalClicks} duration={1000} />
-          </p>
-        </div>
-        <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
-          <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Impressions</p>
-          <p className="text-xl font-extrabold text-slate-900 mt-1">
-            <CountUp end={totalImpressions} duration={1000} />
-          </p>
-        </div>
-        <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
-          <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">CTR</p>
-          <p className="text-xl font-extrabold text-slate-900 mt-1">
-            <CountUp end={ctrNum} suffix="%" decimals={2} duration={1000} />
-          </p>
-        </div>
-        <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
-          <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Total Spend</p>
-          <p className="text-xl font-extrabold text-slate-900 mt-1">
-            <CountUp end={totalSpend / 100} prefix="$" decimals={2} duration={1000} />
-          </p>
-        </div>
-        <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
-          <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Avg CPC</p>
-          <p className="text-xl font-extrabold text-slate-900 mt-1">
-            <CountUp end={avgCpcNum} prefix="$" decimals={2} duration={1000} />
-          </p>
-        </div>
+      <div className="grid grid-cols-2 lg:grid-cols-7 gap-3 portal-stagger">
+        {[
+          { label: "Clicks", value: totalClicks },
+          { label: "Impressions", value: totalImpressions },
+          { label: "CTR", value: ctrNum, suffix: "%", decimals: 2 },
+          { label: "Conversions", value: totalConversions },
+          { label: "Conv. Rate", value: convRate, suffix: "%", decimals: 2 },
+          { label: "Total Spend", value: totalSpend / 100, prefix: "$", decimals: 2 },
+          { label: "Avg CPC", value: avgCpcNum, prefix: "$", decimals: 2 },
+        ].map(kpi => (
+          <div key={kpi.label} className="bg-white rounded-xl border border-slate-200 p-3 hover-lift">
+            <p className="text-[0.62rem] text-slate-500 font-medium uppercase tracking-wide">{kpi.label}</p>
+            <p className="text-lg font-extrabold text-slate-900 mt-0.5">
+              <CountUp end={kpi.value} prefix={kpi.prefix} suffix={kpi.suffix} decimals={kpi.decimals} duration={1000} />
+            </p>
+          </div>
+        ))}
       </div>
 
       {/* Click Chart */}
       <div className="bg-white rounded-xl border border-slate-200 p-5">
-        <h2 className="font-bold text-slate-900 mb-4">Daily Clicks</h2>
+        <h2 className="font-bold text-slate-900 mb-4">
+          Daily Clicks {drillCampaign ? `— ${drillCampaign.name}` : ""}
+        </h2>
         {dailyTotals.length === 0 ? (
           <p className="text-sm text-slate-400 py-8 text-center">No data for this period.</p>
         ) : (
           <div className="overflow-x-auto">
             <svg viewBox={`0 0 ${chartWidth} ${chartHeight + 30}`} className="w-full max-w-[700px]">
-              {/* Bars */}
               {dailyTotals.map((d, i) => {
                 const barH = (d.clicks / maxClicks) * chartHeight;
                 const x = 30 + i * (barWidth + 2);
@@ -174,23 +265,15 @@ export default function ReportsPage() {
                       className="chart-bar-animate"
                       style={{ animationDelay: `${i * 0.03}s` }}
                     />
-                    <title>{d.date}: {d.clicks} clicks</title>
-                    {/* Show label every few bars */}
+                    <title>{d.date}: {d.clicks} clicks, {d.conversions} conversions, ${(d.spend / 100).toFixed(2)} spent</title>
                     {(i % Math.ceil(dailyTotals.length / 10) === 0) && (
-                      <text
-                        x={x + barWidth / 2}
-                        y={chartHeight + 16}
-                        textAnchor="middle"
-                        fontSize={9}
-                        fill="#94a3b8"
-                      >
+                      <text x={x + barWidth / 2} y={chartHeight + 16} textAnchor="middle" fontSize={9} fill="#94a3b8">
                         {d.date.slice(5)}
                       </text>
                     )}
                   </g>
                 );
               })}
-              {/* Y-axis labels */}
               <text x={0} y={12} fontSize={10} fill="#94a3b8">{maxClicks}</text>
               <text x={0} y={chartHeight} fontSize={10} fill="#94a3b8">0</text>
             </svg>
@@ -198,13 +281,24 @@ export default function ReportsPage() {
         )}
       </div>
 
-      {/* Per-campaign breakdown */}
+      {/* Per-campaign breakdown with drill-down */}
       <div className="bg-white rounded-xl border border-slate-200">
-        <div className="px-5 py-4 border-b border-slate-100">
-          <h2 className="font-bold text-slate-900">Campaign Breakdown</h2>
+        <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+          <div>
+            <h2 className="font-bold text-slate-900">Campaign Breakdown</h2>
+            <p className="text-xs text-slate-500 mt-0.5">Click a campaign row to drill down into its daily data</p>
+          </div>
+          {drillCampaignId !== null && (
+            <button
+              onClick={() => setDrillCampaignId(null)}
+              className="text-xs text-slate-500 hover:text-slate-700 transition-colors"
+            >
+              Show all
+            </button>
+          )}
         </div>
-        {campaigns.length === 0 ? (
-          <div className="p-8 text-center text-sm text-slate-400">No campaigns.</div>
+        {campaignBreakdown.length === 0 ? (
+          <div className="p-8 text-center text-sm text-slate-400">No campaigns with data.</div>
         ) : (
           <div className="overflow-x-auto portal-table-stagger">
             <table className="w-full text-sm">
@@ -215,37 +309,105 @@ export default function ReportsPage() {
                   <th className="px-5 py-3 text-left">Status</th>
                   <th className="px-5 py-3 text-right">Clicks</th>
                   <th className="px-5 py-3 text-right">Impressions</th>
+                  <th className="px-5 py-3 text-right">CTR</th>
+                  <th className="px-5 py-3 text-right">Conversions</th>
+                  <th className="px-5 py-3 text-right">Conv. Rate</th>
+                  <th className="px-5 py-3 text-right">Avg CPC</th>
                   <th className="px-5 py-3 text-right">Spend</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {campaigns.map((c) => {
-                  const campStats = stats.filter((s) => s.campaign_id === c.id);
-                  const clicks = campStats.reduce((s, r) => s + r.clicks, 0);
-                  const imps = campStats.reduce((s, r) => s + r.impressions, 0);
-                  const spend = campStats.reduce((s, r) => s + r.spend_cents, 0);
-                  return (
-                    <tr key={c.id} className="hover:bg-slate-50">
-                      <td className="px-5 py-3 font-semibold text-slate-900">{c.name}</td>
-                      <td className="px-5 py-3">
-                        <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-                          c.inventory_type === "featured" ? "bg-purple-50 text-purple-700" : "bg-blue-50 text-blue-700"
-                        }`}>
-                          {c.inventory_type}
-                        </span>
-                      </td>
-                      <td className="px-5 py-3 text-xs text-slate-500">{c.status.replace(/_/g, " ")}</td>
-                      <td className="px-5 py-3 text-right">{clicks}</td>
-                      <td className="px-5 py-3 text-right">{imps}</td>
-                      <td className="px-5 py-3 text-right font-semibold">${(spend / 100).toFixed(2)}</td>
-                    </tr>
-                  );
-                })}
+                {campaignBreakdown.map((c) => (
+                  <tr
+                    key={c.id}
+                    onClick={() => setDrillCampaignId(drillCampaignId === c.id ? null : c.id)}
+                    className={`hover:bg-slate-50 cursor-pointer transition-colors ${
+                      drillCampaignId === c.id ? "bg-slate-900/5 ring-1 ring-inset ring-slate-200" : ""
+                    }`}
+                  >
+                    <td className="px-5 py-3 font-semibold text-slate-900">
+                      <span className="flex items-center gap-1.5">
+                        {drillCampaignId === c.id && <span className="w-1.5 h-1.5 rounded-full bg-slate-900" />}
+                        {c.name}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3">
+                      <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                        c.inventory_type === "featured" ? "bg-purple-50 text-purple-700" : "bg-blue-50 text-blue-700"
+                      }`}>
+                        {c.inventory_type}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3 text-xs text-slate-500">{c.status.replace(/_/g, " ")}</td>
+                    <td className="px-5 py-3 text-right">{c.clicks}</td>
+                    <td className="px-5 py-3 text-right">{c.impressions}</td>
+                    <td className="px-5 py-3 text-right text-xs">{c.ctr.toFixed(2)}%</td>
+                    <td className="px-5 py-3 text-right">{c.conversions}</td>
+                    <td className="px-5 py-3 text-right text-xs">{c.clicks > 0 ? ((c.conversions / c.clicks) * 100).toFixed(2) : "0.00"}%</td>
+                    <td className="px-5 py-3 text-right text-xs">${c.cpc.toFixed(2)}</td>
+                    <td className="px-5 py-3 text-right font-semibold">${(c.spend / 100).toFixed(2)}</td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
         )}
       </div>
+
+      {/* Daily detail table for drill-down */}
+      {drillCampaignId !== null && dailyTotals.length > 0 && (
+        <div className="bg-white rounded-xl border border-slate-200">
+          <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+            <h2 className="font-bold text-slate-900">
+              Daily Detail — {drillCampaign?.name}
+            </h2>
+            <button
+              onClick={() => {
+                const headers = ["Date", "Clicks", "Impressions", "Conversions", "Spend ($)"];
+                const rows = dailyTotals.map(d => [
+                  d.date,
+                  String(d.clicks),
+                  String(d.impressions),
+                  String(d.conversions),
+                  (d.spend / 100).toFixed(2),
+                ]);
+                downloadCSV(`campaign-${drillCampaignId}-detail.csv`, headers, rows);
+              }}
+              className="text-xs text-slate-500 hover:text-slate-700 transition-colors"
+            >
+              Export CSV
+            </button>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
+                  <th className="px-5 py-3 text-left">Date</th>
+                  <th className="px-5 py-3 text-right">Clicks</th>
+                  <th className="px-5 py-3 text-right">Impressions</th>
+                  <th className="px-5 py-3 text-right">CTR</th>
+                  <th className="px-5 py-3 text-right">Conversions</th>
+                  <th className="px-5 py-3 text-right">Spend</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {dailyTotals.map(d => (
+                  <tr key={d.date} className="hover:bg-slate-50">
+                    <td className="px-5 py-2.5 text-slate-700 font-mono text-xs">{d.date}</td>
+                    <td className="px-5 py-2.5 text-right">{d.clicks}</td>
+                    <td className="px-5 py-2.5 text-right">{d.impressions}</td>
+                    <td className="px-5 py-2.5 text-right text-xs">
+                      {d.impressions > 0 ? ((d.clicks / d.impressions) * 100).toFixed(2) : "0.00"}%
+                    </td>
+                    <td className="px-5 py-2.5 text-right">{d.conversions}</td>
+                    <td className="px-5 py-2.5 text-right font-semibold">${(d.spend / 100).toFixed(2)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
