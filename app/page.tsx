@@ -165,7 +165,7 @@ export default async function HomePage() {
           <div className="sm:hidden flex items-center justify-center gap-2 opacity-70 overflow-x-auto scrollbar-hide px-2">
             {(brokers as Broker[])?.slice(0, 5).map((broker) => (
               <div key={broker.id} className="flex items-center gap-1 shrink-0">
-                <div className="w-6 h-6 rounded-md flex items-center justify-center text-white text-[0.56rem] font-bold shrink-0" style={{ backgroundColor: broker.color || '#64748b' }}>
+                <div className="w-6 h-6 rounded-md flex items-center justify-center text-white text-[0.62rem] font-bold shrink-0" style={{ backgroundColor: broker.color || '#64748b' }}>
                   {broker.name?.slice(0, 2).toUpperCase()}
                 </div>
                 <span className="text-[0.62rem] font-semibold text-slate-500 whitespace-nowrap">{broker.name}</span>
@@ -191,7 +191,7 @@ export default async function HomePage() {
               </div>
               <Link
                 href="/compare"
-                className="md:hidden text-[0.69rem] font-semibold text-slate-500 hover:text-slate-900 shrink-0 mt-1"
+                className="md:hidden text-[0.69rem] font-semibold text-slate-500 hover:text-slate-900 shrink-0 min-h-[44px] inline-flex items-center px-1"
               >
                 View all →
               </Link>
@@ -224,7 +224,7 @@ export default async function HomePage() {
                     <span className="md:hidden">Verified promotions</span>
                   </p>
                 </div>
-                <Link href="/deals" className="md:hidden text-[0.69rem] font-semibold text-slate-500 hover:text-slate-900 shrink-0 mt-1">
+                <Link href="/deals" className="md:hidden text-[0.69rem] font-semibold text-slate-500 hover:text-slate-900 shrink-0 min-h-[44px] inline-flex items-center px-1">
                   View all →
                 </Link>
                 <Link href="/deals" className="hidden md:flex text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors min-h-[44px] items-center px-2">
@@ -270,7 +270,7 @@ export default async function HomePage() {
                   <span className="md:hidden">Category guides for your situation</span>
                 </p>
               </div>
-              <Link href="/best" className="md:hidden text-[0.69rem] font-semibold text-slate-500 hover:text-slate-900 shrink-0 mt-1">
+              <Link href="/best" className="md:hidden text-[0.69rem] font-semibold text-slate-500 hover:text-slate-900 shrink-0 min-h-[44px] inline-flex items-center px-1">
                 View all →
               </Link>
             </div>
@@ -325,7 +325,7 @@ export default async function HomePage() {
                   <h2 className="text-lg md:text-2xl font-bold">Investing Guides & Articles</h2>
                   <p className="text-[0.69rem] md:text-sm text-slate-500 mt-0.5 md:mt-1">Expert guides for smarter decisions</p>
                 </div>
-                <Link href="/articles" className="md:hidden text-[0.69rem] font-semibold text-slate-500 hover:text-slate-900 shrink-0 mt-1">
+                <Link href="/articles" className="md:hidden text-[0.69rem] font-semibold text-slate-500 hover:text-slate-900 shrink-0 min-h-[44px] inline-flex items-center px-1">
                   View all →
                 </Link>
                 <Link href="/articles" className="hidden md:flex text-sm font-semibold text-slate-700 hover:text-slate-900 transition-colors min-h-[44px] items-center px-2">
@@ -378,7 +378,7 @@ export default async function HomePage() {
                     )}
                     <div className="p-2.5 flex flex-col flex-1">
                       {article.category && (
-                        <span className="inline-block self-start text-[0.56rem] font-bold uppercase tracking-wider text-slate-600 bg-slate-100 border border-slate-200 px-1.5 py-px rounded-full mb-1.5">
+                        <span className="inline-block self-start text-[0.62rem] font-bold uppercase tracking-wider text-slate-600 bg-slate-100 border border-slate-200 px-1.5 py-px rounded-full mb-1.5">
                           {article.category}
                         </span>
                       )}

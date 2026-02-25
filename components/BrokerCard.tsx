@@ -97,19 +97,19 @@ export default function BrokerCard({
       {/* Metrics grid — 4 compact cells */}
       <div className="grid grid-cols-4 gap-1.5 md:gap-2 mb-2 md:mb-3">
         <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
-          <div className="text-[0.56rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">ASX</div>
+          <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">ASX</div>
           <div className="text-xs md:text-sm font-semibold leading-tight">{broker.asx_fee || 'N/A'}</div>
         </div>
         <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
-          <div className="text-[0.56rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">US</div>
+          <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">US</div>
           <div className="text-xs md:text-sm font-semibold leading-tight">{broker.us_fee || 'N/A'}</div>
         </div>
         <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
-          <div className="text-[0.56rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">FX</div>
+          <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">FX</div>
           <div className="text-xs md:text-sm font-semibold leading-tight">{broker.fx_rate != null ? `${broker.fx_rate}%` : 'N/A'}</div>
         </div>
         <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
-          <div className="text-[0.56rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">CHESS</div>
+          <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">CHESS</div>
           <div className={`text-xs md:text-sm font-semibold leading-tight ${broker.chess_sponsored ? 'text-green-600' : 'text-red-500'}`}>
             {broker.chess_sponsored ? '✓' : '✗'}
           </div>
@@ -122,7 +122,7 @@ export default function BrokerCard({
           <Icon name="flame" size={11} className="text-amber-500 shrink-0" />
           <span className="text-[0.62rem] md:text-[0.69rem] text-amber-700 font-semibold leading-tight truncate">{broker.deal_text}</span>
           {broker.deal_expiry && (
-            <span className="text-[0.56rem] md:text-[0.69rem] text-amber-500 shrink-0">
+            <span className="text-[0.62rem] md:text-[0.69rem] text-amber-500 shrink-0">
               exp {new Date(broker.deal_expiry).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })}
             </span>
           )}

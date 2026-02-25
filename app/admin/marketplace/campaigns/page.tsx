@@ -401,11 +401,11 @@ export default function AdminCampaignsPage() {
                         {c.inventory_type}
                       </span>
                     </div>
-                    <div className="text-sm text-slate-500 space-x-3">
+                    <div className="text-sm text-slate-500 flex flex-wrap gap-x-3 gap-y-0.5">
                       <span>Broker: <strong className="text-slate-700">{c.broker_slug}</strong></span>
                       <span>Placement: <strong className="text-slate-700">{c.placement?.name || `#${c.placement_id}`}</strong></span>
                     </div>
-                    <div className="text-sm text-slate-500 mt-1 space-x-3">
+                    <div className="text-sm text-slate-500 mt-1 flex flex-wrap gap-x-3 gap-y-0.5">
                       <span>
                         Rate:{" "}
                         <strong className="text-slate-700">

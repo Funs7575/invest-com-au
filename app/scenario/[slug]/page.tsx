@@ -123,32 +123,32 @@ export default async function ScenarioPage({
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
     />
-    <div className="py-12">
+    <div className="py-5 md:py-12">
       <div className="container-custom max-w-3xl mx-auto">
         {/* Breadcrumb */}
-        <div className="text-sm text-slate-500 mb-6">
+        <div className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
           <Link href="/" className="hover:text-brand">
             Home
           </Link>
-          <span className="mx-2">/</span>
+          <span className="mx-1.5 md:mx-2">/</span>
           <Link href="/scenarios" className="hover:text-brand">
             Investing For
           </Link>
-          <span className="mx-2">/</span>
+          <span className="mx-1.5 md:mx-2">/</span>
           <span className="text-brand">{s.title}</span>
         </div>
 
         {/* Icon + Title */}
-        <div className="flex items-start gap-4 mb-2">
-          {s.icon && <span className="text-4xl shrink-0">{s.icon}</span>}
-          <h1 className="text-3xl md:text-4xl font-extrabold leading-tight text-brand">
+        <div className="flex items-start gap-2.5 md:gap-4 mb-1.5 md:mb-2">
+          {s.icon && <span className="text-2xl md:text-4xl shrink-0">{s.icon}</span>}
+          <h1 className="text-xl md:text-4xl font-extrabold leading-tight text-brand">
             {s.title}
           </h1>
         </div>
 
         {/* Subtitle */}
         {s.hero_title && (
-          <p className="text-lg text-slate-600 mb-8 leading-relaxed">
+          <p className="text-sm md:text-lg text-slate-600 mb-4 md:mb-8 leading-relaxed">
             {s.hero_title}
           </p>
         )}
@@ -170,33 +170,33 @@ export default async function ScenarioPage({
 
         {/* The Problem */}
         {s.problem && (
-          <div id="the-problem" className="bg-red-50 border border-red-200 rounded-xl p-6 mb-6 scroll-mt-24">
-            <h2 className="font-extrabold text-lg mb-2 text-red-800">
+          <div id="the-problem" className="bg-red-50 border border-red-200 rounded-xl p-4 md:p-6 mb-4 md:mb-6 scroll-mt-24">
+            <h2 className="font-extrabold text-base md:text-lg mb-1.5 md:mb-2 text-red-800">
               The Problem
             </h2>
-            <p className="text-slate-700 leading-relaxed">{s.problem}</p>
+            <p className="text-sm md:text-base text-slate-700 leading-relaxed">{s.problem}</p>
           </div>
         )}
 
         {/* The Solution */}
         {s.solution && (
-          <div id="the-solution" className="bg-green-50 border border-green-200 rounded-xl p-6 mb-8 scroll-mt-24">
-            <h2 className="font-extrabold text-lg mb-2 text-green-800">
+          <div id="the-solution" className="bg-green-50 border border-green-200 rounded-xl p-4 md:p-6 mb-5 md:mb-8 scroll-mt-24">
+            <h2 className="font-extrabold text-base md:text-lg mb-1.5 md:mb-2 text-green-800">
               The Solution
             </h2>
-            <p className="text-slate-700 leading-relaxed">{s.solution}</p>
+            <p className="text-sm md:text-base text-slate-700 leading-relaxed">{s.solution}</p>
           </div>
         )}
 
         {/* Key Considerations */}
         {s.considerations && s.considerations.length > 0 && (
           <>
-            <h2 id="key-considerations" className="text-xl font-extrabold mb-3 text-brand scroll-mt-24">
+            <h2 id="key-considerations" className="text-lg md:text-xl font-extrabold mb-2 md:mb-3 text-brand scroll-mt-24">
               Key Considerations
             </h2>
-            <ul className="mb-8 space-y-2">
+            <ul className="mb-5 md:mb-8 space-y-2">
               {s.considerations.map((item: string, i: number) => (
-                <li key={i} className="flex items-start gap-3 text-slate-700">
+                <li key={i} className="flex items-start gap-2.5 md:gap-3 text-sm md:text-base text-slate-700">
                   <span className="text-slate-700 font-bold shrink-0">
                     {i + 1}.
                   </span>
@@ -208,10 +208,10 @@ export default async function ScenarioPage({
         )}
 
         {/* Quiz nudge — placed between considerations and broker list */}
-        <div className="mb-8">
+        <div className="mb-5 md:mb-8">
           <Link
             href="/quiz"
-            className="text-sm text-slate-700 font-semibold hover:underline transition-colors"
+            className="text-xs md:text-sm text-slate-700 font-semibold hover:underline transition-colors min-h-[44px] inline-flex items-center"
           >
             Not sure which is right? Take our 60-second quiz &rarr;
           </Link>
@@ -220,28 +220,28 @@ export default async function ScenarioPage({
         {/* Brokers Worth Comparing */}
         {recBrokers.length > 0 && (
           <>
-            <h2 id="brokers-to-compare" className="text-xl font-extrabold mb-3 text-brand scroll-mt-24">
+            <h2 id="brokers-to-compare" className="text-lg md:text-xl font-extrabold mb-2 md:mb-3 text-brand scroll-mt-24">
               Brokers Worth Comparing
             </h2>
-            <p className="text-xs text-slate-400 mb-3">{ADVERTISER_DISCLOSURE_SHORT}</p>
-            <div className="space-y-3 mb-8">
+            <p className="text-[0.69rem] md:text-xs text-slate-400 mb-2.5 md:mb-3">{ADVERTISER_DISCLOSURE_SHORT}</p>
+            <div className="space-y-2.5 md:space-y-3 mb-5 md:mb-8">
               {recBrokers.map((b) => (
                 <div
                   key={b.slug}
-                  className="flex items-center gap-4 p-4 bg-white border border-slate-200 rounded-xl flex-wrap"
+                  className="flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-white border border-slate-200 rounded-xl flex-wrap"
                 >
                   <div
-                    className="w-12 h-12 rounded-lg flex items-center justify-center text-sm font-bold shrink-0"
+                    className="w-10 h-10 md:w-12 md:h-12 rounded-lg flex items-center justify-center text-xs md:text-sm font-bold shrink-0"
                     style={{ background: `${b.color}20`, color: b.color }}
                   >
                     {b.icon || b.name.charAt(0)}
                   </div>
-                  <div className="flex-1 min-w-[200px]">
-                    <h3 className="font-bold text-brand">{b.name}</h3>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold text-sm md:text-base text-brand">{b.name}</h3>
                     {b.tagline && (
-                      <p className="text-xs text-slate-600">{b.tagline}</p>
+                      <p className="text-[0.69rem] md:text-xs text-slate-600 truncate">{b.tagline}</p>
                     )}
-                    <div className="flex gap-3 mt-1 text-[0.69rem] text-slate-500">
+                    <div className="flex flex-wrap gap-x-2.5 md:gap-x-3 gap-y-0.5 mt-1 text-[0.62rem] md:text-[0.69rem] text-slate-500">
                       {b.asx_fee && <span>ASX: {b.asx_fee}</span>}
                       {b.rating && (
                         <span>
@@ -256,10 +256,10 @@ export default async function ScenarioPage({
                       </span>
                     </div>
                   </div>
-                  <div className="flex gap-2 shrink-0">
+                  <div className="flex gap-2 shrink-0 w-full sm:w-auto">
                     <Link
                       href={`/broker/${b.slug}`}
-                      className="px-3 py-2 text-sm border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+                      className="flex-1 sm:flex-initial text-center px-3 py-2.5 md:py-2 text-xs md:text-sm border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors min-h-[40px] inline-flex items-center justify-center"
                     >
                       Review
                     </Link>
@@ -267,7 +267,7 @@ export default async function ScenarioPage({
                       href={getAffiliateLink(b)}
                       target="_blank"
                       rel={AFFILIATE_REL}
-                      className="px-3 py-2 text-sm bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition-colors"
+                      className="flex-1 sm:flex-initial text-center px-3 py-2.5 md:py-2 text-xs md:text-sm bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition-colors min-h-[40px] inline-flex items-center justify-center"
                     >
                       {b.cta_text || `Visit ${b.name}`}
                     </a>
@@ -285,31 +285,31 @@ export default async function ScenarioPage({
           return (
             <>
               {/* Guide sections */}
-              <div className="space-y-8 mb-8">
+              <div className="space-y-5 md:space-y-8 mb-5 md:mb-8">
                 {guide.sections.map((section, i) => (
                   <section key={i} id={`guide-${i}`} className="scroll-mt-24">
-                    <h2 className="text-xl font-extrabold mb-2 text-brand">{section.heading}</h2>
-                    <p className="text-slate-700 leading-relaxed">{section.body}</p>
+                    <h2 className="text-lg md:text-xl font-extrabold mb-1.5 md:mb-2 text-brand">{section.heading}</h2>
+                    <p className="text-sm md:text-base text-slate-700 leading-relaxed">{section.body}</p>
                   </section>
                 ))}
               </div>
 
               {/* Contextual lead magnet */}
-              <div className="mb-8">
+              <div className="mb-5 md:mb-8">
                 <ContextualLeadMagnet segment={slug === "smsf" ? "smsf-checklist" : slug === "expats" ? "us-shares-guide" : "fee-audit"} />
               </div>
 
               {/* FAQ section */}
               {guide.faqs.length > 0 && (
-                <div id="faqs" className="mb-8 scroll-mt-24">
-                  <h2 className="text-xl font-extrabold mb-4 text-brand">Frequently Asked Questions</h2>
-                  <div className="space-y-3">
+                <div id="faqs" className="mb-5 md:mb-8 scroll-mt-24">
+                  <h2 className="text-lg md:text-xl font-extrabold mb-3 md:mb-4 text-brand">Frequently Asked Questions</h2>
+                  <div className="space-y-2 md:space-y-3">
                     {guide.faqs.map((faq, i) => (
                       <details key={i} className="border border-slate-200 rounded-lg">
-                        <summary className="px-4 py-3 font-semibold text-sm cursor-pointer hover:bg-slate-50 transition-colors">
+                        <summary className="px-3 md:px-4 py-2.5 md:py-3 font-semibold text-xs md:text-sm cursor-pointer hover:bg-slate-50 transition-colors min-h-[44px] flex items-center">
                           {faq.question}
                         </summary>
-                        <p className="px-4 pb-4 text-sm text-slate-600 leading-relaxed">
+                        <p className="px-3 md:px-4 pb-3 md:pb-4 text-xs md:text-sm text-slate-600 leading-relaxed">
                           {faq.answer}
                         </p>
                       </details>
@@ -319,14 +319,14 @@ export default async function ScenarioPage({
               )}
 
               {/* Related links */}
-              <div className="bg-slate-50 rounded-xl p-5 mb-8">
-                <h3 className="text-sm font-bold text-slate-700 mb-3">Related Guides</h3>
-                <div className="flex flex-wrap gap-2">
+              <div className="bg-slate-50 rounded-xl p-3.5 md:p-5 mb-5 md:mb-8">
+                <h3 className="text-xs md:text-sm font-bold text-slate-700 mb-2 md:mb-3">Related Guides</h3>
+                <div className="flex flex-wrap gap-1.5 md:gap-2">
                   {guide.relatedLinks.map((link, i) => (
                     <Link
                       key={i}
                       href={link.href}
-                      className="px-3 py-1.5 bg-white border border-slate-200 rounded-full text-sm text-slate-700 hover:border-slate-700 hover:text-slate-900 transition-colors"
+                      className="px-2.5 md:px-3 py-1.5 md:py-1.5 bg-white border border-slate-200 rounded-full text-xs md:text-sm text-slate-700 hover:border-slate-700 hover:text-slate-900 transition-colors min-h-[36px] inline-flex items-center"
                     >
                       {link.label}
                     </Link>
@@ -338,23 +338,23 @@ export default async function ScenarioPage({
         })()}
 
         {/* Bottom CTA */}
-        <div className="bg-slate-50 border border-slate-200 rounded-xl p-8 text-center">
-          <h2 className="text-lg font-extrabold mb-2 text-brand">
+        <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 md:p-8 text-center">
+          <h2 className="text-base md:text-lg font-extrabold mb-1.5 md:mb-2 text-brand">
             Need help deciding?
           </h2>
-          <p className="text-slate-600 mb-5 text-sm max-w-md mx-auto">
+          <p className="text-slate-600 mb-3.5 md:mb-5 text-xs md:text-sm max-w-md mx-auto">
             Compare all brokers side-by-side or use our 60-second quiz to filter platforms by your criteria.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 md:gap-3">
             <Link
               href="/compare"
-              className="px-6 py-3 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors"
+              className="w-full sm:w-auto px-5 md:px-6 py-3 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors min-h-[44px] inline-flex items-center justify-center"
             >
               Compare All Brokers
             </Link>
             <Link
               href="/quiz"
-              className="px-6 py-3 border border-slate-300 text-brand text-sm font-bold rounded-lg hover:bg-white transition-colors"
+              className="w-full sm:w-auto px-5 md:px-6 py-3 border border-slate-300 text-brand text-sm font-bold rounded-lg hover:bg-white transition-colors min-h-[44px] inline-flex items-center justify-center"
             >
               Take the Quiz
             </Link>

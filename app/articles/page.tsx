@@ -148,7 +148,7 @@ export default async function ArticlesPage({
                   <div className="flex items-center gap-1 md:gap-2 mb-1 md:mb-3">
                     {article.category && (
                       <span
-                        className={`text-[0.56rem] md:text-xs font-semibold px-1.5 md:px-2.5 py-px md:py-0.5 rounded-full ${categoryColor}`}
+                        className={`text-[0.62rem] md:text-xs font-semibold px-1.5 md:px-2.5 py-px md:py-0.5 rounded-full ${categoryColor}`}
                       >
                         {CATEGORY_LABELS[article.category || ""] || article.category}
                       </span>
@@ -163,7 +163,7 @@ export default async function ArticlesPage({
                       {article.evergreen ? "Evergreen" : "News"}
                     </span>
                     {article.read_time && (
-                      <span className="text-[0.56rem] md:text-xs text-slate-400 ml-auto">
+                      <span className="text-[0.62rem] md:text-xs text-slate-400 ml-auto">
                         {article.read_time} min
                       </span>
                     )}

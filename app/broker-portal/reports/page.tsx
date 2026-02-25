@@ -131,7 +131,7 @@ export default function ReportsPage() {
           <div className="flex gap-1 bg-slate-100 rounded-lg p-0.5">
             <button
               onClick={() => setDateMode("preset")}
-              className={`px-2.5 py-1 text-[0.69rem] font-semibold rounded-md transition-colors ${
+              className={`px-3 py-2 min-h-[36px] text-[0.69rem] font-semibold rounded-md transition-colors ${
                 dateMode === "preset" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500"
               }`}
             >
@@ -139,7 +139,7 @@ export default function ReportsPage() {
             </button>
             <button
               onClick={() => setDateMode("custom")}
-              className={`px-2.5 py-1 text-[0.69rem] font-semibold rounded-md transition-colors ${
+              className={`px-3 py-2 min-h-[36px] text-[0.69rem] font-semibold rounded-md transition-colors ${
                 dateMode === "custom" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500"
               }`}
             >
@@ -153,7 +153,7 @@ export default function ReportsPage() {
                 <button
                   key={d}
                   onClick={() => setDays(d)}
-                  className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
+                  className={`px-3 py-2 min-h-[36px] text-xs font-semibold rounded-lg transition-colors ${
                     days === d ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                   }`}
                 >
@@ -167,14 +167,14 @@ export default function ReportsPage() {
                 type="date"
                 value={customFrom}
                 onChange={(e) => setCustomFrom(e.target.value)}
-                className="px-2.5 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400/30"
+                className="px-2.5 py-2 min-h-[40px] text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400/30"
               />
               <span className="text-xs text-slate-400">to</span>
               <input
                 type="date"
                 value={customTo}
                 onChange={(e) => setCustomTo(e.target.value)}
-                className="px-2.5 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400/30"
+                className="px-2.5 py-2 min-h-[40px] text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400/30"
               />
             </div>
           )}
@@ -194,7 +194,7 @@ export default function ReportsPage() {
               const label = dateMode === "custom" ? `${customFrom}_${customTo}` : `${days}d`;
               downloadCSV(`report-${label}.csv`, headers, rows);
             }}
-            className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors"
+            className="px-3 py-2 min-h-[36px] text-xs font-semibold rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors"
           >
             Export CSV
           </button>
@@ -221,7 +221,7 @@ export default function ReportsPage() {
       )}
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-7 gap-3 portal-stagger">
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 sm:gap-3 portal-stagger">
         {[
           { label: "Clicks", value: totalClicks },
           { label: "Impressions", value: totalImpressions },
@@ -300,22 +300,23 @@ export default function ReportsPage() {
         {campaignBreakdown.length === 0 ? (
           <div className="p-8 text-center text-sm text-slate-400">No campaigns with data.</div>
         ) : (
-          <div className="overflow-x-auto portal-table-stagger">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
-                  <th className="px-5 py-3 text-left">Campaign</th>
-                  <th className="px-5 py-3 text-left">Type</th>
-                  <th className="px-5 py-3 text-left">Status</th>
-                  <th className="px-5 py-3 text-right">Clicks</th>
-                  <th className="px-5 py-3 text-right">Impressions</th>
-                  <th className="px-5 py-3 text-right">CTR</th>
-                  <th className="px-5 py-3 text-right">Conversions</th>
-                  <th className="px-5 py-3 text-right">Conv. Rate</th>
-                  <th className="px-5 py-3 text-right">Avg CPC</th>
-                  <th className="px-5 py-3 text-right">Spend</th>
-                </tr>
-              </thead>
+          <div className="relative">
+            <div className="overflow-x-auto portal-table-stagger">
+              <table className="w-full text-sm min-w-[700px]">
+                <thead>
+                  <tr className="bg-slate-50 text-xs text-slate-500 uppercase tracking-wide">
+                    <th className="px-3 md:px-5 py-3 text-left">Campaign</th>
+                    <th className="px-3 md:px-5 py-3 text-left">Type</th>
+                    <th className="px-3 md:px-5 py-3 text-left">Status</th>
+                    <th className="px-3 md:px-5 py-3 text-right">Clicks</th>
+                    <th className="px-3 md:px-5 py-3 text-right">Impr.</th>
+                    <th className="px-3 md:px-5 py-3 text-right">CTR</th>
+                    <th className="px-3 md:px-5 py-3 text-right">Conv.</th>
+                    <th className="px-3 md:px-5 py-3 text-right">Conv. Rate</th>
+                    <th className="px-3 md:px-5 py-3 text-right">Avg CPC</th>
+                    <th className="px-3 md:px-5 py-3 text-right">Spend</th>
+                  </tr>
+                </thead>
               <tbody className="divide-y divide-slate-100">
                 {campaignBreakdown.map((c) => (
                   <tr
@@ -325,31 +326,34 @@ export default function ReportsPage() {
                       drillCampaignId === c.id ? "bg-slate-900/5 ring-1 ring-inset ring-slate-200" : ""
                     }`}
                   >
-                    <td className="px-5 py-3 font-semibold text-slate-900">
+                    <td className="px-3 md:px-5 py-3 font-semibold text-slate-900 whitespace-nowrap">
                       <span className="flex items-center gap-1.5">
                         {drillCampaignId === c.id && <span className="w-1.5 h-1.5 rounded-full bg-slate-900" />}
                         {c.name}
                       </span>
                     </td>
-                    <td className="px-5 py-3">
-                      <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                    <td className="px-3 md:px-5 py-3">
+                      <span className={`text-xs font-bold px-2 py-0.5 rounded-full whitespace-nowrap ${
                         c.inventory_type === "featured" ? "bg-purple-50 text-purple-700" : "bg-blue-50 text-blue-700"
                       }`}>
                         {c.inventory_type}
                       </span>
                     </td>
-                    <td className="px-5 py-3 text-xs text-slate-500">{c.status.replace(/_/g, " ")}</td>
-                    <td className="px-5 py-3 text-right">{c.clicks}</td>
-                    <td className="px-5 py-3 text-right">{c.impressions}</td>
-                    <td className="px-5 py-3 text-right text-xs">{c.ctr.toFixed(2)}%</td>
-                    <td className="px-5 py-3 text-right">{c.conversions}</td>
-                    <td className="px-5 py-3 text-right text-xs">{c.clicks > 0 ? ((c.conversions / c.clicks) * 100).toFixed(2) : "0.00"}%</td>
-                    <td className="px-5 py-3 text-right text-xs">${c.cpc.toFixed(2)}</td>
-                    <td className="px-5 py-3 text-right font-semibold">${(c.spend / 100).toFixed(2)}</td>
+                    <td className="px-3 md:px-5 py-3 text-xs text-slate-500 whitespace-nowrap">{c.status.replace(/_/g, " ")}</td>
+                    <td className="px-3 md:px-5 py-3 text-right">{c.clicks}</td>
+                    <td className="px-3 md:px-5 py-3 text-right">{c.impressions}</td>
+                    <td className="px-3 md:px-5 py-3 text-right text-xs">{c.ctr.toFixed(2)}%</td>
+                    <td className="px-3 md:px-5 py-3 text-right">{c.conversions}</td>
+                    <td className="px-3 md:px-5 py-3 text-right text-xs">{c.clicks > 0 ? ((c.conversions / c.clicks) * 100).toFixed(2) : "0.00"}%</td>
+                    <td className="px-3 md:px-5 py-3 text-right text-xs">${c.cpc.toFixed(2)}</td>
+                    <td className="px-3 md:px-5 py-3 text-right font-semibold">${(c.spend / 100).toFixed(2)}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
+            </div>
+            {/* Scroll hint — fades right edge on mobile */}
+            <div className="pointer-events-none absolute inset-y-0 right-0 w-6 bg-gradient-to-l from-white to-transparent lg:hidden" />
           </div>
         )}
       </div>
