@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useSubscription } from "@/lib/hooks/useSubscription";
@@ -136,6 +136,7 @@ const faqs = [
 export default function ProPageClient() {
   const [plan, setPlan] = useState<"monthly" | "yearly">("yearly");
   const [loading, setLoading] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
   const { user, isPro, loading: authLoading } = useSubscription();
   const router = useRouter();
@@ -154,6 +155,7 @@ export default function ProPageClient() {
     }
 
     setLoading(true);
+    setCheckoutError(null);
     try {
       const res = await fetch("/api/stripe/create-checkout", {
         method: "POST",
@@ -165,11 +167,11 @@ export default function ProPageClient() {
       if (data.url) {
         window.location.href = data.url;
       } else {
-        alert(data.error || "Something went wrong. Please try again.");
+        setCheckoutError(data.error || "Something went wrong. Please try again.");
         setLoading(false);
       }
     } catch {
-      alert("Something went wrong. Please try again.");
+      setCheckoutError("Something went wrong. Please try again.");
       setLoading(false);
     }
   };
@@ -264,6 +266,9 @@ export default function ProPageClient() {
                 ? "Subscribe Now"
                 : "Sign In & Subscribe"}
             </button>
+            {checkoutError && (
+              <p className="mt-2 text-xs text-red-500 text-center">{checkoutError}</p>
+            )}
             <ul className="mt-4 md:mt-6 space-y-2 md:space-y-3">
               {features.map((f) => (
                 <li key={f.name} className="flex items-start gap-1.5 md:gap-2">

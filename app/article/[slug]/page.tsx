@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import Image from "next/image";
 import type { Article, Broker, TeamMember } from "@/lib/types";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -93,59 +94,50 @@ export default async function ArticlePage({
   const articleReviewer = (a as any).reviewer as TeamMember | null;
   const isEnhanced = ENHANCED_SLUGS.includes(slug);
 
-  // Fetch related brokers
-  let relatedBrokers: Broker[] = [];
-  if (a.related_brokers && a.related_brokers.length > 0) {
-    const { data: relatedBrokerData } = await supabase
-      .from("brokers")
-      .select("*")
-      .eq("status", "active")
-      .in("slug", a.related_brokers);
-    relatedBrokers = (relatedBrokerData as Broker[]) || [];
-  }
+  // Parallelize independent queries with Promise.all
+  const relatedBrokersPromise = (a.related_brokers && a.related_brokers.length > 0)
+    ? supabase.from("brokers").select("*").eq("status", "active").in("slug", a.related_brokers)
+    : Promise.resolve({ data: null });
 
-  // For enhanced articles: also fetch all brokers with FX data
-  let allFxBrokers: Broker[] = [];
+  const fxBrokersPromise = isEnhanced
+    ? supabase.from("brokers").select("*").eq("status", "active").not("fx_rate", "is", null).order("fx_rate", { ascending: true })
+    : Promise.resolve({ data: null });
+
+  const allActiveBrokersPromise = supabase
+    .from("brokers")
+    .select("*")
+    .eq("status", "active")
+    .order("rating", { ascending: false })
+    .limit(50);
+
+  const relatedArticlesPromise = a.category
+    ? supabase.from("articles").select("slug, title, category, read_time, id").eq("category", a.category).neq("slug", slug).limit(3)
+    : Promise.resolve({ data: null });
+
+  const [relatedBrokersRes, fxBrokersRes, allActiveBrokersRes, relatedArticlesRes] = await Promise.all([
+    relatedBrokersPromise,
+    fxBrokersPromise,
+    allActiveBrokersPromise,
+    relatedArticlesPromise,
+  ]);
+
+  let relatedBrokers = (relatedBrokersRes.data as Broker[]) || [];
+  const allFxBrokers = (fxBrokersRes.data as Broker[]) || [];
+  const allBrokersForWidget = (allActiveBrokersRes.data as Broker[]) || [];
+  const relatedArticles = (relatedArticlesRes.data as Article[]) || [];
+
   let topPick: Broker | null = null;
   if (isEnhanced) {
-    const { data: fxData } = await supabase
-      .from("brokers")
-      .select("*")
-      .eq("status", "active")
-      .not("fx_rate", "is", null)
-      .order("fx_rate", { ascending: true });
-    allFxBrokers = (fxData as Broker[]) || [];
     topPick =
       relatedBrokers.sort((x, y) => (y.rating ?? 0) - (x.rating ?? 0))[0] ||
       allFxBrokers[0] ||
       null;
   }
 
-  // Fetch all active brokers for sponsored sidebar widget (used to look up campaign winners)
-  const { data: allActiveBrokers } = await supabase
-    .from("brokers")
-    .select("*")
-    .eq("status", "active")
-    .order("rating", { ascending: false })
-    .limit(50);
-  const allBrokersForWidget = (allActiveBrokers as Broker[]) || [];
-
   // Determine sidebar top pick for non-enhanced articles
   const sidebarTopPick = !isEnhanced
     ? (relatedBrokers.sort((x, y) => (y.rating ?? 0) - (x.rating ?? 0))[0] || allBrokersForWidget[0] || null)
     : null;
-
-  // Fetch related articles
-  let relatedArticles: Article[] = [];
-  if (a.category) {
-    const { data: related } = await supabase
-      .from("articles")
-      .select("*")
-      .eq("category", a.category)
-      .neq("slug", slug)
-      .limit(3);
-    relatedArticles = (related as Article[]) || [];
-  }
 
   const categoryColor =
     CATEGORY_COLORS[a.category || ""] || "bg-slate-100 text-slate-700";
@@ -287,11 +279,14 @@ export default async function ArticlePage({
 
             {/* Cover Image */}
             {a.cover_image_url && (
-              <div className="mt-4 mb-2 rounded-xl overflow-hidden aspect-[2/1] md:aspect-[5/2] bg-slate-100">
-                <img
+              <div className="mt-4 mb-2 rounded-xl overflow-hidden aspect-[2/1] md:aspect-[5/2] bg-slate-100 relative">
+                <Image
                   src={a.cover_image_url}
                   alt={a.title}
-                  className="w-full h-full object-cover"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 800px"
+                  className="object-cover"
+                  priority
                 />
               </div>
             )}

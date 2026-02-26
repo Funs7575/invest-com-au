@@ -3,6 +3,8 @@ import Link from "next/link";
 import type { Scenario } from "@/lib/types";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
 
+export const revalidate = 3600;
+
 export const metadata = {
   title: "Investing Scenarios",
   description: "Find the best broker for your specific situation: SMSF, kids, expats, day trading, and more.",

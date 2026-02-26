@@ -46,19 +46,14 @@ export const revalidate = 3600; // ISR: revalidate every hour
 export default async function HomePage() {
   const supabase = await createClient();
 
-  const [{ data: brokers }, { data: dealBrokers }, { data: articles }] = await Promise.all([
+  const BROKER_LISTING_COLUMNS = "id, name, slug, color, icon, rating, asx_fee, asx_fee_value, us_fee, us_fee_value, fx_rate, chess_sponsored, smsf_support, is_crypto, deal, deal_text, deal_expiry, deal_terms, deal_verified_date, deal_category, editors_pick, tagline, cta_text, affiliate_url, sponsorship_tier, benefit_cta, updated_at, fee_last_checked, status";
+
+  const [{ data: brokers }, { data: articles }] = await Promise.all([
     supabase
       .from("brokers")
-      .select("*")
+      .select(BROKER_LISTING_COLUMNS)
       .eq("status", "active")
       .order("rating", { ascending: false }),
-    supabase
-      .from("brokers")
-      .select("*")
-      .eq("status", "active")
-      .eq("deal", true)
-      .order("rating", { ascending: false })
-      .limit(3),
     supabase
       .from("articles")
       .select("id, title, slug, excerpt, category, read_time, tags, cover_image_url")
@@ -66,6 +61,8 @@ export default async function HomePage() {
       .order("created_at", { ascending: false })
       .limit(6),
   ]);
+
+  const dealBrokers = ((brokers as Broker[]) || []).filter((b) => b.deal).slice(0, 3);
 
   const brokerCount = brokers?.length || 0;
 

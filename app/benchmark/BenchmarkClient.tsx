@@ -63,13 +63,14 @@ function computeBenchmarks(brokers: Broker[]): BrokerBenchmark[] {
       features: featureRanks[i],
       costStability: stabilityRanks[i],
     };
+    const divisor = n > 1 ? n - 1 : 1;
     const percentiles: Record<BenchmarkDimension, number> = {
-      asxFees: Math.round(((n - asxRanks[i]) / (n - 1)) * 100),
-      usFees: Math.round(((n - usRanks[i]) / (n - 1)) * 100),
-      fxRate: Math.round(((n - fxRanks[i]) / (n - 1)) * 100),
-      platformRating: Math.round(((n - ratingRanks[i]) / (n - 1)) * 100),
-      features: Math.round(((n - featureRanks[i]) / (n - 1)) * 100),
-      costStability: Math.round(((n - stabilityRanks[i]) / (n - 1)) * 100),
+      asxFees: Math.round(((n - asxRanks[i]) / divisor) * 100),
+      usFees: Math.round(((n - usRanks[i]) / divisor) * 100),
+      fxRate: Math.round(((n - fxRanks[i]) / divisor) * 100),
+      platformRating: Math.round(((n - ratingRanks[i]) / divisor) * 100),
+      features: Math.round(((n - featureRanks[i]) / divisor) * 100),
+      costStability: Math.round(((n - stabilityRanks[i]) / divisor) * 100),
     };
     const overallPercentile = Math.round(
       Object.values(percentiles).reduce((s, v) => s + v, 0) / 6

@@ -239,9 +239,18 @@ export default function ExitIntentPopup() {
                   {status === "loading" ? "Sending..." : "Get Free Fee Comparison PDF →"}
                 </button>
                 {status === "error" && (
-                  <p className="text-xs text-red-500 text-center">
-                    Something went wrong. Please try again.
-                  </p>
+                  <div className="text-center">
+                    <p className="text-xs text-red-500 mb-1">
+                      Something went wrong.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setStatus("idle")}
+                      className="text-xs text-slate-600 underline hover:text-slate-900"
+                    >
+                      Try again
+                    </button>
+                  </div>
                 )}
               </form>
             )}

@@ -3,6 +3,8 @@ import type { Broker, BrokerTransferGuide } from "@/lib/types";
 import SwitchClient from "./SwitchClient";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 
+export const revalidate = 3600;
+
 export const metadata = {
   title: "Broker Switch Planner — Personalised Migration Checklist",
   description:
@@ -29,7 +31,7 @@ export default async function SwitchPage() {
   const [brokersRes, guidesRes] = await Promise.all([
     supabase
       .from("brokers")
-      .select("*")
+      .select("id, name, slug, color, icon, rating, asx_fee, asx_fee_value, cta_text, affiliate_url, sponsorship_tier, benefit_cta, status")
       .eq("status", "active")
       .order("name"),
     supabase.from("broker_transfer_guides").select("*"),

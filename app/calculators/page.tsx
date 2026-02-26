@@ -4,6 +4,8 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import CalculatorsClient from "./CalculatorsClient";
 
+export const revalidate = 1800;
+
 /* ──────────────────────────────────────────────
    Dynamic metadata based on searchParams
    ────────────────────────────────────────────── */
@@ -67,7 +69,7 @@ export default async function CalculatorsPage() {
 
   const { data: brokers } = await supabase
     .from("brokers")
-    .select("*")
+    .select("id, name, slug, color, icon, rating, asx_fee, asx_fee_value, us_fee, us_fee_value, fx_rate, chess_sponsored, smsf_support, is_crypto, cta_text, affiliate_url, sponsorship_tier, benefit_cta, status")
     .eq("status", "active")
     .order("name");
 

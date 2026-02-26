@@ -10,6 +10,8 @@ import { getScenarioContent } from "@/lib/scenario-content";
 import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
 import OnThisPage from "@/components/OnThisPage";
 
+export const revalidate = 3600;
+
 export async function generateMetadata({
   params,
 }: {

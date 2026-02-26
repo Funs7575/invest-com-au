@@ -35,7 +35,7 @@ export default async function DealsPage() {
   const supabase = await createClient();
   const { data: allBrokers } = await supabase
     .from("brokers")
-    .select("*")
+    .select("id, name, slug, color, icon, rating, deal, deal_text, deal_expiry, deal_terms, deal_verified_date, deal_category, cta_text, affiliate_url, sponsorship_tier, benefit_cta, status")
     .eq("status", "active")
     .eq("deal", true)
     .order("rating", { ascending: false });

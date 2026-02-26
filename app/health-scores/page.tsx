@@ -3,6 +3,8 @@ import type { Broker, BrokerHealthScore } from "@/lib/types";
 import HealthScoresClient from "./HealthScoresClient";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 
+export const revalidate = 3600;
+
 export const metadata = {
   title: "Broker Health & Risk Scores — Safety Ratings for Australian Brokers",
   description:
@@ -27,7 +29,7 @@ export default async function HealthScoresPage() {
   const supabase = await createClient();
 
   const [brokersRes, scoresRes] = await Promise.all([
-    supabase.from("brokers").select("*").eq("status", "active").eq("is_crypto", false).order("name"),
+    supabase.from("brokers").select("id, name, slug, color, icon, rating, status").eq("status", "active").eq("is_crypto", false).order("name"),
     supabase.from("broker_health_scores").select("*"),
   ]);
 

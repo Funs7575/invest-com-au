@@ -80,7 +80,7 @@ export default async function ComparePage() {
 
   const { data: brokers } = await supabase
     .from('brokers')
-    .select('*')
+    .select("id, name, slug, color, icon, rating, asx_fee, asx_fee_value, us_fee, us_fee_value, fx_rate, chess_sponsored, smsf_support, is_crypto, deal, deal_text, deal_expiry, editors_pick, tagline, cta_text, affiliate_url, sponsorship_tier, benefit_cta, updated_at, fee_last_checked, status")
     .eq('status', 'active')
     .order('rating', { ascending: false });
 

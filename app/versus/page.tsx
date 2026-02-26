@@ -3,6 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
 import VersusClient from "./VersusClient";
 
+export const revalidate = 1800;
+
 export const metadata = {
   title: "Broker vs Broker",
   description:
@@ -21,7 +23,7 @@ export default async function VersusPage() {
 
   const { data: brokers } = await supabase
     .from("brokers")
-    .select("*")
+    .select("id, name, slug, color, icon, rating, asx_fee, asx_fee_value, us_fee, us_fee_value, fx_rate, chess_sponsored, smsf_support, is_crypto, inactivity_fee, pros, cons, cta_text, affiliate_url, sponsorship_tier, benefit_cta, status")
     .eq("status", "active")
     .order("name");
 

@@ -36,6 +36,7 @@ export default function AccountClient() {
 
   const { user, subscription, isPro, loading, refresh } = useSubscription();
   const [portalLoading, setPortalLoading] = useState(false);
+  const [portalError, setPortalError] = useState<string | null>(null);
   const [signOutLoading, setSignOutLoading] = useState(false);
   const [showSuccessBanner, setShowSuccessBanner] = useState(checkoutSuccess);
   const [prefs, setPrefs] = useState({
@@ -127,17 +128,18 @@ export default function AccountClient() {
 
   const handleManageSubscription = async () => {
     setPortalLoading(true);
+    setPortalError(null);
     try {
       const res = await fetch("/api/stripe/create-portal", { method: "POST" });
       const data = await res.json();
       if (data.url) {
         window.location.href = data.url;
       } else {
-        alert(data.error || "Failed to open billing portal.");
+        setPortalError(data.error || "Failed to open billing portal.");
         setPortalLoading(false);
       }
     } catch {
-      alert("Something went wrong. Please try again.");
+      setPortalError("Something went wrong. Please try again.");
       setPortalLoading(false);
     }
   };
@@ -259,6 +261,9 @@ export default function AccountClient() {
             >
               {portalLoading ? "Opening..." : "Manage Subscription"}
             </button>
+            {portalError && (
+              <p className="mt-2 text-xs text-red-500">{portalError}</p>
+            )}
           </div>
         ) : (
           <div className="bg-gradient-to-br from-slate-50 to-amber-50 border border-slate-200 rounded-xl p-6 mb-4 text-center">

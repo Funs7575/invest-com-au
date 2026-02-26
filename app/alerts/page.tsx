@@ -3,6 +3,8 @@ import type { RegulatoryAlert } from "@/lib/types";
 import AlertsClient from "./AlertsClient";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 
+export const revalidate = 3600;
+
 export const metadata = {
   title: "Regulatory & Tax Change Alerts — Australian Investing Updates",
   description:

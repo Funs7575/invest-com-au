@@ -11,6 +11,8 @@ import {
   SITE_NAME,
 } from "@/lib/seo";
 
+export const revalidate = 3600;
+
 export async function generateMetadata({
   params,
 }: {

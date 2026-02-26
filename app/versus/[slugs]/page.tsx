@@ -6,6 +6,8 @@ import type { Metadata } from "next";
 import VersusClient from "../VersusClient";
 import { SITE_URL } from "@/lib/seo";
 
+export const revalidate = 1800;
+
 /**
  * SEO-friendly versus pages at /versus/stake-vs-commsec
  * Server-rendered with full metadata, JSON-LD, and sitemap entries.
