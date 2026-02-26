@@ -7,34 +7,6 @@
     {
       "path": "/api/cron/expire-deals",
       "schedule": "0 5 * * *"
-    },
-    {
-      "path": "/api/cron/check-affiliate-links",
-      "schedule": "0 7 * * *"
-    },
-    {
-      "path": "/api/cron/marketplace-stats",
-      "schedule": "0 1 * * *"
-    },
-    {
-      "path": "/api/cron/low-balance-alerts",
-      "schedule": "0 2 * * *"
-    },
-    {
-      "path": "/api/cron/weekly-newsletter",
-      "schedule": "0 8 * * 1"
-    },
-    {
-      "path": "/api/cron/retry-webhooks",
-      "schedule": "*/5 * * * *"
-    },
-    {
-      "path": "/api/cron/auto-publish",
-      "schedule": "0 4 * * *"
-    },
-    {
-      "path": "/api/cron/content-staleness",
-      "schedule": "0 3 1 * *"
     }
   ]
 }
