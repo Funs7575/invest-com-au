@@ -172,7 +172,7 @@ export default function BrokerComparisonTable({
                     href={getAffiliateLink(b)}
                     target="_blank"
                     rel={AFFILIATE_REL}
-                    className="inline-block px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800 hover:scale-105 transition-all"
+                    className="inline-block px-4 py-2 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 hover:scale-105 transition-all"
                   >
                     Go to Site &rarr;
                   </a>
@@ -241,7 +241,7 @@ export default function BrokerComparisonTable({
               href={getAffiliateLink(b)}
               target="_blank"
               rel={AFFILIATE_REL}
-              className="block w-full text-center px-4 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors"
+              className="block w-full text-center px-4 py-2.5 bg-amber-600 text-white text-sm font-bold rounded-lg hover:bg-amber-700 transition-colors"
             >
               Go to Site &rarr;
             </a>

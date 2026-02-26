@@ -190,7 +190,7 @@ export default function EmbeddedFxCalc({ brokers }: { brokers: Broker[] }) {
                 "calculator"
               )
             }
-            className="block w-full text-center px-6 py-3 bg-slate-900 text-white font-bold rounded-lg hover:bg-slate-800 hover:scale-[1.02] transition-all"
+            className="block w-full text-center px-6 py-3 bg-amber-600 text-white font-bold rounded-lg hover:bg-amber-700 hover:scale-[1.02] transition-all"
           >
             Open {cheapest.name} Account — {formatPercent(cheapest.fx_rate ?? 0)}{" "}
             FX &rarr;

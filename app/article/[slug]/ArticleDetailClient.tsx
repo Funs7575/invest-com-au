@@ -47,7 +47,7 @@ export default function ArticleDetailClient({
             broker.layer
           )
         }
-        className="shrink-0 px-4 py-2.5 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800 transition-colors"
+        className="shrink-0 px-4 py-2.5 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors"
       >
         {getBenefitCta(broker, "review")}
       </a>

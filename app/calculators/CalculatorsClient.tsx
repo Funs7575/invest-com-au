@@ -396,7 +396,7 @@ function TradeCostCalculator({ brokers, searchParams }: { brokers: Broker[]; sea
                       rel={AFFILIATE_REL}
                       onClick={() => trackClick(r.broker.slug, r.broker.name, "calculator-trade-cost", "/calculators", "cta")}
                       className={`px-2.5 py-1 text-[0.69rem] font-bold rounded-md transition-all whitespace-nowrap active:scale-[0.97] ${
-                        isCheapest ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-700"
+                        isCheapest ? "bg-amber-600 text-white" : "bg-slate-100 text-slate-700"
                       }`}
                     >
                       {isCheapest ? "Visit" : "Try →"}
@@ -461,8 +461,8 @@ function TradeCostCalculator({ brokers, searchParams }: { brokers: Broker[]; sea
                           onClick={() => trackClick(r.broker.slug, r.broker.name, "calculator-trade-cost", "/calculators", "cta")}
                           className={`inline-block px-3 py-1.5 text-xs font-bold rounded-lg transition-all duration-200 whitespace-nowrap active:scale-[0.97] ${
                             isCheapest
-                              ? "bg-slate-900 text-white hover:bg-slate-800"
-                              : "bg-slate-100 text-slate-700 hover:bg-slate-900 hover:text-white"
+                              ? "bg-amber-600 text-white hover:bg-amber-700"
+                              : "bg-slate-100 text-slate-700 hover:bg-amber-600 hover:text-white"
                           }`}
                         >
                           {isCheapest ? getBenefitCta(r.broker, "calculator") : "Try →"}
@@ -736,7 +736,7 @@ function SwitchingCostCalculator({ brokers, searchParams }: { brokers: Broker[];
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => trackClick(cheaperBroker.slug, cheaperBroker.name, "calculator-switching", "/calculators", "cta")}
-                    className="w-full md:w-auto text-center px-5 py-2.5 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-800 transition-colors text-sm whitespace-nowrap"
+                    className="w-full md:w-auto text-center px-5 py-2.5 bg-amber-600 text-white font-semibold rounded-lg hover:bg-amber-700 transition-colors text-sm whitespace-nowrap"
                   >
                     {getBenefitCta(cheaperBroker, "calculator")}
                   </a>
@@ -879,8 +879,8 @@ function FxFeeCalculator({ brokers, searchParams }: { brokers: Broker[]; searchP
                   onClick={() => trackClick(broker.slug, broker.name, "calculator-fx", "/calculators", "cta")}
                   className={`inline-block px-2.5 py-1 text-[0.69rem] font-bold rounded-md transition-all duration-200 whitespace-nowrap active:scale-[0.97] ${
                     isCheapest
-                      ? "bg-slate-900 text-white hover:bg-slate-800"
-                      : "bg-slate-100 text-slate-600 hover:bg-slate-900 hover:text-white"
+                      ? "bg-amber-600 text-white hover:bg-amber-700"
+                      : "bg-slate-100 text-slate-600 hover:bg-amber-600 hover:text-white"
                   }`}
                 >
                   {isCheapest ? "Try Free →" : "Try →"}
@@ -905,7 +905,7 @@ function FxFeeCalculator({ brokers, searchParams }: { brokers: Broker[]; searchP
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => trackClick(fxBrokers[0].broker.slug, fxBrokers[0].broker.name, "calculator-fx", "/calculators", "cta")}
-            className="w-full md:w-auto text-center px-5 py-2.5 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-800 transition-colors text-sm whitespace-nowrap"
+            className="w-full md:w-auto text-center px-5 py-2.5 bg-amber-600 text-white font-semibold rounded-lg hover:bg-amber-700 transition-colors text-sm whitespace-nowrap"
           >
             {getBenefitCta(fxBrokers[0].broker, "calculator")}
           </a>
@@ -1172,7 +1172,7 @@ function ChessLookup({ brokers, searchParams }: { brokers: Broker[]; searchParam
                           target="_blank"
                           rel={AFFILIATE_REL}
                           onClick={() => trackClick(b.slug, b.name, "calculator-chess", "/calculators", "cta")}
-                          className="inline-block px-2.5 py-1 text-[0.69rem] font-bold rounded-md bg-slate-100 text-slate-600 hover:bg-slate-900 hover:text-white transition-all duration-200 whitespace-nowrap active:scale-[0.97]"
+                          className="inline-block px-2.5 py-1 text-[0.69rem] font-bold rounded-md bg-slate-100 text-slate-600 hover:bg-amber-600 hover:text-white transition-all duration-200 whitespace-nowrap active:scale-[0.97]"
                         >
                           Try →
                         </a>

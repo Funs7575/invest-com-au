@@ -507,7 +507,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                       target="_blank"
                       rel={AFFILIATE_REL}
                       onClick={() => trackClick(broker.slug, broker.name, 'compare-table', '/compare', 'compare')}
-                      className="inline-block px-4 py-2 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 transition-all duration-200 group-hover:scale-105 group-hover:shadow-lg"
+                      className="inline-block px-4 py-2 bg-amber-600 text-white text-sm font-semibold rounded-lg hover:bg-amber-700 transition-all duration-200 group-hover:scale-105 group-hover:shadow-lg"
                     >
                       {getBenefitCta(broker, 'compare')}
                     </a>

@@ -744,7 +744,7 @@ export default function BrokerReviewClient({
             target="_blank"
             rel={AFFILIATE_REL}
             onClick={() => trackClick(b.slug, b.name, 'review-bottom', `/broker/${b.slug}`, 'review')}
-            className="inline-block px-8 py-3.5 bg-slate-900 text-white font-bold rounded-lg hover:bg-slate-800 hover:shadow-lg transition-all active:scale-[0.98] text-lg"
+            className="inline-block px-8 py-3.5 bg-amber-600 text-white font-bold rounded-lg hover:bg-amber-700 hover:shadow-lg transition-all active:scale-[0.98] text-lg"
           >
             {getBenefitCta(b, 'review')}
           </a>
