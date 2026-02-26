@@ -108,7 +108,7 @@ export default function CampaignsPage() {
 
   const activeCount = campaigns.filter((c) => c.status === "active").length;
   const totalSpent = campaigns.reduce((s, c) => s + c.total_spent_cents, 0);
-  const totalClicks = campaigns.reduce((s, c) => s + ((c as Record<string, unknown>).total_clicks as number || 0), 0);
+  const totalClicks = campaigns.reduce((s, c) => s + ((c as unknown as Record<string, number>).total_clicks || 0), 0);
   const avgCpc = totalClicks > 0 ? totalSpent / totalClicks / 100 : 0;
 
   const STATUS_DOTS: Record<string, string> = {
