@@ -336,7 +336,7 @@ export default function BrokerDashboard() {
                       {c.status.replace(/_/g, " ")}
                     </span>
                   </div>
-                  {c.total_budget_cents > 0 && (
+                  {(c.total_budget_cents ?? 0) > 0 && (
                     <div className="mt-2 ml-4">
                       <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
                         <div
