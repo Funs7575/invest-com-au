@@ -219,6 +219,25 @@ const icons: Record<string, string[]> = {
     "M16 12h.01",
     "M2 10h20",
   ],
+  "arrow-up": [
+    "M12 19V5",
+    "M5 12l7-7 7 7",
+  ],
+  "arrow-down": [
+    "M12 5v14",
+    "M19 12l-7 7-7-7",
+  ],
+  eye: [
+    "M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z",
+    "circle:12,12,3",
+  ],
+  "mouse-pointer-click": [
+    "M9 9l5 12 1.8-5.2L21 14l-5-12-1.8 5.2z",
+    "M7.2 2.2L8 5.1",
+    "M5.1 8l-2.9-.8",
+    "M14 4.1L12 6",
+    "M6 12l-1.9 2",
+  ],
 };
 
 export default function Icon({ name, size = 24, className = "" }: IconProps) {

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
+import CountUp from "@/components/CountUp";
 import Icon from "@/components/Icon";
 import type { Campaign } from "@/lib/types";
 
@@ -105,6 +106,22 @@ export default function CampaignsPage() {
     ? campaigns
     : campaigns.filter((c) => c.status === filter);
 
+  const activeCount = campaigns.filter((c) => c.status === "active").length;
+  const totalSpent = campaigns.reduce((s, c) => s + c.total_spent_cents, 0);
+  const totalClicks = campaigns.reduce((s, c) => s + (c.total_clicks || 0), 0);
+  const avgCpc = totalClicks > 0 ? totalSpent / totalClicks / 100 : 0;
+
+  const STATUS_DOTS: Record<string, string> = {
+    active: "bg-green-500",
+    approved: "bg-blue-500",
+    pending_review: "bg-amber-500",
+    paused: "bg-slate-400",
+    budget_exhausted: "bg-red-500",
+    completed: "bg-slate-300",
+    rejected: "bg-red-400",
+    cancelled: "bg-slate-300",
+  };
+
   if (loading) {
     return <div className="h-8 bg-slate-100 rounded w-48 animate-pulse" />;
   }
@@ -122,6 +139,43 @@ export default function CampaignsPage() {
         >
           + New Campaign
         </Link>
+      </div>
+
+      {/* Summary KPIs */}
+      <div className="grid grid-cols-3 gap-3 portal-stagger">
+        <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
+          <div className="flex items-center gap-2 mb-1">
+            <div className="w-6 h-6 rounded-full bg-green-50 flex items-center justify-center">
+              <Icon name="megaphone" size={12} className="text-green-600" />
+            </div>
+            <p className="text-[0.62rem] text-slate-500 font-bold uppercase tracking-wider">Active</p>
+          </div>
+          <p className="text-xl font-extrabold text-slate-900">
+            <CountUp end={activeCount} duration={800} />
+          </p>
+        </div>
+        <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
+          <div className="flex items-center gap-2 mb-1">
+            <div className="w-6 h-6 rounded-full bg-red-50 flex items-center justify-center">
+              <Icon name="dollar-sign" size={12} className="text-red-600" />
+            </div>
+            <p className="text-[0.62rem] text-slate-500 font-bold uppercase tracking-wider">Total Spend</p>
+          </div>
+          <p className="text-xl font-extrabold text-slate-900">
+            <CountUp end={totalSpent / 100} prefix="$" decimals={2} duration={1000} />
+          </p>
+        </div>
+        <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
+          <div className="flex items-center gap-2 mb-1">
+            <div className="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center">
+              <Icon name="mouse-pointer-click" size={12} className="text-blue-600" />
+            </div>
+            <p className="text-[0.62rem] text-slate-500 font-bold uppercase tracking-wider">Avg CPC</p>
+          </div>
+          <p className="text-xl font-extrabold text-slate-900">
+            <CountUp end={avgCpc} prefix="$" decimals={2} duration={1000} />
+          </p>
+        </div>
       </div>
 
       {/* Filter tabs */}
@@ -174,9 +228,15 @@ export default function CampaignsPage() {
             return (
               <div key={c.id} className="bg-white rounded-xl border border-slate-200 p-5">
                 <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <h3 className="font-bold text-slate-900">{c.name}</h3>
-                    <p className="text-xs text-slate-500 mt-0.5">{placementName}</p>
+                  <div className="flex items-start gap-2">
+                    <span className={`w-2.5 h-2.5 rounded-full mt-1.5 ${STATUS_DOTS[c.status] || "bg-slate-300"}`} />
+                    <div>
+                      <h3 className="font-bold text-slate-900">{c.name}</h3>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <Icon name={p?.inventory_type === "featured" ? "megaphone" : "target"} size={11} className="text-slate-400" />
+                        <p className="text-xs text-slate-500">{placementName}</p>
+                      </div>
+                    </div>
                   </div>
                   <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${STATUS_COLORS[c.status] || "bg-slate-100 text-slate-500"}`}>
                     {c.status.replace(/_/g, " ")}
@@ -213,15 +273,17 @@ export default function CampaignsPage() {
                 {/* Budget bar */}
                 {c.total_budget_cents ? (
                   <div className="mb-3">
-                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div className="relative h-5 bg-slate-100 rounded-full overflow-hidden">
                       <div
                         className={`h-full rounded-full progress-bar-animate ${
                           budgetPct >= 90 ? "bg-red-500" : budgetPct >= 70 ? "bg-amber-500" : "bg-green-500"
                         }`}
                         style={{ width: `${budgetPct}%` }}
                       />
+                      <span className="absolute inset-0 flex items-center justify-center text-[0.62rem] font-bold text-slate-700">
+                        {budgetPct}% of ${(c.total_budget_cents / 100).toFixed(0)} budget
+                      </span>
                     </div>
-                    <p className="text-xs text-slate-400 mt-1">{budgetPct}% of budget used</p>
                   </div>
                 ) : null}
 

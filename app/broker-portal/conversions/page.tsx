@@ -143,42 +143,67 @@ export default function ConversionsPage() {
 
       {/* Funnel KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 portal-stagger">
-        <div className="bg-white rounded-xl border border-slate-200 p-4">
-          <p className="text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
-            Total
-          </p>
+        <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
+          <div className="flex items-center gap-1.5 mb-1">
+            <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center">
+              <Icon name="bar-chart" size={12} className="text-slate-600" />
+            </div>
+            <p className="text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
+              Total
+            </p>
+          </div>
           <p className="text-2xl font-extrabold text-slate-900 mt-1">
             <CountUp end={totalConversions} duration={1000} />
           </p>
         </div>
-        <div className="bg-white rounded-xl border border-slate-200 p-4">
-          <p className="text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
-            Total Value
-          </p>
+        <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
+          <div className="flex items-center gap-1.5 mb-1">
+            <div className="w-6 h-6 rounded-full bg-emerald-50 flex items-center justify-center">
+              <Icon name="dollar-sign" size={12} className="text-emerald-600" />
+            </div>
+            <p className="text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
+              Total Value
+            </p>
+          </div>
           <p className="text-2xl font-extrabold text-slate-900 mt-1">
             <CountUp end={totalValue / 100} prefix="$" decimals={2} duration={1000} />
           </p>
         </div>
-        <div className="bg-blue-50 rounded-xl border border-blue-200 p-4">
-          <p className="text-[0.69rem] text-blue-600 uppercase tracking-wider font-bold">
-            Opened
-          </p>
+        <div className="bg-blue-50 rounded-xl border border-blue-200 p-4 hover-lift">
+          <div className="flex items-center gap-1.5 mb-1">
+            <div className="w-6 h-6 rounded-full bg-blue-100 flex items-center justify-center">
+              <Icon name="clipboard-list" size={12} className="text-blue-600" />
+            </div>
+            <p className="text-[0.69rem] text-blue-600 uppercase tracking-wider font-bold">
+              Opened
+            </p>
+          </div>
           <p className="text-2xl font-extrabold text-blue-800 mt-1">
             <CountUp end={funnelCounts.opened} duration={1000} />
           </p>
         </div>
-        <div className="bg-green-50 rounded-xl border border-green-200 p-4">
-          <p className="text-[0.69rem] text-green-600 uppercase tracking-wider font-bold">
-            Funded
-          </p>
+        <div className="bg-green-50 rounded-xl border border-green-200 p-4 hover-lift">
+          <div className="flex items-center gap-1.5 mb-1">
+            <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center">
+              <Icon name="wallet" size={12} className="text-green-600" />
+            </div>
+            <p className="text-[0.69rem] text-green-600 uppercase tracking-wider font-bold">
+              Funded
+            </p>
+          </div>
           <p className="text-2xl font-extrabold text-green-800 mt-1">
             <CountUp end={funnelCounts.funded} duration={1000} />
           </p>
         </div>
-        <div className="bg-purple-50 rounded-xl border border-purple-200 p-4">
-          <p className="text-[0.69rem] text-purple-600 uppercase tracking-wider font-bold">
-            First Trade
-          </p>
+        <div className="bg-purple-50 rounded-xl border border-purple-200 p-4 hover-lift">
+          <div className="flex items-center gap-1.5 mb-1">
+            <div className="w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center">
+              <Icon name="trending-up" size={12} className="text-purple-600" />
+            </div>
+            <p className="text-[0.69rem] text-purple-600 uppercase tracking-wider font-bold">
+              First Trade
+            </p>
+          </div>
           <p className="text-2xl font-extrabold text-purple-800 mt-1">
             <CountUp end={funnelCounts.first_trade} duration={1000} />
           </p>
@@ -186,47 +211,55 @@ export default function ConversionsPage() {
       </div>
 
       {/* Funnel Visualization */}
-      {totalConversions > 0 && (
-        <div className="bg-white rounded-xl border border-slate-200 p-6">
-          <h3 className="text-sm font-bold text-slate-700 mb-4">
-            Conversion Funnel
-          </h3>
-          <div className="flex items-end gap-4 h-32">
-            {(["opened", "funded", "first_trade"] as const).map((stage) => {
-              const count =
-                funnelCounts[stage as keyof typeof funnelCounts] || 0;
-              const pct =
-                totalConversions > 0
-                  ? Math.round((count / totalConversions) * 100)
-                  : 0;
-              const height = Math.max(pct, 5);
-              return (
-                <div
-                  key={stage}
-                  className="flex-1 flex flex-col items-center gap-1"
-                >
-                  <span className="text-xs font-bold text-slate-700">
-                    {count}
-                  </span>
-                  <div
-                    className={`w-full rounded-t chart-bar-animate ${
-                      stage === "opened"
-                        ? "bg-blue-400"
-                        : stage === "funded"
-                          ? "bg-green-400"
-                          : "bg-purple-400"
-                    }`}
-                    style={{ height: `${height}%` }}
-                  />
-                  <span className="text-[0.69rem] text-slate-500 text-center">
-                    {EVENT_LABELS[stage]}
-                  </span>
-                </div>
-              );
-            })}
+      {totalConversions > 0 && (() => {
+        const stages = [
+          { key: "opened" as const, count: funnelCounts.opened, color: "bg-blue-400", label: EVENT_LABELS.opened },
+          { key: "funded" as const, count: funnelCounts.funded, color: "bg-green-400", label: EVENT_LABELS.funded },
+          { key: "first_trade" as const, count: funnelCounts.first_trade, color: "bg-purple-400", label: EVENT_LABELS.first_trade },
+        ];
+        // Width percentages for trapezoid shape
+        const widths = [100, 72, 44];
+        return (
+          <div className="bg-white rounded-xl border border-slate-200 p-6">
+            <h3 className="text-sm font-bold text-slate-700 mb-4">
+              Conversion Funnel
+            </h3>
+            <div className="flex flex-col items-center gap-1 max-w-md mx-auto">
+              {stages.map((stage, i) => {
+                const topW = widths[i];
+                const botW = widths[i + 1] || widths[i] * 0.6;
+                const topInset = (100 - topW) / 2;
+                const botInset = (100 - botW) / 2;
+                const conversionRate = i > 0 && stages[i - 1].count > 0
+                  ? Math.round((stage.count / stages[i - 1].count) * 100)
+                  : null;
+
+                return (
+                  <div key={stage.key} className="w-full">
+                    {conversionRate !== null && (
+                      <div className="flex items-center justify-center gap-1 py-1">
+                        <Icon name="trending-up" size={11} className="text-slate-400" />
+                        <span className="text-[0.62rem] font-bold text-slate-400">{conversionRate}% conversion</span>
+                      </div>
+                    )}
+                    <div
+                      className={`${stage.color} h-14 flex items-center justify-center relative chart-bar-animate`}
+                      style={{
+                        clipPath: `polygon(${topInset}% 0%, ${100 - topInset}% 0%, ${100 - botInset}% 100%, ${botInset}% 100%)`,
+                      }}
+                    >
+                      <div className="text-center text-white">
+                        <span className="text-lg font-extrabold">{stage.count}</span>
+                        <span className="text-[0.69rem] ml-1.5 opacity-80">{stage.label}</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* Table */}
       {loading ? (

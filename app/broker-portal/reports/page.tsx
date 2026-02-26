@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { downloadCSV } from "@/lib/csv-export";
 import CountUp from "@/components/CountUp";
+import Icon from "@/components/Icon";
 import type { CampaignDailyStats, Campaign } from "@/lib/types";
 
 type DateMode = "preset" | "custom";
@@ -223,16 +224,21 @@ export default function ReportsPage() {
       {/* KPI Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 sm:gap-3 portal-stagger">
         {[
-          { label: "Clicks", value: totalClicks },
-          { label: "Impressions", value: totalImpressions },
-          { label: "CTR", value: ctrNum, suffix: "%", decimals: 2 },
-          { label: "Conversions", value: totalConversions },
-          { label: "Conv. Rate", value: convRate, suffix: "%", decimals: 2 },
-          { label: "Total Spend", value: totalSpend / 100, prefix: "$", decimals: 2 },
-          { label: "Avg CPC", value: avgCpcNum, prefix: "$", decimals: 2 },
+          { label: "Clicks", value: totalClicks, icon: "mouse-pointer-click", iconBg: "bg-blue-50", iconColor: "text-blue-600", borderColor: "border-t-blue-500" },
+          { label: "Impressions", value: totalImpressions, icon: "eye", iconBg: "bg-purple-50", iconColor: "text-purple-600", borderColor: "border-t-purple-500" },
+          { label: "CTR", value: ctrNum, suffix: "%", decimals: 2, icon: "trending-up", iconBg: "bg-green-50", iconColor: "text-green-600", borderColor: "border-t-green-500" },
+          { label: "Conversions", value: totalConversions, icon: "target", iconBg: "bg-emerald-50", iconColor: "text-emerald-600", borderColor: "border-t-emerald-500" },
+          { label: "Conv. Rate", value: convRate, suffix: "%", decimals: 2, icon: "bar-chart", iconBg: "bg-amber-50", iconColor: "text-amber-600", borderColor: "border-t-amber-500" },
+          { label: "Total Spend", value: totalSpend / 100, prefix: "$", decimals: 2, icon: "dollar-sign", iconBg: "bg-red-50", iconColor: "text-red-600", borderColor: "border-t-red-500" },
+          { label: "Avg CPC", value: avgCpcNum, prefix: "$", decimals: 2, icon: "coins", iconBg: "bg-slate-100", iconColor: "text-slate-600", borderColor: "border-t-slate-500" },
         ].map(kpi => (
-          <div key={kpi.label} className="bg-white rounded-xl border border-slate-200 p-3 hover-lift">
-            <p className="text-[0.62rem] text-slate-500 font-medium uppercase tracking-wide">{kpi.label}</p>
+          <div key={kpi.label} className={`bg-white rounded-xl border border-slate-200 border-t-2 ${kpi.borderColor} p-3 hover-lift`}>
+            <div className="flex items-center gap-1.5 mb-0.5">
+              <div className={`w-5 h-5 rounded-full ${kpi.iconBg} flex items-center justify-center`}>
+                <Icon name={kpi.icon} size={10} className={kpi.iconColor} />
+              </div>
+              <p className="text-[0.62rem] text-slate-500 font-medium uppercase tracking-wide">{kpi.label}</p>
+            </div>
             <p className="text-lg font-extrabold text-slate-900 mt-0.5">
               <CountUp end={kpi.value} prefix={kpi.prefix} suffix={kpi.suffix} decimals={kpi.decimals} duration={1000} />
             </p>
