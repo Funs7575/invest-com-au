@@ -5,6 +5,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import CountUp from "@/components/CountUp";
 import Icon from "@/components/Icon";
+import Sparkline from "@/components/Sparkline";
 import type { Campaign, BrokerWallet } from "@/lib/types";
 
 export default function BrokerDashboard() {
@@ -12,6 +13,10 @@ export default function BrokerDashboard() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [recentClicks, setRecentClicks] = useState(0);
   const [todaySpend, setTodaySpend] = useState(0);
+  const [dailyClicks, setDailyClicks] = useState<number[]>([]);
+  const [dailySpend, setDailySpend] = useState<number[]>([]);
+  const [prevClicks, setPrevClicks] = useState(0);
+  const [prevSpend, setPrevSpend] = useState(0);
   const [loading, setLoading] = useState(true);
   const [firstName, setFirstName] = useState("");
 
@@ -69,6 +74,36 @@ export default function BrokerDashboard() {
       setTodaySpend(
         (todayEvents || []).reduce((sum, e) => sum + (e.cost_cents || 0), 0)
       );
+
+      // Fetch last 14 days of daily stats for sparklines & trend comparison
+      const twoWeeksAgo = new Date(Date.now() - 14 * 86400000).toISOString().slice(0, 10);
+      const { data: dailyStats } = await supabase
+        .from("campaign_daily_stats")
+        .select("stat_date, clicks, spend_cents")
+        .eq("broker_slug", slug)
+        .gte("stat_date", twoWeeksAgo)
+        .order("stat_date", { ascending: true });
+
+      if (dailyStats && dailyStats.length > 0) {
+        // Aggregate by date
+        const byDate = new Map<string, { clicks: number; spend: number }>();
+        for (const s of dailyStats) {
+          const existing = byDate.get(s.stat_date) || { clicks: 0, spend: 0 };
+          existing.clicks += s.clicks;
+          existing.spend += s.spend_cents;
+          byDate.set(s.stat_date, existing);
+        }
+        const sorted = Array.from(byDate.entries()).sort(([a], [b]) => a.localeCompare(b));
+        setDailyClicks(sorted.map(([, v]) => v.clicks));
+        setDailySpend(sorted.map(([, v]) => v.spend));
+
+        // Trend: compare last 7d vs previous 7d
+        const mid = Math.floor(sorted.length / 2);
+        const prevHalf = sorted.slice(0, mid);
+        const currHalf = sorted.slice(mid);
+        setPrevClicks(prevHalf.reduce((s, [, v]) => s + v.clicks, 0));
+        setPrevSpend(prevHalf.reduce((s, [, v]) => s + v.spend, 0));
+      }
 
       setLoading(false);
     };
@@ -175,9 +210,23 @@ export default function BrokerDashboard() {
             </div>
             <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Clicks (7d)</p>
           </div>
-          <p className="text-2xl font-extrabold text-slate-900 mt-1">
-            <CountUp end={recentClicks} duration={1000} />
-          </p>
+          <div className="flex items-center gap-2 mt-1">
+            <p className="text-2xl font-extrabold text-slate-900">
+              <CountUp end={recentClicks} duration={1000} />
+            </p>
+            {dailyClicks.length >= 4 && (
+              <Sparkline data={dailyClicks.slice(-7)} color="#16a34a" height={22} width={60} />
+            )}
+          </div>
+          {prevClicks > 0 && (() => {
+            const changePct = Math.round(((recentClicks - prevClicks) / prevClicks) * 100);
+            return changePct !== 0 ? (
+              <p className={`text-[0.62rem] font-bold mt-0.5 flex items-center gap-0.5 ${changePct > 0 ? "text-green-600" : "text-red-500"}`}>
+                <Icon name={changePct > 0 ? "arrow-up" : "arrow-down"} size={10} />
+                {Math.abs(changePct)}% vs prev week
+              </p>
+            ) : null;
+          })()}
           <Link href="/broker-portal/reports" className="text-xs text-slate-500 hover:text-slate-700 mt-2 inline-block">
             See Report →
           </Link>
@@ -190,9 +239,24 @@ export default function BrokerDashboard() {
             </div>
             <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Today&apos;s Spend</p>
           </div>
-          <p className="text-2xl font-extrabold text-slate-900 mt-1">
-            <CountUp end={todaySpend / 100} prefix="$" decimals={2} duration={1000} />
-          </p>
+          <div className="flex items-center gap-2 mt-1">
+            <p className="text-2xl font-extrabold text-slate-900">
+              <CountUp end={todaySpend / 100} prefix="$" decimals={2} duration={1000} />
+            </p>
+            {dailySpend.length >= 4 && (
+              <Sparkline data={dailySpend.slice(-7)} color="#9333ea" height={22} width={60} />
+            )}
+          </div>
+          {prevSpend > 0 && (() => {
+            const currentWeekSpend = dailySpend.slice(-7).reduce((s, v) => s + v, 0);
+            const changePct = Math.round(((currentWeekSpend - prevSpend) / prevSpend) * 100);
+            return changePct !== 0 ? (
+              <p className={`text-[0.62rem] font-bold mt-0.5 flex items-center gap-0.5 ${changePct > 0 ? "text-red-500" : "text-green-600"}`}>
+                <Icon name={changePct > 0 ? "arrow-up" : "arrow-down"} size={10} />
+                {Math.abs(changePct)}% vs prev week
+              </p>
+            ) : null;
+          })()}
         </div>
       </div>
 

@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import CountUp from "@/components/CountUp";
 import Icon from "@/components/Icon";
+import Sparkline from "@/components/Sparkline";
 import type { BrokerWallet, WalletTransaction } from "@/lib/types";
 
 const TOPUP_AMOUNTS = [100, 250, 500, 1000, 2500, 5000];
@@ -97,10 +98,26 @@ export default function WalletPage() {
 
       {/* Balance card */}
       <div className="bg-gradient-to-r from-slate-800 to-slate-700 rounded-2xl p-6 text-white">
-        <p className="text-sm text-slate-300 font-medium">Available Balance</p>
-        <p className="text-4xl font-extrabold mt-1">
-          <CountUp end={balance / 100} prefix="$" decimals={2} duration={1000} />
-        </p>
+        <div className="flex items-start justify-between">
+          <div>
+            <p className="text-sm text-slate-300 font-medium">Available Balance</p>
+            <p className="text-4xl font-extrabold mt-1">
+              <CountUp end={balance / 100} prefix="$" decimals={2} duration={1000} />
+            </p>
+          </div>
+          {/* Balance history sparkline from transactions */}
+          {transactions.length >= 3 && (
+            <div className="mt-2">
+              <Sparkline
+                data={[...transactions].reverse().map(t => t.balance_after_cents / 100).slice(-10)}
+                color="#fbbf24"
+                width={100}
+                height={32}
+              />
+              <p className="text-[0.56rem] text-slate-400 text-right mt-0.5">Balance trend</p>
+            </div>
+          )}
+        </div>
         <div className="flex gap-4 mt-3 text-sm text-slate-300">
           <span>Deposited: <CountUp end={(wallet?.lifetime_deposited_cents || 0) / 100} prefix="$" decimals={2} duration={1200} /></span>
           <span>Spent: <CountUp end={(wallet?.lifetime_spent_cents || 0) / 100} prefix="$" decimals={2} duration={1200} /></span>

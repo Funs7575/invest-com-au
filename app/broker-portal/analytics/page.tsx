@@ -3,6 +3,8 @@
 import { useState, useEffect, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import CountUp from "@/components/CountUp";
+import Icon from "@/components/Icon";
+import Sparkline from "@/components/Sparkline";
 import type { CampaignDailyStats } from "@/lib/types";
 
 type TabKey = "overview" | "funnel" | "roi" | "benchmarks";
@@ -295,28 +297,82 @@ export default function AnalyticsPage() {
         <>
           <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 portal-stagger">
             {[
-              { label: "Clicks", value: totalClicks },
-              { label: "Impressions", value: totalImpressions },
-              { label: "CTR", value: ctr, suffix: "%", decimals: 2 },
-              { label: "Conversions", value: totalConversions },
-              { label: "Conv. Rate", value: convRate, suffix: "%", decimals: 2 },
+              { label: "Clicks", value: totalClicks, icon: "mouse-pointer-click", iconBg: "bg-blue-50", iconColor: "text-blue-600", sparkData: dailyTotals.map(d => d.clicks), sparkColor: "#3b82f6" },
+              { label: "Impressions", value: totalImpressions, icon: "eye", iconBg: "bg-purple-50", iconColor: "text-purple-600", sparkData: dailyTotals.map(d => d.impressions), sparkColor: "#9333ea" },
+              { label: "CTR", value: ctr, suffix: "%", decimals: 2, icon: "trending-up", iconBg: "bg-green-50", iconColor: "text-green-600", sparkData: dailyTotals.map(d => d.impressions > 0 ? (d.clicks / d.impressions) * 100 : 0), sparkColor: "#16a34a" },
+              { label: "Conversions", value: totalConversions, icon: "target", iconBg: "bg-emerald-50", iconColor: "text-emerald-600", sparkData: dailyTotals.map(d => d.conversions), sparkColor: "#059669" },
+              { label: "Conv. Rate", value: convRate, suffix: "%", decimals: 2, icon: "bar-chart", iconBg: "bg-amber-50", iconColor: "text-amber-600", sparkData: dailyTotals.map(d => d.clicks > 0 ? (d.conversions / d.clicks) * 100 : 0), sparkColor: "#d97706" },
             ].map(kpi => (
               <div key={kpi.label} className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
-                <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">{kpi.label}</p>
-                <p className="text-xl font-extrabold text-slate-900 mt-1">
-                  <CountUp end={kpi.value} suffix={kpi.suffix} decimals={kpi.decimals} duration={1000} />
-                </p>
+                <div className="flex items-center gap-1.5 mb-1">
+                  <div className={`w-5 h-5 rounded-full ${kpi.iconBg} flex items-center justify-center`}>
+                    <Icon name={kpi.icon} size={10} className={kpi.iconColor} />
+                  </div>
+                  <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">{kpi.label}</p>
+                </div>
+                <div className="flex items-center justify-between mt-1">
+                  <p className="text-xl font-extrabold text-slate-900">
+                    <CountUp end={kpi.value} suffix={kpi.suffix} decimals={kpi.decimals} duration={1000} />
+                  </p>
+                  {kpi.sparkData.length >= 3 && (
+                    <Sparkline data={kpi.sparkData} color={kpi.sparkColor} height={20} width={50} />
+                  )}
+                </div>
               </div>
             ))}
           </div>
 
           <div className="bg-white rounded-xl border border-slate-200 p-5">
-            <h2 className="font-bold text-slate-900 mb-4">Daily Clicks</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-bold text-slate-900">Daily Clicks</h2>
+              <div className="flex items-center gap-4 text-xs">
+                <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-slate-800" /> Clicks</span>
+                <span className="flex items-center gap-1"><span className="w-2.5 h-0.5 bg-green-500 rounded" style={{ height: 2 }} /> Conversions</span>
+              </div>
+            </div>
             {dailyTotals.length === 0 ? (
               <p className="text-sm text-slate-400 py-8 text-center">No data for this period.</p>
             ) : (
               <div className="overflow-x-auto">
-                {renderBarChart(dailyTotals.map(d => ({ label: d.date, value: d.clicks })), "#1e293b")}
+                {(() => {
+                  const data = dailyTotals.map(d => ({ label: d.date, value: d.clicks }));
+                  const max = Math.max(...data.map(d => d.value), 1);
+                  const maxConv = Math.max(...dailyTotals.map(d => d.conversions), 1);
+                  const barW = data.length > 0 ? Math.max(3, (chartWidth - 40) / data.length - 2) : 6;
+                  const convLinePoints = dailyTotals.map((d, i) => {
+                    const x = 30 + i * (barW + 2) + barW / 2;
+                    const y = (1 - d.conversions / maxConv) * chartHeight;
+                    return `${x},${y}`;
+                  }).join(" ");
+                  return (
+                    <svg viewBox={`0 0 ${chartWidth} ${chartHeight + 25}`} className="w-full max-w-[700px]">
+                      {data.map((d, i) => {
+                        const h = (d.value / max) * chartHeight;
+                        const x = 30 + i * (barW + 2);
+                        return (
+                          <g key={d.label}>
+                            <rect x={x} y={chartHeight - h} width={barW} height={h} fill="#1e293b" rx={2}
+                              className="chart-bar-animate" style={{ animationDelay: `${i * 0.02}s` }} />
+                            <title>{d.label}: {d.value} clicks</title>
+                            {i % Math.ceil(data.length / 8) === 0 && (
+                              <text x={x + barW / 2} y={chartHeight + 14} textAnchor="middle" fontSize={9} fill="#94a3b8">
+                                {d.label.slice(5)}
+                              </text>
+                            )}
+                          </g>
+                        );
+                      })}
+                      <polyline points={convLinePoints} fill="none" stroke="#22c55e" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" opacity={0.8} />
+                      {dailyTotals.map((d, i) => {
+                        const x = 30 + i * (barW + 2) + barW / 2;
+                        const y = (1 - d.conversions / maxConv) * chartHeight;
+                        return <circle key={`cd-${d.date}`} cx={x} cy={y} r={2} fill="#22c55e" />;
+                      })}
+                      <text x={0} y={12} fontSize={10} fill="#94a3b8">{max}</text>
+                      <text x={0} y={chartHeight} fontSize={10} fill="#94a3b8">0</text>
+                    </svg>
+                  );
+                })()}
               </div>
             )}
           </div>

@@ -246,43 +246,77 @@ export default function ReportsPage() {
         ))}
       </div>
 
-      {/* Click Chart */}
+      {/* Click Chart with Spend Line Overlay */}
       <div className="bg-white rounded-xl border border-slate-200 p-5">
-        <h2 className="font-bold text-slate-900 mb-4">
-          Daily Clicks {drillCampaign ? `— ${drillCampaign.name}` : ""}
-        </h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="font-bold text-slate-900">
+            Daily Clicks {drillCampaign ? `— ${drillCampaign.name}` : ""}
+          </h2>
+          <div className="flex items-center gap-4 text-xs">
+            <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-slate-800" /> Clicks</span>
+            <span className="flex items-center gap-1"><span className="w-2.5 h-0.5 rounded bg-amber-500" style={{ height: 2 }} /> Spend</span>
+          </div>
+        </div>
         {dailyTotals.length === 0 ? (
           <p className="text-sm text-slate-400 py-8 text-center">No data for this period.</p>
         ) : (
           <div className="overflow-x-auto">
-            <svg viewBox={`0 0 ${chartWidth} ${chartHeight + 30}`} className="w-full max-w-[700px]">
-              {dailyTotals.map((d, i) => {
-                const barH = (d.clicks / maxClicks) * chartHeight;
-                const x = 30 + i * (barWidth + 2);
-                return (
-                  <g key={d.date}>
-                    <rect
-                      x={x}
-                      y={chartHeight - barH}
-                      width={barWidth}
-                      height={barH}
-                      fill="#1e293b"
-                      rx={2}
-                      className="chart-bar-animate"
-                      style={{ animationDelay: `${i * 0.03}s` }}
-                    />
-                    <title>{d.date}: {d.clicks} clicks, {d.conversions} conversions, ${(d.spend / 100).toFixed(2)} spent</title>
-                    {(i % Math.ceil(dailyTotals.length / 10) === 0) && (
-                      <text x={x + barWidth / 2} y={chartHeight + 16} textAnchor="middle" fontSize={9} fill="#94a3b8">
-                        {d.date.slice(5)}
-                      </text>
-                    )}
-                  </g>
-                );
-              })}
-              <text x={0} y={12} fontSize={10} fill="#94a3b8">{maxClicks}</text>
-              <text x={0} y={chartHeight} fontSize={10} fill="#94a3b8">0</text>
-            </svg>
+            {(() => {
+              const maxSpend = Math.max(...dailyTotals.map(d => d.spend), 1);
+              const spendLinePoints = dailyTotals.map((d, i) => {
+                const x = 30 + i * (barWidth + 2) + barWidth / 2;
+                const y = (1 - d.spend / maxSpend) * chartHeight;
+                return `${x},${y}`;
+              }).join(" ");
+              return (
+                <svg viewBox={`0 0 ${chartWidth} ${chartHeight + 30}`} className="w-full max-w-[700px]">
+                  {dailyTotals.map((d, i) => {
+                    const barH = (d.clicks / maxClicks) * chartHeight;
+                    const x = 30 + i * (barWidth + 2);
+                    return (
+                      <g key={d.date}>
+                        <rect
+                          x={x}
+                          y={chartHeight - barH}
+                          width={barWidth}
+                          height={barH}
+                          fill="#1e293b"
+                          rx={2}
+                          className="chart-bar-animate"
+                          style={{ animationDelay: `${i * 0.03}s` }}
+                        />
+                        <title>{d.date}: {d.clicks} clicks, {d.conversions} conversions, ${(d.spend / 100).toFixed(2)} spent</title>
+                        {(i % Math.ceil(dailyTotals.length / 10) === 0) && (
+                          <text x={x + barWidth / 2} y={chartHeight + 16} textAnchor="middle" fontSize={9} fill="#94a3b8">
+                            {d.date.slice(5)}
+                          </text>
+                        )}
+                      </g>
+                    );
+                  })}
+                  {/* Spend line overlay */}
+                  <polyline
+                    points={spendLinePoints}
+                    fill="none"
+                    stroke="#f59e0b"
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    opacity={0.8}
+                  />
+                  {/* Spend dots */}
+                  {dailyTotals.map((d, i) => {
+                    const x = 30 + i * (barWidth + 2) + barWidth / 2;
+                    const y = (1 - d.spend / maxSpend) * chartHeight;
+                    return <circle key={`dot-${d.date}`} cx={x} cy={y} r={2.5} fill="#f59e0b" opacity={0.9} />;
+                  })}
+                  <text x={0} y={12} fontSize={10} fill="#94a3b8">{maxClicks}</text>
+                  <text x={0} y={chartHeight} fontSize={10} fill="#94a3b8">0</text>
+                  {/* Spend axis on right */}
+                  <text x={chartWidth - 2} y={12} textAnchor="end" fontSize={10} fill="#f59e0b">${(maxSpend / 100).toFixed(0)}</text>
+                </svg>
+              );
+            })()}
           </div>
         )}
       </div>
