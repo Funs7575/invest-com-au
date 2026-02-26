@@ -34,8 +34,7 @@ export default function ShortlistClient() {
           setBrokers(sorted);
         }
         setLoading(false);
-      })
-      .catch(() => {
+      }, () => {
         setLoading(false);
       });
   }, [slugs]);
