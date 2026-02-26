@@ -25,19 +25,36 @@ export default function ConfirmDialog({
   onCancel,
 }: ConfirmDialogProps) {
   const confirmRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (open) {
-      // Focus the cancel button by default (safer)
+      // Focus the confirm button by default
       setTimeout(() => confirmRef.current?.focus(), 100);
     }
   }, [open]);
 
-  // Close on Escape
+  // Close on Escape + focus trap
   useEffect(() => {
     if (!open) return;
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onCancel();
+      // Focus trap: cycle Tab within the dialog
+      if (e.key === "Tab" && dialogRef.current) {
+        const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
@@ -63,14 +80,21 @@ export default function ConfirmDialog({
       <div className="absolute inset-0 bg-black/60" onClick={onCancel} />
 
       {/* Dialog */}
-      <div className="relative bg-white border border-slate-200 rounded-xl shadow-2xl max-w-sm w-full p-6">
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="confirm-dialog-title"
+        aria-describedby="confirm-dialog-message"
+        className="relative bg-white border border-slate-200 rounded-xl shadow-2xl max-w-sm w-full p-6"
+      >
         <div className="flex items-start gap-4">
           <div className={`${iconColors[variant]}`}>
             {variant === "danger" ? <Icon name="alert-triangle" size={24} /> : variant === "warning" ? <Icon name="zap" size={24} /> : <Icon name="info" size={24} />}
           </div>
           <div className="flex-1">
-            <h3 className="text-lg font-bold text-slate-900 mb-1">{title}</h3>
-            <p className="text-sm text-slate-500 leading-relaxed">{message}</p>
+            <h3 id="confirm-dialog-title" className="text-lg font-bold text-slate-900 mb-1">{title}</h3>
+            <p id="confirm-dialog-message" className="text-sm text-slate-500 leading-relaxed">{message}</p>
           </div>
         </div>
 

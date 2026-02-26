@@ -1,7 +1,17 @@
 import { createClient } from '@supabase/supabase-js';
+import { createClient as createServerClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 
+const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || 'admin@invest.com.au').split(',').map(e => e.trim().toLowerCase());
+
 export async function POST(request: NextRequest) {
+  // ── Auth check: require an authenticated admin user ──
+  const supabaseAuth = await createServerClient();
+  const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
+  if (authError || !user || !ADMIN_EMAILS.includes(user.email?.toLowerCase() || '')) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   // Parse body
   let body: Record<string, unknown>;
   try {
@@ -23,7 +33,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'action must be approve or reject' }, { status: 400 });
   }
 
-  // Use service role client (admin auth is handled by Supabase RLS + admin middleware)
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!

@@ -1,9 +1,24 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app";
+
 export const metadata: Metadata = {
   title: "Advertise With Us | Invest.com.au",
   description: "Reach thousands of Australian investors actively researching brokers. Promote your brokerage on Invest.com.au with CPC campaigns, featured placements, and sponsorship packages.",
+  alternates: { canonical: `${siteUrl}/advertise` },
+  openGraph: {
+    title: "Advertise With Us | Invest.com.au",
+    description: "Reach Australian investors actively choosing a broker. CPC campaigns, featured placements, and sponsorship packages.",
+    url: `${siteUrl}/advertise`,
+    siteName: "Invest.com.au",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Advertise With Us | Invest.com.au",
+    description: "Reach Australian investors actively choosing a broker. CPC campaigns, featured placements, and sponsorship packages.",
+  },
 };
 
 const PLACEMENTS = [
@@ -184,7 +199,7 @@ export default function AdvertisePage() {
                 tier.highlight ? "border-amber-300 bg-amber-50/30 ring-1 ring-amber-300" : "border-slate-200 bg-white"
               }`}>
                 {tier.highlight && (
-                  <span className="text-[0.62rem] font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full uppercase tracking-widest">
+                  <span className="text-[0.65rem] font-bold text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full uppercase tracking-widest">
                     Most Popular
                   </span>
                 )}

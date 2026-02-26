@@ -9,7 +9,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Static pages with tiered priorities
   const highPriority = new Set(["/compare", "/quiz", "/reviews", "/deals", "/pro"]);
-  const medPriority = new Set(["/versus", "/calculators", "/articles", "/scenarios", "/switch", "/stories", "/benchmark", "/health-scores", "/alerts", "/reports", "/whats-new", "/costs", "/fee-impact", "/courses", "/consultations"]);
+  const medPriority = new Set(["/versus", "/calculators", "/articles", "/scenarios", "/switch", "/stories", "/benchmark", "/health-scores", "/alerts", "/reports", "/whats-new", "/costs", "/fee-impact", "/courses", "/consultations", "/advertise"]);
   // Everything else (about, how-we-earn, privacy, methodology, terms, etc.) → 0.4
 
   const staticPages = [
@@ -17,7 +17,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/articles", "/scenarios", "/quiz", "/deals", "/stories", "/about", "/how-we-earn", "/privacy",
     "/methodology", "/how-we-verify", "/terms", "/switch", "/editorial-policy", "/pro", "/benchmark",
     "/health-scores", "/alerts", "/reports", "/whats-new", "/costs", "/fee-impact", "/courses",
-    "/consultations",
+    "/consultations", "/advertise",
   ].map((path) => ({
     url: `${baseUrl}${path}`,
     lastModified: new Date(),

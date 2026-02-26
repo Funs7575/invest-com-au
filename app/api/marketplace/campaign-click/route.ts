@@ -5,6 +5,24 @@ import { createHash } from "crypto";
 
 export const runtime = "nodejs";
 
+// In-memory rate limiter (per-IP, resets on cold start)
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+const RATE_LIMIT_WINDOW = 60_000; // 1 minute
+const RATE_LIMIT_MAX = 10; // max 10 CPC clicks per minute per IP
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
+
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW });
+    return false;
+  }
+
+  entry.count++;
+  return entry.count > RATE_LIMIT_MAX;
+}
+
 function hashIP(ip: string): string {
   const salt = process.env.IP_HASH_SALT || "invest-com-au-2026";
   if (!process.env.IP_HASH_SALT) console.warn("[env] IP_HASH_SALT not set — using default. Set this env var in production.");
@@ -35,6 +53,11 @@ export async function POST(request: NextRequest) {
     const forwarded = request.headers.get("x-forwarded-for");
     const ip = forwarded ? forwarded.split(",")[0].trim() : "unknown";
     const userAgent = request.headers.get("user-agent") || "";
+
+    // Rate limit check — prevent click-bomb attacks
+    if (isRateLimited(ip)) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+    }
 
     const success = await recordCpcClick(
       campaign_id,

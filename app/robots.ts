@@ -1,15 +1,16 @@
 import type { MetadataRoute } from "next";
-import { SITE_URL } from "@/lib/seo";
 
 export default function robots(): MetadataRoute.Robots {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app";
+
   return {
     rules: [
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin/", "/api/", "/go/", "/broker-portal/", "/account/", "/unsubscribe"],
+        disallow: ["/api/", "/admin/", "/portal/"],
       },
     ],
-    sitemap: `${SITE_URL}/sitemap.xml`,
+    sitemap: `${baseUrl}/sitemap.xml`,
   };
 }

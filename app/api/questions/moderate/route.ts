@@ -109,6 +109,14 @@ async function notifyQuestionAsker(
 
 export async function POST(req: Request) {
   try {
+    // ── Auth check: require an authenticated admin user ──
+    const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || 'admin@invest.com.au').split(',').map(e => e.trim().toLowerCase());
+    const supabaseAuth = await createClient();
+    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
+    if (authError || !user || !ADMIN_EMAILS.includes(user.email?.toLowerCase() || '')) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await req.json();
     const { type, id, action } = body;
 

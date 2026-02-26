@@ -1,6 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
 import { recordImpression } from "@/lib/marketplace/allocation";
 
+// In-memory rate limiter (per-IP)
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+const RATE_LIMIT_WINDOW = 60_000;
+const RATE_LIMIT_MAX = 60; // max 60 impressions per minute per IP
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
+
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW });
+    return false;
+  }
+
+  entry.count++;
+  return entry.count > RATE_LIMIT_MAX;
+}
+
 /**
  * POST /api/marketplace/impression
  * Records a campaign impression (viewability-tracked, fired from ImpressionTracker).
@@ -20,6 +38,13 @@ export async function POST(req: NextRequest) {
         { error: "campaign_id and broker_slug are required" },
         { status: 400 }
       );
+    }
+
+    // Rate limit check
+    const forwarded = req.headers.get("x-forwarded-for");
+    const ip = forwarded ? forwarded.split(",")[0].trim() : "unknown";
+    if (isRateLimited(ip)) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
     }
 
     // Detect device type from user agent

@@ -15,7 +15,7 @@ export default function MarketTicker() {
       <div className="flex items-center">
         {/* Scrolling content — duplicated for seamless loop */}
         <div
-          className="flex items-center gap-8 py-2 px-4 whitespace-nowrap ticker-track"
+          className="flex items-center gap-8 py-2 px-4 whitespace-nowrap ticker-track motion-reduce:animate-none"
           style={{
             animation: "marquee 30s linear infinite",
           }}
@@ -44,7 +44,7 @@ export default function MarketTicker() {
         </div>
       </div>
       {/* Compliance disclaimer */}
-      <div className="absolute right-2 top-1/2 -translate-y-1/2 text-[0.5rem] text-slate-500 hidden lg:block bg-slate-900 pl-4">
+      <div className="absolute right-2 top-1/2 -translate-y-1/2 text-[0.6rem] text-slate-400 hidden lg:block bg-slate-900 pl-4">
         Indicative only. Not financial advice.
       </div>
     </div>

@@ -2,6 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import crypto from "crypto";
 
+/** Escape HTML special chars to prevent XSS in email templates */
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -126,11 +135,11 @@ export async function POST(req: NextRequest) {
           subject: `New Broker Registration: ${company_name}`,
           html: `
             <h2>New Broker Registration</h2>
-            <p><strong>Company:</strong> ${company_name}</p>
-            <p><strong>Contact:</strong> ${full_name} (${email})</p>
-            <p><strong>Broker Slug:</strong> ${slug}</p>
-            ${website ? `<p><strong>Website:</strong> ${website}</p>` : ""}
-            ${phone ? `<p><strong>Phone:</strong> ${phone}</p>` : ""}
+            <p><strong>Company:</strong> ${escapeHtml(company_name)}</p>
+            <p><strong>Contact:</strong> ${escapeHtml(full_name)} (${escapeHtml(email)})</p>
+            <p><strong>Broker Slug:</strong> ${escapeHtml(slug)}</p>
+            ${website ? `<p><strong>Website:</strong> ${escapeHtml(String(website))}</p>` : ""}
+            ${phone ? `<p><strong>Phone:</strong> ${escapeHtml(String(phone))}</p>` : ""}
             <p><a href="${process.env.NEXT_PUBLIC_BASE_URL || "https://invest.com.au"}/admin/marketplace/brokers">Review in Admin →</a></p>
           `,
         }),

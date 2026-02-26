@@ -38,6 +38,9 @@ export default function CookieBanner() {
 
   return (
     <div
+      role="dialog"
+      aria-modal="false"
+      aria-label="Cookie consent"
       className={`fixed bottom-0 left-0 right-0 z-[200] bg-slate-900 text-white transition-transform duration-300 ${
         isAnimating ? "translate-y-0" : "translate-y-full"
       }`}

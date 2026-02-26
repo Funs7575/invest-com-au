@@ -1,6 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
+/** Escape HTML special chars to prevent XSS in email templates */
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -66,7 +75,7 @@ export async function POST(req: NextRequest) {
             body: JSON.stringify({
               from: "Invest.com.au <partners@invest.com.au>",
               to: [account.email],
-              subject: `[Partner Portal] ${title}`,
+              subject: `[Partner Portal] ${String(title).slice(0, 100)}`,
               html: `
                 <div style="font-family: 'Inter', system-ui, sans-serif; max-width: 560px; margin: 0 auto;">
                   <div style="background: #0f172a; padding: 16px 24px; border-radius: 12px 12px 0 0;">
@@ -74,8 +83,8 @@ export async function POST(req: NextRequest) {
                     <span style="color: #94a3b8; font-size: 12px;"> · Partner Portal</span>
                   </div>
                   <div style="background: #fff; border: 1px solid #e2e8f0; border-top: none; padding: 24px; border-radius: 0 0 12px 12px;">
-                    <h2 style="margin: 0 0 8px; font-size: 18px; color: #0f172a;">${title}</h2>
-                    <p style="margin: 0 0 16px; font-size: 14px; color: #475569; line-height: 1.6;">${message}</p>
+                    <h2 style="margin: 0 0 8px; font-size: 18px; color: #0f172a;">${escapeHtml(String(title))}</h2>
+                    <p style="margin: 0 0 16px; font-size: 14px; color: #475569; line-height: 1.6;">${escapeHtml(String(message))}</p>
                     ${link ? `<a href="${baseUrl}${link}" style="display: inline-block; padding: 10px 20px; background: #0f172a; color: #fff; text-decoration: none; border-radius: 8px; font-size: 13px; font-weight: 600;">View in Portal →</a>` : ""}
                     <p style="margin: 24px 0 0; font-size: 12px; color: #94a3b8;">
                       You received this because you have an active partner account on Invest.com.au.

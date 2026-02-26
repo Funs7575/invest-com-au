@@ -80,6 +80,15 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // Verify this user is an admin
+  const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || 'admin@invest.com.au').split(',').map(e => e.trim().toLowerCase());
+  if (!data.user?.email || !ADMIN_EMAILS.includes(data.user.email.toLowerCase())) {
+    return NextResponse.json(
+      { error: "Access denied. This account is not an administrator." },
+      { status: 403 }
+    );
+  }
+
   // Success — reset rate limit for this IP
   loginAttempts.delete(ipHash);
 

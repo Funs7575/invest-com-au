@@ -42,7 +42,7 @@ export async function POST(
       answered_by: answered_by || "community",
       author_slug: author_slug || null,
       display_name: display_name?.trim() || null,
-      status: answered_by === "editorial" ? "approved" : "pending",
+      status: "pending",
       is_accepted: false,
     });
 
