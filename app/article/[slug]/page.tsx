@@ -15,6 +15,7 @@ import { absoluteUrl, breadcrumbJsonLd, articleAuthorJsonLd, articleFaqJsonLd, S
 import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import { CATEGORY_COLORS, getBestPagesForArticle } from "@/lib/internal-links";
 import Icon from "@/components/Icon";
+import AdSlot from "@/components/AdSlot";
 
 export const revalidate = 3600; // ISR: revalidate every hour
 
@@ -437,7 +438,7 @@ export default async function ArticlePage({
                 </div>
               )}
 
-              {/* Standard: Render all sections normally */}
+              {/* Standard: Render all sections with in-content ad after 2nd section */}
               {!isEnhanced && a.sections && a.sections.length > 0 && (
                 <div className="space-y-10">
                   {a.sections.map(
@@ -445,18 +446,28 @@ export default async function ArticlePage({
                       section: { heading: string; body: string },
                       i: number
                     ) => (
-                      <section
-                        key={i}
-                        id={`section-${i}`}
-                        className="scroll-mt-24"
-                      >
-                        <h2 className="text-2xl font-bold mb-4">
-                          {section.heading}
-                        </h2>
-                        <div className="max-w-none text-slate-700 leading-relaxed whitespace-pre-line">
-                          {section.body}
-                        </div>
-                      </section>
+                      <div key={i}>
+                        <section
+                          id={`section-${i}`}
+                          className="scroll-mt-24"
+                        >
+                          <h2 className="text-2xl font-bold mb-4">
+                            {section.heading}
+                          </h2>
+                          <div className="max-w-none text-slate-700 leading-relaxed whitespace-pre-line">
+                            {section.body}
+                          </div>
+                        </section>
+                        {/* In-content ad after 2nd section (only if 4+ sections for density) */}
+                        {i === 1 && a.sections!.length >= 4 && (
+                          <AdSlot
+                            placement="display-incontent-article"
+                            variant="in-content"
+                            page={pagePath}
+                            brokers={allBrokersForWidget}
+                          />
+                        )}
+                      </div>
                     )
                   )}
                 </div>

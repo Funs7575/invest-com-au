@@ -729,6 +729,12 @@ details > :not(summary) {
   .chart-bar-animate { animation: none; opacity: 1; }
 }
 
+/* Sticky ad footer slide-up animation */
+@keyframes slideUpIn {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
 /* ── Print styles for PDF export ─────────────────────── */
 @media print {
   header, footer, nav, .no-print { display: none !important; }

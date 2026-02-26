@@ -8,6 +8,7 @@ import { trackClick, trackEvent, getAffiliateLink, getBenefitCta, AFFILIATE_REL 
 import { useSearchParams } from "next/navigation";
 import AuthorByline from "@/components/AuthorByline";
 import Icon from "@/components/Icon";
+import AdSlot from "@/components/AdSlot";
 
 /* ──────────────────────────────────────────────
    URL state sync helpers
@@ -240,6 +241,14 @@ export default function CalculatorsClient({ brokers }: Props) {
           {activeCalc === "chess" && <ChessLookup brokers={nonCryptoBrokers} searchParams={searchParams} />}
           {activeCalc === "fee-impact" && <FeeImpactTeaser brokers={nonCryptoBrokers} searchParams={searchParams} />}
         </div>
+
+        {/* Display ad — high-intent placement (user just ran calculations) */}
+        <AdSlot
+          placement="display-calculator-results"
+          variant="in-content"
+          page="/calculators"
+          brokers={brokers}
+        />
 
         {/* Related Resources */}
         <div className="mt-4 md:mt-8 bg-slate-50 border border-slate-200 rounded-lg md:rounded-xl p-3 md:p-6">

@@ -18,6 +18,7 @@ import { getSponsorSortPriority, isSponsored, getPlacementWinners, type Placemen
 import Icon from "@/components/Icon";
 import BottomSheet from "@/components/BottomSheet";
 import ShortlistButton from "@/components/ShortlistButton";
+import AdSlot from "@/components/AdSlot";
 
 type FilterType = 'all' | 'beginner' | 'chess' | 'free' | 'us' | 'smsf' | 'low-fx' | 'crypto';
 type SortCol = 'name' | 'asx_fee_value' | 'us_fee_value' | 'fx_rate' | 'rating';
@@ -654,6 +655,14 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             <Link href="/how-we-earn" className="underline hover:text-slate-600">How we earn</Link>
           </p>
         </div>
+
+        {/* Sponsored display ad */}
+        <AdSlot
+          placement="display-sidebar-compare"
+          variant="in-content"
+          page="/compare"
+          brokers={brokers}
+        />
 
         {/* Bottom conversion — compact on mobile */}
         <div className="mt-5 md:mt-8 grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">

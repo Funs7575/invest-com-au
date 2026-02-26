@@ -15,6 +15,7 @@ import UserReviewsList from "@/components/UserReviewsList";
 import SwitchStoriesList from "@/components/SwitchStoriesList";
 import OnThisPage from "@/components/OnThisPage";
 import CollapsibleSection from "@/components/CollapsibleSection";
+import AdSlot from "@/components/AdSlot";
 
 function FeeVerdict({ value, thresholds }: { value: number | undefined; thresholds: [number, number] }) {
   if (value == null) return <span className="px-2 py-0.5 bg-slate-100 text-slate-500 text-xs font-semibold rounded-full">N/A</span>;
@@ -483,6 +484,14 @@ export default function BrokerReviewClient({
             </ScrollReveal>
           )}
         </div>
+
+        {/* In-content display ad */}
+        <AdSlot
+          placement="display-incontent-review"
+          variant="in-content"
+          page={`/broker/${b.slug}`}
+          brokers={similar}
+        />
 
         {/* Important Information — exit/closure policy, regulatory, risk warnings */}
         <div id="important-info" className="bg-slate-50 border border-slate-200 rounded-xl p-5 mb-8 scroll-mt-20">

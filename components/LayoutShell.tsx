@@ -11,6 +11,7 @@ const CookieBanner = dynamic(() => import("@/components/CookieBanner"), { ssr: f
 const BackToTop = dynamic(() => import("@/components/BackToTop"), { ssr: false });
 const QuizPromptBar = dynamic(() => import("@/components/QuizPromptBar"), { ssr: false });
 const ExitIntentPopup = dynamic(() => import("@/components/ExitIntentPopup"), { ssr: false });
+const StickyAdFooter = dynamic(() => import("@/components/StickyAdFooter"), { ssr: false });
 
 
 export default function LayoutShell({ children }: { children: React.ReactNode }) {
@@ -39,6 +40,7 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
       <BackToTop />
       <QuizPromptBar />
       <ExitIntentPopup />
+      <StickyAdFooter />
     </>
   );
 }
