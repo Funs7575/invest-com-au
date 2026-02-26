@@ -27,6 +27,14 @@
     {
       "path": "/api/cron/retry-webhooks",
       "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/auto-publish",
+      "schedule": "0 4 * * *"
+    },
+    {
+      "path": "/api/cron/content-staleness",
+      "schedule": "0 3 1 * *"
     }
   ]
 }

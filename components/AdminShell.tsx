@@ -18,6 +18,7 @@ const navSections = [
     items: [
       { href: "/admin/brokers", label: "Brokers", icon: "🏦" },
       { href: "/admin/articles", label: "Articles", icon: "📝" },
+      { href: "/admin/content-calendar", label: "Content Calendar", icon: "📅" },
       { href: "/admin/team-members", label: "Team Members", icon: "👥" },
       { href: "/admin/scenarios", label: "Scenarios", icon: "🎯" },
       { href: "/admin/quiz-questions", label: "Quiz Questions", icon: "❓" },
