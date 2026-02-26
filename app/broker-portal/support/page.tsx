@@ -14,12 +14,12 @@ const CATEGORIES = [
   { value: "general", label: "General Inquiry" },
 ] as const;
 
-const STATUS_STYLES: Record<string, string> = {
-  open: "bg-green-100 text-green-800",
-  in_progress: "bg-blue-100 text-blue-800",
-  waiting_reply: "bg-amber-100 text-amber-800",
-  resolved: "bg-slate-100 text-slate-700",
-  closed: "bg-slate-100 text-slate-500",
+const STATUS_STYLES: Record<string, { bg: string; icon: string }> = {
+  open: { bg: "bg-green-100 text-green-800", icon: "alert-circle" },
+  in_progress: { bg: "bg-blue-100 text-blue-800", icon: "clock" },
+  waiting_reply: { bg: "bg-amber-100 text-amber-800", icon: "message-circle" },
+  resolved: { bg: "bg-slate-100 text-slate-700", icon: "check-circle" },
+  closed: { bg: "bg-slate-100 text-slate-500", icon: "x-circle" },
 };
 
 const PRIORITY_STYLES: Record<string, string> = {
@@ -191,7 +191,8 @@ export default function SupportPage() {
             <div>
               <h2 className="text-lg font-bold text-slate-900">{activeTicket.subject}</h2>
               <div className="flex items-center gap-2 mt-1">
-                <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${STATUS_STYLES[activeTicket.status]}`}>
+                <span className={`inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full ${STATUS_STYLES[activeTicket.status]?.bg}`}>
+                  <Icon name={STATUS_STYLES[activeTicket.status]?.icon || "info"} size={11} />
                   {activeTicket.status.replace(/_/g, " ")}
                 </span>
                 <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${PRIORITY_STYLES[activeTicket.priority]}`}>
@@ -253,6 +254,9 @@ export default function SupportPage() {
     );
   }
 
+  const openCount = tickets.filter(t => t.status === "open" || t.status === "in_progress" || t.status === "waiting_reply").length;
+  const resolvedCount = tickets.filter(t => t.status === "resolved" || t.status === "closed").length;
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -266,6 +270,39 @@ export default function SupportPage() {
           New Ticket
         </button>
       </div>
+
+      {/* KPI Cards */}
+      {tickets.length > 0 && (
+        <div className="grid grid-cols-3 gap-4 portal-stagger">
+          <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center">
+                <Icon name="message-circle" size={14} className="text-amber-600" />
+              </div>
+              <span className="text-xs font-medium text-slate-500">Open</span>
+            </div>
+            <p className="text-xl font-extrabold text-slate-900">{openCount}</p>
+          </div>
+          <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-7 h-7 rounded-lg bg-green-50 flex items-center justify-center">
+                <Icon name="check-circle" size={14} className="text-green-600" />
+              </div>
+              <span className="text-xs font-medium text-slate-500">Resolved</span>
+            </div>
+            <p className="text-xl font-extrabold text-slate-900">{resolvedCount}</p>
+          </div>
+          <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center">
+                <Icon name="bar-chart" size={14} className="text-blue-600" />
+              </div>
+              <span className="text-xs font-medium text-slate-500">Total</span>
+            </div>
+            <p className="text-xl font-extrabold text-slate-900">{tickets.length}</p>
+          </div>
+        </div>
+      )}
 
       {/* Create ticket form */}
       {showCreate && (
@@ -334,14 +371,15 @@ export default function SupportPage() {
           </p>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-slate-200 divide-y divide-slate-100">
+        <div className="bg-white rounded-xl border border-slate-200 divide-y divide-slate-100 portal-stagger">
           {tickets.map(ticket => (
             <button key={ticket.id} onClick={() => openTicket(ticket)}
-              className="w-full p-4 flex items-center gap-4 text-left hover:bg-slate-50 transition-colors">
+              className="w-full p-4 flex items-center gap-4 text-left hover:bg-slate-50 transition-all">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <p className="text-sm font-semibold text-slate-900 truncate">{ticket.subject}</p>
-                  <span className={`text-[0.62rem] font-bold px-1.5 py-0.5 rounded-full shrink-0 ${STATUS_STYLES[ticket.status]}`}>
+                  <span className={`inline-flex items-center gap-1 text-[0.62rem] font-bold px-1.5 py-0.5 rounded-full shrink-0 ${STATUS_STYLES[ticket.status]?.bg}`}>
+                    <Icon name={STATUS_STYLES[ticket.status]?.icon || "info"} size={10} />
                     {ticket.status.replace(/_/g, " ")}
                   </span>
                 </div>

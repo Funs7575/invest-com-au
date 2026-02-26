@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import Icon from "@/components/Icon";
+import CountUp from "@/components/CountUp";
 import type { ABTest } from "@/lib/types";
 
 const TEST_TYPES = [
@@ -13,11 +14,11 @@ const TEST_TYPES = [
   { value: "landing_page", label: "Landing Page URL", placeholder_a: "https://broker.com/offer-a", placeholder_b: "https://broker.com/offer-b" },
 ] as const;
 
-const STATUS_STYLES: Record<string, string> = {
-  draft: "bg-slate-100 text-slate-700",
-  running: "bg-green-100 text-green-800",
-  paused: "bg-amber-100 text-amber-800",
-  completed: "bg-blue-100 text-blue-800",
+const STATUS_STYLES: Record<string, { bg: string; icon: string }> = {
+  draft: { bg: "bg-slate-100 text-slate-700", icon: "file-text" },
+  running: { bg: "bg-green-100 text-green-800", icon: "trending-up" },
+  paused: { bg: "bg-amber-100 text-amber-800", icon: "pause-circle" },
+  completed: { bg: "bg-blue-100 text-blue-800", icon: "check-circle" },
 };
 
 export default function ABTestsPage() {
@@ -147,6 +148,65 @@ export default function ABTestsPage() {
         </button>
       </div>
 
+      {/* KPI Cards */}
+      {tests.length > 0 && (() => {
+        const running = tests.filter(t => t.status === "running").length;
+        const totalImp = tests.reduce((s, t) => s + t.impressions_a + t.impressions_b, 0);
+        const winners = tests.filter(t => t.winner).length;
+        const totalConv = tests.reduce((s, t) => s + t.conversions_a + t.conversions_b, 0);
+        const totalClk = tests.reduce((s, t) => s + t.clicks_a + t.clicks_b, 0);
+        const avgConvRate = totalClk > 0 ? (totalConv / totalClk) * 100 : 0;
+        return (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 portal-stagger">
+            <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-7 h-7 rounded-lg bg-green-50 flex items-center justify-center">
+                  <Icon name="git-branch" size={14} className="text-green-600" />
+                </div>
+                <span className="text-xs font-medium text-slate-500">Running</span>
+              </div>
+              <p className="text-xl font-extrabold text-slate-900">
+                <CountUp end={running} duration={600} />
+                <span className="text-sm font-medium text-slate-400 ml-1">/ {tests.length}</span>
+              </p>
+            </div>
+            <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center">
+                  <Icon name="eye" size={14} className="text-blue-600" />
+                </div>
+                <span className="text-xs font-medium text-slate-500">Impressions</span>
+              </div>
+              <p className="text-xl font-extrabold text-slate-900">
+                <CountUp end={totalImp} duration={1000} />
+              </p>
+            </div>
+            <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center">
+                  <Icon name="trophy" size={14} className="text-amber-600" />
+                </div>
+                <span className="text-xs font-medium text-slate-500">Winners</span>
+              </div>
+              <p className="text-xl font-extrabold text-slate-900">
+                <CountUp end={winners} duration={600} />
+              </p>
+            </div>
+            <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-7 h-7 rounded-lg bg-purple-50 flex items-center justify-center">
+                  <Icon name="trending-up" size={14} className="text-purple-600" />
+                </div>
+                <span className="text-xs font-medium text-slate-500">Avg Conv Rate</span>
+              </div>
+              <p className="text-xl font-extrabold text-slate-900">
+                <CountUp end={avgConvRate} decimals={2} suffix="%" duration={1000} />
+              </p>
+            </div>
+          </div>
+        );
+      })()}
+
       {/* Create form */}
       {showCreate && (
         <form onSubmit={handleCreate} className="bg-white rounded-xl border border-slate-200 p-6 space-y-4" style={{ animation: "resultCardIn 0.3s ease-out" }}>
@@ -225,19 +285,20 @@ export default function ABTestsPage() {
           <p className="text-xs text-slate-400 mb-4">Create your first test to optimize your messaging.</p>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-4 portal-stagger">
           {tests.map(test => {
             const { ctrA, ctrB, convA, convB } = getWinnerStats(test);
             const totalImp = test.impressions_a + test.impressions_b;
             const totalClicks = test.clicks_a + test.clicks_b;
 
             return (
-              <div key={test.id} className="bg-white rounded-xl border border-slate-200 p-5 space-y-4">
+              <div key={test.id} className="bg-white rounded-xl border border-slate-200 p-5 space-y-4 hover-lift">
                 <div className="flex items-start justify-between">
                   <div>
                     <div className="flex items-center gap-2">
                       <h3 className="font-bold text-slate-900">{test.name}</h3>
-                      <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${STATUS_STYLES[test.status]}`}>
+                      <span className={`inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full ${STATUS_STYLES[test.status]?.bg}`}>
+                        <Icon name={STATUS_STYLES[test.status]?.icon || "info"} size={11} />
                         {test.status.replace(/_/g, " ")}
                       </span>
                       {test.winner && (

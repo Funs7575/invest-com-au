@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import Icon from "@/components/Icon";
+import CountUp from "@/components/CountUp";
 
 interface Invoice {
   id: number;
@@ -54,21 +55,26 @@ export default function InvoicesPage() {
     );
   }
 
+  const STATUS_CONFIG: Record<Invoice["status"], { bg: string; icon: string; iconColor: string }> = {
+    paid: { bg: "bg-green-50 text-green-700", icon: "check-circle", iconColor: "text-green-600" },
+    pending: { bg: "bg-yellow-50 text-yellow-700", icon: "clock", iconColor: "text-yellow-600" },
+    failed: { bg: "bg-red-50 text-red-700", icon: "x-circle", iconColor: "text-red-600" },
+    refunded: { bg: "bg-blue-50 text-blue-600", icon: "arrow-up", iconColor: "text-blue-600" },
+  };
+
   const statusBadge = (status: Invoice["status"]) => {
-    const map: Record<Invoice["status"], string> = {
-      paid: "bg-green-50 text-slate-700",
-      pending: "bg-yellow-50 text-yellow-700",
-      failed: "bg-red-50 text-red-700",
-      refunded: "bg-slate-100 text-slate-600",
-    };
+    const cfg = STATUS_CONFIG[status] || { bg: "bg-slate-100 text-slate-600", icon: "info", iconColor: "text-slate-500" };
     return (
-      <span
-        className={`text-xs font-bold px-2 py-0.5 rounded-full ${map[status] || "bg-slate-100 text-slate-600"}`}
-      >
+      <span className={`inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full ${cfg.bg}`}>
+        <Icon name={cfg.icon} size={11} className={cfg.iconColor} />
         {status}
       </span>
     );
   };
+
+  const totalInvoiced = invoices.reduce((s, i) => s + i.amount_cents, 0);
+  const paidCount = invoices.filter(i => i.status === "paid").length;
+  const pendingAmount = invoices.filter(i => i.status === "pending").reduce((s, i) => s + i.amount_cents, 0);
 
   const formatDate = (iso: string) => {
     const d = new Date(iso);
@@ -89,6 +95,57 @@ export default function InvoicesPage() {
           View your wallet top-up invoices and receipts.
         </p>
       </div>
+
+      {/* KPI Cards */}
+      {invoices.length > 0 && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 portal-stagger">
+          <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center">
+                <Icon name="file-text" size={14} className="text-blue-600" />
+              </div>
+              <span className="text-xs font-medium text-slate-500">Total Invoiced</span>
+            </div>
+            <p className="text-xl font-extrabold text-slate-900">
+              <CountUp end={totalInvoiced / 100} prefix="$" decimals={2} duration={1000} />
+            </p>
+          </div>
+          <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-7 h-7 rounded-lg bg-green-50 flex items-center justify-center">
+                <Icon name="check-circle" size={14} className="text-green-600" />
+              </div>
+              <span className="text-xs font-medium text-slate-500">Paid</span>
+            </div>
+            <p className="text-xl font-extrabold text-slate-900">
+              <CountUp end={paidCount} duration={800} />
+              <span className="text-sm font-medium text-slate-400 ml-1">/ {invoices.length}</span>
+            </p>
+          </div>
+          <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center">
+                <Icon name="clock" size={14} className="text-amber-600" />
+              </div>
+              <span className="text-xs font-medium text-slate-500">Pending</span>
+            </div>
+            <p className="text-xl font-extrabold text-slate-900">
+              <CountUp end={pendingAmount / 100} prefix="$" decimals={2} duration={1000} />
+            </p>
+          </div>
+          <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-7 h-7 rounded-lg bg-purple-50 flex items-center justify-center">
+                <Icon name="trending-up" size={14} className="text-purple-600" />
+              </div>
+              <span className="text-xs font-medium text-slate-500">Success Rate</span>
+            </div>
+            <p className="text-xl font-extrabold text-slate-900">
+              <CountUp end={invoices.length > 0 ? (paidCount / invoices.length) * 100 : 0} decimals={0} suffix="%" duration={1000} />
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="bg-white rounded-xl border border-slate-200">
         {invoices.length === 0 ? (

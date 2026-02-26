@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
+import Icon from "@/components/Icon";
 
 interface Package {
   id: number;
@@ -17,11 +18,11 @@ interface Package {
   sort_order: number;
 }
 
-const TIER_COLORS: Record<string, { bg: string; border: string; badge: string }> = {
-  starter: { bg: "bg-slate-50", border: "border-slate-200", badge: "bg-slate-200 text-slate-700" },
-  growth: { bg: "bg-slate-50", border: "border-slate-300", badge: "bg-slate-300 text-slate-800" },
-  dominance: { bg: "bg-purple-50", border: "border-purple-200", badge: "bg-purple-200 text-purple-800" },
-  enterprise: { bg: "bg-amber-50", border: "border-amber-200", badge: "bg-amber-200 text-amber-800" },
+const TIER_COLORS: Record<string, { bg: string; border: string; badge: string; icon: string; iconBg: string; iconColor: string }> = {
+  starter: { bg: "bg-slate-50", border: "border-slate-200", badge: "bg-slate-200 text-slate-700", icon: "zap", iconBg: "bg-slate-100", iconColor: "text-slate-500" },
+  growth: { bg: "bg-slate-50", border: "border-slate-300", badge: "bg-slate-300 text-slate-800", icon: "trending-up", iconBg: "bg-blue-100", iconColor: "text-blue-600" },
+  dominance: { bg: "bg-purple-50", border: "border-purple-200", badge: "bg-purple-200 text-purple-800", icon: "trophy", iconBg: "bg-purple-100", iconColor: "text-purple-600" },
+  enterprise: { bg: "bg-amber-50", border: "border-amber-200", badge: "bg-amber-200 text-amber-800", icon: "building", iconBg: "bg-amber-100", iconColor: "text-amber-600" },
 };
 
 const TIER_FEATURES: Record<string, string[]> = {
@@ -240,7 +241,10 @@ export default function PackagesPage() {
                 </div>
               )}
 
-              <div className="mb-4">
+              <div className="mb-4 flex items-center gap-2">
+                <div className={`w-8 h-8 rounded-lg ${colors.iconBg} flex items-center justify-center`}>
+                  <Icon name={colors.icon} size={16} className={colors.iconColor} />
+                </div>
                 <span className={`inline-block px-2 py-0.5 rounded text-[0.69rem] font-bold uppercase tracking-wider ${colors.badge}`}>
                   {pkg.tier}
                 </span>
@@ -268,7 +272,7 @@ export default function PackagesPage() {
               <ul className="space-y-2 mb-6 flex-1">
                 {features.map((f, i) => (
                   <li key={i} className="flex items-start gap-2 text-xs text-slate-700">
-                    <span className="text-amber-500 mt-0.5">✓</span>
+                    <Icon name="check-circle" size={13} className="text-amber-500 mt-0.5 shrink-0" />
                     <span>{f}</span>
                   </li>
                 ))}
@@ -306,17 +310,32 @@ export default function PackagesPage() {
       <div className="bg-white rounded-xl border border-slate-200 p-6">
         <h3 className="text-sm font-bold text-slate-700 mb-2">Package Details</h3>
         <div className="grid md:grid-cols-3 gap-4 text-xs text-slate-600">
-          <div>
-            <p className="font-medium text-slate-800 mb-1">CPC Rate Discounts</p>
-            <p>Package discounts are applied automatically to all CPC campaigns.</p>
+          <div className="flex gap-3">
+            <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
+              <Icon name="dollar-sign" size={14} className="text-blue-600" />
+            </div>
+            <div>
+              <p className="font-medium text-slate-800 mb-1">CPC Rate Discounts</p>
+              <p>Package discounts are applied automatically to all CPC campaigns.</p>
+            </div>
           </div>
-          <div>
-            <p className="font-medium text-slate-800 mb-1">Featured Placements</p>
-            <p>Included featured slots are deducted from your monthly fee, not your wallet.</p>
+          <div className="flex gap-3">
+            <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center shrink-0">
+              <Icon name="star" size={14} className="text-amber-600" />
+            </div>
+            <div>
+              <p className="font-medium text-slate-800 mb-1">Featured Placements</p>
+              <p>Included featured slots are deducted from your monthly fee, not your wallet.</p>
+            </div>
           </div>
-          <div>
-            <p className="font-medium text-slate-800 mb-1">Billing</p>
-            <p>Package fees are charged monthly to your wallet. CPC clicks are billed per click.</p>
+          <div className="flex gap-3">
+            <div className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center shrink-0">
+              <Icon name="wallet" size={14} className="text-green-600" />
+            </div>
+            <div>
+              <p className="font-medium text-slate-800 mb-1">Billing</p>
+              <p>Package fees are charged monthly to your wallet. CPC clicks are billed per click.</p>
+            </div>
           </div>
         </div>
       </div>

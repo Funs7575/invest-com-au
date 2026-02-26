@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
+import Icon from "@/components/Icon";
 import type { BrokerAccount } from "@/lib/types";
 
 export default function SettingsPage() {
@@ -130,6 +131,12 @@ export default function SettingsPage() {
       </div>
 
       <form onSubmit={handleSave} className="bg-white rounded-xl border border-slate-200 p-6 space-y-5">
+        <div className="flex items-center gap-2 mb-1">
+          <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center">
+            <Icon name="user" size={14} className="text-blue-600" />
+          </div>
+          <h3 className="font-bold text-slate-900">Account Details</h3>
+        </div>
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
           <input
@@ -225,10 +232,15 @@ export default function SettingsPage() {
 
       {/* Terms Acceptance */}
       <div className="bg-white rounded-xl border border-slate-200 p-6">
-        <h3 className="text-base font-bold text-slate-900 mb-4">Marketplace Terms</h3>
+        <div className="flex items-center gap-2 mb-4">
+          <div className="w-7 h-7 rounded-lg bg-green-50 flex items-center justify-center">
+            <Icon name="shield-check" size={14} className="text-green-600" />
+          </div>
+          <h3 className="text-base font-bold text-slate-900">Marketplace Terms</h3>
+        </div>
         {account?.terms_accepted_at ? (
-          <div className="flex items-center gap-2 text-slate-700 bg-slate-50 rounded-lg px-4 py-3">
-            <span>✓</span>
+          <div className="flex items-center gap-2 text-green-700 bg-green-50 rounded-lg px-4 py-3">
+            <Icon name="check-circle" size={16} className="text-green-600" />
             <span className="text-sm">Terms accepted on {new Date(account.terms_accepted_at).toLocaleDateString("en-AU")}</span>
           </div>
         ) : (
@@ -251,7 +263,12 @@ export default function SettingsPage() {
 
       {/* Postback API Key */}
       <div className="bg-white rounded-xl border border-slate-200 p-6">
-        <h3 className="text-base font-bold text-slate-900 mb-4">Postback API Key</h3>
+        <div className="flex items-center gap-2 mb-4">
+          <div className="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center">
+            <Icon name="key" size={14} className="text-amber-600" />
+          </div>
+          <h3 className="text-base font-bold text-slate-900">Postback API Key</h3>
+        </div>
         <p className="text-sm text-slate-600 mb-3">Use this key to report conversions via the postback API.</p>
         <div className="flex items-center gap-2">
           <code className="flex-1 bg-slate-100 px-3 py-2 rounded text-xs font-mono text-slate-700 truncate">
@@ -271,7 +288,12 @@ export default function SettingsPage() {
 
       {/* Low-Balance Alerts */}
       <div className="bg-white rounded-xl border border-slate-200 p-6">
-        <h3 className="text-base font-bold text-slate-900 mb-4">Low Balance Alerts</h3>
+        <div className="flex items-center gap-2 mb-4">
+          <div className="w-7 h-7 rounded-lg bg-red-50 flex items-center justify-center">
+            <Icon name="bell" size={14} className="text-red-600" />
+          </div>
+          <h3 className="text-base font-bold text-slate-900">Low Balance Alerts</h3>
+        </div>
         <div className="space-y-4">
           <label className="flex items-center gap-3">
             <input

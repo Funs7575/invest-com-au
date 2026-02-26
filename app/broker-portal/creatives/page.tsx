@@ -129,6 +129,45 @@ export default function CreativesPage() {
         </button>
       </div>
 
+      {/* KPI summary */}
+      {creatives.length > 0 && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 portal-stagger">
+          <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center">
+                <Icon name="image" size={14} className="text-blue-600" />
+              </div>
+              <span className="text-xs font-medium text-slate-500">Total Assets</span>
+            </div>
+            <p className="text-xl font-extrabold text-slate-900">{creatives.length}</p>
+          </div>
+          <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-7 h-7 rounded-lg bg-green-50 flex items-center justify-center">
+                <Icon name="check-circle" size={14} className="text-green-600" />
+              </div>
+              <span className="text-xs font-medium text-slate-500">Active</span>
+            </div>
+            <p className="text-xl font-extrabold text-slate-900">{creatives.filter(c => c.is_active).length}</p>
+          </div>
+          {CREATIVE_TYPES.map(t => {
+            const count = creatives.filter(c => c.type === t.value).length;
+            if (count === 0) return null;
+            return (
+              <div key={t.value} className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-7 h-7 rounded-lg bg-slate-50 flex items-center justify-center">
+                    <Icon name="image" size={14} className="text-slate-500" />
+                  </div>
+                  <span className="text-xs font-medium text-slate-500">{t.label}</span>
+                </div>
+                <p className="text-xl font-extrabold text-slate-900">{count}</p>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
       {/* Upload form */}
       {showForm && (
         <form onSubmit={handleUpload} className="bg-white rounded-xl border border-slate-200 p-6 space-y-4" style={{ animation: "resultCardIn 0.3s ease-out" }}>
@@ -193,7 +232,7 @@ export default function CreativesPage() {
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {group.items.map(c => (
-                <div key={c.id} className={`bg-white rounded-xl border overflow-hidden group transition-all ${
+                <div key={c.id} className={`bg-white rounded-xl border overflow-hidden group transition-all hover-lift ${
                   c.is_active ? "border-slate-200" : "border-slate-100 opacity-60"
                 }`}>
                   <div className="aspect-video bg-slate-50 flex items-center justify-center p-3 relative">

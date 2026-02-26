@@ -74,6 +74,12 @@ export default function NotificationsPage() {
   if (loading) return <div className="h-8 bg-slate-100 rounded w-48 animate-pulse" />;
 
   const unread = notifications.filter(n => !n.is_read);
+  const todayCount = notifications.filter(n => {
+    const d = new Date(n.created_at);
+    const now = new Date();
+    return d.toDateString() === now.toDateString();
+  }).length;
+  const alertCount = notifications.filter(n => n.type === "low_balance" || n.type === "budget_exhausted" || n.type === "campaign_rejected").length;
 
   return (
     <div className="space-y-6 max-w-2xl">
@@ -84,6 +90,39 @@ export default function NotificationsPage() {
         </p>
       </div>
 
+      {/* KPI summary */}
+      {notifications.length > 0 && (
+        <div className="grid grid-cols-3 gap-3 portal-stagger">
+          <div className="bg-white rounded-xl border border-slate-200 p-3 hover-lift">
+            <div className="flex items-center gap-2 mb-1">
+              <div className="w-6 h-6 rounded-lg bg-blue-50 flex items-center justify-center">
+                <Icon name="bell" size={12} className="text-blue-600" />
+              </div>
+              <span className="text-[0.69rem] font-medium text-slate-500">Unread</span>
+            </div>
+            <p className="text-lg font-extrabold text-slate-900">{unread.length}</p>
+          </div>
+          <div className="bg-white rounded-xl border border-slate-200 p-3 hover-lift">
+            <div className="flex items-center gap-2 mb-1">
+              <div className="w-6 h-6 rounded-lg bg-amber-50 flex items-center justify-center">
+                <Icon name="alert-triangle" size={12} className="text-amber-600" />
+              </div>
+              <span className="text-[0.69rem] font-medium text-slate-500">Alerts</span>
+            </div>
+            <p className="text-lg font-extrabold text-slate-900">{alertCount}</p>
+          </div>
+          <div className="bg-white rounded-xl border border-slate-200 p-3 hover-lift">
+            <div className="flex items-center gap-2 mb-1">
+              <div className="w-6 h-6 rounded-lg bg-green-50 flex items-center justify-center">
+                <Icon name="calendar" size={12} className="text-green-600" />
+              </div>
+              <span className="text-[0.69rem] font-medium text-slate-500">Today</span>
+            </div>
+            <p className="text-lg font-extrabold text-slate-900">{todayCount}</p>
+          </div>
+        </div>
+      )}
+
       {notifications.length === 0 ? (
         <div className="bg-white rounded-xl border border-slate-200 p-12 text-center">
           <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-3">
@@ -93,11 +132,11 @@ export default function NotificationsPage() {
           <p className="text-xs text-slate-400">We&apos;ll notify you about campaign updates, wallet alerts, and more.</p>
         </div>
       ) : (
-        <div className="space-y-2">
+        <div className="space-y-2 portal-stagger">
           {notifications.map(n => {
             const style = TYPE_ICONS[n.type] || TYPE_ICONS.system;
             return (
-              <div key={n.id} className={`bg-white rounded-xl border p-4 flex items-start gap-3 transition-all ${
+              <div key={n.id} className={`bg-white rounded-xl border p-4 flex items-start gap-3 transition-all hover-lift ${
                 !n.is_read ? "border-slate-300 bg-blue-50/30" : "border-slate-200"
               }`}>
                 <div className={`w-8 h-8 rounded-full ${style.bg} flex items-center justify-center shrink-0 mt-0.5`}>
