@@ -173,6 +173,7 @@ export default function BrokerComparisonTable({
                     target="_blank"
                     rel={AFFILIATE_REL}
                     className="inline-block px-4 py-2 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 hover:scale-105 transition-all"
+                    style={{ backgroundColor: '#d97706' }}
                   >
                     Go to Site &rarr;
                   </a>
@@ -242,6 +243,7 @@ export default function BrokerComparisonTable({
               target="_blank"
               rel={AFFILIATE_REL}
               className="block w-full text-center px-4 py-2.5 bg-amber-600 text-white text-sm font-bold rounded-lg hover:bg-amber-700 transition-colors"
+              style={{ backgroundColor: '#d97706' }}
             >
               Go to Site &rarr;
             </a>

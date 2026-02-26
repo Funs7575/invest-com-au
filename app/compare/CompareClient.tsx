@@ -272,6 +272,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                 rel={AFFILIATE_REL}
                 onClick={() => trackClick(dealBroker.slug, dealBroker.name, 'compare-deal-banner', '/compare', 'compare')}
                 className="shrink-0 px-3 md:px-4 py-1.5 md:py-2 bg-amber-600 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-amber-700 transition-colors"
+                style={{ backgroundColor: '#d97706' }}
               >
                 Claim →
               </a>
@@ -508,6 +509,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                       rel={AFFILIATE_REL}
                       onClick={() => trackClick(broker.slug, broker.name, 'compare-table', '/compare', 'compare')}
                       className="inline-block px-4 py-2 bg-amber-600 text-white text-sm font-semibold rounded-lg hover:bg-amber-700 transition-all duration-200 group-hover:scale-105 group-hover:shadow-lg"
+                      style={{ backgroundColor: '#d97706' }}
                     >
                       {getBenefitCta(broker, 'compare')}
                     </a>

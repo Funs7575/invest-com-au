@@ -140,6 +140,7 @@ export default function ShortlistClient() {
                 rel={AFFILIATE_REL}
                 onClick={() => trackClick(broker.slug, broker.name, "shortlist", "/shortlist", "compare")}
                 className="px-2.5 md:px-3 py-1.5 md:py-2 bg-amber-600 text-white text-[0.69rem] md:text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors min-h-[36px] inline-flex items-center"
+                style={{ backgroundColor: '#d97706' }}
               >
                 <span className="hidden sm:inline">Visit Broker</span>
                 <span className="sm:hidden">Visit</span>

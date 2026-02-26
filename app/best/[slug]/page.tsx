@@ -357,6 +357,7 @@ export default async function BestBrokerPage({
                   target="_blank"
                   rel={AFFILIATE_REL}
                   className="shrink-0 px-6 py-3 bg-amber-600 text-white font-semibold rounded-lg hover:bg-amber-700 transition-colors text-center"
+                  style={{ backgroundColor: '#d97706' }}
                 >
                   {getBenefitCta(topPick, "compare")}
                 </a>
@@ -419,6 +420,7 @@ export default async function BestBrokerPage({
                         target="_blank"
                         rel={AFFILIATE_REL}
                         className="inline-block px-4 py-2 bg-amber-600 text-white text-sm font-semibold rounded-lg hover:bg-amber-700 transition-colors"
+                        style={{ backgroundColor: '#d97706' }}
                       >
                         {getBenefitCta(broker, "compare")}
                       </a>

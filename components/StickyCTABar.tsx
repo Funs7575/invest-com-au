@@ -54,6 +54,7 @@ export default function StickyCTABar({ broker, detail, context = 'review' }: { b
             rel={AFFILIATE_REL}
             onClick={() => trackClick(broker.slug, broker.name, 'sticky-cta', window.location.pathname, context)}
             className="shrink-0 px-4 py-3 md:px-5 bg-amber-600 text-white text-sm font-bold rounded-lg hover:bg-amber-700 hover:shadow-lg transition-all active:scale-[0.97]"
+            style={{ backgroundColor: '#d97706' }}
           >
             {getBenefitCta(broker, context)}
           </a>
