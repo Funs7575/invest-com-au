@@ -21,7 +21,7 @@ function ScoreGauge({ score, color, size = 140 }: { score: number; color: string
   const gaugeColor = score >= 80 ? "#22c55e" : score >= 50 ? "#f59e0b" : "#ef4444";
 
   return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} role="img" aria-label={`Health score: ${score} out of 100`}>
       <circle
         cx={size / 2}
         cy={size / 2}

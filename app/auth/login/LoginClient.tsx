@@ -8,11 +8,16 @@ import { createClient } from "@/lib/supabase/client";
 export default function LoginClient() {
   const searchParams = useSearchParams();
   const next = searchParams.get("next") || "/account";
+  const callbackError = searchParams.get("error");
 
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(
+    callbackError === "callback_failed"
+      ? "Sign-in failed. Please try again."
+      : ""
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -106,6 +111,7 @@ export default function LoginClient() {
                 placeholder="you@example.com"
                 required
                 autoFocus
+                autoComplete="email"
                 className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-700/30 focus:border-blue-700"
               />
             </div>

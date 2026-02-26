@@ -72,6 +72,8 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
 
   function updateSlug(index: number, slug: string) {
     setSelectedSlugs(prev => {
+      // Prevent selecting the same broker twice
+      if (slug && prev.some((s, i) => i !== index && s === slug)) return prev;
       const next = [...prev];
       next[index] = slug;
       return next;
@@ -261,9 +263,14 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                         className="w-full border border-slate-200 rounded-lg py-2.5 md:py-2.5 px-2.5 md:px-3 min-h-[44px] text-xs md:text-sm font-medium bg-white hover:border-slate-300 focus:border-blue-700 focus:ring-1 focus:ring-blue-700 transition-colors"
                       >
                         <option value="">Choose a broker...</option>
-                        {brokers.map(br => (
-                          <option key={br.slug} value={br.slug}>{br.name}</option>
-                        ))}
+                        {brokers.map(br => {
+                          const alreadySelected = selectedSlugs.some((s, i) => i !== index && s === br.slug);
+                          return (
+                            <option key={br.slug} value={br.slug} disabled={alreadySelected}>
+                              {br.name}{alreadySelected ? " (already selected)" : ""}
+                            </option>
+                          );
+                        })}
                       </select>
                     </div>
                   </div>
@@ -397,7 +404,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
             <div className="mb-3 md:mb-8">
               <h2 className="text-base md:text-xl font-extrabold mb-2 md:mb-4">Head-to-Head Comparison</h2>
               <ScrollReveal animation="scroll-fade-in" className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-                <div className="bg-white border border-slate-200 rounded-xl md:rounded-2xl overflow-hidden">
+                <div className="bg-white border border-slate-200 rounded-xl md:rounded-2xl overflow-hidden min-w-[360px]">
                   {/* Broker headers */}
                   <div className="grid border-b border-slate-100" style={{ gridTemplateColumns: `110px repeat(${selected.length}, 1fr)` }}>
                     <div className="px-2.5 py-2.5 md:px-4 md:py-4 bg-slate-50" />

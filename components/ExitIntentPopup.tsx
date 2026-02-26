@@ -101,12 +101,33 @@ export default function ExitIntentPopup() {
     localStorage.setItem("exitIntentDismissed", "true");
   }, []);
 
-  // Escape key to close modal
+  // Escape key to close modal + focus trap
   useEffect(() => {
     if (!visible) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") handleDismiss();
+      // Focus trap: cycle through focusable elements inside the modal
+      if (e.key === "Tab") {
+        const modal = document.querySelector('[role="dialog"]');
+        if (!modal) return;
+        const focusable = modal.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     };
+    // Auto-focus the close button when modal appears
+    const closeBtn = document.querySelector<HTMLElement>('[role="dialog"] button[aria-label="Close"]');
+    closeBtn?.focus();
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [visible, handleDismiss]);

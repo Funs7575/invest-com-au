@@ -337,9 +337,9 @@ export default function FeeImpactClient({ brokers }: Props) {
 
   // Calculate fees for all brokers
   const results = useMemo<FeeResult[]>(() => {
-    const asxPerMonth = parseFloat(asxTrades) || 0;
-    const usPerMonth = parseFloat(usTrades) || 0;
-    const tradeSize = parseFloat(avgTradeSize) || 0;
+    const asxPerMonth = Math.max(0, parseFloat(asxTrades) || 0);
+    const usPerMonth = Math.max(0, parseFloat(usTrades) || 0);
+    const tradeSize = Math.max(0, parseFloat(avgTradeSize) || 0);
 
     return brokers
       .map((b) => {

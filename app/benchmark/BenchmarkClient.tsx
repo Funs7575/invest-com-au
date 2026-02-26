@@ -119,7 +119,7 @@ function RadarChart({
     : null;
 
   return (
-    <svg viewBox="0 0 300 300" className="w-full max-w-[340px] mx-auto">
+    <svg viewBox="0 0 300 300" className="w-full max-w-[340px] mx-auto" role="img" aria-label={`Radar chart showing ${benchmark.name} performance across ${DIMENSIONS.length} dimensions`}>
       {/* Grid levels */}
       {levels.map((level) => (
         <polygon

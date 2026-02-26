@@ -52,21 +52,26 @@ export default function AccountClient() {
   // Load email preferences from profiles table
   const loadPrefs = useCallback(async () => {
     if (!user) return;
-    const supabase = createClient();
-    const { data } = await supabase
-      .from("profiles")
-      .select("email_newsletter, email_fee_alerts, email_deal_alerts, email_weekly_digest")
-      .eq("id", user.id)
-      .maybeSingle();
-    if (data) {
-      setPrefs({
-        email_newsletter: data.email_newsletter ?? true,
-        email_fee_alerts: data.email_fee_alerts ?? true,
-        email_deal_alerts: data.email_deal_alerts ?? true,
-        email_weekly_digest: data.email_weekly_digest ?? true,
-      });
+    try {
+      const supabase = createClient();
+      const { data } = await supabase
+        .from("profiles")
+        .select("email_newsletter, email_fee_alerts, email_deal_alerts, email_weekly_digest")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (data) {
+        setPrefs({
+          email_newsletter: data.email_newsletter ?? true,
+          email_fee_alerts: data.email_fee_alerts ?? true,
+          email_deal_alerts: data.email_deal_alerts ?? true,
+          email_weekly_digest: data.email_weekly_digest ?? true,
+        });
+      }
+    } catch {
+      // Fall back to defaults silently
+    } finally {
+      setPrefsLoading(false);
     }
-    setPrefsLoading(false);
   }, [user]);
 
   useEffect(() => { loadPrefs(); }, [loadPrefs]);
