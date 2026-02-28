@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import AdminShell from "@/components/AdminShell";
+import { downloadCSV } from "@/lib/csv-export";
 
 type Story = {
   id: number;
@@ -70,6 +71,7 @@ export default function AdminSwitchStoriesPage() {
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<number | null>(null);
   const [expandedId, setExpandedId] = useState<number | null>(null);
+  const [selected, setSelected] = useState<Set<number>>(new Set());
 
   const supabase = createClient();
 
@@ -120,6 +122,19 @@ export default function AdminSwitchStoriesPage() {
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   const paginated = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
+  // CSV Export
+  const exportStories = () => {
+    downloadCSV(
+      `switch-stories-${new Date().toISOString().split("T")[0]}.csv`,
+      ["From", "To", "Name", "Email", "Title", "Source Rating", "Dest Rating", "Status", "Date"],
+      filtered.map((s) => [
+        s.source_broker_slug, s.dest_broker_slug, s.display_name, s.email,
+        s.title, String(s.source_rating), String(s.dest_rating), s.status,
+        new Date(s.created_at).toLocaleDateString("en-AU"),
+      ])
+    );
+  };
+
   // Moderate action
   async function handleModerate(storyId: number, action: "approve" | "reject") {
     setActionLoading(storyId);
@@ -156,12 +171,15 @@ export default function AdminSwitchStoriesPage() {
     <AdminShell>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-slate-900">Switch Stories</h1>
-        <button
-          onClick={load}
-          className="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-lg px-4 py-2 text-sm transition-colors"
-        >
-          Refresh
-        </button>
+        <div className="flex items-center gap-2">
+          <button onClick={exportStories} className="bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg px-4 py-2 text-sm transition-colors">Export CSV ↓</button>
+          <button
+            onClick={load}
+            className="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-lg px-4 py-2 text-sm transition-colors"
+          >
+            Refresh
+          </button>
+        </div>
       </div>
 
       {/* Stats Row */}
@@ -199,6 +217,18 @@ export default function AdminSwitchStoriesPage() {
         className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/30 mb-4"
       />
 
+      {/* Bulk Actions */}
+      {selected.size > 0 && (
+        <div className="mb-4 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 flex items-center justify-between">
+          <span className="text-sm text-blue-700 font-medium">{selected.size} stor{selected.size !== 1 ? "ies" : "y"} selected</span>
+          <div className="flex items-center gap-2">
+            <button onClick={async () => { for (const id of selected) await handleModerate(id, "approve"); setSelected(new Set()); }} className="px-3 py-1.5 text-xs font-medium bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">Approve All</button>
+            <button onClick={async () => { for (const id of selected) await handleModerate(id, "reject"); setSelected(new Set()); }} className="px-3 py-1.5 text-xs font-medium bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">Reject All</button>
+            <button onClick={() => setSelected(new Set())} className="px-3 py-1.5 text-xs text-slate-500 hover:text-slate-900 transition-colors">Clear</button>
+          </div>
+        </div>
+      )}
+
       {/* Table */}
       {loading ? (
         <div className="py-12 text-center text-slate-500 text-sm animate-pulse">Loading stories...</div>
@@ -207,6 +237,9 @@ export default function AdminSwitchStoriesPage() {
           <table className="w-full">
             <thead className="bg-slate-50">
               <tr>
+                <th className="px-3 py-3 w-8">
+                  <input type="checkbox" checked={paginated.length > 0 && selected.size === paginated.length} onChange={() => { if (selected.size === paginated.length) setSelected(new Set()); else setSelected(new Set(paginated.map(s => s.id))); }} className="w-4 h-4 rounded border-slate-300" />
+                </th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">From</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">To</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Name</th>
@@ -220,6 +253,9 @@ export default function AdminSwitchStoriesPage() {
             <tbody className="divide-y divide-slate-200">
               {paginated.map((story) => (
                 <tr key={story.id} className="hover:bg-slate-50">
+                  <td className="px-3 py-3 w-8">
+                    <input type="checkbox" checked={selected.has(story.id)} onChange={() => { setSelected(prev => { const next = new Set(prev); if (next.has(story.id)) next.delete(story.id); else next.add(story.id); return next; }); }} className="w-4 h-4 rounded border-slate-300" />
+                  </td>
                   <td className="px-4 py-3 text-sm text-slate-700 font-medium">{story.source_broker_slug}</td>
                   <td className="px-4 py-3 text-sm text-slate-700 font-medium">{story.dest_broker_slug}</td>
                   <td className="px-4 py-3">
@@ -290,7 +326,7 @@ export default function AdminSwitchStoriesPage() {
               ))}
               {paginated.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="px-4 py-8 text-center text-sm text-slate-500">
+                  <td colSpan={9} className="px-4 py-8 text-center text-sm text-slate-500">
                     {search || tab !== "all" ? "No stories match your filters." : "No switch stories yet."}
                   </td>
                 </tr>

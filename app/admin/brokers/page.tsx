@@ -6,6 +6,7 @@ import AdminShell from "@/components/AdminShell";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { useToast } from "@/components/Toast";
 import type { Broker } from "@/lib/types";
+import { downloadCSV } from "@/lib/csv-export";
 
 type FeeChangeEntry = { date: string; field: string; old_value: string; new_value: string };
 
@@ -177,6 +178,18 @@ export default function AdminBrokersPage() {
     }
   };
 
+  const exportBrokers = () => {
+    downloadCSV(
+      `brokers-${new Date().toISOString().split("T")[0]}.csv`,
+      ["Name", "Slug", "Rating", "ASX Fee", "US Fee", "Status", "CHESS", "Affiliate URL", "Tier"],
+      filteredBrokers.map((b) => [
+        b.name, b.slug, String(b.rating || ""), b.asx_fee || "", b.us_fee || "",
+        b.status || "active", b.chess_sponsored ? "Yes" : "No",
+        b.affiliate_url || "", b.sponsorship_tier || "",
+      ])
+    );
+  };
+
   useEffect(() => { setPage(0); }, [search]);
 
   return (
@@ -186,7 +199,10 @@ export default function AdminBrokersPage() {
         <div className="flex items-center gap-3">
           <span className="text-xs text-slate-500">{filteredBrokers.length} broker{filteredBrokers.length !== 1 ? "s" : ""}</span>
           {!showForm && (
-            <button onClick={() => setCreating(true)} className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold rounded-lg px-4 py-2 text-sm transition-colors">+ Add Broker</button>
+            <>
+              <button onClick={exportBrokers} className="bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg px-4 py-2 text-sm transition-colors">Export CSV ↓</button>
+              <button onClick={() => setCreating(true)} className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold rounded-lg px-4 py-2 text-sm transition-colors">+ Add Broker</button>
+            </>
           )}
         </div>
       </div>

@@ -6,6 +6,7 @@ import AdminShell from "@/components/AdminShell";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { useToast } from "@/components/Toast";
 import type { Article, TeamMember } from "@/lib/types";
+import { downloadCSV } from "@/lib/csv-export";
 
 const PAGE_SIZE = 15;
 
@@ -159,6 +160,18 @@ export default function AdminArticlesPage() {
   const draftCount = articles.filter(a => a.status === "draft").length;
   const publishedCount = articles.filter(a => (a.status || "published") === "published").length;
 
+  const exportArticles = () => {
+    downloadCSV(
+      `articles-${new Date().toISOString().split("T")[0]}.csv`,
+      ["Title", "Slug", "Status", "Category", "Author", "Tags", "Published"],
+      filteredArticles.map((a) => [
+        a.title, a.slug, a.status || "published", a.category || "",
+        a.author_name || "Team", (a.tags || []).join("; "),
+        a.published_at ? new Date(a.published_at).toLocaleDateString("en-AU") : "",
+      ])
+    );
+  };
+
   return (
     <AdminShell>
       <div className="flex items-center justify-between mb-6">
@@ -167,12 +180,15 @@ export default function AdminArticlesPage() {
           <p className="text-sm text-slate-500 mt-1">{publishedCount} published, {draftCount} draft</p>
         </div>
         {!showForm && (
-          <button
-            onClick={() => setCreating(true)}
-            className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold rounded-lg px-4 py-2 text-sm transition-colors"
-          >
-            + Add Article
-          </button>
+          <div className="flex items-center gap-3">
+            <button onClick={exportArticles} className="bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg px-4 py-2 text-sm transition-colors">Export CSV ↓</button>
+            <button
+              onClick={() => setCreating(true)}
+              className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold rounded-lg px-4 py-2 text-sm transition-colors"
+            >
+              + Add Article
+            </button>
+          </div>
         )}
       </div>
 

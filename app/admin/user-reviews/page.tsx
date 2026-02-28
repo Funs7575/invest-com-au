@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import AdminShell from "@/components/AdminShell";
+import { downloadCSV } from "@/lib/csv-export";
 
 type Review = {
   id: number;
@@ -66,6 +67,7 @@ export default function AdminUserReviewsPage() {
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<number | null>(null);
   const [expandedId, setExpandedId] = useState<number | null>(null);
+  const [selected, setSelected] = useState<Set<number>>(new Set());
 
   const supabase = createClient();
 
@@ -115,6 +117,19 @@ export default function AdminUserReviewsPage() {
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   const paginated = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
+  // CSV Export
+  const exportReviews = () => {
+    downloadCSV(
+      `user-reviews-${new Date().toISOString().split("T")[0]}.csv`,
+      ["Broker", "Name", "Email", "Rating", "Title", "Body", "Status", "Date"],
+      filtered.map((r) => [
+        r.broker_slug, r.display_name, r.email, String(r.rating),
+        r.title, r.body, r.status,
+        new Date(r.created_at).toLocaleDateString("en-AU"),
+      ])
+    );
+  };
+
   // Moderate action
   async function handleModerate(reviewId: number, action: "approve" | "reject") {
     setActionLoading(reviewId);
@@ -151,12 +166,15 @@ export default function AdminUserReviewsPage() {
     <AdminShell>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-slate-900">User Reviews</h1>
-        <button
-          onClick={load}
-          className="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-lg px-4 py-2 text-sm transition-colors"
-        >
-          Refresh
-        </button>
+        <div className="flex items-center gap-2">
+          <button onClick={exportReviews} className="bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg px-4 py-2 text-sm transition-colors">Export CSV ↓</button>
+          <button
+            onClick={load}
+            className="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-lg px-4 py-2 text-sm transition-colors"
+          >
+            Refresh
+          </button>
+        </div>
       </div>
 
       {/* Stats Row */}
@@ -194,6 +212,18 @@ export default function AdminUserReviewsPage() {
         className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/30 mb-4"
       />
 
+      {/* Bulk Actions */}
+      {selected.size > 0 && (
+        <div className="mb-4 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 flex items-center justify-between">
+          <span className="text-sm text-blue-700 font-medium">{selected.size} review{selected.size !== 1 ? "s" : ""} selected</span>
+          <div className="flex items-center gap-2">
+            <button onClick={async () => { for (const id of selected) await handleModerate(id, "approve"); setSelected(new Set()); }} className="px-3 py-1.5 text-xs font-medium bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">Approve All</button>
+            <button onClick={async () => { for (const id of selected) await handleModerate(id, "reject"); setSelected(new Set()); }} className="px-3 py-1.5 text-xs font-medium bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">Reject All</button>
+            <button onClick={() => setSelected(new Set())} className="px-3 py-1.5 text-xs text-slate-500 hover:text-slate-900 transition-colors">Clear</button>
+          </div>
+        </div>
+      )}
+
       {/* Table */}
       {loading ? (
         <div className="py-12 text-center text-slate-500 text-sm animate-pulse">Loading reviews...</div>
@@ -202,6 +232,9 @@ export default function AdminUserReviewsPage() {
           <table className="w-full">
             <thead className="bg-slate-50">
               <tr>
+                <th className="px-3 py-3 w-8">
+                  <input type="checkbox" checked={paginated.length > 0 && selected.size === paginated.length} onChange={() => { if (selected.size === paginated.length) setSelected(new Set()); else setSelected(new Set(paginated.map(r => r.id))); }} className="w-4 h-4 rounded border-slate-300" />
+                </th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Broker</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Name</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Rating</th>
@@ -214,6 +247,9 @@ export default function AdminUserReviewsPage() {
             <tbody className="divide-y divide-slate-200">
               {paginated.map((review) => (
                 <tr key={review.id} className="hover:bg-slate-50">
+                  <td className="px-3 py-3 w-8">
+                    <input type="checkbox" checked={selected.has(review.id)} onChange={() => { setSelected(prev => { const next = new Set(prev); if (next.has(review.id)) next.delete(review.id); else next.add(review.id); return next; }); }} className="w-4 h-4 rounded border-slate-300" />
+                  </td>
                   <td className="px-4 py-3 text-sm text-slate-700 font-medium">{review.broker_slug}</td>
                   <td className="px-4 py-3">
                     <div className="text-sm text-slate-900">{review.display_name}</div>
@@ -279,7 +315,7 @@ export default function AdminUserReviewsPage() {
               ))}
               {paginated.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-4 py-8 text-center text-sm text-slate-500">
+                  <td colSpan={8} className="px-4 py-8 text-center text-sm text-slate-500">
                     {search || tab !== "all" ? "No reviews match your filters." : "No user reviews yet."}
                   </td>
                 </tr>

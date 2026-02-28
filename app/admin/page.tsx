@@ -41,6 +41,16 @@ interface RecentClick {
   clicked_at: string;
 }
 
+interface ActivityItem {
+  id: string;
+  icon: string;
+  title: string;
+  detail: string;
+  time: string;
+  href: string;
+  color: string;
+}
+
 interface DailyClickData {
   date: string;
   count: number;
@@ -64,6 +74,7 @@ export default function AdminDashboard() {
   const [recentClicks, setRecentClicks] = useState<RecentClick[]>([]);
   const [revenueStats, setRevenueStats] = useState<RevenueByBroker[]>([]);
   const [dailyClicks, setDailyClicks] = useState<DailyClickData[]>([]);
+  const [activity, setActivity] = useState<ActivityItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -215,6 +226,88 @@ export default function AdminDashboard() {
       }
 
       setHealth(issues);
+      // Build recent activity feed from multiple sources
+      const activityItems: ActivityItem[] = [];
+
+      // Recent clicks as activity
+      if (recent.data) {
+        recent.data.slice(0, 3).forEach((c: RecentClick) => {
+          activityItems.push({
+            id: `click-${c.id}`,
+            icon: "🖱️",
+            title: `Click on ${c.broker_name}`,
+            detail: `from ${c.source || "direct"} · ${c.page || "/"}`,
+            time: c.clicked_at,
+            href: "/admin/analytics",
+            color: "amber",
+          });
+        });
+      }
+
+      // Recent reviews
+      const { data: recentReviews } = await supabase
+        .from("user_reviews")
+        .select("id, display_name, broker_slug, rating, status, created_at")
+        .order("created_at", { ascending: false })
+        .limit(3);
+      if (recentReviews) {
+        recentReviews.forEach((r: { id: number; display_name: string; broker_slug: string; rating: number; status: string; created_at: string }) => {
+          activityItems.push({
+            id: `review-${r.id}`,
+            icon: "⭐",
+            title: `${r.display_name} reviewed ${r.broker_slug}`,
+            detail: `${"★".repeat(r.rating)}${"☆".repeat(5 - r.rating)} · ${r.status}`,
+            time: r.created_at,
+            href: "/admin/user-reviews",
+            color: "yellow",
+          });
+        });
+      }
+
+      // Recent articles
+      const { data: recentArticles } = await supabase
+        .from("articles")
+        .select("id, title, status, updated_at")
+        .order("updated_at", { ascending: false })
+        .limit(2);
+      if (recentArticles) {
+        recentArticles.forEach((a: { id: number; title: string; status: string; updated_at: string }) => {
+          activityItems.push({
+            id: `article-${a.id}`,
+            icon: "📝",
+            title: `Article "${a.title}"`,
+            detail: a.status === "published" ? "published" : "saved as draft",
+            time: a.updated_at,
+            href: "/admin/articles",
+            color: "green",
+          });
+        });
+      }
+
+      // Recent email captures
+      const { data: recentEmails } = await supabase
+        .from("email_captures")
+        .select("id, email, source, captured_at")
+        .order("captured_at", { ascending: false })
+        .limit(2);
+      if (recentEmails) {
+        recentEmails.forEach((e: { id: number; email: string; source: string; captured_at: string }) => {
+          activityItems.push({
+            id: `email-${e.id}`,
+            icon: "📧",
+            title: `New subscriber: ${e.email}`,
+            detail: `via ${e.source || "unknown"}`,
+            time: e.captured_at,
+            href: "/admin/subscribers",
+            color: "cyan",
+          });
+        });
+      }
+
+      // Sort by time descending, take top 10
+      activityItems.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
+      setActivity(activityItems.slice(0, 10));
+
       if (recent.data) setRecentClicks(recent.data);
       if (revenueRes.data) {
         setRevenueStats(
@@ -394,6 +487,128 @@ export default function AdminDashboard() {
             <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-slate-200 inline-block" /> Previous 7d</span>
             <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-amber-400/70 inline-block" /> Last 7d</span>
             <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-amber-500 inline-block" /> Today</span>
+          </div>
+        </div>
+      )}
+
+      {/* Recent Activity Feed + Revenue Forecast */}
+      {!loading && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          {/* Activity Feed */}
+          <div className="bg-white border border-slate-200 rounded-lg p-6">
+            <h2 className="text-lg font-semibold text-slate-900 mb-4">Recent Activity</h2>
+            {activity.length === 0 ? (
+              <div className="text-center py-6">
+                <div className="text-3xl mb-2">📭</div>
+                <p className="text-sm text-slate-500">No activity yet</p>
+              </div>
+            ) : (
+              <div className="space-y-0.5">
+                {activity.map((item) => (
+                  <Link
+                    key={item.id}
+                    href={item.href}
+                    className="flex items-start gap-3 py-2 px-2 rounded-lg hover:bg-slate-50 transition-colors group"
+                  >
+                    <span className="text-base mt-0.5 shrink-0">{item.icon}</span>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm text-slate-900 group-hover:text-amber-700 truncate">{item.title}</div>
+                      <div className="text-xs text-slate-400 truncate">{item.detail}</div>
+                    </div>
+                    <div className="text-[0.6rem] text-slate-400 shrink-0 mt-1 whitespace-nowrap">
+                      {(() => {
+                        const diff = Date.now() - new Date(item.time).getTime();
+                        const mins = Math.floor(diff / 60000);
+                        if (mins < 1) return "just now";
+                        if (mins < 60) return `${mins}m ago`;
+                        const hrs = Math.floor(mins / 60);
+                        if (hrs < 24) return `${hrs}h ago`;
+                        const days = Math.floor(hrs / 24);
+                        return `${days}d ago`;
+                      })()}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Revenue Forecast */}
+          <div className="bg-white border border-slate-200 rounded-lg p-6">
+            <h2 className="text-lg font-semibold text-slate-900 mb-4">Revenue Forecast</h2>
+            {revenueStats.length === 0 ? (
+              <div className="text-center py-6">
+                <div className="text-3xl mb-2">📉</div>
+                <p className="text-sm text-slate-500">No revenue data yet</p>
+                <p className="text-xs text-slate-400 mt-1">Set EPC values in Affiliate Links to enable forecasting</p>
+              </div>
+            ) : (() => {
+              const totalAffRev = revenueStats.reduce((s, r) => s + r.estimated_revenue, 0);
+              const totalClicks = revenueStats.reduce((s, r) => s + r.clicks, 0);
+              const avgEpc = totalClicks > 0 ? totalAffRev / totalClicks : 0;
+              const dailyAvgClicks = (stats?.clicks || 0) > 0 ? (stats?.clicks || 0) / 30 : 0;
+              const mktRev = stats?.marketplaceRevenue || 0;
+
+              const month30 = dailyAvgClicks * 30 * avgEpc + mktRev;
+              const month60 = dailyAvgClicks * 60 * avgEpc + mktRev * 2;
+              const month90 = dailyAvgClicks * 90 * avgEpc + mktRev * 3;
+              const annual = dailyAvgClicks * 365 * avgEpc + mktRev * 12;
+
+              const forecasts = [
+                { label: "30-Day", value: month30, color: "emerald" },
+                { label: "60-Day", value: month60, color: "emerald" },
+                { label: "90-Day", value: month90, color: "emerald" },
+                { label: "Annual", value: annual, color: "amber" },
+              ];
+
+              const maxForecast = annual || 1;
+
+              return (
+                <div className="space-y-4">
+                  {/* Key assumptions */}
+                  <div className="bg-slate-50 rounded-lg p-3 space-y-1">
+                    <div className="flex justify-between text-xs">
+                      <span className="text-slate-500">Avg. daily clicks</span>
+                      <span className="text-slate-700 font-medium">{dailyAvgClicks.toFixed(1)}</span>
+                    </div>
+                    <div className="flex justify-between text-xs">
+                      <span className="text-slate-500">Avg. EPC</span>
+                      <span className="text-slate-700 font-medium">${avgEpc.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-xs">
+                      <span className="text-slate-500">Marketplace MRR</span>
+                      <span className="text-slate-700 font-medium">${mktRev.toFixed(2)}</span>
+                    </div>
+                  </div>
+
+                  {/* Forecast bars */}
+                  <div className="space-y-3">
+                    {forecasts.map((f) => (
+                      <div key={f.label}>
+                        <div className="flex justify-between text-sm mb-1">
+                          <span className="text-slate-600">{f.label}</span>
+                          <span className={`font-bold ${f.color === "amber" ? "text-amber-600" : "text-emerald-600"}`}>
+                            ${f.value >= 1000 ? `${(f.value / 1000).toFixed(1)}k` : f.value.toFixed(0)}
+                          </span>
+                        </div>
+                        <div className="w-full bg-slate-100 rounded-full h-2">
+                          <div
+                            className={`h-2 rounded-full transition-all ${f.color === "amber" ? "bg-amber-500" : "bg-emerald-500"}`}
+                            style={{ width: `${Math.max((f.value / maxForecast) * 100, 2)}%` }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="pt-3 border-t border-slate-200">
+                    <p className="text-[0.6rem] text-slate-400 leading-relaxed">
+                      Based on current click rates and EPC values. Actual revenue depends on affiliate agreement terms, conversion rates, and traffic growth.
+                    </p>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         </div>
       )}
