@@ -9,15 +9,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Static pages with tiered priorities
   const highPriority = new Set(["/compare", "/quiz", "/reviews", "/deals", "/pro"]);
-  const medPriority = new Set(["/versus", "/calculators", "/articles", "/scenarios", "/switch", "/stories", "/benchmark", "/health-scores", "/alerts", "/reports", "/whats-new", "/costs", "/fee-impact", "/courses", "/consultations", "/advertise"]);
+  const medPriority = new Set(["/versus", "/calculators", "/articles", "/scenarios", "/switch", "/stories", "/benchmark", "/health-scores", "/alerts", "/reports", "/whats-new", "/costs", "/fee-impact", "/advertise"]);
   // Everything else (about, how-we-earn, privacy, methodology, terms, etc.) → 0.4
 
   const staticPages = [
     "", "/compare", "/versus", "/reviews", "/calculators",
     "/articles", "/scenarios", "/quiz", "/deals", "/stories", "/about", "/how-we-earn", "/privacy",
     "/methodology", "/how-we-verify", "/terms", "/switch", "/editorial-policy", "/pro", "/benchmark",
-    "/health-scores", "/alerts", "/reports", "/whats-new", "/costs", "/fee-impact", "/courses",
-    "/consultations", "/advertise",
+    "/health-scores", "/alerts", "/reports", "/whats-new", "/costs", "/fee-impact",
+    "/advertise",
   ].map((path) => ({
     url: `${baseUrl}${path}`,
     lastModified: new Date(),
@@ -129,32 +129,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  // Dynamic course pages
-  const { data: courses } = await supabase
-    .from("courses")
-    .select("slug, updated_at")
-    .eq("status", "published");
-
-  const coursePages = (courses || []).map((c) => ({
-    url: `${baseUrl}/courses/${c.slug}`,
-    lastModified: c.updated_at ? new Date(c.updated_at) : new Date(),
-    changeFrequency: "monthly" as const,
-    priority: 0.5,
-  }));
-
-  // Dynamic consultation pages
-  const { data: consultations } = await supabase
-    .from("consultations")
-    .select("slug, updated_at")
-    .eq("status", "published");
-
-  const consultationPages = (consultations || []).map((c) => ({
-    url: `${baseUrl}/consultations/${c.slug}`,
-    lastModified: c.updated_at ? new Date(c.updated_at) : new Date(),
-    changeFrequency: "monthly" as const,
-    priority: 0.6,
-  }));
-
   // SEO versus comparison pages (popular pairs)
   const versusPopularPairs = [
     "stake-vs-commsec", "cmc-markets-vs-moomoo", "interactive-brokers-vs-saxo",
@@ -173,5 +147,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  return [...staticPages, ...bestPages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...coursePages, ...consultationPages, ...versusPages];
+  return [...staticPages, ...bestPages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages];
 }
