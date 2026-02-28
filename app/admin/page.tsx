@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import AdminShell from "@/components/AdminShell";
 import Link from "next/link";
+import CountUp from "@/components/CountUp";
+import Sparkline from "@/components/Sparkline";
 
 interface Stats {
   brokers: number;
@@ -12,6 +14,9 @@ interface Stats {
   clicks: number;
   clicksToday: number;
   emails: number;
+  marketplaceRevenue: number;
+  activeMarketplaceCampaigns: number;
+  proSubscribers: number;
 }
 
 interface RevenueByBroker {
@@ -23,7 +28,7 @@ interface RevenueByBroker {
 }
 
 interface HealthIssue {
-  type: "warning" | "error";
+  type: "success" | "warning" | "error";
   message: string;
   link?: string;
 }
@@ -36,18 +41,45 @@ interface RecentClick {
   clicked_at: string;
 }
 
+interface DailyClickData {
+  date: string;
+  count: number;
+}
+
+const SPARKLINE_COLORS: Record<string, string> = {
+  blue: "#3b82f6",
+  green: "#22c55e",
+  purple: "#8b5cf6",
+  amber: "#f59e0b",
+  red: "#ef4444",
+  cyan: "#06b6d4",
+  emerald: "#10b981",
+  rose: "#f43f5e",
+  indigo: "#6366f1",
+};
+
 export default function AdminDashboard() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [health, setHealth] = useState<HealthIssue[]>([]);
   const [recentClicks, setRecentClicks] = useState<RecentClick[]>([]);
   const [revenueStats, setRevenueStats] = useState<RevenueByBroker[]>([]);
+  const [dailyClicks, setDailyClicks] = useState<DailyClickData[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const supabase = createClient();
     async function load() {
-      // Batch ALL queries in a single Promise.all — stats + health data + recent clicks
-      const [brokers, articles, scenarios, clicks, clicksToday, emails, brokersData, dealCount, recent, revenueRes] = await Promise.all([
+      // Build date range for last 14 days
+      const fourteenDaysAgo = new Date(Date.now() - 14 * 86400000).toISOString();
+      const sevenDaysAgo = new Date(Date.now() - 7 * 86400000).toISOString();
+
+      const [
+        brokers, articles, scenarios, clicks, clicksToday, emails,
+        brokersData, dealCount, recent, revenueRes,
+        clicksLast14d,
+        marketplaceCampaigns, marketplaceSpend,
+        proSubs,
+      ] = await Promise.all([
         supabase.from("brokers").select("id", { count: "exact", head: true }),
         supabase.from("articles").select("id", { count: "exact", head: true }),
         supabase.from("scenarios").select("id", { count: "exact", head: true }),
@@ -71,10 +103,51 @@ export default function AdminDashboard() {
           .from("affiliate_clicks")
           .select("id, broker_name, source, page, clicked_at")
           .order("clicked_at", { ascending: false })
-          .limit(5),
+          .limit(8),
         // Revenue stats
         supabase.rpc("get_revenue_stats_by_broker"),
+        // Last 14 days of clicks for sparkline + chart
+        supabase
+          .from("affiliate_clicks")
+          .select("clicked_at")
+          .gte("clicked_at", fourteenDaysAgo)
+          .order("clicked_at", { ascending: true }),
+        // Marketplace campaigns
+        supabase
+          .from("campaigns")
+          .select("id, status", { count: "exact" })
+          .eq("status", "active"),
+        // Marketplace total spend
+        supabase
+          .from("campaign_events")
+          .select("cost_cents")
+          .eq("event_type", "click"),
+        // Pro subscribers
+        supabase.rpc("get_active_pro_count").then((res) => res).catch(() => ({ data: null, count: 0 })),
       ]);
+
+      // Aggregate clicks by date for chart
+      const clicksByDate = new Map<string, number>();
+      // Pre-fill last 14 days with 0
+      for (let i = 13; i >= 0; i--) {
+        const d = new Date(Date.now() - i * 86400000).toISOString().split("T")[0];
+        clicksByDate.set(d, 0);
+      }
+      if (clicksLast14d.data) {
+        for (const c of clicksLast14d.data) {
+          const date = new Date(c.clicked_at).toISOString().split("T")[0];
+          clicksByDate.set(date, (clicksByDate.get(date) || 0) + 1);
+        }
+      }
+      const dailyData = Array.from(clicksByDate.entries())
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([date, count]) => ({ date, count }));
+      setDailyClicks(dailyData);
+
+      // Calculate marketplace revenue
+      const mktRevenue = (marketplaceSpend.data || []).reduce(
+        (sum: number, e: { cost_cents: number }) => sum + (e.cost_cents || 0), 0
+      ) / 100;
 
       setStats({
         brokers: brokers.count || 0,
@@ -83,6 +156,9 @@ export default function AdminDashboard() {
         clicks: clicks.count || 0,
         clicksToday: clicksToday.count || 0,
         emails: emails.count || 0,
+        marketplaceRevenue: mktRevenue,
+        activeMarketplaceCampaigns: marketplaceCampaigns.count || 0,
+        proSubscribers: typeof proSubs.data === "number" ? proSubs.data : 0,
       });
 
       // Health checks
@@ -92,7 +168,7 @@ export default function AdminDashboard() {
         const noAffiliate = brokersData.data.filter((b) => !b.affiliate_url);
         if (noAffiliate.length > 0) {
           issues.push({
-            type: "warning",
+            type: "error",
             message: `${noAffiliate.length} broker(s) missing affiliate URL: ${noAffiliate.map((b) => b.name).join(", ")}`,
             link: "/admin/affiliate-links",
           });
@@ -135,7 +211,7 @@ export default function AdminDashboard() {
       }
 
       if (issues.length === 0) {
-        issues.push({ type: "warning", message: "All content health checks passed!" });
+        issues.push({ type: "success", message: "All content health checks passed!" });
       }
 
       setHealth(issues);
@@ -156,51 +232,171 @@ export default function AdminDashboard() {
     load();
   }, []);
 
+  // Build sparkline data from last 7 days of daily clicks
+  const last7Sparkline = dailyClicks.slice(-7).map((d) => d.count);
+  const prev7Sparkline = dailyClicks.slice(0, 7).map((d) => d.count);
+  const last7Total = last7Sparkline.reduce((s, v) => s + v, 0);
+  const prev7Total = prev7Sparkline.reduce((s, v) => s + v, 0);
+  const clickTrend = prev7Total > 0 ? Math.round(((last7Total - prev7Total) / prev7Total) * 100) : 0;
+
+  // Chart dimensions
+  const chartHeight = 120;
+  const chartWidth = 100; // percentage-based via SVG viewBox
+
   const cards = [
-    { label: "Brokers", value: stats?.brokers, href: "/admin/brokers", color: "bg-blue-50 text-blue-600" },
-    { label: "Articles", value: stats?.articles, href: "/admin/articles", color: "bg-green-50 text-green-600" },
-    { label: "Scenarios", value: stats?.scenarios, href: "/admin/scenarios", color: "bg-purple-50 text-purple-600" },
-    { label: "Total Clicks", value: stats?.clicks, href: "/admin/analytics", color: "bg-amber-50 text-amber-600" },
-    { label: "Clicks Today", value: stats?.clicksToday, href: "/admin/analytics", color: "bg-red-50 text-red-600" },
-    { label: "Email Captures", value: stats?.emails, href: "#", color: "bg-cyan-50 text-cyan-600" },
+    { label: "Brokers", value: stats?.brokers || 0, href: "/admin/brokers", color: "blue", icon: "🏦" },
+    { label: "Articles", value: stats?.articles || 0, href: "/admin/articles", color: "green", icon: "📝" },
+    { label: "Total Clicks", value: stats?.clicks || 0, href: "/admin/analytics", color: "amber", icon: "🖱️", sparkline: last7Sparkline, trend: clickTrend },
+    { label: "Clicks Today", value: stats?.clicksToday || 0, href: "/admin/analytics", color: "red", icon: "📊" },
+    { label: "Email Captures", value: stats?.emails || 0, href: "/admin/subscribers", color: "cyan", icon: "📧" },
+    { label: "Pro Members", value: stats?.proSubscribers || 0, href: "/admin/pro-subscribers", color: "purple", icon: "💎" },
+    { label: "Marketplace Rev", value: stats?.marketplaceRevenue || 0, href: "/admin/marketplace", color: "emerald", icon: "💰", prefix: "$", decimals: 2 },
+    { label: "Active Campaigns", value: stats?.activeMarketplaceCampaigns || 0, href: "/admin/marketplace/campaigns", color: "indigo", icon: "📣" },
   ];
+
+  const colorMap: Record<string, string> = {
+    blue: "bg-blue-50 text-blue-600 border-blue-200",
+    green: "bg-green-50 text-green-600 border-green-200",
+    purple: "bg-purple-50 text-purple-600 border-purple-200",
+    amber: "bg-amber-50 text-amber-600 border-amber-200",
+    red: "bg-red-50 text-red-600 border-red-200",
+    cyan: "bg-cyan-50 text-cyan-600 border-cyan-200",
+    emerald: "bg-emerald-50 text-emerald-600 border-emerald-200",
+    rose: "bg-rose-50 text-rose-600 border-rose-200",
+    indigo: "bg-indigo-50 text-indigo-600 border-indigo-200",
+  };
+
+  // Chart bar max
+  const chartMax = Math.max(...dailyClicks.map((d) => d.count), 1);
 
   return (
     <AdminShell>
       <h1 className="text-2xl font-bold text-slate-900 mb-6">Dashboard</h1>
 
       {/* Health summary banner */}
-      {!loading && health.length > 0 && !health[0].message.includes("passed") && (
-        <div className="bg-amber-50 border border-amber-500/20 rounded-lg px-4 py-2 mb-4 flex items-center gap-2">
-          <span className="text-amber-600">⚠</span>
-          <span className="text-sm text-amber-800">
-            {health.length} content issue{health.length !== 1 ? "s" : ""} need attention
+      {!loading && health.length > 0 && health[0].type !== "success" && (
+        <div className={`rounded-lg px-4 py-2 mb-4 flex items-center gap-2 ${
+          health.some((h) => h.type === "error")
+            ? "bg-red-50 border border-red-200"
+            : "bg-amber-50 border border-amber-200"
+        }`}>
+          <span className={health.some((h) => h.type === "error") ? "text-red-500" : "text-amber-500"}>
+            {health.some((h) => h.type === "error") ? "●" : "▲"}
+          </span>
+          <span className={`text-sm ${health.some((h) => h.type === "error") ? "text-red-800" : "text-amber-800"}`}>
+            {health.filter((h) => h.type === "error").length > 0 && (
+              <>{health.filter((h) => h.type === "error").length} error{health.filter((h) => h.type === "error").length !== 1 ? "s" : ""}</>
+            )}
+            {health.filter((h) => h.type === "error").length > 0 && health.filter((h) => h.type === "warning").length > 0 && " and "}
+            {health.filter((h) => h.type === "warning").length > 0 && (
+              <>{health.filter((h) => h.type === "warning").length} warning{health.filter((h) => h.type === "warning").length !== 1 ? "s" : ""}</>
+            )}
+            {" "}need attention
           </span>
         </div>
       )}
 
-      {/* Stat Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-6 gap-4 mb-8">
+      {/* KPI Stat Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {loading
-          ? Array.from({ length: 6 }).map((_, i) => (
+          ? Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="bg-white border border-slate-200 rounded-lg p-4 animate-pulse">
-                <div className="h-8 w-16 bg-slate-200 rounded mb-2" />
-                <div className="h-4 w-20 bg-slate-200 rounded" />
+                <div className="h-4 w-6 bg-slate-200 rounded mb-3" />
+                <div className="h-8 w-20 bg-slate-200 rounded mb-1" />
+                <div className="h-4 w-16 bg-slate-200 rounded" />
               </div>
             ))
           : cards.map((card) => (
               <Link
                 key={card.label}
                 href={card.href}
-                className="bg-white border border-slate-200 rounded-lg p-4 hover:border-slate-300 transition-colors"
+                className={`bg-white border rounded-lg p-4 hover:shadow-md transition-all group ${colorMap[card.color]?.split(" ")[2] || "border-slate-200"}`}
               >
-                <div className={`text-3xl font-bold ${card.color}`}>
-                  {card.value ?? 0}
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-lg">{card.icon}</span>
+                  {card.sparkline && card.sparkline.length > 1 && (
+                    <Sparkline
+                      data={card.sparkline}
+                      width={60}
+                      height={20}
+                      color={SPARKLINE_COLORS[card.color] || "#3b82f6"}
+                    />
+                  )}
                 </div>
-                <div className="text-sm text-slate-500 mt-1">{card.label}</div>
+                <div className={`text-2xl font-bold ${colorMap[card.color]?.split(" ")[1] || "text-slate-900"}`}>
+                  <CountUp
+                    end={card.value}
+                    prefix={card.prefix || ""}
+                    decimals={card.decimals || 0}
+                    duration={1200}
+                  />
+                </div>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <span className="text-xs text-slate-500">{card.label}</span>
+                  {card.trend !== undefined && card.trend !== 0 && (
+                    <span className={`text-[0.65rem] font-semibold ${card.trend > 0 ? "text-emerald-600" : "text-red-500"}`}>
+                      {card.trend > 0 ? "+" : ""}{card.trend}%
+                    </span>
+                  )}
+                </div>
               </Link>
             ))}
       </div>
+
+      {/* Click Trend Chart */}
+      {!loading && dailyClicks.length > 0 && (
+        <div className="bg-white border border-slate-200 rounded-lg p-6 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-lg font-semibold text-slate-900">Click Trend</h2>
+              <p className="text-xs text-slate-500">Last 14 days</p>
+            </div>
+            <Link href="/admin/analytics" className="text-xs text-amber-600 hover:text-amber-700">
+              Full Analytics →
+            </Link>
+          </div>
+          <div className="flex items-end gap-1" style={{ height: chartHeight }}>
+            {dailyClicks.map((d, i) => {
+              const barH = chartMax > 0 ? (d.count / chartMax) * (chartHeight - 20) : 0;
+              const isToday = d.date === new Date().toISOString().split("T")[0];
+              const isLastWeek = i < 7;
+              return (
+                <div
+                  key={d.date}
+                  className="flex-1 flex flex-col items-center justify-end group relative"
+                  style={{ height: chartHeight }}
+                >
+                  {/* Tooltip */}
+                  <div className="absolute -top-1 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[0.6rem] px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
+                    {d.count} click{d.count !== 1 ? "s" : ""} · {new Date(d.date + "T12:00:00").toLocaleDateString("en-AU", { day: "numeric", month: "short" })}
+                  </div>
+                  <div
+                    className={`w-full rounded-t transition-colors ${
+                      isToday
+                        ? "bg-amber-500"
+                        : isLastWeek
+                        ? "bg-slate-200 group-hover:bg-slate-300"
+                        : "bg-amber-400/70 group-hover:bg-amber-500"
+                    }`}
+                    style={{ height: Math.max(barH, 2), minHeight: 2 }}
+                  />
+                  {/* Date label — show every other day */}
+                  {i % 2 === 0 && (
+                    <div className="text-[0.55rem] text-slate-400 mt-1 leading-none">
+                      {new Date(d.date + "T12:00:00").toLocaleDateString("en-AU", { day: "numeric", month: "short" })}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          <div className="flex items-center gap-4 mt-3 text-[0.65rem] text-slate-500">
+            <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-slate-200 inline-block" /> Previous 7d</span>
+            <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-amber-400/70 inline-block" /> Last 7d</span>
+            <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-amber-500 inline-block" /> Today</span>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Content Health Check */}
@@ -219,16 +415,27 @@ export default function AdminDashboard() {
               ))}
             </div>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               {health.map((issue, i) => (
-                <div key={i} className="flex items-start gap-2">
-                  <span className={`shrink-0 mt-0.5 ${issue.type === "error" ? "text-red-600" : "text-amber-600"}`}>
-                    {issue.type === "error" ? "●" : "●"}
+                <div key={i} className={`flex items-start gap-2 rounded-md px-2.5 py-2 ${
+                  issue.type === "error" ? "bg-red-50" :
+                  issue.type === "success" ? "bg-emerald-50" : "bg-amber-50"
+                }`}>
+                  <span className={`shrink-0 mt-0.5 text-xs ${
+                    issue.type === "error" ? "text-red-500" :
+                    issue.type === "success" ? "text-emerald-500" : "text-amber-500"
+                  }`}>
+                    {issue.type === "error" ? "●" : issue.type === "success" ? "✓" : "▲"}
                   </span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-slate-600">{issue.message}</p>
+                    <p className={`text-sm ${
+                      issue.type === "error" ? "text-red-800" :
+                      issue.type === "success" ? "text-emerald-800" : "text-amber-800"
+                    }`}>{issue.message}</p>
                     {issue.link && (
-                      <Link href={issue.link} className="text-xs text-amber-600 hover:text-amber-700">
+                      <Link href={issue.link} className={`text-xs font-medium ${
+                        issue.type === "error" ? "text-red-600 hover:text-red-700" : "text-amber-600 hover:text-amber-700"
+                      }`}>
                         Fix →
                       </Link>
                     )}
@@ -258,16 +465,20 @@ export default function AdminDashboard() {
               ))}
             </div>
           ) : recentClicks.length === 0 ? (
-            <p className="text-sm text-slate-500">No clicks recorded yet.</p>
+            <div className="text-center py-6">
+              <div className="text-3xl mb-2">🖱️</div>
+              <p className="text-sm text-slate-500">No clicks recorded yet.</p>
+              <p className="text-xs text-slate-400 mt-1">Clicks will appear here once your site gets traffic.</p>
+            </div>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               {recentClicks.map((click) => (
-                <div key={click.id} className="flex items-center justify-between text-sm">
+                <div key={click.id} className="flex items-center justify-between text-sm py-1 px-2 rounded hover:bg-slate-50 transition-colors">
                   <div className="min-w-0">
                     <div className="text-slate-900 font-medium truncate">{click.broker_name}</div>
                     <div className="text-xs text-slate-500 truncate">{click.source} · {click.page}</div>
                   </div>
-                  <div className="text-xs text-slate-500 shrink-0 ml-2">
+                  <div className="text-xs text-slate-400 shrink-0 ml-2">
                     {new Date(click.clicked_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                   </div>
                 </div>
@@ -279,7 +490,7 @@ export default function AdminDashboard() {
         {/* Revenue Overview */}
         <div className="bg-white border border-slate-200 rounded-lg p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-slate-900">Revenue Overview</h2>
+            <h2 className="text-lg font-semibold text-slate-900">Revenue</h2>
             <Link href="/admin/analytics" className="text-xs text-amber-600 hover:text-amber-700">Details →</Link>
           </div>
           {loading ? (
@@ -293,27 +504,33 @@ export default function AdminDashboard() {
             </div>
           ) : (
             <>
-              <div className="bg-slate-50 rounded-lg p-4 mb-4">
-                <div className="text-sm text-slate-500 mb-1">Total Est. Revenue</div>
-                <div className="text-3xl font-bold text-emerald-600">
-                  ${revenueStats.reduce((s, r) => s + r.estimated_revenue, 0).toFixed(2)}
+              {/* Affiliate Revenue */}
+              <div className="bg-emerald-50 rounded-lg p-4 mb-3">
+                <div className="text-xs text-emerald-700 font-medium mb-0.5">Affiliate Revenue (Est.)</div>
+                <div className="text-2xl font-bold text-emerald-600">
+                  <CountUp
+                    end={revenueStats.reduce((s, r) => s + r.estimated_revenue, 0)}
+                    prefix="$"
+                    decimals={2}
+                    duration={1400}
+                  />
                 </div>
                 {stats && stats.clicks > 0 && revenueStats.length > 0 && (() => {
                   const totalRev = revenueStats.reduce((s, r) => s + r.estimated_revenue, 0);
                   const epcAvg = totalRev / revenueStats.reduce((s, r) => s + r.clicks, 0) || 0;
-                  const dailyClicks = stats.clicks / 30;
+                  const dailyClicksAvg = stats.clicks / 30;
                   return (
-                    <div className="mt-2 pt-2 border-t border-slate-200 space-y-1">
+                    <div className="mt-2 pt-2 border-t border-emerald-200 space-y-0.5">
                       <div className="flex justify-between text-xs">
-                        <span className="text-slate-500">Monthly est.</span>
-                        <span className="text-emerald-600 font-semibold">
-                          ${(dailyClicks * 30 * epcAvg).toFixed(0)}
+                        <span className="text-emerald-600">Monthly proj.</span>
+                        <span className="text-emerald-700 font-semibold">
+                          ${(dailyClicksAvg * 30 * epcAvg).toFixed(0)}
                         </span>
                       </div>
                       <div className="flex justify-between text-xs">
-                        <span className="text-slate-500">Annual est.</span>
-                        <span className="text-emerald-600 font-semibold">
-                          ${(dailyClicks * 365 * epcAvg).toFixed(0)}
+                        <span className="text-emerald-600">Annual proj.</span>
+                        <span className="text-emerald-700 font-semibold">
+                          ${(dailyClicksAvg * 365 * epcAvg).toFixed(0)}
                         </span>
                       </div>
                     </div>
@@ -321,31 +538,57 @@ export default function AdminDashboard() {
                 })()}
               </div>
 
+              {/* Marketplace Revenue */}
+              <div className="bg-indigo-50 rounded-lg p-4 mb-3">
+                <div className="text-xs text-indigo-700 font-medium mb-0.5">Marketplace CPC Revenue</div>
+                <div className="text-2xl font-bold text-indigo-600">
+                  <CountUp
+                    end={stats?.marketplaceRevenue || 0}
+                    prefix="$"
+                    decimals={2}
+                    duration={1400}
+                  />
+                </div>
+                <div className="text-xs text-indigo-500 mt-1">
+                  {stats?.activeMarketplaceCampaigns || 0} active campaign{(stats?.activeMarketplaceCampaigns || 0) !== 1 ? "s" : ""}
+                </div>
+              </div>
+
+              {/* Top brokers */}
               {revenueStats.length > 0 ? (
-                <div className="space-y-2 mb-4">
-                  <div className="text-xs text-slate-500 uppercase font-medium">Top Brokers by Revenue</div>
-                  {revenueStats.slice(0, 3).map((r) => (
-                    <div key={r.broker_slug} className="flex items-center justify-between text-sm">
-                      <span className="text-slate-600 truncate">{r.broker_name}</span>
-                      <span className="text-emerald-600 font-semibold ml-2 shrink-0">
-                        ${r.estimated_revenue.toFixed(2)}
-                      </span>
-                    </div>
-                  ))}
+                <div className="space-y-1.5 mb-3">
+                  <div className="text-xs text-slate-500 uppercase font-medium">Top by Affiliate Revenue</div>
+                  {revenueStats.slice(0, 3).map((r) => {
+                    const maxRev = revenueStats[0]?.estimated_revenue || 1;
+                    return (
+                      <div key={r.broker_slug} className="relative">
+                        <div
+                          className="absolute inset-y-0 left-0 bg-emerald-50 rounded"
+                          style={{ width: `${(r.estimated_revenue / maxRev) * 100}%` }}
+                        />
+                        <div className="relative flex items-center justify-between text-sm py-1 px-2">
+                          <span className="text-slate-700 truncate">{r.broker_name}</span>
+                          <span className="text-emerald-600 font-semibold ml-2 shrink-0">
+                            ${r.estimated_revenue.toFixed(2)}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               ) : (
-                <p className="text-sm text-slate-500 mb-4">No revenue data yet. Set EPC values in Affiliate Links.</p>
+                <p className="text-sm text-slate-500 mb-3">No revenue data yet. Set EPC values in Affiliate Links.</p>
               )}
 
-              <div className="pt-3 border-t border-slate-200 space-y-2">
-                <Link href="/admin/affiliate-links" className="block px-3 py-2 bg-slate-50 rounded text-slate-600 hover:bg-slate-200 transition-colors text-sm">
-                  🔗 Affiliate Links & Revenue
+              <div className="pt-3 border-t border-slate-200 space-y-1.5">
+                <Link href="/admin/affiliate-links" className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded text-slate-600 hover:bg-slate-100 transition-colors text-sm">
+                  <span>🔗</span> Affiliate Links
                 </Link>
-                <Link href="/admin/brokers" className="block px-3 py-2 bg-slate-50 rounded text-slate-600 hover:bg-slate-200 transition-colors text-sm">
-                  🏦 Manage Brokers
+                <Link href="/admin/marketplace" className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded text-slate-600 hover:bg-slate-100 transition-colors text-sm">
+                  <span>🏪</span> Marketplace
                 </Link>
-                <a href="/" target="_blank" rel="noopener noreferrer" className="block px-3 py-2 bg-slate-50 rounded text-slate-600 hover:bg-slate-200 transition-colors text-sm">
-                  🌐 View Live Site
+                <a href="/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded text-slate-600 hover:bg-slate-100 transition-colors text-sm">
+                  <span>🌐</span> View Live Site
                 </a>
               </div>
             </>
