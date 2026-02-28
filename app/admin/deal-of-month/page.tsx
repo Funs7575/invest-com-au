@@ -171,7 +171,7 @@ export default function DealOfMonthPage() {
           <div>
             <h1 className="text-2xl font-bold text-slate-900">Deals & Promotions</h1>
             <p className="text-sm text-slate-500 mt-1">
-              {activeDealBrokers.length} active deal{activeDealBrokers.length !== 1 ? "s" : ""}
+              Feature a broker with a promotional banner across the site. {activeDealBrokers.length} active deal{activeDealBrokers.length !== 1 ? "s" : ""}.
             </p>
           </div>
           <button

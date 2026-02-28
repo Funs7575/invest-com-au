@@ -7,6 +7,7 @@ import ConfirmDialog from "@/components/ConfirmDialog";
 import { useToast } from "@/components/Toast";
 import type { Broker } from "@/lib/types";
 import { downloadCSV } from "@/lib/csv-export";
+import InfoTip from "@/components/InfoTip";
 
 type FeeChangeEntry = { date: string; field: string; old_value: string; new_value: string };
 
@@ -195,7 +196,10 @@ export default function AdminBrokersPage() {
   return (
     <AdminShell>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-slate-900">Brokers</h1>
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Brokers</h1>
+          <p className="text-sm text-slate-500 mt-1">Manage broker listings, fees, and ratings. Changes update the public comparison pages.</p>
+        </div>
         <div className="flex items-center gap-3">
           <span className="text-xs text-slate-500">{filteredBrokers.length} broker{filteredBrokers.length !== 1 ? "s" : ""}</span>
           {!showForm && (
@@ -361,7 +365,7 @@ function BrokerForm({ broker, saving, onSave, onCancel }: { broker: Partial<Brok
       <SectionHeading title="Basic Info" />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Field label="Name *" name="name" defaultValue={broker.name} required />
-        <Field label="Slug *" name="slug" defaultValue={broker.slug} required />
+        <Field label="Slug *" name="slug" defaultValue={broker.slug} required hint={'URL identifier — e.g. "commbank" creates /broker/commbank'} />
         <Field label="Color" name="color" defaultValue={broker.color || "#0f172a"} />
       </div>
       <Field label="Tagline" name="tagline" defaultValue={broker.tagline} />
@@ -369,19 +373,22 @@ function BrokerForm({ broker, saving, onSave, onCancel }: { broker: Partial<Brok
       {/* Fees */}
       <SectionHeading title="Fees & Costs" />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Field label="ASX Fee (display)" name="asx_fee" defaultValue={broker.asx_fee} />
-        <Field label="ASX Fee Value ($)" name="asx_fee_value" defaultValue={broker.asx_fee_value?.toString()} type="number" step="0.01" />
-        <Field label="US Fee (display)" name="us_fee" defaultValue={broker.us_fee} />
+        <Field label="ASX Fee (display)" name="asx_fee" defaultValue={broker.asx_fee} hint={'Display text for ASX brokerage, e.g. "$5 flat" or "0.08%"'} />
+        <Field label="ASX Fee Value ($)" name="asx_fee_value" defaultValue={broker.asx_fee_value?.toString()} type="number" step="0.01" hint="Numeric value in dollars used for calculator comparisons." />
+        <Field label="US Fee (display)" name="us_fee" defaultValue={broker.us_fee} hint={'Display text for US brokerage, e.g. "$0" or "US$2"'} />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Field label="US Fee Value ($)" name="us_fee_value" defaultValue={broker.us_fee_value?.toString()} type="number" step="0.01" />
-        <Field label="FX Rate (%)" name="fx_rate" defaultValue={broker.fx_rate?.toString()} type="number" step="0.001" />
-        <Field label="Inactivity Fee" name="inactivity_fee" defaultValue={broker.inactivity_fee} />
+        <Field label="US Fee Value ($)" name="us_fee_value" defaultValue={broker.us_fee_value?.toString()} type="number" step="0.01" hint="Numeric value in dollars used for calculator comparisons." />
+        <Field label="FX Rate (%)" name="fx_rate" defaultValue={broker.fx_rate?.toString()} type="number" step="0.001" hint="Currency conversion fee as a percentage, e.g. 0.70" />
+        <div>
+          <label className="block text-xs font-medium text-slate-500 mb-1">Inactivity Fee <InfoTip text="Monthly charge if the account has no trades — important for comparison." /></label>
+          <input name="inactivity_fee" type="text" defaultValue={broker.inactivity_fee || ""} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+        </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Field label="Min Deposit" name="min_deposit" defaultValue={broker.min_deposit} />
-        <Field label="Rating" name="rating" defaultValue={broker.rating?.toString()} type="number" step="0.1" min="0" max="5" />
-        <Field label="Status" name="status" defaultValue={broker.status || "active"} />
+        <Field label="Rating" name="rating" defaultValue={broker.rating?.toString()} type="number" step="0.1" min="0" max="5" hint="Score from 0-5. Determines default sort order on comparison pages." />
+        <Field label="Status" name="status" defaultValue={broker.status || "active"} hint="Only active brokers appear on the public site." />
       </div>
 
       {/* Fee Verification */}
@@ -509,11 +516,11 @@ function BrokerForm({ broker, saving, onSave, onCancel }: { broker: Partial<Brok
       {/* Flags */}
       <SectionHeading title="Flags" />
       <div className="flex flex-wrap gap-6">
-        <Checkbox label="CHESS Sponsored" name="chess_sponsored" defaultChecked={broker.chess_sponsored} />
-        <Checkbox label="SMSF Support" name="smsf_support" defaultChecked={broker.smsf_support} />
+        <Checkbox label="CHESS Sponsored" name="chess_sponsored" defaultChecked={broker.chess_sponsored} infotip="CHESS sponsorship means the broker holds shares under their own HIN via ASX CHESS system." />
+        <Checkbox label="SMSF Support" name="smsf_support" defaultChecked={broker.smsf_support} infotip="Whether the broker offers Self-Managed Super Fund accounts." />
         <Checkbox label="Crypto" name="is_crypto" defaultChecked={broker.is_crypto} />
         <Checkbox label="Deal" name="deal" defaultChecked={broker.deal} />
-        <Checkbox label="Editor's Pick" name="editors_pick" defaultChecked={broker.editors_pick} />
+        <Checkbox label="Editor's Pick" name="editors_pick" defaultChecked={broker.editors_pick} infotip="Shows an 'Editor's Pick' badge on the broker card." />
       </div>
 
       {/* Sponsorship */}
@@ -538,10 +545,10 @@ function BrokerForm({ broker, saving, onSave, onCancel }: { broker: Partial<Brok
       {/* Affiliate & CTA */}
       <SectionHeading title="Affiliate & CTA" />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Field label="Affiliate URL" name="affiliate_url" defaultValue={broker.affiliate_url} />
-        <Field label="CTA Text" name="cta_text" defaultValue={broker.cta_text} />
+        <Field label="Affiliate URL" name="affiliate_url" defaultValue={broker.affiliate_url} hint="Your referral link — users click this to sign up." />
+        <Field label="CTA Text" name="cta_text" defaultValue={broker.cta_text} hint={'Button text on the broker card, e.g. "Visit CommSec"'} />
       </div>
-      <Field label="Deal Text" name="deal_text" defaultValue={broker.deal_text} />
+      <Field label="Deal Text" name="deal_text" defaultValue={broker.deal_text} hint="Promotional banner text when deal is enabled." />
 
       {/* Company Info */}
       <SectionHeading title="Company Info" />
@@ -587,11 +594,12 @@ function SectionHeading({ title, badge, badgeColor, count }: { title: string; ba
   );
 }
 
-function Field({ label, name, defaultValue, required, type = "text", placeholder, ...props }: { label: string; name: string; defaultValue?: string; required?: boolean; type?: string; placeholder?: string; [key: string]: unknown; }) {
+function Field({ label, name, defaultValue, required, type = "text", placeholder, hint, ...props }: { label: string; name: string; defaultValue?: string; required?: boolean; type?: string; placeholder?: string; hint?: string; [key: string]: unknown; }) {
   return (
     <div>
       <label className="block text-xs font-medium text-slate-500 mb-1">{label}</label>
       <input name={name} type={type} defaultValue={defaultValue || ""} required={required} placeholder={placeholder} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/30" {...props} />
+      {hint && <p className="text-xs text-slate-400 mt-0.5">{hint}</p>}
     </div>
   );
 }
@@ -605,11 +613,12 @@ function TextArea({ label, name, defaultValue, rows = 3 }: { label: string; name
   );
 }
 
-function Checkbox({ label, name, defaultChecked }: { label: string; name: string; defaultChecked?: boolean }) {
+function Checkbox({ label, name, defaultChecked, infotip }: { label: string; name: string; defaultChecked?: boolean; infotip?: string }) {
   return (
     <label className="flex items-center gap-2 cursor-pointer">
       <input type="checkbox" name={name} defaultChecked={defaultChecked} className="w-4 h-4 rounded bg-slate-200 border-slate-300" />
       <span className="text-sm text-slate-600">{label}</span>
+      {infotip && <InfoTip text={infotip} />}
     </label>
   );
 }

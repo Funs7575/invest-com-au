@@ -204,7 +204,10 @@ export default function QuizQuestionsPage() {
     <AdminShell>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-slate-900">Quiz Questions</h1>
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900">Quiz Questions</h1>
+            <p className="text-sm text-slate-500 mt-1">Manage the broker recommendation quiz. Users answer these to get personalised broker matches.</p>
+          </div>
           <div className="flex items-center gap-2">
             <button
               onClick={() => downloadCSV(
@@ -263,6 +266,7 @@ export default function QuizQuestionsPage() {
                   }
                   className="w-full bg-white border border-slate-300 text-slate-900 rounded px-3 py-2 text-sm focus:outline-none focus:border-amber-500"
                 />
+                <p className="text-xs text-slate-400 mt-0.5">Display order in the quiz flow. Lower numbers appear first.</p>
               </div>
               <div className="flex items-end">
                 <label className="flex items-center gap-2 cursor-pointer">
@@ -292,11 +296,12 @@ export default function QuizQuestionsPage() {
                 className="w-full bg-white border border-slate-300 text-slate-900 rounded px-3 py-2 text-sm focus:outline-none focus:border-amber-500"
                 placeholder="Enter your question text..."
               />
+              <p className="text-xs text-slate-400 mt-0.5">The question shown to users.</p>
             </div>
 
             {/* Options Editor */}
             <div>
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center justify-between mb-1">
                 <label className="text-sm font-medium text-slate-600">Options</label>
                 <button
                   onClick={handleAddOption}
@@ -305,6 +310,7 @@ export default function QuizQuestionsPage() {
                   + Add Option
                 </button>
               </div>
+              <p className="text-xs text-slate-400 mb-3">Each option needs a display label and a unique key. Keys are matched against Quiz Weights.</p>
               <div className="space-y-2">
                 {form.options.map((option, index) => (
                   <div key={index} className="flex items-center gap-2">
@@ -382,8 +388,12 @@ export default function QuizQuestionsPage() {
               Loading quiz questions...
             </div>
           ) : questions.length === 0 ? (
-            <div className="p-8 text-center text-slate-500">
-              No quiz questions found. Create your first question above.
+            <div className="text-center py-12">
+              <div className="text-3xl mb-2">❓</div>
+              <p className="text-sm font-medium text-slate-700 mb-1">No quiz questions yet</p>
+              <p className="text-xs text-slate-400 max-w-sm mx-auto">
+                Quiz questions power the broker-matching quiz on your site. Each question helps narrow down which broker suits a visitor&apos;s needs based on their answers.
+              </p>
             </div>
           ) : (
             <div className="overflow-x-auto">

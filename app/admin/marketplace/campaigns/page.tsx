@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import AdminShell from "@/components/AdminShell";
 import { createClient } from "@/lib/supabase/client";
+import InfoTip from "@/components/InfoTip";
 import type { Campaign, MarketplacePlacement } from "@/lib/types";
 
 type StatusFilter = "all" | "pending_review" | "active" | "approved" | "paused" | "budget_exhausted" | "completed" | "rejected" | "cancelled";
@@ -224,7 +225,7 @@ export default function AdminCampaignsPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-extrabold text-slate-900">Campaign Management</h1>
-            <p className="text-sm text-slate-500">Review, approve, and manage broker campaigns</p>
+            <p className="text-sm text-slate-500">Review and manage broker advertising campaigns. Approve, pause, or reject submissions.</p>
           </div>
           {pendingCount > 0 && (
             <span className="px-3 py-1.5 bg-amber-100 text-amber-700 text-sm font-bold rounded-full">
@@ -406,12 +407,15 @@ export default function AdminCampaignsPage() {
                       <span>Placement: <strong className="text-slate-700">{c.placement?.name || `#${c.placement_id}`}</strong></span>
                     </div>
                     <div className="text-sm text-slate-500 mt-1 flex flex-wrap gap-x-3 gap-y-0.5">
-                      <span>
+                      <span className="inline-flex items-center">
                         Rate:{" "}
                         <strong className="text-slate-700">
                           ${(c.rate_cents / 100).toFixed(2)}
                           {c.inventory_type === "cpc" ? "/click" : "/mo"}
                         </strong>
+                        {c.inventory_type === "cpc" && (
+                          <InfoTip text="Cost Per Click — the amount charged to the broker's wallet for each click on their ad." />
+                        )}
                       </span>
                       <span>
                         Spent: <strong className="text-slate-700">${(c.total_spent_cents / 100).toFixed(2)}</strong>

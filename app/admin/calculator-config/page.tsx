@@ -261,8 +261,8 @@ export default function CalculatorConfigPage() {
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Calculator Config</h1>
-          <p className="text-slate-500 mt-1">
-            Configure parameters for each calculator type.
+          <p className="text-sm text-slate-500 mt-1">
+            Configure the brokerage fee calculator parameters for each broker.
           </p>
         </div>
 

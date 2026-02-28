@@ -369,7 +369,10 @@ export default function AdminAnalyticsClient() {
   return (
     <AdminShell>
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold text-slate-900">Analytics & Revenue</h1>
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Analytics & Revenue</h1>
+          <p className="text-sm text-slate-500 mt-1">Detailed affiliate click data, traffic sources, and conversion trends.</p>
+        </div>
         <div className="flex bg-white border border-slate-200 rounded-lg overflow-hidden">
           {(["overview", "revenue", "insights", "sponsorship", "log"] as const).map((tab) => (
             <button

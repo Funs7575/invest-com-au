@@ -133,7 +133,7 @@ export default function AdminPlacementsPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-extrabold text-slate-900">Placement Management</h1>
-            <p className="text-sm text-slate-500">Configure ad placements across the site</p>
+            <p className="text-sm text-slate-500">Ad placement slots available for broker campaigns — homepage, comparison pages, articles.</p>
           </div>
           <button onClick={() => { resetForm(); setShowForm(!showForm); }}
             className="px-4 py-2 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors">

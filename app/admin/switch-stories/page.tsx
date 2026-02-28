@@ -170,7 +170,10 @@ export default function AdminSwitchStoriesPage() {
   return (
     <AdminShell>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-slate-900">Switch Stories</h1>
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Switch Stories</h1>
+          <p className="text-sm text-slate-500 mt-1">User stories about switching brokers — social proof to help others make decisions.</p>
+        </div>
         <div className="flex items-center gap-2">
           <button onClick={exportStories} className="bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg px-4 py-2 text-sm transition-colors">Export CSV ↓</button>
           <button

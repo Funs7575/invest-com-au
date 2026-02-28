@@ -462,7 +462,41 @@ export default function AdminDashboard() {
 
   return (
     <AdminShell>
-      <h1 className="text-2xl font-bold text-slate-900 mb-6">Dashboard</h1>
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
+        <p className="text-sm text-slate-500 mt-1">Overview of your site&apos;s performance, content health, and revenue.</p>
+      </div>
+
+      {/* Getting Started — shown when site has minimal content */}
+      {!loading && stats && (stats.brokers < 3 || stats.articles < 3) && (
+        <div className="bg-gradient-to-r from-amber-50 to-amber-100/50 border border-amber-200 rounded-xl p-5 mb-6">
+          <h2 className="text-sm font-bold text-amber-900 mb-2">👋 Getting Started</h2>
+          <p className="text-xs text-amber-800 mb-3">Welcome to your admin panel. Here are the first things to set up:</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <Link href="/admin/brokers" className="flex items-start gap-2 bg-white/80 rounded-lg p-3 hover:bg-white transition-colors">
+              <span className="text-base shrink-0">🏦</span>
+              <div>
+                <div className="text-xs font-bold text-slate-900">1. Add Brokers</div>
+                <div className="text-[0.65rem] text-slate-500 mt-0.5">Add broker listings with fees and affiliate links</div>
+              </div>
+            </Link>
+            <Link href="/admin/articles" className="flex items-start gap-2 bg-white/80 rounded-lg p-3 hover:bg-white transition-colors">
+              <span className="text-base shrink-0">📝</span>
+              <div>
+                <div className="text-xs font-bold text-slate-900">2. Write Articles</div>
+                <div className="text-[0.65rem] text-slate-500 mt-0.5">Create comparison guides and educational content</div>
+              </div>
+            </Link>
+            <Link href="/admin/affiliate-links" className="flex items-start gap-2 bg-white/80 rounded-lg p-3 hover:bg-white transition-colors">
+              <span className="text-base shrink-0">🔗</span>
+              <div>
+                <div className="text-xs font-bold text-slate-900">3. Set Up Affiliate Links</div>
+                <div className="text-[0.65rem] text-slate-500 mt-0.5">Add referral URLs and set EPC for revenue tracking</div>
+              </div>
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* Health summary banner */}
       {!loading && health.length > 0 && health[0].type !== "success" && (

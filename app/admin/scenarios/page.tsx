@@ -158,6 +158,7 @@ export default function AdminScenariosPage() {
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Scenarios</h1>
           <p className="text-sm text-slate-500 mt-1">{scenarios.length} scenarios</p>
+          <p className="text-sm text-slate-500">Investment scenario guides linking users to the best brokers for their situation.</p>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -199,6 +200,7 @@ export default function AdminScenariosPage() {
             <div>
               <label className="block text-xs font-medium text-slate-500 mb-1">Slug <span className="text-red-600">*</span></label>
               <input name="slug" defaultValue={formScenario.slug} required className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+              <p className="text-xs text-slate-400 mt-0.5">URL path — e.g. &quot;kids&quot; creates /scenario/kids</p>
             </div>
             <div>
               <label className="block text-xs font-medium text-slate-500 mb-1">Icon (emoji)</label>
@@ -209,6 +211,7 @@ export default function AdminScenariosPage() {
           <div>
             <label className="block text-xs font-medium text-slate-500 mb-1">Hero Title</label>
             <input name="hero_title" defaultValue={formScenario.hero_title} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+            <p className="text-xs text-slate-400 mt-0.5">Large heading shown at the top of the scenario page.</p>
           </div>
 
           <div>
@@ -224,11 +227,13 @@ export default function AdminScenariosPage() {
           <div>
             <label className="block text-xs font-medium text-slate-500 mb-1">Brokers (slugs, comma-separated)</label>
             <input name="brokers" defaultValue={formScenario.brokers?.join(", ")} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+            <p className="text-xs text-slate-400 mt-0.5">Comma-separated broker slugs to feature in this scenario.</p>
           </div>
 
           <div>
             <label className="block text-xs font-medium text-slate-500 mb-1">Considerations (one per line)</label>
             <textarea name="considerations" defaultValue={formScenario.considerations?.join("\n")} rows={4} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+            <p className="text-xs text-slate-400 mt-0.5">One bullet point per line — shown as key things to consider.</p>
           </div>
 
           <div className="flex gap-3 pt-2">
@@ -278,6 +283,19 @@ export default function AdminScenariosPage() {
                     </td>
                   </tr>
                 ))}
+                {scenarios.length === 0 && (
+                  <tr>
+                    <td colSpan={4}>
+                      <div className="text-center py-12">
+                        <div className="text-3xl mb-2">🎯</div>
+                        <p className="text-sm font-medium text-slate-700 mb-1">No scenarios yet</p>
+                        <p className="text-xs text-slate-400 max-w-sm mx-auto">
+                          Scenarios are guided investment use-cases (e.g. &quot;First-time investor&quot; or &quot;SMSF setup&quot;) that recommend specific brokers based on a user&apos;s situation.
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

@@ -369,7 +369,7 @@ export default function AttributionAnalyticsPage() {
           <div>
             <h1 className="text-2xl font-extrabold text-slate-900">Attribution Analytics</h1>
             <p className="text-sm text-slate-500">
-              Track campaign performance across pages, devices, and placements.
+              Track click-to-conversion attribution for marketplace campaigns.
             </p>
           </div>
           <button

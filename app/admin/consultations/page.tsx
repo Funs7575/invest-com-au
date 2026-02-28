@@ -278,7 +278,10 @@ export default function AdminConsultationsPage() {
   return (
     <AdminShell>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-slate-900">Consultations</h1>
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Consultations</h1>
+          <p className="text-sm text-slate-500 mt-1">Manage 1-on-1 consultation products. Users book paid sessions with financial experts.</p>
+        </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => {
@@ -523,9 +526,7 @@ export default function AdminConsultationsPage() {
               placeholder="username/event-type"
               required
             />
-            <p className="text-xs text-slate-400 mt-1">
-              The Cal.com event link, e.g. &quot;finnkelly/portfolio-review&quot;
-            </p>
+            <p className="text-xs text-slate-400 mt-0.5">Booking calendar URL — users are redirected here after payment</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-4">
@@ -542,6 +543,7 @@ export default function AdminConsultationsPage() {
                 className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"
                 placeholder="price_..."
               />
+              <p className="text-xs text-slate-400 mt-0.5">Link to the Stripe payment product. Create the product in Stripe first.</p>
             </div>
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
@@ -556,6 +558,7 @@ export default function AdminConsultationsPage() {
                 className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"
                 placeholder="price_..."
               />
+              <p className="text-xs text-slate-400 mt-0.5">Link to the Stripe payment product. Create the product in Stripe first.</p>
             </div>
           </div>
 

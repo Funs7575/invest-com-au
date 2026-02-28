@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import AdminSearch from "@/components/AdminSearch";
 import AdminNotifications from "@/components/AdminNotifications";
+import AdminHelpPanel from "@/components/AdminHelpPanel";
 
 const navSections = [
   {
@@ -201,6 +202,9 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
       {/* Global Search */}
       <AdminSearch />
+
+      {/* Page-specific help panel */}
+      <AdminHelpPanel />
     </div>
   );
 }

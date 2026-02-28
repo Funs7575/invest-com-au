@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { downloadCSV } from "@/lib/csv-export";
 import TableSkeleton from "@/components/TableSkeleton";
 import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
+import InfoTip from "@/components/InfoTip";
 import type { BrokerHealthScore, Broker } from "@/lib/types";
 
 interface FormData {
@@ -217,7 +218,7 @@ export default function HealthScoresPage() {
           <div>
             <h1 className="text-2xl font-bold">Broker Health Scores</h1>
             <p className="text-sm text-slate-500">
-              Manage broker health and risk scores across multiple categories
+              Track broker safety across regulatory, financial, and client-money dimensions.
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -290,7 +291,7 @@ export default function HealthScoresPage() {
               </div>
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
-                  Overall Score
+                  Overall Score <InfoTip text="Weighted average of all health dimensions. Higher = safer." />
                 </label>
                 <input
                   type="number"
@@ -311,7 +312,7 @@ export default function HealthScoresPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
-                  Regulatory Score
+                  Regulatory Score <InfoTip text="Based on AFSL status, compliance history, and ASIC actions." />
                 </label>
                 <input
                   type="number"
@@ -379,7 +380,7 @@ export default function HealthScoresPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
-                  Financial Stability Score
+                  Financial Stability Score <InfoTip text="Based on balance sheet health, parent company, and capital reserves." />
                 </label>
                 <input
                   type="number"
@@ -619,12 +620,14 @@ export default function HealthScoresPage() {
                   ))}
                   {items.length === 0 && (
                     <tr>
-                      <td
-                        colSpan={7}
-                        className="px-4 py-8 text-center text-slate-400"
-                      >
-                        No health scores yet. Click &quot;+ New Health Score&quot; to
-                        create one.
+                      <td colSpan={7}>
+                        <div className="text-center py-12">
+                          <div className="text-3xl mb-2">🛡️</div>
+                          <p className="text-sm font-medium text-slate-700 mb-1">No health scores yet</p>
+                          <p className="text-xs text-slate-400 max-w-sm mx-auto">
+                            Health scores rate each broker across safety categories like regulation, client money handling, and platform reliability. These scores help users assess broker trustworthiness.
+                          </p>
+                        </div>
                       </td>
                     </tr>
                   )}

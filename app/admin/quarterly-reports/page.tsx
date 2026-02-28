@@ -230,7 +230,7 @@ export default function QuarterlyReportsPage() {
           <div>
             <h1 className="text-2xl font-bold">Quarterly Reports</h1>
             <p className="text-sm text-slate-500">
-              Manage quarterly industry reports and analysis
+              Quarterly market reports comparing broker performance, fees, and industry trends.
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -536,12 +536,14 @@ export default function QuarterlyReportsPage() {
                   ))}
                   {items.length === 0 && (
                     <tr>
-                      <td
-                        colSpan={5}
-                        className="px-4 py-8 text-center text-slate-400"
-                      >
-                        No quarterly reports yet. Click &quot;+ New Report&quot; to
-                        create one.
+                      <td colSpan={5}>
+                        <div className="text-center py-12">
+                          <div className="text-3xl mb-2">📊</div>
+                          <p className="text-sm font-medium text-slate-700 mb-1">No quarterly reports yet</p>
+                          <p className="text-xs text-slate-400 max-w-sm mx-auto">
+                            Quarterly reports summarize industry trends, broker fee changes, new market entrants, and key findings to keep your audience informed each quarter.
+                          </p>
+                        </div>
                       </td>
                     </tr>
                   )}

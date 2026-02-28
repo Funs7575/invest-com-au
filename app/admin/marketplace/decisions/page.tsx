@@ -147,7 +147,7 @@ export default function AllocationDecisionsPage() {
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900">Allocation Decision Log</h1>
           <p className="text-sm text-slate-500">
-            Every placement allocation is logged. See which campaigns were considered, who won, and why others were rejected.
+            Campaign approval queue — review and approve or reject pending campaigns.
           </p>
         </div>
 

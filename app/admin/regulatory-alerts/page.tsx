@@ -227,7 +227,7 @@ export default function RegulatoryAlertsPage() {
           <div>
             <h1 className="text-2xl font-bold">Regulatory Alerts</h1>
             <p className="text-sm text-slate-500">
-              Manage regulatory, tax, and super change alerts
+              Track regulatory changes affecting brokers — ASIC actions, license changes, compliance requirements.
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -394,6 +394,7 @@ export default function RegulatoryAlertsPage() {
                   <option value="important">Important</option>
                   <option value="urgent">Urgent</option>
                 </select>
+                <p className="text-xs text-slate-400 mt-0.5">critical &gt; high &gt; medium &gt; low. Critical alerts are shown prominently to users.</p>
               </div>
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
@@ -428,6 +429,7 @@ export default function RegulatoryAlertsPage() {
                   }
                   className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"
                 />
+                <p className="text-xs text-slate-400 mt-0.5">When the regulation takes effect.</p>
               </div>
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
@@ -563,12 +565,14 @@ export default function RegulatoryAlertsPage() {
                   ))}
                   {items.length === 0 && (
                     <tr>
-                      <td
-                        colSpan={6}
-                        className="px-4 py-8 text-center text-slate-400"
-                      >
-                        No regulatory alerts yet. Click &quot;+ New Alert&quot; to
-                        create one.
+                      <td colSpan={6}>
+                        <div className="text-center py-12">
+                          <div className="text-3xl mb-2">📋</div>
+                          <p className="text-sm font-medium text-slate-700 mb-1">No regulatory alerts yet</p>
+                          <p className="text-xs text-slate-400 max-w-sm mx-auto">
+                            Regulatory alerts notify users about important changes to tax rules, ASIC regulations, superannuation laws, or reporting requirements that may affect their investments.
+                          </p>
+                        </div>
                       </td>
                     </tr>
                   )}

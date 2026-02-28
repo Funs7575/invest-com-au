@@ -165,7 +165,10 @@ export default function AdminUserReviewsPage() {
   return (
     <AdminShell>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-slate-900">User Reviews</h1>
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">User Reviews</h1>
+          <p className="text-sm text-slate-500 mt-1">Moderate user-submitted broker reviews. Reviews need approval before appearing on broker pages.</p>
+        </div>
         <div className="flex items-center gap-2">
           <button onClick={exportReviews} className="bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg px-4 py-2 text-sm transition-colors">Export CSV ↓</button>
           <button

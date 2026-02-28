@@ -9,18 +9,19 @@ interface SettingField {
   key: string;
   label: string;
   type: "text" | "textarea" | "number";
+  hint?: string;
 }
 
 const SETTING_FIELDS: SettingField[] = [
-  { key: "site_title", label: "Site Title", type: "text" },
-  { key: "meta_description", label: "Meta Description", type: "textarea" },
+  { key: "site_title", label: "Site Title", type: "text", hint: "Shown in browser tabs and as the default page title." },
+  { key: "meta_description", label: "Meta Description", type: "textarea", hint: "Default meta description for pages without their own." },
   { key: "acn", label: "ACN", type: "text" },
   { key: "abn", label: "ABN", type: "text" },
   { key: "contact_email", label: "Contact Email", type: "text" },
-  { key: "visitor_count", label: "Visitor Count", type: "number" },
-  { key: "user_rating", label: "User Rating", type: "number" },
-  { key: "media_logos", label: "Media Logos (comma-separated)", type: "text" },
-  { key: "hero_headline", label: "Hero Headline", type: "text" },
+  { key: "visitor_count", label: "Visitor Count", type: "number", hint: "Trust signal shown on the homepage — set manually." },
+  { key: "user_rating", label: "User Rating", type: "number", hint: "Trust signal shown on the homepage — set manually." },
+  { key: "media_logos", label: "Media Logos (comma-separated)", type: "text", hint: "Comma-separated image URLs for the 'As seen in' section." },
+  { key: "hero_headline", label: "Hero Headline", type: "text", hint: "Main heading on the homepage hero section." },
   { key: "hero_subtitle", label: "Hero Subtitle", type: "text" },
 ];
 
@@ -113,8 +114,8 @@ export default function SiteSettingsPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-slate-900">Site Settings</h1>
-            <p className="text-slate-500 mt-1">
-              Manage global site configuration and metadata.
+            <p className="text-sm text-slate-500 mt-1">
+              Global configuration — SEO defaults, homepage content, and trust signals.
             </p>
           </div>
           <button
@@ -165,9 +166,11 @@ export default function SiteSettingsPage() {
                     {field.label}
                   </label>
                   {renderField(field)}
-                  <p className="text-xs text-slate-500 mt-1">
-                    Key: {field.key}
-                  </p>
+                  {field.hint && (
+                    <p className="text-xs text-slate-400 mt-0.5">
+                      {field.hint}
+                    </p>
+                  )}
                 </div>
               ))}
             </div>

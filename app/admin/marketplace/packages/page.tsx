@@ -83,7 +83,7 @@ export default function AdminPackagesPage() {
             Broker Packages
           </h1>
           <p className="text-sm text-slate-500 mt-1">
-            Manage advertising package tiers and pricing.
+            Sponsorship packages and pricing tiers for broker advertising.
           </p>
         </div>
 

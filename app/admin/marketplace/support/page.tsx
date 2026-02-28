@@ -277,7 +277,7 @@ export default function AdminSupportPage() {
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900">Support Tickets</h1>
-          <p className="text-sm text-slate-500">Manage partner support requests</p>
+          <p className="text-sm text-slate-500">Support tickets from broker partners. Track and resolve issues.</p>
         </div>
 
         {/* KPIs */}

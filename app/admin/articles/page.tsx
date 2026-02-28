@@ -7,6 +7,7 @@ import ConfirmDialog from "@/components/ConfirmDialog";
 import { useToast } from "@/components/Toast";
 import type { Article, TeamMember } from "@/lib/types";
 import { downloadCSV } from "@/lib/csv-export";
+import InfoTip from "@/components/InfoTip";
 
 const PAGE_SIZE = 15;
 
@@ -178,6 +179,7 @@ export default function AdminArticlesPage() {
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Articles</h1>
           <p className="text-sm text-slate-500 mt-1">{publishedCount} published, {draftCount} draft</p>
+          <p className="text-sm text-slate-500">Create and manage editorial content. Articles can be drafted, scheduled, or published immediately.</p>
         </div>
         {!showForm && (
           <div className="flex items-center gap-3">
@@ -205,6 +207,7 @@ export default function AdminArticlesPage() {
             <div>
               <label className="block text-xs font-medium text-slate-500 mb-1">Slug <span className="text-red-600">*</span></label>
               <input name="slug" defaultValue={formArticle.slug} required className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+              <p className="text-xs text-slate-400 mt-0.5">URL path — e.g. &quot;best-brokers-2025&quot; creates /article/best-brokers-2025</p>
             </div>
             <div>
               <label className="block text-xs font-medium text-slate-500 mb-1">Status</label>
@@ -218,6 +221,7 @@ export default function AdminArticlesPage() {
           <div>
             <label className="block text-xs font-medium text-slate-500 mb-1">Excerpt</label>
             <textarea name="excerpt" defaultValue={formArticle.excerpt} rows={2} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+            <p className="text-xs text-slate-400 mt-0.5">Short summary shown in article cards and social shares.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -243,12 +247,14 @@ export default function AdminArticlesPage() {
           <div>
             <label className="block text-xs font-medium text-slate-500 mb-1">Sections (JSON array)</label>
             <textarea name="sections" defaultValue={formArticle.sections ? JSON.stringify(formArticle.sections, null, 2) : ""} rows={6} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 font-mono text-xs focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+            <p className="text-xs text-slate-400 mt-0.5">JSON array of content sections — use the content editor for easier editing.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-medium text-slate-500 mb-1">Related Brokers (slugs, comma-separated)</label>
               <input name="related_brokers" defaultValue={formArticle.related_brokers?.join(", ")} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
+              <p className="text-xs text-slate-400 mt-0.5">Broker slugs, comma-separated. Shows comparison widget in article.</p>
             </div>
             <div>
               <label className="block text-xs font-medium text-slate-500 mb-1">Related Calculator</label>
@@ -266,7 +272,7 @@ export default function AdminArticlesPage() {
           {/* Author/Reviewer (structured — from team_members) */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1">Author (Team Member)</label>
+              <label className="block text-xs font-medium text-slate-500 mb-1">Author (Team Member) <InfoTip text="Link to a team member. Preferred over legacy author fields below." /></label>
               <select name="author_id" defaultValue={formArticle.author_id?.toString() || ""} className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30">
                 <option value="">None (use legacy fields)</option>
                 {teamMembers.filter(m => m.role !== 'expert_reviewer').map(m => (
@@ -321,6 +327,7 @@ export default function AdminArticlesPage() {
           <label className="flex items-center gap-2 cursor-pointer">
             <input type="checkbox" name="evergreen" defaultChecked={formArticle.evergreen} className="w-4 h-4 rounded bg-slate-200 border-slate-300" />
             <span className="text-sm text-slate-600">Evergreen content</span>
+            <InfoTip text="Evergreen content stays relevant long-term and is scored differently in staleness reports." />
           </label>
 
           <div className="flex gap-3 pt-2">

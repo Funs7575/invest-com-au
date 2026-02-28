@@ -7,6 +7,7 @@ import { useToast } from "@/components/Toast";
 import AdminShell from "@/components/AdminShell";
 import { downloadCSV } from "@/lib/csv-export";
 import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
+import InfoTip from "@/components/InfoTip";
 
 interface CourseRow {
   id: number;
@@ -189,7 +190,10 @@ export default function AdminCoursesPage() {
   return (
     <AdminShell>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-slate-900">Courses</h1>
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Courses</h1>
+          <p className="text-sm text-slate-500 mt-1">Investment education courses — free, paid, or Pro-exclusive.</p>
+        </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => {
@@ -308,6 +312,7 @@ export default function AdminCoursesPage() {
                 className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"
                 placeholder="197.00"
               />
+              <p className="text-xs text-slate-400 mt-0.5">Discounted price for Pro members</p>
             </div>
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">Level</label>
@@ -347,6 +352,7 @@ export default function AdminCoursesPage() {
                 onChange={(e) => setForm({ ...form, revenue_share_percent: e.target.value })}
                 className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"
               />
+              <p className="text-xs text-slate-400 mt-0.5">Percentage of revenue paid to the course creator</p>
             </div>
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">Status</label>
@@ -364,7 +370,7 @@ export default function AdminCoursesPage() {
 
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Stripe Price ID</label>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">Stripe Price ID <InfoTip text="Create the product in Stripe first, then paste the ID here." /></label>
               <input
                 type="text"
                 value={form.stripe_price_id}

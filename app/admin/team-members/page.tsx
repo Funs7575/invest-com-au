@@ -176,7 +176,7 @@ export default function TeamMembersPage() {
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Team Members</h1>
           <p className="text-sm text-slate-500 mt-1">
-            {activeCount} active, {members.length - activeCount} inactive
+            Editorial team shown on articles and the about page. Link team members as article authors. {activeCount} active, {members.length - activeCount} inactive.
           </p>
         </div>
         {!showForm && (
@@ -342,6 +342,7 @@ export default function TeamMembersPage() {
               placeholder="https://..."
               className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
             />
+            <p className="text-xs text-slate-400 mt-0.5">Headshot image URL — shown on articles and the about page</p>
           </div>
 
           <div>

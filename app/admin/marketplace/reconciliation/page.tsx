@@ -116,7 +116,7 @@ export default function ReconciliationPage() {
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900">Revenue Reconciliation</h1>
-          <p className="text-sm text-slate-500">Cross-check wallet balances against transaction history</p>
+          <p className="text-sm text-slate-500">Reconcile campaign spend against wallet balances and verify click data accuracy.</p>
         </div>
 
         {/* KPIs */}

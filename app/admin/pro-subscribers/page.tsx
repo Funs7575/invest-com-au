@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import AdminShell from "@/components/AdminShell";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { downloadCSV } from "@/lib/csv-export";
+import InfoTip from "@/components/InfoTip";
 
 type ProSubscriber = {
   id: number;
@@ -154,7 +155,7 @@ export default function AdminProSubscribersPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-bold text-slate-900">Pro Members</h1>
-          <p className="text-sm text-slate-500">Manage Investor Pro subscriptions</p>
+          <p className="text-sm text-slate-500">Manage Pro plan members — premium content, exclusive deals, and ad-free access.</p>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -267,7 +268,7 @@ export default function AdminProSubscribersPage() {
                 <th className="px-4 py-3 font-semibold text-slate-600">Status</th>
                 <th className="px-4 py-3 font-semibold text-slate-600">Started</th>
                 <th className="px-4 py-3 font-semibold text-slate-600">Period End</th>
-                <th className="px-4 py-3 font-semibold text-slate-600">Stripe</th>
+                <th className="px-4 py-3 font-semibold text-slate-600">Stripe <InfoTip text="Managed via Stripe. Changes here update the local record only — use Stripe dashboard for billing changes." /></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">

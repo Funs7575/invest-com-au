@@ -151,7 +151,7 @@ export default function SponsorBillingPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-extrabold text-slate-900">Sponsor Billing</h1>
-            <p className="text-sm text-slate-500">Manage sponsorship invoicing and payments</p>
+            <p className="text-sm text-slate-500">Billing and invoicing for broker sponsorship packages.</p>
           </div>
           <button onClick={generateMonthlyInvoices} disabled={generating}
             className="px-4 py-2 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50">

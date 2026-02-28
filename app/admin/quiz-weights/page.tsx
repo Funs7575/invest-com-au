@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import AdminShell from "@/components/AdminShell";
+import InfoTip from "@/components/InfoTip";
 import { createClient } from "@/lib/supabase/client";
 
 interface QuizWeight {
@@ -163,7 +164,10 @@ export default function QuizWeightsPage() {
     <AdminShell>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-slate-900">Quiz Weights</h1>
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900">Quiz Weights</h1>
+            <p className="text-sm text-slate-500 mt-1">Control how quiz answers map to broker recommendations. Higher weights = stronger match.</p>
+          </div>
           <div className="flex items-center gap-3">
             <button
               onClick={() => setShowSimulator(!showSimulator)}
@@ -262,7 +266,10 @@ export default function QuizWeightsPage() {
                         key={f.key}
                         className="text-left px-4 py-3 text-sm font-medium text-slate-600 whitespace-nowrap"
                       >
-                        {f.label}
+                        <span className="inline-flex items-center">
+                          {f.label}
+                          <InfoTip text="Score from 0-100. The quiz totals weights across all answers to rank brokers." />
+                        </span>
                       </th>
                     ))}
                     <th className="px-4 py-3"></th>

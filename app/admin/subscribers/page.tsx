@@ -153,7 +153,10 @@ export default function AdminSubscribersPage() {
   return (
     <AdminShell>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-slate-900">Subscribers</h1>
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Subscribers</h1>
+          <p className="text-sm text-slate-500 mt-1">Email signups from the site — quiz leads, newsletter subscribers, and article captures.</p>
+        </div>
         <button
           onClick={exportCsv}
           className="bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg px-4 py-2 text-sm transition-colors"

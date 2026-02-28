@@ -69,6 +69,7 @@ export default function AuditLogPage() {
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Audit Log</h1>
           <p className="text-sm text-slate-500 mt-1">{total} entries</p>
+          <p className="text-sm text-slate-500">Chronological record of all admin actions — who changed what and when.</p>
         </div>
         <button
           onClick={() => {

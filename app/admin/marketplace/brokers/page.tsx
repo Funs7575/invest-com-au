@@ -182,7 +182,7 @@ export default function AdminBrokersPage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-extrabold text-slate-900">Broker Accounts</h1>
-            <p className="text-sm text-slate-500">Manage broker portal access and wallets</p>
+            <p className="text-sm text-slate-500">Broker accounts registered for the advertising marketplace.</p>
           </div>
           <button
             onClick={() => setShowInvite(!showInvite)}

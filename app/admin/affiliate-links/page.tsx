@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import AdminShell from "@/components/AdminShell";
 import { createClient } from "@/lib/supabase/client";
 import TableSkeleton from "@/components/TableSkeleton";
+import InfoTip from "@/components/InfoTip";
 import { Broker } from "@/lib/types";
 
 type EditableFields = {
@@ -209,7 +210,10 @@ export default function AffiliateLinksPage() {
     <AdminShell>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-slate-900">Affiliate Links & Revenue</h1>
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900">Affiliate Links & Revenue</h1>
+            <p className="text-sm text-slate-500 mt-1">Manage referral links and revenue tracking. Broken links = $0 revenue.</p>
+          </div>
           <div className="flex bg-white border border-slate-200 rounded-lg overflow-hidden">
             <button
               onClick={() => setActiveTab("links")}
@@ -315,8 +319,8 @@ export default function AffiliateLinksPage() {
                     <tr>
                       <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">Broker</th>
                       <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">Affiliate URL</th>
-                      <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">CTA Text</th>
-                      <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">Layer</th>
+                      <th className="text-left px-4 py-3 text-sm font-medium text-slate-600"><span title='Button text on broker cards, e.g. "Visit CommSec"'>CTA Text</span></th>
+                      <th className="text-left px-4 py-3 text-sm font-medium text-slate-600"><span title="Priority tier — higher numbers show first">Layer</span></th>
                       <th className="text-right px-4 py-3 text-sm font-medium text-slate-600">Clicks</th>
                       <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">Status</th>
                       <th className="px-4 py-3"></th>
@@ -324,9 +328,9 @@ export default function AffiliateLinksPage() {
                   ) : activeTab === "revenue" ? (
                     <tr>
                       <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">Broker</th>
-                      <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">Commission Type</th>
+                      <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">Commission Type <InfoTip text="CPA = one-time payment per signup. RevShare = ongoing percentage of trades. Hybrid = both." /></th>
                       <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">Commission $</th>
-                      <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">Est. EPC ($)</th>
+                      <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">Est. EPC ($) <InfoTip text="Estimated Earnings Per Click — average revenue per affiliate click. Get this from your affiliate program dashboard." /></th>
                       <th className="text-right px-4 py-3 text-sm font-medium text-slate-600">Clicks</th>
                       <th className="text-right px-4 py-3 text-sm font-medium text-slate-600">Est. Revenue</th>
                       <th className="px-4 py-3"></th>
@@ -374,7 +378,7 @@ export default function AffiliateLinksPage() {
                                 onChange={(e) =>
                                   handleFieldChange(broker.slug, "cta_text", e.target.value)
                                 }
-                                placeholder="Visit Broker"
+                                placeholder="e.g. Visit CommSec"
                                 className="w-full bg-white border border-slate-300 text-slate-900 rounded px-2 py-1 text-sm focus:outline-none focus:border-amber-500"
                               />
                             </td>
@@ -385,7 +389,7 @@ export default function AffiliateLinksPage() {
                                 onChange={(e) =>
                                   handleFieldChange(broker.slug, "layer", e.target.value)
                                 }
-                                placeholder="Layer"
+                                placeholder="e.g. 1"
                                 className="w-24 bg-white border border-slate-300 text-slate-900 rounded px-2 py-1 text-sm focus:outline-none focus:border-amber-500"
                               />
                             </td>

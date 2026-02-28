@@ -185,7 +185,10 @@ export default function AdminQuestionsPage() {
   return (
     <AdminShell>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-slate-900">Questions</h1>
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">Questions</h1>
+          <p className="text-sm text-slate-500 mt-1">Moderate user-submitted broker questions. Approved questions with answers appear as FAQs.</p>
+        </div>
         <div className="flex items-center gap-2">
           <button onClick={exportQuestions} className="bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg px-4 py-2 text-sm transition-colors">Export CSV ↓</button>
           <button

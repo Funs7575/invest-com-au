@@ -181,8 +181,8 @@ export default function ExportImportPage() {
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Export / Import</h1>
-          <p className="text-slate-500 mt-1">
-            Backup and restore your site data.
+          <p className="text-sm text-slate-500 mt-1">
+            Backup and restore site data. Export before making bulk changes.
           </p>
         </div>
 

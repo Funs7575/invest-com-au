@@ -71,7 +71,7 @@ export default function MarketplaceOverviewPage() {
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900">Marketplace</h1>
-          <p className="text-sm text-slate-500">Broker advertising platform overview</p>
+          <p className="text-sm text-slate-500">Broker advertising platform — deposits, CPC campaigns, and revenue overview.</p>
         </div>
 
         {loading ? (

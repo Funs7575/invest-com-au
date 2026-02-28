@@ -8,6 +8,7 @@ import { downloadCSV } from "@/lib/csv-export";
 import TableSkeleton from "@/components/TableSkeleton";
 import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 import type { BrokerTransferGuide, Broker } from "@/lib/types";
+import InfoTip from "@/components/InfoTip";
 
 interface FormData {
   broker_slug: string;
@@ -223,7 +224,7 @@ export default function BrokerTransferGuidesPage() {
           <div>
             <h1 className="text-2xl font-bold">Broker Transfer Guides</h1>
             <p className="text-sm text-slate-500">
-              Manage broker-specific inbound and outbound transfer instructions
+              Step-by-step guides for transferring shares between brokers.
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -319,13 +320,14 @@ export default function BrokerTransferGuidesPage() {
                     </label>
                   ))}
                 </div>
+                <p className="text-xs text-slate-400 mt-0.5">chess_transfer, in_specie, or full_transfer</p>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
-                  CHESS Transfer Fee (cents)
+                  CHESS Transfer Fee (cents) <InfoTip text="The fee charged by the originating broker to transfer CHESS-sponsored holdings" />
                 </label>
                 <input
                   type="number"
@@ -354,6 +356,7 @@ export default function BrokerTransferGuidesPage() {
                   }
                   className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm"
                 />
+                <p className="text-xs text-slate-400 mt-0.5">Business days to complete the transfer</p>
               </div>
               <div>
                 <label className="block text-xs font-bold text-slate-500 uppercase mb-1">
@@ -550,11 +553,14 @@ export default function BrokerTransferGuidesPage() {
                   ))}
                   {guides.length === 0 && (
                     <tr>
-                      <td
-                        colSpan={7}
-                        className="px-4 py-8 text-center text-slate-400"
-                      >
-                        No transfer guides yet. Click &quot;+ New Guide&quot; to create one.
+                      <td colSpan={7}>
+                        <div className="text-center py-12">
+                          <div className="text-3xl mb-2">🔄</div>
+                          <p className="text-sm font-medium text-slate-700 mb-1">No transfer guides yet</p>
+                          <p className="text-xs text-slate-400 max-w-sm mx-auto">
+                            Transfer guides provide step-by-step instructions for moving shares between brokers, including CHESS transfer fees, timelines, and in-specie transfer details.
+                          </p>
+                        </div>
                       </td>
                     </tr>
                   )}
