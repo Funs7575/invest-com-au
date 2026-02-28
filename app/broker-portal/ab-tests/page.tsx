@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import Icon from "@/components/Icon";
+import InfoTip from "@/components/InfoTip";
 import CountUp from "@/components/CountUp";
 import type { ABTest } from "@/lib/types";
 
@@ -139,7 +140,7 @@ export default function ABTestsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900">A/B Tests</h1>
-          <p className="text-sm text-slate-500">Test different messaging to optimize conversions</p>
+          <p className="text-sm text-slate-500 mt-1">Test different CTA text, deal copy, banners, or landing pages to find what converts best.</p>
         </div>
         <button onClick={() => setShowCreate(!showCreate)}
           className="px-4 py-2 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors flex items-center gap-2">
@@ -186,7 +187,7 @@ export default function ABTestsPage() {
                 <div className="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center">
                   <Icon name="trophy" size={14} className="text-amber-600" />
                 </div>
-                <span className="text-xs font-medium text-slate-500">Winners</span>
+                <span className="text-xs font-medium text-slate-500">Winners <InfoTip text="Tests where a winning variant was declared based on higher CTR or conversion rate." /></span>
               </div>
               <p className="text-xl font-extrabold text-slate-900">
                 <CountUp end={winners} duration={600} />
@@ -253,7 +254,7 @@ export default function ABTestsPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Traffic Split: {split}% / {100 - split}%</label>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Traffic Split: {split}% / {100 - split}% <InfoTip text="Percentage of traffic seeing each variant. Start with 50/50 for equal comparison, or use 80/20 to limit exposure to the new variant." /></label>
             <input type="range" min={10} max={90} step={5} value={split} onChange={(e) => setSplit(Number(e.target.value))}
               className="w-full accent-slate-900" />
             <div className="flex justify-between text-xs text-slate-400">
@@ -278,11 +279,11 @@ export default function ABTestsPage() {
       {/* Tests list */}
       {tests.length === 0 ? (
         <div className="bg-white rounded-xl border border-slate-200 p-12 text-center">
-          <div className="w-12 h-12 rounded-full bg-purple-50 flex items-center justify-center mx-auto mb-3">
-            <Icon name="git-branch" size={20} className="text-purple-500" />
+          <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center mx-auto mb-3">
+            <Icon name="git-branch" size={20} className="text-green-500" />
           </div>
           <p className="text-sm font-medium text-slate-700 mb-1">No A/B tests yet</p>
-          <p className="text-xs text-slate-400 mb-4">Create your first test to optimize your messaging.</p>
+          <p className="text-xs text-slate-400 mb-4">A/B testing lets you compare two versions of your ad to find what performs best. Test CTA text, banners, or landing pages.</p>
         </div>
       ) : (
         <div className="space-y-4 portal-stagger">

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import Icon from "@/components/Icon";
+import InfoTip from "@/components/InfoTip";
 
 interface Package {
   id: number;
@@ -315,7 +316,7 @@ export default function PackagesPage() {
               <Icon name="dollar-sign" size={14} className="text-blue-600" />
             </div>
             <div>
-              <p className="font-medium text-slate-800 mb-1">CPC Rate Discounts</p>
+              <p className="font-medium text-slate-800 mb-1">CPC Rate Discounts <InfoTip text="Your discount is automatically applied to every CPC campaign click. A 10% discount on a $2.00 CPC means you pay $1.80 per click." /></p>
               <p>Package discounts are applied automatically to all CPC campaigns.</p>
             </div>
           </div>
@@ -324,7 +325,7 @@ export default function PackagesPage() {
               <Icon name="star" size={14} className="text-amber-600" />
             </div>
             <div>
-              <p className="font-medium text-slate-800 mb-1">Featured Placements</p>
+              <p className="font-medium text-slate-800 mb-1">Featured Placements <InfoTip text="Included featured slots let you run featured campaigns without per-slot charges. Additional slots are billed to your wallet." /></p>
               <p>Included featured slots are deducted from your monthly fee, not your wallet.</p>
             </div>
           </div>

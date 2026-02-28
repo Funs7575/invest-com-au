@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import Icon from "@/components/Icon";
 import CountUp from "@/components/CountUp";
+import BrokerHelpPanel from "@/components/BrokerHelpPanel";
 
 const navItems = [
   { href: "/broker-portal", label: "Dashboard", icon: "bar-chart" },
@@ -212,6 +213,7 @@ export default function BrokerPortalLayout({ children }: { children: React.React
       <main className="flex-1 overflow-auto">
         <div key={pathname} className="p-4 md:p-6 lg:p-8 portal-page-enter">{children}</div>
       </main>
+      <BrokerHelpPanel />
     </div>
   );
 }

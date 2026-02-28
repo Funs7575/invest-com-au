@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import Icon from "@/components/Icon";
+import InfoTip from "@/components/InfoTip";
 import type { MarketplacePlacement } from "@/lib/types";
 
 /* ─────────────────────── Placement visual metadata ─────────────────────── */
@@ -468,7 +469,10 @@ export default function NewCampaignPage() {
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Campaign name */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Campaign Name *</label>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Campaign Name *
+              <InfoTip text="A name for your reference only -- not shown to users. Use something descriptive like 'Compare Page Q1 2025'." />
+            </label>
             <input
               type="text"
               value={name}
@@ -550,6 +554,10 @@ export default function NewCampaignPage() {
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1">
                 Rate (AUD) * — {selectedPlacement.inventory_type === "cpc" ? "per click" : "per month"}
+                {selectedPlacement.inventory_type === "cpc"
+                  ? <InfoTip text="The amount you pay each time a user clicks your ad. Higher rates may win more placement opportunities." />
+                  : <InfoTip text="Fixed monthly fee for this featured placement. Charged to your wallet at the start of each billing period." />
+                }
               </label>
               <div className="relative">
                 <span className="absolute left-3 top-2.5 text-slate-400 text-sm">$</span>
@@ -572,6 +580,7 @@ export default function NewCampaignPage() {
               <label className="block text-sm font-medium text-slate-700 mb-1">
                 Daily Budget (AUD)
                 <span className="text-xs text-slate-400 ml-1">optional</span>
+                <InfoTip text="Maximum amount that can be charged per day. Prevents unexpected high-spend days. Leave blank for unlimited." />
               </label>
               <div className="relative">
                 <span className="absolute left-3 top-2.5 text-slate-400 text-sm">$</span>
@@ -590,6 +599,7 @@ export default function NewCampaignPage() {
               <label className="block text-sm font-medium text-slate-700 mb-1">
                 Total Budget (AUD)
                 <span className="text-xs text-slate-400 ml-1">optional</span>
+                <InfoTip text="Maximum cumulative spend for the entire campaign. Campaign automatically pauses when reached." />
               </label>
               <div className="relative">
                 <span className="absolute left-3 top-2.5 text-slate-400 text-sm">$</span>

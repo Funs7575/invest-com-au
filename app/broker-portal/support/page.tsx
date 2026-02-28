@@ -262,7 +262,7 @@ export default function SupportPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900">Support</h1>
-          <p className="text-sm text-slate-500">Get help from our partner support team</p>
+          <p className="text-sm text-slate-500 mt-1">Submit tickets and communicate with the partner support team. Include campaign details for faster resolution.</p>
         </div>
         <button onClick={() => setShowCreate(!showCreate)}
           className="px-4 py-2 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors flex items-center gap-2">
@@ -366,9 +366,7 @@ export default function SupportPage() {
             <Icon name="message-circle" size={20} className="text-blue-500" />
           </div>
           <p className="text-sm font-medium text-slate-700 mb-1">No support tickets</p>
-          <p className="text-xs text-slate-400 mb-4">
-            Need help? Create a ticket and we&apos;ll respond within 24 hours.
-          </p>
+          <p className="text-xs text-slate-400">Need help? Create a ticket above and our partner team will respond within 24 hours.</p>
         </div>
       ) : (
         <div className="bg-white rounded-xl border border-slate-200 divide-y divide-slate-100 portal-stagger">

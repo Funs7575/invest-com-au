@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import Icon from "@/components/Icon";
+import InfoTip from "@/components/InfoTip";
 
 export default function WebhooksPage() {
   const [apiKey, setApiKey] = useState("");
@@ -113,7 +114,7 @@ export default function WebhooksPage() {
     <div className="space-y-6 max-w-3xl">
       <div>
         <h1 className="text-2xl font-extrabold text-slate-900">Conversion Webhooks</h1>
-        <p className="text-sm text-slate-500">Track conversions from your platform back to Invest.com.au</p>
+        <p className="text-sm text-slate-500 mt-1">Configure webhook endpoints to receive real-time notifications about clicks, conversions, and campaign events.</p>
       </div>
 
       {/* API Key */}
@@ -123,6 +124,7 @@ export default function WebhooksPage() {
             <Icon name="key" size={14} className="text-amber-600" />
           </div>
           <h2 className="font-bold text-slate-900">Your API Key</h2>
+          <InfoTip text="Include this key in your server-side code to authenticate postback requests. Never expose it client-side." />
         </div>
         <p className="text-xs text-slate-500 mb-3">Include this in the <code className="bg-slate-100 px-1 py-0.5 rounded text-[0.69rem]">X-API-Key</code> header of your postback requests.</p>
         <div className="flex items-center gap-2">
@@ -146,6 +148,7 @@ export default function WebhooksPage() {
               <Icon name="link" size={14} className="text-blue-600" />
             </div>
             <h2 className="font-bold text-slate-900">Outbound Webhook URL</h2>
+            <InfoTip text="We send JSON POST requests to this URL when events occur. Must be a publicly accessible HTTPS endpoint." />
           </div>
           {webhookSaved && <span className="text-xs text-green-600 font-medium">✓ Saved</span>}
         </div>

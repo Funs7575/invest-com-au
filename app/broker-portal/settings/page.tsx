@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import Icon from "@/components/Icon";
+import InfoTip from "@/components/InfoTip";
 import type { BrokerAccount } from "@/lib/types";
 
 export default function SettingsPage() {
@@ -268,6 +269,7 @@ export default function SettingsPage() {
             <Icon name="key" size={14} className="text-amber-600" />
           </div>
           <h3 className="text-base font-bold text-slate-900">Postback API Key</h3>
+          <InfoTip text="Use this key in the Authorization header when sending conversion events to our API. Keep it secret -- never expose in client-side code." />
         </div>
         <p className="text-sm text-slate-600 mb-3">Use this key to report conversions via the postback API.</p>
         <div className="flex items-center gap-2">
@@ -293,6 +295,7 @@ export default function SettingsPage() {
             <Icon name="bell" size={14} className="text-red-600" />
           </div>
           <h3 className="text-base font-bold text-slate-900">Low Balance Alerts</h3>
+          <InfoTip text="Get emailed when your wallet drops below the threshold. Prevents campaigns from pausing due to insufficient funds." />
         </div>
         <div className="space-y-4">
           <label className="flex items-center gap-3">
@@ -306,7 +309,7 @@ export default function SettingsPage() {
           </label>
           {alertEnabled && (
             <div>
-              <label className="block text-sm text-slate-600 mb-1">Alert when balance drops below</label>
+              <label className="block text-sm text-slate-600 mb-1">Alert when balance drops below <InfoTip text="We recommend setting this to at least 2x your average daily spend to give you time to top up." /></label>
               <div className="flex items-center gap-2">
                 <span className="text-slate-500">$</span>
                 <input

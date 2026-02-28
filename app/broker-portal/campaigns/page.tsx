@@ -6,7 +6,18 @@ import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import CountUp from "@/components/CountUp";
 import Icon from "@/components/Icon";
+import InfoTip from "@/components/InfoTip";
 import type { Campaign } from "@/lib/types";
+
+function getPlacementTypeVisual(name: string): { icon: string; bg: string; color: string } {
+  const lower = name.toLowerCase();
+  if (lower.includes("compare")) return { icon: "bar-chart", bg: "bg-blue-50", color: "text-blue-600" };
+  if (lower.includes("quiz")) return { icon: "zap", bg: "bg-purple-50", color: "text-purple-600" };
+  if (lower.includes("homepage") || lower.includes("home")) return { icon: "star", bg: "bg-amber-50", color: "text-amber-600" };
+  if (lower.includes("article")) return { icon: "book-open", bg: "bg-green-50", color: "text-green-600" };
+  if (lower.includes("deal")) return { icon: "tag", bg: "bg-red-50", color: "text-red-600" };
+  return { icon: "layout", bg: "bg-slate-50", color: "text-slate-600" };
+}
 
 const STATUS_COLORS: Record<string, string> = {
   active: "bg-green-50 text-slate-700",
@@ -131,7 +142,7 @@ export default function CampaignsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900">Campaigns</h1>
-          <p className="text-sm text-slate-500">Manage your advertising campaigns</p>
+          <p className="text-sm text-slate-500">Manage campaigns from draft to completion. Filter by status, pause or cancel active campaigns.</p>
         </div>
         <Link
           href="/broker-portal/campaigns/new"
@@ -148,7 +159,8 @@ export default function CampaignsPage() {
             <div className="w-6 h-6 rounded-full bg-green-50 flex items-center justify-center">
               <Icon name="megaphone" size={12} className="text-green-600" />
             </div>
-            <p className="text-[0.62rem] text-slate-500 font-bold uppercase tracking-wider">Active</p>
+            <p className="text-[0.62rem] text-slate-500 font-bold uppercase tracking-wider">Active Campaigns</p>
+            <InfoTip text="Campaigns currently running and charging your wallet per click or per billing period." />
           </div>
           <p className="text-xl font-extrabold text-slate-900">
             <CountUp end={activeCount} duration={800} />
@@ -160,6 +172,7 @@ export default function CampaignsPage() {
               <Icon name="dollar-sign" size={12} className="text-red-600" />
             </div>
             <p className="text-[0.62rem] text-slate-500 font-bold uppercase tracking-wider">Total Spend</p>
+            <InfoTip text="Cumulative spend across all campaigns since your account was created." />
           </div>
           <p className="text-xl font-extrabold text-slate-900">
             <CountUp end={totalSpent / 100} prefix="$" decimals={2} duration={1000} />
@@ -171,6 +184,7 @@ export default function CampaignsPage() {
               <Icon name="mouse-pointer-click" size={12} className="text-blue-600" />
             </div>
             <p className="text-[0.62rem] text-slate-500 font-bold uppercase tracking-wider">Avg CPC</p>
+            <InfoTip text="Average Cost Per Click = Total Spend / Total Clicks. Lower is better for your budget." />
           </div>
           <p className="text-xl font-extrabold text-slate-900">
             <CountUp end={avgCpc} prefix="$" decimals={2} duration={1000} />
@@ -234,6 +248,14 @@ export default function CampaignsPage() {
                       <h3 className="font-bold text-slate-900">{c.name}</h3>
                       <div className="flex items-center gap-1.5 mt-0.5">
                         <Icon name={p?.inventory_type === "featured" ? "megaphone" : "target"} size={11} className="text-slate-400" />
+                        {(() => {
+                          const vis = getPlacementTypeVisual(placementName);
+                          return (
+                            <span className={`w-5 h-5 rounded-full ${vis.bg} flex items-center justify-center`}>
+                              <Icon name={vis.icon} size={10} className={vis.color} />
+                            </span>
+                          );
+                        })()}
                         <p className="text-xs text-slate-500">{placementName}</p>
                       </div>
                     </div>

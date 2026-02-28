@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import Icon from "@/components/Icon";
+import InfoTip from "@/components/InfoTip";
 import type { BrokerNotification } from "@/lib/types";
 
 const TYPE_ICONS: Record<string, { icon: string; bg: string; text: string }> = {
@@ -107,7 +108,7 @@ export default function NotificationsPage() {
               <div className="w-6 h-6 rounded-lg bg-amber-50 flex items-center justify-center">
                 <Icon name="alert-triangle" size={12} className="text-amber-600" />
               </div>
-              <span className="text-[0.69rem] font-medium text-slate-500">Alerts</span>
+              <span className="text-[0.69rem] font-medium text-slate-500">Alerts <InfoTip text="Actionable notifications: low balance warnings, budget exhausted alerts, and campaign rejections." /></span>
             </div>
             <p className="text-lg font-extrabold text-slate-900">{alertCount}</p>
           </div>

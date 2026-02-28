@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { downloadCSV } from "@/lib/csv-export";
 import CountUp from "@/components/CountUp";
 import Icon from "@/components/Icon";
+import InfoTip from "@/components/InfoTip";
 
 interface ConversionRow {
   id: number;
@@ -151,6 +152,7 @@ export default function ConversionsPage() {
             <p className="text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
               Total
             </p>
+            <InfoTip text="Total conversion events received via your Postback API across all event types." />
           </div>
           <p className="text-2xl font-extrabold text-slate-900 mt-1">
             <CountUp end={totalConversions} duration={1000} />
@@ -164,6 +166,7 @@ export default function ConversionsPage() {
             <p className="text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
               Total Value
             </p>
+            <InfoTip text="Sum of all conversion values reported. Set conversion_value_cents in your postback calls to track revenue." />
           </div>
           <p className="text-2xl font-extrabold text-slate-900 mt-1">
             <CountUp end={totalValue / 100} prefix="$" decimals={2} duration={1000} />
@@ -177,6 +180,7 @@ export default function ConversionsPage() {
             <p className="text-[0.69rem] text-blue-600 uppercase tracking-wider font-bold">
               Opened
             </p>
+            <InfoTip text="User created a brokerage account after clicking your ad. The first stage of the conversion funnel." />
           </div>
           <p className="text-2xl font-extrabold text-blue-800 mt-1">
             <CountUp end={funnelCounts.opened} duration={1000} />
@@ -190,6 +194,7 @@ export default function ConversionsPage() {
             <p className="text-[0.69rem] text-green-600 uppercase tracking-wider font-bold">
               Funded
             </p>
+            <InfoTip text="User deposited money into their brokerage account. Indicates high-quality lead." />
           </div>
           <p className="text-2xl font-extrabold text-green-800 mt-1">
             <CountUp end={funnelCounts.funded} duration={1000} />
@@ -203,6 +208,7 @@ export default function ConversionsPage() {
             <p className="text-[0.69rem] text-purple-600 uppercase tracking-wider font-bold">
               First Trade
             </p>
+            <InfoTip text="User executed their first trade. The highest-value conversion event." />
           </div>
           <p className="text-2xl font-extrabold text-purple-800 mt-1">
             <CountUp end={funnelCounts.first_trade} duration={1000} />
@@ -301,7 +307,7 @@ export default function ConversionsPage() {
                   Event
                 </th>
                 <th className="px-4 py-3 text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
-                  Click ID
+                  <span className="inline-flex items-center gap-1">Click ID <InfoTip text="Unique identifier linking this conversion back to the original ad click for attribution." /></span>
                 </th>
                 <th className="px-4 py-3 text-[0.69rem] text-slate-500 uppercase tracking-wider font-bold">
                   Value

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import Icon from "@/components/Icon";
+import InfoTip from "@/components/InfoTip";
 import CountUp from "@/components/CountUp";
 
 interface Invoice {
@@ -91,9 +92,7 @@ export default function InvoicesPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-extrabold text-slate-900">Invoices</h1>
-        <p className="text-sm text-slate-500">
-          View your wallet top-up invoices and receipts.
-        </p>
+        <p className="text-sm text-slate-500 mt-1">Receipts for wallet top-ups and package payments. Download receipts for your records.</p>
       </div>
 
       {/* KPI Cards */}
@@ -105,6 +104,7 @@ export default function InvoicesPage() {
                 <Icon name="file-text" size={14} className="text-blue-600" />
               </div>
               <span className="text-xs font-medium text-slate-500">Total Invoiced</span>
+              <InfoTip text="Sum of all invoice amounts, regardless of payment status." />
             </div>
             <p className="text-xl font-extrabold text-slate-900">
               <CountUp end={totalInvoiced / 100} prefix="$" decimals={2} duration={1000} />
@@ -139,6 +139,7 @@ export default function InvoicesPage() {
                 <Icon name="trending-up" size={14} className="text-purple-600" />
               </div>
               <span className="text-xs font-medium text-slate-500">Success Rate</span>
+              <InfoTip text="Percentage of invoices that were successfully paid. Failed payments may need to be retried." />
             </div>
             <p className="text-xl font-extrabold text-slate-900">
               <CountUp end={invoices.length > 0 ? (paidCount / invoices.length) * 100 : 0} decimals={0} suffix="%" duration={1000} />
@@ -149,12 +150,15 @@ export default function InvoicesPage() {
 
       <div className="bg-white rounded-xl border border-slate-200">
         {invoices.length === 0 ? (
-          <div className="p-12 text-center">
-            <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-3">
-              <Icon name="file-text" size={20} className="text-slate-400" />
+          <div className="bg-white rounded-xl border border-slate-200 p-12 text-center">
+            <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center mx-auto mb-3">
+              <Icon name="file-text" size={20} className="text-blue-500" />
             </div>
             <p className="text-sm font-medium text-slate-700 mb-1">No invoices yet</p>
-            <p className="text-xs text-slate-400">Top up your wallet to generate an invoice.</p>
+            <p className="text-xs text-slate-400 mb-4">Invoices are created when you top up your wallet or subscribe to a package.</p>
+            <a href="/broker-portal/wallet" className="inline-block px-4 py-2 bg-slate-100 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-200 transition-colors">
+              Top Up Wallet &rarr;
+            </a>
           </div>
         ) : (
           <div className="overflow-x-auto portal-table-stagger">

@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import { downloadCSV } from "@/lib/csv-export";
 import CountUp from "@/components/CountUp";
 import Icon from "@/components/Icon";
+import InfoTip from "@/components/InfoTip";
 import type { CampaignDailyStats, Campaign } from "@/lib/types";
 
 type DateMode = "preset" | "custom";
@@ -125,7 +126,7 @@ export default function ReportsPage() {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900">Reports</h1>
-          <p className="text-sm text-slate-500">Campaign performance analytics</p>
+          <p className="text-sm text-slate-500">Export reports, drill into individual campaigns, and compare date ranges.</p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           {/* Date mode toggle */}
@@ -224,13 +225,13 @@ export default function ReportsPage() {
       {/* KPI Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2 sm:gap-3 portal-stagger">
         {[
-          { label: "Clicks", value: totalClicks, icon: "mouse-pointer-click", iconBg: "bg-blue-50", iconColor: "text-blue-600", borderColor: "border-t-blue-500" },
-          { label: "Impressions", value: totalImpressions, icon: "eye", iconBg: "bg-purple-50", iconColor: "text-purple-600", borderColor: "border-t-purple-500" },
-          { label: "CTR", value: ctrNum, suffix: "%", decimals: 2, icon: "trending-up", iconBg: "bg-green-50", iconColor: "text-green-600", borderColor: "border-t-green-500" },
-          { label: "Conversions", value: totalConversions, icon: "target", iconBg: "bg-emerald-50", iconColor: "text-emerald-600", borderColor: "border-t-emerald-500" },
-          { label: "Conv. Rate", value: convRate, suffix: "%", decimals: 2, icon: "bar-chart", iconBg: "bg-amber-50", iconColor: "text-amber-600", borderColor: "border-t-amber-500" },
-          { label: "Total Spend", value: totalSpend / 100, prefix: "$", decimals: 2, icon: "dollar-sign", iconBg: "bg-red-50", iconColor: "text-red-600", borderColor: "border-t-red-500" },
-          { label: "Avg CPC", value: avgCpcNum, prefix: "$", decimals: 2, icon: "coins", iconBg: "bg-slate-100", iconColor: "text-slate-600", borderColor: "border-t-slate-500" },
+          { label: "Clicks", value: totalClicks, icon: "mouse-pointer-click", iconBg: "bg-blue-50", iconColor: "text-blue-600", borderColor: "border-t-blue-500", tooltip: "" },
+          { label: "Impressions", value: totalImpressions, icon: "eye", iconBg: "bg-purple-50", iconColor: "text-purple-600", borderColor: "border-t-purple-500", tooltip: "" },
+          { label: "CTR", value: ctrNum, suffix: "%", decimals: 2, icon: "trending-up", iconBg: "bg-green-50", iconColor: "text-green-600", borderColor: "border-t-green-500", tooltip: "Click-Through Rate = Clicks / Impressions x 100. Measures how compelling your ad is to viewers." },
+          { label: "Conversions", value: totalConversions, icon: "target", iconBg: "bg-emerald-50", iconColor: "text-emerald-600", borderColor: "border-t-emerald-500", tooltip: "" },
+          { label: "Conv. Rate", value: convRate, suffix: "%", decimals: 2, icon: "bar-chart", iconBg: "bg-amber-50", iconColor: "text-amber-600", borderColor: "border-t-amber-500", tooltip: "Conversion Rate = Conversions / Clicks x 100. Measures how well clicks translate to desired actions." },
+          { label: "Total Spend", value: totalSpend / 100, prefix: "$", decimals: 2, icon: "dollar-sign", iconBg: "bg-red-50", iconColor: "text-red-600", borderColor: "border-t-red-500", tooltip: "" },
+          { label: "Avg CPC", value: avgCpcNum, prefix: "$", decimals: 2, icon: "coins", iconBg: "bg-slate-100", iconColor: "text-slate-600", borderColor: "border-t-slate-500", tooltip: "Average Cost Per Click = Total Spend / Total Clicks. Your effective price for each visitor." },
         ].map(kpi => (
           <div key={kpi.label} className={`bg-white rounded-xl border border-slate-200 border-t-2 ${kpi.borderColor} p-3 hover-lift`}>
             <div className="flex items-center gap-1.5 mb-0.5">
@@ -238,6 +239,7 @@ export default function ReportsPage() {
                 <Icon name={kpi.icon} size={10} className={kpi.iconColor} />
               </div>
               <p className="text-[0.62rem] text-slate-500 font-medium uppercase tracking-wide">{kpi.label}</p>
+              {kpi.tooltip && <InfoTip text={kpi.tooltip} />}
             </div>
             <p className="text-lg font-extrabold text-slate-900 mt-0.5">
               <CountUp end={kpi.value} prefix={kpi.prefix} suffix={kpi.suffix} decimals={kpi.decimals} duration={1000} />

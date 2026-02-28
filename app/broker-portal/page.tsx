@@ -5,6 +5,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import CountUp from "@/components/CountUp";
 import Icon from "@/components/Icon";
+import InfoTip from "@/components/InfoTip";
 import Sparkline from "@/components/Sparkline";
 import type { Campaign, BrokerWallet } from "@/lib/types";
 
@@ -15,8 +16,10 @@ export default function BrokerDashboard() {
   const [todaySpend, setTodaySpend] = useState(0);
   const [dailyClicks, setDailyClicks] = useState<number[]>([]);
   const [dailySpend, setDailySpend] = useState<number[]>([]);
+  const [dailyConversions, setDailyConversions] = useState<number[]>([]);
   const [prevClicks, setPrevClicks] = useState(0);
   const [prevSpend, setPrevSpend] = useState(0);
+  const [prevConversions, setPrevConversions] = useState(0);
   const [loading, setLoading] = useState(true);
   const [firstName, setFirstName] = useState("");
 
@@ -79,23 +82,25 @@ export default function BrokerDashboard() {
       const twoWeeksAgo = new Date(Date.now() - 14 * 86400000).toISOString().slice(0, 10);
       const { data: dailyStats } = await supabase
         .from("campaign_daily_stats")
-        .select("stat_date, clicks, spend_cents")
+        .select("stat_date, clicks, spend_cents, conversions")
         .eq("broker_slug", slug)
         .gte("stat_date", twoWeeksAgo)
         .order("stat_date", { ascending: true });
 
       if (dailyStats && dailyStats.length > 0) {
         // Aggregate by date
-        const byDate = new Map<string, { clicks: number; spend: number }>();
+        const byDate = new Map<string, { clicks: number; spend: number; conversions: number }>();
         for (const s of dailyStats) {
-          const existing = byDate.get(s.stat_date) || { clicks: 0, spend: 0 };
+          const existing = byDate.get(s.stat_date) || { clicks: 0, spend: 0, conversions: 0 };
           existing.clicks += s.clicks;
           existing.spend += s.spend_cents;
+          existing.conversions += s.conversions || 0;
           byDate.set(s.stat_date, existing);
         }
         const sorted = Array.from(byDate.entries()).sort(([a], [b]) => a.localeCompare(b));
         setDailyClicks(sorted.map(([, v]) => v.clicks));
         setDailySpend(sorted.map(([, v]) => v.spend));
+        setDailyConversions(sorted.map(([, v]) => v.conversions));
 
         // Trend: compare last 7d vs previous 7d
         const mid = Math.floor(sorted.length / 2);
@@ -103,6 +108,7 @@ export default function BrokerDashboard() {
         const currHalf = sorted.slice(mid);
         setPrevClicks(prevHalf.reduce((s, [, v]) => s + v.clicks, 0));
         setPrevSpend(prevHalf.reduce((s, [, v]) => s + v.spend, 0));
+        setPrevConversions(prevHalf.reduce((s, [, v]) => s + v.conversions, 0));
       }
 
       setLoading(false);
@@ -157,6 +163,7 @@ export default function BrokerDashboard() {
               <Icon name="wallet" size={14} className="text-amber-600" />
             </div>
             <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Wallet Balance</p>
+            <InfoTip text="Funds available for CPC ad charges and featured placement fees. Deducted automatically per click or per billing period." />
           </div>
           <p className="text-2xl font-extrabold text-slate-700 mt-1">
             <CountUp end={balance / 100} prefix="$" decimals={2} duration={1000} />
@@ -209,6 +216,7 @@ export default function BrokerDashboard() {
               <Icon name="mouse-pointer-click" size={14} className="text-green-600" />
             </div>
             <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Clicks (7d)</p>
+            <InfoTip text="Total click-throughs on your ads in the last 7 days. Each click is charged to your wallet at your campaign&apos;s CPC rate." />
           </div>
           <div className="flex items-center gap-2 mt-1">
             <p className="text-2xl font-extrabold text-slate-900">
@@ -238,6 +246,7 @@ export default function BrokerDashboard() {
               <Icon name="dollar-sign" size={14} className="text-purple-600" />
             </div>
             <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Today&apos;s Spend</p>
+            <InfoTip text="Amount charged to your wallet today from campaign activity. Resets at midnight AEST." />
           </div>
           <div className="flex items-center gap-2 mt-1">
             <p className="text-2xl font-extrabold text-slate-900">
@@ -259,6 +268,88 @@ export default function BrokerDashboard() {
           })()}
         </div>
       </div>
+
+      {/* This Week vs Last Week */}
+      {dailyClicks.length > 0 && (() => {
+        const currWeekClicks = dailyClicks.slice(-7).reduce((s, v) => s + v, 0);
+        const currWeekSpend = dailySpend.slice(-7).reduce((s, v) => s + v, 0);
+        const currWeekConversions = dailyConversions.slice(-7).reduce((s, v) => s + v, 0);
+        const pctChange = (curr: number, prev: number) => prev > 0 ? Math.round(((curr - prev) / prev) * 100) : curr > 0 ? 100 : 0;
+        const clicksChange = pctChange(currWeekClicks, prevClicks);
+        const spendChange = pctChange(currWeekSpend, prevSpend);
+        const conversionsChange = pctChange(currWeekConversions, prevConversions);
+        return (
+          <div className="bg-white rounded-xl border border-slate-200 p-5 hover-lift">
+            <h2 className="font-bold text-slate-900 text-sm mb-4">This Week vs Last Week</h2>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="text-center">
+                <p className="text-xs text-slate-500 mb-1">Clicks</p>
+                <p className="text-lg font-extrabold text-slate-900">{currWeekClicks.toLocaleString()}</p>
+                <p className="text-[0.62rem] text-slate-400">prev: {prevClicks.toLocaleString()}</p>
+                {clicksChange !== 0 && (
+                  <p className={`text-xs font-bold mt-1 flex items-center justify-center gap-0.5 ${clicksChange > 0 ? "text-green-600" : "text-red-500"}`}>
+                    <Icon name={clicksChange > 0 ? "arrow-up" : "arrow-down"} size={10} />
+                    {Math.abs(clicksChange)}%
+                  </p>
+                )}
+              </div>
+              <div className="text-center">
+                <p className="text-xs text-slate-500 mb-1">Spend</p>
+                <p className="text-lg font-extrabold text-slate-900">${(currWeekSpend / 100).toFixed(2)}</p>
+                <p className="text-[0.62rem] text-slate-400">prev: ${(prevSpend / 100).toFixed(2)}</p>
+                {spendChange !== 0 && (
+                  <p className={`text-xs font-bold mt-1 flex items-center justify-center gap-0.5 ${spendChange > 0 ? "text-red-500" : "text-green-600"}`}>
+                    <Icon name={spendChange > 0 ? "arrow-up" : "arrow-down"} size={10} />
+                    {Math.abs(spendChange)}%
+                  </p>
+                )}
+              </div>
+              <div className="text-center">
+                <p className="text-xs text-slate-500 mb-1">Conversions</p>
+                <p className="text-lg font-extrabold text-slate-900">{currWeekConversions.toLocaleString()}</p>
+                <p className="text-[0.62rem] text-slate-400">prev: {prevConversions.toLocaleString()}</p>
+                {conversionsChange !== 0 && (
+                  <p className={`text-xs font-bold mt-1 flex items-center justify-center gap-0.5 ${conversionsChange > 0 ? "text-green-600" : "text-red-500"}`}>
+                    <Icon name={conversionsChange > 0 ? "arrow-up" : "arrow-down"} size={10} />
+                    {Math.abs(conversionsChange)}%
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* Getting Started Guide — shown when broker has no active campaigns */}
+      {activeCampaignCount === 0 && (
+        <div className="bg-gradient-to-r from-amber-50 to-amber-100/50 border border-amber-200 rounded-xl p-5">
+          <h2 className="text-sm font-bold text-amber-900 mb-2">🚀 Get Started with Advertising</h2>
+          <p className="text-xs text-amber-800 mb-3">Follow these steps to launch your first campaign and start driving traffic.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <Link href="/broker-portal/settings" className="flex items-start gap-2 bg-white/80 rounded-lg p-3 hover:bg-white transition-colors">
+              <span className="text-base shrink-0">1️⃣</span>
+              <div>
+                <div className="text-xs font-bold text-slate-900">Accept Terms</div>
+                <div className="text-[0.65rem] text-slate-500 mt-0.5">Accept the marketplace terms to start advertising.</div>
+              </div>
+            </Link>
+            <Link href="/broker-portal/wallet" className="flex items-start gap-2 bg-white/80 rounded-lg p-3 hover:bg-white transition-colors">
+              <span className="text-base shrink-0">2️⃣</span>
+              <div>
+                <div className="text-xs font-bold text-slate-900">Top Up Wallet</div>
+                <div className="text-[0.65rem] text-slate-500 mt-0.5">Add at least $100 to start running campaigns.</div>
+              </div>
+            </Link>
+            <Link href="/broker-portal/campaigns/new" className="flex items-start gap-2 bg-white/80 rounded-lg p-3 hover:bg-white transition-colors">
+              <span className="text-base shrink-0">3️⃣</span>
+              <div>
+                <div className="text-xs font-bold text-slate-900">Create Campaign</div>
+                <div className="text-[0.65rem] text-slate-500 mt-0.5">Choose a placement, set your rate, and submit for review.</div>
+              </div>
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* Quick Actions */}
       <div className="flex flex-wrap gap-3">
@@ -355,6 +446,54 @@ export default function BrokerDashboard() {
           </div>
         )}
       </div>
+
+      {/* Campaign Status Distribution */}
+      {campaigns.length > 0 && (() => {
+        const statusConfig: { key: string; label: string; color: string }[] = [
+          { key: "active", label: "Active", color: "bg-green-500" },
+          { key: "pending_review", label: "Pending Review", color: "bg-amber-500" },
+          { key: "approved", label: "Approved", color: "bg-blue-500" },
+          { key: "paused", label: "Paused", color: "bg-slate-400" },
+          { key: "budget_exhausted", label: "Budget Exhausted", color: "bg-red-500" },
+          { key: "completed", label: "Completed", color: "bg-slate-300" },
+          { key: "cancelled", label: "Cancelled", color: "bg-slate-200" },
+          { key: "rejected", label: "Rejected", color: "bg-red-400" },
+        ];
+        const counts = new Map<string, number>();
+        for (const c of campaigns) {
+          counts.set(c.status, (counts.get(c.status) || 0) + 1);
+        }
+        const total = campaigns.length;
+        const activeStatuses = statusConfig.filter((s) => (counts.get(s.key) || 0) > 0);
+        return (
+          <div className="bg-white rounded-xl border border-slate-200 p-5 hover-lift">
+            <h2 className="font-bold text-slate-900 text-sm mb-4">Campaign Status Distribution</h2>
+            <div className="h-4 rounded-full overflow-hidden flex">
+              {activeStatuses.map((s) => {
+                const count = counts.get(s.key) || 0;
+                const widthPct = (count / total) * 100;
+                return (
+                  <div
+                    key={s.key}
+                    className={`${s.color} transition-all duration-500`}
+                    style={{ width: `${widthPct}%` }}
+                    title={`${s.label}: ${count}`}
+                  />
+                );
+              })}
+            </div>
+            <div className="flex flex-wrap gap-x-4 gap-y-1.5 mt-3">
+              {activeStatuses.map((s) => (
+                <div key={s.key} className="flex items-center gap-1.5">
+                  <span className={`w-2.5 h-2.5 rounded-full ${s.color}`} />
+                  <span className="text-xs text-slate-600">{s.label}</span>
+                  <span className="text-xs font-bold text-slate-900">{counts.get(s.key)}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Lifetime Stats */}
       {wallet && (

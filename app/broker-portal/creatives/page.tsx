@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import Icon from "@/components/Icon";
+import InfoTip from "@/components/InfoTip";
 import type { BrokerCreative } from "@/lib/types";
 
 const CREATIVE_TYPES = [
@@ -120,7 +121,7 @@ export default function CreativesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-extrabold text-slate-900">Creatives & Assets</h1>
-          <p className="text-sm text-slate-500">Manage your brand assets used across the platform</p>
+          <p className="text-sm text-slate-500 mt-1">Upload logos, banners, icons, and screenshots for use in your ad placements.</p>
         </div>
         <button onClick={() => setShowForm(!showForm)}
           className="px-4 py-2 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors flex items-center gap-2">
@@ -174,7 +175,7 @@ export default function CreativesPage() {
           <h3 className="font-bold text-slate-900">Add New Creative</h3>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Type</label>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Type <InfoTip text="Logo: square PNG/SVG. Banner: 1200x300px. Icon: 64x64px. Screenshot: platform images for article sidebars." /></label>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
               {CREATIVE_TYPES.map(t => (
                 <button key={t.value} type="button" onClick={() => setUploadType(t.value)}
@@ -226,8 +227,12 @@ export default function CreativesPage() {
             <span className="text-xs font-normal text-slate-400 lowercase">({group.items.length})</span>
           </h2>
           {group.items.length === 0 ? (
-            <div className="bg-white rounded-xl border border-dashed border-slate-200 p-8 text-center">
-              <p className="text-sm text-slate-400">No {group.label.toLowerCase()} assets uploaded yet.</p>
+            <div className="bg-white rounded-xl border border-slate-200 p-12 text-center">
+              <div className="w-12 h-12 rounded-full bg-purple-50 flex items-center justify-center mx-auto mb-3">
+                <Icon name="image" size={20} className="text-purple-500" />
+              </div>
+              <p className="text-sm font-medium text-slate-700 mb-1">No creative assets yet</p>
+              <p className="text-xs text-slate-400 mb-4">Upload your brand logos, banners, and screenshots to use in ad campaigns.</p>
             </div>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">

@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import CountUp from "@/components/CountUp";
 import Icon from "@/components/Icon";
+import InfoTip from "@/components/InfoTip";
 import Sparkline from "@/components/Sparkline";
 import type { BrokerWallet, WalletTransaction } from "@/lib/types";
 
@@ -100,7 +101,7 @@ export default function WalletPage() {
       <div className="bg-gradient-to-r from-slate-800 to-slate-700 rounded-2xl p-6 text-white">
         <div className="flex items-start justify-between">
           <div>
-            <p className="text-sm text-slate-300 font-medium">Available Balance</p>
+            <p className="text-sm text-slate-300 font-medium flex items-center gap-1">Available Balance <InfoTip text="Your current wallet balance. CPC clicks and featured placement fees are deducted from this automatically." /></p>
             <p className="text-4xl font-extrabold mt-1">
               <CountUp end={balance / 100} prefix="$" decimals={2} duration={1000} />
             </p>
@@ -119,8 +120,8 @@ export default function WalletPage() {
           )}
         </div>
         <div className="flex gap-4 mt-3 text-sm text-slate-300">
-          <span>Deposited: <CountUp end={(wallet?.lifetime_deposited_cents || 0) / 100} prefix="$" decimals={2} duration={1200} /></span>
-          <span>Spent: <CountUp end={(wallet?.lifetime_spent_cents || 0) / 100} prefix="$" decimals={2} duration={1200} /></span>
+          <span className="flex items-center gap-1">Lifetime Deposited: <CountUp end={(wallet?.lifetime_deposited_cents || 0) / 100} prefix="$" decimals={2} duration={1200} /> <InfoTip text="Total amount you have ever deposited into your wallet, including refunds received." /></span>
+          <span className="flex items-center gap-1">Lifetime Spent: <CountUp end={(wallet?.lifetime_spent_cents || 0) / 100} prefix="$" decimals={2} duration={1200} /> <InfoTip text="Total amount charged for campaigns since your account was created." /></span>
         </div>
 
         {/* Deposit vs Spent bar */}

@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import CountUp from "@/components/CountUp";
 import Icon from "@/components/Icon";
+import InfoTip from "@/components/InfoTip";
 import Sparkline from "@/components/Sparkline";
 import type { CampaignDailyStats } from "@/lib/types";
 
@@ -297,11 +298,11 @@ export default function AnalyticsPage() {
         <>
           <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 portal-stagger">
             {[
-              { label: "Clicks", value: totalClicks, icon: "mouse-pointer-click", iconBg: "bg-blue-50", iconColor: "text-blue-600", sparkData: dailyTotals.map(d => d.clicks), sparkColor: "#3b82f6" },
-              { label: "Impressions", value: totalImpressions, icon: "eye", iconBg: "bg-purple-50", iconColor: "text-purple-600", sparkData: dailyTotals.map(d => d.impressions), sparkColor: "#9333ea" },
-              { label: "CTR", value: ctr, suffix: "%", decimals: 2, icon: "trending-up", iconBg: "bg-green-50", iconColor: "text-green-600", sparkData: dailyTotals.map(d => d.impressions > 0 ? (d.clicks / d.impressions) * 100 : 0), sparkColor: "#16a34a" },
-              { label: "Conversions", value: totalConversions, icon: "target", iconBg: "bg-emerald-50", iconColor: "text-emerald-600", sparkData: dailyTotals.map(d => d.conversions), sparkColor: "#059669" },
-              { label: "Conv. Rate", value: convRate, suffix: "%", decimals: 2, icon: "bar-chart", iconBg: "bg-amber-50", iconColor: "text-amber-600", sparkData: dailyTotals.map(d => d.clicks > 0 ? (d.conversions / d.clicks) * 100 : 0), sparkColor: "#d97706" },
+              { label: "Clicks", value: totalClicks, icon: "mouse-pointer-click", iconBg: "bg-blue-50", iconColor: "text-blue-600", sparkData: dailyTotals.map(d => d.clicks), sparkColor: "#3b82f6", tip: "" },
+              { label: "Impressions", value: totalImpressions, icon: "eye", iconBg: "bg-purple-50", iconColor: "text-purple-600", sparkData: dailyTotals.map(d => d.impressions), sparkColor: "#9333ea", tip: "" },
+              { label: "CTR", value: ctr, suffix: "%", decimals: 2, icon: "trending-up", iconBg: "bg-green-50", iconColor: "text-green-600", sparkData: dailyTotals.map(d => d.impressions > 0 ? (d.clicks / d.impressions) * 100 : 0), sparkColor: "#16a34a", tip: "Click-Through Rate = Clicks / Impressions x 100. Industry average for financial services is ~2.5%." },
+              { label: "Conversions", value: totalConversions, icon: "target", iconBg: "bg-emerald-50", iconColor: "text-emerald-600", sparkData: dailyTotals.map(d => d.conversions), sparkColor: "#059669", tip: "Users who completed an action (opened account, funded, first trade) tracked via your Postback API." },
+              { label: "Conv. Rate", value: convRate, suffix: "%", decimals: 2, icon: "bar-chart", iconBg: "bg-amber-50", iconColor: "text-amber-600", sparkData: dailyTotals.map(d => d.clicks > 0 ? (d.conversions / d.clicks) * 100 : 0), sparkColor: "#d97706", tip: "" },
             ].map(kpi => (
               <div key={kpi.label} className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
                 <div className="flex items-center gap-1.5 mb-1">
@@ -309,6 +310,7 @@ export default function AnalyticsPage() {
                     <Icon name={kpi.icon} size={10} className={kpi.iconColor} />
                   </div>
                   <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">{kpi.label}</p>
+                  {kpi.tip && <InfoTip text={kpi.tip} />}
                 </div>
                 <div className="flex items-center justify-between mt-1">
                   <p className="text-xl font-extrabold text-slate-900">
@@ -486,13 +488,13 @@ export default function AnalyticsPage() {
               </p>
             </div>
             <div className={`rounded-xl border p-4 hover-lift ${roi >= 0 ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"}`}>
-              <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">ROI</p>
+              <p className="text-xs text-slate-500 font-medium uppercase tracking-wide flex items-center gap-1">ROI <InfoTip text="Return on Investment = (Conversion Value - Total Spend) / Total Spend x 100. Positive = profitable campaigns." /></p>
               <p className={`text-xl font-extrabold mt-1 ${roi >= 0 ? "text-green-700" : "text-red-700"}`}>
                 <CountUp end={roi} suffix="%" decimals={1} duration={1000} />
               </p>
             </div>
             <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
-              <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Cost / Conv.</p>
+              <p className="text-xs text-slate-500 font-medium uppercase tracking-wide flex items-center gap-1">Cost per Conv. <InfoTip text="Average cost to acquire one conversion. Lower is better. Compare with your customer lifetime value." /></p>
               <p className="text-xl font-extrabold text-slate-900 mt-1">
                 <CountUp end={costPerConversion} prefix="$" decimals={2} duration={1000} />
               </p>
@@ -579,7 +581,7 @@ export default function AnalyticsPage() {
         <>
           {/* Your Averages vs Industry */}
           <div className="bg-white rounded-xl border border-slate-200 p-5">
-            <h2 className="font-bold text-slate-900 mb-1">Your Performance vs Industry</h2>
+            <h2 className="font-bold text-slate-900 mb-1 flex items-center gap-1.5">Your Performance vs Industry <InfoTip text="Financial services industry averages: CTR 2.5%, Conv Rate 3.2%, CPC $1.80, Cost per Conv $45." /></h2>
             <p className="text-xs text-slate-500 mb-4">Compared to average financial services advertising benchmarks</p>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 portal-stagger">
               {[
@@ -718,7 +720,7 @@ export default function AnalyticsPage() {
 
           {/* Score explanation */}
           <div className="bg-white rounded-xl border border-slate-200 p-5">
-            <h2 className="font-bold text-slate-900 mb-3">How Scores Work</h2>
+            <h2 className="font-bold text-slate-900 mb-3 flex items-center gap-1.5">Performance Score <InfoTip text="Composite score: CTR (30% weight) + Conversion Rate (40%) + Cost Efficiency (30%). Scores above 120 are excellent." /></h2>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
               <div className="bg-green-50 rounded-lg p-3 border border-green-200">
                 <p className="font-bold text-green-700">120+ Excellent</p>
