@@ -2,7 +2,11 @@
 
 import { useEffect, useState, useCallback } from "react";
 import AdminShell from "@/components/AdminShell";
+import ConfirmDialog from "@/components/ConfirmDialog";
 import { createClient } from "@/lib/supabase/client";
+import { downloadCSV } from "@/lib/csv-export";
+import TableSkeleton from "@/components/TableSkeleton";
+import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 import type { ProDeal, Broker } from "@/lib/types";
 
 interface FormData {
@@ -46,10 +50,17 @@ export default function ProDealsPage() {
   const [editing, setEditing] = useState<number | null>(null);
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState<FormData>(emptyForm);
+  const [search, setSearch] = useState("");
+  const [sortKey, setSortKey] = useState<string>("");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+  const [deleteTarget, setDeleteTarget] = useState<ProDeal | null>(null);
   const [message, setMessage] = useState<{
     type: "success" | "error";
     text: string;
   } | null>(null);
+
+  const dirty = creating || editing !== null;
+  const { confirmNavigation } = useUnsavedChanges(dirty);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -101,6 +112,26 @@ export default function ProDealsPage() {
       end_date: item.end_date || "",
       status: item.status,
       featured: item.featured,
+      sort_order: item.sort_order,
+    });
+  };
+
+  const cloneDeal = (item: ProDeal) => {
+    setEditing(null);
+    setCreating(true);
+    setForm({
+      broker_slug: item.broker_slug,
+      title: item.title + " (Copy)",
+      description: item.description || "",
+      deal_value: item.deal_value || "",
+      redemption_code: item.redemption_code || "",
+      redemption_url: item.redemption_url || "",
+      redemption_instructions: item.redemption_instructions || "",
+      terms: item.terms || "",
+      start_date: item.start_date || "",
+      end_date: item.end_date || "",
+      status: "upcoming",
+      featured: false,
       sort_order: item.sort_order,
     });
   };
@@ -159,22 +190,50 @@ export default function ProDealsPage() {
     }
   };
 
-  const deleteItem = async (id: number) => {
-    if (!confirm("Delete this pro deal?")) return;
+  const deleteItem = async () => {
+    if (!deleteTarget) return;
     const { error } = await supabase
       .from("pro_deals")
       .delete()
-      .eq("id", id);
+      .eq("id", deleteTarget.id);
     if (error) {
       showMessage("error", error.message);
     } else {
       showMessage("success", "Deal deleted");
       load();
     }
+    setDeleteTarget(null);
   };
 
   const getBrokerName = (slug: string) =>
     brokers.find((b) => b.slug === slug)?.name || slug;
+
+  const toggleSort = (key: string) => {
+    if (sortKey === key) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(key);
+      setSortDir("asc");
+    }
+  };
+
+  const filtered = items.filter((item) => {
+    const q = search.toLowerCase();
+    return !q || item.title.toLowerCase().includes(q) || (item.description || "").toLowerCase().includes(q);
+  });
+
+  const sorted = [...filtered].sort((a, b) => {
+    if (!sortKey) return 0;
+    const aVal = a[sortKey as keyof typeof a];
+    const bVal = b[sortKey as keyof typeof b];
+    if (aVal == null && bVal == null) return 0;
+    if (aVal == null) return 1;
+    if (bVal == null) return -1;
+    const cmp = typeof aVal === "number" && typeof bVal === "number"
+      ? aVal - bVal
+      : String(aVal).localeCompare(String(bVal));
+    return sortDir === "asc" ? cmp : -cmp;
+  });
 
   const statusBadge = (status: string) => {
     const styles: Record<string, string> = {
@@ -195,13 +254,40 @@ export default function ProDealsPage() {
               Manage exclusive broker deals for Pro subscribers
             </p>
           </div>
-          <button
-            onClick={startCreate}
-            className="px-4 py-2 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors"
-          >
-            + New Deal
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => downloadCSV(
+                items.map((item) => ({
+                  Title: item.title,
+                  Description: item.description || "",
+                  Broker: getBrokerName(item.broker_slug),
+                  Discount: item.deal_value || "",
+                  Code: item.redemption_code || "",
+                  Status: item.status,
+                  Expiry: item.end_date || "",
+                })),
+                "pro-deals.csv"
+              )}
+              className="px-3 py-1.5 bg-green-50 text-green-700 text-xs font-semibold rounded-lg hover:bg-green-100 border border-green-200 transition-colors"
+            >
+              Export CSV
+            </button>
+            <button
+              onClick={startCreate}
+              className="px-4 py-2 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors"
+            >
+              + New Deal
+            </button>
+          </div>
         </div>
+
+        <input
+          type="text"
+          placeholder="Search..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full max-w-sm bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500/30"
+        />
 
         {message && (
           <div
@@ -447,30 +533,30 @@ export default function ProDealsPage() {
 
         {/* Table */}
         {loading ? (
-          <div className="text-center py-12 text-slate-400">Loading...</div>
+          <TableSkeleton rows={4} cols={7} />
         ) : (
           <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
-                    <th className="text-left px-4 py-3 font-semibold text-slate-600">
-                      Broker
+                    <th className="text-left px-4 py-3 font-semibold text-slate-600 cursor-pointer select-none hover:text-slate-900" onClick={() => toggleSort("broker_slug")}>
+                      Broker {sortKey === "broker_slug" ? (sortDir === "asc" ? "\u2191" : "\u2193") : ""}
                     </th>
-                    <th className="text-left px-4 py-3 font-semibold text-slate-600">
-                      Title
+                    <th className="text-left px-4 py-3 font-semibold text-slate-600 cursor-pointer select-none hover:text-slate-900" onClick={() => toggleSort("title")}>
+                      Title {sortKey === "title" ? (sortDir === "asc" ? "\u2191" : "\u2193") : ""}
                     </th>
-                    <th className="text-left px-4 py-3 font-semibold text-slate-600">
-                      Deal Value
+                    <th className="text-left px-4 py-3 font-semibold text-slate-600 cursor-pointer select-none hover:text-slate-900" onClick={() => toggleSort("deal_value")}>
+                      Deal Value {sortKey === "deal_value" ? (sortDir === "asc" ? "\u2191" : "\u2193") : ""}
                     </th>
-                    <th className="text-center px-4 py-3 font-semibold text-slate-600">
-                      Status
+                    <th className="text-center px-4 py-3 font-semibold text-slate-600 cursor-pointer select-none hover:text-slate-900" onClick={() => toggleSort("status")}>
+                      Status {sortKey === "status" ? (sortDir === "asc" ? "\u2191" : "\u2193") : ""}
                     </th>
                     <th className="text-center px-4 py-3 font-semibold text-slate-600">
                       Featured
                     </th>
-                    <th className="text-left px-4 py-3 font-semibold text-slate-600">
-                      End Date
+                    <th className="text-left px-4 py-3 font-semibold text-slate-600 cursor-pointer select-none hover:text-slate-900" onClick={() => toggleSort("end_date")}>
+                      End Date {sortKey === "end_date" ? (sortDir === "asc" ? "\u2191" : "\u2193") : ""}
                     </th>
                     <th className="text-right px-4 py-3 font-semibold text-slate-600">
                       Actions
@@ -478,7 +564,7 @@ export default function ProDealsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {items.map((item) => (
+                  {sorted.map((item) => (
                     <tr
                       key={item.id}
                       className="border-b border-slate-100 hover:bg-slate-50"
@@ -511,13 +597,19 @@ export default function ProDealsPage() {
                       </td>
                       <td className="px-4 py-3 text-right">
                         <button
+                          onClick={() => cloneDeal(item)}
+                          className="text-xs text-blue-600 hover:underline mr-3"
+                        >
+                          Clone
+                        </button>
+                        <button
                           onClick={() => startEdit(item)}
                           className="text-xs text-green-700 hover:underline mr-3"
                         >
                           Edit
                         </button>
                         <button
-                          onClick={() => deleteItem(item.id)}
+                          onClick={() => setDeleteTarget(item)}
                           className="text-xs text-red-500 hover:underline"
                         >
                           Delete
@@ -541,6 +633,15 @@ export default function ProDealsPage() {
           </div>
         )}
       </div>
+      <ConfirmDialog
+        open={!!deleteTarget}
+        title="Delete Pro Deal"
+        message={`Are you sure you want to delete "${deleteTarget?.title}"? This action cannot be undone.`}
+        confirmLabel="Delete"
+        variant="danger"
+        onConfirm={deleteItem}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </AdminShell>
   );
 }

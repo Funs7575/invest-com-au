@@ -5,6 +5,8 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import AdminShell from "@/components/AdminShell";
+import { downloadCSV } from "@/lib/csv-export";
+import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 
 interface CourseRow {
   id: number;
@@ -38,6 +40,9 @@ export default function AdminCoursesPage() {
   const [creators, setCreators] = useState<{ id: number; full_name: string }[]>([]);
   const [saving, setSaving] = useState(false);
   const { toast: showToast } = useToast();
+
+  const dirty = showCreate;
+  const { confirmNavigation } = useUnsavedChanges(dirty);
 
   // New course form state
   const [form, setForm] = useState({
@@ -115,6 +120,26 @@ export default function AdminCoursesPage() {
     setLoading(false);
   };
 
+  const cloneCourse = (c: CourseRow) => {
+    setForm({
+      title: c.title + " (Copy)",
+      slug: c.slug + "-copy",
+      subtitle: "",
+      description: "",
+      price: (c.price / 100).toFixed(2),
+      pro_price: c.pro_price ? (c.pro_price / 100).toFixed(2) : "",
+      creator_id: c.creator?.id?.toString() || "",
+      revenue_share_percent: c.revenue_share_percent.toString(),
+      level: "beginner",
+      stripe_price_id: "",
+      stripe_pro_price_id: "",
+      cover_image_url: "",
+      guarantee: "30-day money-back guarantee — no questions asked.",
+      status: "draft",
+    });
+    setShowCreate(true);
+  };
+
   const autoSlug = (title: string) =>
     title
       .toLowerCase()
@@ -165,12 +190,33 @@ export default function AdminCoursesPage() {
     <AdminShell>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-slate-900">Courses</h1>
-        <button
-          onClick={() => setShowCreate(!showCreate)}
-          className="px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
-        >
-          {showCreate ? "Cancel" : "+ New Course"}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => {
+              const rows = courses.map((c) => [
+                c.title,
+                c.slug,
+                c.creator?.full_name || "",
+                `$${(c.price / 100).toFixed(2)}`,
+                c.pro_price ? `$${(c.pro_price / 100).toFixed(2)}` : "",
+                `${c.revenue_share_percent}%`,
+                c.status,
+                c.featured ? "Yes" : "No",
+                new Date(c.created_at).toLocaleDateString("en-AU"),
+              ]);
+              downloadCSV("courses.csv", ["Title", "Slug", "Creator", "Price", "Pro Price", "Revenue Share %", "Status", "Featured", "Created"], rows);
+            }}
+            className="px-3 py-1.5 bg-green-50 text-green-700 text-xs font-semibold rounded-lg hover:bg-green-100 border border-green-200 transition-colors"
+          >
+            Export CSV ↓
+          </button>
+          <button
+            onClick={() => setShowCreate(!showCreate)}
+            className="px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
+          >
+            {showCreate ? "Cancel" : "+ New Course"}
+          </button>
+        </div>
       </div>
 
       {/* Tabs */}
@@ -410,6 +456,12 @@ export default function AdminCoursesPage() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right">
+                    <button
+                      onClick={() => cloneCourse(c)}
+                      className="text-xs text-blue-600 hover:underline mr-3"
+                    >
+                      Clone
+                    </button>
                     <Link
                       href={`/admin/courses/${c.slug}`}
                       className="text-green-700 hover:text-green-800 font-medium text-xs"

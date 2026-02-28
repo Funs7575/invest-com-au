@@ -3,6 +3,8 @@
 import { useEffect, useState, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import AdminShell from "@/components/AdminShell";
+import ConfirmDialog from "@/components/ConfirmDialog";
+import { downloadCSV } from "@/lib/csv-export";
 
 type ProSubscriber = {
   id: number;
@@ -49,6 +51,8 @@ export default function AdminProSubscribersPage() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [selected, setSelected] = useState<Set<number>>(new Set());
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
 
   const supabase = createClient();
 
@@ -64,7 +68,7 @@ export default function AdminProSubscribersPage() {
   };
 
   useEffect(() => { load(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => { setPage(0); }, [search, statusFilter]);
+  useEffect(() => { setPage(0); setSelected(new Set()); }, [search, statusFilter]);
 
   // Stats
   const stats = useMemo(() => {
@@ -115,6 +119,36 @@ export default function AdminProSubscribersPage() {
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
   const paged = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
+  const toggleSelect = (id: number) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selected.size === paged.length) {
+      setSelected(new Set());
+    } else {
+      setSelected(new Set(paged.map((s) => s.id)));
+    }
+  };
+
+  const handleBulkCancel = async () => {
+    const ids = Array.from(selected);
+    const { error } = await supabase
+      .from("subscriptions")
+      .update({ cancel_at_period_end: true, updated_at: new Date().toISOString() })
+      .in("id", ids);
+    if (!error) {
+      setSelected(new Set());
+      load();
+    }
+    setShowCancelConfirm(false);
+  };
+
   return (
     <AdminShell>
       <div className="flex items-center justify-between mb-6">
@@ -122,13 +156,31 @@ export default function AdminProSubscribersPage() {
           <h1 className="text-xl font-bold text-slate-900">Pro Members</h1>
           <p className="text-sm text-slate-500">Manage Investor Pro subscriptions</p>
         </div>
-        <button
-          onClick={load}
-          disabled={loading}
-          className="px-3 py-1.5 text-xs font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
-        >
-          {loading ? "Loading..." : "Refresh"}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => {
+              const rows = filtered.map((s) => [
+                s.profiles?.email || "",
+                s.stripe_customer_id,
+                s.plan_interval === "year" ? "Yearly ($89)" : "Monthly ($9)",
+                s.cancel_at_period_end && s.status === "active" ? "Cancelling" : s.status,
+                s.plan_interval === "year" ? (89 / 12).toFixed(2) : s.status === "active" && !s.cancel_at_period_end ? "9.00" : "0.00",
+                new Date(s.created_at).toLocaleDateString("en-AU"),
+              ]);
+              downloadCSV("pro-subscribers.csv", ["Email", "Stripe Customer ID", "Plan", "Status", "MRR", "Created"], rows);
+            }}
+            className="px-3 py-1.5 bg-green-50 text-green-700 text-xs font-semibold rounded-lg hover:bg-green-100 border border-green-200 transition-colors"
+          >
+            Export CSV ↓
+          </button>
+          <button
+            onClick={load}
+            disabled={loading}
+            className="px-3 py-1.5 text-xs font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
+          >
+            {loading ? "Loading..." : "Refresh"}
+          </button>
+        </div>
       </div>
 
       {/* Stats */}
@@ -177,12 +229,39 @@ export default function AdminProSubscribersPage() {
         </select>
       </div>
 
+      {/* Bulk Actions */}
+      {selected.size > 0 && (
+        <div className="flex items-center gap-3 mb-4 px-4 py-2.5 bg-amber-50 border border-amber-200 rounded-lg">
+          <span className="text-sm font-medium text-amber-800">{selected.size} selected</span>
+          <button
+            onClick={() => setShowCancelConfirm(true)}
+            className="px-3 py-1 text-xs font-semibold text-red-700 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors"
+          >
+            Cancel Selected
+          </button>
+          <button
+            onClick={() => setSelected(new Set())}
+            className="px-3 py-1 text-xs font-medium text-slate-600 hover:text-slate-900 transition-colors"
+          >
+            Clear Selection
+          </button>
+        </div>
+      )}
+
       {/* Table */}
       <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-slate-50 text-left">
+                <th className="px-4 py-3 w-10">
+                  <input
+                    type="checkbox"
+                    checked={paged.length > 0 && selected.size === paged.length}
+                    onChange={toggleSelectAll}
+                    className="rounded border-slate-300"
+                  />
+                </th>
                 <th className="px-4 py-3 font-semibold text-slate-600">Email</th>
                 <th className="px-4 py-3 font-semibold text-slate-600">Plan</th>
                 <th className="px-4 py-3 font-semibold text-slate-600">Status</th>
@@ -194,13 +273,21 @@ export default function AdminProSubscribersPage() {
             <tbody className="divide-y divide-slate-100">
               {paged.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-4 py-8 text-center text-slate-400">
+                  <td colSpan={7} className="px-4 py-8 text-center text-slate-400">
                     {loading ? "Loading..." : "No subscribers found."}
                   </td>
                 </tr>
               )}
               {paged.map((sub) => (
-                <tr key={sub.id} className="hover:bg-slate-50">
+                <tr key={sub.id} className={`hover:bg-slate-50 ${selected.has(sub.id) ? "bg-amber-50/50" : ""}`}>
+                  <td className="px-4 py-3">
+                    <input
+                      type="checkbox"
+                      checked={selected.has(sub.id)}
+                      onChange={() => toggleSelect(sub.id)}
+                      className="rounded border-slate-300"
+                    />
+                  </td>
                   <td className="px-4 py-3">
                     <p className="font-medium text-slate-900">{sub.profiles?.email || "—"}</p>
                     {sub.profiles?.display_name && (
@@ -272,6 +359,15 @@ export default function AdminProSubscribersPage() {
           </div>
         )}
       </div>
+      <ConfirmDialog
+        open={showCancelConfirm}
+        title="Cancel Selected Subscriptions"
+        message={`Mark ${selected.size} subscription${selected.size !== 1 ? "s" : ""} for cancellation at period end? Members will retain access until their current billing period expires.`}
+        confirmLabel="Cancel Subscriptions"
+        variant="warning"
+        onConfirm={handleBulkCancel}
+        onCancel={() => setShowCancelConfirm(false)}
+      />
     </AdminShell>
   );
 }

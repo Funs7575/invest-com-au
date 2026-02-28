@@ -2,7 +2,11 @@
 
 import { useEffect, useState, useCallback } from "react";
 import AdminShell from "@/components/AdminShell";
+import ConfirmDialog from "@/components/ConfirmDialog";
 import { createClient } from "@/lib/supabase/client";
+import { downloadCSV } from "@/lib/csv-export";
+import TableSkeleton from "@/components/TableSkeleton";
+import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 import type { QuarterlyReport } from "@/lib/types";
 
 interface FormData {
@@ -46,10 +50,17 @@ export default function QuarterlyReportsPage() {
   const [editing, setEditing] = useState<number | null>(null);
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState<FormData>(emptyForm);
+  const [search, setSearch] = useState("");
+  const [sortKey, setSortKey] = useState<string>("");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+  const [deleteTarget, setDeleteTarget] = useState<QuarterlyReport | null>(null);
   const [message, setMessage] = useState<{
     type: "success" | "error";
     text: string;
   } | null>(null);
+
+  const dirty = creating || editing !== null;
+  const { confirmNavigation } = useUnsavedChanges(dirty);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -170,18 +181,46 @@ export default function QuarterlyReportsPage() {
     }
   };
 
-  const deleteItem = async (id: number) => {
-    if (!confirm("Delete this quarterly report?")) return;
+  const toggleSort = (key: string) => {
+    if (sortKey === key) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(key);
+      setSortDir("asc");
+    }
+  };
+
+  const filtered = items.filter((item) => {
+    const q = search.toLowerCase();
+    return !q || item.title.toLowerCase().includes(q) || item.quarter.toLowerCase().includes(q);
+  });
+
+  const sorted = [...filtered].sort((a, b) => {
+    if (!sortKey) return 0;
+    const aVal = a[sortKey as keyof typeof a];
+    const bVal = b[sortKey as keyof typeof b];
+    if (aVal == null && bVal == null) return 0;
+    if (aVal == null) return 1;
+    if (bVal == null) return -1;
+    const cmp = typeof aVal === "number" && typeof bVal === "number"
+      ? aVal - bVal
+      : String(aVal).localeCompare(String(bVal));
+    return sortDir === "asc" ? cmp : -cmp;
+  });
+
+  const deleteItem = async () => {
+    if (!deleteTarget) return;
     const { error } = await supabase
       .from("quarterly_reports")
       .delete()
-      .eq("id", id);
+      .eq("id", deleteTarget.id);
     if (error) {
       showMessage("error", error.message);
     } else {
       showMessage("success", "Report deleted");
       load();
     }
+    setDeleteTarget(null);
   };
 
   return (
@@ -194,13 +233,39 @@ export default function QuarterlyReportsPage() {
               Manage quarterly industry reports and analysis
             </p>
           </div>
-          <button
-            onClick={startCreate}
-            className="px-4 py-2 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors"
-          >
-            + New Report
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => downloadCSV(
+                items.map((item) => ({
+                  Title: item.title,
+                  Quarter: item.quarter,
+                  Year: String(item.year),
+                  Status: item.status,
+                  "Fee Changes Summary": JSON.stringify(item.fee_changes_summary || []),
+                  Created: item.created_at ? new Date(item.created_at).toLocaleDateString() : "",
+                })),
+                "quarterly-reports.csv"
+              )}
+              className="px-3 py-1.5 bg-green-50 text-green-700 text-xs font-semibold rounded-lg hover:bg-green-100 border border-green-200 transition-colors"
+            >
+              Export CSV
+            </button>
+            <button
+              onClick={startCreate}
+              className="px-4 py-2 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors"
+            >
+              + New Report
+            </button>
+          </div>
         </div>
+
+        <input
+          type="text"
+          placeholder="Search..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full max-w-sm bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500/30"
+        />
 
         {message && (
           <div
@@ -403,21 +468,21 @@ export default function QuarterlyReportsPage() {
 
         {/* Table */}
         {loading ? (
-          <div className="text-center py-12 text-slate-400">Loading...</div>
+          <TableSkeleton rows={4} cols={5} />
         ) : (
           <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
-                    <th className="text-left px-4 py-3 font-semibold text-slate-600">
-                      Title
+                    <th className="text-left px-4 py-3 font-semibold text-slate-600 cursor-pointer select-none hover:text-slate-900" onClick={() => toggleSort("title")}>
+                      Title {sortKey === "title" ? (sortDir === "asc" ? "\u2191" : "\u2193") : ""}
                     </th>
-                    <th className="text-center px-4 py-3 font-semibold text-slate-600">
-                      Quarter / Year
+                    <th className="text-center px-4 py-3 font-semibold text-slate-600 cursor-pointer select-none hover:text-slate-900" onClick={() => toggleSort("quarter")}>
+                      Quarter / Year {sortKey === "quarter" ? (sortDir === "asc" ? "\u2191" : "\u2193") : ""}
                     </th>
-                    <th className="text-center px-4 py-3 font-semibold text-slate-600">
-                      Status
+                    <th className="text-center px-4 py-3 font-semibold text-slate-600 cursor-pointer select-none hover:text-slate-900" onClick={() => toggleSort("status")}>
+                      Status {sortKey === "status" ? (sortDir === "asc" ? "\u2191" : "\u2193") : ""}
                     </th>
                     <th className="text-left px-4 py-3 font-semibold text-slate-600">
                       Published
@@ -428,7 +493,7 @@ export default function QuarterlyReportsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {items.map((item) => (
+                  {sorted.map((item) => (
                     <tr
                       key={item.id}
                       className="border-b border-slate-100 hover:bg-slate-50"
@@ -461,7 +526,7 @@ export default function QuarterlyReportsPage() {
                           Edit
                         </button>
                         <button
-                          onClick={() => deleteItem(item.id)}
+                          onClick={() => setDeleteTarget(item)}
                           className="text-xs text-red-500 hover:underline"
                         >
                           Delete
@@ -486,6 +551,15 @@ export default function QuarterlyReportsPage() {
           </div>
         )}
       </div>
+      <ConfirmDialog
+        open={!!deleteTarget}
+        title="Delete Quarterly Report"
+        message={`Are you sure you want to delete "${deleteTarget?.title}"? This action cannot be undone.`}
+        confirmLabel="Delete"
+        variant="danger"
+        onConfirm={deleteItem}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </AdminShell>
   );
 }

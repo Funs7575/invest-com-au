@@ -2,7 +2,11 @@
 
 import { useEffect, useState, useCallback } from "react";
 import AdminShell from "@/components/AdminShell";
+import ConfirmDialog from "@/components/ConfirmDialog";
 import { createClient } from "@/lib/supabase/client";
+import { downloadCSV } from "@/lib/csv-export";
+import TableSkeleton from "@/components/TableSkeleton";
+import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 import type { BrokerHealthScore, Broker } from "@/lib/types";
 
 interface FormData {
@@ -48,10 +52,16 @@ export default function HealthScoresPage() {
   const [editing, setEditing] = useState<number | null>(null);
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState<FormData>(emptyForm);
+  const [sortKey, setSortKey] = useState<string>("");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+  const [deleteTarget, setDeleteTarget] = useState<BrokerHealthScore | null>(null);
   const [message, setMessage] = useState<{
     type: "success" | "error";
     text: string;
   } | null>(null);
+
+  const dirty = creating || editing !== null;
+  const { confirmNavigation } = useUnsavedChanges(dirty);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -160,22 +170,45 @@ export default function HealthScoresPage() {
     }
   };
 
-  const deleteItem = async (id: number) => {
-    if (!confirm("Delete this health score?")) return;
+  const deleteItem = async () => {
+    if (!deleteTarget) return;
     const { error } = await supabase
       .from("broker_health_scores")
       .delete()
-      .eq("id", id);
+      .eq("id", deleteTarget.id);
     if (error) {
       showMessage("error", error.message);
     } else {
       showMessage("success", "Health score deleted");
       load();
     }
+    setDeleteTarget(null);
+  };
+
+  const toggleSort = (key: string) => {
+    if (sortKey === key) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(key);
+      setSortDir("asc");
+    }
   };
 
   const getBrokerName = (slug: string) =>
     brokers.find((b) => b.slug === slug)?.name || slug;
+
+  const sorted = [...items].sort((a, b) => {
+    if (!sortKey) return 0;
+    const aVal = a[sortKey as keyof typeof a];
+    const bVal = b[sortKey as keyof typeof b];
+    if (aVal == null && bVal == null) return 0;
+    if (aVal == null) return 1;
+    if (bVal == null) return -1;
+    const cmp = typeof aVal === "number" && typeof bVal === "number"
+      ? aVal - bVal
+      : String(aVal).localeCompare(String(bVal));
+    return sortDir === "asc" ? cmp : -cmp;
+  });
 
   return (
     <AdminShell>
@@ -187,12 +220,33 @@ export default function HealthScoresPage() {
               Manage broker health and risk scores across multiple categories
             </p>
           </div>
-          <button
-            onClick={startCreate}
-            className="px-4 py-2 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors"
-          >
-            + New Health Score
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                const rows = items.map((item) => [
+                  getBrokerName(item.broker_slug),
+                  String(item.overall_score),
+                  String(item.regulatory_score),
+                  String(item.client_money_score),
+                  String(item.financial_stability_score),
+                  String(item.platform_reliability_score),
+                  String(item.insurance_score),
+                  item.afsl_number || "",
+                  item.afsl_status || "",
+                ]);
+                downloadCSV("health-scores.csv", ["Broker", "Overall", "Regulatory", "Client Money", "Financial Stability", "Platform Reliability", "Insurance", "AFSL Number", "AFSL Status"], rows);
+              }}
+              className="px-3 py-1.5 bg-green-50 text-green-700 text-xs font-semibold rounded-lg hover:bg-green-100 border border-green-200 transition-colors"
+            >
+              Export CSV ↓
+            </button>
+            <button
+              onClick={startCreate}
+              className="px-4 py-2 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors"
+            >
+              + New Health Score
+            </button>
+          </div>
         </div>
 
         {message && (
@@ -483,27 +537,27 @@ export default function HealthScoresPage() {
 
         {/* Table */}
         {loading ? (
-          <div className="text-center py-12 text-slate-400">Loading...</div>
+          <TableSkeleton rows={5} cols={7} />
         ) : (
           <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
-                    <th className="text-left px-4 py-3 font-semibold text-slate-600">
-                      Broker
+                    <th className="text-left px-4 py-3 font-semibold text-slate-600 cursor-pointer select-none hover:text-slate-900" onClick={() => toggleSort("broker_slug")}>
+                      Broker {sortKey === "broker_slug" ? (sortDir === "asc" ? "\u2191" : "\u2193") : ""}
                     </th>
-                    <th className="text-center px-4 py-3 font-semibold text-slate-600">
-                      Overall
+                    <th className="text-center px-4 py-3 font-semibold text-slate-600 cursor-pointer select-none hover:text-slate-900" onClick={() => toggleSort("overall_score")}>
+                      Overall {sortKey === "overall_score" ? (sortDir === "asc" ? "\u2191" : "\u2193") : ""}
                     </th>
-                    <th className="text-center px-4 py-3 font-semibold text-slate-600">
-                      Regulatory
+                    <th className="text-center px-4 py-3 font-semibold text-slate-600 cursor-pointer select-none hover:text-slate-900" onClick={() => toggleSort("regulatory_score")}>
+                      Regulatory {sortKey === "regulatory_score" ? (sortDir === "asc" ? "\u2191" : "\u2193") : ""}
                     </th>
                     <th className="text-center px-4 py-3 font-semibold text-slate-600">
                       Client Money
                     </th>
-                    <th className="text-center px-4 py-3 font-semibold text-slate-600">
-                      Stability
+                    <th className="text-center px-4 py-3 font-semibold text-slate-600 cursor-pointer select-none hover:text-slate-900" onClick={() => toggleSort("financial_stability_score")}>
+                      Stability {sortKey === "financial_stability_score" ? (sortDir === "asc" ? "\u2191" : "\u2193") : ""}
                     </th>
                     <th className="text-left px-4 py-3 font-semibold text-slate-600">
                       AFSL #
@@ -514,7 +568,7 @@ export default function HealthScoresPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {items.map((item) => (
+                  {sorted.map((item) => (
                     <tr
                       key={item.id}
                       className="border-b border-slate-100 hover:bg-slate-50"
@@ -555,7 +609,7 @@ export default function HealthScoresPage() {
                           Edit
                         </button>
                         <button
-                          onClick={() => deleteItem(item.id)}
+                          onClick={() => setDeleteTarget(item)}
                           className="text-xs text-red-500 hover:underline"
                         >
                           Delete
@@ -580,6 +634,15 @@ export default function HealthScoresPage() {
           </div>
         )}
       </div>
+      <ConfirmDialog
+        open={!!deleteTarget}
+        title="Delete Health Score"
+        message={`Delete health score for "${deleteTarget ? getBrokerName(deleteTarget.broker_slug) : ""}"? This cannot be undone.`}
+        confirmLabel="Delete"
+        variant="danger"
+        onConfirm={deleteItem}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </AdminShell>
   );
 }

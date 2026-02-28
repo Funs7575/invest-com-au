@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import AdminShell from "@/components/AdminShell";
 import { createClient } from "@/lib/supabase/client";
+import { downloadCSV } from "@/lib/csv-export";
 import { QuizQuestion } from "@/lib/types";
 
 interface OptionItem {
@@ -32,6 +33,9 @@ export default function QuizQuestionsPage() {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState<FormState>({ ...emptyForm });
   const [saving, setSaving] = useState(false);
+  const [search, setSearch] = useState("");
+  const [sortKey, setSortKey] = useState<string>("");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [deleteConfirmId, setDeleteConfirmId] = useState<number | null>(null);
 
   useEffect(() => {
@@ -156,6 +160,33 @@ export default function QuizQuestionsPage() {
     setSaving(false);
   }
 
+  const toggleSort = (key: string) => {
+    if (sortKey === key) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(key);
+      setSortDir("asc");
+    }
+  };
+
+  const filtered = questions.filter((question) => {
+    const q = search.toLowerCase();
+    return !q || question.question_text.toLowerCase().includes(q);
+  });
+
+  const sorted = [...filtered].sort((a, b) => {
+    if (!sortKey) return 0;
+    const aVal = a[sortKey as keyof typeof a];
+    const bVal = b[sortKey as keyof typeof b];
+    if (aVal == null && bVal == null) return 0;
+    if (aVal == null) return 1;
+    if (bVal == null) return -1;
+    const cmp = typeof aVal === "number" && typeof bVal === "number"
+      ? aVal - bVal
+      : String(aVal).localeCompare(String(bVal));
+    return sortDir === "asc" ? cmp : -cmp;
+  });
+
   async function handleDelete(id: number) {
     setSaving(true);
     const { error } = await supabase.from("quiz_questions").delete().eq("id", id);
@@ -174,15 +205,40 @@ export default function QuizQuestionsPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-slate-900">Quiz Questions</h1>
-          {!showForm && (
+          <div className="flex items-center gap-2">
             <button
-              onClick={handleCreate}
-              className="px-4 py-2 bg-amber-500 text-black font-medium rounded hover:bg-amber-400 transition-colors"
+              onClick={() => downloadCSV(
+                questions.map((q) => ({
+                  Question: q.question_text,
+                  Category: "",
+                  Active: q.active ? "Yes" : "No",
+                  "Options Count": String(q.options ? q.options.length : 0),
+                  Order: String(q.order_index),
+                })),
+                "quiz-questions.csv"
+              )}
+              className="px-3 py-1.5 bg-green-50 text-green-700 text-xs font-semibold rounded-lg hover:bg-green-100 border border-green-200 transition-colors"
             >
-              + New Question
+              Export CSV
             </button>
-          )}
+            {!showForm && (
+              <button
+                onClick={handleCreate}
+                className="px-4 py-2 bg-amber-500 text-black font-medium rounded hover:bg-amber-400 transition-colors"
+              >
+                + New Question
+              </button>
+            )}
+          </div>
         </div>
+
+        <input
+          type="text"
+          placeholder="Search..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full max-w-sm bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500/30"
+        />
 
         {/* Create/Edit Form */}
         {showForm && (
@@ -334,23 +390,23 @@ export default function QuizQuestionsPage() {
               <table className="w-full">
                 <thead className="bg-slate-50">
                   <tr>
-                    <th className="text-left px-4 py-3 text-sm font-medium text-slate-600 w-16">
-                      Order
+                    <th className="text-left px-4 py-3 text-sm font-medium text-slate-600 w-16 cursor-pointer select-none hover:text-slate-900" onClick={() => toggleSort("order_index")}>
+                      Order {sortKey === "order_index" ? (sortDir === "asc" ? "\u2191" : "\u2193") : ""}
                     </th>
-                    <th className="text-left px-4 py-3 text-sm font-medium text-slate-600">
-                      Question
+                    <th className="text-left px-4 py-3 text-sm font-medium text-slate-600 cursor-pointer select-none hover:text-slate-900" onClick={() => toggleSort("question_text")}>
+                      Question {sortKey === "question_text" ? (sortDir === "asc" ? "\u2191" : "\u2193") : ""}
                     </th>
                     <th className="text-left px-4 py-3 text-sm font-medium text-slate-600 w-24">
                       Options
                     </th>
-                    <th className="text-left px-4 py-3 text-sm font-medium text-slate-600 w-24">
-                      Status
+                    <th className="text-left px-4 py-3 text-sm font-medium text-slate-600 w-24 cursor-pointer select-none hover:text-slate-900" onClick={() => toggleSort("active")}>
+                      Status {sortKey === "active" ? (sortDir === "asc" ? "\u2191" : "\u2193") : ""}
                     </th>
                     <th className="px-4 py-3 w-40"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
-                  {questions.map((question) => (
+                  {sorted.map((question) => (
                     <tr key={question.id} className="hover:bg-slate-50">
                       <td className="px-4 py-3 text-slate-900 font-mono text-center">
                         {question.order_index}

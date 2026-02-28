@@ -40,6 +40,10 @@ export default function AdminNotifications() {
       setLoading(true);
       const notes: Notification[] = [];
 
+      const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
+      const sevenDaysFromNow = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+      const today = new Date().toISOString();
+
       const [
         pendingReviews,
         pendingQuestions,
@@ -47,6 +51,10 @@ export default function AdminNotifications() {
         brokersData,
         activeCampaigns,
         supportTickets,
+        staleArticles,
+        expiringDeals,
+        lowHealthScores,
+        draftArticles,
       ] = await Promise.all([
         supabase.from("user_reviews").select("id", { count: "exact", head: true }).eq("status", "pending"),
         supabase.from("broker_questions").select("id", { count: "exact", head: true }).eq("status", "pending"),
@@ -54,6 +62,10 @@ export default function AdminNotifications() {
         supabase.from("brokers").select("name, affiliate_url, status").eq("status", "active"),
         supabase.from("campaigns").select("id, status, total_budget_cents, total_spent_cents").eq("status", "active"),
         supabase.from("support_tickets").select("id", { count: "exact", head: true }).eq("status", "open"),
+        supabase.from("articles").select("id", { count: "exact", head: true }).eq("status", "published").lt("updated_at", ninetyDaysAgo),
+        supabase.from("deals_of_month").select("id, broker_name").not("expiry_date", "is", null).gte("expiry_date", today).lte("expiry_date", sevenDaysFromNow),
+        supabase.from("broker_health_scores").select("broker_slug").lt("overall_score", 60),
+        supabase.from("articles").select("id", { count: "exact", head: true }).eq("status", "draft"),
       ]);
 
       // Pending reviews
@@ -139,6 +151,58 @@ export default function AdminNotifications() {
           title: `${supportTickets.count} open support ticket${supportTickets.count !== 1 ? "s" : ""}`,
           message: "Broker support requests pending",
           href: "/admin/marketplace/support",
+          timestamp: new Date(),
+        });
+      }
+
+      // Stale articles (not updated in 90+ days)
+      if (staleArticles.count && staleArticles.count > 0) {
+        notes.push({
+          id: "stale-articles",
+          type: "info",
+          icon: "📝",
+          title: `${staleArticles.count} article${staleArticles.count !== 1 ? "s" : ""} not updated in 90+ days`,
+          message: "Consider reviewing for accuracy",
+          href: "/admin/articles",
+          timestamp: new Date(),
+        });
+      }
+
+      // Expiring deals (within next 7 days)
+      if (expiringDeals.data && expiringDeals.data.length > 0) {
+        notes.push({
+          id: "expiring-deals",
+          type: "warning",
+          icon: "🔥",
+          title: `${expiringDeals.data.length} deal${expiringDeals.data.length !== 1 ? "s" : ""} expiring soon`,
+          message: expiringDeals.data.map((d) => d.broker_name).join(", "),
+          href: "/admin/deal-of-month",
+          timestamp: new Date(),
+        });
+      }
+
+      // Low health scores (overall_score < 60)
+      if (lowHealthScores.data && lowHealthScores.data.length > 0) {
+        notes.push({
+          id: "low-health-scores",
+          type: "error",
+          icon: "🛡️",
+          title: `${lowHealthScores.data.length} broker${lowHealthScores.data.length !== 1 ? "s" : ""} with low health scores`,
+          message: lowHealthScores.data.map((b) => b.broker_slug).join(", "),
+          href: "/admin/health-scores",
+          timestamp: new Date(),
+        });
+      }
+
+      // Draft articles count (more than 5)
+      if (draftArticles.count && draftArticles.count > 5) {
+        notes.push({
+          id: "draft-articles",
+          type: "info",
+          icon: "📄",
+          title: `${draftArticles.count} draft articles pending`,
+          message: "Review and publish when ready",
+          href: "/admin/articles",
           timestamp: new Date(),
         });
       }

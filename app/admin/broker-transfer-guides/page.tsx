@@ -2,7 +2,11 @@
 
 import { useEffect, useState, useCallback } from "react";
 import AdminShell from "@/components/AdminShell";
+import ConfirmDialog from "@/components/ConfirmDialog";
 import { createClient } from "@/lib/supabase/client";
+import { downloadCSV } from "@/lib/csv-export";
+import TableSkeleton from "@/components/TableSkeleton";
+import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 import type { BrokerTransferGuide, Broker } from "@/lib/types";
 
 interface FormData {
@@ -40,7 +44,14 @@ export default function BrokerTransferGuidesPage() {
   const [editing, setEditing] = useState<number | null>(null);
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState<FormData>(emptyForm);
+  const [search, setSearch] = useState("");
+  const [sortKey, setSortKey] = useState<string>("");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+  const [deleteTarget, setDeleteTarget] = useState<BrokerTransferGuide | null>(null);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
+  const dirty = creating || editing !== null;
+  const { confirmNavigation } = useUnsavedChanges(dirty);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -160,22 +171,50 @@ export default function BrokerTransferGuidesPage() {
     }
   };
 
-  const deleteGuide = async (id: number) => {
-    if (!confirm("Delete this transfer guide?")) return;
+  const deleteGuide = async () => {
+    if (!deleteTarget) return;
     const { error } = await supabase
       .from("broker_transfer_guides")
       .delete()
-      .eq("id", id);
+      .eq("id", deleteTarget.id);
     if (error) {
       showMessage("error", error.message);
     } else {
       showMessage("success", "Guide deleted");
       load();
     }
+    setDeleteTarget(null);
+  };
+
+  const toggleSort = (key: string) => {
+    if (sortKey === key) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(key);
+      setSortDir("asc");
+    }
   };
 
   const getBrokerName = (slug: string) =>
     brokers.find((b) => b.slug === slug)?.name || slug;
+
+  const filtered = guides.filter((guide) => {
+    const q = search.toLowerCase();
+    return !q || getBrokerName(guide.broker_slug).toLowerCase().includes(q) || guide.transfer_type.toLowerCase().includes(q);
+  });
+
+  const sorted = [...filtered].sort((a, b) => {
+    if (!sortKey) return 0;
+    const aVal = a[sortKey as keyof typeof a];
+    const bVal = b[sortKey as keyof typeof b];
+    if (aVal == null && bVal == null) return 0;
+    if (aVal == null) return 1;
+    if (bVal == null) return -1;
+    const cmp = typeof aVal === "number" && typeof bVal === "number"
+      ? aVal - bVal
+      : String(aVal).localeCompare(String(bVal));
+    return sortDir === "asc" ? cmp : -cmp;
+  });
 
   return (
     <AdminShell>
@@ -187,13 +226,38 @@ export default function BrokerTransferGuidesPage() {
               Manage broker-specific inbound and outbound transfer instructions
             </p>
           </div>
-          <button
-            onClick={startCreate}
-            className="px-4 py-2 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors"
-          >
-            + New Guide
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => downloadCSV(
+                guides.map((guide) => ({
+                  "From Broker": guide.transfer_type === "outbound" ? getBrokerName(guide.broker_slug) : "",
+                  "To Broker": guide.transfer_type === "inbound" ? getBrokerName(guide.broker_slug) : "",
+                  Timeline: `${guide.estimated_timeline_days} days`,
+                  Fee: `$${(guide.chess_transfer_fee / 100).toFixed(0)}`,
+                  Status: guide.transfer_type,
+                })),
+                "broker-transfer-guides.csv"
+              )}
+              className="px-3 py-1.5 bg-green-50 text-green-700 text-xs font-semibold rounded-lg hover:bg-green-100 border border-green-200 transition-colors"
+            >
+              Export CSV
+            </button>
+            <button
+              onClick={startCreate}
+              className="px-4 py-2 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors"
+            >
+              + New Guide
+            </button>
+          </div>
         </div>
+
+        <input
+          type="text"
+          placeholder="Search..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full max-w-sm bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500/30"
+        />
 
         {message && (
           <div
@@ -402,24 +466,24 @@ export default function BrokerTransferGuidesPage() {
 
         {/* Table */}
         {loading ? (
-          <div className="text-center py-12 text-slate-400">Loading...</div>
+          <TableSkeleton rows={4} cols={7} />
         ) : (
           <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-slate-50 border-b border-slate-200">
-                    <th className="text-left px-4 py-3 font-semibold text-slate-600">
-                      Broker
+                    <th className="text-left px-4 py-3 font-semibold text-slate-600 cursor-pointer select-none hover:text-slate-900" onClick={() => toggleSort("broker_slug")}>
+                      Broker {sortKey === "broker_slug" ? (sortDir === "asc" ? "\u2191" : "\u2193") : ""}
                     </th>
-                    <th className="text-left px-4 py-3 font-semibold text-slate-600">
-                      Type
+                    <th className="text-left px-4 py-3 font-semibold text-slate-600 cursor-pointer select-none hover:text-slate-900" onClick={() => toggleSort("transfer_type")}>
+                      Type {sortKey === "transfer_type" ? (sortDir === "asc" ? "\u2191" : "\u2193") : ""}
                     </th>
                     <th className="text-center px-4 py-3 font-semibold text-slate-600">
                       Steps
                     </th>
-                    <th className="text-center px-4 py-3 font-semibold text-slate-600">
-                      Timeline
+                    <th className="text-center px-4 py-3 font-semibold text-slate-600 cursor-pointer select-none hover:text-slate-900" onClick={() => toggleSort("estimated_timeline_days")}>
+                      Timeline {sortKey === "estimated_timeline_days" ? (sortDir === "asc" ? "\u2191" : "\u2193") : ""}
                     </th>
                     <th className="text-center px-4 py-3 font-semibold text-slate-600">
                       CHESS Fee
@@ -433,7 +497,7 @@ export default function BrokerTransferGuidesPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {guides.map((guide) => (
+                  {sorted.map((guide) => (
                     <tr
                       key={guide.id}
                       className="border-b border-slate-100 hover:bg-slate-50"
@@ -476,7 +540,7 @@ export default function BrokerTransferGuidesPage() {
                           Edit
                         </button>
                         <button
-                          onClick={() => deleteGuide(guide.id)}
+                          onClick={() => setDeleteTarget(guide)}
                           className="text-xs text-red-500 hover:underline"
                         >
                           Delete
@@ -500,6 +564,15 @@ export default function BrokerTransferGuidesPage() {
           </div>
         )}
       </div>
+      <ConfirmDialog
+        open={!!deleteTarget}
+        title="Delete Transfer Guide"
+        message={`Are you sure you want to delete the transfer guide for "${deleteTarget ? getBrokerName(deleteTarget.broker_slug) : ""}"? This action cannot be undone.`}
+        confirmLabel="Delete"
+        variant="danger"
+        onConfirm={deleteGuide}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </AdminShell>
   );
 }

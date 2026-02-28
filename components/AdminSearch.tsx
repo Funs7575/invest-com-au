@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
 interface SearchResult {
-  type: "broker" | "article" | "page" | "subscriber" | "campaign";
+  type: "broker" | "article" | "page" | "subscriber" | "campaign" | "course" | "consultation" | "team_member";
   icon: string;
   title: string;
   subtitle?: string;
@@ -17,6 +17,8 @@ const ADMIN_PAGES: SearchResult[] = [
   { type: "page", icon: "📈", title: "Analytics", href: "/admin/analytics" },
   { type: "page", icon: "🏦", title: "Brokers", href: "/admin/brokers" },
   { type: "page", icon: "📝", title: "Articles", href: "/admin/articles" },
+  { type: "page", icon: "📞", title: "Consultations", href: "/admin/consultations" },
+  { type: "page", icon: "📚", title: "Courses", href: "/admin/courses" },
   { type: "page", icon: "📅", title: "Content Calendar", href: "/admin/content-calendar" },
   { type: "page", icon: "👥", title: "Team Members", href: "/admin/team-members" },
   { type: "page", icon: "🎯", title: "Scenarios", href: "/admin/scenarios" },
@@ -92,7 +94,7 @@ export default function AdminSearch() {
     setSearching(true);
     const supabase = createClient();
 
-    const [brokersRes, articlesRes] = await Promise.all([
+    const [brokersRes, articlesRes, coursesRes, consultationsRes, teamMembersRes, campaignsRes] = await Promise.all([
       supabase
         .from("brokers")
         .select("name, slug")
@@ -102,6 +104,26 @@ export default function AdminSearch() {
         .from("articles")
         .select("title, slug")
         .or(`title.ilike.%${q}%,slug.ilike.%${q}%`)
+        .limit(5),
+      supabase
+        .from("courses")
+        .select("title, slug")
+        .or(`title.ilike.%${q}%,slug.ilike.%${q}%`)
+        .limit(5),
+      supabase
+        .from("consultations")
+        .select("title, slug")
+        .or(`title.ilike.%${q}%,slug.ilike.%${q}%`)
+        .limit(5),
+      supabase
+        .from("team_members")
+        .select("full_name, slug")
+        .or(`full_name.ilike.%${q}%,slug.ilike.%${q}%`)
+        .limit(5),
+      supabase
+        .from("campaigns")
+        .select("name")
+        .ilike("name", `%${q}%`)
         .limit(5),
     ]);
 
@@ -125,6 +147,49 @@ export default function AdminSearch() {
           title: a.title,
           subtitle: a.slug,
           href: `/admin/articles`,
+        })
+      );
+    }
+    if (coursesRes.data) {
+      coursesRes.data.forEach((c) =>
+        dbRes.push({
+          type: "course",
+          icon: "📚",
+          title: c.title,
+          subtitle: c.slug,
+          href: `/admin/courses`,
+        })
+      );
+    }
+    if (consultationsRes.data) {
+      consultationsRes.data.forEach((c) =>
+        dbRes.push({
+          type: "consultation",
+          icon: "📞",
+          title: c.title,
+          subtitle: c.slug,
+          href: `/admin/consultations`,
+        })
+      );
+    }
+    if (teamMembersRes.data) {
+      teamMembersRes.data.forEach((t) =>
+        dbRes.push({
+          type: "team_member",
+          icon: "👤",
+          title: t.full_name,
+          subtitle: t.slug,
+          href: `/admin/team-members`,
+        })
+      );
+    }
+    if (campaignsRes.data) {
+      campaignsRes.data.forEach((c) =>
+        dbRes.push({
+          type: "campaign",
+          icon: "📣",
+          title: c.name,
+          href: `/admin/marketplace/campaigns`,
         })
       );
     }
@@ -194,7 +259,7 @@ export default function AdminSearch() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Search pages, brokers, articles..."
+            placeholder="Search pages, brokers, articles, courses..."
             className="flex-1 bg-transparent text-slate-900 text-sm placeholder-slate-400 focus:outline-none"
           />
           <kbd className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 text-[0.6rem] font-medium text-slate-400 bg-slate-100 border border-slate-200 rounded">

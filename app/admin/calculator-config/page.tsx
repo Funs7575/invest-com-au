@@ -267,7 +267,15 @@ export default function CalculatorConfigPage() {
         </div>
 
         {loading ? (
-          <div className="text-slate-500">Loading configurations...</div>
+          <div className="space-y-6">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="bg-white border border-slate-200 rounded-xl p-6 space-y-4">
+                <div className="h-6 w-40 bg-slate-200 rounded animate-pulse" />
+                <div className="h-10 w-full bg-slate-100 rounded-lg animate-pulse" />
+                <div className="h-10 w-32 bg-slate-200 rounded-lg animate-pulse" />
+              </div>
+            ))}
+          </div>
         ) : (
           <div className="space-y-6">
             {CALC_TYPES.map((calcType) => (

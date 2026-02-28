@@ -3,6 +3,8 @@
 import { useEffect, useState, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import AdminShell from "@/components/AdminShell";
+import ConfirmDialog from "@/components/ConfirmDialog";
+import { downloadCSV } from "@/lib/csv-export";
 
 type EmailCapture = {
   id: number;
@@ -34,6 +36,8 @@ export default function AdminSubscribersPage() {
   const [page, setPage] = useState(0);
   const [tab, setTab] = useState<"all" | "quiz">("all");
   const [loading, setLoading] = useState(true);
+  const [selected, setSelected] = useState<Set<number>>(new Set());
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const supabase = createClient();
 
@@ -49,7 +53,7 @@ export default function AdminSubscribersPage() {
   };
 
   useEffect(() => { load(); }, []);
-  useEffect(() => { setPage(0); }, [search, sourceFilter, tab]);
+  useEffect(() => { setPage(0); setSelected(new Set()); }, [search, sourceFilter, tab]);
 
   // Unique sources for filter dropdown
   const sources = useMemo(() => {
@@ -101,6 +105,35 @@ export default function AdminSubscribersPage() {
   const currentList = tab === "all" ? filteredCaptures : filteredQuizLeads;
   const totalPages = Math.ceil(currentList.length / PAGE_SIZE);
   const paginatedList = currentList.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+
+  // Toggle selection
+  const toggleSelect = (id: number) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selected.size === paginatedList.length) {
+      setSelected(new Set());
+    } else {
+      setSelected(new Set(paginatedList.map((item) => item.id)));
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    const table = tab === "all" ? "email_captures" : "quiz_leads";
+    const ids = Array.from(selected);
+    const { error } = await supabase.from(table).delete().in("id", ids);
+    if (!error) {
+      setSelected(new Set());
+      load();
+    }
+    setShowDeleteConfirm(false);
+  };
 
   // CSV export
   const exportCsv = () => {
@@ -176,6 +209,25 @@ export default function AdminSubscribersPage() {
         )}
       </div>
 
+      {/* Bulk Actions */}
+      {selected.size > 0 && (
+        <div className="flex items-center gap-3 mb-4 px-4 py-2.5 bg-amber-50 border border-amber-200 rounded-lg">
+          <span className="text-sm font-medium text-amber-800">{selected.size} selected</span>
+          <button
+            onClick={() => setShowDeleteConfirm(true)}
+            className="px-3 py-1 text-xs font-semibold text-red-700 bg-red-50 border border-red-200 rounded-lg hover:bg-red-100 transition-colors"
+          >
+            Delete Selected
+          </button>
+          <button
+            onClick={() => setSelected(new Set())}
+            className="px-3 py-1 text-xs font-medium text-slate-600 hover:text-slate-900 transition-colors"
+          >
+            Clear Selection
+          </button>
+        </div>
+      )}
+
       {/* Table */}
       {loading ? (
         <div className="py-12 text-center text-slate-500 text-sm animate-pulse">Loading subscribers...</div>
@@ -184,6 +236,14 @@ export default function AdminSubscribersPage() {
           <table className="w-full">
             <thead className="bg-slate-50">
               <tr>
+                <th className="px-4 py-3 w-10">
+                  <input
+                    type="checkbox"
+                    checked={paginatedList.length > 0 && selected.size === paginatedList.length}
+                    onChange={toggleSelectAll}
+                    className="rounded border-slate-300"
+                  />
+                </th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Email</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Name</th>
                 {tab === "all" ? (
@@ -200,7 +260,15 @@ export default function AdminSubscribersPage() {
             </thead>
             <tbody className="divide-y divide-slate-200">
               {paginatedList.map((item) => (
-                <tr key={item.id} className="hover:bg-slate-50">
+                <tr key={item.id} className={`hover:bg-slate-50 ${selected.has(item.id) ? "bg-amber-50/50" : ""}`}>
+                  <td className="px-4 py-3">
+                    <input
+                      type="checkbox"
+                      checked={selected.has(item.id)}
+                      onChange={() => toggleSelect(item.id)}
+                      className="rounded border-slate-300"
+                    />
+                  </td>
                   <td className="px-4 py-3 text-sm text-slate-900 font-medium">{item.email}</td>
                   <td className="px-4 py-3 text-sm text-slate-600">{item.name || "—"}</td>
                   {tab === "all" ? (
@@ -263,6 +331,15 @@ export default function AdminSubscribersPage() {
           </div>
         </div>
       )}
+      <ConfirmDialog
+        open={showDeleteConfirm}
+        title="Delete Selected Subscribers"
+        message={`Delete ${selected.size} selected subscriber${selected.size !== 1 ? "s" : ""}? This cannot be undone.`}
+        confirmLabel="Delete"
+        variant="danger"
+        onConfirm={handleBulkDelete}
+        onCancel={() => setShowDeleteConfirm(false)}
+      />
     </AdminShell>
   );
 }

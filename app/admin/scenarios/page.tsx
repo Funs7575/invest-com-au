@@ -5,6 +5,8 @@ import { createClient } from "@/lib/supabase/client";
 import AdminShell from "@/components/AdminShell";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { useToast } from "@/components/Toast";
+import { downloadCSV } from "@/lib/csv-export";
+import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 import type { Scenario } from "@/lib/types";
 
 const PAGE_SIZE = 15;
@@ -15,11 +17,18 @@ export default function AdminScenariosPage() {
   const [creating, setCreating] = useState(false);
   const [saving, setSaving] = useState(false);
   const [search, setSearch] = useState("");
+  const [sortKey, setSortKey] = useState<string>("");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
   const [page, setPage] = useState(0);
   const [deleteTarget, setDeleteTarget] = useState<Scenario | null>(null);
+  const [cloneSource, setCloneSource] = useState<Partial<Scenario> | null>(null);
+  const [formKey, setFormKey] = useState(0);
 
   const supabase = createClient();
   const { toast } = useToast();
+
+  const dirty = creating || editing !== null;
+  const { confirmNavigation } = useUnsavedChanges(dirty);
 
   const load = async () => {
     const { data } = await supabase.from("scenarios").select("*").order("created_at", { ascending: false });
@@ -79,6 +88,7 @@ export default function AdminScenariosPage() {
     setSaving(false);
     setEditing(null);
     setCreating(false);
+    setCloneSource(null);
     load();
   };
 
@@ -95,19 +105,52 @@ export default function AdminScenariosPage() {
     load();
   };
 
+  const handleClone = (scenario: Scenario) => {
+    setEditing(null);
+    setCloneSource({
+      ...scenario,
+      title: scenario.title + " (Copy)",
+      slug: scenario.slug + "-copy",
+    });
+    setCreating(true);
+    setFormKey((k) => k + 1);
+  };
+
   const showForm = editing || creating;
-  const formScenario = editing || {} as Partial<Scenario>;
+  const formScenario = editing || cloneSource || {} as Partial<Scenario>;
+
+  const toggleSort = (key: string) => {
+    if (sortKey === key) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(key);
+      setSortDir("asc");
+    }
+  };
 
   const filteredScenarios = scenarios.filter((s) =>
     s.title.toLowerCase().includes(search.toLowerCase()) ||
     s.slug.toLowerCase().includes(search.toLowerCase())
   );
 
+  const sortedScenarios = [...filteredScenarios].sort((a, b) => {
+    if (!sortKey) return 0;
+    const aVal = a[sortKey as keyof typeof a];
+    const bVal = b[sortKey as keyof typeof b];
+    if (aVal == null && bVal == null) return 0;
+    if (aVal == null) return 1;
+    if (bVal == null) return -1;
+    const cmp = typeof aVal === "number" && typeof bVal === "number"
+      ? aVal - bVal
+      : String(aVal).localeCompare(String(bVal));
+    return sortDir === "asc" ? cmp : -cmp;
+  });
+
   // Reset page when search changes
   useEffect(() => { setPage(0); }, [search]);
 
-  const totalPages = Math.ceil(filteredScenarios.length / PAGE_SIZE);
-  const paginatedScenarios = filteredScenarios.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  const totalPages = Math.ceil(sortedScenarios.length / PAGE_SIZE);
+  const paginatedScenarios = sortedScenarios.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
   return (
     <AdminShell>
@@ -116,18 +159,35 @@ export default function AdminScenariosPage() {
           <h1 className="text-2xl font-bold text-slate-900">Scenarios</h1>
           <p className="text-sm text-slate-500 mt-1">{scenarios.length} scenarios</p>
         </div>
-        {!showForm && (
+        <div className="flex items-center gap-2">
           <button
-            onClick={() => setCreating(true)}
-            className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold rounded-lg px-4 py-2 text-sm transition-colors"
+            onClick={() => downloadCSV(
+              scenarios.map((s) => ({
+                Title: s.title,
+                Slug: s.slug,
+                Description: s.problem || "",
+                Status: s.brokers?.length ? "Active" : "Draft",
+              })),
+              "scenarios.csv"
+            )}
+            className="px-3 py-1.5 bg-green-50 text-green-700 text-xs font-semibold rounded-lg hover:bg-green-100 border border-green-200 transition-colors"
           >
-            + Add Scenario
+            Export CSV
           </button>
-        )}
+          {!showForm && (
+            <button
+              onClick={() => setCreating(true)}
+              className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold rounded-lg px-4 py-2 text-sm transition-colors"
+            >
+              + Add Scenario
+            </button>
+          )}
+        </div>
       </div>
 
       {showForm ? (
         <form
+          key={formKey}
           onSubmit={(e) => { e.preventDefault(); handleSave(new FormData(e.currentTarget)); }}
           className="bg-white border border-slate-200 rounded-lg p-6 space-y-4"
         >
@@ -175,7 +235,7 @@ export default function AdminScenariosPage() {
             <button type="submit" disabled={saving} className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold rounded-lg px-6 py-2.5 text-sm transition-colors disabled:opacity-50">
               {saving ? "Saving..." : editing ? "Update Scenario" : "Create Scenario"}
             </button>
-            <button type="button" onClick={() => { setEditing(null); setCreating(false); }} className="text-slate-500 hover:text-slate-900 px-4 py-2.5 text-sm">Cancel</button>
+            <button type="button" onClick={() => { setEditing(null); setCreating(false); setCloneSource(null); }} className="text-slate-500 hover:text-slate-900 px-4 py-2.5 text-sm">Cancel</button>
           </div>
         </form>
       ) : (
@@ -193,7 +253,9 @@ export default function AdminScenariosPage() {
             <table className="w-full">
               <thead className="bg-slate-50">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Scenario</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase cursor-pointer select-none hover:text-slate-900" onClick={() => toggleSort("title")}>
+                    Scenario {sortKey === "title" ? (sortDir === "asc" ? "\u2191" : "\u2193") : ""}
+                  </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Icon</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase">Brokers</th>
                   <th className="px-4 py-3 text-right text-xs font-semibold text-slate-500 uppercase">Actions</th>
@@ -210,6 +272,7 @@ export default function AdminScenariosPage() {
                     <td className="px-4 py-3 text-sm text-slate-600">{scenario.brokers?.length || 0} brokers</td>
                     <td className="px-4 py-3 text-right space-x-2">
                       <a href={`/scenario/${scenario.slug}`} target="_blank" rel="noopener noreferrer" className="text-xs text-green-600 hover:text-green-700">Preview</a>
+                      <button onClick={() => handleClone(scenario)} className="text-xs text-blue-600 hover:underline mr-3">Clone</button>
                       <button onClick={() => setEditing(scenario)} className="text-xs text-amber-600 hover:text-amber-700">Edit</button>
                       <button onClick={() => setDeleteTarget(scenario)} className="text-xs text-red-600 hover:text-red-300">Delete</button>
                     </td>

@@ -51,6 +51,15 @@ interface ActivityItem {
   color: string;
 }
 
+interface DataWarning {
+  severity: "error" | "warning" | "info";
+  icon: string;
+  title: string;
+  items: string[];
+  href: string;
+  actionLabel: string;
+}
+
 interface DailyClickData {
   date: string;
   count: number;
@@ -75,6 +84,7 @@ export default function AdminDashboard() {
   const [revenueStats, setRevenueStats] = useState<RevenueByBroker[]>([]);
   const [dailyClicks, setDailyClicks] = useState<DailyClickData[]>([]);
   const [activity, setActivity] = useState<ActivityItem[]>([]);
+  const [dataWarnings, setDataWarnings] = useState<DataWarning[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -226,6 +236,94 @@ export default function AdminDashboard() {
       }
 
       setHealth(issues);
+      // Data validation warnings
+      const warnings: DataWarning[] = [];
+
+      // Check brokers missing key data
+      if (brokersData.data) {
+        const noMetaDesc = brokersData.data.filter((b: { name: string; slug: string; affiliate_url: string; pros: string[]; cons: string[]; review_content: string }) => !b.review_content);
+        if (noMetaDesc.length > 0) {
+          warnings.push({
+            severity: "warning",
+            icon: "📋",
+            title: `${noMetaDesc.length} broker(s) missing review content`,
+            items: noMetaDesc.slice(0, 5).map((b: { name: string }) => b.name),
+            href: "/admin/brokers",
+            actionLabel: "Edit Brokers",
+          });
+        }
+      }
+
+      // Check articles missing meta descriptions
+      const { data: articlesNoMeta } = await supabase
+        .from("articles")
+        .select("title")
+        .eq("status", "published")
+        .or("meta_description.is.null,meta_description.eq.");
+      if (articlesNoMeta && articlesNoMeta.length > 0) {
+        warnings.push({
+          severity: "warning",
+          icon: "🔍",
+          title: `${articlesNoMeta.length} published article(s) missing meta description`,
+          items: articlesNoMeta.slice(0, 5).map((a: { title: string }) => a.title),
+          href: "/admin/articles",
+          actionLabel: "Edit Articles",
+        });
+      }
+
+      // Check stale articles (not updated in 90+ days)
+      const ninetyDaysAgo = new Date(Date.now() - 90 * 86400000).toISOString();
+      const { data: staleArticles, count: staleCount } = await supabase
+        .from("articles")
+        .select("title", { count: "exact" })
+        .eq("status", "published")
+        .lt("updated_at", ninetyDaysAgo)
+        .limit(5);
+      if (staleCount && staleCount > 0) {
+        warnings.push({
+          severity: "info",
+          icon: "📅",
+          title: `${staleCount} article(s) not updated in 90+ days`,
+          items: (staleArticles || []).map((a: { title: string }) => a.title),
+          href: "/admin/articles",
+          actionLabel: "Review Articles",
+        });
+      }
+
+      // Check draft articles pile-up
+      const { count: draftCount } = await supabase
+        .from("articles")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "draft");
+      if (draftCount && draftCount > 5) {
+        warnings.push({
+          severity: "info",
+          icon: "📝",
+          title: `${draftCount} draft articles pending publication`,
+          items: [],
+          href: "/admin/articles",
+          actionLabel: "View Drafts",
+        });
+      }
+
+      // Check quiz with no active questions
+      const { count: activeQuizCount } = await supabase
+        .from("quiz_questions")
+        .select("id", { count: "exact", head: true })
+        .eq("active", true);
+      if (activeQuizCount !== null && activeQuizCount < 3) {
+        warnings.push({
+          severity: "error",
+          icon: "❓",
+          title: `Only ${activeQuizCount} active quiz question(s)`,
+          items: ["Minimum 3 recommended for a good user experience"],
+          href: "/admin/quiz-questions",
+          actionLabel: "Edit Quiz",
+        });
+      }
+
+      setDataWarnings(warnings);
+
       // Build recent activity feed from multiple sources
       const activityItems: ActivityItem[] = [];
 
@@ -487,6 +585,73 @@ export default function AdminDashboard() {
             <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-slate-200 inline-block" /> Previous 7d</span>
             <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-amber-400/70 inline-block" /> Last 7d</span>
             <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-amber-500 inline-block" /> Today</span>
+          </div>
+        </div>
+      )}
+
+      {/* Data Validation Warnings */}
+      {!loading && dataWarnings.length > 0 && (
+        <div className="bg-white border border-slate-200 rounded-lg p-6 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-lg font-semibold text-slate-900">Data Quality</h2>
+              <p className="text-xs text-slate-500">{dataWarnings.length} issue{dataWarnings.length !== 1 ? "s" : ""} found</p>
+            </div>
+            <div className="flex items-center gap-1.5">
+              {dataWarnings.filter(w => w.severity === "error").length > 0 && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[0.6rem] font-semibold bg-red-50 text-red-700">
+                  {dataWarnings.filter(w => w.severity === "error").length} error{dataWarnings.filter(w => w.severity === "error").length !== 1 ? "s" : ""}
+                </span>
+              )}
+              {dataWarnings.filter(w => w.severity === "warning").length > 0 && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[0.6rem] font-semibold bg-amber-50 text-amber-700">
+                  {dataWarnings.filter(w => w.severity === "warning").length} warning{dataWarnings.filter(w => w.severity === "warning").length !== 1 ? "s" : ""}
+                </span>
+              )}
+              {dataWarnings.filter(w => w.severity === "info").length > 0 && (
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[0.6rem] font-semibold bg-blue-50 text-blue-700">
+                  {dataWarnings.filter(w => w.severity === "info").length} info
+                </span>
+              )}
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            {dataWarnings.map((w, i) => (
+              <div
+                key={i}
+                className={`rounded-lg p-3 border ${
+                  w.severity === "error" ? "bg-red-50 border-red-200" :
+                  w.severity === "warning" ? "bg-amber-50 border-amber-200" :
+                  "bg-blue-50 border-blue-200"
+                }`}
+              >
+                <div className="flex items-start gap-2 mb-1">
+                  <span className="text-sm">{w.icon}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className={`text-sm font-medium ${
+                      w.severity === "error" ? "text-red-800" :
+                      w.severity === "warning" ? "text-amber-800" :
+                      "text-blue-800"
+                    }`}>{w.title}</div>
+                    {w.items.length > 0 && (
+                      <div className="text-xs text-slate-500 mt-0.5 line-clamp-2">
+                        {w.items.join(", ")}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <Link
+                  href={w.href}
+                  className={`text-xs font-semibold mt-2 inline-block ${
+                    w.severity === "error" ? "text-red-600 hover:text-red-700" :
+                    w.severity === "warning" ? "text-amber-600 hover:text-amber-700" :
+                    "text-blue-600 hover:text-blue-700"
+                  }`}
+                >
+                  {w.actionLabel} →
+                </Link>
+              </div>
+            ))}
           </div>
         </div>
       )}

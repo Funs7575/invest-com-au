@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import AdminShell from "@/components/AdminShell";
 import { createClient } from "@/lib/supabase/client";
+import TableSkeleton from "@/components/TableSkeleton";
 import { Broker } from "@/lib/types";
 
 type EditableFields = {
@@ -305,7 +306,7 @@ export default function AffiliateLinksPage() {
         {/* Table */}
         <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
           {loading ? (
-            <div className="p-8 text-center text-slate-500">Loading brokers...</div>
+            <TableSkeleton rows={5} cols={7} />
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">

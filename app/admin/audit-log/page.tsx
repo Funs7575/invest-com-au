@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import AdminShell from "@/components/AdminShell";
+import { downloadCSV } from "@/lib/csv-export";
 
 interface AuditEntry {
   id: number;
@@ -69,6 +70,21 @@ export default function AuditLogPage() {
           <h1 className="text-2xl font-bold text-slate-900">Audit Log</h1>
           <p className="text-sm text-slate-500 mt-1">{total} entries</p>
         </div>
+        <button
+          onClick={() => {
+            const rows = entries.map((e) => [
+              new Date(e.created_at).toLocaleString("en-AU"),
+              e.action,
+              e.entity_type,
+              e.entity_name || "",
+              e.admin_email || "",
+            ]);
+            downloadCSV("audit-log.csv", ["Time", "Action", "Entity Type", "Entity Name", "Admin Email"], rows);
+          }}
+          className="px-3 py-1.5 bg-green-50 text-green-700 text-xs font-semibold rounded-lg hover:bg-green-100 border border-green-200 transition-colors"
+        >
+          Export CSV ↓
+        </button>
       </div>
 
       {/* Filter */}

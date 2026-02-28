@@ -4,6 +4,10 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import AdminShell from "@/components/AdminShell";
+import ConfirmDialog from "@/components/ConfirmDialog";
+import { downloadCSV } from "@/lib/csv-export";
+import TableSkeleton from "@/components/TableSkeleton";
+import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 
 interface ConsultationRow {
   id: number;
@@ -48,6 +52,12 @@ export default function AdminConsultationsPage() {
   const [saving, setSaving] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const { toast: showToast } = useToast();
+  const [deleteTarget, setDeleteTarget] = useState<ConsultationRow | null>(null);
+  const [sortKey, setSortKey] = useState<string>("");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
+
+  const dirty = showCreate || editingId !== null;
+  const { confirmNavigation } = useUnsavedChanges(dirty);
 
   const emptyForm = {
     title: "",
@@ -190,17 +200,61 @@ export default function AdminConsultationsPage() {
     setShowCreate(true);
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm("Delete this consultation? This cannot be undone.")) return;
+  const cloneConsultation = (c: ConsultationRow) => {
+    setEditingId(null);
+    setForm({
+      title: c.title + " (Copy)",
+      slug: c.slug + "-copy",
+      description: c.description || "",
+      consultant_id: c.consultant_id?.toString() || "",
+      duration_minutes: c.duration_minutes.toString(),
+      price: (c.price / 100).toFixed(2),
+      pro_price: c.pro_price ? (c.pro_price / 100).toFixed(2) : "",
+      stripe_price_id: "",
+      stripe_pro_price_id: "",
+      cal_link: c.cal_link,
+      category: c.category,
+      status: "draft",
+      featured: false,
+      sort_order: c.sort_order.toString(),
+    });
+    setShowCreate(true);
+  };
+
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
     const supabase = createClient();
-    const { error } = await supabase.from("consultations").delete().eq("id", id);
+    const { error } = await supabase.from("consultations").delete().eq("id", deleteTarget.id);
     if (error) {
       showToast(`Error: ${error.message}`, "error");
     } else {
       showToast("Consultation deleted", "success");
       fetchData();
     }
+    setDeleteTarget(null);
   };
+
+  const toggleSort = (key: string) => {
+    if (sortKey === key) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(key);
+      setSortDir("asc");
+    }
+  };
+
+  const sortedConsultations = [...consultations].sort((a, b) => {
+    if (!sortKey) return 0;
+    const aVal = a[sortKey as keyof typeof a];
+    const bVal = b[sortKey as keyof typeof b];
+    if (aVal == null && bVal == null) return 0;
+    if (aVal == null) return 1;
+    if (bVal == null) return -1;
+    const cmp = typeof aVal === "number" && typeof bVal === "number"
+      ? aVal - bVal
+      : String(aVal).localeCompare(String(bVal));
+    return sortDir === "asc" ? cmp : -cmp;
+  });
 
   const statusBadge = (status: string) => {
     const colors: Record<string, string> = {
@@ -225,18 +279,51 @@ export default function AdminConsultationsPage() {
     <AdminShell>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-slate-900">Consultations</h1>
-        <button
-          onClick={() => {
-            if (showCreate && editingId) {
-              setEditingId(null);
-              setForm(emptyForm);
-            }
-            setShowCreate(!showCreate);
-          }}
-          className="px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
-        >
-          {showCreate ? "Cancel" : "+ New Consultation"}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => {
+              if (tab === "consultations") {
+                const rows = consultations.map((c) => [
+                  c.title,
+                  c.consultant?.full_name || "",
+                  `${c.duration_minutes} min`,
+                  `$${(c.price / 100).toFixed(2)}`,
+                  c.pro_price ? `$${(c.pro_price / 100).toFixed(2)}` : "",
+                  c.cal_link,
+                  c.category,
+                  c.status,
+                  c.featured ? "Yes" : "No",
+                ]);
+                downloadCSV("consultations.csv", ["Title", "Consultant", "Duration", "Price", "Pro Price", "Cal Link", "Category", "Status", "Featured"], rows);
+              } else {
+                const rows = bookings.map((b) => [
+                  b.user_id,
+                  b.consultation?.title || `#${b.consultation_id}`,
+                  `$${(b.amount_paid / 100).toFixed(2)}`,
+                  b.status,
+                  new Date(b.booked_at).toLocaleDateString("en-AU"),
+                  b.stripe_payment_id || "",
+                ]);
+                downloadCSV("consultation-bookings.csv", ["User ID", "Consultation", "Amount", "Status", "Booked Date", "Stripe Payment ID"], rows);
+              }
+            }}
+            className="px-3 py-1.5 bg-green-50 text-green-700 text-xs font-semibold rounded-lg hover:bg-green-100 border border-green-200 transition-colors"
+          >
+            Export CSV ↓
+          </button>
+          <button
+            onClick={() => {
+              if (showCreate && editingId) {
+                setEditingId(null);
+                setForm(emptyForm);
+              }
+              setShowCreate(!showCreate);
+            }}
+            className="px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
+          >
+            {showCreate ? "Cancel" : "+ New Consultation"}
+          </button>
+        </div>
       </div>
 
       {/* Tabs */}
@@ -531,7 +618,7 @@ export default function AdminConsultationsPage() {
       )}
 
       {loading ? (
-        <div className="text-center py-12 text-slate-500">Loading...</div>
+        <TableSkeleton rows={4} cols={7} />
       ) : tab === "consultations" ? (
         /* Consultations table */
         <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
@@ -539,8 +626,8 @@ export default function AdminConsultationsPage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-slate-50 text-left">
-                  <th className="px-4 py-3 font-semibold text-slate-600">
-                    Title
+                  <th className="px-4 py-3 font-semibold text-slate-600 cursor-pointer select-none hover:text-slate-900" onClick={() => toggleSort("title")}>
+                    Title {sortKey === "title" ? (sortDir === "asc" ? "\u2191" : "\u2193") : ""}
                   </th>
                   <th className="px-4 py-3 font-semibold text-slate-600">
                     Consultant
@@ -548,14 +635,17 @@ export default function AdminConsultationsPage() {
                   <th className="px-4 py-3 font-semibold text-slate-600">
                     Duration
                   </th>
-                  <th className="px-4 py-3 font-semibold text-slate-600">
-                    Price
+                  <th className="px-4 py-3 font-semibold text-slate-600 cursor-pointer select-none hover:text-slate-900" onClick={() => toggleSort("price")}>
+                    Price {sortKey === "price" ? (sortDir === "asc" ? "\u2191" : "\u2193") : ""}
                   </th>
                   <th className="px-4 py-3 font-semibold text-slate-600">
                     Cal Link
                   </th>
-                  <th className="px-4 py-3 font-semibold text-slate-600">
-                    Status
+                  <th className="px-4 py-3 font-semibold text-slate-600 cursor-pointer select-none hover:text-slate-900" onClick={() => toggleSort("status")}>
+                    Status {sortKey === "status" ? (sortDir === "asc" ? "\u2191" : "\u2193") : ""}
+                  </th>
+                  <th className="px-4 py-3 font-semibold text-slate-600 cursor-pointer select-none hover:text-slate-900" onClick={() => toggleSort("featured")}>
+                    Featured {sortKey === "featured" ? (sortDir === "asc" ? "\u2191" : "\u2193") : ""}
                   </th>
                   <th className="px-4 py-3 font-semibold text-slate-600">
                     Actions
@@ -563,17 +653,17 @@ export default function AdminConsultationsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {consultations.length === 0 ? (
+                {sortedConsultations.length === 0 ? (
                   <tr>
                     <td
-                      colSpan={7}
+                      colSpan={8}
                       className="px-4 py-8 text-center text-slate-400"
                     >
                       No consultations yet. Create one to get started.
                     </td>
                   </tr>
                 ) : (
-                  consultations.map((c) => (
+                  sortedConsultations.map((c) => (
                     <tr key={c.id} className="hover:bg-slate-50">
                       <td className="px-4 py-3 font-medium text-slate-900">
                         {c.title}
@@ -601,8 +691,21 @@ export default function AdminConsultationsPage() {
                         {c.cal_link}
                       </td>
                       <td className="px-4 py-3">{statusBadge(c.status)}</td>
+                      <td className="px-4 py-3 text-center">
+                        {c.featured ? (
+                          <span className="text-amber-600">★</span>
+                        ) : (
+                          <span className="text-slate-300">—</span>
+                        )}
+                      </td>
                       <td className="px-4 py-3">
                         <div className="flex gap-2">
+                          <button
+                            onClick={() => cloneConsultation(c)}
+                            className="text-xs text-blue-600 hover:underline mr-3"
+                          >
+                            Clone
+                          </button>
                           <button
                             onClick={() => startEdit(c)}
                             className="text-xs text-green-700 hover:underline"
@@ -610,7 +713,7 @@ export default function AdminConsultationsPage() {
                             Edit
                           </button>
                           <button
-                            onClick={() => handleDelete(c.id)}
+                            onClick={() => setDeleteTarget(c)}
                             className="text-xs text-red-600 hover:underline"
                           >
                             Delete
@@ -694,6 +797,15 @@ export default function AdminConsultationsPage() {
           </div>
         </div>
       )}
+      <ConfirmDialog
+        open={!!deleteTarget}
+        title="Delete Consultation"
+        message={`Delete "${deleteTarget?.title}"? This cannot be undone.`}
+        confirmLabel="Delete"
+        variant="danger"
+        onConfirm={handleDelete}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </AdminShell>
   );
 }

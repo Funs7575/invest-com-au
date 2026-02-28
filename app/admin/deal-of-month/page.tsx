@@ -5,6 +5,7 @@ import AdminShell from "@/components/AdminShell";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
+import TableSkeleton from "@/components/TableSkeleton";
 import { Broker } from "@/lib/types";
 
 const DEAL_CATEGORIES = [
@@ -185,7 +186,9 @@ export default function DealOfMonthPage() {
         {/* Active Deals */}
         <div className="bg-white border border-slate-200 rounded-lg p-6">
           <h2 className="text-lg font-semibold text-slate-900 mb-4">Active Deals</h2>
-          {activeDealBrokers.length === 0 ? (
+          {loading ? (
+            <TableSkeleton rows={3} cols={4} />
+          ) : activeDealBrokers.length === 0 ? (
             <p className="text-slate-500">
               No active deals. Click &ldquo;+ Add Deal&rdquo; to create one.
             </p>

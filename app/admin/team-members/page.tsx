@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import AdminShell from "@/components/AdminShell";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import { useToast } from "@/components/Toast";
+import { downloadCSV } from "@/lib/csv-export";
 import type { TeamMember } from "@/lib/types";
 
 const ROLES = [
@@ -179,15 +180,33 @@ export default function TeamMembersPage() {
           </p>
         </div>
         {!showForm && (
-          <button
-            onClick={() => {
-              setCreating(true);
-              setAutoSlug(true);
-            }}
-            className="bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold rounded-lg px-4 py-2 text-sm transition-colors"
-          >
-            + Add Member
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                const rows = filteredMembers.map((m) => [
+                  m.full_name,
+                  m.slug,
+                  m.role,
+                  m.status,
+                  m.linkedin_url || "",
+                  m.twitter_url || "",
+                ]);
+                downloadCSV("team-members.csv", ["Name", "Slug", "Role", "Status", "LinkedIn", "Twitter"], rows);
+              }}
+              className="px-3 py-1.5 bg-green-50 text-green-700 text-xs font-semibold rounded-lg hover:bg-green-100 border border-green-200 transition-colors"
+            >
+              Export CSV ↓
+            </button>
+            <button
+              onClick={() => {
+                setCreating(true);
+                setAutoSlug(true);
+              }}
+              className="bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold rounded-lg px-4 py-2 text-sm transition-colors"
+            >
+              + Add Member
+            </button>
+          </div>
         )}
       </div>
 

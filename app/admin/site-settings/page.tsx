@@ -139,7 +139,16 @@ export default function SiteSettingsPage() {
         )}
 
         {loading ? (
-          <div className="text-slate-500">Loading settings...</div>
+          <div className="bg-white border border-slate-200 rounded-xl p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="space-y-2">
+                  <div className="h-4 w-24 bg-slate-200 rounded animate-pulse" />
+                  <div className="h-10 w-full bg-slate-100 rounded-lg animate-pulse" />
+                </div>
+              ))}
+            </div>
+          </div>
         ) : (
           <div className="bg-white border border-slate-200 rounded-xl p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
