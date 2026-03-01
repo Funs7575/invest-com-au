@@ -5,6 +5,12 @@ export const metadata = {
   title: "How We Earn Money",
   description: "Full transparency on how Invest.com.au makes money. Affiliate commissions explained, and what it means for our rankings and your experience.",
   alternates: { canonical: "/how-we-earn" },
+  openGraph: {
+    title: "How We Earn Money — Invest.com.au",
+    description: "Full transparency on how Invest.com.au makes money. Affiliate commissions explained, and what it means for our rankings.",
+    images: [{ url: "/api/og?title=How+We+Earn+Money&subtitle=Full+Transparency+on+Affiliate+Revenue&type=default", width: 1200, height: 630 }],
+  },
+  twitter: { card: "summary_large_image" as const },
 };
 
 export default function HowWeEarnPage() {
