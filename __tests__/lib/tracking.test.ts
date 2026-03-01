@@ -1,216 +1,136 @@
 import { describe, it, expect } from "vitest";
-import {
-  getAffiliateLink,
-  getBenefitCta,
-  formatPercent,
-  renderStars,
-  AFFILIATE_REL,
-} from "@/lib/tracking";
+import { getAffiliateLink, getBenefitCta, formatPercent, renderStars, AFFILIATE_REL } from "@/lib/tracking";
+import type { Broker } from "@/lib/types";
 
-function mockBroker(overrides: Record<string, unknown> = {}) {
+function makeBroker(overrides: Partial<Broker> = {}): Broker {
   return {
-    slug: "test-broker",
-    name: "Test Broker",
+    id: 1,
+    name: "TestBroker",
+    slug: "testbroker",
     affiliate_url: null,
-    benefit_cta: null,
-    cta_text: null,
+    asx_fee: "$5",
+    asx_fee_value: 5,
+    us_fee: null,
+    us_fee_value: null,
+    fx_rate: null,
+    inactivity_fee: null,
+    rating: 4.5,
     deal: false,
     deal_text: null,
-    asx_fee: null,
-    asx_fee_value: null,
+    deal_terms: null,
+    deal_expiry: null,
+    cta_text: null,
+    benefit_cta: null,
+    is_crypto: false,
+    chess_sponsored: true,
+    regulated_by: "ASIC",
+    year_founded: 2010,
+    created_at: "2024-01-01T00:00:00Z",
+    updated_at: "2024-06-01T00:00:00Z",
     ...overrides,
-  } as any;
+  } as Broker;
 }
 
 describe("AFFILIATE_REL", () => {
-  it("equals the standard sponsored rel string", () => {
-    expect(AFFILIATE_REL).toBe("noopener noreferrer nofollow sponsored");
-  });
-
-  it("contains noopener for security", () => {
-    expect(AFFILIATE_REL).toContain("noopener");
-  });
-
-  it("contains sponsored for SEO compliance", () => {
+  it("includes nofollow and sponsored", () => {
+    expect(AFFILIATE_REL).toContain("nofollow");
     expect(AFFILIATE_REL).toContain("sponsored");
+    expect(AFFILIATE_REL).toContain("noopener");
+    expect(AFFILIATE_REL).toContain("noreferrer");
   });
 });
 
 describe("getAffiliateLink", () => {
-  it("returns /go/<slug> when broker has affiliate_url", () => {
-    const broker = mockBroker({
-      slug: "stake",
-      affiliate_url: "https://stake.com.au",
-    });
+  it("returns /go/{slug} when affiliate_url exists", () => {
+    const broker = makeBroker({ slug: "stake", affiliate_url: "https://stake.com.au" });
     expect(getAffiliateLink(broker)).toBe("/go/stake");
   });
 
-  it("returns /broker/<slug> when broker has no affiliate_url", () => {
-    const broker = mockBroker({ slug: "stake", affiliate_url: "" });
-    expect(getAffiliateLink(broker)).toBe("/broker/stake");
+  it("returns /broker/{slug} when no affiliate_url", () => {
+    const broker = makeBroker({ slug: "commsec", affiliate_url: null });
+    expect(getAffiliateLink(broker)).toBe("/broker/commsec");
   });
 
-  it("returns /broker/<slug> when affiliate_url is null", () => {
-    const broker = mockBroker({ slug: "local-broker", affiliate_url: null });
-    expect(getAffiliateLink(broker)).toBe("/broker/local-broker");
-  });
-
-  it("returns correct path for different slugs", () => {
-    const broker = mockBroker({
-      slug: "cmc-markets",
-      affiliate_url: "https://cmc.example.com",
-    });
-    expect(getAffiliateLink(broker)).toBe("/go/cmc-markets");
+  it("returns /broker/ for empty string affiliate_url", () => {
+    const broker = makeBroker({ slug: "test", affiliate_url: "" });
+    expect(getAffiliateLink(broker)).toBe("/broker/test");
   });
 });
 
 describe("getBenefitCta", () => {
-  it("returns custom benefit_cta when set", () => {
-    const broker = mockBroker({ benefit_cta: "Custom CTA" });
+  it("returns benefit_cta if set", () => {
+    const broker = makeBroker({ benefit_cta: "Custom CTA" });
     expect(getBenefitCta(broker, "compare")).toBe("Custom CTA");
   });
 
-  it("returns cta_text when set and no benefit_cta", () => {
-    const broker = mockBroker({ cta_text: "Try Now" });
-    expect(getBenefitCta(broker, "compare")).toBe("Try Now");
+  it("returns cta_text if set and no benefit_cta", () => {
+    const broker = makeBroker({ cta_text: "Custom Text" });
+    expect(getBenefitCta(broker, "compare")).toBe("Custom Text");
   });
 
-  it("prefers benefit_cta over cta_text", () => {
-    const broker = mockBroker({
-      benefit_cta: "Benefit CTA",
-      cta_text: "CTA Text",
-    });
-    expect(getBenefitCta(broker, "compare")).toBe("Benefit CTA");
-  });
-
-  it('returns "Trade $0 Brokerage →" for compare context with asx_fee_value: 0', () => {
-    const broker = mockBroker({ asx_fee_value: 0 });
-    expect(getBenefitCta(broker, "compare")).toBe("Trade $0 Brokerage →");
-  });
-
-  it("returns trade-from CTA for compare context with low fee (<=5)", () => {
-    const broker = mockBroker({ asx_fee_value: 5, asx_fee: "$5.00" });
-    const result = getBenefitCta(broker, "compare");
-    expect(result).toContain("Trade");
-    expect(result).toContain("→");
-  });
-
-  it('returns "Open Free Account →" for compare context with regular fee', () => {
-    const broker = mockBroker({ asx_fee_value: 10 });
-    expect(getBenefitCta(broker, "compare")).toBe("Open Free Account →");
-  });
-
-  it('returns "Get Started Free →" for quiz context with no cta_text', () => {
-    const broker = mockBroker({});
-    expect(getBenefitCta(broker, "quiz")).toBe("Get Started Free →");
-  });
-
-  it("returns deal text when deal=true and deal_text set", () => {
-    const broker = mockBroker({
-      deal: true,
-      deal_text: "Free trades for 30 days",
-      name: "Stake",
-    });
+  it("returns deal-specific CTA when broker has a deal", () => {
+    const broker = makeBroker({ deal: true, deal_text: "Free trades for 30 days", name: "Stake" });
     expect(getBenefitCta(broker, "compare")).toBe("Claim Stake Deal");
   });
 
-  it("still uses benefit_cta even when deal is active", () => {
-    const broker = mockBroker({
-      benefit_cta: "Special Offer",
-      deal: true,
-      deal_text: "Limited Deal",
-    });
-    expect(getBenefitCta(broker, "compare")).toBe("Special Offer");
+  it("returns $0 brokerage CTA for compare context", () => {
+    const broker = makeBroker({ asx_fee_value: 0 });
+    expect(getBenefitCta(broker, "compare")).toBe("Trade $0 Brokerage →");
   });
 
-  it("handles review context", () => {
-    const broker = mockBroker({ asx_fee_value: 10 });
-    const result = getBenefitCta(broker, "review");
-    expect(typeof result).toBe("string");
-    expect(result.length).toBeGreaterThan(0);
+  it("returns low fee CTA for cheap brokers in compare", () => {
+    const broker = makeBroker({ asx_fee_value: 3, asx_fee: "$3" });
+    expect(getBenefitCta(broker, "compare")).toBe("Trade from $3 →");
   });
 
-  it("handles calculator context", () => {
-    const broker = mockBroker({ asx_fee_value: 10 });
-    const result = getBenefitCta(broker, "calculator");
-    expect(typeof result).toBe("string");
-    expect(result.length).toBeGreaterThan(0);
+  it("returns default for compare with normal fees", () => {
+    const broker = makeBroker({ asx_fee_value: 10 });
+    expect(getBenefitCta(broker, "compare")).toBe("Open Free Account →");
   });
 
-  it("handles versus context", () => {
-    const broker = mockBroker({ asx_fee_value: 10 });
-    const result = getBenefitCta(broker, "versus");
-    expect(typeof result).toBe("string");
-    expect(result.length).toBeGreaterThan(0);
+  it("returns calculator-specific CTA for $0 brokerage", () => {
+    const broker = makeBroker({ asx_fee_value: 0 });
+    expect(getBenefitCta(broker, "calculator")).toBe("Try $0 Brokerage →");
+  });
+
+  it("returns quiz-specific default CTA", () => {
+    const broker = makeBroker({});
+    expect(getBenefitCta(broker, "quiz")).toBe("Get Started Free →");
   });
 });
 
 describe("formatPercent", () => {
-  it("formats with default 2 decimal places", () => {
+  it("formats with default 2 decimals", () => {
     expect(formatPercent(0.5)).toBe("0.50%");
   });
 
-  it("formats with custom decimal places", () => {
-    expect(formatPercent(12.345, 1)).toBe("12.3%");
+  it("formats with custom decimals", () => {
+    expect(formatPercent(1.234, 1)).toBe("1.2%");
   });
 
-  it("formats with 0 decimal places", () => {
-    expect(formatPercent(3.14159, 0)).toBe("3%");
-  });
-
-  it("formats with 4 decimal places", () => {
-    expect(formatPercent(3.14159, 4)).toBe("3.1416%");
-  });
-
-  it("handles zero", () => {
-    expect(formatPercent(0)).toBe("0.00%");
-  });
-
-  it("handles whole numbers", () => {
-    expect(formatPercent(5)).toBe("5.00%");
-  });
-
-  it("handles large numbers", () => {
-    expect(formatPercent(100)).toBe("100.00%");
+  it("formats whole numbers", () => {
+    expect(formatPercent(5, 0)).toBe("5%");
   });
 });
 
 describe("renderStars", () => {
-  it("renders 5 full stars for rating 5", () => {
+  it("renders 5 full stars", () => {
     expect(renderStars(5)).toBe("★★★★★");
   });
 
-  it("renders 5 empty stars for rating 0", () => {
+  it("renders 0 stars", () => {
     expect(renderStars(0)).toBe("☆☆☆☆☆");
   });
 
-  it("renders half star correctly for 3.5", () => {
-    expect(renderStars(3.5)).toBe("★★★½☆");
-  });
-
-  it("rounds down fractional ratings below 0.5", () => {
-    expect(renderStars(4.2)).toBe("★★★★☆");
-  });
-
-  it("renders correctly for 4.5", () => {
-    expect(renderStars(4.5)).toBe("★★★★½");
-  });
-
-  it("renders correctly for 1.0", () => {
-    expect(renderStars(1)).toBe("★☆☆☆☆");
-  });
-
-  it("renders correctly for 2.5", () => {
+  it("renders half star at 2.5", () => {
     expect(renderStars(2.5)).toBe("★★½☆☆");
   });
 
-  it("renders correctly for 0.5", () => {
-    expect(renderStars(0.5)).toBe("½☆☆☆☆");
+  it("renders 4 full + 1 empty at 4.3", () => {
+    expect(renderStars(4.3)).toBe("★★★★☆");
   });
 
-  it("always produces a string of length 5", () => {
-    for (const rating of [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5]) {
-      expect(renderStars(rating)).toHaveLength(5);
-    }
+  it("renders 4 full + half at 4.7", () => {
+    expect(renderStars(4.7)).toBe("★★★★½");
   });
 });

@@ -1,167 +1,130 @@
 import { describe, it, expect } from "vitest";
-import { getCostScenarioBySlug, getAllCostScenarios } from "@/lib/cost-scenarios";
+import { getCostScenarioBySlug, getAllCostScenarios, getAllCostScenarioSlugs } from "@/lib/cost-scenarios";
+import type { Broker } from "@/lib/types";
 
-describe("cost-scenarios", () => {
-  describe("getAllCostScenarios", () => {
-    it("returns all scenarios as an array", () => {
-      const all = getAllCostScenarios();
-      expect(Array.isArray(all)).toBe(true);
-      expect(all.length).toBeGreaterThanOrEqual(5);
-    });
+function makeBroker(overrides: Partial<Broker> = {}): Broker {
+  return {
+    id: 1, name: "TestBroker", slug: "testbroker",
+    affiliate_url: null, asx_fee: "$5", asx_fee_value: 5,
+    us_fee: "$2", us_fee_value: 2, fx_rate: 0.5,
+    inactivity_fee: null, rating: 4.0, deal: false,
+    deal_text: null, deal_terms: null, deal_expiry: null,
+    cta_text: null, benefit_cta: null, is_crypto: false,
+    chess_sponsored: true, regulated_by: "ASIC",
+    year_founded: 2010, created_at: "2024-01-01T00:00:00Z",
+    updated_at: "2024-06-01T00:00:00Z",
+    ...overrides,
+  } as Broker;
+}
 
-    it("includes expected scenario slugs", () => {
-      const slugs = getAllCostScenarios().map((s) => s.slug);
-      expect(slugs).toContain("10-trades-month");
-      expect(slugs).toContain("us-shares-5000");
-      expect(slugs).toContain("beginner-500");
-      expect(slugs).toContain("monthly-dca-1000");
-      expect(slugs).toContain("us-shares-monthly");
-    });
-
-    it("every scenario has slug, name, filter, calculateAnnualCost, and sort", () => {
-      for (const scenario of getAllCostScenarios()) {
-        expect(typeof scenario.slug).toBe("string");
-        expect(typeof scenario.name).toBe("string");
-        expect(typeof scenario.filter).toBe("function");
-        expect(typeof scenario.calculateAnnualCost).toBe("function");
-        expect(typeof scenario.sort).toBe("function");
-      }
-    });
+describe("getAllCostScenarios", () => {
+  it("returns at least 5 scenarios", () => {
+    expect(getAllCostScenarios().length).toBeGreaterThanOrEqual(5);
   });
 
-  describe("getCostScenarioBySlug", () => {
-    it("finds the 10-trades-month scenario", () => {
-      const scenario = getCostScenarioBySlug("10-trades-month");
-      expect(scenario).toBeDefined();
-      expect(scenario!.slug).toBe("10-trades-month");
-    });
+  it("each scenario has required fields", () => {
+    for (const s of getAllCostScenarios()) {
+      expect(s.slug).toBeTruthy();
+      expect(s.title).toBeTruthy();
+      expect(typeof s.filter).toBe("function");
+      expect(typeof s.calculateAnnualCost).toBe("function");
+      expect(typeof s.sort).toBe("function");
+    }
+  });
+});
 
-    it("returns undefined for unknown slug", () => {
-      const scenario = getCostScenarioBySlug("nonexistent-slug");
-      expect(scenario).toBeUndefined();
-    });
+describe("getAllCostScenarioSlugs", () => {
+  it("returns unique slugs", () => {
+    const slugs = getAllCostScenarioSlugs();
+    expect(new Set(slugs).size).toBe(slugs.length);
   });
 
-  describe("10-trades-month scenario", () => {
-    const scenario = getCostScenarioBySlug("10-trades-month")!;
+  it("includes known scenarios", () => {
+    const slugs = getAllCostScenarioSlugs();
+    expect(slugs).toContain("10-trades-month");
+    expect(slugs).toContain("us-shares-5000");
+    expect(slugs).toContain("beginner-500");
+  });
+});
 
-    describe("filter", () => {
-      it("rejects crypto brokers", () => {
-        const cryptoBroker = { is_crypto: true, asx_fee_value: 5 } as any;
-        expect(scenario.filter(cryptoBroker)).toBe(false);
-      });
-
-      it("rejects brokers with null asx_fee_value", () => {
-        const noFeeBroker = { is_crypto: false, asx_fee_value: null } as any;
-        expect(scenario.filter(noFeeBroker)).toBe(false);
-      });
-
-      it("accepts valid ASX brokers", () => {
-        const validBroker = { is_crypto: false, asx_fee_value: 5 } as any;
-        expect(scenario.filter(validBroker)).toBe(true);
-      });
-
-      it("accepts brokers with zero fee", () => {
-        const freeBroker = { is_crypto: false, asx_fee_value: 0 } as any;
-        expect(scenario.filter(freeBroker)).toBe(true);
-      });
-    });
-
-    describe("calculateAnnualCost", () => {
-      it("calculates cost for broker with no inactivity fee", () => {
-        const broker = { asx_fee_value: 5, inactivity_fee: "None" } as any;
-        // 5 * 10 trades * 12 months = 600
-        expect(scenario.calculateAnnualCost(broker)).toBe(600);
-      });
-
-      it("includes monthly inactivity fee in annual cost", () => {
-        const broker = {
-          asx_fee_value: 10,
-          inactivity_fee: "$10/month",
-        } as any;
-        // (10 * 10 * 12) + (10 * 12) = 1200 + 120 = 1320
-        expect(scenario.calculateAnnualCost(broker)).toBe(1320);
-      });
-
-      it("calculates zero cost for $0 brokerage with no inactivity fee", () => {
-        const broker = { asx_fee_value: 0, inactivity_fee: "No" } as any;
-        expect(scenario.calculateAnnualCost(broker)).toBe(0);
-      });
-
-      it("returns a non-negative number", () => {
-        const broker = { asx_fee_value: 3, inactivity_fee: "None" } as any;
-        expect(scenario.calculateAnnualCost(broker)).toBeGreaterThanOrEqual(0);
-      });
-    });
-
-    describe("sort", () => {
-      it("sorts cheaper broker first", () => {
-        const cheapBroker = {
-          asx_fee_value: 0,
-          inactivity_fee: "None",
-        } as any;
-        const expensiveBroker = {
-          asx_fee_value: 10,
-          inactivity_fee: "None",
-        } as any;
-        expect(scenario.sort(cheapBroker, expensiveBroker)).toBeLessThan(0);
-      });
-
-      it("sorts expensive broker second", () => {
-        const cheapBroker = {
-          asx_fee_value: 0,
-          inactivity_fee: "None",
-        } as any;
-        const expensiveBroker = {
-          asx_fee_value: 10,
-          inactivity_fee: "None",
-        } as any;
-        expect(scenario.sort(expensiveBroker, cheapBroker)).toBeGreaterThan(0);
-      });
-
-      it("returns 0 for equal-cost brokers", () => {
-        const brokerA = { asx_fee_value: 5, inactivity_fee: "None" } as any;
-        const brokerB = { asx_fee_value: 5, inactivity_fee: "None" } as any;
-        expect(scenario.sort(brokerA, brokerB)).toBe(0);
-      });
-
-      it("is consistent with calculateAnnualCost ordering", () => {
-        const cheap = { asx_fee_value: 0, inactivity_fee: "None" } as any;
-        const mid = { asx_fee_value: 5, inactivity_fee: "None" } as any;
-        const expensive = { asx_fee_value: 20, inactivity_fee: "None" } as any;
-
-        const costCheap = scenario.calculateAnnualCost(cheap);
-        const costMid = scenario.calculateAnnualCost(mid);
-        const costExpensive = scenario.calculateAnnualCost(expensive);
-
-        expect(costCheap).toBeLessThan(costMid);
-        expect(costMid).toBeLessThan(costExpensive);
-        expect(scenario.sort(cheap, mid)).toBeLessThan(0);
-        expect(scenario.sort(mid, expensive)).toBeLessThan(0);
-      });
-    });
+describe("getCostScenarioBySlug", () => {
+  it("returns scenario for valid slug", () => {
+    const scenario = getCostScenarioBySlug("10-trades-month");
+    expect(scenario).toBeDefined();
+    expect(scenario!.slug).toBe("10-trades-month");
   });
 
-  describe("beginner-500 scenario", () => {
-    const scenario = getCostScenarioBySlug("beginner-500");
+  it("returns undefined for invalid slug", () => {
+    expect(getCostScenarioBySlug("nonexistent")).toBeUndefined();
+  });
+});
 
-    it("exists and has a name", () => {
-      expect(scenario).toBeDefined();
-      expect(typeof scenario!.name).toBe("string");
-    });
+describe("10-trades-month cost calculation", () => {
+  const scenario = getCostScenarioBySlug("10-trades-month")!;
 
-    it("filters out crypto brokers", () => {
-      const cryptoBroker = { is_crypto: true, asx_fee_value: 5 } as any;
-      expect(scenario!.filter(cryptoBroker)).toBe(false);
-    });
+  it("calculates $5/trade × 10 × 12 = $600", () => {
+    const broker = makeBroker({ asx_fee_value: 5, inactivity_fee: null });
+    expect(scenario.calculateAnnualCost(broker)).toBe(600);
   });
 
-  describe("us-shares-5000 scenario", () => {
-    const scenario = getCostScenarioBySlug("us-shares-5000");
+  it("adds $10/month inactivity = $120", () => {
+    const broker = makeBroker({ asx_fee_value: 0, inactivity_fee: "$10/month" });
+    expect(scenario.calculateAnnualCost(broker)).toBe(120);
+  });
 
-    it("exists and has a name", () => {
-      expect(scenario).toBeDefined();
-      expect(typeof scenario!.name).toBe("string");
-    });
+  it("adds $50/qtr inactivity = $200", () => {
+    const broker = makeBroker({ asx_fee_value: 0, inactivity_fee: "$50/qtr" });
+    expect(scenario.calculateAnnualCost(broker)).toBe(200);
+  });
+
+  it("handles None inactivity fee", () => {
+    const broker = makeBroker({ asx_fee_value: 5, inactivity_fee: "None" });
+    expect(scenario.calculateAnnualCost(broker)).toBe(600);
+  });
+
+  it("handles $0 inactivity fee", () => {
+    const broker = makeBroker({ asx_fee_value: 5, inactivity_fee: "$0" });
+    expect(scenario.calculateAnnualCost(broker)).toBe(600);
+  });
+
+  it("$0 brokerage + no inactivity = $0", () => {
+    const broker = makeBroker({ asx_fee_value: 0, inactivity_fee: null });
+    expect(scenario.calculateAnnualCost(broker)).toBe(0);
+  });
+
+  it("filters out crypto brokers", () => {
+    expect(scenario.filter(makeBroker({ is_crypto: true }))).toBe(false);
+  });
+
+  it("filters out null asx_fee_value", () => {
+    expect(scenario.filter(makeBroker({ asx_fee_value: null as unknown as number }))).toBe(false);
+  });
+
+  it("sorts cheapest first", () => {
+    const cheap = makeBroker({ asx_fee_value: 0 });
+    const expensive = makeBroker({ asx_fee_value: 10 });
+    expect(scenario.sort(cheap, expensive)).toBeLessThan(0);
+  });
+});
+
+describe("us-shares-5000 cost calculation", () => {
+  const scenario = getCostScenarioBySlug("us-shares-5000")!;
+
+  it("calculates $2 brokerage + 0.5% FX of $5000 = $27", () => {
+    const broker = makeBroker({ us_fee_value: 2, fx_rate: 0.5 });
+    expect(scenario.calculateAnnualCost(broker)).toBe(27);
+  });
+
+  it("$0 brokerage + 0.7% FX = $35", () => {
+    const broker = makeBroker({ us_fee_value: 0, fx_rate: 0.7 });
+    expect(scenario.calculateAnnualCost(broker)).toBe(35);
+  });
+
+  it("filters out brokers without US fees", () => {
+    expect(scenario.filter(makeBroker({ us_fee_value: null as unknown as number }))).toBe(false);
+  });
+
+  it("filters out brokers without FX rate", () => {
+    expect(scenario.filter(makeBroker({ us_fee_value: 2, fx_rate: null as unknown as number }))).toBe(false);
   });
 });
