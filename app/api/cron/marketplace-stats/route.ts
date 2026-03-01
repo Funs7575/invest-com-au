@@ -252,11 +252,18 @@ export async function GET(req: NextRequest) {
     }
   }
 
+  // ── 6. Refresh per-placement stats (monthly impressions, avg CTR) ──
+  const { error: refreshErr } = await supabase.rpc("refresh_placement_stats");
+  if (!refreshErr) {
+    results.push({ action: "placement_stats_refreshed", detail: "Updated monthly_impressions & avg_ctr_pct on marketplace_placements" });
+  }
+
   return NextResponse.json({
     statsAggregated: results.filter((r) => r.action === "stats_aggregated").length,
     budgetExhausted: results.filter((r) => r.action === "budget_exhausted").length,
     campaignsActivated: results.filter((r) => r.action === "campaign_activated").length,
     campaignsCompleted: results.filter((r) => r.action === "campaign_completed").length,
+    placementStatsRefreshed: !refreshErr,
     digestsSent,
     results,
     timestamp: now.toISOString(),

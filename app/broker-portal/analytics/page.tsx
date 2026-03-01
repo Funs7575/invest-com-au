@@ -19,11 +19,19 @@ interface ConversionRow {
   campaign_id: number | null;
 }
 
+interface PlatformBenchmarks {
+  ctr: number;
+  convRate: number;
+  cpc: number;
+  cpConversion: number;
+}
+
 export default function AnalyticsPage() {
   const [tab, setTab] = useState<TabKey>("overview");
   const [days, setDays] = useState<DateRange>("30d");
   const [stats, setStats] = useState<CampaignDailyStats[]>([]);
   const [conversions, setConversions] = useState<ConversionRow[]>([]);
+  const [platformBenchmarks, setPlatformBenchmarks] = useState<PlatformBenchmarks | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -43,7 +51,7 @@ export default function AnalyticsPage() {
       const d = days === "7d" ? 7 : days === "30d" ? 30 : 90;
       const since = new Date(Date.now() - d * 86400000).toISOString().slice(0, 10);
 
-      const [{ data: s }, { data: c }] = await Promise.all([
+      const [{ data: s }, { data: c }, { data: pb }] = await Promise.all([
         supabase
           .from("campaign_daily_stats")
           .select("*")
@@ -56,10 +64,29 @@ export default function AnalyticsPage() {
           .eq("broker_slug", account.broker_slug)
           .gte("created_at", new Date(Date.now() - d * 86400000).toISOString())
           .order("created_at", { ascending: true }),
+        supabase.rpc("get_platform_benchmarks", { date_from: since }),
       ]);
 
       setStats((s || []) as CampaignDailyStats[]);
       setConversions((c || []) as ConversionRow[]);
+
+      // Compute platform-wide benchmarks from aggregate totals
+      if (pb && Array.isArray(pb) && pb.length > 0) {
+        const row = pb[0] as { total_impressions: number; total_clicks: number; total_conversions: number; total_spend_cents: number };
+        const pImps = Number(row.total_impressions) || 0;
+        const pClicks = Number(row.total_clicks) || 0;
+        const pConvs = Number(row.total_conversions) || 0;
+        const pSpend = Number(row.total_spend_cents) || 0;
+        setPlatformBenchmarks({
+          ctr: pImps > 0 ? (pClicks / pImps) * 100 : 0,
+          convRate: pClicks > 0 ? (pConvs / pClicks) * 100 : 0,
+          cpc: pClicks > 0 ? pSpend / pClicks / 100 : 0,
+          cpConversion: pConvs > 0 ? pSpend / pConvs / 100 : 0,
+        });
+      } else {
+        setPlatformBenchmarks(null);
+      }
+
       setLoading(false);
     };
     load();
@@ -579,16 +606,17 @@ export default function AnalyticsPage() {
       {/* Benchmarks Tab */}
       {tab === "benchmarks" && (
         <>
-          {/* Your Averages vs Industry */}
+          {/* Your Averages vs Industry + Platform */}
           <div className="bg-white rounded-xl border border-slate-200 p-5">
-            <h2 className="font-bold text-slate-900 mb-1 flex items-center gap-1.5">Your Performance vs Industry <InfoTip text="Financial services industry averages: CTR 2.5%, Conv Rate 3.2%, CPC $1.80, Cost per Conv $45." /></h2>
-            <p className="text-xs text-slate-500 mb-4">Compared to average financial services advertising benchmarks</p>
+            <h2 className="font-bold text-slate-900 mb-1 flex items-center gap-1.5">Your Performance vs Benchmarks <InfoTip text="Industry averages are for financial services advertising. Platform averages are computed from all campaigns on Invest.com.au over the selected period." /></h2>
+            <p className="text-xs text-slate-500 mb-4">Compared to industry benchmarks{platformBenchmarks ? " and platform-wide averages" : ""}</p>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 portal-stagger">
               {[
                 {
                   label: "CTR",
                   yours: campaignBenchmarks.averages.ctr,
                   industry: campaignBenchmarks.industry.ctr,
+                  platform: platformBenchmarks?.ctr,
                   format: (v: number) => `${v.toFixed(2)}%`,
                   lowerIsBetter: false,
                 },
@@ -596,6 +624,7 @@ export default function AnalyticsPage() {
                   label: "Conv. Rate",
                   yours: campaignBenchmarks.averages.convRate,
                   industry: campaignBenchmarks.industry.convRate,
+                  platform: platformBenchmarks?.convRate,
                   format: (v: number) => `${v.toFixed(2)}%`,
                   lowerIsBetter: false,
                 },
@@ -603,6 +632,7 @@ export default function AnalyticsPage() {
                   label: "Avg CPC",
                   yours: campaignBenchmarks.averages.cpc,
                   industry: campaignBenchmarks.industry.cpc,
+                  platform: platformBenchmarks?.cpc,
                   format: (v: number) => `$${v.toFixed(2)}`,
                   lowerIsBetter: true,
                 },
@@ -610,6 +640,7 @@ export default function AnalyticsPage() {
                   label: "Cost / Conv.",
                   yours: campaignBenchmarks.averages.cpConversion,
                   industry: campaignBenchmarks.industry.cpConversion,
+                  platform: platformBenchmarks?.cpConversion,
                   format: (v: number) => `$${v.toFixed(2)}`,
                   lowerIsBetter: true,
                 },
@@ -622,27 +653,43 @@ export default function AnalyticsPage() {
                       <p className="text-lg font-extrabold text-slate-900">{metric.format(metric.yours)}</p>
                       <span className={`text-xs font-bold ${indicator.color}`} title={indicator.label}>{indicator.icon}</span>
                     </div>
-                    <div className="mt-2 flex items-center justify-between text-[0.69rem] text-slate-400">
-                      <span>Industry avg</span>
-                      <span className="font-medium text-slate-500">{metric.format(metric.industry)}</span>
+                    <div className="mt-2 space-y-1">
+                      <div className="flex items-center justify-between text-[0.69rem] text-slate-400">
+                        <span>Industry avg</span>
+                        <span className="font-medium text-slate-500">{metric.format(metric.industry)}</span>
+                      </div>
+                      {metric.platform != null && metric.platform > 0 && (
+                        <div className="flex items-center justify-between text-[0.69rem] text-blue-400">
+                          <span>Platform avg</span>
+                          <span className="font-medium text-blue-500">{metric.format(metric.platform)}</span>
+                        </div>
+                      )}
                     </div>
                     {/* Comparison bar */}
                     <div className="mt-1.5 h-1.5 bg-slate-200 rounded-full overflow-hidden relative">
                       {(() => {
-                        const maxVal = Math.max(metric.yours, metric.industry) * 1.3 || 1;
+                        const allVals = [metric.yours, metric.industry, ...(metric.platform != null && metric.platform > 0 ? [metric.platform] : [])];
+                        const maxVal = Math.max(...allVals) * 1.3 || 1;
                         const yoursW = (metric.yours / maxVal) * 100;
                         const industryW = (metric.industry / maxVal) * 100;
+                        const platformW = metric.platform != null && metric.platform > 0 ? (metric.platform / maxVal) * 100 : null;
                         return (
                           <>
                             <div className="absolute h-full bg-slate-900 rounded-full" style={{ width: `${yoursW}%` }} />
                             <div className="absolute h-full w-0.5 bg-amber-500" style={{ left: `${industryW}%` }} title="Industry benchmark" />
+                            {platformW != null && (
+                              <div className="absolute h-full w-0.5 bg-blue-500" style={{ left: `${platformW}%` }} title="Platform average" />
+                            )}
                           </>
                         );
                       })()}
                     </div>
-                    <div className="flex items-center gap-3 mt-1 text-[0.62rem]">
+                    <div className="flex items-center gap-2 mt-1 text-[0.62rem] flex-wrap">
                       <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded bg-slate-900" /> Yours</span>
                       <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded bg-amber-500" /> Industry</span>
+                      {metric.platform != null && metric.platform > 0 && (
+                        <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded bg-blue-500" /> Platform</span>
+                      )}
                     </div>
                   </div>
                 );

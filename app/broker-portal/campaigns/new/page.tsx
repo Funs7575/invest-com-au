@@ -12,64 +12,64 @@ import type { MarketplacePlacement, BrokerCreative } from "@/lib/types";
 const PLACEMENT_VISUALS: Record<string, {
   icon: string;
   color: string;
-  reach: string;
-  avgCtr: string;
+  fallbackReach: number;
+  fallbackAvgCtr: number;
   mockup: "compare" | "quiz" | "homepage" | "article" | "deals";
   tip: string;
 }> = {
   "compare-top": {
     icon: "award",
     color: "amber",
-    reach: "15,000+",
-    avgCtr: "4.2%",
+    fallbackReach: 15000,
+    fallbackAvgCtr: 4.2,
     mockup: "compare",
     tip: "Highest visibility — your brand appears above all competitors",
   },
   "compare-cpc": {
     icon: "mouse-pointer",
     color: "blue",
-    reach: "15,000+",
-    avgCtr: "2.8%",
+    fallbackReach: 15000,
+    fallbackAvgCtr: 2.8,
     mockup: "compare",
     tip: "Pay only when users click through to your site",
   },
   "quiz-boost": {
     icon: "zap",
     color: "purple",
-    reach: "5,000+",
-    avgCtr: "6.1%",
+    fallbackReach: 5000,
+    fallbackAvgCtr: 6.1,
     mockup: "quiz",
     tip: "Reach users with the highest purchase intent",
   },
   "homepage-featured": {
     icon: "star",
     color: "amber",
-    reach: "25,000+",
-    avgCtr: "3.5%",
+    fallbackReach: 25000,
+    fallbackAvgCtr: 3.5,
     mockup: "homepage",
     tip: "Premium position on the most-visited page",
   },
   "articles-sidebar": {
     icon: "book-open",
     color: "green",
-    reach: "20,000+",
-    avgCtr: "1.9%",
+    fallbackReach: 20000,
+    fallbackAvgCtr: 1.9,
     mockup: "article",
     tip: "Contextual placement alongside educational content",
   },
   "deals-featured": {
     icon: "tag",
     color: "red",
-    reach: "8,000+",
-    avgCtr: "5.3%",
+    fallbackReach: 8000,
+    fallbackAvgCtr: 5.3,
     mockup: "deals",
     tip: "Showcase your promotional offers to deal-seekers",
   },
   "deals-cpc": {
     icon: "tag",
     color: "blue",
-    reach: "8,000+",
-    avgCtr: "3.1%",
+    fallbackReach: 8000,
+    fallbackAvgCtr: 3.1,
     mockup: "deals",
     tip: "Pay per click on the deals page",
   },
@@ -317,14 +317,13 @@ const MOCKUP_COMPONENTS = {
 };
 
 /* ─────────────────────── Budget estimator ─────────────────────── */
-function BudgetEstimator({ rate, dailyBudget, totalBudget, type, reach, avgCtr }: {
+function BudgetEstimator({ rate, dailyBudget, totalBudget, type, monthlyImpressions, avgCtrPct, isRealData }: {
   rate: number; dailyBudget: number; totalBudget: number;
-  type: string; reach: string; avgCtr: string;
+  type: string; monthlyImpressions: number; avgCtrPct: number; isRealData: boolean;
 }) {
   if (!rate) return null;
-  const monthlyReach = parseInt(reach.replace(/[^0-9]/g, "")) || 0;
-  const ctr = parseFloat(avgCtr) / 100 || 0.03;
-  const estClicksMonth = Math.round(monthlyReach * ctr);
+  const ctr = avgCtrPct / 100;
+  const estClicksMonth = Math.round(monthlyImpressions * ctr);
   const estMonthlyCost = type === "cpc" ? estClicksMonth * rate : rate;
   const daysToExhaust = totalBudget > 0 && dailyBudget > 0
     ? Math.ceil(totalBudget / dailyBudget)
@@ -338,22 +337,26 @@ function BudgetEstimator({ rate, dailyBudget, totalBudget, type, reach, avgCtr }
         <Icon name="trending-up" size={12} className="text-amber-500" />
         Estimated Performance
       </h4>
+      <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[0.6rem] font-medium ${isRealData ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-slate-100 text-slate-500 border border-slate-200"}`}>
+        <Icon name={isRealData ? "activity" : "info"} size={10} />
+        {isRealData ? "Based on last 30 days of real data" : "Estimated — updates once campaigns run"}
+      </div>
       <div className="grid grid-cols-2 gap-2">
         <div className="bg-white rounded-lg p-2.5 border border-slate-200">
           <p className="text-[0.6rem] text-slate-400 font-medium">Monthly Reach</p>
-          <p className="text-sm font-extrabold text-slate-900">{reach}</p>
-          <p className="text-[0.5rem] text-slate-400">visitors/mo</p>
+          <p className="text-sm font-extrabold text-slate-900">{monthlyImpressions.toLocaleString()}+</p>
+          <p className="text-[0.5rem] text-slate-400">impressions/mo</p>
         </div>
         <div className="bg-white rounded-lg p-2.5 border border-slate-200">
           <p className="text-[0.6rem] text-slate-400 font-medium">Avg. CTR</p>
-          <p className="text-sm font-extrabold text-slate-900">{avgCtr}</p>
+          <p className="text-sm font-extrabold text-slate-900">{avgCtrPct.toFixed(1)}%</p>
           <p className="text-[0.5rem] text-slate-400">click-through rate</p>
         </div>
         {type === "cpc" && (
           <div className="bg-white rounded-lg p-2.5 border border-slate-200">
             <p className="text-[0.6rem] text-slate-400 font-medium">Est. Clicks/mo</p>
             <p className="text-sm font-extrabold text-blue-700">~{estClicksMonth.toLocaleString()}</p>
-            <p className="text-[0.5rem] text-slate-400">at {avgCtr} CTR</p>
+            <p className="text-[0.5rem] text-slate-400">at {avgCtrPct.toFixed(1)}% CTR</p>
           </div>
         )}
         <div className="bg-white rounded-lg p-2.5 border border-slate-200">
@@ -572,11 +575,15 @@ export default function NewCampaignPage() {
                             from ${(p.base_rate_cents / 100).toFixed(2)}{p.inventory_type === "cpc" ? "/click" : "/mo"}
                           </span>
                         )}
-                        {vis && (
-                          <span className="text-xs text-slate-400">
-                            {vis.reach} visitors/mo
-                          </span>
-                        )}
+                        {(() => {
+                          const hasReal = (p.monthly_impressions ?? 0) > 0;
+                          const reach = hasReal ? p.monthly_impressions! : vis?.fallbackReach;
+                          return reach ? (
+                            <span className="text-xs text-slate-400">
+                              {reach.toLocaleString()}+ {hasReal ? "impressions" : "est. visitors"}/mo
+                            </span>
+                          ) : null;
+                        })()}
                         <span className="text-xs text-slate-400">
                           {p.max_slots} slot{p.max_slots > 1 ? "s" : ""}
                         </span>
@@ -746,14 +753,22 @@ export default function NewCampaignPage() {
               )}
 
               {/* Budget estimator */}
-              <BudgetEstimator
-                rate={rateCents ? Math.round(parseFloat(rateCents) * 100) : 0}
-                dailyBudget={dailyBudget ? Math.round(parseFloat(dailyBudget) * 100) : 0}
-                totalBudget={totalBudget ? Math.round(parseFloat(totalBudget) * 100) : 0}
-                type={selectedPlacement.inventory_type}
-                reach={visualMeta.reach}
-                avgCtr={visualMeta.avgCtr}
-              />
+              {(() => {
+                const hasRealData = (selectedPlacement.monthly_impressions ?? 0) > 0;
+                const monthlyImpressions = hasRealData ? selectedPlacement.monthly_impressions! : visualMeta.fallbackReach;
+                const avgCtrPct = hasRealData ? Number(selectedPlacement.avg_ctr_pct ?? 0) : visualMeta.fallbackAvgCtr;
+                return (
+                  <BudgetEstimator
+                    rate={rateCents ? Math.round(parseFloat(rateCents) * 100) : 0}
+                    dailyBudget={dailyBudget ? Math.round(parseFloat(dailyBudget) * 100) : 0}
+                    totalBudget={totalBudget ? Math.round(parseFloat(totalBudget) * 100) : 0}
+                    type={selectedPlacement.inventory_type}
+                    monthlyImpressions={monthlyImpressions}
+                    avgCtrPct={avgCtrPct}
+                    isRealData={hasRealData}
+                  />
+                );
+              })()}
             </>
           ) : (
             /* Fallback for unknown placements */

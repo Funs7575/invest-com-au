@@ -568,6 +568,9 @@ export interface MarketplacePlacement {
   base_rate_cents?: number;
   description?: string;
   is_active: boolean;
+  monthly_impressions?: number;
+  avg_ctr_pct?: number;
+  stats_updated_at?: string;
 }
 
 export interface Campaign {
