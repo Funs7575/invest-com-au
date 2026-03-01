@@ -4,6 +4,17 @@ import type { NextRequest } from 'next/server'
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
+
+  // ── Cron route protection ──────────────────────────────────────
+  // Vercel cron jobs send a Bearer token — reject unauthorized callers.
+  if (pathname.startsWith('/api/cron/')) {
+    const authHeader = request.headers.get('authorization')
+    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    return NextResponse.next()
+  }
+
   let response = NextResponse.next({ request })
 
   // ── Preview deploy protection ──────────────────────────────────
