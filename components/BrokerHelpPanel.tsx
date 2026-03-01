@@ -118,17 +118,6 @@ const helpContent: Record<string, { description: string; tips: HelpEntry[] }> = 
       ]},
     ],
   },
-  "/broker-portal/invoices": {
-    description: "View invoices and receipts for wallet top-ups. Download receipts for paid invoices.",
-    tips: [
-      { title: "Invoice Statuses", items: [
-        "Paid (green) -- payment received, receipt available.",
-        "Pending (amber) -- payment initiated but not yet confirmed.",
-        "Failed (red) -- payment attempt failed, funds not added.",
-        "Refunded (blue) -- payment was reversed.",
-      ]},
-    ],
-  },
   "/broker-portal/conversions": {
     description: "Track conversion events reported via the Postback API. See how ad clicks convert into account opens, funding, and first trades.",
     tips: [
