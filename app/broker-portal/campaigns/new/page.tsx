@@ -345,7 +345,7 @@ function BudgetEstimator({ rate, dailyBudget, totalBudget, type, monthlyImpressi
         <div className="bg-white rounded-lg p-2.5 border border-slate-200">
           <p className="text-[0.6rem] text-slate-400 font-medium">Monthly Reach</p>
           <p className="text-sm font-extrabold text-slate-900">{monthlyImpressions.toLocaleString()}+</p>
-          <p className="text-[0.5rem] text-slate-400">impressions/mo</p>
+          <p className="text-[0.5rem] text-slate-400">{isRealData ? "impressions/mo" : "est. visitors/mo"}</p>
         </div>
         <div className="bg-white rounded-lg p-2.5 border border-slate-200">
           <p className="text-[0.6rem] text-slate-400 font-medium">Avg. CTR</p>
