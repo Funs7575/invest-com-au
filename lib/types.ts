@@ -593,6 +593,12 @@ export interface Campaign {
   active_hours_start?: number | null;
   active_hours_end?: number | null;
   active_days?: number[] | null;
+  bid_strategy?: 'manual' | 'target_cpa';
+  target_cpa_cents?: number;
+  auto_bid_min_cents?: number;
+  auto_bid_max_cents?: number;
+  auto_bid_current_cents?: number;
+  auto_bid_last_adjusted_at?: string;
   created_at: string;
   updated_at: string;
   placement?: MarketplacePlacement;
@@ -756,7 +762,7 @@ export interface ABTest {
 export interface BrokerNotification {
   id: number;
   broker_slug: string;
-  type: 'low_balance' | 'campaign_approved' | 'campaign_rejected' | 'campaign_paused' | 'budget_exhausted' | 'payment_received' | 'system' | 'support_reply' | 'budget_pacing' | 'anomaly' | 'recommendation' | 're_engagement';
+  type: 'low_balance' | 'campaign_approved' | 'campaign_rejected' | 'campaign_paused' | 'budget_exhausted' | 'payment_received' | 'system' | 'support_reply' | 'budget_pacing' | 'anomaly' | 'recommendation' | 're_engagement' | 'auto_bid_adjustment';
   title: string;
   message: string;
   link?: string;

@@ -1,5 +1,3 @@
-"use client";
-
 import type { Broker } from "@/lib/types";
 
 export default function FeeBarChart({

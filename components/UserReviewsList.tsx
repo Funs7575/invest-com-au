@@ -1,5 +1,3 @@
-"use client";
-
 import type { UserReview, BrokerReviewStats } from "@/lib/types";
 import UserReviewForm from "./UserReviewForm";
 

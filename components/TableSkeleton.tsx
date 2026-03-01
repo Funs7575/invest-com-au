@@ -1,5 +1,3 @@
-"use client";
-
 interface TableSkeletonProps {
   /** Number of skeleton rows to render */
   rows?: number;

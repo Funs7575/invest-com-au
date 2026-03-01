@@ -1,5 +1,3 @@
-"use client";
-
 import type { Broker } from "@/lib/types";
 import BrokerComparisonTable from "./BrokerComparisonTable";
 import EmbeddedFxCalc from "./EmbeddedFxCalc";

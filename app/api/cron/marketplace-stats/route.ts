@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
+import { calculateOptimalBids, applyBidAdjustments } from "@/lib/marketplace/auto-bid";
 
 export const runtime = "edge";
 export const maxDuration = 60;
@@ -555,6 +556,26 @@ export async function GET(req: NextRequest) {
     }
   }
 
+  // ── 11. Auto-Bid Optimization ──
+  let autoBidAdjustments = 0;
+  try {
+    const adjustments = await calculateOptimalBids();
+    if (adjustments.length > 0) {
+      autoBidAdjustments = await applyBidAdjustments(adjustments);
+      for (const adj of adjustments) {
+        results.push({
+          action: "auto_bid_adjusted",
+          detail: `Campaign #${adj.campaign_id} (${adj.broker_slug}): $${(adj.old_bid_cents / 100).toFixed(2)} → $${(adj.new_bid_cents / 100).toFixed(2)} (${adj.reason})`,
+        });
+      }
+    }
+  } catch (err) {
+    results.push({
+      action: "auto_bid_error",
+      detail: err instanceof Error ? err.message : "Unknown error",
+    });
+  }
+
   return NextResponse.json({
     statsAggregated: results.filter((r) => r.action === "stats_aggregated").length,
     budgetExhausted: results.filter((r) => r.action === "budget_exhausted").length,
@@ -566,6 +587,7 @@ export async function GET(req: NextRequest) {
     anomalyAlerts,
     recommendationsSent,
     reEngagementsSent,
+    autoBidAdjustments,
     results,
     timestamp: now.toISOString(),
   });

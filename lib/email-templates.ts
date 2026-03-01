@@ -935,3 +935,448 @@ export function checkInEmail(
       : `${safeName}, need help launching your first campaign? We're here for you.`
   );
 }
+
+// ─── Quiz Follow-Up: Email 1 — Deep Dive (Day 2) ───────────────────────────
+
+export function quizFollowUp1Email(
+  name: string,
+  topBroker: {
+    name: string;
+    slug: string;
+    rating?: number;
+    asx_fee?: string;
+    us_fee?: string;
+    chess_sponsored?: boolean;
+    pros?: string[];
+    tagline?: string;
+  },
+  experience: string | null,
+  investmentRange: string | null
+): string {
+  const safeName = escapeHtml(name || "there");
+  const safeBrokerName = escapeHtml(topBroker.name);
+  const safeTagline = topBroker.tagline ? escapeHtml(topBroker.tagline) : "";
+  const ratingDisplay = topBroker.rating
+    ? `${topBroker.rating}/5`
+    : "";
+
+  // Build "Why we matched you" section
+  const matchReasons: string[] = [];
+  if (experience) {
+    matchReasons.push(`your <strong style="color:${BRAND_DARK};">${escapeHtml(experience)}</strong> experience level`);
+  }
+  if (investmentRange) {
+    matchReasons.push(`a <strong style="color:${BRAND_DARK};">${escapeHtml(investmentRange)}</strong> investment range`);
+  }
+  const matchExplanation = matchReasons.length > 0
+    ? `Based on ${matchReasons.join(" and ")}, ${safeBrokerName} stood out as the strongest fit for your investing goals.`
+    : `Based on your quiz answers, ${safeBrokerName} stood out as the strongest fit for your investing goals.`;
+
+  // Pros list (max 4)
+  const prosItems = (topBroker.pros || []).slice(0, 4);
+  const prosHtml = prosItems.length > 0
+    ? prosItems
+        .map(
+          (p) => `
+        <tr>
+          <td style="padding:6px 0;font-size:14px;color:#475569;line-height:1.6;">
+            <span style="color:${BRAND_EMERALD};font-weight:700;margin-right:8px;">&#10003;</span>
+            ${escapeHtml(p)}
+          </td>
+        </tr>`
+        )
+        .join("")
+    : "";
+
+  // Experience-based tip
+  let experienceTip = "";
+  if (experience) {
+    const lower = experience.toLowerCase();
+    if (lower.includes("beginner")) {
+      experienceTip = `As someone just starting out, look for a platform with strong educational resources and an intuitive interface. ${safeBrokerName} is known for making things simple for new investors.`;
+    } else if (lower.includes("intermediate")) {
+      experienceTip = `With some experience under your belt, you'll appreciate access to research tools and competitive fees. ${safeBrokerName} offers a solid balance of features and value.`;
+    } else if (lower.includes("advanced") || lower.includes("pro")) {
+      experienceTip = `As an experienced investor, you'll want advanced charting, deep market access, and professional-grade tools. ${safeBrokerName} delivers on the features that matter most.`;
+    }
+  }
+
+  const content = `
+    <div style="display:inline-block;padding:4px 12px;background:#dcfce7;border-radius:100px;margin-bottom:16px;">
+      <span style="font-size:12px;font-weight:700;color:${BRAND_EMERALD};text-transform:uppercase;letter-spacing:0.5px;">Your Quiz Match</span>
+    </div>
+    <h1 style="margin:0 0 8px;font-size:24px;font-weight:800;color:${BRAND_DARK};">A Deeper Look at ${safeBrokerName}</h1>
+    <p style="margin:0 0 24px;font-size:15px;color:#475569;line-height:1.7;">
+      Hi ${safeName}, a couple of days ago you took our broker quiz and matched with ${safeBrokerName}. Here's a closer look at why it's a great fit for you.
+    </p>
+
+    <!-- Why we matched you -->
+    <div style="background:#eff6ff;border-radius:8px;padding:16px 20px;margin-bottom:24px;border-left:4px solid #2563eb;">
+      <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#2563eb;text-transform:uppercase;letter-spacing:0.5px;">Why We Matched You</p>
+      <p style="margin:0;font-size:14px;color:#1e40af;line-height:1.6;">
+        ${matchExplanation}
+      </p>
+    </div>
+
+    <!-- Broker deep dive card -->
+    <div style="border:2px solid ${BRAND_EMERALD};border-radius:10px;overflow:hidden;margin-bottom:24px;">
+      <div style="background:${BRAND_EMERALD};padding:14px 20px;">
+        <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+          <tr>
+            <td>
+              <span style="font-size:18px;font-weight:800;color:#ffffff;">${safeBrokerName}</span>
+            </td>
+            ${ratingDisplay ? `<td align="right"><span style="font-size:14px;font-weight:700;color:rgba(255,255,255,0.9);">${ratingDisplay}</span></td>` : ""}
+          </tr>
+        </table>
+      </div>
+      <div style="padding:20px;">
+        ${safeTagline ? `<p style="margin:0 0 16px;font-size:14px;color:${TEXT_MUTED};font-style:italic;">${safeTagline}</p>` : ""}
+        <!-- Fee summary -->
+        <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:16px;">
+          <tr>
+            <td style="text-align:center;padding:12px 8px;background:${BG_LIGHT};border-radius:8px 0 0 8px;">
+              <p style="margin:0 0 2px;font-size:11px;color:${TEXT_MUTED};text-transform:uppercase;letter-spacing:0.5px;">ASX Fee</p>
+              <p style="margin:0;font-size:18px;font-weight:800;color:${BRAND_DARK};">${escapeHtml(topBroker.asx_fee || "N/A")}</p>
+            </td>
+            <td style="text-align:center;padding:12px 8px;background:${BG_LIGHT};">
+              <p style="margin:0 0 2px;font-size:11px;color:${TEXT_MUTED};text-transform:uppercase;letter-spacing:0.5px;">US Fee</p>
+              <p style="margin:0;font-size:18px;font-weight:800;color:${BRAND_DARK};">${escapeHtml(topBroker.us_fee || "N/A")}</p>
+            </td>
+            <td style="text-align:center;padding:12px 8px;background:${BG_LIGHT};border-radius:0 8px 8px 0;">
+              <p style="margin:0 0 2px;font-size:11px;color:${TEXT_MUTED};text-transform:uppercase;letter-spacing:0.5px;">CHESS</p>
+              <p style="margin:0;font-size:18px;font-weight:800;color:${topBroker.chess_sponsored ? BRAND_EMERALD : "#dc2626"};">${topBroker.chess_sponsored ? "Yes" : "No"}</p>
+            </td>
+          </tr>
+        </table>
+        ${prosHtml ? `
+        <!-- Key strengths -->
+        <p style="margin:0 0 8px;font-size:13px;font-weight:700;color:${BRAND_DARK};text-transform:uppercase;letter-spacing:0.5px;">Key Strengths</p>
+        <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+          ${prosHtml}
+        </table>` : ""}
+      </div>
+    </div>
+
+    ${experienceTip ? `
+    <div style="background:${BG_LIGHT};border-radius:8px;padding:16px 20px;margin-bottom:24px;">
+      <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:${BRAND_EMERALD};text-transform:uppercase;letter-spacing:0.5px;">Personalised Tip</p>
+      <p style="margin:0;font-size:14px;color:#475569;line-height:1.6;">${experienceTip}</p>
+    </div>` : ""}
+
+    <div style="text-align:center;">
+      <table role="presentation" cellpadding="0" cellspacing="0" align="center">
+        <tr>
+          <td style="border-radius:8px;background:${BRAND_EMERALD};">
+            <a href="${BASE_URL}/broker/${escapeHtml(topBroker.slug)}" style="display:inline-block;padding:14px 32px;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px;">
+              Read the Full ${safeBrokerName} Review &rarr;
+            </a>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <p style="margin:24px 0 0;font-size:13px;color:${TEXT_LIGHT};text-align:center;">
+      This is part of your personalised broker quiz follow-up series from Invest.com.au.
+    </p>`;
+
+  return baseTemplate(
+    content,
+    `${safeName}, here's a deeper look at why ${safeBrokerName} is your top broker match.`
+  );
+}
+
+// ─── Quiz Follow-Up: Email 2 — Comparison (Day 5) ──────────────────────────
+
+export function quizFollowUp2Email(
+  name: string,
+  brokers: {
+    name: string;
+    slug: string;
+    rating?: number;
+    asx_fee?: string;
+    us_fee?: string;
+  }[],
+  tradingInterest: string | null
+): string {
+  const safeName = escapeHtml(name || "there");
+
+  // Build comparison table rows
+  const comparisonRows = brokers
+    .map(
+      (b, i) => `
+      <tr${i === 0 ? ` style="background:#f0fdf4;"` : ""}>
+        <td style="padding:12px;border-bottom:1px solid #f1f5f9;">
+          <span style="font-weight:700;color:${BRAND_DARK};font-size:14px;">${i === 0 ? `<span style="color:${BRAND_EMERALD};">&#9733;</span> ` : ""}${escapeHtml(b.name)}</span>
+          ${i === 0 ? `<br><span style="font-size:11px;color:${BRAND_EMERALD};font-weight:600;">YOUR TOP MATCH</span>` : ""}
+        </td>
+        <td style="padding:12px;border-bottom:1px solid #f1f5f9;text-align:center;font-size:14px;color:${BRAND_DARK};font-weight:600;">
+          ${b.rating ? `${b.rating}/5` : "&ndash;"}
+        </td>
+        <td style="padding:12px;border-bottom:1px solid #f1f5f9;text-align:center;font-size:14px;color:${BRAND_DARK};">
+          ${escapeHtml(b.asx_fee || "N/A")}
+        </td>
+        <td style="padding:12px;border-bottom:1px solid #f1f5f9;text-align:center;font-size:14px;color:${BRAND_DARK};">
+          ${escapeHtml(b.us_fee || "N/A")}
+        </td>
+        <td style="padding:12px;border-bottom:1px solid #f1f5f9;text-align:center;">
+          <a href="${BASE_URL}/broker/${escapeHtml(b.slug)}" style="color:${BRAND_EMERALD};font-size:13px;font-weight:600;text-decoration:none;">View &rarr;</a>
+        </td>
+      </tr>`
+    )
+    .join("");
+
+  // Trading interest-specific callout
+  let interestCallout = "";
+  if (tradingInterest) {
+    const lower = tradingInterest.toLowerCase();
+    if (lower.includes("crypto")) {
+      interestCallout = `
+      <div style="background:#fef3c7;border-radius:8px;padding:16px 20px;margin-bottom:24px;border-left:4px solid #f59e0b;">
+        <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:0.5px;">For Crypto Investors</p>
+        <p style="margin:0;font-size:14px;color:#78350f;line-height:1.6;">
+          Did you know not all brokers offer crypto trading in Australia? When comparing, check for the number of supported coins, wallet transfer options, and whether staking rewards are available. Fees can vary dramatically between platforms.
+        </p>
+      </div>`;
+    } else if (lower.includes("income") || lower.includes("dividend")) {
+      interestCallout = `
+      <div style="background:#eff6ff;border-radius:8px;padding:16px 20px;margin-bottom:24px;border-left:4px solid #2563eb;">
+        <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#1e40af;text-transform:uppercase;letter-spacing:0.5px;">For Dividend Investors</p>
+        <p style="margin:0;font-size:14px;color:#1e40af;line-height:1.6;">
+          When building an income portfolio, look for CHESS sponsorship (so dividends are paid directly to you), low ongoing fees, and support for DRPs (Dividend Reinvestment Plans). SMSF compatibility is also worth considering for tax-effective income.
+        </p>
+      </div>`;
+    } else if (lower.includes("active") || lower.includes("trad")) {
+      interestCallout = `
+      <div style="background:#faf5ff;border-radius:8px;padding:16px 20px;margin-bottom:24px;border-left:4px solid #7c3aed;">
+        <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:#6d28d9;text-transform:uppercase;letter-spacing:0.5px;">For Active Traders</p>
+        <p style="margin:0;font-size:14px;color:#5b21b6;line-height:1.6;">
+          Frequent traders should focus on per-trade fees (they add up fast), platform speed, charting tools, and conditional order types. Some brokers offer tiered pricing that rewards higher volumes with lower per-trade costs.
+        </p>
+      </div>`;
+    } else if (lower.includes("growth") || lower.includes("long")) {
+      interestCallout = `
+      <div style="background:#ecfdf5;border-radius:8px;padding:16px 20px;margin-bottom:24px;border-left:4px solid ${BRAND_EMERALD};">
+        <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:${BRAND_EMERALD};text-transform:uppercase;letter-spacing:0.5px;">For Long-Term Growth</p>
+        <p style="margin:0;font-size:14px;color:#065f46;line-height:1.6;">
+          Buy-and-hold investors should prioritise low brokerage fees (since you trade less often), CHESS sponsorship for security, and access to international markets like the US for diversification. Avoid platforms with inactivity fees.
+        </p>
+      </div>`;
+    }
+  }
+
+  const topBrokerName = brokers.length > 0 ? escapeHtml(brokers[0].name) : "your top match";
+
+  const content = `
+    <div style="display:inline-block;padding:4px 12px;background:#dcfce7;border-radius:100px;margin-bottom:16px;">
+      <span style="font-size:12px;font-weight:700;color:${BRAND_EMERALD};text-transform:uppercase;letter-spacing:0.5px;">Broker Comparison</span>
+    </div>
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:${BRAND_DARK};">How Does ${topBrokerName} Compare?</h1>
+    <p style="margin:0 0 24px;font-size:15px;color:#475569;line-height:1.7;">
+      Hi ${safeName}, choosing the right broker is easier when you see them side by side. Here's how your top match stacks up against two other highly-rated options.
+    </p>
+
+    <!-- Comparison table -->
+    <div style="overflow-x:auto;margin-bottom:24px;">
+      <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;border:1px solid ${BORDER};border-radius:8px;">
+        <thead>
+          <tr style="background:${BG_LIGHT};">
+            <th style="padding:10px 12px;text-align:left;font-size:11px;text-transform:uppercase;color:${TEXT_MUTED};letter-spacing:0.5px;border-bottom:2px solid ${BORDER};">Broker</th>
+            <th style="padding:10px 12px;text-align:center;font-size:11px;text-transform:uppercase;color:${TEXT_MUTED};letter-spacing:0.5px;border-bottom:2px solid ${BORDER};">Rating</th>
+            <th style="padding:10px 12px;text-align:center;font-size:11px;text-transform:uppercase;color:${TEXT_MUTED};letter-spacing:0.5px;border-bottom:2px solid ${BORDER};">ASX Fee</th>
+            <th style="padding:10px 12px;text-align:center;font-size:11px;text-transform:uppercase;color:${TEXT_MUTED};letter-spacing:0.5px;border-bottom:2px solid ${BORDER};">US Fee</th>
+            <th style="padding:10px 12px;text-align:center;font-size:11px;text-transform:uppercase;color:${TEXT_MUTED};letter-spacing:0.5px;border-bottom:2px solid ${BORDER};"></th>
+          </tr>
+        </thead>
+        <tbody>
+          ${comparisonRows}
+        </tbody>
+      </table>
+    </div>
+
+    ${interestCallout}
+
+    <div style="background:${BG_LIGHT};border-radius:8px;padding:16px 20px;margin-bottom:24px;">
+      <p style="margin:0;font-size:14px;color:#475569;line-height:1.6;">
+        Want to see even more brokers? Our full comparison page lets you filter by fees, features, markets, and more &mdash; so you can find the perfect fit with confidence.
+      </p>
+    </div>
+
+    <div style="text-align:center;">
+      <table role="presentation" cellpadding="0" cellspacing="0" align="center">
+        <tr>
+          <td style="border-radius:8px;background:${BRAND_EMERALD};">
+            <a href="${BASE_URL}/compare" style="display:inline-block;padding:14px 32px;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px;">
+              Compare All Brokers &rarr;
+            </a>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <p style="margin:24px 0 0;font-size:13px;color:${TEXT_LIGHT};text-align:center;">
+      This is part of your personalised broker quiz follow-up series from Invest.com.au.
+    </p>`;
+
+  return baseTemplate(
+    content,
+    `${safeName}, see how ${topBrokerName} compares to Australia's other top brokers side by side.`
+  );
+}
+
+// ─── Quiz Follow-Up: Email 3 — Action (Day 8) ──────────────────────────────
+
+export function quizFollowUp3Email(
+  name: string,
+  topBroker: {
+    name: string;
+    slug: string;
+    affiliate_url?: string;
+    deal_text?: string;
+  },
+  hasActiveDeal: boolean
+): string {
+  const safeName = escapeHtml(name || "there");
+  const safeBrokerName = escapeHtml(topBroker.name);
+
+  // Primary CTA link: affiliate URL if available, otherwise review page
+  const ctaUrl = topBroker.affiliate_url
+    ? `${BASE_URL}/go/${escapeHtml(topBroker.slug)}`
+    : `${BASE_URL}/broker/${escapeHtml(topBroker.slug)}`;
+  const ctaText = topBroker.affiliate_url
+    ? `Visit ${safeBrokerName} &rarr;`
+    : `Read ${safeBrokerName} Review &rarr;`;
+
+  // Deal card (shown prominently if broker has an active deal)
+  const dealCard = hasActiveDeal && topBroker.deal_text
+    ? `
+    <div style="border:2px solid #f59e0b;border-radius:10px;overflow:hidden;margin-bottom:24px;">
+      <div style="background:#fef3c7;padding:12px 20px;">
+        <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+          <tr>
+            <td>
+              <span style="font-size:12px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:0.5px;">Limited Offer</span>
+            </td>
+            <td align="right">
+              <span style="font-size:12px;font-weight:600;color:#92400e;">${safeBrokerName}</span>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div style="padding:20px;background:#fffbeb;">
+        <p style="margin:0 0 16px;font-size:18px;font-weight:800;color:${BRAND_DARK};line-height:1.4;">
+          ${escapeHtml(topBroker.deal_text)}
+        </p>
+        <table role="presentation" cellpadding="0" cellspacing="0">
+          <tr>
+            <td style="border-radius:8px;background:#f59e0b;">
+              <a href="${ctaUrl}" style="display:inline-block;padding:12px 28px;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px;">
+                Claim This Deal &rarr;
+              </a>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>`
+    : "";
+
+  const content = `
+    <div style="display:inline-block;padding:4px 12px;background:#dcfce7;border-radius:100px;margin-bottom:16px;">
+      <span style="font-size:12px;font-weight:700;color:${BRAND_EMERALD};text-transform:uppercase;letter-spacing:0.5px;">Your Next Step</span>
+    </div>
+    <h1 style="margin:0 0 8px;font-size:24px;font-weight:800;color:${BRAND_DARK};">Ready to Start Investing, ${safeName}?</h1>
+    <p style="margin:0 0 24px;font-size:15px;color:#475569;line-height:1.7;">
+      You took our broker quiz and ${safeBrokerName} came out on top. Now it's time to take the next step &mdash; opening an account usually takes less than 10 minutes.
+    </p>
+
+    ${dealCard}
+
+    <!-- Steps to get started -->
+    <div style="background:${BG_LIGHT};border-radius:8px;padding:24px;margin-bottom:24px;">
+      <p style="margin:0 0 16px;font-size:14px;font-weight:700;color:${BRAND_DARK};">Getting started is simple:</p>
+      <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+          <td style="padding:8px 0;font-size:14px;color:#475569;border-bottom:1px solid ${BORDER};">
+            <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+              <tr>
+                <td width="32" valign="top">
+                  <span style="display:inline-block;width:24px;height:24px;background:${BRAND_EMERALD};border-radius:6px;text-align:center;line-height:24px;font-size:13px;color:#ffffff;font-weight:700;">1</span>
+                </td>
+                <td style="padding-left:8px;">
+                  <strong style="color:${BRAND_DARK};">Open an account online</strong>
+                  <br><span style="font-size:13px;color:${TEXT_MUTED};">Most applications are approved within minutes</span>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:8px 0;font-size:14px;color:#475569;border-bottom:1px solid ${BORDER};">
+            <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+              <tr>
+                <td width="32" valign="top">
+                  <span style="display:inline-block;width:24px;height:24px;background:${BRAND_EMERALD};border-radius:6px;text-align:center;line-height:24px;font-size:13px;color:#ffffff;font-weight:700;">2</span>
+                </td>
+                <td style="padding-left:8px;">
+                  <strong style="color:${BRAND_DARK};">Verify your identity</strong>
+                  <br><span style="font-size:13px;color:${TEXT_MUTED};">Have your driver's licence or passport ready</span>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:8px 0;font-size:14px;color:#475569;">
+            <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+              <tr>
+                <td width="32" valign="top">
+                  <span style="display:inline-block;width:24px;height:24px;background:${BRAND_EMERALD};border-radius:6px;text-align:center;line-height:24px;font-size:13px;color:#ffffff;font-weight:700;">3</span>
+                </td>
+                <td style="padding-left:8px;">
+                  <strong style="color:${BRAND_DARK};">Fund your account and start investing</strong>
+                  <br><span style="font-size:13px;color:${TEXT_MUTED};">Transfer funds via bank transfer, BPAY, or card</span>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Social proof -->
+    <div style="text-align:center;margin-bottom:24px;">
+      <div style="display:inline-block;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px 24px;">
+        <p style="margin:0;font-size:14px;color:${BRAND_EMERALD};font-weight:600;">
+          Thousands of Australians have used our quiz to find their perfect broker
+        </p>
+      </div>
+    </div>
+
+    <!-- Primary CTA -->
+    <div style="text-align:center;margin-bottom:16px;">
+      <table role="presentation" cellpadding="0" cellspacing="0" align="center">
+        <tr>
+          <td style="border-radius:8px;background:${BRAND_EMERALD};">
+            <a href="${ctaUrl}" style="display:inline-block;padding:14px 36px;color:#ffffff;font-size:15px;font-weight:700;text-decoration:none;border-radius:8px;">
+              ${ctaText}
+            </a>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Secondary CTA -->
+    <div style="text-align:center;margin-bottom:8px;">
+      <a href="${BASE_URL}/broker/${escapeHtml(topBroker.slug)}" style="color:${BRAND_EMERALD};font-size:13px;font-weight:600;text-decoration:none;">Read the full ${safeBrokerName} review &rarr;</a>
+    </div>
+
+    <p style="margin:24px 0 0;font-size:13px;color:${TEXT_LIGHT};text-align:center;">
+      This is the final email in your quiz follow-up series. We hope it helped!<br>
+      Questions? Reply to this email or visit our <a href="${BASE_URL}/learn" style="color:${BRAND_EMERALD};text-decoration:underline;">learning hub</a>.
+    </p>`;
+
+  return baseTemplate(
+    content,
+    `${safeName}, your next step to start investing with ${safeBrokerName} is just a click away.`
+  );
+}

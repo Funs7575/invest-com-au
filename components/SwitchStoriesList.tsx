@@ -1,5 +1,3 @@
-"use client";
-
 import type { SwitchStory } from "@/lib/types";
 import SwitchStoryForm from "./SwitchStoryForm";
 

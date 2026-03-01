@@ -1,5 +1,3 @@
-"use client";
-
 /**
  * Privacy-enhanced video embed for YouTube and Vimeo.
  * - YouTube: uses youtube-nocookie.com

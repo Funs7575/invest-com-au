@@ -89,6 +89,9 @@ export async function getWinningCampaigns(
   }
 
   // 2. Query active campaigns for this placement
+  // Note: For campaigns with bid_strategy='target_cpa', rate_cents is
+  // automatically updated by the auto-bid optimizer cron. This means the
+  // standard auction ranking works for both manual and auto-bid campaigns.
   let query = supabase
     .from("campaigns")
     .select("*")

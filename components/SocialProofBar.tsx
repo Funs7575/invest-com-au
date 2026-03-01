@@ -1,5 +1,3 @@
-"use client";
-
 import JargonTooltip from "@/components/JargonTooltip";
 
 /**
