@@ -211,7 +211,7 @@ export default function BrokerOnboarding({ accountCreatedAt }: BrokerOnboardingP
               <div className="bg-slate-50 rounded-xl p-5 border border-slate-200 space-y-3 mb-4">
                 <div>
                   <label className="block text-xs font-medium text-slate-600 mb-1">Campaign Name</label>
-                  <input type="text" placeholder="e.g. Q1 2025 ASX Promotion"
+                  <input type="text" placeholder="e.g. Q1 2026 ASX Promotion"
                     className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400" />
                 </div>
                 <div>

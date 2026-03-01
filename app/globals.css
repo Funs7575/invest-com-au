@@ -15,15 +15,15 @@
   --color-amber-800: #92400e;
   --color-amber-900: #78350f;
 
-  --color-green-50: #f0fdf4;
-  --color-green-100: #dcfce7;
-  --color-green-200: #bbf7d0;
-  --color-green-500: #22c55e;
-  --color-green-600: #16a34a;
-  --color-green-700: #15803d;
-  --color-green-800: #166534;
-  --color-green-900: #14532d;
-  --color-green-950: #052e16;
+  --color-emerald-50: #ecfdf5;
+  --color-emerald-100: #d1fae5;
+  --color-emerald-200: #a7f3d0;
+  --color-emerald-500: #10b981;
+  --color-emerald-600: #059669;
+  --color-emerald-700: #047857;
+  --color-emerald-800: #065f46;
+  --color-emerald-900: #064e3b;
+  --color-emerald-950: #022c22;
 
   /* Trust blue — used for nav, links, active states, selected filters */
   --color-blue-50: #eff6ff;
@@ -194,7 +194,7 @@ body {
   box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.1);
 }
 .form-field.form-success {
-  border-color: var(--color-green-600);
+  border-color: var(--color-emerald-600);
   box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
 }
 .form-field.form-error {
@@ -772,24 +772,14 @@ html.dark body {
 html.dark .bg-white { background-color: var(--bg-card) !important; }
 html.dark .bg-slate-50 { background-color: #1e293b !important; }
 html.dark .bg-slate-100 { background-color: #1e293b !important; }
-html.dark .bg-gray-50 { background-color: #1e293b !important; }
-html.dark .bg-gray-100 { background-color: #1e293b !important; }
 html.dark .text-slate-900 { color: #f1f5f9 !important; }
 html.dark .text-slate-800 { color: #e2e8f0 !important; }
 html.dark .text-slate-700 { color: #cbd5e1 !important; }
 html.dark .text-slate-600 { color: #94a3b8 !important; }
 html.dark .text-slate-500 { color: #94a3b8 !important; }
-html.dark .text-gray-900 { color: #f1f5f9 !important; }
-html.dark .text-gray-800 { color: #e2e8f0 !important; }
-html.dark .text-gray-700 { color: #cbd5e1 !important; }
-html.dark .text-gray-600 { color: #94a3b8 !important; }
-html.dark .text-gray-500 { color: #94a3b8 !important; }
 html.dark .border-slate-200 { border-color: #334155 !important; }
 html.dark .border-slate-100 { border-color: #334155 !important; }
-html.dark .border-gray-200 { border-color: #334155 !important; }
-html.dark .border-gray-100 { border-color: #334155 !important; }
 html.dark .divide-slate-200 > :not(:last-child) { border-color: #334155 !important; }
-html.dark .divide-gray-200 > :not(:last-child) { border-color: #334155 !important; }
 html.dark input, html.dark textarea, html.dark select {
   background-color: #1e293b;
   color: #f1f5f9;

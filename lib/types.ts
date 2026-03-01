@@ -153,6 +153,25 @@ export interface AnalyticsEvent {
   created_at: string;
 }
 
+export interface BrokerAnswer {
+  id: number;
+  answer: string;
+  answered_by?: string;
+  author_slug?: string;
+  display_name?: string;
+  is_accepted?: boolean;
+  status?: string;
+  created_at: string;
+}
+
+export interface BrokerQuestion {
+  id: number;
+  question: string;
+  display_name?: string;
+  created_at: string;
+  broker_answers?: BrokerAnswer[];
+}
+
 export interface QuizQuestion {
   id: number;
   order_index: number;

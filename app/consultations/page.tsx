@@ -54,7 +54,8 @@ export default async function ConsultationsPage() {
     .order("sort_order", { ascending: true });
 
   // Normalise Supabase join (returns array for single FK)
-  const normalized = ((consultations as unknown as any[]) || []).map((c) => ({
+  type RawConsultation = Omit<Consultation, 'consultant'> & { consultant: unknown };
+  const normalized = ((consultations as RawConsultation[] | null) || []).map((c) => ({
     ...c,
     consultant: Array.isArray(c.consultant)
       ? c.consultant[0] ?? null

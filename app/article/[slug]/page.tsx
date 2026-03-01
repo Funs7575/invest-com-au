@@ -91,8 +91,8 @@ export default async function ArticlePage({
   if (!article) notFound();
 
   const a = article as Article;
-  const articleAuthor = (a as any).author as TeamMember | null;
-  const articleReviewer = (a as any).reviewer as TeamMember | null;
+  const articleAuthor = a.author ?? null;
+  const articleReviewer = a.reviewer ?? null;
   const isEnhanced = ENHANCED_SLUGS.includes(slug);
 
   // Parallelize independent queries with Promise.all

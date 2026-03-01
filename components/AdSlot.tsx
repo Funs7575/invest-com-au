@@ -512,9 +512,9 @@ function ProgrammaticContainer({
 
   useEffect(() => {
     // If AdSense is available, push an ad
-    if (adsenseSlot && typeof window !== "undefined" && (window as any).adsbygoogle) {
+    if (adsenseSlot && typeof window !== "undefined" && window.adsbygoogle) {
       try {
-        ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
         setAdLoaded(true);
       } catch {
         // AdSense not ready

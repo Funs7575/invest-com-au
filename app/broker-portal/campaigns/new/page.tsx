@@ -513,7 +513,7 @@ export default function NewCampaignPage() {
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">
               Campaign Name *
-              <InfoTip text="A name for your reference only -- not shown to users. Use something descriptive like 'Compare Page Q1 2025'." />
+              <InfoTip text="A name for your reference only -- not shown to users. Use something descriptive like 'Compare Page Q1 2026'." />
             </label>
             <input
               type="text"

@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
-import type { Broker } from "@/lib/types";
+import type { Broker, BrokerQuestion, BrokerAnswer } from "@/lib/types";
 import {
   getCategoryBySlug,
   getAllCategorySlugs,
@@ -125,14 +125,14 @@ export default async function BestBrokerPage({
     .order("created_at", { ascending: false })
     .limit(10);
 
-  const questions = (questionsRaw || []).map((q: any) => ({
+  const questions = ((questionsRaw || []) as BrokerQuestion[]).map((q) => ({
     id: q.id,
     question: q.question,
     display_name: q.display_name,
     created_at: q.created_at,
     answers: (q.broker_answers || [])
-      .filter((a: any) => a.status === undefined || a.status === "approved")
-      .map((a: any) => ({
+      .filter((a: BrokerAnswer) => a.status === undefined || a.status === "approved")
+      .map((a: BrokerAnswer) => ({
         id: a.id,
         answer: a.answer,
         answered_by: a.answered_by,

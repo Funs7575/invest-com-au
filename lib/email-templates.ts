@@ -2,11 +2,11 @@
  * Shared HTML email template system for Invest.com.au.
  *
  * All templates use inline CSS for maximum email client compatibility.
- * Brand color: green #16a34a, text: dark slate #0f172a.
+ * Brand color: emerald #16a34a, text: dark slate #0f172a.
  * Max-width 600px, mobile-friendly.
  */
 
-const BRAND_GREEN = "#16a34a";
+const BRAND_EMERALD = "#16a34a";
 const BRAND_DARK = "#0f172a";
 const TEXT_MUTED = "#64748b";
 const TEXT_LIGHT = "#94a3b8";
@@ -61,7 +61,7 @@ export function baseTemplate(content: string, preheader?: string): string {
         <table role="presentation" cellpadding="0" cellspacing="0" width="600" style="max-width:600px;width:100%;">
           <!-- Header -->
           <tr>
-            <td style="background:${BRAND_GREEN};padding:20px 24px;border-radius:12px 12px 0 0;">
+            <td style="background:${BRAND_EMERALD};padding:20px 24px;border-radius:12px 12px 0 0;">
               <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
                 <tr>
                   <td>
@@ -124,25 +124,25 @@ export function welcomeEmail(name: string): string {
       <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
         <tr>
           <td style="padding:6px 0;font-size:14px;color:#475569;">
-            <span style="color:${BRAND_GREEN};font-weight:700;margin-right:8px;">1.</span>
+            <span style="color:${BRAND_EMERALD};font-weight:700;margin-right:8px;">1.</span>
             Compare broker fees side-by-side
           </td>
         </tr>
         <tr>
           <td style="padding:6px 0;font-size:14px;color:#475569;">
-            <span style="color:${BRAND_GREEN};font-weight:700;margin-right:8px;">2.</span>
+            <span style="color:${BRAND_EMERALD};font-weight:700;margin-right:8px;">2.</span>
             Set up fee change alerts to stay informed
           </td>
         </tr>
         <tr>
           <td style="padding:6px 0;font-size:14px;color:#475569;">
-            <span style="color:${BRAND_GREEN};font-weight:700;margin-right:8px;">3.</span>
+            <span style="color:${BRAND_EMERALD};font-weight:700;margin-right:8px;">3.</span>
             Take the broker quiz to find your best match
           </td>
         </tr>
         <tr>
           <td style="padding:6px 0;font-size:14px;color:#475569;">
-            <span style="color:${BRAND_GREEN};font-weight:700;margin-right:8px;">4.</span>
+            <span style="color:${BRAND_EMERALD};font-weight:700;margin-right:8px;">4.</span>
             Save brokers to your shortlist for easy comparison
           </td>
         </tr>
@@ -150,7 +150,7 @@ export function welcomeEmail(name: string): string {
     </div>
     <table role="presentation" cellpadding="0" cellspacing="0">
       <tr>
-        <td style="border-radius:8px;background:${BRAND_GREEN};">
+        <td style="border-radius:8px;background:${BRAND_EMERALD};">
           <a href="${BASE_URL}/compare" style="display:inline-block;padding:12px 28px;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px;">
             Compare Brokers Now
           </a>
@@ -158,7 +158,7 @@ export function welcomeEmail(name: string): string {
       </tr>
     </table>
     <p style="margin:24px 0 0;font-size:13px;color:${TEXT_LIGHT};">
-      Questions? Reply to this email or visit our <a href="${BASE_URL}/learn" style="color:${BRAND_GREEN};text-decoration:underline;">learning hub</a>.
+      Questions? Reply to this email or visit our <a href="${BASE_URL}/learn" style="color:${BRAND_EMERALD};text-decoration:underline;">learning hub</a>.
     </p>`;
 
   return baseTemplate(content, `Welcome to Invest.com.au, ${safeName}! Start comparing broker fees today.`);
@@ -175,14 +175,14 @@ export function feeChangeAlertEmail(
     <tr>
       <td style="padding:10px 12px;border-bottom:1px solid #f1f5f9;font-weight:600;color:${BRAND_DARK};font-size:14px;">${escapeHtml(c.broker)}</td>
       <td style="padding:10px 12px;border-bottom:1px solid #f1f5f9;color:#dc2626;font-size:14px;text-decoration:line-through;">${escapeHtml(c.oldFee)}</td>
-      <td style="padding:10px 12px;border-bottom:1px solid #f1f5f9;color:${BRAND_GREEN};font-weight:600;font-size:14px;">${escapeHtml(c.newFee)}</td>
+      <td style="padding:10px 12px;border-bottom:1px solid #f1f5f9;color:${BRAND_EMERALD};font-weight:600;font-size:14px;">${escapeHtml(c.newFee)}</td>
     </tr>`
     )
     .join("");
 
   const content = `
     <div style="display:inline-block;padding:4px 12px;background:#dcfce7;border-radius:100px;margin-bottom:16px;">
-      <span style="font-size:12px;font-weight:700;color:${BRAND_GREEN};text-transform:uppercase;letter-spacing:0.5px;">Fee Alert</span>
+      <span style="font-size:12px;font-weight:700;color:${BRAND_EMERALD};text-transform:uppercase;letter-spacing:0.5px;">Fee Alert</span>
     </div>
     <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:${BRAND_DARK};">Broker Fee Changes Detected</h1>
     <p style="margin:0 0 20px;font-size:14px;color:#475569;line-height:1.6;">
@@ -202,7 +202,7 @@ export function feeChangeAlertEmail(
     </table>
     <table role="presentation" cellpadding="0" cellspacing="0">
       <tr>
-        <td style="border-radius:8px;background:${BRAND_GREEN};">
+        <td style="border-radius:8px;background:${BRAND_EMERALD};">
           <a href="${BASE_URL}/compare" style="display:inline-block;padding:12px 28px;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px;">
             View Updated Comparison
           </a>
@@ -224,20 +224,20 @@ export function campaignApprovedEmail(
 ): string {
   const content = `
     <div style="display:inline-block;padding:4px 12px;background:#dcfce7;border-radius:100px;margin-bottom:16px;">
-      <span style="font-size:12px;font-weight:700;color:${BRAND_GREEN};text-transform:uppercase;letter-spacing:0.5px;">Approved</span>
+      <span style="font-size:12px;font-weight:700;color:${BRAND_EMERALD};text-transform:uppercase;letter-spacing:0.5px;">Approved</span>
     </div>
     <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:${BRAND_DARK};">Campaign Approved</h1>
     <p style="margin:0 0 20px;font-size:15px;color:#475569;line-height:1.7;">
       Great news! Your campaign <strong style="color:${BRAND_DARK};">"${escapeHtml(campaignName)}"</strong> for <strong style="color:${BRAND_DARK};">${escapeHtml(brokerName)}</strong> has been reviewed and approved.
     </p>
-    <div style="background:${BG_LIGHT};border-radius:8px;padding:16px 20px;margin-bottom:24px;border-left:4px solid ${BRAND_GREEN};">
+    <div style="background:${BG_LIGHT};border-radius:8px;padding:16px 20px;margin-bottom:24px;border-left:4px solid ${BRAND_EMERALD};">
       <p style="margin:0;font-size:14px;color:#475569;line-height:1.6;">
         Your campaign will go live on its scheduled start date. Make sure your wallet has sufficient balance to cover the campaign costs.
       </p>
     </div>
     <table role="presentation" cellpadding="0" cellspacing="0">
       <tr>
-        <td style="border-radius:8px;background:${BRAND_GREEN};">
+        <td style="border-radius:8px;background:${BRAND_EMERALD};">
           <a href="${BASE_URL}/broker-portal/campaigns" style="display:inline-block;padding:12px 28px;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px;">
             View Campaign
           </a>
@@ -275,7 +275,7 @@ export function campaignRejectedEmail(
     </p>
     ${reasonBlock}
     <p style="margin:0 0 24px;font-size:14px;color:#475569;line-height:1.6;">
-      You can edit the campaign and resubmit it for review. If you have questions, contact our partnerships team at <a href="mailto:partners@invest.com.au" style="color:${BRAND_GREEN};text-decoration:underline;">partners@invest.com.au</a>.
+      You can edit the campaign and resubmit it for review. If you have questions, contact our partnerships team at <a href="mailto:partners@invest.com.au" style="color:${BRAND_EMERALD};text-decoration:underline;">partners@invest.com.au</a>.
     </p>
     <table role="presentation" cellpadding="0" cellspacing="0">
       <tr>
@@ -322,7 +322,7 @@ export function lowBalanceEmail(
     </div>` : ""}
     <table role="presentation" cellpadding="0" cellspacing="0">
       <tr>
-        <td style="border-radius:8px;background:${BRAND_GREEN};">
+        <td style="border-radius:8px;background:${BRAND_EMERALD};">
           <a href="${BASE_URL}/broker-portal/wallet" style="display:inline-block;padding:12px 28px;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px;">
             Top Up Wallet
           </a>
@@ -361,7 +361,7 @@ export function weeklyDigestEmail(data: {
         <td style="padding:8px 12px;border-bottom:1px solid #f1f5f9;font-weight:600;color:${BRAND_DARK};font-size:13px;">${escapeHtml(c.broker)}</td>
         <td style="padding:8px 12px;border-bottom:1px solid #f1f5f9;color:${TEXT_MUTED};font-size:13px;">${escapeHtml(c.field)}</td>
         <td style="padding:8px 12px;border-bottom:1px solid #f1f5f9;color:#dc2626;font-size:13px;text-decoration:line-through;">${escapeHtml(c.oldValue)}</td>
-        <td style="padding:8px 12px;border-bottom:1px solid #f1f5f9;color:${BRAND_GREEN};font-weight:600;font-size:13px;">${escapeHtml(c.newValue)}</td>
+        <td style="padding:8px 12px;border-bottom:1px solid #f1f5f9;color:${BRAND_EMERALD};font-weight:600;font-size:13px;">${escapeHtml(c.newValue)}</td>
       </tr>`
           )
           .join("")
@@ -404,7 +404,7 @@ export function weeklyDigestEmail(data: {
     </p>
 
     <!-- Fee Changes -->
-    <h2 style="font-size:15px;color:${BRAND_DARK};margin:0 0 12px;padding-bottom:8px;border-bottom:2px solid ${BRAND_GREEN};">Fee Changes</h2>
+    <h2 style="font-size:15px;color:${BRAND_DARK};margin:0 0 12px;padding-bottom:8px;border-bottom:2px solid ${BRAND_EMERALD};">Fee Changes</h2>
     <div style="overflow-x:auto;margin-bottom:24px;">
       <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;">
         <thead>
@@ -420,11 +420,11 @@ export function weeklyDigestEmail(data: {
     </div>
 
     <!-- New Articles -->
-    <h2 style="font-size:15px;color:${BRAND_DARK};margin:0 0 12px;padding-bottom:8px;border-bottom:2px solid ${BRAND_GREEN};">New This Week</h2>
+    <h2 style="font-size:15px;color:${BRAND_DARK};margin:0 0 12px;padding-bottom:8px;border-bottom:2px solid ${BRAND_EMERALD};">New This Week</h2>
     <ul style="margin:0 0 24px;padding-left:20px;line-height:1.8;">${articlesHtml}</ul>
 
     <!-- Deals -->
-    <h2 style="font-size:15px;color:${BRAND_DARK};margin:0 0 12px;padding-bottom:8px;border-bottom:2px solid ${BRAND_GREEN};">Active Deals</h2>
+    <h2 style="font-size:15px;color:${BRAND_DARK};margin:0 0 12px;padding-bottom:8px;border-bottom:2px solid ${BRAND_EMERALD};">Active Deals</h2>
     <div style="overflow-x:auto;margin-bottom:24px;">
       <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;">
         <tbody>${dealsHtml}</tbody>
@@ -435,7 +435,7 @@ export function weeklyDigestEmail(data: {
     <div style="text-align:center;margin-top:8px;">
       <table role="presentation" cellpadding="0" cellspacing="0" align="center">
         <tr>
-          <td style="border-radius:8px;background:${BRAND_GREEN};">
+          <td style="border-radius:8px;background:${BRAND_EMERALD};">
             <a href="${BASE_URL}/compare" style="display:inline-block;padding:12px 32px;color:#ffffff;font-weight:700;font-size:14px;text-decoration:none;border-radius:8px;">
               Compare All Brokers
             </a>
@@ -476,16 +476,16 @@ export function campaignPerformanceEmail(data: {
       <tr>
         ${statCell(data.clicks.toLocaleString(), "Clicks")}
         ${statCell(`${data.ctr.toFixed(1)}%`, "CTR")}
-        ${statCell(data.conversions.toLocaleString(), "Conversions", data.conversions > 0 ? BRAND_GREEN : BRAND_DARK)}
+        ${statCell(data.conversions.toLocaleString(), "Conversions", data.conversions > 0 ? BRAND_EMERALD : BRAND_DARK)}
         ${statCell(`$${data.spend.toFixed(2)}`, "Spend", "#dc2626")}
       </tr>
     </table>
 
-    ${data.conversions > 0 ? `<p style="margin:0 0 20px;font-size:14px;color:${BRAND_GREEN};font-weight:600;">${data.conversions} conversion${data.conversions === 1 ? "" : "s"} tracked yesterday!</p>` : ""}
+    ${data.conversions > 0 ? `<p style="margin:0 0 20px;font-size:14px;color:${BRAND_EMERALD};font-weight:600;">${data.conversions} conversion${data.conversions === 1 ? "" : "s"} tracked yesterday!</p>` : ""}
 
     <table role="presentation" cellpadding="0" cellspacing="0">
       <tr>
-        <td style="border-radius:8px;background:${BRAND_GREEN};">
+        <td style="border-radius:8px;background:${BRAND_EMERALD};">
           <a href="${BASE_URL}/broker-portal/analytics" style="display:inline-block;padding:12px 28px;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px;">
             View Full Analytics
           </a>

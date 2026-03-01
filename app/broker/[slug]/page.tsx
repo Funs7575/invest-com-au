@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
-import type { Broker, TeamMember, UserReview, BrokerReviewStats, SwitchStory } from "@/lib/types";
+import type { Broker, TeamMember, UserReview, BrokerReviewStats, SwitchStory, BrokerQuestion, BrokerAnswer } from "@/lib/types";
 import { notFound } from "next/navigation";
 import BrokerReviewClient from "./BrokerReviewClient";
 import {
@@ -69,7 +69,7 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
   if (!broker) notFound();
 
   const b = broker as Broker;
-  const brokerReviewer = (b as any).reviewer as TeamMember | null;
+  const brokerReviewer = b.reviewer ?? null;
 
   // Fetch similar brokers using multi-attribute similarity scoring
   const { data: allOtherBrokers } = await supabase
@@ -150,14 +150,14 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
   } : null;
 
   // Format Q&A data for QASection component
-  const questions = (questionsRaw || []).map((q: any) => ({
+  const questions = ((questionsRaw || []) as BrokerQuestion[]).map((q) => ({
     id: q.id,
     question: q.question,
     display_name: q.display_name,
     created_at: q.created_at,
     answers: (q.broker_answers || [])
-      .filter((a: any) => a.status === undefined || a.status === 'approved')
-      .map((a: any) => ({
+      .filter((a: BrokerAnswer) => a.status === undefined || a.status === 'approved')
+      .map((a: BrokerAnswer) => ({
         id: a.id,
         answer: a.answer,
         answered_by: a.answered_by,

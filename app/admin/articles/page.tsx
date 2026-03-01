@@ -207,7 +207,7 @@ export default function AdminArticlesPage() {
             <div>
               <label className="block text-xs font-medium text-slate-500 mb-1">Slug <span className="text-red-600">*</span></label>
               <input name="slug" defaultValue={formArticle.slug} required className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
-              <p className="text-xs text-slate-400 mt-0.5">URL path — e.g. &quot;best-brokers-2025&quot; creates /article/best-brokers-2025</p>
+              <p className="text-xs text-slate-400 mt-0.5">URL path — e.g. &quot;best-brokers-2026&quot; creates /article/best-brokers-2026</p>
             </div>
             <div>
               <label className="block text-xs font-medium text-slate-500 mb-1">Status</label>
