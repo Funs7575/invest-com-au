@@ -505,18 +505,18 @@ export default function ModerationQueuePage() {
                       {/* Type-specific meta */}
                       {item.type === "review" && (
                         <div className="space-y-2 mb-4">
-                          {item.meta.rating && (
+                          {!!item.meta.rating && (
                             <div className="text-xs text-slate-500">
                               Rating: <strong className="text-amber-600">{String(item.meta.rating)}/5</strong>
                             </div>
                           )}
-                          {item.meta.pros && (
+                          {!!item.meta.pros && (
                             <div className="bg-green-50 rounded-lg p-3">
                               <p className="text-xs font-bold text-green-700 mb-1">Pros</p>
                               <p className="text-xs text-slate-700">{String(item.meta.pros)}</p>
                             </div>
                           )}
-                          {item.meta.cons && (
+                          {!!item.meta.cons && (
                             <div className="bg-red-50 rounded-lg p-3">
                               <p className="text-xs font-bold text-red-700 mb-1">Cons</p>
                               <p className="text-xs text-slate-700">{String(item.meta.cons)}</p>
@@ -532,19 +532,19 @@ export default function ModerationQueuePage() {
                             {" \u2192 "}
                             <strong>{String(item.meta.dest_broker)}</strong> ({String(item.meta.dest_rating)}/5)
                           </div>
-                          {item.meta.reason && (
+                          {!!item.meta.reason && (
                             <div className="bg-blue-50 rounded-lg p-3">
                               <p className="text-xs font-bold text-blue-700 mb-1">Reason for switching</p>
                               <p className="text-xs text-slate-700">{String(item.meta.reason)}</p>
                             </div>
                           )}
                           <div className="flex flex-wrap gap-2">
-                            {item.meta.estimated_savings && (
+                            {!!item.meta.estimated_savings && (
                               <span className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-full border border-green-200">
                                 Saves {String(item.meta.estimated_savings)}
                               </span>
                             )}
-                            {item.meta.time_with_source && (
+                            {!!item.meta.time_with_source && (
                               <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full border border-slate-200">
                                 {String(item.meta.time_with_source)} with old broker
                               </span>
@@ -563,10 +563,10 @@ export default function ModerationQueuePage() {
                       <div className="text-xs text-slate-400 space-y-1 mb-4">
                         <p>Submitted by: {item.submittedBy}{item.email ? ` (${item.email})` : ""}</p>
                         <p>Date: {new Date(item.dateSubmitted).toLocaleString("en-AU")}</p>
-                        {item.meta.verified_at && (
+                        {!!item.meta.verified_at && (
                           <p>Verified: {new Date(String(item.meta.verified_at)).toLocaleString("en-AU")}</p>
                         )}
-                        {item.meta.moderation_note && (
+                        {!!item.meta.moderation_note && (
                           <p>Previous note: {String(item.meta.moderation_note)}</p>
                         )}
                       </div>
