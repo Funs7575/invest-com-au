@@ -495,7 +495,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                         <ul className="space-y-1 md:space-y-1.5">
                           {br.pros?.map((p, i) => (
                             <li key={i} className="flex items-start gap-1.5 md:gap-2 text-[0.69rem] md:text-xs text-slate-600 leading-relaxed">
-                              <span className="text-green-500 shrink-0 mt-0.5">+</span> {p}
+                              <span className="text-emerald-500 shrink-0 mt-0.5">+</span> {p}
                             </li>
                           ))}
                         </ul>

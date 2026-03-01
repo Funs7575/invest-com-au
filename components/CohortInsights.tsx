@@ -66,15 +66,15 @@ export default function CohortInsights({ experience, range, interest }: Props) {
         </h3>
         {isIllustrative && (
           <span className="text-[0.69rem] px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full font-medium">
-            Illustrative
+            Sample Data
           </span>
         )}
       </div>
       <p className="text-xs text-slate-500 mb-4">
         {isIllustrative ? (
           <>
-            Editorial estimates for <strong>{cohortLabel}</strong> investors.
-            Real data shown when enough quiz responses are collected.
+            Based on editorial research for <strong>{cohortLabel}</strong> investors.
+            Personalised data appears once enough quiz responses are collected.
           </>
         ) : (
           <>
@@ -108,9 +108,9 @@ export default function CohortInsights({ experience, range, interest }: Props) {
 
       {isIllustrative && (
         <p className="text-[0.69rem] text-slate-400 mt-3 italic">
-          These are editorial estimates, not actual user data. Real cohort
-          statistics will appear automatically once we have enough quiz
-          responses from similar investor profiles.
+          Based on our editorial research, not live user data. Personalised
+          cohort statistics will replace these once enough quiz responses from
+          similar investor profiles are collected.
         </p>
       )}
     </div>

@@ -552,7 +552,7 @@ export default function FeeImpactClient({ brokers }: Props) {
                           </span>
                           <div className="text-3xl md:text-4xl font-extrabold text-green-700 tracking-tight mt-1">
                             <AnimatedNumber value={maxSavings} />
-                            <span className="text-xl font-bold text-green-500">
+                            <span className="text-xl font-bold text-emerald-500">
                               /yr
                             </span>
                           </div>

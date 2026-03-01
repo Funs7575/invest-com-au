@@ -131,7 +131,7 @@ export default function AlertsClient({ alerts }: { alerts: RegulatoryAlert[] }) 
                             <ul className="space-y-1.5">
                               {alert.action_items.map((item, i) => (
                                 <li key={i} className="text-xs text-slate-600 flex items-start gap-2">
-                                  <span className="text-green-500 mt-0.5 shrink-0">✓</span>
+                                  <span className="text-emerald-500 mt-0.5 shrink-0">✓</span>
                                   <span>
                                     {item.text}
                                     {item.url && (

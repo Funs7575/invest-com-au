@@ -1,7 +1,7 @@
 "use client";
 
 import type { Broker } from "@/lib/types";
-import { trackClick, getAffiliateLink, renderStars, AFFILIATE_REL } from "@/lib/tracking";
+import { trackClick, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
 import { isSponsored } from "@/lib/sponsorship";
 import SponsorBadge from "@/components/SponsorBadge";
 
@@ -105,7 +105,7 @@ export default function DealCard({
           )}
           {verifiedFormatted && (
             <span className="flex items-center gap-1 shrink-0">
-              <svg className="w-3 h-3 md:w-3.5 md:h-3.5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+              <svg className="w-3 h-3 md:w-3.5 md:h-3.5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
               </svg>
               <span className="text-[0.62rem] md:text-[0.69rem] text-slate-500">
@@ -126,7 +126,7 @@ export default function DealCard({
         }
         className="mt-auto block w-full text-center py-2.5 md:py-3 bg-amber-600 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-amber-700 hover:shadow-[0_0_12px_rgba(217,119,6,0.3)] transition-all duration-200 active:scale-[0.98]"
       >
-        Claim Deal →
+        {broker.deal_text?.toLowerCase().includes("free") ? "Get Free Access →" : getBenefitCta(broker, "compare")}
       </a>
     </div>
   );

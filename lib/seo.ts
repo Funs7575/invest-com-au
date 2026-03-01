@@ -147,6 +147,7 @@ export function brokerReviewJsonLd(broker: {
   pros?: string[];
   cons?: string[];
   fee_verified_date?: string;
+  review_count?: number;
 }, reviewer?: TeamMember) {
   const datePublished = broker.created_at
     ? new Date(broker.created_at).toISOString().split("T")[0]
@@ -221,13 +222,15 @@ export function brokerReviewJsonLd(broker: {
         worstRating: 1,
       },
     },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: broker.rating || 0,
-      bestRating: 5,
-      worstRating: 1,
-      reviewCount: 1,
-    },
+    ...((broker.review_count ?? 0) > 0 ? {
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: broker.rating || 0,
+        bestRating: 5,
+        worstRating: 1,
+        reviewCount: broker.review_count,
+      },
+    } : {}),
   };
 }
 

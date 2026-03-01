@@ -673,7 +673,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-6 flex items-center md:block gap-3">
             <Icon name="target" size={20} className="text-slate-600 shrink-0 md:mb-2" />
             <div className="flex-1 min-w-0">
-              <h3 className="text-sm md:text-lg font-bold text-slate-900 mb-0.5 md:mb-1">Find Your Broker</h3>
+              <h2 className="text-sm md:text-lg font-bold text-slate-900 mb-0.5 md:mb-1">Find Your Broker</h2>
               <p className="text-xs text-slate-500 md:mb-4 hidden md:block">Answer 4 quick questions and narrow down brokers.</p>
             </div>
             <Link href="/quiz" className="shrink-0 px-3 md:px-5 py-2 md:py-2.5 bg-amber-500 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors md:inline-block">
@@ -683,7 +683,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 md:p-6 flex items-center md:block gap-3">
             <Icon name="bar-chart" size={20} className="text-slate-700 shrink-0 md:mb-2" />
             <div className="flex-1 min-w-0">
-              <h3 className="text-sm md:text-lg font-bold text-slate-900 mb-0.5 md:mb-1">Free Fee PDF</h3>
+              <h2 className="text-sm md:text-lg font-bold text-slate-900 mb-0.5 md:mb-1">Free Fee PDF</h2>
               <p className="text-xs text-slate-500 md:mb-4 hidden md:block">Every broker&apos;s fees and hidden costs in one document.</p>
             </div>
             <Link href="/#email-capture" className="shrink-0 px-3 md:px-5 py-2 md:py-2.5 bg-slate-900 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors md:inline-block">

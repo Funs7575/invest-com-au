@@ -92,7 +92,7 @@ export default async function AlertDetailPage({ params }: { params: Promise<{ sl
               <ul className="space-y-2">
                 {alert.action_items.map((item, i) => (
                   <li key={i} className="text-sm text-slate-700 flex items-start gap-2">
-                    <span className="text-green-500 shrink-0 mt-0.5">✓</span>
+                    <span className="text-emerald-500 shrink-0 mt-0.5">✓</span>
                     <span>
                       {item.text}
                       {item.url && (

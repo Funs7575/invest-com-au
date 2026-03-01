@@ -78,7 +78,7 @@ export default async function DealsPage() {
             </h1>
             <a
               href="#advertiser-disclosure"
-              className="text-[0.69rem] text-gray-400 underline hover:text-gray-600 transition-colors shrink-0 mt-1.5"
+              className="text-[0.69rem] text-slate-400 underline hover:text-slate-600 transition-colors shrink-0 mt-1.5"
             >
               Disclosure
             </a>

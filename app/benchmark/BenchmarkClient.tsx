@@ -214,7 +214,7 @@ function PercentileBar({
   total: number;
 }) {
   const barColor =
-    value >= 70 ? "bg-green-500" : value >= 40 ? "bg-amber-400" : "bg-red-400";
+    value >= 70 ? "bg-emerald-500" : value >= 40 ? "bg-amber-400" : "bg-red-400";
   return (
     <div className="space-y-1">
       <div className="flex justify-between text-xs">

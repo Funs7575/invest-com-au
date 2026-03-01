@@ -84,7 +84,7 @@ export default function AuthorByline({
             className={`w-12 h-12 rounded-full flex items-center justify-center font-semibold text-sm shrink-0 ${
               isDark
                 ? "bg-white/10 text-white/70"
-                : "bg-gray-100 text-gray-500"
+                : "bg-slate-100 text-slate-500"
             }`}
           >
             {initials}
@@ -95,14 +95,14 @@ export default function AuthorByline({
         <div className="text-left flex-1">
           <p
             className={`font-bold ${
-              isDark ? "text-white" : "text-gray-900"
+              isDark ? "text-white" : "text-slate-900"
             }`}
           >
             {authorSlug ? (
               <Link
                 href={`/authors/${authorSlug}`}
                 className={`hover:underline ${
-                  isDark ? "text-white" : "text-gray-900"
+                  isDark ? "text-white" : "text-slate-900"
                 }`}
               >
                 {displayName}
@@ -132,7 +132,7 @@ export default function AuthorByline({
                 className={`transition-colors ${
                   isDark
                     ? "text-white/40 hover:text-blue-400"
-                    : "text-gray-400 hover:text-blue-700"
+                    : "text-slate-400 hover:text-blue-700"
                 }`}
               >
                 <Linkedin className="w-4 h-4" />
@@ -147,7 +147,7 @@ export default function AuthorByline({
                 className={`transition-colors ${
                   isDark
                     ? "text-white/40 hover:text-sky-400"
-                    : "text-gray-400 hover:text-sky-600"
+                    : "text-slate-400 hover:text-sky-600"
                 }`}
               >
                 <Twitter className="w-4 h-4" />

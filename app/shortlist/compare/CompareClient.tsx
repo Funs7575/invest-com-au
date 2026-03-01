@@ -274,7 +274,7 @@ export default function CompareClient() {
                       <ul className="space-y-1">
                         {broker.pros!.slice(0, 4).map((pro, i) => (
                           <li key={i} className="flex items-start gap-1">
-                            <span className="text-green-500 shrink-0 mt-0.5">+</span>
+                            <span className="text-emerald-500 shrink-0 mt-0.5">+</span>
                             <span>{pro}</span>
                           </li>
                         ))}

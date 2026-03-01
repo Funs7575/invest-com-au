@@ -184,7 +184,7 @@ export default function HomepageComparisonTable({
                 </td>
                 <td className="px-3 py-2.5">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center font-bold text-slate-900 text-xs shrink-0 transition-transform duration-200 group-hover:scale-110">
+                    <div className="w-8 h-8 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center font-bold text-slate-900 text-xs shrink-0 transition-transform duration-200 group-hover:scale-110">
                       {broker.name.substring(0, 2).toUpperCase()}
                     </div>
                     <div>
@@ -276,7 +276,7 @@ export default function HomepageComparisonTable({
             </div>
 
             {/* Icon */}
-            <div className="w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center font-bold text-slate-900 text-[0.62rem] shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center font-bold text-slate-900 text-[0.62rem] shrink-0">
               {broker.name.substring(0, 2).toUpperCase()}
             </div>
 

@@ -717,8 +717,8 @@ export default function QuizPage() {
             >
               {copied ? (
                 <>
-                  <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                  <span className="text-green-600 font-medium">Copied!</span>
+                  <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  <span className="text-emerald-600 font-medium">Copied!</span>
                 </>
               ) : (
                 <>

@@ -252,7 +252,7 @@ export default function CalculatorsClient({ brokers }: Props) {
 
         {/* Related Resources */}
         <div className="mt-4 md:mt-8 bg-slate-50 border border-slate-200 rounded-lg md:rounded-xl p-3 md:p-6">
-          <h3 className="text-[0.69rem] md:text-sm font-bold text-slate-700 mb-1.5 md:mb-3">Related Resources</h3>
+          <h2 className="text-[0.69rem] md:text-sm font-bold text-slate-700 mb-1.5 md:mb-3">Related Resources</h2>
           <div className="flex flex-wrap gap-1 md:gap-2">
             <Link href="/compare" className="text-[0.69rem] md:text-xs px-2 md:px-2.5 py-1 md:py-1.5 border border-slate-200 rounded-md md:rounded-lg hover:bg-white transition-colors">
               Compare Brokers →
