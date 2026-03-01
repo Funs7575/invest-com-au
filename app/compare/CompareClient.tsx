@@ -3,7 +3,13 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Search, X } from "lucide-react";
+/* Inline SVG icons to avoid lucide-react dependency */
+const Search = ({ className }: { className?: string }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+);
+const XIcon = ({ className }: { className?: string }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+);
 import type { Broker } from "@/lib/types";
 import { trackClick, trackEvent, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
@@ -303,7 +309,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               onClick={() => { setActiveFilter('all'); setSearchQuery(''); }}
               className="shrink-0 px-3 py-2 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-full transition-colors flex items-center gap-1"
             >
-              <X className="w-3.5 h-3.5" />
+              <XIcon className="w-3.5 h-3.5" />
               Clear filters
             </button>
           )}
@@ -332,7 +338,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             />
             {searchQuery && (
               <button onClick={() => setSearchQuery("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400" aria-label="Clear">
-                <X className="w-3.5 h-3.5" />
+                <XIcon className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
@@ -386,7 +392,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               className="absolute left-[18.5rem] top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
               aria-label="Clear search"
             >
-              <X className="w-4 h-4" />
+              <XIcon className="w-4 h-4" />
             </button>
           )}
         </div>
