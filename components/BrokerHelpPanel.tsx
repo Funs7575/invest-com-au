@@ -87,21 +87,6 @@ const helpContent: Record<string, { description: string; tips: HelpEntry[] }> = 
       ]},
     ],
   },
-  "/broker-portal/reports": {
-    description: "Export campaign reports, drill down into individual campaigns, and compare performance across date ranges.",
-    tips: [
-      { title: "Drill-Down", items: [
-        "Click any campaign row to filter all charts and KPIs to that campaign.",
-        "A dark bar appears at the top showing which campaign is selected.",
-        "Click 'Clear filter' or 'Show all' to return to the full view.",
-      ]},
-      { title: "Export", items: [
-        "Export CSV downloads daily data: date, clicks, impressions, conversions, spend.",
-        "Use Custom date range for specific reporting periods.",
-        "Campaign detail CSV is available when drilled into a specific campaign.",
-      ]},
-    ],
-  },
   "/broker-portal/wallet": {
     description: "Your advertising wallet. Add funds via Stripe and view transaction history. Campaigns deduct from this balance.",
     tips: [
