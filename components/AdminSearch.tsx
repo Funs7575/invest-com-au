@@ -58,7 +58,7 @@ export default function AdminSearch() {
   const [searching, setSearching] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // ⌘K / Ctrl+K shortcut
   useEffect(() => {
