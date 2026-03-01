@@ -529,7 +529,7 @@ export default function BenchmarkClient({ brokers }: { brokers: Broker[] }) {
                   <tr
                     key={b.slug}
                     className={`border-b border-slate-50 hover:bg-slate-50 cursor-pointer transition-colors ${
-                      b.slug === selectedSlug ? "bg-green-50/50" : ""
+                      b.slug === selectedSlug ? "bg-emerald-50/50" : ""
                     }`}
                     onClick={() => handleSelect(b.slug)}
                   >
@@ -554,7 +554,7 @@ export default function BenchmarkClient({ brokers }: { brokers: Broker[] }) {
                       <span
                         className={`inline-block px-2 py-0.5 rounded text-xs font-bold ${
                           b.overallPercentile >= 70
-                            ? "bg-green-100 text-green-700"
+                            ? "bg-emerald-100 text-emerald-700"
                             : b.overallPercentile >= 40
                             ? "bg-amber-100 text-amber-700"
                             : "bg-red-100 text-red-700"

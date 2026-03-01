@@ -440,7 +440,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                     isSponsored(broker)
                       ? 'bg-blue-50/30 border-l-2 border-l-blue-400'
                       : editorPicks[broker.slug]
-                      ? 'bg-green-50/40'
+                      ? 'bg-emerald-50/40'
                       : ''
                   }`}
                 >
@@ -486,12 +486,12 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                   <td className="px-4 py-3 text-sm">{broker.us_fee || 'N/A'}</td>
                   <td className="px-4 py-3 text-sm">{broker.fx_rate != null ? `${broker.fx_rate}%` : 'N/A'}</td>
                   <td className="px-4 py-3 text-center">
-                    <span className={broker.chess_sponsored ? 'text-green-600 font-semibold' : 'text-red-500'}>
+                    <span className={broker.chess_sponsored ? 'text-emerald-600 font-semibold' : 'text-red-500'}>
                       {broker.chess_sponsored ? '✓ Yes' : '✗ No'}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-center">
-                    <span className={broker.smsf_support ? 'text-green-600 font-semibold' : 'text-red-500'}>
+                    <span className={broker.smsf_support ? 'text-emerald-600 font-semibold' : 'text-red-500'}>
                       {broker.smsf_support ? '✓ Yes' : '✗ No'}
                     </span>
                   </td>

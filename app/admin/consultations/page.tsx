@@ -259,10 +259,10 @@ export default function AdminConsultationsPage() {
   const statusBadge = (status: string) => {
     const colors: Record<string, string> = {
       draft: "bg-slate-100 text-slate-600",
-      published: "bg-green-100 text-green-700",
+      published: "bg-emerald-100 text-emerald-700",
       archived: "bg-red-100 text-red-600",
       pending: "bg-yellow-100 text-yellow-700",
-      confirmed: "bg-green-100 text-green-700",
+      confirmed: "bg-emerald-100 text-emerald-700",
       completed: "bg-blue-100 text-blue-700",
       cancelled: "bg-red-100 text-red-600",
     };
@@ -310,7 +310,7 @@ export default function AdminConsultationsPage() {
                 downloadCSV("consultation-bookings.csv", ["User ID", "Consultation", "Amount", "Status", "Booked Date", "Stripe Payment ID"], rows);
               }
             }}
-            className="px-3 py-1.5 bg-green-50 text-green-700 text-xs font-semibold rounded-lg hover:bg-green-100 border border-green-200 transition-colors"
+            className="px-3 py-1.5 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-lg hover:bg-emerald-100 border border-emerald-200 transition-colors"
           >
             Export CSV ↓
           </button>
@@ -322,7 +322,7 @@ export default function AdminConsultationsPage() {
               }
               setShowCreate(!showCreate);
             }}
-            className="px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
+            className="px-4 py-2 bg-emerald-700 text-white text-sm font-semibold rounded-lg hover:bg-emerald-800 transition-colors"
           >
             {showCreate ? "Cancel" : "+ New Consultation"}
           </button>
@@ -335,7 +335,7 @@ export default function AdminConsultationsPage() {
           onClick={() => setTab("consultations")}
           className={`pb-2 text-sm font-semibold transition-colors ${
             tab === "consultations"
-              ? "text-green-700 border-b-2 border-green-700"
+              ? "text-emerald-700 border-b-2 border-emerald-700"
               : "text-slate-500 hover:text-slate-700"
           }`}
         >
@@ -345,7 +345,7 @@ export default function AdminConsultationsPage() {
           onClick={() => setTab("bookings")}
           className={`pb-2 text-sm font-semibold transition-colors ${
             tab === "bookings"
-              ? "text-green-700 border-b-2 border-green-700"
+              ? "text-emerald-700 border-b-2 border-emerald-700"
               : "text-slate-500 hover:text-slate-700"
           }`}
         >
@@ -595,7 +595,7 @@ export default function AdminConsultationsPage() {
             <button
               type="submit"
               disabled={saving}
-              className="px-6 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors disabled:opacity-50"
+              className="px-6 py-2 bg-emerald-700 text-white text-sm font-semibold rounded-lg hover:bg-emerald-800 transition-colors disabled:opacity-50"
             >
               {saving
                 ? "Saving..."
@@ -711,7 +711,7 @@ export default function AdminConsultationsPage() {
                           </button>
                           <button
                             onClick={() => startEdit(c)}
-                            className="text-xs text-green-700 hover:underline"
+                            className="text-xs text-emerald-700 hover:underline"
                           >
                             Edit
                           </button>

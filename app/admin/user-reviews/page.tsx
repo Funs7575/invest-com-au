@@ -31,7 +31,7 @@ const PAGE_SIZE = 20;
 const statusColors: Record<string, string> = {
   pending: "bg-yellow-100 text-yellow-700",
   verified: "bg-blue-100 text-blue-700",
-  approved: "bg-green-100 text-green-700",
+  approved: "bg-emerald-100 text-emerald-700",
   rejected: "bg-red-100 text-red-700",
 };
 
@@ -170,7 +170,7 @@ export default function AdminUserReviewsPage() {
           <p className="text-sm text-slate-500 mt-1">Moderate user-submitted broker reviews. Reviews need approval before appearing on broker pages.</p>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={exportReviews} className="bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg px-4 py-2 text-sm transition-colors">Export CSV ↓</button>
+          <button onClick={exportReviews} className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg px-4 py-2 text-sm transition-colors">Export CSV ↓</button>
           <button
             onClick={load}
             className="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-lg px-4 py-2 text-sm transition-colors"
@@ -197,7 +197,7 @@ export default function AdminUserReviewsPage() {
             onClick={() => setTab(t.key)}
             className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
               tab === t.key
-                ? "bg-green-800 text-white"
+                ? "bg-emerald-800 text-white"
                 : "bg-slate-100 text-slate-600 hover:bg-slate-200"
             }`}
           >
@@ -220,7 +220,7 @@ export default function AdminUserReviewsPage() {
         <div className="mb-4 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 flex items-center justify-between">
           <span className="text-sm text-blue-700 font-medium">{selected.size} review{selected.size !== 1 ? "s" : ""} selected</span>
           <div className="flex items-center gap-2">
-            <button onClick={async () => { for (const id of selected) await handleModerate(id, "approve"); setSelected(new Set()); }} className="px-3 py-1.5 text-xs font-medium bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">Approve All</button>
+            <button onClick={async () => { for (const id of selected) await handleModerate(id, "approve"); setSelected(new Set()); }} className="px-3 py-1.5 text-xs font-medium bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors">Approve All</button>
             <button onClick={async () => { for (const id of selected) await handleModerate(id, "reject"); setSelected(new Set()); }} className="px-3 py-1.5 text-xs font-medium bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">Reject All</button>
             <button onClick={() => setSelected(new Set())} className="px-3 py-1.5 text-xs text-slate-500 hover:text-slate-900 transition-colors">Clear</button>
           </div>
@@ -264,7 +264,7 @@ export default function AdminUserReviewsPage() {
                   <td className="px-4 py-3">
                     <button
                       onClick={() => setExpandedId(expandedId === review.id ? null : review.id)}
-                      className="text-sm text-slate-700 hover:text-green-700 text-left max-w-[200px] truncate transition-colors"
+                      className="text-sm text-slate-700 hover:text-emerald-700 text-left max-w-[200px] truncate transition-colors"
                       title={review.title}
                     >
                       {review.title}
@@ -284,7 +284,7 @@ export default function AdminUserReviewsPage() {
                         <button
                           onClick={() => handleModerate(review.id, "approve")}
                           disabled={actionLoading === review.id}
-                          className="px-2 py-1 text-xs bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors disabled:opacity-50 font-medium"
+                          className="px-2 py-1 text-xs bg-emerald-100 text-emerald-700 rounded hover:bg-emerald-200 transition-colors disabled:opacity-50 font-medium"
                         >
                           Approve
                         </button>
@@ -308,7 +308,7 @@ export default function AdminUserReviewsPage() {
                       <button
                         onClick={() => handleModerate(review.id, "approve")}
                         disabled={actionLoading === review.id}
-                        className="px-2 py-1 text-xs bg-green-50 text-green-500 rounded hover:bg-green-100 transition-colors disabled:opacity-50"
+                        className="px-2 py-1 text-xs bg-emerald-50 text-emerald-500 rounded hover:bg-emerald-100 transition-colors disabled:opacity-50"
                       >
                         Approve
                       </button>
@@ -343,8 +343,8 @@ export default function AdminUserReviewsPage() {
                 </div>
                 <p className="text-sm text-slate-700 whitespace-pre-line mb-3">{r.body}</p>
                 {r.pros && (
-                  <div className="bg-green-50 rounded-lg p-3 mb-2">
-                    <p className="text-xs font-bold text-green-700 mb-1">Pros</p>
+                  <div className="bg-emerald-50 rounded-lg p-3 mb-2">
+                    <p className="text-xs font-bold text-emerald-700 mb-1">Pros</p>
                     <p className="text-xs text-slate-700">{r.pros}</p>
                   </div>
                 )}

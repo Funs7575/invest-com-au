@@ -442,7 +442,7 @@ export default function AttributionAnalyticsPage() {
                     <div className="text-sm text-slate-500">Total Impressions</div>
                   </div>
                   <div className="bg-white border border-slate-200 rounded-lg p-4">
-                    <div className="text-3xl font-bold text-green-600">{ctr}%</div>
+                    <div className="text-3xl font-bold text-emerald-600">{ctr}%</div>
                     <div className="text-sm text-slate-500">CTR</div>
                   </div>
                   <div className="bg-white border border-slate-200 rounded-lg p-4">

@@ -52,7 +52,7 @@ const TEST_TYPES = [
 
 const STATUS_STYLES: Record<string, { bg: string; icon: string }> = {
   draft: { bg: "bg-slate-100 text-slate-700", icon: "file-text" },
-  running: { bg: "bg-green-100 text-green-800", icon: "trending-up" },
+  running: { bg: "bg-emerald-100 text-emerald-800", icon: "trending-up" },
   paused: { bg: "bg-amber-100 text-amber-800", icon: "pause-circle" },
   completed: { bg: "bg-blue-100 text-blue-800", icon: "check-circle" },
 };
@@ -196,8 +196,8 @@ export default function ABTestsPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 portal-stagger">
             <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
               <div className="flex items-center gap-2 mb-2">
-                <div className="w-7 h-7 rounded-lg bg-green-50 flex items-center justify-center">
-                  <Icon name="git-branch" size={14} className="text-green-600" />
+                <div className="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center">
+                  <Icon name="git-branch" size={14} className="text-emerald-600" />
                 </div>
                 <span className="text-xs font-medium text-slate-500">Running</span>
               </div>
@@ -314,8 +314,8 @@ export default function ABTestsPage() {
       {/* Tests list */}
       {tests.length === 0 ? (
         <div className="bg-white rounded-xl border border-slate-200 p-12 text-center">
-          <div className="w-12 h-12 rounded-full bg-green-50 flex items-center justify-center mx-auto mb-3">
-            <Icon name="git-branch" size={20} className="text-green-500" />
+          <div className="w-12 h-12 rounded-full bg-emerald-50 flex items-center justify-center mx-auto mb-3">
+            <Icon name="git-branch" size={20} className="text-emerald-500" />
           </div>
           <p className="text-sm font-medium text-slate-700 mb-1">No A/B tests yet</p>
           <p className="text-xs text-slate-400 mb-4">A/B testing lets you compare two versions of your ad to find what performs best. Test CTA text, banners, or landing pages.</p>
@@ -340,7 +340,7 @@ export default function ABTestsPage() {
                         {test.status.replace(/_/g, " ")}
                       </span>
                       {test.winner && (
-                        <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-green-100 text-green-800">
+                        <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
                           Winner: {test.winner.toUpperCase()}
                         </span>
                       )}
@@ -354,7 +354,7 @@ export default function ABTestsPage() {
                   <div className="flex gap-2">
                     {test.status === "draft" && (
                       <button onClick={() => updateStatus(test.id, "running")}
-                        className="px-3 py-1.5 text-xs font-semibold bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors">
+                        className="px-3 py-1.5 text-xs font-semibold bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 transition-colors">
                         Start
                       </button>
                     )}
@@ -372,7 +372,7 @@ export default function ABTestsPage() {
                     )}
                     {test.status === "paused" && (
                       <button onClick={() => updateStatus(test.id, "running")}
-                        className="px-3 py-1.5 text-xs font-semibold bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors">
+                        className="px-3 py-1.5 text-xs font-semibold bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 transition-colors">
                         Resume
                       </button>
                     )}
@@ -388,11 +388,11 @@ export default function ABTestsPage() {
 
                 {/* Variants comparison */}
                 <div className="grid grid-cols-2 gap-4">
-                  <div className={`rounded-lg border p-4 ${test.winner === "a" ? "border-green-300 bg-green-50/50" : "border-slate-200"}`}>
+                  <div className={`rounded-lg border p-4 ${test.winner === "a" ? "border-emerald-300 bg-emerald-50/50" : "border-slate-200"}`}>
                     <div className="flex items-center gap-2 mb-2">
                       <span className="w-5 h-5 rounded bg-blue-100 text-blue-800 flex items-center justify-center text-xs font-bold">A</span>
                       <span className="text-xs text-slate-500 font-medium">Control</span>
-                      {test.winner === "a" && <span className="text-xs text-green-700 font-bold">🏆 Winner</span>}
+                      {test.winner === "a" && <span className="text-xs text-emerald-700 font-bold">🏆 Winner</span>}
                     </div>
                     <p className="text-sm font-medium text-slate-900 mb-2 break-words">
                       {(test.variant_a as Record<string, string>)?.value || "—"}
@@ -405,11 +405,11 @@ export default function ABTestsPage() {
                       <p>Conv Rate: <span className="font-bold text-slate-700">{convA.toFixed(2)}%</span></p>
                     </div>
                   </div>
-                  <div className={`rounded-lg border p-4 ${test.winner === "b" ? "border-green-300 bg-green-50/50" : "border-slate-200"}`}>
+                  <div className={`rounded-lg border p-4 ${test.winner === "b" ? "border-emerald-300 bg-emerald-50/50" : "border-slate-200"}`}>
                     <div className="flex items-center gap-2 mb-2">
                       <span className="w-5 h-5 rounded bg-purple-100 text-purple-800 flex items-center justify-center text-xs font-bold">B</span>
                       <span className="text-xs text-slate-500 font-medium">Challenger</span>
-                      {test.winner === "b" && <span className="text-xs text-green-700 font-bold">🏆 Winner</span>}
+                      {test.winner === "b" && <span className="text-xs text-emerald-700 font-bold">🏆 Winner</span>}
                     </div>
                     <p className="text-sm font-medium text-slate-900 mb-2 break-words">
                       {(test.variant_b as Record<string, string>)?.value || "—"}

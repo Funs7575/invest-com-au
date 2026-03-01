@@ -307,7 +307,7 @@ export default async function BestBrokerPage({
             <ScrollReveal animation="scroll-check-stagger" as="ul" className="space-y-1.5">
               {cat.criteria.map((c, i) => (
                 <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
-                  <span className="text-green-600 font-bold mt-0.5">✓</span>
+                  <span className="text-emerald-600 font-bold mt-0.5">✓</span>
                   {c}
                 </li>
               ))}
@@ -347,7 +347,7 @@ export default async function BestBrokerPage({
                     {topPick.chess_sponsored && (
                       <>
                         <span className="text-slate-400">·</span>
-                        <span className="text-green-600 font-semibold text-xs">CHESS</span>
+                        <span className="text-emerald-600 font-semibold text-xs">CHESS</span>
                       </>
                     )}
                   </div>
@@ -405,7 +405,7 @@ export default async function BestBrokerPage({
                     <td className="px-4 py-3 text-sm">{broker.us_fee || "N/A"}</td>
                     <td className="px-4 py-3 text-sm">{broker.fx_rate != null ? `${broker.fx_rate}%` : "N/A"}</td>
                     <td className="px-4 py-3 text-center">
-                      <span className={broker.chess_sponsored ? "text-green-600 font-semibold" : "text-red-500"}>
+                      <span className={broker.chess_sponsored ? "text-emerald-600 font-semibold" : "text-red-500"}>
                         {broker.chess_sponsored ? "✓" : "✗"}
                       </span>
                     </td>

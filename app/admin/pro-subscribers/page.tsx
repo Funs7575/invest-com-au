@@ -31,7 +31,7 @@ function StatusBadge({ status, cancelAtPeriodEnd }: { status: string; cancelAtPe
     return <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">Cancelling</span>;
   }
   const styles: Record<string, string> = {
-    active: "bg-green-100 text-green-700",
+    active: "bg-emerald-100 text-emerald-700",
     trialing: "bg-blue-100 text-blue-700",
     past_due: "bg-red-100 text-red-700",
     canceled: "bg-slate-100 text-slate-500",
@@ -170,7 +170,7 @@ export default function AdminProSubscribersPage() {
               ]);
               downloadCSV("pro-subscribers.csv", ["Email", "Stripe Customer ID", "Plan", "Status", "MRR", "Created"], rows);
             }}
-            className="px-3 py-1.5 bg-green-50 text-green-700 text-xs font-semibold rounded-lg hover:bg-green-100 border border-green-200 transition-colors"
+            className="px-3 py-1.5 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-lg hover:bg-emerald-100 border border-emerald-200 transition-colors"
           >
             Export CSV ↓
           </button>
@@ -192,7 +192,7 @@ export default function AdminProSubscribersPage() {
         </div>
         <div className="bg-white border border-slate-200 rounded-xl p-4">
           <p className="text-xs text-slate-500 mb-1">Active</p>
-          <p className="text-xl font-bold text-green-600">{stats.active}</p>
+          <p className="text-xl font-bold text-emerald-600">{stats.active}</p>
         </div>
         <div className="bg-white border border-slate-200 rounded-xl p-4">
           <p className="text-xs text-slate-500 mb-1">Cancelling</p>

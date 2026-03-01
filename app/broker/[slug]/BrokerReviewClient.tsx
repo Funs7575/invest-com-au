@@ -22,7 +22,7 @@ function FeeVerdict({ value, thresholds }: { value: number | undefined; threshol
   if (value == null) return <span className="px-2 py-0.5 bg-slate-100 text-slate-500 text-xs font-semibold rounded-full">N/A</span>;
   const color = value <= thresholds[0] ? 'green' : value <= thresholds[1] ? 'amber' : 'red';
   const label = value <= thresholds[0] ? 'Low' : value <= thresholds[1] ? 'Medium' : 'High';
-  const colorMap = { green: 'bg-green-100 text-green-700', amber: 'bg-amber-100 text-amber-700', red: 'bg-red-100 text-red-700' };
+  const colorMap = { green: 'bg-emerald-100 text-emerald-700', amber: 'bg-amber-100 text-amber-700', red: 'bg-red-100 text-red-700' };
   return <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${colorMap[color]}`}>{label}</span>;
 }
 
@@ -90,7 +90,7 @@ function formatFieldName(name: string): string {
 const CATEGORY_COLORS: Record<string, string> = {
   tax: "bg-purple-100 text-purple-700",
   beginners: "bg-blue-100 text-blue-700",
-  smsf: "bg-green-100 text-green-700",
+  smsf: "bg-emerald-100 text-emerald-700",
   strategy: "bg-amber-100 text-amber-700",
   news: "bg-red-100 text-red-700",
   reviews: "bg-teal-100 text-teal-700",
@@ -169,8 +169,8 @@ export default function BrokerReviewClient({
 
         {/* Review Verified Banner */}
         {reviewVerified && (
-          <div className="bg-green-100 border border-green-200 rounded-xl p-4 mb-6 text-center">
-            <p className="text-sm font-semibold text-green-900">
+          <div className="bg-emerald-100 border border-emerald-200 rounded-xl p-4 mb-6 text-center">
+            <p className="text-sm font-semibold text-emerald-900">
               Thanks — your review has been verified! It should appear on this page shortly.
             </p>
           </div>
@@ -178,8 +178,8 @@ export default function BrokerReviewClient({
 
         {/* Story Verified Banner */}
         {storyVerified && (
-          <div className="bg-green-100 border border-green-200 rounded-xl p-4 mb-6 text-center">
-            <p className="text-sm font-semibold text-green-900">
+          <div className="bg-emerald-100 border border-emerald-200 rounded-xl p-4 mb-6 text-center">
+            <p className="text-sm font-semibold text-emerald-900">
               Thanks — your switching story has been verified! It should appear on this page shortly.
             </p>
           </div>
@@ -434,10 +434,10 @@ export default function BrokerReviewClient({
 
         {/* Safety Check */}
         <h2 id="safety" className="text-2xl font-extrabold mb-3 scroll-mt-20">Safety &amp; Scam Check</h2>
-        <div className={`rounded-xl p-6 mb-8 border ${b.chess_sponsored ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+        <div className={`rounded-xl p-6 mb-8 border ${b.chess_sponsored ? 'bg-emerald-50 border-emerald-200' : 'bg-red-50 border-red-200'}`}>
           <div className="flex items-center gap-3 mb-3">
             {b.chess_sponsored
-              ? <Icon name="check-circle" size={28} className="text-green-600 shrink-0" />
+              ? <Icon name="check-circle" size={28} className="text-emerald-600 shrink-0" />
               : <Icon name="alert-triangle" size={28} className="text-red-500 shrink-0" />
             }
             <h3 className="text-lg font-bold">
@@ -599,7 +599,7 @@ export default function BrokerReviewClient({
                   <div key={c.id} className="flex items-start gap-3 bg-white border border-slate-200 rounded-lg px-4 py-3">
                     <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded mt-0.5 ${
                       c.change_type === 'update' ? 'bg-blue-50 text-blue-700' :
-                      c.change_type === 'add' ? 'bg-green-50 text-green-700' :
+                      c.change_type === 'add' ? 'bg-emerald-50 text-emerald-700' :
                       'bg-red-50 text-red-700'
                     }`}>
                       {c.change_type}
@@ -617,7 +617,7 @@ export default function BrokerReviewClient({
                               <span className="text-blue-700 font-medium truncate max-w-[180px]">{c.new_value || '\u2014'}</span>
                             </div>
                           )}
-                          {c.change_type === 'add' && <p className="text-xs text-green-700 mt-0.5">{c.new_value}</p>}
+                          {c.change_type === 'add' && <p className="text-xs text-emerald-700 mt-0.5">{c.new_value}</p>}
                           {c.change_type === 'remove' && <p className="text-xs text-red-500 line-through mt-0.5">{c.old_value}</p>}
                         </>
                       )}

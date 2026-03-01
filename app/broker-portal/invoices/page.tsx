@@ -57,7 +57,7 @@ export default function InvoicesPage() {
   }
 
   const STATUS_CONFIG: Record<Invoice["status"], { bg: string; icon: string; iconColor: string }> = {
-    paid: { bg: "bg-green-50 text-green-700", icon: "check-circle", iconColor: "text-green-600" },
+    paid: { bg: "bg-emerald-50 text-emerald-700", icon: "check-circle", iconColor: "text-emerald-600" },
     pending: { bg: "bg-yellow-50 text-yellow-700", icon: "clock", iconColor: "text-yellow-600" },
     failed: { bg: "bg-red-50 text-red-700", icon: "x-circle", iconColor: "text-red-600" },
     refunded: { bg: "bg-blue-50 text-blue-600", icon: "arrow-up", iconColor: "text-blue-600" },
@@ -112,8 +112,8 @@ export default function InvoicesPage() {
           </div>
           <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-7 h-7 rounded-lg bg-green-50 flex items-center justify-center">
-                <Icon name="check-circle" size={14} className="text-green-600" />
+              <div className="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center">
+                <Icon name="check-circle" size={14} className="text-emerald-600" />
               </div>
               <span className="text-xs font-medium text-slate-500">Paid</span>
             </div>

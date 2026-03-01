@@ -147,7 +147,7 @@ export default function BrokerDashboard() {
   const donutOffset = donutCircumference - (donutPct / 100) * donutCircumference;
 
   // Wallet color based on balance
-  const walletBorderColor = balance >= 10000 ? "border-l-green-500" : balance >= 2000 ? "border-l-amber-500" : "border-l-red-500";
+  const walletBorderColor = balance >= 10000 ? "border-l-emerald-500" : balance >= 2000 ? "border-l-amber-500" : "border-l-red-500";
 
   return (
     <div className="space-y-6">
@@ -215,8 +215,8 @@ export default function BrokerDashboard() {
 
         <div className="bg-white rounded-xl border border-slate-200 p-5 hover-lift">
           <div className="flex items-center gap-2 mb-1">
-            <div className="w-7 h-7 rounded-full bg-green-50 flex items-center justify-center">
-              <Icon name="mouse-pointer-click" size={14} className="text-green-600" />
+            <div className="w-7 h-7 rounded-full bg-emerald-50 flex items-center justify-center">
+              <Icon name="mouse-pointer-click" size={14} className="text-emerald-600" />
             </div>
             <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Clicks (7d)</p>
             <InfoTip text="Total click-throughs on your ads in the last 7 days. Each click is charged to your wallet at your campaign&apos;s CPC rate." />
@@ -232,7 +232,7 @@ export default function BrokerDashboard() {
           {prevClicks > 0 && (() => {
             const changePct = Math.round(((recentClicks - prevClicks) / prevClicks) * 100);
             return changePct !== 0 ? (
-              <p className={`text-[0.62rem] font-bold mt-0.5 flex items-center gap-0.5 ${changePct > 0 ? "text-green-600" : "text-red-500"}`}>
+              <p className={`text-[0.62rem] font-bold mt-0.5 flex items-center gap-0.5 ${changePct > 0 ? "text-emerald-600" : "text-red-500"}`}>
                 <Icon name={changePct > 0 ? "arrow-up" : "arrow-down"} size={10} />
                 {Math.abs(changePct)}% vs prev week
               </p>
@@ -263,7 +263,7 @@ export default function BrokerDashboard() {
             const currentWeekSpend = dailySpend.slice(-7).reduce((s, v) => s + v, 0);
             const changePct = Math.round(((currentWeekSpend - prevSpend) / prevSpend) * 100);
             return changePct !== 0 ? (
-              <p className={`text-[0.62rem] font-bold mt-0.5 flex items-center gap-0.5 ${changePct > 0 ? "text-red-500" : "text-green-600"}`}>
+              <p className={`text-[0.62rem] font-bold mt-0.5 flex items-center gap-0.5 ${changePct > 0 ? "text-red-500" : "text-emerald-600"}`}>
                 <Icon name={changePct > 0 ? "arrow-up" : "arrow-down"} size={10} />
                 {Math.abs(changePct)}% vs prev week
               </p>
@@ -290,7 +290,7 @@ export default function BrokerDashboard() {
                 <p className="text-lg font-extrabold text-slate-900">{currWeekClicks.toLocaleString()}</p>
                 <p className="text-[0.62rem] text-slate-400">prev: {prevClicks.toLocaleString()}</p>
                 {clicksChange !== 0 && (
-                  <p className={`text-xs font-bold mt-1 flex items-center justify-center gap-0.5 ${clicksChange > 0 ? "text-green-600" : "text-red-500"}`}>
+                  <p className={`text-xs font-bold mt-1 flex items-center justify-center gap-0.5 ${clicksChange > 0 ? "text-emerald-600" : "text-red-500"}`}>
                     <Icon name={clicksChange > 0 ? "arrow-up" : "arrow-down"} size={10} />
                     {Math.abs(clicksChange)}%
                   </p>
@@ -301,7 +301,7 @@ export default function BrokerDashboard() {
                 <p className="text-lg font-extrabold text-slate-900">${(currWeekSpend / 100).toFixed(2)}</p>
                 <p className="text-[0.62rem] text-slate-400">prev: ${(prevSpend / 100).toFixed(2)}</p>
                 {spendChange !== 0 && (
-                  <p className={`text-xs font-bold mt-1 flex items-center justify-center gap-0.5 ${spendChange > 0 ? "text-red-500" : "text-green-600"}`}>
+                  <p className={`text-xs font-bold mt-1 flex items-center justify-center gap-0.5 ${spendChange > 0 ? "text-red-500" : "text-emerald-600"}`}>
                     <Icon name={spendChange > 0 ? "arrow-up" : "arrow-down"} size={10} />
                     {Math.abs(spendChange)}%
                   </p>
@@ -312,7 +312,7 @@ export default function BrokerDashboard() {
                 <p className="text-lg font-extrabold text-slate-900">{currWeekConversions.toLocaleString()}</p>
                 <p className="text-[0.62rem] text-slate-400">prev: {prevConversions.toLocaleString()}</p>
                 {conversionsChange !== 0 && (
-                  <p className={`text-xs font-bold mt-1 flex items-center justify-center gap-0.5 ${conversionsChange > 0 ? "text-green-600" : "text-red-500"}`}>
+                  <p className={`text-xs font-bold mt-1 flex items-center justify-center gap-0.5 ${conversionsChange > 0 ? "text-emerald-600" : "text-red-500"}`}>
                     <Icon name={conversionsChange > 0 ? "arrow-up" : "arrow-down"} size={10} />
                     {Math.abs(conversionsChange)}%
                   </p>
@@ -408,7 +408,7 @@ export default function BrokerDashboard() {
               const budgetPct = c.total_budget_cents
                 ? Math.min(100, Math.round((c.total_spent_cents / c.total_budget_cents) * 100))
                 : 0;
-              const statusDot = c.status === "active" ? "bg-green-500" :
+              const statusDot = c.status === "active" ? "bg-emerald-500" :
                 c.status === "pending_review" ? "bg-amber-500" :
                 c.status === "approved" ? "bg-blue-500" : "bg-slate-300";
               return (
@@ -422,7 +422,7 @@ export default function BrokerDashboard() {
                       </div>
                     </div>
                     <span className={`text-xs font-bold px-2 py-1 rounded-full ${
-                      c.status === "active" ? "bg-green-50 text-green-700" :
+                      c.status === "active" ? "bg-emerald-50 text-emerald-700" :
                       c.status === "pending_review" ? "bg-amber-50 text-amber-700" :
                       c.status === "approved" ? "bg-blue-50 text-blue-700" :
                       "bg-slate-100 text-slate-500"
@@ -435,7 +435,7 @@ export default function BrokerDashboard() {
                       <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
                         <div
                           className={`h-full rounded-full progress-bar-animate ${
-                            budgetPct >= 90 ? "bg-red-500" : budgetPct >= 70 ? "bg-amber-500" : "bg-green-500"
+                            budgetPct >= 90 ? "bg-red-500" : budgetPct >= 70 ? "bg-amber-500" : "bg-emerald-500"
                           }`}
                           style={{ width: `${budgetPct}%` }}
                         />
@@ -453,7 +453,7 @@ export default function BrokerDashboard() {
       {/* Campaign Status Distribution */}
       {campaigns.length > 0 && (() => {
         const statusConfig: { key: string; label: string; color: string }[] = [
-          { key: "active", label: "Active", color: "bg-green-500" },
+          { key: "active", label: "Active", color: "bg-emerald-500" },
           { key: "pending_review", label: "Pending Review", color: "bg-amber-500" },
           { key: "approved", label: "Approved", color: "bg-blue-500" },
           { key: "paused", label: "Paused", color: "bg-slate-400" },

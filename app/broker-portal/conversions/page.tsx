@@ -27,7 +27,7 @@ const EVENT_LABELS: Record<string, string> = {
 
 const EVENT_COLORS: Record<string, string> = {
   opened: "bg-blue-100 text-blue-800",
-  funded: "bg-green-100 text-green-800",
+  funded: "bg-emerald-100 text-emerald-800",
   first_trade: "bg-purple-100 text-purple-800",
   custom: "bg-slate-100 text-slate-700",
 };
@@ -186,17 +186,17 @@ export default function ConversionsPage() {
             <CountUp end={funnelCounts.opened} duration={1000} />
           </p>
         </div>
-        <div className="bg-green-50 rounded-xl border border-green-200 p-4 hover-lift">
+        <div className="bg-emerald-50 rounded-xl border border-emerald-200 p-4 hover-lift">
           <div className="flex items-center gap-1.5 mb-1">
-            <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center">
-              <Icon name="wallet" size={12} className="text-green-600" />
+            <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center">
+              <Icon name="wallet" size={12} className="text-emerald-600" />
             </div>
-            <p className="text-[0.69rem] text-green-600 uppercase tracking-wider font-bold">
+            <p className="text-[0.69rem] text-emerald-600 uppercase tracking-wider font-bold">
               Funded
             </p>
             <InfoTip text="User deposited money into their brokerage account. Indicates high-quality lead." />
           </div>
-          <p className="text-2xl font-extrabold text-green-800 mt-1">
+          <p className="text-2xl font-extrabold text-emerald-800 mt-1">
             <CountUp end={funnelCounts.funded} duration={1000} />
           </p>
         </div>
@@ -220,7 +220,7 @@ export default function ConversionsPage() {
       {totalConversions > 0 && (() => {
         const stages = [
           { key: "opened" as const, count: funnelCounts.opened, color: "bg-blue-400", label: EVENT_LABELS.opened },
-          { key: "funded" as const, count: funnelCounts.funded, color: "bg-green-400", label: EVENT_LABELS.funded },
+          { key: "funded" as const, count: funnelCounts.funded, color: "bg-emerald-400", label: EVENT_LABELS.funded },
           { key: "first_trade" as const, count: funnelCounts.first_trade, color: "bg-purple-400", label: EVENT_LABELS.first_trade },
         ];
         // Width percentages for trapezoid shape

@@ -38,7 +38,7 @@ const PAGE_SIZE = 20;
 
 const statusColors: Record<string, string> = {
   pending: "bg-yellow-100 text-yellow-700",
-  approved: "bg-green-100 text-green-700",
+  approved: "bg-emerald-100 text-emerald-700",
   rejected: "bg-red-100 text-red-700",
 };
 
@@ -190,7 +190,7 @@ export default function AdminQuestionsPage() {
           <p className="text-sm text-slate-500 mt-1">Moderate user-submitted broker questions. Approved questions with answers appear as FAQs.</p>
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={exportQuestions} className="bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg px-4 py-2 text-sm transition-colors">Export CSV ↓</button>
+          <button onClick={exportQuestions} className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg px-4 py-2 text-sm transition-colors">Export CSV ↓</button>
           <button
             onClick={load}
             className="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-lg px-4 py-2 text-sm transition-colors"
@@ -216,7 +216,7 @@ export default function AdminQuestionsPage() {
             onClick={() => setTab(t.key)}
             className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
               tab === t.key
-                ? "bg-green-800 text-white"
+                ? "bg-emerald-800 text-white"
                 : "bg-slate-100 text-slate-600 hover:bg-slate-200"
             }`}
           >
@@ -239,7 +239,7 @@ export default function AdminQuestionsPage() {
         <div className="mb-4 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 flex items-center justify-between">
           <span className="text-sm text-blue-700 font-medium">{selected.size} question{selected.size !== 1 ? "s" : ""} selected</span>
           <div className="flex items-center gap-2">
-            <button onClick={async () => { for (const id of selected) await handleModerate(id, "approve"); setSelected(new Set()); }} className="px-3 py-1.5 text-xs font-medium bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">Approve All</button>
+            <button onClick={async () => { for (const id of selected) await handleModerate(id, "approve"); setSelected(new Set()); }} className="px-3 py-1.5 text-xs font-medium bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors">Approve All</button>
             <button onClick={async () => { for (const id of selected) await handleModerate(id, "reject"); setSelected(new Set()); }} className="px-3 py-1.5 text-xs font-medium bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">Reject All</button>
             <button onClick={() => setSelected(new Set())} className="px-3 py-1.5 text-xs text-slate-500 hover:text-slate-900 transition-colors">Clear</button>
           </div>
@@ -280,7 +280,7 @@ export default function AdminQuestionsPage() {
                   <td className="px-4 py-3">
                     <button
                       onClick={() => { setExpandedId(expandedId === q.id ? null : q.id); setAnswerText(""); }}
-                      className="text-sm text-slate-700 hover:text-green-700 text-left max-w-[250px] truncate transition-colors"
+                      className="text-sm text-slate-700 hover:text-emerald-700 text-left max-w-[250px] truncate transition-colors"
                       title={q.question}
                     >
                       {q.question}
@@ -303,7 +303,7 @@ export default function AdminQuestionsPage() {
                         <button
                           onClick={() => handleModerate(q.id, "approve")}
                           disabled={actionLoading === q.id}
-                          className="px-2 py-1 text-xs bg-green-100 text-green-700 rounded hover:bg-green-200 transition-colors disabled:opacity-50 font-medium"
+                          className="px-2 py-1 text-xs bg-emerald-100 text-emerald-700 rounded hover:bg-emerald-200 transition-colors disabled:opacity-50 font-medium"
                         >
                           Approve
                         </button>
@@ -327,7 +327,7 @@ export default function AdminQuestionsPage() {
                       <button
                         onClick={() => handleModerate(q.id, "approve")}
                         disabled={actionLoading === q.id}
-                        className="px-2 py-1 text-xs bg-green-50 text-green-500 rounded hover:bg-green-100 transition-colors disabled:opacity-50"
+                        className="px-2 py-1 text-xs bg-emerald-50 text-emerald-500 rounded hover:bg-emerald-100 transition-colors disabled:opacity-50"
                       >
                         Approve
                       </button>
@@ -380,7 +380,7 @@ export default function AdminQuestionsPage() {
                               {a.answered_by}
                             </span>
                             {a.is_accepted && (
-                              <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-green-50 text-green-700">
+                              <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700">
                                 Accepted
                               </span>
                             )}
@@ -411,7 +411,7 @@ export default function AdminQuestionsPage() {
                   <button
                     onClick={() => handleSubmitAnswer(q.id)}
                     disabled={answerLoading || !answerText.trim()}
-                    className="mt-2 px-4 py-2 text-sm font-semibold text-white bg-green-700 rounded-lg hover:bg-green-800 transition-colors disabled:opacity-50"
+                    className="mt-2 px-4 py-2 text-sm font-semibold text-white bg-emerald-700 rounded-lg hover:bg-emerald-800 transition-colors disabled:opacity-50"
                   >
                     {answerLoading ? "Submitting..." : "Submit Answer"}
                   </button>

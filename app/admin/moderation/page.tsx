@@ -35,7 +35,7 @@ const typeBadge: Record<ContentType, { bg: string; label: string }> = {
 const statusColors: Record<string, string> = {
   pending:  "bg-yellow-100 text-yellow-700",
   verified: "bg-blue-100 text-blue-700",
-  approved: "bg-green-100 text-green-700",
+  approved: "bg-emerald-100 text-emerald-700",
   rejected: "bg-red-100 text-red-700",
 };
 
@@ -325,7 +325,7 @@ export default function ModerationQueuePage() {
             onClick={() => { setTab(t.key); setSelected(new Set()); }}
             className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
               tab === t.key
-                ? "bg-green-800 text-white"
+                ? "bg-emerald-800 text-white"
                 : "bg-slate-100 text-slate-600 hover:bg-slate-200"
             }`}
           >
@@ -363,7 +363,7 @@ export default function ModerationQueuePage() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => handleBulk("approve")}
-              className="px-3 py-1.5 text-xs font-medium bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              className="px-3 py-1.5 text-xs font-medium bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
             >
               Approve All
             </button>
@@ -460,7 +460,7 @@ export default function ModerationQueuePage() {
                       <button
                         onClick={() => handleModerate(item, "approve")}
                         disabled={isLoading}
-                        className="px-2.5 py-1.5 text-xs bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors disabled:opacity-50 font-medium"
+                        className="px-2.5 py-1.5 text-xs bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 transition-colors disabled:opacity-50 font-medium"
                         title="Approve"
                       >
                         Approve
@@ -511,8 +511,8 @@ export default function ModerationQueuePage() {
                             </div>
                           )}
                           {!!item.meta.pros && (
-                            <div className="bg-green-50 rounded-lg p-3">
-                              <p className="text-xs font-bold text-green-700 mb-1">Pros</p>
+                            <div className="bg-emerald-50 rounded-lg p-3">
+                              <p className="text-xs font-bold text-emerald-700 mb-1">Pros</p>
                               <p className="text-xs text-slate-700">{String(item.meta.pros)}</p>
                             </div>
                           )}
@@ -540,7 +540,7 @@ export default function ModerationQueuePage() {
                           )}
                           <div className="flex flex-wrap gap-2">
                             {!!item.meta.estimated_savings && (
-                              <span className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-full border border-green-200">
+                              <span className="text-xs bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-200">
                                 Saves {String(item.meta.estimated_savings)}
                               </span>
                             )}
@@ -587,7 +587,7 @@ export default function ModerationQueuePage() {
                           <button
                             onClick={() => handleModerate(item, "approve")}
                             disabled={actionLoading === key}
-                            className="px-4 py-2 text-sm font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
+                            className="px-4 py-2 text-sm font-semibold text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50"
                           >
                             {actionLoading === key ? "Processing..." : "Approve"}
                           </button>

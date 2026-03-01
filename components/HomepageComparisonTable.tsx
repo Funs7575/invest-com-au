@@ -219,7 +219,7 @@ export default function HomepageComparisonTable({
                   <span
                     className={`text-xs font-semibold ${
                       broker.chess_sponsored
-                        ? "text-green-600"
+                        ? "text-emerald-600"
                         : "text-slate-400"
                     }`}
                   >
@@ -305,7 +305,7 @@ export default function HomepageComparisonTable({
                   <span className="font-semibold text-slate-600">{broker.asx_fee || "N/A"}</span> ASX
                 </span>
                 {broker.chess_sponsored && (
-                  <span className="text-[0.62rem] text-green-600 font-semibold">CHESS✓</span>
+                  <span className="text-[0.62rem] text-emerald-600 font-semibold">CHESS✓</span>
                 )}
               </div>
             </div>

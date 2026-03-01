@@ -178,7 +178,7 @@ export default function EditorialPolicyPage() {
             </p>
             <ul className="space-y-2 mb-4">
               <li className="flex items-start gap-2 text-slate-700">
-                <span className="text-green-600 mt-0.5">&#10003;</span>
+                <span className="text-emerald-600 mt-0.5">&#10003;</span>
                 Email{" "}
                 <a
                   href="mailto:editorial@invest.com.au"
@@ -189,17 +189,17 @@ export default function EditorialPolicyPage() {
                 with the page URL and a description of the error.
               </li>
               <li className="flex items-start gap-2 text-slate-700">
-                <span className="text-green-600 mt-0.5">&#10003;</span>
+                <span className="text-emerald-600 mt-0.5">&#10003;</span>
                 Our target is to investigate and fix factual errors within 48
                 hours.
               </li>
               <li className="flex items-start gap-2 text-slate-700">
-                <span className="text-green-600 mt-0.5">&#10003;</span>
+                <span className="text-emerald-600 mt-0.5">&#10003;</span>
                 Significant corrections are logged in the article changelog
                 (visible in the author byline area).
               </li>
               <li className="flex items-start gap-2 text-slate-700">
-                <span className="text-green-600 mt-0.5">&#10003;</span>
+                <span className="text-emerald-600 mt-0.5">&#10003;</span>
                 Minor typographical fixes are made silently.
               </li>
             </ul>
@@ -213,22 +213,22 @@ export default function EditorialPolicyPage() {
             </p>
             <ul className="space-y-2 mb-4">
               <li className="flex items-start gap-2 text-slate-700">
-                <span className="text-green-600 mt-0.5">&#10003;</span>
+                <span className="text-emerald-600 mt-0.5">&#10003;</span>
                 Contributors must disclose any personal holdings in brokers or
                 products they cover.
               </li>
               <li className="flex items-start gap-2 text-slate-700">
-                <span className="text-green-600 mt-0.5">&#10003;</span>
+                <span className="text-emerald-600 mt-0.5">&#10003;</span>
                 Individual disclosure statements appear on each contributor
                 profile page.
               </li>
               <li className="flex items-start gap-2 text-slate-700">
-                <span className="text-green-600 mt-0.5">&#10003;</span>
+                <span className="text-emerald-600 mt-0.5">&#10003;</span>
                 Writers do not receive performance-based bonuses tied to
                 affiliate revenue.
               </li>
               <li className="flex items-start gap-2 text-slate-700">
-                <span className="text-green-600 mt-0.5">&#10003;</span>
+                <span className="text-emerald-600 mt-0.5">&#10003;</span>
                 Affiliate relationships are disclosed on every page that
                 contains outbound links.
               </li>

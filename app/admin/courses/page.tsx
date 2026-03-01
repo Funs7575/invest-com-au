@@ -210,13 +210,13 @@ export default function AdminCoursesPage() {
               ]);
               downloadCSV("courses.csv", ["Title", "Slug", "Creator", "Price", "Pro Price", "Revenue Share %", "Status", "Featured", "Created"], rows);
             }}
-            className="px-3 py-1.5 bg-green-50 text-green-700 text-xs font-semibold rounded-lg hover:bg-green-100 border border-green-200 transition-colors"
+            className="px-3 py-1.5 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-lg hover:bg-emerald-100 border border-emerald-200 transition-colors"
           >
             Export CSV ↓
           </button>
           <button
             onClick={() => setShowCreate(!showCreate)}
-            className="px-4 py-2 bg-green-700 text-white text-sm font-semibold rounded-lg hover:bg-green-800 transition-colors"
+            className="px-4 py-2 bg-emerald-700 text-white text-sm font-semibold rounded-lg hover:bg-emerald-800 transition-colors"
           >
             {showCreate ? "Cancel" : "+ New Course"}
           </button>
@@ -228,7 +228,7 @@ export default function AdminCoursesPage() {
         <button
           onClick={() => setTab("courses")}
           className={`pb-2 text-sm font-semibold transition-colors ${
-            tab === "courses" ? "text-green-700 border-b-2 border-green-700" : "text-slate-500 hover:text-slate-700"
+            tab === "courses" ? "text-emerald-700 border-b-2 border-emerald-700" : "text-slate-500 hover:text-slate-700"
           }`}
         >
           All Courses
@@ -236,7 +236,7 @@ export default function AdminCoursesPage() {
         <button
           onClick={() => setTab("revenue")}
           className={`pb-2 text-sm font-semibold transition-colors ${
-            tab === "revenue" ? "text-green-700 border-b-2 border-green-700" : "text-slate-500 hover:text-slate-700"
+            tab === "revenue" ? "text-emerald-700 border-b-2 border-emerald-700" : "text-slate-500 hover:text-slate-700"
           }`}
         >
           Revenue by Creator
@@ -404,7 +404,7 @@ export default function AdminCoursesPage() {
           <button
             type="submit"
             disabled={saving}
-            className="px-5 py-2.5 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 disabled:opacity-50 transition-colors"
+            className="px-5 py-2.5 bg-emerald-700 text-white text-sm font-bold rounded-lg hover:bg-emerald-800 disabled:opacity-50 transition-colors"
           >
             {saving ? "Creating..." : "Create Course"}
           </button>
@@ -454,7 +454,7 @@ export default function AdminCoursesPage() {
                   </td>
                   <td className="px-4 py-3">
                     <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                      c.status === "published" ? "bg-green-50 text-green-700" :
+                      c.status === "published" ? "bg-emerald-50 text-emerald-700" :
                       c.status === "draft" ? "bg-slate-100 text-slate-600" :
                       "bg-red-50 text-red-700"
                     }`}>
@@ -470,7 +470,7 @@ export default function AdminCoursesPage() {
                     </button>
                     <Link
                       href={`/admin/courses/${c.slug}`}
-                      className="text-green-700 hover:text-green-800 font-medium text-xs"
+                      className="text-emerald-700 hover:text-emerald-800 font-medium text-xs"
                     >
                       Manage →
                     </Link>
@@ -506,7 +506,7 @@ export default function AdminCoursesPage() {
                   <td className="px-4 py-3 font-semibold text-slate-900">{r.creator_name}</td>
                   <td className="px-4 py-3 text-right text-slate-600">{r.purchases}</td>
                   <td className="px-4 py-3 text-right text-slate-600">${(r.total_revenue / 100).toFixed(2)}</td>
-                  <td className="px-4 py-3 text-right text-green-700 font-medium">${(r.creator_share / 100).toFixed(2)}</td>
+                  <td className="px-4 py-3 text-right text-emerald-700 font-medium">${(r.creator_share / 100).toFixed(2)}</td>
                   <td className="px-4 py-3 text-right text-slate-600">${(r.platform_share / 100).toFixed(2)}</td>
                 </tr>
               ))}

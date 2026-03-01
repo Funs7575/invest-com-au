@@ -16,7 +16,7 @@ function StatusBadge({ status, cancelAtPeriodEnd }: { status: string; cancelAtPe
   }
 
   const styles: Record<string, string> = {
-    active: "bg-green-100 text-green-700",
+    active: "bg-emerald-100 text-emerald-700",
     trialing: "bg-blue-100 text-blue-700",
     past_due: "bg-red-100 text-red-700",
     canceled: "bg-slate-100 text-slate-500",
@@ -110,19 +110,19 @@ export default function AccountClient() {
 
         {/* Checkout success banner */}
         {showSuccessBanner && isPro && (
-          <div className="mb-6 bg-green-50 border border-green-200 rounded-xl px-4 py-3 flex items-start gap-3">
-            <svg className="w-5 h-5 text-green-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="mb-6 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 flex items-start gap-3">
+            <svg className="w-5 h-5 text-emerald-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <div>
-              <p className="text-sm font-semibold text-green-800">Welcome to Investor Pro!</p>
-              <p className="text-xs text-green-700 mt-0.5">
+              <p className="text-sm font-semibold text-emerald-800">Welcome to Investor Pro!</p>
+              <p className="text-xs text-emerald-700 mt-0.5">
                 Your subscription is active. You now have access to all premium features.
               </p>
             </div>
             <button
               onClick={() => setShowSuccessBanner(false)}
-              className="ml-auto text-green-400 hover:text-green-600"
+              className="ml-auto text-emerald-400 hover:text-emerald-600"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

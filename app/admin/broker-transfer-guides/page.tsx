@@ -240,13 +240,13 @@ export default function BrokerTransferGuidesPage() {
                   guide.transfer_type,
                 ])
               )}
-              className="px-3 py-1.5 bg-green-50 text-green-700 text-xs font-semibold rounded-lg hover:bg-green-100 border border-green-200 transition-colors"
+              className="px-3 py-1.5 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-lg hover:bg-emerald-100 border border-emerald-200 transition-colors"
             >
               Export CSV
             </button>
             <button
               onClick={startCreate}
-              className="px-4 py-2 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors"
+              className="px-4 py-2 bg-emerald-700 text-white text-sm font-bold rounded-lg hover:bg-emerald-800 transition-colors"
             >
               + New Guide
             </button>
@@ -258,14 +258,14 @@ export default function BrokerTransferGuidesPage() {
           placeholder="Search..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full max-w-sm bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500/30"
+          className="w-full max-w-sm bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
         />
 
         {message && (
           <div
             className={`rounded-lg px-4 py-2 text-sm font-medium ${
               message.type === "success"
-                ? "bg-green-50 text-green-700 border border-green-200"
+                ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                 : "bg-red-50 text-red-700 border border-red-200"
             }`}
           >
@@ -315,7 +315,7 @@ export default function BrokerTransferGuidesPage() {
                         onChange={() =>
                           setForm({ ...form, transfer_type: t })
                         }
-                        className="text-green-700"
+                        className="text-emerald-700"
                       />
                       {t.charAt(0).toUpperCase() + t.slice(1)}
                     </label>
@@ -454,7 +454,7 @@ export default function BrokerTransferGuidesPage() {
               <button
                 onClick={save}
                 disabled={saving}
-                className="px-4 py-2 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors disabled:opacity-50"
+                className="px-4 py-2 bg-emerald-700 text-white text-sm font-bold rounded-lg hover:bg-emerald-800 transition-colors disabled:opacity-50"
               >
                 {saving ? "Saving..." : editing ? "Update" : "Create"}
               </button>
@@ -531,7 +531,7 @@ export default function BrokerTransferGuidesPage() {
                       </td>
                       <td className="px-4 py-3 text-center">
                         {guide.supports_in_specie ? (
-                          <span className="text-green-600">✓</span>
+                          <span className="text-emerald-600">✓</span>
                         ) : (
                           <span className="text-red-400">✗</span>
                         )}
@@ -539,7 +539,7 @@ export default function BrokerTransferGuidesPage() {
                       <td className="px-4 py-3 text-right">
                         <button
                           onClick={() => startEdit(guide)}
-                          className="text-xs text-green-700 hover:underline mr-3"
+                          className="text-xs text-emerald-700 hover:underline mr-3"
                         >
                           Edit
                         </button>

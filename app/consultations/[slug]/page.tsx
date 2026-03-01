@@ -130,7 +130,7 @@ export default async function ConsultationDetailPage({ params }: PageProps) {
               Consultations
             </Link>
             <span className="mx-2">/</span>
-            <span className="text-green-700">{consultation.title}</span>
+            <span className="text-emerald-700">{consultation.title}</span>
           </nav>
 
           {/* Two-column layout */}
@@ -161,7 +161,7 @@ export default async function ConsultationDetailPage({ params }: PageProps) {
                         className="rounded-full object-cover shrink-0"
                       />
                     ) : (
-                      <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center text-xl font-bold text-green-700 shrink-0">
+                      <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center text-xl font-bold text-emerald-700 shrink-0">
                         {consultation.consultant.full_name.charAt(0)}
                       </div>
                     )}
@@ -185,7 +185,7 @@ export default async function ConsultationDetailPage({ params }: PageProps) {
                             href={consultation.consultant.linkedin_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-xs text-green-700 hover:underline"
+                            className="text-xs text-emerald-700 hover:underline"
                           >
                             LinkedIn
                           </a>
@@ -195,7 +195,7 @@ export default async function ConsultationDetailPage({ params }: PageProps) {
                             href={consultation.consultant.twitter_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-xs text-green-700 hover:underline"
+                            className="text-xs text-emerald-700 hover:underline"
                           >
                             Twitter
                           </a>
@@ -218,7 +218,7 @@ export default async function ConsultationDetailPage({ params }: PageProps) {
                   ].map((item) => (
                     <li key={item} className="flex items-start gap-3 text-sm text-slate-600">
                       <svg
-                        className="w-5 h-5 text-green-600 shrink-0 mt-0.5"
+                        className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5"
                         fill="currentColor"
                         viewBox="0 0 20 20"
                       >

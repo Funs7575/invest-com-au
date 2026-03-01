@@ -21,7 +21,7 @@ const PAGE_SIZE = 25;
 type ViewMode = "table" | "timeline";
 
 const actionColors: Record<string, string> = {
-  create: "bg-green-50 text-green-600",
+  create: "bg-emerald-50 text-emerald-600",
   update: "bg-blue-50 text-blue-600",
   delete: "bg-red-50 text-red-600",
   bulk_update: "bg-purple-50 text-purple-600",
@@ -30,7 +30,7 @@ const actionColors: Record<string, string> = {
 };
 
 const timelineDotColors: Record<string, string> = {
-  create: "bg-green-500",
+  create: "bg-emerald-500",
   update: "bg-blue-500",
   delete: "bg-red-500",
   bulk_update: "bg-purple-500",
@@ -196,14 +196,14 @@ export default function AuditLogPage() {
             onClick={() => setAutoRefresh(!autoRefresh)}
             className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors ${
               autoRefresh
-                ? "bg-green-50 text-green-700 border-green-200"
+                ? "bg-emerald-50 text-emerald-700 border-emerald-200"
                 : "bg-white text-slate-500 border-slate-200 hover:bg-slate-50"
             }`}
             title={autoRefresh ? "Auto-refresh ON (every 30s)" : "Enable auto-refresh"}
           >
             {autoRefresh ? "Live" : "Auto-refresh"}
             {autoRefresh && (
-              <span className="ml-1.5 inline-block w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse" />
+              <span className="ml-1.5 inline-block w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
             )}
           </button>
 
@@ -213,7 +213,7 @@ export default function AuditLogPage() {
               onClick={() => setViewMode("table")}
               className={`px-3 py-1.5 text-xs font-medium transition-colors ${
                 viewMode === "table"
-                  ? "bg-green-700 text-white"
+                  ? "bg-emerald-700 text-white"
                   : "bg-white text-slate-600 hover:bg-slate-50"
               }`}
             >
@@ -223,7 +223,7 @@ export default function AuditLogPage() {
               onClick={() => setViewMode("timeline")}
               className={`px-3 py-1.5 text-xs font-medium transition-colors ${
                 viewMode === "timeline"
-                  ? "bg-green-700 text-white"
+                  ? "bg-emerald-700 text-white"
                   : "bg-white text-slate-600 hover:bg-slate-50"
               }`}
             >
@@ -243,7 +243,7 @@ export default function AuditLogPage() {
               ]);
               downloadCSV("audit-log.csv", ["Time", "Action", "Entity Type", "Entity Name", "Admin Email"], rows);
             }}
-            className="px-3 py-1.5 bg-green-50 text-green-700 text-xs font-semibold rounded-lg hover:bg-green-100 border border-green-200 transition-colors"
+            className="px-3 py-1.5 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-lg hover:bg-emerald-100 border border-emerald-200 transition-colors"
           >
             Export CSV
           </button>
@@ -316,7 +316,7 @@ export default function AuditLogPage() {
             onClick={() => { setFilter(type); setPage(0); }}
             className={`px-3 py-1.5 text-xs rounded-lg font-medium transition-colors ${
               filter === type
-                ? "bg-green-700 text-white"
+                ? "bg-emerald-700 text-white"
                 : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
             }`}
           >
@@ -334,7 +334,7 @@ export default function AuditLogPage() {
             onClick={() => { setActionFilter(type); setPage(0); }}
             className={`px-3 py-1.5 text-xs rounded-lg font-medium transition-colors ${
               actionFilter === type
-                ? "bg-green-700 text-white"
+                ? "bg-emerald-700 text-white"
                 : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
             }`}
           >

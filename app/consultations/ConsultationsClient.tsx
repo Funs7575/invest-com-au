@@ -19,7 +19,7 @@ const CATEGORY_COLORS: Record<string, string> = {
   portfolio: "bg-blue-50 text-blue-700",
   tax: "bg-purple-50 text-purple-700",
   "broker-selection": "bg-amber-50 text-amber-700",
-  general: "bg-green-50 text-green-700",
+  general: "bg-emerald-50 text-emerald-700",
 };
 
 interface Props {

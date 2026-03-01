@@ -136,7 +136,7 @@ export default function ProDealsClient({
                             </span>
                           )}
                           {deal.deal_value && (
-                            <span className="text-[0.69rem] px-2 py-0.5 bg-green-100 text-green-700 rounded-full font-bold">
+                            <span className="text-[0.69rem] px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full font-bold">
                               {deal.deal_value}
                             </span>
                           )}
@@ -154,17 +154,17 @@ export default function ProDealsClient({
                     {/* Redemption section */}
                     <div className="mt-4">
                       {isRevealed ? (
-                        <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                        <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3">
                           {deal.redemption_code && (
                             <div className="mb-2">
                               <span className="text-xs text-slate-500 block mb-1">Redemption Code:</span>
-                              <code className="text-sm font-mono font-bold bg-white px-3 py-1.5 rounded border border-green-200 text-green-800 inline-block">
+                              <code className="text-sm font-mono font-bold bg-white px-3 py-1.5 rounded border border-emerald-200 text-emerald-800 inline-block">
                                 {deal.redemption_code}
                               </code>
                             </div>
                           )}
                           {deal.redemption_instructions && (
-                            <p className="text-xs text-green-700 mb-2">{deal.redemption_instructions}</p>
+                            <p className="text-xs text-emerald-700 mb-2">{deal.redemption_instructions}</p>
                           )}
                           {deal.redemption_url && (
                             <a

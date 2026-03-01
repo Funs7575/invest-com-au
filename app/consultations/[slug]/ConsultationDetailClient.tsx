@@ -100,17 +100,17 @@ export default function ConsultationDetailClient({ consultation }: Props) {
     return (
       <div>
         {showBookingSuccess && (
-          <div className="mb-4 rounded-xl bg-green-50 border border-green-200 p-4 text-center">
-            <p className="text-sm font-semibold text-green-800">
+          <div className="mb-4 rounded-xl bg-emerald-50 border border-emerald-200 p-4 text-center">
+            <p className="text-sm font-semibold text-emerald-800">
               Payment successful! Now pick a time for your session.
             </p>
           </div>
         )}
 
-        <div className="rounded-2xl border-2 border-green-300 bg-gradient-to-b from-green-50 to-white p-6 text-center mb-6">
-          <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+        <div className="rounded-2xl border-2 border-emerald-300 bg-gradient-to-b from-emerald-50 to-white p-6 text-center mb-6">
+          <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
             <svg
-              className="w-6 h-6 text-green-700"
+              className="w-6 h-6 text-emerald-700"
               fill="currentColor"
               viewBox="0 0 20 20"
             >
@@ -121,7 +121,7 @@ export default function ConsultationDetailClient({ consultation }: Props) {
               />
             </svg>
           </div>
-          <h3 className="text-lg font-bold text-green-800 mb-1">
+          <h3 className="text-lg font-bold text-emerald-800 mb-1">
             Session Booked
           </h3>
           <p className="text-sm text-slate-600">
@@ -165,7 +165,7 @@ export default function ConsultationDetailClient({ consultation }: Props) {
 
   // Not yet purchased — show pricing CTA
   return (
-    <div className="rounded-2xl border-2 border-green-300 bg-gradient-to-b from-green-50 to-white p-6 text-center">
+    <div className="rounded-2xl border-2 border-emerald-300 bg-gradient-to-b from-emerald-50 to-white p-6 text-center">
       {hasDiscount && (
         <div className="inline-block px-3 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-full mb-4">
           Pro Discount Applied
@@ -178,12 +178,12 @@ export default function ConsultationDetailClient({ consultation }: Props) {
             <span className="text-lg text-slate-400 line-through mr-2">
               ${fullPriceDisplay}
             </span>
-            <span className="text-4xl font-extrabold text-green-800">
+            <span className="text-4xl font-extrabold text-emerald-800">
               ${proPriceDisplay}
             </span>
           </>
         ) : (
-          <span className="text-4xl font-extrabold text-green-800">
+          <span className="text-4xl font-extrabold text-emerald-800">
             ${fullPriceDisplay}
           </span>
         )}
@@ -209,7 +209,7 @@ export default function ConsultationDetailClient({ consultation }: Props) {
       <button
         onClick={handlePurchase}
         disabled={purchasing}
-        className="w-full py-3 bg-green-700 text-white font-bold rounded-lg hover:bg-green-800 hover:scale-105 hover:shadow-[0_0_12px_rgba(21,128,61,0.3)] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
+        className="w-full py-3 bg-emerald-700 text-white font-bold rounded-lg hover:bg-emerald-800 hover:scale-105 hover:shadow-[0_0_12px_rgba(21,128,61,0.3)] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
       >
         {purchasing
           ? "Redirecting to checkout..."
@@ -223,7 +223,7 @@ export default function ConsultationDetailClient({ consultation }: Props) {
           Already have an account?{" "}
           <Link
             href={`/auth/login?next=/consultations/${consultation.slug}`}
-            className="text-green-700 underline hover:text-green-800"
+            className="text-emerald-700 underline hover:text-emerald-800"
           >
             Sign in
           </Link>
@@ -256,7 +256,7 @@ export default function ConsultationDetailClient({ consultation }: Props) {
             className="flex items-start gap-2 text-xs text-slate-600"
           >
             <svg
-              className="w-4 h-4 text-green-600 shrink-0 mt-0.5"
+              className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5"
               fill="currentColor"
               viewBox="0 0 20 20"
             >

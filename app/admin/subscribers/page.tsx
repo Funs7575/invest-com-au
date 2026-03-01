@@ -159,7 +159,7 @@ export default function AdminSubscribersPage() {
         </div>
         <button
           onClick={exportCsv}
-          className="bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg px-4 py-2 text-sm transition-colors"
+          className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg px-4 py-2 text-sm transition-colors"
         >
           Export CSV ↓
         </button>
@@ -177,13 +177,13 @@ export default function AdminSubscribersPage() {
       <div className="flex gap-2 mb-4">
         <button
           onClick={() => setTab("all")}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${tab === "all" ? "bg-green-800 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${tab === "all" ? "bg-emerald-800 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}
         >
           All Subscribers ({captures.length})
         </button>
         <button
           onClick={() => setTab("quiz")}
-          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${tab === "quiz" ? "bg-green-800 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}
+          className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${tab === "quiz" ? "bg-emerald-800 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}
         >
           Quiz Leads ({quizLeads.length})
         </button>

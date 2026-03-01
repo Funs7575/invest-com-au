@@ -81,7 +81,7 @@ function DimensionBar({ score, label, note, weight, isPro }: {
         <span className="font-medium text-slate-700">{label}</span>
         <div className="flex items-center gap-2">
           <span className="text-xs text-slate-400">{(weight * 100).toFixed(0)}% weight</span>
-          <span className={`text-sm font-bold ${score >= 80 ? "text-green-600" : score >= 50 ? "text-amber-600" : "text-red-500"}`}>
+          <span className={`text-sm font-bold ${score >= 80 ? "text-emerald-600" : score >= 50 ? "text-amber-600" : "text-red-500"}`}>
             {score}
           </span>
         </div>
@@ -179,7 +179,7 @@ export default function HealthScoresClient({
                 <div className="flex-1 text-center sm:text-left">
                   <h2 className="text-2xl font-extrabold">{selectedBroker.name}</h2>
                   <p className={`text-lg font-bold mt-1 ${
-                    selectedScore.overall_score >= 80 ? "text-green-600" : selectedScore.overall_score >= 50 ? "text-amber-600" : "text-red-500"
+                    selectedScore.overall_score >= 80 ? "text-emerald-600" : selectedScore.overall_score >= 50 ? "text-amber-600" : "text-red-500"
                   }`}>
                     {selectedScore.overall_score >= 80 ? "Excellent Safety Rating" : selectedScore.overall_score >= 50 ? "Good Safety Rating" : "Below Average Safety"}
                   </p>
@@ -285,7 +285,7 @@ export default function HealthScoresClient({
                     <tr
                       key={s.broker_slug}
                       className={`border-b border-slate-50 hover:bg-slate-50 cursor-pointer transition-colors ${
-                        s.broker_slug === selectedSlug ? "bg-green-50/50" : ""
+                        s.broker_slug === selectedSlug ? "bg-emerald-50/50" : ""
                       }`}
                       onClick={() => {
                         setSelectedSlug(s.broker_slug);
@@ -296,7 +296,7 @@ export default function HealthScoresClient({
                       <td className="px-4 py-3 font-medium">{broker?.name || s.broker_slug}</td>
                       <td className="px-3 py-3 text-center">
                         <span className={`inline-block px-2 py-0.5 rounded text-xs font-bold ${
-                          s.overall_score >= 80 ? "bg-green-100 text-green-700" :
+                          s.overall_score >= 80 ? "bg-emerald-100 text-emerald-700" :
                           s.overall_score >= 50 ? "bg-amber-100 text-amber-700" : "bg-red-100 text-red-700"
                         }`}>
                           {s.overall_score}

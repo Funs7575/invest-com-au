@@ -55,8 +55,8 @@ function AdminLoginForm() {
       <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4">
         <div className="w-full max-w-sm">
           <div className="bg-white border border-slate-200 rounded-2xl p-8 text-center shadow-sm">
-            <div className="w-14 h-14 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-7 h-7 text-green-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-14 h-14 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-7 h-7 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
             </div>
@@ -70,7 +70,7 @@ function AdminLoginForm() {
               Didn&apos;t get it? Check spam, or{" "}
               <button
                 onClick={() => { setSent(false); setError(""); }}
-                className="text-green-700 font-medium hover:underline"
+                className="text-emerald-700 font-medium hover:underline"
               >
                 try again
               </button>.
@@ -109,7 +109,7 @@ function AdminLoginForm() {
               required
               autoFocus
               autoComplete="email"
-              className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-green-700/30 focus:border-green-700"
+              className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-700/30 focus:border-emerald-700"
             />
             <p className="text-xs text-slate-400 mt-1.5">
               Only @invest.com.au or authorised admin emails can access the dashboard.
@@ -119,7 +119,7 @@ function AdminLoginForm() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-green-700 hover:bg-green-800 text-white font-semibold rounded-xl px-4 py-2.5 text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-semibold rounded-xl px-4 py-2.5 text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? "Sending..." : "Send Sign-In Link"}
           </button>

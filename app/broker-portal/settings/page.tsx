@@ -235,14 +235,14 @@ export default function SettingsPage() {
       {/* Terms Acceptance */}
       <div className="bg-white rounded-xl border border-slate-200 p-6">
         <div className="flex items-center gap-2 mb-4">
-          <div className="w-7 h-7 rounded-lg bg-green-50 flex items-center justify-center">
-            <Icon name="shield-check" size={14} className="text-green-600" />
+          <div className="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center">
+            <Icon name="shield-check" size={14} className="text-emerald-600" />
           </div>
           <h3 className="text-base font-bold text-slate-900">Marketplace Terms</h3>
         </div>
         {account?.terms_accepted_at ? (
-          <div className="flex items-center gap-2 text-green-700 bg-green-50 rounded-lg px-4 py-3">
-            <Icon name="check-circle" size={16} className="text-green-600" />
+          <div className="flex items-center gap-2 text-emerald-700 bg-emerald-50 rounded-lg px-4 py-3">
+            <Icon name="check-circle" size={16} className="text-emerald-600" />
             <span className="text-sm">Terms accepted on {new Date(account.terms_accepted_at).toLocaleDateString("en-AU")}</span>
           </div>
         ) : (
@@ -333,8 +333,8 @@ export default function SettingsPage() {
       {/* Email Notification Preferences */}
       <div className="bg-white rounded-xl border border-slate-200 p-6">
         <div className="flex items-center gap-2 mb-4">
-          <div className="w-7 h-7 rounded-lg bg-green-50 flex items-center justify-center">
-            <Icon name="mail" size={14} className="text-green-600" />
+          <div className="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center">
+            <Icon name="mail" size={14} className="text-emerald-600" />
           </div>
           <h3 className="text-base font-bold text-slate-900">Email Notifications</h3>
         </div>

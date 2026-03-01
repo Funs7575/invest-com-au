@@ -22,7 +22,7 @@ const SEVERITY_STYLES: Record<string, { bg: string; text: string; border: string
 const TYPE_STYLES: Record<string, string> = {
   tax: "bg-purple-100 text-purple-700",
   regulatory: "bg-blue-100 text-blue-700",
-  super: "bg-green-100 text-green-700",
+  super: "bg-emerald-100 text-emerald-700",
   reporting: "bg-slate-100 text-slate-700",
 };
 

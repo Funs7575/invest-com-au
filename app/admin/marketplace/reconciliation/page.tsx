@@ -131,15 +131,15 @@ export default function ReconciliationPage() {
           </div>
           <div className="bg-white rounded-xl border border-slate-200 p-4">
             <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Total Deposited</p>
-            <p className="text-2xl font-extrabold text-green-700 mt-1">${(totalDeposited / 100).toLocaleString()}</p>
+            <p className="text-2xl font-extrabold text-emerald-700 mt-1">${(totalDeposited / 100).toLocaleString()}</p>
           </div>
           <div className="bg-white rounded-xl border border-slate-200 p-4">
             <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Total Spent</p>
             <p className="text-2xl font-extrabold text-red-700 mt-1">${(totalSpent / 100).toLocaleString()}</p>
           </div>
-          <div className={`rounded-xl border p-4 ${issueCount > 0 ? "bg-red-50 border-red-200" : "bg-green-50 border-green-200"}`}>
+          <div className={`rounded-xl border p-4 ${issueCount > 0 ? "bg-red-50 border-red-200" : "bg-emerald-50 border-emerald-200"}`}>
             <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Issues</p>
-            <p className={`text-2xl font-extrabold mt-1 ${issueCount > 0 ? "text-red-700" : "text-green-700"}`}>
+            <p className={`text-2xl font-extrabold mt-1 ${issueCount > 0 ? "text-red-700" : "text-emerald-700"}`}>
               {issueCount === 0 ? "✓ Clean" : `${issueCount} found`}
             </p>
           </div>
@@ -185,11 +185,11 @@ export default function ReconciliationPage() {
                   <tr key={r.broker_slug} className={`hover:bg-slate-50 ${r.has_issue ? "bg-red-50/30" : ""}`}>
                     <td className="px-4 py-3 font-semibold text-slate-900">{r.broker_slug}</td>
                     <td className="px-4 py-3 text-right font-bold">${(r.wallet_balance / 100).toFixed(2)}</td>
-                    <td className="px-4 py-3 text-right text-green-700">${(r.total_deposited / 100).toFixed(2)}</td>
+                    <td className="px-4 py-3 text-right text-emerald-700">${(r.total_deposited / 100).toFixed(2)}</td>
                     <td className="px-4 py-3 text-right text-red-700">${(r.total_spent / 100).toFixed(2)}</td>
                     <td className="px-4 py-3 text-right text-slate-600">${(r.expected_balance / 100).toFixed(2)}</td>
                     <td className={`px-4 py-3 text-right font-bold ${
-                      r.has_issue ? "text-red-700" : "text-green-700"
+                      r.has_issue ? "text-red-700" : "text-emerald-700"
                     }`}>
                       {r.discrepancy === 0 ? "$0.00" : (r.discrepancy > 0 ? "+" : "") + "$" + (r.discrepancy / 100).toFixed(2)}
                     </td>
@@ -205,7 +205,7 @@ export default function ReconciliationPage() {
                       {r.has_issue ? (
                         <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-700">⚠ Mismatch</span>
                       ) : (
-                        <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-green-100 text-green-700">✓ OK</span>
+                        <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">✓ OK</span>
                       )}
                     </td>
                   </tr>

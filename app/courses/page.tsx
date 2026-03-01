@@ -23,7 +23,7 @@ export const revalidate = 3600;
 
 function levelBadge(level: string) {
   const styles: Record<string, string> = {
-    beginner: "bg-green-50 text-green-700",
+    beginner: "bg-emerald-50 text-emerald-700",
     intermediate: "bg-blue-50 text-blue-700",
     advanced: "bg-purple-50 text-purple-700",
   };

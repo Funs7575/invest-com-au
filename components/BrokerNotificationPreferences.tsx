@@ -35,8 +35,8 @@ const prefsMeta: {
     label: "Campaign Approved",
     description: "Get notified when your campaigns are approved and ready to go live",
     icon: "check-circle",
-    iconBg: "bg-green-50",
-    iconColor: "text-green-600",
+    iconBg: "bg-emerald-50",
+    iconColor: "text-emerald-600",
   },
   {
     key: "campaign_rejected",
@@ -192,7 +192,7 @@ export default function BrokerNotificationPreferences({
           <button
             onClick={() => togglePref(item.key)}
             className={`relative w-10 h-6 rounded-full transition-colors shrink-0 mt-1 ${
-              prefs[item.key] ? "bg-green-500" : "bg-slate-200"
+              prefs[item.key] ? "bg-emerald-500" : "bg-slate-200"
             }`}
             role="switch"
             aria-checked={prefs[item.key]}
@@ -210,7 +210,7 @@ export default function BrokerNotificationPreferences({
       {/* Status line */}
       <div className="h-5 flex items-center">
         {saving && <span className="text-xs text-slate-400">Saving...</span>}
-        {saved && <span className="text-xs text-green-600 font-medium">Preferences saved</span>}
+        {saved && <span className="text-xs text-emerald-600 font-medium">Preferences saved</span>}
         {error && <span className="text-xs text-red-500">{error}</span>}
       </div>
     </div>

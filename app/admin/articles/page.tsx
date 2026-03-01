@@ -183,7 +183,7 @@ export default function AdminArticlesPage() {
         </div>
         {!showForm && (
           <div className="flex items-center gap-3">
-            <button onClick={exportArticles} className="bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg px-4 py-2 text-sm transition-colors">Export CSV ↓</button>
+            <button onClick={exportArticles} className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg px-4 py-2 text-sm transition-colors">Export CSV ↓</button>
             <button
               onClick={() => setCreating(true)}
               className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold rounded-lg px-4 py-2 text-sm transition-colors"
@@ -354,7 +354,7 @@ export default function AdminArticlesPage() {
                   key={s}
                   onClick={() => setStatusFilter(s)}
                   className={`px-3 py-2 text-xs font-medium transition-colors ${
-                    statusFilter === s ? "bg-green-700 text-white" : "text-slate-500 hover:bg-slate-50"
+                    statusFilter === s ? "bg-emerald-700 text-white" : "text-slate-500 hover:bg-slate-50"
                   }`}
                 >
                   {s === "all" ? `All (${articles.length})` : s === "published" ? `Published (${publishedCount})` : `Draft (${draftCount})`}
@@ -386,7 +386,7 @@ export default function AdminArticlesPage() {
                         onClick={() => toggleStatus(article)}
                         className={`text-xs px-2 py-1 rounded-full font-medium transition-colors ${
                           (article.status || "published") === "published"
-                            ? "bg-green-50 text-green-600 hover:bg-green-100"
+                            ? "bg-emerald-50 text-emerald-600 hover:bg-emerald-100"
                             : "bg-amber-50 text-amber-600 hover:bg-amber-100"
                         }`}
                       >
@@ -396,7 +396,7 @@ export default function AdminArticlesPage() {
                     <td className="px-4 py-3 text-sm text-slate-600 hidden md:table-cell">{article.author_name || "Team"}</td>
                     <td className="px-4 py-3 text-sm text-slate-600 hidden md:table-cell">{article.category || "\u2014"}</td>
                     <td className="px-4 py-3 text-right space-x-2">
-                      <a href={`/article/${article.slug}`} target="_blank" rel="noopener noreferrer" className="text-xs text-green-600 hover:text-green-700">Preview</a>
+                      <a href={`/article/${article.slug}`} target="_blank" rel="noopener noreferrer" className="text-xs text-emerald-600 hover:text-emerald-700">Preview</a>
                       <button onClick={() => setEditing(article)} className="text-xs text-amber-600 hover:text-amber-700">Edit</button>
                       <button onClick={() => setDeleteTarget(article)} className="text-xs text-red-600 hover:text-red-300">Delete</button>
                     </td>

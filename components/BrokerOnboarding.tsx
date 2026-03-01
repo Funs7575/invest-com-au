@@ -143,8 +143,8 @@ export default function BrokerOnboarding({ accountCreatedAt }: BrokerOnboardingP
 
           {step === 2 && (
             <div className="py-4">
-              <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center mb-4">
-                <Icon name="wallet" size={22} className="text-green-600" />
+              <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center mb-4">
+                <Icon name="wallet" size={22} className="text-emerald-600" />
               </div>
               <h2 className="text-xl font-extrabold text-slate-900 mb-1">Understand Billing</h2>
               <p className="text-sm text-slate-500 mb-5">Our transparent CPC model means you only pay for real engagement.</p>
@@ -170,8 +170,8 @@ export default function BrokerOnboarding({ accountCreatedAt }: BrokerOnboardingP
                     </div>
                     <Icon name="chevron-right" size={18} className="text-slate-300 shrink-0" />
                     <div className="flex-1">
-                      <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-1.5">
-                        <Icon name="target" size={18} className="text-green-600" />
+                      <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-1.5">
+                        <Icon name="target" size={18} className="text-emerald-600" />
                       </div>
                       <p className="text-xs font-bold text-slate-700">Conversions</p>
                       <p className="text-[0.62rem] text-slate-400">Track sign-ups</p>
@@ -179,22 +179,22 @@ export default function BrokerOnboarding({ accountCreatedAt }: BrokerOnboardingP
                   </div>
                 </div>
 
-                <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+                <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center shrink-0">
-                      <Icon name="dollar-sign" size={18} className="text-green-600" />
+                    <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                      <Icon name="dollar-sign" size={18} className="text-emerald-600" />
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-green-800">Your first $50 is on us!</p>
-                      <p className="text-xs text-green-600">New accounts receive a $50 promotional credit to get started.</p>
+                      <p className="text-sm font-bold text-emerald-800">Your first $50 is on us!</p>
+                      <p className="text-xs text-emerald-600">New accounts receive a $50 promotional credit to get started.</p>
                     </div>
                   </div>
                 </div>
 
                 <div className="text-xs text-slate-500 space-y-1">
-                  <p className="flex items-center gap-2"><Icon name="check-circle" size={13} className="text-green-500" /> No monthly minimums or lock-in contracts</p>
-                  <p className="flex items-center gap-2"><Icon name="check-circle" size={13} className="text-green-500" /> Set daily budget caps to control spend</p>
-                  <p className="flex items-center gap-2"><Icon name="check-circle" size={13} className="text-green-500" /> Auto top-up available so you never miss traffic</p>
+                  <p className="flex items-center gap-2"><Icon name="check-circle" size={13} className="text-emerald-500" /> No monthly minimums or lock-in contracts</p>
+                  <p className="flex items-center gap-2"><Icon name="check-circle" size={13} className="text-emerald-500" /> Set daily budget caps to control spend</p>
+                  <p className="flex items-center gap-2"><Icon name="check-circle" size={13} className="text-emerald-500" /> Auto top-up available so you never miss traffic</p>
                 </div>
               </div>
             </div>

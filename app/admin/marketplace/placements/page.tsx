@@ -254,7 +254,7 @@ export default function AdminPlacementsPage() {
                           {p.inventory_type}
                         </span>
                         <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-                          p.is_active ? "bg-green-50 text-green-700" : "bg-slate-100 text-slate-500"
+                          p.is_active ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-500"
                         }`}>
                           {p.is_active ? "Active" : "Inactive"}
                         </span>
@@ -274,7 +274,7 @@ export default function AdminPlacementsPage() {
                         className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
                           p.is_active
                             ? "bg-amber-50 text-amber-700 hover:bg-amber-100"
-                            : "bg-green-50 text-green-700 hover:bg-green-100"
+                            : "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
                         }`}>
                         {p.is_active ? "Disable" : "Enable"}
                       </button>

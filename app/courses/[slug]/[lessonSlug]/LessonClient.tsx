@@ -130,7 +130,7 @@ export default function LessonClient({
               </div>
               <div className="w-full bg-slate-100 rounded-full h-2">
                 <div
-                  className="bg-green-600 h-2 rounded-full transition-all duration-500"
+                  className="bg-emerald-600 h-2 rounded-full transition-all duration-500"
                   style={{ width: `${progressPercent}%` }}
                 />
               </div>
@@ -160,17 +160,17 @@ export default function LessonClient({
                           }`}
                         >
                           {isCompleted ? (
-                            <svg className="w-3.5 h-3.5 text-green-600 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <svg className="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                             </svg>
                           ) : isCurrent ? (
-                            <span className="w-3.5 h-3.5 rounded-full bg-green-600 shrink-0" />
+                            <span className="w-3.5 h-3.5 rounded-full bg-emerald-600 shrink-0" />
                           ) : (
                             <span className="w-3.5 h-3.5 rounded-full border border-slate-300 shrink-0" />
                           )}
                           <span className="truncate">{l.title}</span>
                           {l.isFreePreview && (
-                            <span className="text-[0.45rem] px-1 py-0.5 bg-green-50 text-green-600 rounded font-medium ml-auto shrink-0">
+                            <span className="text-[0.45rem] px-1 py-0.5 bg-emerald-50 text-emerald-600 rounded font-medium ml-auto shrink-0">
                               FREE
                             </span>
                           )}
@@ -195,7 +195,7 @@ export default function LessonClient({
           <span className="text-xs text-slate-300">·</span>
           <span className="text-xs text-slate-400">{moduleInfo.title}</span>
           {isFreePreview && (
-            <span className="text-[0.69rem] px-2 py-0.5 bg-green-50 text-green-600 rounded-full font-medium">
+            <span className="text-[0.69rem] px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded-full font-medium">
               FREE PREVIEW
             </span>
           )}
@@ -244,7 +244,7 @@ export default function LessonClient({
           {isLoggedIn && !isFreePreview && lesson && (
             <div className="mb-6">
               {completed ? (
-                <div className="flex items-center gap-2 text-sm text-green-700 font-medium">
+                <div className="flex items-center gap-2 text-sm text-emerald-700 font-medium">
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                   </svg>

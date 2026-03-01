@@ -172,7 +172,7 @@ export default function AdminScenariosPage() {
                 s.brokers?.length ? "Active" : "Draft",
               ])
             )}
-            className="px-3 py-1.5 bg-green-50 text-green-700 text-xs font-semibold rounded-lg hover:bg-green-100 border border-green-200 transition-colors"
+            className="px-3 py-1.5 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-lg hover:bg-emerald-100 border border-emerald-200 transition-colors"
           >
             Export CSV
           </button>
@@ -277,7 +277,7 @@ export default function AdminScenariosPage() {
                     <td className="px-4 py-3 text-2xl">{scenario.icon || "—"}</td>
                     <td className="px-4 py-3 text-sm text-slate-600">{scenario.brokers?.length || 0} brokers</td>
                     <td className="px-4 py-3 text-right space-x-2">
-                      <a href={`/scenario/${scenario.slug}`} target="_blank" rel="noopener noreferrer" className="text-xs text-green-600 hover:text-green-700">Preview</a>
+                      <a href={`/scenario/${scenario.slug}`} target="_blank" rel="noopener noreferrer" className="text-xs text-emerald-600 hover:text-emerald-700">Preview</a>
                       <button onClick={() => handleClone(scenario)} className="text-xs text-blue-600 hover:underline mr-3">Clone</button>
                       <button onClick={() => setEditing(scenario)} className="text-xs text-amber-600 hover:text-amber-700">Edit</button>
                       <button onClick={() => setDeleteTarget(scenario)} className="text-xs text-red-600 hover:text-red-300">Delete</button>

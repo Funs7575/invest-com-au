@@ -214,7 +214,7 @@ export default function QuizWeightsPage() {
             <button
               onClick={runSimulation}
               disabled={weights.length === 0}
-              className="px-4 py-2 bg-green-700 text-white font-medium rounded-lg hover:bg-green-800 text-sm transition-colors disabled:opacity-40"
+              className="px-4 py-2 bg-emerald-700 text-white font-medium rounded-lg hover:bg-emerald-800 text-sm transition-colors disabled:opacity-40"
             >
               Run Simulation
             </button>
@@ -231,7 +231,7 @@ export default function QuizWeightsPage() {
                         </span>
                         <span className="text-sm text-slate-900 font-medium">{r.broker_slug}</span>
                       </div>
-                      <span className="text-sm font-semibold text-green-600">{r.score.toFixed(1)}</span>
+                      <span className="text-sm font-semibold text-emerald-600">{r.score.toFixed(1)}</span>
                     </div>
                   ))}
                 </div>
@@ -241,7 +241,7 @@ export default function QuizWeightsPage() {
         )}
 
         {successMessage && (
-          <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
+          <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 px-4 py-3 rounded-lg">
             {successMessage}
           </div>
         )}
@@ -313,7 +313,7 @@ export default function QuizWeightsPage() {
                             Save
                           </button>
                           {savedId === row.id && (
-                            <span className="text-green-600 text-sm">Saved!</span>
+                            <span className="text-emerald-600 text-sm">Saved!</span>
                           )}
                         </div>
                       </td>

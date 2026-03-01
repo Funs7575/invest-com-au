@@ -330,8 +330,8 @@ export default function PackagesPage() {
             </div>
           </div>
           <div className="flex gap-3">
-            <div className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center shrink-0">
-              <Icon name="wallet" size={14} className="text-green-600" />
+            <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center shrink-0">
+              <Icon name="wallet" size={14} className="text-emerald-600" />
             </div>
             <div>
               <p className="font-medium text-slate-800 mb-1">Billing</p>
@@ -403,9 +403,9 @@ export default function PackagesPage() {
             )}
 
             {dialogAction === "upgrade" && (
-              <div className="bg-green-50 border border-green-200 rounded-xl p-4 space-y-2">
-                <p className="text-xs font-bold text-green-700 uppercase tracking-wide">What you get</p>
-                <ul className="space-y-1.5 text-xs text-green-700">
+              <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 space-y-2">
+                <p className="text-xs font-bold text-emerald-700 uppercase tracking-wide">What you get</p>
+                <ul className="space-y-1.5 text-xs text-emerald-700">
                   {targetPackage.cpc_rate_discount_pct > 0 && (
                     <li className="flex items-start gap-2"><span>✓</span> {targetPackage.cpc_rate_discount_pct}% CPC rate discount</li>
                   )}

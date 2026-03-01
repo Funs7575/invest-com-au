@@ -105,8 +105,8 @@ export default function UserOnboarding() {
                 <Icon name="chevron-right" size={16} className="text-slate-300 mt-4 shrink-0" />
                 {/* Step 3 */}
                 <div className="flex-1 text-center">
-                  <div className="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center mx-auto mb-2">
-                    <Icon name="check-circle" size={22} className="text-green-600" />
+                  <div className="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center mx-auto mb-2">
+                    <Icon name="check-circle" size={22} className="text-emerald-600" />
                   </div>
                   <p className="text-xs font-bold text-slate-800 mb-0.5">Switch</p>
                   <p className="text-[0.62rem] text-slate-500 leading-snug">Open your new account and start investing smarter.</p>
@@ -125,8 +125,8 @@ export default function UserOnboarding() {
 
           {step === 2 && (
             <div className="text-center py-6">
-              <div className="w-14 h-14 rounded-2xl bg-green-100 flex items-center justify-center mx-auto mb-4">
-                <Icon name="zap" size={28} className="text-green-600" />
+              <div className="w-14 h-14 rounded-2xl bg-emerald-100 flex items-center justify-center mx-auto mb-4">
+                <Icon name="zap" size={28} className="text-emerald-600" />
               </div>
               <h2 className="text-xl font-extrabold text-slate-900 mb-2">Ready to Get Started?</h2>
               <p className="text-sm text-slate-500 max-w-xs mx-auto leading-relaxed mb-6">

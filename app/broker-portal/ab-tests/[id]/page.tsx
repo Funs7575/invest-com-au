@@ -19,7 +19,7 @@ const TEST_TYPES: Record<string, string> = {
 
 const STATUS_STYLES: Record<string, { bg: string; icon: string }> = {
   draft: { bg: "bg-slate-100 text-slate-700", icon: "file-text" },
-  running: { bg: "bg-green-100 text-green-800", icon: "trending-up" },
+  running: { bg: "bg-emerald-100 text-emerald-800", icon: "trending-up" },
   paused: { bg: "bg-amber-100 text-amber-800", icon: "pause-circle" },
   completed: { bg: "bg-blue-100 text-blue-800", icon: "check-circle" },
 };
@@ -60,7 +60,7 @@ function computeZScore(
 }
 
 function getConfidenceColor(confidence: number) {
-  if (confidence >= 95) return { bg: "bg-green-50", border: "border-green-300", text: "text-green-800", dot: "bg-green-500" };
+  if (confidence >= 95) return { bg: "bg-emerald-50", border: "border-emerald-300", text: "text-emerald-800", dot: "bg-emerald-500" };
   if (confidence >= 80) return { bg: "bg-amber-50", border: "border-amber-300", text: "text-amber-800", dot: "bg-amber-500" };
   return { bg: "bg-red-50", border: "border-red-300", text: "text-red-800", dot: "bg-red-500" };
 }
@@ -259,7 +259,7 @@ export default function ABTestDetailPage() {
                 {test.status.replace(/_/g, " ")}
               </span>
               {test.winner && (
-                <span className="inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full bg-green-100 text-green-800">
+                <span className="inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800">
                   <Icon name="trophy" size={12} />
                   Winner: {test.winner.toUpperCase()}
                 </span>
@@ -288,7 +288,7 @@ export default function ABTestDetailPage() {
             {test.winner && (
               <button
                 onClick={handleApplyWinner}
-                className="px-4 py-2 bg-green-600 text-white font-bold text-sm rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+                className="px-4 py-2 bg-emerald-600 text-white font-bold text-sm rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2"
               >
                 <Icon name="check-circle" size={14} />
                 Apply Winner
@@ -329,12 +329,12 @@ export default function ABTestDetailPage() {
       {/* Performance Comparison Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Variant A */}
-        <div className={`bg-white rounded-xl border-2 p-5 transition-all ${test.winner === "a" ? "border-green-400 shadow-green-100 shadow-md" : "border-slate-200"}`}>
+        <div className={`bg-white rounded-xl border-2 p-5 transition-all ${test.winner === "a" ? "border-emerald-400 shadow-emerald-100 shadow-md" : "border-slate-200"}`}>
           <div className="flex items-center gap-2 mb-4">
             <span className="w-7 h-7 rounded-lg bg-blue-100 text-blue-800 flex items-center justify-center text-sm font-bold">A</span>
             <span className="text-sm font-bold text-slate-700">Control</span>
             {test.winner === "a" && (
-              <span className="ml-auto flex items-center gap-1 text-xs font-bold text-green-700 bg-green-100 px-2 py-0.5 rounded-full">
+              <span className="ml-auto flex items-center gap-1 text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
                 <Icon name="trophy" size={12} />
                 Winner
               </span>
@@ -368,12 +368,12 @@ export default function ABTestDetailPage() {
         </div>
 
         {/* Variant B */}
-        <div className={`bg-white rounded-xl border-2 p-5 transition-all ${test.winner === "b" ? "border-green-400 shadow-green-100 shadow-md" : "border-slate-200"}`}>
+        <div className={`bg-white rounded-xl border-2 p-5 transition-all ${test.winner === "b" ? "border-emerald-400 shadow-emerald-100 shadow-md" : "border-slate-200"}`}>
           <div className="flex items-center gap-2 mb-4">
             <span className="w-7 h-7 rounded-lg bg-amber-100 text-amber-800 flex items-center justify-center text-sm font-bold">B</span>
             <span className="text-sm font-bold text-slate-700">Challenger</span>
             {test.winner === "b" && (
-              <span className="ml-auto flex items-center gap-1 text-xs font-bold text-green-700 bg-green-100 px-2 py-0.5 rounded-full">
+              <span className="ml-auto flex items-center gap-1 text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full">
                 <Icon name="trophy" size={12} />
                 Winner
               </span>
@@ -409,13 +409,13 @@ export default function ABTestDetailPage() {
           {totalImpressions > 0 && (
             <div className="mt-4 pt-4 border-t border-slate-100 space-y-2">
               {ctrDiff !== 0 && (
-                <div className={`flex items-center gap-2 text-xs font-bold ${ctrDiff > 0 ? "text-green-700" : "text-red-600"}`}>
+                <div className={`flex items-center gap-2 text-xs font-bold ${ctrDiff > 0 ? "text-emerald-700" : "text-red-600"}`}>
                   <Icon name={ctrDiff > 0 ? "arrow-up" : "arrow-down"} size={12} />
                   {ctrDiff > 0 ? "+" : ""}{ctrDiff.toFixed(1)}% CTR vs Control
                 </div>
               )}
               {convDiff !== 0 && (
-                <div className={`flex items-center gap-2 text-xs font-bold ${convDiff > 0 ? "text-green-700" : "text-red-600"}`}>
+                <div className={`flex items-center gap-2 text-xs font-bold ${convDiff > 0 ? "text-emerald-700" : "text-red-600"}`}>
                   <Icon name={convDiff > 0 ? "arrow-up" : "arrow-down"} size={12} />
                   {convDiff > 0 ? "+" : ""}{convDiff.toFixed(1)}% Conv Rate vs Control
                 </div>
@@ -507,7 +507,7 @@ export default function ABTestDetailPage() {
           {test.winner && (
             <button
               onClick={handleApplyWinner}
-              className="px-4 py-2 bg-green-600 text-white font-bold text-sm rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
+              className="px-4 py-2 bg-emerald-600 text-white font-bold text-sm rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2"
             >
               <Icon name="check-circle" size={14} />
               Apply Winner

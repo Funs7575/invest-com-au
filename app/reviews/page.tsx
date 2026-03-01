@@ -136,7 +136,7 @@ function BrokerReviewCard({ broker }: { broker: Broker }) {
         {/* Badges */}
         <div className="flex flex-wrap gap-1 md:gap-2 mt-2 md:mt-3">
           {broker.chess_sponsored && (
-            <span className="px-1.5 md:px-2 py-0.5 bg-green-50 text-green-700 text-[0.62rem] md:text-[0.69rem] rounded border border-green-200 font-semibold">CHESS</span>
+            <span className="px-1.5 md:px-2 py-0.5 bg-emerald-50 text-emerald-700 text-[0.62rem] md:text-[0.69rem] rounded border border-emerald-200 font-semibold">CHESS</span>
           )}
           {broker.smsf_support && (
             <span className="px-1.5 md:px-2 py-0.5 bg-blue-50 text-blue-700 text-[0.62rem] md:text-[0.69rem] rounded border border-blue-200 font-semibold">SMSF</span>

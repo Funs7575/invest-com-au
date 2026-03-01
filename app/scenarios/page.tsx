@@ -20,7 +20,7 @@ export const metadata = {
 const borderColors = [
   "border-l-amber-400",
   "border-l-blue-400",
-  "border-l-green-400",
+  "border-l-emerald-400",
   "border-l-purple-400",
 ];
 

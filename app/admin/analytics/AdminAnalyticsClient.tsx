@@ -667,7 +667,7 @@ export default function AdminAnalyticsClient() {
             onClick={() => setActiveTab(tab.key)}
             className={`px-3 py-2 text-xs font-medium whitespace-nowrap transition-colors shrink-0 ${
               activeTab === tab.key
-                ? "bg-green-700 text-white rounded-md my-0.5"
+                ? "bg-emerald-700 text-white rounded-md my-0.5"
                 : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
             }`}
           >
@@ -685,7 +685,7 @@ export default function AdminAnalyticsClient() {
             onClick={() => setDateRange(opt.value)}
             className={`px-3 py-1.5 text-xs rounded-lg font-medium transition-colors ${
               dateRange === opt.value
-                ? "bg-green-700 text-white"
+                ? "bg-emerald-700 text-white"
                 : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
             }`}
           >
@@ -722,7 +722,7 @@ export default function AdminAnalyticsClient() {
               <div className="text-sm text-slate-500">Total Clicks</div>
             </div>
             <div className="bg-white border border-slate-200 rounded-lg p-4">
-              <div className="text-3xl font-bold text-green-600">{clicksToday}</div>
+              <div className="text-3xl font-bold text-emerald-600">{clicksToday}</div>
               <div className="text-sm text-slate-500">Today</div>
             </div>
             <div className="bg-white border border-slate-200 rounded-lg p-4">
@@ -761,7 +761,7 @@ export default function AdminAnalyticsClient() {
                             {new Date(d.day + "T00:00:00").toLocaleDateString("en-AU", { month: "short", day: "numeric" })}: {d.clicks}
                           </div>
                           <div
-                            className="w-full bg-green-600 rounded-t transition-all hover:bg-green-500"
+                            className="w-full bg-emerald-600 rounded-t transition-all hover:bg-emerald-500"
                             style={{ height: `${Math.max(heightPct, 2)}%`, minHeight: d.clicks > 0 ? "4px" : "2px" }}
                           />
                         </div>
@@ -940,7 +940,7 @@ export default function AdminAnalyticsClient() {
                         {Math.floor(a.avgTimeOnPage / 60)}m {a.avgTimeOnPage % 60}s
                       </td>
                       <td className="px-4 py-2 text-sm text-right">
-                        <span className={a.bounceRate > 50 ? "text-red-600" : a.bounceRate > 35 ? "text-amber-600" : "text-green-600"}>
+                        <span className={a.bounceRate > 50 ? "text-red-600" : a.bounceRate > 35 ? "text-amber-600" : "text-emerald-600"}>
                           {a.bounceRate}%
                         </span>
                       </td>
@@ -966,7 +966,7 @@ export default function AdminAnalyticsClient() {
                     .filter((a) => a.bounceRate > 40 || a.avgTimeOnPage < 60)
                     .map((a) => {
                       const score = Math.round(100 - a.bounceRate + Math.min(a.avgTimeOnPage / 3, 30));
-                      const scoreColor = score > 70 ? "text-green-600 bg-green-50" : score > 40 ? "text-amber-600 bg-amber-50" : "text-red-600 bg-red-50";
+                      const scoreColor = score > 70 ? "text-emerald-600 bg-emerald-50" : score > 40 ? "text-amber-600 bg-amber-50" : "text-red-600 bg-red-50";
                       return (
                         <div key={a.slug} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
                           <div className="min-w-0">
@@ -988,7 +988,7 @@ export default function AdminAnalyticsClient() {
                       );
                     })}
                   {articlePerf.filter((a) => a.bounceRate > 40 || a.avgTimeOnPage < 60).length === 0 && (
-                    <p className="text-sm text-green-600">All articles are performing well!</p>
+                    <p className="text-sm text-emerald-600">All articles are performing well!</p>
                   )}
                 </div>
               )}
@@ -1201,7 +1201,7 @@ export default function AdminAnalyticsClient() {
                     const isTrendUp = p.rev7d > p.rev30d;
                     const isTrendDown = p.rev7d < p.rev30d * 0.9;
                     return (
-                      <tr key={period} className={`hover:bg-slate-50 ${period === "monthly" ? "bg-green-50/50" : ""}`}>
+                      <tr key={period} className={`hover:bg-slate-50 ${period === "monthly" ? "bg-emerald-50/50" : ""}`}>
                         <td className="px-4 py-3 text-sm font-medium text-slate-900">{label}</td>
                         <td className="px-4 py-3 text-sm text-right text-slate-600">{Math.round(p.clicks30d).toLocaleString()}</td>
                         <td className="px-4 py-3 text-sm text-right font-semibold text-emerald-600">{formatCurrency(p.rev30d)}</td>
@@ -1383,7 +1383,7 @@ export default function AdminAnalyticsClient() {
             </div>
             <div className="bg-white border border-slate-200 rounded-lg p-5">
               <div className="text-sm text-slate-500 mb-1">Share Rate</div>
-              <div className="text-3xl font-bold text-green-600">
+              <div className="text-3xl font-bold text-emerald-600">
                 {shortlistAnalytics.totalShares > 0 && shortlistAnalytics.totalViews > 0
                   ? ((shortlistAnalytics.totalViews / shortlistAnalytics.totalShares)).toFixed(1)
                   : "0"}
@@ -1494,7 +1494,7 @@ export default function AdminAnalyticsClient() {
                       <div key={pagePath} className="flex items-center gap-3">
                         <span className="text-xs text-slate-600 w-48 truncate shrink-0" title={pagePath}>{pagePath}</span>
                         <div className="flex-1 h-5 bg-slate-100 rounded-full overflow-hidden">
-                          <div className="h-full bg-green-500 rounded-full transition-all" style={{ width: `${(clicks / maxClicks) * 100}%` }} />
+                          <div className="h-full bg-emerald-500 rounded-full transition-all" style={{ width: `${(clicks / maxClicks) * 100}%` }} />
                         </div>
                         <span className="text-xs font-mono text-slate-600 w-10 text-right">{clicks}</span>
                       </div>
@@ -1638,14 +1638,14 @@ export default function AdminAnalyticsClient() {
                     const endDate = b.sponsorship_end ? new Date(b.sponsorship_end) : null;
                     const daysLeft = endDate ? Math.ceil((endDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : null;
                     const clicks = sponsorClickStats[b.slug] || 0;
-                    const daysColor = daysLeft === null ? "text-slate-400" : daysLeft < 3 ? "text-red-600 font-bold" : daysLeft < 14 ? "text-amber-600 font-semibold" : "text-green-600";
+                    const daysColor = daysLeft === null ? "text-slate-400" : daysLeft < 3 ? "text-red-600 font-bold" : daysLeft < 14 ? "text-amber-600 font-semibold" : "text-emerald-600";
                     return (
                       <tr key={b.id} className="hover:bg-slate-50">
                         <td className="px-4 py-3 text-sm font-medium text-slate-900">{b.name}</td>
                         <td className="px-4 py-3">
                           <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
                             tier === "featured_partner" ? "bg-blue-50 text-blue-700" :
-                            tier === "editors_pick" ? "bg-green-50 text-green-700" :
+                            tier === "editors_pick" ? "bg-emerald-50 text-emerald-700" :
                             "bg-amber-50 text-amber-700"
                           }`}>{pricing?.label || tier}</span>
                         </td>

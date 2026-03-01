@@ -207,7 +207,7 @@ export default function ExportImportPage() {
             </button>
 
             {exportMessage && (
-              <span className="text-sm text-green-600">{exportMessage}</span>
+              <span className="text-sm text-emerald-600">{exportMessage}</span>
             )}
           </div>
 
@@ -335,7 +335,7 @@ export default function ExportImportPage() {
                         </span>
                       )}
                       {status.status === "done" && (
-                        <span className="text-green-600 text-xs">Done</span>
+                        <span className="text-emerald-600 text-xs">Done</span>
                       )}
                       {status.status === "error" && (
                         <span
@@ -353,7 +353,7 @@ export default function ExportImportPage() {
           )}
 
           {importComplete && (
-            <div className="mb-4 px-4 py-3 rounded-lg bg-green-50 border border-green-200 text-green-700 text-sm">
+            <div className="mb-4 px-4 py-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm">
               Import completed.{" "}
               {importStatuses.filter((s) => s.status === "error").length > 0
                 ? `${importStatuses.filter((s) => s.status === "error").length} table(s) had errors.`

@@ -58,22 +58,22 @@ export default function HowWeEarnPage() {
           <section className="mb-10">
             <h2 className="text-2xl font-extrabold text-brand mb-3">What This Means For You</h2>
             <div className="space-y-3">
-              <div className="flex items-start gap-4 border border-green-200 bg-green-50 rounded-xl p-4">
-                <span className="text-green-600 font-bold text-xl shrink-0 mt-0.5">&#10003;</span>
+              <div className="flex items-start gap-4 border border-emerald-200 bg-emerald-50 rounded-xl p-4">
+                <span className="text-emerald-600 font-bold text-xl shrink-0 mt-0.5">&#10003;</span>
                 <div>
                   <h3 className="font-bold text-slate-900">Free to use</h3>
                   <p className="text-sm text-slate-600 mt-0.5">You never pay us anything. Our comparison tools, calculators, and guides are completely free.</p>
                 </div>
               </div>
-              <div className="flex items-start gap-4 border border-green-200 bg-green-50 rounded-xl p-4">
-                <span className="text-green-600 font-bold text-xl shrink-0 mt-0.5">&#10003;</span>
+              <div className="flex items-start gap-4 border border-emerald-200 bg-emerald-50 rounded-xl p-4">
+                <span className="text-emerald-600 font-bold text-xl shrink-0 mt-0.5">&#10003;</span>
                 <div>
                   <h3 className="font-bold text-slate-900">No extra cost</h3>
                   <p className="text-sm text-slate-600 mt-0.5">Using our links costs you nothing extra — broker fees are the same whether you come through us or go direct.</p>
                 </div>
               </div>
-              <div className="flex items-start gap-4 border border-green-200 bg-green-50 rounded-xl p-4">
-                <span className="text-green-600 font-bold text-xl shrink-0 mt-0.5">&#10003;</span>
+              <div className="flex items-start gap-4 border border-emerald-200 bg-emerald-50 rounded-xl p-4">
+                <span className="text-emerald-600 font-bold text-xl shrink-0 mt-0.5">&#10003;</span>
                 <div>
                   <h3 className="font-bold text-slate-900">Independent rankings</h3>
                   <p className="text-sm text-slate-600 mt-0.5">We don&apos;t rank based on commission rates. Our methodology scores every broker on the same criteria, whether they pay us or not.</p>

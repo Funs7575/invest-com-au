@@ -223,7 +223,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
       <AdminShell>
         <div className="text-center py-16">
           <p className="text-slate-500">Course not found.</p>
-          <Link href="/admin/courses" className="text-green-700 hover:underline text-sm mt-2 inline-block">
+          <Link href="/admin/courses" className="text-emerald-700 hover:underline text-sm mt-2 inline-block">
             ← Back to Courses
           </Link>
         </div>
@@ -236,7 +236,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <Link href="/admin/courses" className="text-xs text-slate-500 hover:text-green-700 mb-1 inline-block">
+          <Link href="/admin/courses" className="text-xs text-slate-500 hover:text-emerald-700 mb-1 inline-block">
             ← Back to Courses
           </Link>
           <h1 className="text-2xl font-bold text-slate-900">{course.title}</h1>
@@ -253,7 +253,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
           </Link>
           <button
             onClick={() => setEditing(!editing)}
-            className="px-3 py-2 text-xs font-medium text-green-700 border border-green-200 rounded-lg hover:bg-green-50"
+            className="px-3 py-2 text-xs font-medium text-emerald-700 border border-emerald-200 rounded-lg hover:bg-emerald-50"
           >
             {editing ? "Cancel" : "Edit Course"}
           </button>
@@ -424,7 +424,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
           <button
             onClick={handleSaveCourse}
             disabled={saving}
-            className="px-5 py-2.5 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 disabled:opacity-50 transition-colors"
+            className="px-5 py-2.5 bg-emerald-700 text-white text-sm font-bold rounded-lg hover:bg-emerald-800 disabled:opacity-50 transition-colors"
           >
             {saving ? "Saving..." : "Save Changes"}
           </button>
@@ -438,7 +438,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
         </h2>
         <button
           onClick={() => setShowAddLesson(!showAddLesson)}
-          className="px-3 py-1.5 bg-green-700 text-white text-xs font-semibold rounded-lg hover:bg-green-800 transition-colors"
+          className="px-3 py-1.5 bg-emerald-700 text-white text-xs font-semibold rounded-lg hover:bg-emerald-800 transition-colors"
         >
           {showAddLesson ? "Cancel" : "+ Add Lesson"}
         </button>
@@ -545,7 +545,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
           <button
             type="submit"
             disabled={saving}
-            className="px-5 py-2.5 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 disabled:opacity-50 transition-colors"
+            className="px-5 py-2.5 bg-emerald-700 text-white text-sm font-bold rounded-lg hover:bg-emerald-800 disabled:opacity-50 transition-colors"
           >
             {saving ? "Adding..." : "Add Lesson"}
           </button>
@@ -579,14 +579,14 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
                 </td>
                 <td className="px-4 py-3 text-center">
                   {l.video_url ? (
-                    <span className="text-green-600 text-xs">✓</span>
+                    <span className="text-emerald-600 text-xs">✓</span>
                   ) : (
                     <span className="text-slate-300 text-xs">—</span>
                   )}
                 </td>
                 <td className="px-4 py-3 text-center">
                   {l.is_free_preview ? (
-                    <span className="text-xs px-1.5 py-0.5 bg-green-50 text-green-700 rounded-full">FREE</span>
+                    <span className="text-xs px-1.5 py-0.5 bg-emerald-50 text-emerald-700 rounded-full">FREE</span>
                   ) : (
                     <span className="text-slate-300 text-xs">—</span>
                   )}
@@ -607,7 +607,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
                         content: l.content || "",
                       });
                     }}
-                    className="text-green-600 hover:text-green-800 text-xs font-medium"
+                    className="text-emerald-600 hover:text-emerald-800 text-xs font-medium"
                   >
                     {editingLessonId === l.id ? "Cancel" : "Edit"}
                   </button>
@@ -615,7 +615,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
                     href={`/courses/${slug}/${l.slug}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-slate-500 hover:text-green-700 text-xs"
+                    className="text-slate-500 hover:text-emerald-700 text-xs"
                   >
                     View
                   </Link>
@@ -714,7 +714,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
                           is_free_preview: lessonForm.is_free_preview,
                           content: lessonForm.content || null,
                         })}
-                        className="px-4 py-2 bg-green-700 text-white text-xs font-bold rounded-lg hover:bg-green-800 transition-colors"
+                        className="px-4 py-2 bg-emerald-700 text-white text-xs font-bold rounded-lg hover:bg-emerald-800 transition-colors"
                       >
                         Save Changes
                       </button>

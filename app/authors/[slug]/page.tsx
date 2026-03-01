@@ -174,7 +174,7 @@ export default async function AuthorPage({
                       key={i}
                       className="flex items-start gap-2 text-slate-700"
                     >
-                      <span className="text-green-600 mt-0.5">&#10003;</span>
+                      <span className="text-emerald-600 mt-0.5">&#10003;</span>
                       {cred}
                     </li>
                   ))}

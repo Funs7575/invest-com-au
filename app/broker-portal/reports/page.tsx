@@ -227,7 +227,7 @@ export default function ReportsPage() {
         {[
           { label: "Clicks", value: totalClicks, icon: "mouse-pointer-click", iconBg: "bg-blue-50", iconColor: "text-blue-600", borderColor: "border-t-blue-500", tooltip: "" },
           { label: "Impressions", value: totalImpressions, icon: "eye", iconBg: "bg-purple-50", iconColor: "text-purple-600", borderColor: "border-t-purple-500", tooltip: "" },
-          { label: "CTR", value: ctrNum, suffix: "%", decimals: 2, icon: "trending-up", iconBg: "bg-green-50", iconColor: "text-green-600", borderColor: "border-t-green-500", tooltip: "Click-Through Rate = Clicks / Impressions x 100. Measures how compelling your ad is to viewers." },
+          { label: "CTR", value: ctrNum, suffix: "%", decimals: 2, icon: "trending-up", iconBg: "bg-emerald-50", iconColor: "text-emerald-600", borderColor: "border-t-emerald-500", tooltip: "Click-Through Rate = Clicks / Impressions x 100. Measures how compelling your ad is to viewers." },
           { label: "Conversions", value: totalConversions, icon: "target", iconBg: "bg-emerald-50", iconColor: "text-emerald-600", borderColor: "border-t-emerald-500", tooltip: "" },
           { label: "Conv. Rate", value: convRate, suffix: "%", decimals: 2, icon: "bar-chart", iconBg: "bg-amber-50", iconColor: "text-amber-600", borderColor: "border-t-amber-500", tooltip: "Conversion Rate = Conversions / Clicks x 100. Measures how well clicks translate to desired actions." },
           { label: "Total Spend", value: totalSpend / 100, prefix: "$", decimals: 2, icon: "dollar-sign", iconBg: "bg-red-50", iconColor: "text-red-600", borderColor: "border-t-red-500", tooltip: "" },

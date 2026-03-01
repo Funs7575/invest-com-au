@@ -524,7 +524,7 @@ export default function FeeImpactClient({ brokers }: Props) {
                   <div
                     className={`rounded-xl p-6 text-center border ${
                       maxSavings > 0
-                        ? "bg-green-50 border-green-200"
+                        ? "bg-emerald-50 border-emerald-200"
                         : "bg-slate-50 border-slate-200"
                     }`}
                   >
@@ -545,12 +545,12 @@ export default function FeeImpactClient({ brokers }: Props) {
                       </div>
                       {maxSavings > 0 && (
                         <div className="text-left sm:text-right">
-                          <span className="text-xs font-bold uppercase tracking-wider text-green-700">
+                          <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">
                             {currentBrokerResult
                               ? "You Could Save"
                               : "Max Savings"}
                           </span>
-                          <div className="text-3xl md:text-4xl font-extrabold text-green-700 tracking-tight mt-1">
+                          <div className="text-3xl md:text-4xl font-extrabold text-emerald-700 tracking-tight mt-1">
                             <AnimatedNumber value={maxSavings} />
                             <span className="text-xl font-bold text-emerald-500">
                               /yr
@@ -591,7 +591,7 @@ export default function FeeImpactClient({ brokers }: Props) {
                             key={r.broker.slug}
                             className={`relative grid grid-cols-1 md:grid-cols-12 gap-2 items-center px-4 py-3 rounded-xl border transition-all ${
                               i === 0
-                                ? "bg-green-50 border-green-200 shadow-sm"
+                                ? "bg-emerald-50 border-emerald-200 shadow-sm"
                                 : "bg-white border-slate-200 hover:border-slate-300"
                             }`}
                           >
@@ -617,7 +617,7 @@ export default function FeeImpactClient({ brokers }: Props) {
                                   {r.broker.name}
                                 </div>
                                 {i === 0 && (
-                                  <span className="text-xs text-green-700 font-semibold">
+                                  <span className="text-xs text-emerald-700 font-semibold">
                                     Cheapest
                                   </span>
                                 )}
@@ -668,7 +668,7 @@ export default function FeeImpactClient({ brokers }: Props) {
                                 {formatCurrency(r.totalAnnual)}
                               </div>
                               {savingsVsCurrent > 0 && i !== 0 && (
-                                <span className="text-xs text-green-700 font-semibold">
+                                <span className="text-xs text-emerald-700 font-semibold">
                                   Save {formatCurrency(savingsVsCurrent)}
                                 </span>
                               )}

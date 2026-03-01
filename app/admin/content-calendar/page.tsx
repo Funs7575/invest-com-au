@@ -40,7 +40,7 @@ const STATUSES = [
   { value: "draft_ready", label: "Draft Ready", color: "bg-indigo-50 text-indigo-600" },
   { value: "in_review", label: "In Review", color: "bg-amber-50 text-amber-600" },
   { value: "scheduled", label: "Scheduled", color: "bg-purple-50 text-purple-600" },
-  { value: "published", label: "Published", color: "bg-green-50 text-green-600" },
+  { value: "published", label: "Published", color: "bg-emerald-50 text-emerald-600" },
   { value: "cancelled", label: "Cancelled", color: "bg-red-50 text-red-400" },
 ];
 
@@ -489,7 +489,7 @@ export default function ContentCalendarPage() {
               onClick={() => setStatusFilter("all")}
               className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
                 statusFilter === "all"
-                  ? "bg-green-700 text-white"
+                  ? "bg-emerald-700 text-white"
                   : "bg-white border border-slate-200 text-slate-500 hover:bg-slate-50"
               }`}
             >
@@ -501,7 +501,7 @@ export default function ContentCalendarPage() {
                 onClick={() => setStatusFilter(s.value)}
                 className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
                   statusFilter === s.value
-                    ? "bg-green-700 text-white"
+                    ? "bg-emerald-700 text-white"
                     : "bg-white border border-slate-200 text-slate-500 hover:bg-slate-50"
                 }`}
               >
@@ -565,7 +565,7 @@ export default function ContentCalendarPage() {
                             : "\u2014"}
                         </div>
                         {item.actual_publish_date && (
-                          <div className="text-xs text-green-600">
+                          <div className="text-xs text-emerald-600">
                             Published {new Date(item.actual_publish_date).toLocaleDateString("en-AU", {
                               day: "numeric",
                               month: "short",
@@ -603,7 +603,7 @@ export default function ContentCalendarPage() {
                           {item.article_id && (
                             <a
                               href={`/admin/articles`}
-                              className="text-xs text-green-600 hover:text-green-700 px-2 py-1"
+                              className="text-xs text-emerald-600 hover:text-emerald-700 px-2 py-1"
                             >
                               Article
                             </a>
@@ -658,7 +658,7 @@ export default function ContentCalendarPage() {
                                     ? "bg-red-500"
                                     : article.staleness_score >= 30
                                     ? "bg-amber-500"
-                                    : "bg-green-500"
+                                    : "bg-emerald-500"
                                 }`}
                                 style={{ width: `${Math.min(100, article.staleness_score)}%` }}
                               />
@@ -671,7 +671,7 @@ export default function ContentCalendarPage() {
                             href={`/article/${article.slug}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-xs text-green-600 hover:text-green-700"
+                            className="text-xs text-emerald-600 hover:text-emerald-700"
                           >
                             Preview
                           </a>

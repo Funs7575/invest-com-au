@@ -14,13 +14,13 @@ function getPlacementTypeVisual(name: string): { icon: string; bg: string; color
   if (lower.includes("compare")) return { icon: "bar-chart", bg: "bg-blue-50", color: "text-blue-600" };
   if (lower.includes("quiz")) return { icon: "zap", bg: "bg-purple-50", color: "text-purple-600" };
   if (lower.includes("homepage") || lower.includes("home")) return { icon: "star", bg: "bg-amber-50", color: "text-amber-600" };
-  if (lower.includes("article")) return { icon: "book-open", bg: "bg-green-50", color: "text-green-600" };
+  if (lower.includes("article")) return { icon: "book-open", bg: "bg-emerald-50", color: "text-emerald-600" };
   if (lower.includes("deal")) return { icon: "tag", bg: "bg-red-50", color: "text-red-600" };
   return { icon: "layout", bg: "bg-slate-50", color: "text-slate-600" };
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  active: "bg-green-50 text-slate-700",
+  active: "bg-emerald-50 text-slate-700",
   approved: "bg-blue-50 text-blue-700",
   pending_review: "bg-amber-50 text-amber-700",
   paused: "bg-slate-100 text-slate-600",
@@ -123,7 +123,7 @@ export default function CampaignsPage() {
   const avgCpc = totalClicks > 0 ? totalSpent / totalClicks / 100 : 0;
 
   const STATUS_DOTS: Record<string, string> = {
-    active: "bg-green-500",
+    active: "bg-emerald-500",
     approved: "bg-blue-500",
     pending_review: "bg-amber-500",
     paused: "bg-slate-400",
@@ -156,8 +156,8 @@ export default function CampaignsPage() {
       <div className="grid grid-cols-3 gap-3 portal-stagger">
         <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
           <div className="flex items-center gap-2 mb-1">
-            <div className="w-6 h-6 rounded-full bg-green-50 flex items-center justify-center">
-              <Icon name="megaphone" size={12} className="text-green-600" />
+            <div className="w-6 h-6 rounded-full bg-emerald-50 flex items-center justify-center">
+              <Icon name="megaphone" size={12} className="text-emerald-600" />
             </div>
             <p className="text-[0.62rem] text-slate-500 font-bold uppercase tracking-wider">Active Campaigns</p>
             <InfoTip text="Campaigns currently running and charging your wallet per click or per billing period." />
@@ -298,7 +298,7 @@ export default function CampaignsPage() {
                     <div className="relative h-5 bg-slate-100 rounded-full overflow-hidden">
                       <div
                         className={`h-full rounded-full progress-bar-animate ${
-                          budgetPct >= 90 ? "bg-red-500" : budgetPct >= 70 ? "bg-amber-500" : "bg-green-500"
+                          budgetPct >= 90 ? "bg-red-500" : budgetPct >= 70 ? "bg-amber-500" : "bg-emerald-500"
                         }`}
                         style={{ width: `${budgetPct}%` }}
                       />

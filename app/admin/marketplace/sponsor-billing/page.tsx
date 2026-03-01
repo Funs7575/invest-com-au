@@ -138,7 +138,7 @@ export default function SponsorBillingPage() {
 
   const STATUS_COLORS: Record<string, string> = {
     pending: "bg-amber-50 text-amber-700",
-    paid: "bg-green-50 text-green-700",
+    paid: "bg-emerald-50 text-emerald-700",
     overdue: "bg-red-50 text-red-700",
     waived: "bg-slate-100 text-slate-500",
   };
@@ -167,7 +167,7 @@ export default function SponsorBillingPage() {
           </div>
           <div className="bg-white rounded-xl border border-slate-200 p-4">
             <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Monthly Revenue</p>
-            <p className="text-2xl font-extrabold text-green-700 mt-1">${monthlyRevenue.toLocaleString()}</p>
+            <p className="text-2xl font-extrabold text-emerald-700 mt-1">${monthlyRevenue.toLocaleString()}</p>
           </div>
           <div className="bg-white rounded-xl border border-slate-200 p-4">
             <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Outstanding</p>
@@ -251,7 +251,7 @@ export default function SponsorBillingPage() {
                           ) : isExpiring ? (
                             <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">Expiring Soon</span>
                           ) : (
-                            <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-green-50 text-green-700">Active</span>
+                            <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">Active</span>
                           )}
                         </td>
                       </tr>
@@ -310,7 +310,7 @@ export default function SponsorBillingPage() {
                             {inv.status === "pending" && (
                               <>
                                 <button onClick={() => updateInvoiceStatus(inv.id, "paid")}
-                                  className="px-2.5 py-1 text-xs font-semibold bg-green-50 text-green-700 rounded hover:bg-green-100 transition-colors">
+                                  className="px-2.5 py-1 text-xs font-semibold bg-emerald-50 text-emerald-700 rounded hover:bg-emerald-100 transition-colors">
                                   Mark Paid
                                 </button>
                                 <button onClick={() => updateInvoiceStatus(inv.id, "overdue")}
@@ -325,7 +325,7 @@ export default function SponsorBillingPage() {
                             )}
                             {inv.status === "overdue" && (
                               <button onClick={() => updateInvoiceStatus(inv.id, "paid")}
-                                className="px-2.5 py-1 text-xs font-semibold bg-green-50 text-green-700 rounded hover:bg-green-100 transition-colors">
+                                className="px-2.5 py-1 text-xs font-semibold bg-emerald-50 text-emerald-700 rounded hover:bg-emerald-100 transition-colors">
                                 Mark Paid
                               </button>
                             )}

@@ -182,8 +182,8 @@ export default async function ScenarioPage({
 
         {/* The Solution */}
         {s.solution && (
-          <div id="the-solution" className="bg-green-50 border border-green-200 rounded-xl p-4 md:p-6 mb-5 md:mb-8 scroll-mt-24">
-            <h2 className="font-extrabold text-base md:text-lg mb-1.5 md:mb-2 text-green-800">
+          <div id="the-solution" className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 md:p-6 mb-5 md:mb-8 scroll-mt-24">
+            <h2 className="font-extrabold text-base md:text-lg mb-1.5 md:mb-2 text-emerald-800">
               The Solution
             </h2>
             <p className="text-sm md:text-base text-slate-700 leading-relaxed">{s.solution}</p>

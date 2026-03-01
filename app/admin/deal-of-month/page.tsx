@@ -177,7 +177,7 @@ export default function DealOfMonthPage() {
           <button
             onClick={() => setShowNewDeal(true)}
             disabled={saving}
-            className="px-4 py-2 bg-green-700 text-white text-sm font-medium rounded hover:bg-green-800 disabled:opacity-50 transition-colors"
+            className="px-4 py-2 bg-emerald-700 text-white text-sm font-medium rounded hover:bg-emerald-800 disabled:opacity-50 transition-colors"
           >
             + Add Deal
           </button>
@@ -329,7 +329,7 @@ export default function DealOfMonthPage() {
 
         {/* Add New Deal Form */}
         {showNewDeal && (
-          <div className="bg-white border border-green-200 rounded-lg p-6">
+          <div className="bg-white border border-emerald-200 rounded-lg p-6">
             <h2 className="text-lg font-semibold text-slate-900 mb-4">Add New Deal</h2>
             <div className="space-y-3">
               <div>
@@ -337,7 +337,7 @@ export default function DealOfMonthPage() {
                 <select
                   value={newDealSlug}
                   onChange={(e) => setNewDealSlug(e.target.value)}
-                  className="w-full bg-white border border-slate-300 text-slate-900 rounded px-3 py-2 text-sm focus:outline-none focus:border-green-500"
+                  className="w-full bg-white border border-slate-300 text-slate-900 rounded px-3 py-2 text-sm focus:outline-none focus:border-emerald-500"
                 >
                   <option value="">Select a broker...</option>
                   {nonDealBrokers.map((b) => (
@@ -352,7 +352,7 @@ export default function DealOfMonthPage() {
                   value={newDealText}
                   onChange={(e) => setNewDealText(e.target.value)}
                   placeholder="e.g. Get $0 brokerage for 30 days!"
-                  className="w-full bg-white border border-slate-300 text-slate-900 rounded px-3 py-2 text-sm focus:outline-none focus:border-green-500"
+                  className="w-full bg-white border border-slate-300 text-slate-900 rounded px-3 py-2 text-sm focus:outline-none focus:border-emerald-500"
                 />
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -362,7 +362,7 @@ export default function DealOfMonthPage() {
                     type="date"
                     value={newDealExpiry}
                     onChange={(e) => setNewDealExpiry(e.target.value)}
-                    className="w-full bg-white border border-slate-300 text-slate-900 rounded px-3 py-2 text-sm focus:outline-none focus:border-green-500"
+                    className="w-full bg-white border border-slate-300 text-slate-900 rounded px-3 py-2 text-sm focus:outline-none focus:border-emerald-500"
                   />
                 </div>
                 <div>
@@ -370,7 +370,7 @@ export default function DealOfMonthPage() {
                   <select
                     value={newDealCategory}
                     onChange={(e) => setNewDealCategory(e.target.value)}
-                    className="w-full bg-white border border-slate-300 text-slate-900 rounded px-3 py-2 text-sm focus:outline-none focus:border-green-500"
+                    className="w-full bg-white border border-slate-300 text-slate-900 rounded px-3 py-2 text-sm focus:outline-none focus:border-emerald-500"
                   >
                     {DEAL_CATEGORIES.map((c) => (
                       <option key={c.value} value={c.value}>{c.label}</option>
@@ -385,7 +385,7 @@ export default function DealOfMonthPage() {
                   onChange={(e) => setNewDealTerms(e.target.value)}
                   placeholder="T&Cs summary..."
                   rows={2}
-                  className="w-full bg-white border border-slate-300 text-slate-900 rounded px-3 py-2 text-sm focus:outline-none focus:border-green-500"
+                  className="w-full bg-white border border-slate-300 text-slate-900 rounded px-3 py-2 text-sm focus:outline-none focus:border-emerald-500"
                 />
               </div>
               <div>
@@ -395,14 +395,14 @@ export default function DealOfMonthPage() {
                   value={newDealSource}
                   onChange={(e) => setNewDealSource(e.target.value)}
                   placeholder="e.g. broker website, partner email"
-                  className="w-full bg-white border border-slate-300 text-slate-900 rounded px-3 py-2 text-sm focus:outline-none focus:border-green-500"
+                  className="w-full bg-white border border-slate-300 text-slate-900 rounded px-3 py-2 text-sm focus:outline-none focus:border-emerald-500"
                 />
               </div>
               <div className="flex gap-2 pt-1">
                 <button
                   onClick={handleAddDeal}
                   disabled={saving || !newDealSlug || !newDealText}
-                  className="px-4 py-2 bg-green-700 text-white text-sm font-medium rounded hover:bg-green-800 disabled:opacity-30 transition-colors"
+                  className="px-4 py-2 bg-emerald-700 text-white text-sm font-medium rounded hover:bg-emerald-800 disabled:opacity-30 transition-colors"
                 >
                   Add Deal
                 </button>

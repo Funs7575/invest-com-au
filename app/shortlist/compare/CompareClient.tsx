@@ -246,13 +246,13 @@ export default function CompareClient() {
                           key={broker.slug}
                           className={`px-4 py-3 text-sm text-center ${
                             isBest
-                              ? "bg-green-50 text-green-700 font-semibold"
+                              ? "bg-emerald-50 text-emerald-700 font-semibold"
                               : "text-slate-600"
                           }`}
                         >
                           {value}
                           {isBest && (
-                            <span className="ml-1.5 inline-flex items-center px-1.5 py-0.5 bg-green-100 text-green-700 text-[0.6rem] font-bold rounded">
+                            <span className="ml-1.5 inline-flex items-center px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-[0.6rem] font-bold rounded">
                               Best
                             </span>
                           )}
@@ -432,7 +432,7 @@ export default function CompareClient() {
                     </div>
                     <div className="min-w-0">
                       <p className="font-bold text-sm text-slate-900">{rec.broker.name}</p>
-                      <p className="text-xs text-green-600 font-medium">{rec.reason}</p>
+                      <p className="text-xs text-emerald-600 font-medium">{rec.reason}</p>
                     </div>
                   </div>
                 </div>

@@ -19,7 +19,7 @@ export default function ReportDetailClient({ report }: { report: QuarterlyReport
         </div>
 
         <div className="flex items-center gap-2 mb-3">
-          <span className="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full font-bold">
+          <span className="text-xs px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full font-bold">
             {report.quarter} {report.year}
           </span>
           {report.published_at && (
@@ -33,9 +33,9 @@ export default function ReportDetailClient({ report }: { report: QuarterlyReport
 
         {/* Executive Summary — free for all */}
         {report.executive_summary && (
-          <div className="bg-green-50 border border-green-200 rounded-xl p-5 mb-6">
-            <h2 className="text-sm font-bold text-green-800 mb-2">Executive Summary</h2>
-            <p className="text-sm text-green-700 leading-relaxed">{report.executive_summary}</p>
+          <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-5 mb-6">
+            <h2 className="text-sm font-bold text-emerald-800 mb-2">Executive Summary</h2>
+            <p className="text-sm text-emerald-700 leading-relaxed">{report.executive_summary}</p>
           </div>
         )}
 
@@ -46,7 +46,7 @@ export default function ReportDetailClient({ report }: { report: QuarterlyReport
             <ul className="space-y-2">
               {report.key_findings.map((finding, i) => (
                 <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
-                  <span className="w-5 h-5 rounded-full bg-green-100 text-green-700 text-[0.69rem] flex items-center justify-center shrink-0 mt-0.5 font-bold">
+                  <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 text-[0.69rem] flex items-center justify-center shrink-0 mt-0.5 font-bold">
                     {i + 1}
                   </span>
                   {finding}

@@ -144,8 +144,8 @@ export default function CreativesPage() {
           </div>
           <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-7 h-7 rounded-lg bg-green-50 flex items-center justify-center">
-                <Icon name="check-circle" size={14} className="text-green-600" />
+              <div className="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center">
+                <Icon name="check-circle" size={14} className="text-emerald-600" />
               </div>
               <span className="text-xs font-medium text-slate-500">Active</span>
             </div>
@@ -256,7 +256,7 @@ export default function CreativesPage() {
                       <button onClick={() => toggleActive(c.id, c.is_active)}
                         className={`text-xs px-2 py-1 rounded font-medium transition-colors ${
                           c.is_active
-                            ? "bg-green-50 text-green-700 hover:bg-green-100"
+                            ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
                             : "bg-slate-100 text-slate-500 hover:bg-slate-200"
                         }`}>
                         {c.is_active ? "Active" : "Inactive"}

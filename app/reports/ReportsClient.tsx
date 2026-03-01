@@ -49,7 +49,7 @@ export default function ReportsClient({ reports }: { reports: QuarterlyReport[] 
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1.5">
-                    <span className="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full font-bold">
+                    <span className="text-xs px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full font-bold">
                       {r.quarter} {r.year}
                     </span>
                     {r.published_at && (

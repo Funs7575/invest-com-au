@@ -112,7 +112,7 @@ export default function StoriesClient({ stories, brokers }: StoriesClientProps) 
                     <StarDisplay rating={story.dest_rating} />
                   </div>
                   {story.dest_rating > story.source_rating && (
-                    <span className="text-xs text-green-600 font-medium">+{story.dest_rating - story.source_rating} stars</span>
+                    <span className="text-xs text-emerald-600 font-medium">+{story.dest_rating - story.source_rating} stars</span>
                   )}
                 </div>
 

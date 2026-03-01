@@ -67,21 +67,21 @@ export default function CoursePageClient({ course, firstLessonSlug }: Props) {
     return (
       <div className="max-w-md mx-auto">
         {showPurchaseSuccess && (
-          <div className="mb-4 rounded-xl bg-green-50 border border-green-200 p-4 text-center">
-            <p className="text-sm font-semibold text-green-800">Purchase successful! Welcome to the course.</p>
+          <div className="mb-4 rounded-xl bg-emerald-50 border border-emerald-200 p-4 text-center">
+            <p className="text-sm font-semibold text-emerald-800">Purchase successful! Welcome to the course.</p>
           </div>
         )}
-        <div className="rounded-2xl border-2 border-green-300 bg-gradient-to-b from-green-50 to-white p-8 text-center">
-        <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
-          <svg className="w-6 h-6 text-green-700" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+        <div className="rounded-2xl border-2 border-emerald-300 bg-gradient-to-b from-emerald-50 to-white p-8 text-center">
+        <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
+          <svg className="w-6 h-6 text-emerald-700" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
         </div>
-        <h3 className="text-xl font-bold text-green-800 mb-2">You Own This Course</h3>
+        <h3 className="text-xl font-bold text-emerald-800 mb-2">You Own This Course</h3>
         <p className="text-sm text-slate-600 mb-6">
           Continue where you left off or start from the beginning.
         </p>
         <Link
           href={`/courses/${course.slug}/${firstLessonSlug || ""}`}
-          className="inline-block w-full py-3 bg-green-700 text-white font-bold rounded-lg hover:bg-green-800 hover:scale-105 hover:shadow-lg transition-all duration-200"
+          className="inline-block w-full py-3 bg-emerald-700 text-white font-bold rounded-lg hover:bg-emerald-800 hover:scale-105 hover:shadow-lg transition-all duration-200"
         >
           Go to Lessons →
         </Link>
@@ -171,7 +171,7 @@ export default function CoursePageClient({ course, firstLessonSlug }: Props) {
           ...(course.guarantee ? [course.guarantee.replace(/\.$/, "")] : []),
         ].filter(Boolean).map((item) => (
           <li key={item} className="flex items-start gap-2 text-xs text-slate-600">
-            <svg className="w-4 h-4 text-green-600 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+            <svg className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
             </svg>
             {item}

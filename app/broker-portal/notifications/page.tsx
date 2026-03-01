@@ -9,11 +9,11 @@ import type { BrokerNotification } from "@/lib/types";
 
 const TYPE_ICONS: Record<string, { icon: string; bg: string; text: string }> = {
   low_balance: { icon: "alert-triangle", bg: "bg-amber-100", text: "text-amber-700" },
-  campaign_approved: { icon: "check-circle", bg: "bg-green-100", text: "text-green-700" },
+  campaign_approved: { icon: "check-circle", bg: "bg-emerald-100", text: "text-emerald-700" },
   campaign_rejected: { icon: "x-circle", bg: "bg-red-100", text: "text-red-700" },
   campaign_paused: { icon: "pause-circle", bg: "bg-slate-100", text: "text-slate-700" },
   budget_exhausted: { icon: "alert-circle", bg: "bg-red-100", text: "text-red-700" },
-  payment_received: { icon: "credit-card", bg: "bg-green-100", text: "text-green-700" },
+  payment_received: { icon: "credit-card", bg: "bg-emerald-100", text: "text-emerald-700" },
   system: { icon: "info", bg: "bg-blue-100", text: "text-blue-700" },
   support_reply: { icon: "message-circle", bg: "bg-purple-100", text: "text-purple-700" },
 };
@@ -114,8 +114,8 @@ export default function NotificationsPage() {
           </div>
           <div className="bg-white rounded-xl border border-slate-200 p-3 hover-lift">
             <div className="flex items-center gap-2 mb-1">
-              <div className="w-6 h-6 rounded-lg bg-green-50 flex items-center justify-center">
-                <Icon name="calendar" size={12} className="text-green-600" />
+              <div className="w-6 h-6 rounded-lg bg-emerald-50 flex items-center justify-center">
+                <Icon name="calendar" size={12} className="text-emerald-600" />
               </div>
               <span className="text-[0.69rem] font-medium text-slate-500">Today</span>
             </div>

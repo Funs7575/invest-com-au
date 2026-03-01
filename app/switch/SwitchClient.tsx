@@ -203,7 +203,7 @@ export default function SwitchClient({ brokers, transferGuides }: Props) {
                     <Icon
                       name="coins"
                       size={18}
-                      className="inline -mt-0.5 text-green-600"
+                      className="inline -mt-0.5 text-emerald-600"
                     />{" "}
                     You could save
                   </>

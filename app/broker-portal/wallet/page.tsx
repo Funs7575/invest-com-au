@@ -134,11 +134,11 @@ export default function WalletPage() {
           return (
             <div className="mt-4">
               <div className="flex h-3 rounded-full overflow-hidden">
-                <div className="bg-green-400" style={{ width: `${remainingPct}%` }} />
+                <div className="bg-emerald-400" style={{ width: `${remainingPct}%` }} />
                 <div className="bg-red-400" style={{ width: `${spentPct}%` }} />
               </div>
               <div className="flex justify-between mt-1.5 text-[0.69rem]">
-                <span className="text-green-300">Remaining ${(remaining / 100).toFixed(0)} ({remainingPct}%)</span>
+                <span className="text-emerald-300">Remaining ${(remaining / 100).toFixed(0)} ({remainingPct}%)</span>
                 <span className="text-red-300">Spent ${(spent / 100).toFixed(0)} ({spentPct}%)</span>
               </div>
             </div>
@@ -229,7 +229,7 @@ export default function WalletPage() {
                     </td>
                     <td className="px-5 py-3">
                       <span className={`inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full ${
-                        t.type === "deposit" ? "bg-green-50 text-green-700" :
+                        t.type === "deposit" ? "bg-emerald-50 text-emerald-700" :
                         t.type === "spend" ? "bg-red-50 text-red-700" :
                         t.type === "refund" ? "bg-blue-50 text-blue-700" :
                         "bg-slate-100 text-slate-600"
@@ -237,7 +237,7 @@ export default function WalletPage() {
                         <Icon
                           name={t.type === "deposit" ? "arrow-up" : t.type === "refund" ? "arrow-up" : "arrow-down"}
                           size={11}
-                          className={t.type === "deposit" ? "text-green-600" : t.type === "refund" ? "text-blue-600" : "text-red-600"}
+                          className={t.type === "deposit" ? "text-emerald-600" : t.type === "refund" ? "text-blue-600" : "text-red-600"}
                         />
                         {t.type}
                       </span>
@@ -246,7 +246,7 @@ export default function WalletPage() {
                       {t.description || "—"}
                     </td>
                     <td className={`px-5 py-3 text-right font-semibold ${
-                      t.type === "spend" ? "text-red-700" : "text-green-700"
+                      t.type === "spend" ? "text-red-700" : "text-emerald-700"
                     }`}>
                       {t.type === "spend" ? "-" : "+"}${(t.amount_cents / 100).toFixed(2)}
                     </td>

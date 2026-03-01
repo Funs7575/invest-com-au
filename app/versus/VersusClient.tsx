@@ -411,7 +411,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                     {selected.map(br => {
                       const isWinner = br.slug === overallWinner?.slug;
                       return (
-                        <div key={br.slug} className={`px-2 py-2.5 md:px-4 md:py-4 text-center ${isWinner ? 'bg-green-50/50' : 'bg-slate-50'}`}>
+                        <div key={br.slug} className={`px-2 py-2.5 md:px-4 md:py-4 text-center ${isWinner ? 'bg-emerald-50/50' : 'bg-slate-50'}`}>
                           <div
                             className="w-7 h-7 md:w-10 md:h-10 rounded-lg md:rounded-xl mx-auto mb-1 md:mb-2 flex items-center justify-center text-[0.6rem] md:text-sm font-bold"
                             style={{ background: `${br.color}20`, color: br.color }}
@@ -419,7 +419,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                             {br.icon || br.name.charAt(0)}
                           </div>
                           <div className="font-bold text-[0.69rem] md:text-sm">{br.name}</div>
-                          {isWinner && <div className="text-[0.56rem] md:text-[0.69rem] font-extrabold text-green-600 uppercase tracking-wider mt-0.5">Winner</div>}
+                          {isWinner && <div className="text-[0.56rem] md:text-[0.69rem] font-extrabold text-emerald-600 uppercase tracking-wider mt-0.5">Winner</div>}
                         </div>
                       );
                     })}
@@ -442,13 +442,13 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                           <div
                             key={j}
                             className={`px-2 py-2.5 md:px-4 md:py-3.5 text-center text-[0.69rem] md:text-sm font-semibold ${
-                              bestIdx === j ? 'text-green-700 bg-green-50/60' : 'text-slate-700'
+                              bestIdx === j ? 'text-emerald-700 bg-emerald-50/60' : 'text-slate-700'
                             }`}
                           >
                             {val}
                             {bestIdx === j && (
-                              <span className="ml-1 md:ml-1.5 inline-flex items-center justify-center w-3.5 h-3.5 md:w-4 md:h-4 rounded-full bg-green-100">
-                                <svg className="w-2 h-2 md:w-2.5 md:h-2.5 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                              <span className="ml-1 md:ml-1.5 inline-flex items-center justify-center w-3.5 h-3.5 md:w-4 md:h-4 rounded-full bg-emerald-100">
+                                <svg className="w-2 h-2 md:w-2.5 md:h-2.5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
                               </span>
                             )}
                           </div>
@@ -488,7 +488,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                       </div>
                       {/* Pros */}
                       <div className="px-3 py-2 md:px-5 md:py-3 border-b border-slate-100">
-                        <h4 className="text-[0.56rem] md:text-[0.69rem] font-bold uppercase tracking-wider text-green-600 mb-1.5 md:mb-2 flex items-center gap-1">
+                        <h4 className="text-[0.56rem] md:text-[0.69rem] font-bold uppercase tracking-wider text-emerald-600 mb-1.5 md:mb-2 flex items-center gap-1">
                           <svg className="w-2.5 h-2.5 md:w-3 md:h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
                           Pros
                         </h4>

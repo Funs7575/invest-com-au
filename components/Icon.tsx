@@ -2,7 +2,7 @@
  * Server-safe icon component using Lucide-style SVG paths.
  * Works in both server and client components (no hooks, no "use client").
  *
- * Usage: <Icon name="sprout" size={24} className="text-green-600" />
+ * Usage: <Icon name="sprout" size={24} className="text-emerald-600" />
  */
 
 interface IconProps {

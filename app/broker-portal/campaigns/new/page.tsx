@@ -85,7 +85,7 @@ function MockupShell({ title, url, children }: { title: string; url: string; chi
         <div className="flex gap-1.5">
           <div className="w-2.5 h-2.5 rounded-full bg-red-400" />
           <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
-          <div className="w-2.5 h-2.5 rounded-full bg-green-400" />
+          <div className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
         </div>
         <div className="flex-1 bg-white rounded-md px-3 py-1 text-[0.6rem] text-slate-400 font-mono truncate border border-slate-200">
           {url}
@@ -225,14 +225,14 @@ function ArticleMockup({ brokerName, isHighlighted }: { brokerName: string; isHi
           </div>
         </div>
         {/* Sidebar widget */}
-        <div className={`w-24 shrink-0 rounded-lg p-2 transition-all duration-500 ${isHighlighted ? "bg-green-50 border border-green-200 ring-2 ring-green-300/50 scale-[1.03]" : "bg-slate-50 border border-slate-200 opacity-40"}`}>
+        <div className={`w-24 shrink-0 rounded-lg p-2 transition-all duration-500 ${isHighlighted ? "bg-emerald-50 border border-emerald-200 ring-2 ring-emerald-300/50 scale-[1.03]" : "bg-slate-50 border border-slate-200 opacity-40"}`}>
           <p className="text-[0.4rem] font-bold text-slate-400 uppercase tracking-wider mb-1">Sponsored</p>
-          <div className={`w-7 h-7 rounded-lg flex items-center justify-center mx-auto mb-1 text-[0.5rem] font-bold ${isHighlighted ? "bg-green-500 text-white" : "bg-slate-200 text-slate-400"}`}>
+          <div className={`w-7 h-7 rounded-lg flex items-center justify-center mx-auto mb-1 text-[0.5rem] font-bold ${isHighlighted ? "bg-emerald-500 text-white" : "bg-slate-200 text-slate-400"}`}>
             {brokerName.charAt(0).toUpperCase() || "?"}
           </div>
           <p className={`text-[0.5rem] font-bold text-center ${isHighlighted ? "text-slate-900" : "text-slate-400"}`}>{brokerName || "Your Broker"}</p>
           <p className="text-[0.4rem] text-slate-400 text-center mt-0.5">$0 brokerage</p>
-          <div className={`text-[0.4rem] font-bold text-center px-1 py-0.5 rounded mt-1 ${isHighlighted ? "bg-green-500 text-white" : "bg-slate-200 text-slate-400"}`}>
+          <div className={`text-[0.4rem] font-bold text-center px-1 py-0.5 rounded mt-1 ${isHighlighted ? "bg-emerald-500 text-white" : "bg-slate-200 text-slate-400"}`}>
             Visit →
           </div>
         </div>

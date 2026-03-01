@@ -306,7 +306,7 @@ export default function CalculatorConfigPage() {
                     <span
                       className={`text-sm ${
                         messages[calcType].type === "success"
-                          ? "text-green-600"
+                          ? "text-emerald-600"
                           : "text-red-600"
                       }`}
                     >

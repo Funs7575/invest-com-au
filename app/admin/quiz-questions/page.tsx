@@ -221,7 +221,7 @@ export default function QuizQuestionsPage() {
                   String(q.order_index),
                 ])
               )}
-              className="px-3 py-1.5 bg-green-50 text-green-700 text-xs font-semibold rounded-lg hover:bg-green-100 border border-green-200 transition-colors"
+              className="px-3 py-1.5 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-lg hover:bg-emerald-100 border border-emerald-200 transition-colors"
             >
               Export CSV
             </button>
@@ -241,7 +241,7 @@ export default function QuizQuestionsPage() {
           placeholder="Search..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full max-w-sm bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500/30"
+          className="w-full max-w-sm bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
         />
 
         {/* Create/Edit Form */}
@@ -430,8 +430,8 @@ export default function QuizQuestionsPage() {
                       </td>
                       <td className="px-4 py-3">
                         {question.active ? (
-                          <span className="inline-flex items-center gap-1 text-green-600 text-sm">
-                            <span className="w-2 h-2 bg-green-400 rounded-full"></span>
+                          <span className="inline-flex items-center gap-1 text-emerald-600 text-sm">
+                            <span className="w-2 h-2 bg-emerald-400 rounded-full"></span>
                             Active
                           </span>
                         ) : (

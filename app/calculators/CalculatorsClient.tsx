@@ -377,11 +377,11 @@ function TradeCostCalculator({ brokers, searchParams }: { brokers: Broker[]; sea
               const barWidth = mostExpensive > 0 ? Math.max((r.totalCost / mostExpensive) * 100, 2) : 0;
               const isCheapest = r.totalCost === cheapest;
               return (
-                <div key={r.broker.slug} className={`rounded-lg border p-2.5 ${isCheapest ? "bg-green-50/60 border-green-200" : "border-slate-200"}`}>
+                <div key={r.broker.slug} className={`rounded-lg border p-2.5 ${isCheapest ? "bg-emerald-50/60 border-emerald-200" : "border-slate-200"}`}>
                   <div className="flex items-center justify-between mb-1.5">
                     <div className="flex items-center gap-1.5">
                       <span className="font-semibold text-xs text-slate-900">{r.broker.name}</span>
-                      {isCheapest && <span className="text-[0.56rem] font-bold text-green-600 uppercase">Cheapest</span>}
+                      {isCheapest && <span className="text-[0.56rem] font-bold text-emerald-600 uppercase">Cheapest</span>}
                     </div>
                     <span className="text-sm font-bold text-slate-900">
                       <AnimatedNumber value={r.totalCost} />
@@ -435,10 +435,10 @@ function TradeCostCalculator({ brokers, searchParams }: { brokers: Broker[]; sea
                   const barWidth = mostExpensive > 0 ? Math.max((r.totalCost / mostExpensive) * 100, 2) : 0;
                   const isCheapest = r.totalCost === cheapest;
                   return (
-                    <tr key={r.broker.slug} className={isCheapest ? "bg-green-50/60" : ""}>
+                    <tr key={r.broker.slug} className={isCheapest ? "bg-emerald-50/60" : ""}>
                       <td className="py-3 pr-4">
                         <span className="font-semibold text-sm">{r.broker.name}</span>
-                        {isCheapest && <span className="ml-2 text-[0.69rem] font-bold text-green-600 uppercase">Cheapest</span>}
+                        {isCheapest && <span className="ml-2 text-[0.69rem] font-bold text-emerald-600 uppercase">Cheapest</span>}
                       </td>
                       <td className="py-3 px-2 text-right text-sm font-mono">
                         <AnimatedNumber value={r.brokerage} />
@@ -608,14 +608,14 @@ function FrankingCalculator({ searchParams }: { searchParams: URLSearchParams })
               {/* Waterfall chart */}
               <div className="space-y-5">
                 <WaterfallBar label="Cash Dividend" value={`${dy.toFixed(2)}%`} width={(dy / maxBar) * 100} color="bg-blue-500" />
-                <WaterfallBar label="+ Franking Credits" value={`+${frankingCredit.toFixed(2)}%`} width={(frankingCredit / maxBar) * 100} color="bg-green-600" valueColor="text-green-600" />
+                <WaterfallBar label="+ Franking Credits" value={`+${frankingCredit.toFixed(2)}%`} width={(frankingCredit / maxBar) * 100} color="bg-emerald-600" valueColor="text-emerald-600" />
                 <WaterfallBar label="- Tax Payable" value={`-${taxPayable.toFixed(2)}%`} width={(taxPayable / maxBar) * 100} color="bg-red-400" valueColor="text-red-500" />
               </div>
 
               {/* Insight box */}
               {hasRefund && (
                 <div className="mt-6 bg-slate-50 border border-slate-200 rounded-lg p-4 flex gap-3 items-start">
-                  <span className="text-green-600 mt-0.5 shrink-0">
+                  <span className="text-emerald-600 mt-0.5 shrink-0">
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                   </span>
                   <p className="text-sm text-slate-900 leading-relaxed">
@@ -708,13 +708,13 @@ function SwitchingCostCalculator({ brokers, searchParams }: { brokers: Broker[];
             <div className="h-full space-y-4">
               {/* Hero savings */}
               <div className={`rounded-xl p-6 text-center border ${
-                annualSavings > 0 ? "bg-green-50 border-green-200" : annualSavings < 0 ? "bg-red-50 border-red-200" : "bg-slate-50 border-slate-200"
+                annualSavings > 0 ? "bg-emerald-50 border-emerald-200" : annualSavings < 0 ? "bg-red-50 border-red-200" : "bg-slate-50 border-slate-200"
               }`}>
-                <span className={`text-xs font-bold uppercase tracking-wider ${annualSavings > 0 ? "text-green-700" : annualSavings < 0 ? "text-red-600" : "text-slate-500"}`}>
+                <span className={`text-xs font-bold uppercase tracking-wider ${annualSavings > 0 ? "text-emerald-700" : annualSavings < 0 ? "text-red-600" : "text-slate-500"}`}>
                   {annualSavings > 0 ? "Projected Annual Savings" : annualSavings < 0 ? "You\u2019d Pay More" : "No Difference"}
                 </span>
                 <div className={`text-3xl md:text-5xl font-extrabold tracking-tight mt-1 ${
-                  annualSavings > 0 ? "text-green-800" : annualSavings < 0 ? "text-red-600" : "text-slate-700"
+                  annualSavings > 0 ? "text-emerald-800" : annualSavings < 0 ? "text-red-600" : "text-slate-700"
                 }`}>
                   <AnimatedNumber value={Math.abs(annualSavings)} /><span className="text-xl md:text-2xl font-bold text-slate-400">/yr</span>
                 </div>
@@ -1010,12 +1010,12 @@ function CgtCalculator({ searchParams }: { searchParams: URLSearchParams }) {
             <div className="space-y-4">
               {/* Hero savings */}
               {held12Months && taxSaved > 0 && (
-                <div className="bg-green-50 border border-green-200 rounded-xl p-5 text-center">
-                  <span className="text-xs font-bold uppercase tracking-wider text-green-700">CGT Discount Saves You</span>
-                  <div className="text-3xl md:text-4xl font-extrabold text-green-800 tracking-tight mt-0.5">
+                <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-5 text-center">
+                  <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">CGT Discount Saves You</span>
+                  <div className="text-3xl md:text-4xl font-extrabold text-emerald-800 tracking-tight mt-0.5">
                     <AnimatedNumber value={taxSaved} />
                   </div>
-                  <p className="text-sm text-green-700 mt-1">
+                  <p className="text-sm text-emerald-700 mt-1">
                     Effective rate drops from {effectiveWithout.toFixed(1)}% to <strong>{effectiveWith.toFixed(1)}%</strong>
                   </p>
                 </div>
@@ -1042,8 +1042,8 @@ function CgtCalculator({ searchParams }: { searchParams: URLSearchParams }) {
                 </div>
 
                 {/* With discount */}
-                <div className={`border rounded-xl p-5 ${held12Months ? "bg-green-50 border-green-200" : "bg-slate-50 border-slate-200"}`}>
-                  <h4 className={`text-xs font-bold uppercase tracking-wider mb-3 ${held12Months ? "text-green-700" : "text-slate-500"}`}>
+                <div className={`border rounded-xl p-5 ${held12Months ? "bg-emerald-50 border-emerald-200" : "bg-slate-50 border-slate-200"}`}>
+                  <h4 className={`text-xs font-bold uppercase tracking-wider mb-3 ${held12Months ? "text-emerald-700" : "text-slate-500"}`}>
                     {held12Months ? "With 50% CGT Discount" : "No Discount (< 12 months)"}
                   </h4>
                   <div className="space-y-2.5">
@@ -1053,7 +1053,7 @@ function CgtCalculator({ searchParams }: { searchParams: URLSearchParams }) {
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-slate-600">Tax Payable</span>
-                      <span className={`font-bold ${held12Months ? "text-green-700" : "text-red-600"}`}>{formatCurrency(taxWith)}</span>
+                      <span className={`font-bold ${held12Months ? "text-emerald-700" : "text-red-600"}`}>{formatCurrency(taxWith)}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-slate-600">Effective Rate</span>
@@ -1116,12 +1116,12 @@ function ChessLookup({ brokers, searchParams }: { brokers: Broker[]; searchParam
         <div className="space-y-6">
           <div
             className={`border rounded-xl p-6 ${
-              broker.chess_sponsored ? "bg-green-50 border-green-200" : "bg-amber-50 border-amber-300"
+              broker.chess_sponsored ? "bg-emerald-50 border-emerald-200" : "bg-amber-50 border-amber-300"
             }`}
           >
             <div className="flex items-start gap-4">
               {broker.chess_sponsored
-                ? <Icon name="check-circle" size={36} className="text-green-600 shrink-0" />
+                ? <Icon name="check-circle" size={36} className="text-emerald-600 shrink-0" />
                 : <Icon name="shield-check" size={36} className="text-amber-500 shrink-0" />
               }
               <div className="flex-1">
@@ -1163,13 +1163,13 @@ function ChessLookup({ brokers, searchParams }: { brokers: Broker[]; searchParam
                     <tr
                       key={b.slug}
                       className={`border-b border-slate-100 last:border-0 transition-colors ${
-                        b.slug === selectedSlug ? "bg-green-50" : "hover:bg-slate-50"
+                        b.slug === selectedSlug ? "bg-emerald-50" : "hover:bg-slate-50"
                       }`}
                     >
                       <td className="px-4 py-2.5 font-medium text-slate-800">{b.name}</td>
                       <td className="px-4 py-2.5">
                         {b.chess_sponsored ? (
-                          <span className="inline-flex items-center px-2 py-0.5 bg-green-50 text-green-700 text-xs rounded border border-green-200 font-medium">CHESS</span>
+                          <span className="inline-flex items-center px-2 py-0.5 bg-emerald-50 text-emerald-700 text-xs rounded border border-emerald-200 font-medium">CHESS</span>
                         ) : (
                           <span className="inline-flex items-center px-2 py-0.5 bg-slate-100 text-slate-600 text-xs rounded border border-slate-200 font-medium">Custodial</span>
                         )}
@@ -1256,7 +1256,7 @@ function FeeImpactTeaser({ brokers, searchParams }: { brokers: Broker[]; searchP
                 <div
                   key={r.broker.slug}
                   className={`flex items-center gap-4 px-4 py-3 rounded-xl border ${
-                    i === 0 ? "bg-green-50 border-green-200" : "bg-white border-slate-200"
+                    i === 0 ? "bg-emerald-50 border-emerald-200" : "bg-white border-slate-200"
                   }`}
                 >
                   <span className="text-xs font-bold text-slate-400 w-5">#{i + 1}</span>
@@ -1356,8 +1356,8 @@ function SelectField({ label, value, onChange, placeholder, children }: {
 function ResultBox({ label, value, positive, negative }: {
   label: string; value: string; positive?: boolean; negative?: boolean;
 }) {
-  const bg = positive ? "bg-green-50 border-green-200" : negative ? "bg-red-50 border-red-200" : "bg-slate-50 border-slate-200";
-  const textColor = positive ? "text-green-800" : negative ? "text-red-600" : "text-slate-900";
+  const bg = positive ? "bg-emerald-50 border-emerald-200" : negative ? "bg-red-50 border-red-200" : "bg-slate-50 border-slate-200";
+  const textColor = positive ? "text-emerald-800" : negative ? "text-red-600" : "text-slate-900";
 
   return (
     <div className={`rounded-xl p-3.5 border ${bg}`}>

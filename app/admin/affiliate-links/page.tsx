@@ -138,8 +138,8 @@ export default function AffiliateLinksPage() {
     switch (status) {
       case "ok":
         return (
-          <span className="inline-flex items-center gap-1 text-green-600 text-xs font-medium">
-            <span className="w-2 h-2 bg-green-400 rounded-full" />
+          <span className="inline-flex items-center gap-1 text-emerald-600 text-xs font-medium">
+            <span className="w-2 h-2 bg-emerald-400 rounded-full" />
             Healthy
           </span>
         );
@@ -203,7 +203,7 @@ export default function AffiliateLinksPage() {
     if (daysLeft <= 7) {
       return <span className="text-xs font-medium text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">{daysLeft}d left</span>;
     }
-    return <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded-full">{daysLeft}d left</span>;
+    return <span className="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">{daysLeft}d left</span>;
   }
 
   return (
@@ -219,7 +219,7 @@ export default function AffiliateLinksPage() {
               onClick={() => setActiveTab("links")}
               className={`px-4 py-2 text-sm font-medium transition-colors ${
                 activeTab === "links"
-                  ? "bg-green-700 text-slate-900"
+                  ? "bg-emerald-700 text-slate-900"
                   : "text-slate-500 hover:text-slate-900 hover:bg-slate-200"
               }`}
             >
@@ -229,7 +229,7 @@ export default function AffiliateLinksPage() {
               onClick={() => setActiveTab("revenue")}
               className={`px-4 py-2 text-sm font-medium transition-colors ${
                 activeTab === "revenue"
-                  ? "bg-green-700 text-slate-900"
+                  ? "bg-emerald-700 text-slate-900"
                   : "text-slate-500 hover:text-slate-900 hover:bg-slate-200"
               }`}
             >
@@ -239,7 +239,7 @@ export default function AffiliateLinksPage() {
               onClick={() => setActiveTab("health")}
               className={`px-4 py-2 text-sm font-medium transition-colors ${
                 activeTab === "health"
-                  ? "bg-green-700 text-slate-900"
+                  ? "bg-emerald-700 text-slate-900"
                   : "text-slate-500 hover:text-slate-900 hover:bg-slate-200"
               }`}
             >
@@ -263,7 +263,7 @@ export default function AffiliateLinksPage() {
             <>
               <div className="bg-white border border-slate-200 rounded-lg p-4">
                 <p className="text-slate-500 text-sm">With Affiliate URL</p>
-                <p className="text-2xl font-bold text-green-600">{withAffiliateUrl}</p>
+                <p className="text-2xl font-bold text-emerald-600">{withAffiliateUrl}</p>
               </div>
               <div className="bg-white border border-slate-200 rounded-lg p-4">
                 <p className="text-slate-500 text-sm">Without Affiliate URL</p>
@@ -293,7 +293,7 @@ export default function AffiliateLinksPage() {
             <>
               <div className="bg-white border border-slate-200 rounded-lg p-4">
                 <p className="text-slate-500 text-sm">Links Healthy</p>
-                <p className="text-2xl font-bold text-green-600">{linksOk}</p>
+                <p className="text-2xl font-bold text-emerald-600">{linksOk}</p>
               </div>
               <div className={`border rounded-lg p-4 ${linksBroken > 0 ? "bg-red-50 border-red-200" : "bg-white border-slate-200"}`}>
                 <p className="text-slate-500 text-sm">Broken / Errored</p>
@@ -398,8 +398,8 @@ export default function AffiliateLinksPage() {
                             </td>
                             <td className="px-4 py-3">
                               {broker.affiliate_url && broker.affiliate_url.trim() !== "" ? (
-                                <span className="inline-flex items-center gap-1 text-green-600 text-sm">
-                                  <span className="w-2 h-2 bg-green-400 rounded-full"></span>
+                                <span className="inline-flex items-center gap-1 text-emerald-600 text-sm">
+                                  <span className="w-2 h-2 bg-emerald-400 rounded-full"></span>
                                   Active
                                 </span>
                               ) : (
@@ -419,7 +419,7 @@ export default function AffiliateLinksPage() {
                                   Save
                                 </button>
                                 {savedSlug === broker.slug && (
-                                  <span className="text-green-600 text-sm">Saved!</span>
+                                  <span className="text-emerald-600 text-sm">Saved!</span>
                                 )}
                               </div>
                             </td>
@@ -483,7 +483,7 @@ export default function AffiliateLinksPage() {
                                   Save
                                 </button>
                                 {savedSlug === broker.slug && (
-                                  <span className="text-green-600 text-sm">Saved!</span>
+                                  <span className="text-emerald-600 text-sm">Saved!</span>
                                 )}
                               </div>
                             </td>
@@ -517,8 +517,8 @@ export default function AffiliateLinksPage() {
                             </td>
                             <td className="px-4 py-3">
                               {broker.deal ? (
-                                <span className="inline-flex items-center gap-1 text-green-600 text-xs font-medium">
-                                  <span className="w-2 h-2 bg-green-400 rounded-full" />
+                                <span className="inline-flex items-center gap-1 text-emerald-600 text-xs font-medium">
+                                  <span className="w-2 h-2 bg-emerald-400 rounded-full" />
                                   Active
                                 </span>
                               ) : (

@@ -62,14 +62,14 @@ export default function AskQuestionForm({ brokerSlug, brokerName, pageType = "br
 
   if (status === "success") {
     return (
-      <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
-        <p className="text-sm text-green-800 font-medium">Thanks for your question!</p>
-        <p className="text-xs text-green-600 mt-1">
+      <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 mb-6">
+        <p className="text-sm text-emerald-800 font-medium">Thanks for your question!</p>
+        <p className="text-xs text-emerald-600 mt-1">
           Our editorial team will review and answer it shortly. Approved questions appear on this page.
         </p>
         <button
           onClick={() => { setStatus("idle"); setIsOpen(false); }}
-          className="text-xs text-green-700 underline mt-2 hover:text-green-900"
+          className="text-xs text-emerald-700 underline mt-2 hover:text-emerald-900"
         >
           Ask another question
         </button>

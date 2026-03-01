@@ -19,7 +19,7 @@ const ROLE_COLORS: Record<string, string> = {
   contributor: "bg-slate-100 text-slate-600",
   staff_writer: "bg-blue-50 text-blue-600",
   editor: "bg-amber-50 text-amber-600",
-  expert_reviewer: "bg-green-50 text-green-700",
+  expert_reviewer: "bg-emerald-50 text-emerald-700",
 };
 
 function slugify(name: string): string {
@@ -193,7 +193,7 @@ export default function TeamMembersPage() {
                 ]);
                 downloadCSV("team-members.csv", ["Name", "Slug", "Role", "Status", "LinkedIn", "Twitter"], rows);
               }}
-              className="px-3 py-1.5 bg-green-50 text-green-700 text-xs font-semibold rounded-lg hover:bg-green-100 border border-green-200 transition-colors"
+              className="px-3 py-1.5 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-lg hover:bg-emerald-100 border border-emerald-200 transition-colors"
             >
               Export CSV ↓
             </button>
@@ -483,7 +483,7 @@ export default function TeamMembersPage() {
                       <span
                         className={`text-xs px-2 py-1 rounded-full font-medium ${
                           member.status === "active"
-                            ? "bg-green-50 text-green-600"
+                            ? "bg-emerald-50 text-emerald-600"
                             : "bg-slate-100 text-slate-500"
                         }`}
                       >
@@ -522,7 +522,7 @@ export default function TeamMembersPage() {
                         href={`/authors/${member.slug}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-xs text-green-600 hover:text-green-700"
+                        className="text-xs text-emerald-600 hover:text-emerald-700"
                       >
                         Preview
                       </a>

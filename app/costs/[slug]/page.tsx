@@ -247,7 +247,7 @@ export default async function CostScenarioPage({
                     )}
                     <td className="py-3 text-right font-bold text-slate-900">
                       {annualCost === 0 ? (
-                        <span className="text-green-700">$0</span>
+                        <span className="text-emerald-700">$0</span>
                       ) : (
                         formatCurrency(annualCost)
                       )}

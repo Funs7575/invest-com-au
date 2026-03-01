@@ -11,7 +11,7 @@ type StatusFilter = "all" | "pending_review" | "active" | "approved" | "paused" 
 const STATUS_COLORS: Record<string, string> = {
   pending_review: "bg-amber-50 text-amber-700",
   approved: "bg-blue-50 text-blue-700",
-  active: "bg-green-50 text-green-700",
+  active: "bg-emerald-50 text-emerald-700",
   paused: "bg-slate-100 text-slate-600",
   budget_exhausted: "bg-red-50 text-red-700",
   completed: "bg-purple-50 text-purple-700",
@@ -282,7 +282,7 @@ export default function AdminCampaignsPage() {
                   <button
                     onClick={() => bulkUpdateStatus("approved")}
                     disabled={bulkLoading}
-                    className="px-3 py-1.5 bg-green-600 text-white text-xs font-bold rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
+                    className="px-3 py-1.5 bg-emerald-600 text-white text-xs font-bold rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50"
                   >
                     {bulkLoading ? "..." : "Approve All"}
                   </button>
@@ -308,7 +308,7 @@ export default function AdminCampaignsPage() {
                 <button
                   onClick={() => bulkUpdateStatus("active")}
                   disabled={bulkLoading}
-                  className="px-3 py-1.5 bg-green-600 text-white text-xs font-bold rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
+                  className="px-3 py-1.5 bg-emerald-600 text-white text-xs font-bold rounded-lg hover:bg-emerald-700 transition-colors disabled:opacity-50"
                 >
                   {bulkLoading ? "..." : "Activate All"}
                 </button>
@@ -452,7 +452,7 @@ export default function AdminCampaignsPage() {
                                 ? "bg-red-500"
                                 : c.total_spent_cents >= c.total_budget_cents * 0.8
                                 ? "bg-amber-500"
-                                : "bg-green-500"
+                                : "bg-emerald-500"
                             }`}
                             style={{
                               width: `${Math.min(100, (c.total_spent_cents / c.total_budget_cents) * 100)}%`,
@@ -480,7 +480,7 @@ export default function AdminCampaignsPage() {
                           <button
                             onClick={() => updateCampaignStatus(c.id, "approved")}
                             disabled={actionLoading === c.id}
-                            className="px-4 py-1.5 bg-green-700 text-white text-xs font-bold rounded-lg hover:bg-green-800 transition-colors disabled:opacity-50"
+                            className="px-4 py-1.5 bg-emerald-700 text-white text-xs font-bold rounded-lg hover:bg-emerald-800 transition-colors disabled:opacity-50"
                           >
                             {actionLoading === c.id ? "..." : "Approve"}
                           </button>
@@ -507,7 +507,7 @@ export default function AdminCampaignsPage() {
                       <button
                         onClick={() => updateCampaignStatus(c.id, "active")}
                         disabled={actionLoading === c.id}
-                        className="px-4 py-1.5 bg-green-700 text-white text-xs font-bold rounded-lg hover:bg-green-800 transition-colors disabled:opacity-50"
+                        className="px-4 py-1.5 bg-emerald-700 text-white text-xs font-bold rounded-lg hover:bg-emerald-800 transition-colors disabled:opacity-50"
                       >
                         Resume
                       </button>
@@ -516,7 +516,7 @@ export default function AdminCampaignsPage() {
                       <button
                         onClick={() => updateCampaignStatus(c.id, "active")}
                         disabled={actionLoading === c.id}
-                        className="px-4 py-1.5 bg-green-700 text-white text-xs font-bold rounded-lg hover:bg-green-800 transition-colors disabled:opacity-50"
+                        className="px-4 py-1.5 bg-emerald-700 text-white text-xs font-bold rounded-lg hover:bg-emerald-800 transition-colors disabled:opacity-50"
                       >
                         Activate Now
                       </button>

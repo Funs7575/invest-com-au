@@ -154,7 +154,7 @@ export default function NotificationPreferences({ isPro }: { isPro?: boolean }) 
                 isProLocked
                   ? "bg-slate-100 cursor-not-allowed"
                   : prefs[item.key]
-                  ? "bg-green-500"
+                  ? "bg-emerald-500"
                   : "bg-slate-200"
               }`}
               role="switch"
@@ -177,7 +177,7 @@ export default function NotificationPreferences({ isPro }: { isPro?: boolean }) 
           <span className="text-xs text-slate-400">Saving...</span>
         )}
         {saved && (
-          <span className="text-xs text-green-600 font-medium">Saved</span>
+          <span className="text-xs text-emerald-600 font-medium">Saved</span>
         )}
         {error && (
           <span className="text-xs text-red-500">{error}</span>

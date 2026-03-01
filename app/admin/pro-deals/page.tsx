@@ -237,7 +237,7 @@ export default function ProDealsPage() {
 
   const statusBadge = (status: string) => {
     const styles: Record<string, string> = {
-      active: "bg-green-50 text-green-700",
+      active: "bg-emerald-50 text-emerald-700",
       expired: "bg-red-50 text-red-700",
       upcoming: "bg-blue-50 text-blue-700",
     };
@@ -269,13 +269,13 @@ export default function ProDealsPage() {
                   item.end_date || "",
                 ])
               )}
-              className="px-3 py-1.5 bg-green-50 text-green-700 text-xs font-semibold rounded-lg hover:bg-green-100 border border-green-200 transition-colors"
+              className="px-3 py-1.5 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-lg hover:bg-emerald-100 border border-emerald-200 transition-colors"
             >
               Export CSV
             </button>
             <button
               onClick={startCreate}
-              className="px-4 py-2 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors"
+              className="px-4 py-2 bg-emerald-700 text-white text-sm font-bold rounded-lg hover:bg-emerald-800 transition-colors"
             >
               + New Deal
             </button>
@@ -287,14 +287,14 @@ export default function ProDealsPage() {
           placeholder="Search..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full max-w-sm bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500/30"
+          className="w-full max-w-sm bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
         />
 
         {message && (
           <div
             className={`rounded-lg px-4 py-2 text-sm font-medium ${
               message.type === "success"
-                ? "bg-green-50 text-green-700 border border-green-200"
+                ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                 : "bg-red-50 text-red-700 border border-red-200"
             }`}
           >
@@ -519,7 +519,7 @@ export default function ProDealsPage() {
               <button
                 onClick={save}
                 disabled={saving}
-                className="px-4 py-2 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors disabled:opacity-50"
+                className="px-4 py-2 bg-emerald-700 text-white text-sm font-bold rounded-lg hover:bg-emerald-800 transition-colors disabled:opacity-50"
               >
                 {saving ? "Saving..." : editing ? "Update" : "Create"}
               </button>
@@ -589,7 +589,7 @@ export default function ProDealsPage() {
                       </td>
                       <td className="px-4 py-3 text-center">
                         {item.featured ? (
-                          <span className="text-green-600">Yes</span>
+                          <span className="text-emerald-600">Yes</span>
                         ) : (
                           <span className="text-slate-400">No</span>
                         )}
@@ -606,7 +606,7 @@ export default function ProDealsPage() {
                         </button>
                         <button
                           onClick={() => startEdit(item)}
-                          className="text-xs text-green-700 hover:underline mr-3"
+                          className="text-xs text-emerald-700 hover:underline mr-3"
                         >
                           Edit
                         </button>

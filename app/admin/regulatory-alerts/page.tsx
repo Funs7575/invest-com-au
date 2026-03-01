@@ -244,13 +244,13 @@ export default function RegulatoryAlertsPage() {
                 ]);
                 downloadCSV("regulatory-alerts.csv", ["Title", "Type", "Severity", "Status", "Effective Date", "Source", "Impact Summary"], rows);
               }}
-              className="px-3 py-1.5 bg-green-50 text-green-700 text-xs font-semibold rounded-lg hover:bg-green-100 border border-green-200 transition-colors"
+              className="px-3 py-1.5 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-lg hover:bg-emerald-100 border border-emerald-200 transition-colors"
             >
               Export CSV ↓
             </button>
             <button
               onClick={startCreate}
-              className="px-4 py-2 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors"
+              className="px-4 py-2 bg-emerald-700 text-white text-sm font-bold rounded-lg hover:bg-emerald-800 transition-colors"
             >
               + New Alert
             </button>
@@ -261,7 +261,7 @@ export default function RegulatoryAlertsPage() {
           <div
             className={`rounded-lg px-4 py-2 text-sm font-medium ${
               message.type === "success"
-                ? "bg-green-50 text-green-700 border border-green-200"
+                ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                 : "bg-red-50 text-red-700 border border-red-200"
             }`}
           >
@@ -465,7 +465,7 @@ export default function RegulatoryAlertsPage() {
               <button
                 onClick={save}
                 disabled={saving}
-                className="px-4 py-2 bg-green-700 text-white text-sm font-bold rounded-lg hover:bg-green-800 transition-colors disabled:opacity-50"
+                className="px-4 py-2 bg-emerald-700 text-white text-sm font-bold rounded-lg hover:bg-emerald-800 transition-colors disabled:opacity-50"
               >
                 {saving ? "Saving..." : editing ? "Update" : "Create"}
               </button>
@@ -537,7 +537,7 @@ export default function RegulatoryAlertsPage() {
                         <span
                           className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
                             item.status === "published"
-                              ? "bg-green-50 text-green-700"
+                              ? "bg-emerald-50 text-emerald-700"
                               : "bg-slate-100 text-slate-600"
                           }`}
                         >
@@ -550,7 +550,7 @@ export default function RegulatoryAlertsPage() {
                       <td className="px-4 py-3 text-right">
                         <button
                           onClick={() => startEdit(item)}
-                          className="text-xs text-green-700 hover:underline mr-3"
+                          className="text-xs text-emerald-700 hover:underline mr-3"
                         >
                           Edit
                         </button>

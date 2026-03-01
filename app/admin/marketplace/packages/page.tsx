@@ -162,7 +162,7 @@ export default function AdminPackagesPage() {
                       <span
                         className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
                           pkg.is_active
-                            ? "bg-green-100 text-green-800"
+                            ? "bg-emerald-100 text-emerald-800"
                             : "bg-slate-100 text-slate-500"
                         }`}
                       >
@@ -172,7 +172,7 @@ export default function AdminPackagesPage() {
                     <td className="px-4 py-3">
                       <button
                         onClick={() => handleEdit(pkg)}
-                        className="text-xs text-green-700 hover:underline"
+                        className="text-xs text-emerald-700 hover:underline"
                       >
                         Edit
                       </button>
@@ -305,7 +305,7 @@ export default function AdminPackagesPage() {
                 <button
                   onClick={handleSave}
                   disabled={saving}
-                  className="flex-1 px-4 py-2 bg-green-700 text-white rounded-lg text-sm font-medium hover:bg-green-800 disabled:opacity-50"
+                  className="flex-1 px-4 py-2 bg-emerald-700 text-white rounded-lg text-sm font-medium hover:bg-emerald-800 disabled:opacity-50"
                 >
                   {saving ? "Saving..." : "Save"}
                 </button>

@@ -204,7 +204,7 @@ export default function AdminBrokersPage() {
           <span className="text-xs text-slate-500">{filteredBrokers.length} broker{filteredBrokers.length !== 1 ? "s" : ""}</span>
           {!showForm && (
             <>
-              <button onClick={exportBrokers} className="bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg px-4 py-2 text-sm transition-colors">Export CSV ↓</button>
+              <button onClick={exportBrokers} className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg px-4 py-2 text-sm transition-colors">Export CSV ↓</button>
               <button onClick={() => setCreating(true)} className="bg-amber-500 hover:bg-amber-600 text-slate-900 font-semibold rounded-lg px-4 py-2 text-sm transition-colors">+ Add Broker</button>
             </>
           )}
@@ -291,7 +291,7 @@ export default function AdminBrokersPage() {
                     <td className="px-4 py-3 text-sm text-slate-600">{broker.asx_fee || "N/A"}</td>
                     <td className="px-4 py-3 hidden md:table-cell">
                       {broker.fee_verified_date ? (
-                        <span className="text-xs px-2 py-1 rounded-full font-medium bg-green-50 text-green-600">
+                        <span className="text-xs px-2 py-1 rounded-full font-medium bg-emerald-50 text-emerald-600">
                           {new Date(broker.fee_verified_date).toLocaleDateString("en-AU", { month: "short", day: "numeric" })}
                         </span>
                       ) : (
@@ -302,7 +302,7 @@ export default function AdminBrokersPage() {
                       {broker.sponsorship_tier ? (
                         <span className={`text-xs px-2 py-1 rounded-full font-medium ${
                           broker.sponsorship_tier === "featured_partner" ? "bg-blue-50 text-blue-700" :
-                          broker.sponsorship_tier === "editors_pick" ? "bg-green-50 text-green-700" :
+                          broker.sponsorship_tier === "editors_pick" ? "bg-emerald-50 text-emerald-700" :
                           "bg-amber-50 text-amber-700"
                         }`}>
                           {broker.sponsorship_tier === "featured_partner" ? "Featured" :
@@ -314,10 +314,10 @@ export default function AdminBrokersPage() {
                       )}
                     </td>
                     <td className="px-4 py-3">
-                      <span className={`text-xs px-2 py-1 rounded-full font-medium ${broker.status === "active" ? "bg-green-50 text-green-600" : "bg-slate-100 text-slate-600"}`}>{broker.status}</span>
+                      <span className={`text-xs px-2 py-1 rounded-full font-medium ${broker.status === "active" ? "bg-emerald-50 text-emerald-600" : "bg-slate-100 text-slate-600"}`}>{broker.status}</span>
                     </td>
                     <td className="px-4 py-3 text-right space-x-2">
-                      <a href={`/broker/${broker.slug}`} target="_blank" rel="noopener noreferrer" className="text-xs text-green-600 hover:text-green-700">Preview</a>
+                      <a href={`/broker/${broker.slug}`} target="_blank" rel="noopener noreferrer" className="text-xs text-emerald-600 hover:text-emerald-700">Preview</a>
                       <button onClick={() => setEditing(broker)} className="text-xs text-amber-600 hover:text-amber-700">Edit</button>
                       <button onClick={() => setDeleteTarget(broker)} className="text-xs text-red-600 hover:text-red-300">Delete</button>
                     </td>
@@ -431,7 +431,7 @@ function BrokerForm({ broker, saving, onSave, onCancel }: { broker: Partial<Brok
               <span className="text-xs font-medium text-slate-900">{entry.field}:</span>
               <span className="text-xs text-red-600 ml-1 line-through">{entry.old_value}</span>
               <span className="text-xs text-slate-500 mx-1">&rarr;</span>
-              <span className="text-xs text-green-600">{entry.new_value}</span>
+              <span className="text-xs text-emerald-600">{entry.new_value}</span>
             </div>
             <button type="button" onClick={() => removeEntry(i)} className="text-xs text-red-600 hover:text-red-300 ml-3 shrink-0">&times;</button>
           </div>
@@ -493,7 +493,7 @@ function BrokerForm({ broker, saving, onSave, onCancel }: { broker: Partial<Brok
                 type="button"
                 onClick={addEntry}
                 disabled={!newEntry.field || !newEntry.old_value || !newEntry.new_value}
-                className="bg-green-600 hover:bg-green-700 text-slate-900 font-semibold rounded-lg px-4 py-1.5 text-xs transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                className="bg-emerald-600 hover:bg-emerald-700 text-slate-900 font-semibold rounded-lg px-4 py-1.5 text-xs transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 Add Entry
               </button>
@@ -584,7 +584,7 @@ function BrokerForm({ broker, saving, onSave, onCancel }: { broker: Partial<Brok
 }
 
 function SectionHeading({ title, badge, badgeColor, count }: { title: string; badge?: string; badgeColor?: "green" | "amber"; count?: number }) {
-  const colorMap = { green: "bg-green-50 text-green-600", amber: "bg-amber-50 text-amber-600" };
+  const colorMap = { green: "bg-emerald-50 text-emerald-600", amber: "bg-amber-50 text-amber-600" };
   return (
     <div className="flex items-center gap-2 pt-2 border-t border-slate-200 first:border-t-0 first:pt-0">
       <h3 className="text-sm font-bold text-slate-600 uppercase tracking-wide">{title}</h3>

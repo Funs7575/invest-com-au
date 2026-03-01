@@ -99,7 +99,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
           <div className="text-center mb-16">
             <div className="flex items-center justify-center gap-2 mb-4">
               <span className={`inline-block px-3 py-1 text-xs font-bold rounded-full uppercase tracking-wide ${
-                course.level === "beginner" ? "bg-green-50 text-green-700" :
+                course.level === "beginner" ? "bg-emerald-50 text-emerald-700" :
                 course.level === "intermediate" ? "bg-blue-50 text-blue-700" :
                 "bg-purple-50 text-purple-700"
               }`}>
@@ -183,9 +183,9 @@ export default async function CourseDetailPage({ params }: PageProps) {
                             href={`/courses/${slug}/${lesson.slug}`}
                             className="flex items-center gap-2 hover:text-slate-900 transition-colors"
                           >
-                            <span className="w-4 h-4 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-[0.5rem]">▶</span>
+                            <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-[0.5rem]">▶</span>
                             {lesson.title}
-                            <span className="text-[0.5rem] px-1.5 py-0.5 bg-green-50 text-green-600 rounded-full font-medium">FREE</span>
+                            <span className="text-[0.5rem] px-1.5 py-0.5 bg-emerald-50 text-emerald-600 rounded-full font-medium">FREE</span>
                           </Link>
                         ) : (
                           <>

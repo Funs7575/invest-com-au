@@ -53,7 +53,7 @@ export default function QASection({ questions, brokerSlug, brokerName, pageType 
                         {a.answered_by === "editorial" ? "Editorial" : "Community"}
                       </span>
                       {a.is_accepted && (
-                        <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-green-50 text-green-700">
+                        <span className="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700">
                           Accepted
                         </span>
                       )}

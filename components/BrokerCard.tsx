@@ -110,7 +110,7 @@ export default function BrokerCard({
         </div>
         <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
           <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">CHESS</div>
-          <div className={`text-xs md:text-sm font-semibold leading-tight ${broker.chess_sponsored ? 'text-green-600' : 'text-red-500'}`}>
+          <div className={`text-xs md:text-sm font-semibold leading-tight ${broker.chess_sponsored ? 'text-emerald-600' : 'text-red-500'}`}>
             {broker.chess_sponsored ? '✓' : '✗'}
           </div>
         </div>

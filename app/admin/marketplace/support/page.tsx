@@ -25,7 +25,7 @@ interface Message {
 }
 
 const STATUS_STYLES: Record<string, string> = {
-  open: "bg-green-100 text-green-800",
+  open: "bg-emerald-100 text-emerald-800",
   in_progress: "bg-blue-100 text-blue-800",
   waiting_reply: "bg-amber-100 text-amber-800",
   resolved: "bg-slate-100 text-slate-700",
@@ -286,9 +286,9 @@ export default function AdminSupportPage() {
             <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Total Tickets</p>
             <p className="text-2xl font-extrabold text-slate-900 mt-1">{tickets.length}</p>
           </div>
-          <div className={`rounded-xl border p-4 ${openCount > 0 ? "bg-green-50 border-green-200" : "bg-white border-slate-200"}`}>
+          <div className={`rounded-xl border p-4 ${openCount > 0 ? "bg-emerald-50 border-emerald-200" : "bg-white border-slate-200"}`}>
             <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Open</p>
-            <p className={`text-2xl font-extrabold mt-1 ${openCount > 0 ? "text-green-700" : "text-slate-900"}`}>{openCount}</p>
+            <p className={`text-2xl font-extrabold mt-1 ${openCount > 0 ? "text-emerald-700" : "text-slate-900"}`}>{openCount}</p>
           </div>
           <div className={`rounded-xl border p-4 ${urgentCount > 0 ? "bg-red-50 border-red-200" : "bg-white border-slate-200"}`}>
             <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Urgent</p>

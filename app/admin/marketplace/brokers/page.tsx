@@ -238,7 +238,7 @@ export default function AdminBrokersPage() {
               <button
                 onClick={handleInvite}
                 disabled={inviting}
-                className="px-4 py-2 bg-green-700 text-white font-bold text-sm rounded-lg hover:bg-green-800 transition-colors disabled:opacity-50"
+                className="px-4 py-2 bg-emerald-700 text-white font-bold text-sm rounded-lg hover:bg-emerald-800 transition-colors disabled:opacity-50"
               >
                 {inviting ? "Creating..." : "Create Account"}
               </button>
@@ -342,7 +342,7 @@ export default function AdminBrokersPage() {
                         <span
                           className={`text-xs font-bold px-2 py-0.5 rounded-full ${
                             b.status === "active"
-                              ? "bg-green-50 text-green-700"
+                              ? "bg-emerald-50 text-emerald-700"
                               : b.status === "pending"
                               ? "bg-amber-50 text-amber-700"
                               : "bg-red-50 text-red-700"
@@ -363,7 +363,7 @@ export default function AdminBrokersPage() {
                             <button
                               onClick={() => updateAccountStatus(b.id, "active")}
                               disabled={actionLoading === b.id}
-                              className="px-2 py-1 bg-green-700 text-white text-xs font-bold rounded hover:bg-green-800 transition-colors disabled:opacity-50"
+                              className="px-2 py-1 bg-emerald-700 text-white text-xs font-bold rounded hover:bg-emerald-800 transition-colors disabled:opacity-50"
                             >
                               Activate
                             </button>
@@ -381,7 +381,7 @@ export default function AdminBrokersPage() {
                             <button
                               onClick={() => updateAccountStatus(b.id, "active")}
                               disabled={actionLoading === b.id}
-                              className="px-2 py-1 bg-green-700 text-white text-xs font-bold rounded hover:bg-green-800 transition-colors disabled:opacity-50"
+                              className="px-2 py-1 bg-emerald-700 text-white text-xs font-bold rounded hover:bg-emerald-800 transition-colors disabled:opacity-50"
                             >
                               Reactivate
                             </button>

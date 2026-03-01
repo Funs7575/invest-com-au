@@ -88,7 +88,7 @@ export default function MarketplaceOverviewPage() {
                 {
                   label: "Total Deposits",
                   value: `$${(stats.totalWalletDeposits / 100).toLocaleString("en-AU", { minimumFractionDigits: 2 })}`,
-                  color: "text-green-700",
+                  color: "text-emerald-700",
                 },
                 {
                   label: "Current Balance (All)",
@@ -208,7 +208,7 @@ export default function MarketplaceOverviewPage() {
                             <span
                               className={`text-xs font-bold px-2 py-0.5 rounded-full ${
                                 t.type === "deposit"
-                                  ? "bg-green-50 text-green-700"
+                                  ? "bg-emerald-50 text-emerald-700"
                                   : t.type === "spend"
                                   ? "bg-red-50 text-red-700"
                                   : t.type === "refund"
@@ -224,7 +224,7 @@ export default function MarketplaceOverviewPage() {
                           </td>
                           <td
                             className={`px-5 py-3 text-right font-semibold ${
-                              t.type === "spend" ? "text-red-700" : "text-green-700"
+                              t.type === "spend" ? "text-red-700" : "text-emerald-700"
                             }`}
                           >
                             {t.type === "spend" ? "-" : "+"}${(t.amount_cents / 100).toFixed(2)}

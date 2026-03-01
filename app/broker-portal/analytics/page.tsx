@@ -233,7 +233,7 @@ export default function AnalyticsPage() {
   }, [stats, totalClicks, totalImpressions, totalConversions, totalSpend]);
 
   const getScoreColor = (score: number) => {
-    if (score >= 120) return "text-green-700 bg-green-50 border-green-200";
+    if (score >= 120) return "text-emerald-700 bg-emerald-50 border-emerald-200";
     if (score >= 80) return "text-blue-700 bg-blue-50 border-blue-200";
     if (score >= 50) return "text-amber-700 bg-amber-50 border-amber-200";
     return "text-red-700 bg-red-50 border-red-200";
@@ -248,7 +248,7 @@ export default function AnalyticsPage() {
 
   const getBenchmarkIndicator = (value: number, benchmark: number, lowerIsBetter = false) => {
     const ratio = lowerIsBetter ? (benchmark / Math.max(value, 0.01)) : (value / Math.max(benchmark, 0.01));
-    if (ratio >= 1.2) return { icon: "▲", color: "text-green-600", label: "Above benchmark" };
+    if (ratio >= 1.2) return { icon: "▲", color: "text-emerald-600", label: "Above benchmark" };
     if (ratio >= 0.8) return { icon: "●", color: "text-blue-500", label: "On par" };
     return { icon: "▼", color: "text-red-500", label: "Below benchmark" };
   };
@@ -300,7 +300,7 @@ export default function AnalyticsPage() {
             {[
               { label: "Clicks", value: totalClicks, icon: "mouse-pointer-click", iconBg: "bg-blue-50", iconColor: "text-blue-600", sparkData: dailyTotals.map(d => d.clicks), sparkColor: "#3b82f6", tip: "" },
               { label: "Impressions", value: totalImpressions, icon: "eye", iconBg: "bg-purple-50", iconColor: "text-purple-600", sparkData: dailyTotals.map(d => d.impressions), sparkColor: "#9333ea", tip: "" },
-              { label: "CTR", value: ctr, suffix: "%", decimals: 2, icon: "trending-up", iconBg: "bg-green-50", iconColor: "text-green-600", sparkData: dailyTotals.map(d => d.impressions > 0 ? (d.clicks / d.impressions) * 100 : 0), sparkColor: "#16a34a", tip: "Click-Through Rate = Clicks / Impressions x 100. Industry average for financial services is ~2.5%." },
+              { label: "CTR", value: ctr, suffix: "%", decimals: 2, icon: "trending-up", iconBg: "bg-emerald-50", iconColor: "text-emerald-600", sparkData: dailyTotals.map(d => d.impressions > 0 ? (d.clicks / d.impressions) * 100 : 0), sparkColor: "#16a34a", tip: "Click-Through Rate = Clicks / Impressions x 100. Industry average for financial services is ~2.5%." },
               { label: "Conversions", value: totalConversions, icon: "target", iconBg: "bg-emerald-50", iconColor: "text-emerald-600", sparkData: dailyTotals.map(d => d.conversions), sparkColor: "#059669", tip: "Users who completed an action (opened account, funded, first trade) tracked via your Postback API." },
               { label: "Conv. Rate", value: convRate, suffix: "%", decimals: 2, icon: "bar-chart", iconBg: "bg-amber-50", iconColor: "text-amber-600", sparkData: dailyTotals.map(d => d.clicks > 0 ? (d.conversions / d.clicks) * 100 : 0), sparkColor: "#d97706", tip: "" },
             ].map(kpi => (
@@ -329,7 +329,7 @@ export default function AnalyticsPage() {
               <h2 className="font-bold text-slate-900">Daily Clicks</h2>
               <div className="flex items-center gap-4 text-xs">
                 <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-slate-800" /> Clicks</span>
-                <span className="flex items-center gap-1"><span className="w-2.5 h-0.5 bg-green-500 rounded" style={{ height: 2 }} /> Conversions</span>
+                <span className="flex items-center gap-1"><span className="w-2.5 h-0.5 bg-emerald-500 rounded" style={{ height: 2 }} /> Conversions</span>
               </div>
             </div>
             {dailyTotals.length === 0 ? (
@@ -402,9 +402,9 @@ export default function AnalyticsPage() {
                 <CountUp end={conversions.filter(c => c.event_type === "opened").length} duration={1000} />
               </p>
             </div>
-            <div className="bg-green-50 rounded-xl border border-green-200 p-4">
-              <p className="text-xs text-green-600 uppercase tracking-wider font-bold">Funded</p>
-              <p className="text-2xl font-extrabold text-green-800 mt-1">
+            <div className="bg-emerald-50 rounded-xl border border-emerald-200 p-4">
+              <p className="text-xs text-emerald-600 uppercase tracking-wider font-bold">Funded</p>
+              <p className="text-2xl font-extrabold text-emerald-800 mt-1">
                 <CountUp end={conversions.filter(c => c.event_type === "funded").length} duration={1000} />
               </p>
             </div>
@@ -427,7 +427,7 @@ export default function AnalyticsPage() {
               <h2 className="font-bold text-slate-900">Conversions Over Time</h2>
               <div className="flex items-center gap-4 text-xs">
                 <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-blue-400" /> Opened</span>
-                <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-green-400" /> Funded</span>
+                <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-emerald-400" /> Funded</span>
                 <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-purple-400" /> First Trade</span>
               </div>
             </div>
@@ -446,7 +446,7 @@ export default function AnalyticsPage() {
                 {[
                   { label: "Clicks", count: totalClicks, color: "bg-slate-700" },
                   { label: "Opened", count: conversions.filter(c => c.event_type === "opened").length, color: "bg-blue-500" },
-                  { label: "Funded", count: conversions.filter(c => c.event_type === "funded").length, color: "bg-green-500" },
+                  { label: "Funded", count: conversions.filter(c => c.event_type === "funded").length, color: "bg-emerald-500" },
                   { label: "First Trade", count: conversions.filter(c => c.event_type === "first_trade").length, color: "bg-purple-500" },
                 ].map((stage, i, arr) => {
                   const pct = arr[0].count > 0 ? (stage.count / arr[0].count) * 100 : 0;
@@ -483,13 +483,13 @@ export default function AnalyticsPage() {
             </div>
             <div className="bg-white rounded-xl border border-slate-200 p-4 hover-lift">
               <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Conv. Value</p>
-              <p className="text-xl font-extrabold text-green-700 mt-1">
+              <p className="text-xl font-extrabold text-emerald-700 mt-1">
                 <CountUp end={totalConversionValue / 100} prefix="$" decimals={2} duration={1000} />
               </p>
             </div>
-            <div className={`rounded-xl border p-4 hover-lift ${roi >= 0 ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"}`}>
+            <div className={`rounded-xl border p-4 hover-lift ${roi >= 0 ? "bg-emerald-50 border-emerald-200" : "bg-red-50 border-red-200"}`}>
               <p className="text-xs text-slate-500 font-medium uppercase tracking-wide flex items-center gap-1">ROI <InfoTip text="Return on Investment = (Conversion Value - Total Spend) / Total Spend x 100. Positive = profitable campaigns." /></p>
-              <p className={`text-xl font-extrabold mt-1 ${roi >= 0 ? "text-green-700" : "text-red-700"}`}>
+              <p className={`text-xl font-extrabold mt-1 ${roi >= 0 ? "text-emerald-700" : "text-red-700"}`}>
                 <CountUp end={roi} suffix="%" decimals={1} duration={1000} />
               </p>
             </div>
@@ -509,7 +509,7 @@ export default function AnalyticsPage() {
               <div className="overflow-x-auto">
                 <div className="flex items-center gap-4 mb-3 text-xs">
                   <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-red-400" /> Spend</span>
-                  <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-green-400" /> Revenue</span>
+                  <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-emerald-400" /> Revenue</span>
                 </div>
                 {(() => {
                   // Merge spend & conversion value per day
@@ -722,9 +722,9 @@ export default function AnalyticsPage() {
           <div className="bg-white rounded-xl border border-slate-200 p-5">
             <h2 className="font-bold text-slate-900 mb-3 flex items-center gap-1.5">Performance Score <InfoTip text="Composite score: CTR (30% weight) + Conversion Rate (40%) + Cost Efficiency (30%). Scores above 120 are excellent." /></h2>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
-              <div className="bg-green-50 rounded-lg p-3 border border-green-200">
-                <p className="font-bold text-green-700">120+ Excellent</p>
-                <p className="text-green-600 mt-0.5">Outperforming industry benchmarks</p>
+              <div className="bg-emerald-50 rounded-lg p-3 border border-emerald-200">
+                <p className="font-bold text-emerald-700">120+ Excellent</p>
+                <p className="text-emerald-600 mt-0.5">Outperforming industry benchmarks</p>
               </div>
               <div className="bg-blue-50 rounded-lg p-3 border border-blue-200">
                 <p className="font-bold text-blue-700">80–119 Good</p>

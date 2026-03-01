@@ -208,7 +208,7 @@ export default function AllocationDecisionsPage() {
                 <div className="text-sm text-slate-500">Total Decisions</div>
               </div>
               <div className="bg-white border border-slate-200 rounded-lg p-4">
-                <div className="text-3xl font-bold text-green-600">{kpiWithWinners.toLocaleString()}</div>
+                <div className="text-3xl font-bold text-emerald-600">{kpiWithWinners.toLocaleString()}</div>
                 <div className="text-sm text-slate-500">With Winners</div>
               </div>
               <div className="bg-white border border-slate-200 rounded-lg p-4">

@@ -150,7 +150,7 @@ export default function WebhooksPage() {
             <h2 className="font-bold text-slate-900">Outbound Webhook URL</h2>
             <InfoTip text="We send JSON POST requests to this URL when events occur. Must be a publicly accessible HTTPS endpoint." />
           </div>
-          {webhookSaved && <span className="text-xs text-green-600 font-medium">✓ Saved</span>}
+          {webhookSaved && <span className="text-xs text-emerald-600 font-medium">✓ Saved</span>}
         </div>
         <p className="text-xs text-slate-500 mb-3">
           When a conversion is recorded via postback, we&apos;ll automatically send a webhook notification to this URL.
@@ -174,8 +174,8 @@ export default function WebhooksPage() {
         </div>
         {webhookUrl && (
           <div className="mt-2 flex items-center gap-1.5">
-            <span className="w-2 h-2 bg-green-500 rounded-full shrink-0" />
-            <span className="text-xs text-green-700">Active — we&apos;ll POST conversion events to this URL</span>
+            <span className="w-2 h-2 bg-emerald-500 rounded-full shrink-0" />
+            <span className="text-xs text-emerald-700">Active — we&apos;ll POST conversion events to this URL</span>
           </div>
         )}
         {!webhookUrl && !webhookInput && (
@@ -204,8 +204,8 @@ export default function WebhooksPage() {
       {/* Endpoint Documentation */}
       <div className="bg-white rounded-xl border border-slate-200 p-5 space-y-5">
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-green-50 flex items-center justify-center">
-            <Icon name="target" size={14} className="text-green-600" />
+          <div className="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center">
+            <Icon name="target" size={14} className="text-emerald-600" />
           </div>
           <h2 className="font-bold text-slate-900">Postback Endpoint</h2>
         </div>
@@ -214,7 +214,7 @@ export default function WebhooksPage() {
         <div>
           <p className="text-xs font-medium text-slate-500 mb-1 uppercase tracking-wide">URL</p>
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-green-700 bg-green-50 px-2 py-1 rounded">POST</span>
+            <span className="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded">POST</span>
             <code className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm font-mono text-slate-700 flex-1 overflow-x-auto">
               {baseUrl}/api/marketplace/postback
             </code>
@@ -270,7 +270,7 @@ export default function WebhooksPage() {
         {/* Response */}
         <div>
           <p className="text-xs font-medium text-slate-500 mb-1 uppercase tracking-wide">Response (Success)</p>
-          <div className="bg-slate-900 rounded-lg p-4 font-mono text-xs text-green-400 overflow-x-auto">
+          <div className="bg-slate-900 rounded-lg p-4 font-mono text-xs text-emerald-400 overflow-x-auto">
             <pre>{`{
   "success": true,
   "conversion_id": 123,
@@ -362,7 +362,7 @@ export default function WebhooksPage() {
           {testing ? "Testing..." : "Send Test Request"}
         </button>
         {testResult && (
-          <div className={`mt-3 p-3 rounded-lg text-sm flex items-center gap-2 ${testResult.success ? "bg-green-50 text-green-700 border border-green-200" : "bg-red-50 text-red-700 border border-red-200"}`}>
+          <div className={`mt-3 p-3 rounded-lg text-sm flex items-center gap-2 ${testResult.success ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-red-50 text-red-700 border border-red-200"}`}>
             <Icon name={testResult.success ? "check-circle" : "x-circle"} size={16} />
             {testResult.message}
           </div>

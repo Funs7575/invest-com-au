@@ -293,11 +293,11 @@ export default function QuizPage() {
             <p className="text-[0.69rem] md:text-base text-slate-600">Brokers that scored highest on your criteria.</p>
             <div className="flex items-center justify-center gap-2 md:gap-3 mt-2 md:mt-3 text-[0.62rem] md:text-xs text-slate-400">
               <span className="flex items-center gap-1">
-                <svg className="w-2.5 h-2.5 md:w-3 md:h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                <svg className="w-2.5 h-2.5 md:w-3 md:h-3 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
                 ASIC-regulated
               </span>
               <span className="flex items-center gap-1">
-                <svg className="w-2.5 h-2.5 md:w-3 md:h-3 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                <svg className="w-2.5 h-2.5 md:w-3 md:h-3 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
                 Based on your answers
               </span>
             </div>
@@ -375,7 +375,7 @@ export default function QuizPage() {
                 <ul className="space-y-0.5 md:space-y-1">
                   {getMatchReasons(answers, topMatch.broker).map((reason, i) => (
                     <li key={i} className="text-[0.69rem] md:text-sm text-slate-700 flex items-start gap-1.5 md:gap-2">
-                      <span className="text-green-600 shrink-0">✓</span>
+                      <span className="text-emerald-600 shrink-0">✓</span>
                       {reason}
                     </li>
                   ))}
@@ -433,7 +433,7 @@ export default function QuizPage() {
                   </thead>
                   <tbody>
                     {allResults.map((r, i) => r.broker && (
-                      <tr key={r.slug} className={`border-b border-slate-50 ${i === 0 ? 'bg-green-50/30' : ''}`}>
+                      <tr key={r.slug} className={`border-b border-slate-50 ${i === 0 ? 'bg-emerald-50/30' : ''}`}>
                         <td className="px-2.5 md:px-4 py-2 md:py-2.5">
                           <div className="flex items-center gap-1.5 md:gap-2">
                             <div
@@ -449,7 +449,7 @@ export default function QuizPage() {
                         <td className="px-2 md:px-3 py-2 md:py-2.5 text-center text-[0.62rem] md:text-xs">{r.broker.asx_fee || 'N/A'}</td>
                         <td className="px-2 md:px-3 py-2 md:py-2.5 text-center text-[0.62rem] md:text-xs hidden md:table-cell">{r.broker.fx_rate != null ? `${r.broker.fx_rate}%` : 'N/A'}</td>
                         <td className="px-2 md:px-3 py-2 md:py-2.5 text-center text-[0.69rem]">
-                          <span className={r.broker.chess_sponsored ? 'text-green-600' : 'text-red-400'}>
+                          <span className={r.broker.chess_sponsored ? 'text-emerald-600' : 'text-red-400'}>
                             {r.broker.chess_sponsored ? '✓' : '✗'}
                           </span>
                         </td>
@@ -839,7 +839,7 @@ export default function QuizPage() {
               >
                 <span className="flex items-center gap-2 md:gap-3">
                   {selectedKey === opt.key && (
-                    <svg className="w-4 h-4 md:w-5 md:h-5 text-green-600 shrink-0 check-pop" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 md:w-5 md:h-5 text-emerald-600 shrink-0 check-pop" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                     </svg>
                   )}
