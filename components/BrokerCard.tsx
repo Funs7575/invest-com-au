@@ -116,6 +116,14 @@ export default function BrokerCard({
         </div>
       </div>
 
+      {/* Fee verified date — trust signal */}
+      {broker.fee_last_checked && (
+        <div className="mb-1.5 flex items-center gap-1 text-[0.58rem] md:text-[0.62rem] text-slate-400">
+          <Icon name="check-circle" size={10} className="text-emerald-500 shrink-0" />
+          <span>Fees verified {new Date(broker.fee_last_checked).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+        </div>
+      )}
+
       {/* Deal badge — compact inline */}
       {broker.deal && broker.deal_text && (
         <div className="mb-2 flex items-center gap-1.5 px-2 py-1 md:px-2.5 md:py-1.5 bg-amber-50 border border-amber-200/80 rounded-lg">

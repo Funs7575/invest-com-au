@@ -347,7 +347,7 @@ export async function recordCpcClick(
       .maybeSingle();
 
     if (existingClick) {
-      console.log(`Idempotent CPC: click_id ${clickData.click_id} already billed (event #${existingClick.id})`);
+      console.info(`Idempotent CPC: click_id ${clickData.click_id} already billed (event #${existingClick.id})`);
       return true; // Already billed — don't charge again
     }
   }
@@ -418,7 +418,7 @@ export async function recordCpcClick(
     // If unique constraint violation, the click was already recorded (race condition)
     // Refund the wallet debit we just made
     if (insertErr.code === "23505") {
-      console.log(`CPC race condition: click_id ${clickData.click_id} duplicate insert, refunding debit`);
+      console.info(`CPC race condition: click_id ${clickData.click_id} duplicate insert, refunding debit`);
       try {
         const { refundWallet } = await import("./wallet");
         await refundWallet(

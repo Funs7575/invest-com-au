@@ -398,7 +398,7 @@ export async function POST(request: NextRequest) {
             .delete()
             .eq("purchase_id", coursePurchase.id);
 
-          console.log(`Course purchase refunded: ${coursePurchase.course_slug} for user ${coursePurchase.user_id}`);
+          console.info(`Course purchase refunded: ${coursePurchase.course_slug} for user ${coursePurchase.user_id}`);
         }
 
         // 2. Check if this was a wallet top-up — reverse the credit
@@ -432,7 +432,7 @@ export async function POST(request: NextRequest) {
               email_sent: false,
             });
 
-            console.log(`Wallet refund reversed: ${walletTxn.broker_slug} — $${(reverseAmount / 100).toFixed(2)}`);
+            console.info(`Wallet refund reversed: ${walletTxn.broker_slug} — $${(reverseAmount / 100).toFixed(2)}`);
           } catch (err) {
             console.error("Wallet refund reversal failed:", err);
           }
@@ -451,7 +451,7 @@ export async function POST(request: NextRequest) {
             .update({ status: "refunded", refunded_at: new Date().toISOString() })
             .eq("id", booking.id);
 
-          console.log(`Consultation booking refunded: #${booking.id}`);
+          console.info(`Consultation booking refunded: #${booking.id}`);
         }
 
         // Audit log

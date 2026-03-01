@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import type { Broker } from "@/lib/types";
 import { getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
-
+import { getMostRecentFeeCheck } from "@/lib/utils";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import PromoBadge from "@/components/PromoBadge";
 import SponsorBadge from "@/components/SponsorBadge";
@@ -329,9 +329,17 @@ export default function HomepageComparisonTable({
         <ImpressionTracker winners={campaignWinners} placement="home-featured" page="/" />
       )}
 
-      {/* Affiliate disclosure */}
-      <div id="advertiser-disclosure" className="px-4 py-3 md:px-5 border-t border-slate-100 text-center">
+      {/* Affiliate disclosure + fee freshness */}
+      <div id="advertiser-disclosure" className="px-4 py-3 md:px-5 border-t border-slate-100 text-center space-y-1">
         <CompactDisclaimerLine />
+        {(() => {
+          const lastChecked = getMostRecentFeeCheck(displayBrokers);
+          return lastChecked ? (
+            <p className="text-[0.62rem] text-slate-400">
+              Fees last verified {new Date(lastChecked).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })}
+            </p>
+          ) : null;
+        })()}
       </div>
     </div>
   );

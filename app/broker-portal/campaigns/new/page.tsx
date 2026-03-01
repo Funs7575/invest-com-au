@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import Icon from "@/components/Icon";
 import InfoTip from "@/components/InfoTip";
-import type { MarketplacePlacement } from "@/lib/types";
+import type { MarketplacePlacement, BrokerCreative } from "@/lib/types";
 
 /* ─────────────────────── Placement visual metadata ─────────────────────── */
 const PLACEMENT_VISUALS: Record<string, {
@@ -106,7 +106,21 @@ function MockupShell({ title, url, children }: { title: string; url: string; chi
   );
 }
 
-function CompareMockup({ brokerName, isHighlighted }: { brokerName: string; isHighlighted: boolean }) {
+function BrokerIcon({ name, logoUrl, size = "w-5 h-5", textSize = "text-[0.45rem]", highlighted = false }: { name: string; logoUrl?: string; size?: string; textSize?: string; highlighted?: boolean }) {
+  if (logoUrl) {
+    return (
+      /* eslint-disable-next-line @next/next/no-img-element */
+      <img src={logoUrl} alt={name} className={`${size} rounded object-contain`} />
+    );
+  }
+  return (
+    <div className={`${size} rounded flex items-center justify-center ${textSize} font-bold ${highlighted ? "bg-amber-500 text-white" : "bg-slate-200 text-slate-500"}`}>
+      {name.charAt(0).toUpperCase()}
+    </div>
+  );
+}
+
+function CompareMockup({ brokerName, isHighlighted, logoUrl }: { brokerName: string; isHighlighted: boolean; logoUrl?: string }) {
   return (
     <MockupShell title="Compare Brokers" url="invest.com.au/compare">
       <p className="text-[0.6rem] text-slate-400 mb-2 font-medium">Compare Australian Share Trading Platforms</p>
@@ -117,9 +131,7 @@ function CompareMockup({ brokerName, isHighlighted }: { brokerName: string; isHi
       {/* Highlighted broker row */}
       <div className={`grid grid-cols-5 gap-1 items-center px-2 py-2 rounded-lg my-1 transition-all duration-500 ${isHighlighted ? "bg-amber-50 border border-amber-200 ring-2 ring-amber-300/50 scale-[1.02]" : "bg-slate-50 border border-transparent"}`}>
         <div className="col-span-2 flex items-center gap-1.5">
-          <div className={`w-5 h-5 rounded flex items-center justify-center text-[0.45rem] font-bold ${isHighlighted ? "bg-amber-500 text-white" : "bg-slate-200 text-slate-500"}`}>
-            {brokerName.charAt(0).toUpperCase()}
-          </div>
+          <BrokerIcon name={brokerName} logoUrl={logoUrl} highlighted={isHighlighted} />
           <div>
             <p className="text-[0.6rem] font-bold text-slate-900 leading-tight">{brokerName || "Your Broker"}</p>
             {isHighlighted && <span className="text-[0.45rem] font-bold text-amber-600 bg-amber-100 px-1 rounded">SPONSORED</span>}
@@ -151,7 +163,7 @@ function CompareMockup({ brokerName, isHighlighted }: { brokerName: string; isHi
   );
 }
 
-function QuizMockup({ brokerName, isHighlighted }: { brokerName: string; isHighlighted: boolean }) {
+function QuizMockup({ brokerName, isHighlighted, logoUrl }: { brokerName: string; isHighlighted: boolean; logoUrl?: string }) {
   return (
     <MockupShell title="Quiz Results" url="invest.com.au/quiz">
       <p className="text-[0.6rem] text-slate-400 mb-2 font-medium">Your Top Broker Matches</p>
@@ -160,9 +172,13 @@ function QuizMockup({ brokerName, isHighlighted }: { brokerName: string; isHighl
           const isYou = i === 0 && isHighlighted;
           return (
             <div key={i} className={`flex items-center gap-2 p-2 rounded-lg transition-all duration-500 ${isYou ? "bg-purple-50 border border-purple-200 ring-2 ring-purple-300/50 scale-[1.02]" : "bg-slate-50 border border-transparent opacity-40"}`}>
-              <div className={`w-6 h-6 rounded-lg flex items-center justify-center text-[0.5rem] font-bold ${isYou ? "bg-purple-500 text-white" : "bg-slate-200 text-slate-400"}`}>
-                {isYou ? (brokerName.charAt(0).toUpperCase() || "?") : "#"}
-              </div>
+              {isYou && logoUrl ? (
+                <BrokerIcon name={brokerName} logoUrl={logoUrl} size="w-6 h-6" />
+              ) : (
+                <div className={`w-6 h-6 rounded-lg flex items-center justify-center text-[0.5rem] font-bold ${isYou ? "bg-purple-500 text-white" : "bg-slate-200 text-slate-400"}`}>
+                  {isYou ? (brokerName.charAt(0).toUpperCase() || "?") : "#"}
+                </div>
+              )}
               <div className="flex-1">
                 <p className={`text-[0.6rem] font-bold ${isYou ? "text-slate-900" : "text-slate-400"}`}>{isYou ? (brokerName || "Your Broker") : `Broker ${i + 1}`}</p>
                 <p className="text-[0.45rem] text-slate-400">{label}</p>
@@ -179,7 +195,7 @@ function QuizMockup({ brokerName, isHighlighted }: { brokerName: string; isHighl
   );
 }
 
-function HomepageMockup({ brokerName, isHighlighted }: { brokerName: string; isHighlighted: boolean }) {
+function HomepageMockup({ brokerName, isHighlighted, logoUrl }: { brokerName: string; isHighlighted: boolean; logoUrl?: string }) {
   return (
     <MockupShell title="Homepage" url="invest.com.au">
       {/* Hero */}
@@ -193,9 +209,13 @@ function HomepageMockup({ brokerName, isHighlighted }: { brokerName: string; isH
         const isYou = i === 0 && isHighlighted;
         return (
           <div key={i} className={`flex items-center gap-2 p-1.5 rounded-lg mb-1 transition-all duration-500 ${isYou ? "bg-amber-50 border border-amber-200 ring-2 ring-amber-300/50 scale-[1.02]" : "bg-slate-50 opacity-40"}`}>
-            <div className={`w-5 h-5 rounded flex items-center justify-center text-[0.45rem] font-bold ${isYou ? "bg-amber-500 text-white" : "bg-slate-200 text-slate-400"}`}>
-              {isYou ? (brokerName.charAt(0).toUpperCase() || "?") : "#"}
-            </div>
+            {isYou && logoUrl ? (
+              <BrokerIcon name={brokerName} logoUrl={logoUrl} highlighted={isYou} />
+            ) : (
+              <div className={`w-5 h-5 rounded flex items-center justify-center text-[0.45rem] font-bold ${isYou ? "bg-amber-500 text-white" : "bg-slate-200 text-slate-400"}`}>
+                {isYou ? (brokerName.charAt(0).toUpperCase() || "?") : "#"}
+              </div>
+            )}
             <span className={`text-[0.6rem] font-bold flex-1 ${isYou ? "text-slate-900" : "text-slate-400"}`}>{isYou ? (brokerName || "Your Broker") : bName}</span>
             {isYou && <span className="text-[0.4rem] font-bold text-amber-600 bg-amber-100 px-1 rounded">FEATURED</span>}
             <div className={`text-[0.45rem] font-bold px-1.5 py-0.5 rounded ${isYou ? "bg-amber-500 text-white" : "bg-slate-100 text-slate-400"}`}>Visit</div>
@@ -206,7 +226,7 @@ function HomepageMockup({ brokerName, isHighlighted }: { brokerName: string; isH
   );
 }
 
-function ArticleMockup({ brokerName, isHighlighted }: { brokerName: string; isHighlighted: boolean }) {
+function ArticleMockup({ brokerName, isHighlighted, logoUrl }: { brokerName: string; isHighlighted: boolean; logoUrl?: string }) {
   return (
     <MockupShell title="Guide: How to Start Investing" url="invest.com.au/article/start-investing">
       <div className="flex gap-3">
@@ -227,9 +247,13 @@ function ArticleMockup({ brokerName, isHighlighted }: { brokerName: string; isHi
         {/* Sidebar widget */}
         <div className={`w-24 shrink-0 rounded-lg p-2 transition-all duration-500 ${isHighlighted ? "bg-emerald-50 border border-emerald-200 ring-2 ring-emerald-300/50 scale-[1.03]" : "bg-slate-50 border border-slate-200 opacity-40"}`}>
           <p className="text-[0.4rem] font-bold text-slate-400 uppercase tracking-wider mb-1">Sponsored</p>
-          <div className={`w-7 h-7 rounded-lg flex items-center justify-center mx-auto mb-1 text-[0.5rem] font-bold ${isHighlighted ? "bg-emerald-500 text-white" : "bg-slate-200 text-slate-400"}`}>
-            {brokerName.charAt(0).toUpperCase() || "?"}
-          </div>
+          {logoUrl ? (
+            <div className="w-7 h-7 mx-auto mb-1"><BrokerIcon name={brokerName} logoUrl={logoUrl} size="w-7 h-7" /></div>
+          ) : (
+            <div className={`w-7 h-7 rounded-lg flex items-center justify-center mx-auto mb-1 text-[0.5rem] font-bold ${isHighlighted ? "bg-emerald-500 text-white" : "bg-slate-200 text-slate-400"}`}>
+              {brokerName.charAt(0).toUpperCase() || "?"}
+            </div>
+          )}
           <p className={`text-[0.5rem] font-bold text-center ${isHighlighted ? "text-slate-900" : "text-slate-400"}`}>{brokerName || "Your Broker"}</p>
           <p className="text-[0.4rem] text-slate-400 text-center mt-0.5">$0 brokerage</p>
           <div className={`text-[0.4rem] font-bold text-center px-1 py-0.5 rounded mt-1 ${isHighlighted ? "bg-emerald-500 text-white" : "bg-slate-200 text-slate-400"}`}>
@@ -241,7 +265,7 @@ function ArticleMockup({ brokerName, isHighlighted }: { brokerName: string; isHi
   );
 }
 
-function DealsMockup({ brokerName, isHighlighted }: { brokerName: string; isHighlighted: boolean }) {
+function DealsMockup({ brokerName, isHighlighted, logoUrl }: { brokerName: string; isHighlighted: boolean; logoUrl?: string }) {
   return (
     <MockupShell title="Deals & Promotions" url="invest.com.au/deals">
       <p className="text-[0.6rem] text-slate-400 mb-2 font-medium">Current Broker Deals</p>
@@ -249,9 +273,13 @@ function DealsMockup({ brokerName, isHighlighted }: { brokerName: string; isHigh
         {/* Featured deal */}
         <div className={`rounded-lg p-2 transition-all duration-500 ${isHighlighted ? "bg-red-50 border border-red-200 ring-2 ring-red-300/50 scale-[1.03] col-span-2" : "bg-slate-50 border border-transparent opacity-40"}`}>
           <div className="flex items-center gap-1.5 mb-1">
-            <div className={`w-5 h-5 rounded flex items-center justify-center text-[0.45rem] font-bold ${isHighlighted ? "bg-red-500 text-white" : "bg-slate-200 text-slate-400"}`}>
-              {brokerName.charAt(0).toUpperCase() || "?"}
-            </div>
+            {logoUrl ? (
+              <BrokerIcon name={brokerName} logoUrl={logoUrl} />
+            ) : (
+              <div className={`w-5 h-5 rounded flex items-center justify-center text-[0.45rem] font-bold ${isHighlighted ? "bg-red-500 text-white" : "bg-slate-200 text-slate-400"}`}>
+                {brokerName.charAt(0).toUpperCase() || "?"}
+              </div>
+            )}
             <span className={`text-[0.6rem] font-bold ${isHighlighted ? "text-slate-900" : "text-slate-400"}`}>{brokerName || "Your Broker"}</span>
             {isHighlighted && <span className="text-[0.4rem] font-bold text-red-600 bg-red-100 px-1 rounded ml-auto">FEATURED DEAL</span>}
           </div>
@@ -351,6 +379,7 @@ export default function NewCampaignPage() {
   const [placements, setPlacements] = useState<MarketplacePlacement[]>([]);
   const [brokerSlug, setBrokerSlug] = useState("");
   const [brokerName, setBrokerName] = useState("");
+  const [brokerLogoUrl, setBrokerLogoUrl] = useState<string | undefined>();
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -379,6 +408,19 @@ export default function NewCampaignPage() {
       if (!account) return;
       setBrokerSlug(account.broker_slug);
       setBrokerName(account.company_name || account.full_name || account.broker_slug);
+
+      // Fetch broker's logo for live preview
+      const { data: logo } = await supabase
+        .from("broker_creatives")
+        .select("url")
+        .eq("broker_slug", account.broker_slug)
+        .eq("type", "logo")
+        .eq("is_active", true)
+        .order("sort_order", { ascending: true })
+        .limit(1)
+        .maybeSingle();
+
+      if (logo?.url) setBrokerLogoUrl(logo.url);
 
       const { data: p } = await supabase
         .from("marketplace_placements")
@@ -690,8 +732,18 @@ export default function NewCampaignPage() {
               {/* Mockup */}
               {(() => {
                 const MockupComponent = MOCKUP_COMPONENTS[visualMeta.mockup];
-                return <MockupComponent brokerName={brokerName} isHighlighted={true} />;
+                return <MockupComponent brokerName={brokerName} isHighlighted={true} logoUrl={brokerLogoUrl} />;
               })()}
+
+              {/* Logo prompt */}
+              {!brokerLogoUrl && (
+                <div className="flex items-center gap-2 bg-blue-50 rounded-lg px-3 py-2 border border-blue-100">
+                  <Icon name="image" size={12} className="text-blue-500 shrink-0" />
+                  <p className="text-[0.62rem] text-blue-700">
+                    <a href="/broker-portal/creatives" className="font-bold underline hover:text-blue-900">Upload a logo</a> to see it in the preview
+                  </p>
+                </div>
+              )}
 
               {/* Budget estimator */}
               <BudgetEstimator

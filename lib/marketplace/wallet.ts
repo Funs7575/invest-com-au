@@ -68,7 +68,7 @@ export async function creditWallet(
       .maybeSingle();
 
     if (existing) {
-      console.log(
+      console.info(
         `Idempotent credit: PI ${reference.stripe_payment_intent_id} already processed (txn #${existing.id})`
       );
       return existing as WalletTransaction;
@@ -347,7 +347,7 @@ async function checkAutoTopup(brokerSlug: string, currentBalance: number): Promi
       },
     });
 
-    console.log(
+    console.info(
       `Auto top-up triggered for ${brokerSlug}: $${(wallet.auto_topup_amount_cents / 100).toFixed(2)}, PI: ${paymentIntent.id}`
     );
   } catch (err) {
