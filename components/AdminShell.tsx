@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import AdminSearch from "@/components/AdminSearch";
 import AdminNotifications from "@/components/AdminNotifications";
 import AdminHelpPanel from "@/components/AdminHelpPanel";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const navSections = [
   {
@@ -14,6 +15,7 @@ const navSections = [
     items: [
       { href: "/admin", label: "Dashboard", icon: "📊" },
       { href: "/admin/analytics", label: "Analytics", icon: "📈" },
+      { href: "/admin/moderation", label: "Moderation", icon: "🛡️", badge: true },
     ],
   },
   {
@@ -72,6 +74,25 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [pendingCount, setPendingCount] = useState(0);
+
+  // Fetch pending moderation count for badge
+  useEffect(() => {
+    async function fetchPendingCount() {
+      try {
+        const supabase = createClient();
+        const [reviews, stories, questions] = await Promise.all([
+          supabase.from("user_reviews").select("id", { count: "exact", head: true }).in("status", ["pending", "verified"]),
+          supabase.from("switch_stories").select("id", { count: "exact", head: true }).in("status", ["pending", "verified"]),
+          supabase.from("broker_questions").select("id", { count: "exact", head: true }).eq("status", "pending"),
+        ]);
+        setPendingCount((reviews.count || 0) + (stories.count || 0) + (questions.count || 0));
+      } catch {
+        // Silently fail - badge just won't show
+      }
+    }
+    fetchPendingCount();
+  }, []);
 
   const handleLogout = async () => {
     const supabase = createClient();
@@ -98,6 +119,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             <div className="space-y-0.5">
               {section.items.map((item) => {
                 const isActive = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href));
+                const showBadge = "badge" in item && (item as { badge?: boolean }).badge && pendingCount > 0;
                 return (
                   <Link
                     key={item.href}
@@ -111,6 +133,11 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                   >
                     <span className="text-base">{item.icon}</span>
                     {item.label}
+                    {showBadge && (
+                      <span className="ml-auto bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
+                        {pendingCount > 99 ? "99+" : pendingCount}
+                      </span>
+                    )}
                   </Link>
                 );
               })}
@@ -152,7 +179,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           </svg>
         </button>
         <span className="text-slate-900 font-bold text-sm">Invest.com.au Admin</span>
-        <div className="w-6" /> {/* Spacer for centering */}
+        <ThemeToggle />
       </div>
 
       {/* Mobile sidebar overlay */}
@@ -196,6 +223,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             <kbd className="ml-2 text-[0.6rem] px-1.5 py-0.5 bg-slate-100 border border-slate-200 rounded font-medium">⌘K</kbd>
           </button>
           <AdminNotifications />
+          <ThemeToggle />
         </div>
         <div className="p-4 md:px-6 md:pt-4 md:pb-6 lg:px-8 lg:pb-8">{children}</div>
       </main>

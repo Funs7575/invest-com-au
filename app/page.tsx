@@ -13,6 +13,7 @@ import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 import { getMostRecentFeeCheck } from "@/lib/utils";
 import Icon from "@/components/Icon";
+import UserOnboarding from "@/components/UserOnboarding";
 
 export const metadata = {
   title: "Compare Australian Brokers",
@@ -77,6 +78,7 @@ export default async function HomePage() {
 
   return (
     <div>
+      <UserOnboarding />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

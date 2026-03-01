@@ -1,12 +1,47 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import Icon from "@/components/Icon";
 import InfoTip from "@/components/InfoTip";
 import CountUp from "@/components/CountUp";
 import type { ABTest } from "@/lib/types";
+
+/** Mini confidence indicator — inline SVG gauge showing statistical significance. */
+function ConfidenceMini({ test }: { test: ABTest }) {
+  if (test.impressions_a === 0 && test.impressions_b === 0) return null;
+
+  const p1 = test.impressions_a > 0 ? test.clicks_a / test.impressions_a : 0;
+  const p2 = test.impressions_b > 0 ? test.clicks_b / test.impressions_b : 0;
+  const n1 = test.impressions_a;
+  const n2 = test.impressions_b;
+  const pPooled = (n1 + n2) > 0 ? (test.clicks_a + test.clicks_b) / (n1 + n2) : 0;
+  const se = (n1 > 0 && n2 > 0) ? Math.sqrt(pPooled * (1 - pPooled) * (1 / n1 + 1 / n2)) : 0;
+  const z = se > 0 ? (p1 - p2) / se : 0;
+  const absZ = Math.abs(z);
+  const t = 1 / (1 + 0.2316419 * absZ);
+  const d = 0.3989422804014327;
+  const prob = d * Math.exp((-absZ * absZ) / 2) * (t * (0.319381530 + t * (-0.356563782 + t * (1.781477937 + t * (-1.821255978 + t * 1.330274429)))));
+  const confidence = (1 - 2 * prob) * 100;
+  const clampedConf = Math.max(0, Math.min(100, confidence));
+
+  const color = clampedConf >= 95 ? "#22c55e" : clampedConf >= 80 ? "#f59e0b" : "#94a3b8";
+  const width = 40;
+  const height = 12;
+  const barWidth = (clampedConf / 100) * (width - 4);
+
+  return (
+    <span className="inline-flex items-center gap-1.5 ml-2" title={`${clampedConf.toFixed(0)}% confidence`}>
+      <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} aria-hidden="true">
+        <rect x={0} y={2} width={width} height={8} rx={4} fill="#e2e8f0" />
+        <rect x={0} y={2} width={Math.max(barWidth, 4)} height={8} rx={4} fill={color} />
+      </svg>
+      <span className="text-[0.62rem] font-bold" style={{ color }}>{clampedConf.toFixed(0)}%</span>
+    </span>
+  );
+}
 
 const TEST_TYPES = [
   { value: "cta_text", label: "CTA Text", placeholder_a: "Open Account", placeholder_b: "Start Trading Free" },
@@ -296,8 +331,10 @@ export default function ABTestsPage() {
               <div key={test.id} className="bg-white rounded-xl border border-slate-200 p-5 space-y-4 hover-lift">
                 <div className="flex items-start justify-between">
                   <div>
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-bold text-slate-900">{test.name}</h3>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <Link href={`/broker-portal/ab-tests/${test.id}`} className="font-bold text-slate-900 hover:text-slate-600 transition-colors hover:underline">
+                        {test.name}
+                      </Link>
                       <span className={`inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full ${STATUS_STYLES[test.status]?.bg}`}>
                         <Icon name={STATUS_STYLES[test.status]?.icon || "info"} size={11} />
                         {test.status.replace(/_/g, " ")}
@@ -307,6 +344,7 @@ export default function ABTestsPage() {
                           Winner: {test.winner.toUpperCase()}
                         </span>
                       )}
+                      <ConfidenceMini test={test} />
                     </div>
                     <p className="text-xs text-slate-500 mt-0.5">
                       {TEST_TYPES.find(t => t.value === test.type)?.label} · Split {test.traffic_split}/{100 - test.traffic_split}
@@ -337,6 +375,13 @@ export default function ABTestsPage() {
                         className="px-3 py-1.5 text-xs font-semibold bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors">
                         Resume
                       </button>
+                    )}
+                    {test.status === "completed" && (
+                      <Link href={`/broker-portal/ab-tests/${test.id}`}
+                        className="px-3 py-1.5 text-xs font-semibold bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors inline-flex items-center gap-1">
+                        <Icon name="bar-chart" size={11} />
+                        View Results
+                      </Link>
                     )}
                   </div>
                 </div>

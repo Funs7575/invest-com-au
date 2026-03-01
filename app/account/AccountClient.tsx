@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useSubscription } from "@/lib/hooks/useSubscription";
-import { createClient } from "@/lib/supabase/client";
+import NotificationPreferences from "@/components/NotificationPreferences";
 
 function StatusBadge({ status, cancelAtPeriodEnd }: { status: string; cancelAtPeriodEnd: boolean }) {
   if (cancelAtPeriodEnd && status === "active") {
@@ -39,63 +39,6 @@ export default function AccountClient() {
   const [portalError, setPortalError] = useState<string | null>(null);
   const [signOutLoading, setSignOutLoading] = useState(false);
   const [showSuccessBanner, setShowSuccessBanner] = useState(checkoutSuccess);
-  const [prefs, setPrefs] = useState({
-    email_newsletter: true,
-    email_fee_alerts: true,
-    email_deal_alerts: true,
-    email_weekly_digest: true,
-  });
-  const [prefsLoading, setPrefsLoading] = useState(true);
-  const [prefsSaving, setPrefsSaving] = useState(false);
-  const [prefsSaved, setPrefsSaved] = useState(false);
-
-  // Load email preferences from profiles table
-  const loadPrefs = useCallback(async () => {
-    if (!user) return;
-    try {
-      const supabase = createClient();
-      const { data } = await supabase
-        .from("profiles")
-        .select("email_newsletter, email_fee_alerts, email_deal_alerts, email_weekly_digest")
-        .eq("id", user.id)
-        .maybeSingle();
-      if (data) {
-        setPrefs({
-          email_newsletter: data.email_newsletter ?? true,
-          email_fee_alerts: data.email_fee_alerts ?? true,
-          email_deal_alerts: data.email_deal_alerts ?? true,
-          email_weekly_digest: data.email_weekly_digest ?? true,
-        });
-      }
-    } catch {
-      // Fall back to defaults silently
-    } finally {
-      setPrefsLoading(false);
-    }
-  }, [user]);
-
-  useEffect(() => { loadPrefs(); }, [loadPrefs]);
-
-  const savePrefs = async (newPrefs: typeof prefs) => {
-    if (!user) return;
-    setPrefsSaving(true);
-    setPrefsSaved(false);
-    const supabase = createClient();
-    await supabase
-      .from("profiles")
-      .update(newPrefs)
-      .eq("id", user.id);
-    setPrefs(newPrefs);
-    setPrefsSaving(false);
-    setPrefsSaved(true);
-    setTimeout(() => setPrefsSaved(false), 2000);
-  };
-
-  const togglePref = (key: keyof typeof prefs) => {
-    const newPrefs = { ...prefs, [key]: !prefs[key] };
-    savePrefs(newPrefs);
-  };
-
   // Poll for subscription after checkout success
   useEffect(() => {
     if (!checkoutSuccess || !user) return;
@@ -293,51 +236,8 @@ export default function AccountClient() {
 
         {/* Email Preferences */}
         <div className="bg-white border border-slate-200 rounded-xl p-5 mb-4">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-base font-bold text-slate-900">Email Preferences</h2>
-            {prefsSaved && (
-              <span className="text-xs text-green-600 font-medium">✓ Saved</span>
-            )}
-            {prefsSaving && (
-              <span className="text-xs text-slate-400">Saving...</span>
-            )}
-          </div>
-
-          {prefsLoading ? (
-            <div className="space-y-3">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="h-6 bg-slate-100 rounded animate-pulse" />
-              ))}
-            </div>
-          ) : (
-            <div className="space-y-3">
-              <PreferenceToggle
-                label="Weekly Newsletter"
-                description="Fee changes, new articles, and broker deals every Monday"
-                checked={prefs.email_weekly_digest}
-                onChange={() => togglePref("email_weekly_digest")}
-              />
-              <PreferenceToggle
-                label="Fee Change Alerts"
-                description="Get notified when any broker changes their fees"
-                checked={prefs.email_fee_alerts}
-                onChange={() => togglePref("email_fee_alerts")}
-                pro={!isPro}
-              />
-              <PreferenceToggle
-                label="Deal Alerts"
-                description="New broker deals and limited-time offers"
-                checked={prefs.email_deal_alerts}
-                onChange={() => togglePref("email_deal_alerts")}
-              />
-              <PreferenceToggle
-                label="Product Updates"
-                description="New features and tools on Invest.com.au"
-                checked={prefs.email_newsletter}
-                onChange={() => togglePref("email_newsletter")}
-              />
-            </div>
-          )}
+          <h2 className="text-base font-bold text-slate-900 mb-4">Email Preferences</h2>
+          <NotificationPreferences isPro={isPro} />
         </div>
 
         {/* Quick Links */}
@@ -368,54 +268,6 @@ export default function AccountClient() {
           {signOutLoading ? "Signing out..." : "Sign Out"}
         </button>
       </div>
-    </div>
-  );
-}
-
-function PreferenceToggle({
-  label,
-  description,
-  checked,
-  onChange,
-  pro,
-}: {
-  label: string;
-  description: string;
-  checked: boolean;
-  onChange: () => void;
-  pro?: boolean;
-}) {
-  return (
-    <div className="flex items-start justify-between gap-3">
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-1.5">
-          <p className="text-sm font-medium text-slate-900">{label}</p>
-          {pro && (
-            <span className="text-[0.62rem] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">PRO</span>
-          )}
-        </div>
-        <p className="text-xs text-slate-500 mt-0.5">{description}</p>
-      </div>
-      <button
-        onClick={onChange}
-        disabled={pro}
-        className={`relative w-10 h-6 rounded-full transition-colors shrink-0 mt-0.5 ${
-          pro
-            ? "bg-slate-100 cursor-not-allowed"
-            : checked
-            ? "bg-green-500"
-            : "bg-slate-200"
-        }`}
-        role="switch"
-        aria-checked={checked}
-        aria-label={`${label} ${checked ? "enabled" : "disabled"}`}
-      >
-        <span
-          className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
-            checked && !pro ? "translate-x-4" : "translate-x-0"
-          }`}
-        />
-      </button>
     </div>
   );
 }

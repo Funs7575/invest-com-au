@@ -6,6 +6,7 @@ import { useToast } from "@/components/Toast";
 import Icon from "@/components/Icon";
 import InfoTip from "@/components/InfoTip";
 import type { BrokerAccount } from "@/lib/types";
+import BrokerNotificationPreferences from "@/components/BrokerNotificationPreferences";
 
 export default function SettingsPage() {
   const [account, setAccount] = useState<BrokerAccount | null>(null);
@@ -327,6 +328,20 @@ export default function SettingsPage() {
             Save Alert Preferences
           </button>
         </div>
+      </div>
+
+      {/* Email Notification Preferences */}
+      <div className="bg-white rounded-xl border border-slate-200 p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <div className="w-7 h-7 rounded-lg bg-green-50 flex items-center justify-center">
+            <Icon name="mail" size={14} className="text-green-600" />
+          </div>
+          <h3 className="text-base font-bold text-slate-900">Email Notifications</h3>
+        </div>
+        <p className="text-sm text-slate-500 mb-4">
+          Choose which email notifications you'd like to receive. Changes save automatically.
+        </p>
+        <BrokerNotificationPreferences brokerSlug={account.broker_slug} />
       </div>
     </div>
   );

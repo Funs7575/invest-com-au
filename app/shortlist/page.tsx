@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import ShortlistClient from "./ShortlistClient";
 
 export const metadata: Metadata = {
@@ -21,7 +22,17 @@ export default function ShortlistPage() {
           </p>
         </div>
       </div>
-      <ShortlistClient />
+      <Suspense
+        fallback={
+          <div className="space-y-2">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="h-16 bg-slate-100 rounded-xl animate-pulse" />
+            ))}
+          </div>
+        }
+      >
+        <ShortlistClient />
+      </Suspense>
     </div>
   );
 }

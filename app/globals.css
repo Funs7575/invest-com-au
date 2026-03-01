@@ -742,3 +742,73 @@ details > :not(summary) {
   .print-only { display: block !important; }
   * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
 }
+
+/* ── Dark mode ────────────────────────────────────────── */
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-card: #ffffff;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --border-primary: #e2e8f0;
+}
+
+html.dark {
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-card: #1e293b;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --border-primary: #334155;
+  color-scheme: dark;
+}
+
+html.dark body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Dark mode overrides for common Tailwind classes */
+html.dark .bg-white { background-color: var(--bg-card) !important; }
+html.dark .bg-slate-50 { background-color: #1e293b !important; }
+html.dark .bg-slate-100 { background-color: #1e293b !important; }
+html.dark .bg-gray-50 { background-color: #1e293b !important; }
+html.dark .bg-gray-100 { background-color: #1e293b !important; }
+html.dark .text-slate-900 { color: #f1f5f9 !important; }
+html.dark .text-slate-800 { color: #e2e8f0 !important; }
+html.dark .text-slate-700 { color: #cbd5e1 !important; }
+html.dark .text-slate-600 { color: #94a3b8 !important; }
+html.dark .text-slate-500 { color: #94a3b8 !important; }
+html.dark .text-gray-900 { color: #f1f5f9 !important; }
+html.dark .text-gray-800 { color: #e2e8f0 !important; }
+html.dark .text-gray-700 { color: #cbd5e1 !important; }
+html.dark .text-gray-600 { color: #94a3b8 !important; }
+html.dark .text-gray-500 { color: #94a3b8 !important; }
+html.dark .border-slate-200 { border-color: #334155 !important; }
+html.dark .border-slate-100 { border-color: #334155 !important; }
+html.dark .border-gray-200 { border-color: #334155 !important; }
+html.dark .border-gray-100 { border-color: #334155 !important; }
+html.dark .divide-slate-200 > :not(:last-child) { border-color: #334155 !important; }
+html.dark .divide-gray-200 > :not(:last-child) { border-color: #334155 !important; }
+html.dark input, html.dark textarea, html.dark select {
+  background-color: #1e293b;
+  color: #f1f5f9;
+  border-color: #475569;
+}
+html.dark input::placeholder, html.dark textarea::placeholder {
+  color: #64748b;
+}
+
+/* Dark mode for specific component patterns */
+html.dark .hover-lift:hover {
+  box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.3), 0 8px 10px -6px rgb(0 0 0 / 0.3);
+}
+html.dark .form-field:focus {
+  border-color: var(--color-blue-500);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* Dark mode focus indicators */
+html.dark *:focus-visible {
+  outline-color: var(--color-blue-500) !important;
+}

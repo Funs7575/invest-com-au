@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import Icon from "@/components/Icon";
 import CountUp from "@/components/CountUp";
 import BrokerHelpPanel from "@/components/BrokerHelpPanel";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const navItems = [
   { href: "/broker-portal", label: "Dashboard", icon: "bar-chart" },
@@ -154,9 +155,12 @@ export default function BrokerPortalLayout({ children }: { children: React.React
       </nav>
 
       <div className="p-3 border-t border-slate-700/50 space-y-1">
-        {brokerName && (
-          <p className="px-3 py-1 text-xs text-slate-400 truncate">{brokerName}</p>
-        )}
+        <div className="flex items-center justify-between px-3 py-1">
+          {brokerName && (
+            <p className="text-xs text-slate-400 truncate">{brokerName}</p>
+          )}
+          <ThemeToggle />
+        </div>
         <Link
           href="/"
           className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-slate-400 hover:bg-slate-700/30 hover:text-white transition-colors"
@@ -189,9 +193,12 @@ export default function BrokerPortalLayout({ children }: { children: React.React
           </svg>
         </button>
         <span className="text-slate-900 font-bold text-sm">{pageTitle}</span>
-        <span className="text-sm font-bold text-slate-700">
-          ${(balanceCents / 100).toFixed(2)}
-        </span>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <span className="text-sm font-bold text-slate-700">
+            ${(balanceCents / 100).toFixed(2)}
+          </span>
+        </div>
       </div>
 
       {/* Mobile overlay */}

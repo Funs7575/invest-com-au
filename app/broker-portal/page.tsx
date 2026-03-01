@@ -7,6 +7,7 @@ import CountUp from "@/components/CountUp";
 import Icon from "@/components/Icon";
 import InfoTip from "@/components/InfoTip";
 import Sparkline from "@/components/Sparkline";
+import BrokerOnboarding from "@/components/BrokerOnboarding";
 import type { Campaign, BrokerWallet } from "@/lib/types";
 
 export default function BrokerDashboard() {
@@ -22,6 +23,7 @@ export default function BrokerDashboard() {
   const [prevConversions, setPrevConversions] = useState(0);
   const [loading, setLoading] = useState(true);
   const [firstName, setFirstName] = useState("");
+  const [accountCreatedAt, setAccountCreatedAt] = useState<string | undefined>();
 
   useEffect(() => {
     const load = async () => {
@@ -31,13 +33,14 @@ export default function BrokerDashboard() {
 
       const { data: account } = await supabase
         .from("broker_accounts")
-        .select("broker_slug, full_name")
+        .select("broker_slug, full_name, created_at")
         .eq("auth_user_id", user.id)
         .maybeSingle();
 
       if (!account) return;
       const slug = account.broker_slug;
       setFirstName((account.full_name || "").split(" ")[0]);
+      setAccountCreatedAt(account.created_at);
 
       // Wallet
       const { data: w } = await supabase
@@ -512,6 +515,9 @@ export default function BrokerDashboard() {
           </div>
         </div>
       )}
+
+      {/* Onboarding for new brokers */}
+      <BrokerOnboarding accountCreatedAt={accountCreatedAt} />
     </div>
   );
 }

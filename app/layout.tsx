@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import LayoutShell from "@/components/LayoutShell";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/seo";
@@ -65,15 +66,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en-AU">
+    <html lang="en-AU" suppressHydrationWarning>
       {/* Inline script adds .js-ready immediately so CSS animations only run when JS is available.
           Without this, hero-fade-up starts at opacity:0 and stays invisible until JS loads. */}
       <head>
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js-ready')" }} />
+        {/* Prevent flash of wrong theme by applying dark class before first paint */}
+        <script dangerouslySetInnerHTML={{ __html: "(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(t!=='light'&&matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.classList.add('dark')}catch(e){}})()" }} />
       </head>
       <body className={inter.className}>
         <GoogleAnalytics />
-        <LayoutShell>{children}</LayoutShell>
+        <ThemeProvider>
+          <LayoutShell>{children}</LayoutShell>
+        </ThemeProvider>
         <SpeedInsights />
       </body>
     </html>
