@@ -73,7 +73,7 @@ function DimensionBar({ score, label, note, weight, isPro }: {
   isPro: boolean;
 }) {
   const [expanded, setExpanded] = useState(false);
-  const barColor = score >= 80 ? "bg-green-500" : score >= 50 ? "bg-amber-400" : "bg-red-400";
+  const barColor = score >= 80 ? "bg-emerald-500" : score >= 50 ? "bg-amber-400" : "bg-red-400";
 
   return (
     <div className="space-y-1.5">

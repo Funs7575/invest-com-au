@@ -273,7 +273,6 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                 rel={AFFILIATE_REL}
                 onClick={() => trackClick(dealBroker.slug, dealBroker.name, 'compare-deal-banner', '/compare', 'compare')}
                 className="shrink-0 px-3 md:px-4 py-1.5 md:py-2 bg-amber-600 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-amber-700 transition-colors"
-                style={{ backgroundColor: '#d97706' }}
               >
                 Claim →
               </a>
@@ -510,7 +509,6 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                       rel={AFFILIATE_REL}
                       onClick={() => trackClick(broker.slug, broker.name, 'compare-table', '/compare', 'compare')}
                       className="inline-block px-4 py-2 bg-amber-600 text-white text-sm font-semibold rounded-lg hover:bg-amber-700 transition-all duration-200 group-hover:scale-105 group-hover:shadow-lg"
-                      style={{ backgroundColor: '#d97706' }}
                     >
                       {getBenefitCta(broker, 'compare')}
                     </a>
@@ -672,7 +670,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               <h3 className="text-sm md:text-lg font-bold text-slate-900 mb-0.5 md:mb-1">Find Your Broker</h3>
               <p className="text-xs text-slate-500 md:mb-4 hidden md:block">Answer 4 quick questions and narrow down brokers.</p>
             </div>
-            <Link href="/quiz" className="shrink-0 px-3 md:px-5 py-2 md:py-2.5 bg-amber-500 text-slate-900 text-xs md:text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors md:inline-block">
+            <Link href="/quiz" className="shrink-0 px-3 md:px-5 py-2 md:py-2.5 bg-amber-500 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors md:inline-block">
               Quiz →
             </Link>
           </div>

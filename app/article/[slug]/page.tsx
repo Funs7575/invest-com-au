@@ -590,7 +590,7 @@ export default async function ArticlePage({
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 md:gap-3">
                   <Link
                     href="/compare"
-                    className="w-full sm:w-auto px-6 py-3 bg-amber-500 text-slate-900 text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors"
+                    className="w-full sm:w-auto px-6 py-3 bg-amber-500 text-white text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors"
                   >
                     Compare All Brokers
                   </Link>

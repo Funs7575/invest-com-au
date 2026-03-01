@@ -54,7 +54,6 @@ export default function Header() {
             <Link
               href="/quiz"
               className="px-4 py-2 bg-amber-600 text-white text-sm font-semibold rounded-lg hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:ring-offset-2 transition-colors"
-              style={{ backgroundColor: '#d97706' }}
             >
               Broker Quiz
             </Link>
@@ -142,7 +141,6 @@ export default function Header() {
                 href="/quiz"
                 onClick={() => setMenuOpen(false)}
                 className="flex-1 py-2.5 min-h-[44px] flex items-center justify-center text-xs font-semibold text-center text-white bg-amber-600 rounded-lg hover:bg-amber-700 transition-colors"
-                style={{ backgroundColor: '#d97706' }}
               >
                 Broker Quiz
               </Link>

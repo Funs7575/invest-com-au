@@ -61,7 +61,6 @@ export default function MobileFloatingCTA({
             )
           }
           className="shrink-0 px-5 py-2.5 bg-amber-600 text-white text-sm font-bold rounded-lg hover:bg-amber-700 hover:scale-105 hover:shadow-[0_0_12px_rgba(217,119,6,0.3)] transition-all duration-200"
-          style={{ backgroundColor: '#d97706' }}
         >
           Open Account
         </a>

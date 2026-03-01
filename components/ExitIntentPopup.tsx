@@ -207,7 +207,7 @@ export default function ExitIntentPopup() {
                 </p>
                 <Link
                   href="/quiz"
-                  className="inline-block px-5 py-2.5 bg-amber-500 text-slate-900 text-sm font-semibold rounded-lg hover:bg-amber-600 transition-colors"
+                  className="inline-block px-5 py-2.5 bg-amber-500 text-white text-sm font-semibold rounded-lg hover:bg-amber-600 transition-colors"
                 >
                   Take the Broker Quiz →
                 </Link>
@@ -255,7 +255,7 @@ export default function ExitIntentPopup() {
                 <button
                   type="submit"
                   disabled={status === "loading" || !consent}
-                  className="w-full px-4 py-3 bg-amber-500 text-slate-900 text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-60"
+                  className="w-full px-4 py-3 bg-amber-500 text-white text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-60"
                 >
                   {status === "loading" ? "Sending..." : "Get Free Fee Comparison PDF →"}
                 </button>

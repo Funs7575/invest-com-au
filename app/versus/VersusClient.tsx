@@ -550,7 +550,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                 <Icon name="target" size={24} className="text-amber-600 mb-2 hidden md:block" />
                 <h2 className="text-xs md:text-lg font-extrabold text-amber-900 mb-0.5 md:mb-1">Not sure which?</h2>
                 <p className="hidden md:block text-slate-600 mb-4 text-sm">Answer 4 quick questions and we&apos;ll narrow it down for you.</p>
-                <Link href="/quiz" className="inline-block px-3 py-2 md:px-5 md:py-2.5 bg-amber-500 text-slate-900 font-semibold rounded-lg md:rounded-xl hover:bg-amber-600 transition-colors text-[0.69rem] md:text-sm mt-1.5 md:mt-0">
+                <Link href="/quiz" className="inline-block px-3 py-2 md:px-5 md:py-2.5 bg-amber-500 text-white font-semibold rounded-lg md:rounded-xl hover:bg-amber-600 transition-colors text-[0.69rem] md:text-sm mt-1.5 md:mt-0">
                   Take the Quiz →
                 </Link>
               </div>

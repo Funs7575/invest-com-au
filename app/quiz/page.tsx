@@ -392,10 +392,7 @@ export default function QuizPage() {
                 target="_blank"
                 rel={AFFILIATE_REL}
                 onClick={() => trackClick(topMatch.broker!.slug, topMatch.broker!.name, 'quiz-result-1', '/quiz', 'quiz')}
-                className="block w-full text-center px-5 py-3 md:px-6 md:py-3.5 text-white font-bold rounded-lg transition-all text-sm md:text-lg shadow-lg hover:shadow-xl hover:scale-[1.02]"
-                style={{
-                  background: topMatch.broker.color || '#f59e0b',
-                }}
+                className="block w-full text-center px-5 py-3 md:px-6 md:py-3.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg transition-all text-sm md:text-lg shadow-lg hover:shadow-xl hover:scale-[1.02]"
               >
                 {getBenefitCta(topMatch.broker, 'quiz')}
               </a>
@@ -541,7 +538,7 @@ export default function QuizPage() {
                             className="h-full rounded-full transition-all"
                             style={{
                               width: `${pct}%`,
-                              background: i === 0 ? (r.broker?.color || '#16a34a') : '#94a3b8',
+                              background: i === 0 ? '#10b981' : '#94a3b8',
                             }}
                           />
                         </div>

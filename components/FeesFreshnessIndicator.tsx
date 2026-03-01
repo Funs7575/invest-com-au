@@ -27,7 +27,7 @@ export function FeesFreshnessIndicator({
   let textColor: string;
   let bgColor: string;
   if (diffHours < 24) {
-    dotColor = "bg-green-500";
+    dotColor = "bg-emerald-500";
     textColor = "text-slate-600";
     bgColor = "bg-slate-50 border-slate-200";
   } else if (diffHours < 72) {

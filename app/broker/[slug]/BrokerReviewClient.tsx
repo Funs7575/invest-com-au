@@ -215,7 +215,6 @@ export default function BrokerReviewClient({
             rel={AFFILIATE_REL}
             onClick={() => trackClick(b.slug, b.name, 'review-header', `/broker/${b.slug}`, 'review')}
             className="inline-block px-6 py-3 bg-amber-600 text-white font-semibold rounded-lg hover:bg-amber-700 transition-colors"
-            style={{ backgroundColor: '#d97706' }}
           >
             {getBenefitCta(b, 'review')}
           </a>
@@ -285,7 +284,6 @@ export default function BrokerReviewClient({
               rel={AFFILIATE_REL}
               onClick={() => trackClick(b.slug, b.name, 'review-deal-banner', `/broker/${b.slug}`, 'review')}
               className="shrink-0 px-5 py-2.5 bg-amber-600 text-white text-sm font-bold rounded-lg hover:bg-amber-700 transition-all hover:shadow-md active:scale-[0.98]"
-              style={{ backgroundColor: '#d97706' }}
             >
               Claim Deal →
             </a>
@@ -428,7 +426,6 @@ export default function BrokerReviewClient({
               rel={AFFILIATE_REL}
               onClick={() => trackClick(b.slug, b.name, 'review-inline-1', `/broker/${b.slug}`, 'review')}
               className="shrink-0 px-4 py-2 bg-amber-600 text-white text-sm font-semibold rounded-lg hover:bg-amber-700 transition-colors"
-              style={{ backgroundColor: '#d97706' }}
             >
               {getBenefitCta(b, 'review')}
             </a>
@@ -657,7 +654,6 @@ export default function BrokerReviewClient({
               rel={AFFILIATE_REL}
               onClick={() => trackClick(b.slug, b.name, 'review-inline-2', `/broker/${b.slug}`, 'review')}
               className="shrink-0 px-4 py-2 bg-amber-600 text-white text-sm font-semibold rounded-lg hover:bg-amber-700 transition-colors"
-              style={{ backgroundColor: '#d97706' }}
             >
               {getBenefitCta(b, 'review')}
             </a>
@@ -759,7 +755,6 @@ export default function BrokerReviewClient({
             rel={AFFILIATE_REL}
             onClick={() => trackClick(b.slug, b.name, 'review-bottom', `/broker/${b.slug}`, 'review')}
             className="inline-block px-8 py-3.5 bg-amber-600 text-white font-bold rounded-lg hover:bg-amber-700 hover:shadow-lg transition-all active:scale-[0.98] text-lg"
-            style={{ backgroundColor: '#d97706' }}
           >
             {getBenefitCta(b, 'review')}
           </a>

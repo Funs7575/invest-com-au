@@ -34,12 +34,12 @@ export const metadata = {
 };
 
 const bestForCards = [
-  { icon: "sprout", title: "Best for Beginners", description: "Low fees, simple platforms, educational resources", href: "/best/beginners", color: "bg-teal-50 border-teal-200 text-teal-800" },
-  { icon: "globe", title: "Best for US Shares", description: "Low FX fees and $0 US brokerage compared", href: "/best/us-shares", color: "bg-blue-50 border-blue-200 text-blue-800" },
+  { icon: "sprout", title: "Best for Beginners", description: "Low fees, simple platforms, educational resources", href: "/best/beginners", color: "bg-amber-50 border-amber-200 text-amber-800" },
+  { icon: "globe", title: "Best for US Shares", description: "Low FX fees and $0 US brokerage compared", href: "/best/us-shares", color: "bg-slate-50 border-slate-200 text-slate-800" },
   { icon: "coins", title: "Cheapest Brokers", description: "$0 brokerage and verified low-cost options", href: "/best/low-fees", color: "bg-amber-50 border-amber-200 text-amber-800" },
-  { icon: "shield-check", title: "CHESS-Sponsored", description: "Your shares held in your name on the ASX register", href: "/best/chess-sponsored", color: "bg-emerald-50 border-emerald-200 text-emerald-800" },
-  { icon: "building", title: "Best for SMSF", description: "Compliant custody and SMSF account support", href: "/best/smsf", color: "bg-violet-50 border-violet-200 text-violet-800" },
-  { icon: "arrow-left-right", title: "Lowest FX Fees", description: "Save on currency conversion for international trades", href: "/best/low-fx-fees", color: "bg-sky-50 border-sky-200 text-sky-800" },
+  { icon: "shield-check", title: "CHESS-Sponsored", description: "Your shares held in your name on the ASX register", href: "/best/chess-sponsored", color: "bg-slate-50 border-slate-200 text-slate-800" },
+  { icon: "building", title: "Best for SMSF", description: "Compliant custody and SMSF account support", href: "/best/smsf", color: "bg-slate-50 border-slate-200 text-slate-800" },
+  { icon: "arrow-left-right", title: "Lowest FX Fees", description: "Save on currency conversion for international trades", href: "/best/low-fx-fees", color: "bg-amber-50 border-amber-200 text-amber-800" },
 ];
 
 export const revalidate = 3600; // ISR: revalidate every hour

@@ -125,7 +125,6 @@ export default function DealCard({
           trackClick(broker.slug, broker.name, "deals-hub", "/deals", "compare", undefined, campaignId ? "deals" : undefined)
         }
         className="mt-auto block w-full text-center py-2.5 md:py-3 bg-amber-600 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-amber-700 hover:shadow-[0_0_12px_rgba(217,119,6,0.3)] transition-all duration-200 active:scale-[0.98]"
-        style={{ backgroundColor: '#d97706' }}
       >
         Claim Deal →
       </a>

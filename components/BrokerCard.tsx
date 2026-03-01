@@ -136,7 +136,6 @@ export default function BrokerCard({
         rel={AFFILIATE_REL}
         onClick={() => trackClick(broker.slug, broker.name, 'compare-mobile', window.location.pathname, context)}
         className="block w-full text-center text-xs md:text-sm px-3 py-2.5 md:py-3 font-bold rounded-lg transition-all duration-200 bg-amber-600 text-white hover:bg-amber-700 active:scale-[0.98]"
-        style={{ backgroundColor: '#d97706' }}
       >
         {getBenefitCta(broker, context)}
       </a>

@@ -389,7 +389,7 @@ function TradeCostCalculator({ brokers, searchParams }: { brokers: Broker[]; sea
                   </div>
                   <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden mb-1.5">
                     <div
-                      className={`h-full rounded-full transition-all duration-500 ${isCheapest ? "bg-green-500" : "bg-amber-400"}`}
+                      className={`h-full rounded-full transition-all duration-500 ${isCheapest ? "bg-emerald-500" : "bg-amber-400"}`}
                       style={{ width: `${barWidth}%` }}
                     />
                   </div>
@@ -457,7 +457,7 @@ function TradeCostCalculator({ brokers, searchParams }: { brokers: Broker[]; sea
                       <td className="py-3 pl-4 w-40">
                         <div className="h-4 bg-slate-100 rounded-full overflow-hidden">
                           <div
-                            className={`h-full rounded-full transition-all duration-500 ${isCheapest ? "bg-green-500" : "bg-amber-400"}`}
+                            className={`h-full rounded-full transition-all duration-500 ${isCheapest ? "bg-emerald-500" : "bg-amber-400"}`}
                             style={{ width: `${barWidth}%` }}
                           />
                         </div>
