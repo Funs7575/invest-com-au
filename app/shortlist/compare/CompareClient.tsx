@@ -340,7 +340,7 @@ export default function CompareClient() {
                       target="_blank"
                       rel={AFFILIATE_REL}
                       onClick={() => trackClick(broker.slug, broker.name, "shortlist-compare", "/shortlist/compare", "compare")}
-                      className="inline-flex items-center justify-center px-4 py-2.5 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors min-h-[36px]"
+                      className="inline-flex items-center justify-center px-4 py-2.5 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors min-h-[44px]"
                     >
                       Visit {broker.name} &rarr;
                     </a>

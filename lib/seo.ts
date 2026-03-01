@@ -35,6 +35,27 @@ export const ORGANIZATION_JSONLD = {
   ],
 };
 
+/* ─── WebSite JSON-LD for Google Sitelinks Search Box ─── */
+
+export function websiteJsonLd() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: SITE_NAME,
+    url: SITE_URL,
+    description: SITE_DESCRIPTION,
+    publisher: ORGANIZATION_JSONLD,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${SITE_URL}/compare?q={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
+}
+
 /**
  * Generate BreadcrumbList JSON-LD schema.
  * Last item should omit `url` (current page).

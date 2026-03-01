@@ -575,7 +575,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                   <Link
                     key={c.href}
                     href={c.href}
-                    className="px-3 py-2 min-h-[36px] inline-flex items-center md:px-4 md:py-2.5 rounded-lg md:rounded-xl bg-white border border-slate-200 text-[0.69rem] md:text-sm font-medium text-slate-600 hover:border-slate-600 hover:text-slate-700 hover:bg-slate-50 hover:shadow-sm transition-all"
+                    className="px-3 py-2 min-h-[44px] inline-flex items-center md:px-4 md:py-2.5 rounded-lg md:rounded-xl bg-white border border-slate-200 text-[0.69rem] md:text-sm font-medium text-slate-600 hover:border-slate-600 hover:text-slate-700 hover:bg-slate-50 hover:shadow-sm transition-all"
                   >
                     {c.label}
                   </Link>

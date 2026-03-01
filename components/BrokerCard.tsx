@@ -89,7 +89,7 @@ export default memo(function BrokerCard({
         <ShortlistButton slug={broker.slug} name={broker.name} size="sm" />
         <a
           href={`/broker/${broker.slug}`}
-          className="text-[0.69rem] px-2.5 py-1.5 min-h-[36px] inline-flex items-center border border-slate-200 rounded-md hover:bg-slate-50 transition-colors shrink-0"
+          className="text-[0.69rem] px-2.5 py-1.5 min-h-[44px] inline-flex items-center border border-slate-200 rounded-md hover:bg-slate-50 transition-colors shrink-0"
         >
           Review
         </a>

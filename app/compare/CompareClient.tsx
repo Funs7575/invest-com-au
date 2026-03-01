@@ -626,7 +626,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               </div>
               <Link
                 href={`/versus?vs=${Array.from(selected).join(',')}`}
-                className="shrink-0 px-4 py-2 min-h-[36px] inline-flex items-center md:px-5 md:py-2 bg-white text-slate-700 font-bold text-xs md:text-sm rounded-lg hover:bg-slate-50 transition-colors"
+                className="shrink-0 px-4 py-2 min-h-[44px] inline-flex items-center md:px-5 md:py-2 bg-white text-slate-700 font-bold text-xs md:text-sm rounded-lg hover:bg-slate-50 transition-colors"
               >
                 Compare →
               </Link>

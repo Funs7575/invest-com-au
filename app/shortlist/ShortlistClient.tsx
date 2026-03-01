@@ -243,7 +243,7 @@ export default function ShortlistClient() {
             <button
               onClick={handleImportShared}
               disabled={importedShared}
-              className="px-4 py-2 bg-purple-600 text-white text-xs font-bold rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 min-h-[36px]"
+              className="px-4 py-2 bg-purple-600 text-white text-xs font-bold rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 min-h-[44px]"
             >
               {importedShared ? "Added to My Shortlist!" : "Import to My Shortlist"}
             </button>
@@ -285,7 +285,7 @@ export default function ShortlistClient() {
                 target="_blank"
                 rel={AFFILIATE_REL}
                 onClick={() => trackClick(broker.slug, broker.name, "shared-shortlist", "/shortlist", "compare")}
-                className="px-2.5 md:px-3 py-1.5 md:py-2 bg-amber-600 text-white text-[0.69rem] md:text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors min-h-[36px] inline-flex items-center"
+                className="px-2.5 md:px-3 py-1.5 md:py-2 bg-amber-600 text-white text-[0.69rem] md:text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors min-h-[44px] inline-flex items-center"
               >
                 <span className="hidden sm:inline">Visit Broker</span>
                 <span className="sm:hidden">Visit</span>
@@ -350,7 +350,7 @@ export default function ShortlistClient() {
           <button
             onClick={handleShare}
             disabled={sharing}
-            className="text-xs font-medium text-purple-600 hover:text-purple-800 transition-colors px-2 py-1 min-h-[36px] inline-flex items-center gap-1"
+            className="text-xs font-medium text-purple-600 hover:text-purple-800 transition-colors px-2 py-1 min-h-[44px] inline-flex items-center gap-1"
           >
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
@@ -359,7 +359,7 @@ export default function ShortlistClient() {
           </button>
           <button
             onClick={clear}
-            className="text-xs text-red-500 hover:text-red-700 font-medium transition-colors px-2 py-1 min-h-[36px]"
+            className="text-xs text-red-500 hover:text-red-700 font-medium transition-colors px-2 py-1 min-h-[44px]"
           >
             Clear All
           </button>
@@ -375,7 +375,7 @@ export default function ShortlistClient() {
           </div>
           <button
             onClick={handleCopyLink}
-            className="px-3 py-1.5 bg-purple-600 text-white text-xs font-bold rounded-lg hover:bg-purple-700 transition-colors shrink-0 min-h-[36px]"
+            className="px-3 py-1.5 bg-purple-600 text-white text-xs font-bold rounded-lg hover:bg-purple-700 transition-colors shrink-0 min-h-[44px]"
           >
             {copied ? "Copied!" : "Copy Link"}
           </button>
@@ -435,7 +435,7 @@ export default function ShortlistClient() {
                 {/* Note button */}
                 <button
                   onClick={() => startEditNote(broker.slug)}
-                  className={`w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-lg transition-colors min-h-[36px] ${
+                  className={`w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-lg transition-colors min-h-[44px] ${
                     notes[broker.slug]
                       ? "text-blue-500 hover:text-blue-700 hover:bg-blue-50"
                       : "text-slate-300 hover:text-slate-500 hover:bg-slate-50"
@@ -454,7 +454,7 @@ export default function ShortlistClient() {
                   target="_blank"
                   rel={AFFILIATE_REL}
                   onClick={() => trackClick(broker.slug, broker.name, "shortlist", "/shortlist", "compare")}
-                  className="px-2.5 md:px-3 py-1.5 md:py-2 bg-amber-600 text-white text-[0.69rem] md:text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors min-h-[36px] inline-flex items-center"
+                  className="px-2.5 md:px-3 py-1.5 md:py-2 bg-amber-600 text-white text-[0.69rem] md:text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors min-h-[44px] inline-flex items-center"
                 >
                   <span className="hidden sm:inline">Visit Broker</span>
                   <span className="sm:hidden">Visit</span>
@@ -463,7 +463,7 @@ export default function ShortlistClient() {
                 {/* Remove button */}
                 <button
                   onClick={() => toggle(broker.slug)}
-                  className="w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-lg text-slate-300 hover:text-red-500 hover:bg-red-50 transition-colors min-h-[36px]"
+                  className="w-8 h-8 md:w-9 md:h-9 flex items-center justify-center rounded-lg text-slate-300 hover:text-red-500 hover:bg-red-50 transition-colors min-h-[44px]"
                   aria-label={`Remove ${broker.name} from shortlist`}
                   title="Remove"
                 >
@@ -497,18 +497,18 @@ export default function ShortlistClient() {
                   }}
                   placeholder="Add a note about this broker..."
                   autoFocus
-                  className="flex-1 px-3 py-1.5 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/30 min-h-[36px]"
+                  className="flex-1 px-3 py-1.5 bg-white border border-slate-300 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/30 min-h-[44px]"
                   maxLength={200}
                 />
                 <button
                   onClick={() => saveNote(broker.slug)}
-                  className="px-3 py-1.5 bg-blue-600 text-white text-xs font-bold rounded-lg hover:bg-blue-700 transition-colors min-h-[36px]"
+                  className="px-3 py-1.5 bg-blue-600 text-white text-xs font-bold rounded-lg hover:bg-blue-700 transition-colors min-h-[44px]"
                 >
                   Save
                 </button>
                 <button
                   onClick={() => { setEditingNote(null); setNoteValue(""); }}
-                  className="px-2 py-1.5 text-xs text-slate-500 hover:text-slate-700 transition-colors min-h-[36px]"
+                  className="px-2 py-1.5 text-xs text-slate-500 hover:text-slate-700 transition-colors min-h-[44px]"
                 >
                   Cancel
                 </button>
@@ -547,7 +547,7 @@ export default function ShortlistClient() {
           <p className="text-xs text-slate-400 mb-2">Save one more broker to compare side-by-side</p>
           <Link
             href="/compare"
-            className="inline-block px-4 py-2 text-xs font-semibold text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors min-h-[36px]"
+            className="inline-block px-4 py-2 text-xs font-semibold text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors min-h-[44px]"
           >
             Browse More Brokers &rarr;
           </Link>
@@ -558,13 +558,13 @@ export default function ShortlistClient() {
       <div className="mt-4 md:mt-6 flex flex-wrap gap-2">
         <Link
           href="/compare"
-          className="text-xs font-medium text-slate-500 hover:text-slate-700 transition-colors px-3 py-1.5 bg-slate-50 rounded-lg min-h-[36px] inline-flex items-center"
+          className="text-xs font-medium text-slate-500 hover:text-slate-700 transition-colors px-3 py-1.5 bg-slate-50 rounded-lg min-h-[44px] inline-flex items-center"
         >
           + Add more brokers
         </Link>
         <Link
           href="/quiz"
-          className="text-xs font-medium text-slate-500 hover:text-slate-700 transition-colors px-3 py-1.5 bg-slate-50 rounded-lg min-h-[36px] inline-flex items-center"
+          className="text-xs font-medium text-slate-500 hover:text-slate-700 transition-colors px-3 py-1.5 bg-slate-50 rounded-lg min-h-[44px] inline-flex items-center"
         >
           Not sure? Take the quiz
         </Link>
