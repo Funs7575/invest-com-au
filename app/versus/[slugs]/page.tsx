@@ -173,11 +173,25 @@ export default async function VersusSlugPage({
     },
   };
 
+  const breadcrumbLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://invest.com.au" },
+      { "@type": "ListItem", position: 2, name: "Compare Brokers", item: "https://invest.com.au/compare" },
+      { "@type": "ListItem", position: 3, name: `${orderedBrokers.map((b) => b.name).join(" vs ")}` },
+    ],
+  };
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
       <Suspense fallback={<VersusLoading />}>
         <VersusClient brokers={(allBrokers as Broker[]) || []} />

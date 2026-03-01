@@ -81,7 +81,12 @@ export default function BrokerPortalLayout({ children }: { children: React.React
 
   // Login page gets no layout chrome
   if (isLogin) {
-    return <>{children}</>;
+    return (
+      <>
+        <meta name="robots" content="noindex, nofollow" />
+        {children}
+      </>
+    );
   }
 
   const handleLogout = async () => {
@@ -181,6 +186,7 @@ export default function BrokerPortalLayout({ children }: { children: React.React
 
   return (
     <div className="min-h-screen bg-slate-50 md:flex">
+      <meta name="robots" content="noindex, nofollow" />
       {/* Mobile top bar */}
       <div className="md:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between sticky top-0 z-50">
         <button

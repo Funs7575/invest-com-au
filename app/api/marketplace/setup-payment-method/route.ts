@@ -78,6 +78,8 @@ export async function POST(request: NextRequest) {
         email: account.email,
         name: account.company_name || undefined,
         metadata: { broker_slug: account.broker_slug },
+      }, {
+        idempotencyKey: `customer_${account.broker_slug}_${user.id}`,
       });
       customerId = customer.id;
     }
@@ -90,6 +92,8 @@ export async function POST(request: NextRequest) {
         broker_slug: account.broker_slug,
         type: "auto_topup_setup",
       },
+    }, {
+      idempotencyKey: `setup_intent_${account.broker_slug}_${Date.now()}`,
     });
 
     return NextResponse.json({

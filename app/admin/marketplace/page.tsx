@@ -164,6 +164,7 @@ export default function MarketplaceOverviewPage() {
               <Link
                 href="/broker-portal"
                 target="_blank"
+                rel="noopener noreferrer"
                 className="bg-white rounded-xl border border-slate-200 p-5 hover:border-amber-300 hover:shadow-sm transition-all group"
               >
                 <div className="text-2xl mb-2">🏪</div>

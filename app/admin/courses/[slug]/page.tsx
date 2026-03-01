@@ -246,6 +246,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
           <Link
             href={`/courses/${course.slug}`}
             target="_blank"
+            rel="noopener noreferrer"
             className="px-3 py-2 text-xs font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50"
           >
             View →
@@ -613,6 +614,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
                   <Link
                     href={`/courses/${slug}/${l.slug}`}
                     target="_blank"
+                    rel="noopener noreferrer"
                     className="text-slate-500 hover:text-green-700 text-xs"
                   >
                     View

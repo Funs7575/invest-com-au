@@ -48,6 +48,8 @@ export async function POST(request: NextRequest) {
       const customer = await getStripe().customers.create({
         email: user.email,
         metadata: { supabase_user_id: user.id },
+      }, {
+        idempotencyKey: `customer_${user.id}`,
       });
       customerId = customer.id;
 
@@ -87,6 +89,8 @@ export async function POST(request: NextRequest) {
         metadata: { supabase_user_id: user.id },
       },
       allow_promotion_codes: true,
+    }, {
+      idempotencyKey: `checkout_${user.id}_${planKey}_${Date.now()}`,
     });
 
     return NextResponse.json({ url: session.url });

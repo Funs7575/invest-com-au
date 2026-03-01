@@ -85,6 +85,8 @@ export async function POST(request: NextRequest) {
       customer_email: account.email,
       success_url: `${siteUrl}/broker-portal/wallet?topup=success`,
       cancel_url: `${siteUrl}/broker-portal/wallet?topup=cancelled`,
+    }, {
+      idempotencyKey: `wallet_topup_${account.broker_slug}_${invoice.id}`,
     });
 
     // Store checkout session ID on invoice

@@ -526,6 +526,7 @@ export default function AuditLogPage() {
               <button
                 onClick={() => setDetailEntry(null)}
                 className="text-slate-400 hover:text-slate-600 transition-colors p-1"
+                aria-label="Close detail panel"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

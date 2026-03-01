@@ -138,6 +138,7 @@ export default async function ReviewerPage({
                   width={80}
                   height={80}
                   className="w-20 h-20 rounded-full object-cover border-2 border-white/20 shrink-0"
+                  priority
                 />
               ) : (
                 <div className="w-20 h-20 rounded-full bg-slate-600 flex items-center justify-center text-2xl font-bold text-white shrink-0">
