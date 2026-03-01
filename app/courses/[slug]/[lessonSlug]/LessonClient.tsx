@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import type { CourseLesson } from "@/lib/types";
 import type { CourseModule } from "@/lib/course";
@@ -228,7 +229,7 @@ export default function LessonClient({
         {creator && (
           <div className="mt-8 flex items-center gap-3 text-xs text-slate-400">
             {creator.avatarUrl ? (
-              <img src={creator.avatarUrl} alt={creator.fullName} className="w-5 h-5 rounded-full object-cover" />
+              <Image src={creator.avatarUrl} alt={creator.fullName} width={20} height={20} className="rounded-full object-cover" />
             ) : (
               <div className="w-5 h-5 rounded-full bg-slate-200 flex items-center justify-center text-[0.4rem] font-bold text-slate-500">
                 {creator.fullName.charAt(0)}

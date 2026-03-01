@@ -1,6 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
 import type { Broker, UserReview, BrokerReviewStats, SwitchStory } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
@@ -234,7 +235,7 @@ export default function BrokerReviewClient({
           {authorName && (
             <span className="flex items-center gap-1.5">
               {authorAvatarUrl ? (
-                <img src={authorAvatarUrl} alt={authorName} className="w-6 h-6 rounded-full object-cover" />
+                <Image src={authorAvatarUrl} alt={authorName} width={24} height={24} className="rounded-full object-cover" />
               ) : (
                 <svg className="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
               )}

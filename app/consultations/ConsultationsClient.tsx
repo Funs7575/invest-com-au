@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useSubscription } from "@/lib/hooks/useSubscription";
 import { trackEvent } from "@/lib/tracking";
@@ -132,10 +133,12 @@ function ConsultationCard({
       {/* Consultant info */}
       <div className="flex items-center gap-3 mb-4">
         {c.consultant?.avatar_url ? (
-          <img
+          <Image
             src={c.consultant.avatar_url}
             alt={c.consultant.full_name}
-            className="w-12 h-12 rounded-full object-cover"
+            width={48}
+            height={48}
+            className="rounded-full object-cover"
           />
         ) : (
           <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center text-lg font-bold text-slate-700">

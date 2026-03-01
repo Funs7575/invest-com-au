@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -152,10 +153,12 @@ export default async function ConsultationDetailPage({ params }: PageProps) {
                   <h2 className="text-xl font-bold mb-4">Your Consultant</h2>
                   <div className="flex items-start gap-5 bg-slate-50 rounded-2xl p-6">
                     {consultation.consultant.avatar_url ? (
-                      <img
+                      <Image
                         src={consultation.consultant.avatar_url}
                         alt={consultation.consultant.full_name}
-                        className="w-16 h-16 rounded-full object-cover shrink-0"
+                        width={64}
+                        height={64}
+                        className="rounded-full object-cover shrink-0"
                       />
                     ) : (
                       <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center text-xl font-bold text-green-700 shrink-0">

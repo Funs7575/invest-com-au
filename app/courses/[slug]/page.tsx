@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import type { Metadata } from "next";
@@ -137,10 +138,12 @@ export default async function CourseDetailPage({ params }: PageProps) {
             {course.creator && (
               <div className="inline-flex items-center gap-3 bg-slate-50 rounded-full px-4 py-2">
                 {course.creator.avatar_url ? (
-                  <img
+                  <Image
                     src={course.creator.avatar_url}
                     alt={course.creator.full_name}
-                    className="w-8 h-8 rounded-full object-cover"
+                    width={32}
+                    height={32}
+                    className="rounded-full object-cover"
                   />
                 ) : (
                   <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-sm font-bold text-slate-700">
@@ -233,10 +236,12 @@ export default async function CourseDetailPage({ params }: PageProps) {
               <h2 className="text-2xl font-bold text-center mb-8">About the Instructor</h2>
               <div className="flex items-start gap-5 bg-slate-50 rounded-2xl p-6">
                 {course.creator.avatar_url ? (
-                  <img
+                  <Image
                     src={course.creator.avatar_url}
                     alt={course.creator.full_name}
-                    className="w-16 h-16 rounded-full object-cover shrink-0"
+                    width={64}
+                    height={64}
+                    className="rounded-full object-cover shrink-0"
                   />
                 ) : (
                   <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center text-xl font-bold text-slate-700 shrink-0">

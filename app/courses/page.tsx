@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import type { Metadata } from "next";
@@ -47,11 +48,13 @@ function CourseCard({ course }: { course: Course }) {
     >
       {/* Cover image or gradient */}
       {course.cover_image_url ? (
-        <div className="aspect-[16/9] overflow-hidden bg-slate-100">
-          <img
+        <div className="aspect-[16/9] overflow-hidden bg-slate-100 relative">
+          <Image
             src={course.cover_image_url}
             alt={course.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover group-hover:scale-105 transition-transform duration-300"
           />
         </div>
       ) : (
@@ -84,10 +87,12 @@ function CourseCard({ course }: { course: Course }) {
         {course.creator && (
           <div className="flex items-center gap-2 mb-3">
             {course.creator.avatar_url ? (
-              <img
+              <Image
                 src={course.creator.avatar_url}
                 alt={course.creator.full_name}
-                className="w-6 h-6 rounded-full object-cover"
+                width={24}
+                height={24}
+                className="rounded-full object-cover"
               />
             ) : (
               <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-[0.5rem] font-bold text-slate-500">

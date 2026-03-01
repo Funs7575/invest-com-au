@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Article } from "@/lib/types";
+import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import ArticleSearchInput from "@/components/ArticleSearchInput";
@@ -134,12 +135,13 @@ export default async function ArticlesPage({
               >
                 {/* Cover Image */}
                 {article.cover_image_url ? (
-                  <div className="aspect-[16/9] overflow-hidden bg-slate-100">
-                    <img
+                  <div className="aspect-[16/9] overflow-hidden bg-slate-100 relative">
+                    <Image
                       src={article.cover_image_url}
                       alt={article.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      loading="lazy"
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   </div>
                 ) : null}
