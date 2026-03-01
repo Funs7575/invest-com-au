@@ -8,7 +8,16 @@ import Icon from "@/components/Icon";
 import InfoTip from "@/components/InfoTip";
 import Sparkline from "@/components/Sparkline";
 import BrokerOnboarding from "@/components/BrokerOnboarding";
+import GettingStartedChecklist from "@/components/GettingStartedChecklist";
+import PageWalkthrough from "@/components/PageWalkthrough";
 import type { Campaign, BrokerWallet, BrokerActivityLog } from "@/lib/types";
+
+const DASHBOARD_WALKTHROUGH_STEPS = [
+  { target: "#kpi-cards", title: "Your Key Metrics", description: "These four cards show your wallet balance, active campaigns, recent clicks, and today's spend. Sparklines reveal 7-day trends at a glance.", position: "bottom" as const },
+  { target: "#quick-actions", title: "Quick Actions", description: "Jump straight to creating a new campaign or topping up your wallet from here.", position: "bottom" as const },
+  { target: "#recent-campaigns", title: "Recent Campaigns", description: "Your 5 most recent campaigns with status badges and budget utilisation bars. Click any campaign to see full details.", position: "top" as const },
+  { target: "#roi-widget", title: "ROI at a Glance", description: "See your 30-day return on investment — total spend vs conversion value, with a break-even progress indicator.", position: "top" as const },
+];
 
 export default function BrokerDashboard() {
   const [wallet, setWallet] = useState<BrokerWallet | null>(null);
@@ -28,6 +37,11 @@ export default function BrokerDashboard() {
   const [loading, setLoading] = useState(true);
   const [firstName, setFirstName] = useState("");
   const [accountCreatedAt, setAccountCreatedAt] = useState<string | undefined>();
+  const [brokerSlug, setBrokerSlug] = useState("");
+  const [hasAcceptedTerms, setHasAcceptedTerms] = useState(false);
+  const [hasCreatives, setHasCreatives] = useState(false);
+  const [hasConversions, setHasConversions] = useState(false);
+  const [allCampaignCount, setAllCampaignCount] = useState(0);
 
   useEffect(() => {
     const load = async () => {
@@ -43,8 +57,21 @@ export default function BrokerDashboard() {
 
       if (!account) return;
       const slug = account.broker_slug;
+      setBrokerSlug(slug);
       setFirstName((account.full_name || "").split(" ")[0]);
       setAccountCreatedAt(account.created_at);
+
+      // Checklist data (terms, creatives, conversions, total campaigns)
+      const [termsRes, creativesRes, convsRes, allCampsRes] = await Promise.all([
+        supabase.from("broker_accounts").select("marketplace_terms_accepted").eq("broker_slug", slug).maybeSingle(),
+        supabase.from("broker_creatives").select("id", { count: "exact", head: true }).eq("broker_slug", slug),
+        supabase.from("conversion_events").select("id", { count: "exact", head: true }).eq("broker_slug", slug),
+        supabase.from("campaigns").select("id", { count: "exact", head: true }).eq("broker_slug", slug),
+      ]);
+      setHasAcceptedTerms(!!termsRes.data?.marketplace_terms_accepted);
+      setHasCreatives((creativesRes.count || 0) > 0);
+      setHasConversions((convsRes.count || 0) > 0);
+      setAllCampaignCount(allCampsRes.count || 0);
 
       // Wallet
       const { data: w } = await supabase
@@ -194,7 +221,7 @@ export default function BrokerDashboard() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 portal-stagger">
+      <div id="kpi-cards" className="grid grid-cols-2 lg:grid-cols-4 gap-4 portal-stagger">
         <div className={`bg-white rounded-xl border border-slate-200 border-l-4 ${walletBorderColor} p-5 hover-lift`}>
           <div className="flex items-center gap-2 mb-1">
             <div className="w-7 h-7 rounded-full bg-amber-50 flex items-center justify-center">
@@ -364,7 +391,7 @@ export default function BrokerDashboard() {
         const costPerConv = thirtyDayConversions > 0 ? thirtyDaySpend / thirtyDayConversions / 100 : 0;
         const isProfitable = thirtyDayConvValue > thirtyDaySpend;
         return (
-          <div className={`rounded-xl border p-5 hover-lift ${isProfitable ? "bg-emerald-50 border-emerald-200" : "bg-white border-slate-200"}`}>
+          <div id="roi-widget" className={`rounded-xl border p-5 hover-lift ${isProfitable ? "bg-emerald-50 border-emerald-200" : "bg-white border-slate-200"}`}>
             <div className="flex items-center justify-between mb-3">
               <h2 className="font-bold text-slate-900 text-sm flex items-center gap-1.5">
                 <Icon name="trending-up" size={14} className={isProfitable ? "text-emerald-600" : "text-slate-400"} />
@@ -441,7 +468,7 @@ export default function BrokerDashboard() {
       )}
 
       {/* Quick Actions */}
-      <div className="flex flex-wrap gap-3">
+      <div id="quick-actions" className="flex flex-wrap gap-3">
         <Link
           href="/broker-portal/campaigns/new"
           className="px-4 py-2 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors"
@@ -457,7 +484,7 @@ export default function BrokerDashboard() {
       </div>
 
       {/* Recent Campaigns */}
-      <div className="bg-white rounded-xl border border-slate-200">
+      <div id="recent-campaigns" className="bg-white rounded-xl border border-slate-200">
         <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
           <h2 className="font-bold text-slate-900">Recent Campaigns</h2>
           <Link href="/broker-portal/campaigns" className="text-xs text-slate-500 hover:text-slate-700 hover:underline">
@@ -659,6 +686,19 @@ export default function BrokerDashboard() {
 
       {/* Onboarding for new brokers */}
       <BrokerOnboarding accountCreatedAt={accountCreatedAt} />
+
+      {/* Getting Started Checklist (persistent, bottom-left) */}
+      <GettingStartedChecklist
+        brokerSlug={brokerSlug}
+        hasAcceptedTerms={hasAcceptedTerms}
+        walletBalanceCents={wallet?.balance_cents || 0}
+        campaignCount={allCampaignCount}
+        hasCreatives={hasCreatives}
+        hasConversions={hasConversions}
+      />
+
+      {/* First-visit page tour */}
+      <PageWalkthrough steps={DASHBOARD_WALKTHROUGH_STEPS} storageKey="wt_broker_dashboard" />
     </div>
   );
 }

@@ -163,7 +163,88 @@ const helpContent: Record<string, { description: string; tips: HelpEntry[] }> = 
   "/admin/marketplace": {
     description: "Overview of the broker advertising marketplace. Brokers deposit funds and run CPC campaigns to promote their listings.",
     tips: [
-      { title: "How It Works", items: ["Brokers register → deposit funds → create campaigns.", "Campaigns are charged per click (CPC).", "Budget enforcement and stats aggregation run automatically (cron required)."] },
+      { title: "How It Works", items: ["Brokers register → deposit funds → create campaigns.", "Campaigns are charged per click (CPC) or monthly (featured).", "Budget enforcement and stats aggregation run automatically via daily cron.", "Revenue = sum of all wallet debits from CPC clicks."] },
+      { title: "KPI Cards", items: ["Total Deposits — lifetime wallet top-ups across all brokers.", "Active Campaigns — currently serving and billing.", "Pending Reviews — campaigns awaiting your approval.", "Today's Revenue — CPC charges deducted today."] },
+    ],
+  },
+  "/admin/marketplace/campaigns": {
+    description: "Review, approve, or reject broker campaigns. Filter by status to manage the review queue efficiently.",
+    tips: [
+      { title: "Review Workflow", items: ["Pending Review — broker submitted, needs your decision.", "Approve to set status to 'approved' (auto-activates on start date).", "Reject with a note — broker sees your feedback.", "Approved campaigns activate automatically when their start date arrives."] },
+      { title: "Status Guide", items: ["Active — live and billing per click.", "Paused — broker paused, no charges.", "Budget Exhausted — total budget hit, auto-stopped.", "Completed — end date reached.", "Cancelled — permanently stopped by broker."] },
+      { title: "Tips", items: ["Check the broker's wallet balance before approving — low balance means campaigns pause quickly.", "Use review notes to suggest rate or targeting improvements.", "Bulk actions let you approve/reject multiple at once."] },
+    ],
+  },
+  "/admin/marketplace/brokers": {
+    description: "Manage marketplace broker accounts, invite new brokers, view wallet balances, and make manual wallet adjustments.",
+    tips: [
+      { title: "Account Statuses", items: ["Active — can log in and create campaigns.", "Pending — registered but not yet approved by admin.", "Suspended — temporarily blocked from the marketplace.", "Invite brokers by entering their slug — they'll receive a registration email."] },
+      { title: "Wallet Adjustments", items: ["Use manual adjustments for promotional credits (e.g. $50 welcome bonus).", "Adjustments are logged in wallet_transactions for audit trail.", "Positive = credit, negative = debit."] },
+    ],
+  },
+  "/admin/marketplace/placements": {
+    description: "Define ad inventory slots on the site. Each placement is a position on a page where broker ads can appear.",
+    tips: [
+      { title: "Key Fields", items: ["Slug — unique ID, e.g. 'compare-top' (cannot change after creation).", "Inventory Type — 'cpc' (pay per click) or 'featured' (flat monthly rate).", "Max Slots — how many campaigns can win simultaneously (e.g. 2 = top 2 bidders shown).", "Base Rate — minimum bid in cents. Brokers cannot bid below this."] },
+      { title: "How Allocation Works", items: ["On each page load, the system picks the top N bidders (by rate) who pass budget/wallet checks.", "Higher rate = higher priority. Ties break by admin-set priority, then creation date.", "Stats (monthly impressions, avg CTR) refresh daily via cron."] },
+    ],
+  },
+  "/admin/marketplace/packages": {
+    description: "Define advertising package tiers that brokers can subscribe to for CPC discounts and included placements.",
+    tips: [
+      { title: "Package Tiers", items: ["Starter — free tier, standard CPC rates.", "Growth — small CPC discount + included featured slots.", "Dominance — larger discount + more slots + priority support.", "Enterprise — custom pricing, dedicated account management."] },
+      { title: "Fields", items: ["CPC Rate Discount — percentage off base CPC rate for subscribers.", "Featured Slots Included — number of featured placements included in the monthly fee.", "Share of Voice — guaranteed impression percentage (enterprise only)."] },
+    ],
+  },
+  "/admin/marketplace/decisions": {
+    description: "Full audit trail of every ad allocation decision. See who won each placement auction, who was filtered out, and why.",
+    tips: [
+      { title: "Reading Decisions", items: ["Winners (green) — campaigns selected to show on this page load.", "Rejected (amber) — campaigns filtered out with a specific reason.", "Rejection reasons: daily_budget_hit, total_budget_exhausted, zero_wallet_balance, end_date_passed, outbid_no_slot."] },
+      { title: "KPIs", items: ["Decisions with Winners — percentage of page loads that served a paid ad.", "Fallback Rate — percentage using sponsorship tier (no paid campaigns available).", "Avg Duration — allocation speed in milliseconds (should be <50ms)."] },
+      { title: "Troubleshooting", items: ["High fallback rate? Check if campaigns are active and wallets have funds.", "All rejected? Look for daily_budget_hit or zero_wallet_balance patterns.", "Use date range filter to compare allocation health over time."] },
+    ],
+  },
+  "/admin/marketplace/attribution": {
+    description: "Understand where clicks and conversions originate — by page, device type, and placement. Optimise ad inventory accordingly.",
+    tips: [
+      { title: "Tabs", items: ["Overview — aggregate clicks, impressions, spend, and CTR.", "By Page — which site pages generate the most clicks (compare, quiz, homepage).", "By Device — mobile vs desktop vs tablet breakdown.", "By Placement — performance of each ad slot (compare-top, quiz-boost, etc.)."] },
+      { title: "Using This Data", items: ["High impressions + low CTR → ad creative may need improvement.", "Mobile dominance → ensure broker landing pages are mobile-friendly.", "Export CSV for offline analysis or sharing with broker partners."] },
+    ],
+  },
+  "/admin/marketplace/intelligence": {
+    description: "AI-powered intelligence dashboard. Health-scores every broker, auto-generates consulting insights, and surfaces revenue opportunities.",
+    tips: [
+      { title: "Tabs", items: ["Portfolio Overview — 8 KPIs with trends and daily revenue chart.", "Broker Scorecard — A-to-F health grades based on CTR, conversions, wallet, activity, and spend momentum.", "Consulting Insights — auto-generated recommendations sorted by severity (critical → warning → info).", "Revenue Analytics — revenue breakdown by broker, placement, and daily trend.", "Performance Heatmap — broker × placement grid showing CTR or spend intensity."] },
+      { title: "Health Grades", items: ["A (80+) — excellent performer, keep engaged.", "B (65-79) — good, minor optimisation opportunities.", "C (45-64) — average, needs attention.", "D (25-44) — underperforming, proactive outreach recommended.", "F (<25) — at risk of churning, immediate action needed."] },
+      { title: "Acting on Insights", items: ["Critical insights (red) — take action within 24 hours.", "Warning insights (amber) — address within a week.", "Info insights (blue) — opportunities to improve, not urgent.", "Use 'Send Notification' quick action to alert brokers directly."] },
+    ],
+  },
+  "/admin/marketplace/sponsor-billing": {
+    description: "Manage monthly billing for sponsored/featured broker partnerships. Generate invoices and track payment status.",
+    tips: [
+      { title: "Invoice Workflow", items: ["Generate invoice → status: pending.", "Mark as paid when payment received.", "Overdue invoices are highlighted after 30 days.", "Waive for promotional or partnership arrangements."] },
+      { title: "Tier Pricing", items: ["Pricing is defined per sponsorship tier (featured_partner, editors_pick, etc.).", "Custom rates can override tier defaults for individual brokers.", "Invoice periods are typically monthly or quarterly."] },
+    ],
+  },
+  "/admin/marketplace/reconciliation": {
+    description: "Financial health check. Compare wallet balances against deposit/spend totals to detect discrepancies.",
+    tips: [
+      { title: "How It Works", items: ["Expected Balance = Lifetime Deposited − Lifetime Spent.", "If actual balance differs from expected, a discrepancy is flagged.", "Common causes: failed webhook, manual adjustment, race condition."] },
+      { title: "Actions", items: ["Use 'Show Issues Only' filter to focus on discrepancies.", "Small discrepancies (<$1) are usually rounding and can be ignored.", "Larger discrepancies need investigation — check wallet_transactions table."] },
+    ],
+  },
+  "/admin/marketplace/support": {
+    description: "Handle support tickets from marketplace brokers. Respond to billing, campaign, and technical queries.",
+    tips: [
+      { title: "Priority Handling", items: ["Urgent — respond within 1 hour (revenue-impacting issues).", "High — respond within 4 hours.", "Normal — respond within 24 hours.", "Low — respond within 48 hours."] },
+      { title: "Ticket Management", items: ["Reply to a ticket to change status to 'in_progress'.", "Set 'waiting_reply' when you need info from the broker.", "Close resolved tickets — broker can reopen by replying.", "Category helps route tickets: billing, campaigns, technical, account, general."] },
+    ],
+  },
+  "/admin/moderation": {
+    description: "Review user-submitted content across the site — reviews, questions, switch stories. Approve or reject to maintain quality.",
+    tips: [
+      { title: "Moderation Queue", items: ["Items are sorted by submission date (newest first).", "The badge count in the sidebar shows total pending items.", "Approve to make content live on the site.", "Reject with a reason to keep records."] },
+      { title: "Best Practices", items: ["Check for spam, offensive language, and fake content.", "Verified emails are more likely to be genuine.", "Good user content improves SEO and social proof."] },
     ],
   },
   "/admin/analytics": {
@@ -186,10 +267,16 @@ const helpContent: Record<string, { description: string; tips: HelpEntry[] }> = 
   },
 };
 
+// Map routes to their walkthrough localStorage keys
+const walkthroughKeys: Record<string, string> = {
+  "/admin": "wt_admin_dashboard",
+};
+
 export default function AdminHelpPanel() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const content = helpContent[pathname];
+  const walkthroughKey = walkthroughKeys[pathname || ""];
 
   // Close on route change
   useEffect(() => { setOpen(false); }, [pathname]);
@@ -258,9 +345,23 @@ export default function AdminHelpPanel() {
 
             {/* Footer */}
             <div className="border-t border-slate-100 px-4 py-2.5 bg-slate-50">
-              <p className="text-[0.6rem] text-slate-400">
-                Press <kbd className="px-1 py-0.5 bg-white border border-slate-200 rounded text-[0.55rem] font-mono">Esc</kbd> to close · Help is page-specific
-              </p>
+              <div className="flex items-center justify-between">
+                <p className="text-[0.6rem] text-slate-400">
+                  Press <kbd className="px-1 py-0.5 bg-white border border-slate-200 rounded text-[0.55rem] font-mono">Esc</kbd> to close
+                </p>
+                {walkthroughKey && (
+                  <button
+                    onClick={() => {
+                      localStorage.removeItem(walkthroughKey);
+                      setOpen(false);
+                      window.location.reload();
+                    }}
+                    className="text-[0.6rem] text-amber-600 hover:text-amber-700 font-semibold"
+                  >
+                    Replay Page Tour
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </>

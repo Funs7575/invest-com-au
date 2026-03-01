@@ -237,6 +237,10 @@ const helpContent: Record<string, { description: string; tips: HelpEntry[] }> = 
   "/broker-portal/settings": {
     description: "Manage your account details, accept marketplace terms, configure API keys, and set balance alert preferences.",
     tips: [
+      { title: "First Time?", items: [
+        "You MUST accept Marketplace Terms before creating campaigns.",
+        "Scroll down and tick the checkbox, then click Save.",
+      ]},
       { title: "Postback API Key", items: [
         "Use this key to authenticate conversion event reports.",
         "Include it in the Authorization header of your POST requests.",
@@ -249,14 +253,89 @@ const helpContent: Record<string, { description: string; tips: HelpEntry[] }> = 
       ]},
     ],
   },
+  "/broker-portal/creative-insights": {
+    description: "See how different creative types (logos, banners, icons, screenshots) perform across your campaigns.",
+    tips: [
+      { title: "Metrics Per Type", items: [
+        "CTR — click-through rate for ads using each creative type.",
+        "Impressions & Clicks — volume for each type.",
+        "Conversions — which creative type drives the most sign-ups.",
+      ]},
+      { title: "Optimisation Tips", items: [
+        "Compare banner CTR vs logo CTR — banners usually win on featured placements.",
+        "Low CTR on a creative type? Try uploading new assets on the Creatives page.",
+        "Use these insights to decide which creatives to use in A/B tests.",
+      ]},
+    ],
+  },
+  "/broker-portal/placements": {
+    description: "Browse all available ad placements across the site. See slot availability, estimated reach, and performance before creating a campaign.",
+    tips: [
+      { title: "Availability Colours", items: [
+        "Green — slots available, you can create a campaign now.",
+        "Amber — limited slots, act fast.",
+        "Red — fully booked, wait for a slot or try a different placement.",
+      ]},
+      { title: "Choosing a Placement", items: [
+        "Compare Top — highest visibility, best for brand awareness.",
+        "Quiz Boost — highest purchase intent, users are actively choosing a broker.",
+        "Articles Sidebar — contextual, great for educational content alignment.",
+        "Deals Featured — users actively looking for promotions.",
+      ]},
+      { title: "Metrics Explained", items: [
+        "Monthly Impressions — how many times this slot is seen per month.",
+        "Avg CTR — typical click-through rate for ads in this slot.",
+        "Base Rate — minimum CPC bid to compete for this placement.",
+      ]},
+    ],
+  },
+  "/broker-portal/invoices": {
+    description: "View invoices and receipts for wallet top-ups. Download receipts for your accounting records.",
+    tips: [
+      { title: "Invoice Statuses", items: [
+        "Paid (green) -- payment received, receipt available for download.",
+        "Pending (amber) -- payment initiated but not yet confirmed by Stripe.",
+        "Failed (red) -- payment attempt failed, funds not added to wallet.",
+        "Refunded (blue) -- payment was reversed, funds returned.",
+      ]},
+      { title: "Receipts", items: [
+        "Click any paid invoice to view the full receipt with GST breakdown.",
+        "Receipts include your company name, ABN, and line items.",
+        "Use 'Print' to save a PDF for your accounting records.",
+        "Invoice numbers are sequential for easy bookkeeping.",
+      ]},
+    ],
+  },
+  "/broker-portal/reports": {
+    description: "Export campaign reports, drill down into individual campaigns, and compare performance across date ranges.",
+    tips: [
+      { title: "Drill-Down", items: [
+        "Click any campaign row to filter all charts and KPIs to that campaign.",
+        "A dark bar appears at the top showing which campaign is selected.",
+        "Click 'Clear filter' or 'Show all' to return to the full view.",
+      ]},
+      { title: "Export", items: [
+        "Export CSV downloads daily data: date, clicks, impressions, conversions, spend.",
+        "Use Custom date range for specific reporting periods.",
+        "Share CSV exports with your marketing team for offline analysis.",
+      ]},
+    ],
+  },
+};
+
+// Map routes to their walkthrough localStorage keys
+const walkthroughKeys: Record<string, string> = {
+  "/broker-portal": "wt_broker_dashboard",
 };
 
 export default function BrokerHelpPanel() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [, setRerender] = useState(0);
 
   // Match content: try exact path, then parent path
   const content = helpContent[pathname] || helpContent[pathname?.replace(/\/[^/]+$/, "") || ""];
+  const walkthroughKey = walkthroughKeys[pathname || ""];
 
   // Close on route change
   useEffect(() => { setOpen(false); }, [pathname]);
@@ -325,9 +404,24 @@ export default function BrokerHelpPanel() {
 
             {/* Footer */}
             <div className="border-t border-slate-100 px-4 py-2.5 bg-slate-50">
-              <p className="text-[0.6rem] text-slate-400">
-                Press <kbd className="px-1 py-0.5 bg-white border border-slate-200 rounded text-[0.55rem] font-mono">Esc</kbd> to close · Help is page-specific
-              </p>
+              <div className="flex items-center justify-between">
+                <p className="text-[0.6rem] text-slate-400">
+                  Press <kbd className="px-1 py-0.5 bg-white border border-slate-200 rounded text-[0.55rem] font-mono">Esc</kbd> to close
+                </p>
+                {walkthroughKey && (
+                  <button
+                    onClick={() => {
+                      localStorage.removeItem(walkthroughKey);
+                      setOpen(false);
+                      setRerender((r) => r + 1);
+                      window.location.reload();
+                    }}
+                    className="text-[0.6rem] text-amber-600 hover:text-amber-700 font-semibold"
+                  >
+                    Replay Page Tour
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </>

@@ -6,6 +6,14 @@ import AdminShell from "@/components/AdminShell";
 import Link from "next/link";
 import CountUp from "@/components/CountUp";
 import Sparkline from "@/components/Sparkline";
+import PageWalkthrough from "@/components/PageWalkthrough";
+
+const ADMIN_DASHBOARD_WALKTHROUGH = [
+  { target: "#admin-kpis", title: "Site Overview", description: "Key performance metrics at a glance — brokers, articles, clicks, marketplace revenue, and Pro members. Click any card to jump to its detail page.", position: "bottom" as const },
+  { target: "#admin-health", title: "Data Health", description: "Issues that need attention are flagged here — missing affiliate URLs (red), stale content (amber), and general notices (blue). Fix reds first.", position: "bottom" as const },
+  { target: "#admin-revenue", title: "Revenue Breakdown", description: "See estimated affiliate revenue per broker. Revenue = Clicks x EPC (set EPC values in Affiliate Links).", position: "top" as const },
+  { target: "#admin-shortcuts", title: "Quick Navigation", description: "Jump to the most common admin tasks from here — add brokers, manage content, view marketplace, or preview the live site.", position: "top" as const },
+];
 
 interface Stats {
   brokers: number;
@@ -522,7 +530,7 @@ export default function AdminDashboard() {
       )}
 
       {/* KPI Stat Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div id="admin-kpis" className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {loading
           ? Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="bg-white border border-slate-200 rounded-lg p-4 animate-pulse">
@@ -814,7 +822,7 @@ export default function AdminDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Content Health Check */}
-        <div className="bg-white border border-slate-200 rounded-lg p-6">
+        <div id="admin-health" className="bg-white border border-slate-200 rounded-lg p-6">
           <h2 className="text-lg font-semibold text-slate-900 mb-4">Content Health</h2>
           {loading ? (
             <div className="space-y-3">
@@ -902,7 +910,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Revenue Overview */}
-        <div className="bg-white border border-slate-200 rounded-lg p-6">
+        <div id="admin-revenue" className="bg-white border border-slate-200 rounded-lg p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-slate-900">Revenue</h2>
             <Link href="/admin/analytics" className="text-xs text-amber-600 hover:text-amber-700">Details →</Link>
@@ -994,7 +1002,7 @@ export default function AdminDashboard() {
                 <p className="text-sm text-slate-500 mb-3">No revenue data yet. Set EPC values in Affiliate Links.</p>
               )}
 
-              <div className="pt-3 border-t border-slate-200 space-y-1.5">
+              <div id="admin-shortcuts" className="pt-3 border-t border-slate-200 space-y-1.5">
                 <Link href="/admin/affiliate-links" className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded text-slate-600 hover:bg-slate-100 transition-colors text-sm">
                   <span>🔗</span> Affiliate Links
                 </Link>
@@ -1009,6 +1017,7 @@ export default function AdminDashboard() {
           )}
         </div>
       </div>
+      <PageWalkthrough steps={ADMIN_DASHBOARD_WALKTHROUGH} storageKey="wt_admin_dashboard" />
     </AdminShell>
   );
 }
