@@ -124,16 +124,27 @@ export default function BrokerCard({
         </div>
       )}
 
-      {/* Deal badge — compact inline */}
+      {/* Deal badge — compact inline with urgency countdown */}
       {broker.deal && broker.deal_text && (
         <div className="mb-2 flex items-center gap-1.5 px-2 py-1 md:px-2.5 md:py-1.5 bg-amber-50 border border-amber-200/80 rounded-lg">
           <Icon name="flame" size={11} className="text-amber-500 shrink-0" />
           <span className="text-[0.62rem] md:text-[0.69rem] text-amber-700 font-semibold leading-tight truncate">{broker.deal_text}</span>
-          {broker.deal_expiry && (
-            <span className="text-[0.62rem] md:text-[0.69rem] text-amber-500 shrink-0">
-              exp {new Date(broker.deal_expiry).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })}
-            </span>
-          )}
+          {broker.deal_expiry && (() => {
+            const now = new Date();
+            const expiry = new Date(broker.deal_expiry);
+            const daysLeft = Math.ceil((expiry.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+            if (daysLeft <= 0) return null;
+            const isUrgent = daysLeft <= 7;
+            return (
+              <span className={`text-[0.56rem] md:text-[0.62rem] shrink-0 font-bold px-1.5 py-0.5 rounded-full ${
+                isUrgent
+                  ? 'bg-red-100 text-red-600 animate-pulse'
+                  : 'bg-amber-100 text-amber-600'
+              }`}>
+                {daysLeft === 1 ? 'Ends tomorrow' : daysLeft <= 7 ? `${daysLeft}d left` : `exp ${expiry.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })}`}
+              </span>
+            );
+          })()}
         </div>
       )}
 

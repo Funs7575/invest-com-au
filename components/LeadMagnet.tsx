@@ -4,8 +4,13 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { trackEvent } from "@/lib/tracking";
 
+function isValidEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
 export default function LeadMagnet() {
   const [email, setEmail] = useState("");
+  const [emailTouched, setEmailTouched] = useState(false);
   const [consent, setConsent] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [emailSent, setEmailSent] = useState(false);
@@ -22,9 +27,14 @@ export default function LeadMagnet() {
     return () => observer.disconnect();
   }, []);
 
+  const emailError = emailTouched && email.length > 0 && !isValidEmail(email)
+    ? "Please enter a valid email address"
+    : null;
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!email || !email.includes("@") || !consent) return;
+    setEmailTouched(true);
+    if (!email || !isValidEmail(email) || !consent) return;
 
     setStatus("loading");
     try {
@@ -71,15 +81,28 @@ export default function LeadMagnet() {
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-2.5 md:space-y-3">
-          <input
-            type="email"
-            placeholder="you@email.com"
-            aria-label="Email address for fee audit PDF"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full px-3 md:px-4 py-2.5 rounded-lg border border-slate-200 text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-700/40 focus:border-blue-700"
-          />
+          <div>
+            <input
+              type="email"
+              placeholder="you@email.com"
+              autoComplete="email"
+              aria-label="Email address for fee audit PDF"
+              aria-invalid={!!emailError}
+              aria-describedby={emailError ? "lead-email-error" : undefined}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onBlur={() => setEmailTouched(true)}
+              required
+              className={`w-full px-3 md:px-4 py-2.5 rounded-lg border text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-700/40 focus:border-blue-700 ${
+                emailError ? 'border-red-400' : 'border-slate-200'
+              }`}
+            />
+            <div aria-live="polite" aria-atomic="true" className="min-h-[1.25rem]">
+              {emailError && (
+                <p id="lead-email-error" className="text-xs text-red-500 mt-0.5">{emailError}</p>
+              )}
+            </div>
+          </div>
           <label className="flex items-start gap-2 cursor-pointer">
             <input
               type="checkbox"
@@ -98,16 +121,22 @@ export default function LeadMagnet() {
           </label>
           <button
             type="submit"
-            disabled={status === "loading" || !consent}
+            disabled={status === "loading" || !consent || !!emailError}
             className="w-full px-4 py-2.5 md:py-3 bg-amber-500 text-white text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-60"
           >
             {status === "loading" ? "Sending..." : "Get the Free PDF"}
           </button>
-          {status === "error" && (
-            <p className="text-xs text-red-500 text-center">
-              Something went wrong. Please try again.
-            </p>
-          )}
+          <p className="text-[0.56rem] md:text-[0.62rem] text-slate-400 text-center flex items-center justify-center gap-1">
+            <svg className="w-2.5 h-2.5 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+            No spam, ever. One email with your PDF.
+          </p>
+          <div aria-live="assertive" aria-atomic="true">
+            {status === "error" && (
+              <p className="text-xs text-red-500 text-center">
+                Something went wrong. Please try again.
+              </p>
+            )}
+          </div>
         </form>
       )}
     </div>

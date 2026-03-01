@@ -335,7 +335,12 @@ const icons: Record<string, string[]> = {
 
 export default function Icon({ name, size = 24, className = "" }: IconProps) {
   const paths = icons[name];
-  if (!paths) return null;
+  if (!paths) {
+    if (process.env.NODE_ENV === "development") {
+      console.warn(`[Icon] Unknown icon name: "${name}". Available: ${Object.keys(icons).join(", ")}`);
+    }
+    return null;
+  }
 
   return (
     <svg

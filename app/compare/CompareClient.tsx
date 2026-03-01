@@ -298,6 +298,15 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               {f.label}
             </button>
           ))}
+          {(activeFilter !== 'all' || searchQuery.trim()) && (
+            <button
+              onClick={() => { setActiveFilter('all'); setSearchQuery(''); }}
+              className="shrink-0 px-3 py-2 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-full transition-colors flex items-center gap-1"
+            >
+              <X className="w-3.5 h-3.5" />
+              Clear filters
+            </button>
+          )}
         </div>
 
         {/* Mobile: Filter + Search inline row */}
@@ -380,6 +389,11 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               <X className="w-4 h-4" />
             </button>
           )}
+        </div>
+
+        {/* Results count — accessible */}
+        <div aria-live="polite" aria-atomic="true" className="sr-only">
+          {sorted.length} {sorted.length === 1 ? 'broker' : 'brokers'} found{activeFilter !== 'all' ? ` with ${filters.find(f => f.key === activeFilter)?.label} filter` : ''}{searchQuery ? ` matching "${searchQuery}"` : ''}
         </div>
 
         {/* Quiz prompt — hidden on mobile to save space */}
@@ -621,19 +635,27 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         )}
 
         {sorted.length === 0 && (
-          <div className="text-center py-8 md:py-12 text-slate-500">
+          <div className="text-center py-8 md:py-12 text-slate-500" role="status">
             {searchQuery ? (
               <>
                 <p className="text-sm md:text-lg font-medium mb-1.5">No brokers match &ldquo;{searchQuery}&rdquo;</p>
                 <button
-                  onClick={() => setSearchQuery("")}
+                  onClick={() => { setSearchQuery(""); setActiveFilter('all'); }}
                   className="text-blue-700 text-sm font-semibold hover:text-blue-800 transition-colors"
                 >
-                  Clear search
+                  Clear all filters
                 </button>
               </>
             ) : (
-              <p className="text-sm">No brokers match this filter. Try a different category.</p>
+              <>
+                <p className="text-sm mb-2">No brokers match this filter. Try a different category.</p>
+                <button
+                  onClick={() => setActiveFilter('all')}
+                  className="text-blue-700 text-sm font-semibold hover:text-blue-800 transition-colors"
+                >
+                  Show all brokers
+                </button>
+              </>
             )}
           </div>
         )}

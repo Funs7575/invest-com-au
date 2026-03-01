@@ -47,6 +47,32 @@ const fallbackScores: Record<string, Record<WeightKey, number>> = {
   "coinspot": { beginner: 9, low_fee: 5, us_shares: 0, smsf: 2, crypto: 9, advanced: 3 },
 };
 
+const QUIZ_STORAGE_KEY = "invest-quiz-progress";
+
+function loadSavedProgress(): { step: number; answers: string[] } | null {
+  try {
+    const raw = localStorage.getItem(QUIZ_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed.step === "number" && Array.isArray(parsed.answers)) {
+      return parsed;
+    }
+  } catch { /* ignore corrupt data */ }
+  return null;
+}
+
+function saveProgress(step: number, answers: string[]) {
+  try {
+    localStorage.setItem(QUIZ_STORAGE_KEY, JSON.stringify({ step, answers }));
+  } catch { /* quota exceeded etc */ }
+}
+
+function clearProgress() {
+  try {
+    localStorage.removeItem(QUIZ_STORAGE_KEY);
+  } catch { /* ignore */ }
+}
+
 export default function QuizPage() {
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
@@ -64,8 +90,17 @@ export default function QuizPage() {
   const [gateStatus, setGateStatus] = useState<"idle" | "loading" | "error">("idle");
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [quizCampaignWinners, setQuizCampaignWinners] = useState<PlacementWinner[]>([]);
+  const [resumePrompt, setResumePrompt] = useState(false);
   const mountedRef = useRef(true);
   const questionHeadingRef = useRef<HTMLHeadingElement>(null);
+
+  // Restore saved progress on mount
+  useEffect(() => {
+    const saved = loadSavedProgress();
+    if (saved && saved.step > 0 && saved.step < fallbackQuestions.length) {
+      setResumePrompt(true);
+    }
+  }, []);
 
   // Cleanup ref for unmount protection (P0 #4)
   useEffect(() => {
@@ -138,6 +173,8 @@ export default function QuizPage() {
       setAnswers(newAnswers);
       setSelectedKey(null);
       if (isFinal) {
+        // Clear saved progress — quiz is complete
+        clearProgress();
         // Show "Analyzing" transition, then go straight to results
         setRevealing(true);
         setAnimating(false);
@@ -147,8 +184,11 @@ export default function QuizPage() {
           setStep(step + 1);
         }, 1800);
       } else {
-        setStep(step + 1);
+        const nextStep = step + 1;
+        setStep(nextStep);
         setAnimating(false);
+        // Save progress to localStorage
+        saveProgress(nextStep, newAnswers);
         // P1 #8: Focus management — move focus to next question heading
         requestAnimationFrame(() => {
           questionHeadingRef.current?.focus();
@@ -158,21 +198,35 @@ export default function QuizPage() {
   };
 
   const handleShareResult = async () => {
+    const shareUrl = window.location.href;
+    const topBrokerName = results[0]?.broker?.name || "my top broker";
+    const shareText = `I just found ${topBrokerName} as my best broker match on Invest.com.au! Take the quiz:`;
+
+    // Try Web Share API first (mobile-native sharing)
+    if (typeof navigator.share === "function") {
+      try {
+        await navigator.share({ title: "My Broker Match", text: shareText, url: shareUrl });
+        trackEvent("quiz_share", { method: "native", top_broker: results[0]?.slug }, "/quiz");
+        return;
+      } catch {
+        // User cancelled or API failed — fall through to clipboard
+      }
+    }
+
+    // Fallback: copy to clipboard
     try {
-      await navigator.clipboard.writeText(window.location.href);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      await navigator.clipboard.writeText(shareUrl);
     } catch {
-      // Fallback for older browsers
       const textarea = document.createElement("textarea");
-      textarea.value = window.location.href;
+      textarea.value = shareUrl;
       document.body.appendChild(textarea);
       textarea.select();
       document.execCommand("copy");
       document.body.removeChild(textarea);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
     }
+    setCopied(true);
+    trackEvent("quiz_share", { method: "clipboard", top_broker: results[0]?.slug }, "/quiz");
+    setTimeout(() => setCopied(false), 2000);
   };
 
   // Generate personalized match reasons based on user answers and broker strengths
@@ -644,6 +698,7 @@ export default function QuizPage() {
                     <input
                       type="email"
                       placeholder="you@email.com"
+                      autoComplete="email"
                       aria-label="Email address for quiz results"
                       value={gateEmail}
                       onChange={(e) => setGateEmail(e.target.value)}
@@ -728,7 +783,7 @@ export default function QuizPage() {
               )}
             </button>
             <button
-              onClick={() => { setStep(0); setAnswers([]); }}
+              onClick={() => { clearProgress(); setStep(0); setAnswers([]); }}
               className="text-[0.69rem] md:text-sm text-slate-500 hover:text-brand transition-colors"
             >
               Restart Quiz →
@@ -780,6 +835,37 @@ export default function QuizPage() {
         {fetchError && (
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-2.5 md:p-3 mb-3 md:mb-4 text-[0.62rem] md:text-xs text-amber-700">
             {fetchError}
+          </div>
+        )}
+
+        {/* Resume prompt — shown when saved progress exists */}
+        {resumePrompt && step === 0 && (
+          <div className="mb-4 md:mb-6 bg-blue-50 border border-blue-200 rounded-lg p-3 md:p-4 flex items-center justify-between gap-3" style={{ animation: "resultCardIn 0.3s ease-out" }}>
+            <div>
+              <p className="text-xs md:text-sm font-semibold text-blue-800">Welcome back!</p>
+              <p className="text-[0.62rem] md:text-xs text-blue-600">You have a quiz in progress. Pick up where you left off?</p>
+            </div>
+            <div className="flex gap-2 shrink-0">
+              <button
+                onClick={() => {
+                  const saved = loadSavedProgress();
+                  if (saved) {
+                    setStep(saved.step);
+                    setAnswers(saved.answers);
+                  }
+                  setResumePrompt(false);
+                }}
+                className="px-3 py-1.5 bg-blue-700 text-white text-xs font-bold rounded-lg hover:bg-blue-800 transition-colors"
+              >
+                Resume
+              </button>
+              <button
+                onClick={() => { clearProgress(); setResumePrompt(false); }}
+                className="px-3 py-1.5 bg-white text-blue-700 text-xs font-semibold border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors"
+              >
+                Start Over
+              </button>
+            </div>
           </div>
         )}
 
@@ -852,7 +938,13 @@ export default function QuizPage() {
 
         {step > 0 && (
           <button
-            onClick={() => { setStep(step - 1); setAnswers(answers.slice(0, -1)); }}
+            onClick={() => {
+              const prevStep = step - 1;
+              const prevAnswers = answers.slice(0, -1);
+              setStep(prevStep);
+              setAnswers(prevAnswers);
+              saveProgress(prevStep, prevAnswers);
+            }}
             className="mt-4 md:mt-6 text-xs md:text-sm text-slate-400 hover:text-slate-600 transition-colors"
           >
             ← Back
