@@ -129,7 +129,7 @@ const faqs = [
   },
   {
     q: "Do you offer refunds?",
-    a: "If you're not happy within the first 7 days, contact us for a full refund.",
+    a: "If you're not happy within the first 7 days, you can request a full refund directly from your account page — no need to contact us.",
   },
 ];
 

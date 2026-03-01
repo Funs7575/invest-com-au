@@ -39,6 +39,22 @@ export default function AccountClient() {
   const [portalError, setPortalError] = useState<string | null>(null);
   const [signOutLoading, setSignOutLoading] = useState(false);
   const [showSuccessBanner, setShowSuccessBanner] = useState(checkoutSuccess);
+
+  const [cancelLoading, setCancelLoading] = useState(false);
+  const [cancelError, setCancelError] = useState<string | null>(null);
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+
+  const [refundLoading, setRefundLoading] = useState(false);
+  const [refundError, setRefundError] = useState<string | null>(null);
+  const [showRefundConfirm, setShowRefundConfirm] = useState(false);
+  const [refundSuccess, setRefundSuccess] = useState(false);
+
+  // Whether the subscription is within the 7-day refund window
+  const isWithinRefundWindow = subscription?.created_at
+    ? (new Date().getTime() - new Date(subscription.created_at).getTime()) /
+        (1000 * 60 * 60 * 24) <=
+      7
+    : false;
   // Poll for subscription after checkout success
   useEffect(() => {
     if (!checkoutSuccess || !user) return;
@@ -89,6 +105,51 @@ export default function AccountClient() {
     } catch {
       setPortalError("Something went wrong. Please try again.");
       setPortalLoading(false);
+    }
+  };
+
+  const handleCancelSubscription = async () => {
+    setCancelLoading(true);
+    setCancelError(null);
+    try {
+      const res = await fetch("/api/stripe/cancel-subscription", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) {
+        setCancelError(data.error || "Failed to cancel subscription.");
+        setCancelLoading(false);
+        return;
+      }
+      setShowCancelConfirm(false);
+      setCancelLoading(false);
+      // Poll for webhook to sync
+      setTimeout(() => refresh(), 1500);
+      setTimeout(() => refresh(), 4000);
+    } catch {
+      setCancelError("Something went wrong. Please try again.");
+      setCancelLoading(false);
+    }
+  };
+
+  const handleRefundSubscription = async () => {
+    setRefundLoading(true);
+    setRefundError(null);
+    try {
+      const res = await fetch("/api/stripe/refund-subscription", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) {
+        setRefundError(data.error || "Failed to process refund.");
+        setRefundLoading(false);
+        return;
+      }
+      setRefundSuccess(true);
+      setShowRefundConfirm(false);
+      setRefundLoading(false);
+      // Poll for webhook sync
+      setTimeout(() => refresh(), 2000);
+      setTimeout(() => refresh(), 5000);
+    } catch {
+      setRefundError("Something went wrong. Please try again.");
+      setRefundLoading(false);
     }
   };
 
@@ -202,15 +263,106 @@ export default function AccountClient() {
               </div>
             )}
 
-            <button
-              onClick={handleManageSubscription}
-              disabled={portalLoading}
-              className="px-4 py-2 border border-slate-200 text-slate-700 text-sm font-semibold rounded-xl hover:bg-slate-50 transition-colors disabled:opacity-50"
-            >
-              {portalLoading ? "Opening..." : "Manage Subscription"}
-            </button>
+            {refundSuccess && (
+              <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 mb-4">
+                <p className="text-xs text-emerald-700 font-semibold">
+                  Refund processed successfully. Check your email for confirmation. The refund will appear on your statement within 5–10 business days.
+                </p>
+              </div>
+            )}
+
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                onClick={handleManageSubscription}
+                disabled={portalLoading}
+                className="px-4 py-2 border border-slate-200 text-slate-700 text-sm font-semibold rounded-xl hover:bg-slate-50 transition-colors disabled:opacity-50"
+              >
+                {portalLoading ? "Opening..." : "Manage Subscription"}
+              </button>
+
+              {subscription.status === "active" && !subscription.cancel_at_period_end && (
+                <button
+                  onClick={() => setShowCancelConfirm(true)}
+                  className="px-4 py-2 border border-red-200 text-red-600 text-sm font-semibold rounded-xl hover:bg-red-50 transition-colors"
+                >
+                  Cancel Subscription
+                </button>
+              )}
+
+              {isWithinRefundWindow && subscription.status === "active" && !subscription.cancel_at_period_end && (
+                <button
+                  onClick={() => setShowRefundConfirm(true)}
+                  className="px-4 py-2 border border-amber-200 text-amber-700 text-sm font-semibold rounded-xl hover:bg-amber-50 transition-colors"
+                >
+                  Request Refund
+                </button>
+              )}
+            </div>
+
             {portalError && (
               <p className="mt-2 text-xs text-red-500">{portalError}</p>
+            )}
+
+            {showCancelConfirm && (
+              <div className="mt-3 bg-red-50 border border-red-200 rounded-xl p-4">
+                <p className="text-sm font-semibold text-red-800 mb-1">Are you sure you want to cancel?</p>
+                <p className="text-xs text-red-700 mb-3">
+                  Your subscription will remain active until the end of your current billing period
+                  {subscription.current_period_end
+                    ? ` (${new Date(subscription.current_period_end).toLocaleDateString("en-AU", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      })})`
+                    : ""
+                  }. You can resubscribe anytime.
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleCancelSubscription}
+                    disabled={cancelLoading}
+                    className="px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded-xl hover:bg-red-700 transition-colors disabled:opacity-50"
+                  >
+                    {cancelLoading ? "Cancelling..." : "Yes, Cancel"}
+                  </button>
+                  <button
+                    onClick={() => { setShowCancelConfirm(false); setCancelError(null); }}
+                    className="px-4 py-2 border border-slate-200 text-slate-700 text-sm font-semibold rounded-xl hover:bg-slate-50 transition-colors"
+                  >
+                    Keep Subscription
+                  </button>
+                </div>
+                {cancelError && (
+                  <p className="mt-2 text-xs text-red-500">{cancelError}</p>
+                )}
+              </div>
+            )}
+
+            {showRefundConfirm && (
+              <div className="mt-3 bg-amber-50 border border-amber-200 rounded-xl p-4">
+                <p className="text-sm font-semibold text-amber-800 mb-1">Request a full refund?</p>
+                <p className="text-xs text-amber-700 mb-3">
+                  This will immediately cancel your Investor Pro subscription and issue a full refund to your original payment method. Refunds typically take 5–10 business days to appear on your statement.
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={handleRefundSubscription}
+                    disabled={refundLoading}
+                    className="px-4 py-2 bg-amber-600 text-white text-sm font-semibold rounded-xl hover:bg-amber-700 transition-colors disabled:opacity-50"
+                  >
+                    {refundLoading ? "Processing..." : "Yes, Refund & Cancel"}
+                  </button>
+                  <button
+                    onClick={() => { setShowRefundConfirm(false); setRefundError(null); }}
+                    className="px-4 py-2 border border-slate-200 text-slate-700 text-sm font-semibold rounded-xl hover:bg-slate-50 transition-colors"
+                  >
+                    Keep Subscription
+                  </button>
+                </div>
+                {refundError && (
+                  <p className="mt-2 text-xs text-red-500">{refundError}</p>
+                )}
+              </div>
             )}
           </div>
         ) : (
