@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
   typescript: {
@@ -73,7 +74,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline'; " +
               "img-src 'self' data: https: https://www.googletagmanager.com; " +
               "font-src 'self'; " +
-              "connect-src 'self' https://*.supabase.co https://va.vercel-scripts.com https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://*.analytics.google.com https://api.stripe.com https://cal.com https://app.cal.com; " +
+              "connect-src 'self' https://*.supabase.co https://va.vercel-scripts.com https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://*.analytics.google.com https://api.stripe.com https://cal.com https://app.cal.com https://*.sentry.io https://*.ingest.sentry.io; " +
               "frame-src https://js.stripe.com https://hooks.stripe.com https://www.youtube-nocookie.com https://player.vimeo.com https://cal.com; " +
               "frame-ancestors 'none'; " +
               "base-uri 'self'; " +
@@ -109,4 +110,23 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSentryConfig(nextConfig, {
+  // Sentry webpack plugin options
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+
+  // Only upload source maps during CI/CD builds (not local dev)
+  silent: !process.env.CI,
+
+  // Hides source maps from generated client bundles
+  hideSourceMaps: true,
+
+  // Automatically tree-shake Sentry logger statements to reduce bundle size
+  disableLogger: true,
+
+  // Upload source maps to Sentry for debugging
+  widenClientFileUpload: true,
+
+  // Tunnel Sentry events through the app to avoid ad blockers
+  tunnelRoute: "/monitoring",
+});

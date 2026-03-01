@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   const title = `${broker.name} Review (${CURRENT_YEAR})`;
   const description = broker.tagline || `Honest review of ${broker.name}. Fees, pros, cons, and our verdict.`;
-  const ogImageUrl = `/api/og?title=${encodeURIComponent(`${broker.name} Review`)}&subtitle=${encodeURIComponent(broker.rating ? `${broker.rating}/5 Rating — Fees, Pros & Cons` : 'Honest Review — Fees, Pros & Cons')}&type=broker`;
+  const ogImageUrl = `/api/og/broker?slug=${slug}`;
 
   return {
     title,
