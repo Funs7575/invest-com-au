@@ -1,36 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
+import { createRateLimiter } from '@/lib/rate-limiter';
+import { isValidEmail } from '@/lib/validate-email';
 
-// In-memory rate limiter (per-IP)
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
-const RATE_LIMIT_WINDOW = 300_000; // 5 minutes
-const RATE_LIMIT_MAX = 5;
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const entry = rateLimitMap.get(ip);
-  if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW });
-    return false;
-  }
-  entry.count++;
-  return entry.count > RATE_LIMIT_MAX;
-}
-
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, entry] of rateLimitMap.entries()) {
-    if (now > entry.resetAt) rateLimitMap.delete(key);
-  }
-}, 60_000);
-
-const EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}$/;
-
-function isValidEmail(email: string): boolean {
-  if (!email || typeof email !== 'string') return false;
-  if (email.length > 254) return false;
-  return EMAIL_REGEX.test(email);
-}
+const isRateLimited = createRateLimiter(300_000, 5); // 5 leads per 5 min per IP
 
 // Map quiz answer keys to human-readable labels
 const EXPERIENCE_MAP: Record<string, string> = {

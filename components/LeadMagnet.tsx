@@ -3,10 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { trackEvent } from "@/lib/tracking";
-
-function isValidEmail(email: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
+import { isValidEmailClient as isValidEmail } from "@/lib/validate-email";
 
 export default function LeadMagnet() {
   const [email, setEmail] = useState("");

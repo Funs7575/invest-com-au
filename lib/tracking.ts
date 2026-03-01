@@ -18,7 +18,9 @@ export function trackClick(brokerSlug: string, brokerName: string, source: strin
         (window as unknown as Record<string, string>).__inv_last_click_id = data.click_id;
       }
     })
-    .catch(() => {});
+    .catch((err) => {
+      if (process.env.NODE_ENV === 'development') console.warn('[tracking] click failed:', err.message);
+    });
 }
 
 export function trackEvent(
@@ -36,7 +38,9 @@ export function trackEvent(
       page: page || (typeof window !== 'undefined' ? window.location.pathname : '/'),
       session_id: sessionId,
     }),
-  }).catch(() => {});
+  }).catch((err) => {
+    if (process.env.NODE_ENV === 'development') console.warn('[tracking] event failed:', err.message);
+  });
 }
 
 export function getAffiliateLink(broker: Broker): string {

@@ -1,9 +1,10 @@
 "use client";
 
+import { memo } from "react";
 import { useShortlist } from "@/lib/hooks/useShortlist";
 import { trackEvent } from "@/lib/tracking";
 
-export default function ShortlistButton({
+export default memo(function ShortlistButton({
   slug,
   name,
   size = "sm",
@@ -46,4 +47,4 @@ export default function ShortlistButton({
       </svg>
     </button>
   );
-}
+});

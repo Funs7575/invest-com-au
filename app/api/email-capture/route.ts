@@ -1,43 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
+import { createRateLimiter } from '@/lib/rate-limiter';
+import { isValidEmail } from '@/lib/validate-email';
 
-// In-memory rate limiter (per-IP)
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
-const RATE_LIMIT_WINDOW = 300_000; // 5 minutes
-const RATE_LIMIT_MAX = 5; // max 5 email captures per 5 minutes per IP
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const entry = rateLimitMap.get(ip);
-
-  if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW });
-    return false;
-  }
-
-  entry.count++;
-  if (entry.count > RATE_LIMIT_MAX) {
-    return true;
-  }
-  return false;
-}
-
-// Clean up stale entries
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, entry] of rateLimitMap.entries()) {
-    if (now > entry.resetAt) rateLimitMap.delete(key);
-  }
-}, 60_000);
-
-// RFC 5322 simplified email regex
-const EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*\.[a-zA-Z]{2,}$/;
-
-function isValidEmail(email: string): boolean {
-  if (!email || typeof email !== 'string') return false;
-  if (email.length > 254) return false; // RFC 5321
-  return EMAIL_REGEX.test(email);
-}
+const isRateLimited = createRateLimiter(300_000, 5); // 5 emails per 5 min per IP
 
 interface BrokerRow {
   name: string;
@@ -50,6 +16,11 @@ interface BrokerRow {
   rating: string | null;
 }
 
+function esc(s: string | null | undefined): string {
+  if (!s) return '';
+  return s.replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch] || ch));
+}
+
 function buildFeeComparisonEmail(brokers: BrokerRow[]): string {
   const now = new Date();
   const dateStr = now.toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -59,13 +30,13 @@ function buildFeeComparisonEmail(brokers: BrokerRow[]): string {
     const fxDisplay = b.fx_rate ? `${parseFloat(b.fx_rate).toFixed(2)}%` : 'N/A';
     return `
       <tr style="background-color: ${bgColor};">
-        <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #1e293b;">${b.name}</td>
-        <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: center; color: #334155;">${b.asx_fee || 'N/A'}</td>
-        <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: center; color: #334155;">${b.us_fee || 'N/A'}</td>
+        <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; font-weight: 600; color: #1e293b;">${esc(b.name)}</td>
+        <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: center; color: #334155;">${esc(b.asx_fee) || 'N/A'}</td>
+        <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: center; color: #334155;">${esc(b.us_fee) || 'N/A'}</td>
         <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: center; color: #334155;">${fxDisplay}</td>
-        <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: center; color: #334155;">${b.inactivity_fee || 'None'}</td>
+        <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: center; color: #334155;">${esc(b.inactivity_fee) || 'None'}</td>
         <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: center;">${b.chess_sponsored ? '✅' : '❌'}</td>
-        <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: center; font-weight: 600; color: #15803d;">${b.rating ? `${b.rating}/5` : '–'}</td>
+        <td style="padding: 12px 16px; border-bottom: 1px solid #e2e8f0; text-align: center; font-weight: 600; color: #15803d;">${b.rating ? `${esc(b.rating)}/5` : '–'}</td>
       </tr>`;
   }).join('');
 
