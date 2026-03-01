@@ -605,8 +605,8 @@ export default function AdvertiserIntelligencePage() {
   };
 
   const sortedScorecards = [...scorecards].sort((a, b) => {
-    const av = (a as Record<string, unknown>)[sortField];
-    const bv = (b as Record<string, unknown>)[sortField];
+    const av = (a as unknown as Record<string, unknown>)[sortField];
+    const bv = (b as unknown as Record<string, unknown>)[sortField];
     if (typeof av === "string" && typeof bv === "string") return sortDir === "asc" ? av.localeCompare(bv) : bv.localeCompare(av);
     if (typeof av === "number" && typeof bv === "number") return sortDir === "asc" ? av - bv : bv - av;
     return 0;
