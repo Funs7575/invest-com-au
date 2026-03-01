@@ -45,7 +45,7 @@ export interface Broker {
   editors_pick: boolean;
   status: string;
   review_content?: string;
-  fee_audit?: any;
+  fee_audit?: Record<string, string | number | null>;
   markets?: string[];
   regulated_by?: string;
   year_founded?: number;

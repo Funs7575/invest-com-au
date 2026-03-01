@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
 import { trackEvent } from "@/lib/tracking";
 import Icon from "@/components/Icon";
+import { CURRENT_YEAR } from "@/lib/seo";
 import { useSubscription } from "@/lib/hooks/useSubscription";
 
 const MIN_ENGAGEMENT_MS = 15_000; // Must be on page 15s before popup can fire
@@ -188,7 +189,7 @@ export default function ExitIntentPopup() {
           <Icon name="bar-chart" size={36} className="text-slate-200 mx-auto mb-3" />
           <h2 id="exit-popup-title" className="text-xl font-extrabold mb-1">Wait — Before You Go</h2>
           <p className="text-sm text-slate-200">
-            Get our free 2026 broker fee comparison PDF. See exactly what every platform charges.
+            Get our free {CURRENT_YEAR} broker fee comparison PDF. See exactly what every platform charges.
           </p>
         </div>
 

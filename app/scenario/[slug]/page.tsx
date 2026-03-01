@@ -261,7 +261,7 @@ export default async function ScenarioPage({
                   <div className="flex gap-2 shrink-0 w-full sm:w-auto">
                     <Link
                       href={`/broker/${b.slug}`}
-                      className="flex-1 sm:flex-initial text-center px-3 py-2.5 md:py-2 text-xs md:text-sm border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors min-h-[40px] inline-flex items-center justify-center"
+                      className="flex-1 sm:flex-initial text-center px-3 py-2.5 md:py-2 text-xs md:text-sm border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors min-h-[44px] inline-flex items-center justify-center"
                     >
                       Review
                     </Link>
@@ -269,7 +269,7 @@ export default async function ScenarioPage({
                       href={getAffiliateLink(b)}
                       target="_blank"
                       rel={AFFILIATE_REL}
-                      className="flex-1 sm:flex-initial text-center px-3 py-2.5 md:py-2 text-xs md:text-sm bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors min-h-[40px] inline-flex items-center justify-center"
+                      className="flex-1 sm:flex-initial text-center px-3 py-2.5 md:py-2 text-xs md:text-sm bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition-colors min-h-[44px] inline-flex items-center justify-center"
                     >
                       {b.cta_text || `Visit ${b.name}`}
                     </a>
@@ -328,7 +328,7 @@ export default async function ScenarioPage({
                     <Link
                       key={i}
                       href={link.href}
-                      className="px-2.5 md:px-3 py-1.5 md:py-1.5 bg-white border border-slate-200 rounded-full text-xs md:text-sm text-slate-700 hover:border-slate-700 hover:text-slate-900 transition-colors min-h-[36px] inline-flex items-center"
+                      className="px-2.5 md:px-3 py-1.5 md:py-1.5 bg-white border border-slate-200 rounded-full text-xs md:text-sm text-slate-700 hover:border-slate-700 hover:text-slate-900 transition-colors min-h-[44px] inline-flex items-center"
                     >
                       {link.label}
                     </Link>

@@ -110,7 +110,7 @@ export async function getPlacementWinners(
     if (!res.ok) return [];
 
     const data = await res.json();
-    return (data.winners || []).map((w: any) => ({
+    return (data.winners || []).map((w: PlacementWinner) => ({
       broker_slug: w.broker_slug,
       campaign_id: w.campaign_id,
       inventory_type: w.inventory_type,

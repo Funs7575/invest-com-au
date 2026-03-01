@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useUser } from "@/lib/hooks/useUser";
+import { CURRENT_YEAR } from "@/lib/seo";
 import ThemeToggle from "@/components/ThemeToggle";
 
 const navItems = [
@@ -17,7 +18,7 @@ const navItems = [
 ];
 
 const popularLinks = [
-  { label: "Best Brokers 2026", href: "/article/best-share-trading-platforms-australia" },
+  { label: `Best Brokers ${CURRENT_YEAR}`, href: "/article/best-share-trading-platforms-australia" },
   { label: "How to Invest", href: "/article/how-to-invest-australia" },
   { label: "Best ETFs", href: "/article/best-etfs-australia" },
   { label: "CommSec vs Stake", href: "/versus?vs=commsec,stake" },

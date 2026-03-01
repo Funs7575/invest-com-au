@@ -98,7 +98,7 @@ export default function LoginClient() {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} noValidate className="space-y-4">
             <div>
               <label htmlFor="email" className="block text-sm font-semibold text-slate-700 mb-1">
                 Email address

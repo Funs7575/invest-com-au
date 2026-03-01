@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Broker, UserReview, BrokerReviewStats, SwitchStory } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
+import { CURRENT_YEAR } from "@/lib/seo";
 import { ADVERTISER_DISCLOSURE_SHORT, GENERAL_ADVICE_WARNING, PDS_CONSIDERATION } from "@/lib/compliance";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import StickyCTABar from "@/components/StickyCTABar";
@@ -195,7 +196,7 @@ export default function BrokerReviewClient({
               {b.icon || b.name.charAt(0)}
             </div>
             <div className="min-w-0">
-              <h1 className="text-3xl md:text-4xl font-extrabold">{b.name} Review (2026)</h1>
+              <h1 className="text-3xl md:text-4xl font-extrabold">{b.name} Review ({CURRENT_YEAR})</h1>
               <p className="text-slate-600 mt-1">{b.tagline}</p>
             </div>
           </div>

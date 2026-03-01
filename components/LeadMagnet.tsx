@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { trackEvent } from "@/lib/tracking";
+import { CURRENT_YEAR } from "@/lib/seo";
 import { isValidEmailClient as isValidEmail } from "@/lib/validate-email";
 
 export default function LeadMagnet() {
@@ -59,7 +60,7 @@ export default function LeadMagnet() {
       <div className="text-[0.62rem] md:text-xs font-bold uppercase tracking-wider mb-1 md:mb-2 text-slate-700">
         Free Download
       </div>
-      <h3 className="text-base md:text-xl font-extrabold mb-1 md:mb-2 text-slate-900">2026 Fee Audit PDF</h3>
+      <h3 className="text-base md:text-xl font-extrabold mb-1 md:mb-2 text-slate-900">{CURRENT_YEAR} Fee Audit PDF</h3>
       <p className="text-xs md:text-sm text-slate-600 mb-2.5 md:mb-4 leading-relaxed">
         <span className="hidden md:inline">See exactly what every Australian broker charges — brokerage, FX fees, inactivity fees, and hidden costs. Compare side-by-side in one document.</span>
         <span className="md:hidden">Every broker&apos;s fees compared side-by-side — brokerage, FX, inactivity &amp; hidden costs.</span>
@@ -72,8 +73,8 @@ export default function LeadMagnet() {
           </div>
           <p className="text-xs md:text-sm text-slate-600">
             {emailSent
-              ? 'We\'ve sent the 2026 Fee Audit to your email.'
-              : 'We\'ll send you the 2026 Fee Audit shortly.'}
+              ? `We've sent the ${CURRENT_YEAR} Fee Audit to your email.`
+              : `We'll send you the ${CURRENT_YEAR} Fee Audit shortly.`}
           </p>
         </div>
       ) : (

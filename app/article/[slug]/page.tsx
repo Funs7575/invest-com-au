@@ -11,7 +11,7 @@ import SponsoredBrokerWidget from "@/components/SponsoredBrokerWidget";
 import ComparisonTableSkeleton from "@/components/ComparisonTableSkeleton";
 import AuthorByline from "@/components/AuthorByline";
 import OnThisPage from "@/components/OnThisPage";
-import { absoluteUrl, breadcrumbJsonLd, articleAuthorJsonLd, articleFaqJsonLd, SITE_NAME } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd, articleAuthorJsonLd, articleFaqJsonLd, SITE_NAME, CURRENT_MONTH_YEAR } from "@/lib/seo";
 import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import { CATEGORY_COLORS, getBestPagesForArticle } from "@/lib/internal-links";
 import Icon from "@/components/Icon";
@@ -261,7 +261,7 @@ export default async function ArticlePage({
               )}
               {isEnhanced && (
                 <span className="text-[0.69rem] md:text-xs font-semibold bg-slate-700/20 text-slate-700 px-2 md:px-2.5 py-0.5 rounded-full">
-                  Updated Feb 2026
+                  Updated {CURRENT_MONTH_YEAR}
                 </span>
               )}
             </div>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { trackEvent } from "@/lib/tracking";
+import { CURRENT_YEAR } from "@/lib/seo";
 import { useSubscription } from "@/lib/hooks/useSubscription";
 
 export type LeadSegment = "fee-audit" | "smsf-checklist" | "us-shares-guide" | "switching-checklist" | "beginner-guide";
@@ -21,13 +22,13 @@ interface SegmentConfig {
 const SEGMENTS: Record<LeadSegment, SegmentConfig> = {
   "fee-audit": {
     badge: "Free Download",
-    title: "2026 Fee Audit PDF",
+    title: `${CURRENT_YEAR} Fee Audit PDF`,
     description: "See exactly what every Australian broker charges — brokerage, FX fees, inactivity fees, and hidden costs. Compare side-by-side in one document.",
     buttonText: "Get the Free PDF",
     consentText: "I agree to receive the Fee Audit PDF and occasional updates from Invest.com.au.",
     source: "lead-magnet-fee-audit",
     successTitle: "Check your inbox!",
-    successText: "We've sent the 2026 Fee Audit to your email.",
+    successText: `We've sent the ${CURRENT_YEAR} Fee Audit to your email.`,
   },
   "smsf-checklist": {
     badge: "Free SMSF Resource",

@@ -1,16 +1,18 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { getAllCategories } from "@/lib/best-broker-categories";
-import { absoluteUrl, breadcrumbJsonLd, REVIEW_AUTHOR } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd, REVIEW_AUTHOR, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 
+const bestTitle = `Best Brokers in Australia (${CURRENT_YEAR}) — By Category`;
+
 export const metadata: Metadata = {
-  title: "Best Brokers in Australia (2026) — By Category",
+  title: bestTitle,
   description:
     "Find the best Australian broker for your needs. 20 category guides covering beginners, low fees, ETFs, dividends, day trading, international shares, and more.",
   alternates: { canonical: "/best" },
   openGraph: {
-    title: "Best Brokers in Australia (2026) — By Category",
+    title: bestTitle,
     description:
       "Find the best Australian broker for your needs. 20 category guides covering beginners, low fees, ETFs, dividends, day trading, international shares, and more.",
     url: "/best",

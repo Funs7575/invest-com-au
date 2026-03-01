@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
 import type { Metadata } from "next";
 import VersusClient from "../VersusClient";
-import { SITE_URL } from "@/lib/seo";
+import { SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 
 export const revalidate = 1800;
 
@@ -71,7 +71,7 @@ export async function generateMetadata({
     .filter(Boolean) as typeof brokers;
 
   const names = ordered.map((b) => b.name);
-  const title = `${names.join(" vs ")} — Side-by-Side Comparison (2026)`;
+  const title = `${names.join(" vs ")} — Side-by-Side Comparison (${CURRENT_YEAR})`;
   const description = `Compare ${names.join(" and ")} head to head. See fees, CHESS sponsorship, ratings, pros & cons, and our honest pick for Australian investors.`;
   const canonical = `/versus/${slugs}`;
 

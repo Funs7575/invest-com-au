@@ -2,18 +2,20 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
-import { absoluteUrl, breadcrumbJsonLd, dealsHubJsonLd, REVIEW_AUTHOR } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd, dealsHubJsonLd, REVIEW_AUTHOR, CURRENT_YEAR } from "@/lib/seo";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import { sortWithSponsorship } from "@/lib/sponsorship";
 import DealsClient from "./DealsClient";
 
+const dealsTitle = `Broker Deals & Promotions (${CURRENT_YEAR}) — Verified Offers`;
+
 export const metadata: Metadata = {
-  title: "Broker Deals & Promotions (2026) — Verified Offers",
+  title: dealsTitle,
   description:
     "Current verified deals and promotions from Australian share trading platforms and crypto exchanges. Updated regularly with expiry dates and terms.",
   alternates: { canonical: "/deals" },
   openGraph: {
-    title: "Broker Deals & Promotions (2026) — Verified Offers",
+    title: dealsTitle,
     description:
       "Current verified deals and promotions from Australian share trading platforms and crypto exchanges. Updated regularly.",
     url: "/deals",

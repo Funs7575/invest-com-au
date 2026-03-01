@@ -11,6 +11,7 @@ import {
   qaPageJsonLd,
   SITE_NAME,
   REVIEW_AUTHOR,
+  CURRENT_YEAR,
 } from "@/lib/seo";
 import { scoreBrokerSimilarity } from "@/lib/internal-links";
 import QASection from "@/components/QASection";
@@ -29,7 +30,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   if (!broker) return { title: 'Broker Not Found' };
 
-  const title = `${broker.name} Review (2026)`;
+  const title = `${broker.name} Review (${CURRENT_YEAR})`;
   const description = broker.tagline || `Honest review of ${broker.name}. Fees, pros, cons, and our verdict.`;
   const ogImageUrl = `/api/og?title=${encodeURIComponent(`${broker.name} Review`)}&subtitle=${encodeURIComponent(broker.rating ? `${broker.rating}/5 Rating — Fees, Pros & Cons` : 'Honest Review — Fees, Pros & Cons')}&type=broker`;
 

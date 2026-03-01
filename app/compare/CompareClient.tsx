@@ -313,7 +313,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         <div className="md:hidden flex items-center gap-2 mb-3">
           <button
             onClick={() => setSheetOpen(true)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2.5 min-h-[40px] bg-slate-100 text-slate-700 text-xs font-semibold rounded-full hover:bg-slate-200 transition-colors shrink-0"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2.5 min-h-[44px] bg-slate-100 text-slate-700 text-xs font-semibold rounded-full hover:bg-slate-200 transition-colors shrink-0"
           >
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
               <path strokeLinecap="round" d="M4 6h16M7 12h10M10 18h4" />
@@ -327,7 +327,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search..."
-              className="w-full px-3 py-2.5 pl-8 min-h-[40px] border border-slate-200 rounded-full text-xs focus:outline-none focus:border-slate-400"
+              className="w-full px-3 py-2.5 pl-8 min-h-[44px] border border-slate-200 rounded-full text-xs focus:outline-none focus:border-slate-400"
               aria-label="Search brokers"
             />
             {searchQuery && (
