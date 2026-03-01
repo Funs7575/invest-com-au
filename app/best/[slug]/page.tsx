@@ -138,7 +138,7 @@ export default async function BestBrokerPage({
         answered_by: a.answered_by,
         author_slug: a.author_slug,
         display_name: a.display_name,
-        is_accepted: a.is_accepted,
+        is_accepted: a.is_accepted ?? false,
         created_at: a.created_at,
       })),
   }));
