@@ -9,12 +9,11 @@ import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE_SHORT, CRYPTO_WARNING, SP
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import RiskWarningInline from "@/components/RiskWarningInline";
 import Icon from "@/components/Icon";
-import { applyQuizSponsorBoost, isSponsored, getPlacementWinners, type PlacementWinner } from "@/lib/sponsorship";
+import { isSponsored, getPlacementWinners, type PlacementWinner } from "@/lib/sponsorship";
+import { scoreQuizResults, type WeightKey } from "@/lib/quiz-scoring";
 import SponsorBadge from "@/components/SponsorBadge";
 import CohortInsights from "@/components/CohortInsights";
 import ProUpsellBanner from "@/components/ProUpsellBanner";
-
-type WeightKey = "beginner" | "low_fee" | "us_shares" | "smsf" | "crypto" | "advanced";
 
 interface QuizWeight {
   broker_slug: string;
@@ -205,52 +204,7 @@ export default function QuizPage() {
 
   // P1 #5: Memoize results to avoid recalculating on every render
   const results = useMemo(() => {
-    const scored = Object.entries(weights).map(([slug, scores]) => {
-      let total = 0;
-
-      answers.forEach(key => {
-        const keyMap: Record<string, WeightKey> = {
-          crypto: 'crypto', trade: 'advanced', income: 'low_fee', grow: 'beginner',
-          beginner: 'beginner', intermediate: 'low_fee', pro: 'advanced',
-          small: 'beginner', medium: 'low_fee', large: 'us_shares', whale: 'advanced',
-          fees: 'low_fee', safety: 'beginner', tools: 'advanced', simple: 'beginner',
-        };
-        const weightKey = keyMap[key] || 'beginner';
-        total += (scores[weightKey] || 0);
-      });
-
-      const broker = brokers.find(b => b.slug === slug);
-      if (broker?.rating) total *= (1 + (broker.rating - 4) * 0.1);
-
-      return { slug, total, broker: broker || null };
-    });
-
-    // P2 #14: Tiebreaker — sort by score, then rating, then name
-    scored.sort((a, b) =>
-      b.total - a.total
-      || (b.broker?.rating ?? 0) - (a.broker?.rating ?? 0)
-      || (a.broker?.name ?? '').localeCompare(b.broker?.name ?? '')
-    );
-
-    // Apply subtle sponsor boost: a featured_partner in positions 1-5
-    // gets swapped up by 1 position (preserves trust — max 1 slot)
-    let boosted = applyQuizSponsorBoost(scored, 1, 5);
-
-    // Apply marketplace campaign boost: if a quiz-boost campaign winner
-    // exists in the scored list (positions 1-5), swap them up by 1 position
-    if (quizCampaignWinners.length > 0) {
-      const campaignSlugs = new Set(quizCampaignWinners.map(w => w.broker_slug));
-      const campaignIdx = boosted.findIndex(
-        (r, i) => i >= 1 && i <= 5 && r.broker && campaignSlugs.has(r.broker.slug)
-      );
-      if (campaignIdx > 0) {
-        const temp = boosted[campaignIdx];
-        boosted[campaignIdx] = boosted[campaignIdx - 1];
-        boosted[campaignIdx - 1] = temp;
-      }
-    }
-
-    return boosted.slice(0, 3);
+    return scoreQuizResults(answers, weights, brokers, quizCampaignWinners);
   }, [answers, weights, brokers, quizCampaignWinners]);
 
   // Check if any result is a crypto broker (for crypto warning)
