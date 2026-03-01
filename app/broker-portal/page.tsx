@@ -21,6 +21,9 @@ export default function BrokerDashboard() {
   const [prevClicks, setPrevClicks] = useState(0);
   const [prevSpend, setPrevSpend] = useState(0);
   const [prevConversions, setPrevConversions] = useState(0);
+  const [thirtyDaySpend, setThirtyDaySpend] = useState(0);
+  const [thirtyDayConvValue, setThirtyDayConvValue] = useState(0);
+  const [thirtyDayConversions, setThirtyDayConversions] = useState(0);
   const [loading, setLoading] = useState(true);
   const [firstName, setFirstName] = useState("");
   const [accountCreatedAt, setAccountCreatedAt] = useState<string | undefined>();
@@ -112,6 +115,28 @@ export default function BrokerDashboard() {
         setPrevClicks(prevHalf.reduce((s, [, v]) => s + v.clicks, 0));
         setPrevSpend(prevHalf.reduce((s, [, v]) => s + v.spend, 0));
         setPrevConversions(prevHalf.reduce((s, [, v]) => s + v.conversions, 0));
+      }
+
+      // 30-day ROI data
+      const monthAgo = new Date(Date.now() - 30 * 86400000).toISOString().slice(0, 10);
+      const [{ data: monthlyStats }, { data: monthlyConvs }] = await Promise.all([
+        supabase
+          .from("campaign_daily_stats")
+          .select("spend_cents, conversions")
+          .eq("broker_slug", slug)
+          .gte("stat_date", monthAgo),
+        supabase
+          .from("conversion_events")
+          .select("conversion_value_cents")
+          .eq("broker_slug", slug)
+          .gte("created_at", new Date(Date.now() - 30 * 86400000).toISOString()),
+      ]);
+      if (monthlyStats) {
+        setThirtyDaySpend(monthlyStats.reduce((s, r) => s + (r.spend_cents || 0), 0));
+        setThirtyDayConversions(monthlyStats.reduce((s, r) => s + (r.conversions || 0), 0));
+      }
+      if (monthlyConvs) {
+        setThirtyDayConvValue(monthlyConvs.reduce((s, r) => s + (r.conversion_value_cents || 0), 0));
       }
 
       setLoading(false);
@@ -319,6 +344,57 @@ export default function BrokerDashboard() {
                 )}
               </div>
             </div>
+          </div>
+        );
+      })()}
+
+      {/* ROI at a Glance — shown when there's spend data */}
+      {thirtyDaySpend > 0 && (() => {
+        const roi = thirtyDaySpend > 0 ? ((thirtyDayConvValue - thirtyDaySpend) / thirtyDaySpend) * 100 : 0;
+        const costPerConv = thirtyDayConversions > 0 ? thirtyDaySpend / thirtyDayConversions / 100 : 0;
+        const isProfitable = thirtyDayConvValue > thirtyDaySpend;
+        return (
+          <div className={`rounded-xl border p-5 hover-lift ${isProfitable ? "bg-emerald-50 border-emerald-200" : "bg-white border-slate-200"}`}>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="font-bold text-slate-900 text-sm flex items-center gap-1.5">
+                <Icon name="trending-up" size={14} className={isProfitable ? "text-emerald-600" : "text-slate-400"} />
+                30-Day ROI
+              </h2>
+              <Link href="/broker-portal/analytics" className="text-xs text-slate-500 hover:text-slate-700 hover:underline">
+                Full Analytics →
+              </Link>
+            </div>
+            <div className="grid grid-cols-4 gap-3">
+              <div>
+                <p className="text-[0.62rem] text-slate-500 font-medium uppercase tracking-wide">Spend</p>
+                <p className="text-lg font-extrabold text-slate-900">${(thirtyDaySpend / 100).toFixed(0)}</p>
+              </div>
+              <div>
+                <p className="text-[0.62rem] text-slate-500 font-medium uppercase tracking-wide">Revenue</p>
+                <p className="text-lg font-extrabold text-emerald-700">${(thirtyDayConvValue / 100).toFixed(0)}</p>
+              </div>
+              <div>
+                <p className="text-[0.62rem] text-slate-500 font-medium uppercase tracking-wide">ROI</p>
+                <p className={`text-lg font-extrabold ${isProfitable ? "text-emerald-700" : "text-red-600"}`}>{roi > 0 ? "+" : ""}{roi.toFixed(0)}%</p>
+              </div>
+              <div>
+                <p className="text-[0.62rem] text-slate-500 font-medium uppercase tracking-wide">Cost/Conv</p>
+                <p className="text-lg font-extrabold text-slate-900">{thirtyDayConversions > 0 ? `$${costPerConv.toFixed(0)}` : "—"}</p>
+              </div>
+            </div>
+            {thirtyDayConversions > 0 && (
+              <div className="mt-3 h-2 bg-slate-200 rounded-full overflow-hidden relative">
+                <div className={`h-full rounded-full ${isProfitable ? "bg-emerald-500" : "bg-red-400"}`}
+                  style={{ width: `${Math.min(100, Math.max(5, (thirtyDayConvValue / Math.max(thirtyDaySpend, 1)) * 50))}%` }} />
+                <div className="absolute h-full w-0.5 bg-slate-900" style={{ left: "50%" }} title="Break-even" />
+              </div>
+            )}
+            {thirtyDayConversions > 0 && (
+              <div className="flex items-center gap-3 mt-1.5 text-[0.58rem] text-slate-400">
+                <span className="flex items-center gap-1"><span className={`w-1.5 h-1.5 rounded ${isProfitable ? "bg-emerald-500" : "bg-red-400"}`} /> Revenue vs Spend</span>
+                <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded bg-slate-900" /> Break-even</span>
+              </div>
+            )}
           </div>
         );
       })()}

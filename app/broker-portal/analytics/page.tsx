@@ -600,6 +600,129 @@ export default function AnalyticsPage() {
               ))}
             </div>
           </div>
+
+          {/* ROI Projection */}
+          {dailyTotals.length >= 3 && (() => {
+            const daysInPeriod = dailyTotals.length;
+            const dailyAvgSpend = totalSpend / daysInPeriod;
+            const dailyAvgRevenue = totalConversionValue / daysInPeriod;
+            const dailyAvgConversions = totalConversions / daysInPeriod;
+            const dailyAvgClicks = totalClicks / daysInPeriod;
+            const projections = [30, 60, 90].map(d => {
+              const pSpend = dailyAvgSpend * d;
+              const pRevenue = dailyAvgRevenue * d;
+              const pProfit = pRevenue - pSpend;
+              const pROI = pSpend > 0 ? (pProfit / pSpend) * 100 : 0;
+              const pConversions = Math.round(dailyAvgConversions * d);
+              return { days: d, spend: pSpend, revenue: pRevenue, profit: pProfit, roi: pROI, conversions: pConversions };
+            });
+            // Break-even analysis
+            const cumulativeData: { date: string; cumSpend: number; cumRevenue: number }[] = [];
+            let cumSpend = 0;
+            let cumRevenue = 0;
+            const convByDate = new Map<string, number>();
+            for (const c of conversions) {
+              const date = c.created_at.slice(0, 10);
+              convByDate.set(date, (convByDate.get(date) || 0) + (c.conversion_value_cents || 0));
+            }
+            let breakEvenDay: string | null = null;
+            for (const d of dailyTotals) {
+              cumSpend += d.spend;
+              cumRevenue += convByDate.get(d.date) || 0;
+              cumulativeData.push({ date: d.date, cumSpend, cumRevenue });
+              if (!breakEvenDay && cumRevenue >= cumSpend && cumSpend > 0) {
+                breakEvenDay = d.date;
+              }
+            }
+            return (
+              <>
+                <div className="bg-white rounded-xl border border-slate-200 p-5">
+                  <h2 className="font-bold text-slate-900 mb-1 flex items-center gap-1.5">
+                    ROI Projection
+                    <InfoTip text="Based on your current daily averages projected forward. Actual results may vary." />
+                  </h2>
+                  <p className="text-xs text-slate-500 mb-4">If current trends continue at ${(dailyAvgSpend / 100).toFixed(0)}/day spend, {dailyAvgClicks.toFixed(1)} clicks/day</p>
+                  <div className="grid grid-cols-3 gap-3">
+                    {projections.map(p => {
+                      const ok = p.profit > 0;
+                      return (
+                        <div key={p.days} className={`rounded-lg p-4 border ${ok ? "bg-emerald-50 border-emerald-200" : "bg-red-50 border-red-200"}`}>
+                          <p className="text-xs text-slate-500 font-bold uppercase tracking-wide">{p.days}-Day Forecast</p>
+                          <div className="space-y-1.5 mt-2">
+                            <div className="flex justify-between text-xs">
+                              <span className="text-slate-500">Spend</span>
+                              <span className="font-bold text-slate-900">${(p.spend / 100).toFixed(0)}</span>
+                            </div>
+                            <div className="flex justify-between text-xs">
+                              <span className="text-slate-500">Revenue</span>
+                              <span className="font-bold text-emerald-700">${(p.revenue / 100).toFixed(0)}</span>
+                            </div>
+                            <div className="flex justify-between text-xs">
+                              <span className="text-slate-500">Conversions</span>
+                              <span className="font-bold text-slate-900">{p.conversions}</span>
+                            </div>
+                            <div className="border-t border-slate-200 pt-1.5 flex justify-between text-xs">
+                              <span className="text-slate-500 font-medium">Profit</span>
+                              <span className={`font-extrabold ${ok ? "text-emerald-700" : "text-red-600"}`}>
+                                {ok ? "+" : ""}${(p.profit / 100).toFixed(0)}
+                              </span>
+                            </div>
+                            <div className="flex justify-between text-xs">
+                              <span className="text-slate-500 font-medium">ROI</span>
+                              <span className={`font-extrabold ${ok ? "text-emerald-700" : "text-red-600"}`}>
+                                {p.roi > 0 ? "+" : ""}{p.roi.toFixed(0)}%
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Break-even Analysis */}
+                <div className="bg-white rounded-xl border border-slate-200 p-5">
+                  <h2 className="font-bold text-slate-900 mb-1 flex items-center gap-1.5">
+                    Break-even Analysis
+                    <InfoTip text="Shows when your cumulative revenue matches cumulative spend, indicating profitability." />
+                  </h2>
+                  {breakEvenDay ? (
+                    <div className="flex items-center gap-2 bg-emerald-50 rounded-lg px-4 py-3 mt-3 border border-emerald-200">
+                      <Icon name="check-circle" size={16} className="text-emerald-600 shrink-0" />
+                      <div>
+                        <p className="text-sm font-bold text-emerald-800">Break-even reached on {breakEvenDay}</p>
+                        <p className="text-xs text-emerald-600 mt-0.5">
+                          Revenue overtook spend — cumulative profit: ${((cumRevenue - cumSpend) / 100).toFixed(2)}
+                        </p>
+                      </div>
+                    </div>
+                  ) : totalSpend > 0 ? (
+                    <div className="space-y-3 mt-3">
+                      <div className="flex items-center gap-2 bg-amber-50 rounded-lg px-4 py-3 border border-amber-200">
+                        <Icon name="clock" size={16} className="text-amber-600 shrink-0" />
+                        <div>
+                          <p className="text-sm font-bold text-amber-800">Not yet profitable</p>
+                          <p className="text-xs text-amber-600 mt-0.5">
+                            Revenue gap: ${((totalSpend - totalConversionValue) / 100).toFixed(2)} to reach break-even
+                            {costPerConversion > 0 && dailyAvgRevenue > dailyAvgSpend && (
+                              <> — estimated {Math.ceil((totalSpend - totalConversionValue) / (dailyAvgRevenue - dailyAvgSpend))} days at current rate</>
+                            )}
+                          </p>
+                        </div>
+                      </div>
+                      {totalConversions > 0 && (
+                        <div className="bg-slate-50 rounded-lg p-3">
+                          <p className="text-xs text-slate-500 font-medium mb-1">Min. customer value needed for break-even</p>
+                          <p className="text-lg font-extrabold text-slate-900">${costPerConversion.toFixed(2)}</p>
+                          <p className="text-[0.62rem] text-slate-400 mt-0.5">If your avg customer is worth more than this, you&apos;re effectively profitable</p>
+                        </div>
+                      )}
+                    </div>
+                  ) : null}
+                </div>
+              </>
+            );
+          })()}
         </>
       )}
 

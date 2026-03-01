@@ -375,6 +375,123 @@ function BudgetEstimator({ rate, dailyBudget, totalBudget, type, monthlyImpressi
   );
 }
 
+/* ─────────────────────── ROI estimator ─────────────────────── */
+function ROIEstimator({ rate, type, monthlyImpressions, avgCtrPct }: {
+  rate: number; type: string; monthlyImpressions: number; avgCtrPct: number;
+}) {
+  const [convValue, setConvValue] = useState(50);
+  const [convRateOverride, setConvRateOverride] = useState(3.2);
+
+  if (!rate) return null;
+  const ctr = avgCtrPct / 100;
+  const estClicksMonth = Math.round(monthlyImpressions * ctr);
+  const estMonthlyCost = type === "cpc" ? estClicksMonth * (rate / 100) : rate / 100;
+  const estConversions = estClicksMonth * (convRateOverride / 100);
+  const estRevenue = estConversions * convValue;
+  const estProfit = estRevenue - estMonthlyCost;
+  const estROI = estMonthlyCost > 0 ? (estProfit / estMonthlyCost) * 100 : 0;
+  const breakEvenConversions = convValue > 0 ? Math.ceil(estMonthlyCost / convValue) : 0;
+  const isProfitable = estProfit > 0;
+
+  return (
+    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 space-y-3" style={{ animation: "resultCardIn 0.3s ease-out" }}>
+      <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+        <Icon name="dollar-sign" size={12} className="text-blue-500" />
+        ROI Estimator
+      </h4>
+
+      {/* Inputs */}
+      <div className="grid grid-cols-2 gap-2">
+        <div>
+          <label className="text-[0.6rem] text-slate-500 font-medium block mb-0.5">Avg Customer Value ($)</label>
+          <input
+            type="number"
+            min={1}
+            value={convValue}
+            onChange={e => setConvValue(Math.max(1, Number(e.target.value) || 50))}
+            className="w-full px-2 py-1.5 border border-slate-200 rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-blue-300"
+          />
+        </div>
+        <div>
+          <label className="text-[0.6rem] text-slate-500 font-medium block mb-0.5">Conv. Rate (%)</label>
+          <input
+            type="number"
+            step={0.1}
+            min={0.1}
+            max={100}
+            value={convRateOverride}
+            onChange={e => setConvRateOverride(Math.max(0.1, Math.min(100, Number(e.target.value) || 3.2)))}
+            className="w-full px-2 py-1.5 border border-slate-200 rounded-md text-xs focus:outline-none focus:ring-1 focus:ring-blue-300"
+          />
+        </div>
+      </div>
+
+      {/* Results */}
+      <div className="grid grid-cols-2 gap-2">
+        <div className="bg-white rounded-lg p-2.5 border border-slate-200">
+          <p className="text-[0.6rem] text-slate-400 font-medium">Est. Conversions/mo</p>
+          <p className="text-sm font-extrabold text-purple-700">~{estConversions.toFixed(1)}</p>
+        </div>
+        <div className="bg-white rounded-lg p-2.5 border border-slate-200">
+          <p className="text-[0.6rem] text-slate-400 font-medium">Est. Revenue/mo</p>
+          <p className="text-sm font-extrabold text-emerald-700">${estRevenue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</p>
+        </div>
+        <div className={`rounded-lg p-2.5 border ${isProfitable ? "bg-emerald-50 border-emerald-200" : "bg-red-50 border-red-200"}`}>
+          <p className="text-[0.6rem] text-slate-400 font-medium">Projected Profit/mo</p>
+          <p className={`text-sm font-extrabold ${isProfitable ? "text-emerald-700" : "text-red-700"}`}>
+            {isProfitable ? "+" : ""}${estProfit.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+          </p>
+        </div>
+        <div className={`rounded-lg p-2.5 border ${isProfitable ? "bg-emerald-50 border-emerald-200" : "bg-red-50 border-red-200"}`}>
+          <p className="text-[0.6rem] text-slate-400 font-medium">Projected ROI</p>
+          <p className={`text-sm font-extrabold ${isProfitable ? "text-emerald-700" : "text-red-700"}`}>
+            {estROI > 0 ? "+" : ""}{estROI.toFixed(0)}%
+          </p>
+        </div>
+      </div>
+
+      {/* Break-even */}
+      <div className="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-slate-200">
+        <Icon name="target" size={12} className="text-blue-500 shrink-0" />
+        <p className="text-[0.6rem] text-slate-700 font-medium">
+          Break-even at <span className="font-extrabold">{breakEvenConversions}</span> conversion{breakEvenConversions !== 1 ? "s" : ""}/mo
+          (need {estClicksMonth > 0 ? ((breakEvenConversions / estClicksMonth) * 100).toFixed(1) : "—"}% conv. rate)
+        </p>
+      </div>
+
+      {/* Quick scenarios */}
+      <div>
+        <p className="text-[0.55rem] text-slate-400 font-medium uppercase tracking-wider mb-1.5">Quick Scenarios</p>
+        <div className="space-y-1">
+          {[
+            { label: "Conservative", rate: 2.0 },
+            { label: "Average", rate: 3.2 },
+            { label: "Optimistic", rate: 5.0 },
+          ].map(scenario => {
+            const sConv = estClicksMonth * (scenario.rate / 100);
+            const sRev = sConv * convValue;
+            const sProfit = sRev - estMonthlyCost;
+            const sROI = estMonthlyCost > 0 ? (sProfit / estMonthlyCost) * 100 : 0;
+            const sOk = sProfit > 0;
+            return (
+              <div key={scenario.label} className="flex items-center justify-between bg-white rounded-md px-2.5 py-1.5 border border-slate-100 text-[0.6rem]">
+                <span className="text-slate-500">{scenario.label} ({scenario.rate}% conv)</span>
+                <span className={`font-bold ${sOk ? "text-emerald-600" : "text-red-500"}`}>
+                  {sOk ? "+" : ""}${sProfit.toFixed(0)}/mo ({sROI > 0 ? "+" : ""}{sROI.toFixed(0)}% ROI)
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <p className="text-[0.5rem] text-slate-400 italic">
+        Based on {monthlyImpressions.toLocaleString()} impressions × {avgCtrPct.toFixed(1)}% CTR × {convRateOverride}% conv. rate × ${convValue} customer value
+      </p>
+    </div>
+  );
+}
+
 /* ─────────────────────── Main page ─────────────────────── */
 export default function NewCampaignPage() {
   const router = useRouter();
@@ -752,21 +869,30 @@ export default function NewCampaignPage() {
                 </div>
               )}
 
-              {/* Budget estimator */}
+              {/* Budget estimator + ROI estimator */}
               {(() => {
                 const hasRealData = (selectedPlacement.monthly_impressions ?? 0) > 0;
                 const monthlyImpressions = hasRealData ? selectedPlacement.monthly_impressions! : visualMeta.fallbackReach;
                 const avgCtrPct = hasRealData ? Number(selectedPlacement.avg_ctr_pct ?? 0) : visualMeta.fallbackAvgCtr;
+                const rateVal = rateCents ? Math.round(parseFloat(rateCents) * 100) : 0;
                 return (
-                  <BudgetEstimator
-                    rate={rateCents ? Math.round(parseFloat(rateCents) * 100) : 0}
-                    dailyBudget={dailyBudget ? Math.round(parseFloat(dailyBudget) * 100) : 0}
-                    totalBudget={totalBudget ? Math.round(parseFloat(totalBudget) * 100) : 0}
-                    type={selectedPlacement.inventory_type}
-                    monthlyImpressions={monthlyImpressions}
-                    avgCtrPct={avgCtrPct}
-                    isRealData={hasRealData}
-                  />
+                  <>
+                    <BudgetEstimator
+                      rate={rateVal}
+                      dailyBudget={dailyBudget ? Math.round(parseFloat(dailyBudget) * 100) : 0}
+                      totalBudget={totalBudget ? Math.round(parseFloat(totalBudget) * 100) : 0}
+                      type={selectedPlacement.inventory_type}
+                      monthlyImpressions={monthlyImpressions}
+                      avgCtrPct={avgCtrPct}
+                      isRealData={hasRealData}
+                    />
+                    <ROIEstimator
+                      rate={rateVal}
+                      type={selectedPlacement.inventory_type}
+                      monthlyImpressions={monthlyImpressions}
+                      avgCtrPct={avgCtrPct}
+                    />
+                  </>
                 );
               })()}
             </>
