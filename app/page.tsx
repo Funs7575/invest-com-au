@@ -13,6 +13,7 @@ import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 import { getMostRecentFeeCheck } from "@/lib/utils";
 import Icon from "@/components/Icon";
+import { ORGANIZATION_JSONLD, SITE_URL } from "@/lib/seo";
 // UserOnboarding modal removed — was blocking first-time visitors (P0 conversion issue)
 
 export const metadata = {
@@ -84,11 +85,51 @@ export default async function HomePage() {
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "Organization",
-            name: "Invest.com.au",
-            url: "https://invest.com.au",
+            ...ORGANIZATION_JSONLD,
             description: "Australia's independent broker comparison platform. Compare fees, features, and safety across every major Australian investment platform.",
-            sameAs: [],
+          }),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: [
+              {
+                "@type": "Question",
+                name: "What is the best broker for beginners in Australia?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "The best beginner broker depends on your goals, but platforms with low fees, simple interfaces, and educational resources — such as Stake, CommSec, and Superhero — consistently rank highest for new investors.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "Which Australian broker has the lowest fees?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Several brokers now offer $0 brokerage on ASX trades, including Stake and Superhero. For US shares, Stake and Moomoo offer $0 USD brokerage. Compare all fee structures at invest.com.au/compare.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "What is CHESS sponsorship and why does it matter?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "CHESS (Clearing House Electronic Subregister System) sponsorship means your shares are held in your name on the ASX register, not in a pooled omnibus account. This provides an extra layer of protection if your broker becomes insolvent.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "How do I choose between Australian brokers?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: `Compare brokers based on brokerage fees, FX rates, available markets, CHESS sponsorship, and platform features. Use our free 60-second quiz at ${SITE_URL}/quiz to get a personalised recommendation.`,
+                },
+              },
+            ],
           }),
         }}
       />
