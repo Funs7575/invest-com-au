@@ -153,14 +153,14 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
   const questions = ((questionsRaw || []) as BrokerQuestion[]).map((q) => ({
     id: q.id,
     question: q.question,
-    display_name: q.display_name,
+    display_name: q.display_name ?? "",
     created_at: q.created_at,
     answers: (q.broker_answers || [])
       .filter((a: BrokerAnswer) => a.status === undefined || a.status === 'approved')
       .map((a: BrokerAnswer) => ({
         id: a.id,
         answer: a.answer,
-        answered_by: a.answered_by,
+        answered_by: a.answered_by ?? "",
         author_slug: a.author_slug,
         display_name: a.display_name,
         is_accepted: a.is_accepted ?? false,
