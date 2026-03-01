@@ -110,23 +110,14 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withSentryConfig(nextConfig, {
-  // Sentry webpack plugin options
+// withSentryConfig wraps the Next.js config for error tracking.
+// Using `as any` because Sentry v9 peer-deps target Next.js ≤15 types,
+// but the runtime integration works fine with Next.js 16.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export default withSentryConfig(nextConfig as any, {
   org: process.env.SENTRY_ORG,
   project: process.env.SENTRY_PROJECT,
-
-  // Only upload source maps during CI/CD builds (not local dev)
   silent: !process.env.CI,
-
-  // Hides source maps from generated client bundles
-  hideSourceMaps: true,
-
-  // Automatically tree-shake Sentry logger statements to reduce bundle size
-  disableLogger: true,
-
-  // Upload source maps to Sentry for debugging
   widenClientFileUpload: true,
-
-  // Tunnel Sentry events through the app to avoid ad blockers
   tunnelRoute: "/monitoring",
-});
+}) as typeof nextConfig;
