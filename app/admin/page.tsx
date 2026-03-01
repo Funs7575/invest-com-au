@@ -144,7 +144,7 @@ export default function AdminDashboard() {
           .select("cost_cents")
           .eq("event_type", "click"),
         // Pro subscribers
-        supabase.rpc("get_active_pro_count").then((res) => res).catch(() => ({ data: null, count: 0 })),
+        Promise.resolve(supabase.rpc("get_active_pro_count")).catch(() => ({ data: null, count: 0 })),
       ]);
 
       // Aggregate clicks by date for chart
