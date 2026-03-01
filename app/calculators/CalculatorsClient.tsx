@@ -861,7 +861,7 @@ function FxFeeCalculator({ brokers, searchParams }: { brokers: Broker[]; searchP
               <div className="flex-1 relative">
                 <div
                   className={`h-7 md:h-9 rounded-lg transition-all duration-500 flex items-center pr-2 md:pr-3 ${
-                    isCheapest ? "bg-slate-700" : isMostExpensive ? "bg-red-400" : "bg-amber"
+                    isCheapest ? "bg-emerald-500" : isMostExpensive ? "bg-red-400" : "bg-amber"
                   }`}
                   style={{ width: `${Math.max(barWidth, 4)}%` }}
                 >
