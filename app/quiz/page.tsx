@@ -10,7 +10,7 @@ import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import RiskWarningInline from "@/components/RiskWarningInline";
 import Icon from "@/components/Icon";
 import { isSponsored, getPlacementWinners, type PlacementWinner } from "@/lib/sponsorship";
-import { scoreQuizResults, type WeightKey } from "@/lib/quiz-scoring";
+import { scoreQuizResults, type WeightKey, type QuizWeights } from "@/lib/quiz-scoring";
 import SponsorBadge from "@/components/SponsorBadge";
 import CohortInsights from "@/components/CohortInsights";
 import ProUpsellBanner from "@/components/ProUpsellBanner";
@@ -52,7 +52,7 @@ export default function QuizPage() {
   const [answers, setAnswers] = useState<string[]>([]);
   const [questions, setQuestions] = useState(fallbackQuestions);
   const [brokers, setBrokers] = useState<Broker[]>([]);
-  const [weights, setWeights] = useState<Record<string, Record<string, number>>>(fallbackScores);
+  const [weights, setWeights] = useState<Record<string, QuizWeights>>(fallbackScores);
   const [copied, setCopied] = useState(false);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [animating, setAnimating] = useState(false);
@@ -102,7 +102,7 @@ export default function QuizPage() {
       }
 
       if (weightsRes.data && weightsRes.data.length > 0) {
-        const w: Record<string, Record<string, number>> = {};
+        const w: Record<string, QuizWeights> = {};
         weightsRes.data.forEach((row: QuizWeight) => {
           w[row.broker_slug] = {
             beginner: row.beginner_weight || 0,
