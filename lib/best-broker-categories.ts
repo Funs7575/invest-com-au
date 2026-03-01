@@ -33,7 +33,7 @@ const categories: BestBrokerCategory[] = [
     metaDescription:
       `Beginner-friendly Australian brokers compared. Low fees, simple platforms, and strong safety features. ${upd}.`,
     intro:
-      "Starting your investing journey? The right broker makes all the difference. We've filtered Australia's trading platforms to find those that combine low fees, intuitive platforms, and strong safety features like CHESS sponsorship. Here are our top picks for 2026.",
+      `Starting your investing journey? The right broker makes all the difference. We've filtered Australia's trading platforms to find those that combine low fees, intuitive platforms, and strong safety features like CHESS sponsorship. Here are our top picks for ${yr}.`,
     filter: (b) => !b.is_crypto && (b.asx_fee_value ?? 999) <= 10 && (b.rating ?? 0) >= 3.5,
     sort: (a, b) => (b.rating ?? 0) - (a.rating ?? 0),
     criteria: [
@@ -297,7 +297,7 @@ const categories: BestBrokerCategory[] = [
     metaDescription:
       `ASIC-regulated Australian crypto exchanges compared. Fees, security, and supported coins. ${upd}.`,
     intro:
-      "Buying Bitcoin, Ethereum, or other cryptocurrencies in Australia? Stick with ASIC-regulated exchanges that offer AUD deposits and transparent fees. Here are the best options for Australian crypto investors in 2026.",
+      `Buying Bitcoin, Ethereum, or other cryptocurrencies in Australia? Stick with ASIC-regulated exchanges that offer AUD deposits and transparent fees. Here are the best options for Australian crypto investors in ${yr}.`,
     filter: (b) => b.is_crypto,
     sort: (a, b) => (b.rating ?? 0) - (a.rating ?? 0),
     criteria: [
@@ -409,7 +409,7 @@ const categories: BestBrokerCategory[] = [
         body: "Safety depends on regulation and custody, not the price you pay. Several $0 brokerage brokers hold Australian Financial Services Licences (AFSL) and are regulated by ASIC. Some are also CHESS-sponsored, meaning your shares are registered in your name on the ASX register. Always check the broker's regulatory status and custody model before opening an account — low fees should never come at the cost of safety.",
       },
       {
-        heading: "Which $0 Broker Is Best in 2026?",
+        heading: `Which $0 Broker Is Best in ${yr}?`,
         body: "The best $0 broker depends on what you trade. If you only buy ASX shares, focus on platform quality, CHESS sponsorship, and any account fees. If you also trade US shares, compare the FX conversion rates — these vary from 0.25% to 0.70% and represent the real cost of 'free' trading. Our ranking above factors in all of these costs to give you a true total-cost comparison.",
       },
     ],
@@ -707,7 +707,7 @@ const categories: BestBrokerCategory[] = [
     metaDescription:
       `Australian brokers for ETF investors. Low brokerage for Vanguard, BetaShares, and iShares ETFs. ${upd}.`,
     intro:
-      "ETFs are the fastest-growing investment product in Australia, and for good reason — they offer instant diversification at low cost. But your broker choice matters. Brokerage fees on regular ETF purchases can significantly impact long-term returns. Here are the best brokers for building an ETF portfolio in 2026.",
+      `ETFs are the fastest-growing investment product in Australia, and for good reason — they offer instant diversification at low cost. But your broker choice matters. Brokerage fees on regular ETF purchases can significantly impact long-term returns. Here are the best brokers for building an ETF portfolio in ${yr}.`,
     filter: (b) => !b.is_crypto && (b.asx_fee_value ?? 999) <= 10,
     sort: (a, b) => (a.asx_fee_value ?? 999) - (b.asx_fee_value ?? 999),
     criteria: [

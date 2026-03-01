@@ -226,6 +226,7 @@ export default function ExitIntentPopup() {
                 <input
                   type="email"
                   placeholder="you@email.com"
+                  autoComplete="email"
                   aria-label="Email address for fee audit"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}

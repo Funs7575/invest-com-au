@@ -19,6 +19,22 @@ export function absoluteUrl(path: string): string {
   return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
+/* ─── Shared Organization block for JSON-LD ─── */
+
+export const ORGANIZATION_JSONLD = {
+  "@type": "Organization" as const,
+  name: SITE_NAME,
+  url: SITE_URL,
+  logo: {
+    "@type": "ImageObject" as const,
+    url: `${SITE_URL}/icon`,
+  },
+  sameAs: [
+    "https://x.com/investcomau",
+    "https://www.linkedin.com/company/invest-com-au",
+  ],
+};
+
 /**
  * Generate BreadcrumbList JSON-LD schema.
  * Last item should omit `url` (current page).
@@ -214,11 +230,7 @@ export function brokerReviewJsonLd(broker: {
               url: SITE_URL,
             },
           },
-      publisher: {
-        "@type": "Organization",
-        name: SITE_NAME,
-        url: SITE_URL,
-      },
+      publisher: ORGANIZATION_JSONLD,
       datePublished,
       dateModified,
       reviewBody,
@@ -284,15 +296,7 @@ export function reviewArticleJsonLd(broker: {
     datePublished,
     dateModified,
     author: authorBlock,
-    publisher: {
-      "@type": "Organization",
-      name: SITE_NAME,
-      url: SITE_URL,
-      logo: {
-        "@type": "ImageObject",
-        url: absoluteUrl("/icon"),
-      },
-    },
+    publisher: ORGANIZATION_JSONLD,
     mainEntityOfPage: {
       "@type": "WebPage",
       "@id": absoluteUrl(`/broker/${broker.slug}`),

@@ -349,7 +349,7 @@ export default async function HomePage() {
               </div>
               {/* Desktop: grid */}
               <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-                {(articles as Article[]).slice(0, 6).map((article) => (
+                {(articles as Article[]).slice(0, 6).map((article, idx) => (
                   <Link
                     key={article.id}
                     href={`/article/${article.slug}`}
@@ -357,7 +357,7 @@ export default async function HomePage() {
                   >
                     {article.cover_image_url && (
                       <div className="aspect-[16/9] overflow-hidden bg-slate-100 relative">
-                        <Image src={article.cover_image_url} alt={article.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
+                        <Image src={article.cover_image_url} alt={article.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" {...(idx < 3 ? { priority: true } : {})} />
                       </div>
                     )}
                     <div className="p-5 flex flex-col flex-1">
@@ -380,7 +380,7 @@ export default async function HomePage() {
               </div>
               {/* Mobile: 2-col compact grid */}
               <div className="md:hidden grid grid-cols-2 gap-2.5">
-                {(articles as Article[]).slice(0, 4).map((article) => (
+                {(articles as Article[]).slice(0, 4).map((article, idx) => (
                   <Link
                     key={article.id}
                     href={`/article/${article.slug}`}
@@ -388,7 +388,7 @@ export default async function HomePage() {
                   >
                     {article.cover_image_url && (
                       <div className="aspect-[16/9] overflow-hidden bg-slate-100 relative">
-                        <Image src={article.cover_image_url} alt={article.title} fill className="object-cover" sizes="50vw" />
+                        <Image src={article.cover_image_url} alt={article.title} fill className="object-cover" sizes="50vw" {...(idx < 2 ? { priority: true } : {})} />
                       </div>
                     )}
                     <div className="p-2.5 flex flex-col flex-1">
