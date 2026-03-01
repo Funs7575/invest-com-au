@@ -821,9 +821,9 @@ function FxFeeCalculator({ brokers, searchParams }: { brokers: Broker[]; searchP
           step={500}
           value={amount}
           onChange={(e) => setAmount(Number(e.target.value))}
-          className="w-full h-2 rounded-full appearance-none cursor-pointer accent-slate-700"
+          className="w-full h-2 rounded-full appearance-none cursor-pointer accent-emerald-500"
           style={{
-            background: `linear-gradient(to right, #334155 ${((amount - 1000) / 49000) * 100}%, #e2e8f0 ${((amount - 1000) / 49000) * 100}%)`,
+            background: `linear-gradient(to right, #10b981 ${((amount - 1000) / 49000) * 100}%, #e2e8f0 ${((amount - 1000) / 49000) * 100}%)`,
           }}
         />
         <div className="flex justify-between text-xs text-slate-400 mt-1">

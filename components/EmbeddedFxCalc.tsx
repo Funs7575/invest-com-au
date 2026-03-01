@@ -84,7 +84,7 @@ export default function EmbeddedFxCalc({ brokers }: { brokers: Broker[] }) {
             step={500}
             value={amount}
             onChange={(e) => setAmount(Number(e.target.value))}
-            className="w-full h-2 rounded-full appearance-none cursor-pointer accent-slate-700"
+            className="w-full h-2 rounded-full appearance-none cursor-pointer accent-emerald-500"
             style={{
               background: `linear-gradient(to right, #15803d ${
                 ((amount - 1000) / 49000) * 100
