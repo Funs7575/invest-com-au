@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { logger } from "@/lib/logger";
+
+const log = logger("notifications");
 
 /**
  * GET /api/notification-preferences
@@ -88,7 +91,7 @@ export async function POST(req: NextRequest) {
     .single();
 
   if (error) {
-    console.error("[notification-preferences] upsert error:", error);
+    log.error("Notification preferences upsert error", { error: error.message });
     return NextResponse.json({ error: "Failed to update preferences" }, { status: 500 });
   }
 

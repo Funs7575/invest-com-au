@@ -1,6 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
 import { createClient as createServerClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
+
+const log = logger('user-review');
 
 const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || 'admin@invest.com.au').split(',').map(e => e.trim().toLowerCase());
 
@@ -52,7 +55,7 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (error) {
-    console.error('user_review moderate error:', error.message);
+    log.error('user_review moderate error', { error: error.message });
     return NextResponse.json({ error: 'Failed to update review' }, { status: 500 });
   }
 

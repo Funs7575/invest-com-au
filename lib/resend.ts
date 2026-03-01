@@ -3,6 +3,10 @@
  * Use this instead of raw fetch() to api.resend.com.
  */
 
+import { logger } from "@/lib/logger";
+
+const log = logger("resend");
+
 const RESEND_TIMEOUT_MS = 10_000; // 10 seconds
 
 interface SendEmailOptions {
@@ -21,7 +25,7 @@ export async function sendEmail(
 ): Promise<{ ok: boolean; error?: string }> {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
-    console.warn("[resend] RESEND_API_KEY not set — skipping email send");
+    log.warn("RESEND_API_KEY not set — skipping email send");
     return { ok: false, error: "No API key" };
   }
 
@@ -43,14 +47,14 @@ export async function sendEmail(
 
     if (!res.ok) {
       const body = await res.text().catch(() => "");
-      console.error(`[resend] HTTP ${res.status}: ${body}`);
+      log.error(`HTTP ${res.status}`, { error: body });
       return { ok: false, error: `HTTP ${res.status}` };
     }
 
     return { ok: true };
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Unknown error";
-    console.error("[resend] Failed to send email:", msg);
+    log.error("Failed to send email", { error: msg });
     return { ok: false, error: msg };
   }
 }
@@ -85,14 +89,14 @@ export async function upsertContact(
 
     if (!res.ok) {
       const body = await res.text().catch(() => "");
-      console.error(`[resend] contact HTTP ${res.status}: ${body}`);
+      log.error(`Contact HTTP ${res.status}`, { error: body });
       return { ok: false, error: `HTTP ${res.status}` };
     }
 
     return { ok: true };
   } catch (err) {
     const msg = err instanceof Error ? err.message : "Unknown error";
-    console.error("[resend] Failed to upsert contact:", msg);
+    log.error("Failed to upsert contact", { error: msg });
     return { ok: false, error: msg };
   }
 }

@@ -1,5 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
+
+const log = logger("fee-profile");
 
 export async function GET() {
   try {
@@ -20,7 +23,7 @@ export async function GET() {
 
     return NextResponse.json({ profile });
   } catch (err) {
-    console.error("Fee profile GET error:", err);
+    log.error("Fee profile GET error", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json(
       { error: "Failed to load profile" },
       { status: 500 }
@@ -83,7 +86,7 @@ export async function POST(request: NextRequest) {
     );
 
     if (error) {
-      console.error("Fee profile upsert error:", error.message);
+      log.error("Fee profile upsert error", { error: error.message });
       return NextResponse.json(
         { error: "Failed to save profile" },
         { status: 500 }
@@ -92,7 +95,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("Fee profile POST error:", err);
+    log.error("Fee profile POST error", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json(
       { error: "Failed to save profile" },
       { status: 500 }

@@ -1,5 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
+
+const log = logger("cron-affiliate");
 
 export const runtime = "edge";
 export const maxDuration = 60;
@@ -249,6 +252,6 @@ async function sendLinkHealthAlert(
       }),
     });
   } catch (err) {
-    console.error("Failed to send link health alert:", err);
+    log.error("Failed to send link health alert", { error: err instanceof Error ? err.message : String(err) });
   }
 }

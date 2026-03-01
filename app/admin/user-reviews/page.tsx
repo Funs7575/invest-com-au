@@ -4,6 +4,9 @@ import { useEffect, useState, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import AdminShell from "@/components/AdminShell";
 import { downloadCSV } from "@/lib/csv-export";
+import { logger } from "@/lib/logger";
+
+const log = logger("admin-reviews");
 
 type Review = {
   id: number;
@@ -149,7 +152,7 @@ export default function AdminUserReviewsPage() {
         );
       }
     } catch (err) {
-      console.error("Moderate error:", err);
+      log.error("Moderate error", { error: err instanceof Error ? err.message : String(err) });
     }
     setActionLoading(null);
   }

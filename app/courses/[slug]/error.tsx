@@ -3,6 +3,9 @@
 import Link from "next/link";
 import { useEffect } from "react";
 import Icon from "@/components/Icon";
+import { logger } from "@/lib/logger";
+
+const log = logger("error-boundary");
 
 export default function CourseDetailError({
   error,
@@ -12,7 +15,7 @@ export default function CourseDetailError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error("Course detail error:", error);
+    log.error("Course detail error", { error: error.message, digest: error.digest });
   }, [error]);
 
   return (

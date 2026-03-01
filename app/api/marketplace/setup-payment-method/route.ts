@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { createServerClient } from "@supabase/ssr";
 import { getStripe } from "@/lib/stripe";
+import { logger } from "@/lib/logger";
+
+const log = logger("payment-setup");
 
 /**
  * POST /api/marketplace/setup-payment-method
@@ -101,7 +104,7 @@ export async function POST(request: NextRequest) {
       customer_id: customerId,
     });
   } catch (err) {
-    console.error("Setup payment method error:", err);
+    log.error("Setup payment method error", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json(
       { error: err instanceof Error ? err.message : "Setup failed" },
       { status: 500 }
@@ -185,7 +188,7 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("Update payment method error:", err);
+    log.error("Update payment method error", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json(
       { error: err instanceof Error ? err.message : "Update failed" },
       { status: 500 }

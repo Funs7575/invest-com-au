@@ -2,6 +2,9 @@ import { getStripe } from "@/lib/stripe";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
+
+const log = logger("course");
 
 export async function POST(request: NextRequest) {
   try {
@@ -151,7 +154,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ url: session.url });
   } catch (err) {
-    console.error("Course purchase checkout error:", err);
+    log.error("Course purchase checkout error", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json(
       { error: "Failed to create checkout session" },
       { status: 500 }

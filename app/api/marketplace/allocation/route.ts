@@ -1,5 +1,8 @@
 import { getWinningCampaigns, AllocationContext } from "@/lib/marketplace/allocation";
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
+
+const log = logger("marketplace");
 
 /**
  * GET /api/marketplace/allocation?placement=compare-top&brokers=commsec,stake
@@ -39,7 +42,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (err) {
-    console.error("Allocation error:", err);
+    log.error("Allocation error", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Allocation failed" }, { status: 500 });
   }
 }

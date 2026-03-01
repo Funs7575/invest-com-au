@@ -1,5 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
+
+const log = logger("postback");
 
 /**
  * POST /api/marketplace/postback
@@ -166,7 +169,7 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    console.error("Postback insert error:", error.message);
+    log.error("Postback insert error", { error: error.message });
     return NextResponse.json(
       { error: "Failed to record conversion" },
       { status: 500 }

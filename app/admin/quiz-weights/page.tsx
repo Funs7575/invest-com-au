@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import AdminShell from "@/components/AdminShell";
 import InfoTip from "@/components/InfoTip";
 import { createClient } from "@/lib/supabase/client";
+import { logger } from "@/lib/logger";
+
+const log = logger("admin-quiz-weights");
 
 interface QuizWeight {
   id: string;
@@ -62,7 +65,7 @@ export default function QuizWeightsPage() {
       .select("*")
       .order("broker_slug");
     if (error) {
-      console.error("Error fetching quiz weights:", error);
+      log.error("Error fetching quiz weights", { error: error.message });
     } else {
       setWeights(data || []);
     }
@@ -95,7 +98,7 @@ export default function QuizWeightsPage() {
       .eq("id", id);
 
     if (error) {
-      console.error("Error saving weight:", error);
+      log.error("Error saving weight", { error: error.message });
       alert("Error saving: " + error.message);
     } else {
       setSavedId(id);
@@ -133,7 +136,7 @@ export default function QuizWeightsPage() {
         .eq("id", id);
 
       if (error) {
-        console.error("Error saving weight for", row.broker_slug, error);
+        log.error("Error saving weight", { brokerSlug: row.broker_slug, error: error.message });
         errorCount++;
       }
     }

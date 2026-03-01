@@ -2,6 +2,9 @@ import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 import { createRateLimiter } from '@/lib/rate-limiter';
 import { isValidEmail } from '@/lib/validate-email';
+import { logger } from '@/lib/logger';
+
+const log = logger('quiz-lead');
 
 const isRateLimited = createRateLimiter(300_000, 5); // 5 leads per 5 min per IP
 
@@ -174,7 +177,7 @@ async function sendQuizResultsEmail(
       }),
     });
   } catch (err) {
-    console.error('Quiz results email failed (non-blocking):', err);
+    log.error('Quiz results email failed (non-blocking)', { error: err instanceof Error ? err.message : String(err) });
   }
 }
 
@@ -202,7 +205,7 @@ async function syncToResendContacts(
       }),
     });
   } catch (err) {
-    console.error('Resend contact sync failed (non-blocking):', err);
+    log.error('Resend contact sync failed (non-blocking)', { error: err instanceof Error ? err.message : String(err) });
   }
 }
 
@@ -257,7 +260,7 @@ export async function POST(request: NextRequest) {
   });
 
   if (leadError) {
-    console.error('quiz_leads insert error:', leadError.message);
+    log.error('quiz_leads insert error', { error: leadError.message });
     return NextResponse.json({ error: 'Failed to save lead' }, { status: 500 });
   }
 
@@ -270,7 +273,7 @@ export async function POST(request: NextRequest) {
     unsubscribed: false,
     ...(sanitizedName ? { name: sanitizedName } : {}),
   }, { onConflict: 'email' }).then(({ error }) => {
-    if (error) console.error('email_captures upsert error:', error.message);
+    if (error) log.error('email_captures upsert error', { error: error.message });
   });
 
   // Send personalized quiz results email (fire-and-forget)

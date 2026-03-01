@@ -1,6 +1,9 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 import { adjustWallet } from "@/lib/marketplace/wallet";
+import { logger } from "@/lib/logger";
+
+const log = logger("wallet");
 
 /**
  * POST /api/marketplace/wallet-adjust
@@ -68,7 +71,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, transaction: txn });
   } catch (err) {
-    console.error("Wallet adjustment error:", err);
+    log.error("Wallet adjustment error", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json(
       { error: err instanceof Error ? err.message : "Adjustment failed" },
       { status: 500 }

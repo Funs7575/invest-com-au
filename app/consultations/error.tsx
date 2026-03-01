@@ -3,6 +3,9 @@
 import Link from "next/link";
 import { useEffect } from "react";
 import Icon from "@/components/Icon";
+import { logger } from "@/lib/logger";
+
+const log = logger("error-boundary");
 
 export default function ConsultationsError({
   error,
@@ -12,7 +15,7 @@ export default function ConsultationsError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error("Consultations page error:", error);
+    log.error("Consultations page error", { error: error.message, digest: error.digest });
   }, [error]);
 
   return (

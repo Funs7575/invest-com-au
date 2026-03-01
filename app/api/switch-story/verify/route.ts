@@ -1,5 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
+
+const log = logger('switch-story');
 
 // --- Blocklist auto-moderation ---
 
@@ -114,7 +117,7 @@ export async function GET(request: NextRequest) {
       .eq('id', story.id);
 
     if (error) {
-      console.error('switch_story verify error:', error.message);
+      log.error('switch_story verify error', { error: error.message });
       return NextResponse.redirect(new URL('/?error=verification_failed', request.url));
     }
   }

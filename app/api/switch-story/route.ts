@@ -1,5 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
+
+const log = logger('switch-story');
 
 // In-memory rate limiter (per-IP)
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -221,7 +224,7 @@ export async function POST(request: NextRequest) {
   });
 
   if (insertError) {
-    console.error('switch_story insert error:', insertError.message);
+    log.error('switch_story insert error', { error: insertError.message });
     return NextResponse.json({ error: 'Failed to submit story' }, { status: 500 });
   }
 
@@ -248,7 +251,7 @@ export async function POST(request: NextRequest) {
         signal: AbortSignal.timeout(10_000), // 10s timeout
       });
     } catch (err) {
-      console.error('Failed to send verification email:', err);
+      log.error('Failed to send verification email', { error: err instanceof Error ? err.message : String(err) });
       // Non-blocking — the story is still saved
     }
   }

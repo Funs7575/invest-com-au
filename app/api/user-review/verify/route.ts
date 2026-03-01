@@ -1,5 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
+
+const log = logger('user-review');
 
 // --- Blocklist auto-moderation ---
 
@@ -116,7 +119,7 @@ export async function GET(request: NextRequest) {
       .eq('id', review.id);
 
     if (error) {
-      console.error('user_review verify error:', error.message);
+      log.error('user_review verify error', { error: error.message });
       return NextResponse.redirect(new URL('/?error=verification_failed', request.url));
     }
   }

@@ -1,5 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
+
+const log = logger("consultation");
 
 export async function GET(request: NextRequest) {
   try {
@@ -33,7 +36,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ booking });
   } catch (err) {
-    console.error("Consultation bookings GET error:", err);
+    log.error("Consultation bookings GET error", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json(
       { error: "Failed to load bookings" },
       { status: 500 }

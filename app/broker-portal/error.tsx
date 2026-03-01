@@ -2,6 +2,9 @@
 
 import { useEffect } from "react";
 import Icon from "@/components/Icon";
+import { logger } from "@/lib/logger";
+
+const log = logger("error-boundary");
 
 export default function BrokerPortalError({
   error,
@@ -11,7 +14,7 @@ export default function BrokerPortalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error("Broker portal error:", error);
+    log.error("Broker portal error", { error: error.message, digest: error.digest });
   }, [error]);
 
   return (

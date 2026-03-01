@@ -5,6 +5,9 @@ import AdminShell from "@/components/AdminShell";
 import { createClient } from "@/lib/supabase/client";
 import { downloadCSV } from "@/lib/csv-export";
 import { QuizQuestion } from "@/lib/types";
+import { logger } from "@/lib/logger";
+
+const log = logger("admin-quiz");
 
 interface OptionItem {
   label: string;
@@ -49,7 +52,7 @@ export default function QuizQuestionsPage() {
       .select("*")
       .order("order_index");
     if (error) {
-      console.error("Error fetching quiz questions:", error);
+      log.error("Error fetching quiz questions", { error: error.message });
     } else {
       setQuestions(data || []);
     }
@@ -136,7 +139,7 @@ export default function QuizQuestionsPage() {
         .eq("id", editingId);
 
       if (error) {
-        console.error("Error updating question:", error);
+        log.error("Error updating question", { error: error.message });
         alert("Error updating: " + error.message);
       } else {
         setShowForm(false);
@@ -149,7 +152,7 @@ export default function QuizQuestionsPage() {
         .insert({ ...payload, created_at: new Date().toISOString() });
 
       if (error) {
-        console.error("Error creating question:", error);
+        log.error("Error creating question", { error: error.message });
         alert("Error creating: " + error.message);
       } else {
         setShowForm(false);
@@ -191,7 +194,7 @@ export default function QuizQuestionsPage() {
     setSaving(true);
     const { error } = await supabase.from("quiz_questions").delete().eq("id", id);
     if (error) {
-      console.error("Error deleting question:", error);
+      log.error("Error deleting question", { error: error.message });
       alert("Error deleting: " + error.message);
     } else {
       setDeleteConfirmId(null);

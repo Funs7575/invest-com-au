@@ -501,3 +501,437 @@ export function campaignPerformanceEmail(data: {
     `${data.clicks} clicks, ${data.conversions} conversions, $${data.spend.toFixed(2)} spend yesterday`
   );
 }
+
+// ─── Welcome Drip: Email 1 — Welcome (sent immediately) ────────────────────
+
+export function brokerWelcomeEmail(
+  brokerName: string,
+  companyName: string
+): string {
+  const safeName = escapeHtml(brokerName || "there");
+  const safeCompany = escapeHtml(companyName || "your company");
+
+  const content = `
+    <div style="text-align:center;padding:8px 0 24px;">
+      <div style="display:inline-block;width:64px;height:64px;background:${BRAND_EMERALD};border-radius:16px;line-height:64px;text-align:center;">
+        <span style="font-size:28px;color:#ffffff;">&#9989;</span>
+      </div>
+    </div>
+    <h1 style="margin:0 0 8px;font-size:24px;font-weight:800;color:${BRAND_DARK};text-align:center;">Welcome to the Partner Portal</h1>
+    <p style="margin:0 0 24px;font-size:15px;color:#475569;line-height:1.7;text-align:center;">
+      Hi ${safeName}, your partner account for <strong style="color:${BRAND_DARK};">${safeCompany}</strong> is ready. You're now part of Australia's leading broker advertising marketplace.
+    </p>
+
+    <div style="background:${BG_LIGHT};border-radius:8px;padding:24px;margin-bottom:24px;">
+      <p style="margin:0 0 16px;font-size:14px;font-weight:700;color:${BRAND_DARK};">Quick-Start Checklist</p>
+      <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+          <td style="padding:10px 0;font-size:14px;color:#475569;border-bottom:1px solid ${BORDER};">
+            <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+              <tr>
+                <td width="32" valign="top">
+                  <span style="display:inline-block;width:24px;height:24px;background:#dcfce7;border-radius:6px;text-align:center;line-height:24px;font-size:13px;color:${BRAND_EMERALD};font-weight:700;">1</span>
+                </td>
+                <td style="padding-left:8px;">
+                  <strong style="color:${BRAND_DARK};">Upload your creative assets</strong>
+                  <br><span style="font-size:13px;color:${TEXT_MUTED};">Logos, banners, and screenshots for your campaigns</span>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:10px 0;font-size:14px;color:#475569;border-bottom:1px solid ${BORDER};">
+            <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+              <tr>
+                <td width="32" valign="top">
+                  <span style="display:inline-block;width:24px;height:24px;background:#dcfce7;border-radius:6px;text-align:center;line-height:24px;font-size:13px;color:${BRAND_EMERALD};font-weight:700;">2</span>
+                </td>
+                <td style="padding-left:8px;">
+                  <strong style="color:${BRAND_DARK};">Set up your wallet</strong>
+                  <br><span style="font-size:13px;color:${TEXT_MUTED};">Add funds to start running campaigns</span>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:10px 0;font-size:14px;color:#475569;">
+            <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+              <tr>
+                <td width="32" valign="top">
+                  <span style="display:inline-block;width:24px;height:24px;background:#dcfce7;border-radius:6px;text-align:center;line-height:24px;font-size:13px;color:${BRAND_EMERALD};font-weight:700;">3</span>
+                </td>
+                <td style="padding-left:8px;">
+                  <strong style="color:${BRAND_DARK};">Create your first campaign</strong>
+                  <br><span style="font-size:13px;color:${TEXT_MUTED};">Choose placements, set your budget, and go live</span>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div style="text-align:center;">
+      <table role="presentation" cellpadding="0" cellspacing="0" align="center">
+        <tr>
+          <td style="border-radius:8px;background:${BRAND_EMERALD};">
+            <a href="${BASE_URL}/broker-portal" style="display:inline-block;padding:14px 32px;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px;">
+              Get Started &rarr;
+            </a>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <p style="margin:24px 0 0;font-size:13px;color:${TEXT_LIGHT};text-align:center;">
+      Need help? Reply to this email or contact <a href="mailto:partners@invest.com.au" style="color:${BRAND_EMERALD};text-decoration:underline;">partners@invest.com.au</a>
+    </p>`;
+
+  return baseTemplate(
+    content,
+    `Welcome to the Invest.com.au Partner Portal, ${safeName}! Here's how to get started.`
+  );
+}
+
+// ─── Welcome Drip: Email 2 — Setup Guide (sent Day 2) ──────────────────────
+
+export function setupGuideEmail(
+  brokerName: string,
+  companyName: string,
+  hasWallet: boolean,
+  hasCampaign: boolean,
+  hasCreative: boolean
+): string {
+  const safeName = escapeHtml(brokerName || "there");
+  const safeCompany = escapeHtml(companyName || "your company");
+
+  const checkIcon = `<span style="display:inline-block;width:22px;height:22px;background:${BRAND_EMERALD};border-radius:6px;text-align:center;line-height:22px;font-size:12px;color:#ffffff;font-weight:700;">&#10003;</span>`;
+  const emptyIcon = `<span style="display:inline-block;width:22px;height:22px;background:#ffffff;border:2px solid ${BORDER};border-radius:6px;text-align:center;line-height:22px;font-size:12px;color:${TEXT_LIGHT};">&nbsp;</span>`;
+
+  const completedCount = [hasCreative, hasWallet, hasCampaign].filter(Boolean).length;
+  const allDone = completedCount === 3;
+
+  // Determine the first incomplete step link
+  let ctaLink = `${BASE_URL}/broker-portal`;
+  let ctaText = "Continue Setup &rarr;";
+  if (!hasCreative) {
+    ctaLink = `${BASE_URL}/broker-portal/creatives`;
+    ctaText = "Upload Creative Assets &rarr;";
+  } else if (!hasWallet) {
+    ctaLink = `${BASE_URL}/broker-portal/wallet`;
+    ctaText = "Set Up Your Wallet &rarr;";
+  } else if (!hasCampaign) {
+    ctaLink = `${BASE_URL}/broker-portal/campaigns/new`;
+    ctaText = "Create Your First Campaign &rarr;";
+  }
+
+  const progressPct = Math.round((completedCount / 3) * 100);
+
+  const content = `
+    <p style="margin:0 0 4px;font-size:12px;color:${TEXT_LIGHT};text-transform:uppercase;letter-spacing:0.5px;font-weight:600;">Setup Progress</p>
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:${BRAND_DARK};">Your Account Setup Checklist</h1>
+    <p style="margin:0 0 20px;font-size:15px;color:#475569;line-height:1.7;">
+      Hi ${safeName}, ${allDone
+        ? `you've completed all the setup steps for ${safeCompany}. You're ready to launch!`
+        : `here's where ${safeCompany} stands. Complete the remaining steps to start reaching investors.`}
+    </p>
+
+    <!-- Progress Bar -->
+    <div style="background:${BORDER};border-radius:100px;height:8px;margin-bottom:24px;overflow:hidden;">
+      <div style="background:${BRAND_EMERALD};height:8px;border-radius:100px;width:${progressPct}%;"></div>
+    </div>
+    <p style="margin:-16px 0 24px;font-size:12px;color:${TEXT_MUTED};text-align:right;">${completedCount}/3 complete</p>
+
+    <!-- Checklist -->
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:24px;">
+      <tr>
+        <td style="padding:12px 16px;background:${hasCreative ? "#f0fdf4" : BG_LIGHT};border-radius:8px 8px 0 0;border-bottom:1px solid ${BORDER};">
+          <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+              <td width="32" valign="middle">${hasCreative ? checkIcon : emptyIcon}</td>
+              <td style="padding-left:12px;">
+                <span style="font-size:14px;font-weight:600;color:${hasCreative ? BRAND_EMERALD : BRAND_DARK};">${hasCreative ? "Creative assets uploaded" : "Upload creative assets"}</span>
+                ${!hasCreative ? `<br><span style="font-size:12px;color:${TEXT_MUTED};">Add logos and banners for your campaigns</span>` : ""}
+              </td>
+              ${!hasCreative ? `<td width="60" align="right"><a href="${BASE_URL}/broker-portal/creatives" style="font-size:12px;color:${BRAND_EMERALD};font-weight:600;text-decoration:none;">Do this</a></td>` : ""}
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:12px 16px;background:${hasWallet ? "#f0fdf4" : BG_LIGHT};border-bottom:1px solid ${BORDER};">
+          <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+              <td width="32" valign="middle">${hasWallet ? checkIcon : emptyIcon}</td>
+              <td style="padding-left:12px;">
+                <span style="font-size:14px;font-weight:600;color:${hasWallet ? BRAND_EMERALD : BRAND_DARK};">${hasWallet ? "Wallet funded" : "Set up your wallet"}</span>
+                ${!hasWallet ? `<br><span style="font-size:12px;color:${TEXT_MUTED};">Add funds to power your advertising</span>` : ""}
+              </td>
+              ${!hasWallet ? `<td width="60" align="right"><a href="${BASE_URL}/broker-portal/wallet" style="font-size:12px;color:${BRAND_EMERALD};font-weight:600;text-decoration:none;">Do this</a></td>` : ""}
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:12px 16px;background:${hasCampaign ? "#f0fdf4" : BG_LIGHT};border-radius:0 0 8px 8px;">
+          <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+              <td width="32" valign="middle">${hasCampaign ? checkIcon : emptyIcon}</td>
+              <td style="padding-left:12px;">
+                <span style="font-size:14px;font-weight:600;color:${hasCampaign ? BRAND_EMERALD : BRAND_DARK};">${hasCampaign ? "First campaign created" : "Create your first campaign"}</span>
+                ${!hasCampaign ? `<br><span style="font-size:12px;color:${TEXT_MUTED};">Pick a placement and start driving leads</span>` : ""}
+              </td>
+              ${!hasCampaign ? `<td width="60" align="right"><a href="${BASE_URL}/broker-portal/campaigns/new" style="font-size:12px;color:${BRAND_EMERALD};font-weight:600;text-decoration:none;">Do this</a></td>` : ""}
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    ${!allDone ? `<div style="text-align:center;">
+      <table role="presentation" cellpadding="0" cellspacing="0" align="center">
+        <tr>
+          <td style="border-radius:8px;background:${BRAND_EMERALD};">
+            <a href="${ctaLink}" style="display:inline-block;padding:14px 32px;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px;">
+              ${ctaText}
+            </a>
+          </td>
+        </tr>
+      </table>
+    </div>` : `<div style="background:#f0fdf4;border-radius:8px;padding:16px 20px;text-align:center;border:1px solid #bbf7d0;">
+      <p style="margin:0;font-size:15px;font-weight:700;color:${BRAND_EMERALD};">All set! You're ready to launch your first campaign.</p>
+    </div>`}
+
+    <p style="margin:24px 0 0;font-size:13px;color:${TEXT_LIGHT};text-align:center;">
+      Questions about setup? Our partnerships team is here to help &mdash; <a href="mailto:partners@invest.com.au" style="color:${BRAND_EMERALD};text-decoration:underline;">partners@invest.com.au</a>
+    </p>`;
+
+  return baseTemplate(
+    content,
+    allDone
+      ? `${safeName}, your setup is complete! You're ready to launch.`
+      : `${safeName}, you're ${completedCount}/3 through setup. Complete your checklist to go live.`
+  );
+}
+
+// ─── Welcome Drip: Email 3 — First Campaign Tips (sent Day 5) ──────────────
+
+export function firstCampaignTipsEmail(
+  brokerName: string,
+  companyName: string
+): string {
+  const safeName = escapeHtml(brokerName || "there");
+  const safeCompany = escapeHtml(companyName || "your company");
+
+  const tipBlock = (number: string, title: string, description: string, iconBg: string) => `
+    <tr>
+      <td style="padding:16px;${number !== "3" ? `border-bottom:1px solid ${BORDER};` : ""}">
+        <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+          <tr>
+            <td width="44" valign="top">
+              <div style="width:36px;height:36px;background:${iconBg};border-radius:10px;text-align:center;line-height:36px;">
+                <span style="font-size:16px;font-weight:800;color:#ffffff;">${number}</span>
+              </div>
+            </td>
+            <td style="padding-left:12px;">
+              <p style="margin:0 0 4px;font-size:14px;font-weight:700;color:${BRAND_DARK};">${title}</p>
+              <p style="margin:0;font-size:13px;color:#475569;line-height:1.6;">${description}</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>`;
+
+  const content = `
+    <div style="display:inline-block;padding:4px 12px;background:#dcfce7;border-radius:100px;margin-bottom:16px;">
+      <span style="font-size:12px;font-weight:700;color:${BRAND_EMERALD};text-transform:uppercase;letter-spacing:0.5px;">Campaign Tips</span>
+    </div>
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:${BRAND_DARK};">3 Tips for a Successful First Campaign</h1>
+    <p style="margin:0 0 24px;font-size:15px;color:#475569;line-height:1.7;">
+      Hi ${safeName}, launching your first campaign for ${safeCompany}? Here are proven strategies from top-performing partners on our platform.
+    </p>
+
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background:${BG_LIGHT};border-radius:8px;margin-bottom:24px;">
+      ${tipBlock(
+        "1",
+        "Choose the right placement",
+        "Match your placement to user intent. Comparison page placements convert best for sign-ups, while article placements build brand awareness. Start with one high-intent placement and expand from there.",
+        BRAND_EMERALD
+      )}
+      ${tipBlock(
+        "2",
+        "Use compelling creative",
+        "Ads with a clear value proposition get 2&ndash;3x more clicks. Highlight your competitive edge &mdash; low fees, unique features, or current promotions. Keep copy concise and use a strong call-to-action.",
+        "#2563eb"
+      )}
+      ${tipBlock(
+        "3",
+        "Set a smart budget",
+        "Start with a moderate daily budget to gather performance data. After 3&ndash;5 days, review your CTR and conversion rates, then adjust your spend and rate. Use our A/B testing tools to optimise further.",
+        "#7c3aed"
+      )}
+    </table>
+
+    <div style="background:#eff6ff;border-radius:8px;padding:16px 20px;margin-bottom:24px;border-left:4px solid #2563eb;">
+      <p style="margin:0;font-size:14px;color:#1e40af;line-height:1.6;">
+        <strong>Pro tip:</strong> Partners who launch within their first week see 40% better first-month performance. The sooner you start, the sooner you can optimise.
+      </p>
+    </div>
+
+    <div style="text-align:center;">
+      <table role="presentation" cellpadding="0" cellspacing="0" align="center">
+        <tr>
+          <td style="border-radius:8px;background:${BRAND_EMERALD};">
+            <a href="${BASE_URL}/broker-portal/campaigns/new" style="display:inline-block;padding:14px 32px;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px;">
+              Create Your First Campaign &rarr;
+            </a>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <p style="margin:24px 0 0;font-size:13px;color:${TEXT_LIGHT};text-align:center;">
+      Want a personalised strategy session? <a href="mailto:partners@invest.com.au" style="color:${BRAND_EMERALD};text-decoration:underline;">Book a call with our partnerships team</a>
+    </p>`;
+
+  return baseTemplate(
+    content,
+    `${safeName}, 3 tips to make your first campaign on Invest.com.au a success.`
+  );
+}
+
+// ─── Welcome Drip: Email 4 — Check-In (sent Day 10) ────────────────────────
+
+export function checkInEmail(
+  brokerName: string,
+  companyName: string,
+  hasActiveCampaign: boolean
+): string {
+  const safeName = escapeHtml(brokerName || "there");
+  const safeCompany = escapeHtml(companyName || "your company");
+
+  const activeCampaignContent = `
+    <div style="text-align:center;padding:8px 0 24px;">
+      <div style="display:inline-block;width:64px;height:64px;background:#dcfce7;border-radius:16px;line-height:64px;text-align:center;">
+        <span style="font-size:28px;">&#128200;</span>
+      </div>
+    </div>
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:${BRAND_DARK};text-align:center;">How's Your Campaign Going?</h1>
+    <p style="margin:0 0 24px;font-size:15px;color:#475569;line-height:1.7;text-align:center;">
+      Hi ${safeName}, it's been 10 days since ${safeCompany} joined the Partner Portal. Your campaign is live &mdash; here's how to make the most of it.
+    </p>
+
+    <div style="background:${BG_LIGHT};border-radius:8px;padding:20px;margin-bottom:24px;">
+      <p style="margin:0 0 12px;font-size:14px;font-weight:700;color:${BRAND_DARK};">Next steps to maximise performance:</p>
+      <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+          <td style="padding:6px 0;font-size:14px;color:#475569;">
+            <span style="color:${BRAND_EMERALD};font-weight:700;margin-right:8px;">&#x2022;</span>
+            Check your analytics to see click and conversion trends
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:6px 0;font-size:14px;color:#475569;">
+            <span style="color:${BRAND_EMERALD};font-weight:700;margin-right:8px;">&#x2022;</span>
+            Try A/B testing different creative to improve CTR
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:6px 0;font-size:14px;color:#475569;">
+            <span style="color:${BRAND_EMERALD};font-weight:700;margin-right:8px;">&#x2022;</span>
+            Consider adding a second placement to expand reach
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div style="text-align:center;">
+      <table role="presentation" cellpadding="0" cellspacing="0" align="center">
+        <tr>
+          <td style="border-radius:8px;background:${BRAND_EMERALD};">
+            <a href="${BASE_URL}/broker-portal/analytics" style="display:inline-block;padding:14px 32px;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px;">
+              View Your Analytics &rarr;
+            </a>
+          </td>
+        </tr>
+      </table>
+    </div>`;
+
+  const noCampaignContent = `
+    <div style="text-align:center;padding:8px 0 24px;">
+      <div style="display:inline-block;width:64px;height:64px;background:#fef3c7;border-radius:16px;line-height:64px;text-align:center;">
+        <span style="font-size:28px;">&#128075;</span>
+      </div>
+    </div>
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:${BRAND_DARK};text-align:center;">We Noticed You Haven't Launched Yet</h1>
+    <p style="margin:0 0 24px;font-size:15px;color:#475569;line-height:1.7;text-align:center;">
+      Hi ${safeName}, it's been 10 days since ${safeCompany} joined the Partner Portal. We'd love to help you get started.
+    </p>
+
+    <div style="background:#fffbeb;border-radius:8px;padding:20px;margin-bottom:24px;border:1px solid #fde68a;">
+      <p style="margin:0 0 8px;font-size:15px;font-weight:700;color:#92400e;">Need a hand?</p>
+      <p style="margin:0 0 16px;font-size:14px;color:#78350f;line-height:1.6;">
+        Our partnerships team can help you set up your first campaign, choose the best placements, and create effective ad creative. Many partners see their first leads within 48 hours of launching.
+      </p>
+      <table role="presentation" cellpadding="0" cellspacing="0">
+        <tr>
+          <td style="border-radius:6px;background:#92400e;">
+            <a href="mailto:partners@invest.com.au?subject=Help%20setting%20up%20campaign%20for%20${encodeURIComponent(safeCompany)}" style="display:inline-block;padding:10px 20px;color:#ffffff;font-size:13px;font-weight:600;text-decoration:none;border-radius:6px;">
+              Request Setup Help
+            </a>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div style="background:${BG_LIGHT};border-radius:8px;padding:20px;margin-bottom:24px;">
+      <p style="margin:0 0 12px;font-size:14px;font-weight:700;color:${BRAND_DARK};">Or jump straight in:</p>
+      <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+          <td style="padding:8px 0;font-size:14px;color:#475569;">
+            <a href="${BASE_URL}/broker-portal/campaigns/new" style="color:${BRAND_EMERALD};font-weight:600;text-decoration:none;">Create a campaign</a>
+            <span style="color:${TEXT_MUTED};"> &mdash; Choose from 10+ placement options</span>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:8px 0;font-size:14px;color:#475569;">
+            <a href="${BASE_URL}/broker-portal/wallet" style="color:${BRAND_EMERALD};font-weight:600;text-decoration:none;">Top up your wallet</a>
+            <span style="color:${TEXT_MUTED};"> &mdash; Start with any amount</span>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:8px 0;font-size:14px;color:#475569;">
+            <a href="${BASE_URL}/broker-portal/creatives" style="color:${BRAND_EMERALD};font-weight:600;text-decoration:none;">Upload creative assets</a>
+            <span style="color:${TEXT_MUTED};"> &mdash; Logos, banners, and more</span>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div style="text-align:center;">
+      <table role="presentation" cellpadding="0" cellspacing="0" align="center">
+        <tr>
+          <td style="border-radius:8px;background:${BRAND_EMERALD};">
+            <a href="${BASE_URL}/broker-portal/campaigns/new" style="display:inline-block;padding:14px 32px;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px;">
+              Launch Your First Campaign &rarr;
+            </a>
+          </td>
+        </tr>
+      </table>
+    </div>`;
+
+  const content = `
+    ${hasActiveCampaign ? activeCampaignContent : noCampaignContent}
+    <p style="margin:24px 0 0;font-size:13px;color:${TEXT_LIGHT};text-align:center;">
+      This is part of your onboarding series from the Invest.com.au Partner Portal.
+    </p>`;
+
+  return baseTemplate(
+    content,
+    hasActiveCampaign
+      ? `${safeName}, check in on your campaign performance after 10 days.`
+      : `${safeName}, need help launching your first campaign? We're here for you.`
+  );
+}

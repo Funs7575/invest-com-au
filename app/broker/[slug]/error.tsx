@@ -3,6 +3,9 @@
 import Link from "next/link";
 import { useEffect } from "react";
 import Icon from "@/components/Icon";
+import { logger } from "@/lib/logger";
+
+const log = logger("error-boundary");
 
 export default function BrokerError({
   error,
@@ -12,7 +15,7 @@ export default function BrokerError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error("Broker page error:", error);
+    log.error("Broker page error", { error: error.message, digest: error.digest });
   }, [error]);
 
   return (

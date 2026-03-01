@@ -2,6 +2,9 @@ import { getStripe } from "@/lib/stripe";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
+
+const log = logger("stripe");
 
 export async function POST() {
   try {
@@ -43,7 +46,7 @@ export async function POST() {
 
     return NextResponse.json({ url: session.url });
   } catch (err) {
-    console.error("Create portal error:", err);
+    log.error("Create portal error", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json(
       { error: "Failed to create portal session" },
       { status: 500 }

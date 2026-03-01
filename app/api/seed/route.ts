@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import siteData from "@/data/site-data.json";
+import { logger } from "@/lib/logger";
+
+const log = logger("seed");
 
 const ADMIN_EMAILS = ["finnduns@gmail.com"];
 const ADMIN_DOMAIN = "@invest.com.au";
@@ -116,7 +119,7 @@ export async function POST() {
       },
     });
   } catch (error) {
-    console.error("Seed error:", error);
+    log.error("Seed error", { error: error instanceof Error ? error.message : String(error) });
     return NextResponse.json(
       { success: false, error: String(error) },
       { status: 500 }

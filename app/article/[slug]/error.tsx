@@ -3,6 +3,9 @@
 import Link from "next/link";
 import { useEffect } from "react";
 import Icon from "@/components/Icon";
+import { logger } from "@/lib/logger";
+
+const log = logger("error-boundary");
 
 export default function ArticleError({
   error,
@@ -12,7 +15,7 @@ export default function ArticleError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error("Article page error:", error);
+    log.error("Article page error", { error: error.message, digest: error.digest });
   }, [error]);
 
   return (

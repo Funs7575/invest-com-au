@@ -1,6 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
+
+const log = logger("course");
 
 export async function POST(request: NextRequest) {
   try {
@@ -62,7 +65,7 @@ export async function POST(request: NextRequest) {
       );
 
     if (error) {
-      console.error("Progress upsert error:", error.message);
+      log.error("Progress upsert error", { error: error.message });
       return NextResponse.json(
         { error: "Failed to save progress" },
         { status: 500 }
@@ -71,7 +74,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("Course progress error:", err);
+    log.error("Course progress error", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json(
       { error: "Failed to save progress" },
       { status: 500 }

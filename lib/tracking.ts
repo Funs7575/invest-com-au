@@ -1,5 +1,8 @@
 import type { Broker } from './types';
 import { getSessionId } from './session';
+import { logger } from "@/lib/logger";
+
+const log = logger("tracking");
 
 /** Standard rel attribute for all outbound affiliate links */
 export const AFFILIATE_REL = "noopener noreferrer nofollow sponsored";
@@ -18,8 +21,8 @@ export function trackClick(brokerSlug: string, brokerName: string, source: strin
         (window as unknown as Record<string, string>).__inv_last_click_id = data.click_id;
       }
     })
-    .catch((err) => {
-      if (process.env.NODE_ENV === 'development') console.warn('[tracking] click failed:', err.message);
+    .catch((err: Error) => {
+      log.warn("Click tracking failed", { error: err.message });
     });
 }
 
@@ -38,8 +41,8 @@ export function trackEvent(
       page: page || (typeof window !== 'undefined' ? window.location.pathname : '/'),
       session_id: sessionId,
     }),
-  }).catch((err) => {
-    if (process.env.NODE_ENV === 'development') console.warn('[tracking] event failed:', err.message);
+  }).catch((err: Error) => {
+    log.warn("Event tracking failed", { error: err.message });
   });
 }
 

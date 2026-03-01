@@ -4,6 +4,9 @@ import { useEffect, useState, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import AdminShell from "@/components/AdminShell";
 import { downloadCSV } from "@/lib/csv-export";
+import { logger } from "@/lib/logger";
+
+const log = logger("admin-questions");
 
 type Answer = {
   id: number;
@@ -136,7 +139,7 @@ export default function AdminQuestionsPage() {
         );
       }
     } catch (err) {
-      console.error("Moderate error:", err);
+      log.error("Moderate error", { error: err instanceof Error ? err.message : String(err) });
     }
     setActionLoading(null);
   }
@@ -170,7 +173,7 @@ export default function AdminQuestionsPage() {
         setAnswerText("");
       }
     } catch (err) {
-      console.error("Answer submit error:", err);
+      log.error("Answer submit error", { error: err instanceof Error ? err.message : String(err) });
     }
     setAnswerLoading(false);
   }

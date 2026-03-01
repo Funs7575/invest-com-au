@@ -3,6 +3,9 @@ import { createClient } from "@supabase/supabase-js";
 import { creditWallet } from "@/lib/marketplace/wallet";
 import { NextRequest, NextResponse } from "next/server";
 import type Stripe from "stripe";
+import { logger } from "@/lib/logger";
+
+const log = logger("marketplace-webhook");
 
 export const runtime = "nodejs";
 
@@ -23,7 +26,7 @@ export async function POST(request: NextRequest) {
       process.env.STRIPE_MARKETPLACE_WEBHOOK_SECRET || process.env.STRIPE_WEBHOOK_SECRET!
     );
   } catch (err) {
-    console.error("Marketplace webhook signature failed:", err instanceof Error ? err.message : err);
+    log.error("Marketplace webhook signature failed", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
@@ -43,7 +46,7 @@ export async function POST(request: NextRequest) {
           const invoiceId = session.metadata.invoice_id;
 
           if (!brokerSlug || !amountCents) {
-            console.error("Missing metadata on wallet_topup checkout:", session.metadata);
+            log.error("Missing metadata on wallet_topup checkout", { metadata: session.metadata });
             return NextResponse.json({ error: "Missing metadata" }, { status: 400 });
           }
 
@@ -175,7 +178,7 @@ export async function POST(request: NextRequest) {
                 admin_email: "auto_topup",
               });
             } catch (err) {
-              console.error("Auto top-up credit error:", err);
+              log.error("Auto top-up credit error", { error: err instanceof Error ? err.message : String(err) });
             }
           }
         }
@@ -183,7 +186,7 @@ export async function POST(request: NextRequest) {
       }
     }
   } catch (err) {
-    console.error("Marketplace webhook error:", err);
+    log.error("Marketplace webhook error", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Webhook handler failed" }, { status: 500 });
   }
 

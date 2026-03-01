@@ -2,6 +2,9 @@ import { getStripe } from "@/lib/stripe";
 import { createClient } from "@/lib/supabase/server";
 import { createClient as createAdminSB } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
+
+const log = logger("wallet");
 
 export async function POST(request: NextRequest) {
   try {
@@ -97,7 +100,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ url: session.url });
   } catch (err) {
-    console.error("Wallet top-up error:", err);
+    log.error("Wallet top-up error", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json(
       { error: "Failed to create checkout session" },
       { status: 500 }

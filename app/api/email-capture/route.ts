@@ -2,6 +2,9 @@ import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 import { createRateLimiter } from '@/lib/rate-limiter';
 import { isValidEmail } from '@/lib/validate-email';
+import { logger } from '@/lib/logger';
+
+const log = logger('email-capture');
 
 const isRateLimited = createRateLimiter(300_000, 5); // 5 emails per 5 min per IP
 
@@ -137,14 +140,14 @@ async function syncToResendContacts(
       }),
     });
   } catch (err) {
-    console.error('Resend contact sync failed (non-blocking):', err);
+    log.error('Resend contact sync failed (non-blocking)', { error: err instanceof Error ? err.message : String(err) });
   }
 }
 
 async function sendFeeComparisonEmail(toEmail: string, brokers: BrokerRow[]): Promise<boolean> {
   const resendApiKey = process.env.RESEND_API_KEY;
   if (!resendApiKey) {
-    console.warn('RESEND_API_KEY not set — skipping email send');
+    log.warn('RESEND_API_KEY not set — skipping email send');
     return false;
   }
 
@@ -167,13 +170,13 @@ async function sendFeeComparisonEmail(toEmail: string, brokers: BrokerRow[]): Pr
 
     if (!res.ok) {
       const errorBody = await res.text();
-      console.error('Resend API error:', res.status, errorBody);
+      log.error('Resend API error', { status: res.status, body: errorBody });
       return false;
     }
 
     return true;
   } catch (err) {
-    console.error('Failed to send email via Resend:', err);
+    log.error('Failed to send email via Resend', { error: err instanceof Error ? err.message : String(err) });
     return false;
   }
 }
@@ -220,7 +223,7 @@ export async function POST(request: NextRequest) {
   });
 
   if (error) {
-    console.error('email-capture insert error:', error.message);
+    log.error('email-capture insert error', { error: error.message });
     return NextResponse.json({ error: 'Failed to save email' }, { status: 500 });
   }
 
@@ -237,7 +240,7 @@ export async function POST(request: NextRequest) {
       emailSent = await sendFeeComparisonEmail(sanitizedEmail, brokers as BrokerRow[]);
     }
   } catch (err) {
-    console.error('Error fetching brokers or sending email:', err);
+    log.error('Error fetching brokers or sending email', { error: err instanceof Error ? err.message : String(err) });
   }
 
   // Sync to Resend Contacts for marketing (fire-and-forget)

@@ -1,5 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
+
+const log = logger('user-review');
 
 // In-memory rate limiter (per-IP)
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -220,7 +223,7 @@ export async function POST(request: NextRequest) {
   });
 
   if (insertError) {
-    console.error('user_review insert error:', insertError.message);
+    log.error('user_review insert error', { error: insertError.message });
     return NextResponse.json({ error: 'Failed to submit review' }, { status: 500 });
   }
 
@@ -246,7 +249,7 @@ export async function POST(request: NextRequest) {
         }),
       });
     } catch (err) {
-      console.error('Failed to send verification email:', err);
+      log.error('Failed to send verification email', { error: err instanceof Error ? err.message : String(err) });
       // Non-blocking — the review is still saved
     }
   }

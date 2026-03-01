@@ -1,6 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
+
+const log = logger("questions");
 
 /** Escape HTML special chars to prevent XSS in email templates */
 function escapeHtml(str: string): string {
@@ -103,7 +106,7 @@ async function notifyQuestionAsker(
       }),
     });
   } catch (err) {
-    console.error("Answer notification email failed (non-blocking):", err);
+    log.error("Answer notification email failed (non-blocking)", { error: err instanceof Error ? err.message : String(err) });
   }
 }
 
@@ -141,14 +144,14 @@ export async function POST(req: Request) {
       .eq("id", id);
 
     if (error) {
-      console.error(`Moderate ${type} error:`, error);
+      log.error(`Moderate ${type} error`, { error: error.message });
       return NextResponse.json({ error: `Failed to ${action} ${type}` }, { status: 500 });
     }
 
     // Notify the question asker when their answer is approved
     if (type === "answer" && action === "approve") {
       notifyQuestionAsker(id).catch((err) => {
-        console.error("Answer notification failed (non-blocking):", err);
+        log.error("Answer notification failed (non-blocking)", { error: err instanceof Error ? err.message : String(err) });
       });
     }
 

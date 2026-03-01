@@ -3,6 +3,9 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import AdminShell from "@/components/AdminShell";
+import { logger } from "@/lib/logger";
+
+const log = logger("admin-moderation");
 
 /* ── Types ── */
 
@@ -250,7 +253,7 @@ export default function ModerationQueuePage() {
         setModerationNote("");
       }
     } catch (err) {
-      console.error("Moderate error:", err);
+      log.error("Moderate error", { error: err instanceof Error ? err.message : String(err) });
     }
     setActionLoading(null);
   }

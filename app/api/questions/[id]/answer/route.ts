@@ -1,5 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
+
+const log = logger("questions");
 
 export async function POST(
   req: Request,
@@ -47,7 +50,7 @@ export async function POST(
     });
 
     if (error) {
-      console.error("Answer insert error:", error);
+      log.error("Answer insert error", { error: error.message });
       return NextResponse.json({ error: "Failed to submit answer" }, { status: 500 });
     }
 

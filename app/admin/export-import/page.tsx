@@ -3,6 +3,9 @@
 import { useEffect, useState } from "react";
 import AdminShell from "@/components/AdminShell";
 import { createClient } from "@/lib/supabase/client";
+import { logger } from "@/lib/logger";
+
+const log = logger("admin-export");
 
 const EXPORT_TABLES = [
   "brokers",
@@ -49,7 +52,7 @@ export default function ExportImportPage() {
       for (const table of EXPORT_TABLES) {
         const { data, error } = await supabase.from(table).select("*");
         if (error) {
-          console.error(`Error fetching ${table}:`, error.message);
+          log.error(`Error fetching ${table}`, { error: error.message });
           backup[table] = [];
         } else {
           backup[table] = data ?? [];

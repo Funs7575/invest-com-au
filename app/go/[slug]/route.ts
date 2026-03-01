@@ -2,6 +2,9 @@ import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "crypto";
 import { detectDeviceType } from "@/lib/device-detect";
+import { logger } from "@/lib/logger";
+
+const log = logger("affiliate-redirect");
 
 // ── In-memory rate limiter (30 redirects / 60s per IP) ──────────
 // Note: In serverless environments each container has its own Map.
@@ -134,7 +137,7 @@ export async function GET(
       }
     } catch (err) {
       // Non-blocking: CPC billing failure should not prevent redirect
-      console.error("CPC click recording error:", err);
+      log.error("CPC click recording error", { error: err instanceof Error ? err.message : String(err) });
     }
   }
 

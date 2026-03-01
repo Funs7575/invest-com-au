@@ -2,6 +2,9 @@ import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
 import { createHash } from 'crypto';
 import { createRateLimiter } from '@/lib/rate-limiter';
+import { logger } from '@/lib/logger';
+
+const log = logger('tracking');
 
 const isRateLimited = createRateLimiter(60_000, 60); // 60 events/min per IP
 
@@ -64,7 +67,7 @@ export async function POST(request: NextRequest) {
   });
 
   if (error) {
-    console.error('track-event insert error:', error.message);
+    log.error('track-event insert error', { error: error.message });
     return NextResponse.json({ error: 'Failed to track event' }, { status: 500 });
   }
 

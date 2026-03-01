@@ -2,6 +2,9 @@ import { createClient } from "@supabase/supabase-js";
 import { recordCpcClick } from "@/lib/marketplace/allocation";
 import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "crypto";
+import { logger } from "@/lib/logger";
+
+const log = logger("campaign-click");
 
 export const runtime = "nodejs";
 
@@ -25,7 +28,7 @@ function isRateLimited(ip: string): boolean {
 
 function hashIP(ip: string): string {
   const salt = process.env.IP_HASH_SALT || "invest-com-au-2026";
-  if (!process.env.IP_HASH_SALT) console.warn("[env] IP_HASH_SALT not set — using default. Set this env var in production.");
+  if (!process.env.IP_HASH_SALT) log.warn("IP_HASH_SALT not set — using default. Set this env var in production.");
   return createHash("sha256").update(salt + ip).digest("hex").slice(0, 16);
 }
 
@@ -78,7 +81,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, billed: true });
   } catch (err) {
-    console.error("Campaign click error:", err);
+    log.error("Campaign click error", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Failed to record click" }, { status: 500 });
   }
 }

@@ -6,6 +6,9 @@ import { createClient } from "@/lib/supabase/client";
 import TableSkeleton from "@/components/TableSkeleton";
 import InfoTip from "@/components/InfoTip";
 import { Broker } from "@/lib/types";
+import { logger } from "@/lib/logger";
+
+const log = logger("admin-affiliates");
 
 type EditableFields = {
   affiliate_url?: string;
@@ -85,7 +88,7 @@ export default function AffiliateLinksPage() {
       .eq("slug", broker.slug);
 
     if (error) {
-      console.error("Error saving broker:", error);
+      log.error("Error saving broker", { error: error.message });
       alert("Error saving: " + error.message);
     } else {
       setSavedSlug(broker.slug);

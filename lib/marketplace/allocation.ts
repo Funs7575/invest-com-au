@@ -1,6 +1,9 @@
 import { createClient } from "@supabase/supabase-js";
 import type { Campaign, MarketplacePlacement } from "@/lib/types";
 import { debitWallet } from "./wallet";
+import { logger } from "@/lib/logger";
+
+const log = logger("allocation");
 
 function getAdminClient() {
   return createClient(
@@ -347,7 +350,7 @@ export async function recordCpcClick(
       .maybeSingle();
 
     if (existingClick) {
-      console.info(`Idempotent CPC: click_id ${clickData.click_id} already billed (event #${existingClick.id})`);
+      log.info(`Idempotent CPC: click_id ${clickData.click_id} already billed`, { eventId: existingClick.id });
       return true; // Already billed — don't charge again
     }
   }
@@ -418,7 +421,7 @@ export async function recordCpcClick(
     // If unique constraint violation, the click was already recorded (race condition)
     // Refund the wallet debit we just made
     if (insertErr.code === "23505") {
-      console.info(`CPC race condition: click_id ${clickData.click_id} duplicate insert, refunding debit`);
+      log.info(`CPC race condition: click_id ${clickData.click_id} duplicate insert, refunding debit`);
       try {
         const { refundWallet } = await import("./wallet");
         await refundWallet(
@@ -428,11 +431,11 @@ export async function recordCpcClick(
           { type: "duplicate_click_refund", id: clickData.click_id || String(campaignId) }
         );
       } catch (refundErr) {
-        console.error("Failed to refund duplicate CPC debit:", refundErr);
+        log.error("Failed to refund duplicate CPC debit", { error: refundErr instanceof Error ? refundErr.message : String(refundErr) });
       }
       return true;
     }
-    console.error("Campaign event insert error:", insertErr.message);
+    log.error("Campaign event insert error", { error: insertErr.message });
     return false;
   }
 
@@ -545,7 +548,7 @@ function logDecision(
           duration_ms: data.duration_ms,
         });
     } catch (err) {
-      console.error("Failed to log allocation decision:", err);
+      log.error("Failed to log allocation decision", { error: err instanceof Error ? err.message : String(err) });
     }
   })();
 }

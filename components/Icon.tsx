@@ -5,6 +5,10 @@
  * Usage: <Icon name="sprout" size={24} className="text-emerald-600" />
  */
 
+import { logger } from "@/lib/logger";
+
+const log = logger("icon");
+
 interface IconProps {
   name: string;
   size?: number;
@@ -336,9 +340,7 @@ const icons: Record<string, string[]> = {
 export default function Icon({ name, size = 24, className = "" }: IconProps) {
   const paths = icons[name];
   if (!paths) {
-    if (process.env.NODE_ENV === "development") {
-      console.warn(`[Icon] Unknown icon name: "${name}". Available: ${Object.keys(icons).join(", ")}`);
-    }
+    log.warn(`Unknown icon name: "${name}"`, { available: Object.keys(icons).join(", ") });
     return null;
   }
 

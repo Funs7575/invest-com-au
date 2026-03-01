@@ -2,10 +2,13 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
+import { logger } from "@/lib/logger";
+
+const log = logger("error-boundary");
 
 export default function ScenariosError({ error, reset }: { error: Error; reset: () => void }) {
   useEffect(() => {
-    console.error("Scenarios page error:", error);
+    log.error("Scenarios page error", { error: error.message });
   }, [error]);
 
   return (

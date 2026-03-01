@@ -1,5 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
 import type { BrokerWallet, WalletTransaction } from "@/lib/types";
+import { logger } from "@/lib/logger";
+
+const log = logger("wallet");
 
 function getAdminClient() {
   return createClient(
@@ -68,9 +71,7 @@ export async function creditWallet(
       .maybeSingle();
 
     if (existing) {
-      console.info(
-        `Idempotent credit: PI ${reference.stripe_payment_intent_id} already processed (txn #${existing.id})`
-      );
+      log.info(`Idempotent credit: PI ${reference.stripe_payment_intent_id} already processed`, { txnId: existing.id });
       return existing as WalletTransaction;
     }
   }
@@ -180,7 +181,7 @@ export async function debitWallet(
 
   // Check if auto-topup should be triggered
   checkAutoTopup(brokerSlug, newBalance).catch((err) =>
-    console.error("Auto-topup check failed:", err)
+    log.error("Auto-topup check failed", { error: err instanceof Error ? err.message : String(err) })
   );
 
   return txn as WalletTransaction;
@@ -347,11 +348,9 @@ async function checkAutoTopup(brokerSlug: string, currentBalance: number): Promi
       },
     });
 
-    console.info(
-      `Auto top-up triggered for ${brokerSlug}: $${(wallet.auto_topup_amount_cents / 100).toFixed(2)}, PI: ${paymentIntent.id}`
-    );
+    log.info(`Auto top-up triggered for ${brokerSlug}`, { amount: `$${(wallet.auto_topup_amount_cents / 100).toFixed(2)}`, paymentIntentId: paymentIntent.id });
   } catch (err) {
-    console.error(`Auto top-up payment failed for ${brokerSlug}:`, err);
+    log.error(`Auto top-up payment failed for ${brokerSlug}`, { error: err instanceof Error ? err.message : String(err) });
     // Don't throw — this is fire-and-forget
   }
 }

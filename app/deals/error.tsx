@@ -2,10 +2,13 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
+import { logger } from "@/lib/logger";
+
+const log = logger("error-boundary");
 
 export default function DealsError({ error, reset }: { error: Error; reset: () => void }) {
   useEffect(() => {
-    console.error("Deals page error:", error);
+    log.error("Deals page error", { error: error.message });
   }, [error]);
 
   return (

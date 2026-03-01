@@ -2,6 +2,9 @@ import { getStripe, PLANS } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import type Stripe from "stripe";
+import { logger } from "@/lib/logger";
+
+const log = logger("stripe-webhook");
 
 // ─── Transactional email helpers ────────────────────────────────────
 
@@ -34,7 +37,7 @@ async function sendTransactionalEmail(
       body: JSON.stringify({ from, to: [to], subject, html }),
     });
   } catch (err) {
-    console.error("Transactional email failed:", err);
+    log.error("Transactional email failed", { error: err instanceof Error ? err.message : String(err) });
   }
 }
 
@@ -136,7 +139,7 @@ async function upsertSubscription(subscription: Stripe.Subscription) {
     .single();
 
   if (!profile) {
-    console.error("No profile found for Stripe customer:", customerId);
+    log.error("No profile found for Stripe customer", { customerId });
     return;
   }
 
@@ -167,7 +170,7 @@ async function upsertSubscription(subscription: Stripe.Subscription) {
     .upsert(subscriptionData, { onConflict: "stripe_subscription_id" });
 
   if (error) {
-    console.error("Subscription upsert error:", error.message);
+    log.error("Subscription upsert error", { error: error.message });
   }
 }
 
@@ -191,10 +194,7 @@ export async function POST(request: NextRequest) {
       process.env.STRIPE_WEBHOOK_SECRET!
     );
   } catch (err) {
-    console.error(
-      "Webhook signature verification failed:",
-      err instanceof Error ? err.message : err
-    );
+    log.error("Webhook signature verification failed", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
@@ -218,7 +218,7 @@ export async function POST(request: NextRequest) {
               ).catch(() => {});
             }
           } catch (err) {
-            console.error("Pro welcome email lookup failed:", err);
+            log.error("Pro welcome email lookup failed", { error: err instanceof Error ? err.message : String(err) });
           }
         }
         break;
@@ -230,12 +230,7 @@ export async function POST(request: NextRequest) {
 
       case "invoice.payment_failed": {
         const invoice = event.data.object as Stripe.Invoice;
-        console.warn(
-          "Payment failed for customer:",
-          invoice.customer,
-          "invoice:",
-          invoice.id
-        );
+        log.warn("Payment failed for customer", { customer: invoice.customer, invoice: invoice.id });
         // The subscription.updated webhook will also fire with status 'past_due',
         // which upsertSubscription handles automatically
         break;
@@ -276,7 +271,7 @@ export async function POST(request: NextRequest) {
               .single();
 
             if (error) {
-              console.error("Course purchase upsert error:", error.message);
+              log.error("Course purchase upsert error", { error: error.message });
             }
 
             // Send course receipt email
@@ -309,7 +304,7 @@ export async function POST(request: NextRequest) {
                 });
 
               if (revenueError) {
-                console.error("Course revenue insert error:", revenueError.message);
+                log.error("Course revenue insert error", { error: revenueError.message });
               }
             }
           }
@@ -349,7 +344,7 @@ export async function POST(request: NextRequest) {
                 );
 
               if (bookingError) {
-                console.error("Consultation booking upsert error:", bookingError.message);
+                log.error("Consultation booking upsert error", { error: bookingError.message });
               }
 
               // Send consultation confirmation email
@@ -398,7 +393,7 @@ export async function POST(request: NextRequest) {
             .delete()
             .eq("purchase_id", coursePurchase.id);
 
-          console.info(`Course purchase refunded: ${coursePurchase.course_slug} for user ${coursePurchase.user_id}`);
+          log.info("Course purchase refunded", { courseSlug: coursePurchase.course_slug, userId: coursePurchase.user_id });
         }
 
         // 2. Check if this was a wallet top-up — reverse the credit
@@ -432,9 +427,9 @@ export async function POST(request: NextRequest) {
               email_sent: false,
             });
 
-            console.info(`Wallet refund reversed: ${walletTxn.broker_slug} — $${(reverseAmount / 100).toFixed(2)}`);
+            log.info("Wallet refund reversed", { brokerSlug: walletTxn.broker_slug, amount: `$${(reverseAmount / 100).toFixed(2)}` });
           } catch (err) {
-            console.error("Wallet refund reversal failed:", err);
+            log.error("Wallet refund reversal failed", { error: err instanceof Error ? err.message : String(err) });
           }
         }
 
@@ -451,7 +446,7 @@ export async function POST(request: NextRequest) {
             .update({ status: "refunded", refunded_at: new Date().toISOString() })
             .eq("id", booking.id);
 
-          console.info(`Consultation booking refunded: #${booking.id}`);
+          log.info("Consultation booking refunded", { bookingId: booking.id });
         }
 
         // Audit log
@@ -534,7 +529,7 @@ export async function POST(request: NextRequest) {
         break;
     }
   } catch (err) {
-    console.error("Webhook handler error:", err);
+    log.error("Webhook handler error", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json(
       { error: "Webhook handler failed" },
       { status: 500 }

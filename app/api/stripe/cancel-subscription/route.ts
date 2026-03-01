@@ -2,6 +2,9 @@ import { getStripe } from "@/lib/stripe";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
+
+const log = logger("stripe");
 
 export async function POST() {
   try {
@@ -52,7 +55,7 @@ export async function POST() {
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("Cancel subscription error:", err);
+    log.error("Cancel subscription error", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json(
       { error: "Failed to cancel subscription" },
       { status: 500 }

@@ -2,6 +2,9 @@ import { getStripe } from "@/lib/stripe";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
+
+const log = logger("stripe");
 
 const REFUND_WINDOW_DAYS = 7;
 
@@ -131,7 +134,7 @@ export async function POST() {
           }),
         });
       } catch (emailErr) {
-        console.error("Refund confirmation email failed:", emailErr);
+        log.error("Refund confirmation email failed", { error: emailErr instanceof Error ? emailErr.message : String(emailErr) });
         // Non-blocking — refund already processed
       }
     }
@@ -142,7 +145,7 @@ export async function POST() {
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("Refund subscription error:", err);
+    log.error("Refund subscription error", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json(
       {
         error:
