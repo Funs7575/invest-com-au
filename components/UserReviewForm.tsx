@@ -104,7 +104,7 @@ export default function UserReviewForm({ brokerSlug, brokerName }: UserReviewFor
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white border border-slate-200 rounded-xl p-5 space-y-4">
+    <form onSubmit={handleSubmit} noValidate className="bg-white border border-slate-200 rounded-xl p-5 space-y-4">
       <h4 className="text-base font-bold text-slate-900">Write Your Review of {brokerName}</h4>
 
       {/* Star Rating */}

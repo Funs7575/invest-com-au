@@ -118,7 +118,7 @@ export default function ContextualLeadMagnet({ segment = "fee-audit" }: { segmen
           <p className="text-sm text-slate-600">{config.successText}</p>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="space-y-3">
+        <form onSubmit={handleSubmit} noValidate className="space-y-3">
           <input
             type="email"
             placeholder="you@email.com"

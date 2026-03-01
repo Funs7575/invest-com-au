@@ -78,6 +78,14 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: "(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(t!=='light'&&matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.classList.add('dark')}catch(e){}})()" }} />
       </head>
       <body className={inter.className}>
+        <noscript>
+          <div style={{ padding: "1rem", textAlign: "center", background: "#f8fafc", borderBottom: "1px solid #e2e8f0" }}>
+            <p style={{ fontSize: "0.875rem", color: "#334155" }}>
+              This site works best with JavaScript enabled.
+              Please enable JavaScript in your browser for the full experience.
+            </p>
+          </div>
+        </noscript>
         <GoogleAnalytics />
         <ThemeProvider>
           <LayoutShell>{children}</LayoutShell>

@@ -77,7 +77,7 @@ export default function LeadMagnet() {
           </p>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="space-y-2.5 md:space-y-3">
+        <form onSubmit={handleSubmit} noValidate className="space-y-2.5 md:space-y-3">
           <div>
             <input
               type="email"

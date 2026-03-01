@@ -146,7 +146,7 @@ export default function SwitchStoryForm({
   const destOptions = brokers.filter((b) => b.slug !== sourceBroker);
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white border border-slate-200 rounded-xl p-5 space-y-4">
+    <form onSubmit={handleSubmit} noValidate className="bg-white border border-slate-200 rounded-xl p-5 space-y-4">
       <h4 className="text-base font-bold text-slate-900">Share Your Switching Story</h4>
       <p className="text-xs text-slate-500 -mt-2">Switched brokers? Tell others about your experience.</p>
 

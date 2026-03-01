@@ -87,36 +87,36 @@ export default function Footer() {
             <div>
               <h4 className="text-white font-semibold mb-2 md:mb-4 text-xs md:text-sm">Compare</h4>
               <ul className="space-y-0.5 md:space-y-2 text-xs md:text-sm">
-                <li><Link href="/compare" className="hover:text-white transition-colors inline-block py-1 min-h-[32px]">All Brokers</Link></li>
-                <li><Link href="/versus" className="hover:text-white transition-colors inline-block py-1 min-h-[32px]">Head-to-Head</Link></li>
-                <li><Link href="/deals" className="hover:text-white transition-colors inline-block py-1 min-h-[32px]">Deals</Link></li>
-                <li><Link href="/reviews" className="hover:text-white transition-colors inline-block py-1 min-h-[32px]">Reviews</Link></li>
-                <li><Link href="/quiz" className="hover:text-white transition-colors inline-block py-1 min-h-[32px]">Quiz</Link></li>
+                <li><Link href="/compare" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">All Brokers</Link></li>
+                <li><Link href="/versus" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Head-to-Head</Link></li>
+                <li><Link href="/deals" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Deals</Link></li>
+                <li><Link href="/reviews" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Reviews</Link></li>
+                <li><Link href="/quiz" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Quiz</Link></li>
               </ul>
             </div>
 
             <div>
               <h4 className="text-white font-semibold mb-2 md:mb-4 text-xs md:text-sm">Learn</h4>
               <ul className="space-y-0.5 md:space-y-2 text-xs md:text-sm">
-                <li><Link href="/articles" className="hover:text-white transition-colors inline-block py-1 min-h-[32px]">Guides</Link></li>
-                <li><Link href="/calculators" className="hover:text-white transition-colors inline-block py-1 min-h-[32px]">Calculators</Link></li>
-                <li><Link href="/scenarios" className="hover:text-white transition-colors inline-block py-1 min-h-[32px]">Best For...</Link></li>
-                <li><Link href="/pro" className="hover:text-white transition-colors text-amber-400 inline-block py-1 min-h-[32px]">Pro ✦</Link></li>
+                <li><Link href="/articles" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Guides</Link></li>
+                <li><Link href="/calculators" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Calculators</Link></li>
+                <li><Link href="/scenarios" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Best For...</Link></li>
+                <li><Link href="/pro" className="hover:text-white transition-colors text-amber-400 inline-block py-1 min-h-[44px]">Pro ✦</Link></li>
               </ul>
             </div>
 
             <div>
               <h4 className="text-white font-semibold mb-2 md:mb-4 text-xs md:text-sm">About</h4>
               <ul className="space-y-0.5 md:space-y-2 text-xs md:text-sm">
-                <li><Link href="/about" className="hover:text-white transition-colors inline-block py-1 min-h-[32px]">About Us</Link></li>
-                <li><Link href="/editorial-policy" className="hover:text-white transition-colors inline-block py-1 min-h-[32px]">Editorial</Link></li>
-                <li><Link href="/how-we-earn" className="hover:text-white transition-colors inline-block py-1 min-h-[32px]">How We Earn</Link></li>
-                <li><Link href="/privacy" className="hover:text-white transition-colors inline-block py-1 min-h-[32px]">Privacy</Link></li>
-                <li><Link href="/methodology" className="hover:text-white transition-colors inline-block py-1 min-h-[32px]">Methodology</Link></li>
-                <li><Link href="/terms" className="hover:text-white transition-colors inline-block py-1 min-h-[32px]">Terms</Link></li>
-                <li><Link href="/contact" className="hover:text-white transition-colors inline-block py-1 min-h-[32px]">Contact</Link></li>
-                <li><Link href="/advertise" className="hover:text-white transition-colors inline-block py-1 min-h-[32px]">Advertise</Link></li>
-                <li><Link href="/broker-portal/login" className="hover:text-white transition-colors inline-block py-1 min-h-[32px]">Partner Login</Link></li>
+                <li><Link href="/about" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">About Us</Link></li>
+                <li><Link href="/editorial-policy" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Editorial</Link></li>
+                <li><Link href="/how-we-earn" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">How We Earn</Link></li>
+                <li><Link href="/privacy" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Privacy</Link></li>
+                <li><Link href="/methodology" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Methodology</Link></li>
+                <li><Link href="/terms" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Terms</Link></li>
+                <li><Link href="/contact" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Contact</Link></li>
+                <li><Link href="/advertise" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Advertise</Link></li>
+                <li><Link href="/broker-portal/login" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Partner Login</Link></li>
               </ul>
             </div>
           </div>

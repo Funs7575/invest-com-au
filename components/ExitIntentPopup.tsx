@@ -214,7 +214,7 @@ export default function ExitIntentPopup() {
                 </Link>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-3">
+              <form onSubmit={handleSubmit} noValidate className="space-y-3">
                 <div className="flex items-center gap-2 text-xs text-slate-500 mb-1">
                   {["Free PDF", "No spam", "Unsubscribe anytime"].map((label) => (
                     <span key={label} className="flex items-center gap-1">

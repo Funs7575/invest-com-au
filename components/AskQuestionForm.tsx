@@ -90,7 +90,7 @@ export default function AskQuestionForm({ brokerSlug, brokerName, pageType = "br
           Ask a question about {brokerName}
         </button>
       ) : (
-        <form onSubmit={handleSubmit} className="bg-slate-50 border border-slate-200 rounded-lg p-4">
+        <form onSubmit={handleSubmit} noValidate className="bg-slate-50 border border-slate-200 rounded-lg p-4">
           <h3 className="text-sm font-bold text-slate-900 mb-3">
             Ask about {brokerName}
           </h3>
