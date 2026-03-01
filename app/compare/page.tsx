@@ -2,11 +2,11 @@ import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
 import CompareClient from "./CompareClient";
-import { absoluteUrl } from "@/lib/seo";
+import { absoluteUrl, UPDATED_LABEL } from "@/lib/seo";
 
 export const metadata = {
   title: "Compare Australian Brokers",
-  description: "Side-by-side comparison of fees, features, and safety for Australian share trading platforms. Updated February 2026.",
+  description: `Side-by-side comparison of fees, features, and safety for Australian share trading platforms. ${UPDATED_LABEL}.`,
   openGraph: {
     title: "Compare Australian Brokers — Invest.com.au",
     description: "Side-by-side comparison of fees, features, and safety for Australian share trading platforms.",

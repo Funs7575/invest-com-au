@@ -1,6 +1,7 @@
+import { memo } from "react";
 import type { Broker } from "@/lib/types";
 
-export default function PromoBadge({ broker }: { broker: Broker }) {
+export default memo(function PromoBadge({ broker }: { broker: Broker }) {
   if (!broker.deal || !broker.deal_text) return null;
 
   const expiryFormatted = broker.deal_expiry
@@ -25,4 +26,4 @@ export default function PromoBadge({ broker }: { broker: Broker }) {
       </span>
     </span>
   );
-}
+})

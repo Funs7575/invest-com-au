@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
 import SponsorBadge from "@/components/SponsorBadge";
@@ -7,7 +8,7 @@ import Icon from "@/components/Icon";
 import ShortlistButton from "@/components/ShortlistButton";
 import { isSponsored } from "@/lib/sponsorship";
 
-export default function BrokerCard({
+export default memo(function BrokerCard({
   broker,
   badge,
   context = 'compare',
@@ -160,4 +161,4 @@ export default function BrokerCard({
       </a>
     </div>
   );
-}
+})

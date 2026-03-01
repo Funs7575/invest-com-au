@@ -109,6 +109,7 @@ export default function OnThisPage({ items }: { items: TocItem[] }) {
             {/* Backdrop — tap to dismiss */}
             <div
               className="fixed inset-0 bg-black/20 -z-10"
+              role="presentation"
               onClick={() => setIsExpanded(false)}
             />
             <div className="bg-white/95 backdrop-blur-md border border-slate-200 rounded-xl shadow-2xl p-3 motion-safe:animate-[fadeInUp_0.15s_ease-out]">

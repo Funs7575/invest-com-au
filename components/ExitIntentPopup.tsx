@@ -163,6 +163,7 @@ export default function ExitIntentPopup() {
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        role="presentation"
         onClick={handleDismiss}
       />
 
@@ -215,18 +216,12 @@ export default function ExitIntentPopup() {
             ) : (
               <form onSubmit={handleSubmit} className="space-y-3">
                 <div className="flex items-center gap-2 text-xs text-slate-500 mb-1">
-                  <span className="flex items-center gap-1">
-                    <svg className="w-3.5 h-3.5 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-                    Free PDF
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <svg className="w-3.5 h-3.5 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-                    No spam
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <svg className="w-3.5 h-3.5 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-                    Unsubscribe anytime
-                  </span>
+                  {["Free PDF", "No spam", "Unsubscribe anytime"].map((label) => (
+                    <span key={label} className="flex items-center gap-1">
+                      <Icon name="check-circle" size={14} className="text-amber-500" />
+                      {label}
+                    </span>
+                  ))}
                 </div>
                 <input
                   type="email"

@@ -1,3 +1,4 @@
+import { memo } from "react";
 import type { Broker } from "@/lib/types";
 
 const TIER_CONFIG = {
@@ -24,7 +25,7 @@ const TIER_CONFIG = {
   },
 } as const;
 
-export default function SponsorBadge({ broker }: { broker: Broker }) {
+export default memo(function SponsorBadge({ broker }: { broker: Broker }) {
   if (!broker.sponsorship_tier) return null;
   const config = TIER_CONFIG[broker.sponsorship_tier];
   if (!config) return null;
@@ -39,6 +40,6 @@ export default function SponsorBadge({ broker }: { broker: Broker }) {
       </span>
     </span>
   );
-}
+})
 
 export { TIER_CONFIG };

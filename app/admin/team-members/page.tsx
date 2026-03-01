@@ -446,7 +446,7 @@ export default function TeamMembersPage() {
                         {member.avatar_url ? (
                           <img
                             src={member.avatar_url}
-                            alt=""
+                            alt={member.full_name}
                             className="w-8 h-8 rounded-full object-cover"
                           />
                         ) : (

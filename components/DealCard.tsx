@@ -1,11 +1,12 @@
 "use client";
 
+import { memo } from "react";
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
 import { isSponsored } from "@/lib/sponsorship";
 import SponsorBadge from "@/components/SponsorBadge";
 
-export default function DealCard({
+export default memo(function DealCard({
   broker,
   isFeaturedCampaign = false,
   campaignId,
@@ -130,4 +131,4 @@ export default function DealCard({
       </a>
     </div>
   );
-}
+})

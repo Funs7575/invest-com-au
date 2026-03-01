@@ -1,4 +1,5 @@
 import type { Broker } from "./types";
+import { CURRENT_YEAR, UPDATED_LABEL, FEES_VERIFIED_LABEL } from "./seo";
 
 export interface BestBrokerCategory {
   slug: string;
@@ -20,13 +21,17 @@ export interface BestBrokerCategory {
   faqs: { question: string; answer: string }[];
 }
 
+const yr = CURRENT_YEAR;
+const upd = UPDATED_LABEL;
+const fv = FEES_VERIFIED_LABEL;
+
 const categories: BestBrokerCategory[] = [
   {
     slug: "beginners",
-    title: "Best Brokers for Beginners in Australia (2026)",
+    title: `Best Brokers for Beginners in Australia (${yr})`,
     h1: "Best Brokers for Beginners in Australia",
     metaDescription:
-      "Beginner-friendly Australian brokers compared. Low fees, simple platforms, and strong safety features. Updated February 2026.",
+      `Beginner-friendly Australian brokers compared. Low fees, simple platforms, and strong safety features. ${upd}.`,
     intro:
       "Starting your investing journey? The right broker makes all the difference. We've filtered Australia's trading platforms to find those that combine low fees, intuitive platforms, and strong safety features like CHESS sponsorship. Here are our top picks for 2026.",
     filter: (b) => !b.is_crypto && (b.asx_fee_value ?? 999) <= 10 && (b.rating ?? 0) >= 3.5,
@@ -77,10 +82,10 @@ const categories: BestBrokerCategory[] = [
   },
   {
     slug: "us-shares",
-    title: "Best Brokers for US Shares in Australia (2026)",
+    title: `Best Brokers for US Shares in Australia (${yr})`,
     h1: "Best Brokers for Buying US Shares from Australia",
     metaDescription:
-      "Compare Australian brokers for US share trading. $0 US brokerage, low FX fees, and fractional shares. Updated February 2026.",
+      `Compare Australian brokers for US share trading. $0 US brokerage, low FX fees, and fractional shares. ${upd}.`,
     intro:
       "Want to buy Apple, Tesla, or S&P 500 ETFs from Australia? Not all brokers make it easy or affordable. We've compared FX conversion fees, US brokerage costs, and fractional share support to find the best options for Australian investors trading US markets.",
     filter: (b) => !b.is_crypto && b.us_fee_value != null && b.us_fee_value <= 5,
@@ -135,10 +140,10 @@ const categories: BestBrokerCategory[] = [
   },
   {
     slug: "low-fees",
-    title: "Cheapest Online Brokers in Australia (2026)",
+    title: `Cheapest Online Brokers in Australia (${yr})`,
     h1: "Cheapest Online Brokers in Australia",
     metaDescription:
-      "The lowest-fee share trading platforms in Australia. $0 brokerage on ASX and US trades. Fees verified February 2026.",
+      `The lowest-fee share trading platforms in Australia. $0 brokerage on ASX and US trades. ${fv}.`,
     intro:
       "Brokerage fees directly reduce your returns. We've ranked Australia's cheapest trading platforms by total cost — not just headline brokerage, but also FX fees, inactivity charges, and hidden costs. Every fee below is verified against the broker's official pricing page.",
     filter: (b) => !b.is_crypto && (b.asx_fee_value ?? 999) <= 10,
@@ -184,10 +189,10 @@ const categories: BestBrokerCategory[] = [
   },
   {
     slug: "chess-sponsored",
-    title: "Best CHESS-Sponsored Brokers in Australia (2026)",
+    title: `Best CHESS-Sponsored Brokers in Australia (${yr})`,
     h1: "Best CHESS-Sponsored Brokers in Australia",
     metaDescription:
-      "CHESS-sponsored brokers compared. Your shares held in your name on the ASX register. Safety, fees, and features compared. Updated 2026.",
+      `CHESS-sponsored brokers compared. Your shares held in your name on the ASX register. Safety, fees, and features compared. ${upd}.`,
     intro:
       "CHESS sponsorship means your ASX shares are registered directly in your name on the official ASX register — not held in the broker's custodial account. If the broker goes bust, your shares are still yours. Here are Australia's best CHESS-sponsored brokers ranked by fees, features, and overall value.",
     filter: (b) => !b.is_crypto && b.chess_sponsored,
@@ -238,10 +243,10 @@ const categories: BestBrokerCategory[] = [
   },
   {
     slug: "smsf",
-    title: "Best Brokers for SMSF Trading in Australia (2026)",
+    title: `Best Brokers for SMSF Trading in Australia (${yr})`,
     h1: "Best Brokers for Self-Managed Super Funds (SMSF)",
     metaDescription:
-      "SMSF-compatible Australian brokers compared. Compliant custody, reporting, and fees for self-managed super fund investing. Updated 2026.",
+      `SMSF-compatible Australian brokers compared. Compliant custody, reporting, and fees for self-managed super fund investing. ${upd}.`,
     intro:
       "Running a Self-Managed Super Fund requires a broker that supports SMSF accounts with compliant custody, proper reporting, and reasonable fees. Not all platforms offer SMSF accounts. Here are the brokers that do, ranked by value for SMSF trustees.",
     filter: (b) => !b.is_crypto && b.smsf_support,
@@ -287,10 +292,10 @@ const categories: BestBrokerCategory[] = [
   },
   {
     slug: "crypto",
-    title: "Best Crypto Exchanges in Australia (2026)",
+    title: `Best Crypto Exchanges in Australia (${yr})`,
     h1: "Best Cryptocurrency Exchanges in Australia",
     metaDescription:
-      "ASIC-regulated Australian crypto exchanges compared. Fees, security, and supported coins. Updated February 2026.",
+      `ASIC-regulated Australian crypto exchanges compared. Fees, security, and supported coins. ${upd}.`,
     intro:
       "Buying Bitcoin, Ethereum, or other cryptocurrencies in Australia? Stick with ASIC-regulated exchanges that offer AUD deposits and transparent fees. Here are the best options for Australian crypto investors in 2026.",
     filter: (b) => b.is_crypto,
@@ -335,10 +340,10 @@ const categories: BestBrokerCategory[] = [
   },
   {
     slug: "low-fx-fees",
-    title: "Best Brokers for Low FX Fees in Australia (2026)",
+    title: `Best Brokers for Low FX Fees in Australia (${yr})`,
     h1: "Best Brokers for Low Foreign Exchange Fees",
     metaDescription:
-      "Australian brokers with the lowest FX conversion fees for international share trading. Save hundreds on currency conversion. Updated 2026.",
+      `Australian brokers with the lowest FX conversion fees for international share trading. Save hundreds on currency conversion. ${upd}.`,
     intro:
       "FX conversion fees are the hidden cost of international investing. Big banks charge 0.60-0.70% — on a $10,000 US trade, that's $60-70 just to convert your currency. We've found brokers charging under 0.50%, saving you hundreds per year if you trade international shares regularly.",
     filter: (b) => !b.is_crypto && b.fx_rate != null && b.fx_rate > 0 && b.fx_rate < 0.5,
@@ -380,10 +385,10 @@ const categories: BestBrokerCategory[] = [
   },
   {
     slug: "free-brokerage",
-    title: "Best $0 Brokerage Brokers in Australia (2026)",
+    title: `Best $0 Brokerage Brokers in Australia (${yr})`,
     h1: "Best Free Brokerage Brokers in Australia",
     metaDescription:
-      "Australian brokers offering $0 brokerage on ASX trades. How they work, are they safe, and which is best. Updated February 2026.",
+      `Australian brokers offering $0 brokerage on ASX trades. How they work, are they safe, and which is best. ${upd}.`,
     intro:
       "Zero-commission trading has arrived in Australia. Several brokers now offer $0 brokerage on ASX share trades, but free doesn't always mean no cost. We've analysed how each $0 broker makes money, whether they're safe, and which one delivers the best overall experience for Australian investors.",
     filter: (b) => b.asx_fee_value === 0,
@@ -434,10 +439,10 @@ const categories: BestBrokerCategory[] = [
   },
   {
     slug: "under-5-dollars",
-    title: "Best Brokers Under $5 Per Trade in Australia (2026)",
+    title: `Best Brokers Under $5 Per Trade in Australia (${yr})`,
     h1: "Best Brokers Under $5 Per Trade in Australia",
     metaDescription:
-      "Australian brokers charging under $5 per ASX trade. The sweet spot between free and full-service. Fees verified February 2026.",
+      `Australian brokers charging under $5 per ASX trade. The sweet spot between free and full-service. ${fv}.`,
     intro:
       "Brokers charging $1 to $5 per trade sit in the sweet spot between free platforms and traditional full-service brokers. You get low costs without the trade-offs that sometimes come with $0 models. Here are Australia's best sub-$5 brokers, ranked by ASX brokerage from lowest to highest.",
     filter: (b) => b.asx_fee_value != null && b.asx_fee_value <= 5 && b.asx_fee_value > 0,
@@ -483,10 +488,10 @@ const categories: BestBrokerCategory[] = [
   },
   {
     slug: "no-inactivity-fee",
-    title: "Best Brokers With No Inactivity Fee in Australia (2026)",
+    title: `Best Brokers With No Inactivity Fee in Australia (${yr})`,
     h1: "Best Brokers With No Inactivity Fee in Australia",
     metaDescription:
-      "Australian brokers that don't charge inactivity fees. Hold shares long-term without penalties. Updated February 2026.",
+      `Australian brokers that don't charge inactivity fees. Hold shares long-term without penalties. ${upd}.`,
     intro:
       "Inactivity fees punish you for not trading — the opposite of a buy-and-hold strategy. If you're a long-term investor who buys shares and holds them for years, you need a broker that won't charge you for doing nothing. Here are Australia's best brokers with zero inactivity fees.",
     filter: (b) =>
@@ -536,10 +541,10 @@ const categories: BestBrokerCategory[] = [
   },
   {
     slug: "international-shares",
-    title: "Best Brokers for International Shares in Australia (2026)",
+    title: `Best Brokers for International Shares in Australia (${yr})`,
     h1: "Best Brokers for International Shares in Australia",
     metaDescription:
-      "Compare Australian brokers for global share trading. Access US, UK, European, and Asian markets with low FX fees. Updated 2026.",
+      `Compare Australian brokers for global share trading. Access US, UK, European, and Asian markets with low FX fees. ${upd}.`,
     intro:
       "Investing beyond the ASX gives you access to thousands of companies across the US, UK, Europe, and Asia. But international trading costs vary wildly between brokers — FX fees, brokerage, and market access all differ. We've ranked Australia's best brokers for international shares by total cost.",
     filter: (b) => b.us_fee_value != null && !b.is_crypto,
@@ -594,10 +599,10 @@ const categories: BestBrokerCategory[] = [
   },
   {
     slug: "day-trading",
-    title: "Best Brokers for Day Trading in Australia (2026)",
+    title: `Best Brokers for Day Trading in Australia (${yr})`,
     h1: "Best Brokers for Day Trading in Australia",
     metaDescription:
-      "Australian brokers for active and day traders. Low brokerage, fast execution, and advanced order types. Updated February 2026.",
+      `Australian brokers for active and day traders. Low brokerage, fast execution, and advanced order types. ${upd}.`,
     intro:
       "Active traders need more than low fees — they need fast execution, reliable platforms, advanced order types, and real-time data. We've identified the best Australian brokers for day trading and frequent trading, ranked by the features that matter most when you're making multiple trades per day.",
     filter: (b) => !b.is_crypto && (b.asx_fee_value ?? 999) <= 5,
@@ -648,10 +653,10 @@ const categories: BestBrokerCategory[] = [
   },
   {
     slug: "dividend-investing",
-    title: "Best Brokers for Dividend Investing in Australia (2026)",
+    title: `Best Brokers for Dividend Investing in Australia (${yr})`,
     h1: "Best Brokers for Dividend Investing in Australia",
     metaDescription:
-      "Australian brokers for dividend investors. DRP support, franking credits, and CHESS sponsorship. Updated February 2026.",
+      `Australian brokers for dividend investors. DRP support, franking credits, and CHESS sponsorship. ${upd}.`,
     intro:
       "Dividend investing is one of the most popular strategies for Australian investors, thanks to our unique franking credit system. The right broker makes dividend investing easier with DRP support, CHESS sponsorship for direct share ownership, and low fees that don't eat into your yield. Here are the best options.",
     filter: (b) => !b.is_crypto && b.chess_sponsored,
@@ -697,10 +702,10 @@ const categories: BestBrokerCategory[] = [
   },
   {
     slug: "etf-investing",
-    title: "Best Brokers for ETF Investing in Australia (2026)",
+    title: `Best Brokers for ETF Investing in Australia (${yr})`,
     h1: "Best Brokers for ETF Investing in Australia",
     metaDescription:
-      "Australian brokers for ETF investors. Low brokerage for Vanguard, BetaShares, and iShares ETFs. Updated February 2026.",
+      `Australian brokers for ETF investors. Low brokerage for Vanguard, BetaShares, and iShares ETFs. ${upd}.`,
     intro:
       "ETFs are the fastest-growing investment product in Australia, and for good reason — they offer instant diversification at low cost. But your broker choice matters. Brokerage fees on regular ETF purchases can significantly impact long-term returns. Here are the best brokers for building an ETF portfolio in 2026.",
     filter: (b) => !b.is_crypto && (b.asx_fee_value ?? 999) <= 10,
@@ -751,10 +756,10 @@ const categories: BestBrokerCategory[] = [
   },
   {
     slug: "mobile-app",
-    title: "Best Mobile Trading Apps in Australia (2026)",
+    title: `Best Mobile Trading Apps in Australia (${yr})`,
     h1: "Best Mobile Trading Apps in Australia",
     metaDescription:
-      "Top-rated mobile share trading apps in Australia. Invest on the go with intuitive design and real-time data. Updated 2026.",
+      `Top-rated mobile share trading apps in Australia. Invest on the go with intuitive design and real-time data. ${upd}.`,
     intro:
       "More Australians are managing their investments from their phones than ever before. A great mobile trading app needs intuitive design, fast execution, real-time data, and reliable notifications. We've ranked Australia's best mobile investing apps based on user experience, features, and overall broker quality.",
     filter: (b) => !b.is_crypto && (b.rating ?? 0) >= 3.5,
@@ -800,10 +805,10 @@ const categories: BestBrokerCategory[] = [
   },
   {
     slug: "fractional-shares",
-    title: "Best Brokers for Fractional Shares in Australia (2026)",
+    title: `Best Brokers for Fractional Shares in Australia (${yr})`,
     h1: "Best Brokers for Fractional Shares in Australia",
     metaDescription:
-      "Australian brokers offering fractional shares. Invest any dollar amount in ASX and US stocks. Updated February 2026.",
+      `Australian brokers offering fractional shares. Invest any dollar amount in ASX and US stocks. ${upd}.`,
     intro:
       "Fractional shares let you invest any dollar amount — even $10 — into shares that might otherwise cost hundreds per unit. This is particularly valuable for US stocks like Amazon or Berkshire Hathaway, and for Australian investors who want to dollar-cost average fixed amounts each month. Here are the best brokers offering fractional shares in Australia.",
     filter: (b) => !b.is_crypto && (b.asx_fee_value ?? 999) <= 10,
@@ -854,10 +859,10 @@ const categories: BestBrokerCategory[] = [
   },
   {
     slug: "joint-accounts",
-    title: "Best Brokers for Joint Accounts in Australia (2026)",
+    title: `Best Brokers for Joint Accounts in Australia (${yr})`,
     h1: "Best Brokers for Joint Accounts in Australia",
     metaDescription:
-      "Australian brokers supporting joint share trading accounts. Invest with your partner under shared ownership. Updated 2026.",
+      `Australian brokers supporting joint share trading accounts. Invest with your partner under shared ownership. ${upd}.`,
     intro:
       "Investing with a partner or family member? A joint brokerage account lets two people co-own shares and make decisions together. Not all brokers support joint accounts, and the features vary. Here are the best Australian brokers for joint share trading accounts.",
     filter: (b) => !b.is_crypto && b.chess_sponsored,
@@ -903,10 +908,10 @@ const categories: BestBrokerCategory[] = [
   },
   {
     slug: "trust-accounts",
-    title: "Best Brokers for Trust & Company Accounts in Australia (2026)",
+    title: `Best Brokers for Trust & Company Accounts in Australia (${yr})`,
     h1: "Best Brokers for Trust and Company Accounts in Australia",
     metaDescription:
-      "Australian brokers supporting trust and company trading accounts. Compliant custody and reporting. Updated 2026.",
+      `Australian brokers supporting trust and company trading accounts. Compliant custody and reporting. ${upd}.`,
     intro:
       "Investing through a trust or company structure offers asset protection and tax flexibility, but requires a broker that supports these account types. Not all platforms do. Here are the best Australian brokers for trust and company share trading accounts, ranked by features and value.",
     filter: (b) => !b.is_crypto && b.smsf_support,
@@ -957,10 +962,10 @@ const categories: BestBrokerCategory[] = [
   },
   {
     slug: "children",
-    title: "Best Brokers for Investing for Kids in Australia (2026)",
+    title: `Best Brokers for Investing for Kids in Australia (${yr})`,
     h1: "Best Brokers for Investing for Children in Australia",
     metaDescription:
-      "Australian brokers for investing on behalf of children. Custodial accounts, trust options, and age requirements. Updated 2026.",
+      `Australian brokers for investing on behalf of children. Custodial accounts, trust options, and age requirements. ${upd}.`,
     intro:
       "Investing for your children is one of the most powerful wealth-building strategies — time is the ultimate advantage. But minors can't open brokerage accounts in their own name in Australia. Here's how to invest on behalf of your kids, and which brokers make it easiest.",
     filter: (b) => !b.is_crypto && (b.rating ?? 0) >= 3.5,
@@ -1011,10 +1016,10 @@ const categories: BestBrokerCategory[] = [
   },
   {
     slug: "low-minimum-deposit",
-    title: "Best Brokers With Low Minimum Deposit in Australia (2026)",
+    title: `Best Brokers With Low Minimum Deposit in Australia (${yr})`,
     h1: "Best Brokers With Low or No Minimum Deposit in Australia",
     metaDescription:
-      "Australian brokers with low or $0 minimum deposit requirements. Start investing with any amount. Updated February 2026.",
+      `Australian brokers with low or $0 minimum deposit requirements. Start investing with any amount. ${upd}.`,
     intro:
       "You don't need thousands of dollars to start investing. Many Australian brokers have no minimum deposit at all, letting you begin with as little as $50. We've ranked the best low-barrier brokers by cost and features, so you can start building your portfolio today — whatever your budget.",
     filter: (b) => !b.is_crypto && (b.asx_fee_value ?? 999) <= 10,

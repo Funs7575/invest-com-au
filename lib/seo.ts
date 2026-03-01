@@ -8,6 +8,13 @@ export const SITE_NAME = "Invest.com.au";
 export const SITE_DESCRIPTION =
   "Compare Australia's best share trading platforms. Honest reviews, fee calculators, and CHESS-sponsored broker comparisons. No bank bias.";
 
+/* ─── Date constants — update once here when refreshing content ─── */
+export const CURRENT_YEAR = 2026;
+export const CURRENT_MONTH_YEAR = "March 2026";
+/** Short form for meta descriptions */
+export const UPDATED_LABEL = `Updated ${CURRENT_MONTH_YEAR}`;
+export const FEES_VERIFIED_LABEL = `Fees verified ${CURRENT_MONTH_YEAR}`;
+
 export function absoluteUrl(path: string): string {
   return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
 }
@@ -269,7 +276,7 @@ export function reviewArticleJsonLd(broker: {
   return {
     "@context": "https://schema.org",
     "@type": "Article",
-    headline: `${broker.name} Review (2026)`,
+    headline: `${broker.name} Review (${CURRENT_YEAR})`,
     description:
       broker.tagline ||
       `Honest review of ${broker.name}. Fees, pros, cons, and our verdict.`,
