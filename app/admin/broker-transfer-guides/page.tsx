@@ -230,14 +230,15 @@ export default function BrokerTransferGuidesPage() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => downloadCSV(
-                guides.map((guide) => ({
-                  "From Broker": guide.transfer_type === "outbound" ? getBrokerName(guide.broker_slug) : "",
-                  "To Broker": guide.transfer_type === "inbound" ? getBrokerName(guide.broker_slug) : "",
-                  Timeline: `${guide.estimated_timeline_days} days`,
-                  Fee: `$${(guide.chess_transfer_fee / 100).toFixed(0)}`,
-                  Status: guide.transfer_type,
-                })),
-                "broker-transfer-guides.csv"
+                "broker-transfer-guides.csv",
+                ["From Broker", "To Broker", "Timeline", "Fee", "Status"],
+                guides.map((guide) => [
+                  guide.transfer_type === "outbound" ? getBrokerName(guide.broker_slug) : "",
+                  guide.transfer_type === "inbound" ? getBrokerName(guide.broker_slug) : "",
+                  `${guide.estimated_timeline_days} days`,
+                  `$${(guide.chess_transfer_fee / 100).toFixed(0)}`,
+                  guide.transfer_type,
+                ])
               )}
               className="px-3 py-1.5 bg-green-50 text-green-700 text-xs font-semibold rounded-lg hover:bg-green-100 border border-green-200 transition-colors"
             >

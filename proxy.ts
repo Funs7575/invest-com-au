@@ -13,10 +13,21 @@ export async function proxy(request: NextRequest) {
     response.headers.set('X-Robots-Tag', 'noindex, nofollow')
   }
 
-  // ── Admin route protection ─────────────────────────────────────
-  // Only initialise Supabase auth for /admin paths to avoid ~50ms
+  // ── Protected route detection ─────────────────────────────────
+  const isAdmin = pathname.startsWith('/admin')
+  const isBrokerPortal = pathname.startsWith('/broker-portal')
+  const isProtected = isAdmin || isBrokerPortal
+
+  // Skip auth for login/register/callback pages
+  const isAuthPage =
+    pathname === '/admin/login' ||
+    pathname === '/broker-portal/login' ||
+    pathname === '/broker-portal/register' ||
+    pathname === '/auth/callback'
+
+  // Only initialise Supabase auth for protected paths to avoid ~50ms
   // latency on every public page request.
-  if (pathname.startsWith('/admin')) {
+  if (isProtected) {
     let supabaseResponse = NextResponse.next({ request })
 
     // Copy preview noindex header to supabase response if set
@@ -52,24 +63,38 @@ export async function proxy(request: NextRequest) {
     // IMPORTANT: Do not add code between createServerClient and getUser().
     const { data: { user } } = await supabase.auth.getUser()
 
-    // Protect admin routes (except login)
-    if (!pathname.startsWith('/admin/login')) {
-      if (!user) {
-        const url = request.nextUrl.clone()
-        url.pathname = '/admin/login'
-        const redirectResponse = NextResponse.redirect(url)
-        supabaseResponse.cookies.getAll().forEach(cookie => {
-          redirectResponse.cookies.set(cookie.name, cookie.value)
-        })
-        return redirectResponse
+    // ── Admin route protection ───────────────────────────────────
+    if (isAdmin) {
+      if (!pathname.startsWith('/admin/login')) {
+        if (!user) {
+          const url = request.nextUrl.clone()
+          url.pathname = '/admin/login'
+          url.searchParams.set('redirect', pathname)
+          const redirectResponse = NextResponse.redirect(url)
+          supabaseResponse.cookies.getAll().forEach(cookie => {
+            redirectResponse.cookies.set(cookie.name, cookie.value)
+          })
+          return redirectResponse
+        }
+
+        // Only allow admin emails
+        const extraAdmins = (process.env.ADMIN_EMAILS || 'finnduns@gmail.com').split(',').map(e => e.trim().toLowerCase());
+        const isAdminUser = user.email?.endsWith('@invest.com.au') || extraAdmins.includes(user.email?.toLowerCase() || '');
+        if (!isAdminUser) {
+          const url = request.nextUrl.clone()
+          url.pathname = '/'
+          const redirectResponse = NextResponse.redirect(url)
+          supabaseResponse.cookies.getAll().forEach(cookie => {
+            redirectResponse.cookies.set(cookie.name, cookie.value)
+          })
+          return redirectResponse
+        }
       }
 
-      // Only allow admin emails
-      const extraAdmins = (process.env.ADMIN_EMAILS || 'finnduns@gmail.com').split(',').map(e => e.trim().toLowerCase());
-      const isAdmin = user.email?.endsWith('@invest.com.au') || extraAdmins.includes(user.email?.toLowerCase() || '');
-      if (!isAdmin) {
+      // Redirect logged-in admins away from login page
+      if (pathname === '/admin/login' && user) {
         const url = request.nextUrl.clone()
-        url.pathname = '/'
+        url.pathname = '/admin'
         const redirectResponse = NextResponse.redirect(url)
         supabaseResponse.cookies.getAll().forEach(cookie => {
           redirectResponse.cookies.set(cookie.name, cookie.value)
@@ -78,10 +103,24 @@ export async function proxy(request: NextRequest) {
       }
     }
 
-    // Redirect logged-in users away from login page
-    if (pathname === '/admin/login' && user) {
+    // ── Broker portal route protection ───────────────────────────
+    if (isBrokerPortal && !isAuthPage) {
+      if (!user) {
+        const url = request.nextUrl.clone()
+        url.pathname = '/broker-portal/login'
+        url.searchParams.set('redirect', pathname)
+        const redirectResponse = NextResponse.redirect(url)
+        supabaseResponse.cookies.getAll().forEach(cookie => {
+          redirectResponse.cookies.set(cookie.name, cookie.value)
+        })
+        return redirectResponse
+      }
+    }
+
+    // Redirect logged-in brokers away from login page
+    if (pathname === '/broker-portal/login' && user) {
       const url = request.nextUrl.clone()
-      url.pathname = '/admin'
+      url.pathname = '/broker-portal'
       const redirectResponse = NextResponse.redirect(url)
       supabaseResponse.cookies.getAll().forEach(cookie => {
         redirectResponse.cookies.set(cookie.name, cookie.value)
