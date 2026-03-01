@@ -68,9 +68,10 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Revalidate each tag
+  // Revalidate each tag (Next.js 16 requires a cacheLife profile as 2nd arg)
+  // Using { expire: 0 } for immediate invalidation from admin actions
   for (const tag of tags) {
-    revalidateTag(tag);
+    revalidateTag(tag, { expire: 0 });
   }
 
   return NextResponse.json({
