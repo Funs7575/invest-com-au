@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import CountUp from "@/components/CountUp";
@@ -31,10 +32,13 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 export default function CampaignsPage() {
+  const router = useRouter();
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [filter, setFilter] = useState("all");
   const [loading, setLoading] = useState(true);
   const [brokerSlug, setBrokerSlug] = useState("");
+  const [selected, setSelected] = useState<Set<number>>(new Set());
+  const [bulkLoading, setBulkLoading] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -111,6 +115,79 @@ export default function CampaignsPage() {
       prev.map((c) => (c.id === id ? { ...c, status: "cancelled" as const } : c))
     );
     toast("Campaign cancelled", "success");
+  };
+
+  const handleDuplicate = async (campaign: Campaign) => {
+    const supabase = createClient();
+    const { error } = await supabase.from("campaigns").insert({
+      broker_slug: campaign.broker_slug,
+      placement_id: campaign.placement_id,
+      name: `${campaign.name} (Copy)`,
+      inventory_type: campaign.inventory_type,
+      rate_cents: campaign.rate_cents,
+      daily_budget_cents: campaign.daily_budget_cents || null,
+      total_budget_cents: campaign.total_budget_cents || null,
+      start_date: new Date().toISOString().slice(0, 10),
+      end_date: null,
+      status: "pending_review",
+      active_hours_start: campaign.active_hours_start ?? null,
+      active_hours_end: campaign.active_hours_end ?? null,
+      active_days: campaign.active_days ?? null,
+    });
+    if (error) {
+      toast("Failed to duplicate campaign", "error");
+      return;
+    }
+    toast("Campaign duplicated — submitted for review", "success");
+    // Reload
+    const { data } = await supabase
+      .from("campaigns")
+      .select("*, marketplace_placements(name, inventory_type)")
+      .eq("broker_slug", brokerSlug)
+      .order("created_at", { ascending: false });
+    setCampaigns((data || []) as Campaign[]);
+  };
+
+  // Bulk actions
+  const toggleSelect = (id: number) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selected.size === filtered.length) {
+      setSelected(new Set());
+    } else {
+      setSelected(new Set(filtered.map((c) => c.id)));
+    }
+  };
+
+  const handleBulkAction = async (action: "pause" | "resume" | "cancel") => {
+    if (selected.size === 0) return;
+    const label = action === "pause" ? "Pause" : action === "resume" ? "Resume" : "Cancel";
+    if (action === "cancel" && !confirm(`Cancel ${selected.size} campaign(s)? This cannot be undone.`)) return;
+    setBulkLoading(true);
+    const supabase = createClient();
+    const newStatus = action === "pause" ? "paused" : action === "resume" ? "approved" : "cancelled";
+    const ids = Array.from(selected);
+    const { error } = await supabase
+      .from("campaigns")
+      .update({ status: newStatus, updated_at: new Date().toISOString() })
+      .in("id", ids);
+    setBulkLoading(false);
+    if (error) {
+      toast(`Failed to ${action} campaigns`, "error");
+      return;
+    }
+    setCampaigns((prev) =>
+      prev.map((c) => (ids.includes(c.id) ? { ...c, status: newStatus as Campaign["status"] } : c))
+    );
+    setSelected(new Set());
+    toast(`${ids.length} campaign(s) ${action === "cancel" ? "cancelled" : action + "d"}`, "success");
   };
 
   const filtered = filter === "all"
@@ -214,6 +291,48 @@ export default function CampaignsPage() {
         ))}
       </div>
 
+      {/* Bulk Actions Bar */}
+      {filtered.length > 0 && (
+        <div className="flex items-center gap-3 bg-white rounded-xl border border-slate-200 px-4 py-2.5">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={selected.size === filtered.length && filtered.length > 0}
+              onChange={toggleSelectAll}
+              className="accent-slate-700 w-3.5 h-3.5"
+            />
+            <span className="text-xs text-slate-500 font-medium">
+              {selected.size > 0 ? `${selected.size} selected` : "Select all"}
+            </span>
+          </label>
+          {selected.size > 0 && (
+            <div className="flex gap-2 ml-auto">
+              <button
+                onClick={() => handleBulkAction("pause")}
+                disabled={bulkLoading}
+                className="px-3 py-1.5 text-xs font-semibold bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 disabled:opacity-50"
+              >
+                Pause Selected
+              </button>
+              <button
+                onClick={() => handleBulkAction("resume")}
+                disabled={bulkLoading}
+                className="px-3 py-1.5 text-xs font-semibold bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 disabled:opacity-50"
+              >
+                Resume Selected
+              </button>
+              <button
+                onClick={() => handleBulkAction("cancel")}
+                disabled={bulkLoading}
+                className="px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 rounded-lg disabled:opacity-50"
+              >
+                Cancel Selected
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Campaign list */}
       {filtered.length === 0 ? (
         <div className="bg-white rounded-xl border border-slate-200 p-12 text-center">
@@ -238,11 +357,18 @@ export default function CampaignsPage() {
             const budgetPct = c.total_budget_cents
               ? Math.min(100, Math.round((c.total_spent_cents / c.total_budget_cents) * 100))
               : 0;
+            const isSelected = selected.has(c.id);
 
             return (
-              <div key={c.id} className="bg-white rounded-xl border border-slate-200 p-5">
+              <div key={c.id} className={`bg-white rounded-xl border-2 p-5 transition-colors ${isSelected ? "border-slate-900 bg-slate-50/50" : "border-slate-200"}`}>
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-start gap-2">
+                    <input
+                      type="checkbox"
+                      checked={isSelected}
+                      onChange={() => toggleSelect(c.id)}
+                      className="accent-slate-700 w-3.5 h-3.5 mt-1.5 cursor-pointer"
+                    />
                     <span className={`w-2.5 h-2.5 rounded-full mt-1.5 ${STATUS_DOTS[c.status] || "bg-slate-300"}`} />
                     <div>
                       <h3 className="font-bold text-slate-900">{c.name}</h3>
@@ -292,6 +418,19 @@ export default function CampaignsPage() {
                   </div>
                 </div>
 
+                {/* Dayparting info */}
+                {(c.active_hours_start != null || (c.active_days && c.active_days.length > 0)) && (
+                  <div className="flex items-center gap-2 text-[0.62rem] text-slate-400 mb-2">
+                    <Icon name="clock" size={10} />
+                    {c.active_hours_start != null && c.active_hours_end != null && (
+                      <span>Active {c.active_hours_start}:00–{c.active_hours_end}:00</span>
+                    )}
+                    {c.active_days && c.active_days.length > 0 && c.active_days.length < 7 && (
+                      <span>on {c.active_days.map(d => ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][d]).join(", ")}</span>
+                    )}
+                  </div>
+                )}
+
                 {/* Budget bar */}
                 {c.total_budget_cents ? (
                   <div className="mb-3">
@@ -317,7 +456,7 @@ export default function CampaignsPage() {
                 )}
 
                 {/* Actions */}
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap">
                   {c.status === "active" && (
                     <button
                       onClick={() => handlePause(c.id)}
@@ -335,13 +474,28 @@ export default function CampaignsPage() {
                     </button>
                   )}
                   {["active", "paused", "pending_review", "approved"].includes(c.status) && (
-                    <button
-                      onClick={() => handleCancel(c.id)}
-                      className="px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 rounded-lg"
-                    >
-                      Cancel
-                    </button>
+                    <>
+                      <Link
+                        href={`/broker-portal/campaigns/${c.id}/edit`}
+                        className="px-3 py-1.5 text-xs font-semibold bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100"
+                      >
+                        Edit
+                      </Link>
+                      <button
+                        onClick={() => handleCancel(c.id)}
+                        className="px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 rounded-lg"
+                      >
+                        Cancel
+                      </button>
+                    </>
                   )}
+                  <button
+                    onClick={() => handleDuplicate(c)}
+                    className="px-3 py-1.5 text-xs font-semibold bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100"
+                  >
+                    <Icon name="copy" size={10} className="inline mr-1" />
+                    Duplicate
+                  </button>
                 </div>
               </div>
             );

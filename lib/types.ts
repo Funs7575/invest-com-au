@@ -590,6 +590,9 @@ export interface Campaign {
   reviewed_by?: string;
   reviewed_at?: string;
   priority: number;
+  active_hours_start?: number | null;
+  active_hours_end?: number | null;
+  active_days?: number[] | null;
   created_at: string;
   updated_at: string;
   placement?: MarketplacePlacement;
@@ -753,7 +756,7 @@ export interface ABTest {
 export interface BrokerNotification {
   id: number;
   broker_slug: string;
-  type: 'low_balance' | 'campaign_approved' | 'campaign_rejected' | 'campaign_paused' | 'budget_exhausted' | 'payment_received' | 'system' | 'support_reply';
+  type: 'low_balance' | 'campaign_approved' | 'campaign_rejected' | 'campaign_paused' | 'budget_exhausted' | 'payment_received' | 'system' | 'support_reply' | 'budget_pacing' | 'anomaly' | 'recommendation' | 're_engagement';
   title: string;
   message: string;
   link?: string;
@@ -781,5 +784,35 @@ export interface SupportMessage {
   sender_type: 'broker' | 'admin';
   sender_name?: string;
   message: string;
+  created_at: string;
+}
+
+// ─── Campaign Templates ───
+
+export interface CampaignTemplate {
+  id: number;
+  broker_slug: string;
+  name: string;
+  placement_id?: number;
+  inventory_type?: string;
+  rate_cents?: number;
+  daily_budget_cents?: number;
+  total_budget_cents?: number;
+  active_hours_start?: number | null;
+  active_hours_end?: number | null;
+  active_days?: number[] | null;
+  created_at: string;
+  updated_at: string;
+}
+
+// ─── Broker Activity Log ───
+
+export interface BrokerActivityLog {
+  id: number;
+  broker_slug: string;
+  action: string;
+  detail?: string;
+  entity_type?: string;
+  entity_id?: string;
   created_at: string;
 }

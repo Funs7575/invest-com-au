@@ -512,6 +512,11 @@ export default function NewCampaignPage() {
   const [totalBudget, setTotalBudget] = useState("");
   const [startDate, setStartDate] = useState(new Date().toISOString().slice(0, 10));
   const [endDate, setEndDate] = useState("");
+  const [activeHoursStart, setActiveHoursStart] = useState<number | null>(null);
+  const [activeHoursEnd, setActiveHoursEnd] = useState<number | null>(null);
+  const [activeDays, setActiveDays] = useState<number[]>([0,1,2,3,4,5,6]);
+  const [templates, setTemplates] = useState<{id: number; name: string; placement_id?: number; rate_cents?: number; daily_budget_cents?: number; total_budget_cents?: number; active_hours_start?: number | null; active_hours_end?: number | null; active_days?: number[] | null}[]>([]);
+  const [savingTemplate, setSavingTemplate] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -549,6 +554,15 @@ export default function NewCampaignPage() {
         .order("name");
 
       setPlacements((p || []) as MarketplacePlacement[]);
+
+      // Fetch templates
+      const { data: tpl } = await supabase
+        .from("campaign_templates")
+        .select("*")
+        .eq("broker_slug", account.broker_slug)
+        .order("created_at", { ascending: false });
+      setTemplates((tpl || []) as typeof templates);
+
       setLoading(false);
     };
     load();
@@ -592,6 +606,9 @@ export default function NewCampaignPage() {
         start_date: startDate,
         end_date: endDate || null,
         status: "pending_review",
+        active_hours_start: activeHoursStart,
+        active_hours_end: activeHoursEnd,
+        active_days: activeDays.length < 7 ? activeDays : null,
       });
 
       if (insertErr) {
@@ -808,14 +825,137 @@ export default function NewCampaignPage() {
             </div>
           </div>
 
+          {/* Dayparting / Scheduling */}
+          <div className="bg-slate-50 rounded-xl p-4 border border-slate-200 space-y-3">
+            <h3 className="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+              <Icon name="clock" size={14} className="text-slate-400" />
+              Scheduling &amp; Dayparting
+              <span className="text-xs text-slate-400 font-normal ml-1">optional</span>
+              <InfoTip text="Control when your ads are shown. Only serve ads during specific hours or days of the week to optimize spend." />
+            </h3>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-medium text-slate-600 mb-1">Active Hours (UTC)</label>
+                <div className="flex items-center gap-2">
+                  <select
+                    value={activeHoursStart ?? ""}
+                    onChange={e => setActiveHoursStart(e.target.value ? Number(e.target.value) : null)}
+                    className="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30"
+                  >
+                    <option value="">All day</option>
+                    {Array.from({ length: 24 }, (_, i) => (
+                      <option key={i} value={i}>{String(i).padStart(2, "0")}:00</option>
+                    ))}
+                  </select>
+                  <span className="text-xs text-slate-400">to</span>
+                  <select
+                    value={activeHoursEnd ?? ""}
+                    onChange={e => setActiveHoursEnd(e.target.value ? Number(e.target.value) : null)}
+                    className="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30"
+                  >
+                    <option value="">All day</option>
+                    {Array.from({ length: 24 }, (_, i) => (
+                      <option key={i} value={i}>{String(i).padStart(2, "0")}:00</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-600 mb-1">Active Days</label>
+                <div className="flex gap-1.5">
+                  {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map((day, i) => (
+                    <button
+                      key={day}
+                      type="button"
+                      onClick={() => setActiveDays(prev =>
+                        prev.includes(i) ? prev.filter(d => d !== i) : [...prev, i].sort()
+                      )}
+                      className={`w-9 h-9 rounded-lg text-[0.62rem] font-bold transition-colors ${
+                        activeDays.includes(i) ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-400 hover:bg-slate-200"
+                      }`}
+                    >
+                      {day}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Templates */}
+          {templates.length > 0 && (
+            <div className="bg-blue-50 rounded-xl p-4 border border-blue-200 space-y-2">
+              <h3 className="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+                <Icon name="file-text" size={14} className="text-blue-500" />
+                Load from Template
+              </h3>
+              <div className="flex gap-2 flex-wrap">
+                {templates.map(tpl => (
+                  <button
+                    key={tpl.id}
+                    type="button"
+                    onClick={() => {
+                      if (tpl.placement_id) setPlacementId(tpl.placement_id);
+                      if (tpl.rate_cents) setRateCents((tpl.rate_cents / 100).toFixed(2));
+                      if (tpl.daily_budget_cents) setDailyBudget((tpl.daily_budget_cents / 100).toFixed(0));
+                      if (tpl.total_budget_cents) setTotalBudget((tpl.total_budget_cents / 100).toFixed(0));
+                      if (tpl.active_hours_start != null) setActiveHoursStart(tpl.active_hours_start);
+                      if (tpl.active_hours_end != null) setActiveHoursEnd(tpl.active_hours_end);
+                      if (tpl.active_days) setActiveDays(tpl.active_days);
+                      toast(`Template "${tpl.name}" loaded`, "success");
+                    }}
+                    className="px-3 py-1.5 text-xs font-semibold bg-white text-blue-700 rounded-lg border border-blue-200 hover:bg-blue-100 transition-colors"
+                  >
+                    {tpl.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Submit */}
-          <div className="flex gap-3 pt-2">
+          <div className="flex gap-3 pt-2 flex-wrap">
             <button
               type="submit"
               disabled={submitting}
               className="px-6 py-2.5 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50"
             >
               {submitting ? "Submitting..." : "Submit for Review"}
+            </button>
+            <button
+              type="button"
+              disabled={savingTemplate || !placementId}
+              onClick={async () => {
+                const tplName = prompt("Template name:");
+                if (!tplName) return;
+                setSavingTemplate(true);
+                const supabase = createClient();
+                await supabase.from("campaign_templates").insert({
+                  broker_slug: brokerSlug,
+                  name: tplName,
+                  placement_id: placementId,
+                  inventory_type: selectedPlacement?.inventory_type || "cpc",
+                  rate_cents: rateCents ? Math.round(parseFloat(rateCents) * 100) : null,
+                  daily_budget_cents: dailyBudget ? Math.round(parseFloat(dailyBudget) * 100) : null,
+                  total_budget_cents: totalBudget ? Math.round(parseFloat(totalBudget) * 100) : null,
+                  active_hours_start: activeHoursStart,
+                  active_hours_end: activeHoursEnd,
+                  active_days: activeDays.length < 7 ? activeDays : null,
+                });
+                setSavingTemplate(false);
+                toast(`Template "${tplName}" saved`, "success");
+                // Reload templates
+                const { data: tpl } = await supabase
+                  .from("campaign_templates")
+                  .select("*")
+                  .eq("broker_slug", brokerSlug)
+                  .order("created_at", { ascending: false });
+                setTemplates((tpl || []) as typeof templates);
+              }}
+              className="px-4 py-2.5 bg-blue-50 text-blue-700 font-bold text-sm rounded-lg hover:bg-blue-100 transition-colors disabled:opacity-50 flex items-center gap-1.5"
+            >
+              <Icon name="save" size={13} />
+              Save as Template
             </button>
             <button
               type="button"

@@ -191,12 +191,23 @@ export default function InvoicesPage() {
                     <td className="px-5 py-3">{statusBadge(inv.status)}</td>
                     <td className="px-5 py-3 text-right whitespace-nowrap">
                       {inv.status === "paid" ? (
-                        <Link
-                          href={`/broker-portal/invoices/${inv.id}`}
-                          className="text-xs font-bold text-slate-700 hover:text-slate-900 hover:underline"
-                        >
-                          View Receipt
-                        </Link>
+                        <div className="flex items-center justify-end gap-2">
+                          <Link
+                            href={`/broker-portal/invoices/${inv.id}`}
+                            className="text-xs font-bold text-slate-700 hover:text-slate-900 hover:underline"
+                          >
+                            View
+                          </Link>
+                          <a
+                            href={`/api/broker-portal/invoices/${inv.id}/pdf`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 hover:text-emerald-900 hover:underline"
+                          >
+                            <Icon name="download" size={10} />
+                            PDF
+                          </a>
+                        </div>
                       ) : (
                         <span className="text-xs text-slate-300">\u2014</span>
                       )}

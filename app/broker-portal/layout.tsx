@@ -18,6 +18,8 @@ const navItems = [
   { href: "/broker-portal/invoices", label: "Invoices", icon: "file-text" },
   { href: "/broker-portal/conversions", label: "Conversions", icon: "target" },
   { href: "/broker-portal/creatives", label: "Creatives", icon: "image" },
+  { href: "/broker-portal/creative-insights", label: "Creative Insights", icon: "bar-chart-2" },
+  { href: "/broker-portal/placements", label: "Placements", icon: "layout" },
   { href: "/broker-portal/ab-tests", label: "A/B Tests", icon: "git-branch" },
   { href: "/broker-portal/webhooks", label: "Webhooks", icon: "link" },
   { href: "/broker-portal/packages", label: "Packages", icon: "package" },

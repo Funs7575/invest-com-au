@@ -8,7 +8,7 @@ import Icon from "@/components/Icon";
 import InfoTip from "@/components/InfoTip";
 import Sparkline from "@/components/Sparkline";
 import BrokerOnboarding from "@/components/BrokerOnboarding";
-import type { Campaign, BrokerWallet } from "@/lib/types";
+import type { Campaign, BrokerWallet, BrokerActivityLog } from "@/lib/types";
 
 export default function BrokerDashboard() {
   const [wallet, setWallet] = useState<BrokerWallet | null>(null);
@@ -24,6 +24,7 @@ export default function BrokerDashboard() {
   const [thirtyDaySpend, setThirtyDaySpend] = useState(0);
   const [thirtyDayConvValue, setThirtyDayConvValue] = useState(0);
   const [thirtyDayConversions, setThirtyDayConversions] = useState(0);
+  const [activityLog, setActivityLog] = useState<BrokerActivityLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [firstName, setFirstName] = useState("");
   const [accountCreatedAt, setAccountCreatedAt] = useState<string | undefined>();
@@ -138,6 +139,15 @@ export default function BrokerDashboard() {
       if (monthlyConvs) {
         setThirtyDayConvValue(monthlyConvs.reduce((s, r) => s + (r.conversion_value_cents || 0), 0));
       }
+
+      // Activity log (last 20 events)
+      const { data: activity } = await supabase
+        .from("broker_activity_log")
+        .select("*")
+        .eq("broker_slug", slug)
+        .order("created_at", { ascending: false })
+        .limit(20);
+      setActivityLog((activity || []) as BrokerActivityLog[]);
 
       setLoading(false);
     };
@@ -573,6 +583,61 @@ export default function BrokerDashboard() {
           </div>
         );
       })()}
+
+      {/* Activity Log */}
+      {activityLog.length > 0 && (
+        <div className="bg-white rounded-xl border border-slate-200 p-5 hover-lift">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-bold text-slate-900 text-sm flex items-center gap-1.5">
+              <Icon name="activity" size={14} className="text-slate-400" />
+              Recent Activity
+            </h2>
+            <span className="text-[0.62rem] text-slate-400">{activityLog.length} events</span>
+          </div>
+          <div className="space-y-0 max-h-72 overflow-y-auto">
+            {activityLog.map((a, i) => {
+              const isLast = i === activityLog.length - 1;
+              const iconMap: Record<string, { icon: string; bg: string; color: string }> = {
+                campaign_created: { icon: "plus-circle", bg: "bg-blue-50", color: "text-blue-600" },
+                campaign_active: { icon: "play", bg: "bg-emerald-50", color: "text-emerald-600" },
+                campaign_paused: { icon: "pause", bg: "bg-amber-50", color: "text-amber-600" },
+                campaign_approved: { icon: "check-circle", bg: "bg-emerald-50", color: "text-emerald-600" },
+                campaign_completed: { icon: "flag", bg: "bg-slate-100", color: "text-slate-500" },
+                campaign_cancelled: { icon: "x-circle", bg: "bg-red-50", color: "text-red-500" },
+                campaign_rejected: { icon: "x-circle", bg: "bg-red-50", color: "text-red-500" },
+                campaign_budget_exhausted: { icon: "alert-circle", bg: "bg-red-50", color: "text-red-600" },
+                campaign_pending_review: { icon: "clock", bg: "bg-amber-50", color: "text-amber-600" },
+                wallet_topup: { icon: "plus", bg: "bg-emerald-50", color: "text-emerald-600" },
+                wallet_debit: { icon: "minus", bg: "bg-red-50", color: "text-red-500" },
+              };
+              const cfg = iconMap[a.action] || { icon: "circle", bg: "bg-slate-50", color: "text-slate-400" };
+              const timeAgo = (() => {
+                const diff = Date.now() - new Date(a.created_at).getTime();
+                const mins = Math.floor(diff / 60000);
+                if (mins < 60) return `${mins}m ago`;
+                const hrs = Math.floor(mins / 60);
+                if (hrs < 24) return `${hrs}h ago`;
+                const days = Math.floor(hrs / 24);
+                return `${days}d ago`;
+              })();
+              return (
+                <div key={a.id} className="flex gap-3">
+                  <div className="flex flex-col items-center">
+                    <div className={`w-7 h-7 rounded-full ${cfg.bg} flex items-center justify-center shrink-0`}>
+                      <Icon name={cfg.icon} size={12} className={cfg.color} />
+                    </div>
+                    {!isLast && <div className="w-px flex-1 bg-slate-200 my-1" />}
+                  </div>
+                  <div className="flex-1 pb-3 min-w-0">
+                    <p className="text-xs font-medium text-slate-700 truncate">{a.detail || a.action.replace(/_/g, " ")}</p>
+                    <p className="text-[0.62rem] text-slate-400 mt-0.5">{timeAgo}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* Lifetime Stats */}
       {wallet && (

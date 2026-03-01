@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { downloadCSV } from "@/lib/csv-export";
 import CountUp from "@/components/CountUp";
 import Icon from "@/components/Icon";
 import InfoTip from "@/components/InfoTip";
@@ -26,12 +27,21 @@ interface PlatformBenchmarks {
   cpConversion: number;
 }
 
+interface PercentileData {
+  metric: string;
+  broker_value: number;
+  percentile_rank: number;
+  total_brokers: number;
+}
+
 export default function AnalyticsPage() {
   const [tab, setTab] = useState<TabKey>("overview");
   const [days, setDays] = useState<DateRange>("30d");
   const [stats, setStats] = useState<CampaignDailyStats[]>([]);
   const [conversions, setConversions] = useState<ConversionRow[]>([]);
   const [platformBenchmarks, setPlatformBenchmarks] = useState<PlatformBenchmarks | null>(null);
+  const [percentiles, setPercentiles] = useState<PercentileData[]>([]);
+  const [brokerSlug, setBrokerSlug] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -47,11 +57,12 @@ export default function AnalyticsPage() {
         .eq("auth_user_id", user.id)
         .maybeSingle();
       if (!account) return;
+      setBrokerSlug(account.broker_slug);
 
       const d = days === "7d" ? 7 : days === "30d" ? 30 : 90;
       const since = new Date(Date.now() - d * 86400000).toISOString().slice(0, 10);
 
-      const [{ data: s }, { data: c }, { data: pb }] = await Promise.all([
+      const [{ data: s }, { data: c }, { data: pb }, { data: pctData }] = await Promise.all([
         supabase
           .from("campaign_daily_stats")
           .select("*")
@@ -65,6 +76,7 @@ export default function AnalyticsPage() {
           .gte("created_at", new Date(Date.now() - d * 86400000).toISOString())
           .order("created_at", { ascending: true }),
         supabase.rpc("get_platform_benchmarks", { date_from: since }),
+        supabase.rpc("get_broker_percentile", { p_broker_slug: account.broker_slug, p_date_from: since }),
       ]);
 
       setStats((s || []) as CampaignDailyStats[]);
@@ -87,6 +99,7 @@ export default function AnalyticsPage() {
         setPlatformBenchmarks(null);
       }
 
+      setPercentiles((pctData || []) as PercentileData[]);
       setLoading(false);
     };
     load();
@@ -296,7 +309,25 @@ export default function AnalyticsPage() {
           <h1 className="text-2xl font-extrabold text-slate-900">Analytics</h1>
           <p className="text-sm text-slate-500">Deep-dive into campaign performance</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
+          <button
+            onClick={() => {
+              const headers = ["Date", "Impressions", "Clicks", "CTR (%)", "Conversions", "Spend ($)"];
+              const rows = dailyTotals.map(d => [
+                d.date,
+                String(d.impressions),
+                String(d.clicks),
+                d.impressions > 0 ? ((d.clicks / d.impressions) * 100).toFixed(2) : "0",
+                String(d.conversions),
+                (d.spend / 100).toFixed(2),
+              ]);
+              downloadCSV(`analytics-${days}-${new Date().toISOString().slice(0, 10)}.csv`, headers, rows);
+            }}
+            className="px-3 py-1.5 text-xs font-semibold bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 transition-colors flex items-center gap-1"
+          >
+            <Icon name="download" size={11} />
+            Export CSV
+          </button>
           {(["7d", "30d", "90d"] as DateRange[]).map(d => (
             <button key={d} onClick={() => setDays(d)}
               className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors ${
@@ -887,6 +918,57 @@ export default function AnalyticsPage() {
               </div>
             )}
           </div>
+
+          {/* Percentile Benchmarking */}
+          {percentiles.length > 0 && (
+            <div className="bg-gradient-to-br from-indigo-50 to-blue-50 rounded-xl border border-indigo-200 p-5">
+              <h2 className="font-bold text-slate-900 mb-1 flex items-center gap-1.5">
+                <Icon name="award" size={16} className="text-indigo-600" />
+                Your Percentile Ranking
+                <InfoTip text="How you rank compared to all brokers on the platform. Top 25% means you outperform 75% of advertisers." />
+              </h2>
+              <p className="text-xs text-slate-500 mb-4">Compared against {percentiles[0]?.total_brokers || 0} active advertisers on Invest.com.au</p>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                {percentiles.map(p => {
+                  const label = p.metric === "ctr" ? "Click-Through Rate" : p.metric === "cpc" ? "Cost Per Click" : "Conversion Rate";
+                  const icon = p.metric === "ctr" ? "mouse-pointer-click" : p.metric === "cpc" ? "dollar-sign" : "target";
+                  const pct = Number(p.percentile_rank);
+                  const tier = pct >= 75 ? { label: `Top ${(100 - pct).toFixed(0)}%`, color: "text-emerald-700 bg-emerald-100 border-emerald-300" }
+                    : pct >= 50 ? { label: "Above Average", color: "text-blue-700 bg-blue-100 border-blue-300" }
+                    : pct >= 25 ? { label: "Below Average", color: "text-amber-700 bg-amber-100 border-amber-300" }
+                    : { label: `Bottom ${pct.toFixed(0)}%`, color: "text-red-700 bg-red-100 border-red-300" };
+                  const format = p.metric === "cpc" ? `$${Number(p.broker_value).toFixed(2)}` : `${Number(p.broker_value).toFixed(2)}%`;
+
+                  return (
+                    <div key={p.metric} className="bg-white rounded-xl p-4 border border-slate-200">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-7 h-7 rounded-lg bg-indigo-50 flex items-center justify-center">
+                          <Icon name={icon} size={14} className="text-indigo-600" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-semibold text-slate-700">{label}</p>
+                          <p className="text-lg font-extrabold text-slate-900">{format}</p>
+                        </div>
+                      </div>
+                      {/* Percentile bar */}
+                      <div className="relative h-3 bg-slate-100 rounded-full overflow-hidden mb-2">
+                        <div
+                          className="h-full rounded-full transition-all duration-1000 bg-gradient-to-r from-indigo-400 to-indigo-600"
+                          style={{ width: `${pct}%` }}
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center text-[0.5rem] font-bold text-slate-700">
+                          {pct.toFixed(0)}th percentile
+                        </div>
+                      </div>
+                      <span className={`inline-flex text-[0.62rem] font-bold px-2 py-0.5 rounded-full border ${tier.color}`}>
+                        {tier.label}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           {/* Score explanation */}
           <div className="bg-white rounded-xl border border-slate-200 p-5">
