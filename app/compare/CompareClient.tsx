@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Search, X } from "lucide-react";
 import type { Broker } from "@/lib/types";
 import { trackClick, trackEvent, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
+import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import { downloadCSV } from "@/lib/csv-export";
 import BrokerCard from "@/components/BrokerCard";
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
@@ -653,6 +654,11 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             <Link href="/how-we-earn" className="underline hover:text-slate-600">How we earn</Link>
           </p>
         </div>
+
+        {/* General Advice Warning */}
+        <p className="mt-2 md:mt-3 text-[0.58rem] md:text-[0.69rem] text-slate-400 text-center leading-relaxed max-w-3xl mx-auto">
+          {GENERAL_ADVICE_WARNING}
+        </p>
 
         {/* Sponsored display ad */}
         <AdSlot

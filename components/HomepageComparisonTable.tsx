@@ -315,9 +315,9 @@ export default function HomepageComparisonTable({
               href={mobileLink}
               target="_blank"
               rel={AFFILIATE_REL}
-              className="shrink-0 px-3.5 py-2 min-h-[36px] inline-flex items-center bg-amber-500 text-white text-[0.69rem] font-bold rounded-lg hover:bg-amber-600 active:scale-[0.97] transition-all"
+              className="shrink-0 px-3 py-2 min-h-[36px] inline-flex items-center bg-amber-500 text-white text-[0.62rem] font-bold rounded-lg hover:bg-amber-600 active:scale-[0.97] transition-all max-w-[120px] text-center leading-tight"
             >
-              Visit
+              {getBenefitCta(broker, "compare")}
             </a>
           </div>
           );

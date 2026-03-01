@@ -2,15 +2,17 @@
 
 import { useState, useEffect } from "react";
 import type { Broker } from "@/lib/types";
-import { trackClick, getAffiliateLink, AFFILIATE_REL } from "@/lib/tracking";
+import { trackClick, getAffiliateLink, getBenefitCta, AFFILIATE_REL } from "@/lib/tracking";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 
 export default function MobileFloatingCTA({
   broker,
   pagePath,
+  context = "review",
 }: {
   broker: Broker;
   pagePath: string;
+  context?: "review" | "compare" | "calculator" | "versus" | "quiz";
 }) {
   const [visible, setVisible] = useState(false);
 
@@ -57,12 +59,12 @@ export default function MobileFloatingCTA({
               broker.name,
               "mobile-floating-cta",
               pagePath,
-              "article"
+              context
             )
           }
-          className="shrink-0 px-5 py-2.5 bg-amber-600 text-white text-sm font-bold rounded-lg hover:bg-amber-700 hover:scale-105 hover:shadow-[0_0_12px_rgba(217,119,6,0.3)] transition-all duration-200"
+          className="shrink-0 px-4 py-2.5 bg-amber-600 text-white text-sm font-bold rounded-lg hover:bg-amber-700 hover:scale-105 hover:shadow-[0_0_12px_rgba(217,119,6,0.3)] transition-all duration-200 max-w-[160px] text-center leading-tight"
         >
-          Open Account
+          {getBenefitCta(broker, context)}
         </a>
       </div>
       <div className="px-4 pb-2 text-[0.62rem] text-slate-400 text-center">

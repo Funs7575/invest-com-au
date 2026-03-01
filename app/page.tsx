@@ -13,7 +13,7 @@ import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 import { getMostRecentFeeCheck } from "@/lib/utils";
 import Icon from "@/components/Icon";
-import UserOnboarding from "@/components/UserOnboarding";
+// UserOnboarding modal removed — was blocking first-time visitors (P0 conversion issue)
 
 export const metadata = {
   title: "Compare Australian Brokers",
@@ -78,7 +78,7 @@ export default async function HomePage() {
 
   return (
     <div>
-      <UserOnboarding />
+      {/* UserOnboarding modal removed — blocked first-time visitors behind a 3-step modal */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -124,8 +124,12 @@ export default async function HomePage() {
               Compare All Brokers &rarr;
             </Link>
           </div>
+          {/* Social proof */}
+          <p className="text-[0.69rem] md:text-sm text-slate-500 mt-2 md:mt-4 hero-fade-up hero-fade-up-5 font-medium">
+            Trusted by <span className="text-slate-700 font-bold">10,000+</span> Australian investors
+          </p>
           {/* Trust signals — inline row on mobile (smaller), inline row on desktop */}
-          <div className="flex items-center justify-center flex-wrap gap-x-3 gap-y-1 sm:gap-x-8 pt-2.5 md:pt-6 text-[0.62rem] md:text-xs text-slate-500 hero-fade-up hero-fade-up-5">
+          <div className="flex items-center justify-center flex-wrap gap-x-3 gap-y-1 sm:gap-x-8 pt-1.5 md:pt-4 text-[0.62rem] md:text-xs text-slate-500 hero-fade-up hero-fade-up-5">
             <span className="flex items-center gap-1">
               <svg className="w-3 h-3 md:w-4 md:h-4 text-slate-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
               ASIC-regulated
@@ -206,6 +210,17 @@ export default async function HomePage() {
               >
                 View All {brokerCount}+ Brokers &rarr;
               </Link>
+            </div>
+          </div>
+        </section>
+      </ScrollFadeIn>
+
+      {/* Email Capture — positioned mid-page for maximum visibility */}
+      <ScrollFadeIn>
+        <section className="py-4 md:py-12 bg-white">
+          <div className="container-custom">
+            <div className="max-w-xl mx-auto">
+              <LeadMagnet />
             </div>
           </div>
         </section>
@@ -398,18 +413,7 @@ export default async function HomePage() {
         </ScrollFadeIn>
       )}
 
-      {/* Email Capture */}
-      <ScrollFadeIn>
-        <section className="py-4 md:py-12 bg-slate-50">
-          <div className="container-custom">
-            <div className="max-w-xl mx-auto">
-              <LeadMagnet />
-            </div>
-          </div>
-        </section>
-      </ScrollFadeIn>
-
-      {/* General Advice Warning is in footer Legal & Disclaimers accordion */}
+      {/* General Advice Warning is in footer Legal & Disclaimers section */}
     </div>
   );
 }

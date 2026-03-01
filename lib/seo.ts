@@ -280,7 +280,7 @@ export function reviewArticleJsonLd(broker: {
       url: SITE_URL,
       logo: {
         "@type": "ImageObject",
-        url: absoluteUrl("/icon.png"),
+        url: absoluteUrl("/icon"),
       },
     },
     mainEntityOfPage: {
