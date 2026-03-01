@@ -163,13 +163,14 @@ export default function AdminScenariosPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => downloadCSV(
-              scenarios.map((s) => ({
-                Title: s.title,
-                Slug: s.slug,
-                Description: s.problem || "",
-                Status: s.brokers?.length ? "Active" : "Draft",
-              })),
-              "scenarios.csv"
+              "scenarios.csv",
+              ["Title", "Slug", "Description", "Status"],
+              scenarios.map((s) => [
+                s.title,
+                s.slug,
+                s.problem || "",
+                s.brokers?.length ? "Active" : "Draft",
+              ])
             )}
             className="px-3 py-1.5 bg-green-50 text-green-700 text-xs font-semibold rounded-lg hover:bg-green-100 border border-green-200 transition-colors"
           >

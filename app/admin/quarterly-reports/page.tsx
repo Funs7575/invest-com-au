@@ -236,15 +236,16 @@ export default function QuarterlyReportsPage() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => downloadCSV(
-                items.map((item) => ({
-                  Title: item.title,
-                  Quarter: item.quarter,
-                  Year: String(item.year),
-                  Status: item.status,
-                  "Fee Changes Summary": JSON.stringify(item.fee_changes_summary || []),
-                  Created: item.created_at ? new Date(item.created_at).toLocaleDateString() : "",
-                })),
-                "quarterly-reports.csv"
+                "quarterly-reports.csv",
+                ["Title", "Quarter", "Year", "Status", "Fee Changes Summary", "Created"],
+                items.map((item) => [
+                  item.title,
+                  item.quarter,
+                  String(item.year),
+                  item.status,
+                  JSON.stringify(item.fee_changes_summary || []),
+                  item.created_at ? new Date(item.created_at).toLocaleDateString() : "",
+                ])
               )}
               className="px-3 py-1.5 bg-green-50 text-green-700 text-xs font-semibold rounded-lg hover:bg-green-100 border border-green-200 transition-colors"
             >

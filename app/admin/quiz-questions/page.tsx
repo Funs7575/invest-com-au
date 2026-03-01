@@ -211,14 +211,15 @@ export default function QuizQuestionsPage() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => downloadCSV(
-                questions.map((q) => ({
-                  Question: q.question_text,
-                  Category: "",
-                  Active: q.active ? "Yes" : "No",
-                  "Options Count": String(q.options ? q.options.length : 0),
-                  Order: String(q.order_index),
-                })),
-                "quiz-questions.csv"
+                "quiz-questions.csv",
+                ["Question", "Category", "Active", "Options Count", "Order"],
+                questions.map((q) => [
+                  q.question_text,
+                  "",
+                  q.active ? "Yes" : "No",
+                  String(q.options ? q.options.length : 0),
+                  String(q.order_index),
+                ])
               )}
               className="px-3 py-1.5 bg-green-50 text-green-700 text-xs font-semibold rounded-lg hover:bg-green-100 border border-green-200 transition-colors"
             >

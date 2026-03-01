@@ -257,16 +257,17 @@ export default function ProDealsPage() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => downloadCSV(
-                items.map((item) => ({
-                  Title: item.title,
-                  Description: item.description || "",
-                  Broker: getBrokerName(item.broker_slug),
-                  Discount: item.deal_value || "",
-                  Code: item.redemption_code || "",
-                  Status: item.status,
-                  Expiry: item.end_date || "",
-                })),
-                "pro-deals.csv"
+                "pro-deals.csv",
+                ["Title", "Description", "Broker", "Discount", "Code", "Status", "Expiry"],
+                items.map((item) => [
+                  item.title,
+                  item.description || "",
+                  getBrokerName(item.broker_slug),
+                  item.deal_value || "",
+                  item.redemption_code || "",
+                  item.status,
+                  item.end_date || "",
+                ])
               )}
               className="px-3 py-1.5 bg-green-50 text-green-700 text-xs font-semibold rounded-lg hover:bg-green-100 border border-green-200 transition-colors"
             >
