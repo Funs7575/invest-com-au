@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Broker } from "@/lib/types";
 import { absoluteUrl } from "@/lib/seo";
 import ScrollReveal from "@/components/ScrollReveal";
+import BrokerLogo from "@/components/BrokerLogo";
 
 export const metadata = {
   title: "Broker Reviews",
@@ -101,12 +102,7 @@ function BrokerReviewCard({ broker }: { broker: Broker }) {
       <div className="p-3 md:p-5 flex-1">
         {/* Header */}
         <div className="flex items-center gap-2 md:gap-3 mb-2 md:mb-3">
-          <div
-            className="w-8 h-8 md:w-10 md:h-10 rounded-lg flex items-center justify-center text-xs md:text-sm font-bold shrink-0"
-            style={{ background: `${broker.color}20`, color: broker.color }}
-          >
-            {broker.icon || broker.name.charAt(0)}
-          </div>
+          <BrokerLogo broker={broker} size="md" />
           <div className="flex-1 min-w-0">
             <h2 className="text-sm md:text-lg font-bold leading-tight truncate">{broker.name}</h2>
             <div className="text-xs text-amber">

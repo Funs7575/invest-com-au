@@ -21,6 +21,7 @@ export interface Broker {
   slug: string;
   color: string;
   icon?: string;
+  logo_url?: string;
   cta_text?: string;
   benefit_cta?: string;
   tagline?: string;

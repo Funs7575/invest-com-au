@@ -110,15 +110,15 @@ export default function BrokerPortalLayout({ children }: { children: React.React
             <span className="text-slate-900 font-extrabold text-sm">I</span>
           </div>
           <div>
-            <span className="text-sm font-bold text-white">Invest.com.au</span>
-            <p className="text-[0.69rem] text-amber-400 font-semibold uppercase tracking-widest">Partner Portal</p>
+            <span className="text-sm font-bold text-white">invest.com.au</span>
+            <p className="text-[0.65rem] text-amber-400 font-semibold uppercase tracking-widest">Partner Portal</p>
           </div>
         </Link>
       </div>
 
       {/* Wallet balance */}
       <div className="p-4 border-b border-slate-700/50">
-        <p className="text-[0.69rem] text-slate-400 uppercase tracking-wider font-bold mb-1">Wallet Balance</p>
+        <p className="text-[0.65rem] text-slate-500 uppercase tracking-wider font-semibold mb-1">Wallet Balance</p>
         <p className="text-xl font-extrabold text-white">
           <CountUp end={balanceCents / 100} prefix="$" decimals={2} duration={1000} />
         </p>
@@ -140,13 +140,13 @@ export default function BrokerPortalLayout({ children }: { children: React.React
               key={item.href}
               href={item.href}
               onClick={() => setMobileOpen(false)}
-              className={`sidebar-nav-item flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+              className={`sidebar-nav-item flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-all ${
                 isActive
-                  ? "is-active bg-slate-700/50 text-white"
-                  : "text-slate-300 hover:bg-slate-700/30 hover:text-white"
+                  ? "is-active bg-amber-500/15 text-amber-500 font-semibold"
+                  : "text-slate-400 hover:bg-white/5 hover:text-white font-medium"
               }`}
             >
-              <Icon name={item.icon} size={16} className={isActive ? "text-amber-400" : "text-slate-400"} />
+              <Icon name={item.icon} size={16} className={isActive ? "text-amber-500" : "text-slate-400"} />
               {item.label}
               {item.label === "Notifications" && unreadCount > 0 && (
                 <span className="ml-auto relative flex items-center justify-center">
@@ -170,14 +170,14 @@ export default function BrokerPortalLayout({ children }: { children: React.React
         </div>
         <Link
           href="/"
-          className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-slate-400 hover:bg-slate-700/30 hover:text-white transition-colors"
+          className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-slate-400 hover:bg-white/5 hover:text-white transition-colors"
         >
           <Icon name="globe" size={16} />
           View Site
         </Link>
         <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-slate-400 hover:bg-slate-700/30 hover:text-red-400 transition-colors"
+          className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-slate-400 hover:bg-white/5 hover:text-red-400 transition-colors"
         >
           <Icon name="log-out" size={16} />
           Sign Out
@@ -193,7 +193,7 @@ export default function BrokerPortalLayout({ children }: { children: React.React
       <div className="md:hidden bg-white border-b border-slate-200 px-4 py-3 flex items-center justify-between sticky top-0 z-50">
         <button
           onClick={() => setMobileOpen(true)}
-          className="text-slate-700 p-1 -ml-1"
+          className="text-amber-500 p-1 -ml-1"
           aria-label="Open navigation"
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

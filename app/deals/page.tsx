@@ -37,7 +37,7 @@ export default async function DealsPage() {
   const supabase = await createClient();
   const { data: allBrokers } = await supabase
     .from("brokers")
-    .select("id, name, slug, color, icon, rating, deal, deal_text, deal_expiry, deal_terms, deal_verified_date, deal_category, cta_text, affiliate_url, sponsorship_tier, benefit_cta, status")
+    .select("id, name, slug, color, icon, logo_url, rating, deal, deal_text, deal_expiry, deal_terms, deal_verified_date, deal_category, cta_text, affiliate_url, sponsorship_tier, benefit_cta, status")
     .eq("status", "active")
     .eq("deal", true)
     .order("rating", { ascending: false });
@@ -64,30 +64,25 @@ export default async function DealsPage() {
 
       <div className="pt-5 pb-8 md:py-12">
         <div className="container-custom max-w-5xl">
-          {/* Breadcrumb */}
-          <nav className="text-xs md:text-sm text-slate-500 mb-2 md:mb-6">
-            <Link href="/" className="hover:text-slate-900">
-              Home
-            </Link>
-            <span className="mx-1.5 md:mx-2">/</span>
-            <span className="text-slate-700">Deals</span>
-          </nav>
-
-          {/* Header — compact on mobile */}
-          <div className="flex items-start justify-between gap-3 mb-1 md:mb-3">
-            <h1 className="text-2xl md:text-4xl font-extrabold">
-              Deals & Promotions
-            </h1>
+          {/* Breadcrumb + disclosure */}
+          <div className="flex items-center justify-between mb-3 md:mb-5">
+            <nav className="text-xs md:text-sm text-slate-500">
+              <Link href="/" className="hover:text-slate-900">
+                Home
+              </Link>
+              <span className="mx-1.5 md:mx-2">/</span>
+              <span className="text-slate-700">Deals</span>
+            </nav>
             <a
               href="#advertiser-disclosure"
-              className="text-[0.69rem] text-slate-400 underline hover:text-slate-600 transition-colors shrink-0 mt-1.5"
+              className="text-[0.69rem] text-slate-400 underline hover:text-slate-600 transition-colors shrink-0"
             >
               Disclosure
             </a>
           </div>
-          <p className="text-xs md:text-base text-slate-500 mb-4 md:mb-6 max-w-2xl">
-            Verified offers from Australian trading platforms, updated regularly.
-          </p>
+
+          {/* SEO h1 — visually compact since hero banner handles the visual impact */}
+          <h1 className="sr-only">Deals & Promotions</h1>
 
           {dealBrokers.length > 0 ? (
             <DealsClient deals={dealBrokers} />

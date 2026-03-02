@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, AFFILIATE_REL } from "@/lib/tracking";
 import { ADVERTISER_DISCLOSURE_SHORT, RISK_WARNING_CTA } from "@/lib/compliance";
+import BrokerLogo from "@/components/BrokerLogo";
 
 export default function StickyCTABar({ broker, detail, context = 'review' }: { broker: Broker; detail: string; context?: 'review' | 'versus' | 'calculator' }) {
   const [visible, setVisible] = useState(false);
@@ -31,12 +32,7 @@ export default function StickyCTABar({ broker, detail, context = 'review' }: { b
     >
       <div className="container-custom py-3 flex items-center justify-between gap-3 md:gap-4">
         <div className="flex items-center gap-3 min-w-0">
-          <div
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold shrink-0"
-            style={{ background: `${broker.color}30`, color: broker.color }}
-          >
-            {broker.icon || broker.name.charAt(0)}
-          </div>
+          <BrokerLogo broker={broker} size="sm" />
           <div className="min-w-0">
             <div className="font-bold text-sm text-white truncate" title={broker.name}>{broker.name}</div>
             <div className="text-xs text-slate-400 truncate" title={detail}>{detail}</div>

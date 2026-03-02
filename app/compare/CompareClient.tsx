@@ -25,6 +25,7 @@ import { getSponsorSortPriority, isSponsored, getPlacementWinners, type Placemen
 import Icon from "@/components/Icon";
 import BottomSheet from "@/components/BottomSheet";
 import ShortlistButton from "@/components/ShortlistButton";
+import BrokerLogo from "@/components/BrokerLogo";
 import AdSlot from "@/components/AdSlot";
 
 type FilterType = 'all' | 'beginner' | 'chess' | 'free' | 'us' | 'smsf' | 'low-fx' | 'crypto';
@@ -476,12 +477,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2.5">
-                      <div
-                        className="w-8 h-8 rounded-lg flex items-center justify-center text-[0.69rem] font-bold shrink-0 transition-transform duration-200 group-hover:scale-110"
-                        style={{ background: `${broker.color}18`, color: broker.color }}
-                      >
-                        {broker.icon || broker.name.charAt(0)}
-                      </div>
+                      <BrokerLogo broker={broker} size="sm" className="transition-transform duration-200 group-hover:scale-110" />
                       <div>
                         <div className="flex items-center gap-1.5">
                           <a href={`/broker/${broker.slug}`} className="font-semibold text-brand hover:text-slate-900 transition-colors">
@@ -615,14 +611,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                     const br = brokers.find(b => b.slug === slug);
                     if (!br) return null;
                     return (
-                      <div
-                        key={slug}
-                        className="w-6 h-6 rounded-full border-2 border-slate-900 flex items-center justify-center text-[0.45rem] font-bold shrink-0"
-                        style={{ background: br.color, color: 'white' }}
-                        title={br.name}
-                      >
-                        {br.icon || br.name.charAt(0)}
-                      </div>
+                      <BrokerLogo key={slug} broker={br} size="xs" className="border-2 border-slate-900 rounded-full" />
                     );
                   })}
                 </div>

@@ -735,6 +735,16 @@ details > :not(summary) {
   to { transform: translateY(0); opacity: 1; }
 }
 
+/* ── Deal card animations ──────────────────────────────── */
+@keyframes dealShimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+@keyframes dealFadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /* ── Print styles for PDF export ─────────────────────── */
 @media print {
   header, footer, nav, .no-print { display: none !important; }
@@ -801,4 +811,31 @@ html.dark .form-field:focus {
 /* Dark mode focus indicators */
 html.dark *:focus-visible {
   outline-color: var(--color-blue-500) !important;
+}
+
+/* ── Unified card styles for admin & portal ──────────── */
+.card-base {
+  @apply bg-white rounded-xl border border-slate-200 shadow-sm;
+}
+
+.card-base-hover {
+  @apply bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow;
+}
+
+/* Consistent table styling */
+.table-header {
+  @apply bg-slate-50 text-xs text-slate-500 uppercase tracking-wide font-semibold;
+}
+
+.table-row-hover {
+  @apply hover:bg-slate-50 transition-colors;
+}
+
+/* Unified button styles */
+.btn-primary {
+  @apply bg-amber-500 text-white font-semibold rounded-lg hover:bg-amber-600 transition-colors;
+}
+
+.btn-secondary {
+  @apply bg-white border border-slate-200 text-slate-700 font-medium rounded-lg hover:bg-slate-50 transition-colors;
 }

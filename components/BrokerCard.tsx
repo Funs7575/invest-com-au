@@ -6,6 +6,7 @@ import { trackClick, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL
 import SponsorBadge from "@/components/SponsorBadge";
 import Icon from "@/components/Icon";
 import ShortlistButton from "@/components/ShortlistButton";
+import BrokerLogo from "@/components/BrokerLogo";
 import { isSponsored } from "@/lib/sponsorship";
 
 export default memo(function BrokerCard({
@@ -71,12 +72,7 @@ export default memo(function BrokerCard({
 
       {/* Header: icon + name + rating + actions */}
       <div className="flex items-center gap-2.5 md:gap-3 mb-2 md:mb-3">
-        <div
-          className="w-9 h-9 md:w-10 md:h-10 rounded-lg flex items-center justify-center text-xs md:text-sm font-bold shrink-0"
-          style={{ background: `${broker.color}20`, color: broker.color }}
-        >
-          {broker.icon || broker.name.charAt(0)}
-        </div>
+        <BrokerLogo broker={broker} size="md" />
         <div className="flex-1 min-w-0">
           <a href={`/broker/${broker.slug}`} className="font-bold text-sm hover:text-slate-900 transition-colors">
             {broker.name}
