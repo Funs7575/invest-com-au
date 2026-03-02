@@ -1,9 +1,8 @@
 import type { NextConfig } from "next";
-import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
   images: {
     remotePatterns: [
@@ -110,14 +109,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-// withSentryConfig wraps the Next.js config for error tracking.
-// Using `as any` because Sentry v9 peer-deps target Next.js ≤15 types,
-// but the runtime integration works fine with Next.js 16.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default withSentryConfig(nextConfig as any, {
-  org: process.env.SENTRY_ORG,
-  project: process.env.SENTRY_PROJECT,
-  silent: !process.env.CI,
-  widenClientFileUpload: true,
-  tunnelRoute: "/monitoring",
-}) as typeof nextConfig;
+export default nextConfig;
