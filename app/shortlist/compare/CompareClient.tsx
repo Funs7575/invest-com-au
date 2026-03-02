@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { getAffiliateLink, renderStars, trackClick, AFFILIATE_REL } from "@/lib/tracking";
 import Icon from "@/components/Icon";
 import type { Broker } from "@/lib/types";
+import BrokerLogo from "@/components/BrokerLogo";
 
 interface ComparisonMetric {
   label: string;
@@ -211,12 +212,7 @@ export default function CompareClient() {
                       href={`/broker/${broker.slug}`}
                       className="inline-flex flex-col items-center gap-2 group"
                     >
-                      <div
-                        className="w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold"
-                        style={{ background: `${broker.color}20`, color: broker.color }}
-                      >
-                        {broker.icon || broker.name.charAt(0)}
-                      </div>
+                      <BrokerLogo broker={broker} size="md" />
                       <span className="font-bold text-sm text-slate-900 group-hover:underline">
                         {broker.name}
                       </span>
@@ -424,12 +420,7 @@ export default function CompareClient() {
                 <div key={rec.label} className="bg-white border border-slate-200 rounded-xl p-4">
                   <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">{rec.label}</div>
                   <div className="flex items-center gap-3">
-                    <div
-                      className="w-9 h-9 rounded-lg flex items-center justify-center text-xs font-bold shrink-0"
-                      style={{ background: `${rec.broker.color}20`, color: rec.broker.color }}
-                    >
-                      {rec.broker.icon || rec.broker.name.charAt(0)}
-                    </div>
+                    <BrokerLogo broker={rec.broker} size="sm" />
                     <div className="min-w-0">
                       <p className="font-bold text-sm text-slate-900">{rec.broker.name}</p>
                       <p className="text-xs text-emerald-600 font-medium">{rec.reason}</p>

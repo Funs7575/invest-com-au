@@ -5,6 +5,7 @@ import AdminShell from "@/components/AdminShell";
 import { createClient } from "@/lib/supabase/client";
 import { TIER_PRICING } from "@/lib/sponsorship";
 import type { Broker } from "@/lib/types";
+import BrokerLogo from "@/components/BrokerLogo";
 
 interface SponsorInvoice {
   id: number;
@@ -218,10 +219,7 @@ export default function SponsorBillingPage() {
                       <tr key={broker.id} className="hover:bg-slate-50">
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-2">
-                            <div className="w-6 h-6 rounded-full flex items-center justify-center text-[0.5rem] font-bold text-white"
-                              style={{ background: broker.color }}>
-                              {broker.icon || broker.name.charAt(0)}
-                            </div>
+                            <BrokerLogo broker={broker} size="xs" />
                             <span className="font-semibold text-slate-900">{broker.name}</span>
                           </div>
                         </td>

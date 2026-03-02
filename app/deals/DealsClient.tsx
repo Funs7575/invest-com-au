@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import type { Broker } from "@/lib/types";
 import DealCard from "@/components/DealCard";
+import BrokerLogo from "@/components/BrokerLogo";
 import Icon from "@/components/Icon";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import ImpressionTracker from "@/components/ImpressionTracker";
@@ -143,16 +144,7 @@ export default function DealsClient({ deals }: { deals: Broker[] }) {
 
           <div className="flex items-start gap-3 md:gap-4">
             {/* Broker icon */}
-            <div
-              className="w-12 h-12 md:w-14 md:h-14 rounded-xl flex items-center justify-center text-base md:text-lg font-bold shrink-0"
-              style={{
-                background: `${dealOfMonth.color}18`,
-                color: dealOfMonth.color,
-                boxShadow: `0 0 0 2px ${dealOfMonth.color}25, 0 0 16px ${dealOfMonth.color}15`,
-              }}
-            >
-              {dealOfMonth.icon || dealOfMonth.name.charAt(0)}
-            </div>
+            <BrokerLogo broker={dealOfMonth} size="xl" />
             <div className="flex-1 min-w-0 pr-20 md:pr-32">
               <h3 className="font-bold text-base md:text-lg text-slate-900 mb-0.5">
                 {dealOfMonth.name}
@@ -190,7 +182,7 @@ export default function DealsClient({ deals }: { deals: Broker[] }) {
               onClick={() => setActiveTab(tab)}
               role="tab"
               aria-selected={activeTab === tab}
-              className={`whitespace-nowrap shrink-0 px-3.5 md:px-4.5 py-2 md:py-2.5 min-h-[44px] rounded-full text-xs md:text-sm font-semibold transition-all duration-200 flex items-center gap-1.5 ${
+              className={`whitespace-nowrap shrink-0 px-3.5 md:px-5 py-2 md:py-2.5 min-h-[44px] rounded-full text-xs md:text-sm font-semibold transition-all duration-200 flex items-center gap-1.5 ${
                 activeTab === tab
                   ? "bg-slate-900 text-white shadow-md"
                   : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:shadow-sm"

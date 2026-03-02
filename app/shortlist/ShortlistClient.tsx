@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 import { trackClick, getAffiliateLink, renderStars, AFFILIATE_REL } from "@/lib/tracking";
 import Icon from "@/components/Icon";
 import type { Broker } from "@/lib/types";
+import BrokerLogo from "@/components/BrokerLogo";
 
 const NOTES_STORAGE_KEY = "invest_shortlist_notes";
 
@@ -254,12 +255,8 @@ export default function ShortlistClient() {
         <div className="bg-white rounded-xl border border-slate-200 divide-y divide-slate-100">
           {sharedBrokers.map((broker) => (
             <div key={broker.id} className="flex items-center gap-2.5 md:gap-4 px-3 md:px-5 py-3 md:py-4 hover:bg-slate-50/50 transition-colors">
-              <Link
-                href={`/broker/${broker.slug}`}
-                className="w-9 h-9 md:w-10 md:h-10 rounded-lg flex items-center justify-center text-xs md:text-sm font-bold shrink-0"
-                style={{ background: `${broker.color}20`, color: broker.color }}
-              >
-                {broker.icon || broker.name.charAt(0)}
+              <Link href={`/broker/${broker.slug}`}>
+                <BrokerLogo broker={broker} size="md" />
               </Link>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
@@ -388,12 +385,8 @@ export default function ShortlistClient() {
           <div key={broker.id} className="px-3 md:px-5 py-3 md:py-4 hover:bg-slate-50/50 transition-colors">
             <div className="flex items-center gap-2.5 md:gap-4">
               {/* Broker icon */}
-              <Link
-                href={`/broker/${broker.slug}`}
-                className="w-9 h-9 md:w-10 md:h-10 rounded-lg flex items-center justify-center text-xs md:text-sm font-bold shrink-0"
-                style={{ background: `${broker.color}20`, color: broker.color }}
-              >
-                {broker.icon || broker.name.charAt(0)}
+              <Link href={`/broker/${broker.slug}`}>
+                <BrokerLogo broker={broker} size="md" />
               </Link>
 
               {/* Name + rating + key fee */}

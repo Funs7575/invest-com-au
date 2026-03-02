@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, AFFILIATE_REL } from "@/lib/tracking";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
+import BrokerLogo from "@/components/BrokerLogo";
 
 export default function MobileFloatingCTA({
   broker,
@@ -29,12 +30,7 @@ export default function MobileFloatingCTA({
   return (
     <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-200 shadow-[0_-4px_20px_rgba(0,0,0,0.1)] safe-area-inset-bottom">
       <div className="flex items-center gap-3 px-4 py-2.5">
-        <div
-          className="w-9 h-9 rounded-lg flex items-center justify-center text-xs font-bold shrink-0"
-          style={{ background: `${broker.color}20`, color: broker.color }}
-        >
-          {broker.icon || broker.name.charAt(0)}
-        </div>
+        <BrokerLogo broker={broker} size="sm" />
         <div className="flex-1 min-w-0">
           <div className="font-bold text-sm text-brand truncate" title={broker.name}>
             {broker.name}

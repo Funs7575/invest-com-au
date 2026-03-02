@@ -2,6 +2,7 @@
 
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, AFFILIATE_REL } from "@/lib/tracking";
+import BrokerLogo from "@/components/BrokerLogo";
 
 export default function ArticleDetailClient({
   broker,
@@ -13,12 +14,7 @@ export default function ArticleDetailClient({
   return (
     <div className="flex items-center gap-4 p-4 border border-slate-100 rounded-lg hover:bg-slate-50 transition-colors">
       {/* Broker Icon */}
-      <div
-        className="w-11 h-11 rounded-lg flex items-center justify-center text-sm font-bold shrink-0"
-        style={{ background: `${broker.color}20`, color: broker.color }}
-      >
-        {broker.icon || broker.name.charAt(0)}
-      </div>
+      <BrokerLogo broker={broker} size="md" />
 
       {/* Broker Info */}
       <div className="flex-1 min-w-0">

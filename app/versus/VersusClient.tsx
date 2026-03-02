@@ -11,6 +11,7 @@ import ScrollReveal from "@/components/ScrollReveal";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import { CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
+import BrokerLogo from "@/components/BrokerLogo";
 
 const MAX_BROKERS = 4;
 
@@ -232,12 +233,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                       {/* Broker identity header — only when selected */}
                       {broker && (
                         <div className="flex items-center gap-2 mb-2">
-                          <div
-                            className="w-7 h-7 md:w-8 md:h-8 rounded-lg flex items-center justify-center text-[0.6rem] md:text-xs font-bold shrink-0"
-                            style={{ background: `${broker.color}18`, color: broker.color }}
-                          >
-                            {broker.icon || broker.name.charAt(0)}
-                          </div>
+                          <BrokerLogo broker={broker} size="sm" />
                           <div className="flex-1 min-w-0">
                             <div className="font-semibold text-xs md:text-sm text-slate-900 truncate">{broker.name}</div>
                             <div className="text-[0.62rem] md:text-xs text-slate-400">
@@ -305,12 +301,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
               {/* Subtle pattern */}
               <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
               <div className="relative flex items-center gap-3 md:gap-4 flex-1 min-w-0">
-                <div
-                  className="w-11 h-11 md:w-16 md:h-16 rounded-xl md:rounded-2xl flex items-center justify-center text-lg md:text-2xl font-extrabold shrink-0 shadow-lg"
-                  style={{ background: 'rgba(255,255,255,0.25)', color: 'white' }}
-                >
-                  {overallWinner.icon || overallWinner.name.charAt(0)}
-                </div>
+                <BrokerLogo broker={overallWinner} size="xl" />
                 <div>
                   <div className="text-[0.56rem] md:text-[0.69rem] uppercase font-extrabold tracking-widest text-white/70 mb-0.5">Our Pick</div>
                   <div className="text-lg md:text-3xl font-extrabold text-white">{overallWinner.name}</div>
@@ -351,12 +342,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                         </span>
                       </div>
                     )}
-                    <div
-                      className="w-9 h-9 md:w-12 md:h-12 rounded-lg md:rounded-xl mx-auto mb-1.5 md:mb-2 flex items-center justify-center text-sm md:text-lg font-bold"
-                      style={{ background: `${br.color}20`, color: br.color }}
-                    >
-                      {br.icon || br.name.charAt(0)}
-                    </div>
+                    <BrokerLogo broker={br} size="lg" className="mx-auto mb-1.5 md:mb-2" />
                     <div className="font-bold text-xs md:text-sm mb-0.5">{br.name}</div>
                     <div className="text-base md:text-xl font-extrabold" style={{ color: br.color }}>{br.rating}/5</div>
                     <div className="text-[0.62rem] md:text-[0.69rem] text-slate-400 mt-0.5 md:mt-1">
@@ -381,12 +367,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                         <div className="text-xs md:text-sm font-bold text-slate-500 mt-0.5">Tie</div>
                       ) : v.winner ? (
                         <div className="flex items-center gap-1.5 md:gap-2 mt-0.5">
-                          <div
-                            className="w-4 h-4 md:w-5 md:h-5 rounded flex items-center justify-center text-[0.45rem] md:text-[0.5rem] font-bold shrink-0"
-                            style={{ background: `${v.winner.color}20`, color: v.winner.color }}
-                          >
-                            {v.winner.icon || v.winner.name.charAt(0)}
-                          </div>
+                          <BrokerLogo broker={v.winner} size="xs" />
                           <span className="text-xs md:text-sm font-bold truncate" style={{ color: v.winner.color }}>{v.winner.name}</span>
                         </div>
                       ) : null}
@@ -413,12 +394,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                       const isWinner = br.slug === overallWinner?.slug;
                       return (
                         <div key={br.slug} className={`px-2 py-2.5 md:px-4 md:py-4 text-center ${isWinner ? 'bg-emerald-50/50' : 'bg-slate-50'}`}>
-                          <div
-                            className="w-7 h-7 md:w-10 md:h-10 rounded-lg md:rounded-xl mx-auto mb-1 md:mb-2 flex items-center justify-center text-[0.6rem] md:text-sm font-bold"
-                            style={{ background: `${br.color}20`, color: br.color }}
-                          >
-                            {br.icon || br.name.charAt(0)}
-                          </div>
+                          <BrokerLogo broker={br} size="md" className="mx-auto mb-1 md:mb-2" />
                           <div className="font-bold text-[0.69rem] md:text-sm">{br.name}</div>
                           {isWinner && <div className="text-[0.56rem] md:text-[0.69rem] font-extrabold text-emerald-600 uppercase tracking-wider mt-0.5">Winner</div>}
                         </div>
@@ -475,12 +451,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                     >
                       {/* Broker header */}
                       <div className="px-3 py-2.5 md:px-5 md:py-4 flex items-center gap-2.5 md:gap-3" style={{ background: `${br.color}10` }}>
-                        <div
-                          className="w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl flex items-center justify-center text-xs md:text-sm font-bold shrink-0"
-                          style={{ background: `${br.color}25`, color: br.color }}
-                        >
-                          {br.icon || br.name.charAt(0)}
-                        </div>
+                        <BrokerLogo broker={br} size="md" />
                         <div className="min-w-0">
                           <h3 className="font-bold text-xs md:text-sm break-words">{br.name}</h3>
                           <div className="text-[0.62rem] md:text-xs text-slate-500">{br.rating}/5 · {br.asx_fee}</div>

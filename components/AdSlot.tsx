@@ -6,6 +6,7 @@ import { filterByFrequencyCap, recordWinnerImpressions } from "@/lib/marketplace
 import { trackClick, getAffiliateLink, AFFILIATE_REL } from "@/lib/tracking";
 import { SPONSORED_DISCLOSURE_SHORT } from "@/lib/compliance";
 import type { Broker } from "@/lib/types";
+import BrokerLogo from "@/components/BrokerLogo";
 
 /**
  * AdSlot — Unified display advertising component.
@@ -312,12 +313,7 @@ function DirectSoldDisplayAd({
         </div>
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
           <div className="flex items-center gap-3 flex-1 min-w-0">
-            <div
-              className="w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold shrink-0"
-              style={{ background: `${broker.color}20`, color: broker.color }}
-            >
-              {broker.icon || broker.name.charAt(0)}
-            </div>
+            <BrokerLogo broker={broker} size="md" />
             <div className="min-w-0">
               <p className="font-bold text-slate-900 text-sm truncate">{broker.name}</p>
               {broker.tagline && (
@@ -363,12 +359,7 @@ function DirectSoldDisplayAd({
       {/* Body */}
       <div className="p-4">
         <div className="flex items-center gap-3 mb-3">
-          <div
-            className="w-11 h-11 rounded-xl flex items-center justify-center text-sm font-bold"
-            style={{ background: `${broker.color}20`, color: broker.color }}
-          >
-            {broker.icon || broker.name.charAt(0)}
-          </div>
+          <BrokerLogo broker={broker} size="lg" />
           <div>
             <p className="font-extrabold text-slate-900">{broker.name}</p>
             {broker.rating != null && (
@@ -460,12 +451,7 @@ function DirectSoldStickyAd({
 
   return (
     <div className="flex items-center gap-3 flex-1 min-w-0">
-      <div
-        className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold shrink-0"
-        style={{ background: `${broker.color}20`, color: broker.color }}
-      >
-        {broker.icon || broker.name.charAt(0)}
-      </div>
+      <BrokerLogo broker={broker} size="sm" />
       <div className="min-w-0 flex-1">
         <p className="text-sm font-bold text-slate-900 truncate">
           {broker.name}

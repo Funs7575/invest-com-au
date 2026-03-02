@@ -3,6 +3,7 @@
 import type { Broker } from "@/lib/types";
 import { trackClick, getAffiliateLink, formatPercent, AFFILIATE_REL } from "@/lib/tracking";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
+import BrokerLogo from "@/components/BrokerLogo";
 
 function Stars({ rating }: { rating: number }) {
   const full = Math.floor(rating);
@@ -41,12 +42,7 @@ export default function ArticleSidebar({
           {/* Content */}
           <div className="p-5">
             <div className="flex items-center gap-3 mb-3">
-              <div
-                className="w-12 h-12 rounded-xl flex items-center justify-center text-sm font-bold"
-                style={{ background: `${broker.color}20`, color: broker.color }}
-              >
-                {broker.icon || broker.name.charAt(0)}
-              </div>
+              <BrokerLogo broker={broker} size="lg" />
               <div>
                 <div className="font-extrabold text-brand">{broker.name}</div>
                 <Stars rating={broker.rating ?? 0} />
