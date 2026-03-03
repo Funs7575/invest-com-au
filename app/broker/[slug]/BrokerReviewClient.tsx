@@ -6,7 +6,18 @@ import Link from "next/link";
 import type { Broker, UserReview, BrokerReviewStats, SwitchStory } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
 import { CURRENT_YEAR } from "@/lib/seo";
-import { ADVERTISER_DISCLOSURE_SHORT, GENERAL_ADVICE_WARNING, PDS_CONSIDERATION } from "@/lib/compliance";
+import {
+  ADVERTISER_DISCLOSURE_SHORT,
+  GENERAL_ADVICE_WARNING,
+  PDS_CONSIDERATION,
+  CRYPTO_WARNING,
+  CRYPTO_REGULATORY_NOTE,
+  CFD_WARNING,
+  NEGATIVE_BALANCE_PROTECTION,
+  SUPER_WARNING,
+  FSG_NOTE,
+  AFCA_REFERENCE,
+} from "@/lib/compliance";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import StickyCTABar from "@/components/StickyCTABar";
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
@@ -548,6 +559,51 @@ export default function BrokerReviewClient({
                 <li className="flex items-start gap-2">
                   <span className="text-slate-400 mt-0.5">•</span>
                   <span>Client funds are subject to the protections outlined in their Financial Services Guide (FSG) and Product Disclosure Statement (PDS).</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Platform-Specific Australian Warnings */}
+            {(b.is_crypto || b.platform_type === "crypto_exchange") && (
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                <h3 className="font-semibold text-amber-800 mb-1 text-xs flex items-center gap-1.5">
+                  <span>⚠️</span> Crypto Risk Warning
+                </h3>
+                <p className="text-xs text-amber-700 leading-relaxed mb-1.5">{CRYPTO_WARNING}</p>
+                <p className="text-[0.69rem] text-amber-600 leading-relaxed">{CRYPTO_REGULATORY_NOTE}</p>
+              </div>
+            )}
+
+            {b.platform_type === "cfd_forex" && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                <h3 className="font-semibold text-red-800 mb-1 text-xs flex items-center gap-1.5">
+                  <span>🔴</span> CFD Risk Warning — ASIC Product Intervention Order
+                </h3>
+                <p className="text-xs text-red-700 leading-relaxed mb-1.5">{CFD_WARNING}</p>
+                <p className="text-[0.69rem] text-red-600 leading-relaxed">{NEGATIVE_BALANCE_PROTECTION}</p>
+              </div>
+            )}
+
+            {b.platform_type === "super_fund" && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <h3 className="font-semibold text-blue-800 mb-1 text-xs flex items-center gap-1.5">
+                  <span>🏛️</span> Super Fund Switching Warning — ASIC RG 183
+                </h3>
+                <p className="text-xs text-blue-700 leading-relaxed">{SUPER_WARNING}</p>
+              </div>
+            )}
+
+            {/* FSG & AFCA Reference */}
+            <div>
+              <h3 className="font-semibold text-slate-800 mb-1">Financial Services Guide &amp; Complaints</h3>
+              <ul className="space-y-1 text-xs text-slate-600">
+                <li className="flex items-start gap-2">
+                  <span className="text-slate-400 mt-0.5">•</span>
+                  <span>{FSG_NOTE}</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-slate-400 mt-0.5">•</span>
+                  <span>{AFCA_REFERENCE}</span>
                 </li>
               </ul>
             </div>

@@ -24,7 +24,15 @@ import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
 import ScrollReveal from "@/components/ScrollReveal";
 import type { LeadSegment } from "@/components/ContextualLeadMagnet";
-import { ADVERTISER_DISCLOSURE_SHORT, SPONSORED_DISCLOSURE_SHORT } from "@/lib/compliance";
+import {
+  ADVERTISER_DISCLOSURE_SHORT,
+  SPONSORED_DISCLOSURE_SHORT,
+  GENERAL_ADVICE_WARNING,
+  PDS_CONSIDERATION,
+  CRYPTO_WARNING,
+  CFD_WARNING,
+  SUPER_WARNING_SHORT,
+} from "@/lib/compliance";
 import { getArticleFiltersForBestPage, CATEGORY_COLORS } from "@/lib/internal-links";
 import { boostFeaturedPartner, isSponsored } from "@/lib/sponsorship";
 import SponsorBadge from "@/components/SponsorBadge";
@@ -278,6 +286,35 @@ export default async function BestBrokerPage({
             <p className="text-xs text-blue-500 mb-2">
               {SPONSORED_DISCLOSURE_SHORT}
             </p>
+          )}
+
+          {/* General Advice Warning — above-fold per ASIC RG 234.89 */}
+          <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 mb-3 text-[0.69rem] text-slate-500 leading-relaxed">
+            <strong className="text-slate-600">⚠️ General Advice Warning:</strong>{" "}
+            {GENERAL_ADVICE_WARNING}
+          </div>
+
+          {/* Platform-specific warnings — shown conditionally based on category slug */}
+          {(slug === "crypto" || slug === "bitcoin" || slug === "crypto-exchanges") && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-3">
+              <p className="text-[0.69rem] text-amber-700 leading-relaxed">
+                <strong>₿ Crypto Risk:</strong> {CRYPTO_WARNING}
+              </p>
+            </div>
+          )}
+          {(slug === "cfd-forex" || slug === "cfd-trading" || slug === "forex") && (
+            <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 mb-3">
+              <p className="text-[0.69rem] text-red-700 leading-relaxed">
+                <strong>🔴 CFD Risk Warning:</strong> {CFD_WARNING}
+              </p>
+            </div>
+          )}
+          {(slug === "super-funds" || slug === "smsf") && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 mb-3">
+              <p className="text-[0.69rem] text-blue-700 leading-relaxed">
+                <strong>🏛️ Super Warning:</strong> {SUPER_WARNING_SHORT}
+              </p>
+            </div>
           )}
 
           {/* Author byline */}
