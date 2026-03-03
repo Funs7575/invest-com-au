@@ -3,7 +3,11 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
-const CATEGORIES = ["tax", "beginners", "smsf", "strategy", "news", "reviews"] as const;
+const CATEGORIES = [
+  "beginners", "tax", "smsf", "strategy", "crypto", "etfs",
+  "robo-advisors", "super", "property", "cfd-forex",
+  "research-tools", "reviews", "news",
+] as const;
 
 const CATEGORY_LABELS: Record<string, string> = {
   tax: "Tax",
@@ -12,6 +16,13 @@ const CATEGORY_LABELS: Record<string, string> = {
   strategy: "Strategy",
   news: "News",
   reviews: "Reviews",
+  crypto: "Crypto",
+  etfs: "ETFs",
+  "robo-advisors": "Robo-Advisors",
+  "research-tools": "Research Tools",
+  super: "Super",
+  property: "Property",
+  "cfd-forex": "CFD & Forex",
 };
 
 export default function ArticleCategoryFilter() {

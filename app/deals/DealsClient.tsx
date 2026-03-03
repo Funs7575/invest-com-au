@@ -15,6 +15,11 @@ const TAB_OPTIONS = [
   "All Deals",
   "Share Trading",
   "Crypto",
+  "Robo-Advisors",
+  "Super Funds",
+  "Property",
+  "CFD & Forex",
+  "Research Tools",
   "International",
   "Beginner",
   "Active Trader",
@@ -25,15 +30,26 @@ const TAB_ICONS: Record<TabOption, string> = {
   "All Deals": "\uD83C\uDFF7\uFE0F",
   "Share Trading": "\uD83D\uDCC8",
   "Crypto": "\u20BF",
+  "Robo-Advisors": "\uD83E\uDD16",
+  "Super Funds": "\uD83C\uDFDB\uFE0F",
+  "Property": "\uD83C\uDFE0",
+  "CFD & Forex": "\uD83D\uDCB1",
+  "Research Tools": "\uD83D\uDD0D",
   "International": "\uD83C\uDF0D",
   "Beginner": "\uD83C\uDFAF",
   "Active Trader": "\u26A1",
 };
 
+/** Maps tab to deal_category value OR platform_type value (prefixed with "pt:") */
 const CATEGORY_MAP: Record<TabOption, string | null> = {
   "All Deals": null,
   "Share Trading": "shares",
   "Crypto": "crypto",
+  "Robo-Advisors": "pt:robo_advisor",
+  "Super Funds": "pt:super_fund",
+  "Property": "pt:property_platform",
+  "CFD & Forex": "pt:cfd_forex",
+  "Research Tools": "pt:research_tool",
   "International": "international",
   "Beginner": "beginner",
   "Active Trader": "active-trader",
@@ -74,7 +90,17 @@ export default function DealsClient({ deals }: { deals: Broker[] }) {
 
   const filteredDeals = useMemo(() => {
     const category = CATEGORY_MAP[activeTab];
-    const base = !category ? deals : deals.filter((b) => b.deal_category === category);
+    let base: Broker[];
+    if (!category) {
+      base = deals;
+    } else if (category.startsWith("pt:")) {
+      // Filter by platform_type
+      const platformType = category.slice(3);
+      base = deals.filter((b) => b.platform_type === platformType);
+    } else {
+      // Filter by deal_category
+      base = deals.filter((b) => b.deal_category === category);
+    }
 
     // Sort: featured campaign winners first, then original order
     return [...base].sort((a, b) => {
@@ -89,6 +115,10 @@ export default function DealsClient({ deals }: { deals: Broker[] }) {
     return TAB_OPTIONS.filter((tab) => {
       const cat = CATEGORY_MAP[tab];
       if (!cat) return true; // Always show "All Deals"
+      if (cat.startsWith("pt:")) {
+        const platformType = cat.slice(3);
+        return deals.some((b) => b.platform_type === platformType);
+      }
       return deals.some((b) => b.deal_category === cat);
     });
   }, [deals]);
@@ -104,14 +134,14 @@ export default function DealsClient({ deals }: { deals: Broker[] }) {
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-2">
             <h2 className="text-xl md:text-3xl font-extrabold text-white">
-              Exclusive Broker Deals
+              Exclusive Platform Deals
             </h2>
             <span className="inline-flex items-center px-2.5 py-1 bg-amber-500/20 text-amber-400 text-xs md:text-sm font-bold rounded-full border border-amber-500/30">
               {deals.length} Active
             </span>
           </div>
           <p className="text-sm md:text-base text-slate-400 max-w-xl">
-            Limited-time offers and promotions from Australia&apos;s top brokers
+            Limited-time offers and promotions from Australia&apos;s top investing platforms
           </p>
         </div>
       </div>

@@ -10,14 +10,14 @@ import LeadMagnet from "@/components/LeadMagnet";
 export const metadata = {
   title: "Investing Guides & Articles",
   description:
-    "Expert guides on tax, SMSF, beginner investing, strategy, and market news. Make smarter investment decisions with independent Australian research.",
+    "Expert guides on shares, crypto, super funds, robo-advisors, property investing, ETFs, tax, SMSF & strategy. Independent Australian investing research.",
   openGraph: {
     title: "Investing Guides & Articles — Invest.com.au",
     description:
-      "Expert guides on tax, SMSF, beginner investing, strategy, and market news.",
+      "Expert guides on shares, crypto, super, robo-advisors, property, ETFs, tax & SMSF. Independent Australian research.",
     images: [
       {
-        url: "/api/og?title=Investing+Guides&subtitle=Expert+guides+on+tax,+SMSF,+strategy&type=article",
+        url: "/api/og?title=Investing+Guides&subtitle=Shares,+crypto,+super,+property+%26+more&type=article",
         width: 1200,
         height: 630,
       },
@@ -33,7 +33,14 @@ const CATEGORY_COLORS: Record<string, string> = {
   smsf: "bg-emerald-100 text-emerald-700",
   strategy: "bg-amber-100 text-amber-700",
   news: "bg-red-100 text-red-700",
-  reviews: "bg-slate-100 text-slate-700",
+  reviews: "bg-teal-100 text-teal-700",
+  crypto: "bg-orange-100 text-orange-700",
+  etfs: "bg-indigo-100 text-indigo-700",
+  "robo-advisors": "bg-violet-100 text-violet-700",
+  "research-tools": "bg-cyan-100 text-cyan-700",
+  super: "bg-emerald-100 text-emerald-700",
+  property: "bg-lime-100 text-lime-700",
+  "cfd-forex": "bg-rose-100 text-rose-700",
 };
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -43,6 +50,13 @@ const CATEGORY_LABELS: Record<string, string> = {
   strategy: "Strategy",
   news: "News",
   reviews: "Reviews",
+  crypto: "Crypto",
+  etfs: "ETFs",
+  "robo-advisors": "Robo-Advisors",
+  "research-tools": "Research Tools",
+  super: "Super",
+  property: "Property",
+  "cfd-forex": "CFD & Forex",
 };
 
 export const revalidate = 3600; // ISR: revalidate every hour
@@ -95,7 +109,7 @@ export default async function ArticlesPage({
             Guides &amp; Articles
           </h1>
           <p className="text-[0.69rem] md:text-lg text-slate-600 max-w-2xl">
-            Expert guides on tax, SMSF, strategy &amp; more
+            Expert guides on shares, crypto, super, property, ETFs, tax &amp; more
           </p>
         </div>
 

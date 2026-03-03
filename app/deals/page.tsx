@@ -7,17 +7,17 @@ import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import { sortWithSponsorship } from "@/lib/sponsorship";
 import DealsClient from "./DealsClient";
 
-const dealsTitle = `Broker Deals & Promotions (${CURRENT_YEAR}) — Verified Offers`;
+const dealsTitle = `Investing Platform Deals & Promotions (${CURRENT_YEAR}) — Verified Offers`;
 
 export const metadata: Metadata = {
   title: dealsTitle,
   description:
-    "Current verified deals and promotions from Australian share trading platforms and crypto exchanges. Updated regularly with expiry dates and terms.",
+    "Current verified deals and promotions from Australian investing platforms — share brokers, crypto exchanges, robo-advisors, super funds & more. Updated regularly.",
   alternates: { canonical: "/deals" },
   openGraph: {
     title: dealsTitle,
     description:
-      "Current verified deals and promotions from Australian share trading platforms and crypto exchanges. Updated regularly.",
+      "Current verified deals and promotions from Australian investing platforms — share brokers, crypto, robo-advisors & more. Updated regularly.",
     url: "/deals",
     images: [
       {
@@ -37,7 +37,7 @@ export default async function DealsPage() {
   const supabase = await createClient();
   const { data: allBrokers } = await supabase
     .from("brokers")
-    .select("id, name, slug, color, icon, logo_url, rating, deal, deal_text, deal_expiry, deal_terms, deal_verified_date, deal_category, cta_text, affiliate_url, sponsorship_tier, benefit_cta, status")
+    .select("id, name, slug, color, icon, logo_url, rating, deal, deal_text, deal_expiry, deal_terms, deal_verified_date, deal_category, platform_type, cta_text, affiliate_url, sponsorship_tier, benefit_cta, status")
     .eq("status", "active")
     .eq("deal", true)
     .order("rating", { ascending: false });
