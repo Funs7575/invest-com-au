@@ -131,6 +131,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // SEO versus comparison pages (popular pairs)
   const versusPopularPairs = [
+    // Share brokers
     "stake-vs-commsec", "cmc-markets-vs-moomoo", "interactive-brokers-vs-saxo",
     "stake-vs-moomoo", "selfwealth-vs-cmc-markets", "commsec-vs-nabtrade",
     "stake-vs-selfwealth", "moomoo-vs-commsec", "interactive-brokers-vs-cmc-markets",
@@ -138,6 +139,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "superhero-vs-commsec", "saxo-vs-cmc-markets", "moomoo-vs-selfwealth",
     "tiger-brokers-vs-moomoo", "stake-vs-interactive-brokers", "commsec-vs-selfwealth",
     "nabtrade-vs-selfwealth", "cmc-markets-vs-selfwealth",
+    // Crypto exchanges
+    "coinspot-vs-swyftx",
+    // Robo-advisors
+    "stockspot-vs-raiz", "stockspot-vs-spaceship", "raiz-vs-spaceship",
+    "stockspot-vs-vanguard-personal-investor", "spaceship-vs-six-park",
+    // Research tools
+    "simply-wall-st-vs-tradingview", "simply-wall-st-vs-morningstar",
+    "tradingview-vs-morningstar", "simply-wall-st-vs-stock-doctor",
+    // CFD & Forex
+    "pepperstone-vs-ig-markets", "pepperstone-vs-cmc-markets-cfds",
+    "ig-markets-vs-plus500", "cmc-markets-cfds-vs-plus500",
+    // Super funds
+    "australiansuper-vs-hostplus", "australiansuper-vs-unisuper",
+    "hostplus-vs-rest-super", "australiansuper-vs-qsuper",
+    // Cross-type (popular search queries)
+    "stockspot-vs-vanguard-vap", "raiz-vs-spaceship",
+    "brickx-vs-vanguard-vap",
   ];
 
   const versusPages = versusPopularPairs.map((pair) => ({
