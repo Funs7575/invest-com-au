@@ -16,6 +16,7 @@ const navSections = [
       { href: "/admin", label: "Dashboard", icon: "📊" },
       { href: "/admin/analytics", label: "Analytics", icon: "📈" },
       { href: "/admin/moderation", label: "Moderation", icon: "🛡️", badge: true },
+      { href: "/admin/compliance", label: "Compliance", icon: "⚕️" },
     ],
   },
   {
