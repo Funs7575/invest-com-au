@@ -4,24 +4,24 @@ import { getAllCategories } from "@/lib/best-broker-categories";
 import { absoluteUrl, breadcrumbJsonLd, REVIEW_AUTHOR, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 
-const bestTitle = `Best Brokers in Australia (${CURRENT_YEAR}) — By Category`;
+const bestTitle = `Best Investing Platforms in Australia (${CURRENT_YEAR}) — By Category`;
 
 export const metadata: Metadata = {
   title: bestTitle,
   description:
-    "Find the best Australian broker for your needs. 20 category guides covering beginners, low fees, ETFs, dividends, day trading, international shares, and more.",
+    "Find the best Australian investing platform for your needs. 20+ category guides covering beginners, low fees, crypto, robo-advisors, ETFs, dividends, and more.",
   alternates: { canonical: "/best" },
   openGraph: {
     title: bestTitle,
     description:
-      "Find the best Australian broker for your needs. 20 category guides covering beginners, low fees, ETFs, dividends, day trading, international shares, and more.",
+      "Find the best Australian investing platform for your needs. 20+ category guides covering beginners, low fees, crypto, robo-advisors, ETFs, dividends, and more.",
     url: "/best",
     images: [
       {
-        url: "/api/og?title=Best+Brokers+in+Australia&subtitle=By+Category+—+Beginners%2C+US+Shares%2C+Low+Fees+%26+More&type=best",
+        url: "/api/og?title=Best+Investing+Platforms&subtitle=By+Category+—+Beginners%2C+Crypto%2C+Low+Fees+%26+More&type=best",
         width: 1200,
         height: 630,
-        alt: "Best Brokers in Australia by Category",
+        alt: "Best Investing Platforms in Australia by Category",
       },
     ],
   },
@@ -56,7 +56,7 @@ export default function BestBrokersHub() {
 
   const breadcrumbs = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
-    { name: "Best Brokers" },
+    { name: "Best Platforms" },
   ]);
 
   return (
@@ -74,14 +74,14 @@ export default function BestBrokersHub() {
               Home
             </Link>
             <span className="mx-2">/</span>
-            <span className="text-slate-700">Best Brokers</span>
+            <span className="text-slate-700">Best Platforms</span>
           </nav>
 
           <h1 className="text-3xl md:text-4xl font-extrabold mb-3">
-            Best Brokers in Australia by Category
+            Best Investing Platforms in Australia by Category
           </h1>
           <p className="text-slate-600 mb-8 max-w-2xl">
-            Not sure which broker is right for you? We&apos;ve built detailed guides for
+            Not sure which platform is right for you? We&apos;ve built detailed guides for
             every type of investor. Each guide filters, ranks, and explains the
             best options based on verified fees and our editorial methodology.
           </p>

@@ -211,7 +211,7 @@ export default async function BestBrokerPage({
 
   const breadcrumbs = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
-    { name: "Best Brokers", url: absoluteUrl("/best") },
+    { name: "Best Platforms", url: absoluteUrl("/best") },
     { name: cat.h1 },
   ]);
 
@@ -268,7 +268,7 @@ export default async function BestBrokerPage({
             </Link>
             <span className="mx-2">/</span>
             <Link href="/best" className="hover:text-slate-900">
-              Best Brokers
+              Best Platforms
             </Link>
             <span className="mx-2">/</span>
             <span className="text-slate-700">{cat.h1.replace("Best ", "").replace(" in Australia", "")}</span>
@@ -339,7 +339,7 @@ export default async function BestBrokerPage({
 {/* Our selection criteria */}
           <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 mb-8">
             <h2 className="text-lg font-bold text-slate-900 mb-2">
-              How We Selected These Brokers
+              How We Selected These Platforms
             </h2>
             <ScrollReveal animation="scroll-check-stagger" as="ul" className="space-y-1.5">
               {cat.criteria.map((c, i) => (
@@ -352,7 +352,7 @@ export default async function BestBrokerPage({
             <p className="text-xs text-slate-500 mt-3">
               Methodology:{" "}
               <Link href="/how-we-verify" className="text-slate-700 hover:text-slate-900 underline">
-                How we verify fees and rank brokers
+                How we verify fees and rank platforms
               </Link>
             </p>
           </div>
@@ -401,9 +401,9 @@ export default async function BestBrokerPage({
             </div>
           )}
 
-          {/* All qualifying brokers */}
+          {/* All qualifying platforms */}
           <h2 id="all-brokers" className="text-2xl font-bold mb-4 scroll-mt-20">
-            All Qualifying Brokers ({filtered.length})
+            All Qualifying Platforms ({filtered.length})
           </h2>
 
           {/* Desktop table */}
@@ -412,7 +412,7 @@ export default async function BestBrokerPage({
               <thead className="bg-slate-50">
                 <tr>
                   <th className="px-4 py-3 text-left font-semibold text-sm">#</th>
-                  <th className="px-4 py-3 text-left font-semibold text-sm">Broker</th>
+                  <th className="px-4 py-3 text-left font-semibold text-sm">Platform</th>
                   <th className="px-4 py-3 text-left font-semibold text-sm"><JargonTooltip term="ASX Fee" /></th>
                   <th className="px-4 py-3 text-left font-semibold text-sm"><JargonTooltip term="US Fee" /></th>
                   <th className="px-4 py-3 text-left font-semibold text-sm"><JargonTooltip term="FX Rate" /></th>
