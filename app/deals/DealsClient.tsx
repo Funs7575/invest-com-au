@@ -40,19 +40,27 @@ const TAB_ICONS: Record<TabOption, string> = {
   "Active Trader": "\u26A1",
 };
 
-/** Maps tab to deal_category value OR platform_type value (prefixed with "pt:") */
-const CATEGORY_MAP: Record<TabOption, string | null> = {
+/**
+ * Maps tab → filter config.
+ * Each entry can match by deal_category, platform_type, or both.
+ * "both:" prefix matches either deal_category OR platform_type.
+ */
+interface TabFilter {
+  dealCategory?: string;
+  platformType?: string;
+}
+const CATEGORY_MAP: Record<TabOption, TabFilter | null> = {
   "All Deals": null,
-  "Share Trading": "shares",
-  "Crypto": "crypto",
-  "Robo-Advisors": "pt:robo_advisor",
-  "Super Funds": "pt:super_fund",
-  "Property": "pt:property_platform",
-  "CFD & Forex": "pt:cfd_forex",
-  "Research Tools": "pt:research_tool",
-  "International": "international",
-  "Beginner": "beginner",
-  "Active Trader": "active-trader",
+  "Share Trading": { dealCategory: "shares", platformType: "share_broker" },
+  "Crypto": { dealCategory: "crypto", platformType: "crypto_exchange" },
+  "Robo-Advisors": { platformType: "robo_advisor" },
+  "Super Funds": { platformType: "super_fund" },
+  "Property": { platformType: "property_platform" },
+  "CFD & Forex": { platformType: "cfd_forex" },
+  "Research Tools": { platformType: "research_tool" },
+  "International": { dealCategory: "international" },
+  "Beginner": { dealCategory: "beginner" },
+  "Active Trader": { dealCategory: "active-trader" },
 };
 
 export default function DealsClient({ deals }: { deals: Broker[] }) {
@@ -88,18 +96,20 @@ export default function DealsClient({ deals }: { deals: Broker[] }) {
     [deals]
   );
 
+  /** Check if a broker matches a tab filter (by deal_category OR platform_type) */
+  function matchesFilter(b: Broker, filter: TabFilter): boolean {
+    if (filter.dealCategory && b.deal_category === filter.dealCategory) return true;
+    if (filter.platformType && b.platform_type === filter.platformType) return true;
+    return false;
+  }
+
   const filteredDeals = useMemo(() => {
-    const category = CATEGORY_MAP[activeTab];
+    const filter = CATEGORY_MAP[activeTab];
     let base: Broker[];
-    if (!category) {
+    if (!filter) {
       base = deals;
-    } else if (category.startsWith("pt:")) {
-      // Filter by platform_type
-      const platformType = category.slice(3);
-      base = deals.filter((b) => b.platform_type === platformType);
     } else {
-      // Filter by deal_category
-      base = deals.filter((b) => b.deal_category === category);
+      base = deals.filter((b) => matchesFilter(b, filter));
     }
 
     // Sort: featured campaign winners first, then original order
@@ -113,13 +123,9 @@ export default function DealsClient({ deals }: { deals: Broker[] }) {
   // Only show tabs that have deals (or "All Deals")
   const availableTabs = useMemo(() => {
     return TAB_OPTIONS.filter((tab) => {
-      const cat = CATEGORY_MAP[tab];
-      if (!cat) return true; // Always show "All Deals"
-      if (cat.startsWith("pt:")) {
-        const platformType = cat.slice(3);
-        return deals.some((b) => b.platform_type === platformType);
-      }
-      return deals.some((b) => b.deal_category === cat);
+      const filter = CATEGORY_MAP[tab];
+      if (!filter) return true; // Always show "All Deals"
+      return deals.some((b) => matchesFilter(b, filter));
     });
   }, [deals]);
 

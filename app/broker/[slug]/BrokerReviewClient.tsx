@@ -72,6 +72,7 @@ interface BrokerReviewProps {
   userReviewStats?: BrokerReviewStats | null;
   switchStories?: SwitchStory[];
   feeHistory: { id: number; field_name: string; old_value: string | null; new_value: string | null; change_type: string; changed_at: string }[];
+  relatedDeals?: Broker[];
 }
 
 const FIELD_LABELS: Record<string, string> = {
@@ -122,6 +123,7 @@ export default function BrokerReviewClient({
   userReviewStats = null,
   switchStories = [],
   feeHistory,
+  relatedDeals = [],
 }: BrokerReviewProps) {
   const feeRows = [
     { label: 'ASX Brokerage', value: b.asx_fee || 'N/A', numVal: b.asx_fee_value, thresholds: [5, 15] as [number, number], verdict: b.asx_fee_value != null && b.asx_fee_value <= 5 ? 'Low' : b.asx_fee_value != null && b.asx_fee_value <= 15 ? 'Medium' : 'High' },
@@ -161,6 +163,7 @@ export default function BrokerReviewClient({
     ...(switchStories.length > 0 ? [{ id: "switch-stories", label: "Switch Stories" }] : []),
     ...(feeHistory.length > 0 ? [{ id: "fee-history", label: "Fee History" }] : []),
     { id: "details", label: "Details" },
+    ...(relatedDeals.length > 0 ? [{ id: "deals", label: "Deals" }] : []),
     ...(similar.length > 0 ? [{ id: "similar", label: "Similar Brokers" }] : []),
     ...(relatedArticles && relatedArticles.length > 0 ? [{ id: "related-articles", label: "Related Guides" }] : []),
     { id: "questions", label: "Q&A" },
@@ -737,6 +740,59 @@ export default function BrokerReviewClient({
             <p className="text-sm font-medium">{b.min_deposit || '$0'}</p>
           </div>
         </div>
+
+        {/* Related Deals */}
+        {relatedDeals.length > 0 && (
+          <div id="deals" className="mb-8 scroll-mt-20">
+            <h2 className="text-xl font-extrabold mb-2">Deals From Similar Platforms</h2>
+            <p className="text-sm text-slate-600 mb-4">
+              Active promotions from other {b.platform_type?.replace(/_/g, " ") || "investing"} platforms:
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {relatedDeals.map((d) => (
+                <div
+                  key={d.slug}
+                  className="border border-slate-200 rounded-xl p-4 hover:shadow-md transition-shadow flex items-start gap-3"
+                >
+                  <div
+                    className="w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold shrink-0"
+                    style={{ background: `${d.color}20`, color: d.color }}
+                  >
+                    {d.icon || d.name.charAt(0)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <Link href={`/broker/${d.slug}`} className="font-bold text-sm hover:text-blue-700 transition-colors">
+                        {d.name}
+                      </Link>
+                      <span className="text-xs text-amber">{d.rating}/5</span>
+                    </div>
+                    <p className="text-sm font-semibold text-slate-800 leading-snug mb-1.5">
+                      {d.deal_text}
+                    </p>
+                    {d.deal_expiry && (
+                      <p className="text-[0.62rem] text-slate-400 mb-2">
+                        Expires {new Date(d.deal_expiry).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}
+                      </p>
+                    )}
+                    <a
+                      href={getAffiliateLink(d)}
+                      target="_blank"
+                      rel={AFFILIATE_REL}
+                      onClick={() => trackClick(d.slug, d.name, "review-related-deal", `/broker/${b.slug}`, "review")}
+                      className="inline-block text-xs px-3 py-1.5 bg-amber-600 text-white font-semibold rounded-md hover:bg-amber-700 transition-colors"
+                    >
+                      Claim Deal →
+                    </a>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <Link href="/deals" className="inline-block mt-3 text-xs text-slate-500 hover:text-slate-700 transition-colors">
+              View all deals →
+            </Link>
+          </div>
+        )}
 
         {/* Similar Brokers */}
         {similar.length > 0 && (

@@ -85,8 +85,8 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
     .slice(0, 3)
     .map(({ broker: br }) => br);
 
-  // Fetch articles that mention this broker + user reviews + switch stories + fee history (in parallel)
-  const [{ data: brokerArticles }, { data: userReviews }, { data: reviewStats }, { data: switchStoriesRaw }, { data: feeHistoryRaw }, { data: questionsRaw }] = await Promise.all([
+  // Fetch articles, user reviews, switch stories, fee history, related deals (in parallel)
+  const [{ data: brokerArticles }, { data: userReviews }, { data: reviewStats }, { data: switchStoriesRaw }, { data: feeHistoryRaw }, { data: questionsRaw }, { data: relatedDealsRaw }] = await Promise.all([
     supabase
       .from('articles')
       .select('id, title, slug, category, read_time')
@@ -124,7 +124,23 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
       .eq('status', 'approved')
       .order('created_at', { ascending: false })
       .limit(10),
+    // Related deals: other platforms with active deals, same platform_type or is_crypto match
+    supabase
+      .from('brokers')
+      .select('id, name, slug, color, icon, logo_url, rating, deal, deal_text, deal_expiry, deal_category, platform_type, affiliate_url, cta_text, benefit_cta, status')
+      .eq('status', 'active')
+      .eq('deal', true)
+      .neq('slug', slug)
+      .order('rating', { ascending: false })
+      .limit(20),
   ]);
+
+  // Filter related deals to same platform_type (or crypto match), take top 4
+  const relatedDeals = ((relatedDealsRaw || []) as Broker[]).filter((d) => {
+    if (b.platform_type && d.platform_type === b.platform_type) return true;
+    if ((b.is_crypto || b.platform_type === 'crypto_exchange') && (d.platform_type === 'crypto_exchange')) return true;
+    return false;
+  }).slice(0, 4);
 
   // JSON-LD structured data — FinancialProduct + Review + Article + Breadcrumb
   const financialProductLd = brokerReviewJsonLd(b, brokerReviewer ?? undefined);
@@ -220,6 +236,7 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
           userReviewStats={(reviewStats as BrokerReviewStats) || null}
           switchStories={(switchStoriesRaw || []) as SwitchStory[]}
           feeHistory={(feeHistoryRaw || []) as { id: number; field_name: string; old_value: string | null; new_value: string | null; change_type: string; changed_at: string }[]}
+          relatedDeals={relatedDeals}
         />
       </Suspense>
       {/* Q&A Section */}
