@@ -184,7 +184,7 @@ export default async function CostScenarioPage({
             <thead>
               <tr className="border-b border-slate-200 text-left">
                 <th className="py-3 pr-4 font-semibold text-slate-900">#</th>
-                <th className="py-3 pr-4 font-semibold text-slate-900">Broker</th>
+                <th className="py-3 pr-4 font-semibold text-slate-900">Platform</th>
                 <th className="py-3 pr-4 font-semibold text-slate-900 text-right">
                   ASX Fee
                 </th>

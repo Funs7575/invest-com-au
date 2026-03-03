@@ -148,13 +148,13 @@ export default function SwitchStoryForm({
   return (
     <form onSubmit={handleSubmit} noValidate className="bg-white border border-slate-200 rounded-xl p-5 space-y-4">
       <h4 className="text-base font-bold text-slate-900">Share Your Switching Story</h4>
-      <p className="text-xs text-slate-500 -mt-2">Switched brokers? Tell others about your experience.</p>
+      <p className="text-xs text-slate-500 -mt-2">Switched platforms? Tell others about your experience.</p>
 
       {/* Broker Selection */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label htmlFor="story-source" className="block text-sm font-medium text-slate-700 mb-1">
-            Broker You Left <span className="text-red-500">*</span>
+            Platform You Left <span className="text-red-500">*</span>
           </label>
           {sourceBrokerSlug && sourceBrokerName ? (
             <div className="px-3 py-2 rounded-lg border border-slate-200 bg-slate-50 text-sm text-slate-700">
@@ -168,7 +168,7 @@ export default function SwitchStoryForm({
               required
               className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400 bg-white"
             >
-              <option value="">Select broker...</option>
+              <option value="">Select platform...</option>
               {sourceOptions.map((b) => (
                 <option key={b.slug} value={b.slug}>{b.name}</option>
               ))}
@@ -177,7 +177,7 @@ export default function SwitchStoryForm({
         </div>
         <div>
           <label htmlFor="story-dest" className="block text-sm font-medium text-slate-700 mb-1">
-            Broker You Switched To <span className="text-red-500">*</span>
+            Platform You Switched To <span className="text-red-500">*</span>
           </label>
           {destBrokerSlug && destBrokerName ? (
             <div className="px-3 py-2 rounded-lg border border-slate-200 bg-slate-50 text-sm text-slate-700">
@@ -191,7 +191,7 @@ export default function SwitchStoryForm({
               required
               className="w-full px-3 py-2 rounded-lg border border-slate-200 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400 bg-white"
             >
-              <option value="">Select broker...</option>
+              <option value="">Select platform...</option>
               {destOptions.map((b) => (
                 <option key={b.slug} value={b.slug}>{b.name}</option>
               ))}
@@ -204,13 +204,13 @@ export default function SwitchStoryForm({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-1">
-            Rate Old Broker <span className="text-red-500">*</span>
+            Rate Old Platform <span className="text-red-500">*</span>
           </label>
           <StarRatingInput value={sourceRating} onChange={setSourceRating} size="md" />
         </div>
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-1">
-            Rate New Broker <span className="text-red-500">*</span>
+            Rate New Platform <span className="text-red-500">*</span>
           </label>
           <StarRatingInput value={destRating} onChange={setDestRating} size="md" />
         </div>
@@ -320,7 +320,7 @@ export default function SwitchStoryForm({
         </div>
         <div>
           <label htmlFor="story-time" className="block text-sm font-medium text-slate-700 mb-1">
-            Time with Old Broker <span className="text-slate-400 font-normal">(optional)</span>
+            Time with Old Platform <span className="text-slate-400 font-normal">(optional)</span>
           </label>
           <input
             id="story-time"

@@ -341,7 +341,14 @@ export default function Icon({ name, size = 24, className = "" }: IconProps) {
   const paths = icons[name];
   if (!paths) {
     log.warn(`Unknown icon name: "${name}"`, { available: Object.keys(icons).join(", ") });
-    return null;
+    // Render a generic placeholder instead of nothing
+    return (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+        <circle cx="12" cy="12" r="10" />
+        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+        <line x1="12" y1="17" x2="12.01" y2="17" />
+      </svg>
+    );
   }
 
   return (

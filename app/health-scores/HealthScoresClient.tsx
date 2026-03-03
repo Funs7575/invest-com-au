@@ -138,21 +138,21 @@ export default function HealthScoresClient({
         <div className="text-sm text-slate-500 mb-6">
           <Link href="/" className="hover:text-brand">Home</Link>
           <span className="mx-2">/</span>
-          <span className="text-brand">Broker Health Scores</span>
+          <span className="text-brand">Platform Health Scores</span>
         </div>
 
         <h1 className="text-3xl md:text-4xl font-extrabold mb-2">
-          Broker Health &amp; Risk Scores
+          Platform Health &amp; Risk Scores
         </h1>
         <p className="text-slate-600 mb-8">
-          Proprietary safety scores for every Australian broker. See how your broker rates across regulatory compliance,
+          Proprietary safety scores for every Australian platform. See how your platform rates across regulatory compliance,
           client money handling, financial stability, platform reliability, and insurance.
         </p>
 
         {/* Broker selector */}
         <div className="mb-8">
           <label className="block text-sm font-semibold text-slate-700 mb-1">
-            Select Broker
+            Select Platform
           </label>
           <select
             value={selectedSlug}
@@ -162,7 +162,7 @@ export default function HealthScoresClient({
             }}
             className="w-full md:w-80 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700"
           >
-            <option value="">Choose a broker...</option>
+            <option value="">Choose a platform...</option>
             {brokers.map((b) => (
               <option key={b.slug} value={b.slug}>{b.name}</option>
             ))}
@@ -271,7 +271,7 @@ export default function HealthScoresClient({
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
                   <th className="text-left px-4 py-3 font-semibold text-slate-600">#</th>
-                  <th className="text-left px-4 py-3 font-semibold text-slate-600">Broker</th>
+                  <th className="text-left px-4 py-3 font-semibold text-slate-600">Platform</th>
                   <th className="text-center px-3 py-3 font-semibold text-slate-600">Score</th>
                   <th className="text-center px-3 py-3 font-semibold text-slate-600 hidden sm:table-cell">AFSL</th>
                   <th className="text-center px-3 py-3 font-semibold text-slate-600 hidden md:table-cell">Regulatory</th>

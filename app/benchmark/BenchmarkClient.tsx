@@ -271,22 +271,22 @@ export default function BenchmarkClient({ brokers }: { brokers: Broker[] }) {
           Fee Benchmarking Dashboard
         </h1>
         <p className="text-slate-600 mb-8">
-          See where your broker ranks on every fee dimension. Visual radar chart
-          with percentile rankings across {brokers.length} Australian brokers.
+          See where your platform ranks on every fee dimension. Visual radar chart
+          with percentile rankings across {brokers.length} Australian platforms.
         </p>
 
         {/* Broker selectors */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           <div>
             <label className="block text-sm font-semibold text-slate-700 mb-1">
-              Select Broker
+              Select Platform
             </label>
             <select
               value={selectedSlug}
               onChange={(e) => handleSelect(e.target.value)}
               className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700"
             >
-              <option value="">Choose a broker...</option>
+              <option value="">Choose a platform...</option>
               {brokers.map((b) => (
                 <option key={b.slug} value={b.slug}>
                   {b.name}

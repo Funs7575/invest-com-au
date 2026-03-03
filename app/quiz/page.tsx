@@ -363,6 +363,35 @@ export default function QuizPage() {
     const runnerUps = results.slice(1);
     const allResults = results.filter(r => r.broker);
 
+    // Edge case: no platforms matched (data fetch failed or empty DB)
+    if (allResults.length === 0) {
+      return (
+        <div className="pt-5 pb-8 md:py-12">
+          <div className="container-custom max-w-2xl mx-auto text-center">
+            <Icon name="alert-triangle" size={48} className="text-amber-500 mx-auto mb-4" />
+            <h1 className="text-xl md:text-2xl font-extrabold mb-2">No Results Found</h1>
+            <p className="text-sm text-slate-600 mb-6">
+              We couldn&apos;t find platforms matching your criteria right now. This may be a temporary issue.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <button
+                onClick={() => { setStep(0); setAnswers([]); }}
+                className="px-5 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 transition-colors"
+              >
+                Retake Quiz
+              </button>
+              <a
+                href="/compare"
+                className="px-5 py-2.5 border border-slate-300 text-slate-700 text-sm font-semibold rounded-lg hover:bg-slate-50 transition-colors"
+              >
+                Browse All Platforms
+              </a>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="pt-5 pb-8 md:py-12">
         <div className="container-custom max-w-2xl mx-auto">
