@@ -270,7 +270,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
       <div className="container-custom">
         {/* Header — compact on mobile */}
         <div className="flex items-start justify-between gap-2 mb-1 md:mb-2">
-          <h1 className="text-xl md:text-4xl font-extrabold">Compare Brokers</h1>
+          <h1 className="text-xl md:text-4xl font-extrabold">Compare Platforms</h1>
           <span className="hidden md:inline">
             <FeesFreshnessIndicator lastChecked={getMostRecentFeeCheck(brokers)} variant="inline" />
           </span>
@@ -373,7 +373,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               </button>
             )}
           </div>
-          <BottomSheet open={sheetOpen} onClose={() => setSheetOpen(false)} title="Filter Brokers">
+          <BottomSheet open={sheetOpen} onClose={() => setSheetOpen(false)} title="Filter Platforms">
             <div className="flex flex-wrap gap-2 mb-6">
               {filters.map(f => (
                 <button

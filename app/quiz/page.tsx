@@ -727,7 +727,11 @@ export default function QuizPage() {
                           <h3 className="font-bold text-xs md:text-sm">{r.broker.name}</h3>
                           {isSponsored(r.broker) && <SponsorBadge broker={r.broker} />}
                         </div>
-                        <div className="text-[0.62rem] md:text-xs text-slate-500">{r.broker.asx_fee} · {r.broker.chess_sponsored ? 'CHESS' : 'Custodial'} · {r.broker.rating}/5</div>
+                        <div className="text-[0.62rem] md:text-xs text-slate-500">
+                          {(r.broker.platform_type === 'share_broker' || r.broker.platform_type === 'cfd_forex')
+                            ? `${r.broker.asx_fee || 'N/A'} · ${r.broker.chess_sponsored ? 'CHESS' : 'Custodial'} · ${r.broker.rating}/5`
+                            : `${r.broker.rating}/5`}
+                        </div>
                       </div>
                       <a
                         href={getAffiliateLink(r.broker)}

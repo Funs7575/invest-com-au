@@ -91,26 +91,125 @@ export default memo(function BrokerCard({
         </a>
       </div>
 
-      {/* Metrics grid — 4 compact cells */}
+      {/* Metrics grid — platform-type-aware */}
       <div className="grid grid-cols-4 gap-1.5 md:gap-2 mb-2 md:mb-3">
-        <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
-          <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">ASX</div>
-          <div className="text-xs md:text-sm font-semibold leading-tight">{broker.asx_fee || 'N/A'}</div>
-        </div>
-        <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
-          <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">US</div>
-          <div className="text-xs md:text-sm font-semibold leading-tight">{broker.us_fee || 'N/A'}</div>
-        </div>
-        <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
-          <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">FX</div>
-          <div className="text-xs md:text-sm font-semibold leading-tight">{broker.fx_rate != null ? `${broker.fx_rate}%` : 'N/A'}</div>
-        </div>
-        <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
-          <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">CHESS</div>
-          <div className={`text-xs md:text-sm font-semibold leading-tight ${broker.chess_sponsored ? 'text-emerald-600' : 'text-red-500'}`}>
-            {broker.chess_sponsored ? '✓' : '✗'}
-          </div>
-        </div>
+        {(broker.platform_type === 'share_broker' || broker.platform_type === 'cfd_forex') ? (
+          <>
+            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
+              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">ASX</div>
+              <div className="text-xs md:text-sm font-semibold leading-tight">{broker.asx_fee || 'N/A'}</div>
+            </div>
+            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
+              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">US</div>
+              <div className="text-xs md:text-sm font-semibold leading-tight">{broker.us_fee || 'N/A'}</div>
+            </div>
+            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
+              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">FX</div>
+              <div className="text-xs md:text-sm font-semibold leading-tight">{broker.fx_rate != null ? `${broker.fx_rate}%` : 'N/A'}</div>
+            </div>
+            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
+              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">CHESS</div>
+              <div className={`text-xs md:text-sm font-semibold leading-tight ${broker.chess_sponsored ? 'text-emerald-600' : 'text-red-500'}`}>
+                {broker.chess_sponsored ? '✓' : '✗'}
+              </div>
+            </div>
+          </>
+        ) : broker.platform_type === 'crypto_exchange' ? (
+          <>
+            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
+              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">Fees</div>
+              <div className="text-xs md:text-sm font-semibold leading-tight">{broker.asx_fee || 'Varies'}</div>
+            </div>
+            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
+              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">Coins</div>
+              <div className="text-xs md:text-sm font-semibold leading-tight">{broker.markets?.length ? `${broker.markets.length}+` : '100+'}</div>
+            </div>
+            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
+              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">Staking</div>
+              <div className="text-xs md:text-sm font-semibold leading-tight">Yes</div>
+            </div>
+            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
+              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">AUSTRAC</div>
+              <div className="text-xs md:text-sm font-semibold leading-tight text-emerald-600">✓</div>
+            </div>
+          </>
+        ) : broker.platform_type === 'robo_advisor' ? (
+          <>
+            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
+              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">Mgmt Fee</div>
+              <div className="text-xs md:text-sm font-semibold leading-tight">{broker.asx_fee || 'Varies'}</div>
+            </div>
+            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
+              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">Min $</div>
+              <div className="text-xs md:text-sm font-semibold leading-tight">{broker.min_deposit || '$0'}</div>
+            </div>
+            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
+              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">Auto</div>
+              <div className="text-xs md:text-sm font-semibold leading-tight text-emerald-600">✓</div>
+            </div>
+            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
+              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">AFSL</div>
+              <div className="text-xs md:text-sm font-semibold leading-tight text-emerald-600">✓</div>
+            </div>
+          </>
+        ) : broker.platform_type === 'research_tool' ? (
+          <>
+            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
+              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">Price</div>
+              <div className="text-xs md:text-sm font-semibold leading-tight">{broker.asx_fee || 'Free+'}</div>
+            </div>
+            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
+              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">Free Tier</div>
+              <div className="text-xs md:text-sm font-semibold leading-tight text-emerald-600">✓</div>
+            </div>
+            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
+              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">ASX</div>
+              <div className="text-xs md:text-sm font-semibold leading-tight text-emerald-600">✓</div>
+            </div>
+            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
+              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">Global</div>
+              <div className="text-xs md:text-sm font-semibold leading-tight text-emerald-600">✓</div>
+            </div>
+          </>
+        ) : broker.platform_type === 'super_fund' ? (
+          <>
+            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
+              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">Admin Fee</div>
+              <div className="text-xs md:text-sm font-semibold leading-tight">{broker.asx_fee || 'Varies'}</div>
+            </div>
+            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
+              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">Insurance</div>
+              <div className="text-xs md:text-sm font-semibold leading-tight text-emerald-600">✓</div>
+            </div>
+            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
+              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">MySuper</div>
+              <div className="text-xs md:text-sm font-semibold leading-tight text-emerald-600">✓</div>
+            </div>
+            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
+              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">APRA</div>
+              <div className="text-xs md:text-sm font-semibold leading-tight text-emerald-600">✓</div>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
+              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">Fees</div>
+              <div className="text-xs md:text-sm font-semibold leading-tight">{broker.asx_fee || 'Varies'}</div>
+            </div>
+            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
+              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">Min $</div>
+              <div className="text-xs md:text-sm font-semibold leading-tight">{broker.min_deposit || '$0'}</div>
+            </div>
+            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
+              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">Rating</div>
+              <div className="text-xs md:text-sm font-semibold leading-tight">{broker.rating}/5</div>
+            </div>
+            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
+              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">ASIC</div>
+              <div className="text-xs md:text-sm font-semibold leading-tight text-emerald-600">✓</div>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Fee verified date — trust signal */}

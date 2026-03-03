@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useSearchParams, usePathname } from "next/navigation";
 import Link from "next/link";
-import type { Broker } from "@/lib/types";
+import type { Broker, PlatformType } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, formatPercent, AFFILIATE_REL } from "@/lib/tracking";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import StickyCTABar from "@/components/StickyCTABar";
@@ -14,6 +14,38 @@ import Icon from "@/components/Icon";
 import BrokerLogo from "@/components/BrokerLogo";
 
 const MAX_BROKERS = 4;
+
+const PLATFORM_LABELS: Record<PlatformType, string> = {
+  share_broker: "Share Broker",
+  crypto_exchange: "Crypto Exchange",
+  robo_advisor: "Robo-Advisor",
+  research_tool: "Research Tool",
+  super_fund: "Super Fund",
+  property_platform: "Property",
+  cfd_forex: "CFD & Forex",
+};
+
+/** Returns true if all selected platforms are the same type */
+function isSameType(platforms: Broker[]): boolean {
+  if (platforms.length < 2) return true;
+  return platforms.every(p => p.platform_type === platforms[0].platform_type);
+}
+
+/** Returns true if any selected platform is a share broker or CFD */
+function hasShareType(platforms: Broker[]): boolean {
+  return platforms.some(p => p.platform_type === 'share_broker' || p.platform_type === 'cfd_forex');
+}
+
+/** Get a short summary line for a platform (used in pros/cons header) */
+function getPlatformSummary(br: Broker): string {
+  if (br.platform_type === 'share_broker' || br.platform_type === 'cfd_forex') {
+    return `${br.rating}/5${br.asx_fee ? ` \u00B7 ${br.asx_fee}` : ''}`;
+  }
+  if (br.platform_type === 'robo_advisor') {
+    return `${br.rating}/5${br.asx_fee ? ` \u00B7 ${br.asx_fee} p.a.` : ''}`;
+  }
+  return `${br.rating}/5`;
+}
 
 const popularComparisons = [
   { label: "Stake vs CommSec", href: "/versus/stake-vs-commsec" },
@@ -109,15 +141,40 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
 
   const featureRows = useMemo(() => {
     if (selected.length < 2) return [];
-    return [
-      { label: "ASX Brokerage", icon: "dollar-sign", key: "asx_fee" as const, values: selected.map(br => br.asx_fee || "N/A"), numValues: selected.map(br => br.asx_fee_value ?? 999), best: "low" as const },
-      { label: "US Brokerage", icon: "globe", key: "us_fee" as const, values: selected.map(br => br.us_fee || "N/A"), numValues: selected.map(br => br.us_fee_value ?? 999), best: "low" as const },
-      { label: "FX Rate", icon: "arrow-left-right", key: "fx_rate" as const, values: selected.map(br => br.fx_rate != null ? formatPercent(br.fx_rate) : "N/A"), numValues: selected.map(br => br.fx_rate ?? 999), best: "low" as const },
-      { label: "CHESS Sponsored", icon: "shield-check", key: "chess" as const, values: selected.map(br => br.chess_sponsored ? "Yes" : "No"), numValues: selected.map(br => br.chess_sponsored ? 1 : 0), best: "high" as const },
-      { label: "SMSF Support", icon: "building", key: "smsf" as const, values: selected.map(br => br.smsf_support ? "Yes" : "No"), numValues: selected.map(br => br.smsf_support ? 1 : 0), best: "high" as const },
-      { label: "Inactivity Fee", icon: "pause-circle", key: "inactivity" as const, values: selected.map(br => br.inactivity_fee || "None"), numValues: selected.map(br => br.inactivity_fee ? 1 : 0), best: "low" as const },
-      { label: "Our Rating", icon: "star", key: "rating" as const, values: selected.map(br => `${br.rating ?? "N/A"}/5`), numValues: selected.map(br => br.rating ?? 0), best: "high" as const },
-    ];
+    const rows: { label: string; icon: string; key: string; values: string[]; numValues: number[]; best: "low" | "high" }[] = [];
+
+    // Always show rating
+    rows.push({ label: "Our Rating", icon: "star", key: "rating", values: selected.map(br => `${br.rating ?? "N/A"}/5`), numValues: selected.map(br => br.rating ?? 0), best: "high" });
+
+    // Show share-trading metrics only if relevant platforms are selected
+    if (hasShareType(selected)) {
+      rows.push(
+        { label: "ASX Brokerage", icon: "dollar-sign", key: "asx_fee", values: selected.map(br => (br.platform_type === 'share_broker' || br.platform_type === 'cfd_forex') ? (br.asx_fee || "N/A") : "\u2014"), numValues: selected.map(br => (br.platform_type === 'share_broker' || br.platform_type === 'cfd_forex') ? (br.asx_fee_value ?? 999) : 999), best: "low" },
+        { label: "US Brokerage", icon: "globe", key: "us_fee", values: selected.map(br => (br.platform_type === 'share_broker' || br.platform_type === 'cfd_forex') ? (br.us_fee || "N/A") : "\u2014"), numValues: selected.map(br => (br.platform_type === 'share_broker' || br.platform_type === 'cfd_forex') ? (br.us_fee_value ?? 999) : 999), best: "low" },
+        { label: "FX Rate", icon: "arrow-left-right", key: "fx_rate", values: selected.map(br => br.fx_rate != null ? formatPercent(br.fx_rate) : "\u2014"), numValues: selected.map(br => br.fx_rate ?? 999), best: "low" },
+        { label: "CHESS Sponsored", icon: "shield-check", key: "chess", values: selected.map(br => br.platform_type === 'share_broker' ? (br.chess_sponsored ? "Yes" : "No") : "\u2014"), numValues: selected.map(br => br.platform_type === 'share_broker' ? (br.chess_sponsored ? 1 : 0) : -1), best: "high" },
+      );
+    }
+
+    // Show management fee for robo-advisors / super funds
+    if (selected.some(br => br.platform_type === 'robo_advisor' || br.platform_type === 'super_fund')) {
+      rows.push({ label: "Management Fee", icon: "percent", key: "mgmt_fee", values: selected.map(br => (br.platform_type === 'robo_advisor' || br.platform_type === 'super_fund') ? (br.asx_fee || "Varies") : "\u2014"), numValues: selected.map(br => (br.platform_type === 'robo_advisor' || br.platform_type === 'super_fund') ? (br.asx_fee_value ?? 999) : 999), best: "low" });
+    }
+
+    // Show min deposit for robo / property
+    if (selected.some(br => br.platform_type === 'robo_advisor' || br.platform_type === 'property_platform')) {
+      rows.push({ label: "Minimum Deposit", icon: "wallet", key: "min_deposit", values: selected.map(br => br.min_deposit || "$0"), numValues: selected.map(br => parseFloat((br.min_deposit || "0").replace(/[^0-9.]/g, '')) || 0), best: "low" });
+    }
+
+    // Always show inactivity fee and SMSF if share brokers present
+    if (hasShareType(selected)) {
+      rows.push(
+        { label: "SMSF Support", icon: "building", key: "smsf", values: selected.map(br => br.smsf_support ? "Yes" : "No"), numValues: selected.map(br => br.smsf_support ? 1 : 0), best: "high" },
+        { label: "Inactivity Fee", icon: "pause-circle", key: "inactivity", values: selected.map(br => br.inactivity_fee || "None"), numValues: selected.map(br => br.inactivity_fee ? 1 : 0), best: "low" },
+      );
+    }
+
+    return rows;
   }, [selected]);
 
   function getBestIndex(numValues: number[], best: "low" | "high"): number {
@@ -135,12 +192,27 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
 
   const verdicts = useMemo(() => {
     if (selected.length < 2) return [];
-    const categories: { cat: string; icon: string; numValues: number[]; best: "low" | "high" }[] = [
-      { cat: "Cheapest ASX Trading", icon: "coins", numValues: selected.map(br => br.asx_fee_value ?? 999), best: "low" },
-      { cat: "Best for US Shares", icon: "globe", numValues: selected.map(br => br.fx_rate ?? 999), best: "low" },
-      { cat: "Safety (CHESS)", icon: "shield-check", numValues: selected.map(br => br.chess_sponsored ? 1 : 0), best: "high" },
-      { cat: "SMSF Support", icon: "building", numValues: selected.map(br => br.smsf_support ? 1 : 0), best: "high" },
-    ];
+    const categories: { cat: string; icon: string; numValues: number[]; best: "low" | "high" }[] = [];
+
+    // Always compare on rating
+    categories.push({ cat: "Overall Rating", icon: "star", numValues: selected.map(br => br.rating ?? 0), best: "high" });
+
+    // Share-specific verdicts
+    if (hasShareType(selected)) {
+      categories.push(
+        { cat: "Cheapest Trading", icon: "coins", numValues: selected.map(br => (br.platform_type === 'share_broker' || br.platform_type === 'cfd_forex') ? (br.asx_fee_value ?? 999) : 999), best: "low" },
+        { cat: "Best for International", icon: "globe", numValues: selected.map(br => br.fx_rate ?? 999), best: "low" },
+      );
+      if (selected.some(br => br.platform_type === 'share_broker')) {
+        categories.push({ cat: "Safety (CHESS)", icon: "shield-check", numValues: selected.map(br => br.chess_sponsored ? 1 : 0), best: "high" });
+      }
+    }
+
+    // Fee-based verdict for robo / super
+    if (selected.some(br => br.platform_type === 'robo_advisor' || br.platform_type === 'super_fund')) {
+      categories.push({ cat: "Lowest Fees", icon: "coins", numValues: selected.map(br => br.asx_fee_value ?? 999), best: "low" });
+    }
+
     return categories.map(c => {
       const bestIdx = getBestIndex(c.numValues, c.best);
       return {
@@ -185,18 +257,18 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
         </div>
 
         <h1 className="text-lg sm:text-3xl lg:text-4xl font-extrabold mb-0.5 md:mb-2 break-words">
-          {allSelected ? `${title}: The Honest Truth (${CURRENT_YEAR})` : "Broker vs Broker"}
+          {allSelected ? `${title}: The Honest Truth (${CURRENT_YEAR})` : "Platform vs Platform"}
         </h1>
         <p className="text-[0.69rem] md:text-base text-slate-600 mb-3 md:mb-8">
           {allSelected
-            ? "Which broker actually deserves your money?"
-            : "Select brokers to compare side by side."}
+            ? "Which platform actually deserves your money?"
+            : "Select platforms to compare side by side."}
         </p>
 
         {/* ───── SELECTORS ───── */}
         <div className="bg-gradient-to-br from-slate-50 to-white border border-slate-200 rounded-xl md:rounded-2xl p-3.5 md:p-8 mb-3 md:mb-8 shadow-sm">
           <div className="text-[0.62rem] md:text-xs font-bold uppercase tracking-wider text-slate-400 mb-2.5 md:mb-4 flex items-center gap-2">
-            <span>Select brokers to compare</span>
+            <span>Select platforms to compare</span>
             <span className="h-px flex-1 bg-slate-200" />
           </div>
           <div className="flex flex-col md:flex-row gap-2 md:gap-4 items-stretch md:items-end">
@@ -237,14 +309,14 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                           <div className="flex-1 min-w-0">
                             <div className="font-semibold text-xs md:text-sm text-slate-900 truncate">{broker.name}</div>
                             <div className="text-[0.62rem] md:text-xs text-slate-400">
-                              {broker.rating?.toFixed(1)}/5{broker.asx_fee ? ` \u00B7 ${broker.asx_fee}` : ''}
+                              {broker.rating?.toFixed(1)}/5 · {PLATFORM_LABELS[broker.platform_type] || 'Platform'}
                             </div>
                           </div>
                           {selectedSlugs.length > 2 && (
                             <button
                               onClick={() => removeSlot(index)}
                               className="w-8 h-8 md:w-7 md:h-7 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors shrink-0"
-                              title="Remove broker"
+                              title="Remove platform"
                             >
                               <svg className="w-3 h-3 md:w-3.5 md:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -259,7 +331,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                         onChange={(e) => updateSlug(index, e.target.value)}
                         className="w-full border border-slate-200 rounded-lg py-2.5 md:py-2.5 px-2.5 md:px-3 min-h-[44px] text-xs md:text-sm font-medium bg-white hover:border-slate-300 focus:border-blue-700 focus:ring-1 focus:ring-blue-700 transition-colors"
                       >
-                        <option value="">Choose a broker...</option>
+                        <option value="">Choose a platform...</option>
                         {brokers.map(br => {
                           const alreadySelected = selectedSlugs.some((s, i) => i !== index && s === br.slug);
                           return (
@@ -284,7 +356,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                 <svg className="w-3.5 h-3.5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>
-                Add Broker
+                Add Platform
               </button>
             )}
           </div>
@@ -454,7 +526,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                         <BrokerLogo broker={br} size="md" />
                         <div className="min-w-0">
                           <h3 className="font-bold text-xs md:text-sm break-words">{br.name}</h3>
-                          <div className="text-[0.62rem] md:text-xs text-slate-500">{br.rating}/5 · {br.asx_fee}</div>
+                          <div className="text-[0.62rem] md:text-xs text-slate-500">{getPlatformSummary(br)}</div>
                         </div>
                         {isWinner && <span className="ml-auto px-1.5 py-px md:px-2 md:py-0.5 text-[0.56rem] md:text-[0.69rem] font-extrabold uppercase rounded-full text-white shrink-0" style={{ background: br.color }}>Winner</span>}
                       </div>
@@ -537,8 +609,8 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
           <div className="text-center py-6 md:py-16">
             <Icon name="swords" size={32} className="text-slate-300 mx-auto mb-2 md:hidden" />
             <Icon name="swords" size={48} className="text-slate-300 mx-auto mb-4 hidden md:block" />
-            <h2 className="text-base md:text-2xl font-extrabold mb-1 md:mb-2">Compare brokers head-to-head</h2>
-            <p className="text-slate-500 text-[0.69rem] md:text-lg mb-1 md:mb-2">Select two brokers above to see fees, features & our verdict.</p>
+            <h2 className="text-base md:text-2xl font-extrabold mb-1 md:mb-2">Compare platforms head-to-head</h2>
+            <p className="text-slate-500 text-[0.69rem] md:text-lg mb-1 md:mb-2">Select two platforms above to see fees, features & our verdict.</p>
 
             <div className="mt-4 md:mt-8">
               <p className="text-[0.62rem] md:text-xs font-bold uppercase tracking-wider text-slate-400 mb-2 md:mb-3">Popular comparisons</p>

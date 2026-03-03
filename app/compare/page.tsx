@@ -5,12 +5,12 @@ import CompareClient from "./CompareClient";
 import { absoluteUrl, UPDATED_LABEL } from "@/lib/seo";
 
 export const metadata = {
-  title: "Compare Australian Brokers",
-  description: `Side-by-side comparison of fees, features, and safety for Australian share trading platforms. ${UPDATED_LABEL}.`,
+  title: "Compare Australian Investing Platforms",
+  description: `Side-by-side comparison of fees, features, and safety for Australian brokers, robo-advisors, crypto exchanges, super funds & more. ${UPDATED_LABEL}.`,
   openGraph: {
-    title: "Compare Australian Brokers — Invest.com.au",
-    description: "Side-by-side comparison of fees, features, and safety for Australian share trading platforms.",
-    images: [{ url: "/api/og?title=Compare+Australian+Brokers&subtitle=Fees,+features+%26+safety+side-by-side&type=default", width: 1200, height: 630 }],
+    title: "Compare Australian Investing Platforms — Invest.com.au",
+    description: "Side-by-side comparison of fees, features, and safety for Australian brokers, robo-advisors, crypto exchanges & more.",
+    images: [{ url: "/api/og?title=Compare+Investing+Platforms&subtitle=Fees,+features+%26+safety+side-by-side&type=default", width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" as const },
   alternates: { canonical: "/compare" },

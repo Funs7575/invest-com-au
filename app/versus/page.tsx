@@ -6,13 +6,13 @@ import VersusClient from "./VersusClient";
 export const revalidate = 1800;
 
 export const metadata = {
-  title: "Broker vs Broker",
+  title: "Platform vs Platform",
   description:
-    "Compare two Australian brokers side by side. See fees, features, CHESS sponsorship, and our honest pick.",
+    "Compare two Australian investing platforms side by side. See fees, features, and our honest pick across brokers, robo-advisors, crypto & more.",
   openGraph: {
-    title: "Broker vs Broker — Invest.com.au",
-    description: "Compare two Australian brokers side by side. See fees, features, CHESS sponsorship, and our honest pick.",
-    images: [{ url: "/api/og?title=Broker+vs+Broker&subtitle=Compare+any+two+brokers+side-by-side&type=default", width: 1200, height: 630 }],
+    title: "Platform vs Platform — Invest.com.au",
+    description: "Compare two Australian investing platforms side by side. See fees, features, and our honest pick.",
+    images: [{ url: "/api/og?title=Platform+vs+Platform&subtitle=Compare+any+two+platforms+side-by-side&type=default", width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" as const },
   alternates: { canonical: "/versus" },
@@ -23,7 +23,7 @@ export default async function VersusPage() {
 
   const { data: brokers } = await supabase
     .from("brokers")
-    .select("id, name, slug, color, icon, rating, asx_fee, asx_fee_value, us_fee, us_fee_value, fx_rate, chess_sponsored, smsf_support, is_crypto, inactivity_fee, pros, cons, cta_text, affiliate_url, sponsorship_tier, benefit_cta, status")
+    .select("id, name, slug, color, icon, rating, asx_fee, asx_fee_value, us_fee, us_fee_value, fx_rate, chess_sponsored, smsf_support, is_crypto, platform_type, min_deposit, inactivity_fee, pros, cons, cta_text, affiliate_url, sponsorship_tier, benefit_cta, status, markets")
     .eq("status", "active")
     .order("name");
 
