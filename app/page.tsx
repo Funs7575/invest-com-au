@@ -41,7 +41,7 @@ const bestForCards = [
   { icon: "building", title: "Best Super Funds", description: "Compare fees, performance & insurance across funds", href: "/best/super-funds", color: "bg-emerald-50 border-emerald-200 text-emerald-800" },
   { icon: "coins", title: "Cheapest Brokers", description: "$0 brokerage and verified low-cost options", href: "/best/low-fees", color: "bg-amber-50 border-amber-200 text-amber-800" },
   { icon: "bar-chart-3", title: "Research Tools", description: "Simply Wall St, TradingView & stock analysis", href: "/best/research-tools", color: "bg-cyan-50 border-cyan-200 text-cyan-800" },
-  { icon: "shield-check", title: "Property Investing", description: "REITs, fractional property & investment platforms", href: "/best/property-investing", color: "bg-lime-50 border-lime-200 text-lime-800" },
+  { icon: "bitcoin", title: "Best Crypto Exchanges", description: "AUSTRAC-registered exchanges with AUD deposits", href: "/best/crypto", color: "bg-orange-50 border-orange-200 text-orange-800" },
   { icon: "arrow-left-right", title: "CFD & Forex", description: "ASIC-regulated CFD and forex brokers compared", href: "/best/cfd-forex", color: "bg-rose-50 border-rose-200 text-rose-800" },
 ];
 

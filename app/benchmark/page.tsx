@@ -5,13 +5,13 @@ import BenchmarkClient from "./BenchmarkClient";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 
 export const metadata = {
-  title: "Broker Fee Benchmarking Dashboard — Percentile Rankings",
+  title: "Platform Fee Benchmarking Dashboard — Percentile Rankings",
   description:
-    "See where your broker ranks on every fee dimension: ASX brokerage, US fees, FX rates, platform quality, and more. Visual radar chart with percentile rankings.",
+    "See where your platform ranks on every fee dimension: ASX brokerage, US fees, FX rates, platform quality, and more. Visual radar chart with percentile rankings.",
   openGraph: {
     title: `Fee Benchmarking Dashboard — ${SITE_NAME}`,
     description:
-      "Visual radar chart showing your broker's percentile ranking across 6 key dimensions vs every Australian broker.",
+      "Visual radar chart showing your platform's percentile ranking across 6 key dimensions vs every Australian platform.",
     images: [
       {
         url: "/api/og?title=Fee+Benchmarking+Dashboard&subtitle=Percentile+Rankings+Across+Every+Dimension&type=default",

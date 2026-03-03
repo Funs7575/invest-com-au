@@ -3,11 +3,11 @@ import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 
 export const metadata = {
   title: "How We Verify Fees — Our Data Process",
-  description: `Learn how ${SITE_NAME} verifies broker fees. We cross-check pricing pages, PDSs, and T&Cs quarterly to ensure accuracy across every broker review.`,
+  description: `Learn how ${SITE_NAME} verifies platform fees. We cross-check pricing pages, PDSs, and T&Cs quarterly to ensure accuracy across every platform review.`,
   alternates: { canonical: "/how-we-verify" },
   openGraph: {
     title: "How We Verify Fees — Our Data Process",
-    description: `Learn how ${SITE_NAME} verifies broker fees. We cross-check pricing pages, PDSs, and T&Cs quarterly to ensure accuracy across every broker review.`,
+    description: `Learn how ${SITE_NAME} verifies platform fees. We cross-check pricing pages, PDSs, and T&Cs quarterly to ensure accuracy across every platform review.`,
     images: [
       {
         url: "/api/og?title=How+We+Verify+Fees&subtitle=Our+Data+Verification+Process&type=default",
@@ -19,9 +19,9 @@ export const metadata = {
 const STEPS = [
   {
     number: 1,
-    title: "Visit the broker's official pricing page",
+    title: "Visit the platform's official pricing page",
     description:
-      "We go directly to each broker's website and locate their current pricing and fee schedule. No third-party aggregators — only primary sources.",
+      "We go directly to each platform's website and locate their current pricing and fee schedule. No third-party aggregators — only primary sources.",
   },
   {
     number: 2,

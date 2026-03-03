@@ -3,9 +3,9 @@ import { Suspense } from "react";
 import CompareClient from "./CompareClient";
 
 export const metadata: Metadata = {
-  title: "Compare Shortlisted Brokers",
+  title: "Compare Shortlisted Platforms",
   description:
-    "Side-by-side detailed comparison of your shortlisted Australian brokers.",
+    "Side-by-side detailed comparison of your shortlisted Australian investing platforms.",
   robots: { index: false, follow: false },
 };
 

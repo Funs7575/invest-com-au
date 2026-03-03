@@ -9,15 +9,15 @@ import {
 
 export const metadata = {
   title: "About Us",
-  description: "Learn about Invest.com.au, Australia's independent broker comparison platform. Our mission, editorial independence pledge, and review methodology.",
+  description: "Learn about Invest.com.au, Australia's independent investing platform comparison. Our mission, editorial independence pledge, and review methodology.",
   alternates: { canonical: "/about" },
   openGraph: {
     title: "About Us — Invest.com.au",
-    description: "Australia's independent broker comparison platform. Our mission, editorial independence pledge, and review methodology.",
+    description: "Australia's independent investing platform comparison. Our mission, editorial independence pledge, and review methodology.",
     url: "/about",
     images: [
       {
-        url: "/api/og?title=About+Invest.com.au&subtitle=Australia's+Independent+Broker+Comparison&type=default",
+        url: "/api/og?title=About+Invest.com.au&subtitle=Australia's+Independent+Platform+Comparison&type=default",
         width: 1200,
         height: 630,
         alt: "About Invest.com.au",

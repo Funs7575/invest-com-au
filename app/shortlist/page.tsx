@@ -3,9 +3,9 @@ import { Suspense } from "react";
 import ShortlistClient from "./ShortlistClient";
 
 export const metadata: Metadata = {
-  title: "My Brokers — Shortlist",
+  title: "My Platforms — Shortlist",
   description:
-    "Your saved brokers. Compare your shortlisted Australian trading platforms side by side.",
+    "Your saved platforms. Compare your shortlisted Australian investing platforms side by side.",
   robots: { index: false, follow: false },
 };
 

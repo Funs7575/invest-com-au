@@ -4,13 +4,13 @@ import ReportsClient from "./ReportsClient";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 
 export const metadata = {
-  title: "Quarterly Broker Industry Reports — Australian Market Analysis",
+  title: "Quarterly Platform Industry Reports — Australian Market Analysis",
   description:
-    "Quarterly reports on the Australian broker landscape: fee changes, new entrants, market trends, and key findings for investors.",
+    "Quarterly reports on the Australian investing platform landscape: fee changes, new entrants, market trends, and key findings for investors.",
   openGraph: {
     title: `Quarterly Industry Reports — ${SITE_NAME}`,
-    description: "In-depth quarterly analysis of the Australian broker industry.",
-    images: [{ url: "/api/og?title=Quarterly+Reports&subtitle=Australian+Broker+Industry+Analysis&type=default", width: 1200, height: 630 }],
+    description: "In-depth quarterly analysis of the Australian investing platform industry.",
+    images: [{ url: "/api/og?title=Quarterly+Reports&subtitle=Australian+Platform+Industry+Analysis&type=default", width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" as const },
   alternates: { canonical: "/reports" },

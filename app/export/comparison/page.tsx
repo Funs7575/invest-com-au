@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
 import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 
-export const metadata = { title: "Broker Comparison Report", robots: "noindex" };
+export const metadata = { title: "Platform Comparison Report", robots: "noindex" };
 
 export default async function ComparisonExportPage({
   searchParams,

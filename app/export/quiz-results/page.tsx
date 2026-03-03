@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
 import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 
-export const metadata = { title: "Your Broker Quiz Results", robots: "noindex" };
+export const metadata = { title: "Your Platform Quiz Results", robots: "noindex" };
 
 export default async function QuizResultsExportPage({
   searchParams,

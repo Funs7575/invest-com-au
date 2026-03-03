@@ -9,22 +9,22 @@ import type { Metadata } from "next";
 export const revalidate = 1800; // ISR: revalidate every 30 minutes
 
 export const metadata: Metadata = {
-  title: `Broker Fee & Data Changes — What Changed — ${SITE_NAME}`,
+  title: `Platform Fee & Data Changes — What Changed — ${SITE_NAME}`,
   description:
-    "Track every broker fee and data change in real time. See when ASX brokerage, FX rates, or platform features change across Australian trading platforms.",
+    "Track every platform fee and data change in real time. See when brokerage, FX rates, or platform features change across Australian investing platforms.",
   openGraph: {
-    title: `Broker Fee & Data Changes — ${SITE_NAME}`,
+    title: `Platform Fee & Data Changes — ${SITE_NAME}`,
     description:
-      "Track every broker fee and data change in real time. See when ASX brokerage, FX rates, or platform features change.",
+      "Track every platform fee and data change in real time. See when brokerage, FX rates, or platform features change.",
     url: absoluteUrl("/whats-new"),
-    images: [{ url: `/api/og?title=${encodeURIComponent("What Changed")}&subtitle=${encodeURIComponent("Broker Fee & Data Changes — Tracked in Real Time")}&type=default`, width: 1200, height: 630, alt: "Broker Fee & Data Changes" }],
+    images: [{ url: `/api/og?title=${encodeURIComponent("What Changed")}&subtitle=${encodeURIComponent("Platform Fee & Data Changes — Tracked in Real Time")}&type=default`, width: 1200, height: 630, alt: "Platform Fee & Data Changes" }],
   },
   twitter: {
     card: "summary_large_image" as const,
-    title: `Broker Fee & Data Changes — ${SITE_NAME}`,
+    title: `Platform Fee & Data Changes — ${SITE_NAME}`,
     description:
-      "Track every broker fee and data change in real time. See when ASX brokerage, FX rates, or platform features change.",
-    images: [`/api/og?title=${encodeURIComponent("What Changed")}&subtitle=${encodeURIComponent("Broker Fee & Data Changes — Tracked in Real Time")}&type=default`],
+      "Track every platform fee and data change in real time. See when brokerage, FX rates, or platform features change.",
+    images: [`/api/og?title=${encodeURIComponent("What Changed")}&subtitle=${encodeURIComponent("Platform Fee & Data Changes — Tracked in Real Time")}&type=default`],
   },
   alternates: { canonical: "/whats-new" },
 };
@@ -141,8 +141,8 @@ export default async function WhatsNewPage() {
     ? {
         "@context": "https://schema.org",
         "@type": "ItemList",
-        name: "Broker Fee & Data Changes",
-        description: "Recent changes to broker fees, features, and data across Australian trading platforms.",
+        name: "Platform Fee & Data Changes",
+        description: "Recent changes to platform fees, features, and data across Australian investing platforms.",
         numberOfItems: changes.length,
         itemListElement: changes.slice(0, 50).map((c, i) => ({
           "@type": "ListItem",
@@ -191,9 +191,9 @@ export default async function WhatsNewPage() {
             What Changed
           </h1>
           <p className="text-slate-500 mt-1">
-            Tracking broker fee and data changes so you always have accurate
+            Tracking platform fee and data changes so you always have accurate
             information. Every change is logged automatically when we verify
-            broker pricing.
+            platform pricing.
           </p>
 
           <AuthorByline
@@ -214,7 +214,7 @@ export default async function WhatsNewPage() {
         {groups.length === 0 ? (
           <div className="bg-white rounded-xl border border-slate-200 p-12 text-center">
             <p className="text-sm text-slate-400">
-              No changes recorded yet. When broker fees or data change,
+              No changes recorded yet. When platform fees or data change,
               they&apos;ll appear here.
             </p>
           </div>

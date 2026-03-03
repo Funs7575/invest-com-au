@@ -2,16 +2,16 @@ import Link from "next/link";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 
 export const metadata = {
-  title: "How We Score Brokers — Our Methodology",
+  title: "How We Score Platforms — Our Methodology",
   description:
-    "Our transparent 6-factor weighted scoring system rates every Australian broker on fees, platform quality, safety, product range, UX, and extras.",
+    "Our transparent 6-factor weighted scoring system rates every Australian investing platform on fees, platform quality, safety, product range, UX, and extras.",
   openGraph: {
-    title: `How We Score Brokers — ${SITE_NAME}`,
+    title: `How We Score Platforms — ${SITE_NAME}`,
     description:
-      "Our transparent 6-factor weighted scoring system rates every Australian broker on fees, platform quality, safety, product range, UX, and extras.",
+      "Our transparent 6-factor weighted scoring system rates every Australian investing platform on fees, platform quality, safety, product range, UX, and extras.",
     images: [
       {
-        url: "/api/og?title=How+We+Score+Brokers&subtitle=Our+Transparent+Rating+Methodology&type=default",
+        url: "/api/og?title=How+We+Score+Platforms&subtitle=Our+Transparent+Rating+Methodology&type=default",
         width: 1200,
         height: 630,
       },

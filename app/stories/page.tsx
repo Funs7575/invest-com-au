@@ -3,12 +3,12 @@ import type { SwitchStory } from "@/lib/types";
 import StoriesClient from "./StoriesClient";
 
 export const metadata = {
-  title: "Broker Switching Stories",
-  description: "Real stories from Australians who switched share trading platforms. Find out why people moved, what they saved, and whether they're happy.",
+  title: "Platform Switching Stories",
+  description: "Real stories from Australians who switched investing platforms. Find out why people moved, what they saved, and whether they're happy.",
   openGraph: {
-    title: "Broker Switching Stories — Invest.com.au",
-    description: "Real stories from Australians who switched share trading platforms. Find out why people moved, what they saved, and whether they're happy.",
-    images: [{ url: "/api/og?title=Switching+Stories&subtitle=Real+stories+from+Aussies+who+switched+brokers&type=default", width: 1200, height: 630 }],
+    title: "Platform Switching Stories — Invest.com.au",
+    description: "Real stories from Australians who switched investing platforms. Find out why people moved, what they saved, and whether they're happy.",
+    images: [{ url: "/api/og?title=Switching+Stories&subtitle=Real+stories+from+Aussies+who+switched+platforms&type=default", width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" as const },
   alternates: { canonical: "/stories" },

@@ -6,16 +6,16 @@ import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 export const revalidate = 3600;
 
 export const metadata = {
-  title: "Broker Health & Risk Scores — Safety Ratings for Australian Brokers",
+  title: "Platform Health & Risk Scores — Safety Ratings for Australian Investing Platforms",
   description:
-    "Proprietary safety scores for every Australian broker. Regulatory compliance, client money handling, financial stability, platform reliability, and insurance — all in one dashboard.",
+    "Proprietary safety scores for every Australian investing platform. Regulatory compliance, client money handling, financial stability, platform reliability, and insurance — all in one dashboard.",
   openGraph: {
-    title: `Broker Health & Risk Scores — ${SITE_NAME}`,
+    title: `Platform Health & Risk Scores — ${SITE_NAME}`,
     description:
-      "See how safe your broker really is with our proprietary 0-100 health scores across 5 key safety dimensions.",
+      "See how safe your platform really is with our proprietary 0-100 health scores across 5 key safety dimensions.",
     images: [
       {
-        url: "/api/og?title=Broker+Health+Scores&subtitle=Safety+Ratings+for+Every+Australian+Broker&type=default",
+        url: "/api/og?title=Platform+Health+Scores&subtitle=Safety+Ratings+for+Every+Australian+Platform&type=default",
         width: 1200,
         height: 630,
       },
