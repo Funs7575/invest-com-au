@@ -239,6 +239,58 @@ export const GLOSSARY_ENTRIES: GlossaryEntry[] = [
       "Decentralised Finance — financial services (lending, borrowing, trading) built on blockchain without traditional banks or intermediaries.",
     category: "Crypto",
   },
+  {
+    term: "Altcoin",
+    definition:
+      "Any cryptocurrency that isn't Bitcoin. Includes Ethereum, Solana, Cardano, and thousands of others. Generally higher risk and more volatile.",
+    category: "Crypto",
+  },
+  {
+    term: "Cold Storage",
+    definition:
+      "Keeping your cryptocurrency offline (on a hardware wallet like Ledger) where hackers can't reach it. The safest way to store large crypto holdings.",
+    category: "Crypto",
+  },
+
+  // ─── More General ───
+  {
+    term: "Diversification",
+    definition:
+      "Spreading your investments across different assets, sectors, or countries to reduce risk. 'Don't put all your eggs in one basket.'",
+    category: "General",
+  },
+  {
+    term: "Compound Interest",
+    definition:
+      "Earning returns on your returns. e.g. $10,000 at 8% p.a. grows to $21,589 in 10 years because each year's gains also earn returns.",
+    category: "General",
+  },
+  {
+    term: "P/E Ratio",
+    definition:
+      "Price-to-Earnings ratio — a company's share price divided by its earnings per share. A quick way to gauge if a share is cheap or expensive relative to its profits.",
+    category: "General",
+  },
+
+  // ─── More Super ───
+  {
+    term: "MySuper",
+    definition:
+      "A simple, low-cost default super option that every fund must offer. If you don't choose a specific investment option, your money goes into MySuper.",
+    category: "Super",
+  },
+  {
+    term: "APRA",
+    definition:
+      "Australian Prudential Regulation Authority — the regulator that supervises super funds, banks, and insurance companies to ensure they're financially sound.",
+    category: "Regulatory",
+  },
+  {
+    term: "Preservation Age",
+    definition:
+      "The age you can access your super — between 55 and 60 depending on when you were born. Born after 1 July 1964? Your preservation age is 60.",
+    category: "Super",
+  },
 
   // ─── CFDs & Forex ───
   {
@@ -272,6 +324,19 @@ export const GLOSSARY_ENTRIES: GlossaryEntry[] = [
     category: "CFD & Forex",
   },
 
+  {
+    term: "Overnight Financing",
+    definition:
+      "A fee charged for holding a leveraged CFD position overnight. Also called a swap rate. Costs add up if you hold positions for days or weeks.",
+    category: "CFD & Forex",
+  },
+  {
+    term: "Short Selling",
+    definition:
+      "Selling an asset you don't own (borrowing it first) to profit from a price drop. You buy it back later at a lower price. Very risky if the price rises instead.",
+    category: "CFD & Forex",
+  },
+
   // ─── Robo-Advisors ───
   {
     term: "Robo-Advisor",
@@ -290,6 +355,38 @@ export const GLOSSARY_ENTRIES: GlossaryEntry[] = [
     definition:
       "Adjusting your portfolio back to its target mix (e.g. 60% shares, 40% bonds) when market movements cause it to drift. Robo-advisors do this automatically.",
     category: "Robo-Advisors",
+  },
+  {
+    term: "Micro-Investing",
+    definition:
+      "Investing tiny amounts (often spare change from round-ups) into a diversified portfolio. Apps like Raiz and Spaceship make this automatic.",
+    category: "Robo-Advisors",
+  },
+  {
+    term: "Socially Responsible Investing",
+    definition:
+      "Investing in companies that meet environmental, social, and governance (ESG) criteria — avoiding fossil fuels, weapons, or tobacco. Most robo-advisors offer an SRI portfolio option.",
+    category: "Robo-Advisors",
+  },
+
+  // ─── Research Tools ───
+  {
+    term: "Fundamental Analysis",
+    definition:
+      "Evaluating a company's financial health (revenue, earnings, debt) to determine if its share price is fair value. Used by tools like Simply Wall St and Stock Doctor.",
+    category: "Share Trading",
+  },
+  {
+    term: "Technical Analysis",
+    definition:
+      "Using charts, price patterns, and indicators (RSI, MACD, moving averages) to predict future price movements. Used heavily in platforms like TradingView.",
+    category: "Share Trading",
+  },
+  {
+    term: "Stock Screener",
+    definition:
+      "A tool that filters shares based on criteria you set (e.g. P/E ratio under 15, dividend yield over 4%). Helps find investment opportunities quickly.",
+    category: "Share Trading",
   },
 
   // ─── Property ───
