@@ -255,8 +255,8 @@ export default function HealthScoresClient({
           </div>
         ) : (
           <div className="bg-white border border-slate-200 rounded-2xl p-12 mb-8 text-center text-slate-400">
-            <p className="text-lg mb-1">Select a broker above to see their safety score</p>
-            <p className="text-sm">{scores.length} brokers with health scores available</p>
+            <p className="text-lg mb-1">Select a platform above to see their safety score</p>
+            <p className="text-sm">{scores.length} platforms with health scores available</p>
           </div>
         )}
 
@@ -264,7 +264,7 @@ export default function HealthScoresClient({
         <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden mb-8">
           <div className="px-6 py-4 border-b border-slate-200">
             <h2 className="text-lg font-extrabold">Safety Leaderboard</h2>
-            <p className="text-xs text-slate-500">All brokers ranked by overall health score</p>
+            <p className="text-xs text-slate-500">All platforms ranked by overall health score</p>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">

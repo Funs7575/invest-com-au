@@ -236,7 +236,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
 
   const title = allSelected
     ? selected.map(br => br.name).join(" vs ")
-    : "Broker vs Broker";
+    : "Platform vs Platform";
 
   const gridCols = selected.length <= 2
     ? "md:grid-cols-2"

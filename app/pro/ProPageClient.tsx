@@ -7,10 +7,10 @@ import { useSubscription } from "@/lib/hooks/useSubscription";
 
 const features = [
   {
-    name: "Broker comparison table",
+    name: "Platform comparison table",
     free: true,
     pro: true,
-    description: "Compare fees, features, and ratings across all Australian brokers",
+    description: "Compare fees, features, and ratings across all Australian platforms",
   },
   {
     name: "User reviews & ratings",
@@ -25,22 +25,22 @@ const features = [
     description: "In-depth investing guides and market analysis",
   },
   {
-    name: "Broker quiz",
+    name: "Platform quiz",
     free: true,
     pro: true,
-    description: "Find your perfect broker match in 60 seconds",
+    description: "Find your perfect platform match in 60 seconds",
   },
   {
     name: "Personal fee impact calculator",
     free: false,
     pro: true,
-    description: "See your total annual broker fees across every broker — free users see top 3 only",
+    description: "See your total annual platform fees across every platform — free users see top 3 only",
   },
   {
     name: "Fee alert notifications",
     free: false,
     pro: true,
-    description: "Get emailed when broker fees change so you never overpay",
+    description: "Get emailed when platform fees change so you never overpay",
   },
   {
     name: "Advanced comparison tools",
@@ -67,7 +67,7 @@ const features = [
     description: "Full dimension breakdown with comparison mode across all 6 fee dimensions",
   },
   {
-    name: "Broker health & risk scores",
+    name: "Platform health & risk scores",
     free: false,
     pro: true,
     description: "Full safety breakdown with 5 dimensions, AFSL verification, and detailed notes",
@@ -88,13 +88,13 @@ const features = [
     name: "Exclusive Pro deals",
     free: false,
     pro: true,
-    description: "Special broker sign-up bonuses and reduced fees only for Pro members",
+    description: "Special platform sign-up bonuses and reduced fees only for Pro members",
   },
   {
     name: "PDF & CSV exports",
     free: false,
     pro: true,
-    description: "Export broker comparisons and fee impact reports as branded PDFs or CSV files",
+    description: "Export platform comparisons and fee impact reports as branded PDFs or CSV files",
   },
   {
     name: "Ad-free experience",

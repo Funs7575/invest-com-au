@@ -420,9 +420,9 @@ export default function BenchmarkClient({ brokers }: { brokers: Broker[] }) {
         ) : (
           <div className="bg-white border border-slate-200 rounded-2xl p-12 mb-8 text-center text-slate-400">
             <Icon name="bar-chart-3" size={48} className="mx-auto mb-4 opacity-30" />
-            <p className="text-lg mb-1">Select a broker to see their radar chart</p>
+            <p className="text-lg mb-1">Select a platform to see their radar chart</p>
             <p className="text-sm">
-              Choose from {brokers.length} Australian brokers above
+              Choose from {brokers.length} Australian platforms above
             </p>
           </div>
         )}
@@ -509,7 +509,7 @@ export default function BenchmarkClient({ brokers }: { brokers: Broker[] }) {
                     #
                   </th>
                   <th className="text-left px-4 py-3 font-semibold text-slate-600">
-                    Broker
+                    Platform
                   </th>
                   <th className="text-center px-3 py-3 font-semibold text-slate-600">
                     Overall
@@ -585,11 +585,11 @@ export default function BenchmarkClient({ brokers }: { brokers: Broker[] }) {
           </h3>
           <p className="text-xs text-slate-500 leading-relaxed">
             Percentile rankings are computed by ranking all {brokers.length}{" "}
-            non-crypto Australian brokers on each dimension. For fee dimensions
+            non-crypto Australian platforms on each dimension. For fee dimensions
             (ASX, US, FX), lower is better. For quality dimensions (rating,
             features, stability), higher is better. The overall score is the
             simple average of all 6 dimension percentiles. Data is sourced from
-            official broker fee schedules and verified by our editorial team.
+            official platform fee schedules and verified by our editorial team.
           </p>
         </div>
       </div>

@@ -90,7 +90,7 @@ export default async function ComparePage() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "Compare Australian Brokers",
+    name: "Compare Australian Investing Platforms",
     description: "Side-by-side comparison of fees, features, and safety for Australian share trading platforms.",
     numberOfItems: activeBrokers.length,
     itemListElement: activeBrokers.slice(0, 10).map((b: Broker, i: number) => ({
@@ -106,7 +106,7 @@ export default async function ComparePage() {
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: "https://invest.com.au" },
-      { "@type": "ListItem", position: 2, name: "Compare Brokers", item: "https://invest.com.au/compare" },
+      { "@type": "ListItem", position: 2, name: "Compare Platforms", item: "https://invest.com.au/compare" },
     ],
   };
 

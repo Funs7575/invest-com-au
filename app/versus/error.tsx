@@ -18,7 +18,7 @@ export default function VersusError({ error, reset }: { error: Error; reset: () 
           Couldn&apos;t load comparison
         </h2>
         <p className="text-sm text-slate-500 mb-6">
-          Something went wrong loading the broker comparison. Please try again.
+          Something went wrong loading the platform comparison. Please try again.
         </p>
         <div className="flex items-center justify-center gap-3">
           <button
@@ -31,7 +31,7 @@ export default function VersusError({ error, reset }: { error: Error; reset: () 
             href="/compare"
             className="px-5 py-2.5 border border-slate-200 text-sm font-semibold rounded-lg hover:bg-slate-50 transition-colors"
           >
-            Compare Brokers
+            Compare Platforms
           </Link>
         </div>
       </div>

@@ -4,7 +4,7 @@ import Icon from "@/components/Icon";
 
 export const metadata: Metadata = {
   title: "Page Not Found | Invest.com.au",
-  description: "The page you're looking for doesn't exist. Browse our broker comparisons, guides, and tools.",
+  description: "The page you're looking for doesn't exist. Browse our platform comparisons, guides, and tools.",
 };
 
 export default function NotFound() {
@@ -37,7 +37,7 @@ export default function NotFound() {
             href="/compare"
             className="w-full sm:w-auto px-6 py-3 min-h-[48px] inline-flex items-center justify-center bg-white text-slate-900 text-sm font-semibold rounded-lg border border-slate-200 hover:bg-slate-50 transition-colors"
           >
-            Compare Brokers
+            Compare Platforms
           </Link>
         </div>
 
@@ -47,7 +47,7 @@ export default function NotFound() {
           <div className="grid grid-cols-2 gap-2 text-left max-w-sm mx-auto">
             <Link href="/quiz" className="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors group">
               <Icon name="target" size={16} className="text-slate-400 group-hover:text-amber-500 transition-colors shrink-0" />
-              <span className="text-xs font-medium text-slate-600">Broker Match Quiz</span>
+              <span className="text-xs font-medium text-slate-600">Platform Match Quiz</span>
             </Link>
             <Link href="/calculators" className="flex items-center gap-2 px-3 py-2.5 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors group">
               <Icon name="calculator" size={16} className="text-slate-400 group-hover:text-amber-500 transition-colors shrink-0" />
