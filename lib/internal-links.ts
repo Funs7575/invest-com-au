@@ -1,5 +1,6 @@
 import type { Broker } from "./types";
 import { getCategoryBySlug } from "./best-broker-categories";
+import { getClustersForArticle, getClustersForBestPage, type ClusterPage } from "./topic-clusters";
 
 // ── Shared category colors (used by article pages + best-for pages) ──
 
@@ -10,6 +11,8 @@ export const CATEGORY_COLORS: Record<string, string> = {
   strategy: "bg-amber-100 text-amber-700",
   news: "bg-red-100 text-red-700",
   reviews: "bg-teal-100 text-teal-700",
+  crypto: "bg-orange-100 text-orange-700",
+  etfs: "bg-indigo-100 text-indigo-700",
 };
 
 // ── Article → Best-for category mapping ──
@@ -101,6 +104,83 @@ const BEST_TO_ARTICLE_FILTERS: Record<string, ArticleFilters> = {
  */
 export function getArticleFiltersForBestPage(bestSlug: string): ArticleFilters {
   return BEST_TO_ARTICLE_FILTERS[bestSlug] || { categories: [], tags: [] };
+}
+
+// ── Topic Cluster Links (pillar↔cluster bidirectional linking) ──
+
+export interface ClusterLink {
+  href: string;
+  title: string;
+  anchorText: string;
+  relationship: "pillar" | "sibling" | "cross-cluster";
+  clusterName: string;
+}
+
+/**
+ * Returns all cluster-based internal links for an article.
+ * Includes: link back to pillar, sibling cluster pages, and cross-cluster links.
+ */
+export function getClusterLinksForArticle(articleSlug: string): ClusterLink[] {
+  const clusters = getClustersForArticle(articleSlug);
+  const links: ClusterLink[] = [];
+
+  for (const { cluster, isPillar, pillarLink, siblingPages } of clusters) {
+    // If this is a spoke page, link back to pillar
+    if (!isPillar) {
+      links.push({
+        href: pillarLink.href,
+        title: pillarLink.title,
+        anchorText: pillarLink.anchorText,
+        relationship: "pillar",
+        clusterName: cluster.name,
+      });
+    }
+
+    // If this is a pillar, link to ALL cluster pages
+    // If this is a spoke, link to 3–5 siblings
+    const siblings = isPillar ? cluster.clusterPages : siblingPages.slice(0, 5);
+    for (const page of siblings) {
+      links.push({
+        href: page.href,
+        title: page.title,
+        anchorText: page.anchorText,
+        relationship: "sibling",
+        clusterName: cluster.name,
+      });
+    }
+  }
+
+  return links;
+}
+
+/**
+ * Returns cluster-based internal links for a /best/ page.
+ */
+export function getClusterLinksForBestPage(bestSlug: string): ClusterLink[] {
+  const clusters = getClustersForBestPage(bestSlug);
+  const links: ClusterLink[] = [];
+
+  for (const { cluster, pillarLink, siblingPages } of clusters) {
+    links.push({
+      href: pillarLink.href,
+      title: pillarLink.title,
+      anchorText: pillarLink.anchorText,
+      relationship: "pillar",
+      clusterName: cluster.name,
+    });
+
+    for (const page of siblingPages.slice(0, 4)) {
+      links.push({
+        href: page.href,
+        title: page.title,
+        anchorText: page.anchorText,
+        relationship: "sibling",
+        clusterName: cluster.name,
+      });
+    }
+  }
+
+  return links;
 }
 
 // ── Broker similarity scoring ──

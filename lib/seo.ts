@@ -19,15 +19,28 @@ export function absoluteUrl(path: string): string {
   return `${SITE_URL}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
-/* ─── Shared Organization block for JSON-LD ─── */
+/* ─── Shared Organization block for JSON-LD (enhanced for E-E-A-T) ─── */
 
 export const ORGANIZATION_JSONLD = {
   "@type": "Organization" as const,
-  name: SITE_NAME,
+  name: "Invest.com.au Pty Ltd",
+  legalName: "Invest.com.au Pty Ltd",
   url: SITE_URL,
   logo: {
     "@type": "ImageObject" as const,
     url: `${SITE_URL}/icon`,
+  },
+  foundingDate: "2024",
+  description: SITE_DESCRIPTION,
+  areaServed: {
+    "@type": "Country" as const,
+    name: "Australia",
+  },
+  contactPoint: {
+    "@type": "ContactPoint" as const,
+    contactType: "customer support",
+    email: "hello@invest.com.au",
+    availableLanguage: "English",
   },
   sameAs: [
     "https://x.com/investcomau",

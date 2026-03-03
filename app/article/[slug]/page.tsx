@@ -13,7 +13,8 @@ import AuthorByline from "@/components/AuthorByline";
 import OnThisPage from "@/components/OnThisPage";
 import { absoluteUrl, breadcrumbJsonLd, articleAuthorJsonLd, articleFaqJsonLd, SITE_NAME, CURRENT_MONTH_YEAR } from "@/lib/seo";
 import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
-import { CATEGORY_COLORS, getBestPagesForArticle } from "@/lib/internal-links";
+import { CATEGORY_COLORS, getBestPagesForArticle, getClusterLinksForArticle } from "@/lib/internal-links";
+import ClusterNav from "@/components/ClusterNav";
 import Icon from "@/components/Icon";
 import AdSlot from "@/components/AdSlot";
 
@@ -516,6 +517,13 @@ export default async function ArticlePage({
                   </div>
                 </div>
               )}
+
+              {/* Topic Cluster Navigation */}
+              {(() => {
+                const clusterLinks = getClusterLinksForArticle(slug);
+                if (clusterLinks.length === 0) return null;
+                return <ClusterNav links={clusterLinks} currentTitle={a.title} />;
+              })()}
 
               {/* Related Articles */}
               {relatedArticles.length > 0 && (
