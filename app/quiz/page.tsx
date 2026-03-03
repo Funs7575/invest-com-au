@@ -211,13 +211,13 @@ export default function QuizPage() {
 
   const handleShareResult = async () => {
     const shareUrl = window.location.href;
-    const topBrokerName = results[0]?.broker?.name || "my top broker";
-    const shareText = `I just found ${topBrokerName} as my best broker match on Invest.com.au! Take the quiz:`;
+    const topBrokerName = results[0]?.broker?.name || "my top platform";
+    const shareText = `I just found ${topBrokerName} as my best platform match on Invest.com.au! Take the quiz:`;
 
     // Try Web Share API first (mobile-native sharing)
     if (typeof navigator.share === "function") {
       try {
-        await navigator.share({ title: "My Broker Match", text: shareText, url: shareUrl });
+        await navigator.share({ title: "My Platform Match", text: shareText, url: shareUrl });
         trackEvent("quiz_share", { method: "native", top_broker: results[0]?.slug }, "/quiz");
         return;
       } catch {
@@ -841,7 +841,7 @@ export default function QuizPage() {
           {/* Bottom CTA card */}
           <div className="bg-amber-400 text-slate-900 rounded-xl p-4 md:p-6 mt-1 md:mt-2 mb-4 md:mb-8 text-center result-card-in result-card-in-delay-5">
             <h3 className="text-sm md:text-lg font-bold mb-0.5 md:mb-1">Still not sure?</h3>
-            <p className="text-[0.69rem] md:text-sm text-slate-700 mb-3 md:mb-4">Compare all brokers or read detailed reviews.</p>
+            <p className="text-[0.69rem] md:text-sm text-slate-700 mb-3 md:mb-4">Compare all platforms or read detailed reviews.</p>
             <div className="flex flex-row gap-2 md:gap-3 justify-center">
               <a
                 href="/compare"
@@ -908,7 +908,7 @@ export default function QuizPage() {
               Analyzing your answers...
             </h2>
             <p className="text-slate-500 text-xs md:text-sm reveal-text-in-delay">
-              Matching you with the best brokers
+              Matching you with the best platforms
             </p>
 
             {/* Animated progress dots */}

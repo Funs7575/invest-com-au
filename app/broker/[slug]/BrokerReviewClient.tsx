@@ -40,12 +40,28 @@ function FeeVerdict({ value, thresholds }: { value: number | undefined; threshol
 
 function getBestFor(b: Broker): string[] {
   const bestFor: string[] = [];
-  if ((b.asx_fee_value ?? 999) === 0) bestFor.push("Cost-conscious traders who want $0 brokerage");
-  else if ((b.asx_fee_value ?? 999) <= 5) bestFor.push("Active traders looking for low ASX fees");
-  if (b.chess_sponsored) bestFor.push("Safety-first investors who want CHESS sponsorship");
-  if (b.smsf_support) bestFor.push("SMSF trustees needing compliant custody");
-  if (b.is_crypto) bestFor.push("Crypto investors on a regulated Australian exchange");
-  if (b.fx_rate != null && b.fx_rate <= 0.3) bestFor.push("International investors wanting low FX fees");
+  const pt = b.platform_type;
+
+  if (pt === 'share_broker' || pt === 'cfd_forex') {
+    if ((b.asx_fee_value ?? 999) === 0) bestFor.push("Cost-conscious traders who want $0 brokerage");
+    else if ((b.asx_fee_value ?? 999) <= 5) bestFor.push("Active traders looking for low fees");
+    if (b.chess_sponsored) bestFor.push("Safety-first investors who want CHESS sponsorship");
+    if (b.smsf_support) bestFor.push("SMSF trustees needing compliant custody");
+    if (b.fx_rate != null && b.fx_rate <= 0.3) bestFor.push("International investors wanting low FX fees");
+  } else if (pt === 'robo_advisor') {
+    bestFor.push("Hands-off investors who want automated portfolio management");
+    if ((b.asx_fee_value ?? 999) <= 0.5) bestFor.push("Fee-conscious investors looking for low management fees");
+  } else if (pt === 'crypto_exchange') {
+    bestFor.push("Crypto investors on a regulated Australian exchange");
+  } else if (pt === 'research_tool') {
+    bestFor.push("Self-directed investors who want in-depth research and analysis");
+  } else if (pt === 'super_fund') {
+    bestFor.push("Australians looking for a high-performing super fund");
+  } else if (pt === 'property_platform') {
+    bestFor.push("Investors wanting property exposure without buying a house");
+  }
+
+  if (b.is_crypto && pt !== 'crypto_exchange') bestFor.push("Investors who also want crypto access");
   if (!bestFor.length) bestFor.push("General investors looking for a solid all-rounder");
   return bestFor;
 }
@@ -136,7 +152,9 @@ export default function BrokerReviewClient({
   const reviewVerified = searchParams.get('review_verified') === '1';
   const storyVerified = searchParams.get('story_verified') === '1';
 
-  const stickyDetail = `${b.asx_fee || 'N/A'} ASX · ${b.chess_sponsored ? 'CHESS' : 'Custodial'} · ${b.rating}/5`;
+  const stickyDetail = (b.platform_type === 'share_broker' || b.platform_type === 'cfd_forex')
+    ? `${b.asx_fee || 'N/A'} ASX · ${b.chess_sponsored ? 'CHESS' : 'Custodial'} · ${b.rating}/5`
+    : `${b.rating}/5`;
   const bestFor = getBestFor(b);
 
   // Real cost calculations

@@ -7,11 +7,11 @@ export const revalidate = 3600;
 
 export const metadata = {
   title: "Investing Scenarios",
-  description: "Find the best broker for your specific situation: SMSF, kids, expats, day trading, and more.",
+  description: "Find the best platform for your specific situation: SMSF, kids, expats, day trading, and more.",
   openGraph: {
     title: "Investing Scenarios — Invest.com.au",
-    description: "Find the best broker for your specific situation: SMSF, kids, expats, day trading, and more.",
-    images: [{ url: "/api/og?title=Investing+Scenarios&subtitle=Find+the+best+broker+for+your+situation&type=scenario", width: 1200, height: 630 }],
+    description: "Find the best platform for your specific situation: SMSF, kids, expats, day trading, and more.",
+    images: [{ url: "/api/og?title=Investing+Scenarios&subtitle=Find+the+best+platform+for+your+situation&type=scenario", width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" as const },
   alternates: { canonical: "/scenarios" },
@@ -37,7 +37,7 @@ export default async function ScenariosPage() {
       <div className="container-custom">
         <h1 className="text-4xl font-bold mb-4">Investing Scenarios</h1>
         <p className="text-lg text-slate-600 mb-8">
-          Find the best broker for your specific situation.
+          Find the best platform for your specific situation.
         </p>
 
         <ScrollFadeIn>

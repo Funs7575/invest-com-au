@@ -1,10 +1,20 @@
 import { Suspense } from "react";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import type { Broker } from "@/lib/types";
+import type { Broker, PlatformType } from "@/lib/types";
 import type { Metadata } from "next";
 import VersusClient from "../VersusClient";
 import { SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+
+const PLATFORM_LABELS: Record<PlatformType, string> = {
+  share_broker: "broker",
+  crypto_exchange: "crypto exchange",
+  robo_advisor: "robo-advisor",
+  research_tool: "research tool",
+  super_fund: "super fund",
+  property_platform: "property platform",
+  cfd_forex: "CFD broker",
+};
 
 export const revalidate = 1800;
 
@@ -59,7 +69,7 @@ export async function generateMetadata({
   const supabase = await createClient();
   const { data: brokers } = await supabase
     .from("brokers")
-    .select("name, slug, rating")
+    .select("name, slug, rating, platform_type")
     .in("slug", brokerSlugs)
     .eq("status", "active");
 
@@ -72,7 +82,8 @@ export async function generateMetadata({
 
   const names = ordered.map((b) => b.name);
   const title = `${names.join(" vs ")} — Side-by-Side Comparison (${CURRENT_YEAR})`;
-  const description = `Compare ${names.join(" and ")} head to head. See fees, CHESS sponsorship, ratings, pros & cons, and our honest pick for Australian investors.`;
+  const hasShareBrokers = ordered.some((b) => b.platform_type === 'share_broker');
+  const description = `Compare ${names.join(" and ")} head to head. See fees, ${hasShareBrokers ? 'CHESS sponsorship, ' : ''}ratings, pros & cons, and our honest pick for Australian investors.`;
   const canonical = `/versus/${slugs}`;
 
   return {
@@ -159,7 +170,7 @@ export default async function VersusSlugPage({
         item: {
           "@type": "FinancialProduct",
           name: b.name,
-          description: b.tagline || `${b.name} broker`,
+          description: b.tagline || `${b.name} ${PLATFORM_LABELS[b.platform_type as PlatformType] || 'platform'}`,
           aggregateRating: b.rating
             ? {
                 "@type": "AggregateRating",
@@ -178,7 +189,7 @@ export default async function VersusSlugPage({
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: "https://invest.com.au" },
-      { "@type": "ListItem", position: 2, name: "Compare Brokers", item: "https://invest.com.au/compare" },
+      { "@type": "ListItem", position: 2, name: "Compare Platforms", item: "https://invest.com.au/compare" },
       { "@type": "ListItem", position: 3, name: `${orderedBrokers.map((b) => b.name).join(" vs ")}` },
     ],
   };

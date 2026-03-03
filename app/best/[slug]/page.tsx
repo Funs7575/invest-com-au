@@ -577,7 +577,7 @@ export default async function BestBrokerPage({
           {/* Cross-links to other best-for categories */}
           <div className="border-t border-slate-100 pt-8">
             <h3 className="text-lg font-bold mb-4">
-              More &quot;Best Broker&quot; Guides
+              More Investing Guides
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {allCategories.slice(0, 6).map((otherCat) => (
