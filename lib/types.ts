@@ -15,6 +15,8 @@ export interface TeamMember {
   updated_at: string;
 }
 
+export type PlatformType = 'share_broker' | 'crypto_exchange' | 'robo_advisor' | 'research_tool' | 'super_fund' | 'property_platform' | 'cfd_forex';
+
 export interface Broker {
   id: number;
   name: string;
@@ -35,6 +37,7 @@ export interface Broker {
   payment_methods?: string[];
   smsf_support: boolean;
   is_crypto: boolean;
+  platform_type: PlatformType;
   min_deposit?: string;
   platforms?: string[];
   pros?: string[];

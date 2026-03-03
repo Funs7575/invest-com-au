@@ -17,19 +17,19 @@ import { ORGANIZATION_JSONLD, SITE_URL } from "@/lib/seo";
 // UserOnboarding modal removed — was blocking first-time visitors (P0 conversion issue)
 
 export const metadata = {
-  title: "Compare Australian Brokers",
+  title: "Compare Australia's Best Investing Platforms",
   description:
-    "Compare 40+ Australian share trading platforms side-by-side. Real fees, real data, updated daily. Find the broker that fits your situation.",
+    "Compare Australian share brokers, crypto exchanges, robo-advisors, and research tools side-by-side. Real fees, real data, updated daily.",
   openGraph: {
-    title: "Compare Australian Brokers — Invest.com.au",
-    description: "Compare 40+ Australian share trading platforms side-by-side. Real fees, real data, updated daily.",
+    title: "Compare Australia's Best Investing Platforms — Invest.com.au",
+    description: "Compare Australian share brokers, crypto exchanges, robo-advisors, and research tools. Real fees, real data, updated daily.",
     url: "/",
     images: [{ url: "/api/og", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image" as const,
-    title: "Compare Australian Brokers — Invest.com.au",
-    description: "Compare 40+ Australian share trading platforms side-by-side. Real fees, real data, updated daily.",
+    title: "Compare Australia's Best Investing Platforms — Invest.com.au",
+    description: "Compare Australian share brokers, crypto exchanges, robo-advisors, and research tools. Real fees, real data, updated daily.",
   },
   alternates: { canonical: "/" },
 };
@@ -39,8 +39,19 @@ const bestForCards = [
   { icon: "globe", title: "Best for US Shares", description: "Low FX fees and $0 US brokerage compared", href: "/best/us-shares", color: "bg-slate-50 border-slate-200 text-slate-800" },
   { icon: "coins", title: "Cheapest Brokers", description: "$0 brokerage and verified low-cost options", href: "/best/low-fees", color: "bg-amber-50 border-amber-200 text-amber-800" },
   { icon: "shield-check", title: "CHESS-Sponsored", description: "Your shares held in your name on the ASX register", href: "/best/chess-sponsored", color: "bg-slate-50 border-slate-200 text-slate-800" },
+  { icon: "cpu", title: "Best Robo-Advisors", description: "Automated investing with Stockspot, Raiz & more", href: "/best/robo-advisors", color: "bg-violet-50 border-violet-200 text-violet-800" },
+  { icon: "bar-chart-3", title: "Research Tools", description: "Simply Wall St, TradingView & stock analysis", href: "/best/research-tools", color: "bg-cyan-50 border-cyan-200 text-cyan-800" },
   { icon: "building", title: "Best for SMSF", description: "Compliant custody and SMSF account support", href: "/best/smsf", color: "bg-slate-50 border-slate-200 text-slate-800" },
   { icon: "arrow-left-right", title: "Lowest FX Fees", description: "Save on currency conversion for international trades", href: "/best/low-fx-fees", color: "bg-amber-50 border-amber-200 text-amber-800" },
+];
+
+const categoryStrip = [
+  { label: "Shares", href: "/compare?category=shares" },
+  { label: "Crypto", href: "/compare?category=crypto" },
+  { label: "Robo-Advisors", href: "/best/robo-advisors" },
+  { label: "Research Tools", href: "/best/research-tools" },
+  { label: "ETFs", href: "/article/best-etfs-australia" },
+  { label: "Super", href: "/best/smsf", badge: "SMSF" },
 ];
 
 export const revalidate = 3600; // ISR: revalidate every hour
@@ -48,7 +59,7 @@ export const revalidate = 3600; // ISR: revalidate every hour
 export default async function HomePage() {
   const supabase = await createClient();
 
-  const BROKER_LISTING_COLUMNS = "id, name, slug, color, icon, rating, asx_fee, asx_fee_value, us_fee, us_fee_value, fx_rate, chess_sponsored, smsf_support, is_crypto, deal, deal_text, deal_expiry, deal_terms, deal_verified_date, deal_category, editors_pick, tagline, cta_text, affiliate_url, sponsorship_tier, benefit_cta, updated_at, fee_last_checked, status";
+  const BROKER_LISTING_COLUMNS = "id, name, slug, color, icon, rating, asx_fee, asx_fee_value, us_fee, us_fee_value, fx_rate, chess_sponsored, smsf_support, is_crypto, platform_type, deal, deal_text, deal_expiry, deal_terms, deal_verified_date, deal_category, editors_pick, tagline, cta_text, affiliate_url, sponsorship_tier, benefit_cta, updated_at, fee_last_checked, status";
 
   const [{ data: brokers }, { data: articles }] = await Promise.all([
     supabase
@@ -86,7 +97,7 @@ export default async function HomePage() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             ...ORGANIZATION_JSONLD,
-            description: "Australia's independent broker comparison platform. Compare fees, features, and safety across every major Australian investment platform.",
+            description: "Australia's independent investing platform comparison. Compare fees, features, and safety across share brokers, crypto exchanges, robo-advisors, and research tools.",
           }),
         }}
       />
@@ -139,15 +150,27 @@ export default async function HomePage() {
         <div className="relative max-w-4xl mx-auto px-4 text-center">
           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 md:px-3 md:py-1.5 bg-slate-100 rounded-full text-[0.69rem] md:text-xs font-medium text-slate-600 mb-2.5 md:mb-6 hero-fade-up hero-fade-up-1 border border-slate-200">
             <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-blue-500 rounded-full animate-pulse" />
-            Updated {updatedDateStr} &middot; {brokerCount} brokers
+            Updated {updatedDateStr} &middot; {brokerCount} platforms
           </div>
           <h1 className="text-2xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 hero-fade-up hero-fade-up-1 leading-tight">
-            Find the Right Broker<br className="hidden sm:block" /> for Your Money
+            Compare Australia&apos;s Best<br className="hidden sm:block" /> Investing Platforms
           </h1>
           <p className="mt-2 md:mt-5 text-sm md:text-xl text-slate-500 max-w-2xl mx-auto hero-fade-up hero-fade-up-2 leading-relaxed">
-            <span className="md:hidden">Compare {brokerCount}+ ASIC-regulated Australian brokers — free &amp; independent.</span>
-            <span className="hidden md:inline">Compare fees, features, and safety across {brokerCount}+ ASIC-regulated Australian investment platforms — independent, transparent, and free.</span>
+            <span className="md:hidden">Share brokers, crypto, robo-advisors &amp; research tools — compared free.</span>
+            <span className="hidden md:inline">Compare fees, features, and safety across share brokers, crypto exchanges, robo-advisors, and research tools — independent, transparent, and free.</span>
           </p>
+          {/* Category strip */}
+          <div className="flex items-center justify-center flex-wrap gap-1.5 md:gap-2 mt-3 md:mt-5 hero-fade-up hero-fade-up-2">
+            {categoryStrip.map((cat) => (
+              <Link
+                key={cat.label}
+                href={cat.href}
+                className="px-3 py-1.5 text-[0.69rem] md:text-xs font-semibold rounded-full border border-slate-200 text-slate-600 bg-white hover:bg-slate-50 hover:border-slate-300 transition-colors"
+              >
+                {cat.label}
+              </Link>
+            ))}
+          </div>
           <div className="hero-fade-up hero-fade-up-3">
             <HomepageSearchBar />
           </div>
@@ -156,13 +179,13 @@ export default async function HomePage() {
               href="/quiz"
               className="px-5 md:px-7 py-3 md:py-3.5 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 hover:scale-105 hover:shadow-lg transition-all duration-200 text-sm w-full sm:w-auto text-center"
             >
-              Find My Broker — 60sec Quiz &rarr;
+              Find My Platform — 60sec Quiz &rarr;
             </Link>
             <Link
               href="/compare"
               className="px-5 md:px-7 py-3 md:py-3.5 border-2 border-slate-300 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 hover:border-slate-400 hover:scale-105 transition-all duration-200 text-sm w-full sm:w-auto text-center"
             >
-              Compare All Brokers &rarr;
+              Compare All Platforms &rarr;
             </Link>
           </div>
           {/* Social proof */}
@@ -194,7 +217,7 @@ export default async function HomePage() {
       {/* Broker Logo Strip — instant credibility */}
       <section className="py-2 md:py-4 bg-white border-b border-slate-100">
         <div className="container-custom">
-          <p className="text-[0.62rem] md:text-[0.69rem] uppercase tracking-widest text-slate-500 text-center mb-1.5 md:mb-3 font-medium">Brokers we compare</p>
+          <p className="text-[0.62rem] md:text-[0.69rem] uppercase tracking-widest text-slate-500 text-center mb-1.5 md:mb-3 font-medium">Platforms we compare</p>
           {/* Desktop: centered wrap row */}
           <div className="hidden sm:flex items-center justify-center gap-8 flex-wrap opacity-70">
             {(brokers as Broker[])?.slice(0, 6).map((broker) => (
@@ -227,7 +250,7 @@ export default async function HomePage() {
             <div className="flex items-start justify-between gap-2 mb-2 sm:mb-5 md:mb-8">
               <div>
                 <h2 className="text-lg md:text-3xl font-bold text-slate-900">
-                  Top Rated Brokers
+                  Top Rated Platforms
                 </h2>
                 <p className="text-[0.69rem] md:text-sm text-slate-500 mt-0.5 md:mt-1">
                   <span className="hidden md:inline">Ranked by fees, features, and user experience<span className="mx-2 text-slate-300">&middot;</span></span>
@@ -249,7 +272,7 @@ export default async function HomePage() {
                 href="/compare"
                 className="inline-block px-5 md:px-7 py-3 md:py-3.5 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 hover:scale-105 hover:shadow-lg transition-all duration-200 text-sm"
               >
-                View All {brokerCount}+ Brokers &rarr;
+                View All {brokerCount}+ Platforms &rarr;
               </Link>
             </div>
           </div>
@@ -274,7 +297,7 @@ export default async function HomePage() {
             <div className="container-custom">
               <div className="flex items-start justify-between gap-2 mb-2.5 md:mb-6">
                 <div>
-                  <h2 className="text-lg md:text-2xl font-bold">Current Broker Deals</h2>
+                  <h2 className="text-lg md:text-2xl font-bold">Current Platform Deals</h2>
                   <p className="text-[0.69rem] md:text-sm text-slate-500 mt-0.5 md:mt-1">
                     <span className="hidden md:inline">Verified promotions from Australian trading platforms</span>
                     <span className="md:hidden">Verified promotions</span>
@@ -320,9 +343,9 @@ export default async function HomePage() {
           <div className="container-custom">
             <div className="flex items-start justify-between gap-2 mb-2.5 md:mb-8">
               <div>
-                <h2 className="text-lg md:text-3xl font-bold">Find the Best Broker for You</h2>
+                <h2 className="text-lg md:text-3xl font-bold">Find the Best Platform for You</h2>
                 <p className="text-[0.69rem] md:text-base text-slate-500 mt-0.5 md:mt-2">
-                  <span className="hidden md:inline">Our category guides rank brokers for your specific situation.</span>
+                  <span className="hidden md:inline">Our category guides rank platforms for your specific situation.</span>
                   <span className="md:hidden">Category guides for your situation</span>
                 </p>
               </div>
@@ -331,7 +354,7 @@ export default async function HomePage() {
               </Link>
             </div>
             {/* Desktop: grid */}
-            <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+            <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
               {bestForCards.map((card, i) => (
                 <Link
                   key={card.title}

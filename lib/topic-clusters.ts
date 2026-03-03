@@ -324,6 +324,90 @@ export const TOPIC_CLUSTERS: TopicCluster[] = [
       },
     ],
   },
+  {
+    id: "robo-advisors",
+    name: "Robo-Advisors in Australia",
+    pillar: {
+      slug: "robo-advisors-australia",
+      href: "/article/robo-advisors-australia",
+      title: "Robo-Advisors in Australia: Complete Guide",
+      anchorText: "our complete guide to robo-advisors in Australia",
+    },
+    clusterPages: [
+      {
+        slug: "robo-advisors",
+        href: "/best/robo-advisors",
+        title: "Best Robo-Advisors in Australia",
+        anchorText: "best robo-advisors compared",
+      },
+      {
+        slug: "robo-advisor-vs-diy",
+        href: "/article/robo-advisor-vs-diy",
+        title: "Robo-Advisor vs DIY Investing: Which Is Better?",
+        anchorText: "robo-advisor vs DIY investing compared",
+      },
+      {
+        slug: "stockspot-review",
+        href: "/article/stockspot-review",
+        title: "Stockspot Review: Fees, Performance & Verdict",
+        anchorText: "our Stockspot review",
+      },
+      {
+        slug: "raiz-review",
+        href: "/article/raiz-review",
+        title: "Raiz Review: Micro-Investing App Analysed",
+        anchorText: "our Raiz review",
+      },
+      {
+        slug: "spaceship-review",
+        href: "/article/spaceship-review",
+        title: "Spaceship Review: Is It Worth It?",
+        anchorText: "our Spaceship review",
+      },
+    ],
+  },
+  {
+    id: "research-tools",
+    name: "Investment Research Tools",
+    pillar: {
+      slug: "investment-research-tools-australia",
+      href: "/article/investment-research-tools-australia",
+      title: "Best Investment Research Tools in Australia",
+      anchorText: "our guide to investment research tools in Australia",
+    },
+    clusterPages: [
+      {
+        slug: "research-tools",
+        href: "/best/research-tools",
+        title: "Best Investment Research Tools",
+        anchorText: "best research tools compared",
+      },
+      {
+        slug: "simply-wall-st-review",
+        href: "/article/simply-wall-st-review",
+        title: "Simply Wall St Review: Visual Stock Analysis",
+        anchorText: "our Simply Wall St review",
+      },
+      {
+        slug: "tradingview-australia",
+        href: "/article/tradingview-australia",
+        title: "TradingView for Australian Investors",
+        anchorText: "TradingView guide for Australians",
+      },
+      {
+        slug: "morningstar-australia",
+        href: "/article/morningstar-australia",
+        title: "Morningstar Australia: Is Premium Worth It?",
+        anchorText: "Morningstar Australia review",
+      },
+      {
+        slug: "how-to-research-stocks",
+        href: "/article/how-to-research-stocks",
+        title: "How to Research Stocks Before You Buy",
+        anchorText: "how to research stocks before buying",
+      },
+    ],
+  },
 ];
 
 /* ─── Lookup helpers ─── */

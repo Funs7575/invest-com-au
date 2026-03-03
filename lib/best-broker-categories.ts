@@ -1068,6 +1068,221 @@ const categories: BestBrokerCategory[] = [
       },
     ],
   },
+  {
+    slug: "robo-advisors",
+    title: `Best Robo-Advisors in Australia (${yr})`,
+    h1: "Best Robo-Advisors in Australia",
+    metaDescription:
+      `Compare Australia's top robo-advisors. Automated portfolio management with Stockspot, Raiz, Spaceship & more. ${upd}.`,
+    intro:
+      `Robo-advisors automate your investing — you answer a few questions about your goals and risk tolerance, and the platform builds and rebalances a diversified portfolio for you. No stock picking, no decision fatigue. Here are Australia's best robo-advisors for ${yr}.`,
+    filter: (b) => b.platform_type === "robo_advisor",
+    sort: (a, b) => (b.rating ?? 0) - (a.rating ?? 0),
+    criteria: [
+      "Automated portfolio construction and rebalancing",
+      "ASIC-regulated managed investment scheme or AFSL",
+      "Transparent management fees disclosed",
+      "Australian-based or serving Australian investors",
+    ],
+    sections: [
+      {
+        heading: "What Is a Robo-Advisor?",
+        body: "A robo-advisor is a digital platform that uses algorithms to build and manage a diversified investment portfolio on your behalf. You typically complete a risk assessment questionnaire, and the platform allocates your money across a mix of ETFs covering Australian shares, international shares, bonds, and sometimes alternatives. The portfolio is automatically rebalanced as markets move, keeping your asset allocation on target without any effort from you.",
+      },
+      {
+        heading: "Robo-Advisor Fees: What You're Paying For",
+        body: "Robo-advisors charge a management fee (typically 0.20%–0.66% per year) on top of the underlying ETF fees (0.04%–0.30%). So your total cost is usually 0.40%–0.90% per year. Compare this to a financial adviser charging 1%+ annually, or actively managed funds charging 1.5%+. For hands-off investors, robo-advisors offer professional portfolio management at a fraction of the traditional cost.",
+      },
+      {
+        heading: "Robo-Advisor vs DIY Investing",
+        body: "If you're comfortable choosing your own ETFs and rebalancing periodically, DIY investing through a share broker is cheaper — you avoid the management fee. But many investors prefer the convenience of a robo-advisor: no research, no rebalancing decisions, no temptation to time the market. For amounts under $50,000, the fee difference is often less than $200 per year, which many find worthwhile for the peace of mind.",
+      },
+    ],
+    relatedLinks: [
+      { label: "Compare All Platforms", href: "/compare" },
+      { label: "Best for Beginners", href: "/best/beginners" },
+      { label: "Best for ETF Investing", href: "/best/etf-investing" },
+      { label: "Research Tools", href: "/best/research-tools" },
+    ],
+    faqs: [
+      {
+        question: "What is the best robo-advisor in Australia?",
+        answer:
+          "The best robo-advisor depends on your investment amount and goals. Stockspot is popular for its long track record and transparent fees. Raiz appeals to micro-investors with its round-up feature. Spaceship targets younger investors with a tech-focused portfolio. Compare management fees, minimum investments, and portfolio options above.",
+      },
+      {
+        question: "Are robo-advisors safe in Australia?",
+        answer:
+          "Yes. Australian robo-advisors operate under ASIC regulation and typically hold your investments in a separate trust, protected if the platform fails. Your money is invested in ETFs held by institutional custodians, not in the robo-advisor's own accounts.",
+      },
+      {
+        question: "How much do robo-advisors cost in Australia?",
+        answer:
+          "Most Australian robo-advisors charge 0.20%–0.66% per year in management fees, plus underlying ETF fees of 0.04%–0.30%. On a $10,000 portfolio, that's roughly $40–$96 per year in total fees. This is significantly cheaper than traditional financial advisers or actively managed funds.",
+      },
+    ],
+  },
+  {
+    slug: "research-tools",
+    title: `Best Investment Research Tools in Australia (${yr})`,
+    h1: "Best Investment Research Tools in Australia",
+    metaDescription:
+      `Compare Australia's top investment research platforms. Simply Wall St, TradingView, Morningstar & more. ${upd}.`,
+    intro:
+      `Good investment decisions start with good research. These platforms help you analyse stocks, screen for opportunities, and track market data — from visual dashboards to professional-grade charting. Here are the best research tools for Australian investors in ${yr}.`,
+    filter: (b) => b.platform_type === "research_tool",
+    sort: (a, b) => (b.rating ?? 0) - (a.rating ?? 0),
+    criteria: [
+      "Stock analysis, screening, or charting tools",
+      "Coverage of ASX-listed securities",
+      "Free tier or clear pricing structure",
+      "Actively maintained and regularly updated",
+    ],
+    sections: [
+      {
+        heading: "Why Use a Dedicated Research Tool?",
+        body: "Most brokers include basic research — company profiles, price charts, maybe analyst ratings. Dedicated research platforms go much deeper: visual financial analysis (Simply Wall St), professional charting with hundreds of indicators (TradingView), institutional-grade reports (Morningstar), or fundamental screening across thousands of metrics (Stock Doctor). If you're choosing individual stocks rather than ETFs, better research leads to better decisions.",
+      },
+      {
+        heading: "Free vs Paid Research Platforms",
+        body: "Most research tools offer a free tier with limited features, plus paid plans unlocking advanced analysis. Free tiers are often sufficient for casual investors who want basic company overviews. Paid plans ($10–$50/month) are worthwhile for active stock pickers who need detailed financials, screening tools, and real-time data. Consider your investing style before paying — if you only buy ETFs, you may not need a premium research subscription.",
+      },
+      {
+        heading: "Combining Research Tools With Your Broker",
+        body: "Many investors use a research platform alongside their broker — analyse stocks in one tool, execute trades in another. Some brokers integrate with third-party research (e.g., Morningstar reports inside CMC Markets). Others like TradingView connect directly to brokers for one-click trading from charts. The ideal setup depends on your workflow and how deeply you want to analyse before buying.",
+      },
+    ],
+    relatedLinks: [
+      { label: "Compare All Platforms", href: "/compare" },
+      { label: "Best for Beginners", href: "/best/beginners" },
+      { label: "Best Robo-Advisors", href: "/best/robo-advisors" },
+      { label: "Best for Low Fees", href: "/best/low-fees" },
+    ],
+    faqs: [
+      {
+        question: "What is the best stock research tool in Australia?",
+        answer:
+          "It depends on your needs. Simply Wall St is best for visual fundamental analysis. TradingView leads for charting and technical analysis. Morningstar provides the most comprehensive analyst reports. Stock Doctor is popular with serious Australian stock pickers. Most offer free tiers to try before committing.",
+      },
+      {
+        question: "Is Simply Wall St free?",
+        answer:
+          "Simply Wall St offers a limited free plan that lets you view basic analysis on a small number of stocks. The paid plan (from ~$10/month) unlocks full portfolio tracking, detailed financials, and unlimited company analysis. They frequently offer discounted annual plans.",
+      },
+      {
+        question: "Do I need a research tool if I only buy ETFs?",
+        answer:
+          "Probably not. ETF investors typically don't need to analyse individual company financials. A basic comparison of ETF fees, holdings, and performance (available free on ETF issuer websites) is usually sufficient. Research tools are most valuable for investors picking individual stocks.",
+      },
+    ],
+  },
+  {
+    slug: "etf-platforms",
+    title: `Best Platforms for ETF Investing in Australia (${yr})`,
+    h1: "Best Platforms for ETF Investing in Australia",
+    metaDescription:
+      `Compare the best platforms for building an ETF portfolio. Share brokers and robo-advisors for passive investing. ${upd}.`,
+    intro:
+      `Building an ETF portfolio? You have two paths: DIY through a share broker (pick your own ETFs, pay per trade) or automated through a robo-advisor (they pick and rebalance for you, charge an annual fee). Here are the best platforms for ETF investing in ${yr}, covering both approaches.`,
+    filter: (b) =>
+      b.platform_type === "robo_advisor" ||
+      (!b.is_crypto && (b.asx_fee_value ?? 999) <= 10),
+    sort: (a, b) => (b.rating ?? 0) - (a.rating ?? 0),
+    criteria: [
+      "Low-cost access to ASX-listed ETFs",
+      "Suitable for regular DCA investing",
+      "Robo-advisor OR share broker with sub-$10 brokerage",
+      "ASIC-regulated platform",
+    ],
+    sections: [
+      {
+        heading: "DIY vs Automated ETF Investing",
+        body: "DIY (share broker): You choose which ETFs to buy, place orders yourself, and rebalance manually. Costs are per-trade brokerage ($0–$10). Best for investors who want full control and are comfortable making their own decisions. Automated (robo-advisor): The platform selects and rebalances an ETF portfolio for you based on your risk profile. Costs are an annual management fee (0.20%–0.66%). Best for hands-off investors who want a 'set and forget' approach.",
+      },
+      {
+        heading: "Best ETFs for Australian Portfolios",
+        body: "Most Australian ETF portfolios are built around a few core holdings: an Australian market ETF (e.g., VAS, A200), a global market ETF (e.g., VGS, IWLD), and optionally a bond or property ETF for diversification. This 2–3 fund approach gives you exposure to thousands of companies worldwide at very low cost. Both DIY brokers and robo-advisors typically use similar ETF building blocks.",
+      },
+      {
+        heading: "Total Cost Comparison: Broker vs Robo",
+        body: "On a $20,000 portfolio invested monthly: A $0 brokerage DIY broker costs $0 per year in brokerage (you pay only ETF management fees of ~0.07%–0.20%). A robo-advisor charges 0.20%–0.66% on top of ETF fees, so $40–$132 more per year. The question is whether the convenience of automated rebalancing is worth that premium for you. For larger portfolios, the fee gap widens; for smaller ones, it's often negligible.",
+      },
+    ],
+    relatedLinks: [
+      { label: "Best Robo-Advisors", href: "/best/robo-advisors" },
+      { label: "Best for Low Fees", href: "/best/low-fees" },
+      { label: "Best for Beginners", href: "/best/beginners" },
+      { label: "Compare All Platforms", href: "/compare" },
+    ],
+    faqs: [
+      {
+        question: "Should I use a robo-advisor or buy ETFs myself?",
+        answer:
+          "If you want zero effort and don't mind paying 0.20%–0.66% per year for automation, use a robo-advisor. If you're comfortable placing your own ETF orders monthly and want to save on fees, use a $0-brokerage share broker. Both approaches build diversified ETF portfolios — the difference is cost vs convenience.",
+      },
+      {
+        question: "What is the cheapest way to invest in ETFs in Australia?",
+        answer:
+          "The cheapest approach is a $0-brokerage share broker combined with low-fee ETFs. This way you pay only the ETF management fee (as low as 0.04% for index funds). Robo-advisors add convenience but at a higher annual cost.",
+      },
+    ],
+  },
+  {
+    slug: "micro-investing",
+    title: `Best Micro-Investing Apps in Australia (${yr})`,
+    h1: "Best Micro-Investing Apps in Australia",
+    metaDescription:
+      `Compare Australian micro-investing apps. Invest spare change and small amounts with Raiz, Spaceship & more. ${upd}.`,
+    intro:
+      `Micro-investing apps let you start with as little as $5, rounding up everyday purchases or investing small amounts regularly. They lower the barrier to entry for new investors who want to start building wealth without needing thousands of dollars upfront. Here are Australia's best micro-investing options.`,
+    filter: (b) =>
+      b.platform_type === "robo_advisor" ||
+      (b.asx_fee_value === 0 && !b.is_crypto),
+    sort: (a, b) => (b.rating ?? 0) - (a.rating ?? 0),
+    criteria: [
+      "Low or no minimum investment (under $50)",
+      "Round-up or small-amount investing features",
+      "$0 brokerage or included in management fee",
+      "ASIC-regulated platform",
+    ],
+    sections: [
+      {
+        heading: "What Is Micro-Investing?",
+        body: "Micro-investing platforms let you invest very small amounts — often by rounding up everyday purchases (e.g., a $4.50 coffee rounds to $5, and the $0.50 goes into your portfolio). Others simply allow minimum investments of $1–$5. The idea is to make investing effortless and habitual, turning spare change into a growing portfolio over time.",
+      },
+      {
+        heading: "Round-Ups: Do They Actually Add Up?",
+        body: "If you make 5 purchases per day averaging $0.50 in round-ups, that's about $75 per month or $900 per year invested automatically. Over 10 years at 7% annual growth, that grows to roughly $12,500. It's not a retirement strategy on its own, but it's an excellent way to build the investing habit and create a starter portfolio. Many users graduate from round-ups to larger regular investments once they see their portfolio grow.",
+      },
+      {
+        heading: "Watch the Fees on Small Balances",
+        body: "Some micro-investing apps charge a flat monthly fee ($2–$5/month). On a $500 balance, a $3.50/month fee equals 8.4% per year — far more than any investment return. These fees only become reasonable as your balance grows. Compare percentage-based fee structures, which scale proportionally, with flat fees that disproportionately impact small balances.",
+      },
+    ],
+    relatedLinks: [
+      { label: "Best Robo-Advisors", href: "/best/robo-advisors" },
+      { label: "Best for Beginners", href: "/best/beginners" },
+      { label: "Best $0 Brokerage", href: "/best/free-brokerage" },
+      { label: "Compare All Platforms", href: "/compare" },
+    ],
+    faqs: [
+      {
+        question: "What is the best micro-investing app in Australia?",
+        answer:
+          "Raiz is the most well-known Australian micro-investing app with its round-up feature. Spaceship offers low-minimum investing with a tech-focused portfolio. $0-brokerage share brokers also work for micro-investing if you're comfortable choosing your own investments. Compare fees carefully — flat monthly fees can eat into small balances.",
+      },
+      {
+        question: "Is micro-investing worth it?",
+        answer:
+          "Yes, as a starting point. Micro-investing builds the habit of regular investing and grows your portfolio with money you wouldn't notice missing. However, for meaningful wealth building, you'll eventually want to increase your contributions beyond just round-ups. Think of micro-investing as the gateway, not the destination.",
+      },
+      {
+        question: "How much can I make with round-up investing?",
+        answer:
+          "It depends on your spending habits. Typical round-ups add $50–$150 per month. Invested at 7% annual growth over 10 years, $100/month becomes roughly $17,000. It's a useful supplement but should be combined with regular contributions for serious wealth building.",
+      },
+    ],
+  },
 ];
 
 export function getCategoryBySlug(slug: string): BestBrokerCategory | undefined {

@@ -28,19 +28,30 @@ import ShortlistButton from "@/components/ShortlistButton";
 import BrokerLogo from "@/components/BrokerLogo";
 import AdSlot from "@/components/AdSlot";
 
-type FilterType = 'all' | 'beginner' | 'chess' | 'free' | 'us' | 'smsf' | 'low-fx' | 'crypto';
+type FilterType = 'all' | 'shares' | 'beginner' | 'chess' | 'free' | 'us' | 'smsf' | 'low-fx' | 'crypto' | 'robo' | 'research';
 type SortCol = 'name' | 'asx_fee_value' | 'us_fee_value' | 'fx_rate' | 'rating';
 
 const filters: { key: FilterType; label: string }[] = [
-  { key: 'all', label: 'All Brokers' },
+  { key: 'all', label: 'All Platforms' },
+  { key: 'shares', label: 'Share Brokers' },
+  { key: 'crypto', label: 'Crypto' },
+  { key: 'robo', label: 'Robo-Advisors' },
+  { key: 'research', label: 'Research Tools' },
   { key: 'beginner', label: 'Beginner' },
   { key: 'chess', label: 'CHESS Only' },
   { key: 'free', label: '$0 Trades' },
   { key: 'us', label: 'US Shares' },
   { key: 'smsf', label: 'SMSF' },
   { key: 'low-fx', label: 'Low FX' },
-  { key: 'crypto', label: 'Crypto' },
 ];
+
+/** Map URL ?category= values to filter keys */
+const CATEGORY_TO_FILTER: Record<string, FilterType> = {
+  shares: 'shares',
+  crypto: 'crypto',
+  'robo-advisors': 'robo',
+  'research-tools': 'research',
+};
 
 const feeTooltips: Record<string, string> = {
   asx_fee_value: "The fee your broker charges each time you buy or sell Australian shares.",
@@ -89,10 +100,14 @@ function InfoTip({ text }: { text: string }) {
 export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   const searchParams = useSearchParams();
 
-  // Derive initial filter/query from URL params
+  // Derive initial filter/query from URL params (?filter= or ?category=)
   const urlFilter = searchParams.get("filter");
-  const initialFilter: FilterType = (urlFilter && filters.some(fl => fl.key === urlFilter))
-    ? urlFilter as FilterType : 'all';
+  const urlCategory = searchParams.get("category");
+  const initialFilter: FilterType = (() => {
+    if (urlFilter && filters.some(fl => fl.key === urlFilter)) return urlFilter as FilterType;
+    if (urlCategory && CATEGORY_TO_FILTER[urlCategory]) return CATEGORY_TO_FILTER[urlCategory];
+    return 'all';
+  })();
   const urlQuery = searchParams.get("q") || "";
 
   const [searchQuery, setSearchQuery] = useState(urlQuery);
@@ -141,9 +156,12 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
     const q = searchParams.get("q") || "";
     setSearchQuery(q);
     const f = searchParams.get("filter");
+    const c = searchParams.get("category");
     if (f && filters.some(fl => fl.key === f)) {
       setActiveFilter(f as FilterType);
-    } else if (!f) {
+    } else if (c && CATEGORY_TO_FILTER[c]) {
+      setActiveFilter(CATEGORY_TO_FILTER[c]);
+    } else if (!f && !c) {
       setActiveFilter('all');
     }
   }, [searchParams]);
@@ -160,6 +178,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   const filtered = useMemo(() => {
     let list = [...brokers];
     switch (activeFilter) {
+      case 'shares': list = list.filter(b => (b.platform_type || 'share_broker') === 'share_broker'); break;
       case 'beginner': list = list.filter(b => !b.is_crypto && (b.asx_fee_value ?? 999) <= 10 && (b.rating ?? 0) >= 4.0); break;
       case 'chess': list = list.filter(b => b.chess_sponsored); break;
       case 'free': list = list.filter(b => (b.asx_fee_value === 0) || (b.us_fee_value === 0)); break;
@@ -167,7 +186,9 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
       case 'smsf': list = list.filter(b => b.smsf_support); break;
       case 'low-fx': list = list.filter(b => b.fx_rate != null && b.fx_rate > 0 && b.fx_rate < 0.5); break;
       case 'crypto': list = list.filter(b => b.is_crypto); break;
-      default: list = list.filter(b => !b.is_crypto); break;
+      case 'robo': list = list.filter(b => b.platform_type === 'robo_advisor'); break;
+      case 'research': list = list.filter(b => b.platform_type === 'research_tool'); break;
+      // 'all' — no filtering, show everything
     }
     // Text search filter
     if (searchQuery.trim()) {
@@ -383,7 +404,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search brokers by name..."
+            placeholder="Search platforms by name..."
             className="w-80 px-4 py-2.5 pl-10 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700"
             aria-label="Search brokers by name"
           />

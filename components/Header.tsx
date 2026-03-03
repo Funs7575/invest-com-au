@@ -19,9 +19,10 @@ const navItems = [
 
 const popularLinks = [
   { label: `Best Brokers ${CURRENT_YEAR}`, href: "/article/best-share-trading-platforms-australia" },
-  { label: "How to Invest", href: "/article/how-to-invest-australia" },
+  { label: "Best Robo-Advisors", href: "/best/robo-advisors" },
+  { label: "Research Tools", href: "/best/research-tools" },
+  { label: "Best Crypto Exchanges", href: "/article/best-crypto-exchanges-australia" },
   { label: "Best ETFs", href: "/article/best-etfs-australia" },
-  { label: "CommSec vs Stake", href: "/versus?vs=commsec,stake" },
 ];
 
 export default function Header() {

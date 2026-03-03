@@ -13,14 +13,24 @@ import { filterByFrequencyCap } from "@/lib/marketplace/frequency-cap";
 import JargonTooltip from "@/components/JargonTooltip";
 import ShortlistButton from "@/components/ShortlistButton";
 
-const TAB_OPTIONS = ["All Platforms", "Share Trading", "Crypto Exchanges", "SMSF"] as const;
+const TAB_OPTIONS = ["All Platforms", "Share Trading", "Crypto Exchanges", "Robo-Advisors", "Research Tools", "SMSF"] as const;
 type TabOption = (typeof TAB_OPTIONS)[number];
 
 function getCategories(broker: Broker): string[] {
-  if (broker.is_crypto) return ["Crypto Exchanges"];
-  const cats: string[] = ["Share Trading"];
-  if (broker.smsf_support) cats.push("SMSF");
-  return cats;
+  const pt = broker.platform_type || (broker.is_crypto ? "crypto_exchange" : "share_broker");
+  switch (pt) {
+    case "crypto_exchange":
+      return ["Crypto Exchanges"];
+    case "robo_advisor":
+      return ["Robo-Advisors"];
+    case "research_tool":
+      return ["Research Tools"];
+    default: {
+      const cats: string[] = ["Share Trading"];
+      if (broker.smsf_support) cats.push("SMSF");
+      return cats;
+    }
+  }
 }
 
 export default function HomepageComparisonTable({

@@ -13,6 +13,9 @@ export const CATEGORY_COLORS: Record<string, string> = {
   reviews: "bg-teal-100 text-teal-700",
   crypto: "bg-orange-100 text-orange-700",
   etfs: "bg-indigo-100 text-indigo-700",
+  "robo-advisors": "bg-violet-100 text-violet-700",
+  "research-tools": "bg-cyan-100 text-cyan-700",
+  "micro-investing": "bg-pink-100 text-pink-700",
 };
 
 // ── Article → Best-for category mapping ──

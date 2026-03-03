@@ -79,18 +79,21 @@ export default function Footer() {
             <div className="col-span-3 md:col-span-1">
               <h3 className="text-white font-bold text-sm md:text-base mb-1 md:mb-4">Invest.com.au</h3>
               <p className="text-xs md:text-sm leading-relaxed">
-                <span className="hidden md:inline">Australia&apos;s independent broker comparison platform. No bank bias, just honest reviews.</span>
-                <span className="md:hidden text-slate-400">Independent broker comparison. No bank bias.</span>
+                <span className="hidden md:inline">Australia&apos;s independent investing platform comparison. Shares, crypto, robo-advisors &amp; more.</span>
+                <span className="md:hidden text-slate-400">Independent investing platform comparison.</span>
               </p>
             </div>
 
             <div>
               <h4 className="text-white font-semibold mb-2 md:mb-4 text-xs md:text-sm">Compare</h4>
               <ul className="space-y-0.5 md:space-y-2 text-xs md:text-sm">
-                <li><Link href="/compare" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">All Brokers</Link></li>
+                <li><Link href="/compare" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">All Platforms</Link></li>
+                <li><Link href="/compare?category=shares" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Share Brokers</Link></li>
+                <li><Link href="/compare?category=crypto" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Crypto Exchanges</Link></li>
+                <li><Link href="/best/robo-advisors" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Robo-Advisors</Link></li>
+                <li><Link href="/best/research-tools" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Research Tools</Link></li>
                 <li><Link href="/versus" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Head-to-Head</Link></li>
                 <li><Link href="/deals" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Deals</Link></li>
-                <li><Link href="/reviews" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Reviews</Link></li>
                 <li><Link href="/quiz" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Quiz</Link></li>
               </ul>
             </div>
