@@ -60,10 +60,10 @@ const CATEGORY_TO_FILTER: Record<string, FilterType> = {
 };
 
 const feeTooltips: Record<string, string> = {
-  asx_fee_value: "The fee your broker charges each time you buy or sell Australian shares.",
+  asx_fee_value: "The fee your platform charges each time you buy or sell Australian shares.",
   us_fee_value: "The fee to buy or sell US shares — like Apple, Tesla, or US ETFs.",
   fx_rate: "The currency conversion markup when you buy shares in a foreign currency. Lower is better.",
-  chess: "Shares registered in your name on the ASX register — not held by your broker. Safer if the broker goes bust.",
+  chess: "Shares registered in your name on the ASX register — not held by your platform. Safer if the platform goes bust.",
 };
 
 function InfoTip({ text }: { text: string }) {
@@ -319,7 +319,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         })()}
 
         {/* Desktop Filter Pills */}
-        <div className="hidden md:flex md:flex-wrap gap-2 mb-4" role="tablist" aria-label="Broker filter">
+        <div className="hidden md:flex md:flex-wrap gap-2 mb-4" role="tablist" aria-label="Platform filter">
           {filters.map(f => (
             <button
               key={f.key}
@@ -448,8 +448,8 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               <tr>
                 <th scope="col" className="px-3 py-3 w-10"></th>
                 <th scope="col" className="px-4 py-3 text-left font-semibold text-sm" aria-sort={sortCol === 'name' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
-                  <button onClick={() => handleSort('name')} className="hover:text-slate-900 transition-colors" aria-label="Sort by broker name">
-                    Broker{sortArrow('name')}
+                  <button onClick={() => handleSort('name')} className="hover:text-slate-900 transition-colors" aria-label="Sort by platform name">
+                    Platform{sortArrow('name')}
                   </button>
                 </th>
                 <th scope="col" className="px-4 py-3 text-left font-semibold text-sm" aria-sort={sortCol === 'asx_fee_value' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
@@ -595,7 +595,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           <div className="hidden md:flex flex-wrap gap-2 mt-4 no-print">
             <button
               onClick={() => {
-                const headers = ["Broker", "ASX Fee", "US Fee", "FX Rate (%)", "CHESS", "SMSF", "Rating"];
+                const headers = ["Platform", "ASX Fee", "US Fee", "FX Rate (%)", "CHESS", "SMSF", "Rating"];
                 const rows = sorted.map(b => [
                   b.name,
                   b.asx_fee || "N/A",
@@ -720,8 +720,8 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-6 flex items-center md:block gap-3">
             <Icon name="target" size={20} className="text-slate-600 shrink-0 md:mb-2" />
             <div className="flex-1 min-w-0">
-              <h2 className="text-sm md:text-lg font-bold text-slate-900 mb-0.5 md:mb-1">Find Your Broker</h2>
-              <p className="text-xs text-slate-500 md:mb-4 hidden md:block">Answer 4 quick questions and narrow down brokers.</p>
+              <h2 className="text-sm md:text-lg font-bold text-slate-900 mb-0.5 md:mb-1">Find Your Platform</h2>
+              <p className="text-xs text-slate-500 md:mb-4 hidden md:block">Answer 4 quick questions and narrow down platforms.</p>
             </div>
             <Link href="/quiz" className="shrink-0 px-3 md:px-5 py-2 md:py-2.5 bg-amber-500 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors md:inline-block">
               Quiz →

@@ -408,6 +408,38 @@ export const GLOSSARY_ENTRIES: GlossaryEntry[] = [
       "Annual rental income as a percentage of the property's value. e.g. $25,000 rent on a $500,000 property = 5% yield.",
     category: "Property",
   },
+
+  // ─── Platform & Account Types ───
+  {
+    term: "HIN",
+    definition:
+      "Holder Identification Number — a unique number assigned to you when your shares are CHESS-sponsored. It starts with an 'X' and lets you transfer shares between brokers without selling.",
+    category: "Share Trading",
+  },
+  {
+    term: "Fractional Shares",
+    definition:
+      "Buying a portion of a share instead of a whole one. e.g. $50 worth of a $500 share. Offered by some platforms to lower the entry barrier.",
+    category: "Share Trading",
+  },
+  {
+    term: "Inactivity Fee",
+    definition:
+      "A fee some platforms charge if you don't trade for a certain period (e.g. 6 or 12 months). Many modern platforms have removed this fee.",
+    category: "Fees",
+  },
+  {
+    term: "Paper Trading",
+    definition:
+      "Practising trades with fake money in a simulated market. A risk-free way to learn before investing real money. Also called a demo account.",
+    category: "Share Trading",
+  },
+  {
+    term: "SRS",
+    definition:
+      "Sponsored Reporting Service — CHESS-sponsored holders receive statements directly from the ASX registry (Computershare or Link Market Services) confirming their holdings.",
+    category: "Share Trading",
+  },
 ];
 
 // Populate the flat GLOSSARY lookup from entries

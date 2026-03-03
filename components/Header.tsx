@@ -18,7 +18,7 @@ const navItems = [
 ];
 
 const popularLinks = [
-  { label: `Best Brokers ${CURRENT_YEAR}`, href: "/article/best-share-trading-platforms-australia" },
+  { label: `Best Platforms ${CURRENT_YEAR}`, href: "/article/best-share-trading-platforms-australia" },
   { label: "Best Super Funds", href: "/best/super-funds" },
   { label: "Best Robo-Advisors", href: "/best/robo-advisors" },
   { label: "Property Investing", href: "/best/property-investing" },

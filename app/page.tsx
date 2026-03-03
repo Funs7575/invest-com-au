@@ -112,15 +112,15 @@ export default async function HomePage() {
             mainEntity: [
               {
                 "@type": "Question",
-                name: "What is the best broker for beginners in Australia?",
+                name: "What is the best investing platform for beginners in Australia?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: "The best beginner broker depends on your goals, but platforms with low fees, simple interfaces, and educational resources — such as Stake, CommSec, and Superhero — consistently rank highest for new investors.",
+                  text: "The best beginner platform depends on your goals, but platforms with low fees, simple interfaces, and educational resources — such as Stake, CommSec, and Superhero — consistently rank highest for new investors.",
                 },
               },
               {
                 "@type": "Question",
-                name: "Which Australian broker has the lowest fees?",
+                name: "Which Australian investing platform has the lowest fees?",
                 acceptedAnswer: {
                   "@type": "Answer",
                   text: "Several brokers now offer $0 brokerage on ASX trades, including Stake and Superhero. For US shares, Stake and Moomoo offer $0 USD brokerage. Compare all fee structures at invest.com.au/compare.",
@@ -136,10 +136,10 @@ export default async function HomePage() {
               },
               {
                 "@type": "Question",
-                name: "How do I choose between Australian brokers?",
+                name: "How do I choose between Australian investing platforms?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: `Compare brokers based on brokerage fees, FX rates, available markets, CHESS sponsorship, and platform features. Use our free 60-second quiz at ${SITE_URL}/quiz to get a personalised recommendation.`,
+                  text: `Compare platforms based on fees, FX rates, available markets, CHESS sponsorship, and features. Use our free 60-second quiz at ${SITE_URL}/quiz to get a personalised recommendation.`,
                 },
               },
             ],
