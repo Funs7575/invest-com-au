@@ -947,7 +947,7 @@ export default function FeeImpactClient({ brokers }: Props) {
               href="/quiz"
               className="text-xs px-3 py-1.5 border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 transition-colors"
             >
-              Take the Broker Quiz →
+              Take the Platform Quiz →
             </Link>
           </div>
         </div>

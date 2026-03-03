@@ -183,7 +183,7 @@ export default function HowWeVerifyPage() {
                 href="/quiz"
                 className="inline-block px-8 py-3 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-800 transition-colors"
               >
-                Take the Broker Quiz
+                Take the Platform Quiz
               </Link>
               <Link
                 href="/compare"

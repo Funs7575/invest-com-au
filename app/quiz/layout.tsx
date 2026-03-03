@@ -2,16 +2,16 @@ import type { Metadata } from "next";
 import { SITE_NAME, absoluteUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Broker Quiz — Filter Brokers in 60 Seconds",
+  title: "Platform Quiz — Find Your Best Investing Platform in 60 Seconds",
   description:
-    "Answer 5 quick questions and narrow down Australian brokers based on your priorities. Free, independent, and takes under 60 seconds.",
+    "Answer 5 quick questions and find the best Australian investing platform for you — brokers, robo-advisors, crypto, super & more. Free and takes under 60 seconds.",
   openGraph: {
-    title: "Broker Quiz — Filter Brokers in 60 Seconds",
+    title: "Platform Quiz — Find Your Best Investing Platform in 60 Seconds",
     description:
-      "Answer 5 quick questions and narrow down Australian brokers based on your priorities.",
+      "Answer 5 quick questions and find the best Australian investing platform for your goals.",
     images: [
       {
-        url: "/api/og?title=Find+Your+Best+Broker&subtitle=Take+the+60-second+quiz&type=default",
+        url: "/api/og?title=Find+Your+Best+Platform&subtitle=Take+the+60-second+quiz&type=default",
         width: 1200,
         height: 630,
       },
@@ -19,9 +19,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Broker Quiz — Filter Brokers in 60 Seconds",
+    title: "Platform Quiz — Find Your Best Investing Platform in 60 Seconds",
     description:
-      "Answer 5 quick questions and narrow down Australian brokers based on your priorities.",
+      "Answer 5 quick questions and find the best Australian investing platform for your goals.",
   },
   alternates: {
     canonical: "/quiz",
@@ -31,13 +31,13 @@ export const metadata: Metadata = {
 const howToJsonLd = {
   "@context": "https://schema.org",
   "@type": "HowTo",
-  name: "How to Find the Best Broker for You",
+  name: "How to Find the Best Investing Platform for You",
   description:
-    "Answer 4 quick questions about your investing goals and preferences to get a personalised broker recommendation in under 60 seconds.",
+    "Answer 4 quick questions about your investing goals and preferences to get a personalised platform recommendation in under 60 seconds.",
   totalTime: "PT1M",
   tool: {
     "@type": "HowToTool",
-    name: `${SITE_NAME} Broker Quiz`,
+    name: `${SITE_NAME} Platform Quiz`,
   },
   step: [
     {

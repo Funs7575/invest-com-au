@@ -126,7 +126,7 @@ export default function HomepageComparisonTable({
       {/* Filter Tabs */}
       <div className="px-3 pt-3 pb-1 md:px-5 md:pt-5 md:pb-2">
         <div className="flex items-center justify-between">
-          <div className="flex gap-1.5 md:gap-2 overflow-x-auto md:overflow-x-visible md:flex-wrap scrollbar-hide" role="tablist" aria-label="Broker category filter">
+          <div className="flex gap-1.5 md:gap-2 overflow-x-auto md:overflow-x-visible md:flex-wrap scrollbar-hide" role="tablist" aria-label="Platform category filter">
             {TAB_OPTIONS.map((tab) => (
               <button
                 key={tab}

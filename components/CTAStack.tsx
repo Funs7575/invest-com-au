@@ -36,7 +36,7 @@ export default function CTAStack({
       {/* Secondary — cross-links */}
       <div className="flex flex-wrap items-center justify-center gap-3 mt-4 text-sm">
         <Link href="/compare" className="text-slate-400 hover:text-white transition-colors">
-          Compare Brokers
+          Compare Platforms
         </Link>
         <span className="text-slate-600">·</span>
         <Link href="/calculators" className="text-slate-400 hover:text-white transition-colors">
@@ -44,7 +44,7 @@ export default function CTAStack({
         </Link>
         <span className="text-slate-600">·</span>
         <Link href="/quiz" className="text-slate-400 hover:text-white transition-colors">
-          Broker Quiz
+          Platform Quiz
         </Link>
       </div>
 

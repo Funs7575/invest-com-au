@@ -879,10 +879,10 @@ export default function BrokerReviewClient({
           <p className="text-sm text-slate-500 mb-2">Want to compare other options?</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link href="/quiz" className="text-sm text-amber-700 font-semibold hover:text-amber-800 transition-colors border border-amber-200 rounded-lg px-4 py-2 hover:bg-amber-50">
-              Take Our Broker Quiz →
+              Take Our Platform Quiz →
             </Link>
             <Link href="/compare" className="text-sm text-slate-600 font-semibold hover:text-slate-800 transition-colors border border-slate-200 rounded-lg px-4 py-2 hover:bg-slate-50">
-              Compare All Brokers →
+              Compare All Platforms →
             </Link>
           </div>
           <CompactDisclaimerLine />

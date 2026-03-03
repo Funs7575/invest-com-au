@@ -211,7 +211,7 @@ export default function ExitIntentPopup() {
                   href="/quiz"
                   className="inline-block px-5 py-2.5 bg-amber-500 text-white text-sm font-semibold rounded-lg hover:bg-amber-600 transition-colors"
                 >
-                  Take the Broker Quiz →
+                  Take the Platform Quiz →
                 </Link>
               </div>
             ) : (

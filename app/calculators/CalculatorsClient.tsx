@@ -264,7 +264,7 @@ export default function CalculatorsClient({ brokers }: Props) {
               How to Invest →
             </Link>
             <Link href="/quiz" className="text-[0.69rem] md:text-xs px-2 md:px-2.5 py-1 md:py-1.5 border border-slate-200 text-slate-700 rounded-md md:rounded-lg hover:bg-white transition-colors">
-              Broker Quiz →
+              Platform Quiz →
             </Link>
           </div>
         </div>
