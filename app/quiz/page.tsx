@@ -35,6 +35,7 @@ const fallbackQuestions = [
 
 // Fallback scoring weights
 const fallbackScores: Record<string, Record<WeightKey, number>> = {
+  // Share brokers
   "selfwealth": { beginner: 7, low_fee: 9, us_shares: 7, smsf: 8, crypto: 0, advanced: 5 },
   "stake": { beginner: 8, low_fee: 10, us_shares: 10, smsf: 3, crypto: 0, advanced: 4 },
   "commsec": { beginner: 9, low_fee: 3, us_shares: 5, smsf: 7, crypto: 0, advanced: 6 },
@@ -43,8 +44,19 @@ const fallbackScores: Record<string, Record<WeightKey, number>> = {
   "moomoo": { beginner: 7, low_fee: 9, us_shares: 9, smsf: 4, crypto: 0, advanced: 7 },
   "superhero": { beginner: 8, low_fee: 9, us_shares: 7, smsf: 6, crypto: 4, advanced: 4 },
   "tiger-brokers": { beginner: 5, low_fee: 7, us_shares: 9, smsf: 3, crypto: 0, advanced: 7 },
+  // Crypto exchanges
   "swyftx": { beginner: 8, low_fee: 7, us_shares: 0, smsf: 3, crypto: 10, advanced: 5 },
   "coinspot": { beginner: 9, low_fee: 5, us_shares: 0, smsf: 2, crypto: 9, advanced: 3 },
+  // Robo-advisors
+  "stockspot": { beginner: 10, low_fee: 7, us_shares: 3, smsf: 4, crypto: 0, advanced: 2 },
+  "raiz": { beginner: 9, low_fee: 8, us_shares: 2, smsf: 2, crypto: 0, advanced: 2 },
+  "spaceship": { beginner: 9, low_fee: 9, us_shares: 3, smsf: 2, crypto: 0, advanced: 2 },
+  // Research tools
+  "simply-wall-st": { beginner: 6, low_fee: 5, us_shares: 7, smsf: 3, crypto: 0, advanced: 8 },
+  "tradingview": { beginner: 4, low_fee: 5, us_shares: 6, smsf: 2, crypto: 4, advanced: 10 },
+  // CFD & Forex
+  "pepperstone": { beginner: 3, low_fee: 6, us_shares: 3, smsf: 0, crypto: 3, advanced: 9 },
+  "cmc-markets-cfds": { beginner: 4, low_fee: 7, us_shares: 3, smsf: 0, crypto: 2, advanced: 8 },
 };
 
 const QUIZ_STORAGE_KEY = "invest-quiz-progress";
@@ -232,21 +244,52 @@ export default function QuizPage() {
   // Generate personalized match reasons based on user answers and broker strengths
   const getMatchReasons = (userAnswers: string[], broker: Broker): string[] => {
     const reasons: string[] = [];
+    const pt = broker.platform_type;
 
-    if (userAnswers.includes('fees') || userAnswers.includes('income'))
-      reasons.push(`Low brokerage fees (${broker.asx_fee || 'competitive rates'})`);
-    if (userAnswers.includes('safety') && broker.chess_sponsored)
-      reasons.push('CHESS sponsorship — your shares are held in your name');
-    if (userAnswers.includes('beginner') || userAnswers.includes('simple'))
-      reasons.push('Simple, beginner-friendly platform and interface');
-    if (userAnswers.includes('crypto') && broker.is_crypto)
+    // Platform-type specific reasons
+    if (pt === 'robo_advisor') {
+      reasons.push('Automated portfolio management — hands-off investing');
+      if (userAnswers.includes('beginner') || userAnswers.includes('simple'))
+        reasons.push('Perfect for beginners who want professional-style investing');
+    } else if (pt === 'research_tool') {
+      reasons.push('Powerful analysis tools to research before you invest');
+      if (userAnswers.includes('tools') || userAnswers.includes('pro'))
+        reasons.push('Advanced charting, screening, and data analytics');
+    } else if (pt === 'super_fund') {
+      reasons.push('Superannuation fund — grow your retirement savings');
+      if (userAnswers.includes('grow'))
+        reasons.push('Strong long-term performance track record');
+    } else if (pt === 'property_platform') {
+      reasons.push('Property investing without buying a whole house');
+      if (userAnswers.includes('income'))
+        reasons.push('Rental income and property returns');
+    } else if (pt === 'cfd_forex') {
+      reasons.push('Access to leveraged trading across multiple markets');
+      if (userAnswers.includes('pro'))
+        reasons.push('Advanced tools for experienced active traders');
+    } else if (pt === 'crypto_exchange' || broker.is_crypto) {
       reasons.push('Regulated Australian crypto exchange');
+      if (userAnswers.includes('crypto'))
+        reasons.push('Wide range of cryptocurrencies available');
+    } else {
+      // share_broker (default)
+      if (userAnswers.includes('fees') || userAnswers.includes('income'))
+        reasons.push(`Low brokerage fees (${broker.asx_fee || 'competitive rates'})`);
+      if (userAnswers.includes('safety') && broker.chess_sponsored)
+        reasons.push('CHESS sponsorship — your shares are held in your name');
+      if (userAnswers.includes('tools') || userAnswers.includes('pro'))
+        reasons.push('Advanced charting and research tools');
+      if (broker.smsf_support && (userAnswers.includes('income') || userAnswers.includes('grow')))
+        reasons.push('Supports SMSF accounts for tax-effective investing');
+    }
+
+    // Universal reasons
+    if (userAnswers.includes('beginner') || userAnswers.includes('simple'))
+      if (!reasons.some(r => r.includes('beginner')))
+        reasons.push('Simple, beginner-friendly platform and interface');
     if (userAnswers.includes('large') || userAnswers.includes('whale'))
-      reasons.push('Competitive international fees for larger portfolios');
-    if (userAnswers.includes('tools') || userAnswers.includes('pro'))
-      reasons.push('Advanced charting and research tools');
-    if (broker.smsf_support && (userAnswers.includes('income') || userAnswers.includes('grow')))
-      reasons.push('Supports SMSF accounts for tax-effective investing');
+      if (pt === 'share_broker' || !pt)
+        reasons.push('Competitive international fees for larger portfolios');
     if (broker.rating && broker.rating >= 4.5)
       reasons.push(`Highly rated (${broker.rating}/5) by our editorial team`);
 
@@ -344,7 +387,7 @@ export default function QuizPage() {
               </div>
             </div>
             <h1 className="text-xl md:text-3xl font-extrabold mb-1 md:mb-2">Your Shortlist</h1>
-            <p className="text-[0.69rem] md:text-base text-slate-600">Brokers that scored highest on your criteria.</p>
+            <p className="text-[0.69rem] md:text-base text-slate-600">Platforms that scored highest on your criteria.</p>
             <div className="flex items-center justify-center gap-2 md:gap-3 mt-2 md:mt-3 text-[0.62rem] md:text-xs text-slate-400">
               <span className="flex items-center gap-1">
                 <svg className="w-2.5 h-2.5 md:w-3 md:h-3 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
@@ -437,9 +480,44 @@ export default function QuizPage() {
               </div>
 
               <div className="flex flex-wrap gap-1.5 md:gap-3 text-[0.62rem] md:text-xs text-slate-500 mb-3 md:mb-5">
-                <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">ASX: {topMatch.broker.asx_fee}</span>
-                <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">CHESS: {topMatch.broker.chess_sponsored ? 'Yes' : 'No'}</span>
-                <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">SMSF: {topMatch.broker.smsf_support ? 'Yes' : 'No'}</span>
+                {(!topMatch.broker.platform_type || topMatch.broker.platform_type === 'share_broker') && (
+                  <>
+                    <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">ASX: {topMatch.broker.asx_fee}</span>
+                    <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">CHESS: {topMatch.broker.chess_sponsored ? 'Yes' : 'No'}</span>
+                    <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">SMSF: {topMatch.broker.smsf_support ? 'Yes' : 'No'}</span>
+                  </>
+                )}
+                {topMatch.broker.platform_type === 'crypto_exchange' && (
+                  <>
+                    <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">AUSTRAC Registered</span>
+                    <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">Crypto Exchange</span>
+                  </>
+                )}
+                {topMatch.broker.platform_type === 'robo_advisor' && (
+                  <>
+                    <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">Automated Investing</span>
+                    <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">Managed Portfolio</span>
+                  </>
+                )}
+                {topMatch.broker.platform_type === 'research_tool' && (
+                  <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">Research & Analysis</span>
+                )}
+                {topMatch.broker.platform_type === 'super_fund' && (
+                  <>
+                    <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">Superannuation</span>
+                    <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">APRA Regulated</span>
+                  </>
+                )}
+                {topMatch.broker.platform_type === 'property_platform' && (
+                  <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">Property Investing</span>
+                )}
+                {topMatch.broker.platform_type === 'cfd_forex' && (
+                  <>
+                    <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">CFD & Forex</span>
+                    <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">Leveraged Trading</span>
+                  </>
+                )}
+                <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">Rating: {topMatch.broker.rating}/5</span>
               </div>
               <a
                 href={getAffiliateLink(topMatch.broker)}
@@ -468,7 +546,12 @@ export default function QuizPage() {
           )}
 
           {/* Quick Comparison Table */}
-          {allResults.length > 1 && (
+          {allResults.length > 1 && (() => {
+            // Determine if results are mostly share brokers for column selection
+            const hasShareBrokers = allResults.some(r => r.broker && (!r.broker.platform_type || r.broker.platform_type === 'share_broker'));
+            const showShareCols = hasShareBrokers || allResults.every(r => !r.broker?.platform_type);
+
+            return (
             <div className="bg-white border border-slate-200 rounded-xl overflow-hidden mb-3 md:mb-6 result-card-in result-card-in-delay-2">
               <div className="px-3 py-2 md:px-4 md:py-3 bg-slate-50 border-b border-slate-200">
                 <h3 className="text-xs md:text-sm font-bold text-slate-700">Quick Comparison</h3>
@@ -477,10 +560,11 @@ export default function QuizPage() {
                 <table className="w-full text-xs md:text-sm">
                   <thead>
                     <tr className="border-b border-slate-100">
-                      <th scope="col" className="px-2.5 md:px-4 py-1.5 md:py-2 text-left text-[0.62rem] md:text-xs text-slate-500 font-medium">Broker</th>
-                      <th scope="col" className="px-2 md:px-3 py-1.5 md:py-2 text-center text-[0.62rem] md:text-xs text-slate-500 font-medium">ASX Fee</th>
-                      <th scope="col" className="px-2 md:px-3 py-1.5 md:py-2 text-center text-[0.62rem] md:text-xs text-slate-500 font-medium hidden md:table-cell">FX Rate</th>
-                      <th scope="col" className="px-2 md:px-3 py-1.5 md:py-2 text-center text-[0.62rem] md:text-xs text-slate-500 font-medium">CHESS</th>
+                      <th scope="col" className="px-2.5 md:px-4 py-1.5 md:py-2 text-left text-[0.62rem] md:text-xs text-slate-500 font-medium">Platform</th>
+                      <th scope="col" className="px-2 md:px-3 py-1.5 md:py-2 text-center text-[0.62rem] md:text-xs text-slate-500 font-medium">Type</th>
+                      {showShareCols && (
+                        <th scope="col" className="px-2 md:px-3 py-1.5 md:py-2 text-center text-[0.62rem] md:text-xs text-slate-500 font-medium hidden md:table-cell">ASX Fee</th>
+                      )}
                       <th scope="col" className="px-2 md:px-3 py-1.5 md:py-2 text-center text-[0.62rem] md:text-xs text-slate-500 font-medium">Rating</th>
                       <th scope="col" className="px-2 md:px-3 py-1.5 md:py-2 text-center text-[0.62rem] md:text-xs text-slate-500 font-medium"><span className="sr-only">Action</span></th>
                     </tr>
@@ -500,13 +584,22 @@ export default function QuizPage() {
                             {i === 0 && <span className="text-[0.45rem] md:text-[0.5rem] px-1 py-px md:px-1.5 md:py-0.5 bg-slate-100 text-slate-700 rounded-full font-bold">TOP</span>}
                           </div>
                         </td>
-                        <td className="px-2 md:px-3 py-2 md:py-2.5 text-center text-[0.62rem] md:text-xs">{r.broker.asx_fee || 'N/A'}</td>
-                        <td className="px-2 md:px-3 py-2 md:py-2.5 text-center text-[0.62rem] md:text-xs hidden md:table-cell">{r.broker.fx_rate != null ? `${r.broker.fx_rate}%` : 'N/A'}</td>
-                        <td className="px-2 md:px-3 py-2 md:py-2.5 text-center text-[0.69rem]">
-                          <span className={r.broker.chess_sponsored ? 'text-emerald-600' : 'text-red-400'}>
-                            {r.broker.chess_sponsored ? '✓' : '✗'}
+                        <td className="px-2 md:px-3 py-2 md:py-2.5 text-center text-[0.56rem] md:text-[0.65rem]">
+                          <span className="px-1 py-0.5 rounded bg-slate-100 text-slate-600">
+                            {r.broker.platform_type === 'crypto_exchange' ? 'Crypto'
+                              : r.broker.platform_type === 'robo_advisor' ? 'Robo'
+                              : r.broker.platform_type === 'research_tool' ? 'Research'
+                              : r.broker.platform_type === 'super_fund' ? 'Super'
+                              : r.broker.platform_type === 'property_platform' ? 'Property'
+                              : r.broker.platform_type === 'cfd_forex' ? 'CFD/FX'
+                              : 'Broker'}
                           </span>
                         </td>
+                        {showShareCols && (
+                          <td className="px-2 md:px-3 py-2 md:py-2.5 text-center text-[0.62rem] md:text-xs hidden md:table-cell">
+                            {(!r.broker.platform_type || r.broker.platform_type === 'share_broker') ? (r.broker.asx_fee || 'N/A') : '—'}
+                          </td>
+                        )}
                         <td className="px-2 md:px-3 py-2 md:py-2.5 text-center text-[0.62rem] md:text-xs font-semibold">{r.broker.rating}/5</td>
                         <td className="px-2 md:px-3 py-2 md:py-2.5 text-center">
                           <a
@@ -526,7 +619,8 @@ export default function QuizPage() {
                 </table>
               </div>
             </div>
-          )}
+            );
+          })()}
 
           {/* Cohort Insights — "People Like Me" */}
           {answers.length >= 3 && (

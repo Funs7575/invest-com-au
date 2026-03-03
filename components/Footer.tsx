@@ -104,6 +104,7 @@ export default function Footer() {
               <h4 className="text-white font-semibold mb-2 md:mb-4 text-xs md:text-sm">Learn</h4>
               <ul className="space-y-0.5 md:space-y-2 text-xs md:text-sm">
                 <li><Link href="/articles" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Guides</Link></li>
+                <li><Link href="/glossary" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Glossary</Link></li>
                 <li><Link href="/calculators" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Calculators</Link></li>
                 <li><Link href="/scenarios" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Best For...</Link></li>
                 <li><Link href="/pro" className="hover:text-white transition-colors text-amber-400 inline-block py-1 min-h-[44px]">Pro ✦</Link></li>

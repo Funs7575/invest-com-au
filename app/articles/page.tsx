@@ -150,6 +150,73 @@ const ARTICLE_CLUSTERS: ClusterDef[] = [
     ],
     filterCategories: ["tax", "smsf"],
   },
+  {
+    id: "robo-advisors",
+    name: "Robo-Advisors",
+    description: "Automated investing for hands-off portfolios.",
+    pillarSlug: "robo-advisors-australia",
+    spokesSlugs: [
+      "robo-advisor-vs-diy",
+      "stockspot-review",
+      "raiz-review",
+      "spaceship-review",
+    ],
+    filterCategories: ["robo-advisors"],
+  },
+  {
+    id: "research-tools",
+    name: "Research Tools",
+    description: "Analyse stocks and build conviction before you buy.",
+    pillarSlug: "investment-research-tools-australia",
+    spokesSlugs: [
+      "simply-wall-st-review",
+      "tradingview-australia",
+      "morningstar-australia",
+      "how-to-research-stocks",
+    ],
+    filterCategories: ["research-tools"],
+  },
+  {
+    id: "super",
+    name: "Superannuation",
+    description: "Choose the right super fund and grow your retirement savings.",
+    pillarSlug: "superannuation-guide-australia",
+    spokesSlugs: [
+      "smsf-guide",
+      "industry-vs-retail-super",
+      "super-contribution-strategies",
+      "how-to-consolidate-super",
+      "super-vs-investing-outside-super",
+    ],
+    filterCategories: ["super"],
+  },
+  {
+    id: "property",
+    name: "Property Investing",
+    description: "REITs, fractional property, and direct investment compared.",
+    pillarSlug: "property-investing-australia",
+    spokesSlugs: [
+      "reits-australia",
+      "fractional-property-investing",
+      "property-vs-shares",
+      "negative-gearing-explained",
+      "investment-property-loans",
+    ],
+    filterCategories: ["property"],
+  },
+  {
+    id: "cfd-forex",
+    name: "CFD & Forex",
+    description: "Understand leveraged trading and manage the risks.",
+    pillarSlug: "cfd-forex-trading-australia",
+    spokesSlugs: [
+      "what-is-cfd-trading",
+      "forex-trading-australia",
+      "cfd-vs-share-trading",
+      "cfd-risk-management",
+    ],
+    filterCategories: ["cfd-forex"],
+  },
 ];
 
 /** All slugs used by clusters, for identifying "unclustered" articles */
