@@ -254,7 +254,7 @@ export default async function BestBrokerPage({
       <div className="py-12">
         <OnThisPage items={[
           ...(topPick ? [{ id: "top-pick", label: "Top Pick" }] : []),
-          { id: "all-brokers", label: "All Brokers" },
+          { id: "all-brokers", label: "All Platforms" },
           ...(cat.sections.length > 0 ? [{ id: "editorial", label: "Analysis" }] : []),
           ...(cat.faqs.length > 0 ? [{ id: "faq", label: "FAQ" }] : []),
           ...(relatedArticles.length > 0 ? [{ id: "related-articles", label: "Related Articles" }] : []),

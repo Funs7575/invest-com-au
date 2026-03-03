@@ -460,10 +460,10 @@ export default function FeeImpactClient({ brokers }: Props) {
                   prefix="$"
                 />
                 <SelectField
-                  label="Your Current Broker"
+                  label="Your Current Platform"
                   value={currentBrokerSlug}
                   onChange={setCurrentBrokerSlug}
-                  placeholder="Select your broker..."
+                  placeholder="Select your platform..."
                 >
                   {brokers.map((b) => (
                     <option key={b.slug} value={b.slug}>
@@ -564,12 +564,12 @@ export default function FeeImpactClient({ brokers }: Props) {
                   {/* Broker ranking table */}
                   <div>
                     <h3 className="text-sm font-bold text-slate-700 mb-3">
-                      All Brokers Ranked by Annual Cost
+                      All Platforms Ranked by Annual Cost
                     </h3>
 
                     {/* Table header */}
                     <div className="hidden md:grid grid-cols-12 gap-2 px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-400">
-                      <div className="col-span-3">Broker</div>
+                      <div className="col-span-3">Platform</div>
                       <div className="col-span-2 text-right">ASX Fees</div>
                       <div className="col-span-2 text-right">US + FX</div>
                       <div className="col-span-1 text-right">Other</div>
@@ -847,7 +847,7 @@ export default function FeeImpactClient({ brokers }: Props) {
                   <div className="flex flex-wrap gap-2 no-print">
                     <button
                       onClick={() => {
-                        const headers = ["Rank", "Broker", "ASX Fees", "US Fees", "FX Fees", "Inactivity", "Total/yr"];
+                        const headers = ["Rank", "Platform", "ASX Fees", "US Fees", "FX Fees", "Inactivity", "Total/yr"];
                         const exportRows = (isPro ? results : results.slice(0, FREE_ROWS));
                         const rows = exportRows.map((r, i) => [
                           String(i + 1),

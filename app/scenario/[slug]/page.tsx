@@ -164,7 +164,7 @@ export default async function ScenarioPage({
           if (s.problem) tocItems.push({ id: "the-problem", label: "The Problem" });
           if (s.solution) tocItems.push({ id: "the-solution", label: "The Solution" });
           if (s.considerations?.length) tocItems.push({ id: "key-considerations", label: "Key Considerations" });
-          if (recBrokers.length > 0) tocItems.push({ id: "brokers-to-compare", label: "Brokers to Compare" });
+          if (recBrokers.length > 0) tocItems.push({ id: "brokers-to-compare", label: "Platforms to Compare" });
           if (guide?.sections) guide.sections.forEach((sec, i) => tocItems.push({ id: `guide-${i}`, label: sec.heading }));
           if (guide?.faqs?.length) tocItems.push({ id: "faqs", label: "FAQ" });
           return tocItems.length > 2 ? <OnThisPage items={tocItems} /> : null;
@@ -219,11 +219,11 @@ export default async function ScenarioPage({
           </Link>
         </div>
 
-        {/* Brokers Worth Comparing */}
+        {/* Platforms Worth Comparing */}
         {recBrokers.length > 0 && (
           <>
             <h2 id="brokers-to-compare" className="text-lg md:text-xl font-extrabold mb-2 md:mb-3 text-brand scroll-mt-24">
-              Brokers Worth Comparing
+              Platforms Worth Comparing
             </h2>
             <p className="text-[0.69rem] md:text-xs text-slate-400 mb-2.5 md:mb-3">{ADVERTISER_DISCLOSURE_SHORT}</p>
             <div className="space-y-2.5 md:space-y-3 mb-5 md:mb-8">

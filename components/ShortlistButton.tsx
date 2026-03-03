@@ -34,7 +34,7 @@ export default memo(function ShortlistButton({
           : "bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-600"
       }`}
       aria-label={saved ? `Remove ${name} from shortlist` : `Save ${name} to shortlist`}
-      title={saved ? "Remove from My Brokers" : "Save to My Brokers"}
+      title={saved ? "Remove from My Platforms" : "Save to My Platforms"}
     >
       <svg
         className={iconSize}

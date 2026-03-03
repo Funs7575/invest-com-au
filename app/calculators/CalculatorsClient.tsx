@@ -679,18 +679,18 @@ function SwitchingCostCalculator({ brokers, searchParams }: { brokers: Broker[];
       id="switching"
       iconName="arrow-right-left"
       title="Switching Cost Simulator"
-      desc="See if switching brokers is worth it after factoring in the $54 CHESS transfer fee."
+      desc="See if switching platforms is worth it after factoring in the $54 CHESS transfer fee."
     >
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Inputs */}
         <div className="lg:col-span-5 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <SelectField label="Current Broker" value={currentSlug} onChange={setCurrentSlug} placeholder="Select broker...">
+            <SelectField label="Current Platform" value={currentSlug} onChange={setCurrentSlug} placeholder="Select platform...">
               {brokers.map((b) => (
                 <option key={b.slug} value={b.slug}>{b.name} ({b.asx_fee || "N/A"}/trade)</option>
               ))}
             </SelectField>
-            <SelectField label="New Broker" value={newSlug} onChange={setNewSlug} placeholder="Select broker...">
+            <SelectField label="New Platform" value={newSlug} onChange={setNewSlug} placeholder="Select platform...">
               {brokers.map((b) => (
                 <option key={b.slug} value={b.slug}>{b.name} ({b.asx_fee || "N/A"}/trade)</option>
               ))}
@@ -1102,10 +1102,10 @@ function ChessLookup({ brokers, searchParams }: { brokers: Broker[]; searchParam
       id="chess"
       iconName="shield-check"
       title="CHESS Sponsorship Lookup"
-      desc="Check if a broker uses CHESS sponsorship or a custodial model, and what it means for you."
+      desc="Check if a platform uses CHESS sponsorship or a custodial model, and what it means for you."
     >
       <div className="max-w-md mb-6">
-        <SelectField label="Select Broker" value={selectedSlug} onChange={setSelectedSlug} placeholder="Choose a broker...">
+        <SelectField label="Select Platform" value={selectedSlug} onChange={setSelectedSlug} placeholder="Choose a platform...">
           {brokers.map((b) => (
             <option key={b.slug} value={b.slug}>{b.name}</option>
           ))}

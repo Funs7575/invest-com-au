@@ -4,9 +4,9 @@ import ProDealsClient from "./ProDealsClient";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 
 export const metadata = {
-  title: "Exclusive Pro Deals — Broker Offers for Pro Members",
+  title: "Exclusive Pro Deals — Platform Offers for Pro Members",
   description:
-    "Exclusive broker deals and offers only available to Investor Pro members. Special sign-up bonuses, reduced fees, and premium perks.",
+    "Exclusive platform deals and offers only available to Investor Pro members. Special sign-up bonuses, reduced fees, and premium perks.",
   alternates: { canonical: "/pro/deals" },
 };
 

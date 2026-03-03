@@ -182,7 +182,7 @@ export default function BrokerReviewClient({
     ...(feeHistory.length > 0 ? [{ id: "fee-history", label: "Fee History" }] : []),
     { id: "details", label: "Details" },
     ...(relatedDeals.length > 0 ? [{ id: "deals", label: "Deals" }] : []),
-    ...(similar.length > 0 ? [{ id: "similar", label: "Similar Brokers" }] : []),
+    ...(similar.length > 0 ? [{ id: "similar", label: "Similar Platforms" }] : []),
     ...(relatedArticles && relatedArticles.length > 0 ? [{ id: "related-articles", label: "Related Guides" }] : []),
     { id: "questions", label: "Q&A" },
   ];
@@ -812,10 +812,10 @@ export default function BrokerReviewClient({
           </div>
         )}
 
-        {/* Similar Brokers */}
+        {/* Similar Platforms */}
         {similar.length > 0 && (
           <>
-            <h2 id="similar" className="text-xl font-extrabold mb-2 scroll-mt-20">Similar Brokers</h2>
+            <h2 id="similar" className="text-xl font-extrabold mb-2 scroll-mt-20">Similar Platforms</h2>
             <p className="text-sm text-slate-600 mb-4">If {b.name} isn&apos;t quite right, consider these alternatives:</p>
             <ScrollReveal animation="scroll-stagger-children" className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
               {similar.map(s => (

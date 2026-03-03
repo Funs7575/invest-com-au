@@ -15,10 +15,10 @@ export default function ShortlistPage() {
       <div className="flex items-center justify-between mb-4 md:mb-6">
         <div>
           <h1 className="text-xl md:text-3xl font-extrabold text-slate-900">
-            My Brokers
+            My Platforms
           </h1>
           <p className="text-xs md:text-sm text-slate-500 mt-0.5">
-            Tap the heart on any broker to save it here.
+            Tap the heart on any platform to save it here.
           </p>
         </div>
       </div>
