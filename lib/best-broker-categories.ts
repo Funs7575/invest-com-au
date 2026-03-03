@@ -1283,6 +1283,348 @@ const categories: BestBrokerCategory[] = [
       },
     ],
   },
+  // ──────────────────────────────────────────────
+  // Super Funds
+  // ──────────────────────────────────────────────
+  {
+    slug: "super-funds",
+    title: `Best Super Funds in Australia (${yr})`,
+    h1: "Best Super Funds in Australia",
+    metaDescription:
+      `Compare Australia's top super funds. Fees, performance, insurance, and investment options reviewed. ${upd}.`,
+    intro:
+      `Superannuation is your single largest investment outside your home — yet most Australians never actively choose their fund. Switching to a better-performing, lower-fee super fund can mean tens of thousands more at retirement. Here are Australia's best super funds for ${yr}.`,
+    filter: (b) => b.platform_type === "super_fund",
+    sort: (a, b) => (b.rating ?? 0) - (a.rating ?? 0),
+    criteria: [
+      "APRA-regulated super fund or AFSL holder",
+      "Competitive total fees (admin + investment)",
+      "Strong long-term investment performance",
+      "Quality insurance and member services",
+    ],
+    sections: [
+      {
+        heading: "Why Your Super Fund Choice Matters",
+        body: "A 25-year-old earning $70,000 with a high-fee fund (1.5% total fees) versus a low-fee fund (0.5% total fees) can retire with $200,000+ less — just from the fee difference compounding over 40 years. Performance matters too: the gap between the best and worst performing balanced super funds over 10 years is often 2%+ per year. Choosing the right fund is one of the highest-impact financial decisions you can make.",
+      },
+      {
+        heading: "Industry Funds vs Retail Funds vs SMSFs",
+        body: "Industry funds (AustralianSuper, HESTA, Cbus) are run as member-owned not-for-profit and typically have lower fees. Retail funds (Colonial First State, MLC) are run by banks/insurers and offer more investment choice but at higher average fees. Self-Managed Super Funds (SMSFs) give you total control but cost $2,000-5,000+ per year to run and are only cost-effective for balances above $200,000-500,000. Most Australians are best served by a high-performing industry fund.",
+      },
+      {
+        heading: "How to Compare Super Funds",
+        body: "Focus on three things: total fees (admin fee + investment option fees + insurance premiums), long-term performance (10-year returns of the 'balanced' or 'growth' option), and insurance (default life and TPD cover). Don't just compare headline returns — check whether those returns are after fees and taxes. The ATO's YourSuper comparison tool is a useful starting point, and we build on it with deeper analysis above.",
+      },
+    ],
+    relatedLinks: [
+      { label: "Best for SMSF", href: "/best/smsf" },
+      { label: "Robo-Advisors", href: "/best/robo-advisors" },
+      { label: "Fee Calculator", href: "/calculators" },
+      { label: "Compare All Platforms", href: "/compare" },
+    ],
+    faqs: [
+      {
+        question: "What is the best performing super fund in Australia?",
+        answer:
+          "Performance varies year to year, but over 10-year periods, funds like AustralianSuper, Hostplus, UniSuper, and QSuper have consistently ranked among the top performers for their balanced/growth options. Past performance doesn't guarantee future results, but consistent long-term outperformance is a strong signal.",
+      },
+      {
+        question: "Should I switch super funds?",
+        answer:
+          "If your current fund has high fees and below-average returns compared to alternatives, switching can save you tens of thousands by retirement. Before switching, check whether you'll lose any insurance benefits, and make sure your new fund's insurance cover meets your needs. Rolling over is free and takes 3-5 business days.",
+      },
+      {
+        question: "How much super should I have at my age?",
+        answer:
+          "As a rough guide: at 30 you might expect $50,000-80,000, at 40 around $150,000-250,000, and at 50 around $300,000-500,000. These vary widely depending on salary, contribution history, and fund performance. The key is whether you're on track for a comfortable retirement — the ASFA Retirement Standard estimates singles need ~$595,000 and couples ~$690,000 at retirement.",
+      },
+    ],
+  },
+  // ──────────────────────────────────────────────
+  // Property Investing
+  // ──────────────────────────────────────────────
+  {
+    slug: "property-investing",
+    title: `Best Property Investing Platforms in Australia (${yr})`,
+    h1: "Best Property Investing Platforms in Australia",
+    metaDescription:
+      `Compare fractional property, REITs, and property investment platforms in Australia. Invest in property from $100. ${upd}.`,
+    intro:
+      `Property investing no longer requires a $500,000 deposit. Fractional property platforms, REITs, and property syndicates let you invest in Australian real estate from as little as $100. Here are the best property investing platforms for ${yr}.`,
+    filter: (b) => b.platform_type === "property_platform",
+    sort: (a, b) => (b.rating ?? 0) - (a.rating ?? 0),
+    criteria: [
+      "ASIC or APRA regulated platform",
+      "Transparent fee structure and property reporting",
+      "Track record of distributions or capital returns",
+      "Accessible minimum investment under $10,000",
+    ],
+    sections: [
+      {
+        heading: "Ways to Invest in Property Without Buying a House",
+        body: "You don't need to buy a whole property to benefit from real estate returns. REITs (Real Estate Investment Trusts) trade on the ASX like shares and give you exposure to commercial property portfolios. Fractional property platforms like BrickX let you buy 'bricks' in specific residential properties. Property syndicates pool investor money to buy commercial or development sites. Each approach has different risk, return, and liquidity profiles.",
+      },
+      {
+        heading: "REITs vs Fractional Property vs Direct Investment",
+        body: "REITs are the most liquid — you can buy and sell on the ASX any trading day. They typically hold diversified portfolios of commercial property (offices, warehouses, retail). Fractional platforms offer exposure to specific residential properties but with less liquidity. Direct property investment gives you full control but requires large capital, a mortgage, and active management. For most investors, REITs offer the best combination of diversification, liquidity, and low minimum investment.",
+      },
+      {
+        heading: "Property vs Shares: The Australian Debate",
+        body: "Australians love property, but the data tells an interesting story. Over 30-year periods, Australian shares and property have delivered similar total returns (7-10% per year including income). Shares are more liquid, more diversified, and cheaper to access. Property offers leverage (via a mortgage) and tax benefits like negative gearing. A balanced portfolio can include both — and you don't need a mortgage to get property exposure through REITs and fractional platforms.",
+      },
+    ],
+    relatedLinks: [
+      { label: "Best Robo-Advisors", href: "/best/robo-advisors" },
+      { label: "Best for ETF Investing", href: "/best/etf-platforms" },
+      { label: "Compare All Platforms", href: "/compare" },
+      { label: "Fee Calculator", href: "/calculators" },
+    ],
+    faqs: [
+      {
+        question: "Can I invest in property with $1,000 in Australia?",
+        answer:
+          "Yes. ASX-listed REITs can be purchased for the price of a single unit (often under $20). Fractional property platforms like BrickX have minimums as low as $50-100. These let you build property exposure gradually without needing a deposit for a physical property.",
+      },
+      {
+        question: "What is the best REIT in Australia?",
+        answer:
+          "Popular Australian REITs include Goodman Group (industrial/logistics), Scentre Group (retail), and Stockland (diversified). Vanguard's VAP ETF gives you diversified exposure across all major ASX-listed REITs in a single trade. The best choice depends on whether you want income (higher-yielding REITs) or growth.",
+      },
+      {
+        question: "Is fractional property investing safe?",
+        answer:
+          "Fractional platforms in Australia must hold an AFSL and operate under ASIC regulation. Your investment is typically held in a trust structure. However, fractional property is less liquid than REITs — you may have to wait to sell your 'bricks'. Understand the platform's liquidity mechanism before investing.",
+      },
+    ],
+  },
+  // ──────────────────────────────────────────────
+  // CFD & Forex
+  // ──────────────────────────────────────────────
+  {
+    slug: "cfd-forex",
+    title: `Best CFD & Forex Brokers in Australia (${yr})`,
+    h1: "Best CFD and Forex Brokers in Australia",
+    metaDescription:
+      `Compare ASIC-regulated CFD and forex brokers. Spreads, leverage, platforms and risk warnings reviewed. ${upd}.`,
+    intro:
+      `CFDs and forex allow you to trade global markets with leverage — amplifying both gains and losses. These products are complex and high-risk: ASIC data shows that 60-80% of retail CFD accounts lose money. If you understand the risks, here are Australia's best-regulated CFD and forex brokers for ${yr}.`,
+    filter: (b) => b.platform_type === "cfd_forex",
+    sort: (a, b) => (b.rating ?? 0) - (a.rating ?? 0),
+    criteria: [
+      "ASIC-regulated with current AFSL",
+      "Competitive spreads on major pairs and indices",
+      "Professional-grade trading platform (MT4/MT5 or proprietary)",
+      "Negative balance protection for retail clients",
+    ],
+    sections: [
+      {
+        heading: "What Are CFDs and Forex?",
+        body: "CFDs (Contracts for Difference) let you speculate on price movements of shares, indices, commodities, and currencies without owning the underlying asset. Forex (foreign exchange) is the trading of currency pairs like AUD/USD. Both use leverage — meaning you can control a large position with a smaller amount of capital. This magnifies both profits and losses. ASIC caps retail leverage at 30:1 for major forex pairs and 20:1 for indices.",
+      },
+      {
+        heading: "Risk Warning: Most Retail Traders Lose Money",
+        body: "ASIC requires all CFD brokers to disclose the percentage of retail accounts that lose money. Most report figures between 60-80%. CFD and forex trading is not investing in the traditional sense — it's short-term speculation with significant risk of losing your entire deposit. Only trade with money you can afford to lose, use stop-loss orders, and never trade with money needed for living expenses.",
+      },
+      {
+        heading: "Choosing a Regulated CFD Broker",
+        body: "Always use an ASIC-regulated broker for CFD and forex trading. ASIC provides protections including leverage caps, negative balance protection (so you can't lose more than your deposit), and client money segregation. Offshore brokers may offer higher leverage but provide none of these protections. Key factors to compare: spreads on your preferred instruments, platform quality, overnight funding rates, and customer support availability during Australian trading hours.",
+      },
+    ],
+    relatedLinks: [
+      { label: "Compare All Platforms", href: "/compare" },
+      { label: "Best for US Shares", href: "/best/us-shares" },
+      { label: "Best for Day Trading", href: "/best/day-trading" },
+      { label: "Research Tools", href: "/best/research-tools" },
+    ],
+    faqs: [
+      {
+        question: "What is the best CFD broker in Australia?",
+        answer:
+          "The best CFD broker depends on what you trade. For forex, look at spreads on major pairs (EUR/USD, AUD/USD). For indices, compare spreads on ASX 200 and S&P 500 CFDs. All brokers listed above are ASIC-regulated with negative balance protection for retail clients. Compare platforms (MT4/MT5), fees, and available instruments.",
+      },
+      {
+        question: "Is CFD trading legal in Australia?",
+        answer:
+          "Yes. CFDs are legal and regulated by ASIC in Australia. Since 2021, ASIC has imposed stricter rules including leverage caps (30:1 for major forex), mandatory negative balance protection, and bans on incentive offers to retail traders. These rules aim to protect retail traders from excessive losses.",
+      },
+      {
+        question: "How much money do you need to start CFD trading?",
+        answer:
+          "Most Australian CFD brokers have minimums of $200-500 to open an account. However, starting with a small balance and high leverage is extremely risky. Financial professionals often suggest only trading with money you can afford to lose entirely, and starting with a demo account to learn the platform.",
+      },
+    ],
+  },
+  // ──────────────────────────────────────────────
+  // Credit Cards for Investors
+  // ──────────────────────────────────────────────
+  {
+    slug: "credit-cards-investors",
+    title: `Best Credit Cards for Investors in Australia (${yr})`,
+    h1: "Best Credit Cards for Australian Investors",
+    metaDescription:
+      `Credit cards with no FX fees, cashback, and rewards optimised for investors. Not all 250 cards — just the 10-15 that matter. ${upd}.`,
+    intro:
+      `You don't need a generic credit card comparison — you need cards that work for your investing lifestyle. No FX fees when buying US shares, cashback that compounds your returns, and travel rewards from international broker spending. Here are the credit cards that actually matter for Australian investors.`,
+    filter: () => false, // Placeholder — credit cards aren't in the brokers table
+    sort: (a, b) => (b.rating ?? 0) - (a.rating ?? 0),
+    criteria: [
+      "No or low foreign transaction fees (for international trading)",
+      "Cashback or rewards on everyday spending",
+      "No annual fee or high-value offset with rewards",
+      "Complementary to an investing strategy",
+    ],
+    sections: [
+      {
+        heading: "Why Investors Need Different Credit Cards",
+        body: "If you're buying US shares through an international broker or funding a Wise account to convert AUD, foreign transaction fees (typically 2-3%) add up fast. A no-FX-fee card saves you money every time you move money internationally. Cashback cards can funnel extra money into your investments — $500-1,000 per year of cashback reinvested over decades compounds significantly.",
+      },
+      {
+        heading: "Best Cards for No Foreign Transaction Fees",
+        body: "A handful of Australian credit cards charge 0% on foreign currency transactions. These are invaluable if you use international brokers, travel for investing conferences, or pay for overseas research subscriptions. Cards from ING, Bankwest, and 28 Degrees have consistently offered no-FX-fee products. Always check the current fee schedule as these change periodically.",
+      },
+      {
+        heading: "Cashback vs Points: What's Better for Investors?",
+        body: "For investors, cashback is usually more valuable than points. Cashback gives you real money you can invest immediately. Points are worth variable amounts depending on how you redeem them, and devaluations happen regularly. A 1.5% cashback card earning $1,200/year in cashback, invested at 7% annual growth for 20 years, becomes roughly $52,000. That's the power of combining card rewards with compound investing.",
+      },
+    ],
+    relatedLinks: [
+      { label: "Best for Low FX Fees", href: "/best/low-fx-fees" },
+      { label: "Best for US Shares", href: "/best/us-shares" },
+      { label: "Fee Calculator", href: "/calculators" },
+      { label: "Compare All Platforms", href: "/compare" },
+    ],
+    faqs: [
+      {
+        question: "What credit card is best for buying international shares?",
+        answer:
+          "Look for a card with zero foreign transaction fees. Most funding of international broker accounts is done via bank transfer or Wise, not credit card — but for platform subscriptions, research tools, and travel, a no-FX-fee card saves 2-3% per transaction.",
+      },
+      {
+        question: "Can I use a credit card to buy shares?",
+        answer:
+          "Most Australian brokers don't accept credit card payments for share purchases. You typically need to fund your account via bank transfer (BPAY, direct debit, or PayID). Some crypto exchanges accept credit cards but often charge higher fees. It's generally not advisable to use borrowed money (credit) to invest.",
+      },
+      {
+        question: "Is cashback better than frequent flyer points for investors?",
+        answer:
+          "Generally yes. Cashback has a fixed, transparent value you can reinvest immediately. Frequent flyer points are subject to devaluations and restrictions. However, if you travel frequently for investing events or international research, premium travel cards may offer better value through lounge access and travel insurance.",
+      },
+    ],
+  },
+  // ──────────────────────────────────────────────
+  // Savings Accounts for Investors
+  // ──────────────────────────────────────────────
+  {
+    slug: "savings-accounts",
+    title: `Best Savings Accounts for Investors in Australia (${yr})`,
+    h1: "Best Savings Accounts for Investors",
+    metaDescription:
+      `High-interest savings accounts for parking cash before investing. Emergency fund and opportunity fund options compared. ${upd}.`,
+    intro:
+      `Every investor needs a place to park cash — whether it's an emergency fund, a war chest for buying dips, or settlement cash between trades. The interest rate on that cash matters. Here are the best savings accounts for Australian investors.`,
+    filter: () => false, // Placeholder — savings accounts aren't in the brokers table
+    sort: (a, b) => (b.rating ?? 0) - (a.rating ?? 0),
+    criteria: [
+      "Competitive interest rate (at or above RBA cash rate)",
+      "No or low conditions for earning bonus interest",
+      "Easy withdrawals for investing when opportunities arise",
+      "ADI regulated (deposits protected up to $250,000)",
+    ],
+    sections: [
+      {
+        heading: "Why Investors Need a High-Interest Savings Account",
+        body: "Smart investors keep 3-6 months of expenses in an emergency fund, plus cash ready to deploy when opportunities arise. Parking this cash at 0.01% in a transaction account means losing purchasing power to inflation. A high-interest savings account earning 5%+ means your cash reserve is working while it waits. On $20,000, the difference between 0.01% and 5.3% is over $1,000 per year — that's real money left on the table.",
+      },
+      {
+        heading: "Emergency Fund vs Opportunity Fund",
+        body: "Your emergency fund (3-6 months expenses) should be in an account with no withdrawal conditions. Your opportunity fund (cash earmarked for investing) can tolerate slight restrictions like 'deposit $1,000/month' bonus interest conditions, since you're adding to it regularly anyway. Some investors maintain two accounts: one unconditional for emergencies, one with bonus conditions for higher interest on investing reserves.",
+      },
+      {
+        heading: "Term Deposits vs Savings Accounts for Investors",
+        body: "Term deposits lock your money for 3-12 months at a fixed rate. Savings accounts offer instant access. For investors, flexibility usually beats a slightly higher rate — you don't want to miss a buying opportunity because your cash is locked in a 12-month term deposit. Exception: if you have a large, defined sum you won't need for a known period, a term deposit removes the temptation to invest it prematurely.",
+      },
+    ],
+    relatedLinks: [
+      { label: "Compare All Platforms", href: "/compare" },
+      { label: "Best for Beginners", href: "/best/beginners" },
+      { label: "Fee Calculator", href: "/calculators" },
+      { label: "Robo-Advisors", href: "/best/robo-advisors" },
+    ],
+    faqs: [
+      {
+        question: "How much cash should an investor keep in savings?",
+        answer:
+          "A common guideline is 3-6 months of living expenses as an emergency fund, plus any cash you're accumulating for your next investment. The total depends on your income stability, risk tolerance, and whether you have other liquid assets. Some investors keep 5-10% of their portfolio in cash as an 'opportunity fund' for market dips.",
+      },
+      {
+        question: "Should I put spare cash in a savings account or invest it?",
+        answer:
+          "Cash needed within 1-2 years should generally stay in savings. Money you won't need for 5+ years is usually better invested (historically, shares have outperformed savings accounts over long periods). Cash for 2-5 years is a judgement call based on your risk tolerance and market conditions.",
+      },
+      {
+        question: "Are savings accounts safe in Australia?",
+        answer:
+          "Deposits up to $250,000 per person per ADI (Authorised Deposit-taking Institution) are guaranteed by the Australian Government's Financial Claims Scheme. This makes savings accounts one of the safest places for your cash — the guarantee covers bank, credit union, and building society deposits.",
+      },
+    ],
+  },
+  // ──────────────────────────────────────────────
+  // Money Transfer Services
+  // ──────────────────────────────────────────────
+  {
+    slug: "money-transfers",
+    title: `Best Money Transfer Services for Investors (${yr})`,
+    h1: "Best Money Transfer Services for Australian Investors",
+    metaDescription:
+      `Compare Wise, OFX, and Revolut for funding international broker accounts. Cheapest AUD to USD conversion rates. ${upd}.`,
+    intro:
+      `Buying US or international shares? You need to convert AUD to USD (or other currencies) — and your broker's built-in FX rate is usually the most expensive option. Dedicated money transfer services like Wise, OFX, and Revolut can save you 0.5-2% per transfer. Here's how to fund your international broker for less.`,
+    filter: () => false, // Placeholder — money transfer services aren't in the brokers table
+    sort: (a, b) => (b.rating ?? 0) - (a.rating ?? 0),
+    criteria: [
+      "Competitive AUD/USD conversion rates",
+      "Low or transparent transfer fees",
+      "Fast settlement (1-2 business days)",
+      "ASIC or AUSTRAC regulated",
+    ],
+    sections: [
+      {
+        heading: "Why Your Broker's FX Rate Costs You Money",
+        body: "Most brokers mark up the mid-market exchange rate by 0.5-0.7% (some charge 1%+). On a $10,000 AUD to USD conversion, that's $50-100+ in hidden fees. Dedicated transfer services like Wise typically charge 0.4-0.6% total, and you can see the exact fee before sending. Over a year of regular investing in US shares, switching to Wise or OFX can save hundreds of dollars.",
+      },
+      {
+        heading: "How to Fund an International Broker Account",
+        body: "The typical flow: Open a Wise (or similar) account → convert AUD to USD at the mid-market rate → transfer USD to your broker's US bank account. This usually takes 1-2 business days and costs 0.4-0.6% total. Compare this to your broker's built-in conversion which might charge 0.7%+ but is instant. For large or regular transfers, the external route saves meaningful money.",
+      },
+      {
+        heading: "Wise vs OFX vs Revolut for Investors",
+        body: "Wise is the most popular for small-to-medium transfers (under $50,000) with transparent pricing and a multi-currency account. OFX specialises in larger transfers ($10,000+) and often offers better rates for bigger amounts with no transfer fees. Revolut offers competitive rates but with monthly limits on fee-free exchanges. For regular US share investing, Wise's simplicity and consistency make it the default choice for most Australian investors.",
+      },
+    ],
+    relatedLinks: [
+      { label: "Best for US Shares", href: "/best/us-shares" },
+      { label: "Best for Low FX Fees", href: "/best/low-fx-fees" },
+      { label: "Best for International Shares", href: "/best/international-shares" },
+      { label: "FX Calculator", href: "/calculators?calc=fx" },
+    ],
+    faqs: [
+      {
+        question: "What is the cheapest way to convert AUD to USD for investing?",
+        answer:
+          "Wise typically offers the most competitive rates for amounts under $50,000, charging around 0.4-0.6% total. For larger amounts ($50,000+), OFX often provides better rates with dedicated dealing support. Both are significantly cheaper than most broker's built-in FX conversion.",
+      },
+      {
+        question: "Can I use Wise to fund my Interactive Brokers account?",
+        answer:
+          "Yes. Many Australian investors use Wise to convert AUD to USD, then transfer the USD to their Interactive Brokers (or Stake, Schwab, etc.) account. This avoids the broker's FX markup. The process typically takes 1-2 business days for the funds to arrive.",
+      },
+      {
+        question: "Is it worth using a money transfer service for small amounts?",
+        answer:
+          "For amounts under $1,000, the savings may only be $5-10 per transfer. If you invest regularly, those savings compound — $10 saved per month over 20 years invested at 7% becomes roughly $5,200. For irregular small transfers, the convenience of your broker's built-in conversion may outweigh the cost difference.",
+      },
+    ],
+  },
 ];
 
 export function getCategoryBySlug(slug: string): BestBrokerCategory | undefined {

@@ -408,6 +408,144 @@ export const TOPIC_CLUSTERS: TopicCluster[] = [
       },
     ],
   },
+  {
+    id: "super-australia",
+    name: "Superannuation in Australia",
+    pillar: {
+      slug: "superannuation-guide-australia",
+      href: "/article/superannuation-guide-australia",
+      title: "Superannuation Guide: Everything Australians Need to Know",
+      anchorText: "our complete guide to superannuation in Australia",
+    },
+    clusterPages: [
+      {
+        slug: "super-funds",
+        href: "/best/super-funds",
+        title: "Best Super Funds in Australia",
+        anchorText: "best super funds compared",
+      },
+      {
+        slug: "smsf-guide",
+        href: "/article/smsf-guide",
+        title: "SMSF Share Trading: Rules, Brokers & Tax Traps",
+        anchorText: "SMSF guide and tax rules",
+      },
+      {
+        slug: "industry-vs-retail-super",
+        href: "/article/industry-vs-retail-super",
+        title: "Industry vs Retail Super Funds: Which Is Better?",
+        anchorText: "industry vs retail super funds compared",
+      },
+      {
+        slug: "super-contribution-strategies",
+        href: "/article/super-contribution-strategies",
+        title: "Super Contribution Strategies to Boost Your Retirement",
+        anchorText: "super contribution strategies explained",
+      },
+      {
+        slug: "how-to-consolidate-super",
+        href: "/article/how-to-consolidate-super",
+        title: "How to Consolidate Your Super Funds",
+        anchorText: "how to consolidate multiple super accounts",
+      },
+      {
+        slug: "super-vs-investing-outside-super",
+        href: "/article/super-vs-investing-outside-super",
+        title: "Investing Inside vs Outside Super: Pros and Cons",
+        anchorText: "super vs personal investing compared",
+      },
+    ],
+  },
+  {
+    id: "property-investing",
+    name: "Property Investing in Australia",
+    pillar: {
+      slug: "property-investing-australia",
+      href: "/article/property-investing-australia",
+      title: "Property Investing in Australia: Complete Guide",
+      anchorText: "our complete guide to property investing in Australia",
+    },
+    clusterPages: [
+      {
+        slug: "property-investing",
+        href: "/best/property-investing",
+        title: "Best Property Investing Platforms in Australia",
+        anchorText: "best property investing platforms compared",
+      },
+      {
+        slug: "reits-australia",
+        href: "/article/reits-australia",
+        title: "Best REITs in Australia: ASX Property Trusts Explained",
+        anchorText: "best Australian REITs reviewed",
+      },
+      {
+        slug: "fractional-property-investing",
+        href: "/article/fractional-property-investing",
+        title: "Fractional Property Investing: BrickX, DomaCom & Alternatives",
+        anchorText: "fractional property platforms compared",
+      },
+      {
+        slug: "property-vs-shares",
+        href: "/article/property-vs-shares",
+        title: "Property vs Shares: Which Is the Better Investment?",
+        anchorText: "property vs shares investment comparison",
+      },
+      {
+        slug: "negative-gearing-explained",
+        href: "/article/negative-gearing-explained",
+        title: "Negative Gearing Explained: How It Works for Investors",
+        anchorText: "negative gearing strategy explained",
+      },
+      {
+        slug: "investment-property-loans",
+        href: "/article/investment-property-loans",
+        title: "Investment Property Loans: Rates, Tips & What to Watch",
+        anchorText: "investment property loan guide",
+      },
+    ],
+  },
+  {
+    id: "cfd-forex",
+    name: "CFD & Forex Trading in Australia",
+    pillar: {
+      slug: "cfd-forex-trading-australia",
+      href: "/article/cfd-forex-trading-australia",
+      title: "CFD & Forex Trading in Australia: Complete Guide",
+      anchorText: "our complete guide to CFD and forex trading in Australia",
+    },
+    clusterPages: [
+      {
+        slug: "cfd-forex",
+        href: "/best/cfd-forex",
+        title: "Best CFD and Forex Brokers in Australia",
+        anchorText: "best CFD and forex brokers compared",
+      },
+      {
+        slug: "what-is-cfd-trading",
+        href: "/article/what-is-cfd-trading",
+        title: "What Is CFD Trading? Risks, Leverage & How It Works",
+        anchorText: "CFD trading explained",
+      },
+      {
+        slug: "forex-trading-australia",
+        href: "/article/forex-trading-australia",
+        title: "Forex Trading in Australia: A Beginner's Guide",
+        anchorText: "forex trading guide for Australians",
+      },
+      {
+        slug: "cfd-vs-share-trading",
+        href: "/article/cfd-vs-share-trading",
+        title: "CFD vs Share Trading: Key Differences",
+        anchorText: "CFDs compared to share trading",
+      },
+      {
+        slug: "cfd-risk-management",
+        href: "/article/cfd-risk-management",
+        title: "CFD Risk Management: Stop-Losses, Position Sizing & More",
+        anchorText: "CFD risk management strategies",
+      },
+    ],
+  },
 ];
 
 /* ─── Lookup helpers ─── */

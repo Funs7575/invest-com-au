@@ -19,9 +19,11 @@ const navItems = [
 
 const popularLinks = [
   { label: `Best Brokers ${CURRENT_YEAR}`, href: "/article/best-share-trading-platforms-australia" },
+  { label: "Best Super Funds", href: "/best/super-funds" },
   { label: "Best Robo-Advisors", href: "/best/robo-advisors" },
-  { label: "Research Tools", href: "/best/research-tools" },
-  { label: "Best Crypto Exchanges", href: "/article/best-crypto-exchanges-australia" },
+  { label: "Property Investing", href: "/best/property-investing" },
+  { label: "Best Crypto", href: "/article/best-crypto-exchanges-australia" },
+  { label: "CFD & Forex", href: "/best/cfd-forex" },
   { label: "Best ETFs", href: "/article/best-etfs-australia" },
 ];
 

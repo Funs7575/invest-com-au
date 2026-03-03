@@ -19,17 +19,17 @@ import { ORGANIZATION_JSONLD, SITE_URL } from "@/lib/seo";
 export const metadata = {
   title: "Compare Australia's Best Investing Platforms",
   description:
-    "Compare Australian share brokers, crypto exchanges, robo-advisors, and research tools side-by-side. Real fees, real data, updated daily.",
+    "Compare Australian share brokers, crypto exchanges, robo-advisors, super funds, property platforms, and CFD brokers side-by-side. Real fees, real data, updated daily.",
   openGraph: {
     title: "Compare Australia's Best Investing Platforms — Invest.com.au",
-    description: "Compare Australian share brokers, crypto exchanges, robo-advisors, and research tools. Real fees, real data, updated daily.",
+    description: "Compare Australian share brokers, crypto exchanges, robo-advisors, super funds, property platforms, and CFD brokers. Real fees, real data, updated daily.",
     url: "/",
     images: [{ url: "/api/og", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image" as const,
     title: "Compare Australia's Best Investing Platforms — Invest.com.au",
-    description: "Compare Australian share brokers, crypto exchanges, robo-advisors, and research tools. Real fees, real data, updated daily.",
+    description: "Compare Australian share brokers, crypto exchanges, robo-advisors, super funds, property platforms, and CFD brokers. Real fees, real data, updated daily.",
   },
   alternates: { canonical: "/" },
 };
@@ -37,21 +37,23 @@ export const metadata = {
 const bestForCards = [
   { icon: "sprout", title: "Best for Beginners", description: "Low fees, simple platforms, educational resources", href: "/best/beginners", color: "bg-amber-50 border-amber-200 text-amber-800" },
   { icon: "globe", title: "Best for US Shares", description: "Low FX fees and $0 US brokerage compared", href: "/best/us-shares", color: "bg-slate-50 border-slate-200 text-slate-800" },
-  { icon: "coins", title: "Cheapest Brokers", description: "$0 brokerage and verified low-cost options", href: "/best/low-fees", color: "bg-amber-50 border-amber-200 text-amber-800" },
-  { icon: "shield-check", title: "CHESS-Sponsored", description: "Your shares held in your name on the ASX register", href: "/best/chess-sponsored", color: "bg-slate-50 border-slate-200 text-slate-800" },
   { icon: "cpu", title: "Best Robo-Advisors", description: "Automated investing with Stockspot, Raiz & more", href: "/best/robo-advisors", color: "bg-violet-50 border-violet-200 text-violet-800" },
+  { icon: "building", title: "Best Super Funds", description: "Compare fees, performance & insurance across funds", href: "/best/super-funds", color: "bg-emerald-50 border-emerald-200 text-emerald-800" },
+  { icon: "coins", title: "Cheapest Brokers", description: "$0 brokerage and verified low-cost options", href: "/best/low-fees", color: "bg-amber-50 border-amber-200 text-amber-800" },
   { icon: "bar-chart-3", title: "Research Tools", description: "Simply Wall St, TradingView & stock analysis", href: "/best/research-tools", color: "bg-cyan-50 border-cyan-200 text-cyan-800" },
-  { icon: "building", title: "Best for SMSF", description: "Compliant custody and SMSF account support", href: "/best/smsf", color: "bg-slate-50 border-slate-200 text-slate-800" },
-  { icon: "arrow-left-right", title: "Lowest FX Fees", description: "Save on currency conversion for international trades", href: "/best/low-fx-fees", color: "bg-amber-50 border-amber-200 text-amber-800" },
+  { icon: "shield-check", title: "Property Investing", description: "REITs, fractional property & investment platforms", href: "/best/property-investing", color: "bg-lime-50 border-lime-200 text-lime-800" },
+  { icon: "arrow-left-right", title: "CFD & Forex", description: "ASIC-regulated CFD and forex brokers compared", href: "/best/cfd-forex", color: "bg-rose-50 border-rose-200 text-rose-800" },
 ];
 
 const categoryStrip = [
   { label: "Shares", href: "/compare?category=shares" },
   { label: "Crypto", href: "/compare?category=crypto" },
-  { label: "Robo-Advisors", href: "/best/robo-advisors" },
-  { label: "Research Tools", href: "/best/research-tools" },
   { label: "ETFs", href: "/article/best-etfs-australia" },
-  { label: "Super", href: "/best/smsf", badge: "SMSF" },
+  { label: "Super", href: "/best/super-funds" },
+  { label: "Robo-Advisors", href: "/best/robo-advisors" },
+  { label: "Property", href: "/best/property-investing" },
+  { label: "CFDs", href: "/best/cfd-forex" },
+  { label: "Research", href: "/best/research-tools" },
 ];
 
 export const revalidate = 3600; // ISR: revalidate every hour
@@ -97,7 +99,7 @@ export default async function HomePage() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             ...ORGANIZATION_JSONLD,
-            description: "Australia's independent investing platform comparison. Compare fees, features, and safety across share brokers, crypto exchanges, robo-advisors, and research tools.",
+            description: "Australia's independent investing platform comparison. Compare fees, features, and safety across share brokers, crypto exchanges, super funds, robo-advisors, property platforms, and CFD brokers.",
           }),
         }}
       />
@@ -156,8 +158,8 @@ export default async function HomePage() {
             Compare Australia&apos;s Best<br className="hidden sm:block" /> Investing Platforms
           </h1>
           <p className="mt-2 md:mt-5 text-sm md:text-xl text-slate-500 max-w-2xl mx-auto hero-fade-up hero-fade-up-2 leading-relaxed">
-            <span className="md:hidden">Share brokers, crypto, robo-advisors &amp; research tools — compared free.</span>
-            <span className="hidden md:inline">Compare fees, features, and safety across share brokers, crypto exchanges, robo-advisors, and research tools — independent, transparent, and free.</span>
+            <span className="md:hidden">Shares, crypto, super, property, robo-advisors &amp; more — compared free.</span>
+            <span className="hidden md:inline">Compare fees, features, and safety across share brokers, crypto exchanges, super funds, robo-advisors, property platforms, and CFD brokers — independent, transparent, and free.</span>
           </p>
           {/* Category strip */}
           <div className="flex items-center justify-center flex-wrap gap-1.5 md:gap-2 mt-3 md:mt-5 hero-fade-up hero-fade-up-2">

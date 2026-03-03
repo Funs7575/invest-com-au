@@ -28,14 +28,17 @@ import ShortlistButton from "@/components/ShortlistButton";
 import BrokerLogo from "@/components/BrokerLogo";
 import AdSlot from "@/components/AdSlot";
 
-type FilterType = 'all' | 'shares' | 'beginner' | 'chess' | 'free' | 'us' | 'smsf' | 'low-fx' | 'crypto' | 'robo' | 'research';
+type FilterType = 'all' | 'shares' | 'beginner' | 'chess' | 'free' | 'us' | 'smsf' | 'low-fx' | 'crypto' | 'robo' | 'research' | 'super' | 'property' | 'cfd';
 type SortCol = 'name' | 'asx_fee_value' | 'us_fee_value' | 'fx_rate' | 'rating';
 
 const filters: { key: FilterType; label: string }[] = [
   { key: 'all', label: 'All Platforms' },
   { key: 'shares', label: 'Share Brokers' },
   { key: 'crypto', label: 'Crypto' },
+  { key: 'super', label: 'Super Funds' },
   { key: 'robo', label: 'Robo-Advisors' },
+  { key: 'property', label: 'Property' },
+  { key: 'cfd', label: 'CFD & Forex' },
   { key: 'research', label: 'Research Tools' },
   { key: 'beginner', label: 'Beginner' },
   { key: 'chess', label: 'CHESS Only' },
@@ -51,6 +54,9 @@ const CATEGORY_TO_FILTER: Record<string, FilterType> = {
   crypto: 'crypto',
   'robo-advisors': 'robo',
   'research-tools': 'research',
+  'super-funds': 'super',
+  'property': 'property',
+  'cfd-forex': 'cfd',
 };
 
 const feeTooltips: Record<string, string> = {
@@ -188,6 +194,9 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
       case 'crypto': list = list.filter(b => b.is_crypto); break;
       case 'robo': list = list.filter(b => b.platform_type === 'robo_advisor'); break;
       case 'research': list = list.filter(b => b.platform_type === 'research_tool'); break;
+      case 'super': list = list.filter(b => b.platform_type === 'super_fund'); break;
+      case 'property': list = list.filter(b => b.platform_type === 'property_platform'); break;
+      case 'cfd': list = list.filter(b => b.platform_type === 'cfd_forex'); break;
       // 'all' — no filtering, show everything
     }
     // Text search filter

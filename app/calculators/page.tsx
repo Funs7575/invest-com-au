@@ -18,6 +18,10 @@ const CALC_TITLES: Record<string, string> = {
   franking: "Franking Credits Calculator",
   chess: "CHESS Sponsorship Lookup",
   "fee-impact": "Fee Impact Calculator",
+  "compound-interest": "Compound Interest Calculator",
+  "dividend-reinvestment": "Dividend Reinvestment Calculator",
+  fire: "FIRE Calculator (Financial Independence)",
+  "property-vs-shares": "Property vs Shares Calculator",
 };
 
 type Props = {

@@ -16,6 +16,12 @@ export const CATEGORY_COLORS: Record<string, string> = {
   "robo-advisors": "bg-violet-100 text-violet-700",
   "research-tools": "bg-cyan-100 text-cyan-700",
   "micro-investing": "bg-pink-100 text-pink-700",
+  "super": "bg-emerald-100 text-emerald-700",
+  "property": "bg-lime-100 text-lime-700",
+  "cfd-forex": "bg-rose-100 text-rose-700",
+  "credit-cards": "bg-fuchsia-100 text-fuchsia-700",
+  "savings": "bg-sky-100 text-sky-700",
+  "money-transfers": "bg-teal-100 text-teal-700",
 };
 
 // ── Article → Best-for category mapping ──

@@ -13,7 +13,7 @@ import { filterByFrequencyCap } from "@/lib/marketplace/frequency-cap";
 import JargonTooltip from "@/components/JargonTooltip";
 import ShortlistButton from "@/components/ShortlistButton";
 
-const TAB_OPTIONS = ["All Platforms", "Share Trading", "Crypto Exchanges", "Robo-Advisors", "Research Tools", "SMSF"] as const;
+const TAB_OPTIONS = ["All Platforms", "Share Trading", "Crypto Exchanges", "Super Funds", "Robo-Advisors", "Property", "CFD & Forex", "Research Tools", "SMSF"] as const;
 type TabOption = (typeof TAB_OPTIONS)[number];
 
 function getCategories(broker: Broker): string[] {
@@ -25,6 +25,12 @@ function getCategories(broker: Broker): string[] {
       return ["Robo-Advisors"];
     case "research_tool":
       return ["Research Tools"];
+    case "super_fund":
+      return ["Super Funds"];
+    case "property_platform":
+      return ["Property"];
+    case "cfd_forex":
+      return ["CFD & Forex"];
     default: {
       const cats: string[] = ["Share Trading"];
       if (broker.smsf_support) cats.push("SMSF");
