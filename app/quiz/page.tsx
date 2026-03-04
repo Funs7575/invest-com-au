@@ -429,20 +429,43 @@ export default function QuizPage() {
             </div>
           </div>
 
-          {/* General Advice Warning */}
-          <div className="bg-slate-50 border border-slate-200 rounded-lg p-2.5 md:p-4 mb-3 md:mb-6">
+          {/* General Advice Warning — collapsed on mobile, visible on desktop */}
+          <div className="hidden md:block bg-slate-50 border border-slate-200 rounded-lg p-2.5 md:p-4 mb-3 md:mb-6">
             <p className="text-[0.62rem] md:text-xs text-slate-500 leading-relaxed">
               <strong>General Advice Warning:</strong> {GENERAL_ADVICE_WARNING} {ADVERTISER_DISCLOSURE_SHORT}
             </p>
           </div>
-
-          {/* Sponsored broker disclosure */}
-          {allResults.some(r => r.broker && isSponsored(r.broker)) && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-2.5 md:p-3 mb-3 md:mb-6">
-              <p className="text-[0.62rem] md:text-xs text-blue-700 leading-relaxed">
-                <strong>Sponsor Disclosure:</strong> Sponsored partners may receive a minor position boost if they already score in the top 5. {SPONSORED_DISCLOSURE_SHORT}
+          <div className="md:hidden mb-3">
+            <details className="bg-slate-50 border border-slate-200 rounded-lg">
+              <summary className="px-2.5 py-2 text-[0.62rem] text-slate-500 font-medium cursor-pointer flex items-center gap-1">
+                <svg className="w-3 h-3 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                General advice only — not a personal recommendation.
+              </summary>
+              <p className="px-2.5 pb-2.5 text-[0.62rem] text-slate-500 leading-relaxed">
+                {GENERAL_ADVICE_WARNING} {ADVERTISER_DISCLOSURE_SHORT}
               </p>
-            </div>
+            </details>
+          </div>
+
+          {/* Sponsored broker disclosure — collapsed on mobile */}
+          {allResults.some(r => r.broker && isSponsored(r.broker)) && (
+            <>
+              <div className="hidden md:block bg-blue-50 border border-blue-200 rounded-lg p-2.5 md:p-3 mb-3 md:mb-6">
+                <p className="text-[0.62rem] md:text-xs text-blue-700 leading-relaxed">
+                  <strong>Sponsor Disclosure:</strong> Sponsored partners may receive a minor position boost if they already score in the top 5. {SPONSORED_DISCLOSURE_SHORT}
+                </p>
+              </div>
+              <div className="md:hidden mb-3">
+                <details className="bg-blue-50 border border-blue-200 rounded-lg">
+                  <summary className="px-2.5 py-2 text-[0.62rem] text-blue-600 font-medium cursor-pointer">
+                    Includes sponsored results · Details
+                  </summary>
+                  <p className="px-2.5 pb-2.5 text-[0.62rem] text-blue-700 leading-relaxed">
+                    Sponsored partners may receive a minor position boost if they already score in the top 5. {SPONSORED_DISCLOSURE_SHORT}
+                  </p>
+                </details>
+              </div>
+            </>
           )}
 
           {/* Top Match */}
@@ -621,7 +644,7 @@ export default function QuizPage() {
                               : r.broker.platform_type === 'super_fund' ? 'Super'
                               : r.broker.platform_type === 'property_platform' ? 'Property'
                               : r.broker.platform_type === 'cfd_forex' ? 'CFD/FX'
-                              : 'Broker'}
+                              : 'Shares'}
                           </span>
                         </td>
                         {showShareCols && (
@@ -685,7 +708,7 @@ export default function QuizPage() {
             </button>
             {showScoring && (
               <div className="mt-2 bg-slate-50 border border-slate-200 rounded-lg p-3 md:p-4 text-[0.69rem] md:text-xs text-slate-600 space-y-2 md:space-y-3">
-                <p>Each broker has pre-set scores across six categories (beginner-friendliness, low fees, US shares, SMSF, crypto, advanced features). Your quiz answers determine which categories matter most:</p>
+                <p>Each platform has pre-set scores across six categories (beginner-friendliness, low fees, US shares, SMSF, crypto, advanced features). Your quiz answers determine which categories matter most:</p>
                 <div className="flex flex-wrap gap-1.5">
                   {answers.map((key, i) => {
                     const keyMap: Record<string, string> = {

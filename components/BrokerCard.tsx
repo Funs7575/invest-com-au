@@ -212,9 +212,9 @@ export default memo(function BrokerCard({
         )}
       </div>
 
-      {/* Fee verified date — trust signal */}
+      {/* Fee verified date — trust signal (desktop only for density) */}
       {broker.fee_last_checked && (
-        <div className="mb-1.5 flex items-center gap-1 text-[0.58rem] md:text-[0.62rem] text-slate-400">
+        <div className="hidden md:flex mb-1.5 items-center gap-1 text-[0.58rem] md:text-[0.62rem] text-slate-400">
           <Icon name="check-circle" size={10} className="text-emerald-500 shrink-0" />
           <span>Fees verified {new Date(broker.fee_last_checked).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
         </div>
@@ -244,13 +244,13 @@ export default memo(function BrokerCard({
         </div>
       )}
 
-      {/* CTA */}
+      {/* CTA — compact on mobile, full-width on desktop */}
       <a
         href={getAffiliateLink(broker)}
         target="_blank"
         rel={AFFILIATE_REL}
         onClick={() => trackClick(broker.slug, broker.name, 'compare-mobile', window.location.pathname, context)}
-        className="block w-full text-center text-xs md:text-sm px-3 py-2.5 md:py-3 font-bold rounded-lg transition-all duration-200 bg-amber-600 text-white hover:bg-amber-700 active:scale-[0.98]"
+        className="block w-full text-center text-xs md:text-sm px-3 py-2 md:py-3 font-bold rounded-lg transition-all duration-200 bg-amber-600 text-white hover:bg-amber-700 active:scale-[0.98]"
       >
         {getBenefitCta(broker, context)}
       </a>

@@ -30,7 +30,7 @@ function jsonLd() {
     "@type": "SoftwareApplication",
     name: "Broker Fee Benchmarking Dashboard",
     description:
-      "Compare your broker's percentile ranking across ASX fees, US fees, FX rates, platform rating, features, and cost stability.",
+      "Compare your platform's percentile ranking across ASX fees, US fees, FX rates, platform rating, features, and cost stability.",
     applicationCategory: "FinanceApplication",
     operatingSystem: "Web",
     url: absoluteUrl("/benchmark"),

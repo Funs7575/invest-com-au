@@ -88,7 +88,7 @@ export default function Footer() {
               <h4 className="text-white font-semibold mb-2 md:mb-4 text-xs md:text-sm">Compare</h4>
               <ul className="space-y-1 md:space-y-2 text-xs md:text-sm">
                 <li><Link href="/compare" className="hover:text-white transition-colors inline-block py-0.5">All Platforms</Link></li>
-                <li><Link href="/compare?category=shares" className="hover:text-white transition-colors inline-block py-0.5">Share Brokers</Link></li>
+                <li><Link href="/compare?category=shares" className="hover:text-white transition-colors inline-block py-0.5">Share Trading</Link></li>
                 <li><Link href="/compare?category=crypto" className="hover:text-white transition-colors inline-block py-0.5">Crypto Exchanges</Link></li>
                 <li><Link href="/best/super-funds" className="hover:text-white transition-colors inline-block py-0.5">Super Funds</Link></li>
                 <li><Link href="/best/robo-advisors" className="hover:text-white transition-colors inline-block py-0.5">Robo-Advisors</Link></li>

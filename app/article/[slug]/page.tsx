@@ -478,7 +478,7 @@ export default async function ArticlePage({
               {relatedBrokers.length > 0 && (
                 <div className="mt-8 md:mt-12 border border-slate-200 rounded-xl p-4 md:p-6 bg-white">
                   <h3 className="text-base md:text-lg font-bold mb-0.5 md:mb-1">
-                    Brokers for This Topic
+                    Platforms for This Topic
                   </h3>
                   <p className="text-xs md:text-sm text-slate-500 mb-3 md:mb-5">
                     Platforms relevant to this guide. {ADVERTISER_DISCLOSURE_SHORT}
@@ -568,9 +568,9 @@ export default async function ArticlePage({
                 if (bestPages.length === 0) return null;
                 return (
                   <div className="mt-6 md:mt-8 bg-slate-50 rounded-xl p-4 md:p-5">
-                    <h3 className="text-base md:text-lg font-bold mb-0.5 md:mb-1">Best Broker Guides</h3>
+                    <h3 className="text-base md:text-lg font-bold mb-0.5 md:mb-1">Best Platform Guides</h3>
                     <p className="text-xs md:text-sm text-slate-500 mb-2 md:mb-3">
-                      See which brokers top our rankings for these topics.
+                      See which platforms top our rankings for these topics.
                     </p>
                     <div className="flex flex-wrap gap-1.5 md:gap-2">
                       {bestPages.map((bp) => (
@@ -590,7 +590,7 @@ export default async function ArticlePage({
               {/* Bottom CTA */}
               <div className="mt-8 md:mt-12 bg-slate-50 border border-slate-200 rounded-xl p-5 md:p-8 text-center">
                 <h3 className="text-xl md:text-2xl font-extrabold mb-1.5 md:mb-2 text-slate-900">
-                  Find the Right Broker
+                  Find the Right Platform
                 </h3>
                 <p className="text-sm md:text-base text-slate-600 mb-4 md:mb-6 max-w-lg mx-auto">
                   Compare fees and platforms — or filter in 60 seconds with our quiz.
