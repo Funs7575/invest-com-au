@@ -88,7 +88,7 @@ export default function QuizPromptBar() {
               href="/quiz"
               className="flex-1 text-center py-3 bg-amber-500 text-white text-sm font-bold rounded-xl hover:bg-amber-600 active:scale-[0.98] transition-all min-h-[48px] flex items-center justify-center"
             >
-              Find My Broker
+              Find My Platform
             </Link>
             <Link
               href="/compare"

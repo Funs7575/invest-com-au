@@ -35,8 +35,8 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-slate-200">
       <div className="container-custom">
-        <div className="flex items-center justify-between h-16">
-          <Link href="/" className="flex items-center text-xl font-bold text-slate-900">
+        <div className="flex items-center justify-between h-12 md:h-16">
+          <Link href="/" className="flex items-center text-lg md:text-xl font-bold text-slate-900">
             <span>Invest<span className="text-amber-500">.com.au</span></span>
           </Link>
 

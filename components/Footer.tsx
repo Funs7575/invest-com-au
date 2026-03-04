@@ -75,8 +75,8 @@ export default function Footer() {
       {/* Footer */}
       <footer className="bg-slate-800 text-slate-300">
         <div className="container-custom py-5 md:py-12">
-          <div className="grid grid-cols-3 md:grid-cols-4 gap-4 md:gap-8">
-            <div className="col-span-3 md:col-span-1">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-8">
+            <div className="col-span-2 sm:col-span-3 md:col-span-1">
               <h3 className="text-white font-bold text-sm md:text-base mb-1 md:mb-4">Invest.com.au</h3>
               <p className="text-xs md:text-sm leading-relaxed">
                 <span className="hidden md:inline">Australia&apos;s independent investing platform comparison. Shares, crypto, super, property, robo-advisors &amp; more.</span>
@@ -86,44 +86,41 @@ export default function Footer() {
 
             <div>
               <h4 className="text-white font-semibold mb-2 md:mb-4 text-xs md:text-sm">Compare</h4>
-              <ul className="space-y-0.5 md:space-y-2 text-xs md:text-sm">
-                <li><Link href="/compare" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">All Platforms</Link></li>
-                <li><Link href="/compare?category=shares" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Share Brokers</Link></li>
-                <li><Link href="/compare?category=crypto" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Crypto Exchanges</Link></li>
-                <li><Link href="/best/super-funds" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Super Funds</Link></li>
-                <li><Link href="/best/robo-advisors" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Robo-Advisors</Link></li>
-                <li><Link href="/best/property-investing" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Property</Link></li>
-                <li><Link href="/best/cfd-forex" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">CFD &amp; Forex</Link></li>
-                <li><Link href="/best/research-tools" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Research Tools</Link></li>
-                <li><Link href="/versus" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Head-to-Head</Link></li>
-                <li><Link href="/deals" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Deals</Link></li>
+              <ul className="space-y-1 md:space-y-2 text-xs md:text-sm">
+                <li><Link href="/compare" className="hover:text-white transition-colors inline-block py-0.5">All Platforms</Link></li>
+                <li><Link href="/compare?category=shares" className="hover:text-white transition-colors inline-block py-0.5">Share Brokers</Link></li>
+                <li><Link href="/compare?category=crypto" className="hover:text-white transition-colors inline-block py-0.5">Crypto Exchanges</Link></li>
+                <li><Link href="/best/super-funds" className="hover:text-white transition-colors inline-block py-0.5">Super Funds</Link></li>
+                <li><Link href="/best/robo-advisors" className="hover:text-white transition-colors inline-block py-0.5">Robo-Advisors</Link></li>
+                <li><Link href="/versus" className="hover:text-white transition-colors inline-block py-0.5">Head-to-Head</Link></li>
+                <li><Link href="/deals" className="hover:text-white transition-colors inline-block py-0.5">Deals</Link></li>
               </ul>
             </div>
 
             <div>
               <h4 className="text-white font-semibold mb-2 md:mb-4 text-xs md:text-sm">Learn</h4>
-              <ul className="space-y-0.5 md:space-y-2 text-xs md:text-sm">
-                <li><Link href="/articles" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Guides</Link></li>
-                <li><Link href="/glossary" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Glossary</Link></li>
-                <li><Link href="/calculators" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Calculators</Link></li>
-                <li><Link href="/scenarios" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Best For...</Link></li>
-                <li><Link href="/pro" className="hover:text-white transition-colors text-amber-400 inline-block py-1 min-h-[44px]">Pro ✦</Link></li>
+              <ul className="space-y-1 md:space-y-2 text-xs md:text-sm">
+                <li><Link href="/articles" className="hover:text-white transition-colors inline-block py-0.5">Guides</Link></li>
+                <li><Link href="/glossary" className="hover:text-white transition-colors inline-block py-0.5">Glossary</Link></li>
+                <li><Link href="/calculators" className="hover:text-white transition-colors inline-block py-0.5">Calculators</Link></li>
+                <li><Link href="/scenarios" className="hover:text-white transition-colors inline-block py-0.5">Best For...</Link></li>
+                <li><Link href="/pro" className="hover:text-white transition-colors text-amber-400 inline-block py-0.5">Pro ✦</Link></li>
               </ul>
             </div>
 
-            <div>
+            <div className="col-span-2 sm:col-span-1">
               <h4 className="text-white font-semibold mb-2 md:mb-4 text-xs md:text-sm">About</h4>
-              <ul className="space-y-0.5 md:space-y-2 text-xs md:text-sm">
-                <li><Link href="/about" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">About Us</Link></li>
-                <li><Link href="/editorial-policy" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Editorial</Link></li>
-                <li><Link href="/how-we-earn" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">How We Earn</Link></li>
-                <li><Link href="/privacy" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Privacy</Link></li>
-                <li><Link href="/methodology" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Methodology</Link></li>
-                <li><Link href="/terms" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Terms</Link></li>
-                <li><Link href="/complaints" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Complaints & AFCA</Link></li>
-                <li><Link href="/contact" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Contact</Link></li>
-                <li><Link href="/advertise" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Advertise</Link></li>
-                <li><Link href="/broker-portal/login" className="hover:text-white transition-colors inline-block py-1 min-h-[44px]">Partner Login</Link></li>
+              <ul className="grid grid-cols-2 sm:grid-cols-1 gap-x-4 gap-y-1 md:space-y-2 text-xs md:text-sm">
+                <li><Link href="/about" className="hover:text-white transition-colors inline-block py-0.5">About Us</Link></li>
+                <li><Link href="/editorial-policy" className="hover:text-white transition-colors inline-block py-0.5">Editorial</Link></li>
+                <li><Link href="/how-we-earn" className="hover:text-white transition-colors inline-block py-0.5">How We Earn</Link></li>
+                <li><Link href="/privacy" className="hover:text-white transition-colors inline-block py-0.5">Privacy</Link></li>
+                <li><Link href="/methodology" className="hover:text-white transition-colors inline-block py-0.5">Methodology</Link></li>
+                <li><Link href="/terms" className="hover:text-white transition-colors inline-block py-0.5">Terms</Link></li>
+                <li><Link href="/complaints" className="hover:text-white transition-colors inline-block py-0.5">Complaints & AFCA</Link></li>
+                <li><Link href="/contact" className="hover:text-white transition-colors inline-block py-0.5">Contact</Link></li>
+                <li><Link href="/advertise" className="hover:text-white transition-colors inline-block py-0.5">Advertise</Link></li>
+                <li><Link href="/broker-portal/login" className="hover:text-white transition-colors inline-block py-0.5">Partner Login</Link></li>
               </ul>
             </div>
           </div>

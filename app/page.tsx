@@ -294,9 +294,9 @@ export default async function HomePage() {
         </section>
       </ScrollFadeIn>
 
-      {/* Email Capture — positioned mid-page for maximum visibility */}
+      {/* Email Capture */}
       <ScrollFadeIn>
-        <section className="py-4 md:py-12 bg-white">
+        <section className="py-3 md:py-12 bg-white">
           <div className="container-custom">
             <div className="max-w-xl mx-auto">
               <LeadMagnet />
@@ -308,7 +308,7 @@ export default async function HomePage() {
       {/* Active Deals Section */}
       {(dealBrokers as Broker[])?.length > 0 && (
         <ScrollFadeIn>
-          <section className="py-4 md:py-12 bg-gradient-to-b from-amber-50/50 to-white">
+          <section className="py-3 md:py-12 bg-gradient-to-b from-amber-50/50 to-white">
             <div className="container-custom">
               <div className="flex items-start justify-between gap-2 mb-2.5 md:mb-6">
                 <div>
@@ -336,7 +336,7 @@ export default async function HomePage() {
                 <div className="relative">
                   <div className="flex gap-2.5 overflow-x-auto snap-x snap-mandatory pb-3 scrollbar-hide -mx-4 px-4">
                     {(dealBrokers as Broker[]).map((broker) => (
-                      <div key={broker.id} className="w-[75vw] shrink-0 snap-start">
+                      <div key={broker.id} className="w-[70vw] shrink-0 snap-start">
                         <DealCard broker={broker} />
                       </div>
                     ))}
@@ -354,9 +354,9 @@ export default async function HomePage() {
 
       {/* Best For Hub */}
       <ScrollFadeIn>
-        <section className="py-4 md:py-12 bg-slate-50">
+        <section className="py-3 md:py-12 bg-slate-50">
           <div className="container-custom">
-            <div className="flex items-start justify-between gap-2 mb-2.5 md:mb-8">
+            <div className="flex items-start justify-between gap-2 mb-2 md:mb-8">
               <div>
                 <h2 className="text-lg md:text-3xl font-bold">Find the Best Platform for You</h2>
                 <p className="text-[0.69rem] md:text-base text-slate-500 mt-0.5 md:mt-2">
@@ -383,17 +383,16 @@ export default async function HomePage() {
                 </Link>
               ))}
             </div>
-            {/* Mobile: 2-col grid, compact */}
-            <div className="sm:hidden grid grid-cols-2 gap-2">
+            {/* Mobile: 2-col grid, compact — titles only */}
+            <div className="sm:hidden grid grid-cols-2 gap-1.5">
               {bestForCards.map((card) => (
                 <Link
                   key={card.title}
                   href={card.href}
-                  className={`border rounded-lg p-2.5 active:scale-[0.98] transition-all ${card.color}`}
+                  className={`border rounded-lg px-2.5 py-2 active:scale-[0.98] transition-all flex items-center gap-2 ${card.color}`}
                 >
-                  <Icon name={card.icon} size={18} className="mb-1 opacity-80" />
+                  <Icon name={card.icon} size={16} className="opacity-70 shrink-0" />
                   <h3 className="font-bold text-xs leading-tight">{card.title}</h3>
-                  <p className="text-[0.62rem] opacity-70 leading-snug mt-0.5 line-clamp-2">{card.description}</p>
                 </Link>
               ))}
             </div>
@@ -412,7 +411,7 @@ export default async function HomePage() {
       {/* Featured Articles */}
       {(articles as Article[])?.length > 0 && (
         <ScrollFadeIn>
-          <section className="py-4 md:py-12 bg-white">
+          <section className="py-3 md:py-12 bg-white">
             <div className="container-custom">
               <div className="flex items-start justify-between gap-2 mb-2.5 md:mb-6">
                 <div>
@@ -457,32 +456,26 @@ export default async function HomePage() {
                   </Link>
                 ))}
               </div>
-              {/* Mobile: 2-col compact grid */}
-              <div className="md:hidden grid grid-cols-2 gap-2.5">
-                {(articles as Article[]).slice(0, 4).map((article, idx) => (
+              {/* Mobile: compact list */}
+              <div className="md:hidden divide-y divide-slate-100">
+                {(articles as Article[]).slice(0, 4).map((article) => (
                   <Link
                     key={article.id}
                     href={`/article/${article.slug}`}
-                    className="border border-slate-200 rounded-lg overflow-hidden hover:shadow-md transition-all duration-200 group flex flex-col"
+                    className="flex items-start gap-3 py-2.5 group"
                   >
-                    {article.cover_image_url && (
-                      <div className="aspect-[16/9] overflow-hidden bg-slate-100 relative">
-                        <Image src={article.cover_image_url} alt={article.title} fill className="object-cover" sizes="50vw" {...(idx < 2 ? { priority: true } : {})} />
-                      </div>
-                    )}
-                    <div className="p-2.5 flex flex-col flex-1">
+                    <div className="flex-1 min-w-0">
                       {article.category && (
-                        <span className="inline-block self-start text-[0.62rem] font-bold uppercase tracking-wider text-slate-600 bg-slate-100 border border-slate-200 px-1.5 py-px rounded-full mb-1.5">
+                        <span className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-500">
                           {article.category}
                         </span>
                       )}
-                      <h3 className="font-bold text-xs text-slate-900 leading-snug line-clamp-2 mb-1">
+                      <h3 className="font-bold text-sm text-slate-900 leading-snug line-clamp-2 group-hover:text-slate-600 transition-colors">
                         {article.title}
                       </h3>
-                      <div className="flex items-center gap-2 text-[0.62rem] text-slate-500 mt-auto">
-                        {article.read_time && <span>{article.read_time} min</span>}
-                        <span className="text-slate-900 font-semibold">Read →</span>
-                      </div>
+                    </div>
+                    <div className="text-[0.65rem] text-slate-400 shrink-0 mt-1">
+                      {article.read_time && <span>{article.read_time} min</span>}
                     </div>
                   </Link>
                 ))}
