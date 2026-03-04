@@ -56,62 +56,112 @@ const fallbackQuestions = [
   ] },
 ];
 
-// Fallback scoring weights — covers all 7 platform types
+// Fallback scoring weights — researched from actual platform features & fees
+// Scale: 0 (irrelevant) to 10 (best-in-class for this category)
+// beginner: ease of use, educational resources, simple UX
+// low_fee: competitive pricing for typical retail investor ($1k-$10k trades)
+// us_shares: US market access, low FX fees, fractional shares
+// smsf: SMSF support, CHESS sponsorship, safety/regulation
+// crypto: crypto range, staking, AUSTRAC registration
+// advanced: pro tools, charting, options, APIs, market depth
+// property: property/REIT exposure, fractional property
+// robo: automated investing, hands-off portfolio management
 const fallbackScores: Record<string, Record<WeightKey, number>> = {
   // ── Share brokers ──
-  "interactive-brokers": { beginner: 3, low_fee: 7, us_shares: 10, smsf: 7, crypto: 0, advanced: 10, property: 0, robo: 0 },
-  "cmc-markets": { beginner: 6, low_fee: 9, us_shares: 8, smsf: 5, crypto: 0, advanced: 8, property: 0, robo: 0 },
-  "stake": { beginner: 8, low_fee: 10, us_shares: 10, smsf: 3, crypto: 0, advanced: 4, property: 0, robo: 0 },
-  "moomoo": { beginner: 7, low_fee: 9, us_shares: 9, smsf: 4, crypto: 0, advanced: 7, property: 0, robo: 0 },
-  "selfwealth": { beginner: 7, low_fee: 8, us_shares: 7, smsf: 8, crypto: 0, advanced: 5, property: 0, robo: 0 },
-  "commsec": { beginner: 9, low_fee: 3, us_shares: 5, smsf: 7, crypto: 0, advanced: 6, property: 0, robo: 0 },
-  "superhero": { beginner: 8, low_fee: 9, us_shares: 7, smsf: 6, crypto: 4, advanced: 4, property: 0, robo: 0 },
-  "tiger-brokers": { beginner: 5, low_fee: 7, us_shares: 9, smsf: 3, crypto: 0, advanced: 7, property: 0, robo: 0 },
-  "ig": { beginner: 5, low_fee: 5, us_shares: 7, smsf: 5, crypto: 0, advanced: 8, property: 0, robo: 0 },
-  "saxo": { beginner: 4, low_fee: 5, us_shares: 8, smsf: 5, crypto: 0, advanced: 8, property: 0, robo: 0 },
-  "nabtrade": { beginner: 7, low_fee: 4, us_shares: 5, smsf: 7, crypto: 0, advanced: 5, property: 0, robo: 0 },
-  "anz-share-investing": { beginner: 6, low_fee: 3, us_shares: 4, smsf: 6, crypto: 0, advanced: 4, property: 0, robo: 0 },
-  "webull": { beginner: 6, low_fee: 8, us_shares: 9, smsf: 2, crypto: 3, advanced: 6, property: 0, robo: 0 },
+  // Interactive Brokers: $6/0.08% ASX, $0.005/share US, 0.002% FX, CHESS, SMSF, 170+ markets
+  "interactive-brokers": { beginner: 3, low_fee: 7, us_shares: 10, smsf: 8, crypto: 0, advanced: 10, property: 0, robo: 0 },
+  // CMC Markets: $0 first trade/day <$1k, $0 US, 0.6% FX, CHESS, good tools
+  "cmc-markets": { beginner: 7, low_fee: 9, us_shares: 8, smsf: 5, crypto: 0, advanced: 7, property: 0, robo: 0 },
+  // Stake: $3 ASX, US$3 US, 0.7% FX, CHESS, clean mobile app
+  "stake": { beginner: 8, low_fee: 8, us_shares: 9, smsf: 3, crypto: 0, advanced: 4, property: 0, robo: 0 },
+  // Moomoo: $0 ASX promo / $3 standard, $0 US, 0.35% FX, not CHESS, interest on cash
+  "moomoo": { beginner: 7, low_fee: 9, us_shares: 9, smsf: 2, crypto: 0, advanced: 7, property: 0, robo: 0 },
+  // SelfWealth: $9.50 flat, CHESS, SMSF, HK market access
+  "selfwealth": { beginner: 6, low_fee: 6, us_shares: 6, smsf: 8, crypto: 0, advanced: 4, property: 0, robo: 0 },
+  // CommSec: $5-$29.95, CBA integration, CHESS, trusted brand, high fees
+  "commsec": { beginner: 9, low_fee: 2, us_shares: 4, smsf: 7, crypto: 0, advanced: 5, property: 0, robo: 0 },
+  // Superhero: $2/$0.01% ASX, not CHESS (custodial), US access
+  "superhero": { beginner: 8, low_fee: 9, us_shares: 7, smsf: 3, crypto: 3, advanced: 3, property: 0, robo: 0 },
+  // Tiger Brokers: $3 ASX CHESS, competitive US, good tools
+  "tiger-brokers": { beginner: 5, low_fee: 8, us_shares: 8, smsf: 3, crypto: 0, advanced: 7, property: 0, robo: 0 },
+  // IG: $0 US, $5 ASX, advanced platform, CFDs available
+  "ig": { beginner: 4, low_fee: 6, us_shares: 8, smsf: 5, crypto: 0, advanced: 8, property: 0, robo: 0 },
+  // Saxo: tiered pricing, wide global access, professional tools
+  "saxo": { beginner: 3, low_fee: 5, us_shares: 8, smsf: 5, crypto: 0, advanced: 9, property: 0, robo: 0 },
+  // NABtrade: bank-backed, CHESS, higher fees, trusted
+  "nabtrade": { beginner: 7, low_fee: 3, us_shares: 4, smsf: 7, crypto: 0, advanced: 4, property: 0, robo: 0 },
+  // ANZ Share Investing: bank-backed, higher fees
+  "anz-share-investing": { beginner: 6, low_fee: 2, us_shares: 3, smsf: 6, crypto: 0, advanced: 3, property: 0, robo: 0 },
+  // Webull: $0 ASX CHESS, $0 US, interest on cash, newer entrant
+  "webull": { beginner: 7, low_fee: 10, us_shares: 9, smsf: 3, crypto: 3, advanced: 6, property: 0, robo: 0 },
 
   // ── Crypto exchanges ──
-  "swyftx": { beginner: 8, low_fee: 7, us_shares: 0, smsf: 3, crypto: 10, advanced: 5, property: 0, robo: 0 },
-  "coinspot": { beginner: 9, low_fee: 5, us_shares: 0, smsf: 2, crypto: 9, advanced: 3, property: 0, robo: 0 },
-  "binance": { beginner: 4, low_fee: 9, us_shares: 0, smsf: 0, crypto: 10, advanced: 9, property: 0, robo: 0 },
-  "kraken": { beginner: 4, low_fee: 8, us_shares: 0, smsf: 0, crypto: 9, advanced: 8, property: 0, robo: 0 },
-  "btc-markets": { beginner: 6, low_fee: 6, us_shares: 0, smsf: 3, crypto: 8, advanced: 5, property: 0, robo: 0 },
-  "coinstash": { beginner: 8, low_fee: 7, us_shares: 0, smsf: 2, crypto: 7, advanced: 3, property: 0, robo: 0 },
-  "independent-reserve": { beginner: 5, low_fee: 6, us_shares: 0, smsf: 4, crypto: 8, advanced: 6, property: 0, robo: 0 },
+  // Swyftx: 0.6% spread, 300+ coins, AUSTRAC, beginner-friendly
+  "swyftx": { beginner: 8, low_fee: 6, us_shares: 0, smsf: 2, crypto: 9, advanced: 5, property: 0, robo: 0 },
+  // CoinSpot: 1% instant buy / 0.1% market, 400+ coins, AUSTRAC, very easy
+  "coinspot": { beginner: 10, low_fee: 4, us_shares: 0, smsf: 2, crypto: 9, advanced: 2, property: 0, robo: 0 },
+  // Binance: lowest fees globally, 600+ coins, advanced tools
+  "binance": { beginner: 3, low_fee: 10, us_shares: 0, smsf: 0, crypto: 10, advanced: 9, property: 0, robo: 0 },
+  // Kraken: strong security, proof of reserves, staking, mid fees
+  "kraken": { beginner: 4, low_fee: 7, us_shares: 0, smsf: 0, crypto: 9, advanced: 8, property: 0, robo: 0 },
+  // BTC Markets: Australian, AUSTRAC, SMSF support, moderate fees
+  "btc-markets": { beginner: 5, low_fee: 5, us_shares: 0, smsf: 5, crypto: 8, advanced: 5, property: 0, robo: 0 },
+  // Coinstash: Australian, beginner-focused, limited coins
+  "coinstash": { beginner: 8, low_fee: 6, us_shares: 0, smsf: 2, crypto: 6, advanced: 2, property: 0, robo: 0 },
+  // Independent Reserve: AUSTRAC, SMSF, institutional-grade
+  "independent-reserve": { beginner: 4, low_fee: 6, us_shares: 0, smsf: 6, crypto: 8, advanced: 6, property: 0, robo: 0 },
 
   // ── Robo-advisors ──
-  "stockspot": { beginner: 10, low_fee: 7, us_shares: 3, smsf: 4, crypto: 0, advanced: 2, property: 0, robo: 10 },
-  "raiz": { beginner: 9, low_fee: 8, us_shares: 2, smsf: 2, crypto: 0, advanced: 2, property: 0, robo: 9 },
-  "spaceship": { beginner: 9, low_fee: 9, us_shares: 3, smsf: 2, crypto: 0, advanced: 2, property: 0, robo: 8 },
-  "sixpark": { beginner: 8, low_fee: 7, us_shares: 3, smsf: 5, crypto: 0, advanced: 3, property: 0, robo: 9 },
-  "pearler": { beginner: 8, low_fee: 8, us_shares: 5, smsf: 3, crypto: 0, advanced: 3, property: 0, robo: 7 },
-  "vanguard-personal-investor": { beginner: 7, low_fee: 9, us_shares: 4, smsf: 3, crypto: 0, advanced: 3, property: 0, robo: 6 },
+  // Stockspot: oldest AU robo, 0.4-0.66% fee, CHESS/HIN, gold allocation, $2k min
+  "stockspot": { beginner: 9, low_fee: 6, us_shares: 3, smsf: 5, crypto: 0, advanced: 2, property: 2, robo: 10 },
+  // Raiz: micro-investing, round-ups, 0.275%/$5.50mo, managed fund (no CHESS)
+  "raiz": { beginner: 10, low_fee: 7, us_shares: 2, smsf: 2, crypto: 2, advanced: 1, property: 2, robo: 9 },
+  // Spaceship: $0 fee under $5k, growth-focused, no CHESS, modern app
+  "spaceship": { beginner: 9, low_fee: 9, us_shares: 4, smsf: 1, crypto: 0, advanced: 1, property: 0, robo: 8 },
+  // SixPark: similar to Stockspot, CHESS/HIN, property REIT allocation
+  "sixpark": { beginner: 8, low_fee: 6, us_shares: 3, smsf: 6, crypto: 0, advanced: 2, property: 3, robo: 9 },
+  // Pearler: $6.50 brokerage, auto-invest, long-term focus, CHESS
+  "pearler": { beginner: 7, low_fee: 6, us_shares: 5, smsf: 4, crypto: 0, advanced: 3, property: 0, robo: 7 },
+  // Vanguard Personal Investor: low ETF fees, $0 brokerage on Vanguard ETFs, trusted brand
+  "vanguard-personal-investor": { beginner: 7, low_fee: 8, us_shares: 3, smsf: 4, crypto: 0, advanced: 2, property: 2, robo: 6 },
 
   // ── Super funds ──
-  "australian-super": { beginner: 8, low_fee: 8, us_shares: 2, smsf: 0, crypto: 0, advanced: 3, property: 3, robo: 7 },
-  "hostplus": { beginner: 7, low_fee: 9, us_shares: 2, smsf: 0, crypto: 0, advanced: 3, property: 3, robo: 6 },
-  "rest-super": { beginner: 7, low_fee: 7, us_shares: 2, smsf: 0, crypto: 0, advanced: 2, property: 2, robo: 6 },
-  "aware-super": { beginner: 7, low_fee: 7, us_shares: 2, smsf: 0, crypto: 0, advanced: 3, property: 2, robo: 6 },
-  "spaceship-super": { beginner: 9, low_fee: 8, us_shares: 3, smsf: 0, crypto: 0, advanced: 2, property: 0, robo: 8 },
+  // AustralianSuper: largest fund, low fees, strong performance, MySuper
+  "australian-super": { beginner: 8, low_fee: 8, us_shares: 2, smsf: 0, crypto: 0, advanced: 2, property: 4, robo: 7 },
+  // Hostplus: low fees, strong long-term returns, industry fund
+  "hostplus": { beginner: 7, low_fee: 9, us_shares: 2, smsf: 0, crypto: 0, advanced: 2, property: 3, robo: 6 },
+  // Rest Super: younger demographic, app-focused, moderate fees
+  "rest-super": { beginner: 7, low_fee: 6, us_shares: 1, smsf: 0, crypto: 0, advanced: 1, property: 2, robo: 6 },
+  // Aware Super: merged fund, competitive fees, ESG options
+  "aware-super": { beginner: 6, low_fee: 7, us_shares: 1, smsf: 0, crypto: 0, advanced: 2, property: 3, robo: 5 },
+  // Spaceship Super: growth-focused super, tech-heavy, younger audience
+  "spaceship-super": { beginner: 9, low_fee: 7, us_shares: 3, smsf: 0, crypto: 0, advanced: 1, property: 0, robo: 8 },
 
   // ── Property platforms ──
-  "brickx": { beginner: 7, low_fee: 6, us_shares: 0, smsf: 3, crypto: 0, advanced: 3, property: 10, robo: 5 },
-  "domacom": { beginner: 4, low_fee: 5, us_shares: 0, smsf: 4, crypto: 0, advanced: 5, property: 9, robo: 3 },
-  "venturecrowd": { beginner: 3, low_fee: 4, us_shares: 0, smsf: 3, crypto: 0, advanced: 6, property: 8, robo: 2 },
+  // BrickX: fractional property, $250 min, rental income, liquid
+  "brickx": { beginner: 7, low_fee: 5, us_shares: 0, smsf: 3, crypto: 0, advanced: 2, property: 10, robo: 4 },
+  // DomaCom: fractional property, crowdfunding model, higher min
+  "domacom": { beginner: 3, low_fee: 4, us_shares: 0, smsf: 4, crypto: 0, advanced: 4, property: 9, robo: 2 },
+  // VentureCrowd: property + venture capital, accredited investors
+  "venturecrowd": { beginner: 2, low_fee: 3, us_shares: 0, smsf: 3, crypto: 0, advanced: 5, property: 8, robo: 1 },
 
   // ── Research tools ──
-  "simply-wall-st": { beginner: 6, low_fee: 5, us_shares: 7, smsf: 3, crypto: 0, advanced: 8, property: 0, robo: 0 },
-  "tradingview": { beginner: 4, low_fee: 5, us_shares: 6, smsf: 2, crypto: 4, advanced: 10, property: 0, robo: 0 },
-  "market-index": { beginner: 7, low_fee: 6, us_shares: 4, smsf: 3, crypto: 0, advanced: 6, property: 0, robo: 0 },
+  // Simply Wall St: visual stock analysis, snowflake charts, freemium
+  "simply-wall-st": { beginner: 7, low_fee: 5, us_shares: 7, smsf: 2, crypto: 0, advanced: 8, property: 0, robo: 0 },
+  // TradingView: best-in-class charting, social, freemium
+  "tradingview": { beginner: 3, low_fee: 5, us_shares: 6, smsf: 1, crypto: 4, advanced: 10, property: 0, robo: 0 },
+  // Market Index: free ASX data, news, simple portfolio tracker
+  "market-index": { beginner: 8, low_fee: 8, us_shares: 3, smsf: 2, crypto: 0, advanced: 5, property: 0, robo: 0 },
 
   // ── CFD & Forex ──
-  "pepperstone": { beginner: 3, low_fee: 6, us_shares: 3, smsf: 0, crypto: 3, advanced: 9, property: 0, robo: 0 },
-  "cmc-markets-cfds": { beginner: 4, low_fee: 7, us_shares: 3, smsf: 0, crypto: 2, advanced: 8, property: 0, robo: 0 },
-  "ic-markets": { beginner: 3, low_fee: 7, us_shares: 3, smsf: 0, crypto: 2, advanced: 9, property: 0, robo: 0 },
-  "fp-markets": { beginner: 4, low_fee: 6, us_shares: 3, smsf: 0, crypto: 2, advanced: 8, property: 0, robo: 0 },
+  // Pepperstone: tight spreads, MT4/MT5, ASIC regulated, pro tools
+  "pepperstone": { beginner: 3, low_fee: 7, us_shares: 3, smsf: 0, crypto: 3, advanced: 9, property: 0, robo: 0 },
+  // CMC Markets CFDs: wide range, good platform, ASIC
+  "cmc-markets-cfds": { beginner: 4, low_fee: 6, us_shares: 3, smsf: 0, crypto: 2, advanced: 8, property: 0, robo: 0 },
+  // IC Markets: raw spreads, ECN, popular with scalpers
+  "ic-markets": { beginner: 2, low_fee: 8, us_shares: 2, smsf: 0, crypto: 2, advanced: 10, property: 0, robo: 0 },
+  // FP Markets: IRESS + MT4/5, ASIC, competitive spreads
+  "fp-markets": { beginner: 3, low_fee: 7, us_shares: 3, smsf: 0, crypto: 2, advanced: 8, property: 0, robo: 0 },
 };
 
 const QUIZ_STORAGE_KEY = "invest-quiz-progress";
