@@ -116,13 +116,13 @@ interface Props { brokers: Broker[] }
 type CalcId = "trade-cost" | "fx" | "switching" | "cgt" | "franking" | "chess" | "fee-impact";
 
 const CALCS: { id: CalcId; icon: string; title: string; subtitle: string; badge?: string }[] = [
-  { id: "trade-cost", icon: "dollar-sign", title: "Trade Cost", subtitle: "What does a trade really cost at each broker?" },
+  { id: "trade-cost", icon: "dollar-sign", title: "Trade Cost", subtitle: "What does a trade really cost at each platform?" },
   { id: "fx", icon: "globe", title: "US Share Costs", subtitle: "What do international trades really cost?" },
-  { id: "switching", icon: "arrow-right-left", title: "Compare Fees", subtitle: "Is it worth switching brokers?" },
+  { id: "switching", icon: "arrow-right-left", title: "Compare Fees", subtitle: "Is it worth switching platforms?" },
   { id: "cgt", icon: "calendar", title: "Tax on Profits", subtitle: "Estimate capital gains tax" },
   { id: "franking", icon: "coins", title: "Dividend Tax", subtitle: "Franking credits after tax" },
-  { id: "chess", icon: "shield-check", title: "Share Safety", subtitle: "Is your broker CHESS sponsored?" },
-  { id: "fee-impact", icon: "calculator", title: "Fee Impact", subtitle: "Your total annual broker fees", badge: "PRO" },
+  { id: "chess", icon: "shield-check", title: "Share Safety", subtitle: "Is your platform CHESS sponsored?" },
+  { id: "fee-impact", icon: "calculator", title: "Fee Impact", subtitle: "Your total annual platform fees", badge: "PRO" },
 ];
 
 const CORPORATE_TAX_RATE = 0.3;
@@ -310,7 +310,7 @@ function TradeCostCalculator({ brokers, searchParams }: { brokers: Broker[]; sea
     <div className="bg-white rounded-xl md:rounded-2xl border border-slate-200 p-3.5 md:p-8">
       <h2 className="text-base md:text-2xl font-bold mb-0.5 md:mb-1">Trade Cost Calculator</h2>
       <p className="text-[0.69rem] md:text-sm text-slate-500 mb-3 md:mb-6">
-        What each broker charges — including hidden FX fees on US trades.
+        What each platform charges — including hidden FX fees on US trades.
       </p>
 
       {/* Inputs */}
@@ -492,7 +492,7 @@ function TradeCostCalculator({ brokers, searchParams }: { brokers: Broker[]; sea
       {results.length >= 2 && (
         <div className="mt-4 md:mt-6 bg-slate-50 border border-slate-200 rounded-xl p-3 md:p-4 text-center motion-safe:animate-[fadeIn_0.4s_ease-out]">
           <p className="text-xs md:text-sm text-slate-800">
-            <strong>Savings:</strong> Cheapest broker saves{" "}
+            <strong>Savings:</strong> Cheapest platform saves{" "}
             <strong className="text-slate-700">
               <AnimatedNumber value={results[results.length - 1].totalCost - results[0].totalCost} />
             </strong>{" "}
@@ -806,7 +806,7 @@ function FxFeeCalculator({ brokers, searchParams }: { brokers: Broker[]; searchP
       id="fx"
       iconName="globe"
       title="FX Fee Calculator"
-      desc="See what every broker charges you in currency conversion fees on international trades."
+      desc="See what every platform charges you in currency conversion fees on international trades."
     >
       {/* Slider + amount */}
       <div className="mb-5 md:mb-8">
@@ -1237,7 +1237,7 @@ function FeeImpactTeaser({ brokers, searchParams }: { brokers: Broker[]; searchP
               <span className="font-bold text-amber-900">Full Calculator</span>
             </div>
             <p className="text-amber-800 text-xs leading-relaxed mb-3">
-              The full version includes US trades, FX fees, inactivity charges, and ranks every broker — not just the top 3.
+              The full version includes US trades, FX fees, inactivity charges, and ranks every platform — not just the top 3.
             </p>
             <Link
               href="/fee-impact"

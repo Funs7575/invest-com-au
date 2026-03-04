@@ -476,7 +476,7 @@ export default function FeeImpactClient({ brokers }: Props) {
               {/* Quick info */}
               <div className="mt-6 bg-slate-50 border border-slate-200 rounded-lg p-4 text-xs text-slate-500 leading-relaxed">
                 <strong className="text-slate-700">How it works:</strong> We
-                multiply your trade frequency by each broker&apos;s published
+                multiply your trade frequency by each platform&apos;s published
                 fees — including brokerage, FX conversion, and inactivity
                 charges — to calculate your real annual cost.
               </div>
