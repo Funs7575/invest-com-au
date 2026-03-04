@@ -28,12 +28,12 @@ import ShortlistButton from "@/components/ShortlistButton";
 import BrokerLogo from "@/components/BrokerLogo";
 import AdSlot from "@/components/AdSlot";
 
-type FilterType = 'all' | 'shares' | 'beginner' | 'chess' | 'free' | 'us' | 'smsf' | 'low-fx' | 'crypto' | 'robo' | 'research' | 'super' | 'property' | 'cfd';
+type FilterType = 'all' | 'shares' | 'beginner' | 'chess' | 'free' | 'us' | 'smsf' | 'low-fx' | 'crypto' | 'robo' | 'research' | 'super' | 'property' | 'cfd' | 'has-deal';
 type SortCol = 'name' | 'asx_fee_value' | 'us_fee_value' | 'fx_rate' | 'rating';
 
 const filters: { key: FilterType; label: string }[] = [
   { key: 'all', label: 'All Platforms' },
-  { key: 'shares', label: 'Share Brokers' },
+  { key: 'shares', label: 'Share Trading' },
   { key: 'crypto', label: 'Crypto' },
   { key: 'super', label: 'Super Funds' },
   { key: 'robo', label: 'Robo-Advisors' },
@@ -46,6 +46,7 @@ const filters: { key: FilterType; label: string }[] = [
   { key: 'us', label: 'US Shares' },
   { key: 'smsf', label: 'SMSF' },
   { key: 'low-fx', label: 'Low FX' },
+  { key: 'has-deal', label: 'Has Deal' },
 ];
 
 /** Map URL ?category= values to filter keys */
@@ -197,6 +198,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
       case 'super': list = list.filter(b => b.platform_type === 'super_fund'); break;
       case 'property': list = list.filter(b => b.platform_type === 'property_platform'); break;
       case 'cfd': list = list.filter(b => b.platform_type === 'cfd_forex'); break;
+      case 'has-deal': list = list.filter(b => b.deal && b.deal_text); break;
       // 'all' — no filtering, show everything
     }
     // Text search filter
@@ -355,7 +357,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
               <path strokeLinecap="round" d="M4 6h16M7 12h10M10 18h4" />
             </svg>
-            {activeFilter !== 'all' ? filters.find(f => f.key === activeFilter)?.label : 'Filter'}
+            {activeFilter !== 'all' ? filters.find(f => f.key === activeFilter)?.label : 'Filter & Sort'}
           </button>
           <div className="relative flex-1">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
@@ -373,8 +375,36 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               </button>
             )}
           </div>
-          <BottomSheet open={sheetOpen} onClose={() => setSheetOpen(false)} title="Filter Platforms">
-            <div className="flex flex-wrap gap-2 mb-6">
+          <BottomSheet open={sheetOpen} onClose={() => setSheetOpen(false)} title="Filter & Sort">
+            {/* Sort */}
+            <div className="mb-4">
+              <p className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-400 mb-2">Sort by</p>
+              <div className="flex flex-wrap gap-2">
+                {([
+                  { col: 'rating' as SortCol, label: 'Rating' },
+                  { col: 'asx_fee_value' as SortCol, label: 'ASX Fee' },
+                  { col: 'us_fee_value' as SortCol, label: 'US Fee' },
+                  { col: 'fx_rate' as SortCol, label: 'FX Rate' },
+                  { col: 'name' as SortCol, label: 'Name' },
+                ] as { col: SortCol; label: string }[]).map(s => (
+                  <button
+                    key={s.col}
+                    onClick={() => handleSort(s.col)}
+                    className={`px-3 py-2 text-sm font-medium rounded-full transition-colors ${
+                      sortCol === s.col
+                        ? 'bg-slate-900 text-white shadow-sm'
+                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                    }`}
+                  >
+                    {s.label} {sortCol === s.col ? (sortDir === 1 ? '↑' : '↓') : ''}
+                  </button>
+                ))}
+              </div>
+            </div>
+            {/* Filters */}
+            <div className="mb-4">
+              <p className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-400 mb-2">Filter</p>
+              <div className="flex flex-wrap gap-2">
               {filters.map(f => (
                 <button
                   key={f.key}
@@ -388,6 +418,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                   {f.label}
                 </button>
               ))}
+              </div>
             </div>
             <div className="flex gap-3 pt-2 border-t border-slate-100">
               <button
@@ -430,7 +461,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
 
         {/* Results count — accessible */}
         <div aria-live="polite" aria-atomic="true" className="sr-only">
-          {sorted.length} {sorted.length === 1 ? 'broker' : 'brokers'} found{activeFilter !== 'all' ? ` with ${filters.find(f => f.key === activeFilter)?.label} filter` : ''}{searchQuery ? ` matching "${searchQuery}"` : ''}
+          {sorted.length} {sorted.length === 1 ? 'platform' : 'platforms'} found{activeFilter !== 'all' ? ` with ${filters.find(f => f.key === activeFilter)?.label} filter` : ''}{searchQuery ? ` matching "${searchQuery}"` : ''}
         </div>
 
         {/* Quiz prompt — hidden on mobile to save space */}
