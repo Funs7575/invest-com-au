@@ -663,7 +663,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           <div className="text-center py-8 md:py-12 text-slate-500" role="status">
             {searchQuery ? (
               <>
-                <p className="text-sm md:text-lg font-medium mb-1.5">No brokers match &ldquo;{searchQuery}&rdquo;</p>
+                <p className="text-sm md:text-lg font-medium mb-1.5">No platforms match &ldquo;{searchQuery}&rdquo;</p>
                 <button
                   onClick={() => { setSearchQuery(""); setActiveFilter('all'); }}
                   className="text-blue-700 text-sm font-semibold hover:text-blue-800 transition-colors"
@@ -673,12 +673,12 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               </>
             ) : (
               <>
-                <p className="text-sm mb-2">No brokers match this filter. Try a different category.</p>
+                <p className="text-sm mb-2">No platforms match this filter. Try a different category.</p>
                 <button
                   onClick={() => setActiveFilter('all')}
                   className="text-blue-700 text-sm font-semibold hover:text-blue-800 transition-colors"
                 >
-                  Show all brokers
+                  Show all platforms
                 </button>
               </>
             )}
