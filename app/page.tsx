@@ -160,16 +160,16 @@ export default async function HomePage() {
             </p>
             <div className="flex items-center gap-2 mt-2.5">
               <Link
-                href="/quiz"
+                href="/compare"
                 className="flex-1 px-4 py-2.5 bg-amber-500 text-white font-bold rounded-lg text-sm text-center active:scale-[0.98] transition-all"
               >
-                Find My Platform →
+                Compare All
               </Link>
               <Link
-                href="/compare"
+                href="/quiz"
                 className="flex-1 px-4 py-2.5 border border-slate-300 text-slate-700 font-semibold rounded-lg text-sm text-center active:scale-[0.98] transition-all"
               >
-                Compare All
+                Find My Platform →
               </Link>
             </div>
           </div>
