@@ -148,80 +148,104 @@ export default async function HomePage() {
       />
 
       {/* Hero Section */}
-      <section className="relative bg-white border-b border-slate-100 py-5 md:py-14 overflow-hidden">
+      <section className="relative bg-white border-b border-slate-100 py-3 md:py-14 overflow-hidden">
         <div className="relative max-w-4xl mx-auto px-4 text-center">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 md:px-3 md:py-1.5 bg-slate-100 rounded-full text-[0.69rem] md:text-xs font-medium text-slate-600 mb-2.5 md:mb-6 hero-fade-up hero-fade-up-1 border border-slate-200">
-            <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-blue-500 rounded-full animate-pulse" />
-            Updated {updatedDateStr} &middot; {brokerCount} platforms
-          </div>
-          <h1 className="text-2xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 hero-fade-up hero-fade-up-1 leading-tight">
-            Compare Australia&apos;s Best<br className="hidden sm:block" /> Investing Platforms
-          </h1>
-          <p className="mt-2 md:mt-5 text-sm md:text-xl text-slate-500 max-w-2xl mx-auto hero-fade-up hero-fade-up-2 leading-relaxed">
-            <span className="md:hidden">Shares, crypto, super, property, robo-advisors &amp; more — compared free.</span>
-            <span className="hidden md:inline">Compare fees, features, and safety across share brokers, crypto exchanges, super funds, robo-advisors, property platforms, and CFD brokers — independent, transparent, and free.</span>
-          </p>
-          {/* Category strip */}
-          <div className="flex items-center justify-center flex-wrap gap-1.5 md:gap-2 mt-3 md:mt-5 hero-fade-up hero-fade-up-2">
-            {categoryStrip.map((cat) => (
+          {/* Mobile: compact hero */}
+          <div className="md:hidden">
+            <h1 className="text-xl font-extrabold text-slate-900 leading-tight">
+              Compare Australia&apos;s Best Investing Platforms
+            </h1>
+            <p className="mt-1 text-xs text-slate-500">
+              {brokerCount} platforms compared free · Updated {updatedDateStr}
+            </p>
+            <div className="flex items-center gap-2 mt-2.5">
               <Link
-                key={cat.label}
-                href={cat.href}
-                className="px-3 py-1.5 text-[0.69rem] md:text-xs font-semibold rounded-full border border-slate-200 text-slate-600 bg-white hover:bg-slate-50 hover:border-slate-300 transition-colors"
+                href="/quiz"
+                className="flex-1 px-4 py-2.5 bg-amber-500 text-white font-bold rounded-lg text-sm text-center active:scale-[0.98] transition-all"
               >
-                {cat.label}
+                Find My Platform →
               </Link>
-            ))}
+              <Link
+                href="/compare"
+                className="flex-1 px-4 py-2.5 border border-slate-300 text-slate-700 font-semibold rounded-lg text-sm text-center active:scale-[0.98] transition-all"
+              >
+                Compare All
+              </Link>
+            </div>
           </div>
-          <div className="hero-fade-up hero-fade-up-3">
-            <HomepageSearchBar />
-          </div>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 sm:gap-3 mt-3 md:mt-6 mb-1 md:mb-2 hero-fade-up hero-fade-up-4">
-            <Link
-              href="/quiz"
-              className="px-5 md:px-7 py-3 md:py-3.5 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 hover:scale-105 hover:shadow-lg transition-all duration-200 text-sm w-full sm:w-auto text-center"
-            >
-              Find My Platform — 60sec Quiz &rarr;
-            </Link>
-            <Link
-              href="/compare"
-              className="px-5 md:px-7 py-3 md:py-3.5 border-2 border-slate-300 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 hover:border-slate-400 hover:scale-105 transition-all duration-200 text-sm w-full sm:w-auto text-center"
-            >
-              Compare All Platforms &rarr;
-            </Link>
-          </div>
-          {/* Social proof */}
-          <p className="text-[0.69rem] md:text-sm text-slate-500 mt-2 md:mt-4 hero-fade-up hero-fade-up-5 font-medium">
-            Trusted by <span className="text-slate-700 font-bold">10,000+</span> Australian investors
-          </p>
-          {/* Trust signals — inline row on mobile (smaller), inline row on desktop */}
-          <div className="flex items-center justify-center flex-wrap gap-x-3 gap-y-1 sm:gap-x-8 pt-1.5 md:pt-4 text-[0.62rem] md:text-xs text-slate-500 hero-fade-up hero-fade-up-5">
-            <span className="flex items-center gap-1">
-              <svg className="w-3 h-3 md:w-4 md:h-4 text-slate-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-              ASIC-regulated
-            </span>
-            <span className="flex items-center gap-1">
-              <svg className="w-3 h-3 md:w-4 md:h-4 text-slate-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-              Independent
-            </span>
-            <span className="flex items-center gap-1">
-              <svg className="w-3 h-3 md:w-4 md:h-4 text-amber-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" /></svg>
-              Verified daily
-            </span>
-            <span className="flex items-center gap-1">
-              <svg className="w-3 h-3 md:w-4 md:h-4 text-slate-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" /></svg>
-              Free
-            </span>
+          {/* Desktop: full hero */}
+          <div className="hidden md:block">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 rounded-full text-xs font-medium text-slate-600 mb-6 hero-fade-up hero-fade-up-1 border border-slate-200">
+              <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+              Updated {updatedDateStr} &middot; {brokerCount} platforms
+            </div>
+            <h1 className="text-5xl lg:text-6xl font-extrabold text-slate-900 hero-fade-up hero-fade-up-1 leading-tight">
+              Compare Australia&apos;s Best<br /> Investing Platforms
+            </h1>
+            <p className="mt-5 text-xl text-slate-500 max-w-2xl mx-auto hero-fade-up hero-fade-up-2 leading-relaxed">
+              Compare fees, features, and safety across share brokers, crypto exchanges, super funds, robo-advisors, property platforms, and CFD brokers — independent, transparent, and free.
+            </p>
+            {/* Category strip — desktop only */}
+            <div className="flex items-center justify-center flex-wrap gap-2 mt-5 hero-fade-up hero-fade-up-2">
+              {categoryStrip.map((cat) => (
+                <Link
+                  key={cat.label}
+                  href={cat.href}
+                  className="px-3 py-1.5 text-xs font-semibold rounded-full border border-slate-200 text-slate-600 bg-white hover:bg-slate-50 hover:border-slate-300 transition-colors"
+                >
+                  {cat.label}
+                </Link>
+              ))}
+            </div>
+            <div className="hero-fade-up hero-fade-up-3">
+              <HomepageSearchBar />
+            </div>
+            <div className="flex items-center justify-center gap-3 mt-6 mb-2 hero-fade-up hero-fade-up-4">
+              <Link
+                href="/quiz"
+                className="px-7 py-3.5 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 hover:scale-105 hover:shadow-lg transition-all duration-200 text-sm"
+              >
+                Find My Platform — 60sec Quiz &rarr;
+              </Link>
+              <Link
+                href="/compare"
+                className="px-7 py-3.5 border-2 border-slate-300 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 hover:border-slate-400 hover:scale-105 transition-all duration-200 text-sm"
+              >
+                Compare All Platforms &rarr;
+              </Link>
+            </div>
+            {/* Social proof */}
+            <p className="text-sm text-slate-500 mt-4 hero-fade-up hero-fade-up-5 font-medium">
+              Trusted by <span className="text-slate-700 font-bold">10,000+</span> Australian investors
+            </p>
+            {/* Trust signals */}
+            <div className="flex items-center justify-center flex-wrap gap-x-8 pt-4 text-xs text-slate-500 hero-fade-up hero-fade-up-5">
+              <span className="flex items-center gap-1">
+                <svg className="w-4 h-4 text-slate-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                ASIC-regulated
+              </span>
+              <span className="flex items-center gap-1">
+                <svg className="w-4 h-4 text-slate-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                Independent
+              </span>
+              <span className="flex items-center gap-1">
+                <svg className="w-4 h-4 text-amber-400 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" /></svg>
+                Verified daily
+              </span>
+              <span className="flex items-center gap-1">
+                <svg className="w-4 h-4 text-slate-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" /></svg>
+                Free
+              </span>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Broker Logo Strip — instant credibility */}
-      <section className="py-2 md:py-4 bg-white border-b border-slate-100">
+      {/* Broker Logo Strip — desktop only */}
+      <section className="hidden md:block py-4 bg-white border-b border-slate-100">
         <div className="container-custom">
-          <p className="text-[0.62rem] md:text-[0.69rem] uppercase tracking-widest text-slate-500 text-center mb-1.5 md:mb-3 font-medium">Platforms we compare</p>
-          {/* Desktop: centered wrap row */}
-          <div className="hidden sm:flex items-center justify-center gap-8 flex-wrap opacity-70">
+          <p className="text-[0.69rem] uppercase tracking-widest text-slate-500 text-center mb-3 font-medium">Platforms we compare</p>
+          <div className="flex items-center justify-center gap-8 flex-wrap opacity-70">
             {(brokers as Broker[])?.slice(0, 6).map((broker) => (
               <div key={broker.id} className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-[0.69rem] font-bold shrink-0" style={{ backgroundColor: broker.color || '#64748b' }}>
@@ -231,27 +255,16 @@ export default async function HomePage() {
               </div>
             ))}
           </div>
-          {/* Mobile: scrollable row, smaller icons — limited to 5 to prevent overflow */}
-          <div className="sm:hidden flex items-center justify-center gap-2 opacity-70 overflow-x-auto scrollbar-hide px-2">
-            {(brokers as Broker[])?.slice(0, 5).map((broker) => (
-              <div key={broker.id} className="flex items-center gap-1 shrink-0">
-                <div className="w-6 h-6 rounded-md flex items-center justify-center text-white text-[0.62rem] font-bold shrink-0" style={{ backgroundColor: broker.color || '#64748b' }}>
-                  {broker.name?.slice(0, 2).toUpperCase()}
-                </div>
-                <span className="text-[0.62rem] font-semibold text-slate-500 whitespace-nowrap">{broker.name}</span>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
       {/* Comparison Table */}
       <ScrollFadeIn>
-        <section className="py-4 sm:py-8 md:py-16 bg-slate-50">
+        <section className="py-3 sm:py-8 md:py-16 bg-slate-50">
           <div className="container-custom">
-            <div className="flex items-start justify-between gap-2 mb-2 sm:mb-5 md:mb-8">
+            <div className="flex items-center justify-between gap-2 mb-1.5 sm:mb-5 md:mb-8">
               <div>
-                <h2 className="text-lg md:text-3xl font-bold text-slate-900">
+                <h2 className="text-base md:text-3xl font-bold text-slate-900">
                   Top Rated Platforms
                 </h2>
                 <p className="text-[0.69rem] md:text-sm text-slate-500 mt-0.5 md:mt-1">
@@ -261,7 +274,7 @@ export default async function HomePage() {
               </div>
               <Link
                 href="/compare"
-                className="md:hidden text-[0.69rem] font-semibold text-slate-500 hover:text-slate-900 shrink-0 min-h-[44px] inline-flex items-center px-1"
+                className="md:hidden text-[0.69rem] font-semibold text-slate-500 hover:text-slate-900 shrink-0 inline-flex items-center px-1"
               >
                 View all →
               </Link>
