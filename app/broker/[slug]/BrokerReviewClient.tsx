@@ -740,7 +740,7 @@ export default function BrokerReviewClient({
 
         {/* Details Grid */}
         <h2 id="details" className="text-xl md:text-2xl font-extrabold mb-3 scroll-mt-20">Details</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 mb-6 md:mb-8">
           <div className="bg-slate-50 rounded-lg p-4">
             <p className="text-[0.69rem] uppercase text-slate-500 tracking-wide font-medium mb-1">Platforms</p>
             <p className="text-sm font-medium">{b.platforms?.join(', ') || 'N/A'}</p>
@@ -770,7 +770,7 @@ export default function BrokerReviewClient({
               {relatedDeals.map((d) => (
                 <div
                   key={d.slug}
-                  className="border border-slate-200 rounded-xl p-4 hover:shadow-md transition-shadow flex items-start gap-3"
+                  className="border border-slate-200 rounded-xl p-3 md:p-4 hover:shadow-md transition-shadow flex items-start gap-3"
                 >
                   <div
                     className="w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold shrink-0"
@@ -817,12 +817,12 @@ export default function BrokerReviewClient({
           <>
             <h2 id="similar" className="text-xl font-extrabold mb-2 scroll-mt-20">Similar Platforms</h2>
             <p className="text-sm text-slate-600 mb-4">If {b.name} isn&apos;t quite right, consider these alternatives:</p>
-            <ScrollReveal animation="scroll-stagger-children" className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+            <ScrollReveal animation="scroll-stagger-children" className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mb-6 md:mb-8">
               {similar.map(s => (
                 <Link
                   key={s.slug}
                   href={`/broker/${s.slug}`}
-                  className="border border-slate-200 rounded-xl p-4 hover:shadow-md transition-shadow"
+                  className="border border-slate-200 rounded-xl p-3 md:p-4 hover:shadow-md transition-shadow"
                 >
                   <div
                     className="w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold mb-2"
@@ -854,7 +854,7 @@ export default function BrokerReviewClient({
                   <Link
                     key={article.id}
                     href={`/article/${article.slug}`}
-                    className="border border-slate-200 rounded-xl p-4 hover:shadow-md transition-shadow flex flex-col"
+                    className="border border-slate-200 rounded-xl p-3 md:p-4 hover:shadow-md transition-shadow flex flex-col"
                   >
                     {article.category && (
                       <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full self-start mb-1 ${color}`}>
