@@ -39,7 +39,7 @@ export default async function QuizResultsExportPage({
   return (
     <div style={{ maxWidth: 700, margin: "0 auto", padding: "40px 24px", fontFamily: "system-ui, -apple-system, sans-serif", color: "#0f172a" }}>
       <div style={{ borderBottom: "3px solid #15803d", paddingBottom: 16, marginBottom: 24 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 800, margin: 0 }}>Your Broker Quiz Results</h1>
+        <h1 style={{ fontSize: 24, fontWeight: 800, margin: 0 }}>Your Platform Quiz Results</h1>
         <p style={{ fontSize: 12, color: "#64748b", margin: "4px 0 0" }}>Generated {now} by invest.com.au</p>
       </div>
 

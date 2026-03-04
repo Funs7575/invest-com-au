@@ -69,7 +69,7 @@ export default memo(function DealCard({
 
   return (
     <div
-      className={`group relative rounded-xl border bg-white p-3.5 md:p-5 flex flex-col transition-all duration-300 hover:translate-y-[-2px] hover:shadow-lg ${
+      className={`group relative rounded-xl border bg-white p-3 md:p-5 flex flex-col transition-all duration-300 hover:translate-y-[-2px] hover:shadow-lg ${
         isFeaturedCampaign
           ? "border-blue-200 ring-1 ring-blue-100"
           : "border-slate-200 hover:border-transparent"

@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
         : type === "scenario"
           ? "Investing Scenario"
           : type === "best"
-            ? "Best Broker Guide"
+            ? "Best Platform Guide"
             : null;
 
   return new ImageResponse(

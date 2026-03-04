@@ -800,7 +800,7 @@ export default function QuizPage() {
                       target="_blank"
                       rel={AFFILIATE_REL}
                       onClick={() => trackClick(r.broker!.slug, r.broker!.name, `quiz-result-${i + 2}`, '/quiz', 'quiz')}
-                      className="sm:hidden block w-full text-center mt-2 px-3 py-2 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors"
+                      className="sm:hidden block w-full text-center mt-2 px-3 py-1.5 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors"
                     >
                       {getBenefitCta(r.broker, 'quiz')}
                     </a>

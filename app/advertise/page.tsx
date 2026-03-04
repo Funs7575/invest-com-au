@@ -147,7 +147,7 @@ export default function AdvertisePage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
             {[
               { value: "50,000+", label: "Monthly Visitors" },
-              { value: "25+", label: "Brokers Compared" },
+              { value: "25+", label: "Platforms Compared" },
               { value: "10,000+", label: "Monthly Quiz Completions" },
               { value: "85%", label: "Mobile Traffic" },
             ].map(stat => (
