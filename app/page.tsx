@@ -9,6 +9,7 @@ import ScrollFadeIn from "@/components/ScrollFadeIn";
 import LeadMagnet from "@/components/LeadMagnet";
 import DealCard from "@/components/DealCard";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
+import LiveActivityTicker from "@/components/LiveActivityTicker";
 
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 import { getMostRecentFeeCheck } from "@/lib/utils";
@@ -63,7 +64,7 @@ export default async function HomePage() {
 
   const BROKER_LISTING_COLUMNS = "id, name, slug, color, icon, rating, asx_fee, asx_fee_value, us_fee, us_fee_value, fx_rate, chess_sponsored, smsf_support, is_crypto, platform_type, deal, deal_text, deal_expiry, deal_terms, deal_verified_date, deal_category, editors_pick, tagline, cta_text, affiliate_url, sponsorship_tier, benefit_cta, updated_at, fee_last_checked, status";
 
-  const [{ data: brokers }, { data: articles }] = await Promise.all([
+  const [{ data: brokers }, { data: articles }, { data: recentFeeChanges }, { data: versusEvents }] = await Promise.all([
     supabase
       .from("brokers")
       .select(BROKER_LISTING_COLUMNS)
@@ -75,11 +76,64 @@ export default async function HomePage() {
       .eq("status", "published")
       .order("created_at", { ascending: false })
       .limit(6),
+    // Recent fee changes for LiveActivityTicker
+    supabase
+      .from("broker_data_changes")
+      .select("broker_slug, field_name, old_value, new_value, changed_at")
+      .in("field_name", ["asx_fee", "asx_fee_value", "us_fee", "us_fee_value", "fx_rate", "inactivity_fee"])
+      .order("changed_at", { ascending: false })
+      .limit(10),
+    // Popular versus page views (last 7 days)
+    supabase
+      .from("analytics_events")
+      .select("page, created_at")
+      .eq("event_type", "page_view")
+      .like("page", "/versus/%")
+      .gte("created_at", new Date(Date.now() - 7 * 86400000).toISOString())
+      .limit(500),
   ]);
 
   const dealBrokers = ((brokers as Broker[]) || []).filter((b) => b.deal).slice(0, 3);
 
   const brokerCount = brokers?.length || 0;
+
+  // Build broker name lookup for fee changes
+  const brokerNameMap = new Map(((brokers as Broker[]) || []).map(b => [b.slug, b.name]));
+
+  // Process recent fee changes
+  const feeChanges = (recentFeeChanges || [])
+    .filter((c: { broker_slug: string }) => brokerNameMap.has(c.broker_slug))
+    .slice(0, 5)
+    .map((c: { broker_slug: string; field_name: string; old_value: string | null; new_value: string | null; changed_at: string }) => ({
+      broker_name: brokerNameMap.get(c.broker_slug) || c.broker_slug,
+      broker_slug: c.broker_slug,
+      field: c.field_name,
+      old_value: c.old_value || "N/A",
+      new_value: c.new_value || "N/A",
+      changed_at: c.changed_at,
+    }));
+
+  // Process popular comparisons — count versus page views and rank
+  const versusCounts = new Map<string, number>();
+  for (const ev of versusEvents || []) {
+    const page = (ev as { page: string }).page;
+    if (!page) continue;
+    // Extract slug pair from /versus/slug1-vs-slug2 or /versus/slug1,slug2
+    const match = page.match(/^\/versus\/(.+)/);
+    if (!match) continue;
+    const key = match[1];
+    versusCounts.set(key, (versusCounts.get(key) || 0) + 1);
+  }
+  const popularComparisons = Array.from(versusCounts.entries())
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .map(([slugs, count]) => {
+      // Parse slug pair — could be "stake-vs-cmc-markets" or "stake,cmc-markets"
+      const parts = slugs.includes("-vs-") ? slugs.split("-vs-") : slugs.split(",");
+      const names = parts.map(s => brokerNameMap.get(s.trim()) || s.trim().replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase()));
+      return { slugs, names, count };
+    })
+    .filter(c => c.names.length >= 2);
 
   // Find the most recent data update across all brokers (for the "Updated" badge)
   const mostRecentUpdate = (brokers as Broker[])?.reduce((latest: string, b: Broker) => {
@@ -293,6 +347,18 @@ export default async function HomePage() {
           </div>
         </section>
       </ScrollFadeIn>
+
+      {/* Live Activity — fee changes + trending comparisons */}
+      {(feeChanges.length > 0 || popularComparisons.length > 0) && (
+        <section className="py-2 md:py-6 bg-white">
+          <div className="container-custom max-w-xl">
+            <LiveActivityTicker
+              feeChanges={feeChanges}
+              popularComparisons={popularComparisons}
+            />
+          </div>
+        </section>
+      )}
 
       {/* Email Capture */}
       <ScrollFadeIn>
