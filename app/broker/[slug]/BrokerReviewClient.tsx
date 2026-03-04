@@ -188,22 +188,22 @@ export default function BrokerReviewClient({
   ];
 
   return (
-    <div className="py-12">
+    <div className="py-5 md:py-12">
       <OnThisPage items={tocItems} />
       <div className="container-custom max-w-4xl">
         {/* Breadcrumb */}
-        <div className="text-sm text-slate-500 mb-6">
+        <div className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
           <Link href="/" className="hover:text-brand">Home</Link>
-          <span className="mx-2">/</span>
+          <span className="mx-1.5 md:mx-2">/</span>
           <Link href="/reviews" className="hover:text-brand">Reviews</Link>
-          <span className="mx-2">/</span>
+          <span className="mx-1.5 md:mx-2">/</span>
           <span className="text-brand">{b.name}</span>
         </div>
 
         {/* Review Verified Banner */}
         {reviewVerified && (
-          <div className="bg-emerald-100 border border-emerald-200 rounded-xl p-4 mb-6 text-center">
-            <p className="text-sm font-semibold text-emerald-900">
+          <div className="bg-emerald-100 border border-emerald-200 rounded-xl p-3 md:p-4 mb-4 md:mb-6 text-center">
+            <p className="text-xs md:text-sm font-semibold text-emerald-900">
               Thanks — your review has been verified! It should appear on this page shortly.
             </p>
           </div>
@@ -211,28 +211,28 @@ export default function BrokerReviewClient({
 
         {/* Story Verified Banner */}
         {storyVerified && (
-          <div className="bg-emerald-100 border border-emerald-200 rounded-xl p-4 mb-6 text-center">
-            <p className="text-sm font-semibold text-emerald-900">
+          <div className="bg-emerald-100 border border-emerald-200 rounded-xl p-3 md:p-4 mb-4 md:mb-6 text-center">
+            <p className="text-xs md:text-sm font-semibold text-emerald-900">
               Thanks — your switching story has been verified! It should appear on this page shortly.
             </p>
           </div>
         )}
 
         {/* Header */}
-        <div className="mb-4">
-          <div className="flex items-start gap-4 mb-3">
+        <div className="mb-3 md:mb-4">
+          <div className="flex items-start gap-3 md:gap-4 mb-2 md:mb-3">
             <div
-              className="w-14 h-14 rounded-xl flex items-center justify-center text-2xl font-bold shrink-0"
+              className="w-10 h-10 md:w-14 md:h-14 rounded-xl flex items-center justify-center text-lg md:text-2xl font-bold shrink-0"
               style={{ background: `${b.color}20`, color: b.color }}
             >
               {b.icon || b.name.charAt(0)}
             </div>
             <div className="min-w-0">
-              <h1 className="text-3xl md:text-4xl font-extrabold">{b.name} Review ({CURRENT_YEAR})</h1>
-              <p className="text-slate-600 mt-1">{b.tagline}</p>
+              <h1 className="text-xl md:text-4xl font-extrabold leading-tight">{b.name} Review ({CURRENT_YEAR})</h1>
+              <p className="text-slate-600 mt-0.5 md:mt-1 text-sm md:text-base">{b.tagline}</p>
             </div>
           </div>
-          <div className="flex items-center gap-3 flex-wrap mb-4">
+          <div className="flex items-center gap-2 md:gap-3 flex-wrap mb-3 md:mb-4">
             <span className="text-amber text-sm">{renderStars(b.rating || 0)}</span>
             <span className="text-sm text-slate-500">{b.rating}/5</span>
             {b.chess_sponsored && (
@@ -247,7 +247,7 @@ export default function BrokerReviewClient({
             target="_blank"
             rel={AFFILIATE_REL}
             onClick={() => trackClick(b.slug, b.name, 'review-header', `/broker/${b.slug}`, 'review')}
-            className="inline-block px-6 py-3 bg-amber-600 text-white font-semibold rounded-lg hover:bg-amber-700 transition-colors"
+            className="block md:inline-block w-full md:w-auto text-center px-6 py-3 bg-amber-600 text-white font-semibold rounded-lg hover:bg-amber-700 transition-colors"
           >
             {getBenefitCta(b, 'review')}
           </a>
@@ -324,10 +324,10 @@ export default function BrokerReviewClient({
         )}
 
         {/* Who Is This Best For? */}
-        <div id="best-for" className="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-8 scroll-mt-20">
+        <div id="best-for" className="bg-blue-50 border border-blue-200 rounded-xl p-4 md:p-6 mb-6 md:mb-8 scroll-mt-20">
           <div className="flex items-center gap-2 mb-3">
             <Icon name="target" size={20} className="text-blue-700 shrink-0" />
-            <h2 className="text-lg font-extrabold text-slate-900">Who Is {b.name} Best For?</h2>
+            <h2 className="text-base md:text-lg font-extrabold text-slate-900">Who Is {b.name} Best For?</h2>
           </div>
           <ul className="space-y-2">
             {bestFor.map((item, i) => (
@@ -340,7 +340,7 @@ export default function BrokerReviewClient({
         </div>
 
         {/* Fee Audit */}
-        <h2 id="fees" className="text-2xl font-extrabold mb-2 scroll-mt-20">Fee Audit</h2>
+        <h2 id="fees" className="text-xl md:text-2xl font-extrabold mb-2 scroll-mt-20">Fee Audit</h2>
         <p className="text-slate-600 mb-4 text-sm">We&apos;ve audited {b.name}&apos;s fee structure so you don&apos;t have to read the PDS.</p>
         <ScrollReveal animation="fee-row-stagger" className="bg-white border border-slate-200 rounded-xl overflow-hidden mb-8">
           {feeRows.map((row, i) => (
@@ -355,7 +355,7 @@ export default function BrokerReviewClient({
         </ScrollReveal>
 
         {/* Sources & Verification — E-E-A-T transparency signals */}
-        <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 mb-8">
+        <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 md:p-5 mb-6 md:mb-8">
           <div className="flex items-center gap-2 mb-3">
             <Icon name="clipboard-list" size={18} className="text-slate-500 shrink-0" />
             <h3 className="text-sm font-extrabold text-slate-700">Sources &amp; Verification</h3>
@@ -415,10 +415,10 @@ export default function BrokerReviewClient({
         </div>
 
         {/* Real Cost Example */}
-        <div id="cost-example" className="border border-slate-200 rounded-xl p-6 mb-8 scroll-mt-20">
+        <div id="cost-example" className="border border-slate-200 rounded-xl p-4 md:p-6 mb-6 md:mb-8 scroll-mt-20">
           <div className="flex items-center gap-2 mb-4">
             <Icon name="calculator" size={20} className="text-slate-600 shrink-0" />
-            <h2 className="text-lg font-extrabold">What Would a Typical Trade Cost?</h2>
+            <h2 className="text-base md:text-lg font-extrabold">What Would a Typical Trade Cost?</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {costScenarios.map((s, i) => (
@@ -443,7 +443,7 @@ export default function BrokerReviewClient({
         </div>
 
         {/* Inline CTA 1 */}
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 mb-8">
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 md:p-5 mb-6 md:mb-8">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <p className="text-sm min-w-0 flex-1">
               <strong>Like what you see?</strong>{' '}
@@ -466,14 +466,14 @@ export default function BrokerReviewClient({
         </div>
 
         {/* Safety Check */}
-        <h2 id="safety" className="text-2xl font-extrabold mb-3 scroll-mt-20">Safety &amp; Scam Check</h2>
-        <div className={`rounded-xl p-6 mb-8 border ${b.chess_sponsored ? 'bg-emerald-50 border-emerald-200' : 'bg-red-50 border-red-200'}`}>
+        <h2 id="safety" className="text-xl md:text-2xl font-extrabold mb-3 scroll-mt-20">Safety &amp; Scam Check</h2>
+        <div className={`rounded-xl p-4 md:p-6 mb-6 md:mb-8 border ${b.chess_sponsored ? 'bg-emerald-50 border-emerald-200' : 'bg-red-50 border-red-200'}`}>
           <div className="flex items-center gap-3 mb-3">
             {b.chess_sponsored
               ? <Icon name="check-circle" size={28} className="text-emerald-600 shrink-0" />
               : <Icon name="alert-triangle" size={28} className="text-red-500 shrink-0" />
             }
-            <h3 className="text-lg font-bold">
+            <h3 className="text-base md:text-lg font-bold">
               {b.chess_sponsored
                 ? 'CHESS Sponsored — You Own Your Shares'
                 : 'Custodial Model — Broker Holds Your Shares'}
@@ -487,9 +487,9 @@ export default function BrokerReviewClient({
         </div>
 
         {/* Pros & Cons */}
-        <div id="pros-cons" className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 scroll-mt-20">
+        <div id="pros-cons" className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8 scroll-mt-20">
           {b.pros && b.pros.length > 0 && (
-            <ScrollReveal animation="scroll-slide-left" className="bg-emerald-50 rounded-xl p-6">
+            <ScrollReveal animation="scroll-slide-left" className="bg-emerald-50 rounded-xl p-4 md:p-6">
               <h3 className="text-emerald-800 font-bold mb-3">What We Like</h3>
               <ul className="space-y-2">
                 {b.pros.map((pro: string, i: number) => (
@@ -502,7 +502,7 @@ export default function BrokerReviewClient({
             </ScrollReveal>
           )}
           {b.cons && b.cons.length > 0 && (
-            <ScrollReveal animation="scroll-slide-right" className="bg-red-50 rounded-xl p-6">
+            <ScrollReveal animation="scroll-slide-right" className="bg-red-50 rounded-xl p-4 md:p-6">
               <h3 className="text-red-800 font-bold mb-3">What We Don&apos;t</h3>
               <ul className="space-y-2">
                 {b.cons.map((con: string, i: number) => (
@@ -525,10 +525,10 @@ export default function BrokerReviewClient({
         />
 
         {/* Important Information — exit/closure policy, regulatory, risk warnings */}
-        <div id="important-info" className="bg-slate-50 border border-slate-200 rounded-xl p-5 mb-8 scroll-mt-20">
+        <div id="important-info" className="bg-slate-50 border border-slate-200 rounded-xl p-4 md:p-5 mb-6 md:mb-8 scroll-mt-20">
           <div className="flex items-center gap-2 mb-3">
             <Icon name="clipboard-list" size={18} className="text-slate-500 shrink-0" />
-            <h2 className="text-lg font-extrabold text-slate-900">Important Information</h2>
+            <h2 className="text-base md:text-lg font-extrabold text-slate-900">Important Information</h2>
           </div>
           <div className="space-y-3 text-sm text-slate-700">
             {/* Account & Exit */}
@@ -714,7 +714,7 @@ export default function BrokerReviewClient({
         )}
 
         {/* Inline CTA 2 */}
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-5 mb-8">
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 md:p-5 mb-6 md:mb-8">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <p className="text-sm min-w-0 flex-1">
               <strong>Ready to decide?</strong>{' '}
@@ -739,7 +739,7 @@ export default function BrokerReviewClient({
         </div>
 
         {/* Details Grid */}
-        <h2 id="details" className="text-2xl font-extrabold mb-3 scroll-mt-20">Details</h2>
+        <h2 id="details" className="text-xl md:text-2xl font-extrabold mb-3 scroll-mt-20">Details</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
           <div className="bg-slate-50 rounded-lg p-4">
             <p className="text-[0.69rem] uppercase text-slate-500 tracking-wide font-medium mb-1">Platforms</p>
@@ -874,7 +874,7 @@ export default function BrokerReviewClient({
 
         {/* Bottom CTA */}
         <div className="bg-amber-400 text-slate-900 rounded-xl p-8 text-center">
-          <h2 className="text-2xl font-extrabold mb-2">Ready to try {b.name}?</h2>
+          <h2 className="text-xl md:text-2xl font-extrabold mb-2">Ready to try {b.name}?</h2>
           <p className="text-slate-700 mb-4">
             {b.deal_text || ((b.asx_fee_value ?? 999) <= 5
               ? `Start trading from just ${b.asx_fee} per trade. Takes under 5 minutes.`
