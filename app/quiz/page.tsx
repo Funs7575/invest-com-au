@@ -23,40 +23,95 @@ interface QuizWeight {
   smsf_weight: number;
   crypto_weight: number;
   advanced_weight: number;
+  property_weight: number;
+  robo_weight: number;
 }
 
 // Fallback questions if DB fetch fails
 const fallbackQuestions = [
-  { question_text: "What is your main investing goal?", options: [{ label: "Buy Crypto", key: "crypto" }, { label: "Active Trading", key: "trade" }, { label: "Dividend Income", key: "income" }, { label: "Long-Term Growth", key: "grow" }] },
-  { question_text: "How experienced are you with investing?", options: [{ label: "Complete Beginner", key: "beginner" }, { label: "Some Experience", key: "intermediate" }, { label: "Advanced / Professional", key: "pro" }] },
-  { question_text: "How much are you looking to invest?", options: [{ label: "Under $5,000", key: "small" }, { label: "$5,000 - $50,000", key: "medium" }, { label: "$50,000 - $100,000", key: "large" }, { label: "$100,000+", key: "whale" }] },
-  { question_text: "What matters most to you?", options: [{ label: "Lowest Fees", key: "fees" }, { label: "Safety (CHESS)", key: "safety" }, { label: "Best Tools & Research", key: "tools" }, { label: "Simplicity", key: "simple" }] },
+  { question_text: "What is your main investing goal?", options: [
+    { label: "Long-Term Growth", key: "grow" },
+    { label: "Buy Crypto", key: "crypto" },
+    { label: "Active Trading", key: "trade" },
+    { label: "Hands-Off / Automated", key: "automate" },
+    { label: "Retirement / Super", key: "super" },
+    { label: "Property", key: "property" },
+  ] },
+  { question_text: "How experienced are you with investing?", options: [
+    { label: "Complete Beginner", key: "beginner" },
+    { label: "Some Experience", key: "intermediate" },
+    { label: "Advanced / Professional", key: "pro" },
+  ] },
+  { question_text: "How much are you looking to invest?", options: [
+    { label: "Under $5,000", key: "small" },
+    { label: "$5,000 - $50,000", key: "medium" },
+    { label: "$50,000 - $100,000", key: "large" },
+    { label: "$100,000+", key: "whale" },
+  ] },
+  { question_text: "What matters most to you?", options: [
+    { label: "Lowest Fees", key: "fees" },
+    { label: "Safety (CHESS)", key: "safety" },
+    { label: "Best Tools & Research", key: "tools" },
+    { label: "Simplicity / Set & Forget", key: "simple" },
+  ] },
 ];
 
-// Fallback scoring weights
+// Fallback scoring weights — covers all 7 platform types
 const fallbackScores: Record<string, Record<WeightKey, number>> = {
-  // Share brokers
-  "selfwealth": { beginner: 7, low_fee: 9, us_shares: 7, smsf: 8, crypto: 0, advanced: 5 },
-  "stake": { beginner: 8, low_fee: 10, us_shares: 10, smsf: 3, crypto: 0, advanced: 4 },
-  "commsec": { beginner: 9, low_fee: 3, us_shares: 5, smsf: 7, crypto: 0, advanced: 6 },
-  "cmc-markets": { beginner: 6, low_fee: 8, us_shares: 8, smsf: 5, crypto: 0, advanced: 8 },
-  "interactive-brokers": { beginner: 3, low_fee: 7, us_shares: 9, smsf: 6, crypto: 0, advanced: 10 },
-  "moomoo": { beginner: 7, low_fee: 9, us_shares: 9, smsf: 4, crypto: 0, advanced: 7 },
-  "superhero": { beginner: 8, low_fee: 9, us_shares: 7, smsf: 6, crypto: 4, advanced: 4 },
-  "tiger-brokers": { beginner: 5, low_fee: 7, us_shares: 9, smsf: 3, crypto: 0, advanced: 7 },
-  // Crypto exchanges
-  "swyftx": { beginner: 8, low_fee: 7, us_shares: 0, smsf: 3, crypto: 10, advanced: 5 },
-  "coinspot": { beginner: 9, low_fee: 5, us_shares: 0, smsf: 2, crypto: 9, advanced: 3 },
-  // Robo-advisors
-  "stockspot": { beginner: 10, low_fee: 7, us_shares: 3, smsf: 4, crypto: 0, advanced: 2 },
-  "raiz": { beginner: 9, low_fee: 8, us_shares: 2, smsf: 2, crypto: 0, advanced: 2 },
-  "spaceship": { beginner: 9, low_fee: 9, us_shares: 3, smsf: 2, crypto: 0, advanced: 2 },
-  // Research tools
-  "simply-wall-st": { beginner: 6, low_fee: 5, us_shares: 7, smsf: 3, crypto: 0, advanced: 8 },
-  "tradingview": { beginner: 4, low_fee: 5, us_shares: 6, smsf: 2, crypto: 4, advanced: 10 },
-  // CFD & Forex
-  "pepperstone": { beginner: 3, low_fee: 6, us_shares: 3, smsf: 0, crypto: 3, advanced: 9 },
-  "cmc-markets-cfds": { beginner: 4, low_fee: 7, us_shares: 3, smsf: 0, crypto: 2, advanced: 8 },
+  // ── Share brokers ──
+  "interactive-brokers": { beginner: 3, low_fee: 7, us_shares: 10, smsf: 7, crypto: 0, advanced: 10, property: 0, robo: 0 },
+  "cmc-markets": { beginner: 6, low_fee: 9, us_shares: 8, smsf: 5, crypto: 0, advanced: 8, property: 0, robo: 0 },
+  "stake": { beginner: 8, low_fee: 10, us_shares: 10, smsf: 3, crypto: 0, advanced: 4, property: 0, robo: 0 },
+  "moomoo": { beginner: 7, low_fee: 9, us_shares: 9, smsf: 4, crypto: 0, advanced: 7, property: 0, robo: 0 },
+  "selfwealth": { beginner: 7, low_fee: 8, us_shares: 7, smsf: 8, crypto: 0, advanced: 5, property: 0, robo: 0 },
+  "commsec": { beginner: 9, low_fee: 3, us_shares: 5, smsf: 7, crypto: 0, advanced: 6, property: 0, robo: 0 },
+  "superhero": { beginner: 8, low_fee: 9, us_shares: 7, smsf: 6, crypto: 4, advanced: 4, property: 0, robo: 0 },
+  "tiger-brokers": { beginner: 5, low_fee: 7, us_shares: 9, smsf: 3, crypto: 0, advanced: 7, property: 0, robo: 0 },
+  "ig": { beginner: 5, low_fee: 5, us_shares: 7, smsf: 5, crypto: 0, advanced: 8, property: 0, robo: 0 },
+  "saxo": { beginner: 4, low_fee: 5, us_shares: 8, smsf: 5, crypto: 0, advanced: 8, property: 0, robo: 0 },
+  "nabtrade": { beginner: 7, low_fee: 4, us_shares: 5, smsf: 7, crypto: 0, advanced: 5, property: 0, robo: 0 },
+  "anz-share-investing": { beginner: 6, low_fee: 3, us_shares: 4, smsf: 6, crypto: 0, advanced: 4, property: 0, robo: 0 },
+  "webull": { beginner: 6, low_fee: 8, us_shares: 9, smsf: 2, crypto: 3, advanced: 6, property: 0, robo: 0 },
+
+  // ── Crypto exchanges ──
+  "swyftx": { beginner: 8, low_fee: 7, us_shares: 0, smsf: 3, crypto: 10, advanced: 5, property: 0, robo: 0 },
+  "coinspot": { beginner: 9, low_fee: 5, us_shares: 0, smsf: 2, crypto: 9, advanced: 3, property: 0, robo: 0 },
+  "binance": { beginner: 4, low_fee: 9, us_shares: 0, smsf: 0, crypto: 10, advanced: 9, property: 0, robo: 0 },
+  "kraken": { beginner: 4, low_fee: 8, us_shares: 0, smsf: 0, crypto: 9, advanced: 8, property: 0, robo: 0 },
+  "btc-markets": { beginner: 6, low_fee: 6, us_shares: 0, smsf: 3, crypto: 8, advanced: 5, property: 0, robo: 0 },
+  "coinstash": { beginner: 8, low_fee: 7, us_shares: 0, smsf: 2, crypto: 7, advanced: 3, property: 0, robo: 0 },
+  "independent-reserve": { beginner: 5, low_fee: 6, us_shares: 0, smsf: 4, crypto: 8, advanced: 6, property: 0, robo: 0 },
+
+  // ── Robo-advisors ──
+  "stockspot": { beginner: 10, low_fee: 7, us_shares: 3, smsf: 4, crypto: 0, advanced: 2, property: 0, robo: 10 },
+  "raiz": { beginner: 9, low_fee: 8, us_shares: 2, smsf: 2, crypto: 0, advanced: 2, property: 0, robo: 9 },
+  "spaceship": { beginner: 9, low_fee: 9, us_shares: 3, smsf: 2, crypto: 0, advanced: 2, property: 0, robo: 8 },
+  "sixpark": { beginner: 8, low_fee: 7, us_shares: 3, smsf: 5, crypto: 0, advanced: 3, property: 0, robo: 9 },
+  "pearler": { beginner: 8, low_fee: 8, us_shares: 5, smsf: 3, crypto: 0, advanced: 3, property: 0, robo: 7 },
+  "vanguard-personal-investor": { beginner: 7, low_fee: 9, us_shares: 4, smsf: 3, crypto: 0, advanced: 3, property: 0, robo: 6 },
+
+  // ── Super funds ──
+  "australian-super": { beginner: 8, low_fee: 8, us_shares: 2, smsf: 0, crypto: 0, advanced: 3, property: 3, robo: 7 },
+  "hostplus": { beginner: 7, low_fee: 9, us_shares: 2, smsf: 0, crypto: 0, advanced: 3, property: 3, robo: 6 },
+  "rest-super": { beginner: 7, low_fee: 7, us_shares: 2, smsf: 0, crypto: 0, advanced: 2, property: 2, robo: 6 },
+  "aware-super": { beginner: 7, low_fee: 7, us_shares: 2, smsf: 0, crypto: 0, advanced: 3, property: 2, robo: 6 },
+  "spaceship-super": { beginner: 9, low_fee: 8, us_shares: 3, smsf: 0, crypto: 0, advanced: 2, property: 0, robo: 8 },
+
+  // ── Property platforms ──
+  "brickx": { beginner: 7, low_fee: 6, us_shares: 0, smsf: 3, crypto: 0, advanced: 3, property: 10, robo: 5 },
+  "domacom": { beginner: 4, low_fee: 5, us_shares: 0, smsf: 4, crypto: 0, advanced: 5, property: 9, robo: 3 },
+  "venturecrowd": { beginner: 3, low_fee: 4, us_shares: 0, smsf: 3, crypto: 0, advanced: 6, property: 8, robo: 2 },
+
+  // ── Research tools ──
+  "simply-wall-st": { beginner: 6, low_fee: 5, us_shares: 7, smsf: 3, crypto: 0, advanced: 8, property: 0, robo: 0 },
+  "tradingview": { beginner: 4, low_fee: 5, us_shares: 6, smsf: 2, crypto: 4, advanced: 10, property: 0, robo: 0 },
+  "market-index": { beginner: 7, low_fee: 6, us_shares: 4, smsf: 3, crypto: 0, advanced: 6, property: 0, robo: 0 },
+
+  // ── CFD & Forex ──
+  "pepperstone": { beginner: 3, low_fee: 6, us_shares: 3, smsf: 0, crypto: 3, advanced: 9, property: 0, robo: 0 },
+  "cmc-markets-cfds": { beginner: 4, low_fee: 7, us_shares: 3, smsf: 0, crypto: 2, advanced: 8, property: 0, robo: 0 },
+  "ic-markets": { beginner: 3, low_fee: 7, us_shares: 3, smsf: 0, crypto: 2, advanced: 9, property: 0, robo: 0 },
+  "fp-markets": { beginner: 4, low_fee: 6, us_shares: 3, smsf: 0, crypto: 2, advanced: 8, property: 0, robo: 0 },
 };
 
 const QUIZ_STORAGE_KEY = "invest-quiz-progress";
@@ -158,6 +213,8 @@ export default function QuizPage() {
             smsf: row.smsf_weight || 0,
             crypto: row.crypto_weight || 0,
             advanced: row.advanced_weight || 0,
+            property: row.property_weight || 0,
+            robo: row.robo_weight || 0,
           };
         });
         setWeights(w);
@@ -249,18 +306,20 @@ export default function QuizPage() {
     // Platform-type specific reasons
     if (pt === 'robo_advisor') {
       reasons.push('Automated portfolio management — hands-off investing');
-      if (userAnswers.includes('beginner') || userAnswers.includes('simple'))
-        reasons.push('Perfect for beginners who want professional-style investing');
+      if (userAnswers.includes('beginner') || userAnswers.includes('simple') || userAnswers.includes('automate'))
+        reasons.push('Perfect for investors who want a set-and-forget approach');
     } else if (pt === 'research_tool') {
       reasons.push('Powerful analysis tools to research before you invest');
       if (userAnswers.includes('tools') || userAnswers.includes('pro'))
         reasons.push('Advanced charting, screening, and data analytics');
     } else if (pt === 'super_fund') {
       reasons.push('Superannuation fund — grow your retirement savings');
-      if (userAnswers.includes('grow'))
+      if (userAnswers.includes('super') || userAnswers.includes('grow'))
         reasons.push('Strong long-term performance track record');
     } else if (pt === 'property_platform') {
       reasons.push('Property investing without buying a whole house');
+      if (userAnswers.includes('property'))
+        reasons.push('Fractional property ownership with rental income');
       if (userAnswers.includes('income'))
         reasons.push('Rental income and property returns');
     } else if (pt === 'cfd_forex') {
@@ -279,13 +338,13 @@ export default function QuizPage() {
         reasons.push('CHESS sponsorship — your shares are held in your name');
       if (userAnswers.includes('tools') || userAnswers.includes('pro'))
         reasons.push('Advanced charting and research tools');
-      if (broker.smsf_support && (userAnswers.includes('income') || userAnswers.includes('grow')))
+      if (broker.smsf_support && (userAnswers.includes('super') || userAnswers.includes('grow')))
         reasons.push('Supports SMSF accounts for tax-effective investing');
     }
 
     // Universal reasons
-    if (userAnswers.includes('beginner') || userAnswers.includes('simple'))
-      if (!reasons.some(r => r.includes('beginner')))
+    if (userAnswers.includes('beginner') || userAnswers.includes('simple') || userAnswers.includes('automate'))
+      if (!reasons.some(r => r.includes('beginner') || r.includes('hands-off') || r.includes('set-and-forget')))
         reasons.push('Simple, beginner-friendly platform and interface');
     if (userAnswers.includes('large') || userAnswers.includes('whale'))
       if (pt === 'share_broker' || !pt)
@@ -713,9 +772,10 @@ export default function QuizPage() {
                   {answers.map((key, i) => {
                     const keyMap: Record<string, string> = {
                       crypto: 'Crypto', trade: 'Advanced', income: 'Low Fees', grow: 'Beginner',
+                      property: 'Property', super: 'SMSF/Super', automate: 'Robo-Advisor',
                       beginner: 'Beginner', intermediate: 'Low Fees', pro: 'Advanced',
-                      small: 'Beginner', medium: 'Low Fees', large: 'US Shares', whale: 'Advanced',
-                      fees: 'Low Fees', safety: 'Beginner', tools: 'Advanced', simple: 'Beginner',
+                      small: 'Beginner', medium: 'Low Fees', large: 'SMSF/Super', whale: 'Advanced',
+                      fees: 'Low Fees', safety: 'SMSF/Safety', tools: 'Advanced', simple: 'Robo-Advisor', handsfree: 'Robo-Advisor',
                     };
                     return (
                       <span key={i} className="px-2 py-1 bg-white border border-slate-200 rounded-full text-[0.69rem] font-medium">

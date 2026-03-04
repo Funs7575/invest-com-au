@@ -1,7 +1,7 @@
 import type { Broker } from "./types";
 import { applyQuizSponsorBoost } from "./sponsorship";
 
-export type WeightKey = "beginner" | "low_fee" | "us_shares" | "smsf" | "crypto" | "advanced";
+export type WeightKey = "beginner" | "low_fee" | "us_shares" | "smsf" | "crypto" | "advanced" | "property" | "robo";
 export type QuizWeights = Record<WeightKey, number>;
 
 export interface ScoredResult {
@@ -11,21 +11,29 @@ export interface ScoredResult {
 }
 
 export const ANSWER_WEIGHT_MAP: Record<string, WeightKey> = {
+  // Q1: What is your main investing goal?
   crypto: "crypto",
   trade: "advanced",
   income: "low_fee",
   grow: "beginner",
+  property: "property",
+  super: "smsf",
+  automate: "robo",
+  // Q2: How experienced are you?
   beginner: "beginner",
   intermediate: "low_fee",
   pro: "advanced",
+  // Q3: How much are you looking to invest?
   small: "beginner",
   medium: "low_fee",
-  large: "us_shares",
+  large: "smsf",
   whale: "advanced",
+  // Q4: What matters most to you?
   fees: "low_fee",
-  safety: "beginner",
+  safety: "smsf",
   tools: "advanced",
-  simple: "beginner",
+  simple: "robo",
+  handsfree: "robo",
 };
 
 export function scoreQuizResults(
