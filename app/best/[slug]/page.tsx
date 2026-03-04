@@ -262,7 +262,7 @@ export default async function BestBrokerPage({
         ]} />
         <div className="container-custom max-w-4xl">
           {/* Breadcrumb */}
-          <nav className="text-sm text-slate-500 mb-6">
+          <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
             <Link href="/" className="hover:text-slate-900">
               Home
             </Link>
@@ -288,10 +288,21 @@ export default async function BestBrokerPage({
             </p>
           )}
 
-          {/* General Advice Warning — above-fold per ASIC RG 234.89 */}
-          <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 mb-3 text-[0.69rem] text-slate-500 leading-relaxed">
+          {/* General Advice Warning — collapsed on mobile, visible on desktop */}
+          <div className="hidden md:block bg-slate-50 border border-slate-200 rounded-lg p-3 mb-3 text-[0.69rem] text-slate-500 leading-relaxed">
             <strong className="text-slate-600">⚠️ General Advice Warning:</strong>{" "}
             {GENERAL_ADVICE_WARNING}
+          </div>
+          <div className="md:hidden mb-3">
+            <details className="bg-slate-50 border border-slate-200 rounded-lg">
+              <summary className="px-3 py-2 text-[0.62rem] text-slate-500 font-medium cursor-pointer flex items-center gap-1">
+                <svg className="w-3 h-3 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                General advice only — not a personal recommendation.
+              </summary>
+              <p className="px-3 pb-2.5 text-[0.62rem] text-slate-500 leading-relaxed">
+                {GENERAL_ADVICE_WARNING}
+              </p>
+            </details>
           </div>
 
           {/* Platform-specific warnings — shown conditionally based on category slug */}
@@ -336,8 +347,8 @@ export default async function BestBrokerPage({
             </span>
           </div>
 
-{/* Our selection criteria */}
-          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 md:p-5 mb-6 md:mb-8">
+{/* Our selection criteria — collapsible on mobile */}
+          <div className="hidden md:block bg-slate-50 border border-slate-200 rounded-xl p-4 md:p-5 mb-6 md:mb-8">
             <h2 className="text-lg font-bold text-slate-900 mb-2">
               How We Selected These Platforms
             </h2>
@@ -355,6 +366,26 @@ export default async function BestBrokerPage({
                 How we verify fees and rank platforms
               </Link>
             </p>
+          </div>
+          <div className="md:hidden mb-4">
+            <details className="bg-slate-50 border border-slate-200 rounded-xl">
+              <summary className="px-3 py-2.5 text-sm font-bold text-slate-900 cursor-pointer">
+                How We Selected These Platforms
+              </summary>
+              <ul className="px-3 pb-3 space-y-1.5">
+                {cat.criteria.map((c, i) => (
+                  <li key={i} className="flex items-start gap-2 text-xs text-slate-700">
+                    <span className="text-emerald-600 font-bold mt-0.5">✓</span>
+                    {c}
+                  </li>
+                ))}
+              </ul>
+              <p className="px-3 pb-3 text-[0.62rem] text-slate-500">
+                <Link href="/how-we-verify" className="text-slate-700 hover:text-slate-900 underline">
+                  How we verify fees →
+                </Link>
+              </p>
+            </details>
           </div>
 
           {/* Top Pick highlight */}
@@ -402,7 +433,7 @@ export default async function BestBrokerPage({
           )}
 
           {/* All qualifying platforms */}
-          <h2 id="all-brokers" className="text-2xl font-bold mb-4 scroll-mt-20">
+          <h2 id="all-brokers" className="text-lg md:text-2xl font-bold mb-3 md:mb-4 scroll-mt-20">
             All Qualifying Platforms ({filtered.length})
           </h2>
 
@@ -467,7 +498,7 @@ export default async function BestBrokerPage({
           </div>
 
           {/* Mobile cards */}
-          <div className="md:hidden space-y-4 mb-8">
+          <div className="md:hidden space-y-2 mb-6">
             {filtered.map((broker, i) => (
               <BrokerCard
                 key={broker.id}
@@ -480,7 +511,7 @@ export default async function BestBrokerPage({
           <CompactDisclaimerLine />
 
           {/* Editorial sections */}
-          <div id="editorial" className="space-y-8 mb-10 scroll-mt-20">
+          <div id="editorial" className="space-y-5 md:space-y-8 mb-6 md:mb-10 scroll-mt-20">
             {cat.sections.map((section, i) => (
               <section key={i}>
                 <h2 className="text-xl font-bold mb-2">{section.heading}</h2>
@@ -524,7 +555,7 @@ export default async function BestBrokerPage({
                     <Link
                       key={ra.id}
                       href={`/article/${ra.slug}`}
-                      className="border border-slate-200 rounded-xl p-5 hover:shadow-lg hover:scale-[1.02] transition-all bg-white flex flex-col"
+                      className="border border-slate-200 rounded-xl p-3 md:p-5 hover:shadow-lg hover:scale-[1.02] transition-all bg-white flex flex-col"
                     >
                       {ra.category && (
                         <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full self-start mb-2 ${color}`}>
@@ -575,8 +606,8 @@ export default async function BestBrokerPage({
           />
 
           {/* Cross-links to other best-for categories */}
-          <div className="border-t border-slate-100 pt-8">
-            <h3 className="text-lg font-bold mb-4">
+          <div className="border-t border-slate-100 pt-5 md:pt-8">
+            <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4">
               More Investing Guides
             </h3>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
