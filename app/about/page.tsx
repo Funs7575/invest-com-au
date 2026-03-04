@@ -48,7 +48,7 @@ export default function AboutPage() {
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
     />
-    <div className="py-12">
+    <div className="py-5 md:py-12">
       <div className="container-custom">
         <div className="max-w-3xl mx-auto">
           {/* Breadcrumb */}
@@ -58,7 +58,7 @@ export default function AboutPage() {
             <span className="text-brand">About Us</span>
           </div>
 
-          <h1 className="text-4xl font-extrabold mb-8">About Invest.com.au</h1>
+          <h1 className="text-2xl md:text-4xl font-extrabold mb-8">About Invest.com.au</h1>
 
           {/* Who We Are */}
           <section className="mb-10">

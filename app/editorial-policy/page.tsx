@@ -22,7 +22,7 @@ const breadcrumbLd = breadcrumbJsonLd([
 
 export default function EditorialPolicyPage() {
   return (
-    <div className="py-12">
+    <div className="py-5 md:py-12">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
@@ -38,7 +38,7 @@ export default function EditorialPolicyPage() {
           <span className="text-slate-700">Editorial Policy</span>
         </nav>
 
-        <h1 className="text-3xl md:text-4xl font-extrabold mb-3">
+        <h1 className="text-3xl md:text-2xl md:text-4xl font-extrabold mb-3">
           Editorial Policy
         </h1>
         <p className="text-base sm:text-lg text-slate-600 mb-10 leading-relaxed">

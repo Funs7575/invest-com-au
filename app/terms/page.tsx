@@ -26,7 +26,7 @@ export default function TermsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
       />
-      <div className="py-12">
+      <div className="py-5 md:py-12">
         <div className="container-custom">
           <div className="max-w-3xl mx-auto">
             {/* Breadcrumb */}
@@ -38,7 +38,7 @@ export default function TermsPage() {
               <span className="text-brand">Terms of Use</span>
             </div>
 
-            <h1 className="text-4xl font-extrabold mb-8">Terms of Use</h1>
+            <h1 className="text-2xl md:text-4xl font-extrabold mb-8">Terms of Use</h1>
 
             <div className="space-y-6">
               {/* 1. Scope of Service */}

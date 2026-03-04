@@ -163,7 +163,7 @@ export default async function CoursesPage() {
 
       <Suspense>
         <CoursesGate>
-          <div className="py-12">
+          <div className="py-5 md:py-12">
             <div className="container-custom max-w-6xl">
               {/* Breadcrumb */}
               <nav aria-label="Breadcrumb" className="text-sm text-slate-500 mb-6">

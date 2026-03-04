@@ -81,7 +81,7 @@ export default function MethodologyPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
       />
-      <div className="py-12">
+      <div className="py-5 md:py-12">
         <div className="container-custom">
           <div className="max-w-3xl mx-auto">
             {/* Breadcrumb */}
@@ -95,7 +95,7 @@ export default function MethodologyPage() {
 
             {/* Hero */}
             <section className="mb-12">
-              <h1 className="text-4xl font-extrabold mb-4">
+              <h1 className="text-2xl md:text-4xl font-extrabold mb-4">
                 How We Score Brokers
               </h1>
               <p className="text-lg text-slate-600 leading-relaxed">

@@ -26,7 +26,7 @@ export default function HowWeEarnPage() {
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
     />
-    <div className="py-12">
+    <div className="py-5 md:py-12">
       <div className="container-custom">
         <div className="max-w-3xl mx-auto">
           {/* Breadcrumb */}
@@ -38,7 +38,7 @@ export default function HowWeEarnPage() {
             <span className="text-brand">How We Earn</span>
           </div>
 
-          <h1 className="text-4xl font-extrabold mb-4">How We Earn Money</h1>
+          <h1 className="text-2xl md:text-4xl font-extrabold mb-4">How We Earn Money</h1>
           <p className="text-lg text-slate-600 mb-10 leading-relaxed">
             Transparency is important to us. Here&apos;s exactly how Invest.com.au makes money
             and how it does (and doesn&apos;t) affect our content.

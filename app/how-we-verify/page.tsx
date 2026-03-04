@@ -55,7 +55,7 @@ export default function HowWeVerifyPage() {
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
     />
-    <div className="py-12">
+    <div className="py-5 md:py-12">
       <div className="container-custom">
         <div className="max-w-3xl mx-auto">
           {/* Breadcrumb */}
@@ -66,7 +66,7 @@ export default function HowWeVerifyPage() {
           </div>
 
           {/* Hero */}
-          <h1 className="text-4xl font-extrabold mb-4">How We Verify Fees</h1>
+          <h1 className="text-2xl md:text-4xl font-extrabold mb-4">How We Verify Fees</h1>
           <p className="text-lg text-slate-600 mb-10 leading-relaxed">
             Accurate fee data is the foundation of every comparison and review on {SITE_NAME}.
             Here&apos;s exactly how we source, verify, and maintain broker fee information.

@@ -33,9 +33,9 @@ export default async function ScenariosPage() {
     .order('id', { ascending: true });
 
   return (
-    <div className="py-12">
+    <div className="py-5 md:py-12">
       <div className="container-custom">
-        <h1 className="text-4xl font-bold mb-4">Investing Scenarios</h1>
+        <h1 className="text-2xl md:text-4xl font-bold mb-4">Investing Scenarios</h1>
         <p className="text-lg text-slate-600 mb-8">
           Find the best platform for your specific situation.
         </p>
