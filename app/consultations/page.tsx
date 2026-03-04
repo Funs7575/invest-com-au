@@ -86,7 +86,7 @@ export default async function ConsultationsPage() {
 
 function ConsultationsLoading() {
   return (
-    <div className="py-12">
+    <div className="py-5 md:py-12">
       <div className="container-custom max-w-5xl">
         <div className="h-10 w-80 bg-slate-200 rounded animate-pulse mb-4" />
         <div className="h-6 w-96 bg-slate-100 rounded animate-pulse mb-10" />

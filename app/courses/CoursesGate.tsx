@@ -8,7 +8,7 @@ export default function CoursesGate({ children }: { children: React.ReactNode })
 
   if (loading) {
     return (
-      <div className="py-12">
+      <div className="py-5 md:py-12">
         <div className="container-custom max-w-6xl text-center">
           <div className="h-8 bg-slate-100 rounded w-48 mx-auto mb-4 animate-pulse" />
           <div className="h-4 bg-slate-100 rounded w-64 mx-auto animate-pulse" />
@@ -19,7 +19,7 @@ export default function CoursesGate({ children }: { children: React.ReactNode })
 
   if (!isPro) {
     return (
-      <div className="py-12">
+      <div className="py-5 md:py-12">
         <div className="container-custom max-w-lg mx-auto text-center">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-full mb-4">
             <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">

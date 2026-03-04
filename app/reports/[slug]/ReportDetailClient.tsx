@@ -8,7 +8,7 @@ export default function ReportDetailClient({ report }: { report: QuarterlyReport
   const { isPro, loading: authLoading } = useSubscription();
 
   return (
-    <div className="py-12">
+    <div className="py-5 md:py-12">
       <div className="container-custom max-w-3xl mx-auto">
         <div className="text-sm text-slate-500 mb-6">
           <Link href="/" className="hover:text-brand">Home</Link>

@@ -55,7 +55,7 @@ export default function StoriesClient({ stories, brokers }: StoriesClientProps) 
   }, [stories, search]);
 
   return (
-    <div className="py-12">
+    <div className="py-5 md:py-12">
       <div className="container-custom max-w-4xl">
         <h1 className="text-3xl md:text-4xl font-extrabold mb-2">Broker Switching Stories</h1>
         <p className="text-slate-600 mb-6">

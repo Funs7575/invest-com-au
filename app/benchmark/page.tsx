@@ -77,7 +77,7 @@ export default async function BenchmarkPage() {
 
 function BenchmarkLoading() {
   return (
-    <div className="py-12">
+    <div className="py-5 md:py-12">
       <div className="container-custom">
         <div className="text-center mb-10">
           <div className="h-8 w-64 bg-slate-200 rounded animate-pulse mx-auto mb-4" />

@@ -165,7 +165,7 @@ export default function AccountClient() {
   };
 
   return (
-    <div className="py-12">
+    <div className="py-5 md:py-12">
       <div className="container-custom max-w-2xl">
         <h1 className="text-2xl font-extrabold text-slate-900 mb-6">My Account</h1>
 

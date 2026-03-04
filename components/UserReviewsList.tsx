@@ -65,7 +65,7 @@ export default function UserReviewsList({ reviews, stats, brokerSlug, brokerName
           <div className="flex flex-col sm:flex-row gap-5">
             {/* Left: Big score */}
             <div className="text-center sm:text-left shrink-0">
-              <div className="text-4xl font-black text-slate-900">
+              <div className="text-2xl md:text-4xl font-black text-slate-900">
                 {stats.average_rating.toFixed(1)}
               </div>
               <StarDisplay rating={stats.average_rating} size="md" />

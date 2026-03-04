@@ -36,7 +36,7 @@ export default function ConsultationsClient({ consultations }: Props) {
       : consultations.filter((c) => c.category === activeCategory);
 
   return (
-    <div className="py-12">
+    <div className="py-5 md:py-12">
       <div className="container-custom max-w-5xl">
         {/* Hero */}
         <div className="text-center mb-12">

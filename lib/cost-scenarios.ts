@@ -170,7 +170,7 @@ const scenarios: CostScenario[] = [
   },
   {
     slug: "beginner-500",
-    title: "Starting with $500: Cheapest Broker in Australia (2026)",
+    title: "Starting with $500: Cheapest Platform in Australia (2026)",
     h1: "Starting with $500: Which Broker Is Cheapest?",
     metaDescription:
       "The cheapest Australian brokers for small investors starting with $500. $0 brokerage options, minimum deposits, and real cost comparison. Updated 2026.",

@@ -151,7 +151,7 @@ export default async function AuthorPage({
       </section>
 
       {/* Content */}
-      <div className="py-12">
+      <div className="py-5 md:py-12">
         <div className="container-custom">
           <div className="max-w-3xl mx-auto space-y-8">
             {/* Bio */}

@@ -47,7 +47,7 @@ export default async function AlertDetailPage({ params }: { params: Promise<{ sl
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
-      <div className="py-12">
+      <div className="py-5 md:py-12">
         <div className="container-custom max-w-2xl mx-auto">
           <div className="text-sm text-slate-500 mb-6">
             <Link href="/" className="hover:text-brand">Home</Link>

@@ -84,7 +84,7 @@ export default async function CourseDetailPage({ params }: PageProps) {
 
       <Suspense>
         <CoursesGate>
-      <div className="py-12">
+      <div className="py-5 md:py-12">
         <div className="container-custom max-w-5xl">
           {/* Breadcrumb */}
           <nav aria-label="Breadcrumb" className="text-sm text-slate-500 mb-6">

@@ -256,7 +256,7 @@ export default function BenchmarkClient({ brokers }: { brokers: Broker[] }) {
   };
 
   return (
-    <div className="py-12">
+    <div className="py-5 md:py-12">
       <div className="container-custom max-w-4xl mx-auto">
         {/* Breadcrumb */}
         <div className="text-sm text-slate-500 mb-6">

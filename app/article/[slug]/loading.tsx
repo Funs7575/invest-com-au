@@ -17,7 +17,7 @@ export default function Loading() {
         </div>
       </section>
       {/* Content area */}
-      <div className="py-12">
+      <div className="py-5 md:py-12">
         <div className="container-custom">
           <div className="max-w-3xl mx-auto space-y-4">
             {Array.from({ length: 8 }).map((_, i) => (

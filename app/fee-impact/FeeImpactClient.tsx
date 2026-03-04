@@ -402,7 +402,7 @@ export default function FeeImpactClient({ brokers }: Props) {
   const maxTotal = mostExpensive?.totalAnnual || 1;
 
   return (
-    <div className="py-12">
+    <div className="py-5 md:py-12">
       <div className="container-custom">
         {/* Page header */}
         <div className="text-center mb-10">

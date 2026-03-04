@@ -25,7 +25,7 @@ export default function ProDealsClient({
   // Redirect non-Pro users
   if (!loading && (!user || !isPro)) {
     return (
-      <div className="py-12">
+      <div className="py-5 md:py-12">
         <div className="container-custom max-w-2xl mx-auto text-center">
           <h1 className="text-3xl font-extrabold mb-3">Exclusive Pro Deals</h1>
           <p className="text-slate-600 mb-6">
@@ -52,7 +52,7 @@ export default function ProDealsClient({
 
   if (loading) {
     return (
-      <div className="py-12">
+      <div className="py-5 md:py-12">
         <div className="container-custom max-w-3xl mx-auto">
           <div className="text-center py-16 text-slate-400">Loading...</div>
         </div>
@@ -78,7 +78,7 @@ export default function ProDealsClient({
   };
 
   return (
-    <div className="py-12">
+    <div className="py-5 md:py-12">
       <div className="container-custom max-w-3xl mx-auto">
         <div className="text-sm text-slate-500 mb-6">
           <Link href="/" className="hover:text-brand">Home</Link>

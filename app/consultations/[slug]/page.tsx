@@ -118,7 +118,7 @@ export default async function ConsultationDetailPage({ params }: PageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="py-12">
+      <div className="py-5 md:py-12">
         <div className="container-custom max-w-5xl">
           {/* Breadcrumb */}
           <nav aria-label="Breadcrumb" className="text-sm text-slate-500 mb-6">

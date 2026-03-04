@@ -1,6 +1,6 @@
 export default function ProLoading() {
   return (
-    <div className="py-12">
+    <div className="py-5 md:py-12">
       <div className="container-custom max-w-4xl text-center">
         <div className="animate-pulse">
           <div className="h-6 bg-amber-200 rounded-full w-32 mx-auto mb-4" />
