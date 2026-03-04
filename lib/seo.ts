@@ -6,7 +6,7 @@ export const SITE_URL =
 export const SITE_NAME = "Invest.com.au";
 
 export const SITE_DESCRIPTION =
-  "Compare Australia's best share trading platforms. Honest reviews, fee calculators, and CHESS-sponsored broker comparisons. No bank bias.";
+  "Compare Australia's best investing platforms. Honest reviews, fee calculators, and independent comparisons across shares, crypto, super, robo-advisors & more.";
 
 /* ─── Date constants — update once here when refreshing content ─── */
 export const CURRENT_YEAR = 2026;

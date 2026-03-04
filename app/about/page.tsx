@@ -188,7 +188,7 @@ export default function AboutPage() {
           {/* Bottom CTA */}
           <div className="mt-10 text-center">
             <Link href="/compare" className="inline-block px-8 py-3 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-800 transition-colors">
-              Compare All Brokers
+              Compare All Platforms
             </Link>
           </div>
         </div>

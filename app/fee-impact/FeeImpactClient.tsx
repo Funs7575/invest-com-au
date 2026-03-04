@@ -935,7 +935,7 @@ export default function FeeImpactClient({ brokers }: Props) {
               href="/compare"
               className="text-xs px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-white transition-colors"
             >
-              Compare All Brokers →
+              Compare All Platforms →
             </Link>
             <Link
               href="/calculators?calc=switching"

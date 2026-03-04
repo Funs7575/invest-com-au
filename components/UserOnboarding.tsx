@@ -143,7 +143,7 @@ export default function UserOnboarding() {
                   onClick={() => navigateAndClose("/compare")}
                   className="w-full px-6 py-3 bg-slate-100 text-slate-700 font-bold text-sm rounded-xl hover:bg-slate-200 transition-colors"
                 >
-                  Browse All Brokers
+                  Browse All Platforms
                 </button>
               </div>
               <label className="flex items-center justify-center gap-2 mt-5 cursor-pointer">

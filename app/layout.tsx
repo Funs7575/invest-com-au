@@ -12,7 +12,7 @@ const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700", "
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} — Australia's Independent Broker Comparison`,
+    default: `${SITE_NAME} — Australia's Independent Platform Comparison`,
     template: `%s — ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_AU",
     siteName: SITE_NAME,
-    title: `${SITE_NAME} — Australia's Independent Broker Comparison`,
+    title: `${SITE_NAME} — Australia's Independent Platform Comparison`,
     description: SITE_DESCRIPTION,
     url: SITE_URL,
     images: [
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE_NAME} — Australia's Independent Broker Comparison`,
+    title: `${SITE_NAME} — Australia's Independent Platform Comparison`,
     description: SITE_DESCRIPTION,
   },
   alternates: {

@@ -31,7 +31,7 @@ export default function ShortlistError({ error, reset }: { error: Error; reset: 
             href="/compare"
             className="px-5 py-2.5 border border-slate-200 text-sm font-semibold rounded-lg hover:bg-slate-50 transition-colors"
           >
-            Compare Brokers
+            Compare Platforms
           </Link>
         </div>
       </div>

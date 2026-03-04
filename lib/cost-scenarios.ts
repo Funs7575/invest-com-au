@@ -93,7 +93,7 @@ const scenarios: CostScenario[] = [
     ],
     relatedLinks: [
       { label: "Fee Calculator", href: "/calculators" },
-      { label: "Compare All Brokers", href: "/compare" },
+      { label: "Compare All Platforms", href: "/compare" },
       { label: "Best for Low Fees", href: "/best/low-fees" },
       { label: "Fee Impact Calculator", href: "/fee-impact" },
     ],
@@ -153,7 +153,7 @@ const scenarios: CostScenario[] = [
       { label: "FX Fee Calculator", href: "/calculators" },
       { label: "Best for US Shares", href: "/best/us-shares" },
       { label: "Best for Low FX", href: "/best/low-fx-fees" },
-      { label: "Compare All Brokers", href: "/compare" },
+      { label: "Compare All Platforms", href: "/compare" },
     ],
     faqs: [
       {
@@ -265,7 +265,7 @@ const scenarios: CostScenario[] = [
       { label: "Fee Impact Calculator", href: "/fee-impact" },
       { label: "Best for Beginners", href: "/best/beginners" },
       { label: "Best for Low Fees", href: "/best/low-fees" },
-      { label: "Compare All Brokers", href: "/compare" },
+      { label: "Compare All Platforms", href: "/compare" },
     ],
     faqs: [
       {
@@ -315,7 +315,7 @@ const scenarios: CostScenario[] = [
       { label: "Best for US Shares", href: "/best/us-shares" },
       { label: "Best for Low FX", href: "/best/low-fx-fees" },
       { label: "FX Calculator", href: "/calculators" },
-      { label: "Compare All Brokers", href: "/compare" },
+      { label: "Compare All Platforms", href: "/compare" },
     ],
     faqs: [
       {

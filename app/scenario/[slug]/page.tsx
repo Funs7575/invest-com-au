@@ -352,7 +352,7 @@ export default async function ScenarioPage({
               href="/compare"
               className="w-full sm:w-auto px-5 md:px-6 py-3 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors min-h-[44px] inline-flex items-center justify-center"
             >
-              Compare All Brokers
+              Compare All Platforms
             </Link>
             <Link
               href="/quiz"

@@ -251,7 +251,7 @@ export default async function BestBrokerPage({
         />
       )}
 
-      <div className="py-12">
+      <div className="py-5 md:py-12">
         <OnThisPage items={[
           ...(topPick ? [{ id: "top-pick", label: "Top Pick" }] : []),
           { id: "all-brokers", label: "All Platforms" },
@@ -275,7 +275,7 @@ export default async function BestBrokerPage({
           </nav>
 
           {/* Header */}
-          <h1 className="text-3xl md:text-4xl font-extrabold mb-3">
+          <h1 className="text-xl md:text-4xl font-extrabold mb-3">
             {cat.h1}
           </h1>
           <p className="text-slate-600 mb-2">{cat.intro}</p>
@@ -337,7 +337,7 @@ export default async function BestBrokerPage({
           </div>
 
 {/* Our selection criteria */}
-          <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 mb-8">
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 md:p-5 mb-6 md:mb-8">
             <h2 className="text-lg font-bold text-slate-900 mb-2">
               How We Selected These Platforms
             </h2>
@@ -359,7 +359,7 @@ export default async function BestBrokerPage({
 
           {/* Top Pick highlight */}
           {topPick && (
-            <div id="top-pick" className="bg-amber-50 border border-amber-200 rounded-xl p-5 mb-8 scroll-mt-20">
+            <div id="top-pick" className="bg-amber-50 border border-amber-200 rounded-xl p-4 md:p-5 mb-6 md:mb-8 scroll-mt-20">
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-xs font-bold uppercase tracking-wide text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">
                   Our Top Pick
@@ -543,7 +543,7 @@ export default async function BestBrokerPage({
           )}
 
           {/* Related links */}
-          <div className="bg-slate-50 rounded-xl p-5 mb-8">
+          <div className="bg-slate-50 rounded-xl p-4 md:p-5 mb-6 md:mb-8">
             <h3 className="text-lg font-bold mb-3">Related Guides</h3>
             <div className="flex flex-wrap gap-2">
               {cat.relatedLinks.map((link, i) => (

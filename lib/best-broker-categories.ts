@@ -57,8 +57,8 @@ const categories: BestBrokerCategory[] = [
       },
     ],
     relatedLinks: [
-      { label: "Compare All Brokers", href: "/compare" },
-      { label: "Take the Broker Quiz", href: "/quiz" },
+      { label: "Compare All Platforms", href: "/compare" },
+      { label: "Take the Platform Quiz", href: "/quiz" },
       { label: "How We Verify Fees", href: "/how-we-verify" },
       { label: "Best for US Shares", href: "/best/us-shares" },
     ],
@@ -116,7 +116,7 @@ const categories: BestBrokerCategory[] = [
     ],
     relatedLinks: [
       { label: "FX Fee Calculator", href: "/calculators" },
-      { label: "Compare All Brokers", href: "/compare" },
+      { label: "Compare All Platforms", href: "/compare" },
       { label: "Best for Low Fees", href: "/best/low-fees" },
       { label: "Best for Beginners", href: "/best/beginners" },
     ],
@@ -169,7 +169,7 @@ const categories: BestBrokerCategory[] = [
       },
     ],
     relatedLinks: [
-      { label: "Compare All Brokers", href: "/compare" },
+      { label: "Compare All Platforms", href: "/compare" },
       { label: "Fee Calculator", href: "/calculators" },
       { label: "Best for Beginners", href: "/best/beginners" },
       { label: "Best for CHESS", href: "/best/chess-sponsored" },
@@ -218,7 +218,7 @@ const categories: BestBrokerCategory[] = [
       },
     ],
     relatedLinks: [
-      { label: "Compare All Brokers", href: "/compare?filter=chess" },
+      { label: "Compare All Platforms", href: "/compare?filter=chess" },
       { label: "CHESS Safety Calculator", href: "/calculators" },
       { label: "Best for Beginners", href: "/best/beginners" },
       { label: "Best for SMSF", href: "/best/smsf" },
@@ -272,7 +272,7 @@ const categories: BestBrokerCategory[] = [
       },
     ],
     relatedLinks: [
-      { label: "Compare All Brokers", href: "/compare?filter=smsf" },
+      { label: "Compare All Platforms", href: "/compare?filter=smsf" },
       { label: "Best for CHESS", href: "/best/chess-sponsored" },
       { label: "Fee Calculator", href: "/calculators" },
       { label: "Best for Low Fees", href: "/best/low-fees" },
@@ -321,7 +321,7 @@ const categories: BestBrokerCategory[] = [
       },
     ],
     relatedLinks: [
-      { label: "Compare All Brokers", href: "/compare?filter=crypto" },
+      { label: "Compare All Platforms", href: "/compare?filter=crypto" },
       { label: "Compare Share Brokers", href: "/compare" },
       { label: "Take the Quiz", href: "/quiz" },
     ],
@@ -367,7 +367,7 @@ const categories: BestBrokerCategory[] = [
     relatedLinks: [
       { label: "FX Fee Calculator", href: "/calculators" },
       { label: "Best for US Shares", href: "/best/us-shares" },
-      { label: "Compare All Brokers", href: "/compare?filter=low-fx" },
+      { label: "Compare All Platforms", href: "/compare?filter=low-fx" },
       { label: "Best for Low Fees", href: "/best/low-fees" },
     ],
     faqs: [
@@ -414,7 +414,7 @@ const categories: BestBrokerCategory[] = [
       },
     ],
     relatedLinks: [
-      { label: "Compare All Brokers", href: "/compare" },
+      { label: "Compare All Platforms", href: "/compare" },
       { label: "Fee Calculator", href: "/calculators" },
       { label: "Best for Low Fees", href: "/best/low-fees" },
       { label: "Best for Beginners", href: "/best/beginners" },
@@ -468,7 +468,7 @@ const categories: BestBrokerCategory[] = [
       },
     ],
     relatedLinks: [
-      { label: "Compare All Brokers", href: "/compare" },
+      { label: "Compare All Platforms", href: "/compare" },
       { label: "Best $0 Brokerage", href: "/best/free-brokerage" },
       { label: "Fee Calculator", href: "/calculators" },
       { label: "Best for Low Fees", href: "/best/low-fees" },
@@ -521,7 +521,7 @@ const categories: BestBrokerCategory[] = [
       },
     ],
     relatedLinks: [
-      { label: "Compare All Brokers", href: "/compare" },
+      { label: "Compare All Platforms", href: "/compare" },
       { label: "Best for CHESS", href: "/best/chess-sponsored" },
       { label: "Best for Dividend Investing", href: "/best/dividend-investing" },
       { label: "Fee Calculator", href: "/calculators" },
@@ -577,7 +577,7 @@ const categories: BestBrokerCategory[] = [
       { label: "Best for US Shares", href: "/best/us-shares" },
       { label: "Best for Low FX Fees", href: "/best/low-fx-fees" },
       { label: "FX Fee Calculator", href: "/calculators" },
-      { label: "Compare All Brokers", href: "/compare" },
+      { label: "Compare All Platforms", href: "/compare" },
     ],
     faqs: [
       {
@@ -631,7 +631,7 @@ const categories: BestBrokerCategory[] = [
       { label: "Best for Low Fees", href: "/best/low-fees" },
       { label: "Best $0 Brokerage", href: "/best/free-brokerage" },
       { label: "Fee Calculator", href: "/calculators" },
-      { label: "Compare All Brokers", href: "/compare" },
+      { label: "Compare All Platforms", href: "/compare" },
     ],
     faqs: [
       {
@@ -684,7 +684,7 @@ const categories: BestBrokerCategory[] = [
     relatedLinks: [
       { label: "Best for CHESS", href: "/best/chess-sponsored" },
       { label: "Best for SMSF", href: "/best/smsf" },
-      { label: "Compare All Brokers", href: "/compare" },
+      { label: "Compare All Platforms", href: "/compare" },
       { label: "Fee Calculator", href: "/calculators" },
     ],
     faqs: [
@@ -734,7 +734,7 @@ const categories: BestBrokerCategory[] = [
       { label: "Best for Low Fees", href: "/best/low-fees" },
       { label: "Best for Beginners", href: "/best/beginners" },
       { label: "Fee Calculator", href: "/calculators" },
-      { label: "Compare All Brokers", href: "/compare" },
+      { label: "Compare All Platforms", href: "/compare" },
     ],
     faqs: [
       {
@@ -786,8 +786,8 @@ const categories: BestBrokerCategory[] = [
     ],
     relatedLinks: [
       { label: "Best for Beginners", href: "/best/beginners" },
-      { label: "Compare All Brokers", href: "/compare" },
-      { label: "Take the Broker Quiz", href: "/quiz" },
+      { label: "Compare All Platforms", href: "/compare" },
+      { label: "Take the Platform Quiz", href: "/quiz" },
       { label: "Best for ETF Investing", href: "/best/etf-investing" },
     ],
     faqs: [
@@ -836,7 +836,7 @@ const categories: BestBrokerCategory[] = [
     relatedLinks: [
       { label: "Best for ETF Investing", href: "/best/etf-investing" },
       { label: "Best for Beginners", href: "/best/beginners" },
-      { label: "Compare All Brokers", href: "/compare" },
+      { label: "Compare All Platforms", href: "/compare" },
       { label: "Fee Calculator", href: "/calculators" },
     ],
     faqs: [
@@ -890,8 +890,8 @@ const categories: BestBrokerCategory[] = [
     relatedLinks: [
       { label: "Best for CHESS", href: "/best/chess-sponsored" },
       { label: "Best for Trust Accounts", href: "/best/trust-accounts" },
-      { label: "Compare All Brokers", href: "/compare" },
-      { label: "Take the Broker Quiz", href: "/quiz" },
+      { label: "Compare All Platforms", href: "/compare" },
+      { label: "Take the Platform Quiz", href: "/quiz" },
     ],
     faqs: [
       {
@@ -939,7 +939,7 @@ const categories: BestBrokerCategory[] = [
     relatedLinks: [
       { label: "Best for SMSF", href: "/best/smsf" },
       { label: "Best for CHESS", href: "/best/chess-sponsored" },
-      { label: "Compare All Brokers", href: "/compare" },
+      { label: "Compare All Platforms", href: "/compare" },
       { label: "Fee Calculator", href: "/calculators" },
     ],
     faqs: [
@@ -994,7 +994,7 @@ const categories: BestBrokerCategory[] = [
       { label: "Best for Beginners", href: "/best/beginners" },
       { label: "Best for Trust Accounts", href: "/best/trust-accounts" },
       { label: "Fee Calculator", href: "/calculators" },
-      { label: "Compare All Brokers", href: "/compare" },
+      { label: "Compare All Platforms", href: "/compare" },
     ],
     faqs: [
       {
@@ -1048,7 +1048,7 @@ const categories: BestBrokerCategory[] = [
       { label: "Best for Beginners", href: "/best/beginners" },
       { label: "Best $0 Brokerage", href: "/best/free-brokerage" },
       { label: "Fee Calculator", href: "/calculators" },
-      { label: "Compare All Brokers", href: "/compare" },
+      { label: "Compare All Platforms", href: "/compare" },
     ],
     faqs: [
       {

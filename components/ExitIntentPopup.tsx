@@ -280,7 +280,7 @@ export default function ExitIntentPopup() {
               href="/quiz"
               className="text-sm text-slate-500 hover:text-slate-900 transition-colors"
             >
-              Or take our free 60-second broker quiz →
+              Or take our free 60-second platform quiz →
             </Link>
           </div>
         </div>

@@ -97,7 +97,7 @@ export default async function DealsPage() {
                 href="/compare"
                 className="inline-block px-5 py-2.5 md:px-6 md:py-3 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 transition-all"
               >
-                Compare Brokers →
+                Compare Platforms →
               </Link>
             </div>
           )}

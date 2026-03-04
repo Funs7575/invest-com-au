@@ -98,9 +98,9 @@ describe("QuizPromptBar", () => {
     // Trigger scroll event
     window.dispatchEvent(new Event("scroll"));
 
-    // The mobile bar should now have "Find My Broker" and "Compare" links
+    // The mobile bar should now have "Find My Platform" and "Compare" links
     // NOTE: They may not be visible (CSS hides via sm:hidden) but should exist in DOM
-    expect(screen.queryByText("Find My Broker")).toBeInTheDocument();
+    expect(screen.queryByText("Find My Platform")).toBeInTheDocument();
     expect(screen.queryByText("Compare")).toBeInTheDocument();
   });
 
@@ -112,7 +112,7 @@ describe("QuizPromptBar", () => {
     window.dispatchEvent(new Event("scroll"));
 
     // On /quiz, the mobile bar is hidden
-    expect(screen.queryByText("Find My Broker")).not.toBeInTheDocument();
+    expect(screen.queryByText("Find My Platform")).not.toBeInTheDocument();
   });
 
   it("hides mobile bar on /compare page", () => {
@@ -122,7 +122,7 @@ describe("QuizPromptBar", () => {
     render(<QuizPromptBar />);
     window.dispatchEvent(new Event("scroll"));
 
-    expect(screen.queryByText("Find My Broker")).not.toBeInTheDocument();
+    expect(screen.queryByText("Find My Platform")).not.toBeInTheDocument();
   });
 
   it("hides mobile bar on broker review pages", () => {
@@ -132,7 +132,7 @@ describe("QuizPromptBar", () => {
     render(<QuizPromptBar />);
     window.dispatchEvent(new Event("scroll"));
 
-    expect(screen.queryByText("Find My Broker")).not.toBeInTheDocument();
+    expect(screen.queryByText("Find My Platform")).not.toBeInTheDocument();
   });
 
   it("renders desktop bar content after sufficient scroll", () => {
@@ -204,7 +204,7 @@ describe("QuizPromptBar", () => {
     render(<QuizPromptBar />);
     window.dispatchEvent(new Event("scroll"));
 
-    const quizLink = screen.getByText("Find My Broker");
+    const quizLink = screen.getByText("Find My Platform");
     expect(quizLink.closest("a")).toHaveAttribute("href", "/quiz");
   });
 

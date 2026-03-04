@@ -45,7 +45,7 @@ export const SCENARIO_CONTENT: Record<string, ScenarioGuideContent> = {
     relatedLinks: [
       { label: "Best for Low Fees", href: "/best/low-fees" },
       { label: "Trade Cost Calculator", href: "/calculators?calc=trade-cost" },
-      { label: "Compare All Brokers", href: "/compare" },
+      { label: "Compare All Platforms", href: "/compare" },
     ],
   },
 
@@ -117,7 +117,7 @@ export const SCENARIO_CONTENT: Record<string, ScenarioGuideContent> = {
     relatedLinks: [
       { label: "Best for Beginners", href: "/best/beginners" },
       { label: "Tax Calculator", href: "/calculators?calc=cgt" },
-      { label: "Compare All Brokers", href: "/compare" },
+      { label: "Compare All Platforms", href: "/compare" },
     ],
   },
 

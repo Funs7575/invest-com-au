@@ -255,7 +255,7 @@ export default function CalculatorsClient({ brokers }: Props) {
           <h2 className="text-[0.69rem] md:text-sm font-bold text-slate-700 mb-1.5 md:mb-3">Related Resources</h2>
           <div className="flex flex-wrap gap-1 md:gap-2">
             <Link href="/compare" className="text-[0.69rem] md:text-xs px-2 md:px-2.5 py-1 md:py-1.5 border border-slate-200 rounded-md md:rounded-lg hover:bg-white transition-colors">
-              Compare Brokers →
+              Compare Platforms →
             </Link>
             <Link href="/article/best-share-trading-platforms-australia" className="text-[0.69rem] md:text-xs px-2 md:px-2.5 py-1 md:py-1.5 border border-slate-200 rounded-md md:rounded-lg hover:bg-white transition-colors">
               Best Platforms →
