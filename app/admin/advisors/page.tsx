@@ -310,7 +310,37 @@ export default function AdminAdvisorsPage() {
 
       {/* ─── LEADS TAB ─── */}
       {tab === "leads" && (
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+        <>
+          {/* CSV Export */}
+          {leads.length > 0 && (
+            <button
+              onClick={() => {
+                const csv = [
+                  ["Date", "Name", "Email", "Phone", "Advisor", "Message", "Status"].join(","),
+                  ...leads.map(l => [
+                    new Date(l.created_at).toISOString().split("T")[0],
+                    `"${l.user_name}"`,
+                    l.user_email,
+                    l.user_phone || "",
+                    `"${l.professional?.name || ""}"`,
+                    `"${(l.message || "").replace(/"/g, '""')}"`,
+                    l.status,
+                  ].join(","))
+                ].join("\n");
+                const blob = new Blob([csv], { type: "text/csv" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `advisor-leads-${new Date().toISOString().split("T")[0]}.csv`;
+                a.click();
+                URL.revokeObjectURL(url);
+              }}
+              className="mb-4 px-4 py-2 bg-emerald-600 text-white font-semibold rounded-lg text-sm hover:bg-emerald-700"
+            >
+              Export CSV ({leads.length} leads)
+            </button>
+          )}
+          <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
           <table className="w-full text-sm">
             <thead className="bg-slate-50 text-left">
               <tr>
@@ -361,6 +391,7 @@ export default function AdminAdvisorsPage() {
             <div className="text-center py-12 text-slate-400">No leads yet. They&apos;ll appear here when users submit enquiries.</div>
           )}
         </div>
+        </>
       )}
 
       {/* ─── REVIEWS TAB ─── */}

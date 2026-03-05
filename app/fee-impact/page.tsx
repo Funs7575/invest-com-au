@@ -3,6 +3,7 @@ import type { Broker } from "@/lib/types";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import FeeImpactClient from "./FeeImpactClient";
+import AdvisorPrompt from "@/components/AdvisorPrompt";
 import { absoluteUrl } from "@/lib/seo";
 
 export const revalidate = 1800;
@@ -106,6 +107,9 @@ export default async function FeeImpactPage() {
       <Suspense fallback={<FeeImpactLoading />}>
         <FeeImpactClient brokers={(brokers as Broker[]) || []} />
       </Suspense>
+      <div className="container-custom max-w-4xl pb-6 md:pb-12">
+        <AdvisorPrompt context="tax" heading="Fees eating into your returns?" description="A tax agent can help you deduct investment-related expenses and minimise your capital gains tax." />
+      </div>
     </>
   );
 }

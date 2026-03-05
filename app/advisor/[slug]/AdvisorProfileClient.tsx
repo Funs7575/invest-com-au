@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import type { Professional, ProfessionalReview } from "@/lib/types";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
@@ -42,6 +42,15 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
   const [reviewRating, setReviewRating] = useState(0);
   const [reviewTitle, setReviewTitle] = useState("");
   const [reviewBody, setReviewBody] = useState("");
+
+  // Track profile view
+  useEffect(() => {
+    fetch("/api/track-event", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ event_type: "advisor_profile_view", page: `/advisor/${pro.slug}`, metadata: { professional_id: pro.id, type: pro.type } }),
+    }).catch(() => {});
+  }, [pro.slug, pro.id, pro.type]);
 
   const typeLabel = PROFESSIONAL_TYPE_LABELS[pro.type] || "Financial Professional";
 
@@ -135,6 +144,31 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
             </div>
           ))}
         </div>
+
+        {/* Trust signals — ASIC verification link */}
+        {(pro.afsl_number || pro.registration_number) && (
+          <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 md:p-4 mb-4 md:mb-6 flex items-start gap-2.5">
+            <Icon name="shield-check" size={18} className="text-emerald-600 shrink-0 mt-0.5" />
+            <div className="flex-1 min-w-0">
+              <div className="text-xs md:text-sm font-bold text-emerald-900 mb-0.5">Credentials Verified</div>
+              <p className="text-[0.62rem] md:text-xs text-emerald-700 leading-relaxed">
+                {pro.name}&apos;s {pro.afsl_number ? "AFSL" : "registration"} ({pro.afsl_number || pro.registration_number}) has been verified against official records.
+                {" "}
+                <a
+                  href={pro.afsl_number
+                    ? `https://asic.gov.au/online-services/search-asics-registers/`
+                    : `https://www.tpb.gov.au/public-register`
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline font-semibold hover:text-emerald-900"
+                >
+                  Verify on {pro.afsl_number ? "ASIC" : "TPB"} Register →
+                </a>
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* Bio */}
         {pro.bio && (

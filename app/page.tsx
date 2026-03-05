@@ -689,16 +689,16 @@ export default async function HomePage() {
               </div>
               <div className="flex gap-2 shrink-0 w-full md:w-auto">
                 <Link
-                  href="/advisors"
+                  href="/find-advisor"
                   className="flex-1 md:flex-none text-center px-4 py-2.5 bg-slate-900 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors"
                 >
-                  Browse Advisors
+                  Find My Advisor
                 </Link>
                 <Link
-                  href="/contact?subject=advisor-listing"
+                  href="/advisors"
                   className="flex-1 md:flex-none text-center px-4 py-2.5 border border-slate-300 text-slate-700 text-xs md:text-sm font-semibold rounded-lg hover:bg-slate-50 transition-colors"
                 >
-                  Get Listed Free
+                  Browse All
                 </Link>
               </div>
             </div>

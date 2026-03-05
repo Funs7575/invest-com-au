@@ -8,6 +8,7 @@ import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import Icon from "@/components/Icon";
 import SwitchChecklist from "@/components/SwitchChecklist";
+import AdvisorPrompt from "@/components/AdvisorPrompt";
 
 const TRANSFER_COST_PER_HOLDING = 54; // Industry standard CHESS transfer
 
@@ -343,8 +344,13 @@ export default function SwitchClient({ brokers, transferGuides }: Props) {
         )}
 
         {/* Contextual lead magnet */}
-        <div className="mt-8">
+        <div className="mt-6 md:mt-8">
           <ContextualLeadMagnet segment="switching-checklist" />
+        </div>
+
+        {/* Advisor prompt */}
+        <div className="mt-4 md:mt-6">
+          <AdvisorPrompt context="general" heading="Need help with the switch?" description="A financial planner can review your portfolio and advise whether switching platforms makes sense for your situation." />
         </div>
       </div>
     </div>

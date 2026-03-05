@@ -21,12 +21,13 @@ function renderStars(rating: number) {
   return "★".repeat(Math.floor(rating)) + (rating % 1 >= 0.5 ? "½" : "");
 }
 
-export default function AdvisorsClient({ professionals, initialType, initialState, pageTitle, pageDescription }: {
+export default function AdvisorsClient({ professionals, initialType, initialState, pageTitle, pageDescription, faqs = [] }: {
   professionals: Professional[];
   initialType?: ProfessionalType;
   initialState?: string;
   pageTitle?: string;
   pageDescription?: string;
+  faqs?: { q: string; a: string }[];
 }) {
   const searchParams = useSearchParams();
   const [typeFilter, setTypeFilter] = useState<ProfessionalType | "all">(initialType || "all");
@@ -247,6 +248,24 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                 Clear all filters
               </button>
             )}
+          </div>
+        )}
+
+        {/* FAQs — shown on type-specific pages */}
+        {faqs.length > 0 && (
+          <div className="mt-6 md:mt-10">
+            <h2 className="text-base md:text-xl font-bold text-slate-900 mb-3 md:mb-4">Frequently Asked Questions</h2>
+            <div className="space-y-2 md:space-y-3">
+              {faqs.map((faq, i) => (
+                <details key={i} className="bg-white border border-slate-200 rounded-lg group">
+                  <summary className="px-3.5 py-3 md:px-4 md:py-3.5 font-semibold text-xs md:text-sm text-slate-800 cursor-pointer hover:bg-slate-50 transition-colors list-none flex items-center justify-between">
+                    {faq.q}
+                    <span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0">▾</span>
+                  </summary>
+                  <p className="px-3.5 pb-3 md:px-4 md:pb-3.5 text-xs md:text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                </details>
+              ))}
+            </div>
           </div>
         )}
 
