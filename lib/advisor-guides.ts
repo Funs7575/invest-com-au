@@ -140,6 +140,126 @@ export const ADVISOR_GUIDES: AdvisorGuide[] = [
       { q: "Can they help me reduce capital gains tax?", a: "Yes — through CGT discount eligibility, tax-loss harvesting, timing of disposals, and optimal asset structuring." },
     ],
   },
+  {
+    slug: "how-to-choose-property-investment-advisor",
+    type: "property_advisor",
+    title: "How to Choose a Property Investment Advisor in Australia",
+    metaDescription: "A practical guide to finding a trustworthy property investment advisor — fees, qualifications, conflicts of interest, and what questions to ask.",
+    intro: "Property investment advice in Australia is a minefield. For every qualified, fee-for-service advisor, there are dozens of 'free' advisors who earn commissions from developers — often recommending properties that benefit them more than you. Here's how to find one who genuinely works in your interest.",
+    sections: [
+      {
+        heading: "What Does a Property Investment Advisor Do?",
+        body: "A property investment advisor helps you assess whether property fits your overall investment strategy, identify suitable properties, model expected returns, understand tax implications, and structure purchases optimally. Some also help with SMSF property purchases (which have strict rules) and portfolio reviews that weigh property against other asset classes like shares and bonds.",
+      },
+      {
+        heading: "Fee-for-Service vs Commission-Based — This Matters a Lot",
+        body: "The single most important distinction in property advice is how the advisor is paid. Fee-for-service advisors charge you directly ($2,000–$5,000 per engagement) and have no financial relationship with developers or agents. Commission-based 'advisors' — often called buyer's agents or property investment companies — earn rebates from developers of $10,000–$50,000 per property sold. This creates an enormous conflict of interest. Always ask: 'Do you receive any payment from property developers, agents, or project marketers?'",
+      },
+      {
+        heading: "What Qualifications Should They Have?",
+        body: "If they provide advice on whether to invest in property (as opposed to just finding properties), they should operate under an AFSL. A real estate licence alone is not sufficient for investment advice. Look for qualifications like a Certified Financial Planner (CFP) designation, a degree in financial planning or economics, and membership of a professional body. Be very cautious of advisors whose only qualification is a real estate licence or 'property investment certificate'.",
+      },
+    ],
+    checklist: [
+      "Confirm they are fee-for-service with no developer commissions",
+      "Check for AFSL authorisation if they provide investment advice",
+      "Ask how many properties they have personally invested in",
+      "Request a sample investment analysis/feasibility study",
+      "Verify they consider your entire portfolio (not just property)",
+      "Ask about their experience with your specific strategy (SMSF property, negatively geared, etc.)",
+    ],
+    redFlags: [
+      "'Free' property seminars or advice sessions (funded by developer commissions)",
+      "Pressure to buy off-the-plan apartments in specific developments",
+      "Guaranteed rental yields or capital growth projections",
+      "No AFSL but providing advice on whether to buy investment property",
+      "Dismissing shares, ETFs, or other asset classes without analysis",
+      "Recommending properties they have a financial interest in",
+    ],
+    faqs: [
+      { q: "How much does a property investment advisor cost?", a: "Fee-for-service advisors charge $2,000–$5,000 per engagement. Be very wary of 'free' advice — it's funded by commissions from developers." },
+      { q: "Should I invest in property or shares?", a: "This depends on your goals, risk tolerance, available capital, and tax situation. A good advisor will model both scenarios for your specific circumstances rather than pushing one over the other." },
+      { q: "Can I buy property through my SMSF?", a: "Yes, but there are strict rules. The property must meet the 'sole purpose test', can't be lived in by fund members, and borrowing requires a limited recourse borrowing arrangement (LRBA). A specialist SMSF accountant should be involved." },
+    ],
+  },
+  {
+    slug: "how-to-choose-mortgage-broker",
+    type: "mortgage_broker",
+    title: "How to Choose a Mortgage Broker for Investment Loans",
+    metaDescription: "How to find the right mortgage broker for investment property loans — what to look for, how they're paid, and questions to ask before you apply.",
+    intro: "If you're borrowing for an investment property, your choice of mortgage broker can save — or cost — you tens of thousands of dollars over the life of the loan. Not all brokers have access to the same lenders, and some are better equipped to handle the complexities of investment lending. Here's what to look for.",
+    sections: [
+      {
+        heading: "How Are Mortgage Brokers Paid?",
+        body: "Most Australian mortgage brokers earn commission from the lender — typically 0.5–0.7% of the loan amount upfront, plus a smaller trailing commission (0.15–0.2% annually). You don't pay the broker directly in most cases. However, this commission structure means some brokers may prefer recommending lenders with higher commissions. Since the Royal Commission, brokers are legally required to act in your best interest, but it's still worth asking about their panel of lenders and any preferred relationships.",
+      },
+      {
+        heading: "What to Look for in an Investment Loan Broker",
+        body: "Investment lending is more complex than home loan lending. Interest rates are typically higher, deposit requirements are larger (usually 20%+), and serviceability calculations are stricter. A good investment loan broker should have experience with investment property lending specifically, access to a wide panel of lenders (30+), understanding of tax deductibility for investment loans, and the ability to structure loans to maximise tax efficiency while maintaining flexibility.",
+      },
+    ],
+    checklist: [
+      "Ask how many lenders they have on their panel (30+ is good)",
+      "Confirm experience with investment property loans specifically",
+      "Ask about their approach to loan structuring for tax efficiency",
+      "Check they hold an Australian Credit Licence (ACL)",
+      "Ask about turnaround times and their process",
+      "Request a comparison of at least 3 lender options",
+    ],
+    redFlags: [
+      "Only recommending one or two lenders repeatedly",
+      "No discussion of loan structure or interest-only vs P&I",
+      "Pressure to borrow more than you're comfortable with",
+      "No Australian Credit Licence",
+      "Unable to explain the difference between offset and redraw",
+    ],
+    faqs: [
+      { q: "Do mortgage brokers charge a fee?", a: "Most don't charge the borrower. They earn commission from the lender. Some charge a fee for complex scenarios like SMSF lending or construction finance." },
+      { q: "Is a broker better than going to my bank?", a: "Usually yes — brokers compare 20-40+ lenders, often finding better rates or features than a single bank can offer. Your bank only offers their own products." },
+      { q: "What deposit do I need for an investment property?", a: "Typically 20% to avoid Lenders Mortgage Insurance (LMI). Some lenders offer 10% deposit investment loans but with higher rates and LMI costs." },
+    ],
+  },
+  {
+    slug: "how-to-choose-estate-planner",
+    type: "estate_planner",
+    title: "How to Choose an Estate Planner in Australia",
+    metaDescription: "When you need estate planning, what it costs, what to look for in an estate planner, and the key documents every Australian investor should have.",
+    intro: "Estate planning isn't just for the wealthy. If you have a super fund, investment portfolio, property, or dependents, failing to plan means the government decides what happens to your assets. The right estate planner ensures your wealth goes where you want it — and minimises the tax and legal complications for your family.",
+    sections: [
+      {
+        heading: "When Do You Need Estate Planning?",
+        body: "You need estate planning if you have assets worth more than $500,000 (including super), dependents or a partner, a blended family, business interests or partnerships, an SMSF, investment properties, or assets in multiple states or countries. Even if your situation is straightforward, a basic will and power of attorney are essential. Without them, your assets are distributed according to intestacy laws — which may not match your wishes.",
+      },
+      {
+        heading: "What Does Estate Planning Include?",
+        body: "Comprehensive estate planning typically covers: wills (who gets what), powers of attorney (who makes decisions if you can't), superannuation death benefit nominations (super doesn't automatically follow your will), testamentary trusts (tax-effective structures for beneficiaries), business succession planning, and advance care directives. The specific documents depend on your situation.",
+      },
+      {
+        heading: "Estate Planners vs Lawyers vs Financial Planners",
+        body: "Wills and powers of attorney must be prepared by a solicitor. However, the broader estate planning strategy — how to structure assets, minimise tax on death, and coordinate super with your will — is often best handled by a financial planner who specialises in estate planning, working alongside a solicitor. Some firms offer both services. The key is ensuring whoever you use understands the interaction between super law, tax law, and succession law.",
+      },
+    ],
+    checklist: [
+      "Check they have a solicitor on staff or a referral arrangement for legal documents",
+      "Ask about their experience with superannuation death benefit nominations",
+      "Confirm they understand testamentary trust structures",
+      "Ask about their approach to blended family situations if relevant",
+      "Verify they consider tax implications (not just asset distribution)",
+      "Request a clear fee quote before engagement",
+    ],
+    redFlags: [
+      "No solicitor involvement in preparing legal documents",
+      "Ignoring superannuation in the estate plan",
+      "One-size-fits-all approach without considering your specific situation",
+      "Unable to explain the difference between binding and non-binding death benefit nominations",
+      "No discussion of potential challenges to the will",
+    ],
+    faqs: [
+      { q: "How much does estate planning cost?", a: "A basic will costs $500–$1,500. Comprehensive planning with testamentary trusts and complex structures is $3,000–$10,000+. The cost depends on complexity." },
+      { q: "Does super follow my will?", a: "No — superannuation is not automatically covered by your will. You need a separate binding death benefit nomination (BDBN) for your super fund. This is one of the most common estate planning mistakes." },
+      { q: "How often should I update my estate plan?", a: "Review it every 2-3 years or after major life events: marriage, divorce, birth of children, significant asset changes, or changes in super fund." },
+    ],
+  },
 ];
 
 export function getAdvisorGuide(slug: string): AdvisorGuide | undefined {

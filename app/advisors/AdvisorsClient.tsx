@@ -272,11 +272,14 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
         {/* Advisor guides */}
         <div className="mt-6 md:mt-8">
           <h2 className="text-sm md:text-base font-bold text-slate-900 mb-2 md:mb-3">Advisor Guides</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3">
             {[
-              { title: "How to Choose an SMSF Accountant", href: "/advisor-guides/how-to-choose-smsf-accountant", icon: "building" },
-              { title: "How to Choose a Financial Planner", href: "/advisor-guides/how-to-choose-financial-planner", icon: "trending-up" },
-              { title: "How to Choose a Tax Agent", href: "/advisor-guides/how-to-choose-tax-agent-investments", icon: "calculator" },
+              { title: "SMSF Accountant", href: "/advisor-guides/how-to-choose-smsf-accountant", icon: "building" },
+              { title: "Financial Planner", href: "/advisor-guides/how-to-choose-financial-planner", icon: "trending-up" },
+              { title: "Tax Agent", href: "/advisor-guides/how-to-choose-tax-agent-investments", icon: "calculator" },
+              { title: "Property Advisor", href: "/advisor-guides/how-to-choose-property-investment-advisor", icon: "home" },
+              { title: "Mortgage Broker", href: "/advisor-guides/how-to-choose-mortgage-broker", icon: "landmark" },
+              { title: "Estate Planner", href: "/advisor-guides/how-to-choose-estate-planner", icon: "file-text" },
             ].map((g) => (
               <Link
                 key={g.href}
@@ -284,7 +287,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                 className="flex items-center gap-2.5 p-3 bg-white border border-slate-200 rounded-lg hover:shadow-md hover:border-slate-300 transition-all"
               >
                 <Icon name={g.icon} size={16} className="text-slate-400 shrink-0" />
-                <span className="text-xs md:text-sm font-semibold text-slate-700">{g.title}</span>
+                <span className="text-xs md:text-sm font-semibold text-slate-700">How to Choose: {g.title}</span>
               </Link>
             ))}
           </div>

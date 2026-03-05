@@ -21,6 +21,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/advisor-guides/how-to-choose-smsf-accountant",
     "/advisor-guides/how-to-choose-financial-planner",
     "/advisor-guides/how-to-choose-tax-agent-investments",
+    "/advisor-guides/how-to-choose-property-investment-advisor",
+    "/advisor-guides/how-to-choose-mortgage-broker",
+    "/advisor-guides/how-to-choose-estate-planner",
   ].map((path) => ({
     url: `${baseUrl}${path}`,
     lastModified: new Date(),

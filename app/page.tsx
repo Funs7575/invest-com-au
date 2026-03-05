@@ -66,7 +66,7 @@ export default async function HomePage() {
 
   const BROKER_LISTING_COLUMNS = "id, name, slug, color, icon, rating, asx_fee, asx_fee_value, us_fee, us_fee_value, fx_rate, chess_sponsored, smsf_support, is_crypto, platform_type, deal, deal_text, deal_expiry, deal_terms, deal_verified_date, deal_category, editors_pick, tagline, cta_text, affiliate_url, sponsorship_tier, benefit_cta, updated_at, fee_last_checked, status";
 
-  const [{ data: brokers }, { data: articles }, { data: recentFeeChanges }, { data: versusEvents }] = await Promise.all([
+  const [{ data: brokers }, { data: articles }, { data: recentFeeChanges }, { data: versusEvents }, { count: advisorCount }] = await Promise.all([
     supabase
       .from("brokers")
       .select(BROKER_LISTING_COLUMNS)
@@ -93,6 +93,11 @@ export default async function HomePage() {
       .like("page", "/versus/%")
       .gte("created_at", new Date(Date.now() - 7 * 86400000).toISOString())
       .limit(500),
+    // Advisor count
+    supabase
+      .from("professionals")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "active"),
   ]);
 
   const dealBrokers = ((brokers as Broker[]) || []).filter((b) => b.deal).slice(0, 3);
@@ -211,7 +216,7 @@ export default async function HomePage() {
             {/* Trust badge */}
             <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-50 rounded-full text-[0.6rem] font-medium text-slate-500 mb-2 border border-slate-100">
               <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-              {brokerCount} platforms + verified advisors
+              {brokerCount} platforms + {(advisorCount || 0) > 0 ? `${advisorCount} advisors` : "verified advisors"}
             </div>
             <h1 className="text-[1.35rem] font-extrabold text-slate-900 leading-[1.2] tracking-tight">
               Compare Platforms.<br />Find Advisors.
@@ -269,7 +274,7 @@ export default async function HomePage() {
           <div className="hidden md:block">
             <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 rounded-full text-xs font-medium text-slate-600 mb-6 hero-fade-up hero-fade-up-1 border border-slate-200">
               <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
-              {brokerCount} platforms + verified advisors · Updated {updatedDateStr}
+              {brokerCount} platforms + {(advisorCount || 0) > 0 ? `${advisorCount} advisors` : "verified advisors"} &middot; Updated {updatedDateStr}
             </div>
             <h1 className="text-5xl lg:text-6xl font-extrabold text-slate-900 hero-fade-up hero-fade-up-1 leading-tight">
               Compare Platforms.<br />Find Advisors.

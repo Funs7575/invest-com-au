@@ -53,6 +53,9 @@ const GUIDE_MAP: Partial<Record<ProfessionalType, string>> = {
   smsf_accountant: "/advisor-guides/how-to-choose-smsf-accountant",
   financial_planner: "/advisor-guides/how-to-choose-financial-planner",
   tax_agent: "/advisor-guides/how-to-choose-tax-agent-investments",
+  property_advisor: "/advisor-guides/how-to-choose-property-investment-advisor",
+  mortgage_broker: "/advisor-guides/how-to-choose-mortgage-broker",
+  estate_planner: "/advisor-guides/how-to-choose-estate-planner",
 };
 
 export default function AdvisorPrompt({ type, heading, description, context = "general", compact = false }: AdvisorPromptProps) {

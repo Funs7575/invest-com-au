@@ -884,10 +884,10 @@ export default function QuizPage() {
           )}
 
           {/* Advisor prompt — contextual for high-value investors or SMSF */}
-          {(answers.includes('large') || answers.includes('whale') || answers.includes('super') || answers.includes('smsf')) && (
+          {(answers.includes('large') || answers.includes('whale') || answers.includes('super') || answers.includes('smsf') || answers.includes('property')) && (
             <div className="mb-4 md:mb-6 result-card-in result-card-in-delay-3">
               <AdvisorPrompt
-                context={answers.includes('super') || answers.includes('smsf') ? "smsf" : "high-value"}
+                context={answers.includes('super') || answers.includes('smsf') ? "smsf" : answers.includes('property') ? "property" : "high-value"}
               />
             </div>
           )}

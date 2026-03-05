@@ -153,9 +153,16 @@ export default async function AdvisorGuidePage({ params }: { params: Promise<{ s
           <div className="mt-8 md:mt-12 pt-6 border-t border-slate-200">
             <h3 className="text-sm md:text-base font-bold text-slate-900 mb-3">More Advisor Guides</h3>
             <div className="flex flex-wrap gap-2">
-              <Link href="/advisor-guides/how-to-choose-smsf-accountant" className="text-xs md:text-sm px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 transition-colors font-medium text-slate-600">SMSF Accountant Guide</Link>
-              <Link href="/advisor-guides/how-to-choose-financial-planner" className="text-xs md:text-sm px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 transition-colors font-medium text-slate-600">Financial Planner Guide</Link>
-              <Link href="/advisor-guides/how-to-choose-tax-agent-investments" className="text-xs md:text-sm px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 transition-colors font-medium text-slate-600">Tax Agent Guide</Link>
+              {[
+                { label: "SMSF Accountant", href: "/advisor-guides/how-to-choose-smsf-accountant" },
+                { label: "Financial Planner", href: "/advisor-guides/how-to-choose-financial-planner" },
+                { label: "Tax Agent", href: "/advisor-guides/how-to-choose-tax-agent-investments" },
+                { label: "Property Advisor", href: "/advisor-guides/how-to-choose-property-investment-advisor" },
+                { label: "Mortgage Broker", href: "/advisor-guides/how-to-choose-mortgage-broker" },
+                { label: "Estate Planner", href: "/advisor-guides/how-to-choose-estate-planner" },
+              ].filter(g => g.href !== `/advisor-guides/${slug}`).map(g => (
+                <Link key={g.href} href={g.href} className="text-xs md:text-sm px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 transition-colors font-medium text-slate-600">{g.label} Guide</Link>
+              ))}
             </div>
           </div>
 
