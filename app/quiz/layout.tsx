@@ -4,7 +4,7 @@ import { SITE_NAME, absoluteUrl } from "@/lib/seo";
 export const metadata: Metadata = {
   title: "Platform Quiz — Find Your Best Investing Platform in 60 Seconds",
   description:
-    "Answer 5 quick questions and find the best Australian investing platform for you — brokers, robo-advisors, crypto, super & more. Free and takes under 60 seconds.",
+    "Answer 4 quick questions and find the best Australian investing platform for you — shares, robo-advisors, crypto, super, property & more. Free and takes under 60 seconds.",
   openGraph: {
     title: "Platform Quiz — Find Your Best Investing Platform in 60 Seconds",
     description:
@@ -43,7 +43,7 @@ const howToJsonLd = {
     {
       "@type": "HowToStep",
       name: "Select your investing goal",
-      text: "Choose whether you want to buy crypto, actively trade, earn dividend income, or grow long-term wealth.",
+      text: "Choose from long-term growth, crypto, active trading, hands-off automated investing, retirement/super, or property.",
       url: absoluteUrl("/quiz"),
     },
     {
@@ -61,7 +61,7 @@ const howToJsonLd = {
     {
       "@type": "HowToStep",
       name: "Pick what matters most",
-      text: "Choose your top priority: lowest fees, safety (CHESS sponsorship), best tools, or simplicity.",
+      text: "Choose your top priority: lowest fees, safety (CHESS sponsorship), best tools & research, or simplicity and set-and-forget investing.",
       url: absoluteUrl("/quiz"),
     },
   ],
