@@ -34,7 +34,7 @@ const CONTACT_OPTIONS = [
   {
     icon: "shield",
     title: "Data Corrections",
-    description: "Spotted an error in our fee data or broker information?",
+    description: "Spotted an error in our fee data or platform information?",
     action: "data@invest.com.au",
     href: "mailto:data@invest.com.au",
   },

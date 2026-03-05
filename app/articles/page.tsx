@@ -97,7 +97,7 @@ const ARTICLE_CLUSTERS: ClusterDef[] = [
   {
     id: "share-trading",
     name: "Share Trading & Brokers",
-    description: "Compare platforms and find the right broker.",
+    description: "Compare platforms and find the right platform.",
     pillarSlug: "best-share-trading-platforms-australia",
     spokesSlugs: [
       "best-investing-app-australia",

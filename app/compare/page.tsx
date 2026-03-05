@@ -6,10 +6,10 @@ import { absoluteUrl, UPDATED_LABEL } from "@/lib/seo";
 
 export const metadata = {
   title: "Compare Australian Investing Platforms",
-  description: `Side-by-side comparison of fees, features, and safety for Australian brokers, robo-advisors, crypto exchanges, super funds & more. ${UPDATED_LABEL}.`,
+  description: `Side-by-side comparison of fees, features, and safety for Australian platforms — shares, robo-advisors, crypto exchanges, super funds & more. ${UPDATED_LABEL}.`,
   openGraph: {
     title: "Compare Australian Investing Platforms — Invest.com.au",
-    description: "Side-by-side comparison of fees, features, and safety for Australian brokers, robo-advisors, crypto exchanges & more.",
+    description: "Side-by-side comparison of fees, features, and safety for Australian platforms — shares, robo-advisors, crypto exchanges & more.",
     images: [{ url: "/api/og?title=Compare+Investing+Platforms&subtitle=Fees,+features+%26+safety+side-by-side&type=default", width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" as const },

@@ -5,13 +5,13 @@ import { absoluteUrl, breadcrumbJsonLd, REVIEW_AUTHOR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 
 export const metadata: Metadata = {
-  title: "Broker Cost Calculator — Real Fee Comparisons by Scenario",
+  title: "Platform Cost Calculator — Real Fee Comparisons by Scenario",
   description:
     "See exactly what Australian brokers cost for your trading style. Brokerage, FX fees, and inactivity charges calculated for real scenarios.",
   alternates: { canonical: "/costs" },
   openGraph: {
-    title: "Broker Cost Calculator — Real Fee Comparisons",
-    description: "See what brokers actually cost for your trading style.",
+    title: "Platform Cost Calculator — Real Fee Comparisons",
+    description: "See what platforms actually cost for your trading style.",
     url: absoluteUrl("/costs"),
   },
 };
@@ -49,7 +49,7 @@ export default function CostsHub() {
           </nav>
 
           <h1 className="text-3xl md:text-4xl font-extrabold mb-3">
-            What Do Brokers Really Cost?
+            What Do Platforms Really Cost?
           </h1>
           <p className="text-slate-600 mb-8 max-w-2xl">
             Stop guessing. We calculate the real annual cost of every Australian platform

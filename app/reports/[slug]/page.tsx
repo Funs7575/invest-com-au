@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!data) return { title: "Report Not Found" };
   return {
     title: `${data.title} — ${SITE_NAME}`,
-    description: data.executive_summary || `Quarterly broker industry report: ${data.title}`,
+    description: data.executive_summary || `Quarterly platform industry report: ${data.title}`,
     alternates: { canonical: `/reports/${slug}` },
   };
 }

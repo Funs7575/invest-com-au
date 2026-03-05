@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     url: "/deals",
     images: [
       {
-        url: "/api/og?title=Broker+Deals+%26+Promotions&subtitle=Verified+Offers+from+Australian+Platforms&type=default",
+        url: "/api/og?title=Platform+Deals+%26+Promotions&subtitle=Verified+Offers+from+Australian+Platforms&type=default",
         width: 1200,
         height: 630,
         alt: "Broker Deals & Promotions",

@@ -6,13 +6,13 @@ import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 export const revalidate = 3600;
 
 export const metadata = {
-  title: "Broker Switch Planner — Personalised Migration Checklist",
+  title: "Platform Switch Planner — Personalised Migration Checklist",
   description:
-    "Generate a personalised switching checklist between Australian brokers. See savings, CHESS transfer steps, CGT implications, and a 'nothing missed' migration plan.",
+    "Generate a personalised switching checklist between Australian platforms. See savings, CHESS transfer steps, CGT implications, and a 'nothing missed' migration plan.",
   openGraph: {
-    title: `Broker Switch Planner — ${SITE_NAME}`,
+    title: `Platform Switch Planner — ${SITE_NAME}`,
     description:
-      "Personalised broker migration checklist with CHESS transfer steps, CGT guidance, and savings calculator.",
+      "Personalised platform migration checklist with CHESS transfer steps, CGT guidance, and savings calculator.",
     images: [
       {
         url: "/api/og?title=Broker+Switch+Planner&subtitle=Personalised+Migration+Checklist&type=default",
@@ -39,7 +39,7 @@ export default async function SwitchPage() {
 
   const breadcrumbLd = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
-    { name: "Switch Brokers" },
+    { name: "Switch Platforms" },
   ]);
 
   return (

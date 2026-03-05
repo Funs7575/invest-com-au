@@ -5,7 +5,7 @@ export const runtime = "edge";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
-  const title = searchParams.get("title") || "Compare Australian Brokers";
+  const title = searchParams.get("title") || "Compare Australian Platforms";
   const subtitle =
     searchParams.get("subtitle") || "Honest reviews, real fees, updated daily.";
   const type = searchParams.get("type") || "default";

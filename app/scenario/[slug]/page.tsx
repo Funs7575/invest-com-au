@@ -31,7 +31,7 @@ export async function generateMetadata({
   const description =
     scenario.hero_title ||
     `Find the best broker for ${scenario.title.toLowerCase()}. Compare fees, features, and platforms.`;
-  const ogImageUrl = `/api/og?title=${encodeURIComponent(`Best Broker for ${scenario.title}`)}&subtitle=${encodeURIComponent(description.slice(0, 80))}&type=scenario`;
+  const ogImageUrl = `/api/og?title=${encodeURIComponent(`Best Platform for ${scenario.title}`)}&subtitle=${encodeURIComponent(description.slice(0, 80))}&type=scenario`;
 
   return {
     title,
