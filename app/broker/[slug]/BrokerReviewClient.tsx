@@ -29,6 +29,7 @@ import SwitchStoriesList from "@/components/SwitchStoriesList";
 import OnThisPage from "@/components/OnThisPage";
 import CollapsibleSection from "@/components/CollapsibleSection";
 import AdSlot from "@/components/AdSlot";
+import AdvisorPrompt from "@/components/AdvisorPrompt";
 
 function FeeVerdict({ value, thresholds }: { value: number | undefined; thresholds: [number, number] }) {
   if (value == null) return <span className="px-2 py-0.5 bg-slate-100 text-slate-500 text-xs font-semibold rounded-full">N/A</span>;
@@ -515,6 +516,13 @@ export default function BrokerReviewClient({
               </ul>
             </ScrollReveal>
           )}
+        </div>
+
+        {/* Advisor prompt — contextual based on platform type */}
+        <div className="mb-6 md:mb-8">
+          <AdvisorPrompt
+            context={b.smsf_support ? "smsf" : b.platform_type === "property_platform" ? "property" : "general"}
+          />
         </div>
 
         {/* In-content display ad */}

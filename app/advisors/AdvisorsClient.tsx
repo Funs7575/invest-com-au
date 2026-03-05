@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import type { Professional, ProfessionalType } from "@/lib/types";
 import { PROFESSIONAL_TYPE_LABELS, AU_STATES } from "@/lib/types";
@@ -21,9 +22,22 @@ function renderStars(rating: number) {
 }
 
 export default function AdvisorsClient({ professionals }: { professionals: Professional[] }) {
+  const searchParams = useSearchParams();
   const [typeFilter, setTypeFilter] = useState<ProfessionalType | "all">("all");
   const [stateFilter, setStateFilter] = useState<string>("all");
   const [search, setSearch] = useState("");
+
+  // Sync filters from URL params on mount
+  useEffect(() => {
+    const typeParam = searchParams.get("type");
+    const stateParam = searchParams.get("state");
+    if (typeParam && TYPE_FILTERS.some(f => f.key === typeParam)) {
+      setTypeFilter(typeParam as ProfessionalType);
+    }
+    if (stateParam && AU_STATES.includes(stateParam as typeof AU_STATES[number])) {
+      setStateFilter(stateParam);
+    }
+  }, [searchParams]);
 
   const filtered = useMemo(() => {
     return professionals.filter((p) => {
