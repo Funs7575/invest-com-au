@@ -49,13 +49,17 @@ export default function HowWeEarnPage() {
             <h2 className="text-2xl font-extrabold text-brand mb-3">Our Revenue Model</h2>
             <div className="bg-slate-50 border border-slate-200 rounded-xl p-6 leading-relaxed text-slate-700 space-y-4">
               <p>
-                When you click a &quot;Visit Broker&quot; or &quot;Sign Up&quot; button on our site and open an
-                account with that broker, we may receive a referral commission from the broker.
-                This is the primary way we fund the site.
+                <strong>Platform affiliates:</strong> When you click a &quot;Visit Platform&quot; or &quot;Sign Up&quot; button and open an
+                account with that platform, we may receive a referral commission. This is our primary revenue source.
               </p>
               <p>
-                These commissions allow us to keep the site free, pay for hosting and data,
-                and continue to research and update our reviews regularly.
+                <strong>Advisor enquiries:</strong> Our advisor directory lists verified financial professionals for free.
+                When you submit a consultation request through an advisor&apos;s profile, the advisor may pay a fee per enquiry.
+                You are never charged — the advisor pays for the lead.
+              </p>
+              <p>
+                Both revenue streams allow us to keep the site free, pay for hosting and data,
+                and continue to research and update our reviews and advisor profiles regularly.
               </p>
             </div>
           </section>
@@ -94,7 +98,7 @@ export default function HowWeEarnPage() {
             <div className="space-y-3">
               <div className="flex items-start gap-4 border border-red-200 bg-red-50 rounded-xl p-4">
                 <span className="text-red-500 font-bold text-xl shrink-0 mt-0.5">&#10007;</span>
-                <span className="text-slate-700">We don&apos;t accept payment to rank brokers higher</span>
+                <span className="text-slate-700">We don&apos;t accept payment to rank platforms or advisors higher</span>
               </div>
               <div className="flex items-start gap-4 border border-red-200 bg-red-50 rounded-xl p-4">
                 <span className="text-red-500 font-bold text-xl shrink-0 mt-0.5">&#10007;</span>

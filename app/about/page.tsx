@@ -9,11 +9,11 @@ import {
 
 export const metadata = {
   title: "About Us",
-  description: "Learn about Invest.com.au, Australia's independent investing platform comparison. Our mission, editorial independence pledge, and review methodology.",
+  description: "Learn about Invest.com.au, Australia's independent investing hub — platforms and advisors. Our mission, editorial independence pledge, and review methodology.",
   alternates: { canonical: "/about" },
   openGraph: {
     title: "About Us — Invest.com.au",
-    description: "Australia's independent investing platform comparison. Our mission, editorial independence pledge, and review methodology.",
+    description: "Australia's independent investing hub — platforms and advisors. Our mission, editorial independence pledge, and review methodology.",
     url: "/about",
     images: [
       {
@@ -66,17 +66,18 @@ export default function AboutPage() {
             <div className="space-y-4 text-slate-700 leading-relaxed">
               <p className="text-lg">
                 {COMPANY_LEGAL_NAME} (ACN {COMPANY_ACN}, ABN {COMPANY_ABN}),
-                trading as Invest.com.au, is Australia&apos;s independent broker comparison platform. We help
-                everyday Australians find the right share trading platform without bank bias or paid rankings.
+                trading as Invest.com.au, is Australia&apos;s independent investing hub. We help
+                everyday Australians compare investing platforms and find verified financial advisors — without bank bias or paid rankings.
               </p>
               <p>
-                The Australian brokerage market is confusing. Banks charge hidden fees, comparison sites
-                rank whoever pays them the most, and new investors have no idea where to start.
+                The Australian financial services market is confusing. Platforms charge hidden fees, comparison sites
+                rank whoever pays them the most, and finding a trustworthy advisor feels impossible.
                 We built Invest.com.au to change that.
               </p>
               <p>
-                Our team compares every major Australian broker on real data — fees, features, safety, and
-                user experience — so you can make an informed choice in minutes, not hours.
+                Our team compares every major Australian platform on real data — fees, features, safety, and
+                user experience. We also connect you with verified financial professionals (SMSF accountants,
+                financial planners, tax agents, and more) so you can make informed decisions in minutes, not hours.
               </p>
             </div>
           </section>
