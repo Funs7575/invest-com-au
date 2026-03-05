@@ -21,6 +21,7 @@ import { getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/l
 import { trackClick } from "@/lib/tracking";
 import BrokerCard from "@/components/BrokerCard";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
+import AdvisorPrompt from "@/components/AdvisorPrompt";
 import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
 import ScrollReveal from "@/components/ScrollReveal";
 import type { LeadSegment } from "@/components/ContextualLeadMagnet";
@@ -521,9 +522,26 @@ export default async function BestBrokerPage({
           </div>
 
           {/* Contextual lead magnet */}
-          <div className="mb-10">
+          <div className="mb-6 md:mb-10">
             <ContextualLeadMagnet segment={SLUG_TO_SEGMENT[slug] || "fee-audit"} />
           </div>
+
+          {/* Contextual advisor prompt for relevant categories */}
+          {(slug === "smsf" || slug === "super-funds") && (
+            <div className="mb-6 md:mb-10">
+              <AdvisorPrompt context="smsf" />
+            </div>
+          )}
+          {slug === "property-investing" && (
+            <div className="mb-6 md:mb-10">
+              <AdvisorPrompt context="property" />
+            </div>
+          )}
+          {(slug === "low-fees" || slug === "beginners" || slug === "us-shares") && (
+            <div className="mb-6 md:mb-10">
+              <AdvisorPrompt context="general" compact />
+            </div>
+          )}
 
           {/* FAQ section */}
           {cat.faqs.length > 0 && (

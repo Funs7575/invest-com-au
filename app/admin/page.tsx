@@ -25,6 +25,8 @@ interface Stats {
   marketplaceRevenue: number;
   activeMarketplaceCampaigns: number;
   proSubscribers: number;
+  advisors: number;
+  advisorLeads: number;
 }
 
 interface RevenueByBroker {
@@ -108,6 +110,7 @@ export default function AdminDashboard() {
         clicksLast14d,
         marketplaceCampaigns, marketplaceSpend,
         proSubs,
+        advisorsCount, advisorLeadsCount,
       ] = await Promise.all([
         supabase.from("brokers").select("id", { count: "exact", head: true }),
         supabase.from("articles").select("id", { count: "exact", head: true }),
@@ -153,6 +156,10 @@ export default function AdminDashboard() {
           .eq("event_type", "click"),
         // Pro subscribers
         Promise.resolve(supabase.rpc("get_active_pro_count")).catch(() => ({ data: null, count: 0 })),
+        // Advisors
+        supabase.from("professionals").select("id", { count: "exact", head: true }).eq("status", "active"),
+        // Advisor leads
+        supabase.from("professional_leads").select("id", { count: "exact", head: true }),
       ]);
 
       // Aggregate clicks by date for chart
@@ -188,6 +195,8 @@ export default function AdminDashboard() {
         marketplaceRevenue: mktRevenue,
         activeMarketplaceCampaigns: marketplaceCampaigns.count || 0,
         proSubscribers: typeof proSubs.data === "number" ? proSubs.data : 0,
+        advisors: advisorsCount.count || 0,
+        advisorLeads: advisorLeadsCount.count || 0,
       });
 
       // Health checks
@@ -451,6 +460,8 @@ export default function AdminDashboard() {
     { label: "Pro Members", value: stats?.proSubscribers || 0, href: "/admin/pro-subscribers", color: "purple", icon: "💎" },
     { label: "Marketplace Rev", value: stats?.marketplaceRevenue || 0, href: "/admin/marketplace", color: "emerald", icon: "💰", prefix: "$", decimals: 2 },
     { label: "Active Campaigns", value: stats?.activeMarketplaceCampaigns || 0, href: "/admin/marketplace/campaigns", color: "indigo", icon: "📣" },
+    { label: "Advisors", value: stats?.advisors || 0, href: "/admin/advisors", color: "violet", icon: "👤" },
+    { label: "Advisor Leads", value: stats?.advisorLeads || 0, href: "/admin/advisors", color: "fuchsia", icon: "📨" },
   ];
 
   const colorMap: Record<string, string> = {
@@ -500,6 +511,13 @@ export default function AdminDashboard() {
               <div>
                 <div className="text-xs font-bold text-slate-900">3. Set Up Affiliate Links</div>
                 <div className="text-[0.65rem] text-slate-500 mt-0.5">Add referral URLs and set EPC for revenue tracking</div>
+              </div>
+            </Link>
+            <Link href="/admin/advisors" className="flex items-start gap-2 bg-white/80 rounded-lg p-3 hover:bg-white transition-colors">
+              <span className="text-base shrink-0">👤</span>
+              <div>
+                <div className="text-xs font-bold text-slate-900">4. Manage Advisors</div>
+                <div className="text-[0.65rem] text-slate-500 mt-0.5">Add financial professionals and track enquiry leads</div>
               </div>
             </Link>
           </div>

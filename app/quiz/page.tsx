@@ -14,6 +14,7 @@ import { scoreQuizResults, type WeightKey, type QuizWeights } from "@/lib/quiz-s
 import SponsorBadge from "@/components/SponsorBadge";
 import CohortInsights from "@/components/CohortInsights";
 import ProUpsellBanner from "@/components/ProUpsellBanner";
+import AdvisorPrompt from "@/components/AdvisorPrompt";
 
 interface QuizWeight {
   broker_slug: string;
@@ -877,6 +878,15 @@ export default function QuizPage() {
                   </Link>
                 ))}
               </div>
+            </div>
+          )}
+
+          {/* Advisor prompt — contextual for high-value investors or SMSF */}
+          {(answers.includes('large') || answers.includes('whale') || answers.includes('super') || answers.includes('smsf')) && (
+            <div className="mb-4 md:mb-6 result-card-in result-card-in-delay-3">
+              <AdvisorPrompt
+                context={answers.includes('super') || answers.includes('smsf') ? "smsf" : "high-value"}
+              />
             </div>
           )}
 

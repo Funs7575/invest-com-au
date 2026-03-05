@@ -3,6 +3,7 @@ import type { Broker } from "@/lib/types";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import CalculatorsClient from "./CalculatorsClient";
+import AdvisorPrompt from "@/components/AdvisorPrompt";
 
 export const revalidate = 1800;
 
@@ -93,6 +94,9 @@ export default async function CalculatorsPage() {
       <Suspense fallback={<CalculatorsLoading />}>
         <CalculatorsClient brokers={(brokers as Broker[]) || []} />
       </Suspense>
+      <div className="container-custom max-w-4xl pb-6 md:pb-12">
+        <AdvisorPrompt context="tax" />
+      </div>
     </>
   );
 }
