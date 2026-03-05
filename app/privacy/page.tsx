@@ -73,8 +73,14 @@ export default function PrivacyPage() {
                 To send you the resources you requested (e.g. Fee Audit PDF).
               </li>
               <li>
-                To send occasional educational content about broker comparisons
+                To send occasional educational content about platform comparisons
                 and investing in Australia (only if you have opted in).
+              </li>
+              <li>
+                <strong>Advisor enquiries:</strong> If you submit a consultation request
+                through our advisor directory, your name, email, phone (if provided), and
+                message are shared with the specific advisor you contacted. Your details
+                are shared only with that advisor and are not sold to any third party.
               </li>
               <li>
                 To improve our website, content, and user experience through
