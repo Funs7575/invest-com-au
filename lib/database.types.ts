@@ -2282,6 +2282,8 @@ export type Database = {
           crypto_weight: number | null
           id: number
           low_fee_weight: number | null
+          property_weight: number | null
+          robo_weight: number | null
           smsf_weight: number | null
           updated_at: string | null
           us_shares_weight: number | null
@@ -2294,6 +2296,8 @@ export type Database = {
           crypto_weight?: number | null
           id?: number
           low_fee_weight?: number | null
+          property_weight?: number | null
+          robo_weight?: number | null
           smsf_weight?: number | null
           updated_at?: string | null
           us_shares_weight?: number | null
@@ -2306,6 +2310,8 @@ export type Database = {
           crypto_weight?: number | null
           id?: number
           low_fee_weight?: number | null
+          property_weight?: number | null
+          robo_weight?: number | null
           smsf_weight?: number | null
           updated_at?: string | null
           us_shares_weight?: number | null
