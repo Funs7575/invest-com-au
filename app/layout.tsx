@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import LayoutShell from "@/components/LayoutShell";
 import { ThemeProvider } from "@/components/ThemeProvider";
@@ -7,7 +7,17 @@ import GoogleAnalytics from "@/components/GoogleAnalytics";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, websiteJsonLd } from "@/lib/seo";
 
-const inter = Inter({ subsets: ["latin"], display: "swap", fallback: ["system-ui", "-apple-system", "Arial", "sans-serif"], adjustFontFallback: true });
+const inter = localFont({
+  src: [
+    { path: "../public/fonts/Inter-Regular.woff2", weight: "400", style: "normal" },
+    { path: "../public/fonts/Inter-Medium.woff2", weight: "500", style: "normal" },
+    { path: "../public/fonts/Inter-SemiBold.woff2", weight: "600", style: "normal" },
+    { path: "../public/fonts/Inter-Bold.woff2", weight: "700", style: "normal" },
+    { path: "../public/fonts/Inter-ExtraBold.woff2", weight: "800", style: "normal" },
+  ],
+  display: "swap",
+  fallback: ["system-ui", "-apple-system", "Arial", "sans-serif"],
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -73,8 +83,6 @@ export default function RootLayout({
         {/* Preconnect to external APIs for faster initial requests */}
         <link rel="preconnect" href="https://guggzyqceattncjwvgyc.supabase.co" />
         <link rel="dns-prefetch" href="https://guggzyqceattncjwvgyc.supabase.co" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="manifest" href="/manifest.json" />
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js-ready')" }} />
         {/* Prevent flash of wrong theme by applying dark class before first paint */}
