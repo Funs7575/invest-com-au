@@ -206,24 +206,42 @@ export default async function HomePage() {
       {/* Hero Section */}
       <section className="relative bg-white border-b border-slate-100 py-2.5 md:py-14 overflow-hidden">
         <div className="relative max-w-4xl mx-auto px-4 text-center">
-          {/* Mobile: ultra-compact hero */}
+          {/* Mobile: premium compact hero */}
           <div className="md:hidden">
-            <h1 className="text-lg font-extrabold text-slate-900 leading-snug">
-              Compare Australia&apos;s Best Investing Platforms
-            </h1>
-            <p className="mt-0.5 text-[0.65rem] text-slate-400">
+            {/* Trust badge */}
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-50 rounded-full text-[0.6rem] font-medium text-slate-500 mb-2 border border-slate-100">
+              <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
               {brokerCount} platforms · Updated {updatedDateStr}
+            </div>
+            <h1 className="text-[1.35rem] font-extrabold text-slate-900 leading-[1.2] tracking-tight">
+              Compare Australia&apos;s Best<br />Investing Platforms
+            </h1>
+            <p className="mt-1 text-[0.7rem] text-slate-500 leading-relaxed">
+              Shares, crypto, super, robo-advisors & more — independent and free.
             </p>
-            <div className="flex items-center gap-2 mt-2">
+            {/* Category quick-access pills */}
+            <div className="flex flex-wrap justify-center gap-1.5 mt-2.5 mb-2.5">
+              {categoryStrip.slice(0, 6).map((cat) => (
+                <Link
+                  key={cat.label}
+                  href={cat.href}
+                  className="px-2.5 py-1 text-[0.6rem] font-semibold rounded-full border border-slate-200 text-slate-600 bg-white hover:bg-slate-50 active:scale-[0.97] transition-all"
+                >
+                  {cat.label}
+                </Link>
+              ))}
+            </div>
+            {/* CTAs */}
+            <div className="flex items-center gap-2">
               <Link
                 href="/compare"
-                className="flex-1 px-3 py-2 bg-amber-500 text-white font-bold rounded-lg text-[0.8rem] text-center active:scale-[0.98] transition-all"
+                className="flex-1 px-3 py-2.5 bg-slate-900 text-white font-bold rounded-lg text-[0.8rem] text-center active:scale-[0.98] transition-all"
               >
                 Compare All
               </Link>
               <Link
                 href="/quiz"
-                className="flex-1 px-3 py-2 border border-slate-300 text-slate-700 font-semibold rounded-lg text-[0.8rem] text-center active:scale-[0.98] transition-all"
+                className="flex-1 px-3 py-2.5 bg-amber-500 text-white font-bold rounded-lg text-[0.8rem] text-center active:scale-[0.98] transition-all"
               >
                 60s Quiz →
               </Link>
@@ -316,14 +334,14 @@ export default async function HomePage() {
 
       {/* Comparison Table */}
       <ScrollFadeIn>
-        <section className="py-2 sm:py-8 md:py-16 bg-slate-50">
+        <section className="py-2.5 sm:py-8 md:py-16 bg-slate-50">
           <div className="container-custom">
-            <div className="flex items-center justify-between gap-2 mb-1 sm:mb-5 md:mb-8">
+            <div className="flex items-center justify-between gap-2 mb-1.5 sm:mb-5 md:mb-8">
               <div>
-                <h2 className="text-[0.95rem] md:text-3xl font-bold text-slate-900">
+                <h2 className="text-base md:text-3xl font-extrabold text-slate-900">
                   Top Rated Platforms
                 </h2>
-                <p className="text-[0.62rem] md:text-sm text-slate-400 mt-0.5 md:mt-1">
+                <p className="text-[0.62rem] md:text-sm text-slate-400 mt-0.5 md:mt-1 flex items-center gap-1.5">
                   <span className="hidden md:inline">Ranked by fees, features, and user experience<span className="mx-2 text-slate-300">&middot;</span></span>
                   <FeesFreshnessIndicator lastChecked={getMostRecentFeeCheck((brokers as Broker[]) || [])} variant="inline" />
                 </p>
@@ -487,18 +505,21 @@ export default async function HomePage() {
                 </Link>
               ))}
             </div>
-            {/* Mobile: 2-col grid, compact — titles only */}
-            <div className="sm:hidden grid grid-cols-2 gap-1.5">
-              {bestForCards.map((card) => (
-                <Link
-                  key={card.title}
-                  href={card.href}
-                  className={`border rounded-lg px-2.5 py-2 active:scale-[0.98] transition-all flex items-center gap-2 ${card.color}`}
-                >
-                  <Icon name={card.icon} size={16} className="opacity-70 shrink-0" />
-                  <h3 className="font-bold text-xs leading-tight">{card.title}</h3>
-                </Link>
-              ))}
+            {/* Mobile: scrollable cards with descriptions */}
+            <div className="sm:hidden -mx-4 px-4">
+              <div className="flex gap-2 overflow-x-auto snap-x snap-mandatory pb-2 scrollbar-hide">
+                {bestForCards.map((card) => (
+                  <Link
+                    key={card.title}
+                    href={card.href}
+                    className={`border rounded-xl p-3 active:scale-[0.98] transition-all flex-none w-[42vw] snap-start ${card.color}`}
+                  >
+                    <Icon name={card.icon} size={20} className="opacity-70 mb-1.5" />
+                    <h3 className="font-bold text-xs leading-tight mb-0.5">{card.title}</h3>
+                    <p className="text-[0.58rem] opacity-60 leading-snug line-clamp-2">{card.description}</p>
+                  </Link>
+                ))}
+              </div>
             </div>
             <div className="hidden md:block text-center mt-6">
               <Link
@@ -560,29 +581,64 @@ export default async function HomePage() {
                   </Link>
                 ))}
               </div>
-              {/* Mobile: compact list */}
-              <div className="md:hidden divide-y divide-slate-100">
-                {(articles as Article[]).slice(0, 4).map((article) => (
+              {/* Mobile: featured first article + compact list */}
+              <div className="md:hidden">
+                {/* Featured article with image */}
+                {(articles as Article[])[0] && (
                   <Link
-                    key={article.id}
-                    href={`/article/${article.slug}`}
-                    className="flex items-start gap-3 py-2.5 group"
+                    href={`/article/${(articles as Article[])[0].slug}`}
+                    className="block mb-3 rounded-xl overflow-hidden border border-slate-200 group"
                   >
-                    <div className="flex-1 min-w-0">
-                      {article.category && (
-                        <span className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-500">
-                          {article.category}
+                    {(articles as Article[])[0].cover_image_url && (
+                      <div className="aspect-[2/1] overflow-hidden bg-slate-100 relative">
+                        <Image
+                          src={(articles as Article[])[0].cover_image_url!}
+                          alt={(articles as Article[])[0].title}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                          sizes="100vw"
+                        />
+                      </div>
+                    )}
+                    <div className="p-3">
+                      {(articles as Article[])[0].category && (
+                        <span className="text-[0.58rem] font-bold uppercase tracking-wider text-slate-500">
+                          {(articles as Article[])[0].category}
                         </span>
                       )}
-                      <h3 className="font-bold text-sm text-slate-900 leading-snug line-clamp-2 group-hover:text-slate-600 transition-colors">
-                        {article.title}
+                      <h3 className="font-bold text-sm text-slate-900 leading-snug line-clamp-2 mt-0.5">
+                        {(articles as Article[])[0].title}
                       </h3>
-                    </div>
-                    <div className="text-[0.65rem] text-slate-400 shrink-0 mt-1">
-                      {article.read_time && <span>{article.read_time} min</span>}
+                      <p className="text-[0.65rem] text-slate-500 mt-1 line-clamp-2">
+                        {(articles as Article[])[0].excerpt}
+                      </p>
                     </div>
                   </Link>
-                ))}
+                )}
+                {/* Remaining articles as compact list */}
+                <div className="divide-y divide-slate-100">
+                  {(articles as Article[]).slice(1, 5).map((article) => (
+                    <Link
+                      key={article.id}
+                      href={`/article/${article.slug}`}
+                      className="flex items-start gap-3 py-2.5 group"
+                    >
+                      <div className="flex-1 min-w-0">
+                        {article.category && (
+                          <span className="text-[0.58rem] font-bold uppercase tracking-wider text-slate-500">
+                            {article.category}
+                          </span>
+                        )}
+                        <h3 className="font-bold text-sm text-slate-900 leading-snug line-clamp-2 group-hover:text-slate-600 transition-colors">
+                          {article.title}
+                        </h3>
+                      </div>
+                      <div className="text-[0.62rem] text-slate-400 shrink-0 mt-1">
+                        {article.read_time && <span>{article.read_time} min</span>}
+                      </div>
+                    </Link>
+                  ))}
+                </div>
               </div>
             </div>
           </section>

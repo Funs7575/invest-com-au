@@ -298,14 +298,15 @@ export default function BrokerReviewClient({
 
         {/* Deal banner */}
         {b.deal && b.deal_text && (
-          <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <Icon name="flame" size={24} className="text-amber-500 shrink-0" />
+          <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-3 md:p-4 mb-6 md:mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 md:gap-3">
+            <div className="flex items-center gap-2 md:gap-3">
+              <Icon name="flame" size={20} className="text-amber-500 shrink-0 md:hidden" />
+              <Icon name="flame" size={24} className="text-amber-500 shrink-0 hidden md:block" />
               <div>
-                <div className="text-xs font-bold uppercase tracking-wide text-amber-700 mb-0.5">Limited Time Deal</div>
-                <p className="text-sm font-semibold text-slate-700">{b.deal_text}</p>
+                <div className="text-[0.62rem] md:text-xs font-bold uppercase tracking-wide text-amber-700 mb-0.5">Limited Time Deal</div>
+                <p className="text-xs md:text-sm font-semibold text-slate-700">{b.deal_text}</p>
                 {b.deal_expiry && (
-                  <p className="text-[0.69rem] text-amber-600 mt-0.5">
+                  <p className="text-[0.62rem] md:text-[0.69rem] text-amber-600 mt-0.5">
                     Expires {new Date(b.deal_expiry).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })}
                   </p>
                 )}
@@ -316,7 +317,7 @@ export default function BrokerReviewClient({
               target="_blank"
               rel={AFFILIATE_REL}
               onClick={() => trackClick(b.slug, b.name, 'review-deal-banner', `/broker/${b.slug}`, 'review')}
-              className="shrink-0 px-5 py-2.5 bg-amber-600 text-white text-sm font-bold rounded-lg hover:bg-amber-700 transition-all hover:shadow-md active:scale-[0.98]"
+              className="shrink-0 w-full sm:w-auto text-center px-4 py-2 md:px-5 md:py-2.5 bg-amber-600 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-amber-700 transition-all"
             >
               Claim Deal →
             </a>
@@ -344,10 +345,10 @@ export default function BrokerReviewClient({
         <p className="text-slate-600 mb-4 text-sm">We&apos;ve audited {b.name}&apos;s fee structure so you don&apos;t have to read the PDS.</p>
         <ScrollReveal animation="fee-row-stagger" className="bg-white border border-slate-200 rounded-xl overflow-hidden mb-8">
           {feeRows.map((row, i) => (
-            <div key={i} className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100 last:border-b-0">
-              <span className="text-sm font-medium text-slate-700">{row.label}</span>
-              <div className="flex items-center gap-3">
-                <span className="font-semibold text-sm">{row.value}</span>
+            <div key={i} className="flex items-center justify-between px-3 py-2.5 md:px-5 md:py-3.5 border-b border-slate-100 last:border-b-0">
+              <span className="text-xs md:text-sm font-medium text-slate-700">{row.label}</span>
+              <div className="flex items-center gap-2 md:gap-3">
+                <span className="font-semibold text-xs md:text-sm">{row.value}</span>
                 <FeeVerdict value={row.numVal} thresholds={row.thresholds} />
               </div>
             </div>
@@ -420,15 +421,15 @@ export default function BrokerReviewClient({
             <Icon name="calculator" size={20} className="text-slate-600 shrink-0" />
             <h2 className="text-base md:text-lg font-extrabold">What Would a Typical Trade Cost?</h2>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 gap-2 md:grid-cols-3 md:gap-4">
             {costScenarios.map((s, i) => (
-              <div key={i} className="bg-slate-50 rounded-lg p-4 text-center">
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-1">{s.label}</p>
-                <p className="text-2xl font-extrabold text-brand">
+              <div key={i} className="bg-slate-50 rounded-lg p-2.5 md:p-4 text-center">
+                <p className="text-[0.58rem] md:text-xs font-semibold uppercase tracking-wide text-slate-500 mb-0.5 md:mb-1">{s.label}</p>
+                <p className="text-lg md:text-2xl font-extrabold text-brand">
                   <CountUp end={s.cost} prefix="$" decimals={2} duration={1200} />
                 </p>
-                <p className="text-xs text-slate-400 mt-1">
-                  {((s.cost / s.amount) * 100).toFixed(2)}% of trade
+                <p className="text-[0.56rem] md:text-xs text-slate-400 mt-0.5 md:mt-1">
+                  {((s.cost / s.amount) * 100).toFixed(2)}%
                   {s.type === "us" && b.fx_rate != null && (
                     <span className="block text-slate-400">incl. {b.fx_rate}% FX</span>
                   )}
@@ -739,23 +740,23 @@ export default function BrokerReviewClient({
         </div>
 
         {/* Details Grid */}
-        <h2 id="details" className="text-xl md:text-2xl font-extrabold mb-3 scroll-mt-20">Details</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4 mb-6 md:mb-8">
-          <div className="bg-slate-50 rounded-lg p-4">
-            <p className="text-[0.69rem] uppercase text-slate-500 tracking-wide font-medium mb-1">Platforms</p>
-            <p className="text-sm font-medium">{b.platforms?.join(', ') || 'N/A'}</p>
+        <h2 id="details" className="text-lg md:text-2xl font-extrabold mb-2 md:mb-3 scroll-mt-20">Details</h2>
+        <div className="grid grid-cols-2 gap-2 md:gap-4 mb-6 md:mb-8">
+          <div className="bg-slate-50 rounded-lg p-3 md:p-4">
+            <p className="text-[0.6rem] md:text-[0.69rem] uppercase text-slate-500 tracking-wide font-medium mb-0.5 md:mb-1">Platforms</p>
+            <p className="text-xs md:text-sm font-medium">{b.platforms?.join(', ') || 'N/A'}</p>
           </div>
-          <div className="bg-slate-50 rounded-lg p-4">
-            <p className="text-[0.69rem] uppercase text-slate-500 tracking-wide font-medium mb-1">Payment Methods</p>
-            <p className="text-sm font-medium">{b.payment_methods?.join(', ') || 'N/A'}</p>
+          <div className="bg-slate-50 rounded-lg p-3 md:p-4">
+            <p className="text-[0.6rem] md:text-[0.69rem] uppercase text-slate-500 tracking-wide font-medium mb-0.5 md:mb-1">Payment Methods</p>
+            <p className="text-xs md:text-sm font-medium">{b.payment_methods?.join(', ') || 'N/A'}</p>
           </div>
-          <div className="bg-slate-50 rounded-lg p-4">
-            <p className="text-[0.69rem] uppercase text-slate-500 tracking-wide font-medium mb-1">SMSF Support</p>
-            <p className="text-sm font-medium">{b.smsf_support ? 'Yes' : 'No'}</p>
+          <div className="bg-slate-50 rounded-lg p-3 md:p-4">
+            <p className="text-[0.6rem] md:text-[0.69rem] uppercase text-slate-500 tracking-wide font-medium mb-0.5 md:mb-1">SMSF Support</p>
+            <p className="text-xs md:text-sm font-medium">{b.smsf_support ? 'Yes' : 'No'}</p>
           </div>
-          <div className="bg-slate-50 rounded-lg p-4">
-            <p className="text-[0.69rem] uppercase text-slate-500 tracking-wide font-medium mb-1">Min Deposit</p>
-            <p className="text-sm font-medium">{b.min_deposit || '$0'}</p>
+          <div className="bg-slate-50 rounded-lg p-3 md:p-4">
+            <p className="text-[0.6rem] md:text-[0.69rem] uppercase text-slate-500 tracking-wide font-medium mb-0.5 md:mb-1">Min Deposit</p>
+            <p className="text-xs md:text-sm font-medium">{b.min_deposit || '$0'}</p>
           </div>
         </div>
 
@@ -817,23 +818,23 @@ export default function BrokerReviewClient({
           <>
             <h2 id="similar" className="text-xl font-extrabold mb-2 scroll-mt-20">Similar Platforms</h2>
             <p className="text-sm text-slate-600 mb-4">If {b.name} isn&apos;t quite right, consider these alternatives:</p>
-            <ScrollReveal animation="scroll-stagger-children" className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4 mb-6 md:mb-8">
+            <ScrollReveal animation="scroll-stagger-children" className="grid grid-cols-2 sm:grid-cols-3 gap-2 md:gap-4 mb-6 md:mb-8">
               {similar.map(s => (
                 <Link
                   key={s.slug}
                   href={`/broker/${s.slug}`}
-                  className="border border-slate-200 rounded-xl p-3 md:p-4 hover:shadow-md transition-shadow"
+                  className="border border-slate-200 rounded-xl p-2.5 md:p-4 hover:shadow-md transition-shadow"
                 >
                   <div
-                    className="w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold mb-2"
+                    className="w-8 h-8 md:w-10 md:h-10 rounded-lg flex items-center justify-center text-xs md:text-sm font-bold mb-1.5 md:mb-2"
                     style={{ background: `${s.color}20`, color: s.color }}
                   >
                     {s.icon || s.name.charAt(0)}
                   </div>
-                  <h3 className="font-bold text-sm">{s.name}</h3>
-                  <div className="text-xs text-amber">{renderStars(s.rating || 0)} <span className="text-slate-500">{s.rating}/5</span></div>
-                  <div className="text-xs text-slate-500 mt-1">ASX: {s.asx_fee} · {s.chess_sponsored ? 'CHESS' : 'Custodial'}</div>
-                  <span className="inline-block mt-2 text-xs px-3 py-1 border border-slate-200 rounded-md">Compare →</span>
+                  <h3 className="font-bold text-xs md:text-sm">{s.name}</h3>
+                  <div className="text-[0.62rem] md:text-xs text-amber">{renderStars(s.rating || 0)} <span className="text-slate-500">{s.rating}/5</span></div>
+                  <div className="text-[0.58rem] md:text-xs text-slate-500 mt-0.5 md:mt-1">{s.asx_fee} · {s.chess_sponsored ? 'CHESS' : 'Custodial'}</div>
+                  <span className="inline-block mt-1.5 md:mt-2 text-[0.62rem] md:text-xs px-2 py-0.5 md:px-3 md:py-1 border border-slate-200 rounded-md">Compare →</span>
                 </Link>
               ))}
             </ScrollReveal>
@@ -847,7 +848,7 @@ export default function BrokerReviewClient({
             <p className="text-sm text-slate-600 mb-4">
               Our editorial team has covered {b.name} in these articles:
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
+            <div className="grid grid-cols-2 gap-2 md:gap-3 mb-8">
               {relatedArticles.map((article) => {
                 const color = CATEGORY_COLORS[article.category || ""] || "bg-slate-100 text-slate-700";
                 return (
