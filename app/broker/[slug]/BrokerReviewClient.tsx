@@ -182,7 +182,7 @@ export default function BrokerReviewClient({
     ...(feeHistory.length > 0 ? [{ id: "fee-history", label: "Fee History" }] : []),
     { id: "details", label: "Details" },
     ...(relatedDeals.length > 0 ? [{ id: "deals", label: "Deals" }] : []),
-    ...(similar.length > 0 ? [{ id: "similar", label: "Similar Platforms" }] : []),
+    ...(similar.length > 0 ? [{ id: "similar", label: "vs Alternatives" }] : []),
     ...(relatedArticles && relatedArticles.length > 0 ? [{ id: "related-articles", label: "Related Guides" }] : []),
     { id: "questions", label: "Q&A" },
   ];
@@ -467,7 +467,7 @@ export default function BrokerReviewClient({
         </div>
 
         {/* Safety Check */}
-        <h2 id="safety" className="text-xl md:text-2xl font-extrabold mb-3 scroll-mt-20">Safety &amp; Scam Check</h2>
+        <h2 id="safety" className="text-lg md:text-2xl font-extrabold mb-2 md:mb-3 scroll-mt-20">Safety &amp; Scam Check</h2>
         <div className={`rounded-xl p-4 md:p-6 mb-6 md:mb-8 border ${b.chess_sponsored ? 'bg-emerald-50 border-emerald-200' : 'bg-red-50 border-red-200'}`}>
           <div className="flex items-center gap-3 mb-3">
             {b.chess_sponsored
@@ -816,14 +816,27 @@ export default function BrokerReviewClient({
         {/* Similar Platforms */}
         {similar.length > 0 && (
           <>
-            <h2 id="similar" className="text-xl font-extrabold mb-2 scroll-mt-20">Similar Platforms</h2>
-            <p className="text-sm text-slate-600 mb-4">If {b.name} isn&apos;t quite right, consider these alternatives:</p>
+            <h2 id="similar" className="text-lg md:text-xl font-extrabold mb-1.5 md:mb-2 scroll-mt-20">Compare {b.name} vs Alternatives</h2>
+            <p className="text-xs md:text-sm text-slate-600 mb-3 md:mb-4">See how {b.name} stacks up head-to-head:</p>
+            {/* Quick versus links */}
+            <div className="flex flex-wrap gap-1.5 md:gap-2 mb-3 md:mb-4">
+              {similar.slice(0, 5).map(s => (
+                <Link
+                  key={s.slug}
+                  href={`/versus/${b.slug}-vs-${s.slug}`}
+                  className="px-2.5 py-1.5 md:px-3 md:py-2 text-[0.65rem] md:text-xs font-semibold border border-slate-200 rounded-lg hover:border-slate-600 hover:bg-slate-50 transition-all active:scale-[0.98]"
+                >
+                  {b.name} vs {s.name}
+                </Link>
+              ))}
+            </div>
+            {/* Platform cards */}
             <ScrollReveal animation="scroll-stagger-children" className="grid grid-cols-2 sm:grid-cols-3 gap-2 md:gap-4 mb-6 md:mb-8">
               {similar.map(s => (
                 <Link
                   key={s.slug}
-                  href={`/broker/${s.slug}`}
-                  className="border border-slate-200 rounded-xl p-2.5 md:p-4 hover:shadow-md transition-shadow"
+                  href={`/versus/${b.slug}-vs-${s.slug}`}
+                  className="border border-slate-200 rounded-xl p-2.5 md:p-4 hover:shadow-md hover:border-slate-300 transition-all"
                 >
                   <div
                     className="w-8 h-8 md:w-10 md:h-10 rounded-lg flex items-center justify-center text-xs md:text-sm font-bold mb-1.5 md:mb-2"
@@ -834,7 +847,7 @@ export default function BrokerReviewClient({
                   <h3 className="font-bold text-xs md:text-sm">{s.name}</h3>
                   <div className="text-[0.62rem] md:text-xs text-amber">{renderStars(s.rating || 0)} <span className="text-slate-500">{s.rating}/5</span></div>
                   <div className="text-[0.58rem] md:text-xs text-slate-500 mt-0.5 md:mt-1">{s.asx_fee} · {s.chess_sponsored ? 'CHESS' : 'Custodial'}</div>
-                  <span className="inline-block mt-1.5 md:mt-2 text-[0.62rem] md:text-xs px-2 py-0.5 md:px-3 md:py-1 border border-slate-200 rounded-md">Compare →</span>
+                  <span className="inline-block mt-1.5 md:mt-2 text-[0.62rem] md:text-xs px-2 py-0.5 md:px-3 md:py-1 bg-slate-900 text-white rounded-md font-semibold">vs {b.name} →</span>
                 </Link>
               ))}
             </ScrollReveal>
@@ -844,8 +857,8 @@ export default function BrokerReviewClient({
         {/* Related Articles */}
         {relatedArticles && relatedArticles.length > 0 && (
           <>
-            <h2 id="related-articles" className="text-xl font-extrabold mb-2 scroll-mt-20">Guides Featuring {b.name}</h2>
-            <p className="text-sm text-slate-600 mb-4">
+            <h2 id="related-articles" className="text-lg md:text-xl font-extrabold mb-1.5 md:mb-2 scroll-mt-20">Guides Featuring {b.name}</h2>
+            <p className="text-xs md:text-sm text-slate-600 mb-3 md:mb-4">
               Our editorial team has covered {b.name} in these articles:
             </p>
             <div className="grid grid-cols-2 gap-2 md:gap-3 mb-8">
@@ -874,9 +887,9 @@ export default function BrokerReviewClient({
         )}
 
         {/* Bottom CTA */}
-        <div className="bg-amber-400 text-slate-900 rounded-xl p-8 text-center">
-          <h2 className="text-xl md:text-2xl font-extrabold mb-2">Ready to try {b.name}?</h2>
-          <p className="text-slate-700 mb-4">
+        <div className="bg-amber-400 text-slate-900 rounded-xl p-5 md:p-8 text-center">
+          <h2 className="text-lg md:text-2xl font-extrabold mb-1.5 md:mb-2">Ready to try {b.name}?</h2>
+          <p className="text-xs md:text-base text-slate-700 mb-3 md:mb-4">
             {b.deal_text || ((b.asx_fee_value ?? 999) <= 5
               ? `Start trading from just ${b.asx_fee} per trade. Takes under 5 minutes.`
               : 'Open an account and start trading in minutes.')}
@@ -886,22 +899,22 @@ export default function BrokerReviewClient({
             target="_blank"
             rel={AFFILIATE_REL}
             onClick={() => trackClick(b.slug, b.name, 'review-bottom', `/broker/${b.slug}`, 'review')}
-            className="inline-block px-8 py-3.5 bg-amber-600 text-white font-bold rounded-lg hover:bg-amber-700 hover:shadow-lg transition-all active:scale-[0.98] text-lg"
+            className="inline-block px-6 py-3 md:px-8 md:py-3.5 bg-amber-600 text-white font-bold rounded-lg hover:bg-amber-700 hover:shadow-lg transition-all active:scale-[0.98] text-sm md:text-lg"
           >
             {getBenefitCta(b, 'review')}
           </a>
-          <p className="text-xs text-slate-600 mt-3">{ADVERTISER_DISCLOSURE_SHORT}</p>
+          <p className="text-[0.58rem] md:text-xs text-slate-600 mt-2 md:mt-3">{ADVERTISER_DISCLOSURE_SHORT}</p>
         </div>
 
         {/* Not convinced? Quiz prompt */}
-        <div className="mt-6 text-center">
-          <p className="text-sm text-slate-500 mb-2">Want to compare other options?</p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link href="/quiz" className="text-sm text-amber-700 font-semibold hover:text-amber-800 transition-colors border border-amber-200 rounded-lg px-4 py-2 hover:bg-amber-50">
-              Take Our Platform Quiz →
+        <div className="mt-4 md:mt-6 text-center">
+          <p className="text-xs md:text-sm text-slate-500 mb-2">Want to compare other options?</p>
+          <div className="flex gap-2 md:gap-3 justify-center">
+            <Link href="/quiz" className="text-xs md:text-sm text-amber-700 font-semibold hover:text-amber-800 transition-colors border border-amber-200 rounded-lg px-3 py-2 md:px-4 hover:bg-amber-50">
+              Platform Quiz →
             </Link>
-            <Link href="/compare" className="text-sm text-slate-600 font-semibold hover:text-slate-800 transition-colors border border-slate-200 rounded-lg px-4 py-2 hover:bg-slate-50">
-              Compare All Platforms →
+            <Link href="/compare" className="text-xs md:text-sm text-slate-600 font-semibold hover:text-slate-800 transition-colors border border-slate-200 rounded-lg px-3 py-2 md:px-4 hover:bg-slate-50">
+              Compare All →
             </Link>
           </div>
           <CompactDisclaimerLine />
