@@ -826,3 +826,74 @@ export interface BrokerActivityLog {
   entity_id?: string;
   created_at: string;
 }
+
+// ═══════════════════════════════════════════════
+// Advisor Directory Types
+// ═══════════════════════════════════════════════
+
+export type ProfessionalType = 'smsf_accountant' | 'financial_planner' | 'property_advisor' | 'tax_agent' | 'mortgage_broker' | 'estate_planner';
+
+export interface Professional {
+  id: number;
+  slug: string;
+  name: string;
+  firm_name?: string;
+  type: ProfessionalType;
+  specialties: string[];
+  location_state?: string;
+  location_suburb?: string;
+  location_display?: string;
+  afsl_number?: string;
+  acn?: string;
+  abn?: string;
+  registration_number?: string;
+  bio?: string;
+  photo_url?: string;
+  website?: string;
+  phone?: string;
+  email?: string;
+  fee_structure?: string;
+  fee_description?: string;
+  rating: number;
+  review_count: number;
+  verified: boolean;
+  status: string;
+  onboarded_at?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ProfessionalLead {
+  id: number;
+  professional_id: number;
+  user_name: string;
+  user_email: string;
+  user_phone?: string;
+  message?: string;
+  source_page?: string;
+  status: 'new' | 'sent' | 'contacted' | 'converted' | 'lost' | 'spam';
+  lead_value?: number;
+  billed: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export const PROFESSIONAL_TYPE_LABELS: Record<ProfessionalType, string> = {
+  smsf_accountant: "SMSF Accountant",
+  financial_planner: "Financial Planner",
+  property_advisor: "Property Advisor",
+  tax_agent: "Tax Agent",
+  mortgage_broker: "Mortgage Broker",
+  estate_planner: "Estate Planner",
+};
+
+export const PROFESSIONAL_TYPE_ICONS: Record<ProfessionalType, string> = {
+  smsf_accountant: "building",
+  financial_planner: "trending-up",
+  property_advisor: "home",
+  tax_agent: "calculator",
+  mortgage_broker: "landmark",
+  estate_planner: "file-text",
+};
+
+export const AU_STATES = ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT"] as const;

@@ -10,6 +10,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 const navItems = [
   { name: "Compare", href: "/compare" },
   { name: "Best", href: "/best" },
+  { name: "Advisors", href: "/advisors" },
   { name: "Deals", href: "/deals" },
   { name: "Reviews", href: "/reviews" },
   { name: "Calculators", href: "/calculators" },

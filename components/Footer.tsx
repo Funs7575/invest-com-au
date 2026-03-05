@@ -94,6 +94,7 @@ export default function Footer() {
                 <li><Link href="/best/robo-advisors" className="hover:text-white transition-colors inline-block py-0.5">Robo-Advisors</Link></li>
                 <li><Link href="/versus" className="hover:text-white transition-colors inline-block py-0.5">Head-to-Head</Link></li>
                 <li><Link href="/deals" className="hover:text-white transition-colors inline-block py-0.5">Deals</Link></li>
+                <li><Link href="/advisors" className="hover:text-white transition-colors inline-block py-0.5">Find an Advisor</Link></li>
               </ul>
             </div>
 

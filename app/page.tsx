@@ -645,6 +645,67 @@ export default async function HomePage() {
         </ScrollFadeIn>
       )}
 
+      {/* Find an Advisor — cross-sell section */}
+      <ScrollFadeIn>
+        <section className="py-3 md:py-12 bg-gradient-to-b from-slate-50 to-white">
+          <div className="container-custom">
+            <div className="flex items-start justify-between gap-2 mb-2.5 md:mb-6">
+              <div>
+                <h2 className="text-lg md:text-2xl font-bold">Need Professional Advice?</h2>
+                <p className="text-[0.69rem] md:text-sm text-slate-500 mt-0.5 md:mt-1">
+                  <span className="hidden md:inline">Browse verified SMSF accountants, financial planners, and property advisors</span>
+                  <span className="md:hidden">Verified financial professionals</span>
+                </p>
+              </div>
+              <Link href="/advisors" className="md:hidden text-[0.69rem] font-semibold text-slate-500 hover:text-slate-900 shrink-0 min-h-[44px] inline-flex items-center px-1">
+                Browse all →
+              </Link>
+            </div>
+            {/* Category pills */}
+            <div className="flex gap-1.5 md:gap-2 mb-3 md:mb-4 overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
+              {[
+                { label: "SMSF Accountants", href: "/advisors?type=smsf_accountant", icon: "building" },
+                { label: "Financial Planners", href: "/advisors?type=financial_planner", icon: "trending-up" },
+                { label: "Property Advisors", href: "/advisors?type=property_advisor", icon: "home" },
+                { label: "Tax Agents", href: "/advisors?type=tax_agent", icon: "calculator" },
+              ].map((cat) => (
+                <Link
+                  key={cat.label}
+                  href={cat.href}
+                  className="shrink-0 flex items-center gap-1.5 px-3 py-2 md:px-4 md:py-2.5 bg-white border border-slate-200 rounded-lg text-[0.65rem] md:text-xs font-semibold text-slate-600 hover:border-slate-400 hover:bg-slate-50 transition-all active:scale-[0.98]"
+                >
+                  <Icon name={cat.icon} size={14} className="text-slate-400" />
+                  {cat.label}
+                </Link>
+              ))}
+            </div>
+            {/* CTA card */}
+            <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-6 flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-6">
+              <div className="flex-1 min-w-0">
+                <p className="text-sm md:text-base font-bold text-slate-900 mb-1">Free listings. Pay only per enquiry.</p>
+                <p className="text-xs md:text-sm text-slate-500">
+                  We connect investors with verified professionals. Request a free consultation — no obligation.
+                </p>
+              </div>
+              <div className="flex gap-2 shrink-0 w-full md:w-auto">
+                <Link
+                  href="/advisors"
+                  className="flex-1 md:flex-none text-center px-4 py-2.5 bg-slate-900 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors"
+                >
+                  Browse Advisors
+                </Link>
+                <Link
+                  href="/contact?subject=advisor-listing"
+                  className="flex-1 md:flex-none text-center px-4 py-2.5 border border-slate-300 text-slate-700 text-xs md:text-sm font-semibold rounded-lg hover:bg-slate-50 transition-colors"
+                >
+                  Get Listed Free
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+      </ScrollFadeIn>
+
       {/* General Advice Warning is in footer Legal & Disclaimers section */}
     </div>
   );
