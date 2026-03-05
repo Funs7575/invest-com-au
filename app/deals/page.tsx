@@ -91,7 +91,7 @@ export default async function DealsPage() {
               <div className="text-3xl md:text-4xl mb-3">📭</div>
               <h2 className="text-lg md:text-xl font-bold text-slate-700 mb-1.5">No Active Deals</h2>
               <p className="text-xs md:text-sm text-slate-500 mb-4 md:mb-6 max-w-md mx-auto">
-                Check back soon or compare brokers by fees instead.
+                Check back soon or compare platforms by fees instead.
               </p>
               <Link
                 href="/compare"
