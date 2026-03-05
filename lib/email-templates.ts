@@ -442,6 +442,9 @@ export function weeklyDigestEmail(data: {
           </td>
         </tr>
       </table>
+      <p style="text-align:center;margin-top:12px;">
+        <a href="${BASE_URL}/find-advisor" style="color:${BRAND_BLUE};font-weight:600;font-size:13px;text-decoration:underline;">Need professional advice? Find an advisor →</a>
+      </p>
     </div>`;
 
   return baseTemplate(
@@ -1212,6 +1215,9 @@ export function quizFollowUp2Email(
           </td>
         </tr>
       </table>
+      <p style="margin-top:12px;">
+        <a href="${BASE_URL}/find-advisor" style="color:${BRAND_BLUE};font-weight:600;font-size:13px;text-decoration:underline;">Prefer professional help? Find an advisor →</a>
+      </p>
     </div>
 
     <p style="margin:24px 0 0;font-size:13px;color:${TEXT_LIGHT};text-align:center;">

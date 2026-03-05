@@ -27,6 +27,7 @@ import BottomSheet from "@/components/BottomSheet";
 import ShortlistButton from "@/components/ShortlistButton";
 import BrokerLogo from "@/components/BrokerLogo";
 import AdSlot from "@/components/AdSlot";
+import AdvisorPrompt from "@/components/AdvisorPrompt";
 
 type FilterType = 'all' | 'shares' | 'beginner' | 'chess' | 'free' | 'us' | 'smsf' | 'low-fx' | 'crypto' | 'robo' | 'research' | 'super' | 'property' | 'cfd' | 'has-deal';
 type SortCol = 'name' | 'asx_fee_value' | 'us_fee_value' | 'fx_rate' | 'rating';
@@ -753,6 +754,16 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           page="/compare"
           brokers={brokers}
         />
+
+        {/* Contextual advisor prompt — changes based on active filter */}
+        {(activeFilter === 'smsf' || activeFilter === 'property' || activeFilter === 'all') && (
+          <div className="mt-4 md:mt-6">
+            <AdvisorPrompt
+              context={activeFilter === 'smsf' ? 'smsf' : activeFilter === 'property' ? 'property' : 'general'}
+              compact={activeFilter === 'all'}
+            />
+          </div>
+        )}
 
         {/* Bottom conversion — compact on mobile */}
         <div className="mt-5 md:mt-8 grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-4">
