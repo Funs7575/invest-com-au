@@ -897,3 +897,18 @@ export const PROFESSIONAL_TYPE_ICONS: Record<ProfessionalType, string> = {
 };
 
 export const AU_STATES = ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT"] as const;
+
+export interface ProfessionalReview {
+  id: number;
+  professional_id: number;
+  reviewer_name: string;
+  reviewer_email: string;
+  rating: number;
+  title?: string;
+  body: string;
+  verified: boolean;
+  status: 'pending' | 'approved' | 'rejected';
+  moderation_notes?: string;
+  created_at: string;
+  updated_at: string;
+}

@@ -21,14 +21,21 @@ function renderStars(rating: number) {
   return "★".repeat(Math.floor(rating)) + (rating % 1 >= 0.5 ? "½" : "");
 }
 
-export default function AdvisorsClient({ professionals }: { professionals: Professional[] }) {
+export default function AdvisorsClient({ professionals, initialType, initialState, pageTitle, pageDescription }: {
+  professionals: Professional[];
+  initialType?: ProfessionalType;
+  initialState?: string;
+  pageTitle?: string;
+  pageDescription?: string;
+}) {
   const searchParams = useSearchParams();
-  const [typeFilter, setTypeFilter] = useState<ProfessionalType | "all">("all");
-  const [stateFilter, setStateFilter] = useState<string>("all");
+  const [typeFilter, setTypeFilter] = useState<ProfessionalType | "all">(initialType || "all");
+  const [stateFilter, setStateFilter] = useState<string>(initialState || "all");
   const [search, setSearch] = useState("");
 
-  // Sync filters from URL params on mount
+  // Sync filters from URL params on mount (only if no initial props)
   useEffect(() => {
+    if (initialType || initialState) return; // Skip if props already set
     const typeParam = searchParams.get("type");
     const stateParam = searchParams.get("state");
     if (typeParam && TYPE_FILTERS.some(f => f.key === typeParam)) {
@@ -37,7 +44,7 @@ export default function AdvisorsClient({ professionals }: { professionals: Profe
     if (stateParam && AU_STATES.includes(stateParam as typeof AU_STATES[number])) {
       setStateFilter(stateParam);
     }
-  }, [searchParams]);
+  }, [searchParams, initialType, initialState]);
 
   const filtered = useMemo(() => {
     return professionals.filter((p) => {
@@ -76,11 +83,11 @@ export default function AdvisorsClient({ professionals }: { professionals: Profe
         {/* Header */}
         <div className="mb-4 md:mb-8">
           <h1 className="text-xl md:text-4xl font-extrabold mb-1 md:mb-3 text-slate-900">
-            Find a Financial Advisor
+            {pageTitle || "Find a Financial Advisor"}
           </h1>
           <p className="text-xs md:text-base text-slate-500">
-            <span className="md:hidden">Verified Australian financial professionals</span>
-            <span className="hidden md:inline">Browse verified Australian financial professionals. Free consultation requests — no obligation.</span>
+            <span className="md:hidden">{pageDescription ? pageDescription.slice(0, 60) + '...' : "Verified Australian financial professionals"}</span>
+            <span className="hidden md:inline">{pageDescription || "Browse verified Australian financial professionals. Free consultation requests — no obligation."}</span>
           </p>
         </div>
 

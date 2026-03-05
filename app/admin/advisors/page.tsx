@@ -13,9 +13,10 @@ const EMPTY_ADVISOR: Partial<Professional> = {
 };
 
 export default function AdminAdvisorsPage() {
-  const [tab, setTab] = useState<"advisors" | "leads">("advisors");
+  const [tab, setTab] = useState<"advisors" | "leads" | "reviews">("advisors");
   const [advisors, setAdvisors] = useState<Professional[]>([]);
   const [leads, setLeads] = useState<(ProfessionalLead & { professional?: Professional })[]>([]);
+  const [pendingReviews, setPendingReviews] = useState<(Record<string, unknown>)[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Partial<Professional> | null>(null);
   const [saving, setSaving] = useState(false);
@@ -25,15 +26,17 @@ export default function AdminAdvisorsPage() {
 
   const loadData = useCallback(async () => {
     setLoading(true);
-    const [advisorRes, leadRes] = await Promise.all([
+    const [advisorRes, leadRes, reviewRes] = await Promise.all([
       supabase.from("professionals").select("*").order("created_at", { ascending: false }),
       supabase.from("professional_leads").select("*, professionals(name, firm_name, type)").order("created_at", { ascending: false }).limit(100),
+      supabase.from("professional_reviews").select("*, professionals(name)").order("created_at", { ascending: false }).limit(50),
     ]);
     setAdvisors((advisorRes.data as Professional[]) || []);
     setLeads((leadRes.data || []).map((l: Record<string, unknown>) => ({
       ...l,
       professional: (l as Record<string, unknown>).professionals as Professional | undefined,
     })) as (ProfessionalLead & { professional?: Professional })[]);
+    setPendingReviews((reviewRes.data || []) as Record<string, unknown>[]);
     setLoading(false);
   }, [supabase]);
 
@@ -92,6 +95,9 @@ export default function AdminAdvisorsPage() {
         </button>
         <button onClick={() => setTab("leads")} className={`px-4 py-2 rounded-lg font-semibold text-sm ${tab === "leads" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600"}`}>
           Leads ({leads.length})
+        </button>
+        <button onClick={() => setTab("reviews")} className={`px-4 py-2 rounded-lg font-semibold text-sm ${tab === "reviews" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600"}`}>
+          Reviews ({pendingReviews.filter((r) => r.status === "pending").length} pending)
         </button>
       </div>
 
@@ -157,8 +163,40 @@ export default function AdminAdvisorsPage() {
                   <input value={editing.website || ""} onChange={(e) => setEditing({ ...editing, website: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="https://..." />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">Photo URL</label>
-                  <input value={editing.photo_url || ""} onChange={(e) => setEditing({ ...editing, photo_url: e.target.value })} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="https://..." />
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">Photo</label>
+                  <div className="flex items-center gap-3">
+                    {editing.photo_url && (
+                      <img src={editing.photo_url} alt="Preview" className="w-12 h-12 rounded-full object-cover border border-slate-200" />
+                    )}
+                    <div className="flex-1">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          const slug = editing.slug || "temp";
+                          const ext = file.name.split(".").pop();
+                          const path = `advisor-photos/${slug}.${ext}`;
+                          const supabaseUpload = createClient();
+                          const { error } = await supabaseUpload.storage.from("public").upload(path, file, { upsert: true });
+                          if (!error) {
+                            const { data: urlData } = supabaseUpload.storage.from("public").getPublicUrl(path);
+                            setEditing({ ...editing, photo_url: urlData.publicUrl });
+                          } else {
+                            alert("Upload failed: " + error.message);
+                          }
+                        }}
+                        className="w-full text-xs file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-slate-100 file:text-slate-600 file:font-semibold file:cursor-pointer hover:file:bg-slate-200"
+                      />
+                      <input
+                        value={editing.photo_url || ""}
+                        onChange={(e) => setEditing({ ...editing, photo_url: e.target.value })}
+                        className="w-full px-3 py-1.5 border rounded-lg text-xs mt-1.5 text-slate-400"
+                        placeholder="Or paste URL..."
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
               <div className="mt-4">
@@ -236,6 +274,22 @@ export default function AdminAdvisorsPage() {
                         <div className="flex gap-2">
                           <button onClick={() => setEditing(a)} className="text-xs text-blue-600 hover:text-blue-800 font-semibold">Edit</button>
                           <a href={`/advisor/${a.slug}`} target="_blank" className="text-xs text-slate-500 hover:text-slate-700 font-semibold">View</a>
+                          {a.email && (
+                            <button
+                              onClick={async () => {
+                                if (!confirm(`Send welcome email to ${a.email}?`)) return;
+                                const res = await fetch("/api/advisor-welcome", {
+                                  method: "POST",
+                                  headers: { "Content-Type": "application/json" },
+                                  body: JSON.stringify({ name: a.name, email: a.email, firm_name: a.firm_name, slug: a.slug, type: a.type }),
+                                });
+                                alert(res.ok ? "Welcome email sent!" : "Failed to send email");
+                              }}
+                              className="text-xs text-purple-600 hover:text-purple-800 font-semibold"
+                            >
+                              Welcome Email
+                            </button>
+                          )}
                           <button onClick={() => handleDelete(a.id)} className="text-xs text-red-500 hover:text-red-700 font-semibold">Delete</button>
                         </div>
                       </td>
@@ -305,6 +359,89 @@ export default function AdminAdvisorsPage() {
           </table>
           {leads.length === 0 && (
             <div className="text-center py-12 text-slate-400">No leads yet. They&apos;ll appear here when users submit enquiries.</div>
+          )}
+        </div>
+      )}
+
+      {/* ─── REVIEWS TAB ─── */}
+      {tab === "reviews" && (
+        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+          <table className="w-full text-sm">
+            <thead className="bg-slate-50 text-left">
+              <tr>
+                <th className="px-4 py-3 font-semibold text-slate-600">Date</th>
+                <th className="px-4 py-3 font-semibold text-slate-600">Reviewer</th>
+                <th className="px-4 py-3 font-semibold text-slate-600">Advisor</th>
+                <th className="px-4 py-3 font-semibold text-slate-600">Rating</th>
+                <th className="px-4 py-3 font-semibold text-slate-600">Review</th>
+                <th className="px-4 py-3 font-semibold text-slate-600">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {pendingReviews.map((r) => (
+                <tr key={r.id as number} className={`hover:bg-slate-50 ${r.status === "pending" ? "bg-amber-50/30" : ""}`}>
+                  <td className="px-4 py-3 text-xs text-slate-500 whitespace-nowrap">
+                    {new Date(r.created_at as string).toLocaleDateString("en-AU", { day: "numeric", month: "short" })}
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="font-semibold text-xs">{r.reviewer_name as string}</div>
+                    <div className="text-[0.62rem] text-slate-400">{r.reviewer_email as string}</div>
+                  </td>
+                  <td className="px-4 py-3 text-xs text-slate-600">
+                    {(r.professionals as Record<string, unknown>)?.name as string || `ID: ${r.professional_id}`}
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className="text-amber-400 text-xs">{"★".repeat(r.rating as number)}</span>
+                  </td>
+                  <td className="px-4 py-3 max-w-[250px]">
+                    {r.title && <div className="text-xs font-semibold text-slate-800 truncate">{r.title as string}</div>}
+                    <div className="text-xs text-slate-500 truncate">{r.body as string}</div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex gap-2">
+                      {r.status === "pending" && (
+                        <>
+                          <button
+                            onClick={async () => {
+                              await supabase.from("professional_reviews").update({ status: "approved" }).eq("id", r.id);
+                              // Update advisor rating
+                              const { data: allReviews } = await supabase.from("professional_reviews").select("rating").eq("professional_id", r.professional_id).eq("status", "approved");
+                              if (allReviews && allReviews.length > 0) {
+                                const avg = allReviews.reduce((s, rv) => s + rv.rating, 0) / allReviews.length;
+                                await supabase.from("professionals").update({ rating: Math.round(avg * 10) / 10, review_count: allReviews.length }).eq("id", r.professional_id);
+                              }
+                              loadData();
+                            }}
+                            className="text-xs text-emerald-600 hover:text-emerald-800 font-semibold"
+                          >
+                            Approve
+                          </button>
+                          <button
+                            onClick={async () => {
+                              await supabase.from("professional_reviews").update({ status: "rejected" }).eq("id", r.id);
+                              loadData();
+                            }}
+                            className="text-xs text-red-500 hover:text-red-700 font-semibold"
+                          >
+                            Reject
+                          </button>
+                        </>
+                      )}
+                      <span className={`text-[0.62rem] font-semibold px-1.5 py-0.5 rounded-full ${
+                        r.status === "approved" ? "bg-emerald-100 text-emerald-700" :
+                        r.status === "rejected" ? "bg-red-100 text-red-600" :
+                        "bg-amber-100 text-amber-700"
+                      }`}>
+                        {r.status as string}
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {pendingReviews.length === 0 && (
+            <div className="text-center py-12 text-slate-400">No reviews yet.</div>
           )}
         </div>
       )}

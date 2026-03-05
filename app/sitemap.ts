@@ -178,5 +178,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...staticPages, ...bestPages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...advisorPages];
+  // Programmatic advisor type + state pages
+  const advisorTypes = ["smsf-accountants", "financial-planners", "property-advisors", "tax-agents", "mortgage-brokers", "estate-planners"];
+  const states = ["nsw", "vic", "qld", "wa", "sa", "tas", "act", "nt"];
+
+  const advisorTypePages = advisorTypes.map((type) => ({
+    url: `${baseUrl}/advisors/${type}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.8,
+  }));
+
+  const advisorStatePages = advisorTypes.flatMap((type) =>
+    states.map((state) => ({
+      url: `${baseUrl}/advisors/${type}/${state}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
+    }))
+  );
+
+  return [...staticPages, ...bestPages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...advisorPages, ...advisorTypePages, ...advisorStatePages];
 }

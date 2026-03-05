@@ -40,15 +40,24 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
 
   if (!pro) notFound();
 
-  // Get other advisors of the same type for "Similar Advisors"
-  const { data: similar } = await supabase
-    .from("professionals")
-    .select("id, name, slug, firm_name, type, location_display, rating, review_count, fee_description, verified, specialties, photo_url")
-    .eq("status", "active")
-    .eq("type", pro.type)
-    .neq("slug", slug)
-    .order("rating", { ascending: false })
-    .limit(3);
+  // Get similar advisors and approved reviews in parallel
+  const [{ data: similar }, { data: reviews }] = await Promise.all([
+    supabase
+      .from("professionals")
+      .select("id, name, slug, firm_name, type, location_display, rating, review_count, fee_description, verified, specialties, photo_url")
+      .eq("status", "active")
+      .eq("type", pro.type)
+      .neq("slug", slug)
+      .order("rating", { ascending: false })
+      .limit(3),
+    supabase
+      .from("professional_reviews")
+      .select("*")
+      .eq("professional_id", pro.id)
+      .eq("status", "approved")
+      .order("created_at", { ascending: false })
+      .limit(20),
+  ]);
 
   const breadcrumbLd = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
@@ -70,7 +79,7 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personLd) }} />
-      <AdvisorProfileClient professional={pro as Professional} similar={(similar as Professional[]) || []} />
+      <AdvisorProfileClient professional={pro as Professional} similar={(similar as Professional[]) || []} reviews={(reviews as import("@/lib/types").ProfessionalReview[]) || []} />
     </>
   );
 }

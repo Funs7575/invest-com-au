@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import type { Professional } from "@/lib/types";
+import type { Professional, ProfessionalReview } from "@/lib/types";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 import Icon from "@/components/Icon";
 
@@ -10,12 +10,38 @@ function renderStars(rating: number) {
   return "★".repeat(Math.floor(rating)) + (rating % 1 >= 0.5 ? "½" : "");
 }
 
-export default function AdvisorProfileClient({ professional: pro, similar }: { professional: Professional; similar: Professional[] }) {
+function StarRating({ value, onChange }: { value: number; onChange: (v: number) => void }) {
+  return (
+    <div className="flex gap-1">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <button
+          key={star}
+          type="button"
+          onClick={() => onChange(star)}
+          className={`text-xl transition-colors ${star <= value ? "text-amber-400" : "text-slate-200 hover:text-amber-200"}`}
+        >
+          ★
+        </button>
+      ))}
+    </div>
+  );
+}
+
+export default function AdvisorProfileClient({ professional: pro, similar, reviews = [] }: { professional: Professional; similar: Professional[]; reviews?: ProfessionalReview[] }) {
   const [formState, setFormState] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
+
+  // Review form state
+  const [reviewFormOpen, setReviewFormOpen] = useState(false);
+  const [reviewState, setReviewState] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [reviewName, setReviewName] = useState("");
+  const [reviewEmail, setReviewEmail] = useState("");
+  const [reviewRating, setReviewRating] = useState(0);
+  const [reviewTitle, setReviewTitle] = useState("");
+  const [reviewBody, setReviewBody] = useState("");
 
   const typeLabel = PROFESSIONAL_TYPE_LABELS[pro.type] || "Financial Professional";
 
@@ -216,6 +242,113 @@ export default function AdvisorProfileClient({ professional: pro, similar }: { p
                 Your contact details are shared only with {pro.name} for the purpose of this enquiry.
               </p>
             </>
+          )}
+        </div>
+
+        {/* Reviews section */}
+        <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-6 mb-4 md:mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm md:text-base font-bold text-slate-900">
+              Reviews {reviews.length > 0 && <span className="text-slate-400 font-normal">({reviews.length})</span>}
+            </h2>
+            {!reviewFormOpen && reviewState !== "success" && (
+              <button
+                onClick={() => setReviewFormOpen(true)}
+                className="text-xs font-semibold text-blue-700 hover:text-blue-800 transition-colors"
+              >
+                Write a Review
+              </button>
+            )}
+          </div>
+
+          {/* Existing reviews */}
+          {reviews.length > 0 ? (
+            <div className="space-y-3 mb-4">
+              {reviews.map((r) => (
+                <div key={r.id} className="border-b border-slate-100 last:border-b-0 pb-3 last:pb-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-amber-400 text-xs">{renderStars(r.rating)}</span>
+                    <span className="text-xs font-semibold text-slate-700">{r.reviewer_name}</span>
+                    <span className="text-[0.56rem] text-slate-400">
+                      {new Date(r.created_at).toLocaleDateString("en-AU", { month: "short", year: "numeric" })}
+                    </span>
+                    {r.verified && <span className="text-[0.5rem] font-bold px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded-full">Verified</span>}
+                  </div>
+                  {r.title && <div className="text-xs font-semibold text-slate-800 mb-0.5">{r.title}</div>}
+                  <p className="text-xs text-slate-600 leading-relaxed">{r.body}</p>
+                </div>
+              ))}
+            </div>
+          ) : !reviewFormOpen && reviewState !== "success" ? (
+            <p className="text-xs text-slate-400 mb-3">No reviews yet. Be the first to share your experience.</p>
+          ) : null}
+
+          {/* Review submission form */}
+          {reviewState === "success" ? (
+            <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 text-center">
+              <p className="text-xs font-semibold text-emerald-800">Thanks! Your review has been submitted for moderation.</p>
+              <p className="text-[0.62rem] text-emerald-600 mt-1">It will appear once verified (usually within 48 hours).</p>
+            </div>
+          ) : reviewFormOpen && (
+            <div className="border-t border-slate-100 pt-3">
+              <h3 className="text-xs font-bold text-slate-700 mb-3">Share Your Experience with {pro.name.split(" ")[0]}</h3>
+              <div className="space-y-2.5">
+                <div>
+                  <label className="block text-[0.62rem] font-semibold text-slate-600 mb-0.5">Rating *</label>
+                  <StarRating value={reviewRating} onChange={setReviewRating} />
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-[0.62rem] font-semibold text-slate-600 mb-0.5">Your name *</label>
+                    <input value={reviewName} onChange={(e) => setReviewName(e.target.value)} className="w-full px-2.5 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/30" placeholder="Full name" />
+                  </div>
+                  <div>
+                    <label className="block text-[0.62rem] font-semibold text-slate-600 mb-0.5">Email * <span className="text-slate-400 font-normal">(not shown)</span></label>
+                    <input type="email" value={reviewEmail} onChange={(e) => setReviewEmail(e.target.value)} className="w-full px-2.5 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/30" placeholder="your@email.com" />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-[0.62rem] font-semibold text-slate-600 mb-0.5">Title <span className="text-slate-400 font-normal">(optional)</span></label>
+                  <input value={reviewTitle} onChange={(e) => setReviewTitle(e.target.value)} className="w-full px-2.5 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/30" placeholder="Summary of your experience" />
+                </div>
+                <div>
+                  <label className="block text-[0.62rem] font-semibold text-slate-600 mb-0.5">Your review *</label>
+                  <textarea value={reviewBody} onChange={(e) => setReviewBody(e.target.value)} rows={3} className="w-full px-2.5 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/30 resize-vertical" placeholder="What was your experience working with this advisor?" />
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={async () => {
+                      if (!reviewRating || !reviewName.trim() || !reviewEmail.trim() || !reviewBody.trim()) return;
+                      setReviewState("submitting");
+                      try {
+                        const res = await fetch("/api/advisor-review", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({
+                            professional_id: pro.id,
+                            reviewer_name: reviewName.trim(),
+                            reviewer_email: reviewEmail.trim(),
+                            rating: reviewRating,
+                            title: reviewTitle.trim() || undefined,
+                            body: reviewBody.trim(),
+                          }),
+                        });
+                        setReviewState(res.ok ? "success" : "error");
+                      } catch { setReviewState("error"); }
+                    }}
+                    disabled={!reviewRating || !reviewName.trim() || !reviewEmail.trim() || !reviewBody.trim() || reviewState === "submitting"}
+                    className="px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800 disabled:opacity-50 transition-all"
+                  >
+                    {reviewState === "submitting" ? "Submitting..." : "Submit Review"}
+                  </button>
+                  <button onClick={() => setReviewFormOpen(false)} className="px-4 py-2 border border-slate-200 text-xs font-semibold rounded-lg hover:bg-slate-50 transition-colors">
+                    Cancel
+                  </button>
+                </div>
+                {reviewState === "error" && <p className="text-xs text-red-600">Failed to submit. You may have already reviewed this advisor.</p>}
+                <p className="text-[0.56rem] text-slate-400">Reviews are moderated before publication. Your email is used for verification only and will not be displayed.</p>
+              </div>
+            </div>
           )}
         </div>
 
