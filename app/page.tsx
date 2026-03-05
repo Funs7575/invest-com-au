@@ -20,19 +20,19 @@ import { ORGANIZATION_JSONLD, SITE_URL } from "@/lib/seo";
 // UserOnboarding modal removed — was blocking first-time visitors (P0 conversion issue)
 
 export const metadata = {
-  title: "Compare Australia's Best Investing Platforms",
+  title: "Compare Investing Platforms & Find Advisors — Invest.com.au",
   description:
-    "Compare Australian share brokers, crypto exchanges, robo-advisors, super funds, property platforms, and CFD brokers side-by-side. Real fees, real data, updated daily.",
+    "Compare Australian share trading platforms, crypto exchanges, super funds, and robo-advisors side-by-side. Find verified financial advisors. Real fees, real data, updated daily.",
   openGraph: {
-    title: "Compare Australia's Best Investing Platforms — Invest.com.au",
-    description: "Compare Australian share brokers, crypto exchanges, robo-advisors, super funds, property platforms, and CFD brokers. Real fees, real data, updated daily.",
+    title: "Compare Platforms & Find Advisors — Invest.com.au",
+    description: "Compare Australian investing platforms and find verified financial advisors. Real fees, real data, updated daily.",
     url: "/",
     images: [{ url: "/api/og", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image" as const,
-    title: "Compare Australia's Best Investing Platforms — Invest.com.au",
-    description: "Compare Australian share brokers, crypto exchanges, robo-advisors, super funds, property platforms, and CFD brokers. Real fees, real data, updated daily.",
+    title: "Compare Platforms & Find Advisors — Invest.com.au",
+    description: "Compare Australian investing platforms and find verified financial advisors. Real fees, real data, updated daily.",
   },
   alternates: { canonical: "/" },
 };
@@ -43,7 +43,7 @@ const bestForCards = [
   { icon: "cpu", title: "Best Robo-Advisors", description: "Automated investing with Stockspot, Raiz & more", href: "/best/robo-advisors", color: "bg-violet-50 border-violet-200 text-violet-800" },
   { icon: "building", title: "Best Super Funds", description: "Compare fees, performance & insurance across funds", href: "/best/super-funds", color: "bg-emerald-50 border-emerald-200 text-emerald-800" },
   { icon: "coins", title: "Lowest Fees", description: "$0 brokerage and verified low-cost options", href: "/best/low-fees", color: "bg-amber-50 border-amber-200 text-amber-800" },
-  { icon: "bar-chart-3", title: "Research Tools", description: "Simply Wall St, TradingView & stock analysis", href: "/best/research-tools", color: "bg-cyan-50 border-cyan-200 text-cyan-800" },
+  { icon: "briefcase", title: "Find an Advisor", description: "SMSF accountants, financial planners & tax agents", href: "/find-advisor", color: "bg-violet-50 border-violet-200 text-violet-800" },
   { icon: "bitcoin", title: "Best Crypto Exchanges", description: "AUSTRAC-registered exchanges with AUD deposits", href: "/best/crypto", color: "bg-orange-50 border-orange-200 text-orange-800" },
   { icon: "arrow-left-right", title: "CFD & Forex", description: "ASIC-regulated CFD and forex brokers compared", href: "/best/cfd-forex", color: "bg-rose-50 border-rose-200 text-rose-800" },
 ];
@@ -55,8 +55,8 @@ const categoryStrip = [
   { label: "Super", href: "/best/super-funds" },
   { label: "Robo-Advisors", href: "/best/robo-advisors" },
   { label: "Property", href: "/best/property-investing" },
+  { label: "Advisors", href: "/find-advisor" },
   { label: "CFDs", href: "/best/cfd-forex" },
-  { label: "Research", href: "/best/research-tools" },
 ];
 
 export const revalidate = 3600; // ISR: revalidate every hour
@@ -155,7 +155,7 @@ export default async function HomePage() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             ...ORGANIZATION_JSONLD,
-            description: "Australia's independent investing platform comparison. Compare fees, features, and safety across share brokers, crypto exchanges, super funds, robo-advisors, property platforms, and CFD brokers.",
+            description: "Australia's independent investing hub. Compare platforms and find verified financial advisors — shares, crypto, super, robo-advisors, property & more.",
           }),
         }}
       />
@@ -211,17 +211,17 @@ export default async function HomePage() {
             {/* Trust badge */}
             <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-50 rounded-full text-[0.6rem] font-medium text-slate-500 mb-2 border border-slate-100">
               <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-              {brokerCount} platforms · Updated {updatedDateStr}
+              {brokerCount} platforms + verified advisors
             </div>
             <h1 className="text-[1.35rem] font-extrabold text-slate-900 leading-[1.2] tracking-tight">
-              Compare Australia&apos;s Best<br />Investing Platforms
+              Compare Platforms.<br />Find Advisors.
             </h1>
             <p className="mt-1 text-[0.7rem] text-slate-500 leading-relaxed">
-              Shares, crypto, super, robo-advisors & more — independent and free.
+              Shares, crypto, super, robo-advisors & financial professionals — independent and free.
             </p>
             {/* Category quick-access pills */}
             <div className="flex flex-wrap justify-center gap-1.5 mt-2.5 mb-2.5">
-              {categoryStrip.slice(0, 6).map((cat) => (
+              {categoryStrip.map((cat) => (
                 <Link
                   key={cat.label}
                   href={cat.href}
@@ -240,12 +240,19 @@ export default async function HomePage() {
                 Compare All
               </Link>
               <Link
-                href="/quiz"
+                href="/find-advisor"
                 className="flex-1 px-3 py-2.5 bg-amber-500 text-white font-bold rounded-lg text-[0.8rem] text-center active:scale-[0.98] transition-all"
               >
-                60s Quiz →
+                Find Advisor
               </Link>
             </div>
+            {/* Secondary CTA */}
+            <Link
+              href="/quiz"
+              className="block text-center mt-2 text-[0.69rem] font-semibold text-slate-500 hover:text-slate-700 transition-colors"
+            >
+              Not sure? Take our 60s quiz →
+            </Link>
             {/* Trust strip — social proof */}
             <div className="flex items-center justify-center gap-3 mt-3 text-[0.56rem] text-slate-400">
               <span className="flex items-center gap-1">
@@ -262,13 +269,13 @@ export default async function HomePage() {
           <div className="hidden md:block">
             <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 rounded-full text-xs font-medium text-slate-600 mb-6 hero-fade-up hero-fade-up-1 border border-slate-200">
               <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
-              Updated {updatedDateStr} &middot; {brokerCount} platforms
+              {brokerCount} platforms + verified advisors · Updated {updatedDateStr}
             </div>
             <h1 className="text-5xl lg:text-6xl font-extrabold text-slate-900 hero-fade-up hero-fade-up-1 leading-tight">
-              Compare Australia&apos;s Best<br /> Investing Platforms
+              Compare Platforms.<br />Find Advisors.
             </h1>
             <p className="mt-5 text-xl text-slate-500 max-w-2xl mx-auto hero-fade-up hero-fade-up-2 leading-relaxed">
-              Compare fees, features, and safety across share brokers, crypto exchanges, super funds, robo-advisors, property platforms, and CFD brokers — independent, transparent, and free.
+              Compare fees, features, and safety across investing platforms — and find verified financial professionals for expert advice. Independent, transparent, and free.
             </p>
             {/* Category strip — desktop only */}
             <div className="flex items-center justify-center flex-wrap gap-2 mt-5 hero-fade-up hero-fade-up-2">
@@ -276,7 +283,11 @@ export default async function HomePage() {
                 <Link
                   key={cat.label}
                   href={cat.href}
-                  className="px-3 py-1.5 text-xs font-semibold rounded-full border border-slate-200 text-slate-600 bg-white hover:bg-slate-50 hover:border-slate-300 transition-colors"
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-full border transition-colors ${
+                    cat.label === "Advisors"
+                      ? "border-violet-200 text-violet-700 bg-violet-50 hover:bg-violet-100"
+                      : "border-slate-200 text-slate-600 bg-white hover:bg-slate-50 hover:border-slate-300"
+                  }`}
                 >
                   {cat.label}
                 </Link>
@@ -287,16 +298,22 @@ export default async function HomePage() {
             </div>
             <div className="flex items-center justify-center gap-3 mt-6 mb-2 hero-fade-up hero-fade-up-4">
               <Link
-                href="/quiz"
-                className="px-7 py-3.5 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 hover:scale-105 hover:shadow-lg transition-all duration-200 text-sm"
+                href="/compare"
+                className="px-7 py-3.5 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 hover:scale-105 hover:shadow-lg transition-all duration-200 text-sm"
               >
-                Find My Platform — 60sec Quiz &rarr;
+                Compare Platforms &rarr;
               </Link>
               <Link
-                href="/compare"
+                href="/find-advisor"
+                className="px-7 py-3.5 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 hover:scale-105 hover:shadow-lg transition-all duration-200 text-sm"
+              >
+                Find an Advisor &rarr;
+              </Link>
+              <Link
+                href="/quiz"
                 className="px-7 py-3.5 border-2 border-slate-300 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 hover:border-slate-400 hover:scale-105 transition-all duration-200 text-sm"
               >
-                Compare All Platforms &rarr;
+                60s Quiz &rarr;
               </Link>
             </div>
             {/* Social proof */}
