@@ -1034,7 +1034,7 @@ export default function QuizPage() {
           <div className="bg-amber-400 text-slate-900 rounded-xl p-4 md:p-6 mt-1 md:mt-2 mb-4 md:mb-8 text-center result-card-in result-card-in-delay-5">
             <h3 className="text-sm md:text-lg font-bold mb-0.5 md:mb-1">Still not sure?</h3>
             <p className="text-[0.69rem] md:text-sm text-slate-700 mb-3 md:mb-4">Compare all platforms or read detailed reviews.</p>
-            <div className="flex flex-row gap-2 md:gap-3 justify-center">
+            <div className="flex flex-row gap-2 md:gap-3 justify-center flex-wrap">
               <a
                 href="/compare"
                 onClick={() => trackEvent('quiz_internal_cta', { target: 'compare' }, '/quiz')}
@@ -1051,6 +1051,13 @@ export default function QuizPage() {
                   {topMatch.broker.name} Review →
                 </a>
               )}
+              <a
+                href="/find-advisor"
+                onClick={() => trackEvent('quiz_internal_cta', { target: 'find-advisor' }, '/quiz')}
+                className="px-3 py-2 md:px-5 md:py-2.5 border border-slate-700 text-slate-900 text-[0.69rem] md:text-sm font-semibold rounded-lg hover:bg-amber-300 transition-colors"
+              >
+                Find Advisor →
+              </a>
             </div>
           </div>
 
