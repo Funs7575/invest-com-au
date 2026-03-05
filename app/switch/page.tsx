@@ -15,7 +15,7 @@ export const metadata = {
       "Personalised platform migration checklist with CHESS transfer steps, CGT guidance, and savings calculator.",
     images: [
       {
-        url: "/api/og?title=Broker+Switch+Planner&subtitle=Personalised+Migration+Checklist&type=default",
+        url: "/api/og?title=Platform+Switch+Planner&subtitle=Personalised+Migration+Checklist&type=default",
         width: 1200,
         height: 630,
       },
