@@ -414,7 +414,7 @@ export default function FeeImpactClient({ brokers }: Props) {
             Personal Fee Impact Calculator
           </h1>
           <p className="text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed">
-            Enter your trading habits to see your total annual broker fees —
+            Enter your trading habits to see your total annual platform fees —
             then find out how much you could save.
           </p>
           <AuthorByline variant="light" />

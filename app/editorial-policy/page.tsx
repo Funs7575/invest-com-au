@@ -105,7 +105,7 @@ export default function EditorialPolicyPage() {
               How Our Ratings Work
             </h2>
             <p className="text-slate-700 leading-relaxed mb-3">
-              Every broker is scored across six weighted factors:
+              Every platform is scored across six weighted factors:
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4">
               {[

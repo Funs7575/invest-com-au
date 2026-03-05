@@ -1225,7 +1225,7 @@ function FeeImpactTeaser({ brokers, searchParams }: { brokers: Broker[]; searchP
       id="fee-impact"
       iconName="calculator"
       title="Personal Fee Impact Calculator"
-      desc="See your total annual broker fees based on your real trading habits — brokerage, FX, and inactivity charges."
+      desc="See your total annual platform fees based on your real trading habits — brokerage, FX, and inactivity charges."
     >
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div className="lg:col-span-4 space-y-5">

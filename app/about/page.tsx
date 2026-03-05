@@ -118,7 +118,7 @@ export default function AboutPage() {
           <section className="mb-10">
             <h2 className="text-2xl font-extrabold text-brand mb-3">Review Methodology</h2>
             <p className="text-slate-700 mb-6 leading-relaxed">
-              Every broker on Invest.com.au is scored across six dimensions, each weighted
+              Every platform on Invest.com.au is scored across six dimensions, each weighted
               to reflect what matters most to Australian investors. Here&apos;s how we calculate our ratings:
             </p>
             <div className="space-y-3">

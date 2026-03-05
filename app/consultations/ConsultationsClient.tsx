@@ -11,7 +11,7 @@ const CATEGORIES = [
   { id: "all", label: "All" },
   { id: "portfolio", label: "Portfolio Review" },
   { id: "tax", label: "Tax Planning" },
-  { id: "broker-selection", label: "Broker Selection" },
+  { id: "broker-selection", label: "Platform Selection" },
   { id: "general", label: "General" },
 ];
 
@@ -45,7 +45,7 @@ export default function ConsultationsClient({ consultations }: Props) {
           </h1>
           <p className="text-lg text-slate-600 max-w-2xl mx-auto">
             Book a 1-on-1 session with a qualified investment expert.
-            Get personalised advice on your portfolio, tax strategy, or broker choice.
+            Get personalised advice on your portfolio, tax strategy, or platform choice.
           </p>
           {!loading && isPro && (
             <div className="mt-3 inline-block px-3 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-full">

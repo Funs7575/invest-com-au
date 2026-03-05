@@ -38,8 +38,8 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
     : "Personal Fee Impact Calculator — See Your Annual Broker Costs";
 
   const description = hasParams
-    ? `See your total annual broker fees for${subtitle.replace(" — ", " ")} across every Australian broker.`
-    : "Enter your trading habits to see exactly what you pay in broker fees each year — brokerage, FX fees, and inactivity charges across every Australian broker.";
+    ? `See your total annual platform fees for${subtitle.replace(" — ", " ")} across every Australian platform.`
+    : "Enter your trading habits to see exactly what you pay in broker fees each year — brokerage, FX fees, and inactivity charges across every Australian platform.";
 
   return {
     title,
@@ -49,8 +49,8 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
         ? `Fee Impact Calculator${subtitle} — Invest.com.au`
         : "Personal Fee Impact Calculator — Invest.com.au",
       description: hasParams
-        ? `See your total annual broker fees for${subtitle.replace(" — ", " ")} across every Australian broker.`
-        : "Calculate your total annual broker fees and see how much you could save by switching.",
+        ? `See your total annual platform fees for${subtitle.replace(" — ", " ")} across every Australian platform.`
+        : "Calculate your total annual platform fees and see how much you could save by switching.",
       images: [
         {
           url: `/api/og?title=${encodeURIComponent("Fee Impact Calculator")}&subtitle=${encodeURIComponent(subtitle ? subtitle.replace(" — ", "") : "See your annual broker costs")}&type=default`,
@@ -70,7 +70,7 @@ function jsonLd() {
     "@type": "SoftwareApplication",
     name: "Personal Fee Impact Calculator",
     description:
-      "Calculate your total annual broker fees across every Australian broker based on your real trading habits.",
+      "Calculate your total annual platform fees across every Australian platform based on your real trading habits.",
     applicationCategory: "FinanceApplication",
     operatingSystem: "Web",
     url: absoluteUrl("/fee-impact"),

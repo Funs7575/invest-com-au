@@ -161,7 +161,7 @@ export default function ShortlistClient() {
         if (navigator.share) {
           try {
             await navigator.share({
-              title: "My Broker Shortlist",
+              title: "My Platform Shortlist",
               text: `Check out my shortlist of ${slugs.length} Australian brokers on Invest.com.au`,
               url: fullUrl,
             });
@@ -238,7 +238,7 @@ export default function ShortlistClient() {
             <div>
               <p className="text-sm font-semibold text-purple-900">Shared Shortlist</p>
               <p className="text-xs text-purple-600">
-                {sharedBrokers.length} broker{sharedBrokers.length !== 1 ? "s" : ""} &middot; Viewed {sharedViewCount} time{sharedViewCount !== 1 ? "s" : ""}
+                {sharedBrokers.length} platform{sharedBrokers.length !== 1 ? "s" : ""} &middot; Viewed {sharedViewCount} time{sharedViewCount !== 1 ? "s" : ""}
               </p>
             </div>
             <button
@@ -324,7 +324,7 @@ export default function ShortlistClient() {
         </svg>
         <h2 className="text-base md:text-lg font-bold text-slate-900 mb-1.5">No brokers saved yet</h2>
         <p className="text-xs md:text-sm text-slate-500 mb-4 md:mb-6">
-          Tap the heart icon on any broker to save it here.
+          Tap the heart icon on any platform to save it here.
         </p>
         <Link
           href="/compare"

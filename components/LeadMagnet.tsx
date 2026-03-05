@@ -62,8 +62,8 @@ export default function LeadMagnet() {
       </div>
       <h3 className="text-base md:text-xl font-extrabold mb-1 md:mb-2 text-slate-900">{CURRENT_YEAR} Fee Audit PDF</h3>
       <p className="text-xs md:text-sm text-slate-600 mb-2.5 md:mb-4 leading-relaxed">
-        <span className="hidden md:inline">See exactly what every Australian broker charges — brokerage, FX fees, inactivity fees, and hidden costs. Compare side-by-side in one document.</span>
-        <span className="md:hidden">Every broker&apos;s fees compared side-by-side — brokerage, FX, inactivity &amp; hidden costs.</span>
+        <span className="hidden md:inline">See exactly what every Australian platform charges — brokerage, FX fees, inactivity fees, and hidden costs. Compare side-by-side in one document.</span>
+        <span className="md:hidden">Every platform&apos;s fees compared side-by-side — brokerage, FX, inactivity &amp; hidden costs.</span>
       </p>
 
       {status === "success" ? (

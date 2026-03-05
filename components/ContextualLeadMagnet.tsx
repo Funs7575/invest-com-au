@@ -23,7 +23,7 @@ const SEGMENTS: Record<LeadSegment, SegmentConfig> = {
   "fee-audit": {
     badge: "Free Download",
     title: `${CURRENT_YEAR} Fee Audit PDF`,
-    description: "See exactly what every Australian broker charges — brokerage, FX fees, inactivity fees, and hidden costs. Compare side-by-side in one document.",
+    description: "See exactly what every Australian platform charges — brokerage, FX fees, inactivity fees, and hidden costs. Compare side-by-side in one document.",
     buttonText: "Get the Free PDF",
     consentText: "I agree to receive the Fee Audit PDF and occasional updates from Invest.com.au.",
     source: "lead-magnet-fee-audit",
@@ -33,7 +33,7 @@ const SEGMENTS: Record<LeadSegment, SegmentConfig> = {
   "smsf-checklist": {
     badge: "Free SMSF Resource",
     title: "SMSF Broker Checklist",
-    description: "Our 12-point checklist for choosing an SMSF-compatible broker: custody, compliance, reporting, fees, and audit readiness. One PDF, zero jargon.",
+    description: "Our 12-point checklist for choosing an SMSF-compatible platform: custody, compliance, reporting, fees, and audit readiness. One PDF, zero jargon.",
     buttonText: "Get the SMSF Checklist",
     consentText: "I agree to receive the SMSF Checklist and occasional updates from Invest.com.au.",
     source: "lead-magnet-smsf-checklist",
@@ -53,7 +53,7 @@ const SEGMENTS: Record<LeadSegment, SegmentConfig> = {
   "switching-checklist": {
     badge: "Free Checklist",
     title: "Broker Switching Checklist",
-    description: "Step-by-step guide to switching brokers without losing money: transfer fees, HIN portability, tax implications, and a timeline for the switch.",
+    description: "Step-by-step guide to switching platforms without losing money: transfer fees, HIN portability, tax implications, and a timeline for the switch.",
     buttonText: "Get the Switching Checklist",
     consentText: "I agree to receive the Switching Checklist and occasional updates from Invest.com.au.",
     source: "lead-magnet-switching-checklist",
@@ -63,7 +63,7 @@ const SEGMENTS: Record<LeadSegment, SegmentConfig> = {
   "beginner-guide": {
     badge: "Free Beginner Guide",
     title: "How to Start Investing in Australia",
-    description: "A plain-English guide for absolute beginners: how to pick a broker, what to buy first, how much you need, and common mistakes to avoid.",
+    description: "A plain-English guide for absolute beginners: how to pick a platform, what to buy first, how much you need, and common mistakes to avoid.",
     buttonText: "Get the Beginner Guide",
     consentText: "I agree to receive the Beginner Guide and occasional updates from Invest.com.au.",
     source: "lead-magnet-beginner-guide",

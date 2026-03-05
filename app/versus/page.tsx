@@ -8,7 +8,7 @@ export const revalidate = 1800;
 export const metadata = {
   title: "Platform vs Platform",
   description:
-    "Compare two Australian investing platforms side by side. See fees, features, and our honest pick across brokers, robo-advisors, crypto & more.",
+    "Compare two Australian investing platforms side by side. See fees, features, and our honest pick across shares, robo-advisors, crypto & more.",
   openGraph: {
     title: "Platform vs Platform — Invest.com.au",
     description: "Compare two Australian investing platforms side by side. See fees, features, and our honest pick.",

@@ -84,9 +84,9 @@ export default function SwitchClient({ brokers, transferGuides }: Props) {
 
   // Generic fallback steps when no specific guide exists
   const genericSteps = [
-    "Open an account with the new broker (usually takes 5-10 minutes online)",
-    "Verify your identity with the new broker",
-    "Initiate a CHESS transfer (also called a broker-to-broker transfer) — your new broker can handle this",
+    "Open an account with the new platform (usually takes 5-10 minutes online)",
+    "Verify your identity with the new platform",
+    "Initiate a CHESS transfer (also called a broker-to-broker transfer) — your new platform can handle this",
     `Transfer cost: approximately $${
       holdings * TRANSFER_COST_PER_HOLDING
     } ($${TRANSFER_COST_PER_HOLDING} per holding × ${holdings} holdings)`,
@@ -111,7 +111,7 @@ export default function SwitchClient({ brokers, transferGuides }: Props) {
           Broker Switch Planner
         </h1>
         <p className="text-slate-600 mb-8">
-          See how much you could save by switching brokers, plus a personalised
+          See how much you could save by switching platforms, plus a personalised
           step-by-step migration plan.
         </p>
 
@@ -334,7 +334,7 @@ export default function SwitchClient({ brokers, transferGuides }: Props) {
         {!savings && (
           <div className="text-center py-12 text-slate-400">
             <p className="text-lg mb-2">
-              Select both brokers above to see your savings.
+              Select both platforms above to see your savings.
             </p>
             <p className="text-sm">
               We&apos;ll generate a personalised switching checklist too.

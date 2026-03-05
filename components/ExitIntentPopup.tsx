@@ -189,7 +189,7 @@ export default function ExitIntentPopup() {
           <Icon name="bar-chart" size={36} className="text-slate-200 mx-auto mb-3" />
           <h2 id="exit-popup-title" className="text-xl font-extrabold mb-1">Wait — Before You Go</h2>
           <p className="text-sm text-slate-200">
-            Get our free {CURRENT_YEAR} broker fee comparison PDF. See exactly what every platform charges.
+            Get our free {CURRENT_YEAR} platform fee comparison PDF. See exactly what every platform charges.
           </p>
         </div>
 
@@ -243,7 +243,7 @@ export default function ExitIntentPopup() {
                     className="mt-0.5 w-4 h-4 rounded accent-slate-700 shrink-0"
                   />
                   <span className="text-xs text-slate-500 leading-tight">
-                    I agree to receive the PDF and occasional broker updates.{" "}
+                    I agree to receive the PDF and occasional platform updates.{" "}
                     <Link href="/privacy" className="underline hover:text-slate-900">
                       Privacy Policy
                     </Link>

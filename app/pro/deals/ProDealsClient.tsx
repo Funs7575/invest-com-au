@@ -29,11 +29,11 @@ export default function ProDealsClient({
         <div className="container-custom max-w-2xl mx-auto text-center">
           <h1 className="text-3xl font-extrabold mb-3">Exclusive Pro Deals</h1>
           <p className="text-slate-600 mb-6">
-            These broker deals are exclusively available to Investor Pro members.
+            These platform deals are exclusively available to Investor Pro members.
           </p>
           <div className="bg-white border border-slate-200 rounded-2xl p-8">
             <p className="text-lg font-bold text-slate-900 mb-2">
-              Upgrade to Pro to unlock exclusive broker deals
+              Upgrade to Pro to unlock exclusive platform deals
             </p>
             <p className="text-sm text-slate-500 mb-4">
               Special sign-up bonuses, reduced fees, and premium perks from our partner brokers.
@@ -92,7 +92,7 @@ export default function ProDealsClient({
           Exclusive Pro Deals
         </h1>
         <p className="text-slate-600 mb-8">
-          Special broker offers only available to Investor Pro members.
+          Special platform offers only available to Investor Pro members.
           {deals.length > 0 && ` ${deals.length} active deal${deals.length !== 1 ? "s" : ""} available.`}
         </p>
 
