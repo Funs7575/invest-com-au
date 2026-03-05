@@ -14,6 +14,8 @@ import LiveActivityTicker from "@/components/LiveActivityTicker";
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 import { getMostRecentFeeCheck } from "@/lib/utils";
 import Icon from "@/components/Icon";
+import BrokerLogo from "@/components/BrokerLogo";
+import { AFFILIATE_REL } from "@/lib/tracking";
 import { ORGANIZATION_JSONLD, SITE_URL } from "@/lib/seo";
 // UserOnboarding modal removed — was blocking first-time visitors (P0 conversion issue)
 
@@ -397,18 +399,54 @@ export default async function HomePage() {
                   <DealCard key={broker.id} broker={broker} />
                 ))}
               </div>
-              {/* Mobile: horizontal snap-scroll carousel */}
-              <div className="md:hidden">
-                <div className="relative">
-                  <div className="flex gap-2.5 overflow-x-auto snap-x snap-mandatory pb-3 scrollbar-hide -mx-4 px-4">
-                    {(dealBrokers as Broker[]).map((broker) => (
-                      <div key={broker.id} className="w-[70vw] shrink-0 snap-start">
-                        <DealCard broker={broker} />
+              {/* Mobile: compact stacked list — all deals visible, no carousel */}
+              <div className="md:hidden space-y-2">
+                {(dealBrokers as Broker[]).map((broker) => {
+                  const expiryDate = broker.deal_expiry ? new Date(broker.deal_expiry) : null;
+                  const daysLeft = expiryDate ? Math.max(0, Math.ceil((expiryDate.getTime() - Date.now()) / 86400000)) : null;
+                  const isUrgent = daysLeft !== null && daysLeft <= 7;
+                  const affiliateLink = `/go/${broker.slug}`;
+                  return (
+                    <div key={broker.id} className="border border-slate-200 rounded-lg p-2.5 bg-white">
+                      {/* Row 1: Logo + name + rating + CTA */}
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <BrokerLogo broker={broker} size="sm" />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1">
+                            <span className="font-bold text-sm text-slate-900 truncate">{broker.name}</span>
+                            <span className="text-[0.6rem] text-slate-400">{broker.rating}/5</span>
+                          </div>
+                        </div>
+                        <a
+                          href={affiliateLink}
+                          target="_blank"
+                          rel={AFFILIATE_REL}
+                          className="shrink-0 px-3 py-1.5 bg-amber-500 text-white text-[0.7rem] font-bold rounded-md active:scale-[0.98] transition-all"
+                        >
+                          Claim →
+                        </a>
                       </div>
-                    ))}
-                  </div>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-amber-50/80 to-transparent" />
-                </div>
+                      {/* Row 2: Deal text + urgency */}
+                      <div className="bg-amber-50/80 rounded-md px-2 py-1.5 flex items-start gap-1.5">
+                        <Icon name="flame" size={12} className="text-amber-500 shrink-0 mt-0.5" />
+                        <p className="text-[0.72rem] text-slate-700 font-medium leading-snug line-clamp-2 flex-1">{broker.deal_text}</p>
+                        {isUrgent && daysLeft !== null && (
+                          <span className="shrink-0 text-[0.56rem] font-bold px-1.5 py-0.5 rounded-full bg-red-100 text-red-600 animate-pulse whitespace-nowrap">
+                            {daysLeft}d left
+                          </span>
+                        )}
+                        {!isUrgent && expiryDate && (
+                          <span className="shrink-0 text-[0.56rem] text-amber-600 whitespace-nowrap">
+                            exp {expiryDate.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+                <Link href="/deals" className="block text-center text-[0.7rem] font-semibold text-slate-500 hover:text-slate-700 py-1 transition-colors">
+                  View all deals →
+                </Link>
               </div>
               <div className="mt-2 md:mt-4">
                 <CompactDisclaimerLine />
