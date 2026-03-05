@@ -8,7 +8,16 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/api/", "/admin/", "/broker-portal/", "/auth/", "/account/"],
+        disallow: [
+          "/api/",
+          "/admin/",
+          "/broker-portal/",
+          "/auth/",
+          "/account/",
+          "/export/",
+          "/unsubscribe/",
+          "/shortlist?code=*",
+        ],
       },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,
