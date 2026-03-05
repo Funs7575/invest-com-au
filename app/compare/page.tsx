@@ -110,6 +110,16 @@ export default async function ComparePage() {
     ],
   };
 
+  const faqLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      { "@type": "Question", name: "What is the cheapest share trading platform in Australia?", acceptedAnswer: { "@type": "Answer", text: "Several platforms offer $0 ASX brokerage including CMC Markets (first trade per day) and Moomoo. Use our comparison table above to filter by lowest fees for your trading frequency." } },
+      { "@type": "Question", name: "What does CHESS sponsored mean?", acceptedAnswer: { "@type": "Answer", text: "CHESS sponsorship means your shares are held directly in your name on the ASX sub-register via a HIN (Holder Identification Number). If your broker fails, your shares are protected. Not all brokers offer CHESS sponsorship." } },
+      { "@type": "Question", name: "How do I choose the best investing platform?", acceptedAnswer: { "@type": "Answer", text: "Consider your trading frequency, preferred markets (ASX, US, crypto), fee sensitivity, and whether you need CHESS sponsorship. Our 60-second quiz can help you narrow down the best match for your situation." } },
+    ],
+  };
+
   return (
     <>
       <script
@@ -119,6 +129,10 @@ export default async function ComparePage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
       />
       <Suspense fallback={<ComparePageSkeleton />}>
         <CompareClient brokers={activeBrokers} />

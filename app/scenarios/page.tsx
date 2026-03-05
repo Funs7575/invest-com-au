@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import type { Scenario } from "@/lib/types";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
+import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 
 export const revalidate = 3600;
 
@@ -32,7 +33,11 @@ export default async function ScenariosPage() {
     .select('*')
     .order('id', { ascending: true });
 
+  const bcLd = breadcrumbJsonLd([{ name: "Home", url: absoluteUrl("/") }, { name: "Scenarios" }]);
+
   return (
+    <>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(bcLd) }} />
     <div className="py-5 md:py-12">
       <div className="container-custom">
         <h1 className="text-2xl md:text-4xl font-bold mb-4">Investing Scenarios</h1>
@@ -64,5 +69,6 @@ export default async function ScenariosPage() {
         </ScrollFadeIn>
       </div>
     </div>
+    </>
   );
 }

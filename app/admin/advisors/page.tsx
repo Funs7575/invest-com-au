@@ -363,7 +363,14 @@ export default function AdminAdvisorsPage() {
                     {l.user_phone && <div className="text-xs text-slate-400">{l.user_phone}</div>}
                   </td>
                   <td className="px-4 py-3 text-slate-600">{l.professional?.name || `ID: ${l.professional_id}`}</td>
-                  <td className="px-4 py-3 text-xs text-slate-500 max-w-[200px] truncate">{l.message || "—"}</td>
+                  <td className="px-4 py-3 max-w-[250px]">
+                    {l.message ? (
+                      <details className="group">
+                        <summary className="text-xs text-slate-500 truncate cursor-pointer hover:text-slate-700">{l.message}</summary>
+                        <p className="text-xs text-slate-600 mt-1 whitespace-pre-wrap bg-slate-50 rounded p-2">{l.message}</p>
+                      </details>
+                    ) : <span className="text-xs text-slate-400">—</span>}
+                  </td>
                   <td className="px-4 py-3">
                     <select
                       value={l.status}

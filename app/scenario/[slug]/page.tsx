@@ -360,6 +360,12 @@ export default async function ScenarioPage({
             >
               Take the Quiz
             </Link>
+            <Link
+              href="/find-advisor"
+              className="w-full sm:w-auto px-5 md:px-6 py-3 border border-slate-300 text-slate-600 text-sm font-semibold rounded-lg hover:bg-white transition-colors min-h-[44px] inline-flex items-center justify-center"
+            >
+              Find an Advisor
+            </Link>
           </div>
         </div>
       </div>

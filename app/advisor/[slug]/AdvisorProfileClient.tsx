@@ -170,6 +170,45 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
           </div>
         )}
 
+        {/* Contact & Links */}
+        {(pro.website || pro.phone) && (
+          <div className="flex flex-wrap gap-2 mb-4 md:mb-6">
+            {pro.website && (
+              <a
+                href={pro.website.startsWith("http") ? pro.website : `https://${pro.website}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 hover:border-slate-400 hover:bg-slate-50 transition-all"
+              >
+                <Icon name="globe" size={14} className="text-slate-400" />
+                Visit Website
+              </a>
+            )}
+            {pro.phone && (
+              <a
+                href={`tel:${pro.phone.replace(/\s/g, "")}`}
+                className="inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 hover:border-slate-400 hover:bg-slate-50 transition-all"
+              >
+                <Icon name="phone" size={14} className="text-slate-400" />
+                {pro.phone}
+              </a>
+            )}
+            <button
+              onClick={() => {
+                if (navigator.share) {
+                  navigator.share({ title: `${pro.name} — ${typeLabel}`, url: window.location.href });
+                } else {
+                  navigator.clipboard.writeText(window.location.href);
+                }
+              }}
+              className="inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-500 hover:border-slate-400 hover:bg-slate-50 transition-all"
+            >
+              <Icon name="share-2" size={14} className="text-slate-400" />
+              Share
+            </button>
+          </div>
+        )}
+
         {/* Bio */}
         {pro.bio && (
           <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-5 mb-4 md:mb-6">

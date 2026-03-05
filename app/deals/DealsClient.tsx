@@ -6,6 +6,7 @@ import DealCard from "@/components/DealCard";
 import BrokerLogo from "@/components/BrokerLogo";
 import Icon from "@/components/Icon";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
+import AdvisorPrompt from "@/components/AdvisorPrompt";
 import ImpressionTracker from "@/components/ImpressionTracker";
 import { getPlacementWinners, type PlacementWinner } from "@/lib/sponsorship";
 import { filterByFrequencyCap } from "@/lib/marketplace/frequency-cap";
@@ -260,6 +261,11 @@ export default function DealsClient({ deals }: { deals: Broker[] }) {
       {featuredWinners.length > 0 && (
         <ImpressionTracker winners={featuredWinners} placement="deals-featured" page="/deals" />
       )}
+
+      {/* Advisor prompt */}
+      <div className="mt-4 md:mt-6">
+        <AdvisorPrompt context="general" compact heading="Not sure which deal is right?" description="A financial planner can help you assess which platform fits your goals." />
+      </div>
 
       {/* Compliance */}
       <div className="mt-4 md:mt-6">

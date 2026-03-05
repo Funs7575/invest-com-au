@@ -6,6 +6,7 @@ import Link from "next/link";
 import type { Broker, PlatformType } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, formatPercent, AFFILIATE_REL } from "@/lib/tracking";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
+import AdvisorPrompt from "@/components/AdvisorPrompt";
 import StickyCTABar from "@/components/StickyCTABar";
 import ScrollReveal from "@/components/ScrollReveal";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
@@ -599,6 +600,11 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
                 </Link>
               </div>
             </ScrollReveal>
+
+            {/* Advisor prompt */}
+            <div className="mb-3 md:mb-4">
+              <AdvisorPrompt context="general" compact />
+            </div>
 
             <StickyCTABar broker={overallWinner} detail={`Winner: ${overallWinner.name} · ${overallWinner.rating}/5`} context="versus" />
           </>
