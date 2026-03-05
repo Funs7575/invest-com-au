@@ -10,7 +10,7 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <div className="py-16">
+        <div className="py-8 md:py-16">
           <div className="container-custom max-w-md">
             <div className="bg-white border border-slate-200 rounded-2xl p-8 animate-pulse">
               <div className="h-8 bg-slate-200 rounded w-48 mx-auto mb-2" />
