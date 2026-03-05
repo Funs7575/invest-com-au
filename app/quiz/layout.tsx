@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { SITE_NAME, absoluteUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Platform Quiz — Find Your Best Investing Platform in 60 Seconds",
+  title: "Platform Quiz — Find Your Best Match in 60 Seconds",
   description:
     "Answer 4 quick questions and find the best Australian investing platform for you — shares, robo-advisors, crypto, super, property & more. Free and takes under 60 seconds.",
   openGraph: {
-    title: "Platform Quiz — Find Your Best Investing Platform in 60 Seconds",
+    title: "Platform Quiz — Find Your Best Match in 60 Seconds",
     description:
       "Answer 5 quick questions and find the best Australian investing platform for your goals.",
     images: [
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Platform Quiz — Find Your Best Investing Platform in 60 Seconds",
+    title: "Platform Quiz — Find Your Best Match in 60 Seconds",
     description:
       "Answer 5 quick questions and find the best Australian investing platform for your goals.",
   },

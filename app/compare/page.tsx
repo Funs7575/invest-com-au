@@ -5,10 +5,10 @@ import CompareClient from "./CompareClient";
 import { absoluteUrl, UPDATED_LABEL } from "@/lib/seo";
 
 export const metadata = {
-  title: "Compare Australian Investing Platforms",
+  title: "Compare Investing Platforms — Fees & Features Side-by-Side",
   description: `Side-by-side comparison of fees, features, and safety for Australian platforms — shares, robo-advisors, crypto exchanges, super funds & more. ${UPDATED_LABEL}.`,
   openGraph: {
-    title: "Compare Australian Investing Platforms — Invest.com.au",
+    title: "Compare Platforms Side-by-Side — Invest.com.au",
     description: "Side-by-side comparison of fees, features, and safety for Australian platforms — shares, robo-advisors, crypto exchanges & more.",
     images: [{ url: "/api/og?title=Compare+Investing+Platforms&subtitle=Fees,+features+%26+safety+side-by-side&type=default", width: 1200, height: 630 }],
   },

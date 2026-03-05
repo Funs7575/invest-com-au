@@ -6,7 +6,7 @@ import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 export const revalidate = 3600;
 
 export const metadata = {
-  title: "Platform Health & Risk Scores — Safety Ratings for Australian Investing Platforms",
+  title: "Platform Health Scores — Safety Ratings for Investors",
   description:
     "Proprietary safety scores for every Australian investing platform. Regulatory compliance, client money handling, financial stability, platform reliability, and insurance — all in one dashboard.",
   openGraph: {
