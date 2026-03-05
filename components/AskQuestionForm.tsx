@@ -99,7 +99,7 @@ export default function AskQuestionForm({ brokerSlug, brokerName, pageType = "br
             id="aq-question"
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
-            placeholder="e.g., Does this broker support DRP for ASX shares?"
+            placeholder="e.g., Does this platform support DRP for ASX shares?"
             className="w-full px-4 py-2.5 md:px-3 md:py-2 text-base md:text-sm border border-slate-200 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400"
             rows={3}
             maxLength={500}

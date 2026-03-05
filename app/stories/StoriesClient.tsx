@@ -79,7 +79,7 @@ export default function StoriesClient({ stories, brokers }: StoriesClientProps) 
         {/* Search */}
         <input
           type="text"
-          placeholder="Search by broker name, title, or author..."
+          placeholder="Search by platform name, title, or author..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-700/30 focus:border-blue-700 mb-6"
@@ -141,7 +141,7 @@ export default function StoriesClient({ stories, brokers }: StoriesClientProps) 
                   )}
                   {story.time_with_source && (
                     <span className="text-xs bg-slate-50 text-slate-600 px-2 py-0.5 rounded-full border border-slate-200">
-                      {story.time_with_source} with old broker
+                      {story.time_with_source} with old platform
                     </span>
                   )}
                   <span className="text-xs text-slate-400 ml-auto">
@@ -173,7 +173,7 @@ export default function StoriesClient({ stories, brokers }: StoriesClientProps) 
             </p>
             {!search && (
               <p className="text-slate-400 text-xs">
-                Be the first to share your broker switching experience!
+                Be the first to share your platform switching experience!
               </p>
             )}
           </div>

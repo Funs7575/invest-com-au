@@ -52,7 +52,7 @@ export default function CostsHub() {
             What Do Brokers Really Cost?
           </h1>
           <p className="text-slate-600 mb-8 max-w-2xl">
-            Stop guessing. We calculate the real annual cost of every Australian broker
+            Stop guessing. We calculate the real annual cost of every Australian platform
             for specific trading scenarios — using verified fees, not marketing claims.
             Pick the scenario closest to your investing style.
           </p>
@@ -106,7 +106,7 @@ export default function CostsHub() {
           {/* E-E-A-T footer */}
           <div className="mt-8 text-xs text-slate-400 text-center">
             <p>
-              All costs calculated using verified broker fees by{" "}
+              All costs calculated using verified platform fees by{" "}
               <a href={REVIEW_AUTHOR.url} className="underline hover:text-slate-900">
                 {REVIEW_AUTHOR.name}
               </a>
