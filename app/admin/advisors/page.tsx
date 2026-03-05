@@ -13,7 +13,7 @@ const EMPTY_ADVISOR: Partial<Professional> = {
 };
 
 export default function AdminAdvisorsPage() {
-  const [tab, setTab] = useState<"advisors" | "leads" | "reviews">("advisors");
+  const [tab, setTab] = useState<"advisors" | "leads" | "reviews" | "outreach">("advisors");
   const [advisors, setAdvisors] = useState<Professional[]>([]);
   const [leads, setLeads] = useState<(ProfessionalLead & { professional?: Professional })[]>([]);
   const [pendingReviews, setPendingReviews] = useState<(Record<string, unknown>)[]>([]);
@@ -89,7 +89,7 @@ export default function AdminAdvisorsPage() {
       <h1 className="text-2xl font-bold mb-4">Advisor Directory Management</h1>
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-6">
+      <div className="flex gap-2 mb-6 flex-wrap">
         <button onClick={() => setTab("advisors")} className={`px-4 py-2 rounded-lg font-semibold text-sm ${tab === "advisors" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600"}`}>
           Advisors ({advisors.length})
         </button>
@@ -98,6 +98,9 @@ export default function AdminAdvisorsPage() {
         </button>
         <button onClick={() => setTab("reviews")} className={`px-4 py-2 rounded-lg font-semibold text-sm ${tab === "reviews" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600"}`}>
           Reviews ({pendingReviews.filter((r) => r.status === "pending").length} pending)
+        </button>
+        <button onClick={() => setTab("outreach")} className={`px-4 py-2 rounded-lg font-semibold text-sm ${tab === "outreach" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600"}`}>
+          Outreach
         </button>
       </div>
 
@@ -481,6 +484,51 @@ export default function AdminAdvisorsPage() {
           {pendingReviews.length === 0 && (
             <div className="text-center py-12 text-slate-400">No reviews yet.</div>
           )}
+        </div>
+      )}
+
+      {/* ─── OUTREACH TAB ─── */}
+      {tab === "outreach" && (
+        <div className="max-w-xl">
+          <p className="text-sm text-slate-600 mb-4">Send an invitation email to a financial professional to list on invest.com.au. The email explains the free listing model and asks them to reply with their details.</p>
+          <div className="bg-white border border-slate-200 rounded-xl p-6 space-y-3">
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 mb-1">Advisor Name *</label>
+              <input id="outreach-name" className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="Sarah Chen" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 mb-1">Email *</label>
+              <input id="outreach-email" type="email" className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="sarah@example.com" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 mb-1">Firm Name</label>
+              <input id="outreach-firm" className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="Chen Advisory" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 mb-1">Advisor Type</label>
+              <select id="outreach-type" className="w-full px-3 py-2 border rounded-lg text-sm">
+                {Object.entries(PROFESSIONAL_TYPE_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+              </select>
+            </div>
+            <button
+              onClick={async () => {
+                const name = (document.getElementById("outreach-name") as HTMLInputElement).value;
+                const email = (document.getElementById("outreach-email") as HTMLInputElement).value;
+                const firm = (document.getElementById("outreach-firm") as HTMLInputElement).value;
+                const type = (document.getElementById("outreach-type") as HTMLSelectElement).value;
+                if (!name || !email) { alert("Name and email required"); return; }
+                const res = await fetch("/api/advisor-outreach", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ to_email: email, to_name: name, firm_name: firm, advisor_type: type }),
+                });
+                alert(res.ok ? `Outreach email sent to ${email}!` : "Failed to send");
+              }}
+              className="w-full py-2.5 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800"
+            >
+              Send Invitation Email
+            </button>
+          </div>
         </div>
       )}
     </div>
