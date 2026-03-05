@@ -112,6 +112,15 @@ export default function ArticleSidebar({
             Learn more
           </a>
         </p>
+
+        {/* Advisor prompt */}
+        <a
+          href="/find-advisor"
+          className="block mt-4 p-3 bg-violet-50 border border-violet-200/60 rounded-lg hover:bg-violet-100 transition-colors group"
+        >
+          <div className="text-xs font-bold text-slate-900 mb-0.5 group-hover:text-violet-800">Need professional advice?</div>
+          <div className="text-[0.62rem] text-slate-500">Find a verified advisor →</div>
+        </a>
       </div>
     </div>
   );
