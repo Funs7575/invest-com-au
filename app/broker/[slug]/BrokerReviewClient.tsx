@@ -409,7 +409,7 @@ export default function BrokerReviewClient({
           {/* Editorial independence notice */}
           <div className="mt-3 pt-3 border-t border-slate-200">
             <p className="text-xs text-slate-400 leading-relaxed">
-              <strong className="text-slate-500">Editorial independence:</strong> Our ratings and rankings are determined by our editorial team using a standardised methodology. Affiliate partnerships may influence which brokers we review but never our ratings or recommendations.{" "}
+              <strong className="text-slate-500">Editorial independence:</strong> Our ratings and rankings are determined by our editorial team using a standardised methodology. Affiliate partnerships may influence which platforms we review but never our ratings or recommendations.{" "}
               <Link href="/how-we-verify" className="text-blue-700 hover:underline">Read our full methodology →</Link>
             </p>
           </div>

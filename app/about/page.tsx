@@ -103,11 +103,11 @@ export default function AboutPage() {
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-amber font-bold shrink-0">3.</span>
-                    <span><strong className="text-white">We review everyone.</strong> Every broker on our platform is reviewed using the same methodology, whether they have an affiliate relationship with us or not.</span>
+                    <span><strong className="text-white">We review everyone.</strong> Every platform on our site is reviewed using the same methodology, whether they have an affiliate relationship with us or not.</span>
                   </li>
                   <li className="flex items-start gap-3">
                     <span className="text-amber font-bold shrink-0">4.</span>
-                    <span><strong className="text-white">Scenario-based comparisons.</strong> Instead of one-size-fits-all lists, we help you compare brokers for your specific situation.</span>
+                    <span><strong className="text-white">Scenario-based comparisons.</strong> Instead of one-size-fits-all lists, we help you compare platforms for your specific situation.</span>
                   </li>
                 </ul>
               </div>
