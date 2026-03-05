@@ -296,7 +296,7 @@ export default function ComplaintsPage() {
                   Editorial Policy →
                 </Link>
                 <Link
-                  href="/privacy-policy"
+                  href="/privacy"
                   className="text-xs px-3 py-1.5 bg-slate-100 text-slate-600 rounded-full hover:bg-slate-200 transition-colors"
                 >
                   Privacy Policy →

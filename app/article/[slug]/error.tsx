@@ -36,7 +36,7 @@ export default function ArticleError({
             Try Again
           </button>
           <Link
-            href="/guides"
+            href="/articles"
             className="w-full sm:w-auto px-6 py-3 min-h-[48px] inline-flex items-center justify-center border border-slate-300 text-slate-700 font-semibold rounded-lg hover:bg-slate-50 transition-colors text-sm"
           >
             Browse Guides
