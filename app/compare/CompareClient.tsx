@@ -755,24 +755,30 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         />
 
         {/* Bottom conversion — compact on mobile */}
-        <div className="mt-5 md:mt-8 grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-          <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-6 flex items-center md:block gap-3">
-            <Icon name="target" size={20} className="text-slate-600 shrink-0 md:mb-2" />
-            <div className="flex-1 min-w-0">
-              <h2 className="text-sm md:text-lg font-bold text-slate-900 mb-0.5 md:mb-1">Find Your Platform</h2>
-              <p className="text-xs text-slate-500 md:mb-4 hidden md:block">Answer 4 quick questions and narrow down platforms.</p>
-            </div>
-            <Link href="/quiz" className="shrink-0 px-3 md:px-5 py-2 md:py-2.5 bg-amber-500 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors md:inline-block">
+        <div className="mt-5 md:mt-8 grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-4">
+          <div className="bg-white border border-slate-200 rounded-xl p-3 md:p-6 flex flex-col items-start gap-1.5 md:gap-0">
+            <Icon name="target" size={18} className="text-amber-500 shrink-0 md:mb-2" />
+            <h2 className="text-xs md:text-lg font-bold text-slate-900">Find Your Platform</h2>
+            <p className="text-[0.58rem] md:text-xs text-slate-500 md:mb-4 hidden md:block">Answer 4 quick questions and narrow down platforms.</p>
+            <Link href="/quiz" className="mt-auto px-3 md:px-5 py-1.5 md:py-2.5 bg-amber-500 text-white text-[0.65rem] md:text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors">
               Quiz →
             </Link>
           </div>
-          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 md:p-6 flex items-center md:block gap-3">
-            <Icon name="bar-chart" size={20} className="text-slate-700 shrink-0 md:mb-2" />
-            <div className="flex-1 min-w-0">
-              <h2 className="text-sm md:text-lg font-bold text-slate-900 mb-0.5 md:mb-1">Free Fee PDF</h2>
-              <p className="text-xs text-slate-500 md:mb-4 hidden md:block">Every broker&apos;s fees and hidden costs in one document.</p>
+          <div className="bg-white border border-slate-200 rounded-xl p-3 md:p-6 flex flex-col items-start gap-1.5 md:gap-0">
+            <Icon name="swords" size={18} className="text-slate-600 shrink-0 md:mb-2" />
+            <h2 className="text-xs md:text-lg font-bold text-slate-900">Head-to-Head</h2>
+            <p className="text-[0.58rem] md:text-xs text-slate-500 md:mb-4 hidden md:block">Compare two platforms side by side — fees, features & our pick.</p>
+            <Link href="/versus" className="mt-auto px-3 md:px-5 py-1.5 md:py-2.5 bg-slate-900 text-white text-[0.65rem] md:text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors">
+              Compare →
+            </Link>
+          </div>
+          <div className="col-span-2 md:col-span-1 bg-slate-50 border border-slate-200 rounded-xl p-3 md:p-6 flex items-center md:flex-col md:items-start gap-3 md:gap-0">
+            <Icon name="bar-chart" size={18} className="text-slate-700 shrink-0 md:mb-2" />
+            <div className="flex-1 min-w-0 md:w-full">
+              <h2 className="text-xs md:text-lg font-bold text-slate-900 mb-0.5 md:mb-1">Free Fee PDF</h2>
+              <p className="text-[0.58rem] md:text-xs text-slate-500 md:mb-4 hidden md:block">Every platform&apos;s fees and hidden costs in one document.</p>
             </div>
-            <Link href="/#email-capture" className="shrink-0 px-3 md:px-5 py-2 md:py-2.5 bg-slate-900 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors md:inline-block">
+            <Link href="/#email-capture" className="shrink-0 px-3 md:px-5 py-1.5 md:py-2.5 bg-slate-900 text-white text-[0.65rem] md:text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors md:inline-block">
               Get PDF →
             </Link>
           </div>
