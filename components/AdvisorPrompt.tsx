@@ -49,6 +49,12 @@ const CONTEXT_CONFIG: Record<string, { heading: string; description: string; typ
   },
 };
 
+const GUIDE_MAP: Partial<Record<ProfessionalType, string>> = {
+  smsf_accountant: "/advisor-guides/how-to-choose-smsf-accountant",
+  financial_planner: "/advisor-guides/how-to-choose-financial-planner",
+  tax_agent: "/advisor-guides/how-to-choose-tax-agent-investments",
+};
+
 export default function AdvisorPrompt({ type, heading, description, context = "general", compact = false }: AdvisorPromptProps) {
   const config = CONTEXT_CONFIG[context] || CONTEXT_CONFIG.general;
   const advisorType = type || config.type;
@@ -89,12 +95,14 @@ export default function AdvisorPrompt({ type, heading, description, context = "g
             >
               Browse {typeLabel}s →
             </Link>
-            <Link
-              href="/advisors"
-              className="px-3 py-1.5 md:px-4 md:py-2 border border-slate-200 text-slate-600 text-[0.65rem] md:text-xs font-semibold rounded-lg hover:bg-slate-50 transition-colors"
-            >
-              All Advisors
-            </Link>
+            {GUIDE_MAP[advisorType] && (
+              <Link
+                href={GUIDE_MAP[advisorType]!}
+                className="px-3 py-1.5 md:px-4 md:py-2 border border-slate-200 text-slate-600 text-[0.65rem] md:text-xs font-semibold rounded-lg hover:bg-slate-50 transition-colors"
+              >
+                How to Choose →
+              </Link>
+            )}
           </div>
         </div>
       </div>

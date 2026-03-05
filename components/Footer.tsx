@@ -105,6 +105,7 @@ export default function Footer() {
                 <li><Link href="/glossary" className="hover:text-white transition-colors inline-block py-0.5">Glossary</Link></li>
                 <li><Link href="/calculators" className="hover:text-white transition-colors inline-block py-0.5">Calculators</Link></li>
                 <li><Link href="/scenarios" className="hover:text-white transition-colors inline-block py-0.5">Best For...</Link></li>
+                <li><Link href="/find-advisor" className="hover:text-white transition-colors inline-block py-0.5">Find an Advisor</Link></li>
                 <li><Link href="/pro" className="hover:text-white transition-colors text-amber-400 inline-block py-0.5">Pro ✦</Link></li>
               </ul>
             </div>

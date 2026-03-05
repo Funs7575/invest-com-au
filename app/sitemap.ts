@@ -18,6 +18,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/methodology", "/how-we-verify", "/terms", "/switch", "/editorial-policy", "/pro", "/benchmark",
     "/health-scores", "/alerts", "/reports", "/whats-new", "/costs", "/fee-impact",
     "/advertise", "/glossary", "/complaints", "/contact", "/consultations", "/courses", "/advisors", "/find-advisor",
+    "/advisor-guides/how-to-choose-smsf-accountant",
+    "/advisor-guides/how-to-choose-financial-planner",
+    "/advisor-guides/how-to-choose-tax-agent-investments",
   ].map((path) => ({
     url: `${baseUrl}${path}`,
     lastModified: new Date(),

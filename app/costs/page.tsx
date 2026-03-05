@@ -48,16 +48,16 @@ export default function CostsHub() {
             <span className="text-slate-700">Cost Comparisons</span>
           </nav>
 
-          <h1 className="text-3xl md:text-4xl font-extrabold mb-3">
+          <h1 className="text-xl md:text-4xl font-extrabold mb-3">
             What Do Platforms Really Cost?
           </h1>
-          <p className="text-slate-600 mb-8 max-w-2xl">
+          <p className="text-sm md:text-base text-slate-600 mb-4 md:mb-8 max-w-2xl">
             Stop guessing. We calculate the real annual cost of every Australian platform
             for specific trading scenarios — using verified fees, not marketing claims.
             Pick the scenario closest to your investing style.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mb-6 md:mb-12">
             {scenarios.map((s, idx) => (
               <Link
                 key={s.slug}
