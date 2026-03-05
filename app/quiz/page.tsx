@@ -862,6 +862,24 @@ export default function QuizPage() {
             )}
           </div>
 
+          {/* Quick versus links — compare top picks head-to-head */}
+          {topMatch?.broker && runnerUps.length > 0 && runnerUps[0]?.broker && (
+            <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 md:p-4 mb-4 md:mb-6 result-card-in result-card-in-delay-3">
+              <p className="text-[0.62rem] md:text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Compare your top picks</p>
+              <div className="flex flex-wrap gap-1.5 md:gap-2">
+                {runnerUps.slice(0, 3).map((r) => r.broker && topMatch.broker && (
+                  <Link
+                    key={r.slug}
+                    href={`/versus/${topMatch.slug}-vs-${r.slug}`}
+                    className="px-2.5 py-1.5 md:px-3 md:py-2 text-[0.65rem] md:text-xs font-semibold border border-slate-200 rounded-lg bg-white hover:border-slate-600 hover:bg-slate-50 transition-all active:scale-[0.98]"
+                  >
+                    {topMatch.broker.name} vs {r.broker.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Runner Ups */}
           {runnerUps.length > 0 && (
             <>
