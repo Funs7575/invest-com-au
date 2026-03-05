@@ -13,7 +13,7 @@ export const revalidate = 1800;
 const CALC_TITLES: Record<string, string> = {
   "trade-cost": "Trade Cost Calculator",
   fx: "FX Cost Calculator",
-  switching: "Broker Switching Simulator",
+  switching: "Platform Switching Simulator",
   cgt: "Capital Gains Tax Estimator",
   franking: "Franking Credits Calculator",
   chess: "CHESS Sponsorship Lookup",
@@ -77,10 +77,23 @@ export default async function CalculatorsPage() {
     .eq("status", "active")
     .order("name");
 
+  const calcJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: "Investing Fee Calculators",
+    description: "Free calculators to compare trading costs, FX fees, capital gains tax, and more across Australian investing platforms.",
+    applicationCategory: "FinanceApplication",
+    operatingSystem: "Web",
+    offers: { "@type": "Offer", price: "0", priceCurrency: "AUD" },
+  };
+
   return (
-    <Suspense fallback={<CalculatorsLoading />}>
-      <CalculatorsClient brokers={(brokers as Broker[]) || []} />
-    </Suspense>
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(calcJsonLd) }} />
+      <Suspense fallback={<CalculatorsLoading />}>
+        <CalculatorsClient brokers={(brokers as Broker[]) || []} />
+      </Suspense>
+    </>
   );
 }
 

@@ -36,7 +36,7 @@ export default function BrokerLogo({ broker, size = "md", className = "" }: Brok
           width={s.img}
           height={s.img}
           className="w-full h-full object-contain p-0.5"
-          unoptimized
+          sizes={`${s.img}px`}
         />
       </div>
     );
