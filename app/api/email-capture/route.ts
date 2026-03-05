@@ -102,7 +102,7 @@ function buildFeeComparisonEmail(brokers: BrokerRow[]): string {
 
       <!-- CTA -->
       <div style="text-align: center; margin-top: 24px;">
-        <a href="https://invest.com.au/compare" style="display: inline-block; padding: 12px 32px; background-color: #f59e0b; color: #1e293b; font-weight: 700; font-size: 14px; border-radius: 8px; text-decoration: none;">Compare All Brokers Live →</a>
+        <a href="https://invest.com.au/compare" style="display: inline-block; padding: 12px 32px; background-color: #f59e0b; color: #1e293b; font-weight: 700; font-size: 14px; border-radius: 8px; text-decoration: none;">Compare All Platforms →</a>
       </div>
 
       <p style="color: #94a3b8; font-size: 11px; text-align: center; margin: 24px 0 0 0; line-height: 1.5;">

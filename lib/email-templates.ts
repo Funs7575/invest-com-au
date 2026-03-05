@@ -137,7 +137,7 @@ export function welcomeEmail(name: string): string {
         <tr>
           <td style="padding:6px 0;font-size:14px;color:#475569;">
             <span style="color:${BRAND_EMERALD};font-weight:700;margin-right:8px;">3.</span>
-            Take the broker quiz to find your best match
+            Take the platform quiz to find your best match
           </td>
         </tr>
         <tr>
@@ -437,7 +437,7 @@ export function weeklyDigestEmail(data: {
         <tr>
           <td style="border-radius:8px;background:${BRAND_EMERALD};">
             <a href="${BASE_URL}/compare" style="display:inline-block;padding:12px 32px;color:#ffffff;font-weight:700;font-size:14px;text-decoration:none;border-radius:8px;">
-              Compare All Brokers
+              Compare All Platforms
             </a>
           </td>
         </tr>
@@ -1007,7 +1007,7 @@ export function quizFollowUp1Email(
     </div>
     <h1 style="margin:0 0 8px;font-size:24px;font-weight:800;color:${BRAND_DARK};">A Deeper Look at ${safeBrokerName}</h1>
     <p style="margin:0 0 24px;font-size:15px;color:#475569;line-height:1.7;">
-      Hi ${safeName}, a couple of days ago you took our broker quiz and matched with ${safeBrokerName}. Here's a closer look at why it's a great fit for you.
+      Hi ${safeName}, a couple of days ago you took our platform quiz and matched with ${safeBrokerName}. Here's a closer look at why it's a great fit for you.
     </p>
 
     <!-- Why we matched you -->
@@ -1077,7 +1077,7 @@ export function quizFollowUp1Email(
     </div>
 
     <p style="margin:24px 0 0;font-size:13px;color:${TEXT_LIGHT};text-align:center;">
-      This is part of your personalised broker quiz follow-up series from Invest.com.au.
+      This is part of your personalised platform quiz follow-up series from Invest.com.au.
     </p>`;
 
   return baseTemplate(
@@ -1207,7 +1207,7 @@ export function quizFollowUp2Email(
         <tr>
           <td style="border-radius:8px;background:${BRAND_EMERALD};">
             <a href="${BASE_URL}/compare" style="display:inline-block;padding:14px 32px;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px;">
-              Compare All Brokers &rarr;
+              Compare All Platforms &rarr;
             </a>
           </td>
         </tr>
@@ -1215,7 +1215,7 @@ export function quizFollowUp2Email(
     </div>
 
     <p style="margin:24px 0 0;font-size:13px;color:${TEXT_LIGHT};text-align:center;">
-      This is part of your personalised broker quiz follow-up series from Invest.com.au.
+      This is part of your personalised platform quiz follow-up series from Invest.com.au.
     </p>`;
 
   return baseTemplate(
@@ -1286,7 +1286,7 @@ export function quizFollowUp3Email(
     </div>
     <h1 style="margin:0 0 8px;font-size:24px;font-weight:800;color:${BRAND_DARK};">Ready to Start Investing, ${safeName}?</h1>
     <p style="margin:0 0 24px;font-size:15px;color:#475569;line-height:1.7;">
-      You took our broker quiz and ${safeBrokerName} came out on top. Now it's time to take the next step &mdash; opening an account usually takes less than 10 minutes.
+      You took our platform quiz and ${safeBrokerName} came out on top. Now it's time to take the next step &mdash; opening an account usually takes less than 10 minutes.
     </p>
 
     ${dealCard}

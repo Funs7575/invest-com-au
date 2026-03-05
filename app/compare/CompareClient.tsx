@@ -463,6 +463,14 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         <div aria-live="polite" aria-atomic="true" className="sr-only">
           {sorted.length} {sorted.length === 1 ? 'platform' : 'platforms'} found{activeFilter !== 'all' ? ` with ${filters.find(f => f.key === activeFilter)?.label} filter` : ''}{searchQuery ? ` matching "${searchQuery}"` : ''}
         </div>
+        {/* Mobile result count — visible */}
+        <div className="md:hidden flex items-center justify-between mb-2">
+          <span className="text-[0.62rem] text-slate-400">
+            {sorted.length} platform{sorted.length !== 1 ? 's' : ''}
+            {activeFilter !== 'all' ? ` · ${filters.find(f => f.key === activeFilter)?.label}` : ''}
+            {sortCol !== 'rating' ? ` · Sorted by ${sortCol === 'asx_fee_value' ? 'ASX fee' : sortCol === 'us_fee_value' ? 'US fee' : sortCol === 'fx_rate' ? 'FX rate' : sortCol}` : ''}
+          </span>
+        </div>
 
         {/* Quiz prompt — hidden on mobile to save space */}
         <div className="hidden md:flex items-center gap-2 mb-4 text-xs text-slate-500">

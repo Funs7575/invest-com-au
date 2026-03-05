@@ -178,7 +178,7 @@ export async function GET(req: NextRequest) {
 
       <!-- CTA -->
       <div style="text-align: center; margin-top: 16px;">
-        <a href="${baseUrl}/compare" style="display: inline-block; padding: 12px 32px; background-color: #f59e0b; color: #1e293b; font-weight: 700; font-size: 14px; border-radius: 8px; text-decoration: none;">Compare All Brokers →</a>
+        <a href="${baseUrl}/compare" style="display: inline-block; padding: 12px 32px; background-color: #f59e0b; color: #1e293b; font-weight: 700; font-size: 14px; border-radius: 8px; text-decoration: none;">Compare All Platforms →</a>
       </div>
 
       <!-- Footer -->
