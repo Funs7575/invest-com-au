@@ -7,7 +7,7 @@ import GoogleAnalytics from "@/components/GoogleAnalytics";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, websiteJsonLd } from "@/lib/seo";
 
-const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"], fallback: ["system-ui", "Arial", "sans-serif"] });
+const inter = Inter({ subsets: ["latin"], display: "swap", fallback: ["system-ui", "-apple-system", "Arial", "sans-serif"], adjustFontFallback: true });
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
