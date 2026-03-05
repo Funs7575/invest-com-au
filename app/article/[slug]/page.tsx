@@ -17,6 +17,7 @@ import { CATEGORY_COLORS, getBestPagesForArticle, getClusterLinksForArticle } fr
 import ClusterNav from "@/components/ClusterNav";
 import Icon from "@/components/Icon";
 import AdSlot from "@/components/AdSlot";
+import AdvisorPrompt from "@/components/AdvisorPrompt";
 
 export const revalidate = 3600; // ISR: revalidate every hour
 
@@ -524,6 +525,15 @@ export default async function ArticlePage({
                 if (clusterLinks.length === 0) return null;
                 return <ClusterNav links={clusterLinks} currentTitle={a.title} />;
               })()}
+
+              {/* Advisor prompt — contextual based on article category */}
+              {(a.category === "Super & SMSF" || a.category === "Property" || a.category === "Tax & Strategy") && (
+                <div className="mt-6 md:mt-8">
+                  <AdvisorPrompt
+                    context={a.category === "Super & SMSF" ? "smsf" : a.category === "Property" ? "property" : "tax"}
+                  />
+                </div>
+              )}
 
               {/* Related Articles */}
               {relatedArticles.length > 0 && (
