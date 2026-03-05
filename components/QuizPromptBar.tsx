@@ -69,30 +69,30 @@ export default function QuizPromptBar() {
       {/* ── Mobile: Persistent 2-button bottom bar ── */}
       {showMobile && (
         <div className="sm:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm border-t border-slate-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] safe-area-inset-bottom animate-sheet-up">
-          <div className="flex items-center gap-2.5 px-4 py-2.5">
+          <div className="flex items-center gap-2 px-3 py-2">
             {shortlistCount > 0 && (
               <Link
                 href="/shortlist"
-                className="relative w-12 shrink-0 flex items-center justify-center py-3 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 active:scale-[0.98] transition-all min-h-[48px]"
+                className="relative w-10 shrink-0 flex items-center justify-center py-2.5 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 active:scale-[0.98] transition-all min-h-[40px]"
                 aria-label={`My shortlist (${shortlistCount})`}
               >
-                <svg className="w-5 h-5 text-red-500" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                <svg className="w-4 h-4 text-red-500" viewBox="0 0 24 24" fill="currentColor" stroke="none">
                   <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
                 </svg>
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[0.69rem] font-bold rounded-full flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[0.56rem] font-bold rounded-full flex items-center justify-center">
                   {shortlistCount}
                 </span>
               </Link>
             )}
             <Link
               href="/quiz"
-              className="flex-1 text-center py-3 bg-amber-500 text-white text-sm font-bold rounded-xl hover:bg-amber-600 active:scale-[0.98] transition-all min-h-[48px] flex items-center justify-center"
+              className="flex-1 text-center py-2.5 bg-amber-500 text-white text-[0.8rem] font-bold rounded-lg hover:bg-amber-600 active:scale-[0.98] transition-all min-h-[40px] flex items-center justify-center"
             >
               Find My Platform
             </Link>
             <Link
               href="/compare"
-              className="flex-1 text-center py-3 bg-white text-slate-700 text-sm font-bold rounded-xl border border-slate-300 hover:bg-slate-50 active:scale-[0.98] transition-all min-h-[48px] flex items-center justify-center"
+              className="flex-1 text-center py-2.5 bg-white text-slate-700 text-[0.8rem] font-bold rounded-lg border border-slate-300 hover:bg-slate-50 active:scale-[0.98] transition-all min-h-[40px] flex items-center justify-center"
             >
               Compare
             </Link>

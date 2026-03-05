@@ -202,28 +202,28 @@ export default async function HomePage() {
       />
 
       {/* Hero Section */}
-      <section className="relative bg-white border-b border-slate-100 py-3 md:py-14 overflow-hidden">
+      <section className="relative bg-white border-b border-slate-100 py-2.5 md:py-14 overflow-hidden">
         <div className="relative max-w-4xl mx-auto px-4 text-center">
-          {/* Mobile: compact hero */}
+          {/* Mobile: ultra-compact hero */}
           <div className="md:hidden">
-            <h1 className="text-xl font-extrabold text-slate-900 leading-tight">
+            <h1 className="text-lg font-extrabold text-slate-900 leading-snug">
               Compare Australia&apos;s Best Investing Platforms
             </h1>
-            <p className="mt-1 text-xs text-slate-500">
-              {brokerCount} platforms compared free · Updated {updatedDateStr}
+            <p className="mt-0.5 text-[0.65rem] text-slate-400">
+              {brokerCount} platforms · Updated {updatedDateStr}
             </p>
-            <div className="flex items-center gap-2 mt-2.5">
+            <div className="flex items-center gap-2 mt-2">
               <Link
                 href="/compare"
-                className="flex-1 px-4 py-2.5 bg-amber-500 text-white font-bold rounded-lg text-sm text-center active:scale-[0.98] transition-all"
+                className="flex-1 px-3 py-2 bg-amber-500 text-white font-bold rounded-lg text-[0.8rem] text-center active:scale-[0.98] transition-all"
               >
                 Compare All
               </Link>
               <Link
                 href="/quiz"
-                className="flex-1 px-4 py-2.5 border border-slate-300 text-slate-700 font-semibold rounded-lg text-sm text-center active:scale-[0.98] transition-all"
+                className="flex-1 px-3 py-2 border border-slate-300 text-slate-700 font-semibold rounded-lg text-[0.8rem] text-center active:scale-[0.98] transition-all"
               >
-                Find My Platform →
+                60s Quiz →
               </Link>
             </div>
           </div>
@@ -314,14 +314,14 @@ export default async function HomePage() {
 
       {/* Comparison Table */}
       <ScrollFadeIn>
-        <section className="py-3 sm:py-8 md:py-16 bg-slate-50">
+        <section className="py-2 sm:py-8 md:py-16 bg-slate-50">
           <div className="container-custom">
-            <div className="flex items-center justify-between gap-2 mb-1.5 sm:mb-5 md:mb-8">
+            <div className="flex items-center justify-between gap-2 mb-1 sm:mb-5 md:mb-8">
               <div>
-                <h2 className="text-base md:text-3xl font-bold text-slate-900">
+                <h2 className="text-[0.95rem] md:text-3xl font-bold text-slate-900">
                   Top Rated Platforms
                 </h2>
-                <p className="text-[0.69rem] md:text-sm text-slate-500 mt-0.5 md:mt-1">
+                <p className="text-[0.62rem] md:text-sm text-slate-400 mt-0.5 md:mt-1">
                   <span className="hidden md:inline">Ranked by fees, features, and user experience<span className="mx-2 text-slate-300">&middot;</span></span>
                   <FeesFreshnessIndicator lastChecked={getMostRecentFeeCheck((brokers as Broker[]) || [])} variant="inline" />
                 </p>

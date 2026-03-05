@@ -14,15 +14,25 @@ export default function DisclosureBanner({
 }) {
   const [expanded, setExpanded] = useState(false);
 
+  const [dismissed, setDismissed] = useState(false);
+
   if (variant === "header") {
+    if (dismissed) return null;
     return (
-      <div className="bg-slate-50 border-b border-slate-200 py-1.5 md:py-2 text-center text-[0.69rem] md:text-xs text-slate-500">
-        <div className="container-custom">
-          {/* Mobile: short one-liner. Desktop: full disclosure + links */}
+      <div className="bg-slate-50 border-b border-slate-200 py-1 md:py-2 text-center text-[0.6rem] md:text-xs text-slate-400 md:text-slate-500">
+        <div className="container-custom flex items-center justify-center gap-2">
+          {/* Mobile: short one-liner + dismiss */}
           <span className="md:hidden">
-            Partner-supported site.{" "}
+            Partner-supported.{" "}
             <Link href="/how-we-earn" className="text-blue-700 underline">Learn more</Link>
           </span>
+          <button
+            onClick={() => setDismissed(true)}
+            className="md:hidden text-slate-300 p-0.5"
+            aria-label="Dismiss"
+          >
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
           <span className="hidden md:inline">
             {ADVERTISER_DISCLOSURE_SHORT}{" "}
             <Link

@@ -212,9 +212,9 @@ export default memo(function BrokerCard({
         )}
       </div>
 
-      {/* Fee verified date — trust signal (desktop only for density) */}
+      {/* Fee verified date — desktop only (mobile shows in CTA row) */}
       {broker.fee_last_checked && (
-        <div className="hidden md:flex mb-1.5 items-center gap-1 text-[0.58rem] md:text-[0.62rem] text-slate-400">
+        <div className="hidden md:flex mb-1.5 items-center gap-1 text-[0.62rem] text-slate-400">
           <Icon name="check-circle" size={10} className="text-emerald-500 shrink-0" />
           <span>Fees verified {new Date(broker.fee_last_checked).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
         </div>
@@ -244,16 +244,35 @@ export default memo(function BrokerCard({
         </div>
       )}
 
-      {/* CTA — compact on mobile, full-width on desktop */}
-      <a
-        href={getAffiliateLink(broker)}
-        target="_blank"
-        rel={AFFILIATE_REL}
-        onClick={() => trackClick(broker.slug, broker.name, 'compare-mobile', window.location.pathname, context)}
-        className="block w-full text-center text-xs md:text-sm px-3 py-2 md:py-3 font-bold rounded-lg transition-all duration-200 bg-amber-600 text-white hover:bg-amber-700 active:scale-[0.98]"
-      >
-        {getBenefitCta(broker, context)}
-      </a>
+      {/* CTA — compact pill on mobile, full-width on desktop */}
+      <div className="flex items-center justify-between gap-2">
+        <div className="md:hidden flex items-center gap-1 text-[0.58rem] text-slate-400 min-w-0">
+          {broker.fee_last_checked && (
+            <>
+              <Icon name="check-circle" size={9} className="text-emerald-500 shrink-0" />
+              <span className="truncate">Verified {new Date(broker.fee_last_checked).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })}</span>
+            </>
+          )}
+        </div>
+        <a
+          href={getAffiliateLink(broker)}
+          target="_blank"
+          rel={AFFILIATE_REL}
+          onClick={() => trackClick(broker.slug, broker.name, 'compare-mobile', window.location.pathname, context)}
+          className="md:hidden shrink-0 px-4 py-1.5 text-xs font-bold rounded-lg transition-all duration-200 bg-amber-500 text-white hover:bg-amber-600 active:scale-[0.98]"
+        >
+          {getBenefitCta(broker, context)}
+        </a>
+        <a
+          href={getAffiliateLink(broker)}
+          target="_blank"
+          rel={AFFILIATE_REL}
+          onClick={() => trackClick(broker.slug, broker.name, 'compare-desktop', window.location.pathname, context)}
+          className="hidden md:block w-full text-center text-sm px-3 py-3 font-bold rounded-lg transition-all duration-200 bg-amber-600 text-white hover:bg-amber-700 active:scale-[0.98]"
+        >
+          {getBenefitCta(broker, context)}
+        </a>
+      </div>
     </div>
   );
 })
