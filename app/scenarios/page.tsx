@@ -36,23 +36,23 @@ export default async function ScenariosPage() {
     <div className="py-5 md:py-12">
       <div className="container-custom">
         <h1 className="text-2xl md:text-4xl font-bold mb-4">Investing Scenarios</h1>
-        <p className="text-lg text-slate-600 mb-8">
+        <p className="text-sm md:text-lg text-slate-500 mb-4 md:mb-8">
           Find the best platform for your specific situation.
         </p>
 
         <ScrollFadeIn>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
             {scenarios?.map((scenario: Scenario, index: number) => (
               <Link
                 key={scenario.id}
                 href={`/scenario/${scenario.slug}`}
-                className={`group border border-slate-200 border-l-4 ${borderColors[index % borderColors.length]} rounded-lg p-8 hover-lift transition-all`}
+                className={`group border border-slate-200 border-l-4 ${borderColors[index % borderColors.length]} rounded-lg p-4 md:p-8 hover-lift transition-all`}
               >
                 {scenario.icon && (
-                  <div className="text-4xl mb-4">{scenario.icon}</div>
+                  <div className="text-2xl md:text-4xl mb-2 md:mb-4">{scenario.icon}</div>
                 )}
                 <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-bold mb-2">{scenario.title}</h2>
+                  <h2 className="text-base md:text-xl font-bold mb-1 md:mb-2">{scenario.title}</h2>
                   <span className="text-slate-300 group-hover:text-slate-700 transition-colors text-lg">→</span>
                 </div>
                 {scenario.hero_title && (
