@@ -75,6 +75,7 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://guggzyqceattncjwvgyc.supabase.co" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="manifest" href="/manifest.json" />
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js-ready')" }} />
         {/* Prevent flash of wrong theme by applying dark class before first paint */}
         <script dangerouslySetInnerHTML={{ __html: "(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(t!=='light'&&matchMedia('(prefers-color-scheme:dark)').matches))document.documentElement.classList.add('dark')}catch(e){}})()" }} />

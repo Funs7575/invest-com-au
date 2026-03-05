@@ -282,6 +282,8 @@ export default function QuizPage() {
     if (step === 0) {
       trackEvent('quiz_start', { first_answer: key }, '/quiz');
     }
+    // Track each step for funnel analysis
+    trackEvent('quiz_step', { step: step + 1, total_steps: questions.length, answer: key }, '/quiz');
     // Show selected confirmation then advance
     setSelectedKey(key);
     setAnimating(true);
