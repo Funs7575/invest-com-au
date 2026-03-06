@@ -60,6 +60,13 @@ body {
   text-size-adjust: 100%;
 }
 
+/* ── Fix iOS input zoom (Safari zooms on focus for font-size < 16px) ── */
+@media screen and (max-width: 767px) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+
 /* ── Subtle dot pattern for section backgrounds ── */
 .bg-dots {
   background-image: radial-gradient(circle, #e2e8f0 1px, transparent 1px);
