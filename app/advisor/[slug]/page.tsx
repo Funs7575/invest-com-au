@@ -59,6 +59,10 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
       .limit(20),
   ]);
 
+  // Increment daily profile view counter (fire-and-forget)
+  const today = new Date().toISOString().split("T")[0];
+  supabase.rpc("increment_advisor_view", { p_professional_id: pro.id, p_date: today }).catch(() => {});
+
   const breadcrumbLd = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
     { name: "Find an Advisor", url: absoluteUrl("/advisors") },

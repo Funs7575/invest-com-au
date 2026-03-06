@@ -305,6 +305,12 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
           >
             Get Listed Free →
           </Link>
+          <Link
+            href="/advisor-portal"
+            className="ml-3 inline-block px-5 py-2.5 md:px-6 md:py-3 border-2 border-slate-300 text-slate-700 text-sm font-semibold rounded-lg hover:bg-slate-50 transition-colors"
+          >
+            Advisor Login →
+          </Link>
         </div>
 
         {/* Compliance footer */}

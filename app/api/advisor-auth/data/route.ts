@@ -1,0 +1,122 @@
+import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
+
+async function getAdvisorId(request: NextRequest): Promise<number | null> {
+  const sessionToken = request.cookies.get("advisor_session")?.value;
+  if (!sessionToken) return null;
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("advisor_sessions")
+    .select("professional_id, expires_at")
+    .eq("session_token", sessionToken)
+    .single();
+  if (!data || new Date(data.expires_at) < new Date()) return null;
+  return data.professional_id;
+}
+
+export async function GET(request: NextRequest) {
+  const advisorId = await getAdvisorId(request);
+  if (!advisorId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+
+  const supabase = await createClient();
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 86400000).toISOString();
+
+  const [
+    { data: leads },
+    { data: allLeads },
+    { data: billing },
+    { data: views },
+    { data: reviews },
+  ] = await Promise.all([
+    // Recent leads (last 90 days)
+    supabase
+      .from("professional_leads")
+      .select("*")
+      .eq("professional_id", advisorId)
+      .order("created_at", { ascending: false })
+      .limit(50),
+    // All leads count
+    supabase
+      .from("professional_leads")
+      .select("id, status, created_at", { count: "exact" })
+      .eq("professional_id", advisorId),
+    // Billing records
+    supabase
+      .from("advisor_billing")
+      .select("*")
+      .eq("professional_id", advisorId)
+      .order("created_at", { ascending: false })
+      .limit(20),
+    // Profile views (last 30 days)
+    supabase
+      .from("advisor_profile_views")
+      .select("view_date, view_count")
+      .eq("professional_id", advisorId)
+      .gte("view_date", thirtyDaysAgo.split("T")[0])
+      .order("view_date", { ascending: true }),
+    // Reviews
+    supabase
+      .from("professional_reviews")
+      .select("*")
+      .eq("professional_id", advisorId)
+      .eq("status", "approved")
+      .order("created_at", { ascending: false }),
+  ]);
+
+  // Calculate stats
+  const totalViews30d = (views || []).reduce((s, v) => s + (v.view_count || 0), 0);
+  const totalLeads = allLeads?.length || 0;
+  const leads30d = (allLeads || []).filter(l => new Date(l.created_at) >= new Date(thirtyDaysAgo)).length;
+  const convertedLeads = (allLeads || []).filter(l => l.status === "converted").length;
+  const totalBilled = (billing || []).reduce((s, b) => s + (b.amount_cents || 0), 0);
+  const pendingBilled = (billing || []).filter(b => b.status === "pending" || b.status === "invoiced").reduce((s, b) => s + (b.amount_cents || 0), 0);
+
+  return NextResponse.json({
+    leads: leads || [],
+    stats: {
+      totalViews30d,
+      totalLeads,
+      leads30d,
+      convertedLeads,
+      conversionRate: totalLeads > 0 ? ((convertedLeads / totalLeads) * 100).toFixed(1) : "0",
+      totalBilledCents: totalBilled,
+      pendingBilledCents: pendingBilled,
+      reviewCount: reviews?.length || 0,
+    },
+    viewsByDay: views || [],
+    billing: billing || [],
+    reviews: reviews || [],
+  });
+}
+
+// Update lead status/notes
+export async function PATCH(request: NextRequest) {
+  const advisorId = await getAdvisorId(request);
+  if (!advisorId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+
+  const { leadId, status, notes } = await request.json();
+  if (!leadId) return NextResponse.json({ error: "Lead ID required" }, { status: 400 });
+
+  const supabase = await createClient();
+
+  // Verify lead belongs to this advisor
+  const { data: lead } = await supabase
+    .from("professional_leads")
+    .select("id, professional_id")
+    .eq("id", leadId)
+    .eq("professional_id", advisorId)
+    .single();
+
+  if (!lead) return NextResponse.json({ error: "Lead not found" }, { status: 404 });
+
+  const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
+  if (status) {
+    updates.status = status;
+    if (status === "contacted") updates.contacted_at = new Date().toISOString();
+    if (status === "converted") updates.converted_at = new Date().toISOString();
+  }
+  if (notes !== undefined) updates.advisor_notes = notes;
+
+  await supabase.from("professional_leads").update(updates).eq("id", leadId);
+  return NextResponse.json({ success: true });
+}
