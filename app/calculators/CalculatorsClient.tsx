@@ -123,9 +123,12 @@ const CALCS: { id: CalcId; icon: string; title: string; subtitle: string; badge?
   { id: "franking", icon: "coins", title: "Dividend Tax", subtitle: "Franking credits after tax" },
   { id: "chess", icon: "shield-check", title: "Share Safety", subtitle: "Is your platform CHESS sponsored?" },
   { id: "fee-impact", icon: "calculator", title: "Fee Impact", subtitle: "Your total annual platform fees", badge: "PRO" },
-  { id: "portfolio", icon: "briefcase", title: "Portfolio Fees", subtitle: "Exact cost at every broker", href: "/portfolio-calculator" },
-  { id: "switching", icon: "arrow-right-left", title: "Switching Calculator", subtitle: "How much could you save?", href: "/switching-calculator" },
+  { id: "portfolio" as CalcId, icon: "briefcase", title: "Portfolio Fees", subtitle: "Exact cost at every broker", href: "/portfolio-calculator" },
+  { id: "switch-calc" as CalcId, icon: "arrow-right-left", title: "Switching Calculator", subtitle: "How much could you save?", href: "/switching-calculator" },
 ];
+
+// Inline-only calcs (no href) for swipe navigation
+const INLINE_CALC_IDS: CalcId[] = CALCS.filter(c => !c.href).map(c => c.id);
 
 const CORPORATE_TAX_RATE = 0.3;
 const TRANSFER_FEE = 54;
@@ -139,6 +142,8 @@ export default function CalculatorsClient({ brokers }: Props) {
   const initialCalc = searchParams.get("calc") as CalcId | null;
   const hasScrolled = useRef(false);
   const [activeCalc, setActiveCalc] = useState<CalcId>(initialCalc || "trade-cost");
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
+  const pillScrollRef = useRef<HTMLDivElement>(null);
 
   // Sync active tab to URL
   const handleSetActiveCalc = useCallback((id: CalcId) => {
@@ -147,7 +152,42 @@ export default function CalculatorsClient({ brokers }: Props) {
     const url = new URL(window.location.href);
     url.searchParams.set("calc", id);
     window.history.replaceState(null, "", url.toString());
+    // Auto-scroll pill nav to active
+    if (pillScrollRef.current) {
+      const activeBtn = pillScrollRef.current.querySelector(`[data-calc-id="${id}"]`);
+      if (activeBtn) activeBtn.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    }
   }, []);
+
+  // Navigate to prev/next inline calculator
+  const goToCalc = useCallback((direction: "prev" | "next") => {
+    const idx = INLINE_CALC_IDS.indexOf(activeCalc);
+    if (idx === -1) return;
+    const newIdx = direction === "next" ? Math.min(idx + 1, INLINE_CALC_IDS.length - 1) : Math.max(idx - 1, 0);
+    if (newIdx !== idx) handleSetActiveCalc(INLINE_CALC_IDS[newIdx]);
+  }, [activeCalc, handleSetActiveCalc]);
+
+  // Swipe detection on calc container
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStart.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  }, []);
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (!touchStart.current) return;
+    const dx = e.changedTouches[0].clientX - touchStart.current.x;
+    const dy = e.changedTouches[0].clientY - touchStart.current.y;
+    touchStart.current = null;
+    // Only swipe if horizontal movement is dominant and > 60px
+    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      if (dx < 0) goToCalc("next");
+      else goToCalc("prev");
+    }
+  }, [goToCalc]);
+
+  const currentInlineIdx = INLINE_CALC_IDS.indexOf(activeCalc);
+  const hasPrev = currentInlineIdx > 0;
+  const hasNext = currentInlineIdx < INLINE_CALC_IDS.length - 1 && currentInlineIdx >= 0;
+  const prevCalc = hasPrev ? CALCS.find(c => c.id === INLINE_CALC_IDS[currentInlineIdx - 1]) : null;
+  const nextCalc = hasNext ? CALCS.find(c => c.id === INLINE_CALC_IDS[currentInlineIdx + 1]) : null;
 
   useEffect(() => {
     if (initialCalc && !hasScrolled.current) {
@@ -177,12 +217,13 @@ export default function CalculatorsClient({ brokers }: Props) {
         {/* ── Pill Navigation ──────────────────────── */}
         {/* Mobile: horizontal snap-scroll strip */}
         <div className="md:hidden -mx-4 px-4 mb-3" role="tablist" aria-label="Calculator selection">
-          <div className="flex gap-1.5 overflow-x-auto snap-x snap-mandatory pb-1 scrollbar-hide">
+          <div ref={pillScrollRef} className="flex gap-1.5 overflow-x-auto snap-x snap-mandatory pb-1 scrollbar-hide">
             {CALCS.map((c) => (
               c.href ? (
                 <a
-                  key={c.id}
+                  key={c.href}
                   href={c.href}
+                  data-calc-id={c.id}
                   className="relative flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border bg-violet-50 border-violet-200 text-violet-700 text-left transition-all shrink-0 snap-start hover:bg-violet-100"
                 >
                   <Icon name={c.icon} size={14} className="text-violet-500" />
@@ -192,6 +233,7 @@ export default function CalculatorsClient({ brokers }: Props) {
               ) : (
               <button
                 key={c.id}
+                data-calc-id={c.id}
                 onClick={() => handleSetActiveCalc(c.id)}
                 role="tab"
                 aria-selected={activeCalc === c.id}
@@ -259,7 +301,13 @@ export default function CalculatorsClient({ brokers }: Props) {
         </div>
 
         {/* ── Active Calculator ────────────────────── */}
-        <div id="calc-container" className="scroll-mt-20 md:scroll-mt-24 min-h-[280px] md:min-h-[400px]" role="tabpanel">
+        <div
+          id="calc-container"
+          className="scroll-mt-20 md:scroll-mt-24 min-h-[280px] md:min-h-[400px]"
+          role="tabpanel"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
           {activeCalc === "trade-cost" && <TradeCostCalculator brokers={nonCryptoBrokers} searchParams={searchParams} />}
           {activeCalc === "franking" && <FrankingCalculator searchParams={searchParams} />}
           {activeCalc === "switching" && <SwitchingCostCalculator brokers={nonCryptoBrokers} searchParams={searchParams} />}
@@ -267,6 +315,36 @@ export default function CalculatorsClient({ brokers }: Props) {
           {activeCalc === "cgt" && <CgtCalculator searchParams={searchParams} />}
           {activeCalc === "chess" && <ChessLookup brokers={nonCryptoBrokers} searchParams={searchParams} />}
           {activeCalc === "fee-impact" && <FeeImpactTeaser brokers={nonCryptoBrokers} searchParams={searchParams} />}
+
+          {/* Prev / Next navigation */}
+          {currentInlineIdx >= 0 && (
+            <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-100">
+              {hasPrev && prevCalc ? (
+                <button
+                  onClick={() => goToCalc("prev")}
+                  className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors min-h-[44px]"
+                >
+                  <Icon name="chevron-left" size={16} />
+                  <span className="hidden sm:inline">{prevCalc.title}</span>
+                  <span className="sm:hidden">Prev</span>
+                </button>
+              ) : <span />}
+              <span className="text-[0.56rem] text-slate-300 font-medium">
+                {currentInlineIdx + 1} / {INLINE_CALC_IDS.length}
+                <span className="md:hidden ml-1 text-slate-300">· swipe ←→</span>
+              </span>
+              {hasNext && nextCalc ? (
+                <button
+                  onClick={() => goToCalc("next")}
+                  className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-500 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors min-h-[44px]"
+                >
+                  <span className="hidden sm:inline">{nextCalc.title}</span>
+                  <span className="sm:hidden">Next</span>
+                  <Icon name="chevron-right" size={16} />
+                </button>
+              ) : <span />}
+            </div>
+          )}
         </div>
 
         {/* Display ad — high-intent placement (user just ran calculations) */}
