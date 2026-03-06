@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import type { Professional, ProfessionalReview } from "@/lib/types";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 import Icon from "@/components/Icon";
@@ -98,7 +99,7 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
           <div className="flex gap-4">
             {/* Avatar */}
             {pro.photo_url ? (
-              <img src={pro.photo_url} alt={pro.name} className="w-16 h-16 md:w-20 md:h-20 rounded-full object-cover shrink-0" />
+              <Image src={pro.photo_url} alt={pro.name} width={80} height={80} className="w-16 h-16 md:w-20 md:h-20 rounded-full object-cover shrink-0" />
             ) : (
               <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-slate-100 flex items-center justify-center text-lg md:text-xl font-bold text-slate-500 shrink-0">
                 {pro.name.split(" ").map((n) => n[0]).join("")}

@@ -117,6 +117,7 @@ export async function POST(request: NextRequest) {
 
     // Send confirmation emails
     const RESEND_API_KEY = process.env.RESEND_API_KEY;
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app";
     if (RESEND_API_KEY && advisor.email) {
       const dateFormatted = new Date(bookingDate).toLocaleDateString("en-AU", { weekday: "long", day: "numeric", month: "long" });
       // Email to advisor
@@ -127,7 +128,7 @@ export async function POST(request: NextRequest) {
           from: "Invest.com.au <hello@invest.com.au>",
           to: advisor.email,
           subject: `New booking: ${investorName} on ${dateFormatted} at ${bookingTime}`,
-          html: `<p><strong>${investorName}</strong> (${investorEmail}${investorPhone ? `, ${investorPhone}` : ""}) has booked a consultation with you on <strong>${dateFormatted} at ${bookingTime}</strong>.</p>${topic ? `<p>Topic: ${topic}</p>` : ""}<p><a href="https://invest-com-au.vercel.app/advisor-portal">View in your dashboard →</a></p>`,
+          html: `<p><strong>${investorName}</strong> (${investorEmail}${investorPhone ? `, ${investorPhone}` : ""}) has booked a consultation with you on <strong>${dateFormatted} at ${bookingTime}</strong>.</p>${topic ? `<p>Topic: ${topic}</p>` : ""}<p><a href="${siteUrl}/advisor-portal">View in your dashboard →</a></p>`,
         }),
       });
       // Confirmation to investor

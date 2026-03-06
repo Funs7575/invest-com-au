@@ -772,7 +772,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         </div>
 
         {/* Bottom conversion — compact on mobile */}
-        <div className="mt-5 md:mt-8 grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-4">
+        <div className="mt-5 md:mt-8 grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
           <div className="bg-white border border-slate-200 rounded-xl p-3 md:p-6 flex flex-col items-start gap-1.5 md:gap-0">
             <Icon name="target" size={18} className="text-amber-500 shrink-0 md:mb-2" />
             <h2 className="text-xs md:text-lg font-bold text-slate-900">Find Your Platform</h2>
@@ -789,14 +789,20 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               Compare →
             </Link>
           </div>
-          <div className="col-span-2 md:col-span-1 bg-slate-50 border border-slate-200 rounded-xl p-3 md:p-6 flex items-center md:flex-col md:items-start gap-3 md:gap-0">
-            <Icon name="bar-chart" size={18} className="text-slate-700 shrink-0 md:mb-2" />
-            <div className="flex-1 min-w-0 md:w-full">
-              <h2 className="text-xs md:text-lg font-bold text-slate-900 mb-0.5 md:mb-1">Free Fee PDF</h2>
-              <p className="text-[0.58rem] md:text-xs text-slate-500 md:mb-4 hidden md:block">Every platform&apos;s fees and hidden costs in one document.</p>
-            </div>
-            <Link href="/#email-capture" className="shrink-0 px-3 md:px-5 py-1.5 md:py-2.5 bg-slate-900 text-white text-[0.65rem] md:text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors md:inline-block">
-              Get PDF →
+          <div className="bg-white border border-slate-200 rounded-xl p-3 md:p-6 flex flex-col items-start gap-1.5 md:gap-0">
+            <Icon name="calculator" size={18} className="text-violet-600 shrink-0 md:mb-2" />
+            <h2 className="text-xs md:text-lg font-bold text-slate-900">Fee Calculator</h2>
+            <p className="text-[0.58rem] md:text-xs text-slate-500 md:mb-4 hidden md:block">See exact fees for your portfolio at every broker.</p>
+            <Link href="/portfolio-calculator" className="mt-auto px-3 md:px-5 py-1.5 md:py-2.5 bg-violet-600 text-white text-[0.65rem] md:text-sm font-bold rounded-lg hover:bg-violet-700 transition-colors">
+              Calculate →
+            </Link>
+          </div>
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 md:p-6 flex flex-col items-start gap-1.5 md:gap-0">
+            <Icon name="bell" size={18} className="text-slate-600 shrink-0 md:mb-2" />
+            <h2 className="text-xs md:text-lg font-bold text-slate-900">Fee Alerts</h2>
+            <p className="text-[0.58rem] md:text-xs text-slate-500 md:mb-4 hidden md:block">Get notified when any broker changes their fees.</p>
+            <Link href="/fee-alerts" className="mt-auto px-3 md:px-5 py-1.5 md:py-2.5 bg-slate-900 text-white text-[0.65rem] md:text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors">
+              Subscribe →
             </Link>
           </div>
         </div>

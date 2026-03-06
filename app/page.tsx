@@ -46,6 +46,8 @@ const bestForCards = [
   { icon: "briefcase", title: "Find an Advisor", description: "SMSF accountants, financial planners & tax agents", href: "/find-advisor", color: "bg-violet-50 border-violet-200 text-violet-800" },
   { icon: "bitcoin", title: "Best Crypto Exchanges", description: "AUSTRAC-registered exchanges with AUD deposits", href: "/best/crypto", color: "bg-orange-50 border-orange-200 text-orange-800" },
   { icon: "arrow-left-right", title: "CFD & Forex", description: "ASIC-regulated CFD and forex brokers compared", href: "/best/cfd-forex", color: "bg-rose-50 border-rose-200 text-rose-800" },
+  { icon: "calculator", title: "Portfolio Calculator", description: "See exact annual fees at every broker for your trades", href: "/portfolio-calculator", color: "bg-blue-50 border-blue-200 text-blue-800" },
+  { icon: "bell", title: "Fee Alerts", description: "Get notified when any broker changes their fees", href: "/fee-alerts", color: "bg-slate-50 border-slate-200 text-slate-700" },
 ];
 
 const categoryStrip = [

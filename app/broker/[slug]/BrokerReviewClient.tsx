@@ -1003,15 +1003,21 @@ export default function BrokerReviewClient({
           <p className="text-[0.58rem] md:text-xs text-slate-600 mt-2 md:mt-3">{ADVERTISER_DISCLOSURE_SHORT}</p>
         </div>
 
-        {/* Not convinced? Quiz prompt */}
+        {/* Not convinced? More tools */}
         <div className="mt-4 md:mt-6 text-center">
           <p className="text-xs md:text-sm text-slate-500 mb-2">Want to compare other options?</p>
-          <div className="flex gap-2 md:gap-3 justify-center">
+          <div className="flex gap-2 md:gap-3 justify-center flex-wrap">
+            <Link href="/portfolio-calculator" className="text-xs md:text-sm text-violet-700 font-semibold hover:text-violet-800 transition-colors border border-violet-200 rounded-lg px-3 py-2 md:px-4 hover:bg-violet-50">
+              Fee Calculator →
+            </Link>
             <Link href="/quiz" className="text-xs md:text-sm text-amber-700 font-semibold hover:text-amber-800 transition-colors border border-amber-200 rounded-lg px-3 py-2 md:px-4 hover:bg-amber-50">
-              Platform Quiz →
+              Quiz →
             </Link>
             <Link href="/compare" className="text-xs md:text-sm text-slate-600 font-semibold hover:text-slate-800 transition-colors border border-slate-200 rounded-lg px-3 py-2 md:px-4 hover:bg-slate-50">
               Compare All →
+            </Link>
+            <Link href="/fee-alerts" className="text-xs md:text-sm text-slate-600 font-semibold hover:text-slate-800 transition-colors border border-slate-200 rounded-lg px-3 py-2 md:px-4 hover:bg-slate-50">
+              Fee Alerts →
             </Link>
           </div>
         </div>
