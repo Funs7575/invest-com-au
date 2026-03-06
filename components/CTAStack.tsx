@@ -39,12 +39,12 @@ export default function CTAStack({
           Compare Platforms
         </Link>
         <span className="text-slate-600">·</span>
-        <Link href="/calculators" className="text-slate-400 hover:text-white transition-colors">
-          Fee Calculator
-        </Link>
-        <span className="text-slate-600">·</span>
         <Link href="/quiz" className="text-slate-400 hover:text-white transition-colors">
           Platform Quiz
+        </Link>
+        <span className="text-slate-600">·</span>
+        <Link href="/find-advisor" className="text-slate-400 hover:text-white transition-colors">
+          Find Advisor
         </Link>
       </div>
 

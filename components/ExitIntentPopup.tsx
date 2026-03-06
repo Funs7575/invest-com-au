@@ -274,13 +274,20 @@ export default function ExitIntentPopup() {
             )}
           </div>
 
-          {/* Alternative CTA */}
-          <div className="text-center mt-3">
+          {/* Alternative CTAs */}
+          <div className="flex items-center justify-center gap-4 mt-3">
             <Link
               href="/quiz"
               className="text-sm text-slate-500 hover:text-slate-900 transition-colors"
             >
-              Or take our free 60-second platform quiz →
+              Platform quiz →
+            </Link>
+            <span className="text-slate-300">·</span>
+            <Link
+              href="/find-advisor"
+              className="text-sm text-violet-500 hover:text-violet-700 transition-colors"
+            >
+              Find an advisor →
             </Link>
           </div>
         </div>

@@ -86,15 +86,15 @@ export default function QuizPromptBar() {
             )}
             <Link
               href="/quiz"
-              className="flex-1 text-center py-2.5 bg-amber-500 text-white text-[0.8rem] font-bold rounded-lg hover:bg-amber-600 active:scale-[0.98] transition-all min-h-[40px] flex items-center justify-center"
+              className="flex-1 text-center py-2.5 bg-amber-500 text-white text-[0.75rem] font-bold rounded-lg hover:bg-amber-600 active:scale-[0.98] transition-all min-h-[40px] flex items-center justify-center"
             >
-              Find My Platform
+              Platform Quiz
             </Link>
             <Link
-              href="/compare"
-              className="flex-1 text-center py-2.5 bg-white text-slate-700 text-[0.8rem] font-bold rounded-lg border border-slate-300 hover:bg-slate-50 active:scale-[0.98] transition-all min-h-[40px] flex items-center justify-center"
+              href="/find-advisor"
+              className="flex-1 text-center py-2.5 bg-violet-600 text-white text-[0.75rem] font-bold rounded-lg hover:bg-violet-700 active:scale-[0.98] transition-all min-h-[40px] flex items-center justify-center"
             >
-              Compare
+              Find Advisor
             </Link>
           </div>
         </div>
@@ -105,18 +105,24 @@ export default function QuizPromptBar() {
         <div className="hidden sm:block fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm border-t border-slate-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] bounce-in-up">
           <div className="container-custom py-3 flex items-center justify-between gap-3">
             <p className="text-sm text-slate-600">
-              Not sure which broker?{" "}
+              Need help?{" "}
               <strong className="text-slate-900">
-                Take our 60-sec quiz
+                Find your platform or advisor
               </strong>{" "}
-              to find your match.
+              in 60 seconds.
             </p>
             <div className="flex items-center gap-2 shrink-0">
               <Link
                 href="/quiz"
                 className="px-5 py-2.5 bg-amber-500 text-white text-sm font-bold rounded-lg hover:bg-amber-600 active:scale-[0.97] transition-all"
               >
-                Take Quiz &rarr;
+                Platform Quiz &rarr;
+              </Link>
+              <Link
+                href="/find-advisor"
+                className="px-5 py-2.5 bg-violet-600 text-white text-sm font-bold rounded-lg hover:bg-violet-700 active:scale-[0.97] transition-all"
+              >
+                Find Advisor &rarr;
               </Link>
               <button
                 onClick={handleDesktopDismiss}
