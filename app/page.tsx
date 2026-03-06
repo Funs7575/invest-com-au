@@ -43,11 +43,7 @@ const bestForCards = [
   { icon: "cpu", title: "Best Robo-Advisors", description: "Automated investing with Stockspot, Raiz & more", href: "/best/robo-advisors", color: "bg-violet-50 border-violet-200 text-violet-800" },
   { icon: "building", title: "Best Super Funds", description: "Compare fees, performance & insurance across funds", href: "/best/super-funds", color: "bg-emerald-50 border-emerald-200 text-emerald-800" },
   { icon: "coins", title: "Lowest Fees", description: "$0 brokerage and verified low-cost options", href: "/best/low-fees", color: "bg-amber-50 border-amber-200 text-amber-800" },
-  { icon: "briefcase", title: "Find an Advisor", description: "SMSF accountants, financial planners & tax agents", href: "/find-advisor", color: "bg-violet-50 border-violet-200 text-violet-800" },
   { icon: "bitcoin", title: "Best Crypto Exchanges", description: "AUSTRAC-registered exchanges with AUD deposits", href: "/best/crypto", color: "bg-orange-50 border-orange-200 text-orange-800" },
-  { icon: "arrow-left-right", title: "CFD & Forex", description: "ASIC-regulated CFD and forex brokers compared", href: "/best/cfd-forex", color: "bg-rose-50 border-rose-200 text-rose-800" },
-  { icon: "calculator", title: "Portfolio Calculator", description: "See exact annual fees at every broker for your trades", href: "/portfolio-calculator", color: "bg-blue-50 border-blue-200 text-blue-800" },
-  { icon: "bell", title: "Fee Alerts", description: "Get notified when any broker changes their fees", href: "/fee-alerts", color: "bg-slate-50 border-slate-200 text-slate-700" },
 ];
 
 const categoryStrip = [
@@ -215,36 +211,19 @@ export default async function HomePage() {
         <div className="relative max-w-4xl mx-auto px-4 text-center">
           {/* Mobile: premium compact hero */}
           <div className="md:hidden">
-            {/* Trust badge */}
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-50 rounded-full text-[0.6rem] font-medium text-slate-500 mb-2 border border-slate-100">
-              <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-              {brokerCount} platforms + {(advisorCount || 0) > 0 ? `${advisorCount} advisors` : "verified advisors"}
-            </div>
-            <h1 className="text-[1.35rem] font-extrabold text-slate-900 leading-[1.2] tracking-tight">
+            <h1 className="text-[1.4rem] font-extrabold text-slate-900 leading-[1.15] tracking-tight">
               Compare Platforms.<br />Find Advisors.
             </h1>
-            <p className="mt-1 text-[0.7rem] text-slate-500 leading-relaxed">
-              Shares, crypto, super, robo-advisors & financial professionals — independent and free.
+            <p className="mt-1.5 text-[0.72rem] text-slate-500 leading-relaxed">
+              Independent platform comparison &amp; verified financial advisors — free.
             </p>
-            {/* Category quick-access pills */}
-            <div className="flex flex-wrap justify-center gap-1.5 mt-2.5 mb-2.5">
-              {categoryStrip.map((cat) => (
-                <Link
-                  key={cat.label}
-                  href={cat.href}
-                  className="px-2.5 py-1 text-[0.6rem] font-semibold rounded-full border border-slate-200 text-slate-600 bg-white hover:bg-slate-50 active:scale-[0.97] transition-all"
-                >
-                  {cat.label}
-                </Link>
-              ))}
-            </div>
             {/* CTAs */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 mt-3">
               <Link
                 href="/compare"
                 className="flex-1 px-3 py-2.5 bg-slate-900 text-white font-bold rounded-lg text-[0.8rem] text-center active:scale-[0.98] transition-all"
               >
-                Compare All
+                Compare Platforms
               </Link>
               <Link
                 href="/find-advisor"
@@ -253,23 +232,16 @@ export default async function HomePage() {
                 Find Advisor
               </Link>
             </div>
-            {/* Secondary CTA */}
-            <Link
-              href="/quiz"
-              className="block text-center mt-2 text-[0.69rem] font-semibold text-slate-500 hover:text-slate-700 transition-colors"
-            >
-              Not sure? Take our 60s quiz →
-            </Link>
-            {/* Trust strip — social proof */}
-            <div className="flex items-center justify-center gap-3 mt-3 text-[0.56rem] text-slate-400">
+            {/* Trust strip */}
+            <div className="flex items-center justify-center gap-3 mt-3 text-[0.58rem] text-slate-400">
               <span className="flex items-center gap-1">
-                <svg className="w-3 h-3 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-                ASIC-verified fees
+                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
+                {brokerCount} platforms
               </span>
               <span className="text-slate-300">·</span>
-              <span>100% independent</span>
+              <span>Verified advisors</span>
               <span className="text-slate-300">·</span>
-              <span>Free forever</span>
+              <span>100% free</span>
             </div>
           </div>
           {/* Desktop: full hero */}
@@ -415,12 +387,89 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* Email Capture */}
+      {/* ═══════ HOW IT WORKS — explains the two paths ═══════ */}
+      <section className="py-4 md:py-12 bg-white border-b border-slate-100">
+        <div className="container-custom max-w-3xl">
+          <h2 className="text-base md:text-2xl font-extrabold text-slate-900 text-center mb-3 md:mb-8">Two Ways We Help You Invest</h2>
+          <div className="grid grid-cols-2 gap-3 md:gap-6">
+            <Link href="/compare" className="bg-slate-50 border border-slate-200 rounded-xl p-3 md:p-6 hover:border-slate-300 transition-colors group">
+              <div className="w-8 h-8 md:w-12 md:h-12 bg-slate-900 rounded-lg flex items-center justify-center mb-2 md:mb-3">
+                <Icon name="bar-chart-2" size={18} className="text-white md:hidden" />
+                <Icon name="bar-chart-2" size={24} className="text-white hidden md:block" />
+              </div>
+              <h3 className="text-xs md:text-base font-bold text-slate-900 mb-0.5 md:mb-1 group-hover:text-slate-700">Compare Platforms</h3>
+              <p className="text-[0.6rem] md:text-sm text-slate-500 leading-relaxed">Compare fees, features, and safety across 33+ platforms. Shares, crypto, super, ETFs, robo-advisors.</p>
+            </Link>
+            <Link href="/find-advisor" className="bg-violet-50 border border-violet-200 rounded-xl p-3 md:p-6 hover:border-violet-300 transition-colors group">
+              <div className="w-8 h-8 md:w-12 md:h-12 bg-violet-600 rounded-lg flex items-center justify-center mb-2 md:mb-3">
+                <Icon name="users" size={18} className="text-white md:hidden" />
+                <Icon name="users" size={24} className="text-white hidden md:block" />
+              </div>
+              <h3 className="text-xs md:text-base font-bold text-violet-900 mb-0.5 md:mb-1 group-hover:text-violet-700">Find an Advisor</h3>
+              <p className="text-[0.6rem] md:text-sm text-violet-600 leading-relaxed">Connect with verified SMSF accountants, financial planners, tax agents, and mortgage brokers.</p>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════ ADVISOR SECTION — moved up from bottom ═══════ */}
       <ScrollFadeIn>
-        <section className="py-3 md:py-12 bg-white">
+        <section className="py-3 md:py-12 bg-gradient-to-b from-violet-50/30 to-white">
           <div className="container-custom">
-            <div className="max-w-xl mx-auto">
-              <LeadMagnet />
+            <div className="flex items-start justify-between gap-2 mb-2.5 md:mb-6">
+              <div>
+                <h2 className="text-lg md:text-2xl font-bold">Verified Financial Advisors</h2>
+                <p className="text-[0.69rem] md:text-sm text-slate-500 mt-0.5 md:mt-1">
+                  <span className="hidden md:inline">SMSF accountants, financial planners, property advisors, tax agents, and more — verified against ASIC registers</span>
+                  <span className="md:hidden">ASIC-verified professionals across Australia</span>
+                </p>
+              </div>
+              <Link href="/advisors" className="md:hidden text-[0.69rem] font-semibold text-violet-600 hover:text-violet-800 shrink-0 min-h-[44px] inline-flex items-center px-1">
+                Browse all →
+              </Link>
+            </div>
+            {/* Category pills */}
+            <div className="flex gap-1.5 md:gap-2 mb-3 md:mb-4 overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
+              {[
+                { label: "SMSF Accountants", href: "/advisors?type=smsf_accountant", icon: "building" },
+                { label: "Financial Planners", href: "/advisors?type=financial_planner", icon: "trending-up" },
+                { label: "Property Advisors", href: "/advisors?type=property_advisor", icon: "home" },
+                { label: "Tax Agents", href: "/advisors?type=tax_agent", icon: "calculator" },
+                { label: "Mortgage Brokers", href: "/advisors?type=mortgage_broker", icon: "landmark" },
+                { label: "Estate Planners", href: "/advisors?type=estate_planner", icon: "file-text" },
+              ].map((cat) => (
+                <Link
+                  key={cat.label}
+                  href={cat.href}
+                  className="shrink-0 flex items-center gap-1.5 px-3 py-2 md:px-4 md:py-2.5 bg-white border border-violet-200 rounded-lg text-[0.65rem] md:text-xs font-semibold text-violet-700 hover:border-violet-400 hover:bg-violet-50 transition-all active:scale-[0.98]"
+                >
+                  <Icon name={cat.icon} size={14} className="text-violet-400" />
+                  {cat.label}
+                </Link>
+              ))}
+            </div>
+            {/* CTA card */}
+            <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-6 flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-6">
+              <div className="flex-1 min-w-0">
+                <p className="text-sm md:text-base font-bold text-slate-900 mb-1">Book a free consultation — no obligation</p>
+                <p className="text-xs md:text-sm text-slate-500">
+                  We connect investors with verified professionals. Request a consultation and the advisor contacts you directly.
+                </p>
+              </div>
+              <div className="flex gap-2 shrink-0 w-full md:w-auto">
+                <Link
+                  href="/find-advisor"
+                  className="flex-1 md:flex-none text-center px-4 py-2.5 bg-violet-600 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-violet-700 transition-colors"
+                >
+                  Find My Advisor
+                </Link>
+                <Link
+                  href="/advisors"
+                  className="flex-1 md:flex-none text-center px-4 py-2.5 border border-violet-300 text-violet-700 text-xs md:text-sm font-semibold rounded-lg hover:bg-violet-50 transition-colors"
+                >
+                  Browse All
+                </Link>
+              </div>
             </div>
           </div>
         </section>
@@ -515,10 +564,10 @@ export default async function HomePage() {
           <div className="container-custom">
             <div className="flex items-start justify-between gap-2 mb-2 md:mb-8">
               <div>
-                <h2 className="text-lg md:text-3xl font-bold">Find Your Best Match</h2>
+                <h2 className="text-lg md:text-3xl font-bold">Best Platforms by Category</h2>
                 <p className="text-[0.69rem] md:text-base text-slate-500 mt-0.5 md:mt-2">
-                  <span className="hidden md:inline">Category guides rank platforms for your situation, plus tools to find the right advisor.</span>
-                  <span className="md:hidden">Platforms, advisors &amp; tools for you</span>
+                  <span className="hidden md:inline">Curated picks ranked by fees, features, and user experience</span>
+                  <span className="md:hidden">Top picks by category</span>
                 </p>
               </div>
               <Link href="/best" className="md:hidden text-[0.69rem] font-semibold text-slate-500 hover:text-slate-900 shrink-0 min-h-[44px] inline-flex items-center px-1">
@@ -680,64 +729,43 @@ export default async function HomePage() {
         </ScrollFadeIn>
       )}
 
-      {/* Find an Advisor — cross-sell section */}
+      {/* ═══════ TOOLS — Portfolio Calculator + Fee Alerts ═══════ */}
       <ScrollFadeIn>
-        <section className="py-3 md:py-12 bg-gradient-to-b from-slate-50 to-white">
+        <section className="py-3 md:py-12 bg-slate-50">
           <div className="container-custom">
-            <div className="flex items-start justify-between gap-2 mb-2.5 md:mb-6">
-              <div>
-                <h2 className="text-lg md:text-2xl font-bold">Need Professional Advice?</h2>
-                <p className="text-[0.69rem] md:text-sm text-slate-500 mt-0.5 md:mt-1">
-                  <span className="hidden md:inline">Browse verified SMSF accountants, financial planners, and property advisors</span>
-                  <span className="md:hidden">Verified financial professionals</span>
-                </p>
-              </div>
-              <Link href="/advisors" className="md:hidden text-[0.69rem] font-semibold text-slate-500 hover:text-slate-900 shrink-0 min-h-[44px] inline-flex items-center px-1">
-                Browse all →
+            <h2 className="text-lg md:text-2xl font-bold text-center mb-3 md:mb-6">Free Investing Tools</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
+              <Link href="/portfolio-calculator" className="bg-white border border-slate-200 rounded-xl p-3 md:p-5 hover:border-slate-300 transition-colors group">
+                <Icon name="calculator" size={20} className="text-violet-600 mb-1.5 md:mb-2" />
+                <h3 className="text-xs md:text-sm font-bold text-slate-900 mb-0.5">Portfolio Calculator</h3>
+                <p className="text-[0.58rem] md:text-xs text-slate-500">See exact fees at every broker for your trades</p>
+              </Link>
+              <Link href="/fee-alerts" className="bg-white border border-slate-200 rounded-xl p-3 md:p-5 hover:border-slate-300 transition-colors group">
+                <Icon name="bell" size={20} className="text-amber-500 mb-1.5 md:mb-2" />
+                <h3 className="text-xs md:text-sm font-bold text-slate-900 mb-0.5">Fee Alerts</h3>
+                <p className="text-[0.58rem] md:text-xs text-slate-500">Get notified when any broker changes their fees</p>
+              </Link>
+              <Link href="/calculators" className="bg-white border border-slate-200 rounded-xl p-3 md:p-5 hover:border-slate-300 transition-colors group">
+                <Icon name="bar-chart" size={20} className="text-blue-600 mb-1.5 md:mb-2" />
+                <h3 className="text-xs md:text-sm font-bold text-slate-900 mb-0.5">All Calculators</h3>
+                <p className="text-[0.58rem] md:text-xs text-slate-500">CGT, FX costs, switching, dividends & more</p>
+              </Link>
+              <Link href="/quiz" className="bg-white border border-slate-200 rounded-xl p-3 md:p-5 hover:border-slate-300 transition-colors group">
+                <Icon name="target" size={20} className="text-emerald-600 mb-1.5 md:mb-2" />
+                <h3 className="text-xs md:text-sm font-bold text-slate-900 mb-0.5">Platform Quiz</h3>
+                <p className="text-[0.58rem] md:text-xs text-slate-500">Find your best match in 60 seconds</p>
               </Link>
             </div>
-            {/* Category pills */}
-            <div className="flex gap-1.5 md:gap-2 mb-3 md:mb-4 overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
-              {[
-                { label: "SMSF Accountants", href: "/advisors?type=smsf_accountant", icon: "building" },
-                { label: "Financial Planners", href: "/advisors?type=financial_planner", icon: "trending-up" },
-                { label: "Property Advisors", href: "/advisors?type=property_advisor", icon: "home" },
-                { label: "Tax Agents", href: "/advisors?type=tax_agent", icon: "calculator" },
-                { label: "Mortgage Brokers", href: "/advisors?type=mortgage_broker", icon: "landmark" },
-                { label: "Estate Planners", href: "/advisors?type=estate_planner", icon: "file-text" },
-              ].map((cat) => (
-                <Link
-                  key={cat.label}
-                  href={cat.href}
-                  className="shrink-0 flex items-center gap-1.5 px-3 py-2 md:px-4 md:py-2.5 bg-white border border-slate-200 rounded-lg text-[0.65rem] md:text-xs font-semibold text-slate-600 hover:border-slate-400 hover:bg-slate-50 transition-all active:scale-[0.98]"
-                >
-                  <Icon name={cat.icon} size={14} className="text-slate-400" />
-                  {cat.label}
-                </Link>
-              ))}
-            </div>
-            {/* CTA card */}
-            <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-6 flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-6">
-              <div className="flex-1 min-w-0">
-                <p className="text-sm md:text-base font-bold text-slate-900 mb-1">Free listings. Pay only per enquiry.</p>
-                <p className="text-xs md:text-sm text-slate-500">
-                  We connect investors with verified professionals. Request a free consultation — no obligation.
-                </p>
-              </div>
-              <div className="flex gap-2 shrink-0 w-full md:w-auto">
-                <Link
-                  href="/find-advisor"
-                  className="flex-1 md:flex-none text-center px-4 py-2.5 bg-slate-900 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors"
-                >
-                  Find My Advisor
-                </Link>
-                <Link
-                  href="/advisors"
-                  className="flex-1 md:flex-none text-center px-4 py-2.5 border border-slate-300 text-slate-700 text-xs md:text-sm font-semibold rounded-lg hover:bg-slate-50 transition-colors"
-                >
-                  Browse All
-                </Link>
-              </div>
+          </div>
+        </section>
+      </ScrollFadeIn>
+
+      {/* ═══════ EMAIL CAPTURE — at the end where browsed users convert ═══════ */}
+      <ScrollFadeIn>
+        <section className="py-3 md:py-12 bg-white">
+          <div className="container-custom">
+            <div className="max-w-xl mx-auto">
+              <LeadMagnet />
             </div>
           </div>
         </section>
