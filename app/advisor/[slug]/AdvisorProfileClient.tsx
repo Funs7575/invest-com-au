@@ -12,6 +12,24 @@ function renderStars(rating: number) {
   return "★".repeat(Math.floor(rating)) + (rating % 1 >= 0.5 ? "½" : "");
 }
 
+function BioSection({ name, bio }: { name: string; bio: string }) {
+  const [expanded, setExpanded] = useState(false);
+  const isLong = bio.length > 300;
+  return (
+    <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-5 mb-4 md:mb-6">
+      <h2 className="text-sm md:text-base font-bold text-slate-900 mb-2">About {name}</h2>
+      <p className={`text-xs md:text-sm text-slate-600 leading-relaxed whitespace-pre-line ${!expanded && isLong ? "line-clamp-4 md:line-clamp-none" : ""}`}>
+        {bio}
+      </p>
+      {isLong && !expanded && (
+        <button onClick={() => setExpanded(true)} className="md:hidden text-xs font-semibold text-violet-600 hover:text-violet-800 mt-1">
+          Read more
+        </button>
+      )}
+    </div>
+  );
+}
+
 function StarRating({ value, onChange }: { value: number; onChange: (v: number) => void }) {
   return (
     <div className="flex gap-1">
@@ -228,10 +246,7 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
 
         {/* Bio */}
         {pro.bio && (
-          <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-5 mb-4 md:mb-6">
-            <h2 className="text-sm md:text-base font-bold text-slate-900 mb-2">About {pro.name}</h2>
-            <p className="text-xs md:text-sm text-slate-600 leading-relaxed whitespace-pre-line">{pro.bio}</p>
-          </div>
+          <BioSection name={pro.name} bio={pro.bio} />
         )}
 
         {/* Specialties */}
@@ -333,7 +348,15 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
                 </button>
 
                 {formState === "error" && (
-                  <p className="text-xs text-red-600 text-center">Something went wrong. Please try again or email directly.</p>
+                  <div className="text-center">
+                    <p className="text-xs text-red-600 mb-2">Something went wrong. Please try again.</p>
+                    <button
+                      onClick={() => setFormState("idle")}
+                      className="text-xs font-semibold text-slate-600 hover:text-slate-900 underline"
+                    >
+                      Try again
+                    </button>
+                  </div>
                 )}
               </div>
 

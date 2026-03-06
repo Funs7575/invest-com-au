@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
+import Link from "next/link";
 import type { Broker } from "@/lib/types";
 import DealCard from "@/components/DealCard";
 import BrokerLogo from "@/components/BrokerLogo";
@@ -132,6 +133,12 @@ export default function DealsClient({ deals }: { deals: Broker[] }) {
 
   return (
     <div>
+      <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-4">
+        <Link href="/" className="hover:text-slate-900">Home</Link>
+        <span className="mx-1.5 md:mx-2">/</span>
+        <span className="text-slate-700">Deals &amp; Promotions</span>
+      </nav>
+
       {/* Hero Banner */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 px-5 py-6 md:px-8 md:py-10 mb-5 md:mb-8">
         {/* Decorative gradient orbs */}
