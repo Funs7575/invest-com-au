@@ -344,45 +344,54 @@ export default function BrokerReviewClient({
         </div>
 
         {/* Editorial Verdict — Bottom Line */}
-        <div id="verdict" className="bg-slate-900 text-white rounded-xl p-4 md:p-6 mb-6 md:mb-8 scroll-mt-20">
-          <div className="flex items-center gap-2 mb-2">
-            <Icon name="award" size={20} className="text-amber-400 shrink-0" />
-            <h2 className="text-base md:text-lg font-extrabold">The Bottom Line</h2>
-          </div>
-          <p className="text-sm md:text-base text-slate-300 leading-relaxed mb-3">
-            {b.rating && b.rating >= 4.5
-              ? `${b.name} is one of the strongest platforms in its category. `
-              : b.rating && b.rating >= 3.5
-              ? `${b.name} is a solid choice for the right investor. `
-              : `${b.name} has some clear strengths but also notable limitations. `
-            }
-            {bestFor[0] ? `It's particularly well-suited for ${bestFor[0].toLowerCase()}. ` : ""}
-            {(b.asx_fee_value ?? 999) === 0
-              ? "The $0 brokerage on ASX trades is a standout feature that's hard to beat. "
-              : (b.asx_fee_value ?? 999) <= 5
-              ? `At ${b.asx_fee}, it's competitively priced for ASX trading. `
-              : b.platform_type === "crypto_exchange"
-              ? "As an AUSTRAC-registered exchange, it meets Australian regulatory requirements. "
-              : b.platform_type === "robo_advisor"
-              ? "The automated approach suits investors who prefer a hands-off strategy. "
-              : ""
-            }
-            {b.chess_sponsored ? "CHESS sponsorship provides an important safety layer. " : ""}
-          </p>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1.5">
-              <span className="text-amber-400 text-lg">{renderStars(b.rating || 0)}</span>
-              <span className="text-xl font-extrabold">{b.rating}/5</span>
+        <div id="verdict" className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white rounded-2xl p-5 md:p-8 mb-6 md:mb-8 scroll-mt-20">
+          {/* Subtle pattern overlay */}
+          <div className="absolute inset-0 opacity-5" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "20px 20px" }} />
+          <div className="relative">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-8 h-8 md:w-10 md:h-10 bg-amber-500/20 rounded-lg flex items-center justify-center">
+                <Icon name="award" size={20} className="text-amber-400 shrink-0" />
+              </div>
+              <div>
+                <h2 className="text-base md:text-lg font-extrabold">The Bottom Line</h2>
+                <p className="text-[0.6rem] md:text-xs text-slate-400">Our editorial verdict</p>
+              </div>
             </div>
-            <a
-              href={getAffiliateLink(b)}
-              target="_blank"
-              rel={AFFILIATE_REL}
-              onClick={() => trackClick(b.slug, b.name, 'review-verdict', `/broker/${b.slug}`, 'review')}
-              className="ml-auto px-4 py-2 bg-amber-500 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors"
-            >
-              {getBenefitCta(b, 'review')}
-            </a>
+            <p className="text-sm md:text-base text-slate-300 leading-relaxed mb-4">
+              {b.rating && b.rating >= 4.5
+                ? `${b.name} is one of the strongest platforms in its category. `
+                : b.rating && b.rating >= 3.5
+                ? `${b.name} is a solid choice for the right investor. `
+                : `${b.name} has some clear strengths but also notable limitations. `
+              }
+              {bestFor[0] ? `It's particularly well-suited for ${bestFor[0].toLowerCase()}. ` : ""}
+              {(b.asx_fee_value ?? 999) === 0
+                ? "The $0 brokerage on ASX trades is a standout feature that's hard to beat. "
+                : (b.asx_fee_value ?? 999) <= 5
+                ? `At ${b.asx_fee}, it's competitively priced for ASX trading. `
+                : b.platform_type === "crypto_exchange"
+                ? "As an AUSTRAC-registered exchange, it meets Australian regulatory requirements. "
+                : b.platform_type === "robo_advisor"
+                ? "The automated approach suits investors who prefer a hands-off strategy. "
+                : ""
+              }
+              {b.chess_sponsored ? "CHESS sponsorship provides an important safety layer. " : ""}
+            </p>
+            <div className="flex items-center gap-4 pt-3 border-t border-white/10">
+              <div className="flex items-center gap-2">
+                <span className="text-amber-400 text-lg">{renderStars(b.rating || 0)}</span>
+                <span className="text-2xl font-extrabold">{b.rating}<span className="text-sm text-slate-400">/5</span></span>
+              </div>
+              <a
+                href={getAffiliateLink(b)}
+                target="_blank"
+                rel={AFFILIATE_REL}
+                onClick={() => trackClick(b.slug, b.name, 'review-verdict', `/broker/${b.slug}`, 'review')}
+                className="ml-auto px-5 py-2.5 bg-amber-500 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-amber-600 hover:shadow-lg hover:shadow-amber-500/20 transition-all"
+              >
+                {getBenefitCta(b, 'review')}
+              </a>
+            </div>
           </div>
         </div>
 
@@ -419,15 +428,15 @@ export default function BrokerReviewClient({
         {/* Key Stats — Quick Reference */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 mb-6 md:mb-8">
           {[
-            { label: "ASX Fee", value: b.asx_fee || "N/A", sub: b.asx_fee_value != null && b.asx_fee_value === 0 ? "Free" : undefined },
-            { label: "US Fee", value: b.us_fee || "N/A", sub: b.platform_type === "crypto_exchange" ? "N/A" : undefined },
-            { label: "FX Rate", value: b.fx_rate != null ? `${b.fx_rate}%` : "N/A" },
-            { label: "Safety", value: b.chess_sponsored ? "CHESS" : b.platform_type === "crypto_exchange" ? "AUSTRAC" : "Custodian" },
+            { label: "ASX Fee", value: b.asx_fee || "N/A", sub: b.asx_fee_value != null && b.asx_fee_value === 0 ? "Free" : undefined, accent: "border-t-emerald-500" },
+            { label: "US Fee", value: b.us_fee || "N/A", sub: b.platform_type === "crypto_exchange" ? "N/A" : undefined, accent: "border-t-blue-500" },
+            { label: "FX Rate", value: b.fx_rate != null ? `${b.fx_rate}%` : "N/A", accent: "border-t-amber-500" },
+            { label: "Safety", value: b.chess_sponsored ? "CHESS" : b.platform_type === "crypto_exchange" ? "AUSTRAC" : "Custodian", accent: "border-t-violet-500" },
           ].map((stat, i) => (
-            <div key={i} className="bg-slate-50 border border-slate-200 rounded-lg p-3 text-center">
-              <div className="text-[0.62rem] md:text-xs font-semibold text-slate-500 uppercase tracking-wide">{stat.label}</div>
-              <div className="text-sm md:text-base font-extrabold text-slate-900 mt-0.5">{stat.value}</div>
-              {stat.sub && <div className="text-[0.56rem] md:text-[0.62rem] text-emerald-600 font-semibold">{stat.sub}</div>}
+            <div key={i} className={`bg-white border border-slate-200 border-t-2 ${stat.accent} rounded-xl p-3 md:p-4 text-center card-hover`}>
+              <div className="text-[0.62rem] md:text-xs font-semibold text-slate-400 uppercase tracking-wider">{stat.label}</div>
+              <div className="text-base md:text-lg font-extrabold text-slate-900 mt-1">{stat.value}</div>
+              {stat.sub && <div className="text-[0.56rem] md:text-[0.62rem] text-emerald-600 font-bold mt-0.5">{stat.sub}</div>}
             </div>
           ))}
         </div>

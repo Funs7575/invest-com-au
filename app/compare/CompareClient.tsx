@@ -272,25 +272,27 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   return (
     <div className="pt-5 pb-8 md:py-12">
       <div className="container-custom">
-        {/* Header — compact on mobile */}
-        <div className="flex items-start justify-between gap-2 mb-1 md:mb-2">
-          <h1 className="text-xl md:text-4xl font-extrabold">Compare Platforms</h1>
-          <span className="hidden md:inline">
-            <FeesFreshnessIndicator lastChecked={getMostRecentFeeCheck(brokers)} variant="inline" />
-          </span>
+        {/* Header */}
+        <div className="bg-gradient-to-r from-slate-50 to-white border border-slate-200 rounded-2xl p-4 md:p-6 mb-3 md:mb-6">
+          <div className="flex items-start justify-between gap-2 mb-1 md:mb-2">
+            <h1 className="text-xl md:text-4xl font-extrabold text-slate-900">Compare Platforms</h1>
+            <span className="hidden md:inline">
+              <FeesFreshnessIndicator lastChecked={getMostRecentFeeCheck(brokers)} variant="inline" />
+            </span>
+          </div>
+          <p className="text-xs md:text-base text-slate-500 mb-1.5 md:mb-2">
+            <span className="hidden md:inline">Side-by-side comparison of fees, features, and safety across {brokers.length}+ Australian platforms.</span>
+            <span className="md:hidden">Fees, features &amp; safety side-by-side.</span>
+            <span className="md:hidden ml-1"><FeesFreshnessIndicator lastChecked={getMostRecentFeeCheck(brokers)} variant="inline" /></span>
+          </p>
+          <div className="flex items-center gap-3 text-[0.62rem] md:text-xs text-slate-400">
+            <Link href="/how-we-verify" className="underline hover:text-slate-600">How we verify</Link>
+            <span>·</span>
+            <Link href="/methodology" className="underline hover:text-slate-600">Methodology</Link>
+            <span>·</span>
+            <Link href="/how-we-earn" className="underline hover:text-slate-600">How we earn</Link>
+          </div>
         </div>
-        <p className="text-xs md:text-base text-slate-500 mb-1.5 md:mb-2">
-          <span className="hidden md:inline">Side-by-side comparison of fees, features, and safety.{" "}</span>
-          <span className="md:hidden">Fees, features &amp; safety side-by-side.</span>
-          <span className="md:hidden ml-1"><FeesFreshnessIndicator lastChecked={getMostRecentFeeCheck(brokers)} variant="inline" /></span>
-        </p>
-        <p className="text-[0.62rem] md:text-xs text-slate-400 mb-3 md:mb-6">
-          <Link href="/how-we-verify" className="underline hover:text-slate-600">How we verify</Link>
-          {" · "}
-          <Link href="/methodology" className="underline hover:text-slate-600">Methodology</Link>
-          {" · "}
-          <Link href="/how-we-earn" className="underline hover:text-slate-600">How we earn</Link>
-        </p>
 
         {/* Deal of the Month — compact on mobile */}
         {(() => {

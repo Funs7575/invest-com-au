@@ -121,12 +121,23 @@ export default function PortfolioCalculatorClient({ brokers }: { brokers: Broker
           <span className="text-slate-700">Portfolio Fee Calculator</span>
         </nav>
 
-        <h1 className="text-xl md:text-4xl font-extrabold text-slate-900 mb-2 md:mb-3">
-          Portfolio Fee Calculator
-        </h1>
-        <p className="text-sm md:text-lg text-slate-500 mb-6 md:mb-8 leading-relaxed">
-          Enter your trading activity and see exactly what you&apos;d pay at every Australian broker. Find out if you&apos;re overpaying.
-        </p>
+        {/* Hero */}
+        <div className="bg-gradient-to-br from-blue-50 to-violet-50 border border-blue-100 rounded-2xl p-4 md:p-8 mb-6">
+          <div className="flex items-start gap-3 md:gap-4">
+            <div className="w-10 h-10 md:w-14 md:h-14 bg-blue-600 rounded-xl flex items-center justify-center shrink-0">
+              <Icon name="calculator" size={20} className="text-white md:hidden" />
+              <Icon name="calculator" size={28} className="text-white hidden md:block" />
+            </div>
+            <div>
+              <h1 className="text-xl md:text-3xl font-extrabold text-slate-900 mb-1 md:mb-2">
+                Portfolio Fee Calculator
+              </h1>
+              <p className="text-xs md:text-base text-slate-500 leading-relaxed">
+                Enter your trading activity and see exactly what you&apos;d pay at every Australian broker. Find out if you&apos;re overpaying.
+              </p>
+            </div>
+          </div>
+        </div>
 
         {/* Input section */}
         <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-6 mb-6">
@@ -206,10 +217,13 @@ export default function PortfolioCalculatorClient({ brokers }: { brokers: Broker
           <>
             {/* Savings banner */}
             {currentBroker && savings > 0 && (
-              <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 md:p-6 mb-6 text-center">
-                <div className="text-xs text-emerald-600 font-semibold uppercase tracking-wide mb-1">You could save</div>
-                <div className="text-3xl md:text-5xl font-extrabold text-emerald-700">${savings.toFixed(0)}<span className="text-lg md:text-xl">/year</span></div>
-                <p className="text-sm text-emerald-600 mt-1">by switching from {results.find(r => r.broker.slug === currentBroker)?.broker.name} to {results[0]?.broker.name}</p>
+              <div className="relative overflow-hidden bg-gradient-to-br from-emerald-600 via-emerald-500 to-teal-500 rounded-2xl p-5 md:p-8 mb-6 text-center text-white shadow-xl shadow-emerald-500/25">
+                <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 2px 2px, white 1px, transparent 0)", backgroundSize: "16px 16px" }} />
+                <div className="relative">
+                  <div className="text-xs md:text-sm font-bold uppercase tracking-widest opacity-80 mb-2">You could save</div>
+                  <div className="text-5xl md:text-7xl font-extrabold tracking-tight">${savings.toFixed(0)}<span className="text-xl md:text-2xl opacity-60 ml-1">/year</span></div>
+                  <p className="text-sm md:text-base opacity-90 mt-3">by switching from <strong>{results.find(r => r.broker.slug === currentBroker)?.broker.name}</strong> to <strong>{results[0]?.broker.name}</strong></p>
+                </div>
               </div>
             )}
 

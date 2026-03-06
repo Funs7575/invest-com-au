@@ -388,25 +388,30 @@ export default async function HomePage() {
       )}
 
       {/* ═══════ HOW IT WORKS — explains the two paths ═══════ */}
-      <section className="py-4 md:py-12 bg-white border-b border-slate-100">
+      <section className="py-4 md:py-14 bg-white border-b border-slate-100">
         <div className="container-custom max-w-3xl">
+          <p className="text-[0.62rem] md:text-xs text-slate-400 text-center uppercase tracking-widest font-semibold mb-1 md:mb-2">How it works</p>
           <h2 className="text-base md:text-2xl font-extrabold text-slate-900 text-center mb-3 md:mb-8">Two Ways We Help You Invest</h2>
           <div className="grid grid-cols-2 gap-3 md:gap-6">
-            <Link href="/compare" className="bg-slate-50 border border-slate-200 rounded-xl p-3 md:p-6 hover:border-slate-300 transition-colors group">
-              <div className="w-8 h-8 md:w-12 md:h-12 bg-slate-900 rounded-lg flex items-center justify-center mb-2 md:mb-3">
+            <Link href="/compare" className="relative bg-white border border-slate-200 rounded-2xl p-3 md:p-7 card-hover group overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-slate-900 to-slate-600" />
+              <div className="w-9 h-9 md:w-14 md:h-14 bg-gradient-to-br from-slate-900 to-slate-700 rounded-xl flex items-center justify-center mb-2 md:mb-4 shadow-lg shadow-slate-900/20">
                 <Icon name="bar-chart-2" size={18} className="text-white md:hidden" />
-                <Icon name="bar-chart-2" size={24} className="text-white hidden md:block" />
+                <Icon name="bar-chart-2" size={28} className="text-white hidden md:block" />
               </div>
-              <h3 className="text-xs md:text-base font-bold text-slate-900 mb-0.5 md:mb-1 group-hover:text-slate-700">Compare Platforms</h3>
-              <p className="text-[0.6rem] md:text-sm text-slate-500 leading-relaxed">Compare fees, features, and safety across 33+ platforms. Shares, crypto, super, ETFs, robo-advisors.</p>
+              <h3 className="text-xs md:text-lg font-bold text-slate-900 mb-0.5 md:mb-1.5 group-hover:text-slate-700">Compare Platforms</h3>
+              <p className="text-[0.6rem] md:text-sm text-slate-500 leading-relaxed">Compare fees, features, and safety across 33+ platforms. Shares, crypto, super, ETFs, and robo-advisors.</p>
+              <span className="hidden md:inline-block mt-3 text-xs font-bold text-slate-400 group-hover:text-slate-600 transition-colors">Explore →</span>
             </Link>
-            <Link href="/find-advisor" className="bg-violet-50 border border-violet-200 rounded-xl p-3 md:p-6 hover:border-violet-300 transition-colors group">
-              <div className="w-8 h-8 md:w-12 md:h-12 bg-violet-600 rounded-lg flex items-center justify-center mb-2 md:mb-3">
+            <Link href="/find-advisor" className="relative bg-white border border-violet-200 rounded-2xl p-3 md:p-7 card-hover group overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-violet-600 to-violet-400" />
+              <div className="w-9 h-9 md:w-14 md:h-14 bg-gradient-to-br from-violet-600 to-violet-500 rounded-xl flex items-center justify-center mb-2 md:mb-4 shadow-lg shadow-violet-500/20">
                 <Icon name="users" size={18} className="text-white md:hidden" />
-                <Icon name="users" size={24} className="text-white hidden md:block" />
+                <Icon name="users" size={28} className="text-white hidden md:block" />
               </div>
-              <h3 className="text-xs md:text-base font-bold text-violet-900 mb-0.5 md:mb-1 group-hover:text-violet-700">Find an Advisor</h3>
+              <h3 className="text-xs md:text-lg font-bold text-violet-900 mb-0.5 md:mb-1.5 group-hover:text-violet-700">Find an Advisor</h3>
               <p className="text-[0.6rem] md:text-sm text-violet-600 leading-relaxed">Connect with verified SMSF accountants, financial planners, tax agents, and mortgage brokers.</p>
+              <span className="hidden md:inline-block mt-3 text-xs font-bold text-violet-400 group-hover:text-violet-600 transition-colors">Find yours →</span>
             </Link>
           </div>
         </div>

@@ -81,15 +81,29 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
           <span className="text-slate-700">Find an Advisor</span>
         </nav>
 
-        {/* Header */}
-        <div className="mb-4 md:mb-8">
-          <h1 className="text-xl md:text-4xl font-extrabold mb-1 md:mb-3 text-slate-900">
+        {/* Hero */}
+        <div className="bg-gradient-to-br from-violet-50 to-slate-50 border border-violet-100 rounded-2xl p-4 md:p-8 mb-4 md:mb-8">
+          <h1 className="text-xl md:text-4xl font-extrabold mb-1.5 md:mb-3 text-slate-900">
             {pageTitle || "Find a Financial Advisor"}
           </h1>
-          <p className="text-xs md:text-base text-slate-500">
+          <p className="text-xs md:text-base text-slate-500 mb-3 md:mb-5">
             <span className="md:hidden">{pageDescription ? pageDescription.slice(0, 60) + '...' : "Verified Australian financial professionals"}</span>
             <span className="hidden md:inline">{pageDescription || "Browse verified Australian financial professionals. Free consultation requests — no obligation."}</span>
           </p>
+          <div className="flex items-center gap-3 md:gap-6 text-[0.62rem] md:text-xs text-slate-500">
+            <span className="flex items-center gap-1.5">
+              <span className="w-2 h-2 bg-violet-500 rounded-full" />
+              <span className="font-semibold text-slate-700">{professionals.length}</span> advisors
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Icon name="shield" size={14} className="text-violet-400" />
+              ASIC verified
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Icon name="clock" size={14} className="text-violet-400" />
+              Free consultation
+            </span>
+          </div>
         </div>
 
         {/* Search bar */}
@@ -164,15 +178,16 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               <Link
                 key={pro.id}
                 href={`/advisor/${pro.slug}`}
-                className="block bg-white border border-slate-200 rounded-xl p-3 md:p-5 hover:shadow-md hover:border-slate-300 transition-all"
-                style={{ borderLeftWidth: 3, borderLeftColor: pro.verified ? "#7c3aed" : "#e2e8f0" }}
+                className="block bg-white border border-slate-200 rounded-xl p-3.5 md:p-5 hover:shadow-lg hover:border-violet-200 hover:-translate-y-0.5 transition-all duration-200"
               >
                 <div className="flex gap-3 md:gap-4">
                   {/* Avatar */}
                   {pro.photo_url ? (
-                    <img src={pro.photo_url} alt={pro.name} className="w-12 h-12 md:w-14 md:h-14 rounded-full object-cover shrink-0" />
+                    <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl overflow-hidden shrink-0 ring-2 ring-violet-100">
+                      <img src={pro.photo_url} alt={pro.name} className="w-full h-full object-cover" />
+                    </div>
                   ) : (
-                    <div className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-slate-100 flex items-center justify-center text-sm md:text-base font-bold text-slate-500 shrink-0">
+                    <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl bg-gradient-to-br from-violet-100 to-slate-100 flex items-center justify-center text-sm md:text-lg font-bold text-violet-600 shrink-0">
                       {pro.name.split(" ").map((n) => n[0]).join("")}
                     </div>
                   )}
@@ -182,7 +197,10 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                     <div className="flex items-center gap-2 mb-0.5">
                       <span className="font-bold text-sm md:text-base text-slate-900 truncate">{pro.name}</span>
                       {pro.verified && (
-                        <span className="shrink-0 text-[0.56rem] md:text-[0.62rem] font-bold px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700">Verified</span>
+                        <span className="shrink-0 text-[0.56rem] md:text-[0.62rem] font-bold px-1.5 py-0.5 rounded-full bg-violet-100 text-violet-700 flex items-center gap-0.5">
+                          <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                          Verified
+                        </span>
                       )}
                     </div>
                     {pro.firm_name && (

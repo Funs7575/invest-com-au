@@ -68,24 +68,28 @@ export default function AdvisorApplyPage() {
           <span className="text-slate-700">Apply</span>
         </nav>
 
-        <h1 className="text-xl md:text-3xl font-extrabold text-slate-900 mb-2">Get Listed on Invest.com.au</h1>
-        <p className="text-sm md:text-base text-slate-500 mb-6 leading-relaxed">
-          Join our advisor directory and connect with Australian investors looking for professional advice. Free to list — you only pay per enquiry.
-        </p>
-
-        {/* Value props */}
-        <div className="grid grid-cols-3 gap-2 md:gap-3 mb-6 md:mb-8">
-          {[
-            { icon: "gift", title: "Free Listing", desc: "No upfront cost" },
-            { icon: "users", title: "Qualified Leads", desc: "Investors seeking help" },
-            { icon: "shield", title: "Verified Badge", desc: "ASIC/TPB checked" },
-          ].map((v, i) => (
-            <div key={i} className="bg-slate-50 border border-slate-200 rounded-lg p-3 text-center">
-              <Icon name={v.icon} size={20} className="text-slate-600 mx-auto mb-1" />
-              <div className="text-xs font-bold text-slate-900">{v.title}</div>
-              <div className="text-[0.56rem] text-slate-500">{v.desc}</div>
+        {/* Hero */}
+        <div className="bg-gradient-to-br from-violet-600 to-violet-800 rounded-2xl p-5 md:p-8 mb-6 md:mb-8 text-white relative overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.1),transparent_60%)]" />
+          <div className="relative">
+            <h1 className="text-xl md:text-3xl font-extrabold mb-2">Get Listed on Invest.com.au</h1>
+            <p className="text-sm md:text-base text-violet-200 mb-4 leading-relaxed max-w-lg">
+              Join our advisor directory and connect with Australian investors looking for professional advice.
+            </p>
+            <div className="grid grid-cols-3 gap-2 md:gap-3">
+              {[
+                { icon: "gift", title: "Free Listing", desc: "No upfront cost" },
+                { icon: "users", title: "Qualified Leads", desc: "Investors seeking help" },
+                { icon: "shield", title: "Verified Badge", desc: "ASIC/TPB checked" },
+              ].map((v, i) => (
+                <div key={i} className="bg-white/10 backdrop-blur rounded-lg p-2.5 md:p-3 text-center">
+                  <Icon name={v.icon} size={18} className="text-violet-200 mx-auto mb-1" />
+                  <div className="text-[0.62rem] md:text-xs font-bold text-white">{v.title}</div>
+                  <div className="text-[0.5rem] md:text-[0.62rem] text-violet-300">{v.desc}</div>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
 
         <div className="bg-white border border-slate-200 rounded-xl p-5 md:p-6">
