@@ -1,0 +1,203 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import Icon from "@/components/Icon";
+import { createClient } from "@/lib/supabase/client";
+
+type FeeChange = {
+  id: number;
+  broker_slug: string;
+  field_name: string;
+  old_value: string;
+  new_value: string;
+  changed_at: string;
+};
+
+const FIELD_LABELS: Record<string, string> = {
+  asx_fee: "ASX Brokerage", asx_fee_value: "ASX Fee ($)", us_fee: "US Brokerage",
+  us_fee_value: "US Fee ($)", fx_rate: "FX Rate (%)", inactivity_fee: "Inactivity Fee",
+};
+
+function ChangeDirection({ oldVal, newVal }: { oldVal: string; newVal: string }) {
+  const o = parseFloat(oldVal);
+  const n = parseFloat(newVal);
+  if (isNaN(o) || isNaN(n)) return <span className="text-slate-400">→</span>;
+  if (n > o) return <span className="text-red-500 font-bold">↑</span>;
+  if (n < o) return <span className="text-emerald-500 font-bold">↓</span>;
+  return <span className="text-slate-400">→</span>;
+}
+
+export default function FeeAlertsPage() {
+  const searchParams = useSearchParams();
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [changes, setChanges] = useState<FeeChange[]>([]);
+  const [verified, setVerified] = useState(false);
+  const [unsubscribed, setUnsubscribed] = useState(false);
+  const [brokerNames, setBrokerNames] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    // Handle verify/unsubscribe tokens
+    const verifyToken = searchParams.get("verify");
+    const unsubToken = searchParams.get("unsubscribe");
+    if (verifyToken) {
+      fetch(`/api/fee-alerts?verify=${verifyToken}`).then(() => setVerified(true));
+    }
+    if (unsubToken) {
+      fetch(`/api/fee-alerts?unsubscribe=${unsubToken}`).then(() => setUnsubscribed(true));
+    }
+
+    // Load recent fee changes
+    const supabase = createClient();
+    supabase
+      .from("broker_data_changes")
+      .select("id, broker_slug, field_name, old_value, new_value, changed_at")
+      .in("field_name", ["asx_fee", "asx_fee_value", "us_fee", "us_fee_value", "fx_rate", "inactivity_fee"])
+      .order("changed_at", { ascending: false })
+      .limit(20)
+      .then(({ data }) => setChanges((data as FeeChange[]) || []));
+
+    // Load broker names
+    supabase.from("brokers").select("slug, name").eq("status", "active").then(({ data }) => {
+      const map: Record<string, string> = {};
+      (data || []).forEach((b) => { map[b.slug] = b.name; });
+      setBrokerNames(map);
+    });
+  }, [searchParams]);
+
+  const subscribe = async () => {
+    setStatus("sending");
+    try {
+      const res = await fetch("/api/fee-alerts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      setStatus(res.ok ? "sent" : "error");
+    } catch {
+      setStatus("error");
+    }
+  };
+
+  return (
+    <div className="py-5 md:py-12">
+      <div className="container-custom max-w-3xl">
+        <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
+          <Link href="/" className="hover:text-slate-900">Home</Link>
+          <span className="mx-1.5 md:mx-2">/</span>
+          <span className="text-slate-700">Fee Alerts</span>
+        </nav>
+
+        {/* Verification banners */}
+        {verified && (
+          <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 mb-6 text-center">
+            <Icon name="check-circle" size={24} className="text-emerald-600 mx-auto mb-2" />
+            <h2 className="text-lg font-bold text-emerald-900">You&apos;re subscribed!</h2>
+            <p className="text-sm text-emerald-700">You&apos;ll receive an email whenever an Australian broker changes their fees.</p>
+          </div>
+        )}
+        {unsubscribed && (
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-6 text-center">
+            <p className="text-sm text-slate-600">You&apos;ve been unsubscribed from fee alerts.</p>
+          </div>
+        )}
+
+        <h1 className="text-xl md:text-4xl font-extrabold text-slate-900 mb-2 md:mb-3">
+          Broker Fee Change Alerts
+        </h1>
+        <p className="text-sm md:text-lg text-slate-500 mb-6 md:mb-8 leading-relaxed">
+          Get notified the moment any Australian broker changes their fees. Never miss a price increase — or a new deal.
+        </p>
+
+        {/* Subscribe form */}
+        {!verified && (
+          <div className="bg-slate-900 rounded-xl p-5 md:p-8 mb-8 md:mb-12">
+            {status === "sent" ? (
+              <div className="text-center py-2">
+                <Icon name="mail" size={32} className="text-amber-400 mx-auto mb-3" />
+                <h3 className="text-lg font-bold text-white mb-1">Check your email</h3>
+                <p className="text-sm text-slate-300">Click the confirmation link we sent to <strong>{email}</strong> to activate your alerts.</p>
+              </div>
+            ) : (
+              <>
+                <div className="flex items-center gap-2 mb-3">
+                  <Icon name="bell" size={20} className="text-amber-400" />
+                  <h2 className="text-lg font-bold text-white">Subscribe to Fee Alerts</h2>
+                </div>
+                <p className="text-sm text-slate-400 mb-4">Free. Instant notifications. Unsubscribe anytime.</p>
+                <div className="flex gap-2">
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    className="flex-1 px-3 py-2.5 bg-white/10 border border-white/20 rounded-lg text-white text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                    onKeyDown={(e) => e.key === "Enter" && subscribe()}
+                  />
+                  <button
+                    onClick={subscribe}
+                    disabled={status === "sending" || !email}
+                    className="px-5 py-2.5 bg-amber-500 text-white font-semibold rounded-lg text-sm hover:bg-amber-600 disabled:opacity-50 transition-colors shrink-0"
+                  >
+                    {status === "sending" ? "..." : "Subscribe"}
+                  </button>
+                </div>
+                {status === "error" && <p className="text-xs text-red-400 mt-2">Something went wrong. Please try again.</p>}
+              </>
+            )}
+          </div>
+        )}
+
+        {/* What you get */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-8 md:mb-12">
+          {[
+            { icon: "zap", title: "Instant Alerts", desc: "Email within minutes of any fee change across 30+ platforms" },
+            { icon: "shield", title: "Never Overpay", desc: "Know immediately when your broker raises fees so you can switch" },
+            { icon: "trending-down", title: "Catch Deals", desc: "Be the first to know about fee reductions and promotions" },
+          ].map((item, i) => (
+            <div key={i} className="bg-white border border-slate-200 rounded-xl p-4">
+              <Icon name={item.icon} size={20} className="text-slate-600 mb-2" />
+              <h3 className="text-sm font-bold text-slate-900 mb-1">{item.title}</h3>
+              <p className="text-xs text-slate-500">{item.desc}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Recent fee changes */}
+        <h2 className="text-lg md:text-2xl font-extrabold text-slate-900 mb-3 md:mb-4">Recent Fee Changes</h2>
+        {changes.length === 0 ? (
+          <div className="bg-white border border-slate-200 rounded-xl p-6 text-center">
+            <p className="text-sm text-slate-500">No fee changes recorded yet. Subscribe to be notified when they happen.</p>
+          </div>
+        ) : (
+          <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+            {changes.map((c, i) => (
+              <div key={c.id} className={`flex items-center justify-between px-4 py-3 ${i < changes.length - 1 ? "border-b border-slate-100" : ""}`}>
+                <div className="flex items-center gap-3 min-w-0">
+                  <ChangeDirection oldVal={c.old_value} newVal={c.new_value} />
+                  <div className="min-w-0">
+                    <Link href={`/broker/${c.broker_slug}`} className="text-sm font-semibold text-slate-900 hover:text-blue-700 truncate block">
+                      {brokerNames[c.broker_slug] || c.broker_slug}
+                    </Link>
+                    <div className="text-xs text-slate-500">
+                      {FIELD_LABELS[c.field_name] || c.field_name}: {c.old_value} → {c.new_value}
+                    </div>
+                  </div>
+                </div>
+                <span className="text-[0.62rem] text-slate-400 shrink-0 ml-2">
+                  {new Date(c.changed_at).toLocaleDateString("en-AU", { day: "numeric", month: "short" })}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <div className="mt-6 text-xs text-slate-400 text-center">
+          Fee data is sourced from official Product Disclosure Statements and broker websites. Always verify with the provider before making decisions.
+        </div>
+      </div>
+    </div>
+  );
+}

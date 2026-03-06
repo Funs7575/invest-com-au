@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { Professional, ProfessionalReview } from "@/lib/types";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 import Icon from "@/components/Icon";
+import BookingWidget from "@/components/BookingWidget";
 
 function renderStars(rating: number) {
   return "★".repeat(Math.floor(rating)) + (rating % 1 >= 0.5 ? "½" : "");
@@ -228,6 +229,11 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
             </div>
           </div>
         )}
+
+        {/* Booking Widget */}
+        <div className="mb-4 md:mb-6">
+          <BookingWidget advisorSlug={pro.slug} advisorName={pro.name} />
+        </div>
 
         {/* Enquiry form */}
         <div id="enquiry" className="bg-white border border-slate-200 rounded-xl p-4 md:p-6 mb-4 md:mb-6 scroll-mt-20">

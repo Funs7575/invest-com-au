@@ -115,7 +115,7 @@ function AnimatedNumber({ value, prefix = "$", decimals = 2 }: { value: number; 
 interface Props { brokers: Broker[] }
 type CalcId = "trade-cost" | "fx" | "switching" | "cgt" | "franking" | "chess" | "fee-impact";
 
-const CALCS: { id: CalcId; icon: string; title: string; subtitle: string; badge?: string }[] = [
+const CALCS: { id: CalcId; icon: string; title: string; subtitle: string; badge?: string; href?: string }[] = [
   { id: "trade-cost", icon: "dollar-sign", title: "Trade Cost", subtitle: "What does a trade really cost at each platform?" },
   { id: "fx", icon: "globe", title: "US Share Costs", subtitle: "What do international trades really cost?" },
   { id: "switching", icon: "arrow-right-left", title: "Compare Fees", subtitle: "Is it worth switching platforms?" },
@@ -123,6 +123,7 @@ const CALCS: { id: CalcId; icon: string; title: string; subtitle: string; badge?
   { id: "franking", icon: "coins", title: "Dividend Tax", subtitle: "Franking credits after tax" },
   { id: "chess", icon: "shield-check", title: "Share Safety", subtitle: "Is your platform CHESS sponsored?" },
   { id: "fee-impact", icon: "calculator", title: "Fee Impact", subtitle: "Your total annual platform fees", badge: "PRO" },
+  { id: "portfolio", icon: "briefcase", title: "Portfolio Fees", subtitle: "Exact cost at every broker", href: "/portfolio-calculator" },
 ];
 
 const CORPORATE_TAX_RATE = 0.3;
@@ -177,6 +178,17 @@ export default function CalculatorsClient({ brokers }: Props) {
         <div className="md:hidden -mx-4 px-4 mb-3" role="tablist" aria-label="Calculator selection">
           <div className="flex gap-1.5 overflow-x-auto snap-x snap-mandatory pb-1 scrollbar-hide">
             {CALCS.map((c) => (
+              c.href ? (
+                <a
+                  key={c.id}
+                  href={c.href}
+                  className="relative flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border bg-violet-50 border-violet-200 text-violet-700 text-left transition-all shrink-0 snap-start hover:bg-violet-100"
+                >
+                  <Icon name={c.icon} size={14} className="text-violet-500" />
+                  <span className="text-xs font-semibold whitespace-nowrap">{c.title}</span>
+                  <span className="px-1 py-px text-[8px] font-bold rounded-full leading-none bg-violet-200 text-violet-800">NEW</span>
+                </a>
+              ) : (
               <button
                 key={c.id}
                 onClick={() => handleSetActiveCalc(c.id)}
@@ -199,12 +211,25 @@ export default function CalculatorsClient({ brokers }: Props) {
                   </span>
                 )}
               </button>
+              )
             ))}
           </div>
         </div>
         {/* Desktop: grid cards */}
         <div className="hidden md:grid md:grid-cols-3 lg:grid-cols-7 gap-3 mb-10" role="tablist" aria-label="Calculator selection">
           {CALCS.map((c) => (
+            c.href ? (
+              <a
+                key={c.id}
+                href={c.href}
+                className="relative flex flex-col items-start p-4 rounded-xl border bg-violet-50 border-violet-200 text-left transition-all h-full w-full group hover:bg-violet-100"
+              >
+                <span className="absolute top-2 right-2 px-1.5 py-0.5 bg-violet-200 text-violet-800 text-[10px] font-bold rounded-full leading-none">NEW</span>
+                <Icon name={c.icon} size={24} className="mb-2 text-violet-500" />
+                <span className="text-sm font-bold mb-0.5 leading-tight text-violet-900">{c.title}</span>
+                <span className="text-xs text-violet-600 leading-snug">{c.subtitle} →</span>
+              </a>
+            ) : (
             <button
               key={c.id}
               onClick={() => handleSetActiveCalc(c.id)}
@@ -228,6 +253,7 @@ export default function CalculatorsClient({ brokers }: Props) {
               </span>
               <span className="text-xs text-slate-500 leading-snug">{c.subtitle}</span>
             </button>
+            )
           ))}
         </div>
 
