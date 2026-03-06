@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { randomBytes } from "crypto";
+import { isRateLimited } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
   try {
     const { email } = await request.json();
     if (!email) return NextResponse.json({ error: "Email required" }, { status: 400 });
+
+    // Rate limit: max 5 magic links per email per hour
+    if (await isRateLimited(`magic_link:${email.toLowerCase().trim()}`, 5, 60)) {
+      return NextResponse.json({ error: "Too many login attempts. Please try again later." }, { status: 429 });
+    }
 
     const supabase = await createClient();
 

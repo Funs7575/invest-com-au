@@ -11,7 +11,7 @@ import AdvisorPrompt from "@/components/AdvisorPrompt";
 
 type Holding = {
   id: string;
-  market: "asx" | "us";
+  market: "asx" | "us" | "crypto";
   trades_per_year: number;
   avg_trade_size: number;
 };
@@ -47,7 +47,15 @@ export default function PortfolioCalculatorClient({ brokers }: { brokers: Broker
 
   // Calculate fees for each broker
   const results = useMemo(() => {
-    const activeBrokers = brokers.filter(b => b.status === "active" && (b.platform_type === "share_broker" || b.platform_type === "cfd_forex"));
+    const activeBrokers = brokers.filter(b => {
+      if (b.status !== "active") return false;
+      // Include share brokers, CFDs, and crypto
+      const hasASX = holdings.some(h => h.market === "asx" || h.market === "us");
+      const hasCrypto = holdings.some(h => h.market === "crypto");
+      if (b.platform_type === "share_broker" || b.platform_type === "cfd_forex") return hasASX;
+      if (b.platform_type === "crypto_exchange") return hasCrypto;
+      return false;
+    });
 
     return activeBrokers.map(broker => {
       let totalFees = 0;
@@ -64,6 +72,13 @@ export default function PortfolioCalculatorClient({ brokers }: { brokers: Broker
           } else {
             totalFees += trades * feePerTrade;
           }
+        } else if (h.market === "crypto") {
+          // Crypto exchanges charge % per trade
+          if (broker.platform_type === "crypto_exchange") {
+            const cryptoFeePercent = broker.asx_fee_value != null && broker.asx_fee_value < 5 ? broker.asx_fee_value : 0.6;
+            totalFees += trades * (size * cryptoFeePercent / 100);
+          }
+          // Non-crypto brokers can't do crypto — skip
         } else {
           // US trades — fee + FX conversion cost
           const usFeePerTrade = broker.us_fee_value != null ? broker.us_fee_value : 999;
@@ -128,6 +143,7 @@ export default function PortfolioCalculatorClient({ brokers }: { brokers: Broker
                 >
                   <option value="asx">ASX</option>
                   <option value="us">US Shares</option>
+                  <option value="crypto">Crypto</option>
                 </select>
               </div>
               <div>
@@ -171,7 +187,7 @@ export default function PortfolioCalculatorClient({ brokers }: { brokers: Broker
               className="w-full max-w-xs px-3 py-2 border border-slate-200 rounded-lg text-sm"
             >
               <option value="">Select your broker...</option>
-              {brokers.filter(b => b.status === "active" && (b.platform_type === "share_broker" || b.platform_type === "cfd_forex")).sort((a, b) => a.name.localeCompare(b.name)).map(b => (
+              {brokers.filter(b => b.status === "active" && (b.platform_type === "share_broker" || b.platform_type === "cfd_forex" || b.platform_type === "crypto_exchange")).sort((a, b) => a.name.localeCompare(b.name)).map(b => (
                 <option key={b.slug} value={b.slug}>{b.name}</option>
               ))}
             </select>

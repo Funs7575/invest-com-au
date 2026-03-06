@@ -53,8 +53,15 @@ export function getAffiliateLink(broker: Broker): string {
 }
 
 export function getBenefitCta(broker: Broker, context: 'compare' | 'review' | 'calculator' | 'versus' | 'quiz'): string {
+  // If no affiliate URL, show informational CTA instead of action CTA
+  const hasAffiliate = !!broker.affiliate_url;
+
   if (broker.benefit_cta) return broker.benefit_cta;
   if (broker.cta_text) return broker.cta_text;
+
+  if (!hasAffiliate) {
+    return context === 'review' ? `Read Full Review →` : `View ${broker.name} →`;
+  }
 
   if (broker.deal && broker.deal_text) {
     return broker.cta_text || `Claim ${broker.name} Deal`;

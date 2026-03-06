@@ -1,24 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-
-const RATE_LIMIT_MAP = new Map<string, { count: number; resetAt: number }>();
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const entry = RATE_LIMIT_MAP.get(ip);
-  if (!entry || now > entry.resetAt) {
-    RATE_LIMIT_MAP.set(ip, { count: 1, resetAt: now + 3600000 }); // 1 hour window
-    return false;
-  }
-  entry.count++;
-  return entry.count > 10; // max 10 enquiries per hour per IP
-}
+import { isRateLimited } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
   try {
-    // Rate limiting
+    // Rate limiting (DB-backed, survives serverless cold starts)
     const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
-    if (isRateLimited(ip)) {
+    if (await isRateLimited(`enquiry:${ip}`, 10, 60)) {
       return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
     }
 
