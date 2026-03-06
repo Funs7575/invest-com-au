@@ -435,7 +435,7 @@ export default function AdminAdvisorsPage() {
                     <span className="text-amber-400 text-xs">{"★".repeat(Number(r.rating) || 0)}</span>
                   </td>
                   <td className="px-4 py-3 max-w-[250px]">
-                    {r.title && <div className="text-xs font-semibold text-slate-800 truncate">{String(r.title)}</div>}
+                    {r.title ? <div className="text-xs font-semibold text-slate-800 truncate">{String(r.title)}</div> : null}
                     <div className="text-xs text-slate-500 truncate">{String(r.body || "")}</div>
                   </td>
                   <td className="px-4 py-3">
