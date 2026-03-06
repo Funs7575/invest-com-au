@@ -24,254 +24,118 @@ export default memo(function BrokerCard({
   onToggleSelect?: (slug: string) => void;
   selectionDisabled?: boolean;
 }) {
+  const isSponsoredBroker = isSponsored(broker);
+  const isShareOrCFD = broker.platform_type === 'share_broker' || broker.platform_type === 'cfd_forex';
+
   return (
-    <div className={`group relative rounded-xl border p-3 md:p-4 bg-white transition-all duration-200 hover:shadow-md ${
+    <div className={`group relative rounded-xl border bg-white transition-all duration-200 hover:shadow-md ${
       isSelected
         ? 'border-slate-700 ring-2 ring-slate-700/30'
-        : isSponsored(broker)
+        : isSponsoredBroker
         ? 'border-blue-400 ring-1 ring-blue-400/30 bg-blue-50/20'
         : badge
         ? 'border-slate-700 ring-1 ring-slate-700/30'
         : 'border-slate-200'
     }`}>
-      {/* Selection checkbox — top-right inside card */}
+      {/* Selection checkbox */}
       {onToggleSelect && (
         <button
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            if (selectionDisabled && !isSelected) return;
-            onToggleSelect(broker.slug);
-          }}
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (selectionDisabled && !isSelected) return; onToggleSelect(broker.slug); }}
           disabled={selectionDisabled && !isSelected}
           className="absolute -top-1 -right-1 z-10 w-10 h-10 flex items-center justify-center"
-          aria-label={isSelected ? `Deselect ${broker.name}` : `Select ${broker.name} for comparison`}
+          aria-label={isSelected ? `Deselect ${broker.name}` : `Select ${broker.name}`}
         >
           <span className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-150 shadow-sm ${
-            isSelected
-              ? 'bg-slate-900 border-slate-900 scale-110'
-              : selectionDisabled
-              ? 'bg-white border-slate-200 opacity-40'
-              : 'bg-white border-slate-300 active:scale-95'
+            isSelected ? 'bg-slate-900 border-slate-900 scale-110' : selectionDisabled ? 'bg-white border-slate-200 opacity-40' : 'bg-white border-slate-300 active:scale-95'
           }`}>
-            {isSelected && (
-              <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-              </svg>
-            )}
+            {isSelected && <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
           </span>
         </button>
       )}
 
-      {/* Badge row — sponsor or editor pick */}
-      {isSponsored(broker) ? (
-        <div className="mb-1.5 md:mb-2"><SponsorBadge broker={broker} /></div>
+      {/* Badge */}
+      {isSponsoredBroker ? (
+        <div className="px-3 pt-2.5 pb-0"><SponsorBadge broker={broker} /></div>
       ) : badge ? (
-        <div className="text-[0.62rem] md:text-[0.69rem] font-extrabold uppercase tracking-wide text-slate-700 mb-1.5 md:mb-2">{badge}</div>
+        <div className="px-3 pt-2.5 pb-0 text-[0.62rem] font-extrabold uppercase tracking-wide text-slate-700">{badge}</div>
       ) : null}
 
-      {/* Header: icon + name + rating + actions */}
-      <div className="flex items-center gap-2.5 md:gap-3 mb-2 md:mb-3">
-        <BrokerLogo broker={broker} size="md" />
-        <div className="flex-1 min-w-0">
-          <a href={`/broker/${broker.slug}`} className="font-bold text-sm hover:text-slate-900 transition-colors">
-            {broker.name}
-          </a>
-          <div className="flex items-center gap-1.5">
-            <span className="text-xs text-amber">{renderStars(broker.rating || 0)}</span>
-            <span className="text-[0.69rem] text-slate-400">{broker.rating}/5</span>
+      {/* ── COMPACT CARD LAYOUT ── */}
+      <div className="p-3">
+        {/* Row 1: Logo + Name + Rating + CTA */}
+        <div className="flex items-center gap-2.5 mb-2">
+          <BrokerLogo broker={broker} size="md" />
+          <div className="flex-1 min-w-0">
+            <a href={`/broker/${broker.slug}`} className="font-bold text-sm text-slate-900 hover:text-slate-700 transition-colors block truncate">
+              {broker.name}
+            </a>
+            <div className="flex items-center gap-1.5">
+              <span className="text-amber-400 text-xs">{renderStars(broker.rating || 0)}</span>
+              <span className="text-[0.65rem] font-semibold text-slate-500">{broker.rating}/5</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <ShortlistButton slug={broker.slug} name={broker.name} size="sm" />
+            <a
+              href={getAffiliateLink(broker)}
+              target="_blank"
+              rel={AFFILIATE_REL}
+              onClick={() => trackClick(broker.slug, broker.name, 'compare-mobile', window.location.pathname, context)}
+              className="px-3 py-1.5 text-[0.69rem] font-bold rounded-lg bg-amber-500 text-white hover:bg-amber-600 active:scale-[0.98] transition-all"
+            >
+              {getBenefitCta(broker, context)}
+            </a>
           </div>
         </div>
-        <ShortlistButton slug={broker.slug} name={broker.name} size="sm" />
-        <a
-          href={`/broker/${broker.slug}`}
-          className="text-[0.69rem] px-2.5 py-1.5 min-h-[44px] inline-flex items-center border border-slate-200 rounded-md hover:bg-slate-50 transition-colors shrink-0"
-        >
-          Review
-        </a>
-      </div>
 
-      {/* Metrics grid — platform-type-aware */}
-      <div className="grid grid-cols-4 gap-1.5 md:gap-2 mb-2 md:mb-3">
-        {(broker.platform_type === 'share_broker' || broker.platform_type === 'cfd_forex') ? (
-          <>
-            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
-              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">ASX</div>
-              <div className="text-xs md:text-sm font-semibold leading-tight">{broker.asx_fee || 'N/A'}</div>
-            </div>
-            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
-              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">US</div>
-              <div className="text-xs md:text-sm font-semibold leading-tight">{broker.us_fee || 'N/A'}</div>
-            </div>
-            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
-              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">FX</div>
-              <div className="text-xs md:text-sm font-semibold leading-tight">{broker.fx_rate != null ? `${broker.fx_rate}%` : 'N/A'}</div>
-            </div>
-            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
-              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">CHESS</div>
-              <div className={`text-xs md:text-sm font-semibold leading-tight ${broker.chess_sponsored ? 'text-emerald-600' : 'text-red-500'}`}>
-                {broker.chess_sponsored ? '✓' : '✗'}
-              </div>
-            </div>
-          </>
-        ) : broker.platform_type === 'crypto_exchange' ? (
-          <>
-            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
-              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">Fees</div>
-              <div className="text-xs md:text-sm font-semibold leading-tight">{broker.asx_fee || 'Varies'}</div>
-            </div>
-            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
-              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">Coins</div>
-              <div className="text-xs md:text-sm font-semibold leading-tight">{broker.markets?.length ? `${broker.markets.length}+` : '100+'}</div>
-            </div>
-            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
-              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">Staking</div>
-              <div className="text-xs md:text-sm font-semibold leading-tight">Yes</div>
-            </div>
-            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
-              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">AUSTRAC</div>
-              <div className="text-xs md:text-sm font-semibold leading-tight text-emerald-600">✓</div>
-            </div>
-          </>
-        ) : broker.platform_type === 'robo_advisor' ? (
-          <>
-            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
-              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">Mgmt Fee</div>
-              <div className="text-xs md:text-sm font-semibold leading-tight">{broker.asx_fee || 'Varies'}</div>
-            </div>
-            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
-              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">Min $</div>
-              <div className="text-xs md:text-sm font-semibold leading-tight">{broker.min_deposit || '$0'}</div>
-            </div>
-            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
-              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">Auto</div>
-              <div className="text-xs md:text-sm font-semibold leading-tight text-emerald-600">✓</div>
-            </div>
-            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
-              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">AFSL</div>
-              <div className="text-xs md:text-sm font-semibold leading-tight text-emerald-600">✓</div>
-            </div>
-          </>
-        ) : broker.platform_type === 'research_tool' ? (
-          <>
-            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
-              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">Price</div>
-              <div className="text-xs md:text-sm font-semibold leading-tight">{broker.asx_fee || 'Free+'}</div>
-            </div>
-            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
-              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">Free Tier</div>
-              <div className="text-xs md:text-sm font-semibold leading-tight text-emerald-600">✓</div>
-            </div>
-            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
-              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">ASX</div>
-              <div className="text-xs md:text-sm font-semibold leading-tight text-emerald-600">✓</div>
-            </div>
-            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
-              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">Global</div>
-              <div className="text-xs md:text-sm font-semibold leading-tight text-emerald-600">✓</div>
-            </div>
-          </>
-        ) : broker.platform_type === 'super_fund' ? (
-          <>
-            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
-              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">Admin Fee</div>
-              <div className="text-xs md:text-sm font-semibold leading-tight">{broker.asx_fee || 'Varies'}</div>
-            </div>
-            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
-              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">Insurance</div>
-              <div className="text-xs md:text-sm font-semibold leading-tight text-emerald-600">✓</div>
-            </div>
-            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
-              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">MySuper</div>
-              <div className="text-xs md:text-sm font-semibold leading-tight text-emerald-600">✓</div>
-            </div>
-            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
-              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">APRA</div>
-              <div className="text-xs md:text-sm font-semibold leading-tight text-emerald-600">✓</div>
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
-              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">Fees</div>
-              <div className="text-xs md:text-sm font-semibold leading-tight">{broker.asx_fee || 'Varies'}</div>
-            </div>
-            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
-              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">Min $</div>
-              <div className="text-xs md:text-sm font-semibold leading-tight">{broker.min_deposit || '$0'}</div>
-            </div>
-            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
-              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">Rating</div>
-              <div className="text-xs md:text-sm font-semibold leading-tight">{broker.rating}/5</div>
-            </div>
-            <div className="bg-slate-50 rounded-md px-2 py-1.5 md:p-2">
-              <div className="text-[0.62rem] md:text-[0.69rem] uppercase text-slate-400 font-medium">ASIC</div>
-              <div className="text-xs md:text-sm font-semibold leading-tight text-emerald-600">✓</div>
-            </div>
-          </>
-        )}
-      </div>
-
-      {/* Fee verified date — desktop only (mobile shows in CTA row) */}
-      {broker.fee_last_checked && (
-        <div className="hidden md:flex mb-1.5 items-center gap-1 text-[0.62rem] text-slate-400">
-          <Icon name="check-circle" size={10} className="text-emerald-500 shrink-0" />
-          <span>Fees verified {new Date(broker.fee_last_checked).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
-        </div>
-      )}
-
-      {/* Deal badge — compact inline with urgency countdown */}
-      {broker.deal && broker.deal_text && (
-        <div className="mb-2 flex items-center gap-1.5 px-2 py-1 md:px-2.5 md:py-1.5 bg-amber-50 border border-amber-200/80 rounded-lg">
-          <Icon name="flame" size={11} className="text-amber-500 shrink-0" />
-          <span className="text-[0.62rem] md:text-[0.69rem] text-amber-700 font-semibold leading-tight truncate">{broker.deal_text}</span>
-          {broker.deal_expiry && (() => {
-            const now = new Date();
-            const expiry = new Date(broker.deal_expiry);
-            const daysLeft = Math.ceil((expiry.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-            if (daysLeft <= 0) return null;
-            const isUrgent = daysLeft <= 7;
-            return (
-              <span className={`text-[0.56rem] md:text-[0.62rem] shrink-0 font-bold px-1.5 py-0.5 rounded-full ${
-                isUrgent
-                  ? 'bg-red-100 text-red-600 animate-pulse'
-                  : 'bg-amber-100 text-amber-600'
-              }`}>
-                {daysLeft === 1 ? 'Ends tomorrow' : daysLeft <= 7 ? `${daysLeft}d left` : `exp ${expiry.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })}`}
-              </span>
-            );
-          })()}
-        </div>
-      )}
-
-      {/* CTA — compact pill on mobile, full-width on desktop */}
-      <div className="flex items-center justify-between gap-2">
-        <div className="md:hidden flex items-center gap-1 text-[0.58rem] text-slate-400 min-w-0">
-          {broker.fee_last_checked && (
+        {/* Row 2: Key metrics — single compact row */}
+        <div className="flex items-center gap-1 mb-1.5">
+          {isShareOrCFD ? (
             <>
-              <Icon name="check-circle" size={9} className="text-emerald-500 shrink-0" />
-              <span className="truncate">Verified {new Date(broker.fee_last_checked).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })}</span>
+              <span className="text-[0.6rem] px-1.5 py-0.5 bg-slate-50 rounded font-semibold text-slate-700">ASX {broker.asx_fee || 'N/A'}</span>
+              <span className="text-[0.6rem] px-1.5 py-0.5 bg-slate-50 rounded font-semibold text-slate-700">US {broker.us_fee || 'N/A'}</span>
+              {broker.fx_rate != null && <span className="text-[0.6rem] px-1.5 py-0.5 bg-slate-50 rounded font-semibold text-slate-700">FX {broker.fx_rate}%</span>}
+              <span className={`text-[0.6rem] px-1.5 py-0.5 rounded font-bold ${broker.chess_sponsored ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-500'}`}>
+                CHESS {broker.chess_sponsored ? '✓' : '✗'}
+              </span>
+            </>
+          ) : broker.platform_type === 'crypto_exchange' ? (
+            <>
+              <span className="text-[0.6rem] px-1.5 py-0.5 bg-slate-50 rounded font-semibold text-slate-700">Fees {broker.asx_fee || 'Varies'}</span>
+              <span className="text-[0.6rem] px-1.5 py-0.5 bg-emerald-50 rounded font-bold text-emerald-700">AUSTRAC ✓</span>
+            </>
+          ) : broker.platform_type === 'super_fund' ? (
+            <>
+              <span className="text-[0.6rem] px-1.5 py-0.5 bg-slate-50 rounded font-semibold text-slate-700">{broker.asx_fee || 'Varies'}</span>
+              <span className="text-[0.6rem] px-1.5 py-0.5 bg-emerald-50 rounded font-bold text-emerald-700">APRA ✓</span>
+              <span className="text-[0.6rem] px-1.5 py-0.5 bg-emerald-50 rounded font-bold text-emerald-700">Insurance ✓</span>
+            </>
+          ) : broker.platform_type === 'robo_advisor' ? (
+            <>
+              <span className="text-[0.6rem] px-1.5 py-0.5 bg-slate-50 rounded font-semibold text-slate-700">{broker.asx_fee || 'Varies'}</span>
+              <span className="text-[0.6rem] px-1.5 py-0.5 bg-emerald-50 rounded font-bold text-emerald-700">Auto ✓</span>
+              <span className="text-[0.6rem] px-1.5 py-0.5 bg-emerald-50 rounded font-bold text-emerald-700">AFSL ✓</span>
+            </>
+          ) : (
+            <>
+              <span className="text-[0.6rem] px-1.5 py-0.5 bg-slate-50 rounded font-semibold text-slate-700">{broker.asx_fee || 'Varies'}</span>
+              <span className="text-[0.6rem] px-1.5 py-0.5 bg-emerald-50 rounded font-bold text-emerald-700">ASIC ✓</span>
             </>
           )}
         </div>
-        <a
-          href={getAffiliateLink(broker)}
-          target="_blank"
-          rel={AFFILIATE_REL}
-          onClick={() => trackClick(broker.slug, broker.name, 'compare-mobile', window.location.pathname, context)}
-          className="md:hidden shrink-0 px-4 py-1.5 text-xs font-bold rounded-lg transition-all duration-200 bg-amber-500 text-white hover:bg-amber-600 active:scale-[0.98]"
-        >
-          {getBenefitCta(broker, context)}
-        </a>
-        <a
-          href={getAffiliateLink(broker)}
-          target="_blank"
-          rel={AFFILIATE_REL}
-          onClick={() => trackClick(broker.slug, broker.name, 'compare-desktop', window.location.pathname, context)}
-          className="hidden md:block w-full text-center text-sm px-3 py-3 font-bold rounded-lg transition-all duration-200 bg-amber-600 text-white hover:bg-amber-700 active:scale-[0.98]"
-        >
-          {getBenefitCta(broker, context)}
-        </a>
+
+        {/* Row 3: Deal (if active) */}
+        {broker.deal && broker.deal_text && (
+          <div className="flex items-center gap-1.5 px-2 py-1 bg-amber-50 border border-amber-200/80 rounded-lg">
+            <Icon name="flame" size={11} className="text-amber-500 shrink-0" />
+            <span className="text-[0.6rem] text-amber-700 font-semibold truncate">{broker.deal_text}</span>
+            {broker.deal_expiry && (() => {
+              const daysLeft = Math.ceil((new Date(broker.deal_expiry).getTime() - Date.now()) / 86400000);
+              if (daysLeft <= 0) return null;
+              return <span className={`text-[0.55rem] shrink-0 font-bold px-1.5 py-0.5 rounded-full ${daysLeft <= 7 ? 'bg-red-100 text-red-600' : 'bg-amber-100 text-amber-600'}`}>{daysLeft}d left</span>;
+            })()}
+          </div>
+        )}
       </div>
     </div>
   );
