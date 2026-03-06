@@ -222,35 +222,35 @@ export default function BrokerReviewClient({
         )}
 
         {/* Header */}
-        <div className="mb-3 md:mb-4">
-          <div className="flex items-start gap-3 md:gap-4 mb-2 md:mb-3">
+        <div className="bg-white border border-slate-200 rounded-2xl p-4 md:p-6 mb-4 md:mb-6 shadow-sm">
+          <div className="flex items-start gap-3 md:gap-4 mb-3 md:mb-4">
             <div
-              className="w-10 h-10 md:w-14 md:h-14 rounded-xl flex items-center justify-center text-lg md:text-2xl font-bold shrink-0"
-              style={{ background: `${b.color}20`, color: b.color }}
+              className="w-12 h-12 md:w-16 md:h-16 rounded-xl flex items-center justify-center text-xl md:text-3xl font-bold shrink-0 shadow-sm"
+              style={{ background: `${b.color}15`, color: b.color, border: `2px solid ${b.color}30` }}
             >
               {b.icon || b.name.charAt(0)}
             </div>
-            <div className="min-w-0">
-              <h1 className="text-xl md:text-4xl font-extrabold leading-tight">{b.name} Review ({CURRENT_YEAR})</h1>
-              <p className="text-slate-600 mt-0.5 md:mt-1 text-sm md:text-base">{b.tagline}</p>
+            <div className="min-w-0 flex-1">
+              <h1 className="text-xl md:text-3xl font-extrabold leading-tight text-slate-900">{b.name} Review ({CURRENT_YEAR})</h1>
+              <p className="text-slate-500 mt-0.5 md:mt-1 text-xs md:text-base">{b.tagline}</p>
+              <div className="flex items-center gap-2 md:gap-3 flex-wrap mt-2">
+                <span className="text-amber-400 text-sm">{renderStars(b.rating || 0)}</span>
+                <span className="text-sm font-bold text-slate-700">{b.rating}/5</span>
+                {b.chess_sponsored && (
+                  <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">CHESS</span>
+                )}
+                {b.deal && (
+                  <span className="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-semibold rounded-full">Deal Active</span>
+                )}
+              </div>
             </div>
-          </div>
-          <div className="flex items-center gap-2 md:gap-3 flex-wrap mb-3 md:mb-4">
-            <span className="text-amber text-sm">{renderStars(b.rating || 0)}</span>
-            <span className="text-sm text-slate-500">{b.rating}/5</span>
-            {b.chess_sponsored && (
-              <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">CHESS Sponsored</span>
-            )}
-            {b.deal && (
-              <span className="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-semibold rounded-full">Deal of the Month</span>
-            )}
           </div>
           <a
             href={getAffiliateLink(b)}
             target="_blank"
             rel={AFFILIATE_REL}
             onClick={() => trackClick(b.slug, b.name, 'review-header', `/broker/${b.slug}`, 'review')}
-            className="block md:inline-block w-full md:w-auto text-center px-6 py-3 bg-amber-600 text-white font-semibold rounded-lg hover:bg-amber-700 transition-colors"
+            className="block md:inline-block w-full md:w-auto text-center px-6 py-3 bg-amber-600 text-white font-bold rounded-xl hover:bg-amber-700 hover:shadow-lg hover:shadow-amber-600/20 transition-all"
           >
             {getBenefitCta(b, 'review')}
           </a>

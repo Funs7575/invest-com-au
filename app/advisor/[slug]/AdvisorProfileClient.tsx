@@ -95,13 +95,15 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
         </nav>
 
         {/* Profile header */}
-        <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-6 mb-4 md:mb-6">
+        <div className="relative bg-white border border-slate-200 rounded-2xl overflow-hidden mb-4 md:mb-6">
+          <div className="h-2 bg-gradient-to-r from-violet-600 via-violet-500 to-violet-400" />
+          <div className="p-4 md:p-6">
           <div className="flex gap-4">
             {/* Avatar */}
             {pro.photo_url ? (
-              <Image src={pro.photo_url} alt={pro.name} width={80} height={80} className="w-16 h-16 md:w-20 md:h-20 rounded-full object-cover shrink-0" />
+              <Image src={pro.photo_url} alt={pro.name} width={80} height={80} className="w-16 h-16 md:w-20 md:h-20 rounded-full object-cover shrink-0 ring-2 ring-violet-100" />
             ) : (
-              <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-slate-100 flex items-center justify-center text-lg md:text-xl font-bold text-slate-500 shrink-0">
+              <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-violet-100 to-violet-50 flex items-center justify-center text-lg md:text-xl font-bold text-violet-600 shrink-0 ring-2 ring-violet-100">
                 {pro.name.split(" ").map((n) => n[0]).join("")}
               </div>
             )}
@@ -127,17 +129,18 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
               )}
             </div>
           </div>
+          </div>
         </div>
 
         {/* Quick facts grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 mb-4 md:mb-6">
           {[
-            { label: "Type", value: typeLabel, icon: "briefcase" },
-            { label: "Location", value: pro.location_display || "Australia", icon: "map-pin" },
-            { label: "Fees", value: pro.fee_description || "Contact for pricing", icon: "coins" },
-            { label: "Licence", value: pro.afsl_number || pro.registration_number || "Verified", icon: "shield-check" },
+            { label: "Type", value: typeLabel, icon: "briefcase", accent: "border-t-violet-500" },
+            { label: "Location", value: pro.location_display || "Australia", icon: "map-pin", accent: "border-t-blue-500" },
+            { label: "Fees", value: pro.fee_description || "Contact for pricing", icon: "coins", accent: "border-t-amber-500" },
+            { label: "Licence", value: pro.afsl_number || pro.registration_number || "Verified", icon: "shield-check", accent: "border-t-emerald-500" },
           ].map((f) => (
-            <div key={f.label} className="bg-white border border-slate-200 rounded-lg p-2.5 md:p-3">
+            <div key={f.label} className={`bg-white border border-slate-200 border-t-2 ${f.accent} rounded-xl p-2.5 md:p-3`}>
               <div className="flex items-center gap-1.5 mb-0.5">
                 <Icon name={f.icon} size={12} className="text-slate-400" />
                 <span className="text-[0.56rem] md:text-[0.62rem] text-slate-400 uppercase font-semibold tracking-wide">{f.label}</span>

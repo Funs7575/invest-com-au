@@ -736,30 +736,26 @@ export default async function HomePage() {
 
       {/* ═══════ TOOLS — Portfolio Calculator + Fee Alerts ═══════ */}
       <ScrollFadeIn>
-        <section className="py-3 md:py-12 bg-slate-50">
+        <section className="py-4 md:py-14 bg-slate-50">
           <div className="container-custom">
-            <h2 className="text-lg md:text-2xl font-bold text-center mb-3 md:mb-6">Free Investing Tools</h2>
+            <p className="text-[0.62rem] md:text-xs text-slate-400 text-center uppercase tracking-widest font-semibold mb-1 md:mb-2">Free tools</p>
+            <h2 className="text-lg md:text-2xl font-bold text-center mb-3 md:mb-8">Investing Tools &amp; Calculators</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
-              <Link href="/portfolio-calculator" className="bg-white border border-slate-200 rounded-xl p-3 md:p-5 hover:border-slate-300 transition-colors group">
-                <Icon name="calculator" size={20} className="text-violet-600 mb-1.5 md:mb-2" />
-                <h3 className="text-xs md:text-sm font-bold text-slate-900 mb-0.5">Portfolio Calculator</h3>
-                <p className="text-[0.58rem] md:text-xs text-slate-500">See exact fees at every broker for your trades</p>
-              </Link>
-              <Link href="/fee-alerts" className="bg-white border border-slate-200 rounded-xl p-3 md:p-5 hover:border-slate-300 transition-colors group">
-                <Icon name="bell" size={20} className="text-amber-500 mb-1.5 md:mb-2" />
-                <h3 className="text-xs md:text-sm font-bold text-slate-900 mb-0.5">Fee Alerts</h3>
-                <p className="text-[0.58rem] md:text-xs text-slate-500">Get notified when any broker changes their fees</p>
-              </Link>
-              <Link href="/calculators" className="bg-white border border-slate-200 rounded-xl p-3 md:p-5 hover:border-slate-300 transition-colors group">
-                <Icon name="bar-chart" size={20} className="text-blue-600 mb-1.5 md:mb-2" />
-                <h3 className="text-xs md:text-sm font-bold text-slate-900 mb-0.5">All Calculators</h3>
-                <p className="text-[0.58rem] md:text-xs text-slate-500">CGT, FX costs, switching, dividends & more</p>
-              </Link>
-              <Link href="/quiz" className="bg-white border border-slate-200 rounded-xl p-3 md:p-5 hover:border-slate-300 transition-colors group">
-                <Icon name="target" size={20} className="text-emerald-600 mb-1.5 md:mb-2" />
-                <h3 className="text-xs md:text-sm font-bold text-slate-900 mb-0.5">Platform Quiz</h3>
-                <p className="text-[0.58rem] md:text-xs text-slate-500">Find your best match in 60 seconds</p>
-              </Link>
+              {[
+                { href: "/portfolio-calculator", icon: "calculator", color: "from-violet-600 to-violet-500", shadow: "shadow-violet-500/15", title: "Portfolio Calculator", desc: "See exact fees at every broker" },
+                { href: "/fee-alerts", icon: "bell", color: "from-amber-500 to-amber-400", shadow: "shadow-amber-500/15", title: "Fee Alerts", desc: "Know when fees change" },
+                { href: "/calculators", icon: "bar-chart", color: "from-blue-600 to-blue-500", shadow: "shadow-blue-500/15", title: "All Calculators", desc: "CGT, FX, dividends & more" },
+                { href: "/quiz", icon: "target", color: "from-emerald-600 to-emerald-500", shadow: "shadow-emerald-500/15", title: "Platform Quiz", desc: "Best match in 60 seconds" },
+              ].map((tool) => (
+                <Link key={tool.href} href={tool.href} className="bg-white border border-slate-200 rounded-2xl p-3 md:p-5 card-hover group">
+                  <div className={`w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br ${tool.color} rounded-lg flex items-center justify-center mb-2 md:mb-3 shadow-lg ${tool.shadow}`}>
+                    <Icon name={tool.icon} size={16} className="text-white md:hidden" />
+                    <Icon name={tool.icon} size={20} className="text-white hidden md:block" />
+                  </div>
+                  <h3 className="text-xs md:text-sm font-bold text-slate-900 mb-0.5 group-hover:text-slate-700">{tool.title}</h3>
+                  <p className="text-[0.58rem] md:text-xs text-slate-500">{tool.desc}</p>
+                </Link>
+              ))}
             </div>
           </div>
         </section>

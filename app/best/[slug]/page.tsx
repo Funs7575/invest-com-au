@@ -276,18 +276,20 @@ export default async function BestBrokerPage({
           </nav>
 
           {/* Header */}
-          <h1 className="text-xl md:text-4xl font-extrabold mb-3">
-            {cat.h1}
-          </h1>
-          <p className="text-slate-600 mb-2">{cat.intro}</p>
-          <p className="text-xs text-slate-400 mb-2">
-            {ADVERTISER_DISCLOSURE_SHORT}
-          </p>
-          {hasSponsored && (
-            <p className="text-xs text-blue-500 mb-2">
-              {SPONSORED_DISCLOSURE_SHORT}
+          <div className="bg-gradient-to-br from-amber-50 to-white border border-amber-200/50 rounded-2xl p-4 md:p-6 mb-3 md:mb-4">
+            <h1 className="text-xl md:text-4xl font-extrabold mb-2 md:mb-3 text-slate-900">
+              {cat.h1}
+            </h1>
+            <p className="text-xs md:text-base text-slate-600 mb-2">{cat.intro}</p>
+            <p className="text-[0.56rem] md:text-xs text-slate-400">
+              {ADVERTISER_DISCLOSURE_SHORT}
             </p>
-          )}
+            {hasSponsored && (
+              <p className="text-[0.56rem] md:text-xs text-blue-500 mt-1">
+                {SPONSORED_DISCLOSURE_SHORT}
+              </p>
+            )}
+          </div>
 
           {/* General Advice Warning — collapsed on mobile, visible on desktop */}
           <div className="hidden md:block bg-slate-50 border border-slate-200 rounded-lg p-3 mb-3 text-[0.69rem] text-slate-500 leading-relaxed">
