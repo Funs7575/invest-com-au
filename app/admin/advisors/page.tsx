@@ -13,7 +13,9 @@ const EMPTY_ADVISOR: Partial<Professional> = {
 };
 
 export default function AdminAdvisorsPage() {
-  const [tab, setTab] = useState<"advisors" | "leads" | "reviews" | "outreach">("advisors");
+  const [tab, setTab] = useState<"advisors" | "leads" | "reviews" | "outreach" | "applications" | "disputes">("advisors");
+  const [applications, setApplications] = useState<Record<string, unknown>[]>([]);
+  const [disputes, setDisputes] = useState<Record<string, unknown>[]>([]);
   const [advisors, setAdvisors] = useState<Professional[]>([]);
   const [leads, setLeads] = useState<(ProfessionalLead & { professional?: Professional })[]>([]);
   const [pendingReviews, setPendingReviews] = useState<(Record<string, unknown>)[]>([]);
@@ -26,10 +28,12 @@ export default function AdminAdvisorsPage() {
 
   const loadData = useCallback(async () => {
     setLoading(true);
-    const [advisorRes, leadRes, reviewRes] = await Promise.all([
+    const [advisorRes, leadRes, reviewRes, appRes, disputeRes] = await Promise.all([
       supabase.from("professionals").select("*").order("created_at", { ascending: false }),
       supabase.from("professional_leads").select("*, professionals(name, firm_name, type)").order("created_at", { ascending: false }).limit(100),
       supabase.from("professional_reviews").select("*, professionals(name)").order("created_at", { ascending: false }).limit(50),
+      supabase.from("advisor_applications").select("*").order("created_at", { ascending: false }).limit(50),
+      supabase.from("lead_disputes").select("*, professional_leads(user_name, user_email), professionals(name)").order("created_at", { ascending: false }).limit(50),
     ]);
     setAdvisors((advisorRes.data as Professional[]) || []);
     setLeads((leadRes.data || []).map((l: Record<string, unknown>) => ({
@@ -37,6 +41,8 @@ export default function AdminAdvisorsPage() {
       professional: (l as Record<string, unknown>).professionals as Professional | undefined,
     })) as (ProfessionalLead & { professional?: Professional })[]);
     setPendingReviews((reviewRes.data || []) as Record<string, unknown>[]);
+    setApplications((appRes.data || []) as Record<string, unknown>[]);
+    setDisputes((disputeRes.data || []) as Record<string, unknown>[]);
     setLoading(false);
   }, [supabase]);
 
@@ -101,6 +107,12 @@ export default function AdminAdvisorsPage() {
         </button>
         <button onClick={() => setTab("outreach")} className={`px-4 py-2 rounded-lg font-semibold text-sm ${tab === "outreach" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600"}`}>
           Outreach
+        </button>
+        <button onClick={() => setTab("applications")} className={`px-4 py-2 rounded-lg font-semibold text-sm ${tab === "applications" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600"}`}>
+          Applications ({applications.filter(a => a.status === "pending").length})
+        </button>
+        <button onClick={() => setTab("disputes")} className={`px-4 py-2 rounded-lg font-semibold text-sm ${tab === "disputes" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600"}`}>
+          Disputes ({disputes.filter(d => d.status === "pending").length})
         </button>
       </div>
 
@@ -529,6 +541,155 @@ export default function AdminAdvisorsPage() {
               Send Invitation Email
             </button>
           </div>
+        </div>
+      )}
+
+      {/* ─── APPLICATIONS TAB ─── */}
+      {tab === "applications" && (
+        <div>
+          <p className="text-sm text-slate-600 mb-4">Review advisor applications. Approve to create a listing or reject with a reason.</p>
+          {applications.length === 0 ? (
+            <div className="text-center py-12 text-slate-400">No applications yet.</div>
+          ) : (
+            <div className="space-y-3">
+              {applications.map((app) => (
+                <div key={String(app.id)} className={`bg-white border rounded-xl p-4 ${app.status === "pending" ? "border-amber-200 bg-amber-50/30" : "border-slate-200"}`}>
+                  <div className="flex items-start justify-between mb-2">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-bold text-slate-900">{String(app.name)}</span>
+                        {app.firm_name && <span className="text-xs text-slate-500">— {String(app.firm_name)}</span>}
+                        <span className={`text-[0.56rem] font-bold px-1.5 py-0.5 rounded-full ${
+                          app.status === "pending" ? "bg-amber-100 text-amber-700" :
+                          app.status === "approved" ? "bg-emerald-100 text-emerald-700" :
+                          "bg-red-100 text-red-600"
+                        }`}>{String(app.status)}</span>
+                      </div>
+                      <div className="text-xs text-slate-500 mt-0.5">{String(app.email)} · {PROFESSIONAL_TYPE_LABELS[String(app.type) as keyof typeof PROFESSIONAL_TYPE_LABELS] || String(app.type)}</div>
+                      <div className="text-xs text-slate-500 mt-0.5">
+                        {app.location_suburb && `${String(app.location_suburb)}, `}{String(app.location_state || "")}
+                        {app.afsl_number && ` · AFSL ${String(app.afsl_number)}`}
+                        {app.registration_number && ` · TAN ${String(app.registration_number)}`}
+                      </div>
+                    </div>
+                    <span className="text-xs text-slate-400">{new Date(String(app.created_at)).toLocaleDateString("en-AU")}</span>
+                  </div>
+                  {app.bio && <p className="text-xs text-slate-600 mb-2 line-clamp-2">{String(app.bio)}</p>}
+                  {app.status === "pending" && (
+                    <div className="flex gap-2 mt-2">
+                      <button
+                        onClick={async () => {
+                          // Create professional from application
+                          const slug = String(app.name).toLowerCase().replace(/[^a-z0-9\s]/g, "").replace(/\s+/g, "-");
+                          const specialtiesArr = app.specialties ? String(app.specialties).split(",").map((s: string) => s.trim()).filter(Boolean) : [];
+                          const { data: pro } = await supabase.from("professionals").insert({
+                            slug: slug + "-" + String(app.id),
+                            name: String(app.name),
+                            firm_name: app.firm_name ? String(app.firm_name) : null,
+                            email: String(app.email),
+                            phone: app.phone ? String(app.phone) : null,
+                            type: String(app.type),
+                            afsl_number: app.afsl_number ? String(app.afsl_number) : null,
+                            registration_number: app.registration_number ? String(app.registration_number) : null,
+                            location_state: app.location_state ? String(app.location_state) : null,
+                            location_suburb: app.location_suburb ? String(app.location_suburb) : null,
+                            location_display: app.location_suburb ? `${String(app.location_suburb)}, ${String(app.location_state)}` : String(app.location_state || ""),
+                            specialties: specialtiesArr,
+                            bio: app.bio ? String(app.bio) : null,
+                            website: app.website ? String(app.website) : null,
+                            fee_description: app.fee_description ? String(app.fee_description) : null,
+                            fee_structure: "fee-for-service",
+                            status: "active",
+                            verified: false,
+                          }).select("id").single();
+                          if (pro) {
+                            await supabase.from("advisor_applications").update({ status: "approved", professional_id: pro.id, reviewed_at: new Date().toISOString() }).eq("id", app.id);
+                            alert("Approved! Listing created.");
+                            loadData();
+                          }
+                        }}
+                        className="text-xs font-semibold text-emerald-600 hover:text-emerald-800 px-3 py-1.5 border border-emerald-200 rounded-lg hover:bg-emerald-50"
+                      >Approve & Create Listing</button>
+                      <button
+                        onClick={async () => {
+                          const reason = prompt("Rejection reason (will be emailed to applicant):");
+                          if (reason == null) return;
+                          await supabase.from("advisor_applications").update({ status: "rejected", rejection_reason: reason, reviewed_at: new Date().toISOString() }).eq("id", app.id);
+                          loadData();
+                        }}
+                        className="text-xs font-semibold text-red-500 hover:text-red-700 px-3 py-1.5 border border-red-200 rounded-lg hover:bg-red-50"
+                      >Reject</button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ─── DISPUTES TAB ─── */}
+      {tab === "disputes" && (
+        <div>
+          <p className="text-sm text-slate-600 mb-4">Review lead disputes from advisors. Approve to waive the charge or reject to uphold it.</p>
+          {disputes.length === 0 ? (
+            <div className="text-center py-12 text-slate-400">No disputes filed.</div>
+          ) : (
+            <div className="space-y-3">
+              {disputes.map((d) => {
+                const leadInfo = d.professional_leads as Record<string, unknown> | null;
+                const proInfo = d.professionals as Record<string, unknown> | null;
+                return (
+                  <div key={String(d.id)} className={`bg-white border rounded-xl p-4 ${d.status === "pending" ? "border-amber-200 bg-amber-50/30" : "border-slate-200"}`}>
+                    <div className="flex items-start justify-between mb-2">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-bold text-slate-900">Dispute #{String(d.id)}</span>
+                          <span className={`text-[0.56rem] font-bold px-1.5 py-0.5 rounded-full ${
+                            d.status === "pending" ? "bg-amber-100 text-amber-700" :
+                            d.status === "approved" ? "bg-emerald-100 text-emerald-700" :
+                            "bg-red-100 text-red-600"
+                          }`}>{String(d.status)}</span>
+                        </div>
+                        <div className="text-xs text-slate-500 mt-0.5">
+                          Filed by: {proInfo ? String(proInfo.name) : "Unknown"} · 
+                          Lead: {leadInfo ? `${String(leadInfo.user_name)} (${String(leadInfo.user_email)})` : `Lead #${String(d.lead_id)}`}
+                        </div>
+                        <div className="text-xs text-slate-600 mt-1">
+                          <strong>Reason:</strong> {String(d.reason).replace(/_/g, " ")}
+                          {d.details && <span className="text-slate-500"> — {String(d.details)}</span>}
+                        </div>
+                      </div>
+                      <span className="text-xs text-slate-400">{new Date(String(d.created_at)).toLocaleDateString("en-AU")}</span>
+                    </div>
+                    {d.status === "pending" && (
+                      <div className="flex gap-2 mt-2">
+                        <button
+                          onClick={async () => {
+                            // Waive the billing charge
+                            if (d.billing_id) {
+                              await supabase.from("advisor_billing").update({ status: "waived" }).eq("id", d.billing_id);
+                            }
+                            await supabase.from("lead_disputes").update({ status: "approved", resolved_at: new Date().toISOString() }).eq("id", d.id);
+                            alert("Dispute approved — charge waived.");
+                            loadData();
+                          }}
+                          className="text-xs font-semibold text-emerald-600 px-3 py-1.5 border border-emerald-200 rounded-lg hover:bg-emerald-50"
+                        >Approve (Waive Charge)</button>
+                        <button
+                          onClick={async () => {
+                            await supabase.from("lead_disputes").update({ status: "rejected", admin_notes: "Charge upheld", resolved_at: new Date().toISOString() }).eq("id", d.id);
+                            loadData();
+                          }}
+                          className="text-xs font-semibold text-red-500 px-3 py-1.5 border border-red-200 rounded-lg hover:bg-red-50"
+                        >Reject (Uphold Charge)</button>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
     </div>

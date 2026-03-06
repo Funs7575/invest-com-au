@@ -428,6 +428,25 @@ export default function AdvisorPortalPage() {
                       {lead.status !== "lost" && lead.status !== "converted" && (
                         <button onClick={() => updateLeadStatus(lead.id, "lost")} className="text-xs font-semibold text-red-500 hover:text-red-700 px-2 py-1 border border-red-200 rounded-lg hover:bg-red-50">Mark Lost</button>
                       )}
+                      <button
+                        onClick={async () => {
+                          const reason = prompt("Dispute reason:\n1. spam\n2. wrong_number\n3. fake_details\n4. not_genuine\n5. duplicate\n6. other\n\nEnter reason:");
+                          if (!reason) return;
+                          const validReasons = ["spam", "wrong_number", "fake_details", "not_genuine", "duplicate", "other"];
+                          const r = validReasons.includes(reason) ? reason : "other";
+                          const details = r === "other" ? prompt("Please describe the issue:") : null;
+                          const res = await fetch("/api/advisor-auth/disputes", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ leadId: lead.id, reason: r, details }),
+                          });
+                          if (res.ok) alert("Dispute submitted. We'll review within 48 hours.");
+                          else { const d = await res.json(); alert(d.error || "Failed to submit dispute."); }
+                        }}
+                        className="text-xs font-semibold text-slate-400 hover:text-slate-600 px-2 py-1 border border-slate-200 rounded-lg hover:bg-slate-50"
+                      >
+                        Dispute
+                      </button>
                       <input
                         type="text"
                         placeholder="Add a note..."

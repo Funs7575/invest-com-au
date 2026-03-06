@@ -100,8 +100,9 @@ export async function POST(request: NextRequest) {
                     </table>
                     <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
                       <a href="mailto:${user_email.trim()}?subject=Re: Your enquiry on Invest.com.au" style="display: inline-block; padding: 10px 24px; background: #0f172a; color: white; text-decoration: none; border-radius: 8px; font-size: 14px; font-weight: 600;">Reply to ${user_name.trim().split(" ")[0]}</a>
+                      <a href="https://invest-com-au.vercel.app/advisor-portal" style="display: inline-block; margin-left: 8px; padding: 10px 24px; background: #f1f5f9; color: #334155; text-decoration: none; border-radius: 8px; font-size: 14px; font-weight: 600;">View in Dashboard</a>
                     </div>
-                    <p style="margin-top: 16px; font-size: 11px; color: #94a3b8;">This lead was generated via your free listing on invest.com.au. We recommend responding within 24 hours.</p>
+                    <p style="margin-top: 16px; font-size: 11px; color: #94a3b8;">This lead was generated via your listing on invest.com.au. We recommend responding within 24 hours for the best chance of conversion.</p>
                   </div>
                 </div>
               `,
