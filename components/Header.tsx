@@ -59,9 +59,15 @@ export default function Header() {
             })}
             <Link
               href="/quiz"
-              className="px-4 py-2 bg-amber-600 text-white text-sm font-semibold rounded-lg hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:ring-offset-2 transition-colors"
+              className="px-3.5 py-2 bg-amber-600 text-white text-sm font-semibold rounded-lg hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:ring-offset-2 transition-colors"
             >
-              Quiz
+              Platform Quiz
+            </Link>
+            <Link
+              href="/find-advisor"
+              className="px-3.5 py-2 bg-violet-600 text-white text-sm font-semibold rounded-lg hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-500/40 focus:ring-offset-2 transition-colors"
+            >
+              Find Advisor
             </Link>
             {/* Pro / Account */}
             {!loading && (
@@ -141,19 +147,28 @@ export default function Header() {
               );
             })}
 
-            {/* Quiz + Pro — side by side buttons */}
-            <div className="pt-1.5 mt-1 border-t border-slate-100 flex gap-2 px-3">
-              <Link
-                href="/quiz"
-                onClick={() => setMenuOpen(false)}
-                className="flex-1 py-2.5 min-h-[44px] flex items-center justify-center text-xs font-semibold text-center text-white bg-amber-600 rounded-lg hover:bg-amber-700 transition-colors"
-              >
-                Quiz
-              </Link>
+            {/* Quiz + Advisor + Pro — action buttons */}
+            <div className="pt-1.5 mt-1 border-t border-slate-100 space-y-2 px-3">
+              <div className="flex gap-2">
+                <Link
+                  href="/quiz"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex-1 py-2.5 min-h-[44px] flex items-center justify-center text-xs font-semibold text-center text-white bg-amber-600 rounded-lg hover:bg-amber-700 transition-colors"
+                >
+                  Platform Quiz
+                </Link>
+                <Link
+                  href="/find-advisor"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex-1 py-2.5 min-h-[44px] flex items-center justify-center text-xs font-semibold text-center text-white bg-violet-600 rounded-lg hover:bg-violet-700 transition-colors"
+                >
+                  Find Advisor
+                </Link>
+              </div>
               <Link
                 href="/pro"
                 onClick={() => setMenuOpen(false)}
-                className="flex-1 py-2.5 min-h-[44px] flex items-center justify-center text-xs font-semibold text-center text-amber-700 bg-amber-50 rounded-lg hover:bg-amber-100 border border-amber-200 transition-colors"
+                className="block py-2.5 min-h-[44px] flex items-center justify-center text-xs font-semibold text-center text-amber-700 bg-amber-50 rounded-lg hover:bg-amber-100 border border-amber-200 transition-colors"
               >
                 Investor Pro ✦
               </Link>
