@@ -124,6 +124,7 @@ const CALCS: { id: CalcId; icon: string; title: string; subtitle: string; badge?
   { id: "chess", icon: "shield-check", title: "Share Safety", subtitle: "Is your platform CHESS sponsored?" },
   { id: "fee-impact", icon: "calculator", title: "Fee Impact", subtitle: "Your total annual platform fees", badge: "PRO" },
   { id: "portfolio", icon: "briefcase", title: "Portfolio Fees", subtitle: "Exact cost at every broker", href: "/portfolio-calculator" },
+  { id: "switching", icon: "arrow-right-left", title: "Switching Calculator", subtitle: "How much could you save?", href: "/switching-calculator" },
 ];
 
 const CORPORATE_TAX_RATE = 0.3;

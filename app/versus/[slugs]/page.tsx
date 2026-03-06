@@ -26,26 +26,56 @@ export const revalidate = 1800;
 
 // Top comparison pairs to pre-render at build time
 const POPULAR_PAIRS = [
+  // Tier 1: highest search volume pairs
   "stake-vs-commsec",
-  "cmc-markets-vs-moomoo",
-  "interactive-brokers-vs-saxo",
+  "cmc-markets-vs-commsec",
   "stake-vs-moomoo",
-  "selfwealth-vs-cmc-markets",
+  "selfwealth-vs-commsec",
+  "interactive-brokers-vs-commsec",
   "commsec-vs-nabtrade",
   "stake-vs-selfwealth",
   "moomoo-vs-commsec",
-  "interactive-brokers-vs-cmc-markets",
+  "cmc-markets-vs-moomoo",
   "superhero-vs-stake",
-  "cmc-markets-vs-commsec",
+  // Tier 2: popular direct competitors
+  "interactive-brokers-vs-saxo",
+  "selfwealth-vs-cmc-markets",
+  "interactive-brokers-vs-cmc-markets",
   "webull-vs-stake",
   "superhero-vs-commsec",
   "saxo-vs-cmc-markets",
   "moomoo-vs-selfwealth",
   "tiger-brokers-vs-moomoo",
   "stake-vs-interactive-brokers",
-  "commsec-vs-selfwealth",
   "nabtrade-vs-selfwealth",
   "cmc-markets-vs-selfwealth",
+  // Tier 3: new pairs for long-tail SEO
+  "moomoo-vs-tiger-brokers",
+  "stake-vs-saxo",
+  "commsec-vs-interactive-brokers",
+  "selfwealth-vs-moomoo",
+  "nabtrade-vs-stake",
+  "superhero-vs-selfwealth",
+  "ig-vs-cmc-markets",
+  "ig-vs-interactive-brokers",
+  "webull-vs-moomoo",
+  "commsec-vs-cmc-markets",
+  "tiger-brokers-vs-stake",
+  "saxo-vs-interactive-brokers",
+  "superhero-vs-moomoo",
+  "nabtrade-vs-cmc-markets",
+  "webull-vs-commsec",
+  "selfwealth-vs-interactive-brokers",
+  "ig-vs-saxo",
+  "stake-vs-ig",
+  // Crypto pairs
+  "coinspot-vs-swyftx",
+  "swyftx-vs-coinspot",
+  // Robo pairs
+  "stockspot-vs-vanguard-personal-investor",
+  "spaceship-vs-raiz",
+  "raiz-vs-stockspot",
+  "sixpark-vs-stockspot",
 ];
 
 function parseSlugs(slugs: string): string[] {
