@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+
+# Block admin and internal pages
+Disallow: /admin/
+Disallow: /admin
+Disallow: /broker-portal/
+Disallow: /advisor-portal
+Disallow: /api/
+Disallow: /auth/
+Disallow: /account/
+Disallow: /export/
+Disallow: /shortlist/
+Disallow: /unsubscribe
+
+# Sitemap
+Sitemap: https://invest-com-au.vercel.app/sitemap.xml
