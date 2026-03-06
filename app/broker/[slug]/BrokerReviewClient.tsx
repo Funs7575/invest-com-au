@@ -299,6 +299,26 @@ export default function BrokerReviewClient({
           )}
         </div>
 
+        {/* Share */}
+        <div className="flex items-center gap-2 mb-4">
+          <span className="text-[0.62rem] text-slate-400 font-medium">Share:</span>
+          <button
+            onClick={() => { if (navigator.share) { navigator.share({ title: `${b.name} Review — Invest.com.au`, url: window.location.href }); } else { navigator.clipboard.writeText(window.location.href); alert("Link copied!"); } }}
+            className="text-[0.62rem] px-2 py-1 border border-slate-200 rounded-md text-slate-500 hover:bg-slate-50 transition-colors"
+            aria-label="Share this review"
+          >
+            <Icon name="share-2" size={12} className="inline mr-1" />Copy Link
+          </button>
+          <a
+            href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`${b.name} Review — ${b.rating}/5 on Invest.com.au`)}&url=${encodeURIComponent(`https://invest-com-au.vercel.app/broker/${b.slug}`)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[0.62rem] px-2 py-1 border border-slate-200 rounded-md text-slate-500 hover:bg-slate-50 transition-colors"
+          >
+            𝕏 Post
+          </a>
+        </div>
+
         {/* Deal banner */}
         {b.deal && b.deal_text && (
           <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-3 md:p-4 mb-6 md:mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 md:gap-3">

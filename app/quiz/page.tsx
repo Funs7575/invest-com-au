@@ -1230,6 +1230,22 @@ export default function QuizPage() {
         </div>
 
         <div key={step} className="quiz-question-enter" aria-live="polite">
+          {step > 0 && (
+            <button
+              onClick={() => {
+                const newAnswers = answers.slice(0, -1);
+                setStep(step - 1);
+                // Update saved answers
+                if (typeof window !== 'undefined') {
+                  try { localStorage.setItem('quiz_progress', JSON.stringify({ step: step - 1, answers: newAnswers })); } catch {}
+                }
+              }}
+              className="flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-700 mt-2 mb-1 min-h-[44px] transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+              Back
+            </button>
+          )}
           <h1
             ref={questionHeadingRef}
             tabIndex={-1}

@@ -31,10 +31,12 @@ function StarRating({ value, onChange }: { value: number; onChange: (v: number) 
 
 export default function AdvisorProfileClient({ professional: pro, similar, reviews = [] }: { professional: Professional; similar: Professional[]; reviews?: ProfessionalReview[] }) {
   const [formState, setFormState] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [formError, setFormError] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [message, setMessage] = useState("");
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   // Review form state
   const [reviewFormOpen, setReviewFormOpen] = useState(false);
@@ -56,8 +58,17 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
 
   const typeLabel = PROFESSIONAL_TYPE_LABELS[pro.type] || "Financial Professional";
 
+  const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+  const nameError = touched.name && !name.trim() ? "Name is required" : "";
+  const emailError = touched.email && !email.trim() ? "Email is required" : touched.email && !isValidEmail(email) ? "Enter a valid email" : "";
+
   const handleSubmit = async () => {
-    if (!name.trim() || !email.trim()) return;
+    setTouched({ name: true, email: true });
+    if (!name.trim() || !email.trim() || !isValidEmail(email)) {
+      setFormError(!name.trim() ? "Please enter your name" : "Please enter a valid email");
+      return;
+    }
+    setFormError("");
     setFormState("submitting");
     try {
       const res = await fetch("/api/advisor-enquiry", {
@@ -272,9 +283,11 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
+                    onBlur={() => setTouched(p => ({ ...p, name: true }))}
                     placeholder="Full name"
-                    className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400"
+                    className={`w-full px-3 py-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-400 ${nameError ? "border-red-300 bg-red-50/50" : "border-slate-200"}`}
                   />
+                  {nameError && <p className="text-[0.62rem] text-red-500 mt-0.5">{nameError}</p>}
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">Email *</label>
@@ -282,9 +295,11 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    onBlur={() => setTouched(p => ({ ...p, email: true }))}
                     placeholder="your@email.com"
-                    className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400"
+                    className={`w-full px-3 py-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-400 ${emailError ? "border-red-300 bg-red-50/50" : "border-slate-200"}`}
                   />
+                  {emailError && <p className="text-[0.62rem] text-red-500 mt-0.5">{emailError}</p>}
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-slate-700 mb-1">Phone <span className="text-slate-400 font-normal">(optional)</span></label>
@@ -293,7 +308,7 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="04XX XXX XXX"
-                    className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400"
+                    className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-400"
                   />
                 </div>
                 <div>
@@ -303,9 +318,10 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
                     onChange={(e) => setMessage(e.target.value)}
                     placeholder="Brief description of your situation..."
                     rows={3}
-                    className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-400 resize-vertical"
+                    className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-400 resize-vertical"
                   />
                 </div>
+                {formError && <p className="text-xs text-red-600 font-medium">{formError}</p>}
 
                 <button
                   onClick={handleSubmit}
