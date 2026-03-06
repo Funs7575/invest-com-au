@@ -75,10 +75,38 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
     ...(pro.website ? { url: pro.website } : {}),
   };
 
+  // LocalBusiness schema for advisor firms — helps Google rich results
+  const localBusinessLd = pro.firm_name ? {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    name: pro.firm_name,
+    description: pro.bio ? String(pro.bio).slice(0, 200) : `${PROFESSIONAL_TYPE_LABELS[pro.type as keyof typeof PROFESSIONAL_TYPE_LABELS]} in ${pro.location_display || "Australia"}`,
+    ...(pro.location_display ? {
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: pro.location_suburb || "",
+        addressRegion: pro.location_state || "",
+        addressCountry: "AU",
+      }
+    } : {}),
+    ...(pro.website ? { url: pro.website } : {}),
+    ...(pro.phone ? { telephone: String(pro.phone) } : {}),
+    ...(pro.rating ? {
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: pro.rating,
+        reviewCount: pro.review_count || 1,
+        bestRating: 5,
+      }
+    } : {}),
+    priceRange: pro.fee_description || "Contact for pricing",
+  } : null;
+
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personLd) }} />
+      {localBusinessLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessLd) }} />}
       <AdvisorProfileClient professional={pro as Professional} similar={(similar as Professional[]) || []} reviews={(reviews as import("@/lib/types").ProfessionalReview[]) || []} />
     </>
   );

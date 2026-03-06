@@ -93,6 +93,8 @@ export default function AdminDashboard() {
   const [recentClicks, setRecentClicks] = useState<RecentClick[]>([]);
   const [revenueStats, setRevenueStats] = useState<RevenueByBroker[]>([]);
   const [dailyClicks, setDailyClicks] = useState<DailyClickData[]>([]);
+  const [topPages, setTopPages] = useState<{ page: string; count: number }[]>([]);
+  const [advisorFunnel, setAdvisorFunnel] = useState<{ views: number; leads: number }>({ views: 0, leads: 0 });
   const [activity, setActivity] = useState<ActivityItem[]>([]);
   const [dataWarnings, setDataWarnings] = useState<DataWarning[]>([]);
   const [loading, setLoading] = useState(true);
@@ -111,6 +113,7 @@ export default function AdminDashboard() {
         marketplaceCampaigns, marketplaceSpend,
         proSubs,
         advisorsCount, advisorLeadsCount,
+        topPagesRaw, advisorProfileViews30d, advisorLeads30d,
       ] = await Promise.all([
         supabase.from("brokers").select("id", { count: "exact", head: true }),
         supabase.from("articles").select("id", { count: "exact", head: true }),
@@ -160,6 +163,22 @@ export default function AdminDashboard() {
         supabase.from("professionals").select("id", { count: "exact", head: true }).eq("status", "active"),
         // Advisor leads
         supabase.from("professional_leads").select("id", { count: "exact", head: true }),
+        // Top pages by affiliate clicks (last 30 days)
+        supabase
+          .from("affiliate_clicks")
+          .select("page")
+          .gte("clicked_at", new Date(Date.now() - 30 * 86400000).toISOString()),
+        // Advisor funnel: profile views (last 30 days)
+        supabase
+          .from("analytics_events")
+          .select("id", { count: "exact", head: true })
+          .eq("event_type", "advisor_profile_view")
+          .gte("created_at", new Date(Date.now() - 30 * 86400000).toISOString()),
+        // Advisor leads last 30 days
+        supabase
+          .from("professional_leads")
+          .select("id", { count: "exact", head: true })
+          .gte("created_at", new Date(Date.now() - 30 * 86400000).toISOString()),
       ]);
 
       // Aggregate clicks by date for chart
@@ -179,6 +198,26 @@ export default function AdminDashboard() {
         .sort(([a], [b]) => a.localeCompare(b))
         .map(([date, count]) => ({ date, count }));
       setDailyClicks(dailyData);
+
+      // Top pages by affiliate clicks
+      const pageCountMap = new Map<string, number>();
+      if (topPagesRaw.data) {
+        for (const r of topPagesRaw.data) {
+          const p = String(r.page || "unknown");
+          pageCountMap.set(p, (pageCountMap.get(p) || 0) + 1);
+        }
+      }
+      const sortedPages = Array.from(pageCountMap.entries())
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10)
+        .map(([page, count]) => ({ page, count }));
+      setTopPages(sortedPages);
+
+      // Advisor funnel
+      setAdvisorFunnel({
+        views: advisorProfileViews30d.count || 0,
+        leads: advisorLeads30d.count || 0,
+      });
 
       // Calculate marketplace revenue
       const mktRevenue = (marketplaceSpend.data || []).reduce(
@@ -1036,6 +1075,48 @@ export default function AdminDashboard() {
         </div>
       </div>
       <PageWalkthrough steps={ADMIN_DASHBOARD_WALKTHROUGH} storageKey="wt_admin_dashboard" />
+
+      {/* Top Pages + Advisor Funnel */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+        <div className="bg-white border border-slate-200 rounded-lg p-6">
+          <h2 className="text-lg font-semibold text-slate-900 mb-4">Top Pages (30d Clicks)</h2>
+          {topPages.length === 0 ? (
+            <p className="text-sm text-slate-500">No click data yet.</p>
+          ) : (
+            <div className="space-y-1.5">
+              {topPages.map((p, i) => (
+                <div key={i} className="flex items-center justify-between text-sm py-1.5 px-2 rounded hover:bg-slate-50">
+                  <span className="text-slate-700 truncate text-xs flex-1 min-w-0 mr-2">{p.page}</span>
+                  <span className="text-xs font-bold text-slate-900 shrink-0">{p.count}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        <div className="bg-white border border-slate-200 rounded-lg p-6">
+          <h2 className="text-lg font-semibold text-slate-900 mb-4">Advisor Funnel (30d)</h2>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-slate-600">Profile Views</span>
+              <span className="text-sm font-bold text-slate-900">{advisorFunnel.views}</span>
+            </div>
+            <div className="w-full bg-slate-100 rounded-full h-2">
+              <div className="bg-blue-500 h-2 rounded-full" style={{ width: "100%" }} />
+            </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-slate-600">Enquiries Submitted</span>
+              <span className="text-sm font-bold text-slate-900">{advisorFunnel.leads}</span>
+            </div>
+            <div className="w-full bg-slate-100 rounded-full h-2">
+              <div className="bg-emerald-500 h-2 rounded-full" style={{ width: advisorFunnel.views > 0 ? `${Math.max(5, (advisorFunnel.leads / advisorFunnel.views) * 100)}%` : "0%" }} />
+            </div>
+            <div className="pt-2 border-t border-slate-100 text-xs text-slate-500">
+              Conversion: <span className="font-bold text-slate-700">{advisorFunnel.views > 0 ? `${((advisorFunnel.leads / advisorFunnel.views) * 100).toFixed(1)}%` : "N/A"}</span>
+            </div>
+            <Link href="/admin/advisors" className="block text-xs text-amber-600 hover:text-amber-700 font-semibold">Manage Advisors →</Link>
+          </div>
+        </div>
+      </div>
     </AdminShell>
   );
 }

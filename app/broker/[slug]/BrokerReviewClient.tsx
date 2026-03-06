@@ -30,6 +30,7 @@ import OnThisPage from "@/components/OnThisPage";
 import CollapsibleSection from "@/components/CollapsibleSection";
 import AdSlot from "@/components/AdSlot";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
+import LeadMagnet from "@/components/LeadMagnet";
 
 function FeeVerdict({ value, thresholds }: { value: number | undefined; thresholds: [number, number] }) {
   if (value == null) return <span className="px-2 py-0.5 bg-slate-100 text-slate-500 text-xs font-semibold rounded-full">N/A</span>;
@@ -174,6 +175,7 @@ export default function BrokerReviewClient({
   // Build TOC items dynamically based on available content
   const tocItems = [
     { id: "best-for", label: "Best For" },
+    { id: "verdict", label: "Verdict" },
     { id: "fees", label: "Fee Audit" },
     { id: "cost-example", label: "Trade Costs" },
     { id: "safety", label: "Safety Check" },
@@ -341,7 +343,94 @@ export default function BrokerReviewClient({
           </ul>
         </div>
 
-        {/* Fee Audit */}
+        {/* Editorial Verdict — Bottom Line */}
+        <div id="verdict" className="bg-slate-900 text-white rounded-xl p-4 md:p-6 mb-6 md:mb-8 scroll-mt-20">
+          <div className="flex items-center gap-2 mb-2">
+            <Icon name="award" size={20} className="text-amber-400 shrink-0" />
+            <h2 className="text-base md:text-lg font-extrabold">The Bottom Line</h2>
+          </div>
+          <p className="text-sm md:text-base text-slate-300 leading-relaxed mb-3">
+            {b.rating && b.rating >= 4.5
+              ? `${b.name} is one of the strongest platforms in its category. `
+              : b.rating && b.rating >= 3.5
+              ? `${b.name} is a solid choice for the right investor. `
+              : `${b.name} has some clear strengths but also notable limitations. `
+            }
+            {bestFor[0] ? `It's particularly well-suited for ${bestFor[0].toLowerCase()}. ` : ""}
+            {(b.asx_fee_value ?? 999) === 0
+              ? "The $0 brokerage on ASX trades is a standout feature that's hard to beat. "
+              : (b.asx_fee_value ?? 999) <= 5
+              ? `At ${b.asx_fee}, it's competitively priced for ASX trading. `
+              : b.platform_type === "crypto_exchange"
+              ? "As an AUSTRAC-registered exchange, it meets Australian regulatory requirements. "
+              : b.platform_type === "robo_advisor"
+              ? "The automated approach suits investors who prefer a hands-off strategy. "
+              : ""
+            }
+            {b.chess_sponsored ? "CHESS sponsorship provides an important safety layer. " : ""}
+          </p>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-1.5">
+              <span className="text-amber-400 text-lg">{renderStars(b.rating || 0)}</span>
+              <span className="text-xl font-extrabold">{b.rating}/5</span>
+            </div>
+            <a
+              href={getAffiliateLink(b)}
+              target="_blank"
+              rel={AFFILIATE_REL}
+              onClick={() => trackClick(b.slug, b.name, 'review-verdict', `/broker/${b.slug}`, 'review')}
+              className="ml-auto px-4 py-2 bg-amber-500 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors"
+            >
+              {getBenefitCta(b, 'review')}
+            </a>
+          </div>
+        </div>
+
+        {/* Who Is This NOT For? */}
+        {(() => {
+          const notFor: string[] = [];
+          if ((b.asx_fee_value ?? 0) > 10) notFor.push("Cost-conscious traders — fees above $10 per trade are above market average");
+          if (!b.chess_sponsored && (b.platform_type === "share_broker")) notFor.push("Safety-first investors who require CHESS sponsorship");
+          if (!b.smsf_support && b.platform_type === "share_broker") notFor.push("SMSF trustees — no SMSF account support");
+          if (b.platform_type === "crypto_exchange") notFor.push("Traditional share investors — this is a crypto-only platform");
+          if (b.platform_type === "robo_advisor") notFor.push("Active traders who want to pick individual stocks");
+          if (b.platform_type === "research_tool") notFor.push("Beginners — this is a research tool, not a trading platform");
+          if (b.fx_rate != null && b.fx_rate > 0.7) notFor.push("International investors — FX fees above 0.7% are relatively high");
+          if (b.inactivity_fee && b.inactivity_fee !== "None" && b.inactivity_fee !== "$0") notFor.push(`Infrequent traders — inactivity fee of ${b.inactivity_fee} applies`);
+          if (notFor.length === 0) return null;
+          return (
+            <div className="bg-red-50 border border-red-200 rounded-xl p-4 md:p-6 mb-6 md:mb-8">
+              <div className="flex items-center gap-2 mb-3">
+                <Icon name="alert-triangle" size={20} className="text-red-600 shrink-0" />
+                <h2 className="text-base md:text-lg font-extrabold text-slate-900">Who Is {b.name} NOT For?</h2>
+              </div>
+              <ul className="space-y-2">
+                {notFor.map((item, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
+                    <span className="text-red-500 font-bold mt-0.5">✗</span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          );
+        })()}
+
+        {/* Key Stats — Quick Reference */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 mb-6 md:mb-8">
+          {[
+            { label: "ASX Fee", value: b.asx_fee || "N/A", sub: b.asx_fee_value != null && b.asx_fee_value === 0 ? "Free" : undefined },
+            { label: "US Fee", value: b.us_fee || "N/A", sub: b.platform_type === "crypto_exchange" ? "N/A" : undefined },
+            { label: "FX Rate", value: b.fx_rate != null ? `${b.fx_rate}%` : "N/A" },
+            { label: "Safety", value: b.chess_sponsored ? "CHESS" : b.platform_type === "crypto_exchange" ? "AUSTRAC" : "Custodian" },
+          ].map((stat, i) => (
+            <div key={i} className="bg-slate-50 border border-slate-200 rounded-lg p-3 text-center">
+              <div className="text-[0.62rem] md:text-xs font-semibold text-slate-500 uppercase tracking-wide">{stat.label}</div>
+              <div className="text-sm md:text-base font-extrabold text-slate-900 mt-0.5">{stat.value}</div>
+              {stat.sub && <div className="text-[0.56rem] md:text-[0.62rem] text-emerald-600 font-semibold">{stat.sub}</div>}
+            </div>
+          ))}
+        </div>
         <h2 id="fees" className="text-xl md:text-2xl font-extrabold mb-2 scroll-mt-20">Fee Audit</h2>
         <p className="text-slate-600 mb-4 text-sm">We&apos;ve audited {b.name}&apos;s fee structure so you don&apos;t have to read the PDS.</p>
         <ScrollReveal animation="fee-row-stagger" className="bg-white border border-slate-200 rounded-xl overflow-hidden mb-8">
@@ -925,8 +1014,14 @@ export default function BrokerReviewClient({
               Compare All →
             </Link>
           </div>
-          <CompactDisclaimerLine />
         </div>
+
+        {/* Email Capture */}
+        <div className="mt-6 md:mt-8">
+          <LeadMagnet />
+        </div>
+
+        <CompactDisclaimerLine />
       </div>
 
       <StickyCTABar broker={b} detail={stickyDetail} context="review" />

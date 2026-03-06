@@ -28,6 +28,7 @@ import ShortlistButton from "@/components/ShortlistButton";
 import BrokerLogo from "@/components/BrokerLogo";
 import AdSlot from "@/components/AdSlot";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
+import LeadMagnet from "@/components/LeadMagnet";
 
 type FilterType = 'all' | 'shares' | 'beginner' | 'chess' | 'free' | 'us' | 'smsf' | 'low-fx' | 'crypto' | 'robo' | 'research' | 'super' | 'property' | 'cfd' | 'has-deal';
 type SortCol = 'name' | 'asx_fee_value' | 'us_fee_value' | 'fx_rate' | 'rating';
@@ -764,6 +765,11 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             />
           </div>
         )}
+
+        {/* Email Capture */}
+        <div className="mt-6 md:mt-8">
+          <LeadMagnet />
+        </div>
 
         {/* Bottom conversion — compact on mobile */}
         <div className="mt-5 md:mt-8 grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-4">

@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import CalculatorsClient from "./CalculatorsClient";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
+import LeadMagnet from "@/components/LeadMagnet";
 
 export const revalidate = 1800;
 
@@ -96,6 +97,9 @@ export default async function CalculatorsPage() {
       </Suspense>
       <div className="container-custom max-w-4xl pb-6 md:pb-12">
         <AdvisorPrompt context="tax" />
+        <div className="mt-6">
+          <LeadMagnet />
+        </div>
       </div>
     </>
   );
