@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { isRateLimited } from "@/lib/rate-limit";
 
 // GET available slots for an advisor
 export async function GET(request: NextRequest) {
@@ -54,6 +55,11 @@ export async function GET(request: NextRequest) {
 // POST create a booking
 export async function POST(request: NextRequest) {
   try {
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
+    if (await isRateLimited(`booking:${ip}`, 5, 60)) {
+      return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+    }
+
     const body = await request.json();
     const { advisorSlug, investorName, investorEmail, investorPhone, bookingDate, bookingTime, topic } = body;
 

@@ -1,12 +1,10 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextRequest, NextResponse } from 'next/server';
-import { createRateLimiter } from '@/lib/rate-limiter';
+import { isRateLimited } from '@/lib/rate-limit';
 import { isValidEmail } from '@/lib/validate-email';
 import { logger } from '@/lib/logger';
 
 const log = logger('email-capture');
-
-const isRateLimited = createRateLimiter(300_000, 5); // 5 emails per 5 min per IP
 
 interface BrokerRow {
   name: string;
@@ -201,7 +199,7 @@ export async function POST(request: NextRequest) {
   const forwarded = request.headers.get('x-forwarded-for');
   const ip = forwarded ? forwarded.split(',')[0].trim() : 'unknown';
 
-  if (isRateLimited(ip)) {
+  if (await isRateLimited(`email_capture:${ip}`, 5, 5)) {
     return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
   }
 

@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { randomBytes } from "crypto";
+import { isRateLimited } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
   try {
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
+    if (await isRateLimited(`fee_alert:${ip}`, 5, 60)) {
+      return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+    }
+
     const { email, brokerSlugs, alertType, frequency } = await request.json();
     if (!email) return NextResponse.json({ error: "Email required" }, { status: 400 });
 

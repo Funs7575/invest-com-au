@@ -22,7 +22,7 @@ const inter = localFont({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} — Australia's Independent Platform Comparison`,
+    default: `${SITE_NAME} — Compare Platforms & Find Advisors`,
     template: `%s — ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_AU",
     siteName: SITE_NAME,
-    title: `${SITE_NAME} — Australia's Independent Platform Comparison`,
+    title: `${SITE_NAME} — Compare Platforms & Find Advisors`,
     description: SITE_DESCRIPTION,
     url: SITE_URL,
     images: [
@@ -44,7 +44,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE_NAME} — Australia's Independent Platform Comparison`,
+    title: `${SITE_NAME} — Compare Platforms & Find Advisors`,
     description: SITE_DESCRIPTION,
   },
   alternates: {
