@@ -6,7 +6,8 @@
 
 /** Full advertiser disclosure — used in footer, dedicated disclosure sections */
 export const ADVERTISER_DISCLOSURE =
-  "Invest.com.au may receive compensation from partners featured on this site. " +
+  "Invest.com.au may receive compensation from partners featured on this site, including " +
+  "affiliate commissions from platforms and per-enquiry fees from listed advisors. " +
   "This compensation may influence which products we write about and their placement, " +
   'including whether they appear as "Promoted." However, our editorial ratings and reviews ' +
   "are determined independently through our research methodology and are never influenced " +

@@ -513,10 +513,10 @@ export default async function HomePage() {
           <div className="container-custom">
             <div className="flex items-start justify-between gap-2 mb-2 md:mb-8">
               <div>
-                <h2 className="text-lg md:text-3xl font-bold">Find the Best Platform for You</h2>
+                <h2 className="text-lg md:text-3xl font-bold">Find Your Best Match</h2>
                 <p className="text-[0.69rem] md:text-base text-slate-500 mt-0.5 md:mt-2">
-                  <span className="hidden md:inline">Our category guides rank platforms for your specific situation.</span>
-                  <span className="md:hidden">Category guides for your situation</span>
+                  <span className="hidden md:inline">Category guides rank platforms for your situation, plus tools to find the right advisor.</span>
+                  <span className="md:hidden">Platforms, advisors &amp; tools for you</span>
                 </p>
               </div>
               <Link href="/best" className="md:hidden text-[0.69rem] font-semibold text-slate-500 hover:text-slate-900 shrink-0 min-h-[44px] inline-flex items-center px-1">
@@ -701,6 +701,8 @@ export default async function HomePage() {
                 { label: "Financial Planners", href: "/advisors?type=financial_planner", icon: "trending-up" },
                 { label: "Property Advisors", href: "/advisors?type=property_advisor", icon: "home" },
                 { label: "Tax Agents", href: "/advisors?type=tax_agent", icon: "calculator" },
+                { label: "Mortgage Brokers", href: "/advisors?type=mortgage_broker", icon: "landmark" },
+                { label: "Estate Planners", href: "/advisors?type=estate_planner", icon: "file-text" },
               ].map((cat) => (
                 <Link
                   key={cat.label}

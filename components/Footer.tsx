@@ -79,34 +79,35 @@ export default function Footer() {
             <div className="col-span-2 sm:col-span-3 md:col-span-1">
               <h3 className="text-white font-bold text-sm md:text-base mb-1 md:mb-4">Invest.com.au</h3>
               <p className="text-xs md:text-sm leading-relaxed">
-                <span className="hidden md:inline">Australia&apos;s independent investing platform comparison. Shares, crypto, super, property, robo-advisors &amp; more.</span>
-                <span className="md:hidden text-slate-400">Independent investing platform comparison.</span>
+                <span className="hidden md:inline">Australia&apos;s independent investing hub. Compare platforms, find verified advisors — shares, crypto, super &amp; more.</span>
+                <span className="md:hidden text-slate-400">Compare platforms &amp; find advisors.</span>
               </p>
             </div>
 
             <div>
-              <h4 className="text-white font-semibold mb-2 md:mb-4 text-xs md:text-sm">Compare</h4>
+              <h4 className="text-white font-semibold mb-2 md:mb-4 text-xs md:text-sm">Platforms</h4>
               <ul className="space-y-1 md:space-y-2 text-xs md:text-sm">
-                <li><Link href="/compare" className="hover:text-white transition-colors inline-block py-0.5">All Platforms</Link></li>
+                <li><Link href="/compare" className="hover:text-white transition-colors inline-block py-0.5">Compare All</Link></li>
                 <li><Link href="/compare?category=shares" className="hover:text-white transition-colors inline-block py-0.5">Share Trading</Link></li>
                 <li><Link href="/compare?category=crypto" className="hover:text-white transition-colors inline-block py-0.5">Crypto Exchanges</Link></li>
                 <li><Link href="/best/super-funds" className="hover:text-white transition-colors inline-block py-0.5">Super Funds</Link></li>
                 <li><Link href="/best/robo-advisors" className="hover:text-white transition-colors inline-block py-0.5">Robo-Advisors</Link></li>
                 <li><Link href="/versus" className="hover:text-white transition-colors inline-block py-0.5">Head-to-Head</Link></li>
                 <li><Link href="/deals" className="hover:text-white transition-colors inline-block py-0.5">Deals</Link></li>
-                <li><Link href="/advisors" className="hover:text-white transition-colors inline-block py-0.5">Find an Advisor</Link></li>
+                <li><Link href="/fee-alerts" className="hover:text-white transition-colors inline-block py-0.5">Fee Alerts</Link></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="text-white font-semibold mb-2 md:mb-4 text-xs md:text-sm">Learn</h4>
+              <h4 className="text-white font-semibold mb-2 md:mb-4 text-xs md:text-sm">Advisors &amp; Tools</h4>
               <ul className="space-y-1 md:space-y-2 text-xs md:text-sm">
-                <li><Link href="/articles" className="hover:text-white transition-colors inline-block py-0.5">Guides</Link></li>
-                <li><Link href="/glossary" className="hover:text-white transition-colors inline-block py-0.5">Glossary</Link></li>
-                <li><Link href="/calculators" className="hover:text-white transition-colors inline-block py-0.5">Calculators</Link></li>
-                <li><Link href="/scenarios" className="hover:text-white transition-colors inline-block py-0.5">Best For...</Link></li>
                 <li><Link href="/find-advisor" className="hover:text-white transition-colors inline-block py-0.5">Find an Advisor</Link></li>
-                <li><Link href="/pro" className="hover:text-white transition-colors text-amber-400 inline-block py-0.5">Pro ✦</Link></li>
+                <li><Link href="/advisors" className="hover:text-white transition-colors inline-block py-0.5">Advisor Directory</Link></li>
+                <li><Link href="/advisor-apply" className="hover:text-white transition-colors inline-block py-0.5">Get Listed</Link></li>
+                <li><Link href="/portfolio-calculator" className="hover:text-white transition-colors inline-block py-0.5">Portfolio Calculator</Link></li>
+                <li><Link href="/calculators" className="hover:text-white transition-colors inline-block py-0.5">All Calculators</Link></li>
+                <li><Link href="/articles" className="hover:text-white transition-colors inline-block py-0.5">Guides</Link></li>
+                <li><Link href="/quiz" className="hover:text-white transition-colors inline-block py-0.5">Platform Quiz</Link></li>
               </ul>
             </div>
 
@@ -122,6 +123,7 @@ export default function Footer() {
                 <li><Link href="/complaints" className="hover:text-white transition-colors inline-block py-0.5">Complaints & AFCA</Link></li>
                 <li><Link href="/contact" className="hover:text-white transition-colors inline-block py-0.5">Contact</Link></li>
                 <li><Link href="/advertise" className="hover:text-white transition-colors inline-block py-0.5">Advertise</Link></li>
+                <li><Link href="/advisor-portal" className="hover:text-white transition-colors inline-block py-0.5">Advisor Portal</Link></li>
                 <li><Link href="/broker-portal/login" className="hover:text-white transition-colors inline-block py-0.5">Partner Login</Link></li>
               </ul>
             </div>
