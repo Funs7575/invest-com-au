@@ -420,23 +420,23 @@ export default function AdminAdvisorsPage() {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {pendingReviews.map((r) => (
-                <tr key={r.id as number} className={`hover:bg-slate-50 ${r.status === "pending" ? "bg-amber-50/30" : ""}`}>
+                <tr key={String(r.id)} className={`hover:bg-slate-50 ${r.status === "pending" ? "bg-amber-50/30" : ""}`}>
                   <td className="px-4 py-3 text-xs text-slate-500 whitespace-nowrap">
-                    {new Date(r.created_at as string).toLocaleDateString("en-AU", { day: "numeric", month: "short" })}
+                    {new Date(String(r.created_at)).toLocaleDateString("en-AU", { day: "numeric", month: "short" })}
                   </td>
                   <td className="px-4 py-3">
-                    <div className="font-semibold text-xs">{r.reviewer_name as string}</div>
-                    <div className="text-[0.62rem] text-slate-400">{r.reviewer_email as string}</div>
+                    <div className="font-semibold text-xs">{String(r.reviewer_name)}</div>
+                    <div className="text-[0.62rem] text-slate-400">{String(r.reviewer_email)}</div>
                   </td>
                   <td className="px-4 py-3 text-xs text-slate-600">
-                    {(r.professionals as Record<string, unknown>)?.name as string || `ID: ${r.professional_id}`}
+                    {String((r.professionals as Record<string, unknown>)?.name || `ID: ${r.professional_id}`)}
                   </td>
                   <td className="px-4 py-3">
-                    <span className="text-amber-400 text-xs">{"★".repeat(r.rating as number)}</span>
+                    <span className="text-amber-400 text-xs">{"★".repeat(Number(r.rating) || 0)}</span>
                   </td>
                   <td className="px-4 py-3 max-w-[250px]">
-                    {r.title && <div className="text-xs font-semibold text-slate-800 truncate">{r.title as string}</div>}
-                    <div className="text-xs text-slate-500 truncate">{r.body as string}</div>
+                    {r.title && <div className="text-xs font-semibold text-slate-800 truncate">{String(r.title)}</div>}
+                    <div className="text-xs text-slate-500 truncate">{String(r.body || "")}</div>
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex gap-2">
@@ -473,7 +473,7 @@ export default function AdminAdvisorsPage() {
                         r.status === "rejected" ? "bg-red-100 text-red-600" :
                         "bg-amber-100 text-amber-700"
                       }`}>
-                        {r.status as string}
+                        {String(r.status)}
                       </span>
                     </div>
                   </td>
