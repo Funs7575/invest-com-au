@@ -33,7 +33,7 @@ type ViewDay = { view_date: string; view_count: number };
 type Review = { id: number; reviewer_name: string; rating: number; title?: string; body?: string; created_at: string };
 
 export default function AdvisorPortalPage() {
-  const [view, setView] = useState<"login" | "dashboard" | "leads" | "profile" | "billing">("login");
+  const [view, setView] = useState<"login" | "dashboard" | "leads" | "profile" | "billing" | "articles">("login");
   const [advisor, setAdvisor] = useState<Advisor | null>(null);
   const [leads, setLeads] = useState<Lead[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
@@ -243,6 +243,7 @@ export default function AdvisorPortalPage() {
   const navItems = [
     { key: "dashboard", label: "Dashboard", icon: "layout-dashboard" },
     { key: "leads", label: "Leads", icon: "inbox" },
+    { key: "articles", label: "Articles", icon: "file-text" },
     { key: "profile", label: "Profile", icon: "user" },
     { key: "billing", label: "Billing", icon: "credit-card" },
   ];
@@ -632,7 +633,238 @@ export default function AdvisorPortalPage() {
             )}
           </>
         )}
+
+        {/* ═══ ARTICLES ═══ */}
+        {view === "articles" && <AdvisorArticlesSection advisorId={advisor?.id} />}
       </div>
+    </div>
+  );
+}
+
+// ═══ ADVISOR ARTICLES SECTION ═══
+type ArticleItem = {
+  id: number; title: string; slug: string; status: string; category: string;
+  created_at: string; submitted_at: string | null; published_at: string | null;
+  view_count: number; click_count: number; admin_notes: string | null;
+  pricing_tier: string; payment_status: string;
+};
+
+const CATEGORIES = ["Investing", "Super & SMSF", "Tax & Strategy", "Property", "Retirement", "Insurance", "Estate Planning", "General"];
+const PRICING_TIERS = [
+  { key: "standard", label: "Standard — $299", desc: "Article with author byline + profile link", price: "$299" },
+  { key: "featured", label: "Featured — $499", desc: "Above + homepage Expert Insights + newsletter", price: "$499" },
+  { key: "sponsored", label: "Sponsored — $799", desc: "Above + pinned to top + social media promo", price: "$799" },
+];
+
+const STATUS_COLORS: Record<string, string> = {
+  draft: "bg-slate-100 text-slate-600",
+  submitted: "bg-blue-100 text-blue-700",
+  in_review: "bg-amber-100 text-amber-700",
+  revision_requested: "bg-orange-100 text-orange-700",
+  approved: "bg-emerald-100 text-emerald-700",
+  published: "bg-green-100 text-green-800",
+  rejected: "bg-red-100 text-red-700",
+};
+
+function AdvisorArticlesSection({ advisorId }: { advisorId?: number }) {
+  const [articles, setArticles] = useState<ArticleItem[]>([]);
+  const [mode, setMode] = useState<"list" | "write">("list");
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  // Editor state
+  const [editId, setEditId] = useState<number | null>(null);
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+  const [excerpt, setExcerpt] = useState("");
+  const [category, setCategory] = useState("General");
+  const [tier, setTier] = useState("standard");
+
+  useEffect(() => {
+    if (!advisorId) return;
+    fetch(`/api/advisor-articles?mode=advisor&professional_id=${advisorId}`)
+      .then(r => r.json())
+      .then(setArticles)
+      .finally(() => setLoading(false));
+  }, [advisorId, mode]);
+
+  const resetForm = () => { setEditId(null); setTitle(""); setContent(""); setExcerpt(""); setCategory("General"); setTier("standard"); };
+
+  const handleSave = async (action: "save" | "submit") => {
+    if (!title.trim() || !content.trim()) return;
+    setSaving(true);
+    try {
+      if (editId) {
+        await fetch("/api/advisor-articles", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: editId, title, content, excerpt, category, pricing_tier: tier, action: action === "submit" ? "submit" : undefined }),
+        });
+      } else {
+        await fetch("/api/advisor-articles", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ professional_id: advisorId, title, content, excerpt, category, pricing_tier: tier, action: action === "submit" ? "submit" : undefined }),
+        });
+      }
+      resetForm();
+      setMode("list");
+      // Refresh
+      const res = await fetch(`/api/advisor-articles?mode=advisor&professional_id=${advisorId}`);
+      setArticles(await res.json());
+    } finally { setSaving(false); }
+  };
+
+  if (loading) return <div className="animate-pulse space-y-3"><div className="h-8 w-48 bg-slate-200 rounded" /><div className="h-24 bg-slate-100 rounded-xl" /></div>;
+
+  // ── EDITOR VIEW ──
+  if (mode === "write") {
+    return (
+      <div>
+        <button onClick={() => { resetForm(); setMode("list"); }} className="flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-700 mb-4">
+          <Icon name="arrow-left" size={14} /> Back to articles
+        </button>
+
+        <h2 className="text-lg font-bold text-slate-900 mb-4">{editId ? "Edit Article" : "Write New Article"}</h2>
+
+        <div className="space-y-4">
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">Title *</label>
+            <input value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. 5 SMSF Mistakes I See Every Tax Season" className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30" />
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">Category</label>
+              <select value={category} onChange={e => setCategory(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg">
+                {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">Publication Tier</label>
+              <select value={tier} onChange={e => setTier(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg">
+                {PRICING_TIERS.map(t => <option key={t.key} value={t.key}>{t.label}</option>)}
+              </select>
+            </div>
+          </div>
+
+          {/* Tier explanation */}
+          <div className="bg-violet-50 border border-violet-200 rounded-lg p-3">
+            <p className="text-xs font-bold text-violet-700 mb-1">{PRICING_TIERS.find(t => t.key === tier)?.label}</p>
+            <p className="text-xs text-violet-600">{PRICING_TIERS.find(t => t.key === tier)?.desc}</p>
+            <p className="text-[0.6rem] text-violet-400 mt-1">Payment is collected after admin approval, before publication.</p>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">Excerpt <span className="font-normal text-slate-400">(1-2 sentences for preview cards)</span></label>
+            <textarea value={excerpt} onChange={e => setExcerpt(e.target.value)} placeholder="Brief summary of what the article covers..." rows={2} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 resize-vertical" />
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">Content * <span className="font-normal text-slate-400">(Markdown supported)</span></label>
+            <textarea value={content} onChange={e => setContent(e.target.value)} placeholder="Write your article here. Use **bold**, *italic*, ## headings, and - bullet points." rows={16} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 resize-vertical font-mono" />
+            <p className="text-[0.58rem] text-slate-400 mt-1">{content.split(/\s+/).filter(Boolean).length} words</p>
+          </div>
+
+          <div className="bg-slate-50 border border-slate-200 rounded-lg p-3">
+            <h4 className="text-xs font-bold text-slate-700 mb-1">Editorial Guidelines</h4>
+            <ul className="text-[0.62rem] text-slate-500 space-y-0.5">
+              <li>• Minimum 500 words, recommended 800-1500</li>
+              <li>• Must be original content (not published elsewhere)</li>
+              <li>• Informational and educational — not a sales pitch for your services</li>
+              <li>• Include practical takeaways readers can act on</li>
+              <li>• No specific product recommendations (general advice only)</li>
+            </ul>
+          </div>
+
+          <div className="flex gap-2">
+            <button onClick={() => handleSave("save")} disabled={saving || !title.trim() || !content.trim()} className="px-4 py-2.5 border border-slate-300 text-slate-700 text-sm font-semibold rounded-lg hover:bg-slate-50 disabled:opacity-40 transition-colors">
+              {saving ? "Saving..." : "Save Draft"}
+            </button>
+            <button onClick={() => handleSave("submit")} disabled={saving || !title.trim() || !content.trim() || content.split(/\s+/).length < 100} className="px-4 py-2.5 bg-violet-600 text-white text-sm font-bold rounded-lg hover:bg-violet-700 disabled:opacity-40 transition-colors">
+              {saving ? "Submitting..." : "Submit for Review"}
+            </button>
+            {content.split(/\s+/).length < 100 && content.length > 0 && (
+              <span className="self-center text-[0.62rem] text-amber-600">Min 100 words to submit ({content.split(/\s+/).filter(Boolean).length}/100)</span>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── LIST VIEW ──
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <h2 className="text-lg font-bold text-slate-900">Your Articles</h2>
+          <p className="text-xs text-slate-500">Write expert content — get published on Invest.com.au with your profile linked.</p>
+        </div>
+        <button onClick={() => { resetForm(); setMode("write"); }} className="px-4 py-2 bg-violet-600 text-white text-sm font-bold rounded-lg hover:bg-violet-700 transition-colors flex items-center gap-1.5">
+          <Icon name="plus" size={16} /> Write Article
+        </button>
+      </div>
+
+      {/* Pricing overview */}
+      <div className="grid grid-cols-3 gap-2 mb-5">
+        {PRICING_TIERS.map(t => (
+          <div key={t.key} className="bg-white border border-slate-200 rounded-lg p-3 text-center">
+            <div className="text-sm font-extrabold text-slate-900">{t.price}</div>
+            <div className="text-[0.58rem] text-slate-500 capitalize">{t.key}</div>
+            <div className="text-[0.5rem] text-slate-400 mt-0.5">{t.desc}</div>
+          </div>
+        ))}
+      </div>
+
+      {articles.length > 0 ? (
+        <div className="space-y-2">
+          {articles.map(a => (
+            <div key={a.id} className="bg-white border border-slate-200 rounded-xl p-4 flex items-start gap-3">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <h3 className="text-sm font-bold text-slate-900 truncate">{a.title}</h3>
+                  <span className={`shrink-0 text-[0.56rem] font-bold px-2 py-0.5 rounded-full ${STATUS_COLORS[a.status] || "bg-slate-100 text-slate-600"}`}>
+                    {a.status.replace("_", " ")}
+                  </span>
+                </div>
+                <div className="flex items-center gap-3 text-[0.62rem] text-slate-400">
+                  <span>{a.category}</span>
+                  <span className="capitalize">{a.pricing_tier} tier</span>
+                  <span>{a.payment_status}</span>
+                  {a.published_at && <span>{new Date(a.published_at).toLocaleDateString("en-AU")}</span>}
+                </div>
+                {a.admin_notes && a.status === "revision_requested" && (
+                  <div className="mt-2 bg-orange-50 border border-orange-200 rounded-lg px-3 py-2 text-xs text-orange-700">
+                    <strong>Admin feedback:</strong> {a.admin_notes}
+                  </div>
+                )}
+                {a.status === "published" && (
+                  <div className="flex items-center gap-3 mt-1.5 text-[0.62rem] text-slate-500">
+                    <span>{a.view_count} views</span>
+                    <span>{a.click_count} profile clicks</span>
+                  </div>
+                )}
+              </div>
+              <div className="flex gap-1.5 shrink-0">
+                {(a.status === "draft" || a.status === "revision_requested") && (
+                  <button onClick={() => { /* load article for editing */ setEditId(a.id); setTitle(a.title); setMode("write"); }} className="text-xs px-2.5 py-1.5 border border-slate-200 rounded-lg hover:bg-slate-50">Edit</button>
+                )}
+                {a.status === "published" && a.slug && (
+                  <Link href={`/expert/${a.slug}`} target="_blank" className="text-xs px-2.5 py-1.5 border border-slate-200 rounded-lg hover:bg-slate-50">View</Link>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="bg-white border border-slate-200 rounded-xl p-8 text-center">
+          <Icon name="file-text" size={32} className="text-slate-300 mx-auto mb-3" />
+          <h3 className="text-sm font-bold text-slate-900 mb-1">No articles yet</h3>
+          <p className="text-xs text-slate-500 mb-4">Write expert content to build your reputation and reach more investors.</p>
+          <button onClick={() => { resetForm(); setMode("write"); }} className="px-4 py-2 bg-violet-600 text-white text-sm font-bold rounded-lg hover:bg-violet-700">Write Your First Article →</button>
+        </div>
+      )}
     </div>
   );
 }
