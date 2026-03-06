@@ -121,6 +121,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
 
   const [searchQuery, setSearchQuery] = useState(urlQuery);
   const [activeFilter, setActiveFilter] = useState<FilterType>(initialFilter);
+  const resultsRef = useRef<HTMLDivElement>(null);
   const [sortCol, setSortCol] = useState<SortCol>('rating');
   const [sortDir, setSortDir] = useState<1 | -1>(-1);
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -175,6 +176,15 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
       setActiveFilter('all');
     }
   }, [searchParams]);
+
+  // Scroll to results when filter changes (not on initial load)
+  const isFirstRender = useRef(true);
+  useEffect(() => {
+    if (isFirstRender.current) { isFirstRender.current = false; return; }
+    if (resultsRef.current) {
+      resultsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [activeFilter]);
 
   function handleSort(col: SortCol) {
     if (sortCol === col) {
@@ -486,6 +496,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         </div>
 
         {/* Desktop Table */}
+        <div ref={resultsRef} className="scroll-mt-16">
         <div key={`${activeFilter}-${searchQuery}`} className="hidden md:block overflow-x-auto tab-content-enter">
           <ScrollReveal key={`table-${activeFilter}-${searchQuery}-${sortCol}-${sortDir}`} animation="table-row-stagger" as="table" className="w-full border border-slate-200 rounded-lg compare-table">
             <thead className="bg-slate-50 sticky top-12 md:top-16 z-10 shadow-sm">
@@ -633,6 +644,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             />
           ))}
         </div>
+        </div>{/* close scroll ref */}
 
         {/* Export Buttons — hide on mobile */}
         {sorted.length > 0 && (

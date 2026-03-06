@@ -85,6 +85,7 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
       });
       if (res.ok) {
         setFormState("success");
+        setName(""); setEmail(""); setPhone(""); setMessage(""); setTouched({});
       } else {
         setFormState("error");
       }

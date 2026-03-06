@@ -188,6 +188,12 @@ export default function PortfolioCalculatorClient({ brokers }: { brokers: Broker
             <button onClick={addHolding} className="text-xs font-semibold text-slate-600 hover:text-slate-900 flex items-center gap-1">
               <Icon name="plus" size={14} /> Add market
             </button>
+            <button
+              onClick={() => { setHoldings([{ id: "1", market: "asx", trades_per_year: 12, avg_trade_size: 2000 }]); setCurrentBroker(""); }}
+              className="text-xs font-medium text-slate-400 hover:text-red-500 flex items-center gap-1 transition-colors"
+            >
+              <Icon name="rotate-ccw" size={12} /> Reset
+            </button>
           </div>
 
           <div className="mt-4 pt-4 border-t border-slate-100">
