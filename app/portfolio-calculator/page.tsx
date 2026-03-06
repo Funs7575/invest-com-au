@@ -3,6 +3,8 @@ import type { Broker } from "@/lib/types";
 import PortfolioCalculatorClient from "./PortfolioCalculatorClient";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
 
+export const revalidate = 3600; // ISR: revalidate every hour
+
 export const metadata = {
   title: `Portfolio Fee Calculator — How Much Are You Really Paying? (${CURRENT_YEAR})`,
   description: "Enter your trading activity and see exactly what you'd pay at every Australian broker. Find out if you're overpaying and how much you could save.",
