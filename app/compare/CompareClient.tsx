@@ -30,7 +30,7 @@ import AdSlot from "@/components/AdSlot";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 import LeadMagnet from "@/components/LeadMagnet";
 
-type FilterType = 'all' | 'shares' | 'beginner' | 'chess' | 'free' | 'us' | 'smsf' | 'low-fx' | 'crypto' | 'robo' | 'research' | 'super' | 'property' | 'cfd' | 'has-deal';
+type FilterType = 'all' | 'shares' | 'beginner' | 'chess' | 'free' | 'us' | 'smsf' | 'low-fx' | 'crypto' | 'robo' | 'research' | 'super' | 'property' | 'cfd' | 'savings' | 'term-deposits' | 'has-deal';
 type SortCol = 'name' | 'asx_fee_value' | 'us_fee_value' | 'fx_rate' | 'rating';
 
 const filters: { key: FilterType; label: string }[] = [
@@ -39,6 +39,8 @@ const filters: { key: FilterType; label: string }[] = [
   { key: 'crypto', label: 'Crypto' },
   { key: 'super', label: 'Super Funds' },
   { key: 'robo', label: 'Robo-Advisors' },
+  { key: 'savings', label: 'Savings' },
+  { key: 'term-deposits', label: 'Term Deposits' },
   { key: 'property', label: 'Property' },
   { key: 'cfd', label: 'CFD & Forex' },
   { key: 'research', label: 'Research Tools' },
@@ -211,6 +213,8 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
       case 'super': list = list.filter(b => b.platform_type === 'super_fund'); break;
       case 'property': list = list.filter(b => b.platform_type === 'property_platform'); break;
       case 'cfd': list = list.filter(b => b.platform_type === 'cfd_forex'); break;
+      case 'savings': list = list.filter(b => b.platform_type === 'savings_account'); break;
+      case 'term-deposits': list = list.filter(b => b.platform_type === 'term_deposit'); break;
       case 'has-deal': list = list.filter(b => b.deal && b.deal_text); break;
       // 'all' — no filtering, show everything
     }

@@ -24,6 +24,8 @@ const PLATFORM_LABELS: Record<PlatformType, string> = {
   super_fund: "Super Fund",
   property_platform: "Property",
   cfd_forex: "CFD & Forex",
+  savings_account: "Savings Account",
+  term_deposit: "Term Deposit",
 };
 
 /** Returns true if all selected platforms are the same type */

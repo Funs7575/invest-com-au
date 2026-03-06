@@ -14,6 +14,8 @@ const PLATFORM_LABELS: Record<PlatformType, string> = {
   super_fund: "super fund",
   property_platform: "property platform",
   cfd_forex: "CFD broker",
+  savings_account: "savings account",
+  term_deposit: "term deposit",
 };
 
 export const revalidate = 1800;

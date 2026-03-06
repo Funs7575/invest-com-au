@@ -1522,7 +1522,7 @@ const categories: BestBrokerCategory[] = [
       `High-interest savings accounts for parking cash before investing. Emergency fund and opportunity fund options compared. ${upd}.`,
     intro:
       `Every investor needs a place to park cash — whether it's an emergency fund, a war chest for buying dips, or settlement cash between trades. The interest rate on that cash matters. Here are the best savings accounts for Australian investors.`,
-    filter: () => false, // Placeholder — savings accounts aren't in the brokers table
+    filter: (b) => b.platform_type === "savings_account", // Now has real savings account data
     sort: (a, b) => (b.rating ?? 0) - (a.rating ?? 0),
     criteria: [
       "Competitive interest rate (at or above RBA cash rate)",

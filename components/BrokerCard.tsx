@@ -116,6 +116,18 @@ export default memo(function BrokerCard({
               <span className="text-[0.6rem] px-1.5 py-0.5 bg-emerald-50 rounded font-bold text-emerald-700">Auto ✓</span>
               <span className="text-[0.6rem] px-1.5 py-0.5 bg-emerald-50 rounded font-bold text-emerald-700">AFSL ✓</span>
             </>
+          ) : broker.platform_type === 'savings_account' ? (
+            <>
+              <span className="text-[0.6rem] px-1.5 py-0.5 bg-emerald-50 rounded font-bold text-emerald-700">{broker.asx_fee || 'Varies'}</span>
+              <span className="text-[0.6rem] px-1.5 py-0.5 bg-slate-50 rounded font-semibold text-slate-700">No Fees</span>
+              <span className="text-[0.6rem] px-1.5 py-0.5 bg-blue-50 rounded font-bold text-blue-700">Gov. Guaranteed</span>
+            </>
+          ) : broker.platform_type === 'term_deposit' ? (
+            <>
+              <span className="text-[0.6rem] px-1.5 py-0.5 bg-emerald-50 rounded font-bold text-emerald-700">{broker.asx_fee || 'Varies'}</span>
+              <span className="text-[0.6rem] px-1.5 py-0.5 bg-slate-50 rounded font-semibold text-slate-700">Min {broker.min_deposit || '$1k'}</span>
+              <span className="text-[0.6rem] px-1.5 py-0.5 bg-blue-50 rounded font-bold text-blue-700">Gov. Guaranteed</span>
+            </>
           ) : (
             <>
               <span className="text-[0.6rem] px-1.5 py-0.5 bg-slate-50 rounded font-semibold text-slate-700">{broker.asx_fee || 'Varies'}</span>
