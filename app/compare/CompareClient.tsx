@@ -485,7 +485,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         {/* Desktop Table */}
         <div key={`${activeFilter}-${searchQuery}`} className="hidden md:block overflow-x-auto tab-content-enter">
           <ScrollReveal key={`table-${activeFilter}-${searchQuery}-${sortCol}-${sortDir}`} animation="table-row-stagger" as="table" className="w-full border border-slate-200 rounded-lg compare-table">
-            <thead className="bg-slate-50">
+            <thead className="bg-slate-50 sticky top-0 z-10 shadow-sm">
               <tr>
                 <th scope="col" className="px-3 py-3 w-10"></th>
                 <th scope="col" className="px-4 py-3 text-left font-semibold text-sm" aria-sort={sortCol === 'name' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
