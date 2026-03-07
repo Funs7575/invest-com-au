@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
               </ul>
 
               <p style="font-size: 14px; line-height: 1.6; margin-top: 24px;">
-                Want to update your profile? Just reply to this email with any changes and we'll update it for you.
+                Want to update your profile? Log in to your <a href="https://invest.com.au/advisor-portal" style="color: #7c3aed; font-weight: 600;">Advisor Portal</a> to manage your listing, view leads, and write expert articles. Or reply to this email with any changes.
               </p>
 
               <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;" />

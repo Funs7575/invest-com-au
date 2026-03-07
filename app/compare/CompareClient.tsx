@@ -131,6 +131,23 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   const [showMobileCompare, setShowMobileCompare] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
 
+  // Sync URL when filter changes (for sharing/bookmarking)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const url = new URL(window.location.href);
+    if (activeFilter === 'all') {
+      url.searchParams.delete('filter');
+    } else {
+      url.searchParams.set('filter', activeFilter);
+    }
+    if (searchQuery.trim()) {
+      url.searchParams.set('q', searchQuery.trim());
+    } else {
+      url.searchParams.delete('q');
+    }
+    window.history.replaceState({}, '', url.toString());
+  }, [activeFilter, searchQuery]);
+
   // Marketplace campaign allocation
   const [campaignWinners, setCampaignWinners] = useState<PlacementWinner[]>([]);
   const [cpcCampaigns, setCpcCampaigns] = useState<PlacementWinner[]>([]);
