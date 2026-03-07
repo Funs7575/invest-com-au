@@ -27,7 +27,24 @@ export default async function ExpertInsightsPage() {
 
   const categories = Array.from(new Set((articles || []).map(a => a.category).filter(Boolean)));
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Expert Insights — Invest.com.au",
+    description: "Expert articles from verified Australian financial professionals.",
+    url: "https://invest.com.au/expert",
+    mainEntity: (articles || []).slice(0, 10).map(a => ({
+      "@type": "Article",
+      headline: a.title,
+      author: { "@type": "Person", name: a.author_name },
+      datePublished: a.published_at,
+      url: `https://invest.com.au/expert/${a.slug}`,
+    })),
+  };
+
   return (
+    <>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
     <div className="py-5 md:py-12">
       <div className="container-custom max-w-4xl">
         <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
@@ -109,5 +126,6 @@ export default async function ExpertInsightsPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

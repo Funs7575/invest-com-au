@@ -13,5 +13,20 @@ export const metadata: Metadata = {
 };
 
 export default function FeeAlertsLayout({ children }: { children: React.ReactNode }) {
-  return <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading...</div>}>{children}</Suspense>;
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: "Broker Fee Change Alerts — Invest.com.au",
+    description: "Get instant email alerts when any Australian broker changes their fees.",
+    url: "https://invest.com.au/fee-alerts",
+    applicationCategory: "FinanceApplication",
+    operatingSystem: "Any",
+    offers: { "@type": "Offer", price: "0", priceCurrency: "AUD" },
+  };
+  return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading...</div>}>{children}</Suspense>
+    </>
+  );
 }

@@ -53,6 +53,8 @@ const categoryStrip = [
   { label: "ETFs", href: "/article/best-etfs-australia" },
   { label: "Super", href: "/best/super-funds" },
   { label: "Robo-Advisors", href: "/best/robo-advisors" },
+  { label: "Savings", href: "/compare?filter=savings" },
+  { label: "Term Deposits", href: "/best/term-deposits" },
   { label: "Property", href: "/best/property-investing" },
   { label: "Advisors", href: "/find-advisor" },
   { label: "CFDs", href: "/best/cfd-forex" },

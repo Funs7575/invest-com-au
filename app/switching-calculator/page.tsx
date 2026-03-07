@@ -24,5 +24,21 @@ export default async function SwitchingCalculatorPage() {
     .in("platform_type", ["share_broker", "cfd_forex"])
     .order("rating", { ascending: false });
 
-  return <SwitchingCalculatorClient brokers={brokers || []} />;
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: `Broker Switching Calculator — ${SITE_NAME}`,
+    description: "Calculate how much you could save by switching to a cheaper Australian broker.",
+    url: "https://invest.com.au/switching-calculator",
+    applicationCategory: "FinanceApplication",
+    operatingSystem: "Any",
+    offers: { "@type": "Offer", price: "0", priceCurrency: "AUD" },
+  };
+
+  return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <SwitchingCalculatorClient brokers={brokers || []} />
+    </>
+  );
 }
