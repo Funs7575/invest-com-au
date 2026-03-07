@@ -1,6 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { Broker, UserReview, BrokerReviewStats, SwitchStory } from "@/lib/types";
@@ -19,6 +20,7 @@ import {
   AFCA_REFERENCE,
 } from "@/lib/compliance";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
+import RecentlyViewed, { trackView } from "@/components/RecentlyViewed";
 import StickyCTABar from "@/components/StickyCTABar";
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 import CountUp from "@/components/CountUp";
@@ -143,6 +145,9 @@ export default function BrokerReviewClient({
   feeHistory,
   relatedDeals = [],
 }: BrokerReviewProps) {
+  // Track this broker for "Recently Viewed"
+  useEffect(() => { trackView(b); }, [b]);
+
   const feeRows = [
     { label: 'ASX Brokerage', value: b.asx_fee || 'N/A', numVal: b.asx_fee_value, thresholds: [5, 15] as [number, number], verdict: b.asx_fee_value != null && b.asx_fee_value <= 5 ? 'Low' : b.asx_fee_value != null && b.asx_fee_value <= 15 ? 'Medium' : 'High' },
     { label: 'US Brokerage', value: b.us_fee || 'N/A', numVal: b.us_fee_value, thresholds: [0, 5] as [number, number], verdict: b.us_fee_value === 0 ? 'Free' : b.us_fee_value != null && b.us_fee_value <= 5 ? 'Low' : 'High' },
@@ -156,6 +161,10 @@ export default function BrokerReviewClient({
 
   const stickyDetail = (b.platform_type === 'share_broker' || b.platform_type === 'cfd_forex')
     ? `${b.asx_fee || 'N/A'} ASX · ${b.chess_sponsored ? 'CHESS' : 'Custodial'} · ${b.rating}/5`
+    : b.platform_type === 'savings_account'
+    ? `${b.asx_fee || 'N/A'} rate · Gov. Guaranteed · ${b.rating}/5`
+    : b.platform_type === 'term_deposit'
+    ? `${b.asx_fee || 'N/A'} rate · Min ${b.min_deposit || '$1k'} · ${b.rating}/5`
     : `${b.rating}/5`;
   const bestFor = getBestFor(b);
 
@@ -1055,6 +1064,8 @@ export default function BrokerReviewClient({
         <div className="mt-6 md:mt-8">
           <LeadMagnet />
         </div>
+
+        <RecentlyViewed currentSlug={b.slug} />
 
         <CompactDisclaimerLine />
       </div>
