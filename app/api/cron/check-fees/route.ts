@@ -100,6 +100,37 @@ export async function GET(req: NextRequest) {
           source: "fee_check",
         });
 
+        // Queue extracted fee changes for admin review
+        const feeFieldMap: Record<string, string> = {
+          brokerage: "asx_fee",
+          us_brokerage: "us_fee",
+          fx_rate: "fx_rate",
+          inactivity: "inactivity_fee",
+        };
+        const currentValues: Record<string, string | null> = {
+          asx_fee: broker.asx_fee,
+          us_fee: broker.us_fee,
+          fx_rate: broker.fx_rate != null ? `${broker.fx_rate}%` : null,
+          inactivity_fee: broker.inactivity_fee,
+        };
+        for (const [extractedKey, extractedValue] of Object.entries(extractedFees)) {
+          const dbField = feeFieldMap[extractedKey] || extractedKey;
+          const currentVal = currentValues[dbField];
+          // Only queue if the value actually differs
+          if (extractedValue && extractedValue !== currentVal) {
+            await supabase.from("fee_update_queue").insert({
+              broker_id: broker.id,
+              broker_slug: broker.slug,
+              broker_name: broker.name,
+              field_name: dbField,
+              old_value: currentVal,
+              new_value: extractedValue,
+              extracted_from: broker.fee_page_url,
+              status: "pending",
+            }).catch(() => {});
+          }
+        }
+
         changedBrokers.push({
           name: broker.name,
           slug: broker.slug,

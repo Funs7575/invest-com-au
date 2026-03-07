@@ -97,7 +97,7 @@ export default function AdminDashboard() {
   const [advisorFunnel, setAdvisorFunnel] = useState<{ views: number; leads: number }>({ views: 0, leads: 0 });
   const [activity, setActivity] = useState<ActivityItem[]>([]);
   const [dataWarnings, setDataWarnings] = useState<DataWarning[]>([]);
-  const [pendingItems, setPendingItems] = useState<{ articles: number; reviews: number; switchStories: number; disputes: number; applications: number; articlesList: { id: number; title: string; author_name: string }[] }>({ articles: 0, reviews: 0, switchStories: 0, disputes: 0, applications: 0, articlesList: [] });
+  const [pendingItems, setPendingItems] = useState<{ articles: number; reviews: number; switchStories: number; disputes: number; applications: number; feeChanges: number; articlesList: { id: number; title: string; author_name: string }[] }>({ articles: 0, reviews: 0, switchStories: 0, disputes: 0, applications: 0, feeChanges: 0, articlesList: [] });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -183,12 +183,13 @@ export default function AdminDashboard() {
       ]);
 
       // ── Pending items (separate queries to avoid bloating the main Promise.all) ──
-      const [pendingArticles, pendingReviews, pendingSwitchStories, pendingDisputes, pendingApplications] = await Promise.all([
+      const [pendingArticles, pendingReviews, pendingSwitchStories, pendingDisputes, pendingApplications, pendingFeeChanges] = await Promise.all([
         supabase.from("advisor_articles").select("id, title, author_name", { count: "exact" }).eq("status", "submitted"),
         supabase.from("user_reviews").select("id", { count: "exact", head: true }).eq("status", "pending"),
         supabase.from("switch_stories").select("id", { count: "exact", head: true }).eq("status", "pending"),
         supabase.from("lead_disputes").select("id", { count: "exact", head: true }).eq("status", "pending"),
         supabase.from("advisor_applications").select("id", { count: "exact", head: true }).eq("status", "pending"),
+        supabase.from("fee_update_queue").select("id", { count: "exact", head: true }).eq("status", "pending"),
       ]);
 
       setPendingItems({
@@ -197,6 +198,7 @@ export default function AdminDashboard() {
         switchStories: pendingSwitchStories.count || 0,
         disputes: pendingDisputes.count || 0,
         applications: pendingApplications.count || 0,
+        feeChanges: pendingFeeChanges.count || 0,
         articlesList: (pendingArticles.data || []).slice(0, 3),
       });
 
@@ -606,13 +608,13 @@ export default function AdminDashboard() {
       )}
 
       {/* Pending Actions — unified view of everything needing admin attention */}
-      {!loading && (pendingItems.articles + pendingItems.reviews + pendingItems.switchStories + pendingItems.disputes + pendingItems.applications) > 0 && (
+      {!loading && (pendingItems.articles + pendingItems.reviews + pendingItems.switchStories + pendingItems.disputes + pendingItems.applications + pendingItems.feeChanges) > 0 && (
         <div className="mb-6 bg-gradient-to-r from-violet-50 to-white border border-violet-200 rounded-xl p-4">
           <div className="flex items-center gap-2 mb-3">
             <span className="text-sm">📋</span>
             <h2 className="text-sm font-bold text-slate-900">Pending Actions</h2>
             <span className="text-[0.56rem] bg-violet-100 text-violet-700 font-bold px-2 py-0.5 rounded-full">
-              {pendingItems.articles + pendingItems.reviews + pendingItems.switchStories + pendingItems.disputes + pendingItems.applications} items
+              {pendingItems.articles + pendingItems.reviews + pendingItems.switchStories + pendingItems.disputes + pendingItems.applications + pendingItems.feeChanges} items
             </span>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
@@ -658,6 +660,15 @@ export default function AdminDashboard() {
                 <div>
                   <div className="text-xs font-bold text-slate-900">{pendingItems.applications} Application{pendingItems.applications !== 1 ? "s" : ""}</div>
                   <div className="text-[0.56rem] text-slate-500">to review</div>
+                </div>
+              </Link>
+            )}
+            {pendingItems.feeChanges > 0 && (
+              <Link href="/admin/fee-queue" className="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-amber-200 hover:border-amber-300 hover:shadow-sm transition-all bg-amber-50/50">
+                <span className="text-lg">💰</span>
+                <div>
+                  <div className="text-xs font-bold text-amber-800">{pendingItems.feeChanges} Fee Change{pendingItems.feeChanges !== 1 ? "s" : ""}</div>
+                  <div className="text-[0.56rem] text-amber-600">to confirm</div>
                 </div>
               </Link>
             )}
