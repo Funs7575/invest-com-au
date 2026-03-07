@@ -1,10 +1,16 @@
 import { createClient } from "@/lib/supabase/server";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { isRateLimited } from "@/lib/rate-limit";
 
 const log = logger("questions");
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
+  if (await isRateLimited(`question:${ip}`, 5, 60)) {
+    return NextResponse.json({ error: "Too many questions. Try again later." }, { status: 429 });
+  }
+
   try {
     const body = await req.json();
     const { broker_slug, page_type, page_slug, question, display_name, email } = body;

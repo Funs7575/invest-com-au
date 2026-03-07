@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { isRateLimited } from "@/lib/rate-limit";
 
 /**
  * Generate a short alphanumeric share code (8 chars).
@@ -20,6 +21,11 @@ function generateCode(): string {
  * Returns: { code: string, url: string }
  */
 export async function POST(req: NextRequest) {
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
+  if (await isRateLimited(`shortlist:${ip}`, 10, 60)) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
   try {
     const body = await req.json();
     const slugs: string[] = body.slugs;

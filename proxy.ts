@@ -17,6 +17,13 @@ export async function proxy(request: NextRequest) {
 
   let response = NextResponse.next({ request })
 
+  // ── Security headers ─────────────────────────────────────────
+  response.headers.set('X-Frame-Options', 'SAMEORIGIN')
+  response.headers.set('X-Content-Type-Options', 'nosniff')
+  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
+  response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
+  response.headers.set('X-DNS-Prefetch-Control', 'on')
+
   // ── Preview deploy protection ──────────────────────────────────
   // Vercel sets VERCEL_ENV to 'preview' on non-production branches.
   // Inject noindex header so Google never indexes staging/preview URLs.

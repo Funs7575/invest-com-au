@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
+import { isRateLimited } from "@/lib/rate-limit";
 
 /**
  * POST /api/unsubscribe
@@ -11,6 +12,11 @@ import { NextRequest, NextResponse } from "next/server";
  * - Resend Contacts: unsubscribed = true
  */
 export async function POST(request: NextRequest) {
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
+  if (await isRateLimited(`unsub:${ip}`, 10, 60)) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
   let body: Record<string, unknown>;
   try {
     body = await request.json();
