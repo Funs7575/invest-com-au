@@ -10,6 +10,7 @@ import LeadMagnet from "@/components/LeadMagnet";
 import DealCard from "@/components/DealCard";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import LiveActivityTicker from "@/components/LiveActivityTicker";
+import SocialProofCounter from "@/components/SocialProofCounter";
 
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 import { getMostRecentFeeCheck } from "@/lib/utils";
@@ -296,9 +297,9 @@ export default async function HomePage() {
               </Link>
             </div>
             {/* Social proof */}
-            <p className="text-sm text-slate-500 mt-4 hero-fade-up hero-fade-up-5 font-medium">
-              Trusted by <span className="text-slate-700 font-bold">10,000+</span> Australian investors
-            </p>
+            <div className="mt-4 hero-fade-up hero-fade-up-5 flex justify-center">
+              <SocialProofCounter variant="badge" />
+            </div>
             {/* Trust signals */}
             <div className="flex items-center justify-center flex-wrap gap-x-8 pt-4 text-xs text-slate-500 hero-fade-up hero-fade-up-5">
               <span className="flex items-center gap-1">

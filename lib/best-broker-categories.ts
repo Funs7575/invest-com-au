@@ -1625,6 +1625,59 @@ const categories: BestBrokerCategory[] = [
       },
     ],
   },
+  {
+    slug: "term-deposits",
+    title: `Best Term Deposit Rates in Australia (${yr})`,
+    h1: "Best Term Deposit Rates",
+    metaDescription:
+      `Compare the highest term deposit rates in Australia for 2026. Judo Bank, ING, Macquarie and more. All government guaranteed to $250,000. ${upd}.`,
+    intro:
+      `Term deposits lock your money at a fixed rate for a set period — 3 months to 5 years. They're ideal for investors who have a defined sum they won't need and want guaranteed returns with zero market risk. Here are the best rates available right now.`,
+    filter: (b) => b.platform_type === "term_deposit",
+    sort: (a, b) => (b.rating ?? 0) - (a.rating ?? 0),
+    criteria: [
+      "Highest rate for 6-month and 12-month terms",
+      "Government guarantee (ADI regulated, deposits protected to $250,000)",
+      "Reasonable minimum deposit ($1,000 or less preferred)",
+      "Flexible term options (3, 6, 9, 12 months minimum)",
+    ],
+    sections: [
+      {
+        heading: "How Term Deposits Work",
+        body: "You deposit a lump sum with a bank for a fixed term (e.g., 6 months). The bank pays a guaranteed interest rate for that period. At maturity, you get your principal plus interest. The rate is locked in at the time of deposit — it won't go up or down regardless of what the RBA does during your term. All Australian ADI-regulated term deposits are government guaranteed up to $250,000 per person per institution.",
+      },
+      {
+        heading: "When to Choose a Term Deposit Over a Savings Account",
+        body: "Term deposits typically pay 0.2-0.5% more than the best savings accounts. The trade-off is you can't access your money during the term without paying an early withdrawal penalty (usually forfeiting most of the interest). Choose a term deposit when: you have a defined sum you won't need for a known period, you want rate certainty (savings rates can drop), or you want to remove the temptation to spend or invest the money prematurely.",
+      },
+      {
+        heading: "Laddering Strategy for Investors",
+        body: "Rather than locking all your cash in one term deposit, spread it across multiple terms (e.g., 3-month, 6-month, 12-month). As each matures, reinvest at the best available rate. This gives you regular access to portions of your cash while still earning competitive rates. It also protects against rate changes — if rates drop, only a portion of your deposits renew at the lower rate.",
+      },
+    ],
+    relatedLinks: [
+      { label: "Best Savings Accounts", href: "/best/savings-accounts" },
+      { label: "Compare All Platforms", href: "/compare" },
+      { label: "Portfolio Calculator", href: "/portfolio-calculator" },
+    ],
+    faqs: [
+      {
+        question: "Are term deposits government guaranteed in Australia?",
+        answer:
+          "Yes. All term deposits with Australian ADI-regulated banks are covered by the Financial Claims Scheme, which guarantees deposits up to $250,000 per person per institution. This is backed by the Australian Government.",
+      },
+      {
+        question: "What happens if I withdraw early from a term deposit?",
+        answer:
+          "Early withdrawal penalties vary by bank. Most will reduce the interest rate significantly — often to the base savings rate or lower. Some banks charge a flat penalty. Always check the early withdrawal terms before locking in.",
+      },
+      {
+        question: "Should I choose a 6-month or 12-month term deposit?",
+        answer:
+          "If you think interest rates will rise, choose shorter terms so you can reinvest at higher rates sooner. If you think rates will fall, lock in a longer term at today's rate. Currently, 6-month and 12-month rates are very similar in Australia, so the main consideration is when you'll need the money.",
+      },
+    ],
+  },
 ];
 
 export function getCategoryBySlug(slug: string): BestBrokerCategory | undefined {

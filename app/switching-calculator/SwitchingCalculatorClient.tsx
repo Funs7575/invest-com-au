@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import BrokerLogo from "@/components/BrokerLogo";
+import SocialProofCounter from "@/components/SocialProofCounter";
 import { getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL, trackClick } from "@/lib/tracking";
 import type { Broker } from "@/lib/types";
 
@@ -89,6 +90,7 @@ export default function SwitchingCalculatorClient({ brokers }: { brokers: Broker
             </div>
             <h1 className="text-xl md:text-3xl font-extrabold mb-2">How much are you overpaying?</h1>
             <p className="text-sm md:text-base text-emerald-100">Enter your trading details below and we&apos;ll calculate your exact annual cost at every Australian broker — and how much you&apos;d save by switching.</p>
+            <div className="mt-3"><SocialProofCounter variant="badge" /></div>
           </div>
         </div>
 

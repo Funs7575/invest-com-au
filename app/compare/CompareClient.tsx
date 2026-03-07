@@ -15,6 +15,7 @@ import { trackClick, trackEvent, getAffiliateLink, getBenefitCta, renderStars, A
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 import { downloadCSV } from "@/lib/csv-export";
 import BrokerCard from "@/components/BrokerCard";
+import SocialProofCounter from "@/components/SocialProofCounter";
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 import { getMostRecentFeeCheck } from "@/lib/utils";
 import ScrollReveal from "@/components/ScrollReveal";
@@ -307,7 +308,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             <span className="md:hidden ml-1"><FeesFreshnessIndicator lastChecked={getMostRecentFeeCheck(brokers)} variant="inline" /></span>
           </p>
           <div className="flex items-center gap-3 text-[0.62rem] md:text-xs text-slate-400">
-            <Link href="/how-we-verify" className="underline hover:text-slate-600">How we verify</Link>
+            <SocialProofCounter />
             <span>·</span>
             <Link href="/methodology" className="underline hover:text-slate-600">Methodology</Link>
             <span>·</span>
