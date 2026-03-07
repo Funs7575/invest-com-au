@@ -97,6 +97,7 @@ export default function AdminDashboard() {
   const [advisorFunnel, setAdvisorFunnel] = useState<{ views: number; leads: number }>({ views: 0, leads: 0 });
   const [activity, setActivity] = useState<ActivityItem[]>([]);
   const [dataWarnings, setDataWarnings] = useState<DataWarning[]>([]);
+  const [pendingItems, setPendingItems] = useState<{ articles: number; reviews: number; switchStories: number; disputes: number; applications: number; articlesList: { id: number; title: string; author_name: string }[] }>({ articles: 0, reviews: 0, switchStories: 0, disputes: 0, applications: 0, articlesList: [] });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -180,6 +181,24 @@ export default function AdminDashboard() {
           .select("id", { count: "exact", head: true })
           .gte("created_at", new Date(Date.now() - 30 * 86400000).toISOString()),
       ]);
+
+      // ── Pending items (separate queries to avoid bloating the main Promise.all) ──
+      const [pendingArticles, pendingReviews, pendingSwitchStories, pendingDisputes, pendingApplications] = await Promise.all([
+        supabase.from("advisor_articles").select("id, title, author_name", { count: "exact" }).eq("status", "submitted"),
+        supabase.from("user_reviews").select("id", { count: "exact", head: true }).eq("status", "pending"),
+        supabase.from("switch_stories").select("id", { count: "exact", head: true }).eq("status", "pending"),
+        supabase.from("lead_disputes").select("id", { count: "exact", head: true }).eq("status", "pending"),
+        supabase.from("advisor_applications").select("id", { count: "exact", head: true }).eq("status", "pending"),
+      ]);
+
+      setPendingItems({
+        articles: pendingArticles.count || 0,
+        reviews: pendingReviews.count || 0,
+        switchStories: pendingSwitchStories.count || 0,
+        disputes: pendingDisputes.count || 0,
+        applications: pendingApplications.count || 0,
+        articlesList: (pendingArticles.data || []).slice(0, 3),
+      });
 
       // Aggregate clicks by date for chart
       const clicksByDate = new Map<string, number>();
@@ -583,6 +602,74 @@ export default function AdminDashboard() {
             )}
             {" "}need attention
           </span>
+        </div>
+      )}
+
+      {/* Pending Actions — unified view of everything needing admin attention */}
+      {!loading && (pendingItems.articles + pendingItems.reviews + pendingItems.switchStories + pendingItems.disputes + pendingItems.applications) > 0 && (
+        <div className="mb-6 bg-gradient-to-r from-violet-50 to-white border border-violet-200 rounded-xl p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-sm">📋</span>
+            <h2 className="text-sm font-bold text-slate-900">Pending Actions</h2>
+            <span className="text-[0.56rem] bg-violet-100 text-violet-700 font-bold px-2 py-0.5 rounded-full">
+              {pendingItems.articles + pendingItems.reviews + pendingItems.switchStories + pendingItems.disputes + pendingItems.applications} items
+            </span>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+            {pendingItems.articles > 0 && (
+              <Link href="/admin/advisor-articles" className="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-slate-200 hover:border-violet-300 hover:shadow-sm transition-all">
+                <span className="text-lg">📰</span>
+                <div>
+                  <div className="text-xs font-bold text-slate-900">{pendingItems.articles} Article{pendingItems.articles !== 1 ? "s" : ""}</div>
+                  <div className="text-[0.56rem] text-slate-500">to review</div>
+                </div>
+              </Link>
+            )}
+            {pendingItems.reviews > 0 && (
+              <Link href="/admin/user-reviews" className="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-slate-200 hover:border-violet-300 hover:shadow-sm transition-all">
+                <span className="text-lg">⭐</span>
+                <div>
+                  <div className="text-xs font-bold text-slate-900">{pendingItems.reviews} Review{pendingItems.reviews !== 1 ? "s" : ""}</div>
+                  <div className="text-[0.56rem] text-slate-500">to moderate</div>
+                </div>
+              </Link>
+            )}
+            {pendingItems.switchStories > 0 && (
+              <Link href="/admin/switch-stories" className="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-slate-200 hover:border-violet-300 hover:shadow-sm transition-all">
+                <span className="text-lg">🔄</span>
+                <div>
+                  <div className="text-xs font-bold text-slate-900">{pendingItems.switchStories} Stor{pendingItems.switchStories !== 1 ? "ies" : "y"}</div>
+                  <div className="text-[0.56rem] text-slate-500">to moderate</div>
+                </div>
+              </Link>
+            )}
+            {pendingItems.disputes > 0 && (
+              <Link href="/admin/advisors" className="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-red-200 hover:border-red-300 hover:shadow-sm transition-all bg-red-50/50">
+                <span className="text-lg">⚠️</span>
+                <div>
+                  <div className="text-xs font-bold text-red-800">{pendingItems.disputes} Dispute{pendingItems.disputes !== 1 ? "s" : ""}</div>
+                  <div className="text-[0.56rem] text-red-500">to resolve</div>
+                </div>
+              </Link>
+            )}
+            {pendingItems.applications > 0 && (
+              <Link href="/admin/advisors" className="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-slate-200 hover:border-violet-300 hover:shadow-sm transition-all">
+                <span className="text-lg">👤</span>
+                <div>
+                  <div className="text-xs font-bold text-slate-900">{pendingItems.applications} Application{pendingItems.applications !== 1 ? "s" : ""}</div>
+                  <div className="text-[0.56rem] text-slate-500">to review</div>
+                </div>
+              </Link>
+            )}
+          </div>
+          {pendingItems.articlesList.length > 0 && (
+            <div className="mt-2 pt-2 border-t border-violet-100">
+              <div className="text-[0.56rem] text-slate-500 mb-1">Latest submitted articles:</div>
+              {pendingItems.articlesList.map(a => (
+                <div key={a.id} className="text-xs text-slate-700 truncate">• <strong>{a.title}</strong> by {a.author_name}</div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 

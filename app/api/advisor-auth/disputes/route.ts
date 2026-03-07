@@ -59,6 +59,27 @@ export async function POST(request: NextRequest) {
   });
 
   if (error) return NextResponse.json({ error: "Failed to create dispute" }, { status: 500 });
+
+  // Notify admin of new dispute
+  if (process.env.RESEND_API_KEY) {
+    const { data: advisor } = await supabase.from("professionals").select("name").eq("id", advisorId).single();
+    const { data: leadData } = await supabase.from("professional_leads").select("user_name, user_email").eq("id", leadId).single();
+    const advisorName = advisor?.name || "An advisor";
+    const leadName = leadData?.user_name || "Unknown";
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app";
+
+    await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        from: "Invest.com.au <system@invest.com.au>",
+        to: process.env.ADMIN_EMAIL || "finnduns@gmail.com",
+        subject: `Lead Dispute: ${advisorName} disputed lead from ${leadName}`,
+        html: `<div style="font-family:Arial,sans-serif;max-width:500px"><h2 style="color:#0f172a;font-size:16px">⚠️ New Lead Dispute</h2><p style="color:#64748b;font-size:14px"><strong>${advisorName}</strong> has disputed a lead.</p><table style="width:100%;font-size:13px;margin:12px 0"><tr><td style="padding:4px 0;color:#64748b">Lead</td><td style="padding:4px 0;font-weight:600">${leadName} (${leadData?.user_email || "no email"})</td></tr><tr><td style="padding:4px 0;color:#64748b">Reason</td><td style="padding:4px 0;font-weight:600">${reason}</td></tr>${details ? `<tr><td style="padding:4px 0;color:#64748b;vertical-align:top">Details</td><td style="padding:4px 0">${details}</td></tr>` : ""}</table><a href="${siteUrl}/admin/advisors" style="display:inline-block;padding:10px 20px;background:#0f172a;color:white;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;margin-top:8px">Review Dispute →</a></div>`,
+      }),
+    }).catch(() => {});
+  }
+
   return NextResponse.json({ success: true });
 }
 

@@ -54,6 +54,32 @@ export async function POST(
       return NextResponse.json({ error: "Failed to submit answer" }, { status: 500 });
     }
 
+    // Notify the question asker that their question was answered
+    if (process.env.RESEND_API_KEY) {
+      const { data: fullQuestion } = await supabase
+        .from("broker_questions")
+        .select("asker_email, asker_name, question, broker_slug, brokers(name)")
+        .eq("id", questionId)
+        .single();
+
+      if (fullQuestion?.asker_email) {
+        const brokerName = (fullQuestion.brokers as { name: string } | null)?.name || fullQuestion.broker_slug || "a platform";
+        const firstName = (fullQuestion.asker_name || "there").split(" ")[0];
+        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app";
+
+        await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            from: "Invest.com.au <questions@invest.com.au>",
+            to: fullQuestion.asker_email,
+            subject: `Your question about ${brokerName} was answered`,
+            html: `<div style="font-family:Arial,sans-serif;max-width:500px"><h2 style="color:#0f172a;font-size:16px">Your Question Was Answered</h2><p style="color:#64748b;font-size:14px">Hi ${firstName}, someone answered your question about <strong>${brokerName}</strong>:</p><div style="background:#f8fafc;padding:12px;border-radius:8px;margin:8px 0;border-left:3px solid #0f172a"><p style="font-size:13px;color:#334155;margin:0"><strong>Q:</strong> ${(fullQuestion.question || "").slice(0, 150)}${(fullQuestion.question || "").length > 150 ? "..." : ""}</p></div><div style="background:#f0fdf4;padding:12px;border-radius:8px;margin:8px 0;border-left:3px solid #22c55e"><p style="font-size:13px;color:#166534;margin:0"><strong>A:</strong> ${answer.trim().slice(0, 200)}${answer.length > 200 ? "..." : ""}</p></div><a href="${siteUrl}/broker/${fullQuestion.broker_slug}" style="display:inline-block;padding:10px 20px;background:#0f172a;color:white;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;margin-top:8px">View Full Answer →</a></div>`,
+          }),
+        }).catch(() => {});
+      }
+    }
+
     return NextResponse.json({ success: true, message: "Answer submitted" });
   } catch {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
