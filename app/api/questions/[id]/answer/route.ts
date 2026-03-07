@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { notificationFooter } from "@/lib/email-templates";
 
 const log = logger("questions");
 
@@ -74,7 +75,7 @@ export async function POST(
             from: "Invest.com.au <questions@invest.com.au>",
             to: fullQuestion.asker_email,
             subject: `Your question about ${brokerName} was answered`,
-            html: `<div style="font-family:Arial,sans-serif;max-width:500px"><h2 style="color:#0f172a;font-size:16px">Your Question Was Answered</h2><p style="color:#64748b;font-size:14px">Hi ${firstName}, someone answered your question about <strong>${brokerName}</strong>:</p><div style="background:#f8fafc;padding:12px;border-radius:8px;margin:8px 0;border-left:3px solid #0f172a"><p style="font-size:13px;color:#334155;margin:0"><strong>Q:</strong> ${(fullQuestion.question || "").slice(0, 150)}${(fullQuestion.question || "").length > 150 ? "..." : ""}</p></div><div style="background:#f0fdf4;padding:12px;border-radius:8px;margin:8px 0;border-left:3px solid #22c55e"><p style="font-size:13px;color:#166534;margin:0"><strong>A:</strong> ${answer.trim().slice(0, 200)}${answer.length > 200 ? "..." : ""}</p></div><a href="${siteUrl}/broker/${fullQuestion.broker_slug}" style="display:inline-block;padding:10px 20px;background:#0f172a;color:white;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;margin-top:8px">View Full Answer →</a></div>`,
+            html: `<div style="font-family:Arial,sans-serif;max-width:500px"><h2 style="color:#0f172a;font-size:16px">Your Question Was Answered</h2><p style="color:#64748b;font-size:14px">Hi ${firstName}, someone answered your question about <strong>${brokerName}</strong>:</p><div style="background:#f8fafc;padding:12px;border-radius:8px;margin:8px 0;border-left:3px solid #0f172a"><p style="font-size:13px;color:#334155;margin:0"><strong>Q:</strong> ${(fullQuestion.question || "").slice(0, 150)}${(fullQuestion.question || "").length > 150 ? "..." : ""}</p></div><div style="background:#f0fdf4;padding:12px;border-radius:8px;margin:8px 0;border-left:3px solid #22c55e"><p style="font-size:13px;color:#166534;margin:0"><strong>A:</strong> ${answer.trim().slice(0, 200)}${answer.length > 200 ? "..." : ""}</p></div><a href="${siteUrl}/broker/${fullQuestion.broker_slug}" style="display:inline-block;padding:10px 20px;background:#0f172a;color:white;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;margin-top:8px">View Full Answer →</a>${notificationFooter(fullQuestion.asker_email)}</div>`,
           }),
         }).catch(() => {});
       }

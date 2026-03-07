@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { isRateLimited } from "@/lib/rate-limit";
 
+import { notificationFooter } from "@/lib/email-templates";
+
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app";
 
 async function logMod(supabase: Awaited<ReturnType<typeof createClient>>, articleId: number, action: string, by: string, notes?: string, oldStatus?: string, newStatus?: string) {
@@ -13,8 +15,8 @@ async function sendEmail(to: string, subject: string, html: string) {
   await fetch("https://api.resend.com/emails", { method: "POST", headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" }, body: JSON.stringify({ from: "Invest.com.au <articles@invest.com.au>", to, subject, html }) }).catch(() => {});
 }
 
-function wrap(title: string, body: string, cta?: string, url?: string) {
-  return `<div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto"><div style="background:#0f172a;padding:16px 20px;border-radius:12px 12px 0 0"><h2 style="color:white;margin:0;font-size:16px">${title}</h2></div><div style="padding:20px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px">${body}${cta && url ? `<a href="${url}" style="display:inline-block;padding:10px 24px;background:#7c3aed;color:white;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;margin-top:12px">${cta}</a>` : ""}<p style="margin-top:16px;font-size:11px;color:#94a3b8">Invest.com.au Expert Insights</p></div></div>`;
+function wrap(title: string, body: string, cta?: string, url?: string, email?: string) {
+  return `<div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto"><div style="background:#0f172a;padding:16px 20px;border-radius:12px 12px 0 0"><h2 style="color:white;margin:0;font-size:16px">${title}</h2></div><div style="padding:20px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px">${body}${cta && url ? `<a href="${url}" style="display:inline-block;padding:10px 24px;background:#7c3aed;color:white;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;margin-top:12px">${cta}</a>` : ""}${notificationFooter(email)}</div></div>`;
 }
 
 export async function GET(request: NextRequest) {

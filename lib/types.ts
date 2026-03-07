@@ -17,6 +17,32 @@ export interface TeamMember {
 
 export type PlatformType = 'share_broker' | 'crypto_exchange' | 'robo_advisor' | 'research_tool' | 'super_fund' | 'property_platform' | 'cfd_forex' | 'savings_account' | 'term_deposit';
 
+/** Canonical display labels for each platform type — single source of truth */
+export const PLATFORM_TYPE_LABELS: Record<PlatformType, string> = {
+  share_broker: "Share Broker",
+  crypto_exchange: "Crypto Exchange",
+  robo_advisor: "Robo-Advisor",
+  research_tool: "Research Tool",
+  super_fund: "Super Fund",
+  property_platform: "Property",
+  cfd_forex: "CFD & Forex",
+  savings_account: "Savings Account",
+  term_deposit: "Term Deposit",
+};
+
+/** Lowercase labels for prose (e.g. "broker", "crypto exchange") */
+export const PLATFORM_TYPE_LABELS_LOWER: Record<PlatformType, string> = {
+  share_broker: "broker",
+  crypto_exchange: "crypto exchange",
+  robo_advisor: "robo-advisor",
+  research_tool: "research tool",
+  super_fund: "super fund",
+  property_platform: "property platform",
+  cfd_forex: "CFD broker",
+  savings_account: "savings account",
+  term_deposit: "term deposit",
+};
+
 export interface Broker {
   id: number;
   name: string;

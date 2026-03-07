@@ -4,6 +4,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { useSearchParams, usePathname } from "next/navigation";
 import Link from "next/link";
 import type { Broker, PlatformType } from "@/lib/types";
+import { PLATFORM_TYPE_LABELS } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, formatPercent, AFFILIATE_REL } from "@/lib/tracking";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
@@ -16,17 +17,7 @@ import BrokerLogo from "@/components/BrokerLogo";
 
 const MAX_BROKERS = 4;
 
-const PLATFORM_LABELS: Record<PlatformType, string> = {
-  share_broker: "Share Broker",
-  crypto_exchange: "Crypto Exchange",
-  robo_advisor: "Robo-Advisor",
-  research_tool: "Research Tool",
-  super_fund: "Super Fund",
-  property_platform: "Property",
-  cfd_forex: "CFD & Forex",
-  savings_account: "Savings Account",
-  term_deposit: "Term Deposit",
-};
+const PLATFORM_LABELS = PLATFORM_TYPE_LABELS;
 
 /** Returns true if all selected platforms are the same type */
 function isSameType(platforms: Broker[]): boolean {

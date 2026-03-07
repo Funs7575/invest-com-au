@@ -2,21 +2,12 @@ import { Suspense } from "react";
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { Broker, PlatformType } from "@/lib/types";
+import { PLATFORM_TYPE_LABELS_LOWER } from "@/lib/types";
 import type { Metadata } from "next";
 import VersusClient from "../VersusClient";
 import { SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 
-const PLATFORM_LABELS: Record<PlatformType, string> = {
-  share_broker: "broker",
-  crypto_exchange: "crypto exchange",
-  robo_advisor: "robo-advisor",
-  research_tool: "research tool",
-  super_fund: "super fund",
-  property_platform: "property platform",
-  cfd_forex: "CFD broker",
-  savings_account: "savings account",
-  term_deposit: "term deposit",
-};
+const PLATFORM_LABELS = PLATFORM_TYPE_LABELS_LOWER;
 
 export const revalidate = 1800;
 

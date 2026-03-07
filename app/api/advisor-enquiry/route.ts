@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { isRateLimited } from "@/lib/rate-limit";
+import { notificationFooter } from "@/lib/email-templates";
 
 export async function POST(request: NextRequest) {
   try {
@@ -124,8 +125,7 @@ export async function POST(request: NextRequest) {
                 <p>Hi ${user_name.trim().split(" ")[0]},</p>
                 <p>Your consultation request has been sent to <strong>${pro.name}</strong>${pro.firm_name ? ` at ${pro.firm_name}` : ""}. They typically respond within 24 hours.</p>
                 <p style="color: #64748b; font-size: 13px;">This is a no-obligation enquiry. You're under no commitment to proceed.</p>
-                <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
-                <p style="font-size: 13px; color: #94a3b8;">Invest.com.au — Australia's independent investing hub</p>
+                ${notificationFooter(user_email.trim())}
               </div>
             `,
           }),

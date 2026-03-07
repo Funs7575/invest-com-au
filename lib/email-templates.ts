@@ -1386,3 +1386,20 @@ export function quizFollowUp3Email(
     `${safeName}, your next step to start investing with ${safeBrokerName} is just a click away.`
   );
 }
+
+// ─── Notification Email Footer ───────────────────────────────────────────────
+
+/**
+ * Simple footer for transactional/notification emails sent from API routes.
+ * Includes unsubscribe link, privacy link, and Spam Act 2003 compliance.
+ * Use this in inline email HTML that doesn't use the full baseTemplate.
+ */
+export function notificationFooter(email?: string): string {
+  const unsubUrl = email
+    ? `${BASE_URL}/unsubscribe?email=${encodeURIComponent(email)}`
+    : `${BASE_URL}/unsubscribe`;
+  return `<div style="margin-top:20px;padding-top:16px;border-top:1px solid #e2e8f0;font-size:11px;color:#94a3b8;line-height:1.6;">
+    <p style="margin:0;">Invest.com.au — Australia's independent investing comparison platform.</p>
+    <p style="margin:4px 0 0;"><a href="${unsubUrl}" style="color:#64748b;text-decoration:underline;">Unsubscribe</a> · <a href="${BASE_URL}/privacy" style="color:#64748b;text-decoration:underline;">Privacy</a></p>
+  </div>`;
+}

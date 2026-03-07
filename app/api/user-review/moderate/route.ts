@@ -2,6 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import { createClient as createServerClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { logger } from '@/lib/logger';
+import { notificationFooter } from '@/lib/email-templates';
 
 const log = logger('user-review');
 
@@ -83,7 +84,7 @@ export async function POST(request: NextRequest) {
             from: 'Invest.com.au <reviews@invest.com.au>',
             to: review.reviewer_email,
             subject: `Your review of ${brokerName} is now live`,
-            html: `<div style="font-family:Arial,sans-serif;max-width:500px;margin:0 auto"><h2 style="color:#0f172a;font-size:16px">Review Published ✓</h2><p style="color:#64748b;font-size:14px">Hi ${firstName}, your review of <strong>${brokerName}</strong> has been approved and is now visible on the platform.</p><p style="color:#64748b;font-size:14px">Thank you for contributing — your feedback helps other investors make better decisions.</p><p style="font-size:12px;color:#94a3b8;margin-top:16px">Invest.com.au</p></div>`,
+            html: `<div style="font-family:Arial,sans-serif;max-width:500px;margin:0 auto"><h2 style="color:#0f172a;font-size:16px">Review Published ✓</h2><p style="color:#64748b;font-size:14px">Hi ${firstName}, your review of <strong>${brokerName}</strong> has been approved and is now visible on the platform.</p><p style="color:#64748b;font-size:14px">Thank you for contributing — your feedback helps other investors make better decisions.</p>${notificationFooter(review.reviewer_email)}</div>`,
           }),
         }).catch(() => {});
       } else if (action === 'reject' && moderation_note) {
@@ -94,7 +95,7 @@ export async function POST(request: NextRequest) {
             from: 'Invest.com.au <reviews@invest.com.au>',
             to: review.reviewer_email,
             subject: `Update on your review of ${brokerName}`,
-            html: `<div style="font-family:Arial,sans-serif;max-width:500px;margin:0 auto"><h2 style="color:#0f172a;font-size:16px">Review Update</h2><p style="color:#64748b;font-size:14px">Hi ${firstName}, your review of <strong>${brokerName}</strong> was not published.</p>${moderation_note ? `<p style="background:#fef2f2;padding:10px;border-radius:6px;font-size:13px;color:#991b1b;border-left:3px solid #ef4444"><strong>Reason:</strong> ${moderation_note}</p>` : ''}<p style="color:#64748b;font-size:14px">You're welcome to submit a new review.</p><p style="font-size:12px;color:#94a3b8;margin-top:16px">Invest.com.au</p></div>`,
+            html: `<div style="font-family:Arial,sans-serif;max-width:500px;margin:0 auto"><h2 style="color:#0f172a;font-size:16px">Review Update</h2><p style="color:#64748b;font-size:14px">Hi ${firstName}, your review of <strong>${brokerName}</strong> was not published.</p>${moderation_note ? `<p style="background:#fef2f2;padding:10px;border-radius:6px;font-size:13px;color:#991b1b;border-left:3px solid #ef4444"><strong>Reason:</strong> ${moderation_note}</p>` : ''}<p style="color:#64748b;font-size:14px">You're welcome to submit a new review.</p>${notificationFooter(review.reviewer_email)}</div>`,
           }),
         }).catch(() => {});
       }

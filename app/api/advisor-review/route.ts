@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { isRateLimited } from "@/lib/rate-limit";
+import { notificationFooter } from "@/lib/email-templates";
 
 const PROFANITY = /\b(fuck|shit|cunt|bitch|asshole|dick|piss|bastard|wanker|slut|whore|nigger|faggot|retard)\b/i;
 const SPAM_URL = /https?:\/\/[^\s]+/i;
