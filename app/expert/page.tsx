@@ -9,6 +9,11 @@ export const metadata: Metadata = {
   title: `Expert Insights — Advice from Verified Professionals (${CURRENT_YEAR})`,
   description: "Read expert articles from verified Australian financial advisors, SMSF accountants, and tax agents. Practical investing insights you can act on.",
   alternates: { canonical: "/expert" },
+  openGraph: {
+    title: `Expert Insights — Verified Financial Professionals (${CURRENT_YEAR})`,
+    description: "Read expert articles from verified Australian financial advisors, SMSF accountants, and tax agents.",
+    images: [{ url: "/api/og?title=Expert+Insights&subtitle=Advice+from+Verified+Professionals&type=default", width: 1200, height: 630 }],
+  },
 };
 
 export default async function ExpertInsightsPage() {

@@ -743,9 +743,11 @@ export default async function HomePage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
               {[
                 { href: "/portfolio-calculator", icon: "calculator", color: "from-violet-600 to-violet-500", shadow: "shadow-violet-500/15", title: "Portfolio Calculator", desc: "See exact fees at every broker" },
+                { href: "/switching-calculator", icon: "arrow-right-left", color: "from-emerald-600 to-emerald-500", shadow: "shadow-emerald-500/15", title: "Switching Calculator", desc: "How much are you overpaying?" },
                 { href: "/fee-alerts", icon: "bell", color: "from-amber-500 to-amber-400", shadow: "shadow-amber-500/15", title: "Fee Alerts", desc: "Know when fees change" },
                 { href: "/calculators", icon: "bar-chart", color: "from-blue-600 to-blue-500", shadow: "shadow-blue-500/15", title: "All Calculators", desc: "CGT, FX, dividends & more" },
-                { href: "/quiz", icon: "target", color: "from-emerald-600 to-emerald-500", shadow: "shadow-emerald-500/15", title: "Platform Quiz", desc: "Best match in 60 seconds" },
+                { href: "/quiz", icon: "target", color: "from-slate-700 to-slate-600", shadow: "shadow-slate-500/15", title: "Platform Quiz", desc: "Best match in 60 seconds" },
+                { href: "/find-advisor", icon: "users", color: "from-violet-500 to-purple-500", shadow: "shadow-violet-500/15", title: "Find Advisor", desc: "Matched to your needs" },
               ].map((tool) => (
                 <Link key={tool.href} href={tool.href} className="bg-white border border-slate-200 rounded-2xl p-3 md:p-5 card-hover group">
                   <div className={`w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br ${tool.color} rounded-lg flex items-center justify-center mb-2 md:mb-3 shadow-lg ${tool.shadow}`}>
