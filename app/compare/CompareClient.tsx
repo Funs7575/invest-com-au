@@ -536,28 +536,28 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                   </button>
                 </th>
                 <th scope="col" className="px-4 py-3 text-left font-semibold text-sm" aria-sort={sortCol === 'asx_fee_value' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
-                  <button onClick={() => handleSort('asx_fee_value')} className="hover:text-slate-900 transition-colors" aria-label="Sort by ASX fee">
-                    ASX Fee{sortArrow('asx_fee_value')}
+                  <button onClick={() => handleSort('asx_fee_value')} className="hover:text-slate-900 transition-colors" aria-label={activeFilter === 'savings' || activeFilter === 'term-deposits' ? "Sort by rate" : "Sort by ASX fee"}>
+                    {activeFilter === 'savings' || activeFilter === 'term-deposits' ? 'Rate' : 'ASX Fee'}{sortArrow('asx_fee_value')}
                   </button>
-                  <InfoTip text={feeTooltips.asx_fee_value} />
+                  <InfoTip text={activeFilter === 'savings' ? 'Annual interest rate (with conditions met)' : activeFilter === 'term-deposits' ? 'Term deposit rate (6-month term)' : feeTooltips.asx_fee_value} />
                 </th>
                 <th scope="col" className="px-4 py-3 text-left font-semibold text-sm" aria-sort={sortCol === 'us_fee_value' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
                   <button onClick={() => handleSort('us_fee_value')} className="hover:text-slate-900 transition-colors" aria-label="Sort by US fee">
-                    US Fee{sortArrow('us_fee_value')}
+                    {activeFilter === 'savings' || activeFilter === 'term-deposits' ? 'Min Deposit' : 'US Fee'}{sortArrow('us_fee_value')}
                   </button>
-                  <InfoTip text={feeTooltips.us_fee_value} />
+                  <InfoTip text={activeFilter === 'savings' || activeFilter === 'term-deposits' ? 'Minimum deposit to open' : feeTooltips.us_fee_value} />
                 </th>
                 <th scope="col" className="px-4 py-3 text-left font-semibold text-sm" aria-sort={sortCol === 'fx_rate' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
                   <button onClick={() => handleSort('fx_rate')} className="hover:text-slate-900 transition-colors" aria-label="Sort by FX rate">
-                    FX Rate{sortArrow('fx_rate')}
+                    {activeFilter === 'savings' || activeFilter === 'term-deposits' ? 'Conditions' : 'FX Rate'}{sortArrow('fx_rate')}
                   </button>
-                  <InfoTip text={feeTooltips.fx_rate} />
+                  <InfoTip text={activeFilter === 'savings' || activeFilter === 'term-deposits' ? 'Requirements to earn bonus rate' : feeTooltips.fx_rate} />
                 </th>
                 <th scope="col" className="px-4 py-3 text-center font-semibold text-sm">
-                  CHESS
-                  <InfoTip text={feeTooltips.chess} />
+                  {activeFilter === 'savings' || activeFilter === 'term-deposits' ? 'ADI' : 'CHESS'}
+                  <InfoTip text={activeFilter === 'savings' || activeFilter === 'term-deposits' ? 'Government deposit guarantee (up to $250,000)' : feeTooltips.chess} />
                 </th>
-                <th scope="col" className="px-4 py-3 text-center font-semibold text-sm">SMSF</th>
+                <th scope="col" className="px-4 py-3 text-center font-semibold text-sm">{activeFilter === 'savings' || activeFilter === 'term-deposits' ? 'Online' : 'SMSF'}</th>
                 <th scope="col" className="px-4 py-3 text-center font-semibold text-sm" aria-sort={sortCol === 'rating' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
                   <button onClick={() => handleSort('rating')} className="hover:text-slate-900 transition-colors" aria-label="Sort by rating">
                     Rating{sortArrow('rating')}
