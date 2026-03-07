@@ -213,6 +213,18 @@ export async function POST(request: NextRequest) {
   const sanitizedSource = (typeof source === 'string' ? source : 'website').slice(0, 100);
   const sanitizedName = (typeof name === 'string' ? name.trim().slice(0, 100) : null) || null;
 
+  // Check for existing email — prevent duplicates and skip re-sending
+  const { data: existing } = await supabase
+    .from('email_captures')
+    .select('id')
+    .eq('email', sanitizedEmail)
+    .limit(1);
+
+  if (existing && existing.length > 0) {
+    // Email already captured — return success without re-inserting or re-emailing
+    return NextResponse.json({ success: true, message: 'Already subscribed' });
+  }
+
   // Save email to database
   const { error } = await supabase.from('email_captures').insert({
     email: sanitizedEmail,

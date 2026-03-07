@@ -189,7 +189,7 @@ export default function BrokerReviewClient({
     { id: "cost-example", label: "Trade Costs" },
     { id: "safety", label: "Safety Check" },
     { id: "pros-cons", label: "Pros & Cons" },
-    ...(userReviews.length > 0 ? [{ id: "reviews", label: "User Reviews" }] : []),
+    ...(userReviews.length > 0 ? [{ id: "reviews", label: `User Reviews (${userReviews.length})` }] : [{ id: "reviews", label: "Write a Review" }]),
     ...(switchStories.length > 0 ? [{ id: "switch-stories", label: "Switch Stories" }] : []),
     ...(feeHistory.length > 0 ? [{ id: "fee-history", label: "Fee History" }] : []),
     { id: "details", label: "Details" },

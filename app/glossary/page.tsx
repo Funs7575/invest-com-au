@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { GLOSSARY_ENTRIES } from "@/lib/glossary";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
+import GlossarySearch from "@/components/GlossarySearch";
 
 export const metadata: Metadata = {
   title: "Investing Glossary — Plain-English Definitions",
@@ -120,6 +121,9 @@ export default function GlossaryPage() {
               terms. No jargon, no fluff — just what you need to know.
             </p>
           </div>
+
+          {/* Search */}
+          <GlossarySearch entries={GLOSSARY_ENTRIES} />
 
           {/* A-Z Quick Jump */}
           <div className="flex flex-wrap gap-1 md:gap-1.5 mb-6 md:mb-8 sticky top-0 bg-white/95 backdrop-blur-sm py-2 -mx-1 px-1 z-10 border-b border-slate-100">
