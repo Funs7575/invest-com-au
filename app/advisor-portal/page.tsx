@@ -643,10 +643,12 @@ export default function AdvisorPortalPage() {
 
 // ═══ ADVISOR ARTICLES SECTION ═══
 type ArticleItem = {
-  id: number; title: string; slug: string; status: string; category: string;
+  id: number; title: string; slug: string; content: string; excerpt: string;
+  status: string; category: string; tags: string[];
   created_at: string; submitted_at: string | null; published_at: string | null;
   view_count: number; click_count: number; admin_notes: string | null;
-  pricing_tier: string; payment_status: string;
+  rejection_reason: string | null;
+  pricing_tier: string; payment_status: string; price_cents: number;
 };
 
 const CATEGORIES = ["Investing", "Super & SMSF", "Tax & Strategy", "Property", "Retirement", "Insurance", "Estate Planning", "General"];
@@ -839,6 +841,16 @@ function AdvisorArticlesSection({ advisorId }: { advisorId?: number }) {
                     <strong>Admin feedback:</strong> {a.admin_notes}
                   </div>
                 )}
+                {a.rejection_reason && a.status === "rejected" && (
+                  <div className="mt-2 bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-700">
+                    <strong>Reason:</strong> {a.rejection_reason}
+                  </div>
+                )}
+                {a.admin_notes && a.status === "approved" && (
+                  <div className="mt-2 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2 text-xs text-emerald-700">
+                    <strong>Editor note:</strong> {a.admin_notes}
+                  </div>
+                )}
                 {a.status === "published" && (
                   <div className="flex items-center gap-3 mt-1.5 text-[0.62rem] text-slate-500">
                     <span>{a.view_count} views</span>
@@ -848,7 +860,15 @@ function AdvisorArticlesSection({ advisorId }: { advisorId?: number }) {
               </div>
               <div className="flex gap-1.5 shrink-0">
                 {(a.status === "draft" || a.status === "revision_requested") && (
-                  <button onClick={() => { /* load article for editing */ setEditId(a.id); setTitle(a.title); setMode("write"); }} className="text-xs px-2.5 py-1.5 border border-slate-200 rounded-lg hover:bg-slate-50">Edit</button>
+                  <button onClick={() => {
+                    setEditId(a.id);
+                    setTitle(a.title);
+                    setContent(a.content || "");
+                    setExcerpt(a.excerpt || "");
+                    setCategory(a.category || "General");
+                    setTier(a.pricing_tier || "standard");
+                    setMode("write");
+                  }} className="text-xs px-2.5 py-1.5 border border-slate-200 rounded-lg hover:bg-slate-50">Edit</button>
                 )}
                 {a.status === "published" && a.slug && (
                   <Link href={`/expert/${a.slug}`} target="_blank" className="text-xs px-2.5 py-1.5 border border-slate-200 rounded-lg hover:bg-slate-50">View</Link>

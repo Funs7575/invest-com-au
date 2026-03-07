@@ -2,238 +2,183 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { isRateLimited } from "@/lib/rate-limit";
 
-// GET — fetch articles (public: published only, admin: all, advisor: own)
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app";
+
+async function logMod(supabase: Awaited<ReturnType<typeof createClient>>, articleId: number, action: string, by: string, notes?: string, oldStatus?: string, newStatus?: string) {
+  await supabase.from("article_moderation_log").insert({ article_id: articleId, action, performed_by: by, notes, old_status: oldStatus, new_status: newStatus }).catch(() => {});
+}
+
+async function sendEmail(to: string, subject: string, html: string) {
+  if (!process.env.RESEND_API_KEY || !to) return;
+  await fetch("https://api.resend.com/emails", { method: "POST", headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" }, body: JSON.stringify({ from: "Invest.com.au <articles@invest.com.au>", to, subject, html }) }).catch(() => {});
+}
+
+function wrap(title: string, body: string, cta?: string, url?: string) {
+  return `<div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto"><div style="background:#0f172a;padding:16px 20px;border-radius:12px 12px 0 0"><h2 style="color:white;margin:0;font-size:16px">${title}</h2></div><div style="padding:20px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px">${body}${cta && url ? `<a href="${url}" style="display:inline-block;padding:10px 24px;background:#7c3aed;color:white;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;margin-top:12px">${cta}</a>` : ""}<p style="margin-top:16px;font-size:11px;color:#94a3b8">Invest.com.au Expert Insights</p></div></div>`;
+}
+
 export async function GET(request: NextRequest) {
   const supabase = await createClient();
-  const { searchParams } = new URL(request.url);
-  const mode = searchParams.get("mode"); // "admin" | "advisor" | default (public)
-  const professionalId = searchParams.get("professional_id");
-  const slug = searchParams.get("slug");
-  const category = searchParams.get("category");
-  const status = searchParams.get("status");
+  const sp = new URL(request.url).searchParams;
+  const mode = sp.get("mode");
+  const articleId = sp.get("id");
+  const slug = sp.get("slug");
 
-  // Single article by slug (public)
+  if (articleId) {
+    const { data } = await supabase.from("advisor_articles").select("*").eq("id", parseInt(articleId)).single();
+    if (!data) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    return NextResponse.json(data);
+  }
+
   if (slug) {
-    const { data, error } = await supabase
-      .from("advisor_articles")
-      .select("*, professionals!advisor_articles_professional_id_fkey(name, slug, firm_name, type, photo_url, verified, rating)")
-      .eq("slug", slug)
-      .eq("status", "published")
-      .single();
-    if (error || !data) return NextResponse.json({ error: "Article not found" }, { status: 404 });
-    // Increment view count
+    const { data } = await supabase.from("advisor_articles").select("*, professionals!advisor_articles_professional_id_fkey(name, slug, firm_name, type, photo_url, verified, rating)").eq("slug", slug).eq("status", "published").single();
+    if (!data) return NextResponse.json({ error: "Not found" }, { status: 404 });
     await supabase.from("advisor_articles").update({ view_count: (data.view_count || 0) + 1 }).eq("id", data.id);
     return NextResponse.json(data);
   }
 
-  // Advisor's own articles
-  if (mode === "advisor" && professionalId) {
-    const { data } = await supabase
-      .from("advisor_articles")
-      .select("id, title, slug, status, category, created_at, submitted_at, published_at, view_count, click_count, admin_notes, pricing_tier, payment_status")
-      .eq("professional_id", parseInt(professionalId))
-      .order("created_at", { ascending: false });
+  if (mode === "advisor" && sp.get("professional_id")) {
+    const { data } = await supabase.from("advisor_articles").select("id, title, slug, content, excerpt, status, category, tags, created_at, submitted_at, published_at, view_count, click_count, admin_notes, rejection_reason, pricing_tier, payment_status, price_cents").eq("professional_id", parseInt(sp.get("professional_id")!)).order("created_at", { ascending: false });
     return NextResponse.json(data || []);
   }
 
-  // Admin — all articles with filters
   if (mode === "admin") {
-    let query = supabase
-      .from("advisor_articles")
-      .select("*, professionals!advisor_articles_professional_id_fkey(name, slug, firm_name)")
-      .order("created_at", { ascending: false });
-    if (status) query = query.eq("status", status);
-    const { data } = await query;
+    let q = supabase.from("advisor_articles").select("*, professionals!advisor_articles_professional_id_fkey(name, slug, firm_name, email)").order("created_at", { ascending: false });
+    if (sp.get("status")) q = q.eq("status", sp.get("status")!);
+    const { data } = await q;
     return NextResponse.json(data || []);
   }
 
-  // Public — published articles
-  let query = supabase
-    .from("advisor_articles")
-    .select("id, title, slug, excerpt, category, tags, author_name, author_firm, author_slug, cover_image_url, published_at, view_count, professionals!advisor_articles_professional_id_fkey(name, slug, photo_url, verified, type)")
-    .eq("status", "published")
-    .order("published_at", { ascending: false });
-  if (category) query = query.eq("category", category);
-  const { data } = await query.limit(50);
+  if (mode === "moderation_log" && sp.get("article_id")) {
+    const { data } = await supabase.from("article_moderation_log").select("*").eq("article_id", parseInt(sp.get("article_id")!)).order("created_at", { ascending: false });
+    return NextResponse.json(data || []);
+  }
+
+  let q = supabase.from("advisor_articles").select("id, title, slug, excerpt, category, tags, author_name, author_firm, author_slug, cover_image_url, published_at, view_count, professionals!advisor_articles_professional_id_fkey(name, slug, photo_url, verified, type)").eq("status", "published").order("published_at", { ascending: false });
+  const { data } = await q.limit(50);
   return NextResponse.json(data || []);
 }
 
-// POST — create or submit article (advisor)
 export async function POST(request: NextRequest) {
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
-  if (await isRateLimited(`advisor_article:${ip}`, 10, 60)) {
-    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
-  }
+  if (await isRateLimited(`advisor_article:${ip}`, 10, 60)) return NextResponse.json({ error: "Too many requests" }, { status: 429 });
 
   const supabase = await createClient();
   const body = await request.json();
   const { professional_id, title, content, excerpt, category, tags, pricing_tier, action } = body;
+  if (!professional_id || !title?.trim() || !content?.trim()) return NextResponse.json({ error: "Title and content required" }, { status: 400 });
 
-  if (!professional_id || !title?.trim() || !content?.trim()) {
-    return NextResponse.json({ error: "Professional ID, title, and content are required" }, { status: 400 });
-  }
-
-  // Verify the professional exists
-  const { data: pro } = await supabase
-    .from("professionals")
-    .select("id, name, slug, firm_name")
-    .eq("id", professional_id)
-    .eq("status", "active")
-    .single();
-
+  const { data: pro } = await supabase.from("professionals").select("id, name, slug, firm_name, email").eq("id", professional_id).eq("status", "active").single();
   if (!pro) return NextResponse.json({ error: "Professional not found" }, { status: 404 });
 
-  const isSubmitting = action === "submit";
-
-  const { data: article, error } = await supabase
-    .from("advisor_articles")
-    .insert({
-      professional_id: pro.id,
-      author_name: pro.name,
-      author_firm: pro.firm_name,
-      author_slug: pro.slug,
-      title: title.trim(),
-      content: content.trim(),
-      excerpt: excerpt?.trim() || content.trim().slice(0, 160) + "...",
-      category: category || "General",
-      tags: tags || [],
-      pricing_tier: pricing_tier || "standard",
-      status: isSubmitting ? "submitted" : "draft",
-      submitted_at: isSubmitting ? new Date().toISOString() : null,
-      price_cents: pricing_tier === "featured" ? 49900 : pricing_tier === "sponsored" ? 79900 : 29900,
-    })
-    .select("id, slug, status")
-    .single();
-
+  const isSubmit = action === "submit";
+  const { data: article, error } = await supabase.from("advisor_articles").insert({
+    professional_id: pro.id, author_name: pro.name, author_firm: pro.firm_name, author_slug: pro.slug,
+    title: title.trim(), content: content.trim(), excerpt: excerpt?.trim() || content.trim().slice(0, 160) + "...",
+    category: category || "General", tags: tags || [], pricing_tier: pricing_tier || "standard",
+    status: isSubmit ? "submitted" : "draft", submitted_at: isSubmit ? new Date().toISOString() : null,
+    price_cents: pricing_tier === "featured" ? 49900 : pricing_tier === "sponsored" ? 79900 : 29900,
+  }).select("id, slug, status").single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  // Notify admin if submitted
-  if (isSubmitting && process.env.RESEND_API_KEY) {
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app";
-    await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        from: "Invest.com.au <system@invest.com.au>",
-        to: process.env.ADMIN_EMAIL || "finnduns@gmail.com",
-        subject: `New article submission: "${title}" by ${pro.name}`,
-        html: `<div style="font-family:Arial,sans-serif;max-width:500px"><h2 style="color:#0f172a;font-size:16px">New Article Submitted</h2><p style="color:#64748b;font-size:14px"><strong>${pro.name}</strong> (${pro.firm_name || "Independent"}) has submitted an article for review.</p><p style="color:#334155;font-size:15px;font-weight:600">"${title}"</p><p style="color:#64748b;font-size:13px">Category: ${category || "General"}<br>Tier: ${pricing_tier || "standard"}</p><a href="${siteUrl}/admin/advisor-articles" style="display:inline-block;padding:10px 20px;background:#0f172a;color:white;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;margin-top:12px">Review in Admin →</a></div>`,
-      }),
-    }).catch(() => {});
-  }
+  await logMod(supabase, article.id, isSubmit ? "submitted" : "draft_created", "advisor", undefined, undefined, article.status);
 
+  if (isSubmit) {
+    const adminEmail = process.env.ADMIN_EMAIL || "finnduns@gmail.com";
+    await sendEmail(adminEmail, `New article: "${title}" by ${pro.name}`,
+      wrap("New Article Submitted", `<p style="color:#64748b;font-size:14px"><strong>${pro.name}</strong> (${pro.firm_name || "Independent"}) submitted an article.</p><p style="color:#334155;font-size:15px;font-weight:600">"${title}"</p><p style="color:#64748b;font-size:13px">Category: ${category || "General"} · Tier: ${pricing_tier || "standard"} · ${content.trim().split(/\s+/).length} words</p>`, "Review →", `${SITE_URL}/admin/advisor-articles`));
+  }
   return NextResponse.json(article);
 }
 
-// PUT — update article (advisor updates draft, or admin reviews)
 export async function PUT(request: NextRequest) {
   const supabase = await createClient();
   const body = await request.json();
   const { id, action, ...updates } = body;
-
   if (!id) return NextResponse.json({ error: "Article ID required" }, { status: 400 });
 
-  // Admin actions
+  const { data: cur } = await supabase.from("advisor_articles").select("status, title, author_name, slug, professionals!advisor_articles_professional_id_fkey(email, name)").eq("id", id).single();
+  const oldStatus = cur?.status;
+  const advEmail = (cur?.professionals as { email?: string } | null)?.email || "";
+  const advName = cur?.author_name || "there";
+  const artTitle = cur?.title || "your article";
+
   if (action === "approve") {
-    const { error } = await supabase
-      .from("advisor_articles")
-      .update({
-        status: "approved",
-        reviewed_at: new Date().toISOString(),
-        reviewed_by: updates.reviewed_by || "admin",
-        admin_notes: updates.admin_notes || null,
-      })
-      .eq("id", id);
+    const { error } = await supabase.from("advisor_articles").update({ status: "approved", reviewed_at: new Date().toISOString(), reviewed_by: updates.reviewed_by || "admin", admin_notes: updates.admin_notes || null }).eq("id", id);
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    await logMod(supabase, id, "approved", updates.reviewed_by || "admin", updates.admin_notes, oldStatus, "approved");
+    if (advEmail) await sendEmail(advEmail, `Article approved: "${artTitle}"`, wrap("Article Approved ✓", `<p style="color:#334155;font-size:14px">Hi ${advName.split(" ")[0]},</p><p style="color:#64748b;font-size:14px"><strong>"${artTitle}"</strong> has been approved!</p>${updates.admin_notes ? `<p style="background:#f8fafc;padding:10px;border-radius:6px;font-size:13px;color:#64748b;border-left:3px solid #7c3aed"><strong>Note:</strong> ${updates.admin_notes}</p>` : ""}<p style="color:#64748b;font-size:14px">Once payment is confirmed, it will be published with your profile linked.</p>`, "View Portal →", `${SITE_URL}/advisor-portal`));
     return NextResponse.json({ status: "approved" });
   }
 
-  if (action === "publish") {
-    const { data: article } = await supabase.from("advisor_articles").select("payment_status, pricing_tier").eq("id", id).single();
-    // Allow publish if paid or waived
-    if (article && article.payment_status !== "paid" && article.payment_status !== "waived") {
-      return NextResponse.json({ error: "Payment required before publishing" }, { status: 400 });
-    }
-    const { error } = await supabase
-      .from("advisor_articles")
-      .update({
-        status: "published",
-        published_at: new Date().toISOString(),
-      })
-      .eq("id", id);
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-    return NextResponse.json({ status: "published" });
-  }
-
-  if (action === "reject") {
-    const { error } = await supabase
-      .from("advisor_articles")
-      .update({
-        status: "rejected",
-        rejection_reason: updates.rejection_reason || "Does not meet editorial standards",
-        reviewed_at: new Date().toISOString(),
-        reviewed_by: updates.reviewed_by || "admin",
-      })
-      .eq("id", id);
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-    return NextResponse.json({ status: "rejected" });
-  }
-
   if (action === "request_revision") {
-    const { error } = await supabase
-      .from("advisor_articles")
-      .update({
-        status: "revision_requested",
-        admin_notes: updates.admin_notes || "Please revise and resubmit",
-        reviewed_at: new Date().toISOString(),
-        reviewed_by: updates.reviewed_by || "admin",
-      })
-      .eq("id", id);
+    const notes = updates.admin_notes || "Please revise based on feedback";
+    const { error } = await supabase.from("advisor_articles").update({ status: "revision_requested", admin_notes: notes, reviewed_at: new Date().toISOString(), reviewed_by: updates.reviewed_by || "admin" }).eq("id", id);
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    await logMod(supabase, id, "revision_requested", updates.reviewed_by || "admin", notes, oldStatus, "revision_requested");
+    if (advEmail) await sendEmail(advEmail, `Revision needed: "${artTitle}"`, wrap("Revision Requested", `<p style="color:#334155;font-size:14px">Hi ${advName.split(" ")[0]},</p><p style="color:#64748b;font-size:14px"><strong>"${artTitle}"</strong> needs some changes before approval.</p><div style="background:#fef3c7;padding:12px;border-radius:8px;margin:12px 0;border-left:3px solid #f59e0b"><p style="font-size:13px;color:#92400e;margin:0"><strong>Feedback:</strong> ${notes}</p></div><p style="color:#64748b;font-size:14px">Please revise and resubmit from your portal.</p>`, "Edit Article →", `${SITE_URL}/advisor-portal`));
     return NextResponse.json({ status: "revision_requested" });
   }
 
-  if (action === "mark_paid") {
-    const { error } = await supabase
-      .from("advisor_articles")
-      .update({
-        payment_status: "paid",
-        payment_reference: updates.payment_reference || "manual",
-        paid_at: new Date().toISOString(),
-      })
-      .eq("id", id);
+  if (action === "reject") {
+    const reason = updates.rejection_reason || "Does not meet editorial standards";
+    const { error } = await supabase.from("advisor_articles").update({ status: "rejected", rejection_reason: reason, reviewed_at: new Date().toISOString(), reviewed_by: updates.reviewed_by || "admin" }).eq("id", id);
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    await logMod(supabase, id, "rejected", updates.reviewed_by || "admin", reason, oldStatus, "rejected");
+    if (advEmail) await sendEmail(advEmail, `Article not accepted: "${artTitle}"`, wrap("Not Accepted", `<p style="color:#334155;font-size:14px">Hi ${advName.split(" ")[0]},</p><p style="color:#64748b;font-size:14px"><strong>"${artTitle}"</strong> was not accepted for publication.</p><div style="background:#fef2f2;padding:12px;border-radius:8px;margin:12px 0;border-left:3px solid #ef4444"><p style="font-size:13px;color:#991b1b;margin:0"><strong>Reason:</strong> ${reason}</p></div><p style="color:#64748b;font-size:14px">You may submit a new article. No charge was applied.</p>`, "Submit New →", `${SITE_URL}/advisor-portal`));
+    return NextResponse.json({ status: "rejected" });
+  }
+
+  if (action === "publish") {
+    const { data: art } = await supabase.from("advisor_articles").select("payment_status, slug").eq("id", id).single();
+    if (art && art.payment_status !== "paid" && art.payment_status !== "waived") return NextResponse.json({ error: "Payment required" }, { status: 400 });
+    const { error } = await supabase.from("advisor_articles").update({ status: "published", published_at: new Date().toISOString() }).eq("id", id);
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    await logMod(supabase, id, "published", updates.reviewed_by || "admin", undefined, oldStatus, "published");
+    if (advEmail) await sendEmail(advEmail, `Your article is live! 🎉`, wrap("Published! 🎉", `<p style="color:#334155;font-size:14px">Hi ${advName.split(" ")[0]},</p><p style="color:#64748b;font-size:14px"><strong>"${artTitle}"</strong> is now live on Invest.com.au with your profile linked.</p>`, "View Article →", `${SITE_URL}/expert/${art?.slug || ""}`));
+    return NextResponse.json({ status: "published" });
+  }
+
+  if (action === "mark_paid") {
+    const { error } = await supabase.from("advisor_articles").update({ payment_status: "paid", payment_reference: updates.payment_reference || "manual", paid_at: new Date().toISOString() }).eq("id", id);
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    await logMod(supabase, id, "mark_paid", updates.reviewed_by || "admin", `Ref: ${updates.payment_reference || "manual"}`);
     return NextResponse.json({ payment_status: "paid" });
   }
 
   if (action === "waive_fee") {
-    const { error } = await supabase
-      .from("advisor_articles")
-      .update({ payment_status: "waived", paid_at: new Date().toISOString() })
-      .eq("id", id);
+    const { error } = await supabase.from("advisor_articles").update({ payment_status: "waived", paid_at: new Date().toISOString() }).eq("id", id);
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    await logMod(supabase, id, "waive_fee", updates.reviewed_by || "admin");
     return NextResponse.json({ payment_status: "waived" });
   }
 
-  // Advisor updating their draft/revision
-  if (action === "submit") {
-    const { error } = await supabase
-      .from("advisor_articles")
-      .update({
-        ...updates,
-        status: "submitted",
-        submitted_at: new Date().toISOString(),
-      })
-      .eq("id", id);
+  if (action === "admin_edit") {
+    const fields: Record<string, unknown> = {};
+    for (const k of ["title", "content", "excerpt", "meta_title", "meta_description", "category"]) {
+      if (updates[k] !== undefined) fields[k] = updates[k];
+    }
+    const { error } = await supabase.from("advisor_articles").update(fields).eq("id", id);
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    await logMod(supabase, id, "admin_edit", updates.reviewed_by || "admin", `Edited: ${Object.keys(fields).join(", ")}`);
+    return NextResponse.json({ edited: true });
+  }
+
+  if (action === "submit") {
+    const sf: Record<string, unknown> = { status: "submitted", submitted_at: new Date().toISOString() };
+    for (const k of ["title", "content", "excerpt", "category"]) { if (updates[k]) sf[k] = updates[k]; }
+    const { error } = await supabase.from("advisor_articles").update(sf).eq("id", id);
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    await logMod(supabase, id, "resubmitted", "advisor", undefined, oldStatus, "submitted");
+    const adminEmail = process.env.ADMIN_EMAIL || "finnduns@gmail.com";
+    await sendEmail(adminEmail, `Resubmitted: "${artTitle}" by ${advName}`, wrap("Article Resubmitted", `<p style="color:#64748b;font-size:14px"><strong>${advName}</strong> revised and resubmitted their article.</p><p style="color:#334155;font-size:15px;font-weight:600">"${artTitle}"</p>`, "Review →", `${SITE_URL}/admin/advisor-articles`));
     return NextResponse.json({ status: "submitted" });
   }
 
-  // Generic update (save draft)
-  const { error } = await supabase
-    .from("advisor_articles")
-    .update(updates)
-    .eq("id", id);
+  // Generic save draft
+  const df: Record<string, unknown> = {};
+  for (const k of ["title", "content", "excerpt", "category", "pricing_tier"]) { if (updates[k]) df[k] = updates[k]; }
+  const { error } = await supabase.from("advisor_articles").update(df).eq("id", id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ updated: true });
 }
