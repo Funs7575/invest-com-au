@@ -237,6 +237,11 @@ export default function SwitchingCalculatorClient({ brokers }: { brokers: Broker
           <p>Our switching calculator uses real fee data from {brokers.length} Australian platforms, updated daily. It accounts for ASX brokerage, US share fees, FX conversion rates, and inactivity charges to show your true annual cost.</p>
           <h3 className="text-base font-bold text-slate-900">How to switch brokers</h3>
           <p>Switching is easier than most people think. For CHESS-sponsored brokers, your HIN (Holder Identification Number) transfers directly — your shares stay in your name throughout. The process typically takes 3-5 business days. Read our <Link href="/switch" className="text-violet-600 hover:underline">complete switching guide</Link> for step-by-step instructions.</p>
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mt-4">
+            <p className="text-sm font-bold text-blue-800 mb-1">Also check your savings rate</p>
+            <p className="text-xs text-blue-600">Most Australians earn 0.01% on their cash while top accounts offer 5%+. On $50k, that's $2,750/year difference.</p>
+            <Link href="/savings-calculator" className="inline-block mt-2 text-xs font-bold text-blue-700 hover:underline">Try the Savings Calculator →</Link>
+          </div>
         </div>
       </div>
     </div>

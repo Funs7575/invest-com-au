@@ -113,7 +113,7 @@ function AnimatedNumber({ value, prefix = "$", decimals = 2 }: { value: number; 
    Types & constants
    ────────────────────────────────────────────── */
 interface Props { brokers: Broker[] }
-type CalcId = "trade-cost" | "fx" | "switching" | "cgt" | "franking" | "chess" | "fee-impact";
+type CalcId = "trade-cost" | "fx" | "switching" | "cgt" | "franking" | "chess" | "fee-impact" | "portfolio" | "switch-calc" | "savings-calc";
 
 const CALCS: { id: CalcId; icon: string; title: string; subtitle: string; badge?: string; href?: string }[] = [
   { id: "trade-cost", icon: "dollar-sign", title: "Trade Cost", subtitle: "What does a trade really cost at each platform?" },
@@ -125,6 +125,7 @@ const CALCS: { id: CalcId; icon: string; title: string; subtitle: string; badge?
   { id: "fee-impact", icon: "calculator", title: "Fee Impact", subtitle: "Your total annual platform fees", badge: "PRO" },
   { id: "portfolio" as CalcId, icon: "briefcase", title: "Portfolio Fees", subtitle: "Exact cost at every broker", href: "/portfolio-calculator" },
   { id: "switch-calc" as CalcId, icon: "arrow-right-left", title: "Switching Calculator", subtitle: "How much could you save?", href: "/switching-calculator" },
+  { id: "savings-calc" as CalcId, icon: "piggy-bank", title: "Savings Calculator", subtitle: "Are you earning enough?", href: "/savings-calculator" },
 ];
 
 // Inline-only calcs (no href) for swipe navigation
