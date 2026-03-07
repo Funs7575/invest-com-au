@@ -136,8 +136,8 @@ export default memo(function BrokerCard({
           )}
         </div>
 
-        {/* Row 3: Deal (if active) */}
-        {broker.deal && broker.deal_text && (
+        {/* Row 3: Deal (if active and not expired) */}
+        {broker.deal && broker.deal_text && (!broker.deal_expiry || new Date(broker.deal_expiry).getTime() > Date.now()) && (
           <div className="flex items-center gap-1.5 px-2 py-1 bg-amber-50 border border-amber-200/80 rounded-lg">
             <Icon name="flame" size={11} className="text-amber-500 shrink-0" />
             <span className="text-[0.6rem] text-amber-700 font-semibold truncate">{broker.deal_text}</span>

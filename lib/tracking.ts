@@ -9,20 +9,27 @@ export const AFFILIATE_REL = "noopener noreferrer nofollow sponsored";
 
 export function trackClick(brokerSlug: string, brokerName: string, source: string, page: string, layer?: string, scenario?: string, placement?: string) {
   const sessionId = getSessionId();
+  const payload = JSON.stringify({ broker_slug: brokerSlug, broker_name: brokerName, source, page, layer, session_id: sessionId, scenario, placement_type: placement });
+
+  // Try fetch first, fallback to sendBeacon for ad-blocker resilience
   fetch('/api/track-click', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ broker_slug: brokerSlug, broker_name: brokerName, source, page, layer, session_id: sessionId, scenario, placement_type: placement }),
+    body: payload,
   })
     .then((res) => res.json())
     .then((data) => {
-      // If click_id returned, append to outbound links for attribution
       if (data?.click_id && typeof window !== 'undefined') {
         (window as unknown as Record<string, string>).__inv_last_click_id = data.click_id;
       }
     })
-    .catch((err: Error) => {
-      log.warn("Click tracking failed", { error: err.message });
+    .catch(() => {
+      // Fetch failed (ad blocker, network error) — try sendBeacon as last resort
+      if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
+        try {
+          navigator.sendBeacon('/api/track-click', new Blob([payload], { type: 'application/json' }));
+        } catch { /* silently fail */ }
+      }
     });
 }
 

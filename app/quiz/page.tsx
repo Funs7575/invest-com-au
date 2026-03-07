@@ -681,6 +681,19 @@ export default function QuizPage() {
                     <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">Leveraged Trading</span>
                   </>
                 )}
+                {topMatch.broker.platform_type === 'savings_account' && (
+                  <>
+                    <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">Rate: {topMatch.broker.asx_fee}</span>
+                    <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">Gov. Guaranteed</span>
+                  </>
+                )}
+                {topMatch.broker.platform_type === 'term_deposit' && (
+                  <>
+                    <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">Rate: {topMatch.broker.asx_fee}</span>
+                    <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">Min: {topMatch.broker.min_deposit}</span>
+                    <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">Gov. Guaranteed</span>
+                  </>
+                )}
                 <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">Rating: {topMatch.broker.rating}/5</span>
               </div>
               <a
