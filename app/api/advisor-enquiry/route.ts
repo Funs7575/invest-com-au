@@ -44,9 +44,9 @@ export async function POST(request: NextRequest) {
       .from("professional_leads")
       .insert({
         professional_id,
-        user_name: user_name.trim(),
-        user_email: user_email.trim().toLowerCase(),
-        user_phone: user_phone?.trim() || null,
+        user_name: user_name.trim().replace(/[\r\n]/g, ''),
+        user_email: user_email.trim().toLowerCase().replace(/[\r\n]/g, ''),
+        user_phone: user_phone?.trim().replace(/[\r\n]/g, '') || null,
         message: message?.trim() || null,
         source_page: source_page || null,
         status: "new",

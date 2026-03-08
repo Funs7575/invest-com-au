@@ -106,19 +106,21 @@ export async function GET(req: NextRequest) {
   let emailsSent = 0;
   let skipped = 0;
 
-  // Get recent email captures
+  // Get recent email captures (exclude bounced)
   const { data: captures } = await supabase
     .from("email_captures")
     .select("email, name, source, created_at")
     .gte("created_at", tenDaysAgo)
+    .neq("status", "bounced")
     .order("created_at", { ascending: true })
     .limit(200);
 
-  // Get recent quiz leads
+  // Get recent quiz leads (exclude unsubscribed)
   const { data: quizLeads } = await supabase
     .from("quiz_leads")
     .select("email, name, created_at")
     .gte("created_at", tenDaysAgo)
+    .neq("unsubscribed", true)
     .order("created_at", { ascending: true })
     .limit(200);
 

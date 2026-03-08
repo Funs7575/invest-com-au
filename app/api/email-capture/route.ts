@@ -212,8 +212,8 @@ export async function POST(request: NextRequest) {
 
   // Sanitize and truncate inputs
   const sanitizedEmail = (email as string).trim().toLowerCase().slice(0, 254);
-  const sanitizedSource = (typeof source === 'string' ? source : 'website').slice(0, 100);
-  const sanitizedName = (typeof name === 'string' ? name.trim().slice(0, 100) : null) || null;
+  const sanitizedSource = (typeof source === 'string' ? source.replace(/[\r\n]/g, '') : 'website').slice(0, 100);
+  const sanitizedName = (typeof name === 'string' ? name.trim().replace(/[\r\n]/g, '').slice(0, 100) : null) || null;
 
   // Check for existing email — prevent duplicates and skip re-sending
   const { data: existing } = await supabase
