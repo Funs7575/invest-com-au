@@ -6,6 +6,7 @@ import LayoutShell from "@/components/LayoutShell";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import UtmCapture from "@/components/UtmCapture";
+import ExitIntentCapture from "@/components/ExitIntentCapture";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, websiteJsonLd } from "@/lib/seo";
 
@@ -110,6 +111,7 @@ export default function RootLayout({
         </noscript>
         <GoogleAnalytics />
         <Suspense fallback={null}><UtmCapture /></Suspense>
+        <ExitIntentCapture />
         <ThemeProvider>
           <LayoutShell>{children}</LayoutShell>
         </ThemeProvider>
