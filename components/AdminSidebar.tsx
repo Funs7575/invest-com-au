@@ -10,8 +10,13 @@ const NAV_GROUPS = [
     label: "Overview",
     items: [
       { href: "/admin", icon: "bar-chart", label: "Dashboard" },
+      { href: "/admin/revenue", icon: "dollar-sign", label: "Revenue" },
+      { href: "/admin/funnel", icon: "filter", label: "Funnel" },
       { href: "/admin/analytics", icon: "trending-up", label: "Analytics" },
       { href: "/admin/data-health", icon: "activity", label: "Data Health" },
+      { href: "/admin/seo-health", icon: "search", label: "SEO Health" },
+      { href: "/admin/compliance", icon: "shield-check", label: "Compliance" },
+      { href: "/admin/competitors", icon: "eye", label: "Competitors" },
       { href: "/admin/bd-pipeline", icon: "target", label: "BD Pipeline" },
     ],
   },
