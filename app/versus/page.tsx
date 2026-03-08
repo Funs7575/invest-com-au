@@ -23,7 +23,7 @@ export default async function VersusPage() {
 
   const { data: brokers } = await supabase
     .from("brokers")
-    .select("id, name, slug, color, icon, rating, asx_fee, asx_fee_value, us_fee, us_fee_value, fx_rate, chess_sponsored, smsf_support, is_crypto, platform_type, min_deposit, inactivity_fee, pros, cons, cta_text, affiliate_url, sponsorship_tier, benefit_cta, status, markets")
+    .select("id, name, slug, color, icon, logo_url, rating, asx_fee, asx_fee_value, us_fee, us_fee_value, fx_rate, chess_sponsored, smsf_support, is_crypto, platform_type, min_deposit, inactivity_fee, pros, cons, cta_text, affiliate_url, sponsorship_tier, benefit_cta, status, markets")
     .eq("status", "active")
     .order("name");
 

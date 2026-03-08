@@ -15,7 +15,7 @@ export default async function ProDealsPage() {
 
   const [dealsRes, brokersRes] = await Promise.all([
     supabase.from("pro_deals").select("*").eq("status", "active").order("sort_order").order("featured", { ascending: false }),
-    supabase.from("brokers").select("id, name, slug, color, icon, status").eq("status", "active"),
+    supabase.from("brokers").select("id, name, slug, color, icon, logo_url, status").eq("status", "active"),
   ]);
 
   const breadcrumbLd = breadcrumbJsonLd([

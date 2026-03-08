@@ -29,7 +29,7 @@ export default async function HealthScoresPage() {
   const supabase = await createClient();
 
   const [brokersRes, scoresRes] = await Promise.all([
-    supabase.from("brokers").select("id, name, slug, color, icon, rating, status").eq("status", "active").eq("is_crypto", false).order("name"),
+    supabase.from("brokers").select("id, name, slug, color, icon, logo_url, rating, status").eq("status", "active").eq("is_crypto", false).order("name"),
     supabase.from("broker_health_scores").select("*"),
   ]);
 

@@ -20,7 +20,7 @@ export default async function SavingsCalculatorPage() {
   const supabase = await createClient();
   const { data: accounts } = await supabase
     .from("brokers")
-    .select("id, slug, name, platform_type, asx_fee, rating, affiliate_url, color, min_deposit")
+    .select("id, slug, name, platform_type, asx_fee, rating, affiliate_url, color, icon, logo_url, min_deposit")
     .eq("status", "active")
     .eq("platform_type", "savings_account")
     .order("rating", { ascending: false });

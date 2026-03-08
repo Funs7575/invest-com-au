@@ -2,7 +2,10 @@
  * Reusable broker logo/avatar component. Shows the actual logo image
  * if logo_url exists, otherwise falls back to the color+icon pattern.
  */
+"use client";
+
 import Image from "next/image";
+import { useState } from "react";
 
 interface BrokerLogoProps {
   broker: {
@@ -24,12 +27,44 @@ const SIZES = {
   xl: { container: "w-16 h-16", text: "text-lg", img: 64 },
 };
 
+function LetterFallback({ broker, s }: { broker: BrokerLogoProps["broker"]; s: (typeof SIZES)["md"] }) {
+  return (
+    <div
+      className={`${s.container} rounded-lg flex items-center justify-center ${s.text} font-bold shrink-0`}
+      style={{ background: `${broker.color}20`, color: broker.color }}
+    >
+      {broker.icon || broker.name.charAt(0)}
+    </div>
+  );
+}
+
 export default function BrokerLogo({ broker, size = "md", className = "" }: BrokerLogoProps) {
   const s = SIZES[size];
+  const [imgError, setImgError] = useState(false);
 
-  if (broker.logo_url) {
+  if (broker.logo_url && !imgError) {
+    const isIco = broker.logo_url.endsWith(".ico");
+
+    // ICO files: use native <img> since Next.js Image doesn't handle ICO well
+    if (isIco) {
+      return (
+        <div className={`${s.container} rounded-lg overflow-hidden shrink-0 bg-white border border-slate-100 ${className}`}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={broker.logo_url}
+            alt={`${broker.name} logo`}
+            width={s.img}
+            height={s.img}
+            className="w-full h-full object-contain p-0.5"
+            loading="lazy"
+            onError={() => setImgError(true)}
+          />
+        </div>
+      );
+    }
+
     return (
-      <div className={`${s.container} rounded-lg overflow-hidden shrink-0 ${className}`} style={{ background: `${broker.color}10` }}>
+      <div className={`${s.container} rounded-lg overflow-hidden shrink-0 bg-white border border-slate-100 ${className}`}>
         <Image
           src={broker.logo_url}
           alt={`${broker.name} logo`}
@@ -37,17 +72,11 @@ export default function BrokerLogo({ broker, size = "md", className = "" }: Brok
           height={s.img}
           className="w-full h-full object-contain p-0.5"
           sizes={`${s.img}px`}
+          onError={() => setImgError(true)}
         />
       </div>
     );
   }
 
-  return (
-    <div
-      className={`${s.container} rounded-lg flex items-center justify-center ${s.text} font-bold shrink-0 ${className}`}
-      style={{ background: `${broker.color}20`, color: broker.color }}
-    >
-      {broker.icon || broker.name.charAt(0)}
-    </div>
-  );
+  return <LetterFallback broker={broker} s={s} />;
 }

@@ -31,7 +31,7 @@ export default async function SwitchPage() {
   const [brokersRes, guidesRes] = await Promise.all([
     supabase
       .from("brokers")
-      .select("id, name, slug, color, icon, rating, asx_fee, asx_fee_value, cta_text, affiliate_url, sponsorship_tier, benefit_cta, status")
+      .select("id, name, slug, color, icon, logo_url, rating, asx_fee, asx_fee_value, cta_text, affiliate_url, sponsorship_tier, benefit_cta, status")
       .eq("status", "active")
       .order("name"),
     supabase.from("broker_transfer_guides").select("*"),
