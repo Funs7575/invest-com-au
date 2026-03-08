@@ -1678,6 +1678,280 @@ const categories: BestBrokerCategory[] = [
       },
     ],
   },
+
+  // ═══════════════════════════════════════════
+  // NEW PROGRAMMATIC SEO CATEGORIES
+  // High-intent long-tail keywords
+  // ═══════════════════════════════════════════
+
+  {
+    slug: "cheapest-broker",
+    title: `Cheapest Online Broker Australia (${yr})`,
+    h1: "Cheapest Online Broker in Australia",
+    metaDescription: `Compare Australia's cheapest brokers by total cost. $0 brokerage platforms ranked by ASX fees, FX rates, and hidden charges. ${upd}.`,
+    intro: `Looking for the absolute cheapest way to trade shares in Australia? We've calculated the total annual cost of each broker based on typical trading patterns — not just headline brokerage, but FX fees, inactivity fees, and platform charges. Here are the genuinely cheapest options for ${yr}.`,
+    filter: (b) => !b.is_crypto && b.platform_type === "share_broker" && (b.asx_fee_value ?? 999) <= 15,
+    sort: (a, b) => (a.asx_fee_value ?? 999) - (b.asx_fee_value ?? 999),
+    criteria: ["ASX brokerage under $15", "Low or no FX fees for international trades", "No inactivity or platform fees", "Transparent fee schedule"],
+    sections: [
+      { heading: "What Makes a Broker 'Cheap'?", body: "Headline brokerage is just one part of the cost. A broker advertising $0 ASX trades might charge 0.7% on FX conversions for US trades — that's $70 on a $10,000 US share purchase. We compare the total cost including brokerage, FX fees, inactivity fees, and account maintenance charges." },
+      { heading: "Is $0 Brokerage Really Free?", body: "Several Australian brokers now offer genuine $0 ASX brokerage with no catch. However, they make money elsewhere — usually through wider spreads on US shares, FX conversion margins, or premium subscription tiers. For pure ASX trading, these are genuinely the cheapest option." },
+      { heading: "How to Calculate Your Real Trading Cost", body: "Use our switching calculator to enter your trading frequency, average trade size, and US allocation. It calculates the true annual cost with each broker. A trader doing 2 ASX trades per month at $2,000 each might pay $0 with one broker and $720 with another — same trades, same shares." },
+    ],
+    relatedLinks: [{ label: "Switching Calculator", href: "/switching-calculator" }, { label: "Compare All Fees", href: "/compare" }, { label: "Free Brokerage", href: "/best/free-brokerage" }],
+    faqs: [
+      { question: "What is the cheapest broker in Australia?", answer: "The cheapest Australian broker for ASX trades offers $0 brokerage. For US shares, cost depends on FX conversion rates. Use our switching calculator to find the cheapest broker for your specific trading pattern." },
+      { question: "Is there a catch with $0 brokerage?", answer: "Most $0 brokerage brokers make money on FX margins for international trades and premium features. For ASX-only investors, there's genuinely no catch — your trades execute at market price with no brokerage fee." },
+    ],
+  },
+  {
+    slug: "asx-trading-platform",
+    title: `Best ASX Trading Platform Australia (${yr})`,
+    h1: "Best ASX Trading Platform",
+    metaDescription: `Top ASX share trading platforms compared. Fees, CHESS sponsorship, tools, and safety. Independent ratings from our editorial team. ${upd}.`,
+    intro: `Choosing an ASX trading platform means balancing fees, platform quality, safety features, and available tools. We test every platform hands-on and rate them across our standardised methodology. Here are the best ASX platforms for ${yr}.`,
+    filter: (b) => !b.is_crypto && b.platform_type === "share_broker",
+    sort: (a, b) => (b.rating ?? 0) - (a.rating ?? 0),
+    criteria: ["Access to ASX-listed shares and ETFs", "Tested and rated by our editorial team", "Regulated by ASIC with AFSL", "Clear fee schedule published online"],
+    sections: [
+      { heading: "What to Look for in an ASX Platform", body: "The best ASX platforms offer reliable order execution, real-time pricing, a solid mobile app, and CHESS sponsorship. CHESS sponsorship means your shares are held in your name on the ASX register — essential for protecting your investments if the broker fails." },
+      { heading: "Commission-Free vs Premium Platforms", body: "Australian investors now have a choice between $0 brokerage platforms and premium platforms with professional tools. If you're a buy-and-hold investor making monthly purchases, a commission-free platform saves you hundreds per year. If you're an active trader who needs advanced charting and Level 2 data, a premium platform may be worth the extra cost." },
+    ],
+    relatedLinks: [{ label: "Cheapest Broker", href: "/best/cheapest-broker" }, { label: "CHESS Sponsored", href: "/best/chess-sponsored" }, { label: "Compare All", href: "/compare" }],
+    faqs: [
+      { question: "What is the best platform to buy shares in Australia?", answer: "The best ASX platform depends on your needs. Our top-rated platform balances low fees, strong safety features, and a user-friendly interface. See our full comparison above." },
+      { question: "Is CommSec still the best ASX broker?", answer: "CommSec remains Australia's most well-known broker and offers CHESS sponsorship, but newer platforms now offer better fees and modern mobile apps. CommSec's $29.95 brokerage is significantly higher than competitors offering $0-$5 per trade." },
+    ],
+  },
+  {
+    slug: "bitcoin-exchange",
+    title: `Best Bitcoin Exchange Australia (${yr})`,
+    h1: "Best Bitcoin Exchange in Australia",
+    metaDescription: `Top Australian Bitcoin exchanges compared. Fees, security, AUSTRAC registration, and ease of use. ${upd}.`,
+    intro: `Buying Bitcoin in Australia requires an AUSTRAC-registered exchange. We compare the major Australian exchanges by fees, security features, supported payment methods, and ease of use for both first-time and experienced crypto investors.`,
+    filter: (b) => b.is_crypto || b.platform_type === "crypto_exchange",
+    sort: (a, b) => (b.rating ?? 0) - (a.rating ?? 0),
+    criteria: ["AUSTRAC registered as a digital currency exchange", "Supports AUD deposits via PayID or bank transfer", "Reasonable trading fees (under 1%)", "Strong security (2FA, cold storage)"],
+    sections: [
+      { heading: "How to Buy Bitcoin in Australia", body: "To buy Bitcoin in Australia: 1) Choose an AUSTRAC-registered exchange, 2) Verify your identity (driver's licence or passport), 3) Deposit AUD via PayID or bank transfer, 4) Place a buy order for Bitcoin. Most exchanges complete this process within 24 hours." },
+      { heading: "Exchange Fees Compared", body: "Australian crypto exchange fees typically range from 0.1% to 1% per trade. The cheapest exchanges charge 0.1-0.2% maker/taker fees, while the most expensive charge 1% or more. For a $1,000 Bitcoin purchase, that's a difference of $1 vs $10 in fees." },
+      { heading: "Security: What to Look For", body: "The safest Australian exchanges store the majority of customer crypto in offline cold storage, require two-factor authentication, and are registered with AUSTRAC. Crypto is not covered by any government guarantee — if an exchange is hacked, you may lose your funds." },
+    ],
+    relatedLinks: [{ label: "Compare Crypto Exchanges", href: "/compare?filter=crypto" }, { label: "Crypto Risk Guide", href: "/articles" }, { label: "All Crypto Platforms", href: "/best/crypto" }],
+    faqs: [
+      { question: "What is the best Bitcoin exchange in Australia?", answer: "The best Australian Bitcoin exchange balances low fees, AUSTRAC registration, strong security, and easy AUD deposits. See our ranked comparison above." },
+      { question: "Is Bitcoin legal in Australia?", answer: "Yes, Bitcoin is legal in Australia. Crypto exchanges must register with AUSTRAC as digital currency exchanges. However, crypto is not considered legal tender and is treated as property for tax purposes by the ATO." },
+    ],
+  },
+  {
+    slug: "cheapest-crypto-exchange",
+    title: `Cheapest Crypto Exchange Australia (${yr})`,
+    h1: "Cheapest Crypto Exchange in Australia",
+    metaDescription: `Lowest fee crypto exchanges in Australia compared. Trading fees, deposit costs, and spread markups ranked. ${upd}.`,
+    intro: `Crypto exchange fees can range from 0.1% to over 2% per trade. On a $10,000 portfolio, that's the difference between $10 and $200 per round trip. We rank Australian exchanges by their true trading cost including spreads.`,
+    filter: (b) => b.is_crypto || b.platform_type === "crypto_exchange",
+    sort: (a, b) => (a.asx_fee_value ?? 999) - (b.asx_fee_value ?? 999),
+    criteria: ["Trading fees under 0.6%", "Free or low-cost AUD deposits", "Transparent fee schedule", "AUSTRAC registered"],
+    sections: [
+      { heading: "Why Crypto Fees Matter More Than You Think", body: "If you buy $5,000 of Bitcoin with a 1% fee and sell it later with another 1% fee, you've paid $100 in fees — your investment needs to grow 2% just to break even. With a 0.1% fee exchange, the same trades cost $10. Over a year of regular buying, the difference is enormous." },
+      { heading: "Watch Out for Hidden Spreads", body: "Some exchanges advertise 'no fees' but build a spread into the price. You might think you're buying Bitcoin at $100,000 but the exchange is actually selling it to you at $100,500 — a hidden 0.5% fee. Always check the actual price you're paying vs the market rate." },
+    ],
+    relatedLinks: [{ label: "All Crypto Exchanges", href: "/best/crypto" }, { label: "Bitcoin Exchange", href: "/best/bitcoin-exchange" }, { label: "Compare Crypto", href: "/compare?filter=crypto" }],
+    faqs: [
+      { question: "Which crypto exchange has the lowest fees in Australia?", answer: "The cheapest Australian crypto exchanges charge 0.1-0.2% per trade. However, the cheapest by headline fee may have higher spreads. Check both the fee schedule and the actual prices offered." },
+    ],
+  },
+  {
+    slug: "high-interest-savings",
+    title: `Highest Interest Savings Account Australia (${yr})`,
+    h1: "Highest Interest Savings Account in Australia",
+    metaDescription: `Top savings account rates in Australia ranked. Compare bonus rates, conditions, and ongoing rates. Updated ${upd}.`,
+    intro: `Looking for the highest interest rate on your savings? We compare every major Australian savings account by both their bonus rate (with conditions) and their ongoing base rate (without conditions). Here's who pays the most in ${yr}.`,
+    filter: (b) => b.platform_type === "savings_account",
+    sort: (a, b) => (b.asx_fee_value ?? 0) - (a.asx_fee_value ?? 0),
+    criteria: ["Available to Australian residents", "ADI authorised (APRA regulated)", "Government deposit guarantee eligible ($250k)", "Interest rate above 4% with conditions"],
+    sections: [
+      { heading: "Bonus Rate vs Base Rate — What's the Difference?", body: "Most high-interest savings accounts have two rates: a bonus rate (higher, but you need to meet conditions each month) and a base rate (lower, paid regardless). Conditions typically include depositing a minimum amount, making no withdrawals, or growing your balance. If you miss the conditions one month, you drop to the base rate." },
+      { heading: "Are Savings Accounts Safe?", body: "All savings accounts from ADI-authorised banks are covered by the Australian Government Deposit Guarantee, which protects up to $250,000 per person per ADI. This means your money is safe even if the bank fails — one of the safest places to keep cash in Australia." },
+      { heading: "How to Maximise Your Savings Rate", body: "Set up an automatic transfer on payday to meet deposit conditions. Avoid withdrawals from your high-interest account — keep a separate transaction account for spending. Review rates quarterly, as banks frequently change their bonus rate offers." },
+    ],
+    relatedLinks: [{ label: "Savings Calculator", href: "/savings-calculator" }, { label: "Compare Savings", href: "/compare?filter=savings" }, { label: "Term Deposits", href: "/best/term-deposits" }],
+    faqs: [
+      { question: "What is the highest savings rate in Australia right now?", answer: "The highest savings account rates in Australia are currently above 5% with conditions. See our comparison above for the latest rates, updated regularly." },
+      { question: "Is my money safe in a savings account?", answer: "Yes. Savings accounts at ADI-authorised banks are covered by the Australian Government Deposit Guarantee up to $250,000 per person per institution." },
+    ],
+  },
+  {
+    slug: "best-term-deposit-rates",
+    title: `Best Term Deposit Rates Australia (${yr})`,
+    h1: "Best Term Deposit Rates in Australia",
+    metaDescription: `Highest term deposit rates in Australia compared. 3-month, 6-month, 12-month terms from major banks and challengers. ${upd}.`,
+    intro: `Term deposits lock your money away for a fixed period in exchange for a guaranteed interest rate. We compare rates from major banks and challenger banks across different terms to find where you'll earn the most.`,
+    filter: (b) => b.platform_type === "term_deposit",
+    sort: (a, b) => (b.asx_fee_value ?? 0) - (a.asx_fee_value ?? 0),
+    criteria: ["ADI authorised (APRA regulated)", "Government guarantee eligible", "Minimum deposit under $5,000", "Competitive rate above 4%"],
+    sections: [
+      { heading: "Fixed Rate vs Savings Account", body: "Term deposits guarantee your rate for the full term — even if the RBA cuts rates. Savings accounts can change their rate at any time. If you won't need the money for 6-12 months and want certainty, a term deposit locks in today's rate." },
+      { heading: "Short Term vs Long Term", body: "In a falling rate environment, longer terms are better because you lock in the higher rate. In a rising rate environment, shorter terms let you reinvest at higher rates sooner. Currently, the gap between 6-month and 12-month rates is small, so the main factor is when you'll need the money." },
+    ],
+    relatedLinks: [{ label: "Savings Accounts", href: "/best/high-interest-savings" }, { label: "Compare Term Deposits", href: "/compare?filter=term-deposits" }, { label: "Savings Calculator", href: "/savings-calculator" }],
+    faqs: [
+      { question: "What is the best term deposit rate in Australia?", answer: "The best term deposit rates in Australia are currently above 4.5% for 12-month terms. Challenger banks often offer higher rates than the big four. See our comparison above for latest rates." },
+      { question: "Are term deposits safe?", answer: "Yes. Term deposits at ADI-authorised institutions are covered by the Government Deposit Guarantee up to $250,000 per person per institution." },
+    ],
+  },
+  {
+    slug: "best-performing-super",
+    title: `Best Performing Super Funds Australia (${yr})`,
+    h1: "Best Performing Super Funds in Australia",
+    metaDescription: `Top performing Australian super funds ranked by long-term returns, fees, and insurance. Independent comparison. ${upd}.`,
+    intro: `Choosing the right super fund can add tens of thousands to your retirement balance. We compare Australia's major super funds by long-term investment performance, fees, insurance options, and member services.`,
+    filter: (b) => b.platform_type === "super_fund",
+    sort: (a, b) => (b.rating ?? 0) - (a.rating ?? 0),
+    criteria: ["APRA regulated", "10+ year investment track record", "Passed YFYS performance test", "Competitive fees below 1%"],
+    sections: [
+      { heading: "Why Long-Term Returns Matter Most", body: "Super fund returns compound over decades. A fund returning 8% vs 7% per year might not sound like much, but over 30 years that 1% difference turns $100,000 into $1,006,000 vs $761,000 — a $245,000 gap from the same starting balance. Always compare 10-year returns, not 1-year returns." },
+      { heading: "The Impact of Fees on Your Super", body: "A seemingly small difference in fees has an outsized impact over a working lifetime. The ATO estimates that a 0.5% reduction in fees could add $100,000 to your super balance by retirement. Industry funds typically charge 0.5-0.8%, while retail funds may charge 1-2%." },
+      { heading: "Check the ATO YourSuper Tool", body: "The government's YourSuper comparison tool at ato.gov.au ranks every MySuper product by performance and fees. It also flags funds that have failed the annual performance test — if your fund has failed, you should consider switching." },
+    ],
+    relatedLinks: [{ label: "Compare Super Funds", href: "/compare?filter=super" }, { label: "SMSF Platforms", href: "/best/smsf" }, { label: "Cheapest Super", href: "/best/cheapest-super" }],
+    faqs: [
+      { question: "What is the best performing super fund in Australia?", answer: "The best performing super fund depends on the time period and investment option. Over 10 years, several industry funds have consistently outperformed retail funds. See our ranked comparison above." },
+      { question: "Should I switch super funds?", answer: "If your fund has failed the YFYS performance test or charges significantly higher fees than competitors, switching may be worthwhile. However, check what insurance you'll lose before switching — death, TPD, and income protection cover may not carry over." },
+    ],
+  },
+  {
+    slug: "cheapest-super",
+    title: `Cheapest Super Fund Australia — Lowest Fees (${yr})`,
+    h1: "Cheapest Super Fund in Australia",
+    metaDescription: `Australian super funds ranked by fees. Compare admin fees, investment fees, and total cost. Lower fees = bigger retirement balance. ${upd}.`,
+    intro: `The cheapest super fund isn't always the best, but fees matter enormously over a 30+ year timeframe. We rank Australian super funds by their total annual cost including administration fees, investment fees, and insurance premiums.`,
+    filter: (b) => b.platform_type === "super_fund",
+    sort: (a, b) => (a.asx_fee_value ?? 999) - (b.asx_fee_value ?? 999),
+    criteria: ["Total fees below 1%", "APRA regulated", "Passed YFYS performance test", "No exit fees"],
+    sections: [
+      { heading: "How Super Fees Are Charged", body: "Super funds charge two main fees: an administration fee (fixed or percentage, for running the fund) and an investment fee (percentage, for managing your money). Some also charge insurance premiums. Total fees typically range from 0.5% to 2% per year." },
+      { heading: "How Much Do Fees Cost Over a Lifetime?", body: "The ATO estimates that paying just 0.5% more in super fees could cost you $100,000 or more by retirement. On a $200,000 balance, a fund charging 1.5% takes $3,000/year in fees vs $1,000/year for a fund charging 0.5%. Over 20 years, that's $40,000+ difference — money that stays in your retirement balance." },
+    ],
+    relatedLinks: [{ label: "Best Performing Super", href: "/best/best-performing-super" }, { label: "Compare Super", href: "/compare?filter=super" }, { label: "SMSF", href: "/best/smsf" }],
+    faqs: [
+      { question: "Which super fund has the lowest fees?", answer: "The cheapest super funds in Australia charge total fees under 0.5-0.6%. Industry funds generally have lower fees than retail funds. See our ranked comparison above." },
+      { question: "Are low-fee super funds any good?", answer: "Yes — many of the lowest-fee super funds also have strong long-term investment returns. The ATO's YFYS test shows that low-fee funds frequently outperform high-fee funds." },
+    ],
+  },
+  {
+    slug: "ethical-super",
+    title: `Best Ethical Super Funds Australia (${yr})`,
+    h1: "Best Ethical Super Funds in Australia",
+    metaDescription: `Top ethical and sustainable super funds compared. ESG screening, fossil fuel exclusions, performance, and fees. ${upd}.`,
+    intro: `Want your super invested ethically? Several Australian super funds now offer dedicated ethical or sustainable investment options that screen out fossil fuels, gambling, weapons, and tobacco. We compare their ESG credentials, performance, and fees.`,
+    filter: (b) => b.platform_type === "super_fund",
+    sort: (a, b) => (b.rating ?? 0) - (a.rating ?? 0),
+    criteria: ["Dedicated ethical/sustainable investment option", "Published ESG screening criteria", "APRA regulated", "Competitive returns vs conventional options"],
+    sections: [
+      { heading: "What Makes a Super Fund 'Ethical'?", body: "Ethical super funds typically screen out investments in fossil fuels, weapons manufacturing, gambling, tobacco, and companies with poor human rights records. Some go further with positive screening — actively investing in renewable energy, healthcare, and education. Check each fund's published exclusion criteria to ensure it matches your values." },
+      { heading: "Do Ethical Funds Perform Worse?", body: "The data increasingly shows that ethical super funds perform comparably to conventional funds — and in some cases better. Over the past 5 years, many ESG-screened options have outperformed their conventional counterparts, partly because avoiding fossil fuel companies proved beneficial during the energy transition." },
+    ],
+    relatedLinks: [{ label: "Best Performing Super", href: "/best/best-performing-super" }, { label: "Compare Super", href: "/compare?filter=super" }, { label: "Cheapest Super", href: "/best/cheapest-super" }],
+    faqs: [
+      { question: "What is the best ethical super fund in Australia?", answer: "The best ethical super fund depends on what issues matter to you. Some exclude fossil fuels but invest in gambling companies; others have broader exclusions. Check each fund's published screening criteria." },
+      { question: "Do ethical super funds perform worse?", answer: "Not necessarily. Many ethical super options have matched or exceeded conventional fund returns over the past 5-10 years. Performance depends more on overall investment strategy than ethical screening alone." },
+    ],
+  },
+  {
+    slug: "super-for-young-people",
+    title: `Best Super Fund for Young People Australia (${yr})`,
+    h1: "Best Super Fund for Young People",
+    metaDescription: `Top super funds for people in their 20s and 30s. Low fees, growth focus, and insurance options for young Australians. ${upd}.`,
+    intro: `If you're in your 20s or 30s, your super has decades to grow. The right fund choice now — low fees and a growth-oriented investment strategy — can add hundreds of thousands to your retirement balance. Here's what to look for.`,
+    filter: (b) => b.platform_type === "super_fund",
+    sort: (a, b) => (b.rating ?? 0) - (a.rating ?? 0),
+    criteria: ["Low total fees", "Strong growth/high-growth option", "Good mobile app for tracking", "Competitive insurance premiums for young members"],
+    sections: [
+      { heading: "Why Young People Should Choose Growth", body: "With 30-40 years until retirement, you can afford more risk in exchange for higher expected returns. A high-growth option (70-90% shares) has historically returned 8-10% per year over long periods vs 5-6% for conservative options. On $50,000, that difference compounds to hundreds of thousands by retirement." },
+      { heading: "The Power of Low Fees When You're Young", body: "A 1% fee difference on $50,000 is only $500/year. But that $500 reinvested at 8% for 35 years becomes $86,000. Start with a low-fee fund early and the savings compound dramatically over your working life." },
+    ],
+    relatedLinks: [{ label: "Cheapest Super", href: "/best/cheapest-super" }, { label: "Best Performing", href: "/best/best-performing-super" }, { label: "Compare Super", href: "/compare?filter=super" }],
+    faqs: [
+      { question: "What super fund should I choose in my 20s?", answer: "In your 20s, prioritise: 1) Low total fees, 2) A high-growth investment option, 3) Adequate insurance (but don't over-insure). Industry funds typically tick all three boxes." },
+    ],
+  },
+  {
+    slug: "cheapest-us-shares",
+    title: `Cheapest Way to Buy US Shares from Australia (${yr})`,
+    h1: "Cheapest Way to Buy US Shares from Australia",
+    metaDescription: `Compare the true cost of buying US shares from Australia. Brokerage, FX rates, and total costs compared. ${upd}.`,
+    intro: `Buying US shares from Australia involves two costs: brokerage and FX conversion. Some brokers charge $0 brokerage but have high FX margins, while others charge per-trade but offer better rates. We rank the total cost.`,
+    filter: (b) => !b.is_crypto && b.platform_type === "share_broker" && (b.us_fee !== null || b.fx_rate !== null),
+    sort: (a, b) => {
+      const costA = (a.us_fee_value ?? 5) + ((a.fx_rate ?? 70) / 100) * 50;
+      const costB = (b.us_fee_value ?? 5) + ((b.fx_rate ?? 70) / 100) * 50;
+      return costA - costB;
+    },
+    criteria: ["Access to US markets (NYSE, NASDAQ)", "Published FX conversion rate", "Competitive total cost per $5,000 US trade", "Fractional US shares preferred"],
+    sections: [
+      { heading: "The Hidden Cost: FX Conversion", body: "The biggest cost of buying US shares isn't brokerage — it's the FX conversion. A broker charging 0.7% on a $10,000 conversion takes $70, while one charging 0.2% takes $20. That's a $50 difference on a single trade, and it applies both when you buy and when you sell." },
+      { heading: "How to Calculate Your True Cost", body: "True cost per trade = US brokerage + (trade amount × FX rate). For a $5,000 US share purchase: a broker with $0 brokerage and 0.7% FX costs $35, while one with $5 brokerage and 0.2% FX costs $15. The 'free' broker is actually more expensive." },
+    ],
+    relatedLinks: [{ label: "US Shares Guide", href: "/best/us-shares" }, { label: "Low FX Fees", href: "/best/low-fx-fees" }, { label: "Switching Calculator", href: "/switching-calculator" }],
+    faqs: [
+      { question: "What is the cheapest way to buy US shares from Australia?", answer: "The cheapest option depends on your trade size. For small trades under $1,000, $0 brokerage brokers are cheapest despite higher FX rates. For large trades over $5,000, brokers with low FX rates (0.2-0.3%) are cheaper even with per-trade brokerage." },
+    ],
+  },
+  {
+    slug: "options-trading",
+    title: `Best Options Trading Platform Australia (${yr})`,
+    h1: "Best Options Trading Platform in Australia",
+    metaDescription: `Compare Australian options trading platforms. US & ASX options, fees, margin, and tools. ${upd}.`,
+    intro: `Options trading in Australia is available through a handful of brokers offering ASX exchange-traded options and US options. We compare them by fees, available markets, margin requirements, and trading tools.`,
+    filter: (b) => !b.is_crypto && b.platform_type === "share_broker" && (b.markets?.includes("options") || b.slug === "interactive-brokers" || b.slug === "cmc-markets" || b.slug === "ig"),
+    sort: (a, b) => (b.rating ?? 0) - (a.rating ?? 0),
+    criteria: ["ASX and/or US options available", "Competitive options brokerage", "Options analytics and strategy tools", "ASIC regulated"],
+    sections: [
+      { heading: "ASX Options vs US Options", body: "ASX exchange-traded options are available on the top ~60 ASX stocks and indices. US options (available through international brokers like Interactive Brokers) offer far more choice — options on thousands of US stocks and ETFs. Most serious options traders use US markets for liquidity." },
+      { heading: "What You Need to Start Trading Options", body: "Options trading requires approval from your broker, which typically involves answering questions about your experience and risk tolerance. You'll also need enough capital for margin requirements — naked option selling requires significant margin, while buying calls/puts only risks the premium paid." },
+    ],
+    relatedLinks: [{ label: "Day Trading", href: "/best/day-trading" }, { label: "International Shares", href: "/best/international-shares" }, { label: "CFD Trading", href: "/best/cfd-forex" }],
+    faqs: [
+      { question: "Can you trade options in Australia?", answer: "Yes. ASX exchange-traded options are available through several Australian brokers. US options are accessible through international brokers like Interactive Brokers that accept Australian clients." },
+    ],
+  },
+  {
+    slug: "kids-savings-account",
+    title: `Best Kids Savings Account Australia (${yr})`,
+    h1: "Best Kids Savings Account in Australia",
+    metaDescription: `Top children's savings accounts compared. High interest rates, parental controls, and no monthly fees. ${upd}.`,
+    intro: `Teaching your children to save starts with the right account. We compare Australian children's savings accounts by interest rate, age eligibility, parental controls, and fees.`,
+    filter: (b) => b.platform_type === "savings_account",
+    sort: (a, b) => (b.asx_fee_value ?? 0) - (a.asx_fee_value ?? 0),
+    criteria: ["Available for under-18s", "No monthly fees", "Competitive interest rate", "Government deposit guarantee"],
+    sections: [
+      { heading: "What Makes a Good Kids Account?", body: "The best kids savings accounts offer competitive interest rates (often higher than adult accounts as a marketing tool), no monthly fees, and parental oversight features. Some banks let parents open the account online and manage it through their existing banking app." },
+      { heading: "Teaching Kids About Money", body: "A savings account with a debit card (available from age ~14 at most banks) gives teenagers hands-on money management experience. Before that age, regular deposits and watching the interest grow teaches the value of saving." },
+    ],
+    relatedLinks: [{ label: "Savings Accounts", href: "/best/high-interest-savings" }, { label: "Savings Calculator", href: "/savings-calculator" }, { label: "Best for Children", href: "/best/children" }],
+    faqs: [
+      { question: "What is the best savings account for a child in Australia?", answer: "The best kids savings accounts offer high interest rates with no monthly fees. Several banks offer rates above 4% for under-18s. Compare the latest rates in our table above." },
+    ],
+  },
+  {
+    slug: "online-savings-account",
+    title: `Best Online Savings Account Australia (${yr})`,
+    h1: "Best Online Savings Account in Australia",
+    metaDescription: `Top online-only savings accounts compared. Higher rates than branch banks, no fees, instant access. ${upd}.`,
+    intro: `Online-only banks consistently offer higher savings rates than traditional banks — they save on branch costs and pass the savings to customers. We compare the best online savings accounts by rate, conditions, and ease of use.`,
+    filter: (b) => b.platform_type === "savings_account",
+    sort: (a, b) => (b.asx_fee_value ?? 0) - (a.asx_fee_value ?? 0),
+    criteria: ["Online account opening", "No branch requirement", "Competitive bonus rate", "Government deposit guarantee"],
+    sections: [
+      { heading: "Why Online Banks Pay Higher Rates", body: "Online banks don't have branches, which saves them millions in property costs and staff. They pass those savings to customers as higher interest rates. The trade-off? No in-person support — everything is done online or by phone." },
+      { heading: "Is My Money Safe With an Online Bank?", body: "Yes. Online banks that are ADI-authorised are covered by the same $250,000 Government Deposit Guarantee as the big four banks. Your money is equally safe whether it's with CBA or an online-only challenger." },
+    ],
+    relatedLinks: [{ label: "Highest Interest Savings", href: "/best/high-interest-savings" }, { label: "Term Deposits", href: "/best/best-term-deposit-rates" }, { label: "Savings Calculator", href: "/savings-calculator" }],
+    faqs: [
+      { question: "Are online savings accounts safe?", answer: "Yes. Online savings accounts from ADI-authorised banks are covered by the Australian Government Deposit Guarantee up to $250,000, the same as traditional banks." },
+    ],
+  },
 ];
 
 export function getCategoryBySlug(slug: string): BestBrokerCategory | undefined {
