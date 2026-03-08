@@ -3,13 +3,17 @@ import { createClient } from "@/lib/supabase/server";
 
 // GET — list pending fee changes
 export async function GET() {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("fee_update_queue")
-    .select("*")
-    .order("created_at", { ascending: false })
-    .limit(100);
-  return NextResponse.json(data || []);
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("fee_update_queue")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(100);
+    return NextResponse.json(data || []);
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to fetch fee queue" }, { status: 500 });
+  }
 }
 
 // POST — approve or reject a fee change

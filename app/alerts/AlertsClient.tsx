@@ -161,7 +161,7 @@ export default function AlertsClient({ alerts }: { alerts: RegulatoryAlert[] }) 
                       {alert.source_url && (
                         <a
                           href={alert.source_url}
-                          target="_blank"
+                          target="_blank" rel="noopener noreferrer"
                           rel="noopener noreferrer"
                           className="inline-block text-xs text-slate-700 hover:underline"
                         >

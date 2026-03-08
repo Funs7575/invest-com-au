@@ -32,7 +32,7 @@ export default function ArticleDetailClient({
       {/* CTA Button */}
       <a
         href={getAffiliateLink(broker)}
-        target="_blank"
+        target="_blank" rel="noopener noreferrer"
         rel={AFFILIATE_REL}
         onClick={() =>
           trackClick(

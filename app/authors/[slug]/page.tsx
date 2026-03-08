@@ -202,7 +202,7 @@ export default async function AuthorPage({
                   {m.linkedin_url && (
                     <a
                       href={m.linkedin_url}
-                      target="_blank"
+                      target="_blank" rel="noopener noreferrer"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 text-sm font-medium rounded-lg hover:bg-blue-100 transition-colors"
                     >
@@ -215,7 +215,7 @@ export default async function AuthorPage({
                   {m.twitter_url && (
                     <a
                       href={m.twitter_url}
-                      target="_blank"
+                      target="_blank" rel="noopener noreferrer"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-200 transition-colors"
                     >
@@ -229,7 +229,7 @@ export default async function AuthorPage({
                     <a
                       key={i}
                       href={pub.url}
-                      target="_blank"
+                      target="_blank" rel="noopener noreferrer"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-200 transition-colors"
                     >

@@ -3,12 +3,16 @@ import { createClient } from "@/lib/supabase/server";
 
 // GET — list all pipeline entries
 export async function GET() {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("bd_pipeline")
-    .select("*")
-    .order("updated_at", { ascending: false });
-  return NextResponse.json(data || []);
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("bd_pipeline")
+      .select("*")
+      .order("updated_at", { ascending: false });
+    return NextResponse.json(data || []);
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to fetch pipeline" }, { status: 500 });
+  }
 }
 
 // POST — create or update a pipeline entry

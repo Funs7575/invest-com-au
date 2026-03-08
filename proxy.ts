@@ -23,6 +23,8 @@ export async function proxy(request: NextRequest) {
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
   response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=()')
   response.headers.set('X-DNS-Prefetch-Control', 'on')
+  response.headers.set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload')
+  response.headers.set('Content-Security-Policy', "frame-ancestors 'self'")
 
   // ── Preview deploy protection ──────────────────────────────────
   // Vercel sets VERCEL_ENV to 'preview' on non-production branches.
