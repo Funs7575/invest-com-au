@@ -167,6 +167,8 @@ export default function AdvisorPortalPage() {
           fee_description: advisor.fee_description,
           website: advisor.website,
           phone: advisor.phone,
+          booking_link: advisor.booking_link,
+          booking_intro: advisor.booking_intro,
         }),
       });
       setProfileSaved(true);
@@ -532,6 +534,27 @@ export default function AdvisorPortalPage() {
                     placeholder="04XX XXX XXX"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Booking Link (Calendly / Cal.com)</label>
+                <input
+                  value={advisor.booking_link || ""}
+                  onChange={(e) => setAdvisor({ ...advisor, booking_link: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
+                  placeholder="https://calendly.com/your-name/30min"
+                />
+                <p className="text-[0.55rem] text-slate-400 mt-1">Paste your Calendly or Cal.com link. A &quot;Book Free Call&quot; button will appear on your profile.</p>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Booking Intro (optional)</label>
+                <input
+                  value={advisor.booking_intro || ""}
+                  onChange={(e) => setAdvisor({ ...advisor, booking_intro: e.target.value })}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
+                  placeholder="e.g. Book a free 30-minute consultation"
+                />
               </div>
 
               <div className="flex items-center gap-3 pt-2">

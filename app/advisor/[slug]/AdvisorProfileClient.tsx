@@ -522,6 +522,40 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
           Verify any advisor&apos;s credentials on the <a href="https://asic.gov.au/online-services/search-asics-registers/" target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-600">ASIC Register</a> before engaging their services.</p>
         </div>
       </div>
+
+      {/* Sticky mobile CTA */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-3 z-40 safe-area-pb">
+        <div className="flex gap-2">
+          {pro.booking_link ? (
+            <a
+              href={pro.booking_link}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => {
+                fetch("/api/track-event", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ event_type: "booking_click", page: `/advisor/${pro.slug}`, metadata: { advisor: pro.slug, source: "sticky_mobile" } }),
+                }).catch(() => {});
+              }}
+              className="flex-1 py-3 bg-violet-600 text-white font-bold rounded-xl text-sm text-center"
+            >
+              Book Free Call
+            </a>
+          ) : (
+            <a href="#enquiry" className="flex-1 py-3 bg-violet-600 text-white font-bold rounded-xl text-sm text-center">
+              Send Enquiry
+            </a>
+          )}
+          {pro.phone && (
+            <a href={`tel:${pro.phone}`} className="px-4 py-3 border border-slate-200 rounded-xl">
+              <Icon name="phone" size={18} className="text-slate-600" />
+            </a>
+          )}
+        </div>
+      </div>
+      {/* Spacer for sticky CTA on mobile */}
+      <div className="md:hidden h-20" />
     </div>
   );
 }

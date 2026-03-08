@@ -119,16 +119,46 @@ export default function BookingWidget({ advisorSlug, advisorName }: { advisorSlu
   };
 
   if (!bookingEnabled) {
-    // If they have an external booking link, show that
+    // External booking link (Calendly, Cal.com, etc.)
     if (bookingLink) {
       return (
-        <a href={bookingLink} target="_blank" rel="noopener noreferrer" className="block bg-violet-50 border border-violet-200 rounded-xl p-4 hover:bg-violet-100 transition-colors">
-          <div className="flex items-center gap-2 mb-1">
-            <Icon name="calendar" size={18} className="text-violet-600" />
-            <h3 className="text-sm font-bold text-violet-900">Book a Consultation</h3>
+        <div className="bg-gradient-to-br from-violet-50 to-indigo-50 border border-violet-200 rounded-xl overflow-hidden">
+          <div className="p-4 md:p-5">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-8 h-8 bg-violet-100 rounded-lg flex items-center justify-center">
+                <Icon name="calendar" size={18} className="text-violet-600" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-violet-900">Book a Free Consultation</h3>
+                <p className="text-[0.6rem] text-violet-600">30-minute video or phone call</p>
+              </div>
+            </div>
+            {bookingIntro && <p className="text-xs text-slate-600 mb-3">{bookingIntro}</p>}
+            <a
+              href={bookingLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => {
+                // Track booking click as high-value conversion event
+                fetch("/api/track-event", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    event_type: "booking_click",
+                    page: `/advisor/${advisorSlug}`,
+                    metadata: { advisor: advisorSlug, booking_url: bookingLink },
+                  }),
+                }).catch(() => {});
+              }}
+              className="block w-full text-center px-4 py-3 bg-violet-600 text-white font-bold rounded-xl hover:bg-violet-700 transition-all text-sm shadow-sm hover:shadow-md"
+            >
+              Choose a Time →
+            </a>
+            <p className="text-[0.5rem] text-violet-400 text-center mt-2">
+              {bookingLink.includes("calendly") ? "Powered by Calendly" : bookingLink.includes("cal.com") ? "Powered by Cal.com" : "Opens booking calendar"} · No obligation · Free initial consultation
+            </p>
           </div>
-          <p className="text-xs text-violet-700">{bookingIntro || `Schedule a time with ${advisorName}`} →</p>
-        </a>
+        </div>
       );
     }
     return null;

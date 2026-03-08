@@ -884,6 +884,9 @@ export interface Professional {
   review_count: number;
   verified: boolean;
   status: string;
+  booking_enabled?: boolean;
+  booking_link?: string;
+  booking_intro?: string;
   onboarded_at?: string;
   created_at: string;
   updated_at: string;
