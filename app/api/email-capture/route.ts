@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { isRateLimited } from '@/lib/rate-limit';
 import { isValidEmail } from '@/lib/validate-email';
 import { logger } from '@/lib/logger';
+import { extractUtm, utmForInsert } from '@/lib/utm';
 
 const log = logger('email-capture');
 
@@ -189,6 +190,7 @@ export async function POST(request: NextRequest) {
   }
 
   const { email, source, name } = body as { email?: string; source?: string; name?: string };
+  const utm = extractUtm(body as Record<string, unknown>);
 
   // Validate email properly
   if (!isValidEmail(email as string)) {
@@ -230,6 +232,7 @@ export async function POST(request: NextRequest) {
     email: sanitizedEmail,
     source: sanitizedSource,
     ...(sanitizedName ? { name: sanitizedName } : {}),
+    ...utmForInsert(utm),
   });
 
   if (error) {

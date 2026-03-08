@@ -55,6 +55,7 @@ export async function POST(request: NextRequest) {
       bio: bio?.trim() || null,
       website: website?.trim() || null,
       fee_description: fee_description?.trim() || null,
+      referral_source: body.referral_source?.trim()?.slice(0, 200) || null,
     });
 
     if (error) {

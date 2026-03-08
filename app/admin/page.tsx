@@ -1158,6 +1158,12 @@ export default function AdminDashboard() {
               )}
 
               <div id="admin-shortcuts" className="pt-3 border-t border-slate-200 space-y-1.5">
+                <Link href="/admin/bd-pipeline" className="flex items-center gap-2 px-3 py-2 bg-violet-50 rounded text-violet-700 hover:bg-violet-100 transition-colors text-sm font-semibold">
+                  <span>🤝</span> BD Pipeline
+                </Link>
+                <Link href="/admin/fee-queue" className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded text-slate-600 hover:bg-slate-100 transition-colors text-sm">
+                  <span>💰</span> Fee Queue
+                </Link>
                 <Link href="/admin/affiliate-links" className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded text-slate-600 hover:bg-slate-100 transition-colors text-sm">
                   <span>🔗</span> Affiliate Links
                 </Link>
