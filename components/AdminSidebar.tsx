@@ -7,12 +7,19 @@ import Icon from "@/components/Icon";
 
 const NAV_GROUPS = [
   {
-    label: "Overview",
+    label: "Dashboards",
     items: [
-      { href: "/admin", icon: "bar-chart", label: "Dashboard" },
+      { href: "/admin", icon: "bar-chart", label: "Overview" },
       { href: "/admin/revenue", icon: "dollar-sign", label: "Revenue" },
       { href: "/admin/funnel", icon: "filter", label: "Funnel" },
-      { href: "/admin/analytics", icon: "trending-up", label: "Analytics" },
+      { href: "/admin/content-performance", icon: "zap", label: "Content Perf." },
+      { href: "/admin/email-performance", icon: "mail", label: "Email Perf." },
+      { href: "/admin/analytics", icon: "trending-up", label: "Traffic" },
+    ],
+  },
+  {
+    label: "Health & Ops",
+    items: [
       { href: "/admin/data-health", icon: "activity", label: "Data Health" },
       { href: "/admin/seo-health", icon: "search", label: "SEO Health" },
       { href: "/admin/compliance", icon: "shield-check", label: "Compliance" },
@@ -51,6 +58,7 @@ const NAV_GROUPS = [
     label: "Advisors",
     items: [
       { href: "/admin/advisors", icon: "user", label: "Advisors" },
+      { href: "/admin/advisor-performance", icon: "trending-up", label: "Advisor Perf." },
       { href: "/admin/consultations", icon: "phone", label: "Consultations" },
     ],
   },
