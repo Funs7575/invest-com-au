@@ -63,6 +63,12 @@ function getBestFor(b: Broker): string[] {
     bestFor.push("Australians looking for a high-performing super fund");
   } else if (pt === 'property_platform') {
     bestFor.push("Investors wanting property exposure without buying a house");
+  } else if (pt === 'savings_account') {
+    bestFor.push("Investors parking cash between trades at a competitive rate");
+    bestFor.push("Anyone building an emergency fund that earns real interest");
+  } else if (pt === 'term_deposit') {
+    bestFor.push("Conservative investors wanting guaranteed returns with zero market risk");
+    bestFor.push("Savers with a defined sum they won't need for a known period");
   }
 
   if (b.is_crypto && pt !== 'crypto_exchange') bestFor.push("Investors who also want crypto access");
@@ -181,7 +187,11 @@ export default function BrokerReviewClient({
     const fxCost = amount * ((b.fx_rate ?? 0) / 100);
     return fee + fxCost;
   };
-  const costScenarios = [
+  const costScenarios = isSavingsOrTD ? [
+    { label: "$10,000 Balance", amount: 10000, cost: 10000 * (parseFloat(b.asx_fee?.replace(/[^0-9.]/g, '') || '0') / 100), type: "asx" as const },
+    { label: "$25,000 Balance", amount: 25000, cost: 25000 * (parseFloat(b.asx_fee?.replace(/[^0-9.]/g, '') || '0') / 100), type: "asx" as const },
+    { label: "$50,000 Balance", amount: 50000, cost: 50000 * (parseFloat(b.asx_fee?.replace(/[^0-9.]/g, '') || '0') / 100), type: "asx" as const },
+  ] : [
     { label: "$1,000 ASX Trade", amount: 1000, cost: asxCost, type: "asx" as const },
     { label: "$5,000 US Trade", amount: 5000, cost: usCost(5000), type: "us" as const },
     { label: "$10,000 US Trade", amount: 10000, cost: usCost(10000), type: "us" as const },
@@ -192,7 +202,7 @@ export default function BrokerReviewClient({
     { id: "best-for", label: "Best For" },
     { id: "verdict", label: "Verdict" },
     { id: "fees", label: isSavingsOrTD ? "Rate Details" : "Fee Audit" },
-    { id: "cost-example", label: "Trade Costs" },
+    { id: "cost-example", label: isSavingsOrTD ? "Interest Earned" : "Trade Costs" },
     { id: "safety", label: "Safety Check" },
     { id: "pros-cons", label: "Pros & Cons" },
     ...(userReviews.length > 0 ? [{ id: "reviews", label: `User Reviews (${userReviews.length})` }] : [{ id: "reviews", label: "Write a Review" }]),
@@ -433,12 +443,17 @@ export default function BrokerReviewClient({
         {/* Who Is This NOT For? */}
         {(() => {
           const notFor: string[] = [];
-          if ((b.asx_fee_value ?? 0) > 10) notFor.push("Cost-conscious traders — fees above $10 per trade are above market average");
+          if ((b.asx_fee_value ?? 0) > 10 && !isSavingsOrTD) notFor.push("Cost-conscious traders — fees above $10 per trade are above market average");
           if (!b.chess_sponsored && (b.platform_type === "share_broker")) notFor.push("Safety-first investors who require CHESS sponsorship");
           if (!b.smsf_support && b.platform_type === "share_broker") notFor.push("SMSF trustees — no SMSF account support");
           if (b.platform_type === "crypto_exchange") notFor.push("Traditional share investors — this is a crypto-only platform");
           if (b.platform_type === "robo_advisor") notFor.push("Active traders who want to pick individual stocks");
           if (b.platform_type === "research_tool") notFor.push("Beginners — this is a research tool, not a trading platform");
+          if (b.platform_type === "savings_account") notFor.push("Investors seeking share trading or crypto — this is a cash savings account only");
+          if (b.platform_type === "term_deposit") {
+            notFor.push("Anyone who might need their money before the term ends — early withdrawal penalties apply");
+            notFor.push("Investors wanting market returns — term deposits offer fixed, lower rates in exchange for certainty");
+          }
           if (b.fx_rate != null && b.fx_rate > 0.7) notFor.push("International investors — FX fees above 0.7% are relatively high");
           if (b.inactivity_fee && b.inactivity_fee !== "None" && b.inactivity_fee !== "$0") notFor.push(`Infrequent traders — inactivity fee of ${b.inactivity_fee} applies`);
           if (notFor.length === 0) return null;
@@ -553,7 +568,7 @@ export default function BrokerReviewClient({
         <div id="cost-example" className="border border-slate-200 rounded-xl p-4 md:p-6 mb-6 md:mb-8 scroll-mt-20">
           <div className="flex items-center gap-2 mb-4">
             <Icon name="calculator" size={20} className="text-slate-600 shrink-0" />
-            <h2 className="text-base md:text-lg font-extrabold">What Would a Typical Trade Cost?</h2>
+            <h2 className="text-base md:text-lg font-extrabold">{isSavingsOrTD ? "How Much Would You Earn?" : "What Would a Typical Trade Cost?"}</h2>
           </div>
           <div className="grid grid-cols-3 gap-2 md:grid-cols-3 md:gap-4">
             {costScenarios.map((s, i) => (
@@ -563,8 +578,8 @@ export default function BrokerReviewClient({
                   <CountUp end={s.cost} prefix="$" decimals={2} duration={1200} />
                 </p>
                 <p className="text-[0.56rem] md:text-xs text-slate-400 mt-0.5 md:mt-1">
-                  {((s.cost / s.amount) * 100).toFixed(2)}%
-                  {s.type === "us" && b.fx_rate != null && (
+                  {isSavingsOrTD ? "per year" : `${((s.cost / s.amount) * 100).toFixed(2)}%`}
+                  {!isSavingsOrTD && s.type === "us" && b.fx_rate != null && (
                     <span className="block text-slate-400">incl. {b.fx_rate}% FX</span>
                   )}
                 </p>
