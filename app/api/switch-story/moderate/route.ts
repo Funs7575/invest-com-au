@@ -3,6 +3,7 @@ import { createClient as createServerClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { logger } from '@/lib/logger';
 import { notificationFooter } from '@/lib/email-templates';
+import { getSiteUrl } from '@/lib/url';
 
 const log = logger('switch-story');
 
@@ -64,6 +65,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Story not found' }, { status: 404 });
   }
 
+  const siteUrl = getSiteUrl();
   // Email the author about the moderation result
   if (process.env.RESEND_API_KEY) {
     const { data: story } = await supabase
@@ -84,7 +86,7 @@ export async function POST(request: NextRequest) {
           to: story.author_email,
           subject: action === 'approve' ? 'Your switch story is now live!' : 'Update on your switch story',
           html: action === 'approve'
-            ? `<div style="font-family:Arial,sans-serif;max-width:500px"><h2 style="color:#0f172a;font-size:16px">Story Published ✓</h2><p style="color:#64748b;font-size:14px">Hi ${firstName}, your story about ${storyDesc} is now live on Invest.com.au. Thank you for sharing — it helps other investors making the same decision.</p><a href="${process.env.NEXT_PUBLIC_SITE_URL || 'https://invest-com-au.vercel.app'}/switch" style="display:inline-block;padding:10px 20px;background:#0f172a;color:white;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;margin-top:8px">View Switch Stories →</a>${notificationFooter(story.author_email)}</div>`
+            ? `<div style="font-family:Arial,sans-serif;max-width:500px"><h2 style="color:#0f172a;font-size:16px">Story Published ✓</h2><p style="color:#64748b;font-size:14px">Hi ${firstName}, your story about ${storyDesc} is now live on Invest.com.au. Thank you for sharing — it helps other investors making the same decision.</p><a href="${siteUrl}/switch" style="display:inline-block;padding:10px 20px;background:#0f172a;color:white;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;margin-top:8px">View Switch Stories →</a>${notificationFooter(story.author_email)}</div>`
             : `<div style="font-family:Arial,sans-serif;max-width:500px"><h2 style="color:#0f172a;font-size:16px">Story Update</h2><p style="color:#64748b;font-size:14px">Hi ${firstName}, your switch story was not published.${moderation_note ? `</p><p style="background:#fef2f2;padding:10px;border-radius:6px;font-size:13px;color:#991b1b;border-left:3px solid #ef4444"><strong>Reason:</strong> ${moderation_note}` : ''}</p><p style="color:#64748b;font-size:14px">You're welcome to submit a new story.</p>${notificationFooter(story.author_email)}</div>`,
         }),
       }).catch(() => {});

@@ -66,7 +66,7 @@ export async function POST(
       if (fullQuestion?.asker_email) {
         const brokerName = (fullQuestion.brokers as { name: string } | null)?.name || fullQuestion.broker_slug || "a platform";
         const firstName = (fullQuestion.asker_name || "there").split(" ")[0];
-        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app";
+        const { getSiteUrl } = await import("@/lib/url"); const siteUrl = getSiteUrl();
 
         await fetch("https://api.resend.com/emails", {
           method: "POST",

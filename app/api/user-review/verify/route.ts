@@ -125,6 +125,6 @@ export async function GET(request: NextRequest) {
   }
 
   // Redirect to broker page with success param
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://invest-com-au.vercel.app';
+  const { getSiteUrl } = await import("@/lib/url"); const siteUrl = getSiteUrl();
   return NextResponse.redirect(new URL(`/broker/${review.broker_slug}?review_verified=1`, siteUrl));
 }

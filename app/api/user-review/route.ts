@@ -228,7 +228,7 @@ export async function POST(request: NextRequest) {
   }
 
   // Send verification email
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://invest-com-au.vercel.app';
+  const { getSiteUrl } = await import("@/lib/url"); const siteUrl = getSiteUrl();
   const verifyUrl = `${siteUrl}/api/user-review/verify?token=${verificationToken}`;
 
   const resendApiKey = process.env.RESEND_API_KEY;

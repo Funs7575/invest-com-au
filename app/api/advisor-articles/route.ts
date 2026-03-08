@@ -3,8 +3,9 @@ import { createClient } from "@/lib/supabase/server";
 import { isRateLimited } from "@/lib/rate-limit";
 
 import { notificationFooter } from "@/lib/email-templates";
+import { getSiteUrl } from "@/lib/url";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app";
+const SITE_URL = getSiteUrl();
 
 async function logMod(supabase: Awaited<ReturnType<typeof createClient>>, articleId: number, action: string, by: string, notes?: string, oldStatus?: string, newStatus?: string) {
   await supabase.from("article_moderation_log").insert({ article_id: articleId, action, performed_by: by, notes, old_status: oldStatus, new_status: newStatus }).catch(() => {});

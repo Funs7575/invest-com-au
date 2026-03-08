@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
     const { data: leadData } = await supabase.from("professional_leads").select("user_name, user_email").eq("id", leadId).single();
     const advisorName = advisor?.name || "An advisor";
     const leadName = leadData?.user_name || "Unknown";
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app";
+    const { getSiteUrl } = await import("@/lib/url"); const siteUrl = getSiteUrl();
 
     await fetch("https://api.resend.com/emails", {
       method: "POST",

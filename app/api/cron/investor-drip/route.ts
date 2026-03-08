@@ -4,7 +4,8 @@ import { NextRequest, NextResponse } from "next/server";
 export const runtime = "edge";
 export const maxDuration = 60;
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app";
+import { getSiteUrl } from "@/lib/url";
+const SITE_URL = getSiteUrl();
 
 /**
  * Investor email drip: 3-email sequence for new email captures and quiz leads.
