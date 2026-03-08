@@ -4,19 +4,20 @@ import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
+type LoginMode = "magic" | "password";
+
 function AdminLoginForm() {
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") || "/admin";
 
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [mode, setMode] = useState<LoginMode>("password");
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-
+  const handleMagicLink = async () => {
     const trimmed = email.trim().toLowerCase();
     if (!trimmed || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
       setError("Please enter a valid email address.");
@@ -24,10 +25,11 @@ function AdminLoginForm() {
     }
 
     setLoading(true);
+    setError("");
 
     try {
       const supabase = createClient();
-      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
+      const siteUrl = typeof window !== "undefined" ? window.location.origin : "https://invest-com-au.vercel.app";
 
       const { error: authError } = await supabase.auth.signInWithOtp({
         email: trimmed,
@@ -47,6 +49,51 @@ function AdminLoginForm() {
       setError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handlePassword = async () => {
+    const trimmed = email.trim().toLowerCase();
+    if (!trimmed || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+    if (!password) {
+      setError("Please enter your password.");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const supabase = createClient();
+
+      const { error: authError } = await supabase.auth.signInWithPassword({
+        email: trimmed,
+        password,
+      });
+
+      if (authError) {
+        setError(authError.message === "Invalid login credentials" ? "Wrong email or password." : authError.message);
+        setLoading(false);
+        return;
+      }
+
+      window.location.href = redirect;
+    } catch {
+      setError("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (mode === "magic") {
+      await handleMagicLink();
+    } else {
+      await handlePassword();
     }
   };
 
@@ -89,6 +136,24 @@ function AdminLoginForm() {
           <p className="text-slate-500 text-sm mt-1">Admin Dashboard</p>
         </div>
 
+        {/* Login mode toggle */}
+        <div className="flex bg-slate-100 rounded-xl p-1 mb-4">
+          <button
+            type="button"
+            onClick={() => { setMode("password"); setError(""); }}
+            className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${mode === "password" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500"}`}
+          >
+            Password
+          </button>
+          <button
+            type="button"
+            onClick={() => { setMode("magic"); setError(""); }}
+            className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all ${mode === "magic" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500"}`}
+          >
+            Magic Link
+          </button>
+        </div>
+
         <form onSubmit={handleSubmit} className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4 shadow-sm">
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg px-4 py-3">
@@ -111,22 +176,65 @@ function AdminLoginForm() {
               autoComplete="email"
               className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-700/30 focus:border-emerald-700"
             />
-            <p className="text-xs text-slate-400 mt-1.5">
-              Only @invest.com.au or authorised admin emails can access the dashboard.
-            </p>
           </div>
+
+          {mode === "password" && (
+            <div>
+              <label htmlFor="admin-password" className="block text-sm font-semibold text-slate-700 mb-1">
+                Password
+              </label>
+              <input
+                id="admin-password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                autoComplete="current-password"
+                className="w-full bg-white border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-700/30 focus:border-emerald-700"
+              />
+              <button
+                type="button"
+                onClick={async () => {
+                  const trimmed = email.trim().toLowerCase();
+                  if (!trimmed || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+                    setError("Enter your email first, then click 'Reset password'.");
+                    return;
+                  }
+                  setLoading(true);
+                  setError("");
+                  const supabase = createClient();
+                  const siteUrl = typeof window !== "undefined" ? window.location.origin : "https://invest-com-au.vercel.app";
+                  const { error: resetErr } = await supabase.auth.resetPasswordForEmail(trimmed, {
+                    redirectTo: `${siteUrl}/auth/callback?next=/admin`,
+                  });
+                  setLoading(false);
+                  if (resetErr) { setError(resetErr.message); return; }
+                  setSent(true);
+                }}
+                className="text-xs text-emerald-700 hover:underline mt-1.5 font-medium"
+              >
+                Forgot password? Set or reset it
+              </button>
+            </div>
+          )}
 
           <button
             type="submit"
             disabled={loading}
             className="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-semibold rounded-xl px-4 py-2.5 text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? "Sending..." : "Send Sign-In Link"}
+            {loading
+              ? (mode === "magic" ? "Sending..." : "Signing in...")
+              : (mode === "magic" ? "Send Sign-In Link" : "Sign In")
+            }
           </button>
         </form>
 
         <p className="text-center text-xs text-slate-400 mt-4">
-          Magic link sign-in — no password needed.
+          {mode === "magic"
+            ? "We\u2019ll email you a one-time sign-in link."
+            : "Use your admin email and password."
+          }
         </p>
       </div>
     </div>
