@@ -105,7 +105,7 @@ export default function Footer() {
               <ul className="space-y-1 md:space-y-2 text-xs md:text-sm">
                 <li><Link href="/find-advisor" className="hover:text-white transition-colors inline-block py-0.5">Find an Advisor</Link></li>
                 <li><Link href="/advisors" className="hover:text-white transition-colors inline-block py-0.5">Advisor Directory</Link></li>
-                <li><Link href="/advisor-apply" className="hover:text-white transition-colors inline-block py-0.5">Get Listed</Link></li>
+                <li><Link href="/for-advisors" className="hover:text-white transition-colors inline-block py-0.5">List Your Practice</Link></li>
                 <li><Link href="/portfolio-calculator" className="hover:text-white transition-colors inline-block py-0.5">Portfolio Calculator</Link></li>
                 <li><Link href="/calculators" className="hover:text-white transition-colors inline-block py-0.5">All Calculators</Link></li>
                 <li><Link href="/articles" className="hover:text-white transition-colors inline-block py-0.5">Guides</Link></li>
