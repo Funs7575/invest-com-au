@@ -55,6 +55,14 @@
     {
       "path": "/api/cron/advisor-onboarding",
       "schedule": "0 10 * * *"
+    },
+    {
+      "path": "/api/cron/post-enquiry-drip",
+      "schedule": "0 11 * * *"
+    },
+    {
+      "path": "/api/cron/annual-review-reminder",
+      "schedule": "0 9 1 * *"
     }
   ]
 }

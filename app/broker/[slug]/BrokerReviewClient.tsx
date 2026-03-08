@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Broker, UserReview, BrokerReviewStats, SwitchStory } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL, trackPageDuration } from "@/lib/tracking";
+import ProUpsell from "@/components/ProUpsell";
 import { CURRENT_YEAR } from "@/lib/seo";
 import {
   ADVERTISER_DISCLOSURE_SHORT,
@@ -1090,6 +1091,11 @@ export default function BrokerReviewClient({
         {/* Email Capture */}
         <div className="mt-6 md:mt-8">
           <LeadMagnet />
+        </div>
+
+        {/* Pro upsell */}
+        <div className="mt-4">
+          <ProUpsell variant="fee-alert" />
         </div>
 
         <RecentlyViewed currentSlug={b.slug} />
