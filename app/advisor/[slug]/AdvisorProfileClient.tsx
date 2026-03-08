@@ -7,6 +7,7 @@ import type { Professional, ProfessionalReview } from "@/lib/types";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 import Icon from "@/components/Icon";
 import BookingWidget from "@/components/BookingWidget";
+import { getStoredUtm } from "@/components/UtmCapture";
 
 function renderStars(rating: number) {
   return "★".repeat(Math.floor(rating)) + (rating % 1 >= 0.5 ? "½" : "");
@@ -99,6 +100,7 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
           user_phone: phone.trim() || undefined,
           message: message.trim() || undefined,
           source_page: `/advisor/${pro.slug}`,
+          ...getStoredUtm(),
         }),
       });
       if (res.ok) {

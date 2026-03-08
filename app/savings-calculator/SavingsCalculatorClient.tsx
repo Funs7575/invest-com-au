@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import SocialProofCounter from "@/components/SocialProofCounter";
-import { trackEvent, trackClick, getAffiliateLink, AFFILIATE_REL } from "@/lib/tracking";
+import { trackEvent, trackClick, getAffiliateLink, AFFILIATE_REL, trackPageDuration } from "@/lib/tracking";
 
 type Account = {
   id: number; slug: string; name: string; platform_type: string;
@@ -27,6 +27,8 @@ export default function SavingsCalculatorClient({ accounts }: { accounts: Accoun
   const [emailGated, setEmailGated] = useState(false);
   const [email, setEmail] = useState("");
   const [emailSubmitted, setEmailSubmitted] = useState(false);
+
+  useEffect(() => { trackPageDuration("/savings-calculator"); }, []);
 
   const ranked = accounts
     .map(a => {

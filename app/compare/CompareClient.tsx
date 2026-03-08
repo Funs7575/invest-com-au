@@ -329,6 +329,20 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             <span>·</span>
             <Link href="/methodology" className="underline hover:text-slate-600">Methodology</Link>
             <span>·</span>
+            <button
+              onClick={() => {
+                const url = typeof window !== 'undefined' ? window.location.href : '';
+                if (navigator.share) {
+                  navigator.share({ title: 'Compare Platforms — invest.com.au', url }).catch(() => {});
+                } else {
+                  navigator.clipboard.writeText(url).then(() => alert('Link copied!')).catch(() => {});
+                }
+              }}
+              className="underline hover:text-slate-600"
+            >
+              Share this view
+            </button>
+            <span>·</span>
             <Link href="/how-we-earn" className="underline hover:text-slate-600">How we earn</Link>
           </div>
         </div>

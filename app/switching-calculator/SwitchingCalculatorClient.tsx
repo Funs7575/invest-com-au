@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import BrokerLogo from "@/components/BrokerLogo";
 import SocialProofCounter from "@/components/SocialProofCounter";
-import { getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL, trackClick } from "@/lib/tracking";
+import { getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL, trackClick, trackPageDuration } from "@/lib/tracking";
 import type { Broker } from "@/lib/types";
 
 function parseFee(feeStr: string | null): { flat: number; pct: number } {
@@ -43,6 +43,8 @@ export default function SwitchingCalculatorClient({ brokers }: { brokers: Broker
   const [showResults, setShowResults] = useState(false);
   const [email, setEmail] = useState("");
   const [emailCaptured, setEmailCaptured] = useState(false);
+
+  useEffect(() => { trackPageDuration("/switching-calculator"); }, []);
 
   const results = useMemo(() => {
     return brokers

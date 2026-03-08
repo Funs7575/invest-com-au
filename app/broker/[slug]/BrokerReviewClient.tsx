@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { Broker, UserReview, BrokerReviewStats, SwitchStory } from "@/lib/types";
-import { trackClick, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
+import { trackClick, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL, trackPageDuration } from "@/lib/tracking";
 import { CURRENT_YEAR } from "@/lib/seo";
 import {
   ADVERTISER_DISCLOSURE_SHORT,
@@ -152,7 +152,7 @@ export default function BrokerReviewClient({
   relatedDeals = [],
 }: BrokerReviewProps) {
   // Track this broker for "Recently Viewed"
-  useEffect(() => { trackView(b); }, [b]);
+  useEffect(() => { trackView(b); trackPageDuration(`/broker/${b.slug}`); }, [b]);
 
   const isSavingsOrTD = b.platform_type === 'savings_account' || b.platform_type === 'term_deposit';
   const feeRows = isSavingsOrTD ? [

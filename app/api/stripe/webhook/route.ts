@@ -216,6 +216,14 @@ export async function POST(request: NextRequest) {
                 "Welcome to Invest.com.au Pro 🎉",
                 buildProWelcomeEmail(interval),
               ).catch(() => {});
+
+              // Notify admin of new Pro signup
+              const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "finnduns@gmail.com";
+              sendTransactionalEmail(
+                ADMIN_EMAIL,
+                `New Pro Signup: ${customer.email}`,
+                `<div style="font-family:Arial,sans-serif;max-width:500px"><h2 style="color:#0f172a;font-size:16px">💎 New Pro Member</h2><p style="color:#64748b;font-size:14px"><strong>${customer.email}</strong> just subscribed to Invest.com.au Pro (${interval || "unknown"} plan).</p><p style="color:#64748b;font-size:14px">Customer ID: ${custId}</p><a href="${process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app"}/admin/pro-subscribers" style="display:inline-block;padding:10px 20px;background:#7c3aed;color:white;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;margin-top:8px">View Pro Members →</a></div>`,
+              ).catch(() => {});
             }
           } catch (err) {
             log.error("Pro welcome email lookup failed", { error: err instanceof Error ? err.message : String(err) });

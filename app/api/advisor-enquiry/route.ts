@@ -50,6 +50,8 @@ export async function POST(request: NextRequest) {
         message: message?.trim() || null,
         source_page: source_page || null,
         status: "new",
+        utm_source: body.utm_source?.slice(0, 100) || null,
+        utm_campaign: body.utm_campaign?.slice(0, 200) || null,
       })
       .select()
       .single();
