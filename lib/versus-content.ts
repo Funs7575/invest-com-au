@@ -141,9 +141,113 @@ const content: VersusEditorial[] = [
       { heading: "Ownership Model: Key Difference", body: "Stake offers CHESS sponsorship — your ASX shares are in your name. eToro uses a custodial model where they hold shares on your behalf. This matters for investor protection: CHESS-sponsored shares are yours regardless of what happens to the broker." },
     ],
   },
-];
 
-const contentMap = new Map<string, VersusEditorial>();
+  // ═══════════════════════════════════════════
+  // BATCH 2: 10 more high-traffic comparisons
+  // ═══════════════════════════════════════════
+
+  {
+    key: "cmc-markets-vs-selfwealth",
+    tldr: "CMC Markets offers a free daily ASX trade and $0 international brokerage. SelfWealth charges a flat $9.50 per trade with CHESS sponsorship. CMC wins on total features; SelfWealth wins on simplicity and ownership model.",
+    chooseA: "Choose CMC Markets if you trade regularly and want a free daily trade, $0 international brokerage, and professional-grade charting tools.",
+    chooseB: "Choose SelfWealth if you want the simplicity of flat-fee CHESS-sponsored trading with a social investing community.",
+    sections: [
+      { heading: "Fee Comparison", body: "CMC's first ASX trade each day (up to $1,000) is free, with subsequent trades at $11 or 0.10%. SelfWealth charges a flat $9.50 per trade regardless of size. For investors making one small trade per day, CMC is cheaper. For occasional larger trades, SelfWealth's flat fee is simpler." },
+      { heading: "Ownership Model", body: "SelfWealth offers CHESS sponsorship — your shares are in your name on the ASX register. CMC Markets uses a custodial model for share trading. This is the biggest structural difference and matters for investor protection." },
+    ],
+  },
+  {
+    key: "moomoo-vs-superhero",
+    tldr: "Both target younger investors, but Moomoo packs in professional tools while Superhero keeps things ultra-simple. Moomoo has $0 ASX brokerage; Superhero charges $5.",
+    chooseA: "Choose Moomoo for $0 ASX brokerage, advanced real-time data, Level 2 quotes, and social trading features.",
+    chooseB: "Choose Superhero for a clean, simple interface at $5/trade, plus super and crypto in one place.",
+    sections: [
+      { heading: "Features Per Dollar", body: "Moomoo gives you more for less. Level 2 data, analyst ratings, AI stock analysis, and real-time news are all free. Superhero is deliberately stripped back, focusing on quick execution with minimal distractions." },
+      { heading: "The Super Factor", body: "Superhero also offers Superhero Super — a low-cost super fund — which Moomoo doesn't. If you want investing and super in one ecosystem, Superhero has the edge." },
+    ],
+  },
+  {
+    key: "fp-markets-vs-pepperstone",
+    tldr: "Two of Australia's top CFD brokers with very similar offerings. Pepperstone has a slight edge in platform ecosystem; FP Markets offers more instruments and DMA pricing on shares.",
+    chooseA: "Choose FP Markets for 10,000+ CFD instruments including DMA share CFDs, with raw spreads from 0.0 pips.",
+    chooseB: "Choose Pepperstone for TradingView integration, polished support, and one of the broadest regulatory footprints globally.",
+    sections: [
+      { heading: "Spreads and Pricing", body: "Both offer raw spread accounts from 0.0 pips. FP Markets charges $3.00 per side; Pepperstone charges $3.50. The difference is $1 per round trip on a standard lot — marginal but it adds up for high-volume traders." },
+      { heading: "Instrument Range", body: "FP Markets offers 10,000+ instruments including DMA on share CFDs. Pepperstone offers 1,200+. For share CFD traders, FP Markets has significantly more choice." },
+    ],
+  },
+  {
+    key: "cmc-markets-vs-moomoo",
+    tldr: "Both offer $0 ASX brokerage (CMC on the first daily trade, Moomoo on all). CMC adds free international trading; Moomoo adds professional data tools.",
+    chooseA: "Choose CMC for free international share trading across US, UK, Canada, and Japan.",
+    chooseB: "Choose Moomoo for $0 brokerage on every ASX trade with no daily limit, plus Level 2 data.",
+    sections: [
+      { heading: "Free Brokerage Fine Print", body: "CMC's first ASX trade per day is free up to $1,000. Moomoo's $0 applies to all ASX trades. For multiple trades or trades over $1,000, Moomoo is cheaper on ASX." },
+      { heading: "International Edge", body: "CMC offers genuinely free brokerage on US, UK, Canadian, and Japanese shares — unmatched by Moomoo's $0.99 per US trade. For globally diversified investors, CMC saves hundreds per year." },
+    ],
+  },
+  {
+    key: "pearler-vs-stake",
+    tldr: "Pearler is built for automated passive ETF investing with CHESS sponsorship. Stake offers $0 brokerage for both active and passive investors. Both are CHESS-sponsored.",
+    chooseA: "Choose Pearler for set-and-forget auto-investing into ETFs with a supportive community.",
+    chooseB: "Choose Stake for $0 brokerage on ASX and US shares with flexibility for both active and passive styles.",
+    sections: [
+      { heading: "Auto-Invest Is Pearler's Superpower", body: "Schedule recurring ETF purchases — weekly, fortnightly, or monthly — with automatic execution. No other Australian platform does this as well." },
+      { heading: "Both Are CHESS-Sponsored", body: "Unusually for low-cost brokers, both Pearler and Stake offer CHESS sponsorship. Your shares are in your name on the ASX register with either platform." },
+    ],
+    faqs: [{ question: "Is Pearler or Stake better for ETF investing?", answer: "Pearler for automated recurring ETF investments. Stake for flexibility to trade both ETFs and individual stocks at $0." }],
+  },
+  {
+    key: "selfwealth-vs-stake",
+    tldr: "SelfWealth is the flat-fee veteran ($9.50/trade); Stake is the $0 newcomer. Both CHESS-sponsored. The fee gap is $228/year on 24 trades.",
+    chooseA: "Choose SelfWealth for social portfolio insights and a longer ASX-listed track record.",
+    chooseB: "Choose Stake for $0 ASX and US brokerage with a modern mobile-first experience.",
+    sections: [
+      { heading: "The Cost Gap", body: "24 trades/year: SelfWealth $228, Stake $0. That's $228 saved annually. The only question is whether SelfWealth's social features justify paying $9.50 per trade." },
+      { heading: "SelfWealth's Social Edge", body: "SelfWealth shows portfolios of Australia's top-performing investors. See what high-performers buy and sell. Stake doesn't offer this kind of social intelligence." },
+    ],
+  },
+  {
+    key: "interactive-brokers-vs-saxo",
+    tldr: "The two global multi-asset brokers for Australians. IBKR has lower fees and more markets; Saxo has a more polished platform and better research.",
+    chooseA: "Choose Interactive Brokers for the lowest international fees, 150+ markets, and options/futures.",
+    chooseB: "Choose Saxo for a premium platform with excellent research and a more intuitive interface.",
+    sections: [
+      { heading: "Fees: IBKR Wins", body: "IBKR charges 0.08% ASX and $0.005/share US. Saxo charges similar ASX but $1 min on US with 0.25% FX. For active international traders, IBKR is cheaper." },
+      { heading: "Platform: Saxo Wins", body: "Saxo's platforms are beautifully designed. IBKR's Trader Workstation is powerful but complex. If you value UX, Saxo wins convincingly." },
+    ],
+  },
+  {
+    key: "commsec-vs-superhero",
+    tldr: "Old guard vs new. CommSec $29.95 with CHESS; Superhero $5 custodial. Six times the price difference for a simpler product.",
+    chooseA: "Choose CommSec for CHESS sponsorship, deep research, and the trust of Australia's biggest bank.",
+    chooseB: "Choose Superhero for $5 flat-fee trades and a modern app. Great for small portfolios.",
+    sections: [
+      { heading: "The Real Cost", body: "24 trades/year: CommSec $719, Superhero $120. That's $599 saved — or 120 additional $5 trades." },
+      { heading: "CHESS vs Custodial", body: "CommSec's CHESS means shares in your name. Superhero's custodial model is fine for small portfolios but less protective for large ones." },
+    ],
+  },
+  {
+    key: "digital-surge-vs-swyftx",
+    tldr: "Two Aussie crypto exchanges. Swyftx has lower fees and more features. Digital Surge is simpler with strong local support.",
+    chooseA: "Choose Digital Surge for simplicity, beginner-friendliness, and excellent Brisbane-based support.",
+    chooseB: "Choose Swyftx for lower fees (0.6%), recurring buys, staking, and a larger coin selection.",
+    sections: [
+      { heading: "Fees", body: "Swyftx: 0.6% flat. Digital Surge: higher on instant buy, competitive on exchange. For regular trading, Swyftx is generally cheaper." },
+      { heading: "Features", body: "Swyftx offers recurring buys, staking, bundles, and tax reporting integration. Digital Surge is more basic — buy, sell, hold." },
+    ],
+  },
+  {
+    key: "moomoo-vs-webull",
+    tldr: "Two Asian-backed $0 brokers competing in Australia. Moomoo is more established with deeper data tools; Webull is newer but growing fast.",
+    chooseA: "Choose Moomoo for an established $0 ASX platform with Level 2 data and a strong new-user promotion.",
+    chooseB: "Choose Webull for competitive US share trading and solid charting tools from a NASDAQ-listed parent.",
+    sections: [
+      { heading: "Market Presence", body: "Moomoo launched in Australia 2022 with CHESS sponsorship and hundreds of thousands of users. Webull launched 2023 and is newer. Both backed by large listed parent companies." },
+      { heading: "Data Depth", body: "Moomoo's free data is unmatched: Level 2, institutional flow, analyst consensus, AI insights. Webull has solid charting but doesn't match Moomoo's analytical depth." },
+    ],
+  },
+];
 for (const c of content) contentMap.set(c.key, c);
 
 /**
