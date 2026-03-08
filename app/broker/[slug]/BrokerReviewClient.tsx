@@ -148,7 +148,13 @@ export default function BrokerReviewClient({
   // Track this broker for "Recently Viewed"
   useEffect(() => { trackView(b); }, [b]);
 
-  const feeRows = [
+  const isSavingsOrTD = b.platform_type === 'savings_account' || b.platform_type === 'term_deposit';
+  const feeRows = isSavingsOrTD ? [
+    { label: 'Interest Rate', value: b.asx_fee || 'N/A', numVal: b.asx_fee_value, thresholds: [4, 5] as [number, number], verdict: b.asx_fee_value != null && b.asx_fee_value >= 5 ? 'Excellent' : b.asx_fee_value != null && b.asx_fee_value >= 4 ? 'Good' : 'Below average' },
+    { label: 'Minimum Deposit', value: b.min_deposit || '$0', numVal: 0, thresholds: [0, 0] as [number, number], verdict: b.min_deposit === '$0' || !b.min_deposit ? 'None' : 'Required' },
+    { label: 'Government Guarantee', value: 'Up to $250,000', numVal: 0, thresholds: [0, 0] as [number, number], verdict: 'Protected' },
+    { label: 'Monthly Fees', value: 'None', numVal: 0, thresholds: [0, 0] as [number, number], verdict: 'None' },
+  ] : [
     { label: 'ASX Brokerage', value: b.asx_fee || 'N/A', numVal: b.asx_fee_value, thresholds: [5, 15] as [number, number], verdict: b.asx_fee_value != null && b.asx_fee_value <= 5 ? 'Low' : b.asx_fee_value != null && b.asx_fee_value <= 15 ? 'Medium' : 'High' },
     { label: 'US Brokerage', value: b.us_fee || 'N/A', numVal: b.us_fee_value, thresholds: [0, 5] as [number, number], verdict: b.us_fee_value === 0 ? 'Free' : b.us_fee_value != null && b.us_fee_value <= 5 ? 'Low' : 'High' },
     { label: 'FX Rate', value: b.fx_rate != null ? `${b.fx_rate}%` : 'N/A', numVal: b.fx_rate, thresholds: [0.3, 0.5] as [number, number], verdict: b.fx_rate != null && b.fx_rate <= 0.3 ? 'Excellent' : b.fx_rate != null && b.fx_rate <= 0.5 ? 'Fair' : 'Expensive' },
@@ -185,7 +191,7 @@ export default function BrokerReviewClient({
   const tocItems = [
     { id: "best-for", label: "Best For" },
     { id: "verdict", label: "Verdict" },
-    { id: "fees", label: "Fee Audit" },
+    { id: "fees", label: isSavingsOrTD ? "Rate Details" : "Fee Audit" },
     { id: "cost-example", label: "Trade Costs" },
     { id: "safety", label: "Safety Check" },
     { id: "pros-cons", label: "Pros & Cons" },
@@ -469,7 +475,7 @@ export default function BrokerReviewClient({
             </div>
           ))}
         </div>
-        <h2 id="fees" className="text-xl md:text-2xl font-extrabold mb-2 scroll-mt-20">Fee Audit</h2>
+        <h2 id="fees" className="text-xl md:text-2xl font-extrabold mb-2 scroll-mt-20">{isSavingsOrTD ? "Rate Details" : "Fee Audit"}</h2>
         <p className="text-slate-600 mb-4 text-sm">We&apos;ve audited {b.name}&apos;s fee structure so you don&apos;t have to read the PDS.</p>
         <ScrollReveal animation="fee-row-stagger" className="bg-white border border-slate-200 rounded-xl overflow-hidden mb-8">
           {feeRows.map((row, i) => (

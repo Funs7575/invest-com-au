@@ -410,7 +410,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search..."
               className="w-full px-3 py-2.5 pl-8 min-h-[44px] border border-slate-200 rounded-full text-xs focus:outline-none focus:border-slate-400"
-              aria-label="Search brokers"
+              aria-label="Search platforms"
             />
             {searchQuery && (
               <button onClick={() => setSearchQuery("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400" aria-label="Clear">
@@ -489,7 +489,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search platforms by name..."
             className="w-80 px-4 py-2.5 pl-10 border border-slate-200 rounded-lg text-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700"
-            aria-label="Search brokers by name"
+            aria-label="Search platforms by name"
           />
           {searchQuery && (
             <button

@@ -23,7 +23,7 @@ import { ORGANIZATION_JSONLD, SITE_URL } from "@/lib/seo";
 export const metadata = {
   title: "Compare Investing Platforms & Find Advisors — Invest.com.au",
   description:
-    "Compare Australian share trading platforms, crypto exchanges, super funds, and robo-advisors side-by-side. Find verified financial advisors. Real fees, real data, updated daily.",
+    "Compare Australian share trading platforms, crypto exchanges, super funds, robo-advisors, savings accounts, and term deposits side-by-side. Find verified financial advisors. Real fees, real data, updated daily.",
   openGraph: {
     title: "Compare Platforms & Find Advisors — Invest.com.au",
     description: "Compare Australian investing platforms and find verified financial advisors. Real fees, real data, updated daily.",
