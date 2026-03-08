@@ -104,3 +104,33 @@ export function renderStars(rating: number): string {
   const empty = 5 - full - half;
   return '★'.repeat(full) + (half ? '½' : '') + '☆'.repeat(empty);
 }
+
+/**
+ * Track page view duration. Call once on page load.
+ * Sends duration on page hide (tab switch, navigation, close).
+ * Uses visibilitychange for accuracy (not beforeunload which is unreliable on mobile).
+ */
+export function trackPageDuration(page: string) {
+  if (typeof window === 'undefined' || typeof document === 'undefined') return;
+  const start = Date.now();
+  let sent = false;
+
+  const send = () => {
+    if (sent) return;
+    sent = true;
+    const duration = Math.round((Date.now() - start) / 1000);
+    if (duration < 2 || duration > 3600) return; // Ignore <2s (bounces) and >1hr (stale tabs)
+    const payload = JSON.stringify({
+      event_type: 'page_duration',
+      page,
+      metadata: { duration_seconds: duration },
+    });
+    navigator.sendBeacon?.('/api/track-event', payload);
+  };
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') send();
+  });
+  // Fallback for page unload (closing tab)
+  window.addEventListener('pagehide', send);
+}

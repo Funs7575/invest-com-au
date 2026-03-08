@@ -539,6 +539,12 @@ export default function BrokerReviewClient({
             {b.fee_last_checked && (
               <FeesFreshnessIndicator lastChecked={b.fee_last_checked} variant="inline" />
             )}
+            <a
+              href={`mailto:hello@invest.com.au?subject=Data correction: ${b.name}&body=Hi, I noticed incorrect data on the ${b.name} review page (${typeof window !== 'undefined' ? window.location.href : ''}).%0A%0AWhat's wrong:%0A%0AWhat it should be:`}
+              className="text-[0.56rem] text-slate-400 hover:text-red-500 transition-colors"
+            >
+              Report an error
+            </a>
           </div>
           {b.fee_changelog && b.fee_changelog.length > 0 && (
             <details className="mt-3">
