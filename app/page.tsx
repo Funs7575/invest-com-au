@@ -17,7 +17,7 @@ import { getMostRecentFeeCheck } from "@/lib/utils";
 import Icon from "@/components/Icon";
 import BrokerLogo from "@/components/BrokerLogo";
 import { AFFILIATE_REL } from "@/lib/tracking";
-import { ORGANIZATION_JSONLD, SITE_URL } from "@/lib/seo";
+import { ORGANIZATION_JSONLD, SITE_URL, websiteJsonLd } from "@/lib/seo";
 // UserOnboarding modal removed — was blocking first-time visitors (P0 conversion issue)
 
 export const metadata = {
@@ -155,6 +155,10 @@ export default async function HomePage() {
   return (
     <div>
       {/* UserOnboarding modal removed — blocked first-time visitors behind a 3-step modal */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd()) }}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

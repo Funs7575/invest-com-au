@@ -176,7 +176,7 @@ export default function SwitchingCalculatorClient({ brokers }: { brokers: Broker
                       <BrokerLogo broker={r.broker} size="xs" />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className="text-sm font-bold text-slate-900 truncate">{r.broker.name}</span>
+                          <Link href={`/broker/${r.broker.slug}`} className="text-sm font-bold text-slate-900 truncate hover:text-blue-600 transition-colors">{r.broker.name}</Link>
                           {isCurrent && <span className="text-[0.5rem] font-bold bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full">YOUR BROKER</span>}
                           {i === 0 && !isCurrent && <span className="text-[0.5rem] font-bold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded-full">CHEAPEST</span>}
                         </div>
