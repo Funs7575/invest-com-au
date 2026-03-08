@@ -629,6 +629,34 @@ export default async function HomePage() {
         </section>
       </ScrollFadeIn>
 
+      {/* Top Reviewed Platforms — internal links to broker review pages */}
+      <ScrollFadeIn>
+        <section className="py-3 md:py-10 bg-white">
+          <div className="container-custom">
+            <h2 className="text-lg md:text-2xl font-bold mb-2 md:mb-4">Top Reviewed Platforms</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
+              {(brokers as Broker[])?.filter(b => b.rating && b.rating >= 4.0).sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 8).map(b => (
+                <Link key={b.slug} href={`/broker/${b.slug}`} className="flex items-center gap-2 p-2.5 md:p-3 rounded-xl border border-slate-100 hover:border-slate-300 hover:shadow-sm transition-all group">
+                  <BrokerLogo broker={b} size="sm" />
+                  <div className="min-w-0">
+                    <p className="text-xs md:text-sm font-bold text-slate-900 group-hover:text-blue-600 truncate">{b.name}</p>
+                    <p className="text-[0.55rem] text-slate-400">{b.rating}/5 · Read Review</p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+            <div className="mt-3 md:mt-4 flex flex-wrap gap-1.5">
+              <span className="text-[0.6rem] text-slate-400 mr-1">Popular comparisons:</span>
+              {["stake-vs-commsec", "cmc-markets-vs-commsec", "moomoo-vs-stake", "coinspot-vs-swyftx", "ic-markets-vs-pepperstone"].map(pair => (
+                <Link key={pair} href={`/versus/${pair}`} className="text-[0.6rem] px-2 py-0.5 bg-slate-100 text-slate-600 rounded-full hover:bg-slate-200 hover:text-slate-900 transition-colors">
+                  {pair.replace(/-vs-/g, " vs ").replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase())}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      </ScrollFadeIn>
+
       {/* Featured Articles */}
       {(articles as Article[])?.length > 0 && (
         <ScrollFadeIn>

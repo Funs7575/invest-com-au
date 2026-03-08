@@ -651,6 +651,26 @@ export default async function BestBrokerPage({
               ))}
             </div>
           </div>
+
+          {/* Head-to-head versus links from top brokers on this page */}
+          {filtered.length >= 2 && (
+            <div className="border-t border-slate-100 pt-5 md:pt-8">
+              <h3 className="text-base md:text-lg font-bold mb-2">Head-to-Head Comparisons</h3>
+              <p className="text-xs text-slate-500 mb-3">See detailed side-by-side breakdowns of the top platforms in this category.</p>
+              <div className="flex flex-wrap gap-1.5">
+                {filtered.slice(0, 5).flatMap((a, i) =>
+                  filtered.slice(i + 1, 5).map(b => {
+                    const pair = [a.slug, b.slug].sort().join("-vs-");
+                    return (
+                      <Link key={pair} href={`/versus/${pair}`} className="text-xs px-3 py-1.5 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 hover:text-slate-900 transition-colors font-medium">
+                        {a.name} vs {b.name}
+                      </Link>
+                    );
+                  })
+                ).slice(0, 10)}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </>

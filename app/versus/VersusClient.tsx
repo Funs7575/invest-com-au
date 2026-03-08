@@ -12,6 +12,7 @@ import StickyCTABar from "@/components/StickyCTABar";
 import ScrollReveal from "@/components/ScrollReveal";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import { CURRENT_YEAR } from "@/lib/seo";
+import { getVersusEditorial } from "@/lib/versus-content";
 import Icon from "@/components/Icon";
 import BrokerLogo from "@/components/BrokerLogo";
 
@@ -571,6 +572,43 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
               </ScrollReveal>
               <CompactDisclaimerLine />
             </div>
+
+            {/* ─── Editorial Comparison Content ─── */}
+            {(() => {
+              const editorial = getVersusEditorial(selected.map(b => b.slug));
+              if (!editorial) return null;
+              return (
+                <div className="mb-4 md:mb-6 space-y-4">
+                  {/* TL;DR */}
+                  <div className="bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-200 rounded-xl p-4 md:p-5">
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">The Bottom Line</p>
+                    <p className="text-sm md:text-base text-slate-700 leading-relaxed">{editorial.tldr}</p>
+                  </div>
+
+                  {/* Choose A / Choose B */}
+                  <div className="grid md:grid-cols-2 gap-3">
+                    {[editorial.chooseA, editorial.chooseB].map((text, i) => {
+                      const br = selected[i];
+                      if (!br) return null;
+                      return (
+                        <div key={br.slug} className="border border-slate-200 rounded-xl p-4" style={{ borderTopColor: br.color, borderTopWidth: 3 }}>
+                          <p className="text-xs font-bold mb-1.5" style={{ color: br.color }}>Choose {br.name} if...</p>
+                          <p className="text-sm text-slate-600 leading-relaxed">{text}</p>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Editorial sections */}
+                  {editorial.sections.map((section, i) => (
+                    <div key={i}>
+                      <h2 className="text-base md:text-lg font-extrabold text-slate-900 mb-1.5">{section.heading}</h2>
+                      <p className="text-sm text-slate-600 leading-relaxed">{section.body}</p>
+                    </div>
+                  ))}
+                </div>
+              );
+            })()}
 
             {/* ─── Bottom CTA ─── */}
             <ScrollReveal animation="scroll-stagger-children" className="grid grid-cols-2 md:grid-cols-2 gap-2.5 md:gap-4 mb-3 md:mb-4">
