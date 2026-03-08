@@ -242,6 +242,16 @@ export default function SavingsCalculatorClient({ accounts }: { accounts: Accoun
             )}
 
             {/* SEO content */}
+            {/* Contextual advisor CTA for large savings balances */}
+            {showResults && balance >= 100000 && (
+              <div className="bg-gradient-to-r from-violet-50 to-indigo-50 border border-violet-200 rounded-2xl p-5 mb-4">
+                <p className="text-sm font-bold text-violet-900 mb-1">With ${balance.toLocaleString()} in savings, have you considered your tax position?</p>
+                <p className="text-xs text-violet-700 mb-3">Interest on large savings balances is taxable income. A financial advisor can help structure your savings to minimise tax and maximise returns.</p>
+                <Link href="/find-advisor" className="inline-block px-4 py-2 bg-violet-600 text-white text-xs font-bold rounded-lg hover:bg-violet-700 transition-colors">
+                  Find a Financial Advisor →
+                </Link>
+              </div>
+            )}
             <div className="bg-white border border-slate-200 rounded-2xl p-5 md:p-8">
               <h2 className="text-lg font-bold text-slate-900 mb-3">Why Your Savings Rate Matters</h2>
               <p className="text-sm text-slate-600 leading-relaxed mb-4">

@@ -210,5 +210,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }))
   );
 
-  return [...staticPages, ...bestPages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...advisorPages, ...advisorTypePages, ...advisorStatePages];
+  const advisorLocationSlugs = ["sydney", "melbourne", "brisbane", "perth", "adelaide", "canberra", "hobart", "darwin", "gold-coast", "sydney-smsf", "melbourne-smsf", "sydney-financial-planner", "melbourne-financial-planner", "brisbane-financial-planner"];
+  const advisorLocationPages = advisorLocationSlugs.map(slug => ({
+    url: `${baseUrl}/find-advisor/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
+
+  return [...staticPages, ...bestPages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorLocationPages];
 }

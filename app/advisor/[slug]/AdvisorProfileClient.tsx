@@ -100,6 +100,10 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
           user_phone: phone.trim() || undefined,
           message: message.trim() || undefined,
           source_page: `/advisor/${pro.slug}`,
+          // Lead quality signals
+          pages_visited: typeof window !== 'undefined' ? parseInt(sessionStorage.getItem('pages_visited') || '1') : 1,
+          quiz_completed: typeof window !== 'undefined' ? !!sessionStorage.getItem('quiz_completed') : false,
+          calculator_used: typeof window !== 'undefined' ? !!sessionStorage.getItem('calculator_used') : false,
           ...getStoredUtm(),
         }),
       });

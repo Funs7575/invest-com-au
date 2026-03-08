@@ -235,6 +235,16 @@ export default function SwitchingCalculatorClient({ brokers }: { brokers: Broker
 
         {/* SEO content */}
         <div className="mt-8 md:mt-12 space-y-6 text-sm text-slate-600 leading-relaxed">
+          {/* Contextual advisor prompt for large portfolios */}
+          {showResults && avgTradeSize * tradesPerYear > 50000 && (
+            <div className="bg-gradient-to-r from-violet-50 to-indigo-50 border border-violet-200 rounded-xl p-4 md:p-5 mb-4">
+              <p className="text-sm font-bold text-violet-900 mb-1">Switching a large portfolio? Consider professional advice</p>
+              <p className="text-xs text-violet-700 mb-3">With ${(avgTradeSize * tradesPerYear).toLocaleString()} in annual trades, a financial advisor can help optimise your structure, tax position, and broker setup.</p>
+              <Link href="/find-advisor" className="inline-block px-4 py-2 bg-violet-600 text-white text-xs font-bold rounded-lg hover:bg-violet-700 transition-colors">
+                Find a Financial Advisor →
+              </Link>
+            </div>
+          )}
           <h2 className="text-lg font-bold text-slate-900">Why Switching Brokers Could Save You Thousands</h2>
           <p>Most Australians stick with their first broker out of inertia — even when cheaper options exist. The difference in annual fees between the most and least expensive ASX brokers can exceed $2,000 per year for active traders.</p>
           <p>Our switching calculator uses real fee data from {brokers.length} Australian platforms, updated daily. It accounts for ASX brokerage, US share fees, FX conversion rates, and inactivity charges to show your true annual cost.</p>

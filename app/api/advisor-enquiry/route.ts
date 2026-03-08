@@ -61,6 +61,65 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Failed to submit enquiry." }, { status: 500 });
     }
 
+    // ── Lead Quality Scoring ──
+    // Score based on engagement signals sent from the client
+    const signals: Record<string, unknown> = {};
+    let score = 0;
+
+    // Has a phone number (+20 — serious enquiry)
+    if (user_phone?.trim()) { score += 20; signals.has_phone = true; }
+    // Wrote a message (+15 — engaged)
+    if (message?.trim() && message.trim().length > 30) { score += 15; signals.has_message = true; }
+    // Came from a specific page (+10 — was researching)
+    if (source_page && source_page !== "/advisors") { score += 10; signals.specific_page = source_page; }
+    // Has UTM source (+5 — came from marketing)
+    if (body.utm_source) { score += 5; signals.utm = body.utm_source; }
+    // Client-side signals (pages visited, quiz taken, calculator used)
+    if (body.pages_visited && body.pages_visited > 3) { score += 15; signals.pages_visited = body.pages_visited; }
+    if (body.quiz_completed) { score += 20; signals.quiz_completed = true; }
+    if (body.calculator_used) { score += 15; signals.calculator_used = true; }
+
+    // Clamp 0-100
+    score = Math.min(100, Math.max(0, score));
+
+    // ── Auto-Billing ──
+    // First 3 leads are free (trial), then charge per lead
+    const { data: advisor } = await supabase
+      .from("professionals")
+      .select("free_leads_used, lead_price_cents")
+      .eq("id", professional_id)
+      .single();
+
+    const freeUsed = advisor?.free_leads_used || 0;
+    const isFree = freeUsed < 3;
+    const priceCents = isFree ? 0 : (advisor?.lead_price_cents || 4900);
+
+    // Update lead with quality score and billing
+    await supabase.from("professional_leads").update({
+      quality_score: score,
+      quality_signals: signals,
+      billed: !isFree,
+      bill_amount_cents: priceCents,
+    }).eq("id", lead.id);
+
+    // Increment free leads counter
+    if (isFree) {
+      await supabase.from("professionals").update({
+        free_leads_used: freeUsed + 1,
+      }).eq("id", professional_id);
+    }
+
+    // Create billing record if not free
+    if (!isFree && priceCents > 0) {
+      await supabase.from("advisor_billing").insert({
+        professional_id,
+        lead_id: lead.id,
+        amount_cents: priceCents,
+        description: `Lead: ${user_name.trim()} (quality: ${score}/100)`,
+        status: "pending",
+      }).catch(() => {});
+    }
+
     // Send notification email to the advisor (if they have an email)
     if (pro.email) {
       try {

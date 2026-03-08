@@ -24,6 +24,15 @@ export default function UtmCapture() {
       if (campaign) sessionStorage.setItem("utm_campaign", campaign);
       sessionStorage.setItem("referral_url", document.referrer || "");
     }
+
+    // Track pages visited (for lead quality scoring)
+    const visited = parseInt(sessionStorage.getItem("pages_visited") || "0") + 1;
+    sessionStorage.setItem("pages_visited", String(visited));
+
+    // Track calculator/quiz usage
+    const path = window.location.pathname;
+    if (path.includes("calculator")) sessionStorage.setItem("calculator_used", "1");
+    if (path.includes("quiz")) sessionStorage.setItem("quiz_completed", "1");
   }, [searchParams]);
 
   return null;
