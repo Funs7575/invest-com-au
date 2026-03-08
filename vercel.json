@@ -67,6 +67,10 @@
     {
       "path": "/api/cron/portfolio-alerts",
       "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/cron/portfolio-monitor",
+      "schedule": "0 8 1 * *"
     }
   ]
 }
