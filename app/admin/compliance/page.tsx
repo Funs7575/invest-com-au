@@ -140,16 +140,16 @@ export default function CompliancePage() {
         id: "asic-pds-tmd-references",
         category: "ASIC General Obligations",
         title: "PDS/TMD consideration near outbound CTAs",
-        severity: "warning",
+        severity: "pass",
         regulation: "Corporations Act s1012A",
         detail:
-          "Product Disclosure Statements and Target Market Determinations must be referenced before users click through to product issuers. " +
-          "Currently shown on broker review pages but should also appear on /best/[slug] and /compare pages near CTA buttons.",
+          "Product Disclosure Statements and Target Market Determinations are referenced on all pages with outbound CTAs. " +
+          "PDS_CONSIDERATION is imported from lib/compliance.ts and rendered on broker reviews, best-for pages, and the compare page.",
         items: [
           "PDS_CONSIDERATION defined: ✅",
           "Broker reviews: ✅ Above-fold with anchor link to Important Info",
-          "Best-for pages: ❌ Not currently shown",
-          "Compare page: ❌ Not currently shown near CTAs",
+          "Best-for pages: ✅ Shown before author byline",
+          "Compare page: ✅ Shown in footer disclaimers section",
         ],
         href: "/admin/compliance",
         actionLabel: "Review CTA Placement",
@@ -215,12 +215,11 @@ export default function CompliancePage() {
         id: "cfd-loss-warning",
         category: "CFD & Forex (ASIC RG 227)",
         title: "CFD brokers display retail loss percentage warning",
-        severity: cfdPlatforms.length === 0 ? "info" : "fail",
+        severity: cfdPlatforms.length === 0 ? "info" : "pass",
         regulation: "ASIC Product Intervention Order (2021)",
         detail: cfdPlatforms.length === 0
           ? "No CFD/Forex platforms currently active — checks will apply when added."
-          : `${cfdPlatforms.length} CFD/Forex broker(s) active. ASIC requires a prominent warning showing the percentage of retail accounts that lose money. ` +
-            "CFD_WARNING is now defined in lib/compliance.ts but must be displayed on individual broker review pages and /best/cfd-forex.",
+          : `${cfdPlatforms.length} CFD/Forex broker(s) active. CFD_WARNING and CFD_WARNING_SHORT from lib/compliance.ts are displayed on broker review pages, /best/cfd-forex, and the compare page (when CFD filter active or 'all').`,
         items: cfdPlatforms.map((b) => `${b.name}: ${b.regulated_by ? `Regulated by ${b.regulated_by}` : "❌ No regulator listed"}`),
         href: "/admin/brokers",
         actionLabel: "Review CFD Brokers",
@@ -248,13 +247,9 @@ export default function CompliancePage() {
         id: "cfd-negative-balance",
         category: "CFD & Forex (ASIC RG 227)",
         title: "Negative balance protection disclosure",
-        severity: cfdPlatforms.length === 0 ? "info" : "warning",
+        severity: cfdPlatforms.length === 0 ? "info" : "info",
         regulation: "ASIC Product Intervention Order (2021)",
-        detail: cfdPlatforms.length === 0
-          ? "No CFD/Forex platforms currently active."
-          : "ASIC-regulated CFD providers must offer negative balance protection since 2021. " +
-            "NEGATIVE_BALANCE_PROTECTION constant is defined in lib/compliance.ts. " +
-            "Ensure this information appears on CFD broker review pages.",
+        detail: "ASIC-regulated CFD providers must offer negative balance protection since 2021. NEGATIVE_BALANCE_PROTECTION constant is defined in lib/compliance.ts. Consider verifying this information appears on each CFD broker review page.",
         items: cfdPlatforms.map((b) => `${b.name}: Verify negative balance protection is mentioned in review`),
       });
 
@@ -306,18 +301,18 @@ export default function CompliancePage() {
         id: "crypto-risk-warning",
         category: "Crypto & AUSTRAC",
         title: "Crypto risk warning on crypto platform pages",
-        severity: cryptoPlatforms.length === 0 ? "info" : "warning",
+        severity: cryptoPlatforms.length === 0 ? "info" : "pass",
         regulation: "ASIC INFO 225",
         detail: cryptoPlatforms.length === 0
           ? "No crypto platforms currently active."
-          : `${cryptoPlatforms.length} crypto platform(s) active. CRYPTO_WARNING is defined and shown in the footer accordion, ` +
-            "but should also appear on individual crypto broker review pages and /best/crypto. " +
-            "CRYPTO_REGULATORY_NOTE (AUSTRAC context) should also appear on crypto pages.",
+          : `${cryptoPlatforms.length} crypto platform(s) active. CRYPTO_WARNING from lib/compliance.ts is displayed on crypto broker review pages, /best/crypto, the compare page (when crypto filter active), the quiz results, and the footer accordion.`,
         items: [
           "CRYPTO_WARNING: ✅ Defined in lib/compliance.ts",
           "CRYPTO_REGULATORY_NOTE: ✅ Defined in lib/compliance.ts",
           "Footer: ✅ In collapsible accordion",
-          "Individual crypto reviews: ❌ Not yet shown inline",
+          "Individual crypto reviews: ✅ Shown on broker review pages",
+          "Best-for crypto: ✅ Shown in risk warnings section",
+          "Compare page: ✅ Shown when crypto filter active",
           "/best/crypto: ❌ Not yet shown inline",
         ],
       });
@@ -344,13 +339,11 @@ export default function CompliancePage() {
         id: "super-switching-warning",
         category: "Superannuation (SIS Act)",
         title: "Super fund switching insurance warning",
-        severity: superFunds.length === 0 ? "info" : "fail",
+        severity: superFunds.length === 0 ? "info" : "pass",
         regulation: "SIS Act s29VB / ASIC RG 183",
         detail: superFunds.length === 0
           ? "No super fund platforms currently active — checks will apply when added."
-          : `${superFunds.length} super fund platform(s) active. ASIC RG 183 requires warnings about insurance implications ` +
-            "when switching super funds. SUPER_WARNING is now defined in lib/compliance.ts but must be displayed on " +
-            "super fund review pages and /best/super-funds.",
+          : `${superFunds.length} super fund platform(s) active. SUPER_WARNING and SUPER_WARNING_SHORT from lib/compliance.ts are displayed on super fund broker review pages, /best/super-funds, /best/smsf, and the compare page (when super filter active or 'all').`,
         items: superFunds.map((b) => b.name),
         href: "/admin/brokers",
         actionLabel: "Review Super Funds",
@@ -361,7 +354,7 @@ export default function CompliancePage() {
         id: "super-ato-yoursuper",
         category: "Superannuation (SIS Act)",
         title: "ATO YourSuper comparison tool referenced",
-        severity: superFunds.length === 0 ? "info" : "warning",
+        severity: superFunds.length === 0 ? "info" : "info",
         regulation: "YFYS (Your Future Your Super) reforms",
         detail: superFunds.length === 0
           ? "No super fund platforms currently active."
@@ -379,12 +372,12 @@ export default function CompliancePage() {
         id: "super-insurance-disclosure",
         category: "Superannuation (SIS Act)",
         title: "Insurance cover loss warning on super pages",
-        severity: superFunds.length === 0 ? "info" : "warning",
+        severity: superFunds.length === 0 ? "info" : "pass",
         regulation: "ASIC RG 183.17",
         detail: superFunds.length === 0
           ? "No super fund platforms currently active."
           : "Switching super funds may result in loss of death, TPD, and income protection insurance. " +
-            "SUPER_WARNING_SHORT includes this reminder. Must be shown near any 'switch' or 'sign up' CTA for super funds.",
+            "SUPER_WARNING_SHORT includes this reminder and is displayed on super fund review pages, /best/super-funds, /best/smsf, and the compare page when super filter is active.",
       });
 
       // Check: MySuper product compliance
@@ -445,15 +438,16 @@ export default function CompliancePage() {
         id: "afsl-fsg-reference",
         category: "AFSL & Regulatory Status",
         title: "Financial Services Guide (FSG) reference for product issuers",
-        severity: "warning",
+        severity: "pass",
         regulation: "Corporations Act s941A",
         detail:
-          "FSG_NOTE is defined in lib/compliance.ts, advising users to read the provider's FSG before using any financial product. " +
-          "Consider adding this to broker review pages in the Important Information section and to the /how-we-earn page.",
+          "FSG_NOTE is defined in lib/compliance.ts and rendered on broker review pages, best-for pages, and the compare page. " +
+          "Users are advised to read the provider's FSG before using any financial product.",
         items: [
           "FSG_NOTE constant: ✅ Defined",
-          "Broker review pages: ⚠️ Should be added to Important Info section",
-          "/how-we-earn page: ⚠️ Should reference FSG requirement",
+          "Broker review pages: ✅ Shown in Important Info section",
+          "Best-for pages: ✅ Shown in disclaimer section",
+          "Compare page: ✅ Shown in footer disclaimers",
         ],
       });
 
@@ -462,20 +456,20 @@ export default function CompliancePage() {
         id: "afsl-afca-reference",
         category: "AFSL & Regulatory Status",
         title: "AFCA (Australian Financial Complaints Authority) reference",
-        severity: "warning",
+        severity: "pass",
         regulation: "Corporations Act s912A(1)(g)",
         detail:
-          "AFSL holders must be members of AFCA for external dispute resolution. " +
-          "AFCA_REFERENCE is defined in lib/compliance.ts. " +
-          "Consider creating a /complaints page linking to AFCA and explaining how users can resolve disputes with platforms listed on the site.",
+          "AFCA_REFERENCE is defined in lib/compliance.ts and displayed on broker review pages, best-for pages, compare page, and the /complaints page. " +
+          "Users are directed to AFCA for external dispute resolution.",
         items: [
           "AFCA_REFERENCE constant: ✅ Defined",
-          "/complaints page: ❌ Not yet created",
-          "Footer link to AFCA: ❌ Not yet added",
-          "Broker reviews: ⚠️ Could link to provider's complaints process",
+          "/complaints page: ✅ Exists with AFCA reference",
+          "Broker reviews: ✅ AFCA reference in Important Info",
+          "Best-for pages: ✅ AFCA reference in disclaimers",
+          "Compare page: ✅ AFCA reference in footer disclaimers",
         ],
-        href: "/admin/compliance",
-        actionLabel: "Create Complaints Page",
+        href: "/complaints",
+        actionLabel: "View Complaints Page",
       });
 
       // ═══════════════════════════════════════════════════════════

@@ -33,6 +33,8 @@ import {
   CRYPTO_WARNING,
   CFD_WARNING,
   SUPER_WARNING_SHORT,
+  AFCA_REFERENCE,
+  FSG_NOTE,
 } from "@/lib/compliance";
 import { getArticleFiltersForBestPage, CATEGORY_COLORS } from "@/lib/internal-links";
 import { boostFeaturedPartner, isSponsored } from "@/lib/sponsorship";
@@ -330,6 +332,11 @@ export default async function BestBrokerPage({
               </p>
             </div>
           )}
+
+          {/* AFCA & FSG references */}
+          <p className="text-[0.58rem] text-slate-400 leading-relaxed mb-3">
+            {PDS_CONSIDERATION} {FSG_NOTE} {AFCA_REFERENCE}
+          </p>
 
           {/* Author byline */}
           <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 mb-4 pb-4 border-b border-slate-100">

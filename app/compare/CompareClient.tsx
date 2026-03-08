@@ -12,7 +12,7 @@ const XIcon = ({ className }: { className?: string }) => (
 );
 import type { Broker } from "@/lib/types";
 import { trackClick, trackEvent, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
-import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import { GENERAL_ADVICE_WARNING, PDS_CONSIDERATION, CFD_WARNING_SHORT, CRYPTO_WARNING, SUPER_WARNING_SHORT, AFCA_REFERENCE, FSG_NOTE } from "@/lib/compliance";
 import { downloadCSV } from "@/lib/csv-export";
 import BrokerCard from "@/components/BrokerCard";
 import SocialProofCounter from "@/components/SocialProofCounter";
@@ -850,6 +850,21 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         <p className="mt-2 md:mt-3 text-[0.58rem] md:text-[0.69rem] text-slate-400 text-center leading-relaxed max-w-3xl mx-auto">
           {GENERAL_ADVICE_WARNING}
         </p>
+
+        {/* Contextual risk warnings based on active filter */}
+        <div className="mt-2 text-[0.55rem] md:text-[0.62rem] text-slate-400 text-center leading-relaxed max-w-3xl mx-auto space-y-1.5">
+          <p>{PDS_CONSIDERATION} {FSG_NOTE}</p>
+          {(activeFilter === 'cfd' || activeFilter === 'all') && (
+            <p className="text-red-400/80">{CFD_WARNING_SHORT}</p>
+          )}
+          {(activeFilter === 'crypto' || activeFilter === 'all') && (
+            <p className="text-amber-500/80">{CRYPTO_WARNING}</p>
+          )}
+          {(activeFilter === 'super' || activeFilter === 'all') && (
+            <p>{SUPER_WARNING_SHORT}</p>
+          )}
+          <p>{AFCA_REFERENCE}</p>
+        </div>
 
         {/* Sponsored display ad */}
         <AdSlot
