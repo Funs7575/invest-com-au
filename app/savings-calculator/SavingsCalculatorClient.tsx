@@ -5,6 +5,7 @@ import Link from "next/link";
 import Icon from "@/components/Icon";
 import SocialProofCounter from "@/components/SocialProofCounter";
 import { trackEvent, trackClick, getAffiliateLink, AFFILIATE_REL, trackPageDuration } from "@/lib/tracking";
+import { getStoredUtm } from "@/components/UtmCapture";
 
 type Account = {
   id: number; slug: string; name: string; platform_type: string;
@@ -60,7 +61,7 @@ export default function SavingsCalculatorClient({ accounts }: { accounts: Accoun
     await fetch("/api/email-capture", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: email.trim(), source: "savings-calculator", name: "" }),
+      body: JSON.stringify({ email: email.trim(), source: "savings-calculator", name: "", ...getStoredUtm() }),
     }).catch(() => {});
     setEmailSubmitted(true);
     setEmailGated(false);

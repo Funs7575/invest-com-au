@@ -6,6 +6,7 @@ import Icon from "@/components/Icon";
 import BrokerLogo from "@/components/BrokerLogo";
 import SocialProofCounter from "@/components/SocialProofCounter";
 import { getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL, trackClick, trackPageDuration } from "@/lib/tracking";
+import { getStoredUtm } from "@/components/UtmCapture";
 import type { Broker } from "@/lib/types";
 
 function parseFee(feeStr: string | null): { flat: number; pct: number } {
@@ -67,7 +68,7 @@ export default function SwitchingCalculatorClient({ brokers }: { brokers: Broker
   const handleEmailCapture = async () => {
     if (!email.trim()) return;
     await fetch("/api/email-capture", { method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: email.trim(), source: "switching_calculator", name: "" })
+      body: JSON.stringify({ email: email.trim(), source: "switching_calculator", name: "", ...getStoredUtm() })
     }).catch(() => {});
     setEmailCaptured(true);
   };
