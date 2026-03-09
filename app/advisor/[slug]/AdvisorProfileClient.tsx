@@ -216,6 +216,44 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
           ))}
         </div>
 
+        {/* Structured fee breakdown */}
+        {(pro.hourly_rate_cents || pro.flat_fee_cents || pro.aum_percentage) && (
+          <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-5 mb-4 md:mb-6">
+            <h2 className="text-sm md:text-base font-bold text-slate-900 mb-3">Fee Breakdown</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {pro.hourly_rate_cents && (
+                <div className="bg-amber-50 rounded-lg p-3">
+                  <div className="text-[0.56rem] uppercase font-semibold text-amber-600 mb-0.5">Hourly Rate</div>
+                  <div className="text-base md:text-lg font-bold text-amber-900">${(pro.hourly_rate_cents / 100).toLocaleString()}</div>
+                </div>
+              )}
+              {pro.flat_fee_cents && (
+                <div className="bg-amber-50 rounded-lg p-3">
+                  <div className="text-[0.56rem] uppercase font-semibold text-amber-600 mb-0.5">Flat Fee</div>
+                  <div className="text-base md:text-lg font-bold text-amber-900">${(pro.flat_fee_cents / 100).toLocaleString()}</div>
+                </div>
+              )}
+              {pro.aum_percentage && (
+                <div className="bg-amber-50 rounded-lg p-3">
+                  <div className="text-[0.56rem] uppercase font-semibold text-amber-600 mb-0.5">AUM Fee</div>
+                  <div className="text-base md:text-lg font-bold text-amber-900">{pro.aum_percentage}%</div>
+                </div>
+              )}
+              {pro.initial_consultation_free && (
+                <div className="bg-emerald-50 rounded-lg p-3">
+                  <div className="text-[0.56rem] uppercase font-semibold text-emerald-600 mb-0.5">Initial Consult</div>
+                  <div className="text-base md:text-lg font-bold text-emerald-900">Free</div>
+                </div>
+              )}
+            </div>
+            {pro.fee_structure && (
+              <p className="text-[0.62rem] md:text-xs text-slate-400 mt-2">
+                Fee model: <span className="font-medium text-slate-600">{pro.fee_structure === "percentage of AUM" ? "% of Assets Under Management" : pro.fee_structure.charAt(0).toUpperCase() + pro.fee_structure.slice(1)}</span>
+              </p>
+            )}
+          </div>
+        )}
+
         {/* Trust signals — ASIC verification link */}
         {(pro.afsl_number || pro.registration_number) && (
           <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 md:p-4 mb-4 md:mb-6 flex items-start gap-2.5">

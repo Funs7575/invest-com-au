@@ -99,6 +99,21 @@ export async function PATCH(request: NextRequest) {
   const { data: existing } = await supabase.from("professionals").select("id").eq("slug", slug).single();
   const finalSlug = existing ? `${slug}-${Date.now().toString(36).slice(-4)}` : slug;
 
+  // Geocode by matching suburb to postcode lookup
+  let geoData: { latitude?: number; longitude?: number; location_postcode?: string } = {};
+  if (app.location_suburb && app.location_state) {
+    const { data: pc } = await supabase
+      .from("au_postcodes")
+      .select("postcode, latitude, longitude")
+      .eq("state", app.location_state)
+      .ilike("locality", `%${app.location_suburb}%`)
+      .limit(1)
+      .single();
+    if (pc) {
+      geoData = { latitude: pc.latitude, longitude: pc.longitude, location_postcode: pc.postcode };
+    }
+  }
+
   const professionalData: Record<string, unknown> = {
     name: app.name,
     slug: finalSlug,
@@ -111,10 +126,12 @@ export async function PATCH(request: NextRequest) {
     location_state: app.location_state || null,
     location_suburb: app.location_suburb || null,
     location_display: [app.location_suburb, app.location_state].filter(Boolean).join(", ") || null,
+    ...geoData,
     specialties: app.specialties ? app.specialties.split(",").map((s: string) => s.trim()).filter(Boolean) : [],
     bio: app.bio || null,
     website: app.website || null,
     fee_description: app.fee_description || null,
+    initial_consultation_free: true,
     status: "active",
     verified: true,
     rating: 0,

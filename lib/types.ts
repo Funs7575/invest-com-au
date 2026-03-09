@@ -880,6 +880,15 @@ export interface Professional {
   email?: string;
   fee_structure?: string;
   fee_description?: string;
+  hourly_rate_cents?: number;
+  flat_fee_cents?: number;
+  aum_percentage?: number;
+  initial_consultation_free?: boolean;
+  min_investment_cents?: number;
+  latitude?: number;
+  longitude?: number;
+  location_postcode?: string;
+  distance_km?: number;
   rating: number;
   review_count: number;
   verified: boolean;

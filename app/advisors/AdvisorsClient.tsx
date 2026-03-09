@@ -24,10 +24,22 @@ const TYPE_FILTERS: { key: ProfessionalType | "all"; label: string; icon: string
   { key: "debt_counsellor", label: "Debt Counsellors", icon: "credit-card" },
 ];
 
-type SortKey = "rating" | "name" | "newest" | "reviews";
+const RADIUS_OPTIONS = [
+  { value: 10, label: "10 km" },
+  { value: 25, label: "25 km" },
+  { value: 50, label: "50 km" },
+  { value: 100, label: "100 km" },
+  { value: 200, label: "200 km" },
+  { value: 0, label: "Any distance" },
+];
+
+type SortKey = "rating" | "name" | "newest" | "reviews" | "distance" | "fee_low" | "fee_high";
 const SORT_OPTIONS: { key: SortKey; label: string }[] = [
   { key: "rating", label: "Highest Rated" },
   { key: "reviews", label: "Most Reviewed" },
+  { key: "distance", label: "Nearest" },
+  { key: "fee_low", label: "Lowest Fee" },
+  { key: "fee_high", label: "Highest Fee" },
   { key: "name", label: "Name (A-Z)" },
   { key: "newest", label: "Newest" },
 ];
@@ -36,6 +48,110 @@ const RESULTS_PER_PAGE = 12;
 
 function renderStars(rating: number) {
   return "\u2605".repeat(Math.floor(rating)) + (rating % 1 >= 0.5 ? "\u00BD" : "");
+}
+
+function formatCents(cents: number): string {
+  return `$${(cents / 100).toLocaleString("en-AU", { maximumFractionDigits: 0 })}`;
+}
+
+interface PostcodeResult {
+  postcode: string;
+  locality: string;
+  state: string;
+  latitude: number;
+  longitude: number;
+}
+
+function LocationSearch({ onSelect, selected }: { onSelect: (p: PostcodeResult | null) => void; selected: PostcodeResult | null }) {
+  const [query, setQuery] = useState(selected ? `${selected.locality}, ${selected.state}` : "");
+  const [results, setResults] = useState<PostcodeResult[]>([]);
+  const [open, setOpen] = useState(false);
+  const timeout = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const search = useCallback((q: string) => {
+    clearTimeout(timeout.current);
+    if (q.length < 2) { setResults([]); return; }
+    timeout.current = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/advisor-search/postcodes?q=${encodeURIComponent(q)}`);
+        if (res.ok) {
+          const data = await res.json();
+          setResults(data.postcodes || []);
+          setOpen(true);
+        }
+      } catch { /* ignore */ }
+    }, 250);
+  }, []);
+
+  return (
+    <div ref={ref} className="relative">
+      <div className="relative">
+        <Icon name="map-pin" size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
+        <input
+          type="text"
+          value={query}
+          onChange={e => { setQuery(e.target.value); search(e.target.value); }}
+          onFocus={() => results.length > 0 && setOpen(true)}
+          placeholder="Suburb or postcode..."
+          className="w-full pl-8 pr-8 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30"
+        />
+        {selected && (
+          <button onClick={() => { setQuery(""); onSelect(null); setResults([]); }} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+            <Icon name="x" size={14} />
+          </button>
+        )}
+      </div>
+      {open && results.length > 0 && (
+        <div className="absolute z-50 top-full mt-1 w-full bg-white border border-slate-200 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+          {results.map(p => (
+            <button
+              key={p.postcode}
+              onClick={() => { onSelect(p); setQuery(`${p.locality}, ${p.state}`); setOpen(false); }}
+              className="w-full text-left px-3 py-2 hover:bg-violet-50 text-sm text-slate-700 flex items-center justify-between"
+            >
+              <span>{p.locality}, {p.state}</span>
+              <span className="text-xs text-slate-400">{p.postcode}</span>
+            </button>
+          ))}
+        </div>
+      )}
+      {open && results.length === 0 && query.length >= 2 && (
+        <div className="absolute z-50 top-full mt-1 w-full bg-white border border-slate-200 rounded-lg shadow-lg p-3">
+          <p className="text-xs text-slate-400">No locations found</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function UseMyLocation({ onLocate }: { onLocate: (lat: number, lng: number) => void }) {
+  const [loading, setLoading] = useState(false);
+  return (
+    <button
+      onClick={() => {
+        if (!navigator.geolocation) return;
+        setLoading(true);
+        navigator.geolocation.getCurrentPosition(
+          pos => { onLocate(pos.coords.latitude, pos.coords.longitude); setLoading(false); },
+          () => setLoading(false),
+          { enableHighAccuracy: false, timeout: 10000 }
+        );
+      }}
+      className="flex items-center gap-1 text-[0.65rem] font-semibold text-violet-600 hover:text-violet-800 transition-colors"
+    >
+      <Icon name="navigation" size={12} />
+      {loading ? "Locating..." : "Use my location"}
+    </button>
+  );
 }
 
 export default function AdvisorsClient({ professionals, initialType, initialState, pageTitle, pageDescription, faqs = [], editorial }: {
@@ -51,7 +167,6 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
   const router = useRouter();
   const trackedRef = useRef(false);
 
-  // Track advisor directory view (once per mount)
   useEffect(() => {
     if (trackedRef.current) return;
     trackedRef.current = true;
@@ -71,6 +186,48 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
   const [sortBy, setSortBy] = useState<SortKey>("rating");
   const [page, setPage] = useState(1);
   const [filtersOpen, setFiltersOpen] = useState(false);
+
+  // Location/proximity state
+  const [locationSearch, setLocationSearch] = useState<PostcodeResult | null>(null);
+  const [userLat, setUserLat] = useState<number | null>(null);
+  const [userLng, setUserLng] = useState<number | null>(null);
+  const [radius, setRadius] = useState(25);
+
+  // API-fetched nearby results
+  const [nearbyResults, setNearbyResults] = useState<Professional[] | null>(null);
+  const [nearbyLoading, setNearbyLoading] = useState(false);
+
+  const isLocationActive = userLat !== null && userLng !== null;
+
+  // When location is selected from search
+  useEffect(() => {
+    if (locationSearch) {
+      setUserLat(locationSearch.latitude);
+      setUserLng(locationSearch.longitude);
+      setSortBy("distance");
+    }
+  }, [locationSearch]);
+
+  // Fetch nearby advisors when location/radius changes
+  useEffect(() => {
+    if (!isLocationActive) { setNearbyResults(null); return; }
+    const controller = new AbortController();
+    setNearbyLoading(true);
+    const params = new URLSearchParams({
+      lat: String(userLat),
+      lng: String(userLng),
+      ...(radius > 0 ? { radius: String(radius) } : { radius: "500" }),
+      limit: "100",
+      ...(typeFilter !== "all" ? { type: typeFilter } : {}),
+      ...(feeFilter !== "all" ? { fee_structure: feeFilter } : {}),
+      ...(specialtyFilters.length > 0 ? { specialty: specialtyFilters[0] } : {}),
+    });
+    fetch(`/api/advisor-search?${params}`, { signal: controller.signal })
+      .then(r => r.json())
+      .then(data => { setNearbyResults(data.advisors || []); setNearbyLoading(false); })
+      .catch(() => setNearbyLoading(false));
+    return () => controller.abort();
+  }, [userLat, userLng, radius, typeFilter, feeFilter, specialtyFilters, isLocationActive]);
 
   useEffect(() => {
     if (initialType || initialState) return;
@@ -102,7 +259,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
     return () => clearTimeout(t);
   }, [updateURL]);
 
-  useEffect(() => { setPage(1); }, [typeFilter, stateFilter, specialtyFilters, feeFilter, verifiedOnly, search, sortBy]);
+  useEffect(() => { setPage(1); }, [typeFilter, stateFilter, specialtyFilters, feeFilter, verifiedOnly, search, sortBy, nearbyResults]);
 
   const allSpecialties = useMemo(() => {
     const set = new Set<string>();
@@ -116,7 +273,33 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
     return counts;
   }, [professionals]);
 
+  // Use nearby results when location active, otherwise client-side filter
   const filtered = useMemo(() => {
+    if (isLocationActive && nearbyResults) {
+      let result = [...nearbyResults];
+      if (verifiedOnly) result = result.filter(p => p.verified);
+      if (search) {
+        const q = search.toLowerCase();
+        result = result.filter(p =>
+          p.name.toLowerCase().includes(q) || p.firm_name?.toLowerCase().includes(q) ||
+          p.specialties.some(s => s.toLowerCase().includes(q)) ||
+          p.location_display?.toLowerCase().includes(q)
+        );
+      }
+      // Sort already done by API (distance) but allow re-sort
+      if (sortBy !== "distance") {
+        switch (sortBy) {
+          case "rating": result.sort((a, b) => (b.rating || 0) - (a.rating || 0)); break;
+          case "reviews": result.sort((a, b) => (b.review_count || 0) - (a.review_count || 0)); break;
+          case "name": result.sort((a, b) => a.name.localeCompare(b.name)); break;
+          case "fee_low": result.sort((a, b) => (a.hourly_rate_cents || a.flat_fee_cents || 999999) - (b.hourly_rate_cents || b.flat_fee_cents || 999999)); break;
+          case "fee_high": result.sort((a, b) => (b.hourly_rate_cents || b.flat_fee_cents || 0) - (a.hourly_rate_cents || a.flat_fee_cents || 0)); break;
+          case "newest": result.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()); break;
+        }
+      }
+      return result;
+    }
+
     let result = professionals.filter(p => {
       if (typeFilter !== "all" && p.type !== typeFilter) return false;
       if (stateFilter !== "all" && p.location_state !== stateFilter) return false;
@@ -134,22 +317,29 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
       case "reviews": result.sort((a, b) => (b.review_count || 0) - (a.review_count || 0)); break;
       case "name": result.sort((a, b) => a.name.localeCompare(b.name)); break;
       case "newest": result.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()); break;
+      case "fee_low": result.sort((a, b) => (a.hourly_rate_cents || a.flat_fee_cents || 999999) - (b.hourly_rate_cents || b.flat_fee_cents || 999999)); break;
+      case "fee_high": result.sort((a, b) => (b.hourly_rate_cents || b.flat_fee_cents || 0) - (a.hourly_rate_cents || a.flat_fee_cents || 0)); break;
     }
     return result;
-  }, [professionals, typeFilter, stateFilter, specialtyFilters, feeFilter, verifiedOnly, search, sortBy]);
+  }, [professionals, nearbyResults, isLocationActive, typeFilter, stateFilter, specialtyFilters, feeFilter, verifiedOnly, search, sortBy]);
 
   const totalPages = Math.ceil(filtered.length / RESULTS_PER_PAGE);
   const paginatedResults = filtered.slice((page - 1) * RESULTS_PER_PAGE, page * RESULTS_PER_PAGE);
 
-  const activeFilterCount = [typeFilter !== "all", stateFilter !== "all", specialtyFilters.length > 0, feeFilter !== "all", verifiedOnly].filter(Boolean).length;
+  const activeFilterCount = [typeFilter !== "all", stateFilter !== "all", specialtyFilters.length > 0, feeFilter !== "all", verifiedOnly, isLocationActive].filter(Boolean).length;
 
   const contextParts: string[] = [];
   if (typeFilter !== "all") contextParts.push(TYPE_FILTERS.find(f => f.key === typeFilter)?.label || "");
   if (stateFilter !== "all") contextParts.push(`in ${stateFilter}`);
+  if (isLocationActive && locationSearch) contextParts.push(`near ${locationSearch.locality}`);
   if (specialtyFilters.length > 0) contextParts.push(`specialising in ${specialtyFilters.join(" + ")}`);
 
   const toggleSpecialty = (s: string) => setSpecialtyFilters(prev => prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s]);
-  const clearAll = () => { setTypeFilter("all"); setStateFilter("all"); setSpecialtyFilters([]); setFeeFilter("all"); setVerifiedOnly(false); setSearch(""); setSortBy("rating"); };
+  const clearAll = () => {
+    setTypeFilter("all"); setStateFilter("all"); setSpecialtyFilters([]); setFeeFilter("all");
+    setVerifiedOnly(false); setSearch(""); setSortBy("rating");
+    setLocationSearch(null); setUserLat(null); setUserLng(null); setRadius(25);
+  };
 
   return (
     <div className="py-5 md:py-12">
@@ -164,7 +354,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
           <h1 className="text-xl md:text-4xl font-extrabold mb-1.5 md:mb-3 text-slate-900">{pageTitle || "Find a Financial Advisor"}</h1>
           <p className="text-xs md:text-base text-slate-500 mb-3 md:mb-5">
             <span className="md:hidden">{pageDescription ? pageDescription.slice(0, 60) + "..." : "Verified Australian financial professionals"}</span>
-            <span className="hidden md:inline">{pageDescription || "Browse verified Australian financial professionals. Free consultation requests \u2014 no obligation."}</span>
+            <span className="hidden md:inline">{pageDescription || "Browse verified Australian financial professionals. Filter by location, type, fees, and specialties."}</span>
           </p>
           <div className="flex items-center gap-3 md:gap-6 text-[0.62rem] md:text-xs text-slate-500">
             <span className="flex items-center gap-1.5"><span className="w-2 h-2 bg-violet-500 rounded-full" /><span className="font-semibold text-slate-700">{professionals.length}</span> advisors</span>
@@ -193,6 +383,26 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
         {/* Filter panel */}
         {filtersOpen && (
           <div className="bg-white border border-slate-200 rounded-2xl p-4 md:p-5 mb-4 md:mb-6 space-y-4">
+            {/* Location / Near me */}
+            <div>
+              <label className="text-xs font-bold text-slate-700 mb-2 block flex items-center gap-1.5">
+                <Icon name="map-pin" size={13} className="text-violet-500" />
+                Location
+              </label>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                <div className="md:col-span-2">
+                  <LocationSearch selected={locationSearch} onSelect={(p) => { setLocationSearch(p); if (!p) { setUserLat(null); setUserLng(null); } }} />
+                </div>
+                <div className="flex items-center gap-2">
+                  <select value={radius} onChange={e => setRadius(Number(e.target.value))} className="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30" disabled={!isLocationActive}>
+                    {RADIUS_OPTIONS.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
+                  </select>
+                  <UseMyLocation onLocate={(lat, lng) => { setUserLat(lat); setUserLng(lng); setSortBy("distance"); setLocationSearch({ postcode: "", locality: "My location", state: "", latitude: lat, longitude: lng }); }} />
+                </div>
+              </div>
+            </div>
+
+            {/* Advisor Type */}
             <div>
               <label className="text-xs font-bold text-slate-700 mb-2 block">Advisor Type</label>
               <div className="flex flex-wrap gap-1.5">
@@ -205,10 +415,11 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                 ))}
               </div>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               <div>
                 <label className="text-xs font-bold text-slate-700 mb-1.5 block">State</label>
-                <select value={stateFilter} onChange={e => setStateFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30">
+                <select value={stateFilter} onChange={e => setStateFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30" disabled={isLocationActive}>
                   <option value="all">All States</option>
                   {AU_STATES.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
@@ -223,13 +434,21 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                   <option value="percentage of AUM">% of AUM</option>
                 </select>
               </div>
-              <div className="flex items-end col-span-2 md:col-span-1">
+              <div>
+                <label className="text-xs font-bold text-slate-700 mb-1.5 block">Sort By</label>
+                <select value={sortBy} onChange={e => setSortBy(e.target.value as SortKey)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30">
+                  {SORT_OPTIONS.map(o => <option key={o.key} value={o.key}>{o.label}</option>)}
+                </select>
+              </div>
+              <div className="flex items-end">
                 <label className="flex items-center gap-2 cursor-pointer py-2">
                   <input type="checkbox" checked={verifiedOnly} onChange={() => setVerifiedOnly(!verifiedOnly)} className="w-4 h-4 rounded border-slate-300 text-violet-600 focus:ring-violet-500" />
                   <span className="text-xs font-semibold text-slate-700">Verified only</span>
                 </label>
               </div>
             </div>
+
+            {/* Specialties */}
             <div>
               <label className="text-xs font-bold text-slate-700 mb-2 block">Specialties {specialtyFilters.length > 0 && <span className="text-violet-600">({specialtyFilters.length} selected)</span>}</label>
               <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto">
@@ -238,15 +457,12 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                 ))}
               </div>
             </div>
-            <div className="md:hidden">
-              <label className="text-xs font-bold text-slate-700 mb-1.5 block">Sort By</label>
-              <select value={sortBy} onChange={e => setSortBy(e.target.value as SortKey)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm">
-                {SORT_OPTIONS.map(o => <option key={o.key} value={o.key}>{o.label}</option>)}
-              </select>
-            </div>
+
             <div className="flex items-center justify-between pt-2 border-t border-slate-100">
               <button onClick={clearAll} className="text-xs text-slate-500 hover:text-slate-700 font-medium">Clear all filters</button>
-              <button onClick={() => setFiltersOpen(false)} className="px-4 py-2 bg-violet-600 text-white text-xs font-bold rounded-lg hover:bg-violet-700 transition-colors">Show {filtered.length} result{filtered.length !== 1 ? "s" : ""}</button>
+              <button onClick={() => setFiltersOpen(false)} className="px-4 py-2 bg-violet-600 text-white text-xs font-bold rounded-lg hover:bg-violet-700 transition-colors">
+                {nearbyLoading ? "Searching..." : `Show ${filtered.length} result${filtered.length !== 1 ? "s" : ""}`}
+              </button>
             </div>
           </div>
         )}
@@ -254,6 +470,13 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
         {/* Active filter chips */}
         {activeFilterCount > 0 && !filtersOpen && (
           <div className="flex flex-wrap items-center gap-1.5 mb-3">
+            {isLocationActive && locationSearch && (
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-violet-100 text-violet-700 text-[0.65rem] font-semibold rounded-full">
+                <Icon name="map-pin" size={11} />
+                {radius > 0 ? `${radius}km from ` : "Near "}{locationSearch.locality}
+                <button onClick={() => { setLocationSearch(null); setUserLat(null); setUserLng(null); }} className="hover:text-violet-900"><Icon name="x" size={12} /></button>
+              </span>
+            )}
             {typeFilter !== "all" && (
               <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-violet-100 text-violet-700 text-[0.65rem] font-semibold rounded-full">
                 {TYPE_FILTERS.find(f => f.key === typeFilter)?.label}
@@ -291,15 +514,36 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
         {/* Result count */}
         <div className="flex items-center justify-between mb-3 md:mb-4">
           <p className="text-xs md:text-sm text-slate-500">
-            <span className="font-bold text-slate-700">{filtered.length}</span>{" "}
-            {contextParts.length > 0 ? contextParts.join(" ") : `advisor${filtered.length !== 1 ? "s" : ""}`}
-            {search && <span className="text-slate-400"> matching &ldquo;{search}&rdquo;</span>}
+            {nearbyLoading ? (
+              <span className="text-slate-400">Searching nearby advisors...</span>
+            ) : (
+              <>
+                <span className="font-bold text-slate-700">{filtered.length}</span>{" "}
+                {contextParts.length > 0 ? contextParts.join(" ") : `advisor${filtered.length !== 1 ? "s" : ""}`}
+                {search && <span className="text-slate-400"> matching &ldquo;{search}&rdquo;</span>}
+              </>
+            )}
           </p>
           {totalPages > 1 && <p className="text-[0.62rem] md:text-xs text-slate-400">Page {page} of {totalPages}</p>}
         </div>
 
         {/* Results */}
-        {paginatedResults.length > 0 ? (
+        {nearbyLoading ? (
+          <div className="space-y-2.5 md:space-y-3">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div key={i} className="bg-white border border-slate-200 rounded-xl p-5 animate-pulse">
+                <div className="flex gap-4">
+                  <div className="w-16 h-16 rounded-xl bg-slate-100" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 w-40 bg-slate-100 rounded" />
+                    <div className="h-3 w-28 bg-slate-50 rounded" />
+                    <div className="h-3 w-64 bg-slate-50 rounded" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : paginatedResults.length > 0 ? (
           <div className="space-y-2.5 md:space-y-3">
             {paginatedResults.map(pro => (
               <Link key={pro.id} href={`/advisor/${pro.slug}`} className="block bg-white border border-slate-200 rounded-xl p-3.5 md:p-5 hover:shadow-lg hover:border-violet-200 hover:-translate-y-0.5 transition-all duration-200">
@@ -326,9 +570,45 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                     {pro.firm_name && <div className="text-[0.65rem] md:text-xs text-slate-500 truncate">{pro.firm_name}</div>}
                     <div className="flex items-center gap-2 mt-1 flex-wrap">
                       <span className="text-[0.62rem] md:text-xs text-violet-600 bg-violet-50 px-2 py-0.5 rounded-full font-medium">{PROFESSIONAL_TYPE_LABELS[pro.type]}</span>
-                      {pro.location_display && <span className="text-[0.62rem] md:text-xs text-slate-400 flex items-center gap-0.5"><Icon name="map-pin" size={11} className="text-slate-300" />{pro.location_display}</span>}
+                      {pro.location_display && (
+                        <span className="text-[0.62rem] md:text-xs text-slate-400 flex items-center gap-0.5">
+                          <Icon name="map-pin" size={11} className="text-slate-300" />{pro.location_display}
+                        </span>
+                      )}
+                      {/* Distance badge */}
+                      {pro.distance_km !== undefined && pro.distance_km !== null && (
+                        <span className="text-[0.62rem] md:text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
+                          {pro.distance_km < 1 ? "<1 km" : `${pro.distance_km} km`}
+                        </span>
+                      )}
+                      {/* Fee info */}
                       {pro.fee_description && <span className="text-[0.62rem] md:text-xs font-semibold text-slate-600">{pro.fee_description}</span>}
                     </div>
+                    {/* Structured fees */}
+                    {(pro.hourly_rate_cents || pro.flat_fee_cents || pro.aum_percentage) && (
+                      <div className="flex items-center gap-2 mt-1 flex-wrap">
+                        {pro.hourly_rate_cents && (
+                          <span className="text-[0.56rem] md:text-[0.62rem] text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full font-medium">
+                            {formatCents(pro.hourly_rate_cents)}/hr
+                          </span>
+                        )}
+                        {pro.flat_fee_cents && (
+                          <span className="text-[0.56rem] md:text-[0.62rem] text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full font-medium">
+                            {formatCents(pro.flat_fee_cents)} flat
+                          </span>
+                        )}
+                        {pro.aum_percentage && (
+                          <span className="text-[0.56rem] md:text-[0.62rem] text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full font-medium">
+                            {pro.aum_percentage}% AUM
+                          </span>
+                        )}
+                        {pro.initial_consultation_free && (
+                          <span className="text-[0.56rem] md:text-[0.62rem] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-medium">
+                            Free initial consult
+                          </span>
+                        )}
+                      </div>
+                    )}
                     <div className="flex items-center gap-3 mt-1.5">
                       {pro.rating > 0 && <span className="text-[0.62rem] md:text-xs"><span className="text-amber-500">{renderStars(pro.rating)}</span><span className="text-slate-400 ml-1">{pro.rating} ({pro.review_count})</span></span>}
                     </div>
@@ -356,7 +636,9 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
           <div className="text-center py-12 bg-white rounded-xl border border-slate-200">
             <Icon name="search" size={32} className="text-slate-300 mx-auto mb-3" />
             <p className="text-sm font-medium text-slate-600 mb-1">No advisors found</p>
-            <p className="text-xs text-slate-400 mb-3">{search ? `No results for "${search}".` : "Try adjusting your filters."}</p>
+            <p className="text-xs text-slate-400 mb-3">
+              {isLocationActive ? `No advisors within ${radius}km. Try a larger radius.` : search ? `No results for "${search}".` : "Try adjusting your filters."}
+            </p>
             <button onClick={clearAll} className="text-xs text-violet-600 font-semibold hover:text-violet-800">Clear all filters</button>
           </div>
         )}
@@ -380,7 +662,6 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
         {/* Editorial content */}
         {editorial && (
           <section className="mt-8 md:mt-12 space-y-6">
-            {/* How to Choose */}
             <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-6">
               <h2 className="text-lg md:text-xl font-extrabold text-slate-900 mb-3">How to Choose the Right {pageTitle?.replace(' in Australia', '') || 'Professional'}</h2>
               <ul className="space-y-2.5">
@@ -392,14 +673,10 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                 ))}
               </ul>
             </div>
-
-            {/* Cost Guide */}
             <div className="bg-gradient-to-br from-amber-50 to-white border border-amber-200/60 rounded-xl p-4 md:p-6">
               <h2 className="text-lg md:text-xl font-extrabold text-slate-900 mb-2">Cost Guide</h2>
               <p className="text-sm text-slate-600 leading-relaxed">{editorial.costGuide}</p>
             </div>
-
-            {/* Industry Insight */}
             <div className="bg-gradient-to-br from-violet-50 to-white border border-violet-200/60 rounded-xl p-4 md:p-6">
               <h2 className="text-lg md:text-xl font-extrabold text-slate-900 mb-2">Industry Insight</h2>
               <p className="text-sm text-slate-600 leading-relaxed">{editorial.industryInsight}</p>
