@@ -123,6 +123,11 @@ export default function AdvisorApplyPage() {
       setErrorMsg("Firm name is required for firm applications.");
       return;
     }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(form.email)) {
+      setErrorMsg("Please enter a valid email address.");
+      return;
+    }
     if (!photoFile) {
       setErrorMsg("A profile photo is required.");
       return;
@@ -373,16 +378,23 @@ export default function AdvisorApplyPage() {
               <textarea value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} rows={3} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="Tell investors about your experience and approach..." />
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Website</label>
-                <input value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="https://..." />
+            {accountType !== "firm" ? (
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">Website</label>
+                  <input value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="https://..." />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">Fee Range</label>
+                  <input value={form.fee_description} onChange={(e) => setForm({ ...form, fee_description: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="e.g. SOA from $3,300" />
+                </div>
               </div>
+            ) : (
               <div>
                 <label className="block text-xs font-semibold text-slate-600 mb-1">Fee Range</label>
                 <input value={form.fee_description} onChange={(e) => setForm({ ...form, fee_description: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="e.g. SOA from $3,300" />
               </div>
-            </div>
+            )}
 
             {errorMsg && <p className="text-xs text-red-600">{errorMsg}</p>}
 

@@ -126,6 +126,15 @@ export default function FindAdvisorPage() {
     <div className="min-h-[70vh] flex flex-col bg-gradient-to-b from-violet-50/40 to-white">
       <div className="container-custom max-w-xl py-6 md:py-12 flex-1">
 
+        {/* Breadcrumb */}
+        <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
+          <Link href="/" className="hover:text-slate-900">Home</Link>
+          <span className="mx-1.5 md:mx-2">/</span>
+          <Link href="/advisors" className="hover:text-slate-900">Advisors</Link>
+          <span className="mx-1.5 md:mx-2">/</span>
+          <span className="text-slate-700">Find an Advisor</span>
+        </nav>
+
         {/* Progress */}
         <div className="mb-6 md:mb-8">
           <div className="flex items-center justify-between mb-1.5">

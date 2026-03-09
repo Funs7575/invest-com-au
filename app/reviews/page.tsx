@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import type { Broker, Professional } from "@/lib/types";
-import { absoluteUrl } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import ReviewsClient from "./ReviewsClient";
 
 export const metadata = {
@@ -38,6 +38,11 @@ export default async function ReviewsPage() {
   const allBrokers = (brokers as Broker[]) || [];
   const allAdvisors = (advisors || []) as (Professional & { id: number })[];
 
+  const breadcrumbLd = breadcrumbJsonLd([
+    { name: "Home", url: absoluteUrl("/") },
+    { name: "Reviews" },
+  ]);
+
   // JSON-LD structured data for search results
   const jsonLd = {
     "@context": "https://schema.org",
@@ -55,6 +60,10 @@ export default async function ReviewsPage() {
 
   return (
     <>
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+    />
     <script
       type="application/ld+json"
       dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

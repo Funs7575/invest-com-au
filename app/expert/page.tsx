@@ -8,6 +8,7 @@ export const revalidate = 1800;
 export const metadata: Metadata = {
   title: `Expert Insights — Advice from Verified Professionals (${CURRENT_YEAR})`,
   description: "Read expert articles from verified Australian financial advisors, SMSF accountants, and tax agents. Practical investing insights you can act on.",
+  robots: { index: false },
   alternates: { canonical: "/expert" },
   openGraph: {
     title: `Expert Insights — Verified Financial Professionals (${CURRENT_YEAR})`,
