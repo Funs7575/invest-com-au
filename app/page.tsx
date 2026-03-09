@@ -449,6 +449,12 @@ export default async function HomePage() {
                 { label: "Tax Agents", href: "/advisors?type=tax_agent", icon: "calculator" },
                 { label: "Mortgage Brokers", href: "/advisors?type=mortgage_broker", icon: "landmark" },
                 { label: "Estate Planners", href: "/advisors?type=estate_planner", icon: "file-text" },
+                { label: "Insurance Brokers", href: "/advisors?type=insurance_broker", icon: "shield" },
+                { label: "Buyers Agents", href: "/advisors?type=buyers_agent", icon: "search" },
+                { label: "Wealth Managers", href: "/advisors?type=wealth_manager", icon: "briefcase" },
+                { label: "Aged Care", href: "/advisors?type=aged_care_advisor", icon: "heart" },
+                { label: "Crypto Advisors", href: "/advisors?type=crypto_advisor", icon: "bitcoin" },
+                { label: "Debt Help", href: "/advisors?type=debt_counsellor", icon: "credit-card" },
               ].map((cat) => (
                 <Link
                   key={cat.label}

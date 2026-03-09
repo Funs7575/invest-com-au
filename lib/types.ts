@@ -857,7 +857,7 @@ export interface BrokerActivityLog {
 // Advisor Directory Types
 // ═══════════════════════════════════════════════
 
-export type ProfessionalType = 'smsf_accountant' | 'financial_planner' | 'property_advisor' | 'tax_agent' | 'mortgage_broker' | 'estate_planner';
+export type ProfessionalType = 'smsf_accountant' | 'financial_planner' | 'property_advisor' | 'tax_agent' | 'mortgage_broker' | 'estate_planner' | 'insurance_broker' | 'buyers_agent' | 'wealth_manager' | 'aged_care_advisor' | 'crypto_advisor' | 'debt_counsellor';
 
 export interface Professional {
   id: number;
@@ -914,6 +914,12 @@ export const PROFESSIONAL_TYPE_LABELS: Record<ProfessionalType, string> = {
   tax_agent: "Tax Agent",
   mortgage_broker: "Mortgage Broker",
   estate_planner: "Estate Planner",
+  insurance_broker: "Insurance Broker",
+  buyers_agent: "Buyers Agent",
+  wealth_manager: "Wealth Manager",
+  aged_care_advisor: "Aged Care Advisor",
+  crypto_advisor: "Crypto Advisor",
+  debt_counsellor: "Debt Counsellor",
 };
 
 export const PROFESSIONAL_TYPE_ICONS: Record<ProfessionalType, string> = {
@@ -923,6 +929,12 @@ export const PROFESSIONAL_TYPE_ICONS: Record<ProfessionalType, string> = {
   tax_agent: "calculator",
   mortgage_broker: "landmark",
   estate_planner: "file-text",
+  insurance_broker: "shield",
+  buyers_agent: "search",
+  wealth_manager: "briefcase",
+  aged_care_advisor: "heart",
+  crypto_advisor: "bitcoin",
+  debt_counsellor: "credit-card",
 };
 
 export const AU_STATES = ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT"] as const;

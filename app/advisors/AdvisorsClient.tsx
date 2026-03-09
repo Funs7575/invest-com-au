@@ -15,6 +15,12 @@ const TYPE_FILTERS: { key: ProfessionalType | "all"; label: string; icon: string
   { key: "tax_agent", label: "Tax Agents", icon: "calculator" },
   { key: "mortgage_broker", label: "Mortgage Brokers", icon: "landmark" },
   { key: "estate_planner", label: "Estate Planners", icon: "file-text" },
+  { key: "insurance_broker", label: "Insurance Brokers", icon: "shield" },
+  { key: "buyers_agent", label: "Buyers Agents", icon: "search" },
+  { key: "wealth_manager", label: "Wealth Managers", icon: "briefcase" },
+  { key: "aged_care_advisor", label: "Aged Care Advisors", icon: "heart" },
+  { key: "crypto_advisor", label: "Crypto Advisors", icon: "bitcoin" },
+  { key: "debt_counsellor", label: "Debt Counsellors", icon: "credit-card" },
 ];
 
 type SortKey = "rating" | "name" | "newest" | "reviews";
@@ -377,6 +383,12 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               { title: "Property Advisor", href: "/advisor-guides/how-to-choose-property-investment-advisor", icon: "home" },
               { title: "Mortgage Broker", href: "/advisor-guides/how-to-choose-mortgage-broker", icon: "landmark" },
               { title: "Estate Planner", href: "/advisor-guides/how-to-choose-estate-planner", icon: "file-text" },
+              { title: "Insurance Broker", href: "/advisor-guides/how-to-choose-insurance-broker", icon: "shield" },
+              { title: "Buyers Agent", href: "/advisor-guides/how-to-choose-buyers-agent", icon: "search" },
+              { title: "Wealth Manager", href: "/advisor-guides/how-to-choose-wealth-manager", icon: "briefcase" },
+              { title: "Aged Care Advisor", href: "/advisor-guides/how-to-choose-aged-care-advisor", icon: "heart" },
+              { title: "Crypto Advisor", href: "/advisor-guides/how-to-choose-crypto-advisor", icon: "bitcoin" },
+              { title: "Debt Counsellor", href: "/advisor-guides/how-to-choose-debt-counsellor", icon: "credit-card" },
             ].map(g => (
               <Link key={g.href} href={g.href} className="flex items-center gap-2.5 p-3 bg-white border border-slate-200 rounded-lg hover:shadow-md hover:border-slate-300 transition-all">
                 <Icon name={g.icon} size={16} className="text-slate-400 shrink-0" />

@@ -260,6 +260,254 @@ export const ADVISOR_GUIDES: AdvisorGuide[] = [
       { q: "How often should I update my estate plan?", a: "Review it every 2-3 years or after major life events: marriage, divorce, birth of children, significant asset changes, or changes in super fund." },
     ],
   },
+  {
+    slug: "how-to-choose-insurance-broker",
+    type: "insurance_broker",
+    title: "How to Choose an Insurance Broker in Australia",
+    metaDescription: "How to find a good insurance broker for life insurance, TPD, income protection, and trauma cover. Fees, qualifications, and what to ask.",
+    intro: "Insurance is one of those things you hope you never need — but when you do, having the right cover is life-changing. An insurance broker compares policies across multiple insurers to find the best fit for your situation, handles claims, and ensures you're not overpaying. Here's how to choose a good one.",
+    sections: [
+      {
+        heading: "What Does an Insurance Broker Do?",
+        body: "An insurance broker assesses your personal and financial situation, recommends appropriate cover levels for life, TPD (total and permanent disability), income protection, and trauma insurance. They compare products across 10-20+ insurers, handle applications and underwriting, and assist with claims. Unlike dealing directly with one insurer, a broker works for you, not the insurance company.",
+      },
+      {
+        heading: "How Are Insurance Brokers Paid?",
+        body: "Most insurance brokers earn initial and ongoing commissions from the insurer — typically 60-130% of the first year's premium (initial commission), then 10-20% per year (ongoing). You don't pay the broker directly. Some fee-for-service brokers rebate commissions and charge a flat fee instead ($1,000-$3,000). Post-Life Insurance Framework (LIF) reforms, commission rates are capped, improving consumer outcomes.",
+      },
+      {
+        heading: "Types of Insurance You Might Need",
+        body: "Life insurance pays a lump sum to your dependents if you die. TPD insurance pays a lump sum if you become permanently disabled. Income protection replaces up to 75% of your income if you can't work due to illness or injury. Trauma/critical illness insurance pays a lump sum on diagnosis of specified conditions (cancer, heart attack, stroke). Not everyone needs all four — a good broker will assess which you actually need.",
+      },
+    ],
+    checklist: [
+      "Check they're an authorised representative under an AFSL",
+      "Ask how many insurers they compare (10+ is good)",
+      "Request a clear needs analysis before any recommendations",
+      "Ask about their claims assistance process",
+      "Understand the commission structure and any fee rebates",
+      "Check for professional memberships (NIBA, AFA)",
+    ],
+    redFlags: [
+      "Recommending cover levels without understanding your financial situation",
+      "Only offering products from one or two insurers",
+      "Pressure to sign immediately without time to review",
+      "No discussion of exclusions or policy conditions",
+      "Guaranteeing approval without proper underwriting assessment",
+    ],
+    faqs: [
+      { q: "How much does insurance broking cost?", a: "Most brokers are paid by insurer commissions, so there's no direct cost to you. Fee-for-service brokers charge $1,000-$3,000 but may find lower premiums by rebating commissions." },
+      { q: "Can I hold insurance inside my super?", a: "Yes — life, TPD, and income protection can be held inside superannuation, which is often more tax-effective. Your broker should explain the trade-offs between inside and outside super." },
+      { q: "How often should I review my insurance?", a: "Annually, or after major life events (marriage, children, mortgage, salary increase). Under-insurance is extremely common in Australia." },
+    ],
+  },
+  {
+    slug: "how-to-choose-buyers-agent",
+    type: "buyers_agent",
+    title: "How to Choose a Buyers Agent in Australia",
+    metaDescription: "A practical guide to finding a good buyers agent — fees, licensing, what to look for, and how to avoid conflicts of interest.",
+    intro: "A buyers agent works exclusively for you — the buyer — to find, evaluate, and negotiate property purchases. In a market where selling agents represent the seller's interests, having your own advocate can save you thousands and find properties you'd never see on the open market. Here's how to choose the right one.",
+    sections: [
+      {
+        heading: "What Does a Buyers Agent Do?",
+        body: "A buyers agent searches for properties matching your brief (including off-market opportunities), conducts due diligence (comparable sales analysis, building inspections, strata reviews), attends inspections on your behalf, and negotiates or bids at auction. Some specialise in investment property, others in owner-occupier purchases. The best ones save you more than their fee through better negotiation outcomes.",
+      },
+      {
+        heading: "How Much Do Buyers Agents Charge?",
+        body: "Fees typically fall into three models: a flat fee ($10,000-$25,000), a percentage of purchase price (1.5-3%), or a retainer plus success fee ($3,000-$5,000 retainer + $5,000-$15,000 on settlement). For investment property, percentage-based fees create a conflict — the agent earns more if you pay more. A flat fee or capped percentage is usually better aligned with your interests.",
+      },
+      {
+        heading: "Licensing and Qualifications",
+        body: "All buyers agents in Australia must hold a real estate licence or certificate of registration in the state they operate. They must also be a member of the Property Owners Association or equivalent. REBAA (Real Estate Buyers Agents Association) membership indicates adherence to a code of conduct. For investment advice, check if they operate under an AFSL.",
+      },
+    ],
+    checklist: [
+      "Verify they hold a real estate licence in your state",
+      "Ask about their fee structure and whether it's capped",
+      "Check REBAA membership for code of conduct adherence",
+      "Ask for recent purchase examples in your target area and price range",
+      "Confirm they have no relationships with selling agents or developers",
+      "Ask how they source off-market properties",
+    ],
+    redFlags: [
+      "Receiving kickbacks from selling agents or developers",
+      "No real estate licence in the relevant state",
+      "Charging a percentage fee with no cap (incentivises you to pay more)",
+      "Pushing you toward specific developments or areas without justification",
+      "Unable to provide recent comparable purchase results",
+    ],
+    faqs: [
+      { q: "Are buyers agents worth the cost?", a: "For investment property, a good buyers agent often negotiates savings of 5-10% off asking price, which on a $700k property is $35,000-$70,000 — far exceeding their fee." },
+      { q: "Can a buyers agent help with SMSF property?", a: "Yes, many specialise in SMSF-compliant property purchases. They understand the sole purpose test and LRBA requirements." },
+      { q: "Do I still need a solicitor if I use a buyers agent?", a: "Yes. A buyers agent handles the property search and negotiation, but you still need a conveyancer or solicitor for the legal aspects of the purchase." },
+    ],
+  },
+  {
+    slug: "how-to-choose-wealth-manager",
+    type: "wealth_manager",
+    title: "How to Choose a Wealth Manager in Australia",
+    metaDescription: "How to find the right wealth manager for high-net-worth portfolio management — fees, qualifications, investment philosophy, and what to ask.",
+    intro: "Wealth management goes beyond basic financial planning. It's a comprehensive service for investors with $500,000+ in assets who need active portfolio management, tax-efficient structuring, estate planning integration, and ongoing strategic advice — all coordinated under one roof. Choosing the wrong wealth manager can cost you hundreds of thousands in underperformance and excessive fees. Here's how to choose wisely.",
+    sections: [
+      {
+        heading: "What Does a Wealth Manager Do?",
+        body: "A wealth manager provides integrated services across investment management (actively managing your portfolio), tax planning (minimising tax across all your structures), estate planning coordination, insurance review, philanthropy planning, and intergenerational wealth transfer. The key difference from a financial planner is scale and depth — wealth managers typically handle fewer clients with higher asset levels, providing more personalised attention.",
+      },
+      {
+        heading: "Fee Structures to Understand",
+        body: "Most wealth managers charge a percentage of assets under management (AUM) — typically 0.5-1.5% per year. On a $2M portfolio, that's $10,000-$30,000 annually. Some also charge performance fees (10-20% of returns above a benchmark). Others use a flat retainer ($5,000-$20,000/year). AUM fees create alignment — the manager earns more as your wealth grows — but can become excessive on large portfolios. Always negotiate the rate.",
+      },
+      {
+        heading: "Investment Philosophy Matters",
+        body: "Ask whether they use active management (stock picking), passive indexing, or a blended approach. Research consistently shows passive strategies outperform most active managers after fees. A good wealth manager will be transparent about their philosophy, expected returns, and how they add value beyond investment selection (tax alpha, behavioural coaching, asset allocation).",
+      },
+    ],
+    checklist: [
+      "Verify AFSL and check the ASIC Financial Advisers Register",
+      "Ask about total fees including AUM, platform, admin, and performance fees",
+      "Understand their investment philosophy and expected return range",
+      "Ask for their investment track record (after fees, vs benchmark)",
+      "Check qualifications — CFP, CFA, or Masters in Finance are gold standard",
+      "Ask how many clients they manage per advisor (under 80 is ideal)",
+    ],
+    redFlags: [
+      "Unable or unwilling to share after-fee performance vs benchmark",
+      "AUM fees above 1.5% without clear justification",
+      "Recommending in-house products that benefit the firm",
+      "No discussion of tax efficiency or estate planning integration",
+      "High minimum investment combined with high fees and lock-in periods",
+    ],
+    faqs: [
+      { q: "When do I need a wealth manager vs a financial planner?", a: "Generally when you have $500k+ in investable assets and need active portfolio management, integrated tax strategy, and ongoing advisory — not just a one-off plan." },
+      { q: "What return should I expect?", a: "After fees, a well-managed diversified portfolio should aim for CPI + 3-5% over the long term. Be sceptical of anyone promising significantly higher returns." },
+      { q: "Can I leave my wealth manager?", a: "Yes. Check for exit fees or lock-in periods before signing. Most modern wealth managers allow you to leave with 30 days notice." },
+    ],
+  },
+  {
+    slug: "how-to-choose-aged-care-advisor",
+    type: "aged_care_advisor",
+    title: "How to Choose an Aged Care Advisor in Australia",
+    metaDescription: "How to find an aged care financial advisor — navigating residential care costs, means testing, RADs vs DAPs, and maximising government subsidies.",
+    intro: "Aged care decisions are among the most complex and emotional financial decisions a family faces. The system involves means testing, Refundable Accommodation Deposits (RADs) of $300,000-$1,000,000+, ongoing daily fees, and interactions with Centrelink and the aged care assessment process. A specialist advisor can save tens of thousands in costs and ensure you maximise government subsidies. Here's how to find one.",
+    sections: [
+      {
+        heading: "What Does an Aged Care Advisor Do?",
+        body: "An aged care financial advisor helps with: understanding the true cost of residential aged care, navigating the Aged Care Means Test (income and assets test), choosing between RAD (lump sum) and DAP (daily payment) for accommodation, structuring assets to maximise government fee reductions, coordinating with Centrelink/DVA, and integrating aged care costs into the broader family financial plan.",
+      },
+      {
+        heading: "When Should You Seek Advice?",
+        body: "Ideally before a crisis. Many families only seek advice after an ACAT assessment when the person needs immediate placement. By then, there's less time to optimise finances. If a parent is over 75 or showing signs of needing care, start the conversation early. Pre-planning can save $50,000-$200,000+ through better asset structuring and fee optimisation.",
+      },
+      {
+        heading: "How Much Does Aged Care Advice Cost?",
+        body: "Specialist aged care advice typically costs $2,000-$5,000 for a comprehensive plan. Some advisors charge hourly ($250-$450/hr). Given that RADs can exceed $500,000 and daily care fees can be $100-$300/day, the cost of advice is typically recovered many times over through fee optimisation and subsidy maximisation.",
+      },
+    ],
+    checklist: [
+      "Check for AFSL authorisation and aged care specialist accreditation",
+      "Ask about experience with Centrelink and DVA means testing",
+      "Confirm they understand RAD vs DAP trade-offs",
+      "Ask how they handle the family home in means test calculations",
+      "Check they coordinate with the family's existing financial planner",
+      "Ask for case studies showing fee savings achieved for other clients",
+    ],
+    redFlags: [
+      "No experience with the specific aged care means test rules",
+      "Recommending asset restructuring without considering Centrelink gifting rules",
+      "No AFSL authorisation for providing financial advice",
+      "Unable to explain the difference between RAD, DAP, and combination payments",
+      "Not considering the impact on Age Pension or DVA entitlements",
+    ],
+    faqs: [
+      { q: "Is aged care financial advice tax deductible?", a: "Financial advice fees are generally not tax deductible for individuals, but the tax savings from proper structuring often far exceed the advisory cost." },
+      { q: "Does the family home affect aged care costs?", a: "It depends. If a spouse or dependent continues living there, the home is exempt from the means test. If it's vacated, it may be assessed as an asset (capped at the current threshold)." },
+      { q: "Can I get aged care advice through my existing financial planner?", a: "Some financial planners have aged care expertise, but it's a specialist area. Look for advisors with specific aged care accreditation (e.g., Aged Care Steps) for the most current knowledge." },
+    ],
+  },
+  {
+    slug: "how-to-choose-crypto-advisor",
+    type: "crypto_advisor",
+    title: "How to Choose a Crypto Advisor in Australia",
+    metaDescription: "How to find a crypto and digital asset advisor — qualifications, tax planning, portfolio construction, and what to ask before engaging.",
+    intro: "Cryptocurrency and digital assets are now a legitimate part of many Australian investment portfolios. But the regulatory landscape is complex, tax obligations are significant, and the risk of loss is high. A specialist crypto advisor can help with portfolio construction, risk management, DeFi strategies, and the increasingly complex ATO reporting requirements. Here's how to find a good one.",
+    sections: [
+      {
+        heading: "What Does a Crypto Advisor Do?",
+        body: "A crypto advisor helps with: portfolio allocation (how much of your total portfolio should be in crypto), asset selection (Bitcoin, Ethereum, altcoins, DeFi protocols), risk management (position sizing, stop-losses, custody solutions), tax planning (CGT optimisation, cost base tracking, DeFi income classification), and regulatory compliance. The best advisors integrate crypto into your broader financial strategy rather than treating it in isolation.",
+      },
+      {
+        heading: "Regulatory Requirements in Australia",
+        body: "Anyone providing personal advice on crypto assets must hold an AFSL or be an authorised representative of an AFSL holder. ASIC has been clear that crypto is a financial product when it involves derivatives, managed investment schemes, or non-cash payment facilities. Be extremely cautious of 'crypto advisors' who don't hold or operate under an AFSL — they may be operating illegally.",
+      },
+      {
+        heading: "Tax Implications You Need to Know",
+        body: "The ATO treats cryptocurrency as a CGT asset. Every disposal (sell, swap, spend, gift) is a taxable event. DeFi activities (staking rewards, liquidity mining, airdrops) have complex tax treatments. Cost base tracking across multiple exchanges and wallets is essential. A crypto-savvy tax agent or advisor can save thousands in tax through proper structuring, timing of disposals, and tax-loss harvesting.",
+      },
+    ],
+    checklist: [
+      "Verify AFSL authorisation — this is non-negotiable for personal advice",
+      "Ask about their personal crypto experience and portfolio management approach",
+      "Check they understand DeFi, staking, and cross-chain transactions",
+      "Ask how they handle cost base tracking and ATO reporting",
+      "Understand their risk management approach (position sizing, custody)",
+      "Check they integrate crypto into your broader financial strategy",
+    ],
+    redFlags: [
+      "No AFSL authorisation — illegal to provide personal crypto advice",
+      "Guaranteeing returns or promoting specific tokens without analysis",
+      "No discussion of risk management or position sizing",
+      "Unable to explain the tax treatment of DeFi activities",
+      "Recommending self-custody without discussing security practices",
+      "Earning commissions or referral fees from crypto exchanges",
+    ],
+    faqs: [
+      { q: "How much does a crypto advisor charge?", a: "Expect $2,000-$5,000 for a comprehensive crypto strategy review. Some charge hourly ($300-$500/hr). Ongoing portfolio management fees are typically 1-2% AUM." },
+      { q: "Can I hold crypto in my SMSF?", a: "Yes, but strict rules apply. The crypto must be held in a wallet controlled by the SMSF trustee, and investment decisions must align with the fund's investment strategy. Get specialist SMSF + crypto advice." },
+      { q: "How does the ATO know about my crypto?", a: "The ATO has data-matching agreements with Australian exchanges. They receive transaction data directly. International exchanges are also increasingly sharing data under CRS (Common Reporting Standard)." },
+    ],
+  },
+  {
+    slug: "how-to-choose-debt-counsellor",
+    type: "debt_counsellor",
+    title: "How to Choose a Debt Counsellor in Australia",
+    metaDescription: "How to find free and low-cost debt counselling — what to expect, your rights, and how to avoid predatory debt management companies.",
+    intro: "If you're struggling with debt, you're not alone — and free help is available. Financial counsellors (distinct from 'debt management' companies) provide free, independent advice on managing debt, negotiating with creditors, and understanding your legal options. The key is knowing the difference between legitimate counselling and predatory debt companies that charge fees for services you can get for free.",
+    sections: [
+      {
+        heading: "Free Financial Counselling vs Paid Debt Management",
+        body: "Free financial counsellors are qualified professionals funded by government and community organisations. They work in your interest and never charge fees. The National Debt Helpline (1800 007 007) connects you to free counsellors in your state. Paid 'debt management' companies, by contrast, charge significant fees ($2,000-$10,000+) for services you can often get for free. Some take monthly payments from you and delay paying creditors, making your situation worse.",
+      },
+      {
+        heading: "What Can a Financial Counsellor Help With?",
+        body: "Financial counsellors can: review your complete financial situation, negotiate hardship arrangements with banks and creditors, explain your options (debt agreements, personal insolvency agreements, bankruptcy), help you access government assistance programs, represent you in disputes with creditors, help with budgeting and money management, and provide referrals to legal services if needed.",
+      },
+      {
+        heading: "Understanding Your Options",
+        body: "Depending on your situation, options include: informal hardship arrangements (reduced payments, temporary pauses), debt consolidation loans (combining debts into one lower payment), Part IX Debt Agreements (formal agreement with creditors to pay reduced amount), Personal Insolvency Agreements, or bankruptcy as a last resort. Each has different implications for your credit history and future financial life. A counsellor can explain the trade-offs.",
+      },
+    ],
+    checklist: [
+      "Start with the free National Debt Helpline: 1800 007 007",
+      "Check the counsellor holds a Diploma of Financial Counselling",
+      "Verify they're a member of Financial Counselling Australia (FCA)",
+      "Ensure the service is free — legitimate counselling is always free",
+      "Ask about their experience with your type of debt (credit cards, personal loans, tax debt)",
+      "Check if they can represent you in dealings with creditors",
+    ],
+    redFlags: [
+      "Charging any upfront fees — legitimate financial counselling is free",
+      "Asking you to pay them instead of your creditors",
+      "Recommending bankruptcy without exploring all other options first",
+      "No Diploma of Financial Counselling or FCA membership",
+      "Pressure to sign a debt agreement immediately",
+      "Promising to 'fix' your credit score for a fee",
+    ],
+    faqs: [
+      { q: "Is debt counselling really free?", a: "Yes. Financial counselling through the National Debt Helpline and community legal centres is 100% free. If someone charges you, they're a commercial debt management company, not a counsellor." },
+      { q: "Will seeing a debt counsellor affect my credit score?", a: "No. Seeking counselling has no impact on your credit report. However, some solutions (debt agreements, bankruptcy) will be recorded. Your counsellor will explain the implications before you decide." },
+      { q: "Can a counsellor stop creditors from calling me?", a: "They can negotiate hardship arrangements and contact moratoriums on your behalf. If you're experiencing harassment, they can also refer you to the appropriate ombudsman service." },
+    ],
+  },
 ];
 
 export function getAdvisorGuide(slug: string): AdvisorGuide | undefined {

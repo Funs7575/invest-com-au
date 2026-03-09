@@ -18,6 +18,12 @@ const STEPS = [
       { label: "Tax Optimisation", desc: "Minimise tax on investments and capital gains", key: "tax", type: "tax_agent" as ProfessionalType, icon: "calculator", color: "bg-amber-50 border-amber-200" },
       { label: "Home Loan / Refinancing", desc: "Find the best mortgage rate for your situation", key: "mortgage", type: "mortgage_broker" as ProfessionalType, icon: "landmark", color: "bg-rose-50 border-rose-200" },
       { label: "Estate Planning", desc: "Protect your assets and plan for the future", key: "estate", type: "estate_planner" as ProfessionalType, icon: "file-text", color: "bg-slate-100 border-slate-200" },
+      { label: "Insurance", desc: "Life, TPD, income protection, or trauma cover", key: "insurance", type: "insurance_broker" as ProfessionalType, icon: "shield", color: "bg-sky-50 border-sky-200" },
+      { label: "Buyers Agent", desc: "Help finding and negotiating property purchases", key: "buyers", type: "buyers_agent" as ProfessionalType, icon: "search", color: "bg-teal-50 border-teal-200" },
+      { label: "Wealth Management", desc: "Portfolio management for high-net-worth investors", key: "wealth", type: "wealth_manager" as ProfessionalType, icon: "briefcase", color: "bg-indigo-50 border-indigo-200" },
+      { label: "Aged Care", desc: "Navigate aged care options, costs, and subsidies", key: "agedcare", type: "aged_care_advisor" as ProfessionalType, icon: "heart", color: "bg-pink-50 border-pink-200" },
+      { label: "Crypto & Digital Assets", desc: "Crypto portfolio strategy and tax planning", key: "crypto", type: "crypto_advisor" as ProfessionalType, icon: "bitcoin", color: "bg-orange-50 border-orange-200" },
+      { label: "Debt Help", desc: "Debt consolidation, budgeting, and financial recovery", key: "debt", type: "debt_counsellor" as ProfessionalType, icon: "credit-card", color: "bg-red-50 border-red-200" },
     ],
   },
   {
@@ -62,6 +68,9 @@ const TYPE_SLUG_MAP: Record<ProfessionalType, string> = {
   smsf_accountant: "smsf-accountants", financial_planner: "financial-planners",
   property_advisor: "property-advisors", tax_agent: "tax-agents",
   mortgage_broker: "mortgage-brokers", estate_planner: "estate-planners",
+  insurance_broker: "insurance-brokers", buyers_agent: "buyers-agents",
+  wealth_manager: "wealth-managers", aged_care_advisor: "aged-care-advisors",
+  crypto_advisor: "crypto-advisors", debt_counsellor: "debt-counsellors",
 };
 const STATE_SLUG_MAP: Record<string, string> = { NSW: "nsw", VIC: "vic", QLD: "qld", WA: "wa", SA: "sa" };
 
@@ -72,6 +81,12 @@ const ADVISOR_TIPS: Record<string, string[]> = {
   tax_agent: ["Registered with the TPB — verify their number", "Investment-savvy agents understand CGT, franking credits, and trusts", "Ask if they specialise in investor tax returns"],
   mortgage_broker: ["Paid by lenders, not you — their service is free", "Ask how many lenders they compare", "Check MFAA or FBAA membership"],
   estate_planner: ["More than just a will — covers trusts, powers of attorney, succession", "Review every 3-5 years or after major life events", "Ask about experience with blended families if relevant"],
+  insurance_broker: ["Check they compare multiple insurers, not just one", "Ask about their claims support process", "Ensure they're an authorised representative under an AFSL"],
+  buyers_agent: ["Ask for recent comparable purchases in your target area", "Check they have no relationship with selling agents", "REBAA membership is a good sign of professionalism"],
+  wealth_manager: ["Ask about their investment philosophy and track record", "Understand all fees — management, performance, platform, and entry/exit", "Check they hold a CFP or CFA designation"],
+  aged_care_advisor: ["Ask about experience with Centrelink and DVA means testing", "They should explain RAD vs DAP options clearly", "Look for Aged Care Steps or similar specialist accreditation"],
+  crypto_advisor: ["Must hold an AFSL to provide crypto investment advice", "Ask how they track cost bases across exchanges and wallets", "Check they understand DeFi, staking, and airdrop tax treatment"],
+  debt_counsellor: ["Free counselling is available through the National Debt Helpline (1800 007 007)", "Be wary of 'debt management' companies that charge upfront fees", "Ask about all options including hardship provisions and debt agreements"],
 };
 
 export default function FindAdvisorPage() {

@@ -24,6 +24,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/advisor-guides/how-to-choose-property-investment-advisor",
     "/advisor-guides/how-to-choose-mortgage-broker",
     "/advisor-guides/how-to-choose-estate-planner",
+    "/advisor-guides/how-to-choose-insurance-broker",
+    "/advisor-guides/how-to-choose-buyers-agent",
+    "/advisor-guides/how-to-choose-wealth-manager",
+    "/advisor-guides/how-to-choose-aged-care-advisor",
+    "/advisor-guides/how-to-choose-crypto-advisor",
+    "/advisor-guides/how-to-choose-debt-counsellor",
     "/advisor-guides/compare",
     "/advisor-guides/smsf-accountant-vs-diy",
     "/advisor-guides/financial-planner-vs-robo-advisor",
@@ -191,7 +197,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // Programmatic advisor type + state pages
-  const advisorTypes = ["smsf-accountants", "financial-planners", "property-advisors", "tax-agents", "mortgage-brokers", "estate-planners"];
+  const advisorTypes = ["smsf-accountants", "financial-planners", "property-advisors", "tax-agents", "mortgage-brokers", "estate-planners", "insurance-brokers", "buyers-agents", "wealth-managers", "aged-care-advisors", "crypto-advisors", "debt-counsellors"];
   const states = ["nsw", "vic", "qld", "wa", "sa", "tas", "act", "nt"];
 
   const advisorTypePages = advisorTypes.map((type) => ({

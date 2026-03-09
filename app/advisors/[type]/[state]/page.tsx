@@ -15,6 +15,12 @@ const SLUG_TO_TYPE: Record<string, ProfessionalType> = {
   "tax-agents": "tax_agent",
   "mortgage-brokers": "mortgage_broker",
   "estate-planners": "estate_planner",
+  "insurance-brokers": "insurance_broker",
+  "buyers-agents": "buyers_agent",
+  "wealth-managers": "wealth_manager",
+  "aged-care-advisors": "aged_care_advisor",
+  "crypto-advisors": "crypto_advisor",
+  "debt-counsellors": "debt_counsellor",
 };
 
 const STATE_NAMES: Record<string, string> = {

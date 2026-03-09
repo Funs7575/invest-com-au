@@ -15,6 +15,12 @@ const SLUG_TO_TYPE: Record<string, ProfessionalType> = {
   "tax-agents": "tax_agent",
   "mortgage-brokers": "mortgage_broker",
   "estate-planners": "estate_planner",
+  "insurance-brokers": "insurance_broker",
+  "buyers-agents": "buyers_agent",
+  "wealth-managers": "wealth_manager",
+  "aged-care-advisors": "aged_care_advisor",
+  "crypto-advisors": "crypto_advisor",
+  "debt-counsellors": "debt_counsellor",
 };
 
 const TYPE_DESCRIPTIONS: Record<string, string> = {
@@ -24,6 +30,12 @@ const TYPE_DESCRIPTIONS: Record<string, string> = {
   "tax-agents": "Find tax agents specialising in investment tax, CGT optimisation, crypto tax, and complex investment structures.",
   "mortgage-brokers": "Compare mortgage brokers for investment property loans, refinancing, and home loan structuring.",
   "estate-planners": "Find estate planning specialists for wills, trusts, succession planning, and intergenerational wealth transfer.",
+  "insurance-brokers": "Compare insurance brokers for life insurance, TPD, income protection, and general insurance across Australia.",
+  "buyers-agents": "Find qualified buyers agents to help you find, evaluate, and negotiate investment property purchases.",
+  "wealth-managers": "Browse wealth managers for high-net-worth portfolio management, asset allocation, and comprehensive wealth strategy.",
+  "aged-care-advisors": "Find aged care advisors who specialise in residential aged care, home care packages, means testing, and retirement transitions.",
+  "crypto-advisors": "Compare crypto and digital asset advisors for portfolio construction, tax planning, and DeFi strategy in Australia.",
+  "debt-counsellors": "Find accredited debt counsellors for debt consolidation, hardship applications, budgeting, and financial recovery.",
 };
 
 const TYPE_FAQS: Record<string, { q: string; a: string }[]> = {
@@ -56,6 +68,36 @@ const TYPE_FAQS: Record<string, { q: string; a: string }[]> = {
     { q: "When do I need estate planning?", a: "If you have assets worth more than $500k, dependents, a blended family, business interests, or an SMSF. Estate planning ensures your wealth is distributed according to your wishes." },
     { q: "What does estate planning include?", a: "Typically: wills, powers of attorney, trust structures, superannuation death benefit nominations, and succession planning for businesses or farms." },
     { q: "How much does estate planning cost?", a: "A basic will costs $500–$1,500. Comprehensive estate planning with trusts and complex structures can be $3,000–$10,000+." },
+  ],
+  "insurance-brokers": [
+    { q: "What does an insurance broker do?", a: "An insurance broker compares policies across multiple insurers to find the best life, TPD, income protection, or trauma cover for your situation. They handle claims and annual reviews." },
+    { q: "How much does an insurance broker cost?", a: "Most insurance brokers are paid by commission from insurers — their service is typically free to you. Some fee-for-service brokers charge $500–$2,000 for comprehensive advice." },
+    { q: "Should I use a broker or go directly to an insurer?", a: "Brokers compare dozens of insurers and can find better value, particularly for complex needs. Going direct limits you to one insurer's products." },
+  ],
+  "buyers-agents": [
+    { q: "What does a buyers agent do?", a: "A buyers agent searches for, evaluates, and negotiates property purchases on your behalf. They work exclusively for you — not the seller — and have access to off-market properties." },
+    { q: "How much does a buyers agent charge?", a: "Typically 1.5–3% of the purchase price, or a fixed fee of $10,000–$25,000. Some charge a retainer plus a success fee." },
+    { q: "Is a buyers agent worth it?", a: "For investment property, buyers agents often negotiate savings that exceed their fee. They also save significant time and reduce emotional decision-making." },
+  ],
+  "wealth-managers": [
+    { q: "What's the difference between a wealth manager and a financial planner?", a: "Wealth managers typically serve high-net-worth clients ($500k+ portfolios) with comprehensive services including investment management, tax strategy, estate planning, and philanthropic giving — all under one roof." },
+    { q: "How much do wealth managers charge?", a: "Most charge 0.5–1.5% of assets under management (AUM) per year. On a $1M portfolio, that's $5,000–$15,000 annually. Some also charge performance fees." },
+    { q: "When do I need a wealth manager vs a financial planner?", a: "If you have $500k+ in investable assets and want active portfolio management, tax optimisation, and integrated advice across multiple areas, a wealth manager may be more appropriate." },
+  ],
+  "aged-care-advisors": [
+    { q: "What does an aged care advisor do?", a: "They help navigate residential aged care, home care packages, means testing for government subsidies, Refundable Accommodation Deposits (RADs), and the financial implications of aged care decisions." },
+    { q: "How much does aged care advice cost?", a: "Aged care financial advice typically costs $2,000–$5,000 for a comprehensive plan covering accommodation, means testing, and asset strategies." },
+    { q: "When should I get aged care advice?", a: "Ideally before a crisis — when a parent or loved one starts needing care. Early planning can save tens of thousands in accommodation costs and maximise government subsidies." },
+  ],
+  "crypto-advisors": [
+    { q: "Do I need a crypto advisor?", a: "If you hold significant crypto assets, use DeFi protocols, have complex tax events from trading, or want to integrate crypto into your broader investment strategy, a specialist advisor can help." },
+    { q: "What qualifications should a crypto advisor have?", a: "They should hold an AFSL or be an authorised representative, and have specific experience with digital assets. Look for CFP or CFA credentials alongside crypto-specific knowledge." },
+    { q: "How can a crypto advisor help with tax?", a: "They can advise on CGT treatment of crypto disposals, DeFi income classification, airdrop and staking tax treatment, and cost base tracking — often saving thousands in tax." },
+  ],
+  "debt-counsellors": [
+    { q: "Is debt counselling free?", a: "Financial counselling through not-for-profit services (like the National Debt Helpline) is free. Private debt management services may charge fees — always ask upfront." },
+    { q: "What can a debt counsellor help with?", a: "They help with budgeting, debt consolidation strategies, negotiating hardship arrangements with creditors, understanding your rights, and creating a plan to become debt-free." },
+    { q: "Will debt counselling affect my credit score?", a: "Seeing a counsellor does not affect your credit score. However, some debt solutions they recommend (like Part IX agreements or bankruptcy) will appear on your credit report." },
   ],
 };
 
