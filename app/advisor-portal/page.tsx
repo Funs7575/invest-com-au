@@ -12,6 +12,7 @@ type Advisor = {
   review_count?: number; verified?: boolean; bio?: string; specialties?: string[];
   fee_structure?: string; fee_description?: string; website?: string; phone?: string;
   booking_link?: string; booking_intro?: string;
+  offer_text?: string; offer_terms?: string; offer_active?: boolean;
 };
 
 type Lead = {
@@ -180,6 +181,9 @@ export default function AdvisorPortalPage() {
           phone: advisor.phone,
           booking_link: advisor.booking_link,
           booking_intro: advisor.booking_intro,
+          offer_text: advisor.offer_text || null,
+          offer_terms: advisor.offer_terms || null,
+          offer_active: advisor.offer_active || false,
         }),
       });
       setProfileSaved(true);
@@ -726,6 +730,56 @@ export default function AdvisorPortalPage() {
                   className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
                   placeholder="e.g. Book a free 30-minute consultation"
                 />
+              </div>
+
+              {/* Special Offer / Deal */}
+              <div className="border-t border-slate-100 pt-4 mt-2">
+                <div className="flex items-center justify-between mb-3">
+                  <div>
+                    <label className="block text-sm font-bold text-slate-900">Special Offer</label>
+                    <p className="text-[0.62rem] text-slate-500">Create a promotional offer shown on your profile and the Deals page.</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setAdvisor({ ...advisor, offer_active: !advisor.offer_active })}
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors ${advisor.offer_active ? "bg-violet-600" : "bg-slate-200"}`}
+                  >
+                    <span className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition-transform ${advisor.offer_active ? "translate-x-5" : "translate-x-0"}`} />
+                  </button>
+                </div>
+
+                {advisor.offer_active && (
+                  <div className="space-y-3 bg-violet-50 border border-violet-200/60 rounded-lg p-3.5">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 mb-1">Offer Headline</label>
+                      <input
+                        value={advisor.offer_text || ""}
+                        onChange={(e) => setAdvisor({ ...advisor, offer_text: e.target.value })}
+                        className="w-full px-3 py-2 border border-violet-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white"
+                        placeholder="e.g. Free 30-minute initial consultation"
+                        maxLength={100}
+                      />
+                      <p className="text-[0.55rem] text-slate-400 mt-1">Keep it short and compelling. This is the main text investors see.</p>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 mb-1">Terms & Conditions (optional)</label>
+                      <input
+                        value={advisor.offer_terms || ""}
+                        onChange={(e) => setAdvisor({ ...advisor, offer_terms: e.target.value })}
+                        className="w-full px-3 py-2 border border-violet-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white"
+                        placeholder="e.g. New clients only. Valid until March 2026."
+                        maxLength={200}
+                      />
+                    </div>
+                    {advisor.offer_text && (
+                      <div className="bg-white border border-violet-100 rounded-lg p-3">
+                        <p className="text-[0.58rem] font-bold uppercase tracking-wider text-violet-500 mb-1">Preview</p>
+                        <p className="text-sm font-bold text-violet-700">{advisor.offer_text}</p>
+                        {advisor.offer_terms && <p className="text-[0.62rem] text-violet-500 mt-0.5">{advisor.offer_terms}</p>}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="flex items-center gap-3 pt-2">

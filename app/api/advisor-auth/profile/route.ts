@@ -22,7 +22,7 @@ export async function PATCH(request: NextRequest) {
   const supabase = await createClient();
 
   // Only allow updating specific fields (not status, verified, rating, etc.)
-  const allowedFields = ["bio", "specialties", "fee_structure", "fee_description", "website", "phone", "photo_url", "booking_link", "booking_intro"];
+  const allowedFields = ["bio", "specialties", "fee_structure", "fee_description", "website", "phone", "photo_url", "booking_link", "booking_intro", "offer_text", "offer_terms", "offer_active"];
   const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
 
   for (const field of allowedFields) {
