@@ -268,6 +268,14 @@ function AdvisorReviewCard({ advisor }: { advisor: Professional }) {
             )}
           </div>
         )}
+
+        {/* Offer badge */}
+        {advisor.offer_active && advisor.offer_text && (
+          <div className="mt-2 bg-violet-50 border border-violet-100 rounded-lg px-2.5 py-1.5 flex items-center gap-1.5">
+            <span className="text-violet-500 shrink-0 text-[0.62rem]">★</span>
+            <span className="text-[0.58rem] md:text-[0.62rem] font-bold text-violet-700 truncate">{advisor.offer_text}</span>
+          </div>
+        )}
       </div>
 
       {/* Footer CTA */}

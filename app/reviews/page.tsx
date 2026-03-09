@@ -29,7 +29,7 @@ export default async function ReviewsPage() {
       .order('rating', { ascending: false }),
     supabase
       .from('professionals')
-      .select('id, slug, name, firm_name, type, location_display, rating, review_count, photo_url, verified, specialties, fee_description')
+      .select('id, slug, name, firm_name, type, location_display, rating, review_count, photo_url, verified, specialties, fee_description, offer_text, offer_terms, offer_active')
       .eq('status', 'active')
       .order('rating', { ascending: false })
       .order('review_count', { ascending: false }),

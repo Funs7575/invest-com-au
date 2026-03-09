@@ -164,6 +164,19 @@ export default async function AdvisorGuidePage({ params }: { params: Promise<{ s
                 <Link key={g.href} href={g.href} className="text-xs md:text-sm px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 transition-colors font-medium text-slate-600">{g.label} Guide</Link>
               ))}
             </div>
+            <h3 className="text-sm md:text-base font-bold text-slate-900 mt-4 mb-3">Compare Advisor Types</h3>
+            <div className="flex flex-wrap gap-2">
+              {[
+                { label: "SMSF Accountant vs DIY", href: "/advisor-guides/smsf-accountant-vs-diy" },
+                { label: "Financial Planner vs Robo", href: "/advisor-guides/financial-planner-vs-robo-advisor" },
+                { label: "Tax Agent vs Accountant", href: "/advisor-guides/tax-agent-vs-accountant" },
+                { label: "Mortgage Broker vs Bank", href: "/advisor-guides/mortgage-broker-vs-bank" },
+                { label: "Buyer's Agent vs DIY", href: "/advisor-guides/buyers-agent-vs-diy" },
+                { label: "Compare All Types", href: "/advisor-guides/compare" },
+              ].filter(g => g.href !== `/advisor-guides/${slug}`).map(g => (
+                <Link key={g.href} href={g.href} className="text-xs md:text-sm px-3 py-1.5 bg-violet-50 border border-violet-200 rounded-lg hover:bg-violet-100 transition-colors font-medium text-violet-700">{g.label}</Link>
+              ))}
+            </div>
           </div>
 
           {/* Compliance */}
