@@ -6,6 +6,7 @@ import { Suspense } from "react";
 import ArticleSearchInput from "@/components/ArticleSearchInput";
 import ArticleCategoryFilter from "@/components/ArticleCategoryFilter";
 import LeadMagnet from "@/components/LeadMagnet";
+import Icon from "@/components/Icon";
 
 export const metadata = {
   title: "Investing Guides & Articles",
@@ -412,6 +413,77 @@ export default async function ArticlesPage({
             )}
           </>
         )}
+
+        {/* ─── Advisor Guides + How-To Guides ─── */}
+        <section className="border-t border-slate-200 pt-6 md:pt-10 mt-6 md:mt-10">
+          <div className="mb-4 md:mb-6">
+            <h2 className="text-base md:text-2xl font-extrabold text-slate-900">Expert Help & How-To Guides</h2>
+            <p className="text-[0.69rem] md:text-sm text-slate-500 mt-0.5">Step-by-step investing guides and professional advisor resources</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            {/* How-To Guides */}
+            <div className="border border-emerald-200 rounded-xl p-4 md:p-5 bg-emerald-50/30">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg flex items-center justify-center">
+                  <Icon name="book-open" size={16} className="text-white" />
+                </div>
+                <div>
+                  <h3 className="text-sm md:text-base font-bold text-slate-900">Step-by-Step Guides</h3>
+                  <p className="text-[0.6rem] md:text-xs text-slate-500">Learn how to invest in Australia</p>
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                {[
+                  { href: "/how-to/buy-shares", title: "How to Buy Shares in Australia" },
+                  { href: "/how-to/buy-bitcoin", title: "How to Buy Bitcoin in Australia" },
+                  { href: "/how-to/buy-etfs", title: "How to Buy ETFs in Australia" },
+                  { href: "/how-to/open-brokerage-account", title: "How to Open a Brokerage Account" },
+                  { href: "/how-to/start-investing", title: "How to Start Investing" },
+                ].map((guide) => (
+                  <Link key={guide.href} href={guide.href} className="flex items-center gap-2 px-2.5 py-2 rounded-lg hover:bg-white hover:shadow-sm transition-all group">
+                    <Icon name="chevron-right" size={12} className="text-emerald-500 shrink-0" />
+                    <span className="text-xs md:text-sm text-slate-700 font-medium group-hover:text-slate-900">{guide.title}</span>
+                  </Link>
+                ))}
+              </div>
+              <Link href="/how-to" className="block text-center text-[0.7rem] font-semibold text-emerald-600 hover:text-emerald-700 mt-2 py-1">
+                View all guides →
+              </Link>
+            </div>
+
+            {/* Advisor Guides */}
+            <div className="border border-violet-200 rounded-xl p-4 md:p-5 bg-violet-50/30">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-violet-500 to-purple-600 rounded-lg flex items-center justify-center">
+                  <Icon name="users" size={16} className="text-white" />
+                </div>
+                <div>
+                  <h3 className="text-sm md:text-base font-bold text-slate-900">Professional Advisor Guides</h3>
+                  <p className="text-[0.6rem] md:text-xs text-slate-500">When and how to get professional help</p>
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                {[
+                  { href: "/advisor-guides/financial-planner", title: "Choosing a Financial Planner" },
+                  { href: "/advisor-guides/smsf-accountant", title: "Choosing an SMSF Accountant" },
+                  { href: "/advisor-guides/tax-agent", title: "Choosing a Tax Agent" },
+                  { href: "/advisor-guides/mortgage-broker", title: "Choosing a Mortgage Broker" },
+                  { href: "/advisor-guides/property-advisor", title: "Choosing a Property Advisor" },
+                  { href: "/advisor-guides/financial-planner-vs-robo-advisor", title: "Financial Planner vs Robo-Advisor" },
+                  { href: "/advisor-guides/smsf-accountant-vs-diy", title: "SMSF Accountant vs DIY" },
+                ].map((guide) => (
+                  <Link key={guide.href} href={guide.href} className="flex items-center gap-2 px-2.5 py-2 rounded-lg hover:bg-white hover:shadow-sm transition-all group">
+                    <Icon name="chevron-right" size={12} className="text-violet-500 shrink-0" />
+                    <span className="text-xs md:text-sm text-slate-700 font-medium group-hover:text-slate-900">{guide.title}</span>
+                  </Link>
+                ))}
+              </div>
+              <Link href="/find-advisor" className="block text-center text-[0.7rem] font-semibold text-violet-600 hover:text-violet-700 mt-2 py-1">
+                Find your advisor →
+              </Link>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   );

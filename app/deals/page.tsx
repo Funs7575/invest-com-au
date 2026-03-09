@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
@@ -6,6 +7,7 @@ import { absoluteUrl, breadcrumbJsonLd, dealsHubJsonLd, REVIEW_AUTHOR, CURRENT_Y
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import { sortWithSponsorship } from "@/lib/sponsorship";
 import DealsClient from "./DealsClient";
+import Icon from "@/components/Icon";
 
 const dealsTitle = `Investing Platform Deals & Promotions (${CURRENT_YEAR}) — Verified Offers`;
 
@@ -35,12 +37,22 @@ export const revalidate = 1800; // ISR: revalidate every 30 minutes (deals chang
 
 export default async function DealsPage() {
   const supabase = await createClient();
-  const { data: allBrokers } = await supabase
-    .from("brokers")
-    .select("id, name, slug, color, icon, logo_url, rating, deal, deal_text, deal_expiry, deal_terms, deal_verified_date, deal_category, platform_type, cta_text, affiliate_url, sponsorship_tier, benefit_cta, status")
-    .eq("status", "active")
-    .eq("deal", true)
-    .order("rating", { ascending: false });
+  const [{ data: allBrokers }, { data: topAdvisors }] = await Promise.all([
+    supabase
+      .from("brokers")
+      .select("id, name, slug, color, icon, logo_url, rating, deal, deal_text, deal_expiry, deal_terms, deal_verified_date, deal_category, platform_type, cta_text, affiliate_url, sponsorship_tier, benefit_cta, status")
+      .eq("status", "active")
+      .eq("deal", true)
+      .order("rating", { ascending: false }),
+    supabase
+      .from("professionals")
+      .select("slug, name, firm_name, type, location_display, rating, review_count, photo_url, fee_description")
+      .eq("status", "active")
+      .eq("verified", true)
+      .order("rating", { ascending: false })
+      .order("review_count", { ascending: false })
+      .limit(6),
+  ]);
 
   const dealBrokers: Broker[] = sortWithSponsorship((allBrokers || []) as Broker[]);
 
@@ -99,6 +111,59 @@ export default async function DealsPage() {
               >
                 Compare Platforms →
               </Link>
+            </div>
+          )}
+
+          {/* Advisor Free Consultations */}
+          {(topAdvisors?.length ?? 0) > 0 && (
+            <div className="mt-8 md:mt-10">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2 className="text-base md:text-lg font-bold text-slate-900 flex items-center gap-2">
+                    <Icon name="users" size={18} className="text-violet-500" />
+                    Free Advisor Consultations
+                  </h2>
+                  <p className="text-[0.65rem] md:text-xs text-slate-500 mt-0.5">Book a free 30-minute call with a verified professional — no obligation</p>
+                </div>
+                <Link href="/advisors" className="text-xs font-semibold text-violet-600 hover:text-violet-800 transition-colors hidden md:flex items-center gap-1">
+                  Browse all advisors &rarr;
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {(topAdvisors as { slug: string; name: string; firm_name: string; type: string; location_display: string; rating: number; review_count: number; photo_url: string; fee_description: string }[]).map((advisor) => {
+                  const typeLabel = advisor.type.replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase());
+                  return (
+                    <Link
+                      key={advisor.slug}
+                      href={`/advisor/${advisor.slug}`}
+                      className="flex items-start gap-3 p-3.5 bg-white border border-violet-100 rounded-xl hover:border-violet-300 hover:shadow-md transition-all group"
+                    >
+                      <Image
+                        src={advisor.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(advisor.name)}&size=80&background=random`}
+                        alt={advisor.name}
+                        width={48}
+                        height={48}
+                        className="rounded-full shrink-0"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-bold text-slate-900 group-hover:text-violet-700 transition-colors">{advisor.name}</p>
+                        <p className="text-[0.65rem] text-slate-500">{advisor.firm_name}</p>
+                        <p className="text-[0.6rem] text-violet-600 font-medium mt-0.5">{typeLabel} &middot; {advisor.location_display}</p>
+                        <div className="flex items-center gap-1.5 mt-1">
+                          <span className="text-[0.62rem] text-amber-600 font-bold">{advisor.rating}/5</span>
+                          <span className="text-[0.58rem] text-slate-400">({advisor.review_count} reviews)</span>
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+              <div className="text-center mt-3">
+                <Link href="/find-advisor" className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-violet-600 text-white text-xs font-bold rounded-lg hover:bg-violet-700 transition-colors">
+                  <Icon name="search" size={14} className="text-violet-200" />
+                  Find Your Advisor
+                </Link>
+              </div>
             </div>
           )}
 

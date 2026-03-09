@@ -68,7 +68,7 @@ export default async function HomePage() {
 
   const BROKER_LISTING_COLUMNS = "id, name, slug, color, icon, logo_url, rating, asx_fee, asx_fee_value, us_fee, us_fee_value, fx_rate, chess_sponsored, smsf_support, is_crypto, platform_type, deal, deal_text, deal_expiry, deal_terms, deal_verified_date, deal_category, editors_pick, tagline, cta_text, affiliate_url, sponsorship_tier, benefit_cta, updated_at, fee_last_checked, status";
 
-  const [{ data: brokers }, { data: articles }, { data: recentFeeChanges }, { data: versusEvents }, { count: advisorCount }] = await Promise.all([
+  const [{ data: brokers }, { data: articles }, { data: recentFeeChanges }, { data: versusEvents }, { count: advisorCount }, { data: featuredAdvisors }] = await Promise.all([
     supabase
       .from("brokers")
       .select(BROKER_LISTING_COLUMNS)
@@ -100,6 +100,15 @@ export default async function HomePage() {
       .from("professionals")
       .select("id", { count: "exact", head: true })
       .eq("status", "active"),
+    // Featured advisors for deals section (top-rated with free consultations)
+    supabase
+      .from("professionals")
+      .select("slug, name, firm_name, type, location_display, rating, review_count, photo_url, fee_description, specialties")
+      .eq("status", "active")
+      .eq("verified", true)
+      .order("rating", { ascending: false })
+      .order("review_count", { ascending: false })
+      .limit(6),
   ]);
 
   const dealBrokers = ((brokers as Broker[]) || []).filter((b) => b.deal).slice(0, 3);
@@ -576,6 +585,51 @@ export default async function HomePage() {
                   View all deals →
                 </Link>
               </div>
+              {/* Advisor free consultation banner */}
+              {(featuredAdvisors?.length ?? 0) > 0 && (
+                <div className="mt-4 md:mt-6 border border-violet-200 rounded-xl bg-gradient-to-r from-violet-50 to-white p-3 md:p-5">
+                  <div className="flex items-start md:items-center justify-between gap-3 mb-3">
+                    <div>
+                      <h3 className="text-sm md:text-base font-bold text-slate-900 flex items-center gap-1.5">
+                        <Icon name="users" size={16} className="text-violet-500" />
+                        Free Advisor Consultations
+                      </h3>
+                      <p className="text-[0.65rem] md:text-xs text-slate-500 mt-0.5">Book a free 30-min call with a verified professional — no obligation</p>
+                    </div>
+                    <Link href="/advisors" className="hidden md:flex text-xs font-semibold text-violet-600 hover:text-violet-800 transition-colors shrink-0 items-center gap-1">
+                      Browse all <span>&rarr;</span>
+                    </Link>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                    {(featuredAdvisors as { slug: string; name: string; firm_name: string; type: string; location_display: string; rating: number; review_count: number; photo_url: string; fee_description: string; specialties: string[] }[]).slice(0, 3).map((advisor) => (
+                      <Link
+                        key={advisor.slug}
+                        href={`/advisor/${advisor.slug}`}
+                        className="flex items-center gap-2.5 p-2.5 bg-white border border-slate-200 rounded-lg hover:border-violet-300 hover:shadow-sm transition-all group"
+                      >
+                        <Image
+                          src={advisor.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(advisor.name)}&size=80&background=random`}
+                          alt={advisor.name}
+                          width={40}
+                          height={40}
+                          className="rounded-full shrink-0"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-bold text-slate-900 truncate group-hover:text-violet-700 transition-colors">{advisor.name}</p>
+                          <p className="text-[0.6rem] text-slate-500 truncate">{advisor.firm_name}</p>
+                          <div className="flex items-center gap-1.5 mt-0.5">
+                            <span className="text-[0.58rem] text-amber-600 font-semibold">{advisor.rating}/5</span>
+                            <span className="text-[0.55rem] text-slate-400">({advisor.review_count} reviews)</span>
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                  <Link href="/find-advisor" className="md:hidden block text-center text-[0.7rem] font-semibold text-violet-600 hover:text-violet-800 py-1.5 mt-2 transition-colors">
+                    Find your advisor →
+                  </Link>
+                </div>
+              )}
               <div className="mt-2 md:mt-4">
                 <CompactDisclaimerLine />
               </div>
@@ -671,15 +725,15 @@ export default async function HomePage() {
         </section>
       </ScrollFadeIn>
 
-      {/* Featured Articles */}
+      {/* Featured Articles + Advisor Guides */}
       {(articles as Article[])?.length > 0 && (
         <ScrollFadeIn>
           <section className="py-3 md:py-12 bg-white">
             <div className="container-custom">
               <div className="flex items-start justify-between gap-2 mb-2.5 md:mb-6">
                 <div>
-                  <h2 className="text-lg md:text-2xl font-bold">Investing Guides & Articles</h2>
-                  <p className="text-[0.69rem] md:text-sm text-slate-500 mt-0.5 md:mt-1">Expert guides for smarter decisions</p>
+                  <h2 className="text-lg md:text-2xl font-bold">Learn & Get Expert Help</h2>
+                  <p className="text-[0.69rem] md:text-sm text-slate-500 mt-0.5 md:mt-1">Guides, how-tos, and professional advice for smarter investing</p>
                 </div>
                 <Link href="/articles" className="md:hidden text-[0.69rem] font-semibold text-slate-500 hover:text-slate-900 shrink-0 min-h-[44px] inline-flex items-center px-1">
                   View all →
@@ -776,6 +830,71 @@ export default async function HomePage() {
                       </div>
                     </Link>
                   ))}
+                </div>
+              </div>
+
+              {/* How-To Guides + Advisor Guides quick links */}
+              <div className="mt-5 md:mt-8 grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-5">
+                {/* How-To Guides */}
+                <div className="border border-slate-200 rounded-xl p-4 md:p-5 bg-slate-50/50">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-7 h-7 md:w-8 md:h-8 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg flex items-center justify-center">
+                      <Icon name="book-open" size={14} className="text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm md:text-base font-bold text-slate-900">Step-by-Step Guides</h3>
+                      <p className="text-[0.6rem] md:text-xs text-slate-500">Learn how to invest in Australia</p>
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    {[
+                      { href: "/how-to/buy-shares", title: "How to Buy Shares in Australia", icon: "trending-up" },
+                      { href: "/how-to/buy-bitcoin", title: "How to Buy Bitcoin in Australia", icon: "bitcoin" },
+                      { href: "/how-to/buy-etfs", title: "How to Buy ETFs in Australia", icon: "bar-chart" },
+                      { href: "/how-to/open-brokerage-account", title: "How to Open a Brokerage Account", icon: "user-plus" },
+                      { href: "/how-to/start-investing", title: "How to Start Investing", icon: "sprout" },
+                    ].map((guide) => (
+                      <Link key={guide.href} href={guide.href} className="flex items-center gap-2 px-2.5 py-2 rounded-lg hover:bg-white hover:shadow-sm transition-all group">
+                        <Icon name={guide.icon} size={14} className="text-emerald-500 shrink-0" />
+                        <span className="text-xs md:text-sm text-slate-700 font-medium group-hover:text-slate-900 transition-colors">{guide.title}</span>
+                        <span className="text-slate-400 text-xs ml-auto group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+                      </Link>
+                    ))}
+                  </div>
+                  <Link href="/how-to" className="block text-center text-[0.7rem] font-semibold text-emerald-600 hover:text-emerald-700 mt-2 py-1 transition-colors">
+                    View all guides →
+                  </Link>
+                </div>
+
+                {/* Advisor Guides */}
+                <div className="border border-violet-200 rounded-xl p-4 md:p-5 bg-violet-50/30">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-7 h-7 md:w-8 md:h-8 bg-gradient-to-br from-violet-500 to-purple-600 rounded-lg flex items-center justify-center">
+                      <Icon name="users" size={14} className="text-white" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm md:text-base font-bold text-slate-900">Professional Advisor Guides</h3>
+                      <p className="text-[0.6rem] md:text-xs text-slate-500">When and how to get professional help</p>
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    {[
+                      { href: "/advisor-guides/financial-planner", title: "Choosing a Financial Planner", icon: "trending-up" },
+                      { href: "/advisor-guides/smsf-accountant", title: "Choosing an SMSF Accountant", icon: "building" },
+                      { href: "/advisor-guides/tax-agent", title: "Choosing a Tax Agent", icon: "calculator" },
+                      { href: "/advisor-guides/mortgage-broker", title: "Choosing a Mortgage Broker", icon: "landmark" },
+                      { href: "/advisor-guides/financial-planner-vs-robo-advisor", title: "Financial Planner vs Robo-Advisor", icon: "arrow-right-left" },
+                    ].map((guide) => (
+                      <Link key={guide.href} href={guide.href} className="flex items-center gap-2 px-2.5 py-2 rounded-lg hover:bg-white hover:shadow-sm transition-all group">
+                        <Icon name={guide.icon} size={14} className="text-violet-500 shrink-0" />
+                        <span className="text-xs md:text-sm text-slate-700 font-medium group-hover:text-slate-900 transition-colors">{guide.title}</span>
+                        <span className="text-slate-400 text-xs ml-auto group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+                      </Link>
+                    ))}
+                  </div>
+                  <Link href="/find-advisor" className="block text-center text-[0.7rem] font-semibold text-violet-600 hover:text-violet-700 mt-2 py-1 transition-colors">
+                    Find your advisor →
+                  </Link>
                 </div>
               </div>
             </div>
