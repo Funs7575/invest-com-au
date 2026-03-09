@@ -23,6 +23,8 @@ export default function AdminAdvisorsPage() {
   const [editing, setEditing] = useState<Partial<Professional> | null>(null);
   const [saving, setSaving] = useState(false);
   const [specialtyInput, setSpecialtyInput] = useState("");
+  const [expandedAppId, setExpandedAppId] = useState<number | null>(null);
+  const [appStatusFilter, setAppStatusFilter] = useState<"all" | "pending" | "approved" | "rejected">("all");
 
   const supabase = createClient();
 
@@ -547,83 +549,223 @@ export default function AdminAdvisorsPage() {
       {/* ─── APPLICATIONS TAB ─── */}
       {tab === "applications" && (
         <div>
-          <p className="text-sm text-slate-600 mb-4">Review advisor applications. Approve to create a listing or reject with a reason.</p>
-          {applications.length === 0 ? (
-            <div className="text-center py-12 text-slate-400">No applications yet.</div>
+          <p className="text-sm text-slate-600 mb-4">Review advisor applications. Expand each card to see full details, then approve or reject.</p>
+
+          {/* Filter bar */}
+          <div className="flex gap-2 mb-4">
+            {(["all", "pending", "approved", "rejected"] as const).map((s) => {
+              const count = s === "all" ? applications.length : applications.filter(a => a.status === s).length;
+              return (
+                <button
+                  key={s}
+                  onClick={() => setAppStatusFilter(s)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                    appStatusFilter === s
+                      ? "bg-slate-900 text-white"
+                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                  }`}
+                >
+                  {s.charAt(0).toUpperCase() + s.slice(1)} ({count})
+                </button>
+              );
+            })}
+          </div>
+
+          {applications.filter(a => appStatusFilter === "all" || a.status === appStatusFilter).length === 0 ? (
+            <div className="text-center py-12 text-slate-400">No {appStatusFilter === "all" ? "" : appStatusFilter + " "}applications.</div>
           ) : (
             <div className="space-y-3">
-              {applications.map((app) => (
-                <div key={String(app.id)} className={`bg-white border rounded-xl p-4 ${app.status === "pending" ? "border-amber-200 bg-amber-50/30" : "border-slate-200"}`}>
-                  <div className="flex items-start justify-between mb-2">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold text-slate-900">{String(app.name)}</span>
-                        {!!app.firm_name && <span className="text-xs text-slate-500">— {String(app.firm_name)}</span>}
-                        <span className={`text-[0.56rem] font-bold px-1.5 py-0.5 rounded-full ${
-                          app.status === "pending" ? "bg-amber-100 text-amber-700" :
-                          app.status === "approved" ? "bg-emerald-100 text-emerald-700" :
-                          "bg-red-100 text-red-600"
-                        }`}>{String(app.status)}</span>
+              {applications
+                .filter(a => appStatusFilter === "all" || a.status === appStatusFilter)
+                .map((app) => {
+                  const isExpanded = expandedAppId === Number(app.id);
+                  return (
+                    <div key={String(app.id)} className={`bg-white border rounded-xl ${app.status === "pending" ? "border-amber-200 bg-amber-50/30" : "border-slate-200"}`}>
+                      {/* Header row */}
+                      <div className="p-4">
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <span className="text-sm font-bold text-slate-900">{String(app.name)}</span>
+                            {!!app.firm_name && <span className="text-xs text-slate-500">— {String(app.firm_name)}</span>}
+                            <span className={`text-[0.56rem] font-bold px-1.5 py-0.5 rounded-full ${
+                              app.status === "pending" ? "bg-amber-100 text-amber-700" :
+                              app.status === "approved" ? "bg-emerald-100 text-emerald-700" :
+                              "bg-red-100 text-red-600"
+                            }`}>{String(app.status)}</span>
+                            {!!app.account_type && (
+                              <span className="text-[0.56rem] font-semibold text-violet-600 bg-violet-50 px-1.5 py-0.5 rounded">
+                                {app.account_type === "firm" ? "Firm" : "Individual"}
+                              </span>
+                            )}
+                          </div>
+                          <span className="text-xs text-slate-400 whitespace-nowrap ml-3">
+                            {new Date(String(app.created_at)).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}
+                          </span>
+                        </div>
+
+                        {/* Quick info row */}
+                        <div className="flex items-center gap-3 mt-1.5 flex-wrap text-xs text-slate-500">
+                          <span>{String(app.email)}</span>
+                          {!!app.phone && <span>{String(app.phone)}</span>}
+                          <span className="text-slate-400">|</span>
+                          <span>{PROFESSIONAL_TYPE_LABELS[String(app.type) as keyof typeof PROFESSIONAL_TYPE_LABELS] || String(app.type)}</span>
+                          {(!!app.location_suburb || !!app.location_state) && (
+                            <>
+                              <span className="text-slate-400">|</span>
+                              <span>{[app.location_suburb, app.location_state].filter(Boolean).map(String).join(", ")}</span>
+                            </>
+                          )}
+                        </div>
+
+                        {/* Expand/Collapse button */}
+                        <button
+                          onClick={() => setExpandedAppId(isExpanded ? null : Number(app.id))}
+                          className="mt-2 text-xs font-semibold text-blue-600 hover:text-blue-800"
+                        >
+                          {isExpanded ? "Collapse" : "Expand Details"}
+                        </button>
                       </div>
-                      <div className="text-xs text-slate-500 mt-0.5">{String(app.email)} · {PROFESSIONAL_TYPE_LABELS[String(app.type) as keyof typeof PROFESSIONAL_TYPE_LABELS] || String(app.type)}</div>
-                      <div className="text-xs text-slate-500 mt-0.5">
-                        {!!app.location_suburb && `${String(app.location_suburb)}, `}{String(app.location_state || "")}
-                        {!!app.afsl_number && ` · AFSL ${String(app.afsl_number)}`}
-                        {!!app.registration_number && ` · TAN ${String(app.registration_number)}`}
-                      </div>
+
+                      {/* Expanded detail view */}
+                      {isExpanded && (
+                        <div className="border-t border-slate-200 p-4 space-y-4">
+                          {/* Credentials section */}
+                          <div>
+                            <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">Credentials</h4>
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                              <div>
+                                <span className="block text-[0.62rem] font-semibold text-slate-400 uppercase">AFSL</span>
+                                <span className="text-xs text-slate-700">{app.afsl_number ? String(app.afsl_number) : "—"}</span>
+                              </div>
+                              <div>
+                                <span className="block text-[0.62rem] font-semibold text-slate-400 uppercase">Registration / TAN</span>
+                                <span className="text-xs text-slate-700">{app.registration_number ? String(app.registration_number) : "—"}</span>
+                              </div>
+                              <div>
+                                <span className="block text-[0.62rem] font-semibold text-slate-400 uppercase">ABN</span>
+                                <span className="text-xs text-slate-700">{app.abn ? String(app.abn) : "—"}</span>
+                              </div>
+                              <div>
+                                <span className="block text-[0.62rem] font-semibold text-slate-400 uppercase">Website</span>
+                                {app.website ? (
+                                  <a href={String(app.website)} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:text-blue-800 truncate block">{String(app.website)}</a>
+                                ) : (
+                                  <span className="text-xs text-slate-700">—</span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Photo */}
+                          {!!app.photo_url && (
+                            <div>
+                              <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">Photo</h4>
+                              <img src={String(app.photo_url)} alt={String(app.name)} className="w-20 h-20 rounded-full object-cover border-2 border-slate-200" />
+                            </div>
+                          )}
+
+                          {/* About section */}
+                          <div>
+                            <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">About</h4>
+                            {app.bio ? (
+                              <p className="text-xs text-slate-600 whitespace-pre-wrap bg-slate-50 rounded-lg p-3 mb-2">{String(app.bio)}</p>
+                            ) : (
+                              <p className="text-xs text-slate-400 mb-2">No bio provided.</p>
+                            )}
+                            {!!app.specialties && String(app.specialties).trim() && (
+                              <div className="mb-2">
+                                <span className="text-[0.62rem] font-semibold text-slate-400 uppercase">Specialties</span>
+                                <div className="flex flex-wrap gap-1.5 mt-1">
+                                  {String(app.specialties).split(",").map((s: string) => s.trim()).filter(Boolean).map((s, i) => (
+                                    <span key={i} className="text-xs bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full">{s}</span>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                            {!!app.fee_description && (
+                              <div>
+                                <span className="text-[0.62rem] font-semibold text-slate-400 uppercase">Fees</span>
+                                <p className="text-xs text-slate-600 mt-0.5">{String(app.fee_description)}</p>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Location section */}
+                          <div>
+                            <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">Location</h4>
+                            <div className="grid grid-cols-2 gap-3">
+                              <div>
+                                <span className="block text-[0.62rem] font-semibold text-slate-400 uppercase">State</span>
+                                <span className="text-xs text-slate-700">{app.location_state ? String(app.location_state) : "—"}</span>
+                              </div>
+                              <div>
+                                <span className="block text-[0.62rem] font-semibold text-slate-400 uppercase">Suburb</span>
+                                <span className="text-xs text-slate-700">{app.location_suburb ? String(app.location_suburb) : "—"}</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Referral section */}
+                          {!!app.referral_source && (
+                            <div>
+                              <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">Referral</h4>
+                              <span className="text-xs text-slate-600">{String(app.referral_source)}</span>
+                            </div>
+                          )}
+
+                          {/* Action buttons for pending applications */}
+                          {app.status === "pending" && (
+                            <div className="flex gap-3 pt-2 border-t border-slate-100">
+                              <button
+                                onClick={async () => {
+                                  if (!confirm(`Approve ${String(app.name)}? This will create their listing, send a magic link, and email them.`)) return;
+                                  try {
+                                    const res = await fetch("/api/admin/advisor-applications", {
+                                      method: "PATCH",
+                                      headers: { "Content-Type": "application/json" },
+                                      body: JSON.stringify({ applicationId: app.id, action: "approve" }),
+                                    });
+                                    if (res.ok) {
+                                      alert("Approved! Listing created and login link emailed.");
+                                      setExpandedAppId(null);
+                                      loadData();
+                                    } else {
+                                      const data = await res.json();
+                                      alert(data.error || "Failed to approve.");
+                                    }
+                                  } catch { alert("Network error."); }
+                                }}
+                                className="text-xs font-semibold text-emerald-600 hover:text-emerald-800 px-4 py-2 border border-emerald-200 rounded-lg hover:bg-emerald-50"
+                              >Approve & Create Listing</button>
+                              <button
+                                onClick={async () => {
+                                  const reason = prompt("Rejection reason (will be emailed to applicant):");
+                                  if (reason == null) return;
+                                  try {
+                                    const res = await fetch("/api/admin/advisor-applications", {
+                                      method: "PATCH",
+                                      headers: { "Content-Type": "application/json" },
+                                      body: JSON.stringify({ applicationId: app.id, action: "reject", rejectionReason: reason }),
+                                    });
+                                    if (res.ok) {
+                                      alert("Rejected. Applicant has been notified.");
+                                      setExpandedAppId(null);
+                                      loadData();
+                                    } else {
+                                      const data = await res.json();
+                                      alert(data.error || "Failed to reject.");
+                                    }
+                                  } catch { alert("Network error."); }
+                                }}
+                                className="text-xs font-semibold text-red-500 hover:text-red-700 px-4 py-2 border border-red-200 rounded-lg hover:bg-red-50"
+                              >Reject</button>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
-                    <span className="text-xs text-slate-400">{new Date(String(app.created_at)).toLocaleDateString("en-AU")}</span>
-                  </div>
-                  {!!app.bio && <p className="text-xs text-slate-600 mb-2 line-clamp-2">{String(app.bio)}</p>}
-                  {!!app.account_type && <span className="text-[0.56rem] font-semibold text-violet-600 bg-violet-50 px-1.5 py-0.5 rounded mr-1">{app.account_type === "firm" ? "Firm" : "Individual"}</span>}
-                  {!!app.abn && <span className="text-[0.56rem] text-slate-500">ABN: {String(app.abn)}</span>}
-                  {app.status === "pending" && (
-                    <div className="flex gap-2 mt-2">
-                      <button
-                        onClick={async () => {
-                          if (!confirm(`Approve ${String(app.name)}? This will create their listing, send a magic link, and email them.`)) return;
-                          try {
-                            const res = await fetch("/api/admin/advisor-applications", {
-                              method: "PATCH",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify({ applicationId: app.id, action: "approve" }),
-                            });
-                            if (res.ok) {
-                              alert("Approved! Listing created and login link emailed.");
-                              loadData();
-                            } else {
-                              const data = await res.json();
-                              alert(data.error || "Failed to approve.");
-                            }
-                          } catch { alert("Network error."); }
-                        }}
-                        className="text-xs font-semibold text-emerald-600 hover:text-emerald-800 px-3 py-1.5 border border-emerald-200 rounded-lg hover:bg-emerald-50"
-                      >Approve & Create Listing</button>
-                      <button
-                        onClick={async () => {
-                          const reason = prompt("Rejection reason (will be emailed to applicant):");
-                          if (reason == null) return;
-                          try {
-                            const res = await fetch("/api/admin/advisor-applications", {
-                              method: "PATCH",
-                              headers: { "Content-Type": "application/json" },
-                              body: JSON.stringify({ applicationId: app.id, action: "reject", rejectionReason: reason }),
-                            });
-                            if (res.ok) {
-                              alert("Rejected. Applicant has been notified.");
-                              loadData();
-                            } else {
-                              const data = await res.json();
-                              alert(data.error || "Failed to reject.");
-                            }
-                          } catch { alert("Network error."); }
-                        }}
-                        className="text-xs font-semibold text-red-500 hover:text-red-700 px-3 py-1.5 border border-red-200 rounded-lg hover:bg-red-50"
-                      >Reject</button>
-                    </div>
-                  )}
-                </div>
-              ))}
+                  );
+                })}
             </div>
           )}
         </div>

@@ -1,11 +1,45 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 
 const STATES = ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT"];
+const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const TARGET_SIZE = 400;
+
+function resizeImage(file: File): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      const canvas = document.createElement("canvas");
+      canvas.width = TARGET_SIZE;
+      canvas.height = TARGET_SIZE;
+      const ctx = canvas.getContext("2d")!;
+      const minDim = Math.min(img.width, img.height);
+      const sx = (img.width - minDim) / 2;
+      const sy = (img.height - minDim) / 2;
+      ctx.drawImage(img, sx, sy, minDim, minDim, 0, 0, TARGET_SIZE, TARGET_SIZE);
+      canvas.toBlob(
+        (blob) => {
+          if (blob) resolve(blob);
+          else reject(new Error("Failed to resize image"));
+        },
+        "image/webp",
+        0.85
+      );
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("Failed to load image"));
+    };
+    img.src = url;
+  });
+}
 
 export default function AdvisorApplyPage() {
   const [accountType, setAccountType] = useState<"individual" | "firm">("individual");
@@ -18,6 +52,68 @@ export default function AdvisorApplyPage() {
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
+  // Photo upload state
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [photoError, setPhotoError] = useState("");
+  const [photoUploading, setPhotoUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setPhotoError("");
+
+    if (!ACCEPTED_TYPES.includes(file.type)) {
+      setPhotoError("Please upload a JPG, PNG, or WebP image.");
+      e.target.value = "";
+      return;
+    }
+
+    if (file.size > MAX_FILE_SIZE) {
+      setPhotoError("Image must be under 5MB.");
+      e.target.value = "";
+      return;
+    }
+
+    setPhotoFile(file);
+    const previewUrl = URL.createObjectURL(file);
+    setPhotoPreview(previewUrl);
+    e.target.value = "";
+  };
+
+  const removePhoto = () => {
+    if (photoPreview) URL.revokeObjectURL(photoPreview);
+    setPhotoFile(null);
+    setPhotoPreview(null);
+    setPhotoError("");
+  };
+
+  const uploadPhoto = async (): Promise<string | null> => {
+    if (!photoFile) return null;
+    setPhotoUploading(true);
+    try {
+      const resizedBlob = await resizeImage(photoFile);
+      const formData = new FormData();
+      formData.append("file", resizedBlob, "photo.webp");
+
+      const res = await fetch("/api/advisor-apply/photo", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({ error: "Upload failed" }));
+        throw new Error(data.error || "Photo upload failed");
+      }
+
+      const { publicUrl } = await res.json();
+      return publicUrl;
+    } finally {
+      setPhotoUploading(false);
+    }
+  };
+
   const submit = async () => {
     if (!form.name || !form.email || !form.type) {
       setErrorMsg("Name, email, and advisor type are required.");
@@ -27,13 +123,25 @@ export default function AdvisorApplyPage() {
       setErrorMsg("Firm name is required for firm applications.");
       return;
     }
+    if (!photoFile) {
+      setErrorMsg("A profile photo is required.");
+      return;
+    }
     setStatus("submitting");
     setErrorMsg("");
     try {
+      // Upload photo first
+      const photoUrl = await uploadPhoto();
+      if (!photoUrl) {
+        setErrorMsg("Photo upload failed. Please try again.");
+        setStatus("error");
+        return;
+      }
+
       const res = await fetch("/api/advisor-apply", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, account_type: accountType }),
+        body: JSON.stringify({ ...form, account_type: accountType, photo_url: photoUrl }),
       });
       if (res.ok) {
         setStatus("success");
@@ -57,7 +165,7 @@ export default function AdvisorApplyPage() {
           </div>
           <h1 className="text-2xl font-extrabold text-slate-900 mb-2">Application Submitted!</h1>
           <p className="text-slate-500 mb-6">We&apos;ll review your credentials and get back to you within 48 hours. Check your email for confirmation.</p>
-          <Link href="/advisors" className="text-sm text-amber-600 hover:text-amber-700 font-semibold">← Back to Advisor Directory</Link>
+          <Link href="/advisors" className="text-sm text-amber-600 hover:text-amber-700 font-semibold">&larr; Back to Advisor Directory</Link>
         </div>
       </div>
     );
@@ -118,6 +226,71 @@ export default function AdvisorApplyPage() {
                   </div>
                   <p className="text-[0.62rem] text-slate-500">Register your firm & invite team members</p>
                 </button>
+              </div>
+            </div>
+
+            {/* Photo Upload */}
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 mb-2">Profile Photo *</label>
+              <div className="flex items-start gap-4">
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={photoUploading}
+                  className={`
+                    relative w-24 h-24 rounded-full border-2 border-dashed overflow-hidden flex-shrink-0
+                    transition-all duration-200 cursor-pointer group
+                    ${photoPreview ? "border-slate-300" : "border-slate-300 hover:border-slate-400"}
+                    ${photoUploading ? "opacity-70 cursor-wait" : ""}
+                  `}
+                >
+                  {photoPreview ? (
+                    <img
+                      src={photoPreview}
+                      alt="Profile photo preview"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center justify-center w-full h-full bg-slate-100 text-slate-400">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                      </svg>
+                    </div>
+                  )}
+                  {!photoUploading && (
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-full">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="17 8 12 3 7 8" />
+                        <line x1="12" y1="3" x2="12" y2="15" />
+                      </svg>
+                    </div>
+                  )}
+                </button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={handlePhotoSelect}
+                  className="hidden"
+                />
+                <div className="pt-1">
+                  <p className="text-xs text-slate-500">Click to upload a headshot photo.</p>
+                  <p className="text-[0.56rem] text-slate-400 mt-0.5">JPG, PNG, or WebP. Max 5MB.</p>
+                  {photoPreview && (
+                    <button
+                      type="button"
+                      onClick={removePhoto}
+                      className="text-[0.62rem] text-red-500 hover:text-red-600 font-medium mt-1.5"
+                    >
+                      Remove photo
+                    </button>
+                  )}
+                  {photoError && (
+                    <p className="text-xs text-red-600 font-medium mt-1">{photoError}</p>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -218,7 +391,7 @@ export default function AdvisorApplyPage() {
               disabled={status === "submitting"}
               className="w-full py-3 bg-slate-900 text-white font-bold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 transition-colors"
             >
-              {status === "submitting" ? "Submitting..." : "Submit Application"}
+              {status === "submitting" ? (photoUploading ? "Uploading photo..." : "Submitting...") : "Submit Application"}
             </button>
           </div>
 
@@ -229,7 +402,7 @@ export default function AdvisorApplyPage() {
         </div>
 
         <p className="text-center text-xs text-slate-400 mt-4">
-          Already listed? <Link href="/advisor-portal" className="text-slate-600 hover:text-slate-900 font-medium">Log in to your portal →</Link>
+          Already listed? <Link href="/advisor-portal" className="text-slate-600 hover:text-slate-900 font-medium">Log in to your portal &rarr;</Link>
         </p>
       </div>
     </div>

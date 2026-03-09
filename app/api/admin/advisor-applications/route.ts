@@ -93,7 +93,7 @@ export async function PATCH(request: NextRequest) {
     rating: 0,
     review_count: 0,
     account_type: app.account_type === "firm" ? "firm_member" : "individual",
-    photo_url: `https://ui-avatars.com/api/?name=${encodeURIComponent(app.name)}&size=200&background=7c3aed&color=fff`,
+    photo_url: app.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(app.name)}&size=200&background=7c3aed&color=fff`,
   };
 
   const { data: newPro, error: proError } = await supabase
