@@ -98,7 +98,7 @@ export async function proxy(request: NextRequest) {
         }
 
         // Only allow admin emails
-        const extraAdmins = (process.env.ADMIN_EMAILS || 'finnduns@gmail.com').split(',').map(e => e.trim().toLowerCase());
+        const extraAdmins = (process.env.ADMIN_EMAILS || 'admin@invest.com.au').split(',').map(e => e.trim().toLowerCase());
         const isAdminUser = user.email?.endsWith('@invest.com.au') || extraAdmins.includes(user.email?.toLowerCase() || '');
         if (!isAdminUser) {
           const url = request.nextUrl.clone()

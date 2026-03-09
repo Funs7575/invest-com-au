@@ -887,6 +887,10 @@ export interface Professional {
   booking_enabled?: boolean;
   booking_link?: string;
   booking_intro?: string;
+  offer_text?: string;
+  offer_terms?: string;
+  offer_expiry?: string;
+  offer_active?: boolean;
   onboarded_at?: string;
   created_at: string;
   updated_at: string;

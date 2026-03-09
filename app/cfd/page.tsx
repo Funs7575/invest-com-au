@@ -58,11 +58,33 @@ export default async function CfdPage() {
     "id" | "title" | "slug" | "category" | "read_time"
   >[];
 
+  // Fetch relevant advisors for this vertical
+  const advisorTypes = vertical.advisorTypes?.map(a => a.type) || [];
+  const { data: advisors } = advisorTypes.length > 0
+    ? await supabase
+        .from("professionals")
+        .select("slug, name, firm_name, type, location_display, rating, review_count, photo_url, verified")
+        .eq("status", "active")
+        .in("type", advisorTypes)
+        .order("verified", { ascending: false })
+        .order("rating", { ascending: false })
+        .limit(4)
+    : { data: [] };
+
+  const { data: expertArticles } = await supabase
+    .from("advisor_articles")
+    .select("id, title, slug, excerpt, category, author_name, author_photo_url, views, created_at")
+    .eq("status", "published")
+    .order("views", { ascending: false })
+    .limit(3);
+
   return (
     <VerticalPillarPage
       config={vertical}
       brokers={sorted}
       relatedArticles={relatedArticles}
+      advisors={advisors || []}
+      expertArticles={expertArticles || []}
     />
   );
 }

@@ -143,7 +143,7 @@ export async function POST(req: NextRequest) {
             <p><a href="${process.env.NEXT_PUBLIC_BASE_URL || "https://invest.com.au"}/admin/marketplace/brokers">Review in Admin →</a></p>
           `,
         }),
-      }).catch(() => {});
+      }).catch((err) => console.error("[marketplace-register] Registration notification email failed:", err));
     }
 
     return NextResponse.json({ success: true }, { status: 201 });

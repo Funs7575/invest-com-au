@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
   await logMod(supabase, article.id, isSubmit ? "submitted" : "draft_created", "advisor", undefined, undefined, article.status);
 
   if (isSubmit) {
-    const adminEmail = process.env.ADMIN_EMAIL || "finnduns@gmail.com";
+    const adminEmail = process.env.ADMIN_EMAIL || "admin@invest.com.au";
     await sendEmail(adminEmail, `New article: "${title}" by ${pro.name}`,
       wrap("New Article Submitted", `<p style="color:#64748b;font-size:14px"><strong>${pro.name}</strong> (${pro.firm_name || "Independent"}) submitted an article.</p><p style="color:#334155;font-size:15px;font-weight:600">"${title}"</p><p style="color:#64748b;font-size:13px">Category: ${category || "General"} · Tier: ${pricing_tier || "standard"} · ${content.trim().split(/\s+/).length} words</p>`, "Review →", `${SITE_URL}/admin/advisor-articles`));
   }
@@ -174,7 +174,7 @@ export async function PUT(request: NextRequest) {
     const { error } = await supabase.from("advisor_articles").update(sf).eq("id", id);
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
     await logMod(supabase, id, "resubmitted", "advisor", undefined, oldStatus, "submitted");
-    const adminEmail = process.env.ADMIN_EMAIL || "finnduns@gmail.com";
+    const adminEmail = process.env.ADMIN_EMAIL || "admin@invest.com.au";
     await sendEmail(adminEmail, `Resubmitted: "${artTitle}" by ${advName}`, wrap("Article Resubmitted", `<p style="color:#64748b;font-size:14px"><strong>${advName}</strong> revised and resubmitted their article.</p><p style="color:#334155;font-size:15px;font-weight:600">"${artTitle}"</p>`, "Review →", `${SITE_URL}/admin/advisor-articles`));
     return NextResponse.json({ status: "submitted" });
   }

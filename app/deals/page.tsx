@@ -46,7 +46,7 @@ export default async function DealsPage() {
       .order("rating", { ascending: false }),
     supabase
       .from("professionals")
-      .select("slug, name, firm_name, type, location_display, rating, review_count, photo_url, fee_description")
+      .select("slug, name, firm_name, type, location_display, rating, review_count, photo_url, fee_description, verified, offer_text, offer_terms, offer_expiry, offer_active")
       .eq("status", "active")
       .eq("verified", true)
       .order("rating", { ascending: false })
@@ -97,7 +97,7 @@ export default async function DealsPage() {
           <h1 className="sr-only">Deals & Promotions</h1>
 
           {dealBrokers.length > 0 ? (
-            <DealsClient deals={dealBrokers} />
+            <DealsClient deals={dealBrokers} advisors={topAdvisors || []} />
           ) : (
             <div className="text-center py-10 md:py-16">
               <div className="text-3xl md:text-4xl mb-3">📭</div>

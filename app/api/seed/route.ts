@@ -5,7 +5,7 @@ import { logger } from "@/lib/logger";
 
 const log = logger("seed");
 
-const ADMIN_EMAILS = ["finnduns@gmail.com"];
+const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || "admin@invest.com.au").split(",").map(e => e.trim());
 const ADMIN_DOMAIN = "@invest.com.au";
 
 export async function POST() {

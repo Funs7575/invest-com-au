@@ -38,13 +38,14 @@ function renderStars(rating: number) {
   return "\u2605".repeat(Math.floor(rating)) + (rating % 1 >= 0.5 ? "\u00BD" : "");
 }
 
-export default function AdvisorsClient({ professionals, initialType, initialState, pageTitle, pageDescription, faqs = [] }: {
+export default function AdvisorsClient({ professionals, initialType, initialState, pageTitle, pageDescription, faqs = [], editorial }: {
   professionals: Professional[];
   initialType?: ProfessionalType;
   initialState?: string;
   pageTitle?: string;
   pageDescription?: string;
   faqs?: { q: string; a: string }[];
+  editorial?: { howToChoose: string[]; costGuide: string; industryInsight: string };
 }) {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -368,6 +369,36 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
             })}
             <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages} className="px-3 py-2 text-xs font-semibold border border-slate-200 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed">Next {"\u2192"}</button>
           </div>
+        )}
+
+        {/* Editorial content */}
+        {editorial && (
+          <section className="mt-8 md:mt-12 space-y-6">
+            {/* How to Choose */}
+            <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-6">
+              <h2 className="text-lg md:text-xl font-extrabold text-slate-900 mb-3">How to Choose the Right {pageTitle?.replace(' in Australia', '') || 'Professional'}</h2>
+              <ul className="space-y-2.5">
+                {editorial.howToChoose.map((tip, i) => (
+                  <li key={i} className="flex items-start gap-2.5 text-sm text-slate-600">
+                    <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 text-xs font-bold mt-0.5">{i + 1}</span>
+                    <span>{tip}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Cost Guide */}
+            <div className="bg-gradient-to-br from-amber-50 to-white border border-amber-200/60 rounded-xl p-4 md:p-6">
+              <h2 className="text-lg md:text-xl font-extrabold text-slate-900 mb-2">Cost Guide</h2>
+              <p className="text-sm text-slate-600 leading-relaxed">{editorial.costGuide}</p>
+            </div>
+
+            {/* Industry Insight */}
+            <div className="bg-gradient-to-br from-violet-50 to-white border border-violet-200/60 rounded-xl p-4 md:p-6">
+              <h2 className="text-lg md:text-xl font-extrabold text-slate-900 mb-2">Industry Insight</h2>
+              <p className="text-sm text-slate-600 leading-relaxed">{editorial.industryInsight}</p>
+            </div>
+          </section>
         )}
 
         {/* FAQs */}

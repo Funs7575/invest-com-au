@@ -17,6 +17,8 @@ export interface VerticalConfig {
   sections: { heading: string; body: string }[];
   faqs: { question: string; answer: string }[];
   disclaimer?: string;
+  advisorTypes?: { type: string; label: string; href: string }[];
+  expertTags?: string[];
 }
 
 const yr = CURRENT_YEAR;
@@ -27,6 +29,7 @@ const VERTICALS: VerticalConfig[] = [
   {
     slug: "share-trading",
     platformTypes: ["share_broker"],
+    expertTags: ["shares", "investing", "asx", "dividends"],
     title: `Best Share Trading Platforms in Australia (${yr}) — Compare Fees`,
     h1: "Best Share Trading Platforms in Australia",
     metaDescription: `Compare Australia's best share trading platforms for ${yr}. ASX brokerage fees, US share access, CHESS sponsorship, and platform features — all verified monthly.`,
@@ -63,6 +66,10 @@ const VERTICALS: VerticalConfig[] = [
       { label: "Fee Impact Calculator", href: "/fee-impact", icon: "calculator" },
       { label: "Savings Calculator", href: "/savings-calculator", icon: "piggy-bank" },
       { label: "Switching Calculator", href: "/switching-calculator", icon: "refresh-cw" },
+    ],
+    advisorTypes: [
+      { type: "financial_planner", label: "Financial Planners", href: "/advisors/financial-planners" },
+      { type: "wealth_manager", label: "Wealth Managers", href: "/advisors/wealth-managers" },
     ],
     sections: [
       {
@@ -114,6 +121,7 @@ const VERTICALS: VerticalConfig[] = [
   {
     slug: "crypto",
     platformTypes: ["crypto_exchange"],
+    expertTags: ["crypto", "bitcoin", "defi", "blockchain"],
     title: `Best Crypto Exchanges in Australia (${yr}) — Compare Fees & Security`,
     h1: "Best Cryptocurrency Exchanges in Australia",
     metaDescription: `Compare Australia's best crypto exchanges for ${yr}. AUSTRAC-registered, AUD deposit methods, fees, supported coins, and security — reviewed and updated ${CURRENT_MONTH_YEAR}.`,
@@ -140,6 +148,10 @@ const VERTICALS: VerticalConfig[] = [
     tools: [
       { label: "Compare Crypto Platforms", href: "/compare?category=crypto", icon: "bar-chart" },
       { label: "Find Your Match", href: "/quiz", icon: "target" },
+    ],
+    advisorTypes: [
+      { type: "crypto_advisor", label: "Crypto Advisors", href: "/advisors/crypto-advisors" },
+      { type: "tax_agent", label: "Tax Agents (CGT)", href: "/advisors/tax-agents" },
     ],
     sections: [
       {
@@ -192,6 +204,7 @@ const VERTICALS: VerticalConfig[] = [
   {
     slug: "savings",
     platformTypes: ["savings_account", "term_deposit"],
+    expertTags: ["savings", "cash", "interest", "deposits"],
     title: `Best Savings Accounts & Term Deposits in Australia (${yr})`,
     h1: "Best Savings Accounts & Term Deposits in Australia",
     metaDescription: `Compare the best high-interest savings accounts and term deposit rates in Australia for ${yr}. Rates verified and updated ${CURRENT_MONTH_YEAR}.`,
@@ -221,6 +234,10 @@ const VERTICALS: VerticalConfig[] = [
     tools: [
       { label: "Savings Calculator", href: "/savings-calculator", icon: "calculator" },
       { label: "Compare Savings", href: "/compare?filter=savings", icon: "bar-chart" },
+    ],
+    advisorTypes: [
+      { type: "financial_planner", label: "Financial Planners", href: "/advisors/financial-planners" },
+      { type: "debt_counsellor", label: "Debt Counsellors", href: "/advisors/debt-counsellors" },
     ],
     sections: [
       {
@@ -272,6 +289,7 @@ const VERTICALS: VerticalConfig[] = [
   {
     slug: "super",
     platformTypes: ["super_fund"],
+    expertTags: ["super", "smsf", "retirement", "superannuation"],
     title: `Best Super Funds in Australia (${yr}) — Compare Fees & Returns`,
     h1: "Best Super Funds in Australia",
     metaDescription: `Compare Australia's best super funds for ${yr}. Fees, investment options, insurance, and long-term performance — independent reviews updated ${CURRENT_MONTH_YEAR}.`,
@@ -302,6 +320,10 @@ const VERTICALS: VerticalConfig[] = [
       { label: "Compare Super Funds", href: "/compare?category=super", icon: "bar-chart" },
       { label: "Find Your Match", href: "/quiz", icon: "target" },
       { label: "Fee Impact Calculator", href: "/fee-impact", icon: "calculator" },
+    ],
+    advisorTypes: [
+      { type: "smsf_accountant", label: "SMSF Accountants", href: "/advisors/smsf-accountants" },
+      { type: "financial_planner", label: "Financial Planners", href: "/advisors/financial-planners" },
     ],
     sections: [
       {
@@ -354,6 +376,7 @@ const VERTICALS: VerticalConfig[] = [
   {
     slug: "cfd",
     platformTypes: ["cfd_forex"],
+    expertTags: ["cfd", "forex", "trading", "derivatives"],
     title: `Best CFD & Forex Brokers in Australia (${yr}) — Compare Spreads`,
     h1: "Best CFD & Forex Brokers in Australia",
     metaDescription: `Compare ASIC-regulated CFD and forex brokers in Australia for ${yr}. Spreads, leverage, platforms, and risk tools — reviewed and updated ${CURRENT_MONTH_YEAR}.`,
@@ -379,6 +402,10 @@ const VERTICALS: VerticalConfig[] = [
     tools: [
       { label: "Compare CFD Brokers", href: "/compare?category=cfd", icon: "bar-chart" },
       { label: "Find Your Match", href: "/quiz", icon: "target" },
+    ],
+    advisorTypes: [
+      { type: "financial_planner", label: "Financial Planners", href: "/advisors/financial-planners" },
+      { type: "wealth_manager", label: "Wealth Managers", href: "/advisors/wealth-managers" },
     ],
     sections: [
       {

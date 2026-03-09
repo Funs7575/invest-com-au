@@ -29,7 +29,6 @@ import BrokerCard from "@/components/BrokerCard";
 import BrokerLogo from "@/components/BrokerLogo";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
-import AdvisorPrompt from "@/components/AdvisorPrompt";
 import ScrollReveal from "@/components/ScrollReveal";
 import OnThisPage from "@/components/OnThisPage";
 import SponsorBadge from "@/components/SponsorBadge";
@@ -201,16 +200,32 @@ const SLUG_TO_SEGMENT: Record<string, "fee-audit" | "smsf-checklist" | "beginner
 
 /* ─── Main component ─── */
 
+interface ExpertArticle {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  category: string | null;
+  author_name: string | null;
+  author_photo_url: string | null;
+  views: number | null;
+  created_at: string;
+}
+
 interface VerticalPillarPageProps {
   config: VerticalConfig;
   brokers: Broker[];
   relatedArticles: Pick<Article, "id" | "title" | "slug" | "category" | "read_time">[];
+  advisors?: { slug: string; name: string; firm_name: string; type: string; location_display: string; rating: number; review_count: number; photo_url: string; verified: boolean }[];
+  expertArticles?: ExpertArticle[];
 }
 
 export default function VerticalPillarPage({
   config,
   brokers,
   relatedArticles,
+  advisors = [],
+  expertArticles = [],
 }: VerticalPillarPageProps) {
   const hasSponsored = brokers.some(isSponsored);
   const topPick = brokers[0] || null;
@@ -296,6 +311,8 @@ export default function VerticalPillarPage({
             ...(config.sections.length > 0
               ? [{ id: "editorial", label: "Analysis" }]
               : []),
+            ...(advisors.length > 0 ? [{ id: "expert-advisors", label: "Advisors" }] : []),
+            ...(expertArticles.length > 0 ? [{ id: "expert-insights", label: "Expert Insights" }] : []),
             ...(config.faqs.length > 0 ? [{ id: "faq", label: "FAQ" }] : []),
             ...(relatedArticles.length > 0
               ? [{ id: "related-articles", label: "Articles" }]
@@ -748,14 +765,124 @@ export default function VerticalPillarPage({
             />
           </div>
 
-          {/* ─── Advisor Prompt ─── */}
-          {(config.slug === "super" || config.slug === "share-trading") && (
-            <div className="mb-6 md:mb-10">
-              <AdvisorPrompt
-                context={config.slug === "super" ? "smsf" : "general"}
-                compact={config.slug === "share-trading"}
-              />
+          {/* ─── Expert Advisors ─── */}
+          {advisors.length > 0 && config.advisorTypes && (
+            <div id="expert-advisors" className="mb-6 md:mb-10 scroll-mt-20">
+              <div className="bg-gradient-to-br from-violet-50 to-white border border-violet-200 rounded-2xl p-4 md:p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h2 className="text-lg md:text-xl font-bold text-slate-900 flex items-center gap-2">
+                      <svg className="w-5 h-5 text-violet-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+                      Need Professional Advice?
+                    </h2>
+                    <p className="text-xs md:text-sm text-slate-500 mt-0.5">
+                      Verified Australian professionals who specialise in this area
+                    </p>
+                  </div>
+                  <Link
+                    href="/advisors"
+                    className="hidden md:inline-flex items-center gap-1 text-xs font-semibold text-violet-600 hover:text-violet-800 transition-colors"
+                  >
+                    View all &rarr;
+                  </Link>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 md:gap-3 mb-4">
+                  {advisors.map((advisor) => {
+                    const typeLabel = advisor.type.replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase());
+                    return (
+                      <Link
+                        key={advisor.slug}
+                        href={`/advisor/${advisor.slug}`}
+                        className="flex items-center gap-3 p-3 bg-white border border-violet-100 rounded-xl hover:border-violet-300 hover:shadow-md transition-all group"
+                      >
+                        <img
+                          src={advisor.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(advisor.name)}&size=80&background=random`}
+                          alt={advisor.name}
+                          width={44}
+                          height={44}
+                          className="rounded-full shrink-0 w-11 h-11 object-cover"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5">
+                            <p className="text-sm font-bold text-slate-900 group-hover:text-violet-700 transition-colors truncate">
+                              {advisor.name}
+                            </p>
+                            {advisor.verified && (
+                              <svg className="w-3.5 h-3.5 text-violet-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                            )}
+                          </div>
+                          <p className="text-[0.65rem] text-slate-500 truncate">{advisor.firm_name}</p>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <span className="text-[0.6rem] text-violet-600 font-medium">{typeLabel}</span>
+                            <span className="text-[0.55rem] text-slate-300">&middot;</span>
+                            <span className="text-[0.6rem] text-slate-400">{advisor.location_display}</span>
+                            {advisor.rating > 0 && (
+                              <>
+                                <span className="text-[0.55rem] text-slate-300">&middot;</span>
+                                <span className="text-[0.6rem] text-amber-600 font-semibold">{advisor.rating}/5</span>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                        <svg className="w-4 h-4 text-slate-300 group-hover:text-violet-400 transition-colors shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                      </Link>
+                    );
+                  })}
+                </div>
+
+                {/* Browse by type buttons */}
+                <div className="flex flex-wrap gap-2">
+                  {config.advisorTypes.map((at) => (
+                    <Link
+                      key={at.type}
+                      href={at.href}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-violet-100 text-violet-700 text-xs font-semibold rounded-lg hover:bg-violet-200 transition-colors"
+                    >
+                      {at.label} &rarr;
+                    </Link>
+                  ))}
+                  <Link
+                    href="/find-advisor"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 text-slate-600 text-xs font-semibold rounded-lg hover:bg-slate-200 transition-colors"
+                  >
+                    Find by location &rarr;
+                  </Link>
+                </div>
+              </div>
             </div>
+          )}
+
+          {/* ─── Expert Insights ─── */}
+          {expertArticles && expertArticles.length > 0 && (
+            <section id="expert-insights" className="mb-6 md:mb-10 scroll-mt-20">
+              <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 mb-4">Expert Insights</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {expertArticles.map((article: ExpertArticle) => (
+                  <a key={article.id} href={`/expert/${article.slug}`} className="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-md hover:border-slate-300 transition-all group">
+                    <div className="flex items-center gap-2 mb-2.5">
+                      <img
+                        src={article.author_photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(article.author_name || 'Expert')}&background=7c3aed&color=fff&size=40`}
+                        alt={article.author_name || 'Expert'}
+                        className="w-8 h-8 rounded-full object-cover"
+                      />
+                      <div>
+                        <div className="text-[0.62rem] font-bold text-slate-700">{article.author_name || 'Expert Contributor'}</div>
+                        <div className="text-[0.55rem] text-slate-400">{article.views ? `${article.views.toLocaleString()} views` : 'Expert article'}</div>
+                      </div>
+                    </div>
+                    <h3 className="text-sm font-bold text-slate-900 group-hover:text-violet-700 transition-colors mb-1.5 line-clamp-2">{article.title}</h3>
+                    {article.excerpt && <p className="text-xs text-slate-500 line-clamp-2">{article.excerpt}</p>}
+                    {article.category && (
+                      <span className="inline-block mt-2 px-2 py-0.5 bg-violet-50 text-violet-600 text-[0.58rem] font-medium rounded-full">{article.category}</span>
+                    )}
+                  </a>
+                ))}
+              </div>
+              <div className="mt-3 text-center">
+                <a href="/expert" className="text-xs font-bold text-violet-600 hover:text-violet-800 transition-colors">View all expert articles &rarr;</a>
+              </div>
+            </section>
           )}
 
           {/* ─── FAQ Section ─── */}

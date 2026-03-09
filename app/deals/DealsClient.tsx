@@ -25,6 +25,7 @@ const TAB_OPTIONS = [
   "International",
   "Beginner",
   "Active Trader",
+  "Advisor Offers",
 ] as const;
 type TabOption = (typeof TAB_OPTIONS)[number];
 
@@ -40,6 +41,7 @@ const TAB_ICONS: Record<TabOption, string> = {
   "International": "\uD83C\uDF0D",
   "Beginner": "\uD83C\uDFAF",
   "Active Trader": "\u26A1",
+  "Advisor Offers": "\uD83D\uDC65",
 };
 
 /**
@@ -63,9 +65,10 @@ const CATEGORY_MAP: Record<TabOption, TabFilter | null> = {
   "International": { dealCategory: "international" },
   "Beginner": { dealCategory: "beginner" },
   "Active Trader": { dealCategory: "active-trader" },
+  "Advisor Offers": null,
 };
 
-export default function DealsClient({ deals }: { deals: Broker[] }) {
+export default function DealsClient({ deals, advisors = [] }: { deals: Broker[]; advisors?: any[] }) {
   const [activeTab, setActiveTab] = useState<TabOption>("All Deals");
   const [featuredWinners, setFeaturedWinners] = useState<PlacementWinner[]>([]);
   const [cpcWinners, setCpcWinners] = useState<PlacementWinner[]>([]);
@@ -122,14 +125,15 @@ export default function DealsClient({ deals }: { deals: Broker[] }) {
     });
   }, [deals, activeTab, featuredSlugs]);
 
-  // Only show tabs that have deals (or "All Deals")
+  // Only show tabs that have deals (or "All Deals" / "Advisor Offers")
   const availableTabs = useMemo(() => {
     return TAB_OPTIONS.filter((tab) => {
+      if (tab === "Advisor Offers") return advisors.some((a: any) => a.offer_active && a.offer_text);
       const filter = CATEGORY_MAP[tab];
       if (!filter) return true; // Always show "All Deals"
       return deals.some((b) => matchesFilter(b, filter));
     });
-  }, [deals]);
+  }, [deals, advisors]);
 
   return (
     <div>
@@ -240,7 +244,52 @@ export default function DealsClient({ deals }: { deals: Broker[] }) {
       )}
 
       {/* Deals Grid with subtle background and staggered entrance */}
-      {filteredDeals.length > 0 ? (
+      {activeTab === "Advisor Offers" ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {advisors.filter((a: any) => a.offer_active && a.offer_text).map((advisor: any) => (
+            <div key={advisor.slug} className="bg-white border border-violet-200/60 rounded-xl p-4 hover:shadow-md transition-shadow">
+              <div className="flex items-center gap-3 mb-3">
+                <img
+                  src={advisor.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(advisor.name)}&background=7c3aed&color=fff&size=80`}
+                  alt={advisor.name}
+                  className="w-12 h-12 rounded-full object-cover"
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-bold text-slate-900 truncate">{advisor.name}</div>
+                  <div className="text-xs text-slate-500">{advisor.firm_name || advisor.type.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase())}</div>
+                  {advisor.verified && (
+                    <span className="inline-flex items-center gap-0.5 text-[0.58rem] text-violet-600 font-medium">
+                      <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                      Verified
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className="bg-violet-50 border border-violet-100 rounded-lg p-2.5 mb-3">
+                <p className="text-xs font-bold text-violet-700">{advisor.offer_text}</p>
+                {advisor.offer_terms && <p className="text-[0.58rem] text-violet-500 mt-0.5">{advisor.offer_terms}</p>}
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <svg key={i} className={`w-3 h-3 ${i < Math.round(advisor.rating) ? 'text-amber-400' : 'text-slate-200'}`} fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                  ))}
+                  <span className="text-[0.58rem] text-slate-400 ml-0.5">{advisor.rating}</span>
+                </div>
+                <a href={`/advisor/${advisor.slug}`} className="text-xs font-bold text-violet-600 hover:text-violet-800 transition-colors">
+                  View Profile →
+                </a>
+              </div>
+            </div>
+          ))}
+          {advisors.filter((a: any) => a.offer_active && a.offer_text).length === 0 && (
+            <div className="col-span-full text-center py-8">
+              <p className="text-sm text-slate-500 mb-2">No advisor offers available right now.</p>
+              <a href="/advisors" className="text-xs font-bold text-violet-600 hover:text-violet-800">Browse all advisors →</a>
+            </div>
+          )}
+        </div>
+      ) : filteredDeals.length > 0 ? (
         <div className="relative">
           {/* Subtle background pattern */}
           <div className="absolute inset-0 bg-gradient-to-b from-slate-50/50 via-transparent to-slate-50/30 rounded-2xl -mx-2 -my-2 px-2 py-2 pointer-events-none" />

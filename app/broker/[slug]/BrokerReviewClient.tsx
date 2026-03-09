@@ -136,6 +136,41 @@ const CATEGORY_COLORS: Record<string, string> = {
   reviews: "bg-teal-100 text-teal-700",
 };
 
+const PLATFORM_TO_ADVISORS: Record<string, { type: string; label: string; context: string }[]> = {
+  share_broker: [
+    { type: "financial_planner", label: "Financial Planner", context: "Get personalised investment advice" },
+    { type: "tax_agent", label: "Tax Agent", context: "Optimise your capital gains tax" },
+  ],
+  crypto_exchange: [
+    { type: "crypto_advisor", label: "Crypto Advisor", context: "Navigate digital asset strategy" },
+    { type: "tax_agent", label: "Tax Agent", context: "Handle complex crypto tax reporting" },
+  ],
+  robo_advisor: [
+    { type: "financial_planner", label: "Financial Planner", context: "Compare robo vs human advice" },
+    { type: "wealth_manager", label: "Wealth Manager", context: "For portfolios over $500k" },
+  ],
+  super_fund: [
+    { type: "smsf_accountant", label: "SMSF Accountant", context: "Set up and manage your SMSF" },
+    { type: "financial_planner", label: "Financial Planner", context: "Optimise your super strategy" },
+  ],
+  property_platform: [
+    { type: "property_advisor", label: "Property Advisor", context: "Assess your property portfolio" },
+    { type: "buyers_agent", label: "Buyers Agent", context: "Find and negotiate property purchases" },
+  ],
+  cfd_forex: [
+    { type: "financial_planner", label: "Financial Planner", context: "Ensure CFDs fit your strategy" },
+    { type: "tax_agent", label: "Tax Agent", context: "Handle complex trading tax" },
+  ],
+  savings_account: [
+    { type: "financial_planner", label: "Financial Planner", context: "Optimise your cash allocation" },
+    { type: "mortgage_broker", label: "Mortgage Broker", context: "Better use for your savings?" },
+  ],
+  term_deposit: [
+    { type: "financial_planner", label: "Financial Planner", context: "Is a term deposit right for you?" },
+    { type: "wealth_manager", label: "Wealth Manager", context: "For comprehensive wealth strategy" },
+  ],
+};
+
 export default function BrokerReviewClient({
   broker: b,
   similar,
@@ -1047,6 +1082,40 @@ export default function BrokerReviewClient({
               })}
             </div>
           </>
+        )}
+
+        {/* Advisor Cross-Links */}
+        {PLATFORM_TO_ADVISORS[b.platform_type] && (
+          <div className="bg-gradient-to-br from-violet-50 to-slate-50 border border-violet-200/60 rounded-xl p-4 md:p-6 mt-6 md:mt-8">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center">
+                <Icon name="users" size={16} className="text-violet-600" />
+              </div>
+              <div>
+                <h3 className="text-sm md:text-base font-bold text-slate-900">Need help choosing?</h3>
+                <p className="text-[0.62rem] md:text-xs text-slate-500">Talk to a verified professional</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              {PLATFORM_TO_ADVISORS[b.platform_type]!.map((advisor) => (
+                <Link
+                  key={advisor.type}
+                  href={`/advisors?type=${advisor.type}`}
+                  className="flex items-center gap-3 p-3 bg-white border border-violet-100 rounded-lg hover:border-violet-300 hover:shadow-sm transition-all group"
+                >
+                  <div className="w-10 h-10 rounded-full bg-violet-100 flex items-center justify-center shrink-0 group-hover:bg-violet-200 transition-colors">
+                    <Icon name="user" size={18} className="text-violet-600" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs md:text-sm font-bold text-slate-900 group-hover:text-violet-700 transition-colors">{advisor.label}</div>
+                    <div className="text-[0.62rem] md:text-xs text-slate-500">{advisor.context}</div>
+                  </div>
+                  <svg className="w-4 h-4 text-slate-300 group-hover:text-violet-500 transition-colors shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                </Link>
+              ))}
+            </div>
+            <p className="text-[0.58rem] text-slate-400 mt-2.5">Free consultation requests. No obligation.</p>
+          </div>
         )}
 
         {/* Bottom CTA */}

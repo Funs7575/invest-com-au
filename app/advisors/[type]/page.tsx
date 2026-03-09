@@ -101,6 +101,129 @@ const TYPE_FAQS: Record<string, { q: string; a: string }[]> = {
   ],
 };
 
+const TYPE_EDITORIAL: Record<string, { howToChoose: string[]; costGuide: string; industryInsight: string }> = {
+  "smsf-accountants": {
+    howToChoose: [
+      "Verify they're a registered SMSF auditor or work with one — your fund needs an independent audit annually",
+      "Ask about their experience with your investment types (property in SMSF, crypto, international shares)",
+      "Check they use cloud-based SMSF software (Class Super, BGL) for real-time reporting",
+      "Confirm their fee includes all compliance work: annual return, audit coordination, and ATO lodgement",
+    ],
+    costGuide: "SMSF accountants typically charge $1,500–$5,000/year for ongoing compliance and administration. Setup fees range from $1,000–$3,000. Funds under $200k may find an SMSF isn't cost-effective due to fixed fees.",
+    industryInsight: "The ATO has been increasing scrutiny on SMSF compliance since 2024, with a focus on in-house asset rules and related party transactions. A specialist accountant significantly reduces your risk of penalties.",
+  },
+  "financial-planners": {
+    howToChoose: [
+      "Check they're listed on the ASIC Financial Advisers Register and hold a current authorisation",
+      "Ask whether they're fee-for-service or commission-based — fee-only planners have fewer conflicts of interest",
+      "Look for relevant credentials: CFP (Certified Financial Planner) is the gold standard in Australia",
+      "Request a sample Statement of Advice (SOA) to understand their advice quality and style",
+    ],
+    costGuide: "A Statement of Advice (SOA) typically costs $2,500–$5,500. Ongoing advice retainers range from $2,000–$8,000/year. Some planners offer initial consultations for free or $200–$500.",
+    industryInsight: "Following the Hayne Royal Commission, Australian financial planning has shifted heavily toward fee-for-service models. The number of licensed advisers dropped 40% since 2019, making qualified planners more in-demand than ever.",
+  },
+  "property-advisors": {
+    howToChoose: [
+      "Ensure they're independent and don't earn commissions from property developers or agents",
+      "Ask about their modelling approach — good advisors run cash flow projections over 10+ years",
+      "Check if they can advise on SMSF property purchases if relevant to your situation",
+      "Look for advisors who consider your entire financial picture, not just property in isolation",
+    ],
+    costGuide: "Fee-for-service property advisors charge $2,000–$5,000 for a comprehensive property strategy. Be cautious of 'free' advice from advisors who earn developer commissions — this creates significant conflicts of interest.",
+    industryInsight: "With Australian property prices at record highs in most capitals, independent property advice has become critical. Quality advisors help you avoid overpaying and ensure property fits your overall investment strategy.",
+  },
+  "tax-agents": {
+    howToChoose: [
+      "Verify they're registered with the Tax Practitioners Board (TPB) — this is a legal requirement",
+      "Ask about their experience with investment-specific tax: CGT, crypto, international income, trusts",
+      "Check if they use cloud accounting software that integrates with your broker's tax reports",
+      "Confirm they can handle your specific needs: are they just lodging returns, or providing strategic tax advice?",
+    ],
+    costGuide: "Investment tax returns typically cost $300–$800. Complex returns with crypto, property, and international holdings can be $800–$2,000+. Strategic tax planning advice is usually $1,000–$3,000 for a comprehensive review.",
+    industryInsight: "The ATO has significantly increased its data matching for share trading, crypto, and property transactions. Having a specialist tax agent ensures you claim all legitimate deductions while staying compliant.",
+  },
+  "mortgage-brokers": {
+    howToChoose: [
+      "Ask how many lenders they compare — good brokers access 20-40+ lenders on their panel",
+      "Check if they specialise in investment property lending, which has different requirements from owner-occupier loans",
+      "Ask about their trail commission disclosure — transparency about how they're paid builds trust",
+      "Look for brokers who explain the 'why' behind their recommendations, not just the rate",
+    ],
+    costGuide: "Most mortgage brokers don't charge borrowers directly — they earn commissions from lenders (typically 0.5–0.7% upfront + 0.15% trail). Some charge $1,000–$3,000 for complex scenarios like commercial lending.",
+    industryInsight: "Mortgage brokers now write over 70% of all Australian home loans. The best-interest duty introduced in 2021 requires brokers to demonstrate why their recommendation suits your circumstances.",
+  },
+  "estate-planners": {
+    howToChoose: [
+      "Ensure they specialise in estate planning, not just general law — estate law is complex and state-specific",
+      "Ask about their experience with superannuation death benefit nominations and binding nominations",
+      "Check if they coordinate with your financial planner and accountant for a comprehensive approach",
+      "Look for practitioners who review and update plans regularly, not just set-and-forget",
+    ],
+    costGuide: "A basic will costs $500–$1,500. Comprehensive estate planning with testamentary trusts, powers of attorney, and succession planning can be $3,000–$10,000+. Annual reviews are typically $500–$1,000.",
+    industryInsight: "With $3.5 trillion expected to transfer between generations in Australia over the next 20 years, estate planning has become essential. Poorly structured estates can lose 30%+ to tax and disputes.",
+  },
+  "insurance-brokers": {
+    howToChoose: [
+      "Check they compare policies across multiple insurers — not just one or two preferred partners",
+      "Ask about their claims experience: a good broker advocates for you during the claims process",
+      "Ensure they conduct a thorough needs analysis before recommending cover levels",
+      "Look for brokers who provide annual reviews to ensure your cover keeps pace with your life changes",
+    ],
+    costGuide: "Most insurance brokers earn commissions from insurers (typically 20-30% of first-year premium). Fee-for-service brokers charge $500–$2,000 for comprehensive advice. Some offer hybrid models.",
+    industryInsight: "Australia is significantly underinsured — the average life insurance gap is over $500,000 per household. Quality insurance advice can mean the difference between financial security and hardship if the unexpected happens.",
+  },
+  "buyers-agents": {
+    howToChoose: [
+      "Verify they hold a real estate licence in the state where you're purchasing — this is a legal requirement",
+      "Ask about their fee structure: fixed fee, percentage of purchase price, or retainer plus success fee",
+      "Check their track record: ask for recent comparable purchases and savings negotiated",
+      "Ensure they have access to off-market properties and developer relationships in your target area",
+    ],
+    costGuide: "Buyers agents typically charge 1.5–3% of the purchase price, or a fixed fee of $10,000–$25,000. Some charge a retainer ($2,000–$5,000) plus a success fee. For a $800k property, expect $12,000–$24,000.",
+    industryInsight: "Buyers agents have grown rapidly in Australia, now representing over 10% of all residential property transactions in major cities. They're particularly valuable in competitive markets where off-market access gives a significant advantage.",
+  },
+  "wealth-managers": {
+    howToChoose: [
+      "Verify they hold an AFSL and have experience managing portfolios of your size and complexity",
+      "Understand their fee structure: AUM-based (0.5–1.5%), fixed fee, or hybrid — and what's included",
+      "Ask about their investment philosophy and how they construct portfolios",
+      "Check if they provide integrated services (tax, estate, insurance) or coordinate with your other advisors",
+    ],
+    costGuide: "Wealth managers typically charge 0.5–1.5% of assets under management annually. On a $1M portfolio, that's $5,000–$15,000/year. Some also charge performance fees or minimum engagement fees of $5,000–$10,000.",
+    industryInsight: "The Australian wealth management industry manages over $4 trillion in assets. The trend is toward comprehensive, goals-based advice rather than just investment management — the best wealth managers integrate tax, estate, and insurance planning.",
+  },
+  "aged-care-advisors": {
+    howToChoose: [
+      "Look for advisors with specific aged care accreditation or significant experience in the sector",
+      "Ask about their knowledge of means testing, RADs (Refundable Accommodation Deposits), and DAPs",
+      "Check if they can coordinate with Centrelink and My Aged Care on your behalf",
+      "Ensure they consider the financial impact on the broader family, not just the person entering care",
+    ],
+    costGuide: "Aged care financial advice typically costs $2,000–$5,000 for a comprehensive plan. This covers accommodation analysis, means testing optimisation, and asset restructuring. Early planning can save $50,000+ in accommodation costs.",
+    industryInsight: "With Australia's ageing population, aged care planning has become one of the fastest-growing advice areas. The 2024 aged care reforms have made specialist advice more important than ever for navigating the new funding models.",
+  },
+  "crypto-advisors": {
+    howToChoose: [
+      "Verify they hold an AFSL or are an authorised representative — crypto advice without a licence is illegal in Australia",
+      "Ask about their personal crypto experience and knowledge of DeFi, staking, and different blockchain ecosystems",
+      "Check they understand Australian crypto tax rules: CGT events, cost base tracking, and DeFi income classification",
+      "Look for advisors who integrate crypto into your overall portfolio strategy, not just crypto-only advice",
+    ],
+    costGuide: "Crypto advisory fees range from $2,000–$5,000 for initial portfolio strategy. Ongoing management or advice retainers cost $1,500–$4,000/year. Tax preparation for complex crypto portfolios is typically $800–$2,000+.",
+    industryInsight: "Australia is one of the leading crypto-adopting nations, with over 25% of adults holding digital assets. As regulations tighten, having a licensed crypto advisor ensures your portfolio complies with evolving ASIC and ATO requirements.",
+  },
+  "debt-counsellors": {
+    howToChoose: [
+      "Start with free services: the National Debt Helpline (1800 007 007) provides free, independent financial counselling",
+      "If using a private service, verify they're accredited with the Financial Counselling Association of Australia",
+      "Be wary of debt management companies that charge large upfront fees — reputable counsellors are affordable or free",
+      "Ask about their experience with your specific type of debt: credit cards, personal loans, investment losses, or ATO debts",
+    ],
+    costGuide: "Financial counselling through not-for-profit services is free. Private debt management services range from $500–$3,000 depending on complexity. Avoid services charging percentage-based fees on your total debt — this is a red flag.",
+    industryInsight: "Australian household debt-to-income ratio is among the highest globally at over 180%. Rising interest rates have increased demand for debt counselling services, with the National Debt Helpline reporting record call volumes.",
+  },
+};
+
 export function generateStaticParams() {
   return Object.keys(SLUG_TO_TYPE).map((type) => ({ type }));
 }
@@ -166,6 +289,7 @@ export default async function AdvisorTypePage({ params }: { params: Promise<{ ty
         pageTitle={`${label}s in Australia`}
         pageDescription={TYPE_DESCRIPTIONS[typeSlug]}
         faqs={faqs}
+        editorial={TYPE_EDITORIAL[typeSlug]}
       />
     </>
   );

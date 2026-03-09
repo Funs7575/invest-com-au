@@ -135,7 +135,7 @@ export default function AdminCampaignsPage() {
             link: "/broker-portal/campaigns",
             send_email: true,
           }),
-        }).catch(() => {});
+        }).catch((err) => console.error("[campaigns] Campaign notification failed:", err));
       });
     }
 
