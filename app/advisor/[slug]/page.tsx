@@ -51,15 +51,17 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
 
   if (!pro) notFound();
 
-  // Get similar advisors and approved reviews in parallel — gracefully handle missing tables
+  // Get similar advisors, reviews, and firm team in parallel
   let similar: Professional[] = [];
   let reviews: import("@/lib/types").ProfessionalReview[] = [];
+  let teamMembers: Professional[] = [];
+  let firm: import("@/lib/types").AdvisorFirm | null = null;
 
   try {
-    const [similarResult, reviewsResult] = await Promise.all([
+    const queries: PromiseLike<unknown>[] = [
       supabase
         .from("professionals")
-        .select("id, name, slug, firm_name, type, location_display, rating, review_count, fee_description, verified, specialties, photo_url")
+        .select("id, name, slug, firm_name, type, location_display, rating, review_count, fee_description, verified, specialties, photo_url, account_type, hourly_rate_cents, flat_fee_cents, aum_percentage, initial_consultation_free")
         .eq("status", "active")
         .eq("type", pro.type)
         .neq("slug", slug)
@@ -72,11 +74,35 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
         .eq("status", "approved")
         .order("created_at", { ascending: false })
         .limit(20),
-    ]);
-    similar = (similarResult.data as Professional[]) || [];
-    reviews = (reviewsResult.data as import("@/lib/types").ProfessionalReview[]) || [];
+    ];
+
+    // If advisor is part of a firm, fetch team members and firm info
+    if (pro.firm_id) {
+      queries.push(
+        supabase
+          .from("professionals")
+          .select("id, name, slug, type, photo_url, rating, review_count, specialties, fee_description, hourly_rate_cents, flat_fee_cents, aum_percentage, is_firm_admin")
+          .eq("firm_id", pro.firm_id)
+          .eq("status", "active")
+          .neq("id", pro.id)
+          .order("is_firm_admin", { ascending: false }),
+        supabase
+          .from("advisor_firms")
+          .select("*")
+          .eq("id", pro.firm_id)
+          .single()
+      );
+    }
+
+    const results = await Promise.all(queries);
+    similar = ((results[0] as { data: Professional[] | null }).data as Professional[]) || [];
+    reviews = ((results[1] as { data: import("@/lib/types").ProfessionalReview[] | null }).data as import("@/lib/types").ProfessionalReview[]) || [];
+    if (pro.firm_id && results.length > 2) {
+      teamMembers = ((results[2] as { data: Professional[] | null }).data as Professional[]) || [];
+      firm = ((results[3] as { data: import("@/lib/types").AdvisorFirm | null }).data as import("@/lib/types").AdvisorFirm) || null;
+    }
   } catch {
-    // Secondary queries failed (e.g. missing table) — continue with defaults
+    // Secondary queries failed — continue with defaults
   }
 
   // Increment daily profile view counter (fire-and-forget)
@@ -138,7 +164,7 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personLd) }} />
       {localBusinessLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessLd) }} />}
-      <AdvisorProfileClient professional={pro as Professional} similar={similar} reviews={reviews} />
+      <AdvisorProfileClient professional={pro as Professional} similar={similar} reviews={reviews} teamMembers={teamMembers} firm={firm} />
     </>
   );
 }

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import type { Professional, ProfessionalReview } from "@/lib/types";
+import type { Professional, ProfessionalReview, AdvisorFirm } from "@/lib/types";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 import Icon from "@/components/Icon";
 import BookingWidget from "@/components/BookingWidget";
@@ -82,7 +82,7 @@ function BioSection({ name, bio }: { name: string; bio: string }) {
   );
 }
 
-export default function AdvisorProfileClient({ professional: pro, similar, reviews = [] }: { professional: Professional; similar: Professional[]; reviews?: ProfessionalReview[] }) {
+export default function AdvisorProfileClient({ professional: pro, similar, reviews = [], teamMembers = [], firm }: { professional: Professional; similar: Professional[]; reviews?: ProfessionalReview[]; teamMembers?: Professional[]; firm?: AdvisorFirm | null }) {
   const [formState, setFormState] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [formError, setFormError] = useState("");
   const [name, setName] = useState("");
@@ -197,6 +197,63 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
           </div>
           </div>
         </div>
+
+        {/* Firm / Independent badge */}
+        {firm && pro.account_type === "firm_member" ? (
+          <div className="bg-gradient-to-br from-blue-50 to-white border border-blue-200 rounded-xl p-4 md:p-5 mb-4 md:mb-6">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-lg bg-blue-100 flex items-center justify-center shrink-0">
+                <Icon name="building" size={20} className="text-blue-600" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-0.5">
+                  <Link href={`/firm/${firm.slug}`} className="text-sm md:text-base font-bold text-slate-900 hover:text-blue-700 transition-colors">
+                    {firm.name}
+                  </Link>
+                  {pro.is_firm_admin && (
+                    <span className="text-[0.56rem] font-bold px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded-full">Principal</span>
+                  )}
+                </div>
+                {firm.bio && <p className="text-[0.62rem] md:text-xs text-slate-500 line-clamp-2">{firm.bio}</p>}
+                <div className="flex items-center gap-3 mt-1.5 flex-wrap">
+                  {firm.afsl_number && <span className="text-[0.56rem] text-slate-400">AFSL {firm.afsl_number}</span>}
+                  {firm.abn && <span className="text-[0.56rem] text-slate-400">ABN {firm.abn}</span>}
+                  <span className="text-[0.56rem] font-semibold text-blue-600">{teamMembers.length + 1} team member{teamMembers.length > 0 ? "s" : ""}</span>
+                  <Link href={`/firm/${firm.slug}`} className="text-[0.56rem] font-semibold text-blue-600 hover:text-blue-800">View firm profile →</Link>
+                </div>
+              </div>
+            </div>
+            {/* Team members preview */}
+            {teamMembers.length > 0 && (
+              <div className="mt-3 pt-3 border-t border-blue-100">
+                <p className="text-[0.56rem] font-bold text-slate-500 uppercase tracking-wider mb-2">Other team members</p>
+                <div className="flex gap-2 overflow-x-auto pb-1">
+                  {teamMembers.map(m => (
+                    <Link key={m.id} href={`/advisor/${m.slug}`} className="shrink-0 flex items-center gap-2 px-3 py-2 bg-white border border-slate-200 rounded-lg hover:border-blue-300 hover:shadow-sm transition-all">
+                      {m.photo_url ? (
+                        <img src={m.photo_url} alt={m.name} className="w-7 h-7 rounded-full object-cover" />
+                      ) : (
+                        <div className="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center text-[0.5rem] font-bold text-slate-500">
+                          {m.name.split(" ").map(n => n[0]).join("")}
+                        </div>
+                      )}
+                      <div>
+                        <div className="text-[0.62rem] font-semibold text-slate-800">{m.name}</div>
+                        <div className="text-[0.5rem] text-slate-400">{PROFESSIONAL_TYPE_LABELS[m.type as keyof typeof PROFESSIONAL_TYPE_LABELS]}</div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        ) : !pro.firm_name && (
+          <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg mb-4 md:mb-6">
+            <Icon name="user" size={14} className="text-slate-500" />
+            <span className="text-[0.62rem] md:text-xs font-semibold text-slate-600">Independent Advisor</span>
+            <span className="text-[0.56rem] md:text-[0.62rem] text-slate-400">— Not aligned to any product provider or dealer group</span>
+          </div>
+        )}
 
         {/* Quick facts grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 mb-4 md:mb-6">

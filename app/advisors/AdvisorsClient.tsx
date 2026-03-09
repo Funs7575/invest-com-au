@@ -567,9 +567,21 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                         </span>
                       )}
                     </div>
-                    {pro.firm_name && <div className="text-[0.65rem] md:text-xs text-slate-500 truncate">{pro.firm_name}</div>}
+                    {pro.firm_name && (
+                      <div className="text-[0.65rem] md:text-xs text-slate-500 truncate flex items-center gap-1.5">
+                        <Icon name="building" size={11} className="text-slate-400 shrink-0" />
+                        {pro.firm_name}
+                      </div>
+                    )}
                     <div className="flex items-center gap-2 mt-1 flex-wrap">
                       <span className="text-[0.62rem] md:text-xs text-violet-600 bg-violet-50 px-2 py-0.5 rounded-full font-medium">{PROFESSIONAL_TYPE_LABELS[pro.type]}</span>
+                      {pro.account_type === "firm_member" ? (
+                        <span className="text-[0.56rem] md:text-[0.62rem] font-semibold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
+                          <Icon name="users" size={10} className="text-blue-400" />Firm
+                        </span>
+                      ) : !pro.firm_name ? (
+                        <span className="text-[0.56rem] md:text-[0.62rem] font-semibold text-slate-500 bg-slate-50 px-1.5 py-0.5 rounded-full">Independent</span>
+                      ) : null}
                       {pro.location_display && (
                         <span className="text-[0.62rem] md:text-xs text-slate-400 flex items-center gap-0.5">
                           <Icon name="map-pin" size={11} className="text-slate-300" />{pro.location_display}
