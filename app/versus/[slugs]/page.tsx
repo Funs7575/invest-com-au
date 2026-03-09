@@ -261,7 +261,7 @@ export default async function VersusSlugPage({
                   ratingValue: b.rating,
                   bestRating: 5,
                   worstRating: 1,
-                  reviewCount: b.review_count || 1,
+                  reviewCount: 1,
                 },
               }
             : {}),
