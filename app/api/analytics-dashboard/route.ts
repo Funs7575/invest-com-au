@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
   const authHeader = req.headers.get("authorization");
   const token = authHeader?.replace("Bearer ", "");
   if (token !== process.env.CRON_SECRET && !req.headers.get("cookie")?.includes("sb-")) {
-    // Allow if coming from the site (has Supabase session cookie) or has cron token
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const supabase = createClient(

@@ -1080,7 +1080,7 @@ export default function QuizPage() {
             <div className="flex items-center justify-center gap-2 md:gap-3">
               {/* Twitter/X */}
               <a
-                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`I just found ${results[0]?.broker?.name || "my top platform"} as my best investing platform match on @InvestComAu! Take the quiz:`)}&url=${encodeURIComponent(typeof window !== "undefined" ? window.location.origin + "/quiz" : "https://invest-com-au.vercel.app/quiz")}`}
+                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`I just found ${results[0]?.broker?.name || "my top platform"} as my best investing platform match on @InvestComAu! Take the quiz:`)}&url=${encodeURIComponent(typeof window !== "undefined" ? window.location.origin + "/quiz" : "https://invest.com.au/quiz")}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-lg bg-slate-900 hover:bg-slate-700 flex items-center justify-center transition-colors"
@@ -1090,7 +1090,7 @@ export default function QuizPage() {
               </a>
               {/* WhatsApp */}
               <a
-                href={`https://wa.me/?text=${encodeURIComponent(`I just matched with ${results[0]?.broker?.name || "a top platform"} on Invest.com.au! Try the quiz: ${typeof window !== "undefined" ? window.location.origin + "/quiz" : "https://invest-com-au.vercel.app/quiz"}`)}`}
+                href={`https://wa.me/?text=${encodeURIComponent(`I just matched with ${results[0]?.broker?.name || "a top platform"} on Invest.com.au! Try the quiz: ${typeof window !== "undefined" ? window.location.origin + "/quiz" : "https://invest.com.au/quiz"}`)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-lg bg-emerald-500 hover:bg-emerald-600 flex items-center justify-center transition-colors"

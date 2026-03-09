@@ -336,7 +336,7 @@ export default function BrokerReviewClient({
             <Icon name="share-2" size={12} className="inline mr-1" />Copy Link
           </button>
           <a
-            href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`${b.name} Review — ${b.rating}/5 on Invest.com.au`)}&url=${encodeURIComponent(`https://invest-com-au.vercel.app/broker/${b.slug}`)}`}
+            href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`${b.name} Review — ${b.rating}/5 on Invest.com.au`)}&url=${encodeURIComponent(`${typeof window !== 'undefined' ? window.location.origin : 'https://invest.com.au'}/broker/${b.slug}`)}`}
             target="_blank"
             rel="noopener noreferrer"
             className="text-[0.62rem] px-2 py-1 border border-slate-200 rounded-md text-slate-500 hover:bg-slate-50 transition-colors"
