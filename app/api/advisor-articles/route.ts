@@ -14,7 +14,7 @@ async function logMod(supabase: Awaited<ReturnType<typeof createClient>>, articl
 
 async function sendEmail(to: string, subject: string, html: string) {
   if (!process.env.RESEND_API_KEY || !to) return;
-  await fetch("https://api.resend.com/emails", { method: "POST", headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" }, body: JSON.stringify({ from: "Invest.com.au <articles@invest.com.au>", to, subject, html }) }).catch(() => {});
+  await fetch("https://api.resend.com/emails", { method: "POST", headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" }, body: JSON.stringify({ from: "Invest.com.au <articles@invest.com.au>", to, subject, html }) }).catch((err) => console.error("[advisor-articles] email failed:", err));
 }
 
 function wrap(title: string, body: string, cta?: string, url?: string, email?: string) {
