@@ -17,7 +17,7 @@ export const revalidate = 3600;
 
 const pageTitle = `How-To Investing Guides for Australians (${CURRENT_YEAR})`;
 const pageDescription =
-  "Step-by-step investing guides for Australians. Learn how to buy shares, Bitcoin, ETFs, open a brokerage account, and start investing from scratch.";
+  "Step-by-step investing guides for Australians. Learn how to buy shares, ETFs, Bitcoin, cryptocurrency, set up an SMSF, claim franking credits, invest in property, and more.";
 
 export const metadata: Metadata = {
   title: `${pageTitle} | ${SITE_NAME}`,
@@ -40,11 +40,16 @@ export const metadata: Metadata = {
 };
 
 const GUIDE_ICONS: Record<string, string> = {
-  "how-to-buy-shares": "trending-up",
-  "how-to-buy-bitcoin": "bitcoin",
-  "how-to-buy-etfs": "pie-chart",
-  "how-to-open-brokerage-account": "user-plus",
-  "how-to-start-investing": "target",
+  "buy-shares": "trending-up",
+  "buy-bitcoin": "bitcoin",
+  "buy-etfs": "pie-chart",
+  "open-brokerage-account": "user-plus",
+  "start-investing": "target",
+  "buy-vanguard-etfs": "bar-chart-2",
+  "set-up-smsf": "shield",
+  "claim-franking-credits": "dollar-sign",
+  "buy-cryptocurrency": "cpu",
+  "invest-in-property": "home",
 };
 
 export default function HowToHubPage() {

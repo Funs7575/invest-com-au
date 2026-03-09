@@ -943,8 +943,12 @@ export interface ProfessionalReview {
   id: number;
   professional_id: number;
   reviewer_name: string;
-  reviewer_email: string;
+  reviewer_email?: string;
   rating: number;
+  communication_rating?: number;
+  expertise_rating?: number;
+  value_for_money_rating?: number;
+  used_services?: boolean;
   title?: string;
   body: string;
   verified: boolean;

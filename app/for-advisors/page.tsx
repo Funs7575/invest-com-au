@@ -33,7 +33,7 @@ export default async function ForAdvisorsPage() {
             Put your practice in front of them.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link href="/advisor-apply" className="px-8 py-4 bg-white text-violet-700 font-bold rounded-xl text-lg hover:bg-violet-50 transition-all shadow-lg">
+            <Link href="/advisor-signup" className="px-8 py-4 bg-white text-violet-700 font-bold rounded-xl text-lg hover:bg-violet-50 transition-all shadow-lg">
               Apply Now — It&apos;s Free to Start
             </Link>
             <a href="#pricing" className="px-8 py-4 border-2 border-white/30 text-white font-bold rounded-xl text-lg hover:bg-white/10 transition-all">
@@ -105,7 +105,7 @@ export default async function ForAdvisorsPage() {
                   <li key={f} className="flex items-center gap-2 text-sm text-slate-700"><span className="text-emerald-500">✓</span>{f}</li>
                 ))}
               </ul>
-              <Link href="/advisor-apply" className="block w-full text-center py-3 border border-slate-300 text-slate-700 font-bold rounded-xl hover:bg-slate-50 text-sm">
+              <Link href="/advisor-signup" className="block w-full text-center py-3 border border-slate-300 text-slate-700 font-bold rounded-xl hover:bg-slate-50 text-sm">
                 Start Free Trial
               </Link>
             </div>
@@ -121,7 +121,7 @@ export default async function ForAdvisorsPage() {
                   <li key={f} className="flex items-center gap-2 text-sm text-slate-700"><span className="text-violet-500">✓</span>{f}</li>
                 ))}
               </ul>
-              <Link href="/advisor-apply" className="block w-full text-center py-3 bg-violet-600 text-white font-bold rounded-xl hover:bg-violet-700 text-sm">
+              <Link href="/advisor-signup" className="block w-full text-center py-3 bg-violet-600 text-white font-bold rounded-xl hover:bg-violet-700 text-sm">
                 Get Started
               </Link>
             </div>
@@ -136,7 +136,7 @@ export default async function ForAdvisorsPage() {
                   <li key={f} className="flex items-center gap-2 text-sm text-slate-700"><span className="text-emerald-500">✓</span>{f}</li>
                 ))}
               </ul>
-              <Link href="/advisor-apply" className="block w-full text-center py-3 border border-slate-300 text-slate-700 font-bold rounded-xl hover:bg-slate-50 text-sm">
+              <Link href="/advisor-signup" className="block w-full text-center py-3 border border-slate-300 text-slate-700 font-bold rounded-xl hover:bg-slate-50 text-sm">
                 Learn More
               </Link>
             </div>
@@ -228,7 +228,7 @@ export default async function ForAdvisorsPage() {
         <div className="max-w-2xl mx-auto">
           <h2 className="text-2xl md:text-4xl font-extrabold mb-4">Ready to Grow Your Practice?</h2>
           <p className="text-violet-200 text-lg mb-8">Join {advisorCount || 8}+ advisors already listed. Start with 3 free leads — no credit card required.</p>
-          <Link href="/advisor-apply" className="inline-block px-10 py-4 bg-white text-violet-700 font-bold rounded-xl text-lg hover:bg-violet-50 transition-all shadow-lg">
+          <Link href="/advisor-signup" className="inline-block px-10 py-4 bg-white text-violet-700 font-bold rounded-xl text-lg hover:bg-violet-50 transition-all shadow-lg">
             Apply Now — Free to Start →
           </Link>
         </div>
