@@ -4,9 +4,16 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import AdminShell from "@/components/AdminShell";
 import Link from "next/link";
-import CountUp from "@/components/CountUp";
-import Sparkline from "@/components/Sparkline";
 import PageWalkthrough from "@/components/PageWalkthrough";
+
+import AdminKpiCards from "./_components/AdminKpiCards";
+import AdminClickChart from "./_components/AdminClickChart";
+import AdminDataQuality from "./_components/AdminDataQuality";
+import AdminActivityFeed from "./_components/AdminActivityFeed";
+import AdminRevenueForecast from "./_components/AdminRevenueForecast";
+import AdminBottomGrid from "./_components/AdminBottomGrid";
+import AdminPendingActions from "./_components/AdminPendingActions";
+import AdminTopPagesAdvisor from "./_components/AdminTopPagesAdvisor";
 
 const ADMIN_DASHBOARD_WALKTHROUGH = [
   { target: "#admin-kpis", title: "Site Overview", description: "Key performance metrics at a glance — brokers, articles, clicks, marketplace revenue, and Pro members. Click any card to jump to its detail page.", position: "bottom" as const },
@@ -85,6 +92,18 @@ const SPARKLINE_COLORS: Record<string, string> = {
   emerald: "#10b981",
   rose: "#f43f5e",
   indigo: "#6366f1",
+};
+
+const COLOR_MAP: Record<string, string> = {
+  blue: "bg-blue-50 text-blue-600 border-blue-200",
+  green: "bg-emerald-50 text-emerald-600 border-emerald-200",
+  purple: "bg-purple-50 text-purple-600 border-purple-200",
+  amber: "bg-amber-50 text-amber-600 border-amber-200",
+  red: "bg-red-50 text-red-600 border-red-200",
+  cyan: "bg-cyan-50 text-cyan-600 border-cyan-200",
+  emerald: "bg-emerald-50 text-emerald-600 border-emerald-200",
+  rose: "bg-rose-50 text-rose-600 border-rose-200",
+  indigo: "bg-indigo-50 text-indigo-600 border-indigo-200",
 };
 
 export default function AdminDashboard() {
@@ -507,10 +526,6 @@ export default function AdminDashboard() {
   const prev7Total = prev7Sparkline.reduce((s, v) => s + v, 0);
   const clickTrend = prev7Total > 0 ? Math.round(((last7Total - prev7Total) / prev7Total) * 100) : 0;
 
-  // Chart dimensions
-  const chartHeight = 120;
-  const chartWidth = 100; // percentage-based via SVG viewBox
-
   const cards = [
     { label: "Brokers", value: stats?.brokers || 0, href: "/admin/brokers", color: "blue", icon: "🏦" },
     { label: "Articles", value: stats?.articles || 0, href: "/admin/articles", color: "green", icon: "📝" },
@@ -523,21 +538,6 @@ export default function AdminDashboard() {
     { label: "Advisors", value: stats?.advisors || 0, href: "/admin/advisors", color: "violet", icon: "👤" },
     { label: "Advisor Leads", value: stats?.advisorLeads || 0, href: "/admin/advisors", color: "fuchsia", icon: "📨" },
   ];
-
-  const colorMap: Record<string, string> = {
-    blue: "bg-blue-50 text-blue-600 border-blue-200",
-    green: "bg-emerald-50 text-emerald-600 border-emerald-200",
-    purple: "bg-purple-50 text-purple-600 border-purple-200",
-    amber: "bg-amber-50 text-amber-600 border-amber-200",
-    red: "bg-red-50 text-red-600 border-red-200",
-    cyan: "bg-cyan-50 text-cyan-600 border-cyan-200",
-    emerald: "bg-emerald-50 text-emerald-600 border-emerald-200",
-    rose: "bg-rose-50 text-rose-600 border-rose-200",
-    indigo: "bg-indigo-50 text-indigo-600 border-indigo-200",
-  };
-
-  // Chart bar max
-  const chartMax = Math.max(...dailyClicks.map((d) => d.count), 1);
 
   return (
     <AdminShell>
@@ -607,620 +607,44 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* Pending Actions — unified view of everything needing admin attention */}
-      {!loading && (pendingItems.articles + pendingItems.reviews + pendingItems.switchStories + pendingItems.disputes + pendingItems.applications + pendingItems.feeChanges) > 0 && (
-        <div className="mb-6 bg-gradient-to-r from-violet-50 to-white border border-violet-200 rounded-xl p-4">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="text-sm">📋</span>
-            <h2 className="text-sm font-bold text-slate-900">Pending Actions</h2>
-            <span className="text-[0.56rem] bg-violet-100 text-violet-700 font-bold px-2 py-0.5 rounded-full">
-              {pendingItems.articles + pendingItems.reviews + pendingItems.switchStories + pendingItems.disputes + pendingItems.applications + pendingItems.feeChanges} items
-            </span>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
-            {pendingItems.articles > 0 && (
-              <Link href="/admin/advisor-articles" className="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-slate-200 hover:border-violet-300 hover:shadow-sm transition-all">
-                <span className="text-lg">📰</span>
-                <div>
-                  <div className="text-xs font-bold text-slate-900">{pendingItems.articles} Article{pendingItems.articles !== 1 ? "s" : ""}</div>
-                  <div className="text-[0.56rem] text-slate-500">to review</div>
-                </div>
-              </Link>
-            )}
-            {pendingItems.reviews > 0 && (
-              <Link href="/admin/user-reviews" className="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-slate-200 hover:border-violet-300 hover:shadow-sm transition-all">
-                <span className="text-lg">⭐</span>
-                <div>
-                  <div className="text-xs font-bold text-slate-900">{pendingItems.reviews} Review{pendingItems.reviews !== 1 ? "s" : ""}</div>
-                  <div className="text-[0.56rem] text-slate-500">to moderate</div>
-                </div>
-              </Link>
-            )}
-            {pendingItems.switchStories > 0 && (
-              <Link href="/admin/switch-stories" className="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-slate-200 hover:border-violet-300 hover:shadow-sm transition-all">
-                <span className="text-lg">🔄</span>
-                <div>
-                  <div className="text-xs font-bold text-slate-900">{pendingItems.switchStories} Stor{pendingItems.switchStories !== 1 ? "ies" : "y"}</div>
-                  <div className="text-[0.56rem] text-slate-500">to moderate</div>
-                </div>
-              </Link>
-            )}
-            {pendingItems.disputes > 0 && (
-              <Link href="/admin/advisors" className="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-red-200 hover:border-red-300 hover:shadow-sm transition-all bg-red-50/50">
-                <span className="text-lg">⚠️</span>
-                <div>
-                  <div className="text-xs font-bold text-red-800">{pendingItems.disputes} Dispute{pendingItems.disputes !== 1 ? "s" : ""}</div>
-                  <div className="text-[0.56rem] text-red-500">to resolve</div>
-                </div>
-              </Link>
-            )}
-            {pendingItems.applications > 0 && (
-              <Link href="/admin/advisors" className="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-slate-200 hover:border-violet-300 hover:shadow-sm transition-all">
-                <span className="text-lg">👤</span>
-                <div>
-                  <div className="text-xs font-bold text-slate-900">{pendingItems.applications} Application{pendingItems.applications !== 1 ? "s" : ""}</div>
-                  <div className="text-[0.56rem] text-slate-500">to review</div>
-                </div>
-              </Link>
-            )}
-            {pendingItems.feeChanges > 0 && (
-              <Link href="/admin/fee-queue" className="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-amber-200 hover:border-amber-300 hover:shadow-sm transition-all bg-amber-50/50">
-                <span className="text-lg">💰</span>
-                <div>
-                  <div className="text-xs font-bold text-amber-800">{pendingItems.feeChanges} Fee Change{pendingItems.feeChanges !== 1 ? "s" : ""}</div>
-                  <div className="text-[0.56rem] text-amber-600">to confirm</div>
-                </div>
-              </Link>
-            )}
-          </div>
-          {pendingItems.articlesList.length > 0 && (
-            <div className="mt-2 pt-2 border-t border-violet-100">
-              <div className="text-[0.56rem] text-slate-500 mb-1">Latest submitted articles:</div>
-              {pendingItems.articlesList.map(a => (
-                <div key={a.id} className="text-xs text-slate-700 truncate">• <strong>{a.title}</strong> by {a.author_name}</div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
+      {/* Pending Actions */}
+      {!loading && <AdminPendingActions pendingItems={pendingItems} />}
 
       {/* KPI Stat Cards */}
-      <div id="admin-kpis" className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {loading
-          ? Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="bg-white border border-slate-200 rounded-lg p-4 animate-pulse">
-                <div className="h-4 w-6 bg-slate-200 rounded mb-3" />
-                <div className="h-8 w-20 bg-slate-200 rounded mb-1" />
-                <div className="h-4 w-16 bg-slate-200 rounded" />
-              </div>
-            ))
-          : cards.map((card) => (
-              <Link
-                key={card.label}
-                href={card.href}
-                className={`bg-white border rounded-lg p-4 hover:shadow-md transition-all group ${colorMap[card.color]?.split(" ")[2] || "border-slate-200"}`}
-              >
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-lg">{card.icon}</span>
-                  {card.sparkline && card.sparkline.length > 1 && (
-                    <Sparkline
-                      data={card.sparkline}
-                      width={60}
-                      height={20}
-                      color={SPARKLINE_COLORS[card.color] || "#3b82f6"}
-                    />
-                  )}
-                </div>
-                <div className={`text-2xl font-bold ${colorMap[card.color]?.split(" ")[1] || "text-slate-900"}`}>
-                  <CountUp
-                    end={card.value}
-                    prefix={card.prefix || ""}
-                    decimals={card.decimals || 0}
-                    duration={1200}
-                  />
-                </div>
-                <div className="flex items-center gap-1.5 mt-0.5">
-                  <span className="text-xs text-slate-500">{card.label}</span>
-                  {card.trend !== undefined && card.trend !== 0 && (
-                    <span className={`text-[0.65rem] font-semibold ${card.trend > 0 ? "text-emerald-600" : "text-red-500"}`}>
-                      {card.trend > 0 ? "+" : ""}{card.trend}%
-                    </span>
-                  )}
-                </div>
-              </Link>
-            ))}
-      </div>
+      <AdminKpiCards loading={loading} cards={cards} colorMap={COLOR_MAP} sparklineColors={SPARKLINE_COLORS} />
 
       {/* Click Trend Chart */}
-      {!loading && dailyClicks.length > 0 && (
-        <div className="bg-white border border-slate-200 rounded-lg p-6 mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="text-lg font-semibold text-slate-900">Click Trend</h2>
-              <p className="text-xs text-slate-500">Last 14 days</p>
-            </div>
-            <Link href="/admin/analytics" className="text-xs text-amber-600 hover:text-amber-700">
-              Full Analytics →
-            </Link>
-          </div>
-          <div className="flex items-end gap-1" style={{ height: chartHeight }}>
-            {dailyClicks.map((d, i) => {
-              const barH = chartMax > 0 ? (d.count / chartMax) * (chartHeight - 20) : 0;
-              const isToday = d.date === new Date().toISOString().split("T")[0];
-              const isLastWeek = i < 7;
-              return (
-                <div
-                  key={d.date}
-                  className="flex-1 flex flex-col items-center justify-end group relative"
-                  style={{ height: chartHeight }}
-                >
-                  {/* Tooltip */}
-                  <div className="absolute -top-1 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[0.6rem] px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-10">
-                    {d.count} click{d.count !== 1 ? "s" : ""} · {new Date(d.date + "T12:00:00").toLocaleDateString("en-AU", { day: "numeric", month: "short" })}
-                  </div>
-                  <div
-                    className={`w-full rounded-t transition-colors ${
-                      isToday
-                        ? "bg-amber-500"
-                        : isLastWeek
-                        ? "bg-slate-200 group-hover:bg-slate-300"
-                        : "bg-amber-400/70 group-hover:bg-amber-500"
-                    }`}
-                    style={{ height: Math.max(barH, 2), minHeight: 2 }}
-                  />
-                  {/* Date label — show every other day */}
-                  {i % 2 === 0 && (
-                    <div className="text-[0.55rem] text-slate-400 mt-1 leading-none">
-                      {new Date(d.date + "T12:00:00").toLocaleDateString("en-AU", { day: "numeric", month: "short" })}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-          <div className="flex items-center gap-4 mt-3 text-[0.65rem] text-slate-500">
-            <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-slate-200 inline-block" /> Previous 7d</span>
-            <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-amber-400/70 inline-block" /> Last 7d</span>
-            <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-sm bg-amber-500 inline-block" /> Today</span>
-          </div>
-        </div>
-      )}
+      {!loading && dailyClicks.length > 0 && <AdminClickChart dailyClicks={dailyClicks} />}
 
       {/* Data Validation Warnings */}
-      {!loading && dataWarnings.length > 0 && (
-        <div className="bg-white border border-slate-200 rounded-lg p-6 mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="text-lg font-semibold text-slate-900">Data Quality</h2>
-              <p className="text-xs text-slate-500">{dataWarnings.length} issue{dataWarnings.length !== 1 ? "s" : ""} found</p>
-            </div>
-            <div className="flex items-center gap-1.5">
-              {dataWarnings.filter(w => w.severity === "error").length > 0 && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[0.6rem] font-semibold bg-red-50 text-red-700">
-                  {dataWarnings.filter(w => w.severity === "error").length} error{dataWarnings.filter(w => w.severity === "error").length !== 1 ? "s" : ""}
-                </span>
-              )}
-              {dataWarnings.filter(w => w.severity === "warning").length > 0 && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[0.6rem] font-semibold bg-amber-50 text-amber-700">
-                  {dataWarnings.filter(w => w.severity === "warning").length} warning{dataWarnings.filter(w => w.severity === "warning").length !== 1 ? "s" : ""}
-                </span>
-              )}
-              {dataWarnings.filter(w => w.severity === "info").length > 0 && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[0.6rem] font-semibold bg-blue-50 text-blue-700">
-                  {dataWarnings.filter(w => w.severity === "info").length} info
-                </span>
-              )}
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {dataWarnings.map((w, i) => (
-              <div
-                key={i}
-                className={`rounded-lg p-3 border ${
-                  w.severity === "error" ? "bg-red-50 border-red-200" :
-                  w.severity === "warning" ? "bg-amber-50 border-amber-200" :
-                  "bg-blue-50 border-blue-200"
-                }`}
-              >
-                <div className="flex items-start gap-2 mb-1">
-                  <span className="text-sm">{w.icon}</span>
-                  <div className="flex-1 min-w-0">
-                    <div className={`text-sm font-medium ${
-                      w.severity === "error" ? "text-red-800" :
-                      w.severity === "warning" ? "text-amber-800" :
-                      "text-blue-800"
-                    }`}>{w.title}</div>
-                    {w.items.length > 0 && (
-                      <div className="text-xs text-slate-500 mt-0.5 line-clamp-2">
-                        {w.items.join(", ")}
-                      </div>
-                    )}
-                  </div>
-                </div>
-                <Link
-                  href={w.href}
-                  className={`text-xs font-semibold mt-2 inline-block ${
-                    w.severity === "error" ? "text-red-600 hover:text-red-700" :
-                    w.severity === "warning" ? "text-amber-600 hover:text-amber-700" :
-                    "text-blue-600 hover:text-blue-700"
-                  }`}
-                >
-                  {w.actionLabel} →
-                </Link>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      {!loading && dataWarnings.length > 0 && <AdminDataQuality dataWarnings={dataWarnings} />}
 
       {/* Recent Activity Feed + Revenue Forecast */}
       {!loading && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-          {/* Activity Feed */}
-          <div className="bg-white border border-slate-200 rounded-lg p-6">
-            <h2 className="text-lg font-semibold text-slate-900 mb-4">Recent Activity</h2>
-            {activity.length === 0 ? (
-              <div className="text-center py-6">
-                <div className="text-3xl mb-2">📭</div>
-                <p className="text-sm text-slate-500">No activity yet</p>
-              </div>
-            ) : (
-              <div className="space-y-0.5">
-                {activity.map((item) => (
-                  <Link
-                    key={item.id}
-                    href={item.href}
-                    className="flex items-start gap-3 py-2 px-2 rounded-lg hover:bg-slate-50 transition-colors group"
-                  >
-                    <span className="text-base mt-0.5 shrink-0">{item.icon}</span>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-sm text-slate-900 group-hover:text-amber-700 truncate">{item.title}</div>
-                      <div className="text-xs text-slate-400 truncate">{item.detail}</div>
-                    </div>
-                    <div className="text-[0.6rem] text-slate-400 shrink-0 mt-1 whitespace-nowrap">
-                      {(() => {
-                        const diff = Date.now() - new Date(item.time).getTime();
-                        const mins = Math.floor(diff / 60000);
-                        if (mins < 1) return "just now";
-                        if (mins < 60) return `${mins}m ago`;
-                        const hrs = Math.floor(mins / 60);
-                        if (hrs < 24) return `${hrs}h ago`;
-                        const days = Math.floor(hrs / 24);
-                        return `${days}d ago`;
-                      })()}
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Revenue Forecast */}
-          <div className="bg-white border border-slate-200 rounded-lg p-6">
-            <h2 className="text-lg font-semibold text-slate-900 mb-4">Revenue Forecast</h2>
-            {revenueStats.length === 0 ? (
-              <div className="text-center py-6">
-                <div className="text-3xl mb-2">📉</div>
-                <p className="text-sm text-slate-500">No revenue data yet</p>
-                <p className="text-xs text-slate-400 mt-1">Set EPC values in Affiliate Links to enable forecasting</p>
-              </div>
-            ) : (() => {
-              const totalAffRev = revenueStats.reduce((s, r) => s + r.estimated_revenue, 0);
-              const totalClicks = revenueStats.reduce((s, r) => s + r.clicks, 0);
-              const avgEpc = totalClicks > 0 ? totalAffRev / totalClicks : 0;
-              const dailyAvgClicks = (stats?.clicks || 0) > 0 ? (stats?.clicks || 0) / 30 : 0;
-              const mktRev = stats?.marketplaceRevenue || 0;
-
-              const month30 = dailyAvgClicks * 30 * avgEpc + mktRev;
-              const month60 = dailyAvgClicks * 60 * avgEpc + mktRev * 2;
-              const month90 = dailyAvgClicks * 90 * avgEpc + mktRev * 3;
-              const annual = dailyAvgClicks * 365 * avgEpc + mktRev * 12;
-
-              const forecasts = [
-                { label: "30-Day", value: month30, color: "emerald" },
-                { label: "60-Day", value: month60, color: "emerald" },
-                { label: "90-Day", value: month90, color: "emerald" },
-                { label: "Annual", value: annual, color: "amber" },
-              ];
-
-              const maxForecast = annual || 1;
-
-              return (
-                <div className="space-y-4">
-                  {/* Key assumptions */}
-                  <div className="bg-slate-50 rounded-lg p-3 space-y-1">
-                    <div className="flex justify-between text-xs">
-                      <span className="text-slate-500">Avg. daily clicks</span>
-                      <span className="text-slate-700 font-medium">{dailyAvgClicks.toFixed(1)}</span>
-                    </div>
-                    <div className="flex justify-between text-xs">
-                      <span className="text-slate-500">Avg. EPC</span>
-                      <span className="text-slate-700 font-medium">${avgEpc.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between text-xs">
-                      <span className="text-slate-500">Marketplace MRR</span>
-                      <span className="text-slate-700 font-medium">${mktRev.toFixed(2)}</span>
-                    </div>
-                  </div>
-
-                  {/* Forecast bars */}
-                  <div className="space-y-3">
-                    {forecasts.map((f) => (
-                      <div key={f.label}>
-                        <div className="flex justify-between text-sm mb-1">
-                          <span className="text-slate-600">{f.label}</span>
-                          <span className={`font-bold ${f.color === "amber" ? "text-amber-600" : "text-emerald-600"}`}>
-                            ${f.value >= 1000 ? `${(f.value / 1000).toFixed(1)}k` : f.value.toFixed(0)}
-                          </span>
-                        </div>
-                        <div className="w-full bg-slate-100 rounded-full h-2">
-                          <div
-                            className={`h-2 rounded-full transition-all ${f.color === "amber" ? "bg-amber-500" : "bg-emerald-500"}`}
-                            style={{ width: `${Math.max((f.value / maxForecast) * 100, 2)}%` }}
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="pt-3 border-t border-slate-200">
-                    <p className="text-[0.6rem] text-slate-400 leading-relaxed">
-                      Based on current click rates and EPC values. Actual revenue depends on affiliate agreement terms, conversion rates, and traffic growth.
-                    </p>
-                  </div>
-                </div>
-              );
-            })()}
-          </div>
+          <AdminActivityFeed activity={activity} />
+          <AdminRevenueForecast
+            revenueStats={revenueStats}
+            totalClicks={stats?.clicks || 0}
+            marketplaceRevenue={stats?.marketplaceRevenue || 0}
+          />
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Content Health Check */}
-        <div id="admin-health" className="bg-white border border-slate-200 rounded-lg p-6">
-          <h2 className="text-lg font-semibold text-slate-900 mb-4">Content Health</h2>
-          {loading ? (
-            <div className="space-y-3">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="animate-pulse flex items-start gap-2">
-                  <div className="h-3 w-3 bg-slate-100 rounded-full mt-1 shrink-0" />
-                  <div className="flex-1 space-y-1">
-                    <div className="h-4 w-full bg-slate-200 rounded" />
-                    <div className="h-3 w-16 bg-slate-200 rounded" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="space-y-2.5">
-              {health.map((issue, i) => (
-                <div key={i} className={`flex items-start gap-2 rounded-md px-2.5 py-2 ${
-                  issue.type === "error" ? "bg-red-50" :
-                  issue.type === "success" ? "bg-emerald-50" : "bg-amber-50"
-                }`}>
-                  <span className={`shrink-0 mt-0.5 text-xs ${
-                    issue.type === "error" ? "text-red-500" :
-                    issue.type === "success" ? "text-emerald-500" : "text-amber-500"
-                  }`}>
-                    {issue.type === "error" ? "●" : issue.type === "success" ? "✓" : "▲"}
-                  </span>
-                  <div className="flex-1 min-w-0">
-                    <p className={`text-sm ${
-                      issue.type === "error" ? "text-red-800" :
-                      issue.type === "success" ? "text-emerald-800" : "text-amber-800"
-                    }`}>{issue.message}</p>
-                    {issue.link && (
-                      <Link href={issue.link} className={`text-xs font-medium ${
-                        issue.type === "error" ? "text-red-600 hover:text-red-700" : "text-amber-600 hover:text-amber-700"
-                      }`}>
-                        Fix →
-                      </Link>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+      <AdminBottomGrid
+        loading={loading}
+        health={health}
+        recentClicks={recentClicks}
+        revenueStats={revenueStats}
+        totalClicks={stats?.clicks || 0}
+        marketplaceRevenue={stats?.marketplaceRevenue || 0}
+        activeMarketplaceCampaigns={stats?.activeMarketplaceCampaigns || 0}
+      />
 
-        {/* Recent Clicks */}
-        <div className="bg-white border border-slate-200 rounded-lg p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-slate-900">Recent Clicks</h2>
-            <Link href="/admin/analytics" className="text-xs text-amber-600 hover:text-amber-700">View All →</Link>
-          </div>
-          {loading ? (
-            <div className="space-y-3">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="animate-pulse flex items-center justify-between">
-                  <div className="space-y-1">
-                    <div className="h-4 w-28 bg-slate-200 rounded" />
-                    <div className="h-3 w-36 bg-slate-200 rounded" />
-                  </div>
-                  <div className="h-3 w-12 bg-slate-200 rounded" />
-                </div>
-              ))}
-            </div>
-          ) : recentClicks.length === 0 ? (
-            <div className="text-center py-6">
-              <div className="text-3xl mb-2">🖱️</div>
-              <p className="text-sm text-slate-500">No clicks recorded yet.</p>
-              <p className="text-xs text-slate-400 mt-1">Clicks will appear here once your site gets traffic.</p>
-            </div>
-          ) : (
-            <div className="space-y-1.5">
-              {recentClicks.map((click) => (
-                <div key={click.id} className="flex items-center justify-between text-sm py-1 px-2 rounded hover:bg-slate-50 transition-colors">
-                  <div className="min-w-0">
-                    <div className="text-slate-900 font-medium truncate">{click.broker_name}</div>
-                    <div className="text-xs text-slate-500 truncate">{click.source} · {click.page}</div>
-                  </div>
-                  <div className="text-xs text-slate-400 shrink-0 ml-2">
-                    {new Date(click.clicked_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Revenue Overview */}
-        <div id="admin-revenue" className="bg-white border border-slate-200 rounded-lg p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-slate-900">Revenue</h2>
-            <Link href="/admin/analytics" className="text-xs text-amber-600 hover:text-amber-700">Details →</Link>
-          </div>
-          {loading ? (
-            <div className="space-y-3">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="animate-pulse">
-                  <div className="h-4 w-full bg-slate-200 rounded mb-1" />
-                  <div className="h-3 w-20 bg-slate-200 rounded" />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <>
-              {/* Affiliate Revenue */}
-              <div className="bg-emerald-50 rounded-lg p-4 mb-3">
-                <div className="text-xs text-emerald-700 font-medium mb-0.5">Affiliate Revenue (Est.)</div>
-                <div className="text-2xl font-bold text-emerald-600">
-                  <CountUp
-                    end={revenueStats.reduce((s, r) => s + r.estimated_revenue, 0)}
-                    prefix="$"
-                    decimals={2}
-                    duration={1400}
-                  />
-                </div>
-                {stats && stats.clicks > 0 && revenueStats.length > 0 && (() => {
-                  const totalRev = revenueStats.reduce((s, r) => s + r.estimated_revenue, 0);
-                  const epcAvg = totalRev / revenueStats.reduce((s, r) => s + r.clicks, 0) || 0;
-                  const dailyClicksAvg = stats.clicks / 30;
-                  return (
-                    <div className="mt-2 pt-2 border-t border-emerald-200 space-y-0.5">
-                      <div className="flex justify-between text-xs">
-                        <span className="text-emerald-600">Monthly proj.</span>
-                        <span className="text-emerald-700 font-semibold">
-                          ${(dailyClicksAvg * 30 * epcAvg).toFixed(0)}
-                        </span>
-                      </div>
-                      <div className="flex justify-between text-xs">
-                        <span className="text-emerald-600">Annual proj.</span>
-                        <span className="text-emerald-700 font-semibold">
-                          ${(dailyClicksAvg * 365 * epcAvg).toFixed(0)}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })()}
-              </div>
-
-              {/* Marketplace Revenue */}
-              <div className="bg-indigo-50 rounded-lg p-4 mb-3">
-                <div className="text-xs text-indigo-700 font-medium mb-0.5">Marketplace CPC Revenue</div>
-                <div className="text-2xl font-bold text-indigo-600">
-                  <CountUp
-                    end={stats?.marketplaceRevenue || 0}
-                    prefix="$"
-                    decimals={2}
-                    duration={1400}
-                  />
-                </div>
-                <div className="text-xs text-indigo-500 mt-1">
-                  {stats?.activeMarketplaceCampaigns || 0} active campaign{(stats?.activeMarketplaceCampaigns || 0) !== 1 ? "s" : ""}
-                </div>
-              </div>
-
-              {/* Top brokers */}
-              {revenueStats.length > 0 ? (
-                <div className="space-y-1.5 mb-3">
-                  <div className="text-xs text-slate-500 uppercase font-medium">Top by Affiliate Revenue</div>
-                  {revenueStats.slice(0, 3).map((r) => {
-                    const maxRev = revenueStats[0]?.estimated_revenue || 1;
-                    return (
-                      <div key={r.broker_slug} className="relative">
-                        <div
-                          className="absolute inset-y-0 left-0 bg-emerald-50 rounded"
-                          style={{ width: `${(r.estimated_revenue / maxRev) * 100}%` }}
-                        />
-                        <div className="relative flex items-center justify-between text-sm py-1 px-2">
-                          <span className="text-slate-700 truncate">{r.broker_name}</span>
-                          <span className="text-emerald-600 font-semibold ml-2 shrink-0">
-                            ${r.estimated_revenue.toFixed(2)}
-                          </span>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <p className="text-sm text-slate-500 mb-3">No revenue data yet. Set EPC values in Affiliate Links.</p>
-              )}
-
-              <div id="admin-shortcuts" className="pt-3 border-t border-slate-200 space-y-1.5">
-                <Link href="/admin/bd-pipeline" className="flex items-center gap-2 px-3 py-2 bg-violet-50 rounded text-violet-700 hover:bg-violet-100 transition-colors text-sm font-semibold">
-                  <span>🤝</span> BD Pipeline
-                </Link>
-                <Link href="/admin/fee-queue" className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded text-slate-600 hover:bg-slate-100 transition-colors text-sm">
-                  <span>💰</span> Fee Queue
-                </Link>
-                <Link href="/admin/affiliate-links" className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded text-slate-600 hover:bg-slate-100 transition-colors text-sm">
-                  <span>🔗</span> Affiliate Links
-                </Link>
-                <Link href="/admin/marketplace" className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded text-slate-600 hover:bg-slate-100 transition-colors text-sm">
-                  <span>🏪</span> Marketplace
-                </Link>
-                <a href="/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded text-slate-600 hover:bg-slate-100 transition-colors text-sm">
-                  <span>🌐</span> View Live Site
-                </a>
-              </div>
-            </>
-          )}
-        </div>
-      </div>
       <PageWalkthrough steps={ADMIN_DASHBOARD_WALKTHROUGH} storageKey="wt_admin_dashboard" />
 
       {/* Top Pages + Advisor Funnel */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-        <div className="bg-white border border-slate-200 rounded-lg p-6">
-          <h2 className="text-lg font-semibold text-slate-900 mb-4">Top Pages (30d Clicks)</h2>
-          {topPages.length === 0 ? (
-            <p className="text-sm text-slate-500">No click data yet.</p>
-          ) : (
-            <div className="space-y-1.5">
-              {topPages.map((p, i) => (
-                <div key={i} className="flex items-center justify-between text-sm py-1.5 px-2 rounded hover:bg-slate-50">
-                  <span className="text-slate-700 truncate text-xs flex-1 min-w-0 mr-2">{p.page}</span>
-                  <span className="text-xs font-bold text-slate-900 shrink-0">{p.count}</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-        <div className="bg-white border border-slate-200 rounded-lg p-6">
-          <h2 className="text-lg font-semibold text-slate-900 mb-4">Advisor Funnel (30d)</h2>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-slate-600">Profile Views</span>
-              <span className="text-sm font-bold text-slate-900">{advisorFunnel.views}</span>
-            </div>
-            <div className="w-full bg-slate-100 rounded-full h-2">
-              <div className="bg-blue-500 h-2 rounded-full" style={{ width: "100%" }} />
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-slate-600">Enquiries Submitted</span>
-              <span className="text-sm font-bold text-slate-900">{advisorFunnel.leads}</span>
-            </div>
-            <div className="w-full bg-slate-100 rounded-full h-2">
-              <div className="bg-emerald-500 h-2 rounded-full" style={{ width: advisorFunnel.views > 0 ? `${Math.max(5, (advisorFunnel.leads / advisorFunnel.views) * 100)}%` : "0%" }} />
-            </div>
-            <div className="pt-2 border-t border-slate-100 text-xs text-slate-500">
-              Conversion: <span className="font-bold text-slate-700">{advisorFunnel.views > 0 ? `${((advisorFunnel.leads / advisorFunnel.views) * 100).toFixed(1)}%` : "N/A"}</span>
-            </div>
-            <Link href="/admin/advisors" className="block text-xs text-amber-600 hover:text-amber-700 font-semibold">Manage Advisors →</Link>
-          </div>
-        </div>
-      </div>
+      <AdminTopPagesAdvisor topPages={topPages} advisorFunnel={advisorFunnel} />
     </AdminShell>
   );
 }

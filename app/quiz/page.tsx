@@ -1,20 +1,15 @@
 "use client";
 
 import { useState, useEffect, useMemo, useRef } from "react";
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import type { Broker } from "@/lib/types";
-import { trackClick, trackEvent, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
-import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE_SHORT, CRYPTO_WARNING, SPONSORED_DISCLOSURE_SHORT } from "@/lib/compliance";
-import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
-import RiskWarningInline from "@/components/RiskWarningInline";
-import Icon from "@/components/Icon";
-import { isSponsored, getPlacementWinners, type PlacementWinner } from "@/lib/sponsorship";
+import { trackEvent } from "@/lib/tracking";
+import { getPlacementWinners, type PlacementWinner } from "@/lib/sponsorship";
 import { scoreQuizResults, type WeightKey, type QuizWeights } from "@/lib/quiz-scoring";
-import SponsorBadge from "@/components/SponsorBadge";
-import CohortInsights from "@/components/CohortInsights";
-import ProUpsellBanner from "@/components/ProUpsellBanner";
-import AdvisorPrompt from "@/components/AdvisorPrompt";
+
+import QuizQuestionScreen from "./_components/QuizQuestionScreen";
+import QuizAnalyzingScreen from "./_components/QuizAnalyzingScreen";
+import QuizResultsScreen from "./_components/QuizResultsScreen";
 
 interface QuizWeight {
   broker_slug: string;
@@ -422,7 +417,7 @@ export default function QuizPage() {
     [results]
   );
 
-  // Track quiz completion when user reaches results
+  // Track quiz completion when user reaches results + persist for PersonalizedRecommendations
   useEffect(() => {
     if (step >= questions.length && step > 0 && brokers.length > 0) {
       trackEvent('quiz_complete', {
@@ -430,6 +425,23 @@ export default function QuizPage() {
         top_broker: results[0]?.slug || null,
         results_count: results.length,
       }, '/quiz');
+      // Persist top results so other pages can show personalized recommendations
+      try {
+        const topResults = results.slice(0, 5).filter(r => r.broker).map(r => ({
+          slug: r.slug,
+          name: r.broker!.name,
+          score: r.total,
+          logo_url: r.broker!.logo_url || null,
+          color: r.broker!.color,
+          tagline: r.broker!.tagline || null,
+          rating: r.broker!.rating || null,
+        }));
+        localStorage.setItem('invest-quiz-results', JSON.stringify({
+          answers,
+          results: topResults,
+          completedAt: new Date().toISOString(),
+        }));
+      } catch { /* quota exceeded */ }
     }
   }, [step, questions.length, brokers.length, results, answers]);
 
@@ -471,845 +483,60 @@ export default function QuizPage() {
 
   // Results screen
   if (step >= questions.length) {
-    const topMatch = results[0];
-    const runnerUps = results.slice(1);
-    const allResults = results.filter(r => r.broker);
-
-    // Edge case: no platforms matched (data fetch failed or empty DB)
-    if (allResults.length === 0) {
-      return (
-        <div className="pt-5 pb-8 md:py-12">
-          <div className="container-custom max-w-2xl mx-auto text-center">
-            <Icon name="alert-triangle" size={48} className="text-amber-500 mx-auto mb-4" />
-            <h1 className="text-xl md:text-2xl font-extrabold mb-2">No Results Found</h1>
-            <p className="text-sm text-slate-600 mb-6">
-              We couldn&apos;t find platforms matching your criteria right now. This may be a temporary issue.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <button
-                onClick={() => { setStep(0); setAnswers([]); }}
-                className="px-5 py-2.5 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 transition-colors"
-              >
-                Retake Quiz
-              </button>
-              <a
-                href="/compare"
-                className="px-5 py-2.5 border border-slate-300 text-slate-700 text-sm font-semibold rounded-lg hover:bg-slate-50 transition-colors"
-              >
-                Browse All Platforms
-              </a>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
     return (
-      <div className="pt-5 pb-8 md:py-12">
-        <div className="container-custom max-w-2xl mx-auto">
-          <div className="text-center mb-4 md:mb-8 result-card-in">
-            {/* Confetti burst + emoji */}
-            <div className="relative h-14 md:h-20 mb-1 md:mb-2" aria-hidden="true">
-              <div className="confetti-container confetti-active">
-                {Array.from({ length: 24 }).map((_, i) => (
-                  <span key={i} className="confetti-particle" style={{
-                    '--confetti-x': `${-60 + Math.random() * 120}px`,
-                    '--confetti-delay': `${i * 0.04}s`,
-                    '--confetti-fall': `${50 + Math.random() * 50}px`,
-                    '--confetti-rotate': `${Math.random() * 720 - 360}deg`,
-                    '--confetti-color': ['#15803d','#f59e0b','#fbbf24','#16a34a','#ef4444','#6366f1'][i % 6],
-                    left: `${8 + (i / 24) * 84}%`,
-                  } as React.CSSProperties} />
-                ))}
-              </div>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Icon name="trophy" size={36} className="celebrate-emoji text-amber-500 md:hidden" />
-                <Icon name="trophy" size={56} className="celebrate-emoji text-amber-500 hidden md:block" />
-              </div>
-            </div>
-            <h1 className="text-xl md:text-3xl font-extrabold mb-1 md:mb-2">Your Shortlist</h1>
-            <p className="text-[0.69rem] md:text-base text-slate-600">Platforms that scored highest on your criteria.</p>
-            <div className="flex items-center justify-center gap-2 md:gap-3 mt-2 md:mt-3 text-[0.62rem] md:text-xs text-slate-400">
-              <span className="flex items-center gap-1">
-                <svg className="w-2.5 h-2.5 md:w-3 md:h-3 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-                ASIC-regulated
-              </span>
-              <span className="flex items-center gap-1">
-                <svg className="w-2.5 h-2.5 md:w-3 md:h-3 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-                Based on your answers
-              </span>
-            </div>
-          </div>
-
-          {/* General Advice Warning — collapsed on mobile, visible on desktop */}
-          <div className="hidden md:block bg-slate-50 border border-slate-200 rounded-lg p-2.5 md:p-4 mb-3 md:mb-6">
-            <p className="text-[0.62rem] md:text-xs text-slate-500 leading-relaxed">
-              <strong>General Advice Warning:</strong> {GENERAL_ADVICE_WARNING} {ADVERTISER_DISCLOSURE_SHORT}
-            </p>
-          </div>
-          <div className="md:hidden mb-3">
-            <details className="bg-slate-50 border border-slate-200 rounded-lg">
-              <summary className="px-2.5 py-2 text-[0.62rem] text-slate-500 font-medium cursor-pointer flex items-center gap-1">
-                <svg className="w-3 h-3 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                General advice only — not a personal recommendation.
-              </summary>
-              <p className="px-2.5 pb-2.5 text-[0.62rem] text-slate-500 leading-relaxed">
-                {GENERAL_ADVICE_WARNING} {ADVERTISER_DISCLOSURE_SHORT}
-              </p>
-            </details>
-          </div>
-
-          {/* Sponsored broker disclosure — collapsed on mobile */}
-          {allResults.some(r => r.broker && isSponsored(r.broker)) && (
-            <>
-              <div className="hidden md:block bg-blue-50 border border-blue-200 rounded-lg p-2.5 md:p-3 mb-3 md:mb-6">
-                <p className="text-[0.62rem] md:text-xs text-blue-700 leading-relaxed">
-                  <strong>Sponsor Disclosure:</strong> Sponsored partners may receive a minor position boost if they already score in the top 5. {SPONSORED_DISCLOSURE_SHORT}
-                </p>
-              </div>
-              <div className="md:hidden mb-3">
-                <details className="bg-blue-50 border border-blue-200 rounded-lg">
-                  <summary className="px-2.5 py-2 text-[0.62rem] text-blue-600 font-medium cursor-pointer">
-                    Includes sponsored results · Details
-                  </summary>
-                  <p className="px-2.5 pb-2.5 text-[0.62rem] text-blue-700 leading-relaxed">
-                    Sponsored partners may receive a minor position boost if they already score in the top 5. {SPONSORED_DISCLOSURE_SHORT}
-                  </p>
-                </details>
-              </div>
-            </>
-          )}
-
-          {/* Top Match */}
-          {topMatch?.broker && (
-            <div
-              className="border-2 rounded-xl p-4 md:p-8 mb-3 md:mb-6 relative overflow-hidden result-card-in result-card-in-delay-1 shine-effect"
-              style={{
-                borderColor: topMatch.broker.color || '#f59e0b',
-                background: `linear-gradient(135deg, ${topMatch.broker.color}08 0%, ${topMatch.broker.color}15 100%)`,
-              }}
-            >
-              {/* Accent bar */}
-              <div
-                className="absolute top-0 left-0 w-full h-1"
-                style={{ background: topMatch.broker.color || '#f59e0b' }}
-              />
-              {/* Background glow */}
-              <div
-                className="absolute inset-0 pointer-events-none top-card-glow"
-                style={{ background: `radial-gradient(ellipse at 50% 0%, ${topMatch.broker.color || '#f59e0b'}20 0%, transparent 70%)` }}
-                aria-hidden="true"
-              />
-              <div
-                className="text-[0.56rem] md:text-[0.69rem] uppercase font-extrabold tracking-wider mb-2.5 md:mb-4 inline-block px-2 py-1 md:px-3 md:py-1.5 rounded-full badge-pulse"
-                style={{
-                  color: topMatch.broker.color || '#b45309',
-                  background: `${topMatch.broker.color || '#f59e0b'}20`,
-                  '--badge-glow': `${topMatch.broker.color || '#f59e0b'}40`,
-                } as React.CSSProperties}
-              >
-                <Icon name="trophy" size={12} className="inline -mt-0.5 md:hidden" />
-                <Icon name="trophy" size={14} className="inline -mt-0.5 hidden md:inline" /> #1 on Your Shortlist
-              </div>
-              <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
-                <div
-                  className="w-11 h-11 md:w-16 md:h-16 rounded-xl flex items-center justify-center text-lg md:text-2xl font-bold shrink-0"
-                  style={{ background: `${topMatch.broker.color}20`, color: topMatch.broker.color }}
-                >
-                  {topMatch.broker.icon || topMatch.broker.name.charAt(0)}
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-1.5 md:gap-2 flex-wrap">
-                    <h2 className="text-xl md:text-3xl font-extrabold">{topMatch.broker.name}</h2>
-                    {isSponsored(topMatch.broker) && <SponsorBadge broker={topMatch.broker} />}
-                  </div>
-                  <div className="text-xs md:text-sm text-amber">{renderStars(topMatch.broker.rating || 0)} <span className="text-slate-500">{topMatch.broker.rating}/5</span></div>
-                </div>
-              </div>
-              <p className="text-[0.69rem] md:text-base text-slate-600 mb-3 md:mb-4 hidden md:block">{topMatch.broker.tagline}</p>
-
-              {/* Why this broker? */}
-              <div className="bg-white/60 rounded-lg p-2.5 md:p-3 mb-3 md:mb-4">
-                <p className="text-[0.56rem] md:text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1 md:mb-1.5">
-                  Why {topMatch.broker.name}?
-                </p>
-                <ul className="space-y-0.5 md:space-y-1">
-                  {getMatchReasons(answers, topMatch.broker).map((reason, i) => (
-                    <li key={i} className="text-[0.69rem] md:text-sm text-slate-700 flex items-start gap-1.5 md:gap-2">
-                      <span className="text-emerald-600 shrink-0">✓</span>
-                      {reason}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="flex flex-wrap gap-1.5 md:gap-3 text-[0.62rem] md:text-xs text-slate-500 mb-3 md:mb-5">
-                {(!topMatch.broker.platform_type || topMatch.broker.platform_type === 'share_broker') && (
-                  <>
-                    <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">ASX: {topMatch.broker.asx_fee}</span>
-                    <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">CHESS: {topMatch.broker.chess_sponsored ? 'Yes' : 'No'}</span>
-                    <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">SMSF: {topMatch.broker.smsf_support ? 'Yes' : 'No'}</span>
-                  </>
-                )}
-                {topMatch.broker.platform_type === 'crypto_exchange' && (
-                  <>
-                    <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">AUSTRAC Registered</span>
-                    <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">Crypto Exchange</span>
-                  </>
-                )}
-                {topMatch.broker.platform_type === 'robo_advisor' && (
-                  <>
-                    <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">Automated Investing</span>
-                    <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">Managed Portfolio</span>
-                  </>
-                )}
-                {topMatch.broker.platform_type === 'research_tool' && (
-                  <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">Research & Analysis</span>
-                )}
-                {topMatch.broker.platform_type === 'super_fund' && (
-                  <>
-                    <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">Superannuation</span>
-                    <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">APRA Regulated</span>
-                  </>
-                )}
-                {topMatch.broker.platform_type === 'property_platform' && (
-                  <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">Property Investing</span>
-                )}
-                {topMatch.broker.platform_type === 'cfd_forex' && (
-                  <>
-                    <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">CFD & Forex</span>
-                    <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">Leveraged Trading</span>
-                  </>
-                )}
-                {topMatch.broker.platform_type === 'savings_account' && (
-                  <>
-                    <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">Rate: {topMatch.broker.asx_fee}</span>
-                    <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">Gov. Guaranteed</span>
-                  </>
-                )}
-                {topMatch.broker.platform_type === 'term_deposit' && (
-                  <>
-                    <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">Rate: {topMatch.broker.asx_fee}</span>
-                    <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">Min: {topMatch.broker.min_deposit}</span>
-                    <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">Gov. Guaranteed</span>
-                  </>
-                )}
-                <span className="bg-white/60 px-1.5 py-0.5 md:px-2 md:py-1 rounded">Rating: {topMatch.broker.rating}/5</span>
-              </div>
-              <a
-                href={getAffiliateLink(topMatch.broker)}
-                target="_blank"
-                rel={AFFILIATE_REL}
-                onClick={() => trackClick(topMatch.broker!.slug, topMatch.broker!.name, 'quiz-result-1', '/quiz', 'quiz')}
-                className="block w-full text-center px-5 py-3 md:px-6 md:py-3.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg transition-all text-sm md:text-lg shadow-lg hover:shadow-xl hover:scale-[1.02]"
-              >
-                {getBenefitCta(topMatch.broker, 'quiz')}
-              </a>
-              <RiskWarningInline />
-              {topMatch.broker.deal && topMatch.broker.deal_text && (
-                <div className="mt-2 md:mt-3 text-center">
-                  <span className="inline-flex items-center gap-1 md:gap-1.5 px-2 py-1 md:px-3 md:py-1.5 bg-amber-50 border border-amber-200 rounded-full text-[0.62rem] md:text-xs font-semibold text-amber-700">
-                    <Icon name="flame" size={12} className="inline text-amber-500 md:hidden" />
-                    <Icon name="flame" size={14} className="inline text-amber-500 hidden md:inline" /> {topMatch.broker.deal_text}
-                    {topMatch.broker.deal_expiry && (
-                      <span className="text-[0.56rem] md:text-[0.69rem] text-amber-500 font-normal ml-0.5 md:ml-1">
-                        (expires {new Date(topMatch.broker.deal_expiry).toLocaleDateString('en-AU', { day: 'numeric', month: 'short' })})
-                      </span>
-                    )}
-                  </span>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Quick Comparison Table */}
-          {allResults.length > 1 && (() => {
-            // Determine if results are mostly share brokers for column selection
-            const hasShareBrokers = allResults.some(r => r.broker && (!r.broker.platform_type || r.broker.platform_type === 'share_broker'));
-            const showShareCols = hasShareBrokers || allResults.every(r => !r.broker?.platform_type);
-
-            return (
-            <div className="bg-white border border-slate-200 rounded-xl overflow-hidden mb-3 md:mb-6 result-card-in result-card-in-delay-2">
-              <div className="px-3 py-2 md:px-4 md:py-3 bg-slate-50 border-b border-slate-200">
-                <h3 className="text-xs md:text-sm font-bold text-slate-700">Quick Comparison</h3>
-              </div>
-              <div className="overflow-x-auto">
-                <table className="w-full text-xs md:text-sm">
-                  <thead>
-                    <tr className="border-b border-slate-100">
-                      <th scope="col" className="px-2.5 md:px-4 py-1.5 md:py-2 text-left text-[0.62rem] md:text-xs text-slate-500 font-medium">Platform</th>
-                      <th scope="col" className="px-2 md:px-3 py-1.5 md:py-2 text-center text-[0.62rem] md:text-xs text-slate-500 font-medium">Type</th>
-                      {showShareCols && (
-                        <th scope="col" className="px-2 md:px-3 py-1.5 md:py-2 text-center text-[0.62rem] md:text-xs text-slate-500 font-medium hidden md:table-cell">ASX Fee</th>
-                      )}
-                      <th scope="col" className="px-2 md:px-3 py-1.5 md:py-2 text-center text-[0.62rem] md:text-xs text-slate-500 font-medium">Rating</th>
-                      <th scope="col" className="px-2 md:px-3 py-1.5 md:py-2 text-center text-[0.62rem] md:text-xs text-slate-500 font-medium"><span className="sr-only">Action</span></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {allResults.map((r, i) => r.broker && (
-                      <tr key={r.slug} className={`border-b border-slate-50 ${i === 0 ? 'bg-emerald-50/30' : ''}`}>
-                        <td className="px-2.5 md:px-4 py-2 md:py-2.5">
-                          <div className="flex items-center gap-1.5 md:gap-2">
-                            <div
-                              className="w-5 h-5 md:w-6 md:h-6 rounded flex items-center justify-center text-[0.5rem] md:text-[0.69rem] font-bold shrink-0"
-                              style={{ background: `${r.broker.color}20`, color: r.broker.color }}
-                            >
-                              {r.broker.icon || r.broker.name.charAt(0)}
-                            </div>
-                            <span className="font-semibold text-[0.69rem] md:text-xs">{r.broker.name}</span>
-                            {i === 0 && <span className="text-[0.45rem] md:text-[0.5rem] px-1 py-px md:px-1.5 md:py-0.5 bg-slate-100 text-slate-700 rounded-full font-bold">TOP</span>}
-                          </div>
-                        </td>
-                        <td className="px-2 md:px-3 py-2 md:py-2.5 text-center text-[0.56rem] md:text-[0.65rem]">
-                          <span className="px-1 py-0.5 rounded bg-slate-100 text-slate-600">
-                            {r.broker.platform_type === 'crypto_exchange' ? 'Crypto'
-                              : r.broker.platform_type === 'robo_advisor' ? 'Robo'
-                              : r.broker.platform_type === 'research_tool' ? 'Research'
-                              : r.broker.platform_type === 'super_fund' ? 'Super'
-                              : r.broker.platform_type === 'property_platform' ? 'Property'
-                              : r.broker.platform_type === 'cfd_forex' ? 'CFD/FX'
-                              : 'Shares'}
-                          </span>
-                        </td>
-                        {showShareCols && (
-                          <td className="px-2 md:px-3 py-2 md:py-2.5 text-center text-[0.62rem] md:text-xs hidden md:table-cell">
-                            {(!r.broker.platform_type || r.broker.platform_type === 'share_broker') ? (r.broker.asx_fee || 'N/A') : '—'}
-                          </td>
-                        )}
-                        <td className="px-2 md:px-3 py-2 md:py-2.5 text-center text-[0.62rem] md:text-xs font-semibold">{r.broker.rating}/5</td>
-                        <td className="px-2 md:px-3 py-2 md:py-2.5 text-center">
-                          <a
-                            href={getAffiliateLink(r.broker)}
-                            target="_blank"
-                            rel={AFFILIATE_REL}
-                            onClick={() => trackClick(r.broker!.slug, r.broker!.name, `quiz-compare-${i + 1}`, '/quiz', 'quiz')}
-                            className="inline-block px-2 py-1 md:px-3 md:py-1.5 bg-amber-600 text-white text-[0.62rem] md:text-xs font-semibold rounded-md hover:bg-amber-700 transition-colors"
-                          >
-                            Visit →
-                          </a>
-                          <RiskWarningInline />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            );
-          })()}
-
-          {/* Cohort Insights — "People Like Me" */}
-          {answers.length >= 3 && (
-            <div className="mb-3 md:mb-6 result-card-in result-card-in-delay-3">
-              <CohortInsights
-                experience={(() => {
-                  const expMap: Record<string, string> = { beginner: "beginner", intermediate: "intermediate", pro: "pro" };
-                  return expMap[answers[1]] || "beginner";
-                })()}
-                range={(() => {
-                  const rangeMap: Record<string, string> = { small: "small", medium: "medium", large: "large", whale: "whale" };
-                  return rangeMap[answers[2]] || "medium";
-                })()}
-                interest={(() => {
-                  const intMap: Record<string, string> = { crypto: "crypto", trade: "trade", income: "income", grow: "grow" };
-                  return intMap[answers[0]] || undefined;
-                })()}
-              />
-            </div>
-          )}
-
-          {/* Scoring Transparency */}
-          <div className="mb-3 md:mb-6 result-card-in result-card-in-delay-3">
-            <button
-              onClick={() => setShowScoring(!showScoring)}
-              className="w-full flex items-center justify-between px-3 py-2.5 md:px-4 md:py-3 bg-slate-50 border border-slate-200 rounded-lg text-xs md:text-sm text-slate-600 hover:bg-slate-100 transition-colors"
-            >
-              <span className="flex items-center gap-1.5 md:gap-2 font-medium">
-                <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                How we scored your results
-              </span>
-              <svg className={`w-3.5 h-3.5 md:w-4 md:h-4 text-slate-400 transition-transform ${showScoring ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-            </button>
-            {showScoring && (
-              <div className="mt-2 bg-slate-50 border border-slate-200 rounded-lg p-3 md:p-4 text-[0.69rem] md:text-xs text-slate-600 space-y-2 md:space-y-3">
-                <p>Each platform has pre-set scores across six categories (beginner-friendliness, low fees, US shares, SMSF, crypto, advanced features). Your quiz answers determine which categories matter most:</p>
-                <div className="flex flex-wrap gap-1.5">
-                  {answers.map((key, i) => {
-                    const keyMap: Record<string, string> = {
-                      crypto: 'Crypto', trade: 'Advanced', income: 'Low Fees', grow: 'Beginner',
-                      property: 'Property', super: 'SMSF/Super', automate: 'Robo-Advisor',
-                      beginner: 'Beginner', intermediate: 'Low Fees', pro: 'Advanced',
-                      small: 'Beginner', medium: 'Low Fees', large: 'SMSF/Super', whale: 'Advanced',
-                      fees: 'Low Fees', safety: 'SMSF/Safety', tools: 'Advanced', simple: 'Robo-Advisor', handsfree: 'Robo-Advisor',
-                    };
-                    return (
-                      <span key={i} className="px-2 py-1 bg-white border border-slate-200 rounded-full text-[0.69rem] font-medium">
-                        Your answer → <strong>{keyMap[key] || key}</strong>
-                      </span>
-                    );
-                  })}
-                </div>
-                <div className="space-y-1.5">
-                  {allResults.map((r, i) => {
-                    const maxScore = allResults[0]?.total || 1;
-                    const pct = Math.round((r.total / maxScore) * 100);
-                    return (
-                      <div key={r.slug} className="flex items-center gap-2">
-                        <span className="w-24 truncate font-medium text-slate-700">
-                          {i === 0 && <><Icon name="trophy" size={12} className="inline -mt-0.5 mr-0.5" /> </>}{r.broker?.name}
-                        </span>
-                        <div className="flex-1 bg-slate-200 rounded-full h-2 overflow-hidden">
-                          <div
-                            className="h-full rounded-full transition-all"
-                            style={{
-                              width: `${pct}%`,
-                              background: i === 0 ? '#10b981' : '#94a3b8',
-                            }}
-                          />
-                        </div>
-                        <span className="text-[0.69rem] text-slate-500 w-8 text-right">{pct}%</span>
-                      </div>
-                    );
-                  })}
-                </div>
-                <p className="text-xs text-slate-400">Scores are editorially set and weighted by your answers. Sponsored partners may receive a minor position boost if they already score in the top 5.</p>
-              </div>
-            )}
-          </div>
-
-          {/* Quick versus links — compare top picks head-to-head */}
-          {topMatch?.broker && runnerUps.length > 0 && runnerUps[0]?.broker && (
-            <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 md:p-4 mb-4 md:mb-6 result-card-in result-card-in-delay-3">
-              <p className="text-[0.62rem] md:text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Compare your top picks</p>
-              <div className="flex flex-wrap gap-1.5 md:gap-2">
-                {runnerUps.slice(0, 3).map((r) => r.broker && topMatch.broker && (
-                  <Link
-                    key={r.slug}
-                    href={`/versus/${topMatch.slug}-vs-${r.slug}`}
-                    className="px-2.5 py-1.5 md:px-3 md:py-2 text-[0.65rem] md:text-xs font-semibold border border-slate-200 rounded-lg bg-white hover:border-slate-600 hover:bg-slate-50 transition-all active:scale-[0.98]"
-                  >
-                    {topMatch.broker.name} vs {r.broker.name}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Advisor prompt — contextual for high-value investors or SMSF */}
-          {(answers.includes('large') || answers.includes('whale') || answers.includes('super') || answers.includes('smsf') || answers.includes('property')) && (
-            <div className="mb-4 md:mb-6 result-card-in result-card-in-delay-3">
-              <AdvisorPrompt
-                context={answers.includes('super') || answers.includes('smsf') ? "smsf" : answers.includes('property') ? "property" : "high-value"}
-              />
-            </div>
-          )}
-
-          {/* Runner Ups */}
-          {runnerUps.length > 0 && (
-            <>
-              <h3 className="text-[0.69rem] md:text-sm font-bold text-slate-500 uppercase tracking-wide mb-2 md:mb-3 result-card-in result-card-in-delay-3">Also Worth Considering</h3>
-              <div className="space-y-2 md:space-y-3 mb-4 md:mb-8">
-                {runnerUps.map((r, i) => r.broker && (
-                  <div
-                    key={r.slug}
-                    className={`border border-slate-200 rounded-lg md:rounded-xl p-3 md:p-4 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg result-card-in result-card-in-delay-${i + 4}`}
-                    style={{ borderLeftWidth: '3px', borderLeftColor: r.broker.color || '#e2e8f0' }}
-                  >
-                    <div className="flex items-center gap-2 md:gap-3">
-                      {/* Rank badge */}
-                      <div className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-slate-100 text-slate-500 text-[0.62rem] md:text-xs font-bold flex items-center justify-center shrink-0">
-                        #{i + 2}
-                      </div>
-                      <div
-                        className="w-8 h-8 md:w-10 md:h-10 rounded-lg flex items-center justify-center text-xs md:text-sm font-bold shrink-0"
-                        style={{ background: `${r.broker.color}20`, color: r.broker.color }}
-                      >
-                        {r.broker.icon || r.broker.name.charAt(0)}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1 md:gap-1.5 flex-wrap">
-                          <h3 className="font-bold text-xs md:text-sm">{r.broker.name}</h3>
-                          {isSponsored(r.broker) && <SponsorBadge broker={r.broker} />}
-                        </div>
-                        <div className="text-[0.62rem] md:text-xs text-slate-500">
-                          {(r.broker.platform_type === 'share_broker' || r.broker.platform_type === 'cfd_forex')
-                            ? `${r.broker.asx_fee || 'N/A'} · ${r.broker.chess_sponsored ? 'CHESS' : 'Custodial'} · ${r.broker.rating}/5`
-                            : `${r.broker.rating}/5`}
-                        </div>
-                      </div>
-                      <a
-                        href={getAffiliateLink(r.broker)}
-                        target="_blank"
-                        rel={AFFILIATE_REL}
-                        onClick={() => trackClick(r.broker!.slug, r.broker!.name, `quiz-result-${i + 2}`, '/quiz', 'quiz')}
-                        className="hidden sm:inline-flex shrink-0 px-4 py-2 bg-amber-600 text-white text-sm font-semibold rounded-lg hover:bg-amber-700 transition-colors"
-                      >
-                        {getBenefitCta(r.broker, 'quiz')}
-                      </a>
-                    </div>
-                    <a
-                      href={getAffiliateLink(r.broker)}
-                      target="_blank"
-                      rel={AFFILIATE_REL}
-                      onClick={() => trackClick(r.broker!.slug, r.broker!.name, `quiz-result-${i + 2}`, '/quiz', 'quiz')}
-                      className="sm:hidden block w-full text-center mt-2 px-3 py-1.5 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors"
-                    >
-                      {getBenefitCta(r.broker, 'quiz')}
-                    </a>
-                    <RiskWarningInline />
-                    {/* Match reasons for runner-ups too */}
-                    <div className="mt-1.5 md:mt-2 flex flex-wrap gap-1 md:gap-1.5">
-                      {getMatchReasons(answers, r.broker).slice(0, 2).map((reason, ri) => (
-                        <span key={ri} className="text-[0.56rem] md:text-[0.69rem] px-1.5 md:px-2 py-px md:py-0.5 bg-slate-50 text-slate-500 rounded-full">
-                          ✓ {reason}
-                        </span>
-                      ))}
-                    </div>
-                    {r.broker.deal && r.broker.deal_text && (
-                      <div className="mt-1.5 md:mt-2">
-                        <span className="inline-flex items-center gap-1 px-1.5 md:px-2 py-px md:py-0.5 bg-amber-50 border border-amber-200 rounded-full text-[0.56rem] md:text-[0.69rem] font-semibold text-amber-700">
-                          <Icon name="flame" size={10} className="inline text-amber-500" /> {r.broker.deal_text}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
-
-          {/* P1 #7: Crypto warning when results include a crypto broker */}
-          {hasCryptoResult && (
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-2.5 md:p-3 mb-3 md:mb-4">
-              <p className="text-[0.62rem] md:text-xs text-amber-700 leading-relaxed">
-                <strong>Crypto Warning:</strong> {CRYPTO_WARNING}
-              </p>
-            </div>
-          )}
-
-          {/* Email capture — non-blocking, below results */}
-          {!emailGate && (
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 md:p-5 mb-3 md:mb-6 result-card-in result-card-in-delay-5">
-              <div className="flex items-start gap-2.5 md:gap-4">
-                <Icon name="mail" size={20} className="text-slate-700 shrink-0 md:hidden" />
-                <Icon name="mail" size={28} className="text-slate-700 shrink-0 hidden md:block" />
-                <div className="flex-1">
-                  <h3 className="font-bold text-xs md:text-sm mb-0.5 md:mb-1">Get your results emailed</h3>
-                  <p className="text-[0.62rem] md:text-xs text-slate-500 mb-2 md:mb-3">We&apos;ll send your shortlist + our free fee comparison PDF.</p>
-                  <div className="flex flex-col sm:flex-row gap-1.5 md:gap-2">
-                    <input
-                      type="email"
-                      placeholder="you@email.com"
-                      autoComplete="email"
-                      aria-label="Email address for quiz results"
-                      value={gateEmail}
-                      onChange={(e) => setGateEmail(e.target.value)}
-                      className="flex-1 px-2.5 py-2 md:px-3 rounded-lg border border-slate-200 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-blue-700/30 focus:border-blue-700"
-                    />
-                    <button
-                      onClick={async () => {
-                        if (!gateEmail || !gateEmail.includes("@")) return;
-                        setGateConsent(true);
-                        await handleGateSubmit();
-                        setEmailGate(true); // Hide the form after sending
-                      }}
-                      disabled={gateStatus === "loading" || !gateEmail.includes("@")}
-                      className="px-3 py-2 md:px-4 bg-slate-900 text-white text-xs md:text-sm font-semibold rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-60 shrink-0"
-                    >
-                      {gateStatus === "loading" ? "Sending..." : "Email Me"}
-                    </button>
-                  </div>
-                  {gateStatus === "error" && (
-                    <p className="text-[0.62rem] md:text-xs text-red-500 mt-1">Something went wrong. Please try again.</p>
-                  )}
-                  <p className="text-[0.56rem] md:text-xs text-slate-400 mt-1.5 md:mt-2">No spam. Unsubscribe anytime. <Link href="/privacy" className="underline hover:text-slate-900">Privacy Policy</Link></p>
-                </div>
-              </div>
-            </div>
-          )}
-          {emailGate && (
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 md:p-4 mb-3 md:mb-6 text-center">
-              <span className="text-xs md:text-sm text-slate-700 font-medium">✓ Results sent to {gateEmail}</span>
-            </div>
-          )}
-
-          {/* Pro upsell — shown below results */}
-          <div className="mb-3 md:mb-6 result-card-in result-card-in-delay-5">
-            <ProUpsellBanner variant="inline" />
-          </div>
-
-          <div className="my-3 md:my-6">
-            <CompactDisclaimerLine />
-          </div>
-
-          {/* Bottom CTA card */}
-          <div className="bg-amber-400 text-slate-900 rounded-xl p-4 md:p-6 mt-1 md:mt-2 mb-4 md:mb-8 text-center result-card-in result-card-in-delay-5">
-            <h3 className="text-sm md:text-lg font-bold mb-0.5 md:mb-1">Still not sure?</h3>
-            <p className="text-[0.69rem] md:text-sm text-slate-700 mb-3 md:mb-4">Compare all platforms or read detailed reviews.</p>
-            <div className="flex flex-row gap-2 md:gap-3 justify-center flex-wrap">
-              <a
-                href="/compare"
-                onClick={() => trackEvent('quiz_internal_cta', { target: 'compare' }, '/quiz')}
-                className="px-3 py-2 md:px-5 md:py-2.5 bg-slate-900 text-white text-[0.69rem] md:text-sm font-semibold rounded-lg hover:bg-slate-800 transition-colors"
-              >
-                Compare All →
-              </a>
-              {topMatch?.broker && (
-                <a
-                  href={`/broker/${topMatch.broker.slug}`}
-                  onClick={() => trackEvent('quiz_internal_cta', { target: 'review', broker: topMatch.broker!.slug }, '/quiz')}
-                  className="px-3 py-2 md:px-5 md:py-2.5 border border-slate-700 text-slate-900 text-[0.69rem] md:text-sm font-semibold rounded-lg hover:bg-amber-300 transition-colors"
-                >
-                  {topMatch.broker.name} Review →
-                </a>
-              )}
-              <a
-                href="/find-advisor"
-                onClick={() => trackEvent('quiz_internal_cta', { target: 'find-advisor' }, '/quiz')}
-                className="px-3 py-2 md:px-5 md:py-2.5 border border-slate-700 text-slate-900 text-[0.69rem] md:text-sm font-semibold rounded-lg hover:bg-amber-300 transition-colors"
-              >
-                Find Advisor →
-              </a>
-            </div>
-          </div>
-
-          {/* Share & Restart */}
-          <div className="mt-4 md:mt-6">
-            <p className="text-[0.62rem] md:text-xs text-slate-400 text-center mb-2 font-medium">Share your result</p>
-            <div className="flex items-center justify-center gap-2 md:gap-3">
-              {/* Twitter/X */}
-              <a
-                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`I just found ${results[0]?.broker?.name || "my top platform"} as my best investing platform match on @InvestComAu! Take the quiz:`)}&url=${encodeURIComponent(typeof window !== "undefined" ? window.location.origin + "/quiz" : "https://invest.com.au/quiz")}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-lg bg-slate-900 hover:bg-slate-700 flex items-center justify-center transition-colors"
-                aria-label="Share on X"
-              >
-                <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-              </a>
-              {/* WhatsApp */}
-              <a
-                href={`https://wa.me/?text=${encodeURIComponent(`I just matched with ${results[0]?.broker?.name || "a top platform"} on Invest.com.au! Try the quiz: ${typeof window !== "undefined" ? window.location.origin + "/quiz" : "https://invest.com.au/quiz"}`)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-lg bg-emerald-500 hover:bg-emerald-600 flex items-center justify-center transition-colors"
-                aria-label="Share on WhatsApp"
-              >
-                <svg className="w-4.5 h-4.5 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-              </a>
-              {/* Copy link */}
-              <button
-                onClick={handleShareResult}
-                className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${
-                  copied ? "bg-emerald-100 text-emerald-600" : "bg-slate-100 hover:bg-slate-200 text-slate-600"
-                }`}
-                aria-label="Copy link"
-              >
-                {copied ? (
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
-                ) : (
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
-                )}
-              </button>
-              {/* Native share (mobile) */}
-              {typeof navigator !== "undefined" && "share" in navigator && (
-                <button
-                  onClick={handleShareResult}
-                  className="w-10 h-10 rounded-lg bg-violet-100 hover:bg-violet-200 text-violet-600 flex items-center justify-center transition-colors"
-                  aria-label="Share"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>
-                </button>
-              )}
-            </div>
-            <div className="text-center mt-3">
-              <button
-                onClick={() => { clearProgress(); setStep(0); setAnswers([]); }}
-                className="text-[0.69rem] md:text-sm text-slate-500 hover:text-slate-700 font-semibold transition-colors"
-              >
-                Restart Quiz →
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <QuizResultsScreen
+        results={results}
+        answers={answers}
+        hasCryptoResult={hasCryptoResult}
+        emailGate={emailGate}
+        gateEmail={gateEmail}
+        gateStatus={gateStatus}
+        copied={copied}
+        showScoring={showScoring}
+        onSetShowScoring={setShowScoring}
+        onGateEmailChange={setGateEmail}
+        onGateSubmit={handleGateSubmit}
+        onEmailGateSent={() => setEmailGate(true)}
+        onGateConsentSet={() => setGateConsent(true)}
+        onShareResult={handleShareResult}
+        onRestart={() => { clearProgress(); setStep(0); setAnswers([]); }}
+        getMatchReasons={getMatchReasons}
+      />
     );
   }
 
   // Analyzing transition screen
   if (revealing) {
-    return (
-      <div className="pt-5 pb-8 md:py-12">
-        <div className="container-custom max-w-2xl mx-auto">
-          <div className="flex flex-col items-center justify-center min-h-[40vh] md:min-h-[40vh] reveal-screen-in">
-            {/* Animated analyzing spinner */}
-            <div className="relative w-12 h-12 md:w-16 md:h-16 mb-4 md:mb-6">
-              <div className="absolute inset-0 rounded-full border-3 md:border-4 border-slate-200" />
-              <div className="absolute inset-0 rounded-full border-3 md:border-4 border-transparent border-t-blue-700 analyzing-ring-spin" />
-            </div>
-
-            <h2 className="text-base md:text-xl font-bold mb-1 md:mb-2 reveal-text-in">
-              Analyzing your answers...
-            </h2>
-            <p className="text-slate-500 text-xs md:text-sm reveal-text-in-delay">
-              Matching you with the best platforms
-            </p>
-
-            {/* Animated progress dots */}
-            <div className="flex gap-1.5 md:gap-2 mt-4 md:mt-6">
-              <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-blue-700 analyzing-dot-1" />
-              <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-blue-700 analyzing-dot-2" />
-              <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-blue-700 analyzing-dot-3" />
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <QuizAnalyzingScreen />;
   }
 
   // Question screen
-  const current = questions[step];
-
   return (
-    <div className="pt-5 pb-8 md:py-12">
-      <div className="container-custom max-w-2xl mx-auto">
-        {/* Data fetch error notice */}
-        {fetchError && (
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-2.5 md:p-3 mb-3 md:mb-4 text-[0.62rem] md:text-xs text-amber-700">
-            {fetchError}
-          </div>
-        )}
-
-        {/* Resume prompt — shown when saved progress exists */}
-        {resumePrompt && step === 0 && (
-          <div className="mb-4 md:mb-6 bg-blue-50 border border-blue-200 rounded-lg p-3 md:p-4 flex items-center justify-between gap-3" style={{ animation: "resultCardIn 0.3s ease-out" }}>
-            <div>
-              <p className="text-xs md:text-sm font-semibold text-blue-800">Welcome back!</p>
-              <p className="text-[0.62rem] md:text-xs text-blue-600">You have a quiz in progress. Pick up where you left off?</p>
-            </div>
-            <div className="flex gap-2 shrink-0">
-              <button
-                onClick={() => {
-                  const saved = loadSavedProgress();
-                  if (saved) {
-                    setStep(saved.step);
-                    setAnswers(saved.answers);
-                  }
-                  setResumePrompt(false);
-                }}
-                className="px-3 py-1.5 bg-blue-700 text-white text-xs font-bold rounded-lg hover:bg-blue-800 transition-colors"
-              >
-                Resume
-              </button>
-              <button
-                onClick={() => { clearProgress(); setResumePrompt(false); }}
-                className="px-3 py-1.5 bg-white text-blue-700 text-xs font-semibold border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors"
-              >
-                Start Over
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Progress dots — hidden on mobile (progress bar is enough) */}
-        <div className="hidden md:flex items-center justify-center gap-1.5 md:gap-2 mb-4 md:mb-8">
-          {questions.map((_, i) => (
-            <div
-              key={i}
-              className={`w-2.5 h-2.5 md:w-3 md:h-3 rounded-full transition-colors ${
-                i < step ? 'bg-blue-700' : i === step ? 'bg-blue-700 ring-2 ring-blue-700/30 ring-offset-2' : 'bg-slate-200'
-              }`}
-            />
-          ))}
-        </div>
-
-        {/* Progress bar */}
-        <div className="mb-1.5 md:mb-2">
-          <div className="flex justify-between text-[0.62rem] md:text-xs text-slate-500 mb-0.5 md:mb-1">
-            <span>Question {step + 1} of {questions.length}</span>
-            <span>{Math.round(((step + 1) / questions.length) * 100)}%</span>
-          </div>
-          <div
-            className="h-1 md:h-1.5 bg-slate-100 rounded-full overflow-hidden"
-            role="progressbar"
-            aria-valuenow={step + 1}
-            aria-valuemin={1}
-            aria-valuemax={questions.length}
-            aria-label={`Question ${step + 1} of ${questions.length}`}
-          >
-            <div className="h-full bg-blue-700 rounded-full transition-all duration-500" style={{ width: `${((step + 1) / questions.length) * 100}%` }} />
-          </div>
-        </div>
-
-        <div key={step} className="quiz-question-enter" aria-live="polite">
-          {step > 0 && (
-            <button
-              onClick={() => {
-                const newAnswers = answers.slice(0, -1);
-                setStep(step - 1);
-                // Update saved answers
-                if (typeof window !== 'undefined') {
-                  try { localStorage.setItem('quiz_progress', JSON.stringify({ step: step - 1, answers: newAnswers })); } catch {}
-                }
-              }}
-              className="flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-700 mt-2 mb-1 min-h-[44px] transition-colors"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-              Back
-            </button>
-          )}
-          <h1
-            ref={questionHeadingRef}
-            tabIndex={-1}
-            className="text-lg md:text-3xl font-extrabold mb-4 md:mb-8 mt-3 md:mt-6 outline-none"
-          >
-            {current.question_text}
-          </h1>
-
-          <div className="space-y-2 md:space-y-3" role="radiogroup" aria-label={current.question_text}>
-            {current.options.map((opt: { label: string; key: string }) => (
-              <button
-                key={opt.label}
-                onClick={() => handleAnswer(opt.key)}
-                disabled={animating}
-                role="radio"
-                aria-checked={selectedKey === opt.key}
-                aria-label={opt.label}
-                className={`w-full text-left border rounded-lg md:rounded-xl px-4 py-3.5 md:px-6 md:py-4 min-h-[48px] transition-all font-medium text-xs md:text-base ${
-                  selectedKey === opt.key
-                    ? "border-slate-700 bg-slate-700/5 scale-[0.98]"
-                    : "border-slate-200 hover:border-slate-700 hover:bg-slate-700/5"
-                } ${animating && selectedKey !== opt.key ? "opacity-50" : ""}`}
-              >
-                <span className="flex items-center gap-2 md:gap-3">
-                  {selectedKey === opt.key && (
-                    <svg className="w-4 h-4 md:w-5 md:h-5 text-emerald-600 shrink-0 check-pop" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                    </svg>
-                  )}
-                  {opt.label}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {step > 0 && (
-          <button
-            onClick={() => {
-              const prevStep = step - 1;
-              const prevAnswers = answers.slice(0, -1);
-              setStep(prevStep);
-              setAnswers(prevAnswers);
-              saveProgress(prevStep, prevAnswers);
-            }}
-            className="mt-3 md:mt-6 px-3 py-2 min-h-[44px] inline-flex items-center text-xs md:text-sm text-slate-500 hover:text-slate-700 active:text-slate-900 transition-colors rounded-lg"
-          >
-            ← Back
-          </button>
-        )}
-      </div>
-    </div>
+    <QuizQuestionScreen
+      step={step}
+      questions={questions}
+      selectedKey={selectedKey}
+      animating={animating}
+      fetchError={fetchError}
+      resumePrompt={resumePrompt}
+      onAnswer={handleAnswer}
+      onBack={() => {
+        const prevStep = step - 1;
+        const prevAnswers = answers.slice(0, -1);
+        setStep(prevStep);
+        setAnswers(prevAnswers);
+        saveProgress(prevStep, prevAnswers);
+      }}
+      onResume={() => {
+        const saved = loadSavedProgress();
+        if (saved) {
+          setStep(saved.step);
+          setAnswers(saved.answers);
+        }
+        setResumePrompt(false);
+      }}
+      onStartOver={() => { clearProgress(); setResumePrompt(false); }}
+      questionHeadingRef={questionHeadingRef}
+    />
   );
 }

@@ -11,6 +11,7 @@ import DealCard from "@/components/DealCard";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import LiveActivityTicker from "@/components/LiveActivityTicker";
 import SocialProofCounter from "@/components/SocialProofCounter";
+import PersonalizedRecommendations from "@/components/PersonalizedRecommendations";
 
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 import { getMostRecentFeeCheck } from "@/lib/utils";
@@ -326,6 +327,13 @@ export default async function HomePage() {
               </span>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ─── Personalized Recommendations (from quiz results) ─── */}
+      <section className="py-3 md:py-4">
+        <div className="container-custom max-w-4xl">
+          <PersonalizedRecommendations />
         </div>
       </section>
 

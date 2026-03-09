@@ -36,6 +36,8 @@ import SponsorBadge from "@/components/SponsorBadge";
 import JargonTooltip from "@/components/JargonTooltip";
 import Icon from "@/components/Icon";
 import { CATEGORY_COLORS } from "@/lib/internal-links";
+import PillarExitIntent from "@/components/PillarExitIntent";
+import PersonalizedRecommendations from "@/components/PersonalizedRecommendations";
 
 /* ─── Column config per vertical type ─── */
 
@@ -213,6 +215,8 @@ export default function VerticalPillarPage({
   const hasSponsored = brokers.some(isSponsored);
   const topPick = brokers[0] || null;
   const columns = getColumns(config.slug);
+  const dealBrokers = brokers.filter((b) => b.deal && b.deal_text).slice(0, 3);
+  const hasDeals = dealBrokers.length > 0;
 
   /* ─── JSON-LD ─── */
   const webPageJsonLd = {
@@ -285,6 +289,7 @@ export default function VerticalPillarPage({
         <OnThisPage
           items={[
             ...(topPick ? [{ id: "top-pick", label: "Top Pick" }] : []),
+            ...(hasDeals ? [{ id: "current-deals", label: "Deals" }] : []),
             { id: "subcategories", label: "Categories" },
             { id: "all-platforms", label: "All Platforms" },
             { id: "tools", label: "Tools" },
@@ -427,6 +432,11 @@ export default function VerticalPillarPage({
             </span>
           </div>
 
+          {/* ─── Personalized Recommendations (from quiz) ─── */}
+          <div className="mb-4 md:mb-6">
+            <PersonalizedRecommendations />
+          </div>
+
           {/* ─── Top Pick ─── */}
           {topPick && (
             <div
@@ -474,6 +484,77 @@ export default function VerticalPillarPage({
                 >
                   {getBenefitCta(topPick, "compare")}
                 </a>
+              </div>
+            </div>
+          )}
+
+          {/* ─── Current Deals ─── */}
+          {hasDeals && (
+            <div id="current-deals" className="mb-6 md:mb-8 scroll-mt-20">
+              <div className="flex items-center gap-2 mb-3">
+                <h2 className="text-lg md:text-xl font-bold">Current Deals</h2>
+                <span className={`text-[0.6rem] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full ${config.color.bg} ${config.color.text}`}>
+                  {dealBrokers.length} {dealBrokers.length === 1 ? "offer" : "offers"}
+                </span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                {dealBrokers.map((broker) => {
+                  const expiryDate = broker.deal_expiry ? new Date(broker.deal_expiry) : null;
+                  const expiryFormatted = expiryDate
+                    ? expiryDate.toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })
+                    : null;
+                  return (
+                    <div
+                      key={broker.id}
+                      className={`relative border-2 ${config.color.border} rounded-xl p-4 bg-white hover:shadow-md transition-all`}
+                    >
+                      {/* DEAL badge */}
+                      <div className="absolute -top-2.5 left-3">
+                        <span className={`inline-block text-[0.56rem] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full text-white ${config.color.accent}`}>
+                          DEAL
+                        </span>
+                      </div>
+
+                      {/* Broker info */}
+                      <div className="flex items-center gap-2.5 mt-1 mb-2.5">
+                        <BrokerLogo broker={broker} size="md" />
+                        <div className="min-w-0">
+                          <Link
+                            href={`/broker/${broker.slug}`}
+                            className="text-sm font-bold text-slate-900 hover:text-slate-700 transition-colors truncate block"
+                          >
+                            {broker.name}
+                          </Link>
+                          {broker.rating && (
+                            <span className="text-[0.62rem] text-slate-400">{renderStars(broker.rating)} {broker.rating}/5</span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Deal text */}
+                      <div className="bg-amber-50 border border-amber-200/60 rounded-lg px-3 py-2 mb-3">
+                        <p className="text-sm font-semibold text-slate-800 leading-snug">
+                          {broker.deal_text}
+                        </p>
+                        {expiryFormatted && (
+                          <p className="text-[0.6rem] text-amber-600 font-medium mt-1">
+                            Exp. {expiryFormatted}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* CTA */}
+                      <a
+                        href={getAffiliateLink(broker)}
+                        target="_blank"
+                        rel={AFFILIATE_REL}
+                        className={`block w-full text-center py-2.5 ${config.color.accent} text-white text-xs font-bold rounded-lg hover:opacity-90 transition-colors`}
+                      >
+                        {getBenefitCta(broker, "compare")}
+                      </a>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -741,6 +822,9 @@ export default function VerticalPillarPage({
           <CompactDisclaimerLine />
         </div>
       </div>
+
+      {/* ─── Exit Intent (client component) ─── */}
+      <PillarExitIntent slug={config.slug} />
     </>
   );
 }

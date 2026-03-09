@@ -11,25 +11,18 @@ const XIcon = ({ className }: { className?: string }) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
 );
 import type { Broker } from "@/lib/types";
-import { trackClick, trackEvent, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
-import { GENERAL_ADVICE_WARNING, PDS_CONSIDERATION, CFD_WARNING_SHORT, CRYPTO_WARNING, SUPER_WARNING_SHORT, AFCA_REFERENCE, FSG_NOTE } from "@/lib/compliance";
-import { downloadCSV } from "@/lib/csv-export";
+import { trackEvent, getAffiliateLink, trackClick, AFFILIATE_REL } from "@/lib/tracking";
 import BrokerCard from "@/components/BrokerCard";
 import SocialProofCounter from "@/components/SocialProofCounter";
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 import { getMostRecentFeeCheck } from "@/lib/utils";
-import ScrollReveal from "@/components/ScrollReveal";
-import PromoBadge from "@/components/PromoBadge";
-import ProUpsellBanner from "@/components/ProUpsellBanner";
-import SponsorBadge from "@/components/SponsorBadge";
-import { getSponsorSortPriority, isSponsored, getPlacementWinners, type PlacementWinner } from "@/lib/sponsorship";
 import Icon from "@/components/Icon";
 import BottomSheet from "@/components/BottomSheet";
-import ShortlistButton from "@/components/ShortlistButton";
-import BrokerLogo from "@/components/BrokerLogo";
-import AdSlot from "@/components/AdSlot";
-import AdvisorPrompt from "@/components/AdvisorPrompt";
-import LeadMagnet from "@/components/LeadMagnet";
+import { getSponsorSortPriority, isSponsored, getPlacementWinners, type PlacementWinner } from "@/lib/sponsorship";
+
+import CompareDesktopTable from "./_components/CompareDesktopTable";
+import CompareSelectionBar from "./_components/CompareSelectionBar";
+import CompareFooter from "./_components/CompareFooter";
 
 type FilterType = 'all' | 'shares' | 'beginner' | 'chess' | 'free' | 'us' | 'smsf' | 'low-fx' | 'crypto' | 'robo' | 'research' | 'super' | 'property' | 'cfd' | 'savings' | 'term-deposits' | 'has-deal';
 type SortCol = 'name' | 'asx_fee_value' | 'us_fee_value' | 'fx_rate' | 'rating';
@@ -539,129 +532,22 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
 
         {/* Desktop Table */}
         <div ref={resultsRef} className="scroll-mt-16">
-        <div key={`${activeFilter}-${searchQuery}`} className="hidden md:block overflow-x-auto tab-content-enter">
-          <ScrollReveal key={`table-${activeFilter}-${searchQuery}-${sortCol}-${sortDir}`} animation="table-row-stagger" as="table" className="w-full border border-slate-200 rounded-lg compare-table">
-            <thead className="bg-slate-50 sticky top-12 md:top-16 z-10 shadow-sm">
-              <tr>
-                <th scope="col" className="px-3 py-3 w-10"></th>
-                <th scope="col" className="px-4 py-3 text-left font-semibold text-sm" aria-sort={sortCol === 'name' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
-                  <button onClick={() => handleSort('name')} className="hover:text-slate-900 transition-colors" aria-label="Sort by platform name">
-                    Platform{sortArrow('name')}
-                  </button>
-                </th>
-                <th scope="col" className="px-4 py-3 text-left font-semibold text-sm" aria-sort={sortCol === 'asx_fee_value' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
-                  <button onClick={() => handleSort('asx_fee_value')} className="hover:text-slate-900 transition-colors" aria-label={activeFilter === 'savings' || activeFilter === 'term-deposits' ? "Sort by rate" : "Sort by ASX fee"}>
-                    {activeFilter === 'savings' || activeFilter === 'term-deposits' ? 'Rate' : 'ASX Fee'}{sortArrow('asx_fee_value')}
-                  </button>
-                  <InfoTip text={activeFilter === 'savings' ? 'Annual interest rate (with conditions met)' : activeFilter === 'term-deposits' ? 'Term deposit rate (6-month term)' : feeTooltips.asx_fee_value} />
-                </th>
-                <th scope="col" className="px-4 py-3 text-left font-semibold text-sm" aria-sort={sortCol === 'us_fee_value' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
-                  <button onClick={() => handleSort('us_fee_value')} className="hover:text-slate-900 transition-colors" aria-label="Sort by US fee">
-                    {activeFilter === 'savings' || activeFilter === 'term-deposits' ? 'Min Deposit' : 'US Fee'}{sortArrow('us_fee_value')}
-                  </button>
-                  <InfoTip text={activeFilter === 'savings' || activeFilter === 'term-deposits' ? 'Minimum deposit to open' : feeTooltips.us_fee_value} />
-                </th>
-                <th scope="col" className="px-4 py-3 text-left font-semibold text-sm" aria-sort={sortCol === 'fx_rate' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
-                  <button onClick={() => handleSort('fx_rate')} className="hover:text-slate-900 transition-colors" aria-label="Sort by FX rate">
-                    {activeFilter === 'savings' || activeFilter === 'term-deposits' ? 'Conditions' : 'FX Rate'}{sortArrow('fx_rate')}
-                  </button>
-                  <InfoTip text={activeFilter === 'savings' || activeFilter === 'term-deposits' ? 'Requirements to earn bonus rate' : feeTooltips.fx_rate} />
-                </th>
-                <th scope="col" className="px-4 py-3 text-center font-semibold text-sm">
-                  {activeFilter === 'savings' || activeFilter === 'term-deposits' ? 'ADI' : 'CHESS'}
-                  <InfoTip text={activeFilter === 'savings' || activeFilter === 'term-deposits' ? 'Government deposit guarantee (up to $250,000)' : feeTooltips.chess} />
-                </th>
-                <th scope="col" className="px-4 py-3 text-center font-semibold text-sm">{activeFilter === 'savings' || activeFilter === 'term-deposits' ? 'Online' : 'SMSF'}</th>
-                <th scope="col" className="px-4 py-3 text-center font-semibold text-sm" aria-sort={sortCol === 'rating' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
-                  <button onClick={() => handleSort('rating')} className="hover:text-slate-900 transition-colors" aria-label="Sort by rating">
-                    Rating{sortArrow('rating')}
-                  </button>
-                </th>
-                <th scope="col" className="px-4 py-3 text-center font-semibold text-sm"></th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-200">
-              {sorted.map(broker => (
-                <tr
-                  key={broker.id}
-                  className={`group hover:bg-slate-50 transition-colors duration-150 ${
-                    isSponsored(broker)
-                      ? 'bg-blue-50/30 border-l-2 border-l-blue-400'
-                      : editorPicks[broker.slug]
-                      ? 'bg-emerald-50/40'
-                      : ''
-                  }`}
-                >
-                  <td className="px-3 py-3">
-                    <input
-                      type="checkbox"
-                      checked={selected.has(broker.slug)}
-                      disabled={!selected.has(broker.slug) && selected.size >= 4}
-                      onChange={() => toggleSelected(broker.slug)}
-                      className="w-4 h-4 accent-slate-700 rounded disabled:opacity-40 disabled:cursor-not-allowed"
-                      aria-label={`Select ${broker.name} for comparison`}
-                    />
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-2.5">
-                      <BrokerLogo broker={broker} size="sm" className="transition-transform duration-200 group-hover:scale-110" />
-                      <div>
-                        <div className="flex items-center gap-1.5">
-                          <a href={`/broker/${broker.slug}`} className="font-semibold text-brand hover:text-slate-900 transition-colors">
-                            {broker.name}
-                          </a>
-                          <PromoBadge broker={broker} />
-                          {campaignWinners.some(w => w.broker_slug === broker.slug) && (
-                            <span className="text-[0.69rem] font-bold px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded-full uppercase tracking-wide">Sponsored</span>
-                          )}
-                          {!campaignWinners.some(w => w.broker_slug === broker.slug) && <SponsorBadge broker={broker} />}
-                        </div>
-                        {!isSponsored(broker) && editorPicks[broker.slug] && (
-                          <div className="text-[0.69rem] font-extrabold text-slate-700 uppercase tracking-wide">
-                            {editorPicks[broker.slug]}
-                          </div>
-                        )}
-                      </div>
-                      <ShortlistButton slug={broker.slug} name={broker.name} size="sm" />
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 text-sm">{broker.asx_fee || 'N/A'}</td>
-                  <td className="px-4 py-3 text-sm">{broker.us_fee || 'N/A'}</td>
-                  <td className="px-4 py-3 text-sm">{broker.fx_rate != null ? `${broker.fx_rate}%` : 'N/A'}</td>
-                  <td className="px-4 py-3 text-center">
-                    <span className={broker.chess_sponsored ? 'text-emerald-600 font-semibold' : 'text-red-500'}>
-                      {broker.chess_sponsored ? '✓ Yes' : '✗ No'}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-center">
-                    <span className={broker.smsf_support ? 'text-emerald-600 font-semibold' : 'text-red-500'}>
-                      {broker.smsf_support ? '✓ Yes' : '✗ No'}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-center">
-                    <span className="text-amber">{renderStars(broker.rating || 0)}</span>
-                    <span className="text-sm text-slate-500 ml-1">{broker.rating}</span>
-                  </td>
-                  <td className="px-4 py-3 text-center">
-                    <a
-                      href={(() => {
-                        const link = getAffiliateLink(broker);
-                        const cid = cpcCampaignMap.get(broker.slug);
-                        return cid ? `${link}${link.includes('?') ? '&' : '?'}cid=${cid}` : link;
-                      })()}
-                      target="_blank"
-                      rel={AFFILIATE_REL}
-                      onClick={() => trackClick(broker.slug, broker.name, 'compare-table', '/compare', 'compare')}
-                      className="inline-block px-4 py-2 bg-amber-600 text-white text-sm font-semibold rounded-lg hover:bg-amber-700 transition-all duration-200 group-hover:scale-105 group-hover:shadow-lg"
-                    >
-                      {getBenefitCta(broker, 'compare')}
-                    </a>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </ScrollReveal>
-        </div>
+        <CompareDesktopTable
+          sorted={sorted}
+          activeFilter={activeFilter}
+          searchQuery={searchQuery}
+          sortCol={sortCol}
+          sortDir={sortDir}
+          selected={selected}
+          editorPicks={editorPicks}
+          campaignWinners={campaignWinners}
+          cpcCampaignMap={cpcCampaignMap}
+          onSort={handleSort}
+          onToggleSelected={toggleSelected}
+          sortArrow={sortArrow}
+          InfoTip={InfoTip}
+          feeTooltips={feeTooltips}
+        />
 
         {/* Mobile Cards */}
         <div key={`mobile-${activeFilter}-${searchQuery}`} className={`md:hidden space-y-2 tab-content-enter overflow-x-hidden ${selected.size >= 2 ? 'pb-20' : ''}`}>
@@ -688,120 +574,19 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
         </div>
         </div>{/* close scroll ref */}
 
-        {/* Export Buttons — hide on mobile */}
-        {sorted.length > 0 && (
-          <div className="hidden md:flex flex-wrap gap-2 mt-4 no-print">
-            <button
-              onClick={() => {
-                const headers = ["Platform", "ASX Fee", "US Fee", "FX Rate (%)", "CHESS", "SMSF", "Rating"];
-                const rows = sorted.map(b => [
-                  b.name,
-                  b.asx_fee || "N/A",
-                  b.us_fee || "N/A",
-                  b.fx_rate != null ? String(b.fx_rate) : "N/A",
-                  b.chess_sponsored ? "Yes" : "No",
-                  b.smsf_support ? "Yes" : "No",
-                  b.rating != null ? String(b.rating) : "N/A",
-                ]);
-                downloadCSV("broker-comparison.csv", headers, rows);
-                trackEvent("export_csv", { page: "compare", count: String(sorted.length) }, "/compare");
-              }}
-              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors text-slate-600"
-            >
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              Export CSV
-            </button>
-            <button
-              onClick={() => {
-                const slugs = sorted.map(b => b.slug).join(",");
-                window.open(`/export/comparison?brokers=${slugs}`, "_blank");
-                trackEvent("export_pdf", { page: "compare", count: String(sorted.length) }, "/compare");
-              }}
-              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors text-slate-600"
-            >
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-              </svg>
-              Export PDF
-            </button>
-          </div>
-        )}
+        <CompareFooter
+          sorted={sorted}
+          brokers={brokers}
+          activeFilter={activeFilter}
+        />
 
-        {selected.size >= 2 && (
-          <div className="fixed bottom-0 left-0 right-0 z-40 bg-slate-900 text-white py-2.5 md:py-3 shadow-lg bounce-in-up" style={{ paddingBottom: 'max(0.625rem, env(safe-area-inset-bottom))' }}>
-            <div className="container-custom flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2 min-w-0">
-                <div className="flex -space-x-1.5 shrink-0 md:hidden">
-                  {Array.from(selected).slice(0, 4).map(slug => {
-                    const br = brokers.find(b => b.slug === slug);
-                    if (!br) return null;
-                    return (
-                      <BrokerLogo key={slug} broker={br} size="xs" className="border-2 border-slate-900 rounded-full" />
-                    );
-                  })}
-                </div>
-                <span className="text-xs md:text-sm font-semibold truncate">
-                  {selected.size}/4 selected
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                {/* Mobile: Quick Compare inline */}
-                <button
-                  onClick={() => setShowMobileCompare(prev => !prev)}
-                  className="md:hidden shrink-0 px-3 py-2 min-h-[44px] inline-flex items-center bg-slate-700 text-white font-bold text-xs rounded-lg"
-                >
-                  {showMobileCompare ? "Close" : "Quick Compare"}
-                </button>
-                <Link
-                  href={`/versus?vs=${Array.from(selected).join(',')}`}
-                  className="shrink-0 px-4 py-2 min-h-[44px] inline-flex items-center md:px-5 md:py-2 bg-white text-slate-700 font-bold text-xs md:text-sm rounded-lg hover:bg-slate-50 transition-colors"
-                >
-                  Full Compare →
-                </Link>
-              </div>
-            </div>
-
-            {/* Mobile swipe comparison panel */}
-            {showMobileCompare && (
-              <div className="md:hidden mt-2 pb-1">
-                <div className="container-custom">
-                  <div className="overflow-x-auto scrollbar-hide -mx-4 px-4 flex gap-2 snap-x snap-mandatory">
-                    {Array.from(selected).map(slug => {
-                      const br = brokers.find(b => b.slug === slug);
-                      if (!br) return null;
-                      return (
-                        <div key={slug} className="snap-center shrink-0 w-[70vw] bg-white rounded-xl p-3 text-slate-900">
-                          <div className="flex items-center gap-2 mb-2">
-                            <BrokerLogo broker={br} size="xs" />
-                            <div className="min-w-0">
-                              <div className="text-sm font-bold truncate">{br.name}</div>
-                              <div className="text-amber-500 text-xs">{renderStars(br.rating || 0)} {br.rating}</div>
-                            </div>
-                            <button onClick={() => toggleSelected(br.slug)} className="ml-auto text-slate-400 hover:text-red-500 shrink-0">
-                              <Icon name="x" size={14} />
-                            </button>
-                          </div>
-                          <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 text-[0.62rem]">
-                            <div><span className="text-slate-400">ASX Fee</span><div className="font-bold text-slate-800">{br.asx_fee || "N/A"}</div></div>
-                            <div><span className="text-slate-400">US Fee</span><div className="font-bold text-slate-800">{br.us_fee || "N/A"}</div></div>
-                            <div><span className="text-slate-400">FX Rate</span><div className="font-bold text-slate-800">{br.fx_rate != null ? `${br.fx_rate}%` : "N/A"}</div></div>
-                            <div><span className="text-slate-400">CHESS</span><div className="font-bold text-slate-800">{br.chess_sponsored ? "Yes" : "No"}</div></div>
-                          </div>
-                          <Link href={`/broker/${br.slug}`} className="block mt-2 text-center text-[0.62rem] font-semibold text-violet-600 hover:text-violet-800">
-                            Full Review →
-                          </Link>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  <p className="text-[0.56rem] text-slate-400 text-center mt-1.5">Swipe to compare</p>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
+        <CompareSelectionBar
+          brokers={brokers}
+          selected={selected}
+          showMobileCompare={showMobileCompare}
+          onToggleMobileCompare={() => setShowMobileCompare(prev => !prev)}
+          onToggleSelected={toggleSelected}
+        />
 
         {sorted.length === 0 && (
           <div className="text-center py-8 md:py-12 text-slate-500" role="status">
@@ -828,102 +613,6 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             )}
           </div>
         )}
-
-        {/* Pro upsell */}
-        <div className="mt-6 md:mt-8">
-          <ProUpsellBanner variant="compact" />
-        </div>
-
-        {/* Trust signals */}
-        <div className="mt-4 md:mt-8 text-[0.62rem] md:text-xs text-slate-400 text-center">
-          <p>
-            Fees verified against official pricing.{" "}
-            <Link href="/how-we-verify" className="underline hover:text-slate-600">Verification</Link>
-            {" · "}
-            <Link href="/methodology" className="underline hover:text-slate-600">Rankings</Link>
-            {" · "}
-            <Link href="/how-we-earn" className="underline hover:text-slate-600">How we earn</Link>
-          </p>
-        </div>
-
-        {/* General Advice Warning */}
-        <p className="mt-2 md:mt-3 text-[0.58rem] md:text-[0.69rem] text-slate-400 text-center leading-relaxed max-w-3xl mx-auto">
-          {GENERAL_ADVICE_WARNING}
-        </p>
-
-        {/* Contextual risk warnings based on active filter */}
-        <div className="mt-2 text-[0.55rem] md:text-[0.62rem] text-slate-400 text-center leading-relaxed max-w-3xl mx-auto space-y-1.5">
-          <p>{PDS_CONSIDERATION} {FSG_NOTE}</p>
-          {(activeFilter === 'cfd' || activeFilter === 'all') && (
-            <p className="text-red-400/80">{CFD_WARNING_SHORT}</p>
-          )}
-          {(activeFilter === 'crypto' || activeFilter === 'all') && (
-            <p className="text-amber-500/80">{CRYPTO_WARNING}</p>
-          )}
-          {(activeFilter === 'super' || activeFilter === 'all') && (
-            <p>{SUPER_WARNING_SHORT}</p>
-          )}
-          <p>{AFCA_REFERENCE}</p>
-        </div>
-
-        {/* Sponsored display ad */}
-        <AdSlot
-          placement="display-sidebar-compare"
-          variant="in-content"
-          page="/compare"
-          brokers={brokers}
-        />
-
-        {/* Contextual advisor prompt — changes based on active filter */}
-        {(activeFilter === 'smsf' || activeFilter === 'property' || activeFilter === 'all') && (
-          <div className="mt-4 md:mt-6">
-            <AdvisorPrompt
-              context={activeFilter === 'smsf' ? 'smsf' : activeFilter === 'property' ? 'property' : 'general'}
-              compact={activeFilter === 'all'}
-            />
-          </div>
-        )}
-
-        {/* Email Capture */}
-        <div className="mt-6 md:mt-8">
-          <LeadMagnet />
-        </div>
-
-        {/* Bottom conversion — compact on mobile */}
-        <div className="mt-5 md:mt-8 grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
-          <div className="bg-white border border-slate-200 rounded-xl p-3 md:p-6 flex flex-col items-start gap-1.5 md:gap-0">
-            <Icon name="target" size={18} className="text-amber-500 shrink-0 md:mb-2" />
-            <h2 className="text-xs md:text-lg font-bold text-slate-900">Find Your Platform</h2>
-            <p className="text-[0.58rem] md:text-xs text-slate-500 md:mb-4 hidden md:block">Answer 4 quick questions and narrow down platforms.</p>
-            <Link href="/quiz" className="mt-auto px-3 md:px-5 py-1.5 md:py-2.5 bg-amber-500 text-white text-[0.65rem] md:text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors">
-              Quiz →
-            </Link>
-          </div>
-          <div className="bg-white border border-slate-200 rounded-xl p-3 md:p-6 flex flex-col items-start gap-1.5 md:gap-0">
-            <Icon name="swords" size={18} className="text-slate-600 shrink-0 md:mb-2" />
-            <h2 className="text-xs md:text-lg font-bold text-slate-900">Head-to-Head</h2>
-            <p className="text-[0.58rem] md:text-xs text-slate-500 md:mb-4 hidden md:block">Compare two platforms side by side — fees, features & our pick.</p>
-            <Link href="/versus" className="mt-auto px-3 md:px-5 py-1.5 md:py-2.5 bg-slate-900 text-white text-[0.65rem] md:text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors">
-              Compare →
-            </Link>
-          </div>
-          <div className="bg-white border border-slate-200 rounded-xl p-3 md:p-6 flex flex-col items-start gap-1.5 md:gap-0">
-            <Icon name="calculator" size={18} className="text-violet-600 shrink-0 md:mb-2" />
-            <h2 className="text-xs md:text-lg font-bold text-slate-900">Fee Calculator</h2>
-            <p className="text-[0.58rem] md:text-xs text-slate-500 md:mb-4 hidden md:block">See exact fees for your portfolio at every broker.</p>
-            <Link href="/portfolio-calculator" className="mt-auto px-3 md:px-5 py-1.5 md:py-2.5 bg-violet-600 text-white text-[0.65rem] md:text-sm font-bold rounded-lg hover:bg-violet-700 transition-colors">
-              Calculate →
-            </Link>
-          </div>
-          <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 md:p-6 flex flex-col items-start gap-1.5 md:gap-0">
-            <Icon name="bell" size={18} className="text-slate-600 shrink-0 md:mb-2" />
-            <h2 className="text-xs md:text-lg font-bold text-slate-900">Fee Alerts</h2>
-            <p className="text-[0.58rem] md:text-xs text-slate-500 md:mb-4 hidden md:block">Get notified when any broker changes their fees.</p>
-            <Link href="/fee-alerts" className="mt-auto px-3 md:px-5 py-1.5 md:py-2.5 bg-slate-900 text-white text-[0.65rem] md:text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors">
-              Subscribe →
-            </Link>
-          </div>
-        </div>
       </div>
     </div>
   );

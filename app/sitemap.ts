@@ -2,14 +2,16 @@ import { createClient } from "@/lib/supabase/server";
 import type { MetadataRoute } from "next";
 import { getAllCategorySlugs } from "@/lib/best-broker-categories";
 import { getAllCostScenarioSlugs } from "@/lib/cost-scenarios";
+import { getAllCitySlugs } from "@/lib/cities";
+import { getAllGuideSlugs } from "@/lib/how-to-guides";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app";
   const supabase = await createClient();
 
   // Static pages with tiered priorities
-  const highPriority = new Set(["/compare", "/quiz", "/reviews", "/deals", "/pro", "/share-trading", "/crypto", "/savings", "/super", "/cfd"]);
-  const medPriority = new Set(["/versus", "/calculators", "/articles", "/scenarios", "/switch", "/stories", "/benchmark", "/health-scores", "/alerts", "/reports", "/whats-new", "/costs", "/fee-impact", "/advertise"]);
+  const highPriority = new Set(["/compare", "/quiz", "/reviews", "/deals", "/pro", "/share-trading", "/crypto", "/savings", "/super", "/cfd", "/versus", "/how-to"]);
+  const medPriority = new Set(["/calculators", "/articles", "/scenarios", "/switch", "/stories", "/benchmark", "/health-scores", "/alerts", "/reports", "/whats-new", "/costs", "/fee-impact", "/advertise"]);
   // Everything else (about, how-we-earn, privacy, methodology, terms, etc.) → 0.4
 
   const staticPages = [
@@ -37,6 +39,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/portfolio-calculator",
     "/advisor-apply", "/for-advisors", "/expert", "/switching-calculator", "/savings-calculator", "/portfolio", "/dashboard",
     "/share-trading", "/crypto", "/savings", "/super", "/cfd",
+    "/how-to",
   ].map((path) => ({
     url: `${baseUrl}${path}`,
     lastModified: new Date(),
@@ -225,5 +228,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...staticPages, ...bestPages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorLocationPages];
+  // How-to guide pages
+  const howToPages = getAllGuideSlugs().map((slug) => ({
+    url: `${baseUrl}/how-to/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
+
+  // City / location investing pages
+  const investingCityPages = [
+    { url: `${baseUrl}/investing`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.7 },
+    ...getAllCitySlugs().map((slug) => ({
+      url: `${baseUrl}/investing/${slug}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    })),
+  ];
+
+  return [...staticPages, ...bestPages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorLocationPages, ...investingCityPages];
 }
