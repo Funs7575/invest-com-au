@@ -8,7 +8,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = await createClient();
 
   // Static pages with tiered priorities
-  const highPriority = new Set(["/compare", "/quiz", "/reviews", "/deals", "/pro"]);
+  const highPriority = new Set(["/compare", "/quiz", "/reviews", "/deals", "/pro", "/share-trading", "/crypto", "/savings", "/super", "/cfd"]);
   const medPriority = new Set(["/versus", "/calculators", "/articles", "/scenarios", "/switch", "/stories", "/benchmark", "/health-scores", "/alerts", "/reports", "/whats-new", "/costs", "/fee-impact", "/advertise"]);
   // Everything else (about, how-we-earn, privacy, methodology, terms, etc.) → 0.4
 
@@ -36,6 +36,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/fee-alerts",
     "/portfolio-calculator",
     "/advisor-apply", "/for-advisors", "/expert", "/switching-calculator", "/savings-calculator", "/portfolio", "/dashboard",
+    "/share-trading", "/crypto", "/savings", "/super", "/cfd",
   ].map((path) => ({
     url: `${baseUrl}${path}`,
     lastModified: new Date(),

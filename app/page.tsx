@@ -48,16 +48,16 @@ const bestForCards = [
 ];
 
 const categoryStrip = [
-  { label: "Shares", href: "/compare?category=shares" },
-  { label: "Crypto", href: "/compare?category=crypto" },
+  { label: "Shares", href: "/share-trading" },
+  { label: "Crypto", href: "/crypto" },
   { label: "ETFs", href: "/article/best-etfs-australia" },
-  { label: "Super", href: "/best/super-funds" },
+  { label: "Super", href: "/super" },
   { label: "Robo-Advisors", href: "/best/robo-advisors" },
-  { label: "Savings", href: "/compare?filter=savings" },
+  { label: "Savings", href: "/savings" },
   { label: "Term Deposits", href: "/best/term-deposits" },
   { label: "Property", href: "/best/property-investing" },
   { label: "Advisors", href: "/find-advisor" },
-  { label: "CFDs", href: "/best/cfd-forex" },
+  { label: "CFDs", href: "/cfd" },
 ];
 
 export const revalidate = 3600; // ISR: revalidate every hour
