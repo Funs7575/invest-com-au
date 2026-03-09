@@ -241,6 +241,22 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
           </div>
         )}
 
+        {/* Special Offer */}
+        {pro.offer_active && pro.offer_text && (
+          <div className="bg-gradient-to-r from-violet-50 to-violet-100/50 border border-violet-200 rounded-xl p-4 md:p-5 mb-4 md:mb-6">
+            <div className="flex items-start gap-3">
+              <div className="w-9 h-9 rounded-full bg-violet-200 flex items-center justify-center shrink-0">
+                <Icon name="tag" size={18} className="text-violet-600" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[0.58rem] font-bold uppercase tracking-wider text-violet-500 mb-0.5">Special Offer</p>
+                <p className="text-sm md:text-base font-bold text-violet-900">{pro.offer_text}</p>
+                {pro.offer_terms && <p className="text-[0.62rem] md:text-xs text-violet-600 mt-1">{pro.offer_terms}</p>}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Contact & Links */}
         {(pro.website || pro.phone) && (
           <div className="flex flex-wrap gap-2 mb-4 md:mb-6">

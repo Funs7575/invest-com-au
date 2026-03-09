@@ -340,6 +340,12 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                         {pro.specialties.length > 4 && <span className="text-[0.56rem] md:text-[0.62rem] text-slate-400">+{pro.specialties.length - 4}</span>}
                       </div>
                     )}
+                    {pro.offer_active && pro.offer_text && (
+                      <div className="mt-2 bg-violet-50 border border-violet-100 rounded-lg px-2.5 py-1.5 flex items-center gap-1.5">
+                        <Icon name="tag" size={11} className="text-violet-500 shrink-0" />
+                        <span className="text-[0.58rem] md:text-[0.62rem] font-bold text-violet-700 truncate">{pro.offer_text}</span>
+                      </div>
+                    )}
                   </div>
                   <div className="shrink-0 self-center"><Icon name="chevron-right" size={18} className="text-slate-300" /></div>
                 </div>
