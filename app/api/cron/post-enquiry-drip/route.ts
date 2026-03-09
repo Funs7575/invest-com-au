@@ -18,7 +18,12 @@ export const maxDuration = 30;
  * Step 2 (Day 7): "How did it go? Rate [advisor]" + comparison tools
  * Step 3 (Day 30): "Fee update: your shortlisted brokers changed" + annual check-in
  */
-export async function GET() {
+export async function GET(req: Request) {
+  const authHeader = req.headers.get("authorization");
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!

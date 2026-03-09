@@ -1,15 +1,21 @@
 import { createClient } from "@/lib/supabase/server";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { notificationFooter } from "@/lib/email-templates";
+import { isRateLimited } from "@/lib/rate-limit";
 
 const log = logger("questions");
 
 export async function POST(
-  req: Request,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
+    if (await isRateLimited(`question_answer:${ip}`, 10, 60)) {
+      return NextResponse.json({ error: "Too many answers submitted. Please try again later." }, { status: 429 });
+    }
+
     const { id } = await params;
     const questionId = parseInt(id, 10);
     if (isNaN(questionId)) {

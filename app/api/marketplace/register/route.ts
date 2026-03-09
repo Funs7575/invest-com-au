@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import crypto from "crypto";
+import { isRateLimited } from "@/lib/rate-limit";
 
 /** Escape HTML special chars to prevent XSS in email templates */
 function escapeHtml(str: string): string {
@@ -18,6 +19,11 @@ const supabaseAdmin = createClient(
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
+    if (await isRateLimited(`marketplace_register:${ip}`, 3, 60)) {
+      return NextResponse.json({ error: "Too many registration attempts. Please try again later." }, { status: 429 });
+    }
+
     const body = await req.json();
     const { email, password, full_name, company_name, phone, broker_slug, website } = body;
 

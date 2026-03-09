@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { isRateLimited } from "@/lib/rate-limit";
+import { getSiteUrl } from "@/lib/url";
 
 const PROFANITY = /\b(fuck|shit|cunt|bitch|asshole|dick|piss|bastard|wanker|slut|whore|nigger|faggot|retard)\b/i;
 const SPAM_URL = /https?:\/\/[^\s]+/i;
@@ -128,7 +129,7 @@ export async function POST(request: NextRequest) {
 
     // Notify admin of new review
     if (process.env.RESEND_API_KEY) {
-      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app";
+      const siteUrl = getSiteUrl();
       await fetch("https://api.resend.com/emails", {
         method: "POST",
         headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" },

@@ -288,7 +288,7 @@ export async function POST(request: NextRequest) {
       experienceLevel ? EXPERIENCE_MAP[experienceLevel] : null,
       investmentRange ? INVESTMENT_MAP[investmentRange] : null,
       tradingInterest ? INTEREST_MAP[tradingInterest] : null,
-    ).catch(() => {});
+    ).catch((err) => console.error("[quiz-lead] results email failed:", err));
   }
 
   // Sync to Resend Contacts with quiz-specific properties
@@ -299,7 +299,7 @@ export async function POST(request: NextRequest) {
     ...(experienceLevel ? { experience: EXPERIENCE_MAP[experienceLevel] } : {}),
     ...(investmentRange ? { investment_range: INVESTMENT_MAP[investmentRange] } : {}),
     ...(tradingInterest ? { trading_interest: INTEREST_MAP[tradingInterest] } : {}),
-  }).catch(() => {});
+  }).catch((err) => console.error("[quiz-lead] resend sync failed:", err));
 
   return NextResponse.json({ success: true });
 }

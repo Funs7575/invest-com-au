@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isRateLimited } from "@/lib/rate-limit";
 
 function slugify(text: string): string {
   return text
@@ -10,6 +11,11 @@ function slugify(text: string): string {
 
 export async function POST(request: NextRequest) {
   try {
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
+    if (await isRateLimited(`advisor_signup:${ip}`, 3, 60)) {
+      return NextResponse.json({ error: "Too many signup attempts. Please try again later." }, { status: 429 });
+    }
+
     const body = await request.json();
     const {
       name,

@@ -1,9 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
+async function requireAdmin() {
+  const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || "admin@invest.com.au")
+    .split(",")
+    .map((e) => e.trim().toLowerCase());
+  const supabaseAuth = await createClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabaseAuth.auth.getUser();
+
+  if (
+    authError ||
+    !user ||
+    !ADMIN_EMAILS.includes(user.email?.toLowerCase() || "")
+  ) {
+    return null;
+  }
+  return user;
+}
+
 // GET — list pending fee changes
 export async function GET() {
   try {
+    const admin = await requireAdmin();
+    if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     const supabase = await createClient();
     const { data } = await supabase
       .from("fee_update_queue")
@@ -18,6 +41,9 @@ export async function GET() {
 
 // POST — approve or reject a fee change
 export async function POST(request: NextRequest) {
+  const admin = await requireAdmin();
+  if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
   const supabase = await createClient();
   const { id, action } = await request.json();
 

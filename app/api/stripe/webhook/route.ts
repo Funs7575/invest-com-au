@@ -4,6 +4,7 @@ import { handleInvoicePaid, handleInvoicePaymentFailed } from "@/lib/advisor-bil
 import { NextRequest, NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { logger } from "@/lib/logger";
+import { getSiteUrl } from "@/lib/url";
 
 const log = logger("stripe-webhook");
 
@@ -223,7 +224,7 @@ export async function POST(request: NextRequest) {
               sendTransactionalEmail(
                 ADMIN_EMAIL,
                 `New Pro Signup: ${customer.email}`,
-                `<div style="font-family:Arial,sans-serif;max-width:500px"><h2 style="color:#0f172a;font-size:16px">💎 New Pro Member</h2><p style="color:#64748b;font-size:14px"><strong>${customer.email}</strong> just subscribed to Invest.com.au Pro (${interval || "unknown"} plan).</p><p style="color:#64748b;font-size:14px">Customer ID: ${custId}</p><a href="${process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app"}/admin/pro-subscribers" style="display:inline-block;padding:10px 20px;background:#7c3aed;color:white;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;margin-top:8px">View Pro Members →</a></div>`,
+                `<div style="font-family:Arial,sans-serif;max-width:500px"><h2 style="color:#0f172a;font-size:16px">💎 New Pro Member</h2><p style="color:#64748b;font-size:14px"><strong>${customer.email}</strong> just subscribed to Invest.com.au Pro (${interval || "unknown"} plan).</p><p style="color:#64748b;font-size:14px">Customer ID: ${custId}</p><a href="${getSiteUrl()}/admin/pro-subscribers" style="display:inline-block;padding:10px 20px;background:#7c3aed;color:white;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;margin-top:8px">View Pro Members →</a></div>`,
               ).catch((err) => console.error("[stripe-webhook] Admin Pro signup notification failed:", err));
             }
           } catch (err) {

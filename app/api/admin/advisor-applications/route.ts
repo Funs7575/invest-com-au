@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { createClient as createServerClient } from "@/lib/supabase/server";
 import { randomBytes } from "crypto";
 import { sendApplicationApproved, sendApplicationRejected } from "@/lib/advisor-emails";
 import { getSiteUrl } from "@/lib/url";
@@ -11,8 +12,31 @@ function createAdminSupabase() {
   );
 }
 
+async function requireAdmin() {
+  const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || "admin@invest.com.au")
+    .split(",")
+    .map((e) => e.trim().toLowerCase());
+  const supabaseAuth = await createServerClient();
+  const {
+    data: { user },
+    error: authError,
+  } = await supabaseAuth.auth.getUser();
+
+  if (
+    authError ||
+    !user ||
+    !ADMIN_EMAILS.includes(user.email?.toLowerCase() || "")
+  ) {
+    return null;
+  }
+  return user;
+}
+
 // GET - list applications
 export async function GET(request: NextRequest) {
+  const admin = await requireAdmin();
+  if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
   const supabase = createAdminSupabase();
   const status = request.nextUrl.searchParams.get("status") || "pending";
 
@@ -29,6 +53,9 @@ export async function GET(request: NextRequest) {
 
 // PATCH - approve or reject
 export async function PATCH(request: NextRequest) {
+  const admin = await requireAdmin();
+  if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
   const supabase = createAdminSupabase();
   const siteUrl = getSiteUrl(request.headers.get("host"));
 

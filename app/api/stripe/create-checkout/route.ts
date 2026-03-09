@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { getSiteUrl } from "@/lib/url";
 
 const log = logger("stripe");
 
@@ -79,8 +80,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create Checkout Session
-    const siteUrl =
-      process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app";
+    const siteUrl = getSiteUrl();
 
     const session = await getStripe().checkout.sessions.create({
       customer: customerId,

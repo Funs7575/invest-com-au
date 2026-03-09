@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
     sendAdminNotification(
       `New advisor application: ${name.trim()}`,
       `<strong>${name.trim()}</strong> (${account_type === 'firm' ? 'Firm' : 'Individual'}) applied as ${type}.<br/>Email: ${email}<br/>Firm: ${firm_name || 'N/A'}<br/><a href="https://invest.com.au/admin/advisors" style="color:#2563eb">Review in Admin →</a>`
-    ).catch(() => {});
+    ).catch((err) => console.error("[advisor-apply] admin notification failed:", err));
 
     return NextResponse.json({ success: true });
   } catch (error) {

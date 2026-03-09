@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { randomBytes } from "crypto";
 import { isRateLimited } from "@/lib/rate-limit";
+import { getSiteUrl } from "@/lib/url";
 
 export async function POST(request: NextRequest) {
   try {
@@ -31,7 +32,7 @@ export async function POST(request: NextRequest) {
 
     // Send verification email
     const RESEND_API_KEY = process.env.RESEND_API_KEY;
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app";
+    const siteUrl = getSiteUrl();
     if (RESEND_API_KEY) {
       await fetch("https://api.resend.com/emails", {
         method: "POST",

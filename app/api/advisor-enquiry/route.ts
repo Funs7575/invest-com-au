@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { isRateLimited } from "@/lib/rate-limit";
 import { notificationFooter } from "@/lib/email-templates";
 import { createLeadInvoice } from "@/lib/advisor-billing";
+import { getSiteUrl } from "@/lib/url";
 
 export async function POST(request: NextRequest) {
   try {
@@ -138,7 +139,7 @@ export async function POST(request: NextRequest) {
     if (pro.email) {
       try {
         const RESEND_API_KEY = process.env.RESEND_API_KEY;
-        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app";
+        const siteUrl = getSiteUrl();
         if (RESEND_API_KEY) {
           await fetch("https://api.resend.com/emails", {
             method: "POST",

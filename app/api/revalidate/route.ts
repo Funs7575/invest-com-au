@@ -16,9 +16,9 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { paths, tags, secret } = body;
 
-    // Simple secret check — prevents random people from purging your cache
-    const REVALIDATE_SECRET = process.env.REVALIDATE_SECRET || "invest-revalidate-2026";
-    if (secret && secret !== REVALIDATE_SECRET) {
+    // Secret check — prevents random people from purging your cache
+    const REVALIDATE_SECRET = process.env.REVALIDATE_SECRET;
+    if (!secret || secret !== REVALIDATE_SECRET) {
       return NextResponse.json({ error: "Invalid secret" }, { status: 401 });
     }
 
