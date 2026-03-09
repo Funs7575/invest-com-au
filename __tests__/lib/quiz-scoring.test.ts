@@ -32,6 +32,8 @@ const makeWeights = (overrides: Partial<QuizWeights> = {}): QuizWeights => ({
   smsf: 5,
   crypto: 5,
   advanced: 5,
+  property: 5,
+  robo: 5,
   ...overrides,
 });
 

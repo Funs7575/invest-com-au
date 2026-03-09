@@ -111,13 +111,14 @@ export async function POST(request: NextRequest) {
 
     // Create billing record if not free
     if (!isFree && priceCents > 0) {
-      await supabase.from("advisor_billing").insert({
+      const { error: billingError } = await supabase.from("advisor_billing").insert({
         professional_id,
         lead_id: lead.id,
         amount_cents: priceCents,
         description: `Lead: ${user_name.trim()} (quality: ${score}/100)`,
         status: "pending",
-      }).catch(() => {});
+      });
+      if (billingError) console.error("billing insert failed:", billingError.message);
     }
 
     // Send notification email to the advisor (if they have an email)

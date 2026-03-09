@@ -7,7 +7,7 @@ export type QuizWeights = Record<WeightKey, number>;
 export interface ScoredResult {
   slug: string;
   total: number;
-  broker: Broker | null;
+  broker?: Broker;
 }
 
 export const ANSWER_WEIGHT_MAP: Record<string, WeightKey> = {
@@ -53,7 +53,7 @@ export function scoreQuizResults(
     const broker = brokers.find((b) => b.slug === slug);
     if (broker?.rating) total *= 1 + (broker.rating - 4) * 0.1;
 
-    return { slug, total, broker: broker || null };
+    return { slug, total, broker: broker || undefined };
   });
 
   // Tiebreaker: sort by score DESC, then rating DESC, then name ASC

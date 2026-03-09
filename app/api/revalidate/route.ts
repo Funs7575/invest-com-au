@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     if (tags && Array.isArray(tags)) {
       for (const tag of tags.slice(0, 10)) {
         if (typeof tag === "string") {
-          revalidateTag(tag);
+          revalidateTag(tag, "default");
           revalidated.push(`tag:${tag}`);
         }
       }

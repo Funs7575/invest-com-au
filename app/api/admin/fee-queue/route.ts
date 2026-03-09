@@ -54,13 +54,14 @@ export async function POST(request: NextRequest) {
     await supabase.from("brokers").update(updateField).eq("id", item.broker_id);
 
     // Log the change in broker_data_changes
-    await supabase.from("broker_data_changes").insert({
+    const { error: logError } = await supabase.from("broker_data_changes").insert({
       broker_id: item.broker_id,
       field_name: item.field_name,
       old_value: item.old_value,
       new_value: item.new_value,
       change_type: "fee_scraper_approved",
-    }).catch(() => {});
+    });
+    if (logError) console.error("insert failed:", logError.message);
 
     await supabase.from("fee_update_queue").update({
       status: "approved",

@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (review?.reviewer_email) {
-      const brokerName = (review.brokers as { name: string } | null)?.name || review.broker_slug;
+      const brokerName = ((review.brokers as { name: string }[] | null)?.[0])?.name || review.broker_slug;
       const firstName = (review.reviewer_name || 'there').split(' ')[0];
 
       if (action === 'approve') {

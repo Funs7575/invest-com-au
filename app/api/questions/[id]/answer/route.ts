@@ -64,7 +64,7 @@ export async function POST(
         .single();
 
       if (fullQuestion?.asker_email) {
-        const brokerName = (fullQuestion.brokers as { name: string } | null)?.name || fullQuestion.broker_slug || "a platform";
+        const brokerName = ((fullQuestion.brokers as { name: string }[] | null)?.[0])?.name || fullQuestion.broker_slug || "a platform";
         const firstName = (fullQuestion.asker_name || "there").split(" ")[0];
         const { getSiteUrl } = await import("@/lib/url"); const siteUrl = getSiteUrl();
 

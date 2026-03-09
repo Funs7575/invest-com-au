@@ -207,7 +207,7 @@ export default function SavingsCalculatorClient({ accounts }: { accounts: Accoun
                       )}
                     </div>
                     <a
-                      href={getAffiliateLink(account)}
+                      href={getAffiliateLink(account as unknown as import("@/lib/types").Broker)}
                       target="_blank"
                       rel={AFFILIATE_REL}
                       onClick={() => trackClick(account.slug, account.name, "savings-calc", "/savings-calculator", "savings")}

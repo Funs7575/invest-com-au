@@ -8,7 +8,7 @@ const mockRevokeObjectURL = vi.fn();
 
 vi.stubGlobal("document", { createElement: mockCreateElement });
 vi.stubGlobal("URL", { createObjectURL: mockCreateObjectURL, revokeObjectURL: mockRevokeObjectURL });
-vi.stubGlobal("Blob", class MockBlob { constructor(public parts: string[], public options: Record<string, string>) {} });
+vi.stubGlobal("Blob", class MockBlob { parts: string[]; options: Record<string, string>; constructor(parts: string[], options: Record<string, string>) { this.parts = parts; this.options = options; } });
 
 // Now import the module
 const { downloadCSV } = await import("@/lib/csv-export");
@@ -27,8 +27,8 @@ describe("downloadCSV", () => {
 
   it("generates correct CSV content", () => {
     downloadCSV("test.csv", ["Name", "Score"], [["Alice", "100"], ["Bob", "95"]]);
-    const blobArgs = (mockCreateObjectURL.mock.calls[0][0] as { parts: string[] }).parts;
-    const csv = blobArgs[0];
+    const blob = ((mockCreateObjectURL.mock.calls[0] as unknown[])[0] as { parts: string[] });
+    const csv = blob.parts[0];
     expect(csv).toContain("Name,Score");
     expect(csv).toContain("Alice,100");
     expect(csv).toContain("Bob,95");
@@ -36,29 +36,29 @@ describe("downloadCSV", () => {
 
   it("escapes values with commas", () => {
     downloadCSV("test.csv", ["Name"], [["Smith, John"]]);
-    const blobArgs = (mockCreateObjectURL.mock.calls[0][0] as { parts: string[] }).parts;
-    const csv = blobArgs[0];
+    const blob = ((mockCreateObjectURL.mock.calls[0] as unknown[])[0] as { parts: string[] });
+    const csv = blob.parts[0];
     expect(csv).toContain('"Smith, John"');
   });
 
   it("escapes values with quotes", () => {
     downloadCSV("test.csv", ["Name"], [['He said "hello"']]);
-    const blobArgs = (mockCreateObjectURL.mock.calls[0][0] as { parts: string[] }).parts;
-    const csv = blobArgs[0];
+    const blob = ((mockCreateObjectURL.mock.calls[0] as unknown[])[0] as { parts: string[] });
+    const csv = blob.parts[0];
     expect(csv).toContain('"He said ""hello"""');
   });
 
   it("escapes values with newlines", () => {
     downloadCSV("test.csv", ["Note"], [["Line1\nLine2"]]);
-    const blobArgs = (mockCreateObjectURL.mock.calls[0][0] as { parts: string[] }).parts;
-    const csv = blobArgs[0];
+    const blob = ((mockCreateObjectURL.mock.calls[0] as unknown[])[0] as { parts: string[] });
+    const csv = blob.parts[0];
     expect(csv).toContain('"Line1\nLine2"');
   });
 
   it("passes through simple values without escaping", () => {
     downloadCSV("test.csv", ["Name"], [["Alice"]]);
-    const blobArgs = (mockCreateObjectURL.mock.calls[0][0] as { parts: string[] }).parts;
-    const csv = blobArgs[0];
+    const blob = ((mockCreateObjectURL.mock.calls[0] as unknown[])[0] as { parts: string[] });
+    const csv = blob.parts[0];
     expect(csv).toBe("Name\nAlice");
   });
 });

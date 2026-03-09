@@ -78,7 +78,7 @@ describe("StarRatingInput", () => {
 
     const stars = screen.getAllByRole("radio");
     // All should be unchecked
-    stars.forEach((star) => {
+    stars.forEach((star: HTMLElement) => {
       expect(star).toHaveAttribute("aria-checked", "false");
     });
   });
@@ -204,7 +204,7 @@ describe("StarRatingInput", () => {
     );
 
     const buttons = container.querySelectorAll("button");
-    buttons.forEach((btn) => {
+    buttons.forEach((btn: Element) => {
       expect(btn.className).toContain("w-5");
       expect(btn.className).toContain("h-5");
     });
@@ -216,7 +216,7 @@ describe("StarRatingInput", () => {
     );
 
     const buttons = container.querySelectorAll("button");
-    buttons.forEach((btn) => {
+    buttons.forEach((btn: Element) => {
       expect(btn.className).toContain("w-9");
       expect(btn.className).toContain("h-9");
     });
@@ -228,7 +228,7 @@ describe("StarRatingInput", () => {
     );
 
     const buttons = container.querySelectorAll("button");
-    buttons.forEach((btn) => {
+    buttons.forEach((btn: Element) => {
       expect(btn.className).toContain("w-7");
       expect(btn.className).toContain("h-7");
     });

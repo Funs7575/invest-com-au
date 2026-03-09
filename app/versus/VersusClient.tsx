@@ -12,7 +12,7 @@ import StickyCTABar from "@/components/StickyCTABar";
 import ScrollReveal from "@/components/ScrollReveal";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import { CURRENT_YEAR } from "@/lib/seo";
-import { getVersusEditorial } from "@/lib/versus-content";
+import type { VersusEditorial } from "@/lib/versus-content";
 import Icon from "@/components/Icon";
 import BrokerLogo from "@/components/BrokerLogo";
 
@@ -57,7 +57,7 @@ function parseSlugsFromPath(pathname: string): string[] {
   return match[1].split("-vs-").filter(Boolean);
 }
 
-export default function VersusClient({ brokers }: { brokers: Broker[] }) {
+export default function VersusClient({ brokers, serverEditorial }: { brokers: Broker[]; serverEditorial?: VersusEditorial | null }) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
@@ -575,7 +575,7 @@ export default function VersusClient({ brokers }: { brokers: Broker[] }) {
 
             {/* ─── Editorial Comparison Content ─── */}
             {(() => {
-              const editorial = getVersusEditorial(selected.map(b => b.slug));
+              const editorial = serverEditorial ?? null;
               if (!editorial) return null;
               return (
                 <div className="mb-4 md:mb-6 space-y-4">

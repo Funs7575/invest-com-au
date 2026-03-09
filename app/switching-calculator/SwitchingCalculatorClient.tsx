@@ -9,7 +9,7 @@ import { getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL, trackClick
 import { getStoredUtm } from "@/components/UtmCapture";
 import type { Broker } from "@/lib/types";
 
-function parseFee(feeStr: string | null): { flat: number; pct: number } {
+function parseFee(feeStr: string | null | undefined): { flat: number; pct: number } {
   if (!feeStr) return { flat: 0, pct: 0 };
   const s = feeStr.replace(/,/g, "");
   const pctMatch = s.match(/([\d.]+)%/);

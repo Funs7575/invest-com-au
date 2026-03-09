@@ -125,9 +125,10 @@ export async function GET(req: NextRequest) {
               field_name: dbField,
               old_value: currentVal,
               new_value: extractedValue,
-              extracted_from: broker.fee_page_url,
+              extracted_from: broker.fee_source_url,
               status: "pending",
-            }).catch(() => {});
+            });
+            // Ignore insert errors for fee queue
           }
         }
 

@@ -8,6 +8,7 @@
  */
 
 // Re-export testing utilities for convenience
+// @ts-expect-error - @testing-library/react types may not export all members
 export { render, screen, within, waitFor, act } from "@testing-library/react";
 export { default as userEvent } from "@testing-library/user-event";
 

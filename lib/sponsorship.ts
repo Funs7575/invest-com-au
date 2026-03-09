@@ -61,7 +61,7 @@ export function boostFeaturedPartner(
  * Only boosts by 1 slot to maintain trust.
  */
 export function applyQuizSponsorBoost<
-  T extends { broker: Broker | null }
+  T extends { broker?: Broker | null }
 >(items: T[], minRank: number = 1, maxRank: number = 5): T[] {
   const result = [...items];
   const idx = result.findIndex(

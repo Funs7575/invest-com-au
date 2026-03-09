@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
   );
 
   const now = Date.now();
-  const results: { id: number; slug: string; score: number; needsUpdate: boolean }[] = [];
+  const results: { id: number; slug: string; title: string; score: number; needsUpdate: boolean }[] = [];
 
   for (const article of articles || []) {
     let score = 0;
@@ -77,6 +77,7 @@ export async function GET(req: NextRequest) {
     results.push({
       id: article.id,
       slug: article.slug,
+      title: article.title,
       score,
       needsUpdate,
     });

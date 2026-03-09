@@ -72,7 +72,8 @@ export default async function ExpertInsightsPage() {
         {articles && articles.length > 0 ? (
           <div className="space-y-3 md:space-y-4">
             {articles.map((a) => {
-              const pro = a.professionals as { name: string; slug: string; photo_url: string | null; verified: boolean; type: string } | null;
+              const rawPro = a.professionals as unknown;
+              const pro = (Array.isArray(rawPro) ? rawPro[0] : rawPro) as { name: string; slug: string; photo_url: string | null; verified: boolean; type: string } | null;
               return (
                 <Link key={a.id} href={`/expert/${a.slug}`} className="block bg-white border border-slate-200 rounded-xl p-4 md:p-5 hover:shadow-lg hover:border-violet-200 hover:-translate-y-0.5 transition-all duration-200">
                   <div className="flex items-center gap-2 mb-2">

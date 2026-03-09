@@ -39,7 +39,7 @@ export default async function SwitchingCalculatorPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <SwitchingCalculatorClient brokers={brokers || []} />
+      <SwitchingCalculatorClient brokers={(brokers || []) as import("@/lib/types").Broker[]} />
     </>
   );
 }

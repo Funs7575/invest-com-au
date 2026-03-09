@@ -47,7 +47,7 @@ describe("getAffiliateLink", () => {
   });
 
   it("returns /broker/{slug} when no affiliate_url", () => {
-    const broker = makeBroker({ slug: "commsec", affiliate_url: null });
+    const broker = makeBroker({ slug: "commsec", affiliate_url: undefined });
     expect(getAffiliateLink(broker)).toBe("/broker/commsec");
   });
 

@@ -59,19 +59,19 @@ export async function GET(req: NextRequest) {
     supabase.from("fee_alert_subscriptions").select("id", { count: "exact", head: true }).eq("verified", true),
     supabase.from("user_reviews").select("id", { count: "exact", head: true }),
     // Top pages (7d)
-    supabase.rpc("get_top_pages_7d").catch(() => ({ data: null })),
+    supabase.rpc("get_top_pages_7d").then(r => r, () => ({ data: null, error: null, count: null, status: 500, statusText: 'error' })),
     // Top broker clicks (7d)
-    supabase.rpc("get_top_broker_clicks_7d").catch(() => ({ data: null })),
+    supabase.rpc("get_top_broker_clicks_7d").then(r => r, () => ({ data: null, error: null, count: null, status: 500, statusText: 'error' })),
     // Top event types (7d)
-    supabase.rpc("get_top_events_7d").catch(() => ({ data: null })),
+    supabase.rpc("get_top_events_7d").then(r => r, () => ({ data: null, error: null, count: null, status: 500, statusText: 'error' })),
     // Clicks by placement (7d)
-    supabase.rpc("get_clicks_by_placement_7d").catch(() => ({ data: null })),
+    supabase.rpc("get_clicks_by_placement_7d").then(r => r, () => ({ data: null, error: null, count: null, status: 500, statusText: 'error' })),
     // Daily events (30d)
-    supabase.rpc("get_daily_events_30d").catch(() => ({ data: null })),
+    supabase.rpc("get_daily_events_30d").then(r => r, () => ({ data: null, error: null, count: null, status: 500, statusText: 'error' })),
     // Daily clicks (30d)
-    supabase.rpc("get_daily_clicks_30d").catch(() => ({ data: null })),
+    supabase.rpc("get_daily_clicks_30d").then(r => r, () => ({ data: null, error: null, count: null, status: 500, statusText: 'error' })),
     // Device breakdown (7d)
-    supabase.rpc("get_device_breakdown_7d").catch(() => ({ data: null })),
+    supabase.rpc("get_device_breakdown_7d").then(r => r, () => ({ data: null, error: null, count: null, status: 500, statusText: 'error' })),
   ]);
 
   return NextResponse.json({

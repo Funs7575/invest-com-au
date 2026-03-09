@@ -162,6 +162,8 @@ function getPlatformLabel(type: PlatformType): string {
     super_fund: "Super Fund",
     property_platform: "Property Platform",
     cfd_forex: "CFD & Forex",
+    savings_account: "Savings Account",
+    term_deposit: "Term Deposit",
   };
   return labels[type] || type;
 }
@@ -175,6 +177,8 @@ function getPlatformColor(type: PlatformType): string {
     super_fund: "bg-emerald-50 text-emerald-700",
     property_platform: "bg-lime-50 text-lime-700",
     cfd_forex: "bg-rose-50 text-rose-700",
+    savings_account: "bg-teal-50 text-teal-700",
+    term_deposit: "bg-amber-50 text-amber-700",
   };
   return colors[type] || "bg-slate-50 text-slate-700";
 }

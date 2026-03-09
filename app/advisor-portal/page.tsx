@@ -10,6 +10,7 @@ type Advisor = {
   photo_url?: string; type: string; location_display?: string; rating?: number;
   review_count?: number; verified?: boolean; bio?: string; specialties?: string[];
   fee_structure?: string; fee_description?: string; website?: string; phone?: string;
+  booking_link?: string; booking_intro?: string;
 };
 
 type Lead = {

@@ -558,7 +558,7 @@ export default function AdminAdvisorsPage() {
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-bold text-slate-900">{String(app.name)}</span>
-                        {app.firm_name && <span className="text-xs text-slate-500">— {String(app.firm_name)}</span>}
+                        {!!app.firm_name && <span className="text-xs text-slate-500">— {String(app.firm_name)}</span>}
                         <span className={`text-[0.56rem] font-bold px-1.5 py-0.5 rounded-full ${
                           app.status === "pending" ? "bg-amber-100 text-amber-700" :
                           app.status === "approved" ? "bg-emerald-100 text-emerald-700" :
@@ -567,14 +567,14 @@ export default function AdminAdvisorsPage() {
                       </div>
                       <div className="text-xs text-slate-500 mt-0.5">{String(app.email)} · {PROFESSIONAL_TYPE_LABELS[String(app.type) as keyof typeof PROFESSIONAL_TYPE_LABELS] || String(app.type)}</div>
                       <div className="text-xs text-slate-500 mt-0.5">
-                        {app.location_suburb && `${String(app.location_suburb)}, `}{String(app.location_state || "")}
-                        {app.afsl_number && ` · AFSL ${String(app.afsl_number)}`}
-                        {app.registration_number && ` · TAN ${String(app.registration_number)}`}
+                        {!!app.location_suburb && `${String(app.location_suburb)}, `}{String(app.location_state || "")}
+                        {!!app.afsl_number && ` · AFSL ${String(app.afsl_number)}`}
+                        {!!app.registration_number && ` · TAN ${String(app.registration_number)}`}
                       </div>
                     </div>
                     <span className="text-xs text-slate-400">{new Date(String(app.created_at)).toLocaleDateString("en-AU")}</span>
                   </div>
-                  {app.bio && <p className="text-xs text-slate-600 mb-2 line-clamp-2">{String(app.bio)}</p>}
+                  {!!app.bio && <p className="text-xs text-slate-600 mb-2 line-clamp-2">{String(app.bio)}</p>}
                   {app.status === "pending" && (
                     <div className="flex gap-2 mt-2">
                       <button
@@ -657,7 +657,7 @@ export default function AdminAdvisorsPage() {
                         </div>
                         <div className="text-xs text-slate-600 mt-1">
                           <strong>Reason:</strong> {String(d.reason).replace(/_/g, " ")}
-                          {d.details && <span className="text-slate-500"> — {String(d.details)}</span>}
+                          {!!d.details && <span className="text-slate-500"> — {String(d.details)}</span>}
                         </div>
                       </div>
                       <span className="text-xs text-slate-400">{new Date(String(d.created_at)).toLocaleDateString("en-AU")}</span>

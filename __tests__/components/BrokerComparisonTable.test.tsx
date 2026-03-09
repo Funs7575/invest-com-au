@@ -15,6 +15,7 @@ function makeBroker(overrides: Partial<Broker> = {}): Broker {
     deal: false,
     editors_pick: false,
     status: "active",
+    platform_type: "share_broker" as const,
     rating: 4.0,
     asx_fee: "$5",
     asx_fee_value: 5,

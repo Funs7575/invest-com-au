@@ -7,6 +7,7 @@
  */
 
 const BRAND_EMERALD = "#16a34a";
+const BRAND_BLUE = "#2563eb";
 const BRAND_DARK = "#0f172a";
 const TEXT_MUTED = "#64748b";
 const TEXT_LIGHT = "#94a3b8";

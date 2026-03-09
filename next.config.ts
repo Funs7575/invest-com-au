@@ -2,12 +2,6 @@ import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
-  typescript: {
-    // TODO: Fix strict TS errors on Vercel (different TS version from local)
-    // Vercel's build uses React 19 types where 'unknown' is not assignable to ReactNode
-    // Local tsc passes fine. Re-enable once Supabase types are properly narrowed.
-    ignoreBuildErrors: true,
-  },
   images: {
     remotePatterns: [
       {

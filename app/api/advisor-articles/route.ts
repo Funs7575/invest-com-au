@@ -8,7 +8,8 @@ import { getSiteUrl } from "@/lib/url";
 const SITE_URL = getSiteUrl();
 
 async function logMod(supabase: Awaited<ReturnType<typeof createClient>>, articleId: number, action: string, by: string, notes?: string, oldStatus?: string, newStatus?: string) {
-  await supabase.from("article_moderation_log").insert({ article_id: articleId, action, performed_by: by, notes, old_status: oldStatus, new_status: newStatus }).catch(() => {});
+  const { error } = await supabase.from("article_moderation_log").insert({ article_id: articleId, action, performed_by: by, notes, old_status: oldStatus, new_status: newStatus });
+  if (error) console.error("moderation log insert failed:", error.message);
 }
 
 async function sendEmail(to: string, subject: string, html: string) {

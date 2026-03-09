@@ -63,7 +63,7 @@ describe("10-trades-month cost calculation", () => {
   const scenario = getCostScenarioBySlug("10-trades-month")!;
 
   it("calculates $5/trade × 10 × 12 = $600", () => {
-    const broker = makeBroker({ asx_fee_value: 5, inactivity_fee: null });
+    const broker = makeBroker({ asx_fee_value: 5, inactivity_fee: undefined });
     expect(scenario.calculateAnnualCost(broker)).toBe(600);
   });
 
@@ -88,7 +88,7 @@ describe("10-trades-month cost calculation", () => {
   });
 
   it("$0 brokerage + no inactivity = $0", () => {
-    const broker = makeBroker({ asx_fee_value: 0, inactivity_fee: null });
+    const broker = makeBroker({ asx_fee_value: 0, inactivity_fee: undefined });
     expect(scenario.calculateAnnualCost(broker)).toBe(0);
   });
 

@@ -77,7 +77,7 @@ export default function EmailPerformancePage() {
     setBounced(bouncedRes.count || 0);
     setUnsubscribed(unsubRes.count || 0);
     setDripsSent(drips.length);
-    setRecentBounces((capturesFullRes.data || []).map((c: EmailCapture) => c.email));
+    setRecentBounces((capturesFullRes.data || []).map((c: { email: string }) => c.email));
 
     // By source
     const srcMap = new Map<string, number>();

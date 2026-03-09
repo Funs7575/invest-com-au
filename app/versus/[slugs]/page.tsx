@@ -6,7 +6,8 @@ import { PLATFORM_TYPE_LABELS_LOWER } from "@/lib/types";
 import type { Metadata } from "next";
 import VersusClient from "../VersusClient";
 import { SITE_URL, CURRENT_YEAR } from "@/lib/seo";
-import { getVersusEditorial } from "@/lib/versus-content";
+import { getVersusEditorial } from "@/lib/cached-versus";
+import type { VersusEditorial } from "@/lib/versus-content";
 
 const PLATFORM_LABELS = PLATFORM_TYPE_LABELS_LOWER;
 
@@ -275,8 +276,8 @@ export default async function VersusSlugPage({
     ],
   };
 
-  // FAQ structured data from editorial content
-  const editorial = getVersusEditorial(brokerSlugs);
+  // FAQ structured data from editorial content (now fetched from Supabase)
+  const editorial = await getVersusEditorial(brokerSlugs);
   const faqLd = editorial?.faqs && editorial.faqs.length > 0 ? {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -304,7 +305,7 @@ export default async function VersusSlugPage({
         />
       )}
       <Suspense fallback={<VersusLoading />}>
-        <VersusClient brokers={(allBrokers as Broker[]) || []} />
+        <VersusClient brokers={(allBrokers as Broker[]) || []} serverEditorial={editorial} />
       </Suspense>
     </>
   );

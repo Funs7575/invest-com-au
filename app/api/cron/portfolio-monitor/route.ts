@@ -139,25 +139,27 @@ export async function GET() {
     }
 
     // Create fee snapshot
-    await supabase.from("portfolio_fee_snapshots").insert({
+    const { error: snapshotError } = await supabase.from("portfolio_fee_snapshots").insert({
       portfolio_id: portfolio.id,
       snapshot_date: new Date().toISOString().slice(0, 10),
       total_annual_fees: totalFees,
       cheapest_alternative_fees: optimalFees,
       potential_savings: savings,
       breakdown: feeBreakdown,
-    }).catch(() => {});
+    });
+    if (snapshotError) log.error("Snapshot insert failed", { error: snapshotError.message });
     snapshotsCreated++;
 
     // Save alerts
     for (const alert of alerts) {
-      await supabase.from("portfolio_alerts").insert({
+      const { error: alertError } = await supabase.from("portfolio_alerts").insert({
         portfolio_id: portfolio.id,
         broker_slug: alert.slug,
         alert_type: alert.type,
         title: alert.title,
         detail: alert.detail,
-      }).catch(() => {});
+      });
+      if (alertError) log.error("Alert insert failed", { error: alertError.message });
     }
 
     // Update portfolio with new calculations
@@ -167,7 +169,8 @@ export async function GET() {
       savings_cents: savings * 100,
       optimal_broker_slug: optimalSlug || null,
       last_snapshot_at: new Date().toISOString(),
-    }).eq("id", portfolio.id).catch(() => {});
+    }).eq("id", portfolio.id);
+    // Ignore update errors for portfolio recalculation
 
     // Send monthly summary email
     const optBroker = brokerMap.get(optimalSlug);
