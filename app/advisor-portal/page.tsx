@@ -13,7 +13,11 @@ type Advisor = {
   fee_structure?: string; fee_description?: string; website?: string; phone?: string;
   booking_link?: string; booking_intro?: string;
   offer_text?: string; offer_terms?: string; offer_active?: boolean;
+  firm_id?: number; is_firm_admin?: boolean; account_type?: string; status?: string;
 };
+
+type FirmMember = { id: number; name: string; slug: string; email?: string; type: string; photo_url?: string; verified?: boolean; status?: string; created_at: string };
+type FirmInvite = { id: number; email: string; name?: string; status: string; created_at: string; expires_at: string };
 
 type Lead = {
   id: number; user_name: string; user_email: string; user_phone?: string;
@@ -40,10 +44,15 @@ type WeeklyEnquiry = { weekLabel: string; count: number };
 type ProfileCompleteness = { score: number; missingFields: string[] };
 
 export default function AdvisorPortalPage() {
-  const [view, setView] = useState<"login" | "dashboard" | "leads" | "profile" | "billing" | "articles">("login");
+  const [view, setView] = useState<"login" | "dashboard" | "leads" | "profile" | "billing" | "articles" | "team">("login");
   const [advisor, setAdvisor] = useState<Advisor | null>(null);
   const [leads, setLeads] = useState<Lead[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
+  const [firmMembers, setFirmMembers] = useState<FirmMember[]>([]);
+  const [firmInvites, setFirmInvites] = useState<FirmInvite[]>([]);
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [inviteName, setInviteName] = useState("");
+  const [inviteStatus, setInviteStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [viewsByDay, setViewsByDay] = useState<ViewDay[]>([]);
   const [billing, setBilling] = useState<BillingRecord[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -75,8 +84,8 @@ export default function AdvisorPortalPage() {
       if (res.ok) {
         const { advisor: a } = await res.json();
         setAdvisor(a);
-        setView("dashboard");
-        loadData();
+        setView(a.status === "pending" ? "dashboard" : "dashboard");
+        if (a.status !== "pending") loadData();
       } else {
         setView("login");
       }
@@ -84,6 +93,42 @@ export default function AdvisorPortalPage() {
       setView("login");
     }
     setLoading(false);
+  };
+
+  const loadFirmData = useCallback(async () => {
+    try {
+      const res = await fetch("/api/advisor-auth/firm/invite");
+      if (res.ok) {
+        const data = await res.json();
+        setFirmMembers(data.members || []);
+        setFirmInvites(data.invitations || []);
+      }
+    } catch { /* ignore */ }
+  }, []);
+
+  const sendInvite = async () => {
+    if (!inviteEmail.trim()) return;
+    setInviteStatus("sending");
+    try {
+      const res = await fetch("/api/advisor-auth/firm/invite", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: inviteEmail.trim(), name: inviteName.trim() || undefined }),
+      });
+      if (res.ok) {
+        setInviteStatus("sent");
+        setInviteEmail("");
+        setInviteName("");
+        loadFirmData();
+        setTimeout(() => setInviteStatus("idle"), 3000);
+      } else {
+        const data = await res.json();
+        alert(data.error || "Failed to send invite");
+        setInviteStatus("error");
+      }
+    } catch {
+      setInviteStatus("error");
+    }
   };
 
   const verifyToken = async (token: string) => {
@@ -257,12 +302,16 @@ export default function AdvisorPortalPage() {
   }
 
   // ─── PORTAL SHELL ───
+  const isPending = advisor?.status === "pending";
+  const isFirmAdmin = advisor?.is_firm_admin && advisor?.firm_id;
+
   const navItems = [
     { key: "dashboard", label: "Dashboard", icon: "layout-dashboard" },
     { key: "leads", label: "Leads", icon: "inbox" },
     { key: "articles", label: "Articles", icon: "file-text" },
     { key: "profile", label: "Profile", icon: "user" },
     { key: "billing", label: "Billing", icon: "credit-card" },
+    ...(isFirmAdmin ? [{ key: "team", label: "Team", icon: "users" }] : []),
   ];
 
   return (
@@ -286,7 +335,7 @@ export default function AdvisorPortalPage() {
           {navItems.map((item) => (
             <button
               key={item.key}
-              onClick={() => setView(item.key as typeof view)}
+              onClick={() => { setView(item.key as typeof view); if (item.key === "team") loadFirmData(); }}
               className={`flex items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
                 view === item.key
                   ? "border-slate-900 text-slate-900"
@@ -306,10 +355,24 @@ export default function AdvisorPortalPage() {
       {/* Content */}
       <div className="max-w-5xl mx-auto px-4 py-6">
 
+        {/* ─── PENDING BANNER ─── */}
+        {isPending && (
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 flex items-start gap-3">
+            <div className="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center shrink-0 mt-0.5">
+              <Icon name="clock" size={16} className="text-amber-600" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-amber-900">Application Under Review</h3>
+              <p className="text-xs text-amber-700 mt-0.5">Your application is being reviewed by our team. We&apos;ll verify your credentials and activate your listing within 48 hours. You&apos;ll receive an email when your profile goes live.</p>
+              <p className="text-[0.62rem] text-amber-600 mt-2">While you wait, you can set up your profile below so it&apos;s ready when approved.</p>
+            </div>
+          </div>
+        )}
+
         {/* ─── DASHBOARD ─── */}
         {view === "dashboard" && (
           <>
-            <h1 className="text-xl font-bold text-slate-900 mb-1">Welcome back, {advisor?.name?.split(" ")[0]}</h1>
+            <h1 className="text-xl font-bold text-slate-900 mb-1">Welcome{isPending ? "" : " back"}, {advisor?.name?.split(" ")[0]}</h1>
             <p className="text-sm text-slate-500 mb-6">{advisor?.firm_name || PROFESSIONAL_TYPE_LABELS[advisor?.type as keyof typeof PROFESSIONAL_TYPE_LABELS]}</p>
 
             {/* ── Stats cards row ── */}
@@ -884,6 +947,78 @@ export default function AdvisorPortalPage() {
 
         {/* ═══ ARTICLES ═══ */}
         {view === "articles" && <AdvisorArticlesSection advisorId={advisor?.id} />}
+
+        {/* ─── TEAM (firm admins only) ─── */}
+        {view === "team" && isFirmAdmin && (
+          <div>
+            <h2 className="text-lg font-bold text-slate-900 mb-1">Team Management</h2>
+            <p className="text-sm text-slate-500 mb-6">Invite advisors to join your firm on Invest.com.au. Each member gets their own verified profile.</p>
+
+            {/* Invite form */}
+            <div className="bg-white border border-slate-200 rounded-xl p-5 mb-6">
+              <h3 className="text-sm font-bold text-slate-900 mb-3">Invite a Team Member</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <input value={inviteName} onChange={(e) => setInviteName(e.target.value)} placeholder="Name (optional)" className="px-3 py-2 border border-slate-200 rounded-lg text-sm" />
+                <input type="email" value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} placeholder="Email address *" className="px-3 py-2 border border-slate-200 rounded-lg text-sm" />
+                <button onClick={sendInvite} disabled={inviteStatus === "sending" || !inviteEmail.trim()} className="px-4 py-2 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 transition-colors">
+                  {inviteStatus === "sending" ? "Sending..." : inviteStatus === "sent" ? "Sent!" : "Send Invite"}
+                </button>
+              </div>
+              {inviteStatus === "error" && <p className="text-xs text-red-600 mt-2">Failed to send invite. Please try again.</p>}
+            </div>
+
+            {/* Current members */}
+            <div className="bg-white border border-slate-200 rounded-xl p-5 mb-6">
+              <h3 className="text-sm font-bold text-slate-900 mb-3">Team Members ({firmMembers.length})</h3>
+              {firmMembers.length === 0 ? (
+                <p className="text-sm text-slate-400">No team members yet. Invite your first advisor above.</p>
+              ) : (
+                <div className="divide-y divide-slate-100">
+                  {firmMembers.map((m) => (
+                    <div key={m.id} className="py-3 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        {m.photo_url ? (
+                          <img src={m.photo_url} alt="" className="w-8 h-8 rounded-full object-cover" />
+                        ) : (
+                          <div className="w-8 h-8 bg-violet-100 rounded-full flex items-center justify-center text-xs font-bold text-violet-600">{m.name?.[0]}</div>
+                        )}
+                        <div>
+                          <div className="text-sm font-semibold text-slate-900">{m.name}</div>
+                          <div className="text-[0.62rem] text-slate-500">{m.email} · {PROFESSIONAL_TYPE_LABELS[m.type as keyof typeof PROFESSIONAL_TYPE_LABELS] || m.type}</div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {m.verified && <span className="text-[0.56rem] bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded font-semibold">Verified</span>}
+                        <span className={`text-[0.56rem] px-1.5 py-0.5 rounded font-semibold ${m.status === "active" ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>{m.status}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Pending invitations */}
+            {firmInvites.length > 0 && (
+              <div className="bg-white border border-slate-200 rounded-xl p-5">
+                <h3 className="text-sm font-bold text-slate-900 mb-3">Pending Invitations</h3>
+                <div className="divide-y divide-slate-100">
+                  {firmInvites.map((inv) => (
+                    <div key={inv.id} className="py-3 flex items-center justify-between">
+                      <div>
+                        <div className="text-sm font-medium text-slate-900">{inv.name || inv.email}</div>
+                        {inv.name && <div className="text-[0.62rem] text-slate-500">{inv.email}</div>}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className={`text-[0.56rem] px-1.5 py-0.5 rounded font-semibold ${inv.status === "pending" ? "bg-amber-50 text-amber-700" : inv.status === "accepted" ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-500"}`}>{inv.status}</span>
+                        <span className="text-[0.56rem] text-slate-400">Expires {new Date(inv.expires_at).toLocaleDateString()}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

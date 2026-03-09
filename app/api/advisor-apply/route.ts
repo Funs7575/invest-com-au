@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { isRateLimited } from "@/lib/rate-limit";
+import { sendApplicationConfirmation, sendAdminNotification } from "@/lib/advisor-emails";
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,7 +11,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, firm_name, email, phone, type, afsl_number, registration_number, location_state, location_suburb, specialties, bio, website, fee_description } = body;
+    const { name, firm_name, email, phone, type, afsl_number, registration_number, location_state, location_suburb, specialties, bio, website, fee_description, account_type, abn } = body;
 
     if (!name?.trim() || !email?.trim() || !type) {
       return NextResponse.json({ error: "Name, email, and advisor type are required." }, { status: 400 });
@@ -55,6 +56,8 @@ export async function POST(request: NextRequest) {
       bio: bio?.trim() || null,
       website: website?.trim() || null,
       fee_description: fee_description?.trim() || null,
+      account_type: account_type || null,
+      abn: abn?.trim() || null,
       referral_source: body.referral_source?.trim()?.slice(0, 200) || null,
     });
 
@@ -63,32 +66,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Failed to submit application." }, { status: 500 });
     }
 
-    // Send confirmation email
-    const RESEND_API_KEY = process.env.RESEND_API_KEY;
-    if (RESEND_API_KEY) {
-      await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${RESEND_API_KEY}` },
-        body: JSON.stringify({
-          from: "Invest.com.au <hello@invest.com.au>",
-          to: email.toLowerCase().trim(),
-          subject: "Application received — Invest.com.au Advisor Directory",
-          html: `
-            <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; color: #334155;">
-              <div style="background: #0f172a; padding: 20px 24px; border-radius: 12px 12px 0 0;">
-                <h1 style="color: white; margin: 0; font-size: 18px;">Application Received</h1>
-              </div>
-              <div style="background: #f8fafc; padding: 24px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px;">
-                <p style="font-size: 15px;">Hi ${name.trim().split(" ")[0]},</p>
-                <p style="font-size: 14px; color: #64748b;">Thanks for applying to join the Invest.com.au advisor directory. We'll review your application and verify your credentials within 48 hours.</p>
-                <p style="font-size: 14px; color: #64748b;">Once approved, you'll receive a link to set up your profile and start receiving enquiries.</p>
-                <p style="font-size: 12px; color: #94a3b8; margin-top: 20px;">Questions? Reply to this email.</p>
-              </div>
-            </div>
-          `,
-        }),
-      });
-    }
+    // Send confirmation email and admin notification
+    sendApplicationConfirmation(email.toLowerCase().trim(), name.trim(), account_type || 'individual').catch((err) => console.error("[advisor-apply] confirmation email failed:", err));
+    sendAdminNotification(
+      `New advisor application: ${name.trim()}`,
+      `<strong>${name.trim()}</strong> (${account_type === 'firm' ? 'Firm' : 'Individual'}) applied as ${type}.<br/>Email: ${email}<br/>Firm: ${firm_name || 'N/A'}<br/><a href="https://invest.com.au/admin/advisors" style="color:#2563eb">Review in Admin →</a>`
+    ).catch(() => {});
 
     return NextResponse.json({ success: true });
   } catch (error) {

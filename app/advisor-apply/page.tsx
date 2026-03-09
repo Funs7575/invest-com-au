@@ -8,10 +8,12 @@ import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 const STATES = ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT"];
 
 export default function AdvisorApplyPage() {
+  const [accountType, setAccountType] = useState<"individual" | "firm">("individual");
   const [form, setForm] = useState({
     name: "", firm_name: "", email: "", phone: "", type: "financial_planner",
     afsl_number: "", registration_number: "", location_state: "",
     location_suburb: "", specialties: "", bio: "", website: "", fee_description: "",
+    abn: "",
   });
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
@@ -21,13 +23,17 @@ export default function AdvisorApplyPage() {
       setErrorMsg("Name, email, and advisor type are required.");
       return;
     }
+    if (accountType === "firm" && !form.firm_name) {
+      setErrorMsg("Firm name is required for firm applications.");
+      return;
+    }
     setStatus("submitting");
     setErrorMsg("");
     try {
       const res = await fetch("/api/advisor-apply", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, account_type: accountType }),
       });
       if (res.ok) {
         setStatus("success");
@@ -94,16 +100,51 @@ export default function AdvisorApplyPage() {
 
         <div className="bg-white border border-slate-200 rounded-xl p-5 md:p-6">
           <div className="space-y-4">
+            {/* Account Type Selector */}
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 mb-2">I&apos;m applying as *</label>
+              <div className="grid grid-cols-2 gap-3">
+                <button type="button" onClick={() => setAccountType("individual")} className={`p-3 rounded-lg border-2 text-left transition-all ${accountType === "individual" ? "border-slate-900 bg-slate-50" : "border-slate-200 hover:border-slate-300"}`}>
+                  <div className="flex items-center gap-2 mb-1">
+                    <Icon name="user" size={16} className={accountType === "individual" ? "text-slate-900" : "text-slate-400"} />
+                    <span className="text-sm font-bold text-slate-900">Individual Advisor</span>
+                  </div>
+                  <p className="text-[0.62rem] text-slate-500">Solo practitioner or authorised rep</p>
+                </button>
+                <button type="button" onClick={() => setAccountType("firm")} className={`p-3 rounded-lg border-2 text-left transition-all ${accountType === "firm" ? "border-slate-900 bg-slate-50" : "border-slate-200 hover:border-slate-300"}`}>
+                  <div className="flex items-center gap-2 mb-1">
+                    <Icon name="building" size={16} className={accountType === "firm" ? "text-slate-900" : "text-slate-400"} />
+                    <span className="text-sm font-bold text-slate-900">Firm / Brokerage</span>
+                  </div>
+                  <p className="text-[0.62rem] text-slate-500">Register your firm & invite team members</p>
+                </button>
+              </div>
+            </div>
+
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Full Name *</label>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">{accountType === "firm" ? "Your Full Name *" : "Full Name *"}</label>
                 <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="Sarah Chen" />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Firm Name</label>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">{accountType === "firm" ? "Firm Name *" : "Firm Name"}</label>
                 <input value={form.firm_name} onChange={(e) => setForm({ ...form, firm_name: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="Chen Advisory" />
               </div>
             </div>
+
+            {/* Firm-specific fields */}
+            {accountType === "firm" && (
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">ABN</label>
+                  <input value={form.abn} onChange={(e) => setForm({ ...form, abn: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="XX XXX XXX XXX" />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">Firm Website</label>
+                  <input value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="https://..." />
+                </div>
+              </div>
+            )}
 
             <div className="grid grid-cols-2 gap-3">
               <div>

@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
       .from("professionals")
       .select("id, name, email")
       .eq("email", email.toLowerCase().trim())
-      .eq("status", "active")
+      .in("status", ["active", "pending"])
       .single();
 
     if (!advisor) {

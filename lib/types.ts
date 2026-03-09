@@ -891,6 +891,9 @@ export interface Professional {
   offer_terms?: string;
   offer_expiry?: string;
   offer_active?: boolean;
+  firm_id?: number;
+  is_firm_admin?: boolean;
+  account_type?: 'individual' | 'firm_member';
   onboarded_at?: string;
   created_at: string;
   updated_at: string;
@@ -960,4 +963,67 @@ export interface ProfessionalReview {
   moderation_notes?: string;
   created_at: string;
   updated_at: string;
+}
+
+export interface AdvisorFirm {
+  id: number;
+  name: string;
+  slug: string;
+  abn?: string;
+  acn?: string;
+  afsl_number?: string;
+  website?: string;
+  phone?: string;
+  email?: string;
+  logo_url?: string;
+  location_state?: string;
+  location_suburb?: string;
+  location_display?: string;
+  bio?: string;
+  status: string;
+  admin_professional_id?: number;
+  max_seats: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AdvisorApplication {
+  id: number;
+  account_type: 'individual' | 'firm';
+  name: string;
+  email: string;
+  phone?: string;
+  firm_name?: string;
+  type: ProfessionalType;
+  afsl_number?: string;
+  registration_number?: string;
+  abn?: string;
+  location_state?: string;
+  location_suburb?: string;
+  specialties?: string;
+  bio?: string;
+  website?: string;
+  fee_description?: string;
+  referral_source?: string;
+  status: 'pending' | 'approved' | 'rejected';
+  professional_id?: number;
+  firm_id?: number;
+  rejection_reason?: string;
+  reviewed_at?: string;
+  reviewed_by?: string;
+  created_at: string;
+}
+
+export interface FirmInvitation {
+  id: number;
+  firm_id: number;
+  email: string;
+  name?: string;
+  invited_by: number;
+  token: string;
+  role: string;
+  status: 'pending' | 'accepted' | 'expired' | 'revoked';
+  accepted_at?: string;
+  expires_at: string;
+  created_at: string;
 }
