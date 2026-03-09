@@ -15,7 +15,7 @@ export interface HowToGuide {
 
 export const HOW_TO_GUIDES: HowToGuide[] = [
   {
-    slug: "how-to-buy-shares",
+    slug: "buy-shares",
     title: "How to Buy Shares in Australia (2026) — Step-by-Step Guide",
     h1: "How to Buy Shares in Australia",
     metaDescription:
@@ -113,7 +113,7 @@ Come tax time (July each year), your broker will provide a tax summary showing y
     verticalLink: "/share-trading",
   },
   {
-    slug: "how-to-buy-bitcoin",
+    slug: "buy-bitcoin",
     title: "How to Buy Bitcoin in Australia (2026) — Step-by-Step Guide",
     h1: "How to Buy Bitcoin in Australia",
     metaDescription:
@@ -197,7 +197,7 @@ If you do use a hardware wallet or software wallet, you'll receive a recovery se
     verticalLink: "/crypto",
   },
   {
-    slug: "how-to-buy-etfs",
+    slug: "buy-etfs",
     title: "How to Buy ETFs in Australia (2026) — Step-by-Step Guide",
     h1: "How to Buy ETFs in Australia",
     metaDescription:
@@ -283,7 +283,7 @@ Over decades, a simple 3-ETF portfolio with regular contributions and reinvested
     verticalLink: "/share-trading",
   },
   {
-    slug: "how-to-open-brokerage-account",
+    slug: "open-brokerage-account",
     title: "How to Open a Brokerage Account in Australia (2026)",
     h1: "How to Open a Brokerage Account in Australia",
     metaDescription:
@@ -376,7 +376,7 @@ Consider setting up two-factor authentication (2FA) if you haven't already, and 
     verticalLink: "/share-trading",
   },
   {
-    slug: "how-to-start-investing",
+    slug: "start-investing",
     title: "How to Start Investing in Australia (2026) — Beginner's Guide",
     h1: "How to Start Investing in Australia",
     metaDescription:
