@@ -40,28 +40,41 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
 
   if (!pro) notFound();
 
-  // Get similar advisors and approved reviews in parallel
-  const [{ data: similar }, { data: reviews }] = await Promise.all([
-    supabase
-      .from("professionals")
-      .select("id, name, slug, firm_name, type, location_display, rating, review_count, fee_description, verified, specialties, photo_url")
-      .eq("status", "active")
-      .eq("type", pro.type)
-      .neq("slug", slug)
-      .order("rating", { ascending: false })
-      .limit(3),
-    supabase
-      .from("professional_reviews")
-      .select("*")
-      .eq("professional_id", pro.id)
-      .eq("status", "approved")
-      .order("created_at", { ascending: false })
-      .limit(20),
-  ]);
+  // Get similar advisors and approved reviews in parallel — gracefully handle missing tables
+  let similar: Professional[] = [];
+  let reviews: import("@/lib/types").ProfessionalReview[] = [];
 
-  // Increment daily profile view counter (fire-and-forget, must be awaited to avoid RSC serialisation issues)
+  try {
+    const [similarResult, reviewsResult] = await Promise.all([
+      supabase
+        .from("professionals")
+        .select("id, name, slug, firm_name, type, location_display, rating, review_count, fee_description, verified, specialties, photo_url")
+        .eq("status", "active")
+        .eq("type", pro.type)
+        .neq("slug", slug)
+        .order("rating", { ascending: false })
+        .limit(3),
+      supabase
+        .from("professional_reviews")
+        .select("*")
+        .eq("professional_id", pro.id)
+        .eq("status", "approved")
+        .order("created_at", { ascending: false })
+        .limit(20),
+    ]);
+    similar = (similarResult.data as Professional[]) || [];
+    reviews = (reviewsResult.data as import("@/lib/types").ProfessionalReview[]) || [];
+  } catch {
+    // Secondary queries failed (e.g. missing table) — continue with defaults
+  }
+
+  // Increment daily profile view counter (fire-and-forget)
   const today = new Date().toISOString().split("T")[0];
-  await supabase.rpc("increment_advisor_view", { p_professional_id: pro.id, p_date: today }).catch(() => {});
+  try {
+    await supabase.rpc("increment_advisor_view", { p_professional_id: pro.id, p_date: today });
+  } catch {
+    // RPC function may not exist yet — safe to ignore
+  }
 
   const breadcrumbLd = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
@@ -111,7 +124,7 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personLd) }} />
       {localBusinessLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessLd) }} />}
-      <AdvisorProfileClient professional={pro as Professional} similar={(similar as Professional[]) || []} reviews={(reviews as import("@/lib/types").ProfessionalReview[]) || []} />
+      <AdvisorProfileClient professional={pro as Professional} similar={similar} reviews={reviews} />
     </>
   );
 }
