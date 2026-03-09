@@ -425,6 +425,10 @@ export default function QuizPage() {
         top_broker: results[0]?.slug || null,
         results_count: results.length,
       }, '/quiz');
+      trackEvent('quiz_completed', {
+        top_match: results[0]?.slug || null,
+        results_count: results.length,
+      }, '/quiz');
       // Persist top results so other pages can show personalized recommendations
       try {
         const topResults = results.slice(0, 5).filter(r => r.broker).map(r => ({

@@ -50,7 +50,7 @@ export async function generateMetadata({
       url: `/how-to/${guide.slug}`,
       images: [
         {
-          url: `/api/og?title=${encodeURIComponent(guide.h1)}&subtitle=Step-by-step+guide+for+Australians&type=default`,
+          url: `/api/og/how-to?slug=${encodeURIComponent(guide.slug)}`,
           width: 1200,
           height: 630,
           alt: guide.h1,
@@ -143,12 +143,18 @@ export default async function HowToGuidePage({
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(
-            [breadcrumbs, howToJsonLd, faqJsonLd].filter(Boolean)
-          ),
-        }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(howToJsonLd) }}
+      />
+      {faqJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+      )}
 
       <div className="py-5 md:py-12">
         <div className="container-custom max-w-3xl">
@@ -302,7 +308,7 @@ export default async function HowToGuidePage({
                         </div>
                       ))}
                     </div>
-                    <p className="text-[0.55rem] md:text-[0.6rem] text-slate-400 mt-2 md:mt-3">
+                    <p className="text-[0.62rem] md:text-xs text-slate-400 mt-2 md:mt-3">
                       {ADVERTISER_DISCLOSURE_SHORT}
                     </p>
                   </div>

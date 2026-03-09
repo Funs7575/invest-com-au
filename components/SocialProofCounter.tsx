@@ -31,27 +31,47 @@ export default function SocialProofCounter({ variant = "inline" }: { variant?: "
     setCount(Math.max(8, baseLine + variance));
   }, []);
 
-  if (count === 0) return null;
-
   if (variant === "badge") {
     return (
-      <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 border border-emerald-200 rounded-full text-[0.62rem] text-emerald-700 font-medium">
-        <span className="relative flex h-1.5 w-1.5">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-          <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
-        </span>
-        {count} investors comparing today
+      <div
+        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[0.62rem] font-medium transition-opacity duration-300 ${
+          count === 0
+            ? "opacity-0 bg-transparent border border-transparent"
+            : "opacity-100 bg-emerald-50 border border-emerald-200 text-emerald-700"
+        }`}
+        // Reserve space with min-height to prevent CLS when count loads
+        style={{ minHeight: "1.5rem" }}
+      >
+        {count > 0 && (
+          <>
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+            </span>
+            {count} investors comparing today
+          </>
+        )}
       </div>
     );
   }
 
   return (
-    <p className="text-[0.62rem] text-slate-400 flex items-center gap-1.5">
-      <span className="relative flex h-1.5 w-1.5">
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
-      </span>
-      {count} investors compared platforms today
+    <p
+      className={`text-[0.62rem] flex items-center gap-1.5 transition-opacity duration-300 ${
+        count === 0 ? "opacity-0 text-transparent" : "opacity-100 text-slate-400"
+      }`}
+      // Reserve space with min-height to prevent CLS
+      style={{ minHeight: "1.125rem" }}
+    >
+      {count > 0 && (
+        <>
+          <span className="relative flex h-1.5 w-1.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+          </span>
+          {count} investors compared platforms today
+        </>
+      )}
     </p>
   );
 }

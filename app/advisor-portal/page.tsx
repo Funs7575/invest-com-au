@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
+import AdvisorPhotoUpload from "@/components/AdvisorPhotoUpload";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 
 type Advisor = {
@@ -17,6 +18,7 @@ type Lead = {
   id: number; user_name: string; user_email: string; user_phone?: string;
   message?: string; source_page?: string; status: string; advisor_notes?: string;
   contacted_at?: string; converted_at?: string; created_at: string;
+  quality_score?: number;
 };
 
 type BillingRecord = {
@@ -28,10 +30,13 @@ type Stats = {
   totalViews30d: number; totalLeads: number; leads30d: number;
   convertedLeads: number; conversionRate: string;
   totalBilledCents: number; pendingBilledCents: number; reviewCount: number;
+  avgRating: string | null; bookingClicks30d: number;
 };
 
 type ViewDay = { view_date: string; view_count: number };
-type Review = { id: number; reviewer_name: string; rating: number; title?: string; body?: string; created_at: string };
+type Review = { id: number; reviewer_name: string; rating: number; title?: string; body?: string; created_at: string; communication_rating?: number; expertise_rating?: number; value_for_money_rating?: number };
+type WeeklyEnquiry = { weekLabel: string; count: number };
+type ProfileCompleteness = { score: number; missingFields: string[] };
 
 export default function AdvisorPortalPage() {
   const [view, setView] = useState<"login" | "dashboard" | "leads" | "profile" | "billing" | "articles">("login");
@@ -41,6 +46,8 @@ export default function AdvisorPortalPage() {
   const [viewsByDay, setViewsByDay] = useState<ViewDay[]>([]);
   const [billing, setBilling] = useState<BillingRecord[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [weeklyEnquiries, setWeeklyEnquiries] = useState<WeeklyEnquiry[]>([]);
+  const [profileCompleteness, setProfileCompleteness] = useState<ProfileCompleteness | null>(null);
   const [loading, setLoading] = useState(true);
   const [loginEmail, setLoginEmail] = useState("");
   const [loginStatus, setLoginStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
@@ -105,7 +112,7 @@ export default function AdvisorPortalPage() {
 
   const loadData = useCallback(async () => {
     try {
-      const res = await fetch("/api/advisor-auth/data");
+      const res = await fetch("/api/advisor-dashboard");
       if (res.ok) {
         const data = await res.json();
         setLeads(data.leads);
@@ -113,6 +120,9 @@ export default function AdvisorPortalPage() {
         setViewsByDay(data.viewsByDay);
         setBilling(data.billing);
         setReviews(data.reviews);
+        setWeeklyEnquiries(data.weeklyEnquiries || []);
+        setProfileCompleteness(data.profileCompleteness || null);
+        if (data.advisor) setAdvisor(data.advisor);
       }
     } catch { /* ignore */ }
   }, []);
@@ -298,33 +308,79 @@ export default function AdvisorPortalPage() {
             <h1 className="text-xl font-bold text-slate-900 mb-1">Welcome back, {advisor?.name?.split(" ")[0]}</h1>
             <p className="text-sm text-slate-500 mb-6">{advisor?.firm_name || PROFESSIONAL_TYPE_LABELS[advisor?.type as keyof typeof PROFESSIONAL_TYPE_LABELS]}</p>
 
-            {/* KPI cards */}
+            {/* ── Stats cards row ── */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
               {[
-                { label: "Profile Views", value: stats?.totalViews30d || 0, sub: "last 30 days", color: "text-blue-600" },
-                { label: "Enquiries", value: stats?.leads30d || 0, sub: "last 30 days", color: "text-amber-600" },
-                { label: "Conversion", value: `${stats?.conversionRate || 0}%`, sub: `${stats?.convertedLeads || 0} converted`, color: "text-emerald-600" },
-                { label: "Rating", value: advisor?.rating || "—", sub: `${advisor?.review_count || 0} reviews`, color: "text-violet-600" },
+                { label: "Profile Views", value: stats?.totalViews30d || 0, sub: "last 30 days", icon: "eye", color: "text-blue-600", bg: "bg-blue-50" },
+                { label: "Enquiries", value: stats?.leads30d || 0, sub: "last 30 days", icon: "inbox", color: "text-violet-600", bg: "bg-violet-50" },
+                { label: "Booking Clicks", value: stats?.bookingClicks30d || 0, sub: "last 30 days", icon: "calendar", color: "text-emerald-600", bg: "bg-emerald-50" },
+                { label: "Avg Rating", value: stats?.avgRating || (advisor?.rating ? Number(advisor.rating).toFixed(1) : "\u2014"), sub: `${stats?.reviewCount || advisor?.review_count || 0} reviews`, icon: "star", color: "text-amber-600", bg: "bg-amber-50" },
               ].map((kpi, i) => (
-                <div key={i} className="bg-white border border-slate-200 rounded-xl p-4">
-                  <div className="text-xs text-slate-500 font-medium">{kpi.label}</div>
-                  <div className={`text-2xl font-extrabold mt-1 ${kpi.color}`}>{kpi.value}</div>
+                <div key={i} className="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-sm transition-shadow">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-xs text-slate-500 font-medium">{kpi.label}</div>
+                    <div className={`w-7 h-7 ${kpi.bg} rounded-lg flex items-center justify-center`}>
+                      <Icon name={kpi.icon} size={14} className={kpi.color} />
+                    </div>
+                  </div>
+                  <div className={`text-2xl font-extrabold ${kpi.color}`}>{kpi.value}</div>
                   <div className="text-[0.62rem] text-slate-400 mt-0.5">{kpi.sub}</div>
                 </div>
               ))}
             </div>
 
-            {/* Views chart (simple bar) */}
-            {viewsByDay.length > 0 && (
+            {/* ── Profile Completeness ── */}
+            {profileCompleteness && profileCompleteness.score < 100 && (
               <div className="bg-white border border-slate-200 rounded-xl p-4 mb-6">
-                <h3 className="text-sm font-bold text-slate-900 mb-3">Profile Views (30 Days)</h3>
-                <div className="flex items-end gap-0.5 h-20">
-                  {viewsByDay.map((d, i) => {
-                    const max = Math.max(...viewsByDay.map(v => v.view_count), 1);
-                    const pct = (d.view_count / max) * 100;
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-sm font-bold text-slate-900">Profile Completeness</h3>
+                  <span className={`text-sm font-extrabold ${profileCompleteness.score >= 80 ? "text-emerald-600" : profileCompleteness.score >= 50 ? "text-amber-600" : "text-red-500"}`}>
+                    {profileCompleteness.score}%
+                  </span>
+                </div>
+                <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden mb-3">
+                  <div
+                    className={`h-full rounded-full transition-all duration-500 ${
+                      profileCompleteness.score >= 80 ? "bg-emerald-500" : profileCompleteness.score >= 50 ? "bg-amber-500" : "bg-red-500"
+                    }`}
+                    style={{ width: `${profileCompleteness.score}%` }}
+                  />
+                </div>
+                {profileCompleteness.missingFields.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5">
+                    <span className="text-[0.62rem] text-slate-500 mr-1">Missing:</span>
+                    {profileCompleteness.missingFields.map((f) => (
+                      <button
+                        key={f}
+                        onClick={() => setView("profile")}
+                        className="text-[0.58rem] font-medium text-violet-600 bg-violet-50 border border-violet-200 px-2 py-0.5 rounded-full hover:bg-violet-100 transition-colors"
+                      >
+                        {f}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* ── Performance Chart: Enquiries per week (last 8 weeks) ── */}
+            {weeklyEnquiries.length > 0 && (
+              <div className="bg-white border border-slate-200 rounded-xl p-4 mb-6">
+                <h3 className="text-sm font-bold text-slate-900 mb-1">Enquiries Per Week</h3>
+                <p className="text-[0.62rem] text-slate-400 mb-4">Last 8 weeks</p>
+                <div className="flex items-end gap-2 h-28">
+                  {weeklyEnquiries.map((w, i) => {
+                    const max = Math.max(...weeklyEnquiries.map(wk => wk.count), 1);
+                    const pct = (w.count / max) * 100;
                     return (
-                      <div key={i} className="flex-1 flex flex-col items-center justify-end" title={`${d.view_date}: ${d.view_count} views`}>
-                        <div className="w-full bg-blue-500 rounded-sm min-h-[2px]" style={{ height: `${Math.max(pct, 3)}%` }} />
+                      <div key={i} className="flex-1 flex flex-col items-center justify-end gap-1">
+                        <span className="text-[0.56rem] font-bold text-slate-700">{w.count}</span>
+                        <div
+                          className="w-full bg-violet-500 rounded-t-md transition-all duration-300 hover:bg-violet-600"
+                          style={{ height: `${Math.max(pct, 4)}%`, minHeight: "3px" }}
+                          title={`${w.weekLabel}: ${w.count} enquiries`}
+                        />
+                        <span className="text-[0.5rem] text-slate-400 whitespace-nowrap">{w.weekLabel}</span>
                       </div>
                     );
                   })}
@@ -332,51 +388,156 @@ export default function AdvisorPortalPage() {
               </div>
             )}
 
-            {/* Recent leads */}
-            <div className="bg-white border border-slate-200 rounded-xl p-4 mb-6">
-              <div className="flex items-center justify-between mb-3">
+            {/* ── Views chart (daily, 30 days) ── */}
+            {viewsByDay.length > 0 && (
+              <div className="bg-white border border-slate-200 rounded-xl p-4 mb-6">
+                <h3 className="text-sm font-bold text-slate-900 mb-1">Profile Views</h3>
+                <p className="text-[0.62rem] text-slate-400 mb-3">Daily views over the last 30 days</p>
+                <div className="flex items-end gap-0.5 h-20">
+                  {viewsByDay.map((d, i) => {
+                    const max = Math.max(...viewsByDay.map(v => v.view_count), 1);
+                    const pct = (d.view_count / max) * 100;
+                    return (
+                      <div key={i} className="flex-1 flex flex-col items-center justify-end" title={`${d.view_date}: ${d.view_count} views`}>
+                        <div className="w-full bg-blue-500 rounded-sm min-h-[2px] hover:bg-blue-600 transition-colors" style={{ height: `${Math.max(pct, 3)}%` }} />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* ── Recent leads table ── */}
+            <div className="bg-white border border-slate-200 rounded-xl mb-6 overflow-hidden">
+              <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
                 <h3 className="text-sm font-bold text-slate-900">Recent Enquiries</h3>
-                <button onClick={() => setView("leads")} className="text-xs text-amber-600 hover:text-amber-700 font-semibold">View All →</button>
+                <button onClick={() => setView("leads")} className="text-xs text-violet-600 hover:text-violet-700 font-semibold">View All &rarr;</button>
               </div>
               {leads.length === 0 ? (
-                <p className="text-sm text-slate-500 py-4 text-center">No enquiries yet. They&apos;ll appear here when investors contact you.</p>
+                <div className="px-4 py-8 text-center">
+                  <Icon name="inbox" size={28} className="text-slate-300 mx-auto mb-2" />
+                  <p className="text-sm text-slate-500">No enquiries yet. They&apos;ll appear here when investors contact you.</p>
+                </div>
               ) : (
-                <div className="space-y-2">
-                  {leads.slice(0, 5).map((lead) => (
-                    <div key={lead.id} className={`flex items-center justify-between p-2.5 rounded-lg ${lead.status === "new" ? "bg-amber-50 border border-amber-200" : "bg-slate-50"}`}>
-                      <div className="min-w-0">
-                        <div className="text-sm font-semibold text-slate-900 truncate">{lead.user_name}</div>
-                        <div className="text-xs text-slate-500 truncate">{lead.user_email}</div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left">
+                    <thead>
+                      <tr className="bg-slate-50 text-[0.62rem] font-semibold text-slate-500 uppercase tracking-wider">
+                        <th className="px-4 py-2">Name</th>
+                        <th className="px-4 py-2">Date</th>
+                        <th className="px-4 py-2 text-center">Quality</th>
+                        <th className="px-4 py-2">Status</th>
+                        <th className="px-4 py-2">Message</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {leads.slice(0, 8).map((lead) => (
+                        <tr key={lead.id} className={`text-xs ${lead.status === "new" ? "bg-violet-50/40" : "hover:bg-slate-50"} transition-colors`}>
+                          <td className="px-4 py-2.5">
+                            <div className="font-semibold text-slate-900">{lead.user_name}</div>
+                            <div className="text-[0.58rem] text-slate-400">{lead.user_email}</div>
+                          </td>
+                          <td className="px-4 py-2.5 text-slate-500 whitespace-nowrap">
+                            {new Date(lead.created_at).toLocaleDateString("en-AU", { day: "numeric", month: "short" })}
+                          </td>
+                          <td className="px-4 py-2.5 text-center">
+                            {lead.quality_score != null ? (
+                              <span className={`inline-block w-6 h-6 leading-6 text-center text-[0.56rem] font-bold rounded-full ${
+                                lead.quality_score >= 80 ? "bg-emerald-100 text-emerald-700" :
+                                lead.quality_score >= 50 ? "bg-amber-100 text-amber-700" :
+                                "bg-slate-100 text-slate-500"
+                              }`}>{lead.quality_score}</span>
+                            ) : (
+                              <span className="text-slate-300">&mdash;</span>
+                            )}
+                          </td>
+                          <td className="px-4 py-2.5">
+                            <span className={`text-[0.56rem] font-bold px-2 py-0.5 rounded-full ${
+                              lead.status === "new" ? "bg-violet-100 text-violet-700" :
+                              lead.status === "contacted" ? "bg-blue-100 text-blue-700" :
+                              lead.status === "converted" ? "bg-emerald-100 text-emerald-700" :
+                              lead.status === "lost" ? "bg-red-100 text-red-600" :
+                              "bg-slate-100 text-slate-500"
+                            }`}>{lead.status}</span>
+                          </td>
+                          <td className="px-4 py-2.5 text-slate-500 max-w-[200px] truncate">
+                            {lead.message ? lead.message.slice(0, 80) + (lead.message.length > 80 ? "..." : "") : <span className="text-slate-300">&mdash;</span>}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+
+            {/* ── Latest Reviews ── */}
+            <div className="bg-white border border-slate-200 rounded-xl p-4 mb-6">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-bold text-slate-900">Latest Reviews</h3>
+                {reviews.length > 0 && (
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-amber-400 text-sm">{"★".repeat(Math.round(Number(stats?.avgRating || advisor?.rating || 0)))}</span>
+                    <span className="text-xs font-bold text-slate-700">{stats?.avgRating || (advisor?.rating ? Number(advisor.rating).toFixed(1) : "N/A")}</span>
+                    <span className="text-[0.62rem] text-slate-400">({stats?.reviewCount || 0})</span>
+                  </div>
+                )}
+              </div>
+              {reviews.length === 0 ? (
+                <div className="py-6 text-center">
+                  <Icon name="star" size={28} className="text-slate-300 mx-auto mb-2" />
+                  <p className="text-sm text-slate-500">No reviews yet. Ask happy clients to leave a review on your profile.</p>
+                  <Link href={`/advisor/${advisor?.slug}`} target="_blank" className="inline-block mt-2 text-xs font-semibold text-violet-600 hover:text-violet-700">Share review link &rarr;</Link>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {reviews.slice(0, 4).map((r) => (
+                    <div key={r.id} className="border border-slate-100 rounded-lg p-3 hover:bg-slate-50/50 transition-colors">
+                      <div className="flex items-center justify-between mb-1.5">
+                        <div className="flex items-center gap-2">
+                          <div className="w-7 h-7 bg-violet-100 rounded-full flex items-center justify-center text-[0.56rem] font-bold text-violet-700">
+                            {r.reviewer_name.charAt(0).toUpperCase()}
+                          </div>
+                          <div>
+                            <span className="text-sm font-semibold text-slate-900">{r.reviewer_name}</span>
+                            <div className="text-[0.56rem] text-slate-400">{new Date(r.created_at).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-0.5">
+                          {[1,2,3,4,5].map(s => (
+                            <span key={s} className={`text-sm ${s <= r.rating ? "text-amber-400" : "text-slate-200"}`}>★</span>
+                          ))}
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2 shrink-0 ml-2">
-                        <span className={`text-[0.56rem] font-bold px-1.5 py-0.5 rounded-full ${
-                          lead.status === "new" ? "bg-amber-100 text-amber-700" :
-                          lead.status === "contacted" ? "bg-blue-100 text-blue-700" :
-                          lead.status === "converted" ? "bg-emerald-100 text-emerald-700" :
-                          "bg-slate-100 text-slate-500"
-                        }`}>{lead.status}</span>
-                        <span className="text-[0.56rem] text-slate-400">{new Date(lead.created_at).toLocaleDateString("en-AU", { day: "numeric", month: "short" })}</span>
-                      </div>
+                      {r.title && <div className="text-xs font-semibold text-slate-800 mb-1">{r.title}</div>}
+                      {r.body && <p className="text-xs text-slate-600 leading-relaxed">{r.body.slice(0, 200)}{r.body.length > 200 ? "..." : ""}</p>}
+                      {(r.communication_rating || r.expertise_rating || r.value_for_money_rating) && (
+                        <div className="flex gap-3 mt-2">
+                          {r.communication_rating && <span className="text-[0.56rem] text-slate-400">Communication: <strong className="text-slate-600">{r.communication_rating}/5</strong></span>}
+                          {r.expertise_rating && <span className="text-[0.56rem] text-slate-400">Expertise: <strong className="text-slate-600">{r.expertise_rating}/5</strong></span>}
+                          {r.value_for_money_rating && <span className="text-[0.56rem] text-slate-400">Value: <strong className="text-slate-600">{r.value_for_money_rating}/5</strong></span>}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
               )}
             </div>
 
-            {/* Quick actions */}
+            {/* ── Quick actions ── */}
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              <button onClick={() => setView("profile")} className="bg-white border border-slate-200 rounded-xl p-4 text-left hover:bg-slate-50 transition-colors">
-                <Icon name="user" size={20} className="text-slate-600 mb-2" />
+              <button onClick={() => setView("profile")} className="bg-white border border-slate-200 rounded-xl p-4 text-left hover:bg-slate-50 hover:shadow-sm transition-all">
+                <Icon name="user" size={20} className="text-violet-600 mb-2" />
                 <div className="text-sm font-bold text-slate-900">Edit Profile</div>
                 <div className="text-xs text-slate-500">Update bio, fees, specialties</div>
               </button>
-              <Link href={`/advisor/${advisor?.slug}`} target="_blank" className="bg-white border border-slate-200 rounded-xl p-4 text-left hover:bg-slate-50 transition-colors">
-                <Icon name="external-link" size={20} className="text-slate-600 mb-2" />
+              <Link href={`/advisor/${advisor?.slug}`} target="_blank" className="bg-white border border-slate-200 rounded-xl p-4 text-left hover:bg-slate-50 hover:shadow-sm transition-all">
+                <Icon name="external-link" size={20} className="text-blue-600 mb-2" />
                 <div className="text-sm font-bold text-slate-900">View Public Profile</div>
                 <div className="text-xs text-slate-500">See how investors see you</div>
               </Link>
-              <button onClick={() => setView("billing")} className="bg-white border border-slate-200 rounded-xl p-4 text-left hover:bg-slate-50 transition-colors">
-                <Icon name="credit-card" size={20} className="text-slate-600 mb-2" />
+              <button onClick={() => setView("billing")} className="bg-white border border-slate-200 rounded-xl p-4 text-left hover:bg-slate-50 hover:shadow-sm transition-all">
+                <Icon name="credit-card" size={20} className="text-emerald-600 mb-2" />
                 <div className="text-sm font-bold text-slate-900">Billing</div>
                 <div className="text-xs text-slate-500">{stats?.pendingBilledCents ? `$${(stats.pendingBilledCents / 100).toFixed(0)} pending` : "No charges yet"}</div>
               </button>
@@ -481,6 +642,15 @@ export default function AdvisorPortalPage() {
             </div>
 
             <div className="bg-white border border-slate-200 rounded-xl p-5 space-y-4">
+              {/* Profile Photo */}
+              <div className="flex flex-col items-center pb-2 border-b border-slate-100">
+                <AdvisorPhotoUpload
+                  currentPhotoUrl={advisor.photo_url}
+                  advisorSlug={advisor.slug}
+                  onPhotoUpdated={(url) => setAdvisor({ ...advisor, photo_url: url })}
+                />
+              </div>
+
               <div>
                 <label className="block text-xs font-semibold text-slate-600 mb-1">Bio</label>
                 <textarea

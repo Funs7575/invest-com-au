@@ -11,7 +11,7 @@ import SponsoredBrokerWidget from "@/components/SponsoredBrokerWidget";
 import ComparisonTableSkeleton from "@/components/ComparisonTableSkeleton";
 import AuthorByline from "@/components/AuthorByline";
 import OnThisPage from "@/components/OnThisPage";
-import { absoluteUrl, breadcrumbJsonLd, articleAuthorJsonLd, articleFaqJsonLd, SITE_NAME, CURRENT_MONTH_YEAR } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd, articleAuthorJsonLd, articleFaqJsonLd, SITE_NAME, CURRENT_MONTH_YEAR, ORGANIZATION_JSONLD } from "@/lib/seo";
 import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import { CATEGORY_COLORS, getBestPagesForArticle, getClusterLinksForArticle } from "@/lib/internal-links";
 import ClusterNav from "@/components/ClusterNav";
@@ -166,9 +166,10 @@ export default async function ArticlePage({
     "@context": "https://schema.org",
     "@type": "Article",
     headline: a.title,
-    description: a.excerpt,
-    datePublished: a.published_at,
-    dateModified: a.updated_at,
+    description: a.excerpt || undefined,
+    url: absoluteUrl(pagePath),
+    ...(a.published_at ? { datePublished: new Date(a.published_at).toISOString().split("T")[0] } : {}),
+    ...(a.updated_at ? { dateModified: new Date(a.updated_at).toISOString().split("T")[0] } : {}),
     author: authorBlock,
     ...(articleReviewer
       ? {
@@ -179,10 +180,7 @@ export default async function ArticlePage({
           },
         }
       : {}),
-    publisher: {
-      "@type": "Organization",
-      name: "Invest.com.au",
-    },
+    publisher: ORGANIZATION_JSONLD,
     mainEntityOfPage: {
       "@type": "WebPage",
       "@id": absoluteUrl(pagePath),

@@ -72,6 +72,7 @@ export default function BrokerLogo({ broker, size = "md", className = "" }: Brok
           height={s.img}
           className="w-full h-full object-contain p-0.5"
           sizes={`${s.img}px`}
+          loading="lazy"
           onError={() => setImgError(true)}
         />
       </div>

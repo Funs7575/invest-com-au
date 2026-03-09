@@ -8,8 +8,6 @@ import {
   absoluteUrl,
   breadcrumbJsonLd,
   ORGANIZATION_JSONLD,
-  SITE_NAME,
-  SITE_URL,
   CURRENT_YEAR,
 } from "@/lib/seo";
 import {
@@ -142,24 +140,6 @@ export default async function CityInvestingPage({
     { name: city.name },
   ]);
 
-  const localBusinessJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    name: `${SITE_NAME} — ${city.name}`,
-    description: city.metaDescription,
-    url: absoluteUrl(`/investing/${city.slug}`),
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: city.name,
-      addressRegion: city.stateShort,
-      addressCountry: "AU",
-    },
-    areaServed: {
-      "@type": "City",
-      name: city.name,
-    },
-  };
-
   return (
     <>
       {/* JSON-LD */}
@@ -174,10 +154,6 @@ export default async function CityInvestingPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }}
       />
 
       <div className="py-5 md:py-12">

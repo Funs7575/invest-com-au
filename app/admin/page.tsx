@@ -116,7 +116,7 @@ export default function AdminDashboard() {
   const [advisorFunnel, setAdvisorFunnel] = useState<{ views: number; leads: number }>({ views: 0, leads: 0 });
   const [activity, setActivity] = useState<ActivityItem[]>([]);
   const [dataWarnings, setDataWarnings] = useState<DataWarning[]>([]);
-  const [pendingItems, setPendingItems] = useState<{ articles: number; reviews: number; switchStories: number; disputes: number; applications: number; feeChanges: number; articlesList: { id: number; title: string; author_name: string }[] }>({ articles: 0, reviews: 0, switchStories: 0, disputes: 0, applications: 0, feeChanges: 0, articlesList: [] });
+  const [pendingItems, setPendingItems] = useState<{ articles: number; reviews: number; switchStories: number; disputes: number; applications: number; feeChanges: number; pendingAdvisors: number; pendingAdvisorReviews: number; articlesList: { id: number; title: string; author_name: string }[] }>({ articles: 0, reviews: 0, switchStories: 0, disputes: 0, applications: 0, feeChanges: 0, pendingAdvisors: 0, pendingAdvisorReviews: 0, articlesList: [] });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -202,13 +202,15 @@ export default function AdminDashboard() {
       ]);
 
       // ── Pending items (separate queries to avoid bloating the main Promise.all) ──
-      const [pendingArticles, pendingReviews, pendingSwitchStories, pendingDisputes, pendingApplications, pendingFeeChanges] = await Promise.all([
+      const [pendingArticles, pendingReviews, pendingSwitchStories, pendingDisputes, pendingApplications, pendingFeeChanges, pendingAdvisorsRes, pendingAdvisorReviewsRes] = await Promise.all([
         supabase.from("advisor_articles").select("id, title, author_name", { count: "exact" }).eq("status", "submitted"),
         supabase.from("user_reviews").select("id", { count: "exact", head: true }).eq("status", "pending"),
         supabase.from("switch_stories").select("id", { count: "exact", head: true }).eq("status", "pending"),
         supabase.from("lead_disputes").select("id", { count: "exact", head: true }).eq("status", "pending"),
         supabase.from("advisor_applications").select("id", { count: "exact", head: true }).eq("status", "pending"),
         supabase.from("fee_update_queue").select("id", { count: "exact", head: true }).eq("status", "pending"),
+        supabase.from("professionals").select("id", { count: "exact", head: true }).eq("status", "pending"),
+        supabase.from("professional_reviews").select("id", { count: "exact", head: true }).eq("status", "pending"),
       ]);
 
       setPendingItems({
@@ -218,6 +220,8 @@ export default function AdminDashboard() {
         disputes: pendingDisputes.count || 0,
         applications: pendingApplications.count || 0,
         feeChanges: pendingFeeChanges.count || 0,
+        pendingAdvisors: pendingAdvisorsRes.count || 0,
+        pendingAdvisorReviews: pendingAdvisorReviewsRes.count || 0,
         articlesList: (pendingArticles.data || []).slice(0, 3),
       });
 

@@ -21,6 +21,20 @@ const ALLOWED_EVENTS = new Set([
   'pdf_opt_in',
   'compare_select',
   'outbound_click',
+  // Advisor funnel events
+  'advisor_directory_view',
+  'advisor_profile_view',
+  'advisor_enquiry_submitted',
+  'advisor_review_submitted',
+  'advisor_signup_started',
+  'advisor_signup_completed',
+  // Broker funnel events
+  'affiliate_click',
+  'deal_claimed',
+  'quiz_completed',
+  // General page engagement
+  'booking_click',
+  'page_duration',
 ]);
 
 export async function POST(request: NextRequest) {

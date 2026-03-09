@@ -5,6 +5,8 @@ import { useRef, useEffect, useState, type ReactNode } from "react";
 /**
  * Scroll-triggered fade-in wrapper.
  * Animation class deferred until after hydration so SSR content stays visible.
+ * Uses `will-change` and `contain: content` to avoid triggering layout shifts
+ * on surrounding elements — the wrapper always occupies its full space in flow.
  */
 export default function ScrollFadeIn({
   children,
@@ -45,7 +47,7 @@ export default function ScrollFadeIn({
   const animClass = mounted ? `scroll-fade-in ${delayClass}` : "";
 
   return (
-    <div ref={ref} className={`${animClass} ${className}`.trim()}>
+    <div ref={ref} className={`${animClass} ${className}`.trim()} style={{ contain: "layout style" }}>
       {children}
     </div>
   );

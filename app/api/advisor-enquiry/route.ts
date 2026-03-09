@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { isRateLimited } from "@/lib/rate-limit";
 import { notificationFooter } from "@/lib/email-templates";
+import { createLeadInvoice } from "@/lib/advisor-billing";
 
 export async function POST(request: NextRequest) {
   try {
@@ -111,14 +112,26 @@ export async function POST(request: NextRequest) {
 
     // Create billing record if not free
     if (!isFree && priceCents > 0) {
-      const { error: billingError } = await supabase.from("advisor_billing").insert({
-        professional_id,
-        lead_id: lead.id,
-        amount_cents: priceCents,
-        description: `Lead: ${user_name.trim()} (quality: ${score}/100)`,
-        status: "pending",
-      });
-      if (billingError) console.error("billing insert failed:", billingError.message);
+      const { data: billingRecord, error: billingError } = await supabase
+        .from("advisor_billing")
+        .insert({
+          professional_id,
+          lead_id: lead.id,
+          amount_cents: priceCents,
+          description: `Lead: ${user_name.trim()} (quality: ${score}/100)`,
+          status: "pending",
+        })
+        .select("id")
+        .single();
+
+      if (billingError) {
+        console.error("billing insert failed:", billingError.message);
+      } else if (billingRecord) {
+        // Fire-and-forget: create and send the Stripe invoice
+        createLeadInvoice(billingRecord.id).catch((err) =>
+          console.error("Lead invoice creation failed:", err)
+        );
+      }
     }
 
     // Send notification email to the advisor (if they have an email)
@@ -197,14 +210,28 @@ export async function POST(request: NextRequest) {
       // Don't fail if confirmation email fails
     }
 
-    // Track the event
+    // Track the event (legacy + funnel event)
     try {
-      await supabase.from("analytics_events").insert({
-        event_type: "advisor_lead",
-        page: source_page || `/advisor/${professional_id}`,
-        broker_slug: null,
-        metadata: { professional_id, type: pro.type },
-      });
+      await supabase.from("analytics_events").insert([
+        {
+          event_type: "advisor_lead",
+          page: source_page || `/advisor/${professional_id}`,
+          broker_slug: null,
+          metadata: { professional_id, type: pro.type },
+        },
+        {
+          event_type: "advisor_enquiry_submitted",
+          page: source_page || `/advisor/${professional_id}`,
+          event_data: {
+            professional_id,
+            advisor_type: pro.type,
+            quality_score: score,
+            is_free_lead: isFree,
+            has_phone: !!user_phone?.trim(),
+            has_message: !!message?.trim(),
+          },
+        },
+      ]);
     } catch {
       // Non-critical
     }

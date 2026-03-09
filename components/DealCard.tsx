@@ -2,7 +2,7 @@
 
 import { memo, useState, useMemo } from "react";
 import type { Broker } from "@/lib/types";
-import { trackClick, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
+import { trackClick, trackEvent, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
 import { isSponsored } from "@/lib/sponsorship";
 import SponsorBadge from "@/components/SponsorBadge";
 import BrokerLogo from "@/components/BrokerLogo";
@@ -249,9 +249,10 @@ export default memo(function DealCard({
         href={affiliateLink}
         target="_blank"
         rel={AFFILIATE_REL}
-        onClick={() =>
-          trackClick(broker.slug, broker.name, "deals-hub", "/deals", "compare", undefined, campaignId ? "deals" : undefined)
-        }
+        onClick={() => {
+          trackClick(broker.slug, broker.name, "deals-hub", "/deals", "compare", undefined, campaignId ? "deals" : undefined);
+          trackEvent('deal_claimed', { broker_slug: broker.slug, broker_name: broker.name, deal_text: broker.deal_text || '' }, '/deals');
+        }}
         className="mt-auto block w-full text-center py-2.5 md:py-3 text-white text-xs md:text-sm font-bold rounded-lg transition-all duration-200 active:scale-[0.98] hover:shadow-[0_0_20px_rgba(217,119,6,0.35)]"
         style={{
           background: "linear-gradient(135deg, #f59e0b, #d97706)",

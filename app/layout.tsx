@@ -8,6 +8,7 @@ import GoogleAnalytics from "@/components/GoogleAnalytics";
 import UtmCapture from "@/components/UtmCapture";
 import ExitIntentCapture from "@/components/ExitIntentCapture";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import WebVitals from "@/components/WebVitals";
 import { SITE_URL, SITE_NAME, SITE_DESCRIPTION, websiteJsonLd } from "@/lib/seo";
 
 const inter = localFont({
@@ -115,6 +116,7 @@ export default function RootLayout({
         <ThemeProvider>
           <LayoutShell>{children}</LayoutShell>
         </ThemeProvider>
+        <Suspense fallback={null}><WebVitals /></Suspense>
         <SpeedInsights />
       </body>
     </html>

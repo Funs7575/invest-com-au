@@ -429,7 +429,7 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
                     <Icon name={v.icon} size={16} className="text-slate-400 shrink-0 md:hidden" />
                     <Icon name={v.icon} size={20} className="text-slate-400 shrink-0 hidden md:block" />
                     <div className="flex-1 min-w-0">
-                      <div className="text-[0.56rem] md:text-xs font-semibold text-slate-400 uppercase tracking-wide">{v.cat}</div>
+                      <div className="text-[0.62rem] md:text-xs font-semibold text-slate-400 uppercase tracking-wide">{v.cat}</div>
                       {v.isTie ? (
                         <div className="text-xs md:text-sm font-bold text-slate-500 mt-0.5">Tie</div>
                       ) : v.winner ? (

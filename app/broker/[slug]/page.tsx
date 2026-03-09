@@ -152,16 +152,19 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
   ]);
 
   // AggregateRating JSON-LD for user reviews (star ratings in Google results)
+  // Uses SoftwareApplication type to distinguish user ratings from editorial review on FinancialProduct
   const aggregateRatingLd = reviewStats && reviewStats.review_count > 0 ? {
     "@context": "https://schema.org",
-    "@type": "Product",
-    "name": `${b.name} Trading Platform`,
-    "aggregateRating": {
+    "@type": "SoftwareApplication",
+    name: `${b.name}`,
+    applicationCategory: "FinanceApplication",
+    operatingSystem: "Web",
+    aggregateRating: {
       "@type": "AggregateRating",
-      "ratingValue": reviewStats.average_rating.toFixed(1),
-      "bestRating": "5",
-      "worstRating": "1",
-      "ratingCount": reviewStats.review_count,
+      ratingValue: parseFloat(reviewStats.average_rating.toFixed(1)),
+      bestRating: 5,
+      worstRating: 1,
+      ratingCount: reviewStats.review_count,
     },
   } : null;
 

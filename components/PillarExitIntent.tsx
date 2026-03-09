@@ -199,7 +199,7 @@ export default function PillarExitIntent({ slug }: { slug: string }) {
         {/* Close button */}
         <button
           onClick={handleDismiss}
-          className="absolute top-3 right-3 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 transition-colors text-slate-500"
+          className="absolute top-2 right-2 z-10 w-11 h-11 flex items-center justify-center rounded-full bg-slate-100 hover:bg-slate-200 transition-colors text-slate-500"
           aria-label="Close"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -249,7 +249,7 @@ export default function PillarExitIntent({ slug }: { slug: string }) {
                 {status === "error" && (
                   <p className="text-xs text-red-500 text-center">Something went wrong. Please try again.</p>
                 )}
-                <p className="text-[0.56rem] text-slate-400 text-center">Free. No spam. Unsubscribe anytime.</p>
+                <p className="text-[0.65rem] text-slate-400 text-center">Free. No spam. Unsubscribe anytime.</p>
               </form>
             )
           ) : (
@@ -264,7 +264,7 @@ export default function PillarExitIntent({ slug }: { slug: string }) {
 
           <button
             onClick={handleDismiss}
-            className="w-full mt-3 text-xs text-slate-400 hover:text-slate-600 text-center transition-colors"
+            className="w-full mt-3 py-2 min-h-[44px] text-xs text-slate-400 hover:text-slate-600 text-center transition-colors"
           >
             No thanks
           </button>

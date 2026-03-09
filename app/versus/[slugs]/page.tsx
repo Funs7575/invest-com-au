@@ -5,7 +5,7 @@ import type { Broker, PlatformType } from "@/lib/types";
 import { PLATFORM_TYPE_LABELS_LOWER } from "@/lib/types";
 import type { Metadata } from "next";
 import VersusClient from "../VersusClient";
-import { SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { SITE_URL, CURRENT_YEAR, absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import { getVersusEditorial } from "@/lib/cached-versus";
 import type { VersusEditorial } from "@/lib/versus-content";
 
@@ -176,9 +176,10 @@ export async function generateMetadata({
       description,
       images: [
         {
-          url: `/api/og?title=${encodeURIComponent(names.join(" vs "))}&subtitle=Side-by-Side+Comparison&type=default`,
+          url: `/api/og/versus?slugs=${encodeURIComponent(slugs)}`,
           width: 1200,
           height: 630,
+          alt: `${names.join(" vs ")} comparison`,
         },
       ],
     },
@@ -253,28 +254,27 @@ export default async function VersusSlugPage({
           "@type": "FinancialProduct",
           name: b.name,
           description: b.tagline || `${b.name} ${PLATFORM_LABELS[b.platform_type as PlatformType] || 'platform'}`,
-          aggregateRating: b.rating
+          ...(b.rating
             ? {
-                "@type": "AggregateRating",
-                ratingValue: b.rating,
-                bestRating: 5,
-                worstRating: 1,
+                aggregateRating: {
+                  "@type": "AggregateRating",
+                  ratingValue: b.rating,
+                  bestRating: 5,
+                  worstRating: 1,
+                  reviewCount: b.review_count || 1,
+                },
               }
-            : undefined,
+            : {}),
         },
       })),
     },
   };
 
-  const breadcrumbLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Home", item: "https://invest.com.au" },
-      { "@type": "ListItem", position: 2, name: "Compare Platforms", item: "https://invest.com.au/compare" },
-      { "@type": "ListItem", position: 3, name: `${orderedBrokers.map((b) => b.name).join(" vs ")}` },
-    ],
-  };
+  const breadcrumbLd = breadcrumbJsonLd([
+    { name: "Home", url: absoluteUrl("/") },
+    { name: "Compare Platforms", url: absoluteUrl("/compare") },
+    { name: `${orderedBrokers.map((b) => b.name).join(" vs ")}` },
+  ]);
 
   // FAQ structured data from editorial content (now fetched from Supabase)
   const editorial = await getVersusEditorial(brokerSlugs);

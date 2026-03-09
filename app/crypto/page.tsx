@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     url: absoluteUrl("/crypto"),
     images: [
       {
-        url: `/api/og?title=${encodeURIComponent(vertical.h1)}&subtitle=${encodeURIComponent(vertical.metaDescription.slice(0, 80))}&type=best`,
+        url: "/api/og/vertical?slug=crypto",
         width: 1200,
         height: 630,
         alt: vertical.h1,

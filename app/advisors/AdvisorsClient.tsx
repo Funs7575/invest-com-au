@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import type { Professional, ProfessionalType } from "@/lib/types";
 import { PROFESSIONAL_TYPE_LABELS, AU_STATES } from "@/lib/types";
 import Icon from "@/components/Icon";
+import { trackEvent } from "@/lib/tracking";
 
 const TYPE_FILTERS: { key: ProfessionalType | "all"; label: string; icon: string }[] = [
   { key: "all", label: "All Types", icon: "users" },
@@ -47,6 +48,18 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
 }) {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const trackedRef = useRef(false);
+
+  // Track advisor directory view (once per mount)
+  useEffect(() => {
+    if (trackedRef.current) return;
+    trackedRef.current = true;
+    trackEvent('advisor_directory_view', {
+      total_advisors: professionals.length,
+      initial_type: initialType || 'all',
+      initial_state: initialState || 'all',
+    }, '/advisors');
+  }, [professionals.length, initialType, initialState]);
 
   const [typeFilter, setTypeFilter] = useState<ProfessionalType | "all">(initialType || "all");
   const [stateFilter, setStateFilter] = useState<string>(initialState || "all");

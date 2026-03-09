@@ -76,7 +76,7 @@ export default function PersonalizedRecommendations() {
   const reason = getRecommendationReason(data.answers);
 
   return (
-    <div className="bg-gradient-to-r from-slate-50 to-slate-100/50 border border-slate-200 rounded-xl p-4 md:p-5 animate-in fade-in slide-in-from-bottom-2 duration-500">
+    <div className="bg-gradient-to-r from-slate-50 to-slate-100/50 border border-slate-200 rounded-xl p-4 md:p-5 animate-in fade-in slide-in-from-bottom-2 duration-500" style={{ contain: "layout style" }}>
       <div className="flex items-center justify-between gap-3 mb-3">
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">

@@ -9,6 +9,8 @@ interface PendingItems {
   disputes: number;
   applications: number;
   feeChanges: number;
+  pendingAdvisors: number;
+  pendingAdvisorReviews: number;
   articlesList: { id: number; title: string; author_name: string }[];
 }
 
@@ -17,7 +19,7 @@ interface Props {
 }
 
 export default function AdminPendingActions({ pendingItems }: Props) {
-  const total = pendingItems.articles + pendingItems.reviews + pendingItems.switchStories + pendingItems.disputes + pendingItems.applications + pendingItems.feeChanges;
+  const total = pendingItems.articles + pendingItems.reviews + pendingItems.switchStories + pendingItems.disputes + pendingItems.applications + pendingItems.feeChanges + pendingItems.pendingAdvisors + pendingItems.pendingAdvisorReviews;
   if (total === 0) return null;
 
   return (
@@ -30,6 +32,24 @@ export default function AdminPendingActions({ pendingItems }: Props) {
         </span>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+        {pendingItems.pendingAdvisors > 0 && (
+          <Link href="/admin/advisor-moderation" className="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-blue-200 hover:border-blue-300 hover:shadow-sm transition-all bg-blue-50/50">
+            <span className="text-lg">👤</span>
+            <div>
+              <div className="text-xs font-bold text-blue-800">{pendingItems.pendingAdvisors} Advisor{pendingItems.pendingAdvisors !== 1 ? "s" : ""}</div>
+              <div className="text-[0.56rem] text-blue-500">to approve</div>
+            </div>
+          </Link>
+        )}
+        {pendingItems.pendingAdvisorReviews > 0 && (
+          <Link href="/admin/review-moderation" className="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-amber-200 hover:border-amber-300 hover:shadow-sm transition-all bg-amber-50/50">
+            <span className="text-lg">⭐</span>
+            <div>
+              <div className="text-xs font-bold text-amber-800">{pendingItems.pendingAdvisorReviews} Advisor Review{pendingItems.pendingAdvisorReviews !== 1 ? "s" : ""}</div>
+              <div className="text-[0.56rem] text-amber-600">to moderate</div>
+            </div>
+          </Link>
+        )}
         {pendingItems.articles > 0 && (
           <Link href="/admin/advisor-articles" className="flex items-center gap-2 bg-white rounded-lg px-3 py-2 border border-slate-200 hover:border-violet-300 hover:shadow-sm transition-all">
             <span className="text-lg">📰</span>

@@ -343,11 +343,11 @@ export default function VerticalPillarPage({
               ))}
             </div>
 
-            <p className="text-[0.56rem] md:text-xs text-slate-400 mt-3">
+            <p className="text-[0.62rem] md:text-xs text-slate-400 mt-3">
               {ADVERTISER_DISCLOSURE_SHORT}
             </p>
             {hasSponsored && (
-              <p className="text-[0.56rem] md:text-xs text-blue-500 mt-1">
+              <p className="text-[0.62rem] md:text-xs text-blue-500 mt-1">
                 {SPONSORED_DISCLOSURE_SHORT}
               </p>
             )}
@@ -398,7 +398,7 @@ export default function VerticalPillarPage({
           )}
 
           {/* PDS / FSG / AFCA */}
-          <p className="text-[0.58rem] text-slate-400 leading-relaxed mb-3">
+          <p className="text-[0.62rem] md:text-xs text-slate-400 leading-relaxed mb-3">
             {PDS_CONSIDERATION} {FSG_NOTE} {AFCA_REFERENCE}
           </p>
 
@@ -770,7 +770,7 @@ export default function VerticalPillarPage({
                     key={i}
                     className="border border-slate-200 rounded-lg"
                   >
-                    <summary className="px-4 py-3 font-semibold text-sm cursor-pointer hover:bg-slate-50 transition-colors">
+                    <summary className="px-4 py-3 min-h-[44px] font-semibold text-sm cursor-pointer hover:bg-slate-50 transition-colors flex items-center">
                       {faq.question}
                     </summary>
                     <p className="px-4 pb-4 text-sm text-slate-600 leading-relaxed">

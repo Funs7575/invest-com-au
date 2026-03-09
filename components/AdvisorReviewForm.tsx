@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { trackEvent } from "@/lib/tracking";
 
 interface AdvisorReviewFormProps {
   professionalId: number;
@@ -21,7 +22,7 @@ function StarRatingInput({ label, value, onChange }: { label: string; value: num
             type="button"
             onClick={() => onChange(star)}
             onMouseEnter={() => setHovered(star)}
-            className={`text-lg transition-colors ${
+            className={`min-w-[44px] min-h-[44px] md:min-w-0 md:min-h-0 text-2xl md:text-lg flex items-center justify-center transition-colors ${
               star <= (hovered || value) ? "text-amber-400" : "text-slate-200 hover:text-amber-200"
             }`}
           >
@@ -85,6 +86,11 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
       });
 
       if (res.ok) {
+        trackEvent('advisor_review_submitted', {
+          professional_id: professionalId,
+          overall_rating: overallRating,
+          used_services: usedServices,
+        });
         onSuccess();
       } else {
         const data = await res.json().catch(() => ({}));
@@ -121,7 +127,7 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
             <button
               type="button"
               onClick={() => setUsedServices(true)}
-              className={`px-4 py-1.5 text-xs font-semibold rounded-lg border transition-all ${
+              className={`px-5 py-2.5 min-h-[44px] text-xs font-semibold rounded-lg border transition-all ${
                 usedServices === true
                   ? "bg-slate-900 text-white border-slate-900"
                   : "bg-white text-slate-600 border-slate-200 hover:border-slate-400"
@@ -132,7 +138,7 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
             <button
               type="button"
               onClick={() => setUsedServices(false)}
-              className={`px-4 py-1.5 text-xs font-semibold rounded-lg border transition-all ${
+              className={`px-5 py-2.5 min-h-[44px] text-xs font-semibold rounded-lg border transition-all ${
                 usedServices === false
                   ? "bg-slate-900 text-white border-slate-900"
                   : "bg-white text-slate-600 border-slate-200 hover:border-slate-400"
@@ -153,7 +159,7 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
             value={reviewerName}
             onChange={(e) => setReviewerName(e.target.value)}
             placeholder="Anonymous"
-            className="w-full px-2.5 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-400"
+            className="w-full px-3 py-2.5 min-h-[44px] text-sm md:text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-400"
           />
         </div>
 
@@ -167,7 +173,7 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
             value={reviewTitle}
             onChange={(e) => setReviewTitle(e.target.value)}
             placeholder="Summary of your experience"
-            className="w-full px-2.5 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-400"
+            className="w-full px-3 py-2.5 min-h-[44px] text-sm md:text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-400"
           />
         </div>
 
@@ -181,18 +187,18 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
             onChange={(e) => setReviewBody(e.target.value)}
             rows={4}
             placeholder="What was your experience working with this advisor? (minimum 50 characters)"
-            className="w-full px-2.5 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-400 resize-vertical"
+            className="w-full px-3 py-2.5 text-sm md:text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-400 resize-vertical"
           />
           <div className="flex justify-between mt-0.5">
             {bodyLength > 0 && bodyLength < 50 && (
-              <p className="text-[0.56rem] text-amber-600">
+              <p className="text-[0.65rem] text-amber-600">
                 {50 - bodyLength} more character{50 - bodyLength !== 1 ? "s" : ""} needed
               </p>
             )}
             {bodyLength >= 50 && (
-              <p className="text-[0.56rem] text-emerald-600">Minimum reached</p>
+              <p className="text-[0.65rem] text-emerald-600">Minimum reached</p>
             )}
-            <p className="text-[0.56rem] text-slate-400 ml-auto">{bodyLength} / 50 min</p>
+            <p className="text-[0.65rem] text-slate-400 ml-auto">{bodyLength} / 50 min</p>
           </div>
         </div>
 
@@ -207,20 +213,20 @@ export default function AdvisorReviewForm({ professionalId, advisorName, onSucce
             type="button"
             onClick={handleSubmit}
             disabled={!canSubmit}
-            className="px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="flex-1 md:flex-none px-4 py-3 min-h-[44px] bg-slate-900 text-white text-sm md:text-xs font-bold rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             {state === "submitting" ? "Submitting..." : "Submit Review"}
           </button>
           <button
             type="button"
             onClick={onCancel}
-            className="px-4 py-2 border border-slate-200 text-xs font-semibold rounded-lg hover:bg-slate-50 transition-colors text-slate-600"
+            className="flex-1 md:flex-none px-4 py-3 min-h-[44px] border border-slate-200 text-sm md:text-xs font-semibold rounded-lg hover:bg-slate-50 transition-colors text-slate-600"
           >
             Cancel
           </button>
         </div>
 
-        <p className="text-[0.56rem] text-slate-400 leading-relaxed">
+        <p className="text-[0.65rem] text-slate-400 leading-relaxed">
           Reviews are moderated before publication. Your name will be displayed publicly; if left blank it will show as &quot;Anonymous&quot;.
         </p>
       </div>

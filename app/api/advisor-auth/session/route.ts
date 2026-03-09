@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
 
     const { data: advisor } = await supabase
       .from("professionals")
-      .select("id, name, slug, firm_name, email, photo_url, type, location_display, rating, review_count, verified, bio, specialties, fee_structure, fee_description, website, phone")
+      .select("id, name, slug, firm_name, email, photo_url, type, location_display, rating, review_count, verified, bio, specialties, fee_structure, fee_description, website, phone, booking_link, booking_intro")
       .eq("id", session.professional_id)
       .eq("status", "active")
       .single();

@@ -23,6 +23,7 @@ export function absoluteUrl(path: string): string {
 
 export const ORGANIZATION_JSONLD = {
   "@type": "Organization" as const,
+  "@id": `${SITE_URL}/#organization`,
   name: "Invest.com.au Pty Ltd",
   legalName: "Invest.com.au Pty Ltd",
   url: SITE_URL,
@@ -270,7 +271,7 @@ export function brokerReviewJsonLd(broker: {
       reviewBody,
       reviewRating: {
         "@type": "Rating",
-        ratingValue: broker.rating || 0,
+        ratingValue: Math.max(broker.rating || 1, 1),
         bestRating: 5,
         worstRating: 1,
       },
@@ -278,7 +279,7 @@ export function brokerReviewJsonLd(broker: {
     ...((broker.review_count ?? 0) > 0 ? {
       aggregateRating: {
         "@type": "AggregateRating",
-        ratingValue: broker.rating || 0,
+        ratingValue: Math.max(broker.rating || 1, 1),
         bestRating: 5,
         worstRating: 1,
         reviewCount: broker.review_count,
@@ -378,6 +379,9 @@ export function dealOfferJsonLd(broker: Broker) {
     ...(broker.deal_terms ? { description: broker.deal_terms } : {}),
     ...(broker.deal_expiry ? { validThrough: new Date(broker.deal_expiry).toISOString() } : {}),
     url: absoluteUrl(`/broker/${broker.slug}`),
+    price: "0",
+    priceCurrency: "AUD",
+    availability: "https://schema.org/InStock",
     offeredBy: {
       "@type": "Organization",
       name: broker.name,

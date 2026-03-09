@@ -21,8 +21,19 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title,
     description,
-    openGraph: { title: `${pro.name} — Invest.com.au`, description },
-    twitter: { card: "summary" },
+    openGraph: {
+      title: `${pro.name} — Invest.com.au`,
+      description,
+      images: [
+        {
+          url: `/api/og/advisor?slug=${encodeURIComponent(slug)}`,
+          width: 1200,
+          height: 630,
+          alt: `${pro.name} — ${typeLabel}`,
+        },
+      ],
+    },
+    twitter: { card: "summary_large_image" },
     alternates: { canonical: `/advisor/${slug}` },
   };
 }
@@ -82,14 +93,16 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
     { name: pro.name },
   ]);
 
+  const profileUrl = absoluteUrl(`/advisor/${slug}`);
   const personLd = {
     "@context": "https://schema.org",
     "@type": "Person",
     name: pro.name,
+    url: profileUrl,
     jobTitle: PROFESSIONAL_TYPE_LABELS[pro.type as keyof typeof PROFESSIONAL_TYPE_LABELS],
     ...(pro.firm_name ? { worksFor: { "@type": "Organization", name: pro.firm_name } } : {}),
     ...(pro.location_display ? { address: { "@type": "PostalAddress", addressLocality: pro.location_display } } : {}),
-    ...(pro.website ? { url: pro.website } : {}),
+    ...(pro.website ? { sameAs: pro.website } : {}),
   };
 
   // LocalBusiness schema for advisor firms — helps Google rich results
@@ -114,6 +127,7 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
         ratingValue: pro.rating,
         reviewCount: pro.review_count || 1,
         bestRating: 5,
+        worstRating: 1,
       }
     } : {}),
     priceRange: pro.fee_description || "Contact for pricing",

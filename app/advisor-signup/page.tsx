@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
+import { trackEvent } from "@/lib/tracking";
 
 const STATES = ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT"];
 
@@ -73,6 +74,14 @@ export default function AdvisorSignupPage() {
   });
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const trackedStartRef = useRef(false);
+
+  // Track signup started (once per page load)
+  useEffect(() => {
+    if (trackedStartRef.current) return;
+    trackedStartRef.current = true;
+    trackEvent('advisor_signup_started', {}, '/advisor-signup');
+  }, []);
 
   const updateField = <K extends keyof FormData>(key: K, value: FormData[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -136,6 +145,13 @@ export default function AdvisorSignupPage() {
         body: JSON.stringify(form),
       });
       if (res.ok) {
+        trackEvent('advisor_signup_completed', {
+          type: form.type,
+          state: form.location_state,
+          specialties_count: form.specialties.length,
+          has_afsl: !!form.afsl_number,
+          fee_structure: form.fee_structure,
+        }, '/advisor-signup');
         setStatus("success");
       } else {
         const data = await res.json();
@@ -173,7 +189,7 @@ export default function AdvisorSignupPage() {
     );
   }
 
-  const inputClass = "w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all";
+  const inputClass = "w-full px-3 py-2.5 min-h-[44px] border border-slate-200 rounded-lg text-base md:text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all";
   const labelClass = "block text-xs font-semibold text-slate-600 mb-1";
 
   return (
@@ -221,7 +237,7 @@ export default function AdvisorSignupPage() {
               <h2 className="text-lg font-bold text-slate-900 mb-1">Basic Information</h2>
               <p className="text-xs text-slate-500 mb-3">Tell us about yourself and your practice.</p>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className={labelClass}>Full Name *</label>
                   <input
@@ -242,7 +258,7 @@ export default function AdvisorSignupPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className={labelClass}>Email *</label>
                   <input
@@ -285,7 +301,7 @@ export default function AdvisorSignupPage() {
               <h2 className="text-lg font-bold text-slate-900 mb-1">Professional Details</h2>
               <p className="text-xs text-slate-500 mb-3">Help us verify your credentials and set up your profile.</p>
 
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
                   <label className={labelClass}>AFSL Number</label>
                   <input
@@ -317,11 +333,11 @@ export default function AdvisorSignupPage() {
 
               <div>
                 <label className={labelClass}>Specialties</label>
-                <div className="grid grid-cols-2 gap-1.5 mt-1">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 mt-1">
                   {SPECIALTY_OPTIONS.map((s) => (
                     <label
                       key={s}
-                      className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-sm cursor-pointer transition-colors ${
+                      className={`flex items-center gap-2 px-3 py-2.5 min-h-[44px] rounded-lg border text-sm cursor-pointer transition-colors ${
                         form.specialties.includes(s)
                           ? "border-violet-300 bg-violet-50 text-violet-700"
                           : "border-slate-200 text-slate-600 hover:bg-slate-50"
@@ -346,7 +362,7 @@ export default function AdvisorSignupPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className={labelClass}>State *</label>
                   <select
@@ -380,7 +396,7 @@ export default function AdvisorSignupPage() {
                   className={inputClass}
                   placeholder="Tell investors about your experience, qualifications, and approach to financial advice..."
                 />
-                <p className="text-[0.56rem] text-slate-400 mt-0.5">{form.bio.length}/500 characters</p>
+                <p className="text-[0.65rem] text-slate-400 mt-0.5">{form.bio.length}/500 characters</p>
               </div>
             </div>
           )}
@@ -444,11 +460,11 @@ export default function AdvisorSignupPage() {
           )}
 
           {/* Navigation buttons */}
-          <div className="flex items-center justify-between mt-6">
+          <div className="flex items-center justify-between gap-3 mt-6">
             {step > 1 ? (
               <button
                 onClick={prevStep}
-                className="px-4 py-2.5 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
+                className="px-4 py-3 min-h-[44px] text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
               >
                 Back
               </button>
@@ -459,7 +475,7 @@ export default function AdvisorSignupPage() {
             {step < 3 ? (
               <button
                 onClick={nextStep}
-                className="px-6 py-2.5 bg-violet-600 text-white font-bold rounded-lg text-sm hover:bg-violet-700 transition-colors"
+                className="flex-1 sm:flex-none px-6 py-3 min-h-[44px] bg-violet-600 text-white font-bold rounded-lg text-sm hover:bg-violet-700 transition-colors"
               >
                 Continue
               </button>
@@ -467,7 +483,7 @@ export default function AdvisorSignupPage() {
               <button
                 onClick={submit}
                 disabled={status === "submitting"}
-                className="px-8 py-3 bg-slate-900 text-white font-bold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 transition-colors"
+                className="flex-1 sm:flex-none px-8 py-3 min-h-[44px] bg-slate-900 text-white font-bold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 transition-colors"
               >
                 {status === "submitting" ? "Creating Account..." : "Create My Account"}
               </button>
@@ -475,7 +491,7 @@ export default function AdvisorSignupPage() {
           </div>
         </div>
 
-        <p className="text-[0.56rem] text-slate-400 mt-3 text-center leading-relaxed">
+        <p className="text-[0.65rem] md:text-xs text-slate-400 mt-3 text-center leading-relaxed">
           By signing up, you agree to our{" "}
           <Link href="/terms" className="underline">Terms</Link> and{" "}
           <Link href="/privacy" className="underline">Privacy Policy</Link>.

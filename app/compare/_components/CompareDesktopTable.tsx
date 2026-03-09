@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import type { Broker } from "@/lib/types";
-import { trackClick, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
+import { trackClick, trackEvent, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
 import ScrollReveal from "@/components/ScrollReveal";
 import PromoBadge from "@/components/PromoBadge";
 import SponsorBadge from "@/components/SponsorBadge";
@@ -160,7 +160,10 @@ export default function CompareDesktopTable({
                   })()}
                   target="_blank"
                   rel={AFFILIATE_REL}
-                  onClick={() => trackClick(broker.slug, broker.name, 'compare-table', '/compare', 'compare')}
+                  onClick={() => {
+                    trackClick(broker.slug, broker.name, 'compare-table', '/compare', 'compare');
+                    trackEvent('affiliate_click', { broker_slug: broker.slug, source: 'compare-table' }, '/compare');
+                  }}
                   className="inline-block px-4 py-2 bg-amber-600 text-white text-sm font-semibold rounded-lg hover:bg-amber-700 transition-all duration-200 group-hover:scale-105 group-hover:shadow-lg"
                 >
                   {getBenefitCta(broker, 'compare')}

@@ -1,5 +1,6 @@
 import { getStripe, PLANS } from "@/lib/stripe";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { handleInvoicePaid, handleInvoicePaymentFailed } from "@/lib/advisor-billing";
 import { NextRequest, NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { logger } from "@/lib/logger";
@@ -236,8 +237,30 @@ export async function POST(request: NextRequest) {
         await upsertSubscription(event.data.object as Stripe.Subscription);
         break;
 
+      case "invoice.paid": {
+        const paidInvoice = event.data.object as Stripe.Invoice;
+        const paidPiId =
+          typeof paidInvoice.payment_intent === "string"
+            ? paidInvoice.payment_intent
+            : paidInvoice.payment_intent?.id || null;
+
+        // Check if this is an advisor lead billing invoice
+        if (paidInvoice.metadata?.type === "advisor_lead") {
+          await handleInvoicePaid(paidInvoice.id, paidPiId);
+        }
+
+        log.info("Invoice paid", { invoiceId: paidInvoice.id, customer: paidInvoice.customer });
+        break;
+      }
+
       case "invoice.payment_failed": {
         const invoice = event.data.object as Stripe.Invoice;
+
+        // Update advisor billing if applicable
+        if (invoice.metadata?.type === "advisor_lead") {
+          await handleInvoicePaymentFailed(invoice.id);
+        }
+
         log.warn("Payment failed for customer", { customer: invoice.customer, invoice: invoice.id });
         // The subscription.updated webhook will also fire with status 'past_due',
         // which upsertSubscription handles automatically

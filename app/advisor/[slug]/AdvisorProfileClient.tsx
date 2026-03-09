@@ -9,6 +9,7 @@ import Icon from "@/components/Icon";
 import BookingWidget from "@/components/BookingWidget";
 import AdvisorReviewForm from "@/components/AdvisorReviewForm";
 import { getStoredUtm } from "@/components/UtmCapture";
+import { trackEvent } from "@/lib/tracking";
 
 function renderStars(rating: number) {
   return "★".repeat(Math.floor(rating)) + (rating % 1 >= 0.5 ? "½" : "");
@@ -47,12 +48,13 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
 
   // Track profile view
   useEffect(() => {
-    fetch("/api/track-event", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ event_type: "advisor_profile_view", page: `/advisor/${pro.slug}`, metadata: { professional_id: pro.id, type: pro.type } }),
-    }).catch(() => {});
-  }, [pro.slug, pro.id, pro.type]);
+    trackEvent('advisor_profile_view', {
+      professional_id: pro.id,
+      advisor_slug: pro.slug,
+      type: pro.type,
+      has_booking_link: !!pro.booking_link,
+    }, `/advisor/${pro.slug}`);
+  }, [pro.slug, pro.id, pro.type, pro.booking_link]);
 
   const typeLabel = PROFESSIONAL_TYPE_LABELS[pro.type] || "Financial Professional";
 

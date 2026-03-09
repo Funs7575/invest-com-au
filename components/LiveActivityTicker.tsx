@@ -139,7 +139,7 @@ export default function LiveActivityTicker({
   const hasMultipleTabs = feeChanges.length > 0 && popularComparisons.length > 0;
 
   return (
-    <div ref={containerRef} className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+    <div ref={containerRef} className="bg-white border border-slate-200 rounded-xl overflow-hidden" style={{ contain: "layout style", minHeight: "140px" }}>
       {/* Header */}
       <div className="flex items-center justify-between px-3 pt-2.5 pb-1.5 md:px-4 md:pt-3 md:pb-2">
         <div className="flex items-center gap-1.5">

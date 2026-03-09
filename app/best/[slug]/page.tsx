@@ -14,6 +14,7 @@ import {
   REVIEW_AUTHOR,
   SITE_NAME,
   SITE_URL,
+  ORGANIZATION_JSONLD,
 } from "@/lib/seo";
 import QASection from "@/components/QASection";
 import AskQuestionForm from "@/components/AskQuestionForm";
@@ -175,11 +176,10 @@ export default async function BestBrokerPage({
       jobTitle: REVIEW_AUTHOR.jobTitle,
       url: absoluteUrl("/reviewers/editorial-team"),
     },
-    publisher: {
-      "@type": "Organization",
-      name: SITE_NAME,
-      url: SITE_URL,
-      logo: { "@type": "ImageObject", url: absoluteUrl("/icon.png") },
+    publisher: ORGANIZATION_JSONLD,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": absoluteUrl(`/best/${slug}`),
     },
   };
 

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
 import type { Article } from "@/lib/types";
@@ -250,7 +251,7 @@ export default async function HomePage() {
               </Link>
             </div>
             {/* Trust strip */}
-            <div className="flex items-center justify-center gap-3 mt-3 text-[0.58rem] text-slate-400">
+            <div className="flex items-center justify-center gap-3 mt-3 text-[0.65rem] text-slate-400">
               <span className="flex items-center gap-1">
                 <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
                 {brokerCount} platforms
@@ -342,7 +343,9 @@ export default async function HomePage() {
       {/* ─── Personalized Recommendations (from quiz results) ─── */}
       <section className="py-3 md:py-4">
         <div className="container-custom max-w-4xl">
-          <PersonalizedRecommendations />
+          <Suspense fallback={null}>
+            <PersonalizedRecommendations />
+          </Suspense>
         </div>
       </section>
 
@@ -613,13 +616,15 @@ export default async function HomePage() {
                           width={40}
                           height={40}
                           className="rounded-full shrink-0"
+                          loading="lazy"
+                          sizes="40px"
                         />
                         <div className="flex-1 min-w-0">
                           <p className="text-xs font-bold text-slate-900 truncate group-hover:text-violet-700 transition-colors">{advisor.name}</p>
                           <p className="text-[0.6rem] text-slate-500 truncate">{advisor.firm_name}</p>
                           <div className="flex items-center gap-1.5 mt-0.5">
-                            <span className="text-[0.58rem] text-amber-600 font-semibold">{advisor.rating}/5</span>
-                            <span className="text-[0.55rem] text-slate-400">({advisor.review_count} reviews)</span>
+                            <span className="text-[0.65rem] text-amber-600 font-semibold">{advisor.rating}/5</span>
+                            <span className="text-[0.62rem] text-slate-400">({advisor.review_count} reviews)</span>
                           </div>
                         </div>
                       </Link>
@@ -680,7 +685,7 @@ export default async function HomePage() {
                   >
                     <Icon name={card.icon} size={20} className="opacity-70 mb-1.5" />
                     <h3 className="font-bold text-xs leading-tight mb-0.5">{card.title}</h3>
-                    <p className="text-[0.58rem] opacity-60 leading-snug line-clamp-2">{card.description}</p>
+                    <p className="text-[0.65rem] opacity-60 leading-snug line-clamp-2">{card.description}</p>
                   </Link>
                 ))}
               </div>
@@ -708,15 +713,15 @@ export default async function HomePage() {
                   <BrokerLogo broker={b} size="sm" />
                   <div className="min-w-0">
                     <p className="text-xs md:text-sm font-bold text-slate-900 group-hover:text-blue-600 truncate">{b.name}</p>
-                    <p className="text-[0.55rem] text-slate-400">{b.rating}/5 · Read Review</p>
+                    <p className="text-[0.62rem] text-slate-400">{b.rating}/5 · Read Review</p>
                   </div>
                 </Link>
               ))}
             </div>
             <div className="mt-3 md:mt-4 flex flex-wrap gap-1.5">
-              <span className="text-[0.6rem] text-slate-400 mr-1">Popular comparisons:</span>
+              <span className="text-[0.6rem] md:text-xs text-slate-400 mr-1 self-center">Popular comparisons:</span>
               {["stake-vs-commsec", "cmc-markets-vs-commsec", "moomoo-vs-stake", "coinspot-vs-swyftx", "ic-markets-vs-pepperstone"].map(pair => (
-                <Link key={pair} href={`/versus/${pair}`} className="text-[0.6rem] px-2 py-0.5 bg-slate-100 text-slate-600 rounded-full hover:bg-slate-200 hover:text-slate-900 transition-colors">
+                <Link key={pair} href={`/versus/${pair}`} className="text-[0.65rem] md:text-xs px-2.5 py-1.5 min-h-[32px] inline-flex items-center bg-slate-100 text-slate-600 rounded-full hover:bg-slate-200 hover:text-slate-900 transition-colors">
                   {pair.replace(/-vs-/g, " vs ").replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase())}
                 </Link>
               ))}
@@ -752,7 +757,7 @@ export default async function HomePage() {
                   >
                     {article.cover_image_url && (
                       <div className="aspect-[16/9] overflow-hidden bg-slate-100 relative">
-                        <Image src={article.cover_image_url} alt={article.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" {...(idx < 3 ? { priority: true } : {})} />
+                        <Image src={article.cover_image_url} alt={article.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" loading="lazy" />
                       </div>
                     )}
                     <div className="p-5 flex flex-col flex-1">
@@ -789,12 +794,13 @@ export default async function HomePage() {
                           fill
                           className="object-cover group-hover:scale-105 transition-transform duration-300"
                           sizes="100vw"
+                          loading="lazy"
                         />
                       </div>
                     )}
                     <div className="p-3">
                       {(articles as Article[])[0].category && (
-                        <span className="text-[0.58rem] font-bold uppercase tracking-wider text-slate-500">
+                        <span className="text-[0.65rem] font-bold uppercase tracking-wider text-slate-500">
                           {(articles as Article[])[0].category}
                         </span>
                       )}
@@ -817,7 +823,7 @@ export default async function HomePage() {
                     >
                       <div className="flex-1 min-w-0">
                         {article.category && (
-                          <span className="text-[0.58rem] font-bold uppercase tracking-wider text-slate-500">
+                          <span className="text-[0.65rem] font-bold uppercase tracking-wider text-slate-500">
                             {article.category}
                           </span>
                         )}
@@ -925,7 +931,7 @@ export default async function HomePage() {
                     <Icon name={tool.icon} size={20} className="text-white hidden md:block" />
                   </div>
                   <h3 className="text-xs md:text-sm font-bold text-slate-900 mb-0.5 group-hover:text-slate-700">{tool.title}</h3>
-                  <p className="text-[0.58rem] md:text-xs text-slate-500">{tool.desc}</p>
+                  <p className="text-[0.65rem] md:text-xs text-slate-500">{tool.desc}</p>
                 </Link>
               ))}
             </div>
