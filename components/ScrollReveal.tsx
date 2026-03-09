@@ -38,6 +38,13 @@ export default function ScrollReveal({
     const el = ref.current;
     if (!el) return;
 
+    // If already in viewport, show immediately (no animation delay)
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      el.classList.add("is-visible");
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
