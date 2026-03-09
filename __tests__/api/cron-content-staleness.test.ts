@@ -232,7 +232,7 @@ describe("GET /api/cron/content-staleness", () => {
         emailCalls.push({ url, body: args[1]?.body });
         return Promise.resolve(new Response(JSON.stringify({ id: "mock-email" }), { status: 200 }));
       }
-      return originalFetch(...args);
+      return (originalFetch as any)(...args);
     });
 
     const req = makeCronRequest("/api/cron/content-staleness");
@@ -268,7 +268,7 @@ describe("GET /api/cron/content-staleness", () => {
         emailCalls.push(url);
         return Promise.resolve(new Response(JSON.stringify({ id: "mock-email" }), { status: 200 }));
       }
-      return originalFetch(...args);
+      return (originalFetch as any)(...args);
     });
 
     const req = makeCronRequest("/api/cron/content-staleness");

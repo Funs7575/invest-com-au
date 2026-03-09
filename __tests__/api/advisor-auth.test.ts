@@ -103,7 +103,7 @@ describe("POST /api/advisor-auth/login", () => {
 
     // Should NOT have called advisor_auth_tokens insert
     const tokenInserts = mockFrom.mock.calls.filter(
-      ([t]: [string]) => t === "advisor_auth_tokens"
+      ([t]: any) => t === "advisor_auth_tokens"
     );
     expect(tokenInserts).toHaveLength(0);
   });
@@ -119,19 +119,19 @@ describe("POST /api/advisor-auth/login", () => {
 
     // Verify token was inserted
     const tokenInserts = mockFrom.mock.calls.filter(
-      ([t]: [string]) => t === "advisor_auth_tokens"
+      ([t]: any) => t === "advisor_auth_tokens"
     );
     expect(tokenInserts.length).toBeGreaterThanOrEqual(1);
 
     // Verify email was sent via Resend
     const fetchCalls = (globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls;
     const resendCall = fetchCalls.find(
-      ([url]: [string]) => typeof url === "string" && url.includes("resend.com")
+      ([url]: any) => typeof url === "string" && url.includes("resend.com")
     );
     expect(resendCall).toBeDefined();
 
     // Verify the email body contains the advisor portal login link
-    const emailBody = JSON.parse(resendCall[1].body);
+    const emailBody = JSON.parse(resendCall![1].body);
     expect(emailBody.to).toBe("jane@advisor.com.au");
     expect(emailBody.html).toContain("advisor-portal?token=");
   });
@@ -145,7 +145,7 @@ describe("POST /api/advisor-auth/login", () => {
 
     // Find the advisor_auth_tokens insert call
     const tokenCalls = mockFrom.mock.calls.filter(
-      ([t]: [string]) => t === "advisor_auth_tokens"
+      ([t]: any) => t === "advisor_auth_tokens"
     );
     expect(tokenCalls.length).toBeGreaterThanOrEqual(1);
 

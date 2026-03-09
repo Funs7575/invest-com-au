@@ -197,7 +197,7 @@ describe("POST /api/advisor-enquiry", () => {
 
     // Verify the professional_leads update was called with quality_score
     const updateCalls = mockFrom.mock.calls.filter(
-      ([t]: [string]) => t === "professional_leads"
+      ([t]: any) => t === "professional_leads"
     );
     // At least 2 calls: insert + update
     expect(updateCalls.length).toBeGreaterThanOrEqual(2);
@@ -217,7 +217,7 @@ describe("POST /api/advisor-enquiry", () => {
 
     // Score: phone(20) + message(15) + source_page(10) + pages_visited>3(15) + quiz(20) + calculator(15) = 95
     const updateCalls = mockFrom.mock.calls.filter(
-      ([t]: [string]) => t === "professional_leads"
+      ([t]: any) => t === "professional_leads"
     );
     expect(updateCalls.length).toBeGreaterThanOrEqual(2);
   });
@@ -231,14 +231,14 @@ describe("POST /api/advisor-enquiry", () => {
 
     // Should increment free_leads_used on the professionals table
     const proCalls = mockFrom.mock.calls.filter(
-      ([t]: [string]) => t === "professionals"
+      ([t]: any) => t === "professionals"
     );
     // At least 2 calls: initial lookup + free_leads_used update
     expect(proCalls.length).toBeGreaterThanOrEqual(2);
 
     // Should NOT create a billing record
     const billingCalls = mockFrom.mock.calls.filter(
-      ([t]: [string]) => t === "advisor_billing"
+      ([t]: any) => t === "advisor_billing"
     );
     expect(billingCalls).toHaveLength(0);
   });
@@ -252,7 +252,7 @@ describe("POST /api/advisor-enquiry", () => {
 
     // Should create a billing record
     const billingCalls = mockFrom.mock.calls.filter(
-      ([t]: [string]) => t === "advisor_billing"
+      ([t]: any) => t === "advisor_billing"
     );
     expect(billingCalls.length).toBeGreaterThanOrEqual(1);
 
@@ -278,14 +278,14 @@ describe("POST /api/advisor-enquiry", () => {
 
     const fetchCalls = (globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls;
     const resendCalls = fetchCalls.filter(
-      ([url]: [string]) => typeof url === "string" && url.includes("resend.com")
+      ([url]: any) => typeof url === "string" && url.includes("resend.com")
     );
 
     // Should send two emails: one to advisor, one to user
     expect(resendCalls.length).toBeGreaterThanOrEqual(2);
 
     const emailBodies = resendCalls.map(
-      ([, opts]: [string, { body: string }]) => JSON.parse(opts.body)
+      ([, opts]: any) => JSON.parse(opts.body)
     );
     const advisorEmail = emailBodies.find(
       (b: { to: string }) => b.to === "john@advisor.com.au"
@@ -307,7 +307,7 @@ describe("POST /api/advisor-enquiry", () => {
     await POST(req);
 
     const analyticsCalls = mockFrom.mock.calls.filter(
-      ([t]: [string]) => t === "analytics_events"
+      ([t]: any) => t === "analytics_events"
     );
     expect(analyticsCalls.length).toBeGreaterThanOrEqual(1);
   });

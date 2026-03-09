@@ -112,8 +112,8 @@ describe("POST /api/stripe/create-checkout", () => {
     // Actually, since the PLANS mock is already set with valid priceIds, we need
     // to test this differently. We'll dynamically modify the imported PLANS.
     const stripeMod = await import("@/lib/stripe");
-    const originalMonthly = stripeMod.PLANS.monthly;
-    stripeMod.PLANS.monthly = { priceId: "", label: "$9/mo" } as typeof originalMonthly;
+    const originalMonthly = (stripeMod.PLANS as any).monthly;
+    (stripeMod.PLANS as any).monthly = { priceId: "", label: "$9/mo" };
 
     const req = makeRequest({ plan: "monthly" });
     const res = await POST(req);
@@ -122,7 +122,7 @@ describe("POST /api/stripe/create-checkout", () => {
     expect(json.error).toBe("Plan not configured");
 
     // Restore
-    stripeMod.PLANS.monthly = originalMonthly;
+    (stripeMod.PLANS as any).monthly = originalMonthly;
   });
 
   it("returns 400 when user already has active subscription", async () => {

@@ -151,7 +151,7 @@ describe("GET /api/cron/check-fees", () => {
       if (url.includes("resend.com")) {
         return Promise.resolve(new Response(JSON.stringify({ id: "mock-email" }), { status: 200 }));
       }
-      return originalFetch(...args);
+      return (originalFetch as any)(...args);
     });
 
     const req = makeCronRequest("/api/cron/check-fees");
@@ -204,7 +204,7 @@ describe("GET /api/cron/check-fees", () => {
       if (url.includes("resend.com")) {
         return Promise.resolve(new Response(JSON.stringify({ id: "mock-email" }), { status: 200 }));
       }
-      return originalFetch(...args);
+      return (originalFetch as any)(...args);
     });
 
     const req = makeCronRequest("/api/cron/check-fees");
@@ -258,7 +258,7 @@ describe("GET /api/cron/check-fees", () => {
         fetchCalls.push({ url, body: args[1]?.body });
         return Promise.resolve(new Response(JSON.stringify({ id: "mock-email" }), { status: 200 }));
       }
-      return originalFetch(...args);
+      return (originalFetch as any)(...args);
     });
 
     const req = makeCronRequest("/api/cron/check-fees");
@@ -303,7 +303,7 @@ describe("GET /api/cron/check-fees", () => {
       if (url.includes("resend.com")) {
         return Promise.resolve(new Response(JSON.stringify({ id: "mock-email" }), { status: 200 }));
       }
-      return originalFetch(...args);
+      return (originalFetch as any)(...args);
     });
 
     const req = makeCronRequest("/api/cron/check-fees");
