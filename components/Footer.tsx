@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE, CRYPTO_WARNING, REGULATORY_NOTE, COMPANY_LEGAL_NAME, COMPANY_ACN, COMPANY_ABN } from "@/lib/compliance";
+import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE, CRYPTO_WARNING, REGULATORY_NOTE, AFSL_STATUS_DISCLOSURE, COMPANY_LEGAL_NAME, COMPANY_ACN, COMPANY_ABN } from "@/lib/compliance";
 
 const sections = [
   { title: "Affiliate Disclosure", content: ADVERTISER_DISCLOSURE },
   { title: "Crypto Warning", content: CRYPTO_WARNING },
   { title: "Regulatory Note", content: REGULATORY_NOTE },
+  { title: "AFSL Status", content: AFSL_STATUS_DISCLOSURE },
 ];
 
 export default function Footer() {

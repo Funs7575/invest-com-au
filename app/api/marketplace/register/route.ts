@@ -150,6 +150,22 @@ export async function POST(req: NextRequest) {
       }).catch((err) => console.error("[marketplace-register] Registration notification email failed:", err));
     }
 
+    // Record agreement acceptance for audit trail
+    try {
+      await supabaseAdmin.from("agreement_acceptances").insert({
+        user_type: "broker",
+        agreement_type: "broker_advertising",
+        agreement_version: "1.0",
+        email: email.toLowerCase().trim(),
+        accepted_by_name: full_name.trim(),
+        ip_address: ip,
+        user_agent: req.headers.get("user-agent") || null,
+        metadata: { company_name: company_name.trim(), broker_slug: slug },
+      });
+    } catch (err) {
+      console.error("[marketplace-register] Agreement recording failed:", err);
+    }
+
     return NextResponse.json({ success: true }, { status: 201 });
   } catch {
     return NextResponse.json({ error: "Internal server error." }, { status: 500 });

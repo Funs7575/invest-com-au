@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { ADVERTISER_DISCLOSURE, GENERAL_ADVICE_WARNING, CRYPTO_WARNING, REGULATORY_NOTE } from "@/lib/compliance";
+import { ADVERTISER_DISCLOSURE, GENERAL_ADVICE_WARNING, CRYPTO_WARNING, REGULATORY_NOTE, AFSL_STATUS_DISCLOSURE } from "@/lib/compliance";
 
 const sections = [
   { title: "General Advice Warning", content: GENERAL_ADVICE_WARNING },
   { title: "Affiliate Disclosure", content: ADVERTISER_DISCLOSURE },
   { title: "Crypto Warning", content: CRYPTO_WARNING },
   { title: "Regulatory Note", content: REGULATORY_NOTE },
+  { title: "AFSL Status", content: AFSL_STATUS_DISCLOSURE },
 ];
 
 export default function CompactDisclosure() {

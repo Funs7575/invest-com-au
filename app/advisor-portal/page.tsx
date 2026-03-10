@@ -1284,7 +1284,9 @@ function AdvisorArticlesSection({ advisorId }: { advisorId?: number }) {
             <label className="flex items-start gap-2.5 cursor-pointer">
               <input type="checkbox" checked={acknowledged} onChange={e => setAcknowledged(e.target.checked)} className="w-4 h-4 mt-0.5 rounded border-slate-300 text-violet-600 focus:ring-violet-500" />
               <span className="text-xs text-slate-600 leading-relaxed">
-                I confirm this article is <strong>original content</strong>, complies with the <strong>editorial guidelines</strong> above, does not constitute <strong>personal financial advice</strong>, and does not contain <strong>promotional material</strong> for my firm or any specific product. I understand articles that violate these guidelines will be rejected or require revision.
+                I confirm this article is <strong>original content</strong>, complies with the <strong>editorial guidelines</strong> above, does not constitute <strong>personal financial advice</strong>, and does not contain <strong>promotional material</strong> for my firm or any specific product. I agree to the{" "}
+                <a href="/content-license" target="_blank" className="text-violet-600 underline hover:text-violet-800">Content Licence Agreement</a>{" "}
+                and grant Invest.com.au a licence to publish, edit, and distribute this article. I understand articles that violate these guidelines will be rejected or require revision.
               </span>
             </label>
           </div>

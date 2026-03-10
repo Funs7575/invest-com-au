@@ -155,9 +155,22 @@ export const EDITORIAL_ACCURACY_COMMITMENT =
   "We will investigate and update the information promptly.";
 
 /**
+ * AFSL status disclosure — ASIC requires clarity about licensing status.
+ * Invest.com.au operates as an information/comparison service under the
+ * general advice exemption (s911A(2)(eb) Corporations Act 2001) and does
+ * not hold an AFSL. This must be clearly disclosed.
+ */
+export const AFSL_STATUS_DISCLOSURE =
+  `${COMPANY_LEGAL_NAME} (ACN ${COMPANY_ACN}, ABN ${COMPANY_ABN}) does not hold an Australian ` +
+  "Financial Services Licence (AFSL). We operate as a financial comparison and information " +
+  "service, providing general information only. We do not provide personal financial advice, " +
+  "deal in financial products, or make financial product recommendations. " +
+  "Our revenue comes from affiliate commissions and advertising fees paid by the platforms " +
+  "and professionals listed on our site. These commercial relationships do not influence " +
+  "our independent editorial ratings or review methodology.";
+
+/**
  * Crypto-specific Australian regulatory context.
- * ASIC does not regulate cryptocurrencies as financial products (with some exceptions
- * for crypto-asset-based ETFs and funds). This is important context for Australian users.
  */
 export const CRYPTO_REGULATORY_NOTE =
   "Cryptocurrency exchanges operating in Australia must be registered with AUSTRAC " +
