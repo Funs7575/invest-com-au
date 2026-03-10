@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from 'next/server';
 import { logger } from '@/lib/logger';
 import { isValidEmail } from '@/lib/validate-email';
@@ -125,10 +125,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 });
   }
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
+  const supabase = createAdminClient();
 
   // Verify broker exists
   const { data: broker } = await supabase

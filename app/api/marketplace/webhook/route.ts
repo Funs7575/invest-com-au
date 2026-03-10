@@ -1,5 +1,5 @@
 import { getStripe } from "@/lib/stripe";
-import { createClient } from "@supabase/supabase-js";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { creditWallet } from "@/lib/marketplace/wallet";
 import { NextRequest, NextResponse } from "next/server";
 import type Stripe from "stripe";
@@ -30,10 +30,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
+  const supabase = createAdminClient();
 
   try {
     switch (event.type) {

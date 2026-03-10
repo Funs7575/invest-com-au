@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient as createServerClient } from "@/lib/supabase/server";
 import { randomBytes } from "crypto";
 import { sendApplicationApproved, sendApplicationRejected } from "@/lib/advisor-emails";
@@ -7,10 +7,7 @@ import { getSiteUrl } from "@/lib/url";
 import { ADMIN_EMAILS } from "@/lib/admin";
 
 function createAdminSupabase() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
+  return createAdminClient();
 }
 
 async function requireAdmin() {

@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 
@@ -25,10 +25,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
+  const supabase = createAdminClient();
 
   // Look up broker by API key
   const { data: account } = await supabase

@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
@@ -22,10 +22,7 @@ export async function GET(request: Request) {
   // ── 1. Database connectivity ──
   const dbStart = Date.now();
   try {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    const supabase = createAdminClient();
     const { error } = await supabase
       .from("brokers")
       .select("id", { count: "exact", head: true });
@@ -42,10 +39,7 @@ export async function GET(request: Request) {
   // ── 2. Cron job recency (check if marketplace-stats ran in last 26 hours) ──
   const cronStart = Date.now();
   try {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    const supabase = createAdminClient();
     const cutoff = new Date(Date.now() - 26 * 60 * 60 * 1000).toISOString();
     const { error } = await supabase
       .from("campaign_daily_stats")

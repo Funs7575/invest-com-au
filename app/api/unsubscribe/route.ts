@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { isRateLimited } from "@/lib/rate-limit";
 
@@ -32,10 +32,7 @@ export async function POST(request: NextRequest) {
 
   const sanitizedEmail = email.trim().toLowerCase().slice(0, 254);
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
+  const supabase = createAdminClient();
 
   let updated = false;
 

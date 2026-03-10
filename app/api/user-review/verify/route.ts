@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from 'next/server';
 import { logger } from '@/lib/logger';
 
@@ -79,10 +79,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL('/?error=invalid_token', request.url));
   }
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
+  const supabase = createAdminClient();
 
   // Lookup review by verification token (need full content for blocklist check)
   const { data: review } = await supabase

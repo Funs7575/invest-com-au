@@ -1,13 +1,10 @@
-import { createClient } from "@supabase/supabase-js";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 
 const log = logger("auto-bid");
 
 function getAdminClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
+  return createAdminClient();
 }
 
 export interface BidAdjustment {

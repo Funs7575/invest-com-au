@@ -1,6 +1,6 @@
 import { getStripe } from "@/lib/stripe";
 import { createClient } from "@/lib/supabase/server";
-import { createClient as createAdminSB } from "@supabase/supabase-js";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 
@@ -42,10 +42,7 @@ export async function POST(request: NextRequest) {
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app";
 
     // Create invoice record (pending)
-    const admin = createAdminSB(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    const admin = createAdminClient();
 
     const { data: invoice, error: invoiceErr } = await admin
       .from("marketplace_invoices")

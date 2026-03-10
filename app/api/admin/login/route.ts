@@ -1,3 +1,4 @@
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "crypto";
@@ -12,10 +13,7 @@ function hashIP(ip: string): string {
 }
 
 function createAdminSupabase() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
+  return createAdminClient();
 }
 
 async function checkRateLimit(ipHash: string): Promise<{ locked: boolean; remaining: number }> {

@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from 'next/server';
 import { createHash } from 'crypto';
 import { detectDeviceType } from '@/lib/device-detect';
@@ -48,10 +48,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
   }
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
+  const supabase = createAdminClient();
 
   // Get broker ID
   const { data: broker } = await supabase

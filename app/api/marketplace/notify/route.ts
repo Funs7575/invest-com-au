@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 /** Escape HTML special chars to prevent XSS in email templates */
 function escapeHtml(str: string): string {
@@ -10,10 +10,7 @@ function escapeHtml(str: string): string {
     .replace(/"/g, "&quot;");
 }
 
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+const supabaseAdmin = createAdminClient();
 
 /**
  * Internal notification API — sends broker notifications and optionally emails.

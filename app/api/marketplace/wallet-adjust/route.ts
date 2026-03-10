@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { adjustWallet } from "@/lib/marketplace/wallet";
 import { logger } from "@/lib/logger";
@@ -11,10 +11,7 @@ const log = logger("wallet");
  */
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    const supabase = createAdminClient();
 
     // Verify caller is admin by checking the cookie-based session
     const cookieHeader = request.headers.get("cookie") || "";

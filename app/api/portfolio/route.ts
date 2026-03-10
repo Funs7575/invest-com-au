@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
 
 /**
@@ -11,10 +11,7 @@ export async function GET(request: NextRequest) {
   const email = request.nextUrl.searchParams.get("email")?.toLowerCase().trim();
   if (!email) return NextResponse.json({ error: "Email required" }, { status: 400 });
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
+  const supabase = createAdminClient();
 
   const { data: portfolio } = await supabase
     .from("user_portfolios")
@@ -50,10 +47,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Too many requests" }, { status: 429 });
     }
 
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    const supabase = createAdminClient();
 
     // Get broker fee data for calculations
     const brokerSlugs = holdings.map((h: { broker_slug: string }) => h.broker_slug).filter(Boolean);

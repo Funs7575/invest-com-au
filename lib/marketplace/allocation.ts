@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type { Campaign, MarketplacePlacement } from "@/lib/types";
 import { debitWallet } from "./wallet";
 import { logger } from "@/lib/logger";
@@ -6,10 +6,7 @@ import { logger } from "@/lib/logger";
 const log = logger("allocation");
 
 function getAdminClient() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
+  return createAdminClient();
 }
 
 export interface WinningCampaign {

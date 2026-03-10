@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from 'next/server';
 import { createRateLimiter } from '@/lib/rate-limiter';
 import { isValidEmail } from '@/lib/validate-email';
@@ -51,10 +51,7 @@ async function sendQuizResultsEmail(
   const resendApiKey = process.env.RESEND_API_KEY;
   if (!resendApiKey) return;
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  );
+  const supabase = createAdminClient();
 
   // Fetch top match broker details
   const { data: broker } = await supabase
@@ -235,10 +232,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
   }
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  );
+  const supabase = createAdminClient();
 
   const sanitizedEmail = (email as string).trim().toLowerCase().slice(0, 254);
   const sanitizedName = (typeof name === 'string' ? name.trim().slice(0, 100) : null) || null;

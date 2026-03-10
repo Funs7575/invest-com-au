@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
-import { createClient } from "@supabase/supabase-js";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
 
@@ -66,10 +66,7 @@ export async function GET(
   }
 
   // --- Service role client for data access ---
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
+  const supabase = createAdminClient();
 
   // --- Verify broker account ownership ---
   const { data: account } = await supabase

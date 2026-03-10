@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "edge";
@@ -12,10 +12,7 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const token = searchParams.get("token"); // email hash as simple verification
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
+  const supabase = createAdminClient();
 
   // Fetch all active brokers
   const { data: brokers } = await supabase

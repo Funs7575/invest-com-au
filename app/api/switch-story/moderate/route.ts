@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient as createServerClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { logger } from '@/lib/logger';
@@ -37,10 +37,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'action must be approve or reject' }, { status: 400 });
   }
 
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
+  const supabase = createAdminClient();
 
   const newStatus = action === 'approve' ? 'approved' : 'rejected';
 

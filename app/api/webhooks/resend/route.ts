@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 
 const log = logger("resend-webhook");
@@ -23,10 +23,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid webhook payload" }, { status: 400 });
     }
 
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    const supabase = createAdminClient();
 
     const email = data.to?.[0] || data.email_id;
 

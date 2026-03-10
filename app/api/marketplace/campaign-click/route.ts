@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { recordCpcClick } from "@/lib/marketplace/allocation";
 import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "crypto";
