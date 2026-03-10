@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
+import { ADMIN_EMAIL } from "@/lib/admin";
 
 export const runtime = "edge";
 export const maxDuration = 60;
@@ -162,7 +163,7 @@ export async function GET(req: NextRequest) {
       headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" },
       body: JSON.stringify({
         from: "Invest.com.au <system@invest.com.au>",
-        to: process.env.ADMIN_EMAIL || "admin@invest.com.au",
+        to: ADMIN_EMAIL,
         subject: `Fee Alert: ${changedBrokers.length} broker${changedBrokers.length > 1 ? "s" : ""} changed fees`,
         html: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto"><div style="background:#0f172a;color:white;padding:16px 20px;border-radius:12px 12px 0 0"><h2 style="margin:0;font-size:16px">Fee Page Changes Detected</h2><p style="margin:4px 0 0;opacity:.7;font-size:12px">${changedBrokers.length} broker${changedBrokers.length > 1 ? "s" : ""} · ${new Date().toLocaleDateString("en-AU")}</p></div><div style="padding:16px 20px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px"><table style="width:100%;border-collapse:collapse">${changeList}</table><p style="margin-top:16px;font-size:12px;color:#94a3b8">Review these changes in <a href="https://invest-com-au.vercel.app/admin" style="color:#2563eb">the admin panel</a>. Fee values may need manual updating.</p></div></div>`,
       }),

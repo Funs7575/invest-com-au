@@ -2,10 +2,9 @@ import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import siteData from "@/data/site-data.json";
 import { logger } from "@/lib/logger";
+import { ADMIN_EMAILS } from "@/lib/admin";
 
 const log = logger("seed");
-
-const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || "admin@invest.com.au").split(",").map(e => e.trim());
 const ADMIN_DOMAIN = "@invest.com.au";
 
 export async function POST() {

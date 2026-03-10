@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
+import { ADMIN_EMAIL } from "@/lib/admin";
 
 export const runtime = "edge";
 export const maxDuration = 60;
@@ -98,7 +99,6 @@ export async function GET(req: NextRequest) {
   // Email admin if stale articles found
   if (staleCount > 0) {
     const RESEND_API_KEY = process.env.RESEND_API_KEY;
-    const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@invest.com.au";
     if (RESEND_API_KEY) {
       const staleList = results
         .filter((r) => r.needsUpdate)

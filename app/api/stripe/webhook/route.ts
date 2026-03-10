@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { logger } from "@/lib/logger";
 import { getSiteUrl } from "@/lib/url";
+import { ADMIN_EMAIL } from "@/lib/admin";
 
 const log = logger("stripe-webhook");
 
@@ -220,7 +221,6 @@ export async function POST(request: NextRequest) {
               ).catch((err) => console.error("[stripe-webhook] Pro welcome email failed:", err));
 
               // Notify admin of new Pro signup
-              const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@invest.com.au";
               sendTransactionalEmail(
                 ADMIN_EMAIL,
                 `New Pro Signup: ${customer.email}`,

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { isRateLimited } from "@/lib/rate-limit";
 import { getSiteUrl } from "@/lib/url";
+import { ADMIN_EMAIL } from "@/lib/admin";
 
 const PROFANITY = /\b(fuck|shit|cunt|bitch|asshole|dick|piss|bastard|wanker|slut|whore|nigger|faggot|retard)\b/i;
 const SPAM_URL = /https?:\/\/[^\s]+/i;
@@ -135,7 +136,7 @@ export async function POST(request: NextRequest) {
         headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" },
         body: JSON.stringify({
           from: "Invest.com.au <system@invest.com.au>",
-          to: process.env.ADMIN_EMAIL || "admin@invest.com.au",
+          to: ADMIN_EMAIL,
           subject: `New advisor review: ${pro.name} (${rating}/5)${autoFlagged ? " FLAGGED" : ""}`,
           html: `<div style="font-family:Arial,sans-serif;max-width:500px"><h2 style="color:#0f172a;font-size:16px">${autoFlagged ? "Flagged Review" : "New Review"}</h2><p style="color:#64748b;font-size:14px"><strong>${resolvedName}</strong> reviewed <strong>${pro.name}</strong></p><p style="color:#334155;font-size:14px">${"★".repeat(Math.floor(rating))} ${rating}/5</p><p style="color:#64748b;font-size:12px">Communication: ${communication_rating}/5 | Expertise: ${expertise_rating}/5 | Value: ${value_for_money_rating}/5</p><p style="color:#64748b;font-size:12px">Used services: ${used_services ? "Yes" : "No"}</p>${title ? `<p style="color:#334155;font-weight:600">"${title.trim()}"</p>` : ""}<p style="color:#64748b;font-size:13px">${reviewBody.trim().slice(0, 200)}${reviewBody.length > 200 ? "..." : ""}</p>${autoFlagged ? `<p style="color:#dc2626;font-size:12px;font-weight:bold">Auto-flags: ${autoFlags.join(", ")}</p>` : ""}<a href="${siteUrl}/admin/advisors" style="display:inline-block;padding:10px 20px;background:#0f172a;color:white;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;margin-top:12px">Review in Admin</a></div>`,
         }),

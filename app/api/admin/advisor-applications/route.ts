@@ -4,6 +4,7 @@ import { createClient as createServerClient } from "@/lib/supabase/server";
 import { randomBytes } from "crypto";
 import { sendApplicationApproved, sendApplicationRejected } from "@/lib/advisor-emails";
 import { getSiteUrl } from "@/lib/url";
+import { ADMIN_EMAILS } from "@/lib/admin";
 
 function createAdminSupabase() {
   return createClient(
@@ -13,9 +14,6 @@ function createAdminSupabase() {
 }
 
 async function requireAdmin() {
-  const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || "admin@invest.com.au")
-    .split(",")
-    .map((e) => e.trim().toLowerCase());
   const supabaseAuth = await createServerClient();
   const {
     data: { user },

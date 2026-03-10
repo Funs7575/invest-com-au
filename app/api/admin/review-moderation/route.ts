@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
+import { ADMIN_EMAILS } from "@/lib/admin";
 
 /**
  * PATCH /api/admin/review-moderation
@@ -11,9 +12,6 @@ import { NextRequest, NextResponse } from "next/server";
 export async function PATCH(req: NextRequest) {
   try {
     // Auth check: require an authenticated admin user
-    const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || "admin@invest.com.au")
-      .split(",")
-      .map((e) => e.trim().toLowerCase());
     const supabaseAuth = await createClient();
     const {
       data: { user },

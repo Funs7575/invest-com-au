@@ -3,10 +3,9 @@ import { createClient as createServerClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { logger } from '@/lib/logger';
 import { notificationFooter } from '@/lib/email-templates';
+import { ADMIN_EMAILS } from "@/lib/admin";
 
 const log = logger('user-review');
-
-const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || 'admin@invest.com.au').split(',').map(e => e.trim().toLowerCase());
 
 export async function POST(request: NextRequest) {
   // ── Auth check: require an authenticated admin user ──

@@ -13,7 +13,7 @@ interface Props {
 export default function ConsultationDetailClient({ consultation }: Props) {
   const searchParams = useSearchParams();
   const { user, isPro, loading: subLoading } = useSubscription();
-  const [booking, setBooking] = useState<any>(null);
+  const [booking, setBooking] = useState<Record<string, unknown> | null>(null);
   const [bookingLoading, setBookingLoading] = useState(true);
   const [purchasing, setPurchasing] = useState(false);
   const [error, setError] = useState("");

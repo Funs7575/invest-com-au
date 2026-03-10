@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
-import type { Broker } from "@/lib/types";
+import type { Broker, Professional } from "@/lib/types";
 import DealCard from "@/components/DealCard";
 import BrokerLogo from "@/components/BrokerLogo";
 import Icon from "@/components/Icon";
@@ -68,7 +68,18 @@ const CATEGORY_MAP: Record<TabOption, TabFilter | null> = {
   "Advisor Offers": null,
 };
 
-export default function DealsClient({ deals, advisors = [] }: { deals: Broker[]; advisors?: any[] }) {
+type AdvisorDeal = Pick<Professional, 'slug' | 'name' | 'type' | 'rating' | 'review_count' | 'verified'> & {
+  firm_name?: string;
+  location_display?: string;
+  photo_url?: string;
+  fee_description?: string;
+  offer_text?: string;
+  offer_terms?: string;
+  offer_expiry?: string;
+  offer_active?: boolean;
+};
+
+export default function DealsClient({ deals, advisors = [] }: { deals: Broker[]; advisors?: AdvisorDeal[] }) {
   const [activeTab, setActiveTab] = useState<TabOption>("All Deals");
   const [featuredWinners, setFeaturedWinners] = useState<PlacementWinner[]>([]);
   const [cpcWinners, setCpcWinners] = useState<PlacementWinner[]>([]);
@@ -128,7 +139,7 @@ export default function DealsClient({ deals, advisors = [] }: { deals: Broker[];
   // Only show tabs that have deals (or "All Deals" / "Advisor Offers")
   const availableTabs = useMemo(() => {
     return TAB_OPTIONS.filter((tab) => {
-      if (tab === "Advisor Offers") return advisors.some((a: any) => a.offer_active && a.offer_text);
+      if (tab === "Advisor Offers") return advisors.some((a) => a.offer_active && a.offer_text);
       const filter = CATEGORY_MAP[tab];
       if (!filter) return true; // Always show "All Deals"
       return deals.some((b) => matchesFilter(b, filter));
@@ -246,7 +257,7 @@ export default function DealsClient({ deals, advisors = [] }: { deals: Broker[];
       {/* Deals Grid with subtle background and staggered entrance */}
       {activeTab === "Advisor Offers" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {advisors.filter((a: any) => a.offer_active && a.offer_text).map((advisor: any) => (
+          {advisors.filter((a) => a.offer_active && a.offer_text).map((advisor) => (
             <div key={advisor.slug} className="bg-white border border-violet-200/60 rounded-xl p-4 hover:shadow-md transition-shadow">
               <div className="flex items-center gap-3 mb-3">
                 <img
@@ -282,7 +293,7 @@ export default function DealsClient({ deals, advisors = [] }: { deals: Broker[];
               </div>
             </div>
           ))}
-          {advisors.filter((a: any) => a.offer_active && a.offer_text).length === 0 && (
+          {advisors.filter((a) => a.offer_active && a.offer_text).length === 0 && (
             <div className="col-span-full text-center py-8">
               <p className="text-sm text-slate-500 mb-2">No advisor offers available right now.</p>
               <a href="/advisors" className="text-xs font-bold text-violet-600 hover:text-violet-800">Browse all advisors →</a>

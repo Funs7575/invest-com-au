@@ -527,9 +527,8 @@ interface DecisionLogData {
   duration_ms: number;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function logDecision(
-  supabase: any,
+  supabase: { from: (table: string) => { insert: (data: Record<string, unknown>) => { select: () => unknown } } },
   data: DecisionLogData
 ): void {
   // Fire-and-forget — allocation latency must not increase

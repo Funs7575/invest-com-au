@@ -75,8 +75,8 @@ export default function ExportImportPage() {
       URL.revokeObjectURL(url);
 
       setExportMessage(`Exported ${filename} successfully.`);
-    } catch (err: any) {
-      setExportMessage(`Export failed: ${err.message}`);
+    } catch (err: unknown) {
+      setExportMessage(`Export failed: ${err instanceof Error ? err.message : String(err)}`);
     }
 
     setExporting(false);
@@ -111,10 +111,10 @@ export default function ExportImportPage() {
           }
         }
         setImportPreview(preview);
-      } catch (err: any) {
+      } catch (err: unknown) {
         setImportPreview(null);
         setImportData(null);
-        alert(`Invalid JSON file: ${err.message}`);
+        alert(`Invalid JSON file: ${err instanceof Error ? err.message : String(err)}`);
       }
     };
     reader.readAsText(file);
@@ -156,11 +156,11 @@ export default function ExportImportPage() {
         } else {
           statuses[i] = { ...statuses[i], status: "done" };
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         statuses[i] = {
           ...statuses[i],
           status: "error",
-          message: err.message,
+          message: err instanceof Error ? err.message : String(err),
         };
       }
 

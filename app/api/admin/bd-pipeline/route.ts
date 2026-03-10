@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { ADMIN_EMAILS } from "@/lib/admin";
 
 async function requireAdmin() {
-  const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || "admin@invest.com.au")
-    .split(",")
-    .map((e) => e.trim().toLowerCase());
   const supabaseAuth = await createClient();
   const {
     data: { user },

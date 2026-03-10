@@ -1,3 +1,5 @@
+import { ADMIN_EMAIL } from "@/lib/admin";
+
 const RESEND_API_KEY = () => process.env.RESEND_API_KEY;
 
 function emailWrapper(title: string, body: string): string {
@@ -76,6 +78,5 @@ export async function sendFirmInvitation(email: string, inviteeName: string | un
 }
 
 export async function sendAdminNotification(subject: string, body: string): Promise<boolean> {
-  const adminEmail = process.env.ADMIN_EMAIL || "admin@invest.com.au";
-  return send(adminEmail, subject, emailWrapper("Admin Notification", `<p style="font-size:14px;color:#64748b">${body}</p>`));
+  return send(ADMIN_EMAIL, subject, emailWrapper("Admin Notification", `<p style="font-size:14px;color:#64748b">${body}</p>`));
 }

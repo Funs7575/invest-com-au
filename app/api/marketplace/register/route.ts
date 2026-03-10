@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import crypto from "crypto";
 import { isRateLimited } from "@/lib/rate-limit";
+import { ADMIN_EMAIL } from "@/lib/admin";
 
 /** Escape HTML special chars to prevent XSS in email templates */
 function escapeHtml(str: string): string {
@@ -137,7 +138,7 @@ export async function POST(req: NextRequest) {
         },
         body: JSON.stringify({
           from: "Invest.com.au <partners@invest.com.au>",
-          to: ["admin@invest.com.au"],
+          to: [ADMIN_EMAIL],
           subject: `New Broker Registration: ${company_name}`,
           html: `
             <h2>New Broker Registration</h2>
