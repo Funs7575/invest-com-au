@@ -3,7 +3,8 @@
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import type { Professional, ProfessionalType } from "@/lib/types";
+import Image from "next/image";
+import type { Professional, ProfessionalType, AdvisorFirm } from "@/lib/types";
 import { PROFESSIONAL_TYPE_LABELS, AU_STATES } from "@/lib/types";
 import Icon from "@/components/Icon";
 import { trackEvent } from "@/lib/tracking";
@@ -154,7 +155,7 @@ function UseMyLocation({ onLocate }: { onLocate: (lat: number, lng: number) => v
   );
 }
 
-export default function AdvisorsClient({ professionals, initialType, initialState, pageTitle, pageDescription, faqs = [], editorial }: {
+export default function AdvisorsClient({ professionals, initialType, initialState, pageTitle, pageDescription, faqs = [], editorial, firms = [], firmMemberCounts = {} }: {
   professionals: Professional[];
   initialType?: ProfessionalType;
   initialState?: string;
@@ -162,6 +163,8 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
   pageDescription?: string;
   faqs?: { q: string; a: string }[];
   editorial?: { howToChoose: string[]; costGuide: string; industryInsight: string };
+  firms?: AdvisorFirm[];
+  firmMemberCounts?: Record<number, number>;
 }) {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -526,6 +529,64 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
           </p>
           {totalPages > 1 && <p className="text-[0.62rem] md:text-xs text-slate-400">Page {page} of {totalPages}</p>}
         </div>
+
+        {/* Advisory Firms */}
+        {firms.length > 0 && !isLocationActive && page === 1 && !search && typeFilter === "all" && (
+          <div className="mb-5">
+            <h2 className="text-sm font-bold text-slate-700 mb-2.5 flex items-center gap-1.5">
+              <Icon name="building" size={15} className="text-violet-500" />
+              Advisory Firms
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {firms.map(firm => (
+                <Link
+                  key={firm.id}
+                  href={`/firm/${firm.slug}`}
+                  className="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-lg hover:border-violet-200 hover:-translate-y-0.5 transition-all duration-200 group"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-100 to-violet-50 border border-violet-200 flex items-center justify-center overflow-hidden shrink-0">
+                      {firm.logo_url ? (
+                        <Image src={firm.logo_url} alt={firm.name} width={48} height={48} className="w-full h-full object-contain" />
+                      ) : (
+                        <span className="text-sm font-bold text-violet-600">
+                          {firm.name.split(/\s+/).slice(0, 2).map(w => w[0]).join("").toUpperCase()}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-bold text-sm text-slate-900 group-hover:text-violet-700 transition-colors truncate">{firm.name}</h3>
+                      {firm.location_display && (
+                        <p className="text-[0.65rem] text-slate-500 flex items-center gap-1 mt-0.5">
+                          <Icon name="map-pin" size={10} className="text-slate-400" />
+                          {firm.location_display}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  {firm.bio && (
+                    <p className="text-[0.62rem] text-slate-500 mt-2 line-clamp-2 leading-relaxed">{firm.bio}</p>
+                  )}
+                  <div className="flex items-center gap-2 mt-2.5 flex-wrap">
+                    <span className="text-[0.56rem] font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full flex items-center gap-0.5">
+                      <Icon name="users" size={10} className="text-blue-400" />
+                      {firmMemberCounts[firm.id] || 0} {(firmMemberCounts[firm.id] || 0) === 1 ? "advisor" : "advisors"}
+                    </span>
+                    {firm.afsl_number && (
+                      <span className="text-[0.56rem] font-semibold text-violet-600 bg-violet-50 px-2 py-0.5 rounded-full flex items-center gap-0.5">
+                        <Icon name="shield" size={10} className="text-violet-400" />
+                        AFSL {firm.afsl_number}
+                      </span>
+                    )}
+                    {firm.abn && (
+                      <span className="text-[0.56rem] text-slate-400">ABN {firm.abn}</span>
+                    )}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Results */}
         {nearbyLoading ? (

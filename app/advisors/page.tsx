@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
-import type { Professional } from "@/lib/types";
+import type { Professional, AdvisorFirm } from "@/lib/types";
 import type { Metadata } from "next";
 import AdvisorsClient from "./AdvisorsClient";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
@@ -23,12 +23,27 @@ export const metadata: Metadata = {
 export default async function AdvisorsPage() {
   const supabase = await createClient();
 
-  const { data: professionals } = await supabase
-    .from("professionals")
-    .select("*")
-    .eq("status", "active")
-    .order("verified", { ascending: false })
-    .order("rating", { ascending: false });
+  const [proResult, firmResult] = await Promise.all([
+    supabase
+      .from("professionals")
+      .select("*")
+      .eq("status", "active")
+      .order("verified", { ascending: false })
+      .order("rating", { ascending: false }),
+    supabase
+      .from("advisor_firms")
+      .select("*")
+      .eq("status", "active")
+      .order("name", { ascending: true }),
+  ]);
+
+  // Count team members per firm
+  const professionals = (proResult.data as Professional[]) || [];
+  const firms = (firmResult.data as AdvisorFirm[]) || [];
+  const firmMemberCounts: Record<number, number> = {};
+  professionals.forEach(p => {
+    if (p.firm_id) firmMemberCounts[p.firm_id] = (firmMemberCounts[p.firm_id] || 0) + 1;
+  });
 
   const breadcrumbLd = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
@@ -39,7 +54,7 @@ export default async function AdvisorsPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <Suspense fallback={<AdvisorsLoading />}>
-        <AdvisorsClient professionals={(professionals as Professional[]) || []} />
+        <AdvisorsClient professionals={professionals} firms={firms} firmMemberCounts={firmMemberCounts} />
       </Suspense>
     </>
   );
