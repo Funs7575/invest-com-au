@@ -180,6 +180,59 @@ export default async function FirmProfilePage({ params }: { params: Promise<{ sl
             </div>
           </div>
 
+          {/* ── Quick Stats Bar ── */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="bg-white border border-slate-200 rounded-xl p-4 text-center">
+              <p className="text-2xl font-bold text-slate-900">{members.length}</p>
+              <p className="text-xs text-slate-500">Team Members</p>
+            </div>
+            <div className="bg-white border border-slate-200 rounded-xl p-4 text-center">
+              <p className="text-2xl font-bold text-slate-900">
+                {members.reduce((sum, m) => sum + (m.review_count || 0), 0)}
+              </p>
+              <p className="text-xs text-slate-500">Client Reviews</p>
+            </div>
+            <div className="bg-white border border-slate-200 rounded-xl p-4 text-center">
+              <p className="text-2xl font-bold text-slate-900">
+                {members.length > 0 ? (members.reduce((sum, m) => sum + (m.rating || 0), 0) / members.length).toFixed(1) : "—"}
+              </p>
+              <p className="text-xs text-slate-500">Avg Rating</p>
+            </div>
+            <div className="bg-white border border-slate-200 rounded-xl p-4 text-center">
+              <p className="text-2xl font-bold text-slate-900">{yearsActive(typedFirm.created_at)}+</p>
+              <p className="text-xs text-slate-500">Years Active</p>
+            </div>
+          </div>
+
+          {/* ── Services We Offer ── */}
+          {members.length > 0 && (() => {
+            const allTypes = [...new Set(members.map(m => PROFESSIONAL_TYPE_LABELS[m.type as keyof typeof PROFESSIONAL_TYPE_LABELS] || m.type))];
+            const allSpecs = [...new Set(members.flatMap(m => m.specialties || []))].slice(0, 12);
+            return (
+              <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+                <h2 className="text-sm font-semibold text-slate-800 mb-3 flex items-center gap-2">
+                  <Icon name="briefcase" size={16} className="text-violet-600" />
+                  Services We Offer
+                </h2>
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {allTypes.map(t => (
+                    <span key={t} className="px-3 py-1.5 bg-violet-50 text-violet-700 text-xs font-semibold rounded-lg border border-violet-200">{t}</span>
+                  ))}
+                </div>
+                {allSpecs.length > 0 && (
+                  <>
+                    <p className="text-xs text-slate-400 mb-2">Specialties:</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {allSpecs.map(s => (
+                        <span key={s} className="px-2.5 py-1 bg-slate-50 text-slate-600 text-[0.65rem] font-medium rounded-full border border-slate-200">{s}</span>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+            );
+          })()}
+
           {/* ── Trust Signals + Contact ── */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Trust Signals */}

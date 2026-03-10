@@ -50,9 +50,9 @@ describe("POST /api/advisor-auth/login", () => {
     vi.clearAllMocks();
     mockFrom.mockImplementation((table: string) => {
       if (table === "professionals") {
-        return createChainableBuilder(ADVISOR);
+        return createChainableBuilder("professionals");
       }
-      return createChainableBuilder(null);
+      return createChainableBuilder("professionals");
     });
   });
 
@@ -64,7 +64,7 @@ describe("POST /api/advisor-auth/login", () => {
   });
 
   it("returns success even for unregistered email (magic link)", async () => {
-    mockFrom.mockImplementation(() => createChainableBuilder(null));
+    mockFrom.mockImplementation(() => createChainableBuilder("professionals"));
     const res = await POST(makeRequest("POST", { email: "nobody@test.com", mode: "magic" }));
     expect(res.status).toBe(200);
   });
@@ -81,7 +81,7 @@ describe("POST /api/advisor-auth/login", () => {
   });
 
   it("password login returns 404 for unregistered email", async () => {
-    mockFrom.mockImplementation(() => createChainableBuilder(null));
+    mockFrom.mockImplementation(() => createChainableBuilder("professionals"));
     const res = await POST(makeRequest("POST", { email: "nobody@test.com", password: "test1234", mode: "password" }));
     expect(res.status).toBe(404);
   });

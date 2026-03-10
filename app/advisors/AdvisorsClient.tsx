@@ -570,63 +570,69 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
           {totalPages > 1 && <p className="text-[0.62rem] md:text-xs text-slate-400">Page {page} of {totalPages}</p>}
         </div>
 
-        {/* Advisory Firms */}
-        {firms.length > 0 && !isLocationActive && page === 1 && !search && typeFilter === "all" && (
-          <div className="mb-5">
-            <h2 className="text-sm font-bold text-slate-700 mb-2.5 flex items-center gap-1.5">
-              <Icon name="building" size={15} className="text-violet-500" />
-              Advisory Firms
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {firms.map(firm => (
-                <Link
-                  key={firm.id}
-                  href={`/firm/${firm.slug}`}
-                  className="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-lg hover:border-violet-200 hover:-translate-y-0.5 transition-all duration-200 group"
-                >
-                  <div className="flex items-start gap-3">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-100 to-violet-50 border border-violet-200 flex items-center justify-center overflow-hidden shrink-0">
-                      {firm.logo_url ? (
-                        <Image src={firm.logo_url} alt={firm.name} width={48} height={48} className="w-full h-full object-contain" />
-                      ) : (
-                        <span className="text-sm font-bold text-violet-600">
-                          {firm.name.split(/\s+/).slice(0, 2).map(w => w[0]).join("").toUpperCase()}
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-sm text-slate-900 group-hover:text-violet-700 transition-colors truncate">{firm.name}</h3>
-                      {firm.location_display && (
-                        <p className="text-[0.65rem] text-slate-500 flex items-center gap-1 mt-0.5">
-                          <Icon name="map-pin" size={10} className="text-slate-400" />
-                          {firm.location_display}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                  {firm.bio && (
-                    <p className="text-[0.62rem] text-slate-500 mt-2 line-clamp-2 leading-relaxed">{firm.bio}</p>
-                  )}
-                  <div className="flex items-center gap-2 mt-2.5 flex-wrap">
-                    <span className="text-[0.56rem] font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full flex items-center gap-0.5">
-                      <Icon name="users" size={10} className="text-blue-400" />
-                      {firmMemberCounts[firm.id] || 0} {(firmMemberCounts[firm.id] || 0) === 1 ? "advisor" : "advisors"}
-                    </span>
-                    {firm.afsl_number && (
-                      <span className="text-[0.56rem] font-semibold text-violet-600 bg-violet-50 px-2 py-0.5 rounded-full flex items-center gap-0.5">
-                        <Icon name="shield" size={10} className="text-violet-400" />
-                        AFSL {firm.afsl_number}
-                      </span>
-                    )}
-                    {firm.abn && (
-                      <span className="text-[0.56rem] text-slate-400">ABN {firm.abn}</span>
-                    )}
-                  </div>
-                </Link>
-              ))}
-            </div>
+        {/* View Toggle — Advisors vs Firms */}
+        {firms.length > 0 && (
+          <div className="flex items-center gap-2 mb-4">
+            <button
+              onClick={() => { /* handled by clearing firm filter */ setFirmFilter("all"); }}
+              className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all ${
+                firmFilter === "all" ? "bg-violet-600 text-white shadow-sm" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+              }`}
+            >
+              All Advisors ({professionals.length})
+            </button>
+            {firms.map(firm => (
+              <button
+                key={firm.id}
+                onClick={() => setFirmFilter(firm.name)}
+                className={`px-3 py-2 text-sm font-medium rounded-lg transition-all flex items-center gap-1.5 ${
+                  firmFilter === firm.name ? "bg-violet-600 text-white shadow-sm" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                }`}
+              >
+                <span className="w-5 h-5 rounded bg-violet-100 flex items-center justify-center text-[0.5rem] font-bold text-violet-600 shrink-0">
+                  {firm.name.split(/\s+/).slice(0, 2).map((w: string) => w[0]).join("").toUpperCase()}
+                </span>
+                {firm.name}
+                <span className={`text-xs ${firmFilter === firm.name ? "text-violet-200" : "text-slate-400"}`}>({firmMemberCounts[firm.id] || 0})</span>
+              </button>
+            ))}
           </div>
         )}
+
+        {/* Firm detail card — shown when a firm is selected */}
+        {firmFilter !== "all" && (() => {
+          const selectedFirm = firms.find((f: AdvisorFirm) => f.name === firmFilter);
+          if (!selectedFirm) return null;
+          return (
+            <div className="bg-white border border-violet-200 rounded-xl p-4 md:p-5 mb-4 flex flex-col md:flex-row gap-4">
+              <div className="flex items-start gap-3 flex-1 min-w-0">
+                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-violet-100 to-violet-50 border border-violet-200 flex items-center justify-center shrink-0">
+                  {selectedFirm.logo_url ? (
+                    <Image src={selectedFirm.logo_url} alt={selectedFirm.name} width={56} height={56} className="w-full h-full object-contain rounded-xl" />
+                  ) : (
+                    <span className="text-lg font-bold text-violet-600">
+                      {selectedFirm.name.split(/\s+/).slice(0, 2).map((w: string) => w[0]).join("").toUpperCase()}
+                    </span>
+                  )}
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-base font-bold text-slate-900">{selectedFirm.name}</h3>
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 mt-0.5 text-xs text-slate-500">
+                    {selectedFirm.location_display && <span className="flex items-center gap-1"><Icon name="map-pin" size={11} className="text-slate-400" />{selectedFirm.location_display}</span>}
+                    {selectedFirm.afsl_number && <span className="flex items-center gap-1"><Icon name="shield" size={11} className="text-violet-400" />AFSL {selectedFirm.afsl_number}</span>}
+                    <span className="flex items-center gap-1"><Icon name="users" size={11} className="text-blue-400" />{firmMemberCounts[selectedFirm.id] || 0} advisors</span>
+                  </div>
+                  {selectedFirm.bio && <p className="text-xs text-slate-500 mt-1.5 line-clamp-2">{selectedFirm.bio}</p>}
+                </div>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <Link href={`/firm/${selectedFirm.slug}`} className="px-4 py-2 bg-violet-600 text-white text-xs font-bold rounded-lg hover:bg-violet-700 transition-colors">
+                  View Firm Profile →
+                </Link>
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Results */}
         {nearbyLoading ? (
