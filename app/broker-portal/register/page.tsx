@@ -22,6 +22,7 @@ export default function BrokerRegisterPage() {
 
   // Step 2: Company
   const [companyName, setCompanyName] = useState("");
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const [phone, setPhone] = useState("");
   const [brokerSlug, setBrokerSlug] = useState("");
   const [website, setWebsite] = useState("");
@@ -255,19 +256,31 @@ export default function BrokerRegisterPage() {
               )}
             </div>
 
-            <p className="text-xs text-slate-500">
-              By submitting, you agree to our{" "}
-              <a href="/terms" className="underline">Terms of Service</a>{" "}
-              and <a href="/privacy" className="underline">Privacy Policy</a>.
-              Your account will be reviewed before activation.
-            </p>
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3">
+              <label className="flex items-start gap-2.5 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={termsAccepted}
+                  onChange={(e) => setTermsAccepted(e.target.checked)}
+                  className="w-4 h-4 mt-0.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                  required
+                />
+                <span className="text-xs text-slate-600 leading-relaxed">
+                  I have read and agree to the{" "}
+                  <a href="/broker-terms" target="_blank" className="text-blue-600 underline hover:text-blue-800">Advertising &amp; Listing Terms</a>,{" "}
+                  <a href="/terms" target="_blank" className="text-blue-600 underline hover:text-blue-800">Terms of Use</a>, and{" "}
+                  <a href="/privacy" target="_blank" className="text-blue-600 underline hover:text-blue-800">Privacy Policy</a>.
+                  I confirm we hold the required licences to offer our products in Australia.
+                </span>
+              </label>
+            </div>
 
             <div className="flex gap-3">
               <button type="button" onClick={() => setStep(1)}
                 className="px-6 py-2.5 bg-slate-100 text-slate-700 font-bold text-sm rounded-lg hover:bg-slate-200 transition-colors">
                 ← Back
               </button>
-              <button onClick={handleSubmit} disabled={loading}
+              <button onClick={handleSubmit} disabled={loading || !termsAccepted}
                 className="flex-1 py-2.5 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50">
                 {loading ? "Submitting..." : "Submit Application"}
               </button>

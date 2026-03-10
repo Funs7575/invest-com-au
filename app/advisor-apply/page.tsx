@@ -48,6 +48,7 @@ export default function AdvisorApplyPage() {
     afsl_number: "", registration_number: "", location_state: "",
     location_suburb: "", specialties: "", bio: "", website: "", fee_description: "",
     abn: "",
+    termsAccepted: false,
   });
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
@@ -400,15 +401,32 @@ export default function AdvisorApplyPage() {
 
             <button
               onClick={submit}
-              disabled={status === "submitting"}
+              disabled={status === "submitting" || !form.termsAccepted}
               className="w-full py-3 bg-slate-900 text-white font-bold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 transition-colors"
             >
               {status === "submitting" ? (photoUploading ? "Uploading photo..." : "Submitting...") : "Submit Application"}
             </button>
           </div>
 
-          <p className="text-[0.56rem] text-slate-400 mt-3 text-center leading-relaxed">
-            By submitting, you agree to our <Link href="/terms" className="underline">Terms</Link> and <Link href="/privacy" className="underline">Privacy Policy</Link>.
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 mt-3">
+            <label className="flex items-start gap-2.5 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={form.termsAccepted || false}
+                onChange={(e) => setForm({ ...form, termsAccepted: e.target.checked })}
+                className="w-4 h-4 mt-0.5 rounded border-slate-300 text-violet-600 focus:ring-violet-500"
+                required
+              />
+              <span className="text-[0.6rem] md:text-xs text-slate-600 leading-relaxed">
+                I have read and agree to the{" "}
+                <Link href="/advisor-terms" target="_blank" className="text-violet-600 underline hover:text-violet-800">Advisor Services Agreement</Link>,{" "}
+                <Link href="/terms" target="_blank" className="text-violet-600 underline hover:text-violet-800">Terms of Use</Link>, and{" "}
+                <Link href="/privacy" target="_blank" className="text-violet-600 underline hover:text-violet-800">Privacy Policy</Link>.
+                I confirm my details are accurate and I hold the required professional registration.
+              </span>
+            </label>
+          </div>
+          <p className="text-[0.52rem] text-slate-400 mt-1.5 text-center">
             We&apos;ll verify your AFSL/registration before activating your listing.
           </p>
         </div>
