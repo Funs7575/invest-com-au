@@ -24,31 +24,53 @@ import CompareDesktopTable from "./_components/CompareDesktopTable";
 import CompareSelectionBar from "./_components/CompareSelectionBar";
 import CompareFooter from "./_components/CompareFooter";
 
-type FilterType = 'all' | 'shares' | 'beginner' | 'chess' | 'free' | 'us' | 'smsf' | 'low-fx' | 'crypto' | 'robo' | 'research' | 'super' | 'property' | 'cfd' | 'savings' | 'term-deposits' | 'has-deal';
+type PlatformType = 'all' | 'shares' | 'crypto' | 'super' | 'robo' | 'savings' | 'term-deposits' | 'property' | 'cfd' | 'research';
+type FeatureFilter = 'chess' | 'free' | 'smsf' | 'low-fx' | 'us' | 'has-deal';
 type SortCol = 'name' | 'asx_fee_value' | 'us_fee_value' | 'fx_rate' | 'rating';
 
-const filters: { key: FilterType; label: string }[] = [
+const platformTypes: { key: PlatformType; label: string; short?: string }[] = [
   { key: 'all', label: 'All Platforms' },
-  { key: 'shares', label: 'Share Trading' },
-  { key: 'crypto', label: 'Crypto' },
+  { key: 'shares', label: 'Share Trading', short: 'Brokerages' },
+  { key: 'crypto', label: 'Crypto Exchanges' },
   { key: 'super', label: 'Super Funds' },
   { key: 'robo', label: 'Robo-Advisors' },
-  { key: 'savings', label: 'Savings' },
+  { key: 'savings', label: 'Savings Accounts' },
   { key: 'term-deposits', label: 'Term Deposits' },
   { key: 'property', label: 'Property' },
   { key: 'cfd', label: 'CFD & Forex' },
   { key: 'research', label: 'Research Tools' },
-  { key: 'beginner', label: 'Beginner' },
-  { key: 'chess', label: 'CHESS Only' },
-  { key: 'free', label: '$0 Trades' },
-  { key: 'us', label: 'US Shares' },
-  { key: 'smsf', label: 'SMSF' },
-  { key: 'low-fx', label: 'Low FX' },
-  { key: 'has-deal', label: 'Has Deal' },
 ];
 
-/** Map URL ?category= values to filter keys */
-const CATEGORY_TO_FILTER: Record<string, FilterType> = {
+const featureFilters: { key: FeatureFilter; label: string; icon: string }[] = [
+  { key: 'chess', label: 'CHESS Sponsored', icon: 'shield' },
+  { key: 'free', label: '$0 Trades', icon: 'zap' },
+  { key: 'us', label: 'US Shares', icon: 'globe' },
+  { key: 'smsf', label: 'SMSF Support', icon: 'building' },
+  { key: 'low-fx', label: 'Low FX (<0.5%)', icon: 'dollar-sign' },
+  { key: 'has-deal', label: 'Has Deal', icon: 'tag' },
+];
+
+const maxFeeOptions = [
+  { value: 999, label: 'Any' },
+  { value: 0, label: '$0' },
+  { value: 5, label: '≤ $5' },
+  { value: 10, label: '≤ $10' },
+  { value: 20, label: '≤ $20' },
+];
+
+const minRatingOptions = [
+  { value: 0, label: 'Any' },
+  { value: 4.5, label: '4.5+' },
+  { value: 4.0, label: '4.0+' },
+  { value: 3.5, label: '3.5+' },
+];
+
+// Keep old filter type for URL backwards compatibility
+type FilterType = PlatformType | FeatureFilter | 'beginner' | 'all';
+const filters = platformTypes; // for URL compat
+
+/** Map URL ?category= values to platform type keys */
+const CATEGORY_TO_FILTER: Record<string, PlatformType> = {
   shares: 'shares',
   crypto: 'crypto',
   'robo-advisors': 'robo',
@@ -108,15 +130,19 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   // Derive initial filter/query from URL params (?filter= or ?category=)
   const urlFilter = searchParams.get("filter");
   const urlCategory = searchParams.get("category");
-  const initialFilter: FilterType = (() => {
-    if (urlFilter && filters.some(fl => fl.key === urlFilter)) return urlFilter as FilterType;
+  const initialFilter: PlatformType = (() => {
+    if (urlFilter && platformTypes.some(fl => fl.key === urlFilter)) return urlFilter as PlatformType;
     if (urlCategory && CATEGORY_TO_FILTER[urlCategory]) return CATEGORY_TO_FILTER[urlCategory];
     return 'all';
   })();
   const urlQuery = searchParams.get("q") || "";
 
   const [searchQuery, setSearchQuery] = useState(urlQuery);
-  const [activeFilter, setActiveFilter] = useState<FilterType>(initialFilter);
+  const [activeFilter, setActiveFilter] = useState<PlatformType>(initialFilter);
+  const [activeFeatures, setActiveFeatures] = useState<Set<FeatureFilter>>(new Set());
+  const [maxFee, setMaxFee] = useState(999);
+  const [minRating, setMinRating] = useState(0);
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
   const [sortCol, setSortCol] = useState<SortCol>('rating');
   const [sortDir, setSortDir] = useState<1 | -1>(-1);
@@ -181,8 +207,8 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
     setSearchQuery(q);
     const f = searchParams.get("filter");
     const c = searchParams.get("category");
-    if (f && filters.some(fl => fl.key === f)) {
-      setActiveFilter(f as FilterType);
+    if (f && platformTypes.some(fl => fl.key === f)) {
+      setActiveFilter(f as PlatformType);
     } else if (c && CATEGORY_TO_FILTER[c]) {
       setActiveFilter(CATEGORY_TO_FILTER[c]);
     } else if (!f && !c) {
@@ -210,14 +236,10 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
 
   const filtered = useMemo(() => {
     let list = [...brokers];
+    
+    // 1. Platform type filter (single-select)
     switch (activeFilter) {
       case 'shares': list = list.filter(b => (b.platform_type || 'share_broker') === 'share_broker'); break;
-      case 'beginner': list = list.filter(b => !b.is_crypto && (b.asx_fee_value ?? 999) <= 10 && (b.rating ?? 0) >= 4.0); break;
-      case 'chess': list = list.filter(b => b.chess_sponsored); break;
-      case 'free': list = list.filter(b => (b.asx_fee_value === 0) || (b.us_fee_value === 0)); break;
-      case 'us': list = list.filter(b => b.us_fee_value != null && b.us_fee_value <= 5); break;
-      case 'smsf': list = list.filter(b => b.smsf_support); break;
-      case 'low-fx': list = list.filter(b => b.fx_rate != null && b.fx_rate > 0 && b.fx_rate < 0.5); break;
       case 'crypto': list = list.filter(b => b.is_crypto); break;
       case 'robo': list = list.filter(b => b.platform_type === 'robo_advisor'); break;
       case 'research': list = list.filter(b => b.platform_type === 'research_tool'); break;
@@ -226,10 +248,27 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
       case 'cfd': list = list.filter(b => b.platform_type === 'cfd_forex'); break;
       case 'savings': list = list.filter(b => b.platform_type === 'savings_account'); break;
       case 'term-deposits': list = list.filter(b => b.platform_type === 'term_deposit'); break;
-      case 'has-deal': list = list.filter(b => b.deal && b.deal_text); break;
-      // 'all' — no filtering, show everything
     }
-    // Text search filter
+    
+    // 2. Feature filters (multi-select — all must match)
+    if (activeFeatures.has('chess')) list = list.filter(b => b.chess_sponsored);
+    if (activeFeatures.has('free')) list = list.filter(b => (b.asx_fee_value === 0) || (b.us_fee_value === 0));
+    if (activeFeatures.has('us')) list = list.filter(b => b.us_fee_value != null && b.us_fee_value <= 5);
+    if (activeFeatures.has('smsf')) list = list.filter(b => b.smsf_support);
+    if (activeFeatures.has('low-fx')) list = list.filter(b => b.fx_rate != null && b.fx_rate > 0 && b.fx_rate < 0.5);
+    if (activeFeatures.has('has-deal')) list = list.filter(b => b.deal && b.deal_text);
+    
+    // 3. Fee range filter
+    if (maxFee < 999) {
+      list = list.filter(b => (b.asx_fee_value ?? 999) <= maxFee);
+    }
+    
+    // 4. Rating filter
+    if (minRating > 0) {
+      list = list.filter(b => (b.rating ?? 0) >= minRating);
+    }
+    
+    // 5. Text search filter
     if (searchQuery.trim()) {
       const q = searchQuery.trim().toLowerCase();
       list = list.filter(b =>
@@ -239,7 +278,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
       );
     }
     return list;
-  }, [brokers, activeFilter, searchQuery]);
+  }, [brokers, activeFilter, activeFeatures, maxFee, minRating, searchQuery]);
 
   const sorted = useMemo(() => {
     // Campaign winners from marketplace get priority over sponsorship tiers
@@ -370,32 +409,91 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           );
         })()}
 
-        {/* Desktop Filter Pills */}
-        <div className="hidden md:flex md:flex-wrap gap-2 mb-4" role="tablist" aria-label="Platform filter">
-          {filters.map(f => (
-            <button
-              key={f.key}
-              onClick={() => setActiveFilter(f.key)}
-              role="tab"
-              aria-selected={activeFilter === f.key}
-              className={`shrink-0 px-4 py-2 text-sm font-medium rounded-full filter-pill ${
-                activeFilter === f.key
-                  ? 'bg-blue-700 text-white shadow-sm scale-105'
-                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:scale-[1.02]'
+        {/* Desktop Filter System */}
+        <div className="hidden md:block mb-4 space-y-3">
+          {/* Row 1: Platform type pills */}
+          <div className="flex flex-wrap gap-2" role="tablist" aria-label="Platform type">
+            {platformTypes.map(f => (
+              <button
+                key={f.key}
+                onClick={() => setActiveFilter(f.key)}
+                role="tab"
+                aria-selected={activeFilter === f.key}
+                className={`shrink-0 px-4 py-2 text-sm font-medium rounded-full transition-all ${
+                  activeFilter === f.key
+                    ? 'bg-blue-700 text-white shadow-sm scale-105'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:scale-[1.02]'
+                }`}
+              >
+                {f.label}
+              </button>
+            ))}
+          </div>
+          
+          {/* Row 2: Feature toggles + Advanced filters */}
+          <div className="flex items-center gap-2 flex-wrap">
+            {featureFilters.map(f => (
+              <button
+                key={f.key}
+                onClick={() => setActiveFeatures(prev => {
+                  const next = new Set(prev);
+                  if (next.has(f.key)) next.delete(f.key); else next.add(f.key);
+                  return next;
+                })}
+                className={`shrink-0 px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all flex items-center gap-1.5 ${
+                  activeFeatures.has(f.key)
+                    ? 'bg-emerald-50 border-emerald-300 text-emerald-700 shadow-sm'
+                    : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300 hover:text-slate-700'
+                }`}
+              >
+                <Icon name={f.icon} size={12} />
+                {f.label}
+              </button>
+            ))}
+            
+            <span className="w-px h-5 bg-slate-200 mx-1" />
+            
+            {/* Max Fee dropdown */}
+            <select
+              value={maxFee}
+              onChange={e => setMaxFee(Number(e.target.value))}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all cursor-pointer ${
+                maxFee < 999
+                  ? 'bg-blue-50 border-blue-300 text-blue-700'
+                  : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300'
               }`}
             >
-              {f.label}
-            </button>
-          ))}
-          {(activeFilter !== 'all' || searchQuery.trim()) && (
-            <button
-              onClick={() => { setActiveFilter('all'); setSearchQuery(''); }}
-              className="shrink-0 px-3 py-2 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-full transition-colors flex items-center gap-1"
+              {maxFeeOptions.map(o => (
+                <option key={o.value} value={o.value}>ASX Fee: {o.label}</option>
+              ))}
+            </select>
+            
+            {/* Min Rating dropdown */}
+            <select
+              value={minRating}
+              onChange={e => setMinRating(Number(e.target.value))}
+              className={`px-3 py-1.5 text-xs font-semibold rounded-lg border transition-all cursor-pointer ${
+                minRating > 0
+                  ? 'bg-amber-50 border-amber-300 text-amber-700'
+                  : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300'
+              }`}
             >
-              <XIcon className="w-3.5 h-3.5" />
-              Clear filters
-            </button>
-          )}
+              {minRatingOptions.map(o => (
+                <option key={o.value} value={o.value}>Rating: {o.label}</option>
+              ))}
+            </select>
+            
+            {/* Active filter count + clear */}
+            {(activeFilter !== 'all' || activeFeatures.size > 0 || maxFee < 999 || minRating > 0 || searchQuery.trim()) && (
+              <button
+                onClick={() => { setActiveFilter('all'); setActiveFeatures(new Set()); setMaxFee(999); setMinRating(0); setSearchQuery(''); }}
+                className="shrink-0 px-3 py-1.5 text-xs font-semibold text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors flex items-center gap-1"
+              >
+                <XIcon className="w-3 h-3" />
+                Clear all ({[activeFilter !== 'all' ? 1 : 0, activeFeatures.size, maxFee < 999 ? 1 : 0, minRating > 0 ? 1 : 0].reduce((a, b) => a + b, 0)} filters)
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Mobile: Filter + Search inline row */}
@@ -407,7 +505,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
               <path strokeLinecap="round" d="M4 6h16M7 12h10M10 18h4" />
             </svg>
-            {activeFilter !== 'all' ? filters.find(f => f.key === activeFilter)?.label : 'Filter & Sort'}
+            {activeFilter !== 'all' ? platformTypes.find(f => f.key === activeFilter)?.label : activeFeatures.size > 0 ? `${activeFeatures.size} filter${activeFeatures.size > 1 ? 's' : ''}` : 'Filter & Sort'}
           </button>
           <div className="relative flex-1">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
@@ -451,28 +549,66 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                 ))}
               </div>
             </div>
-            {/* Filters */}
+            {/* Platform Type */}
             <div className="mb-4">
-              <p className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-400 mb-2">Filter</p>
+              <p className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-400 mb-2">Platform type</p>
               <div className="flex flex-wrap gap-2">
-              {filters.map(f => (
-                <button
-                  key={f.key}
-                  onClick={() => setActiveFilter(f.key)}
-                  className={`px-4 py-2.5 text-sm font-medium rounded-full filter-pill ${
-                    activeFilter === f.key
-                      ? 'bg-blue-700 text-white shadow-sm'
-                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                  }`}
-                >
-                  {f.label}
-                </button>
-              ))}
+                {platformTypes.map(f => (
+                  <button
+                    key={f.key}
+                    onClick={() => setActiveFilter(f.key)}
+                    className={`px-3 py-2 text-sm font-medium rounded-full ${
+                      activeFilter === f.key
+                        ? 'bg-blue-700 text-white shadow-sm'
+                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                    }`}
+                  >
+                    {f.short || f.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            {/* Features */}
+            <div className="mb-4">
+              <p className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-400 mb-2">Features</p>
+              <div className="flex flex-wrap gap-2">
+                {featureFilters.map(f => (
+                  <button
+                    key={f.key}
+                    onClick={() => setActiveFeatures(prev => {
+                      const next = new Set(prev);
+                      if (next.has(f.key)) next.delete(f.key); else next.add(f.key);
+                      return next;
+                    })}
+                    className={`px-3 py-2 text-sm font-medium rounded-full ${
+                      activeFeatures.has(f.key)
+                        ? 'bg-emerald-600 text-white shadow-sm'
+                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                    }`}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            {/* Fee & Rating */}
+            <div className="mb-4 grid grid-cols-2 gap-3">
+              <div>
+                <p className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-400 mb-2">Max ASX Fee</p>
+                <select value={maxFee} onChange={e => setMaxFee(Number(e.target.value))} className="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm">
+                  {maxFeeOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                </select>
+              </div>
+              <div>
+                <p className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-400 mb-2">Min Rating</p>
+                <select value={minRating} onChange={e => setMinRating(Number(e.target.value))} className="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm">
+                  {minRatingOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                </select>
               </div>
             </div>
             <div className="flex gap-3 pt-2 border-t border-slate-100">
               <button
-                onClick={() => { setActiveFilter('all'); }}
+                onClick={() => { setActiveFilter('all'); setActiveFeatures(new Set()); setMaxFee(999); setMinRating(0); }}
                 className="flex-1 py-3 min-h-[48px] text-sm font-semibold text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors"
               >
                 Clear All
@@ -481,7 +617,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                 onClick={() => setSheetOpen(false)}
                 className="flex-1 py-3 min-h-[48px] text-sm font-bold text-white bg-slate-900 rounded-xl hover:bg-slate-800 transition-colors"
               >
-                Apply
+                Show Results
               </button>
             </div>
           </BottomSheet>
