@@ -4,7 +4,7 @@ import { SITE_NAME, absoluteUrl } from "@/lib/seo";
 export const metadata: Metadata = {
   title: "Platform Quiz — Find Your Best Match in 60 Seconds",
   description:
-    "Answer 4 quick questions and find the best Australian investing platform for you — shares, robo-advisors, crypto, super, property & more. Free and takes under 60 seconds.",
+    "Find the best Australian investing platform in 60 seconds. Answer 4 quick questions for personalised results — free.",
   openGraph: {
     title: "Platform Quiz — Find Your Best Match in 60 Seconds",
     description:

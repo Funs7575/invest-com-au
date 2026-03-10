@@ -4,8 +4,8 @@ import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 
 export const metadata: Metadata = {
-  title: `Advisor Guides — How to Choose the Right Professional (${CURRENT_YEAR})`,
-  description: "Expert guides to help you choose the right financial professional — SMSF accountants, financial planners, tax agents, mortgage brokers, and more. Compare qualifications, costs, and when to use each.",
+  title: `Advisor Guides — Choose the Right Professional (${CURRENT_YEAR})`,
+  description: "Choose the right financial professional. Compare SMSF accountants, financial planners, tax agents and mortgage brokers — qualifications, costs and more.",
   alternates: { canonical: "/advisor-guides" },
   openGraph: {
     title: `Advisor Guides — Invest.com.au`,

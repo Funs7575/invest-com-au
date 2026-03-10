@@ -20,7 +20,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/methodology", "/how-we-verify", "/terms", "/switch", "/editorial-policy", "/benchmark",
     "/health-scores", "/alerts", "/whats-new", "/costs", "/fee-impact",
     "/glossary", "/complaints", "/contact", "/advisors", "/find-advisor",
-    "/advisor-terms", "/broker-terms", "/content-license", "/expert", "/for-advisors",
+    "/advisor-terms", "/broker-terms", "/content-license", "/expert", "/for-advisors", "/advisor-guides",
     "/advisor-guides/how-to-choose-smsf-accountant",
     "/advisor-guides/how-to-choose-financial-planner",
     "/advisor-guides/how-to-choose-tax-agent-investments",

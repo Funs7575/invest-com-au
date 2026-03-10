@@ -14,7 +14,7 @@ const dealsTitle = `Investing Platform Deals & Promotions (${CURRENT_YEAR}) — 
 export const metadata: Metadata = {
   title: dealsTitle,
   description:
-    "Current verified deals and promotions from Australian investing platforms — share brokers, crypto exchanges, robo-advisors, super funds & more. Updated regularly.",
+    "Current deals and promotions from Australian investing platforms. Verified offers from share trading, crypto, robo-advisors and more.",
   alternates: { canonical: "/deals" },
   openGraph: {
     title: dealsTitle,

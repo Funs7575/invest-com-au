@@ -6,11 +6,12 @@ import Icon from "@/components/Icon";
 export const metadata: Metadata = {
   title: "List Your Practice on Invest.com.au — Reach Australian Investors",
   description:
-    "Get qualified leads from Australian investors actively looking for financial advisors, SMSF specialists, and tax agents. Free profile, 2 free leads, then prepaid credit.",
+    "Get qualified leads from Australian investors. Free profile, 2 free leads, then $200 prepaid credit at $49/lead.",
   alternates: { canonical: "/for-advisors" },
   openGraph: {
     title: "List Your Advisory Practice — Invest.com.au",
     description: "Reach thousands of Australian investors looking for financial advice. Free profile with 2 free leads.",
+    images: [{ url: "/api/og?title=List+Your+Practice&subtitle=Reach+Australian+Investors&type=default", width: 1200, height: 630 }],
   },
 };
 

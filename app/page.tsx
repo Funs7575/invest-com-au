@@ -25,7 +25,7 @@ import { ORGANIZATION_JSONLD, SITE_URL, websiteJsonLd } from "@/lib/seo";
 export const metadata = {
   title: "Compare Investing Platforms & Find Advisors — Invest.com.au",
   description:
-    "Compare Australian share trading platforms, crypto exchanges, super funds, robo-advisors, savings accounts, and term deposits side-by-side. Find verified financial advisors. Real fees, real data, updated daily.",
+    "Compare Australian investing platforms and find verified financial advisors. Real fees, real data, updated daily. Shares, crypto, super, robo-advisors and more.",
   openGraph: {
     title: "Compare Platforms & Find Advisors — Invest.com.au",
     description: "Compare Australian investing platforms and find verified financial advisors. Real fees, real data, updated daily.",
@@ -165,11 +165,7 @@ export default async function HomePage() {
 
   return (
     <div>
-      {/* UserOnboarding modal removed — blocked first-time visitors behind a 3-step modal */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd()) }}
-      />
+      {/* WebSite schema is in layout.tsx — no need to duplicate here */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
