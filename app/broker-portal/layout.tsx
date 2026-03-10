@@ -11,6 +11,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 
 const navItems = [
   { href: "/broker-portal", label: "Dashboard", icon: "bar-chart" },
+  { href: "/broker-portal/deals", label: "Deals", icon: "tag" },
   { href: "/broker-portal/analytics", label: "Analytics", icon: "pie-chart" },
   { href: "/broker-portal/settings", label: "Settings", icon: "settings" },
 ];
