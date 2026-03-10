@@ -1,23 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { recordImpression } from "@/lib/marketplace/allocation";
+import { createRateLimiter } from "@/lib/rate-limiter";
 
-// In-memory rate limiter (per-IP)
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
-const RATE_LIMIT_WINDOW = 60_000;
-const RATE_LIMIT_MAX = 60; // max 60 impressions per minute per IP
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const entry = rateLimitMap.get(ip);
-
-  if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW });
-    return false;
-  }
-
-  entry.count++;
-  return entry.count > RATE_LIMIT_MAX;
-}
+const isRateLimited = createRateLimiter(60_000, 60); // 60 impressions per minute per IP
 
 /**
  * POST /api/marketplace/impression

@@ -3,28 +3,13 @@ import { recordCpcClick } from "@/lib/marketplace/allocation";
 import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "crypto";
 import { logger } from "@/lib/logger";
+import { createRateLimiter } from "@/lib/rate-limiter";
 
 const log = logger("campaign-click");
 
 export const runtime = "nodejs";
 
-// In-memory rate limiter (per-IP, resets on cold start)
-const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
-const RATE_LIMIT_WINDOW = 60_000; // 1 minute
-const RATE_LIMIT_MAX = 10; // max 10 CPC clicks per minute per IP
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const entry = rateLimitMap.get(ip);
-
-  if (!entry || now > entry.resetAt) {
-    rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW });
-    return false;
-  }
-
-  entry.count++;
-  return entry.count > RATE_LIMIT_MAX;
-}
+const isRateLimited = createRateLimiter(60_000, 10); // 10 CPC clicks per minute per IP
 
 function hashIP(ip: string): string {
   const salt = process.env.IP_HASH_SALT || "invest-com-au-2026";

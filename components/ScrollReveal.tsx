@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useState, type ReactNode } from "react";
+import React, { useRef, useEffect, useState, createElement, type ReactNode } from "react";
 
 /**
  * Generic scroll-triggered animation wrapper.
@@ -64,10 +64,9 @@ export default function ScrollReveal({
   // After hydration: animation class applied → scroll-trigger works
   const animClass = mounted ? `${animation} ${delayClass}` : "";
 
-  return (
-    // @ts-expect-error - dynamic tag element
-    <Tag ref={ref} className={`${animClass} ${className}`.trim()}>
-      {children}
-    </Tag>
+  return createElement(
+    Tag,
+    { ref: ref as React.Ref<HTMLElement>, className: `${animClass} ${className}`.trim() },
+    children
   );
 }
