@@ -391,7 +391,7 @@ export default async function HomePage() {
       </section>
 
 
-      {/* ═══════ ADVISOR SECTION — moved up from bottom ═══════ */}
+      {/* ═══════ ADVISOR SECTION with proof ═══════ */}
       <ScrollFadeIn>
         <section className="py-3 md:py-12 bg-gradient-to-b from-violet-50/30 to-white">
           <div className="container-custom">
@@ -403,10 +403,46 @@ export default async function HomePage() {
                   <span className="md:hidden">ASIC-verified professionals across Australia</span>
                 </p>
               </div>
-              <Link href="/advisors" className="md:hidden text-[0.69rem] font-semibold text-violet-600 hover:text-violet-800 shrink-0 min-h-[44px] inline-flex items-center px-1">
+              <Link href="/advisors" className="text-[0.69rem] font-semibold text-violet-600 hover:text-violet-800 shrink-0 min-h-[44px] inline-flex items-center px-1">
                 Browse all →
               </Link>
             </div>
+
+            {/* Featured advisor cards — real people, real photos */}
+            {(featuredAdvisors?.length ?? 0) > 0 && (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 mb-4 md:mb-6">
+                {(featuredAdvisors as { slug: string; name: string; firm_name: string; type: string; location_display: string; rating: number; review_count: number; photo_url: string; fee_description: string; specialties: string[] }[]).slice(0, 6).map((advisor) => {
+                  const typeLabel = advisor.type.replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase());
+                  return (
+                    <Link
+                      key={advisor.slug}
+                      href={`/advisor/${advisor.slug}`}
+                      className="flex items-start gap-2.5 p-2.5 md:p-3.5 bg-white border border-violet-100 rounded-xl hover:border-violet-300 hover:shadow-md transition-all group"
+                    >
+                      <Image
+                        src={advisor.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(advisor.name)}&size=80&background=7c3aed&color=fff`}
+                        alt={advisor.name}
+                        width={48}
+                        height={48}
+                        className="rounded-full shrink-0 w-10 h-10 md:w-12 md:h-12"
+                        loading="lazy"
+                        sizes="48px"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs md:text-sm font-bold text-slate-900 truncate group-hover:text-violet-700 transition-colors">{advisor.name}</p>
+                        <p className="text-[0.58rem] md:text-xs text-violet-600 font-medium">{typeLabel}</p>
+                        {advisor.firm_name && <p className="text-[0.55rem] md:text-[0.65rem] text-slate-400 truncate">{advisor.firm_name}</p>}
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                          {advisor.rating > 0 && <span className="text-[0.6rem] md:text-[0.65rem] text-amber-600 font-semibold">{advisor.rating}/5</span>}
+                          {advisor.location_display && <span className="text-[0.55rem] md:text-[0.6rem] text-slate-400">{advisor.location_display}</span>}
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+
             {/* Category pills */}
             <div className="flex gap-1.5 md:gap-2 mb-3 md:mb-4 overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
               {[
@@ -418,10 +454,6 @@ export default async function HomePage() {
                 { label: "Estate Planners", href: "/advisors?type=estate_planner", icon: "file-text" },
                 { label: "Insurance Brokers", href: "/advisors?type=insurance_broker", icon: "shield" },
                 { label: "Buyers Agents", href: "/advisors?type=buyers_agent", icon: "search" },
-                { label: "Wealth Managers", href: "/advisors?type=wealth_manager", icon: "briefcase" },
-                { label: "Aged Care", href: "/advisors?type=aged_care_advisor", icon: "heart" },
-                { label: "Crypto Advisors", href: "/advisors?type=crypto_advisor", icon: "bitcoin" },
-                { label: "Debt Help", href: "/advisors?type=debt_counsellor", icon: "credit-card" },
               ].map((cat) => (
                 <Link
                   key={cat.label}
@@ -433,6 +465,7 @@ export default async function HomePage() {
                 </Link>
               ))}
             </div>
+
             {/* CTA card */}
             <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-6 flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-6">
               <div className="flex-1 min-w-0">
@@ -598,53 +631,6 @@ export default async function HomePage() {
                   View all deals →
                 </Link>
               </div>
-              {/* Featured advisors banner */}
-              {(featuredAdvisors?.length ?? 0) > 0 && (
-                <div className="mt-4 md:mt-6 border border-violet-200 rounded-xl bg-gradient-to-r from-violet-50 to-white p-3 md:p-5">
-                  <div className="flex items-start md:items-center justify-between gap-3 mb-3">
-                    <div>
-                      <h3 className="text-sm md:text-base font-bold text-slate-900 flex items-center gap-1.5">
-                        <Icon name="users" size={16} className="text-violet-500" />
-                        Verified Financial Professionals
-                      </h3>
-                      <p className="text-[0.65rem] md:text-xs text-slate-500 mt-0.5">Send a free enquiry to a verified advisor — exclusive, no obligation</p>
-                    </div>
-                    <Link href="/advisors" className="hidden md:flex text-xs font-semibold text-violet-600 hover:text-violet-800 transition-colors shrink-0 items-center gap-1">
-                      Browse all <span>&rarr;</span>
-                    </Link>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                    {(featuredAdvisors as { slug: string; name: string; firm_name: string; type: string; location_display: string; rating: number; review_count: number; photo_url: string; fee_description: string; specialties: string[] }[]).slice(0, 3).map((advisor) => (
-                      <Link
-                        key={advisor.slug}
-                        href={`/advisor/${advisor.slug}`}
-                        className="flex items-center gap-2.5 p-2.5 bg-white border border-slate-200 rounded-lg hover:border-violet-300 hover:shadow-sm transition-all group"
-                      >
-                        <Image
-                          src={advisor.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(advisor.name)}&size=80&background=7c3aed&color=fff`}
-                          alt={advisor.name}
-                          width={40}
-                          height={40}
-                          className="rounded-full shrink-0"
-                          loading="lazy"
-                          sizes="40px"
-                        />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-xs font-bold text-slate-900 truncate group-hover:text-violet-700 transition-colors">{advisor.name}</p>
-                          <p className="text-[0.6rem] text-slate-500 truncate">{advisor.firm_name}</p>
-                          <div className="flex items-center gap-1.5 mt-0.5">
-                            <span className="text-[0.65rem] text-amber-600 font-semibold">{advisor.rating}/5</span>
-                            <span className="text-[0.62rem] text-slate-400">({advisor.review_count} reviews)</span>
-                          </div>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                  <Link href="/find-advisor" className="md:hidden block text-center text-[0.7rem] font-semibold text-violet-600 hover:text-violet-800 py-1.5 mt-2 transition-colors">
-                    Find your advisor →
-                  </Link>
-                </div>
-              )}
               <div className="mt-2 md:mt-4">
                 <CompactDisclaimerLine />
               </div>
