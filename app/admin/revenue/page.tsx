@@ -39,11 +39,45 @@ const CONV_RATE = 0.025; // 2.5% click-to-signup conversion
 
 type Period = "7d" | "30d" | "90d" | "all";
 
+interface AdvisorRevenue {
+  totalLeads: number;
+  billedLeads: number;
+  freeLeads: number;
+  pendingBillingCents: number;
+  paidBillingCents: number;
+  totalBillingCents: number;
+  disputedLeads: number;
+  convertedLeads: number;
+  activeAdvisors: number;
+  stripeConnected: number;
+  freeLeadsUsed: number;
+  avgLeadPrice: number;
+}
+
+interface MarketplaceRevenue {
+  totalWallets: number;
+  totalBalanceCents: number;
+  totalDepositedCents: number;
+  totalSpentCents: number;
+  activeCampaigns: number;
+}
+
+interface ArticleRevenue {
+  totalSubmitted: number;
+  totalPublished: number;
+  paidCents: number;
+  waivedCents: number;
+  unpaidCents: number;
+}
+
 export default function RevenuePage() {
   const [clicks, setClicks] = useState<Click[]>([]);
   const [brokerTypes, setBrokerTypes] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [period, setPeriod] = useState<Period>("30d");
+  const [advisorRev, setAdvisorRev] = useState<AdvisorRevenue | null>(null);
+  const [marketplaceRev, setMarketplaceRev] = useState<MarketplaceRevenue | null>(null);
+  const [articleRev, setArticleRev] = useState<ArticleRevenue | null>(null);
 
   useEffect(() => {
     fetchData();
@@ -52,14 +86,62 @@ export default function RevenuePage() {
   async function fetchData() {
     setLoading(true);
     const supabase = createClient();
-    const [clicksRes, brokersRes] = await Promise.all([
+    const [clicksRes, brokersRes, leadsRes, billingRes, walletsRes, campaignsRes, articlesRes, prosRes, disputesRes] = await Promise.all([
       supabase.from("affiliate_clicks").select("id, broker_slug, broker_name, source, page, created_at, placement_type").order("created_at", { ascending: false }).limit(5000),
       supabase.from("brokers").select("slug, platform_type").eq("status", "active"),
+      supabase.from("professional_leads").select("id, billed, bill_amount_cents, status"),
+      supabase.from("advisor_billing").select("id, amount_cents, status"),
+      supabase.from("broker_wallets").select("balance_cents, lifetime_deposited_cents, lifetime_spent_cents"),
+      supabase.from("broker_campaigns").select("id, status").eq("status", "active"),
+      supabase.from("advisor_articles").select("id, status, price_cents, payment_status").not("status", "eq", "draft"),
+      supabase.from("professionals").select("id, lead_price_cents, free_leads_used, stripe_customer_id").eq("status", "active"),
+      supabase.from("lead_disputes").select("id"),
     ]);
+
     setClicks(clicksRes.data || []);
     const typeMap: Record<string, string> = {};
     for (const b of brokersRes.data || []) typeMap[b.slug] = b.platform_type || "share_broker";
     setBrokerTypes(typeMap);
+
+    // Advisor revenue
+    const leads = leadsRes.data || [];
+    const billing = billingRes.data || [];
+    const pros = prosRes.data || [];
+    setAdvisorRev({
+      totalLeads: leads.length,
+      billedLeads: leads.filter(l => l.billed).length,
+      freeLeads: leads.filter(l => !l.billed).length,
+      pendingBillingCents: billing.filter(b => b.status === "pending").reduce((s, b) => s + (b.amount_cents || 0), 0),
+      paidBillingCents: billing.filter(b => b.status === "paid").reduce((s, b) => s + (b.amount_cents || 0), 0),
+      totalBillingCents: billing.reduce((s, b) => s + (b.amount_cents || 0), 0),
+      disputedLeads: (disputesRes.data || []).length,
+      convertedLeads: leads.filter(l => l.status === "converted").length,
+      activeAdvisors: pros.length,
+      stripeConnected: pros.filter(p => p.stripe_customer_id).length,
+      freeLeadsUsed: pros.reduce((s, p) => s + (p.free_leads_used || 0), 0),
+      avgLeadPrice: pros.length > 0 ? pros.reduce((s, p) => s + (p.lead_price_cents || 4900), 0) / pros.length : 4900,
+    });
+
+    // Marketplace revenue
+    const wallets = walletsRes.data || [];
+    setMarketplaceRev({
+      totalWallets: wallets.length,
+      totalBalanceCents: wallets.reduce((s, w) => s + (w.balance_cents || 0), 0),
+      totalDepositedCents: wallets.reduce((s, w) => s + (w.lifetime_deposited_cents || 0), 0),
+      totalSpentCents: wallets.reduce((s, w) => s + (w.lifetime_spent_cents || 0), 0),
+      activeCampaigns: (campaignsRes.data || []).length,
+    });
+
+    // Article revenue
+    const articles = articlesRes.data || [];
+    setArticleRev({
+      totalSubmitted: articles.length,
+      totalPublished: articles.filter(a => a.status === "published").length,
+      paidCents: articles.filter(a => a.payment_status === "paid").reduce((s, a) => s + (a.price_cents || 0), 0),
+      waivedCents: articles.filter(a => a.payment_status === "waived").reduce((s, a) => s + (a.price_cents || 0), 0),
+      unpaidCents: articles.filter(a => a.payment_status === "unpaid" && a.status === "approved").reduce((s, a) => s + (a.price_cents || 0), 0),
+    });
+
     setLoading(false);
   }
 
@@ -157,6 +239,102 @@ export default function RevenuePage() {
               <p className="text-[0.6rem] font-bold text-slate-400 uppercase">Active Brokers</p>
               <p className="text-2xl font-extrabold text-slate-900">{byBroker.length}</p>
               <p className="text-[0.55rem] text-slate-400">with clicks</p>
+            </div>
+          </div>
+
+          {/* ═══ ADVISOR & MARKETPLACE REVENUE ═══ */}
+          <div className="bg-white border border-slate-200 rounded-xl p-5 mb-6">
+            <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
+              <span className="w-2 h-2 bg-violet-500 rounded-full" />
+              Advisor & Marketplace Revenue
+            </h3>
+
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+              {/* Lead revenue */}
+              <div className="bg-violet-50 border border-violet-200 rounded-xl p-3">
+                <p className="text-[0.6rem] font-bold text-violet-600 uppercase">Lead Revenue</p>
+                <p className="text-xl font-extrabold text-violet-900">${((advisorRev?.paidBillingCents || 0) / 100).toLocaleString()}</p>
+                <p className="text-[0.55rem] text-violet-500">collected from advisors</p>
+              </div>
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-3">
+                <p className="text-[0.6rem] font-bold text-amber-600 uppercase">Pending Invoices</p>
+                <p className="text-xl font-extrabold text-amber-900">${((advisorRev?.pendingBillingCents || 0) / 100).toLocaleString()}</p>
+                <p className="text-[0.55rem] text-amber-500">{advisorRev?.billedLeads || 0} billed leads</p>
+              </div>
+              {/* Marketplace ad spend */}
+              <div className="bg-blue-50 border border-blue-200 rounded-xl p-3">
+                <p className="text-[0.6rem] font-bold text-blue-600 uppercase">Ad Spend (Brokers)</p>
+                <p className="text-xl font-extrabold text-blue-900">${((marketplaceRev?.totalSpentCents || 0) / 100).toLocaleString()}</p>
+                <p className="text-[0.55rem] text-blue-500">{marketplaceRev?.activeCampaigns || 0} active campaigns</p>
+              </div>
+              {/* Article publication fees */}
+              <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3">
+                <p className="text-[0.6rem] font-bold text-emerald-600 uppercase">Article Fees</p>
+                <p className="text-xl font-extrabold text-emerald-900">${((articleRev?.paidCents || 0) / 100).toLocaleString()}</p>
+                <p className="text-[0.55rem] text-emerald-500">{articleRev?.totalPublished || 0} published</p>
+              </div>
+            </div>
+
+            {/* Cash position overview */}
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-4">
+              <h4 className="text-xs font-bold text-slate-700 mb-3">Cash Position</h4>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                <div>
+                  <p className="text-[0.6rem] text-slate-500 font-semibold">Broker Wallet Balances</p>
+                  <p className="text-base font-extrabold text-slate-900">${((marketplaceRev?.totalBalanceCents || 0) / 100).toLocaleString()}</p>
+                  <p className="text-[0.5rem] text-slate-400">pre-funded by brokers</p>
+                </div>
+                <div>
+                  <p className="text-[0.6rem] text-slate-500 font-semibold">Lifetime Deposits</p>
+                  <p className="text-base font-extrabold text-slate-900">${((marketplaceRev?.totalDepositedCents || 0) / 100).toLocaleString()}</p>
+                  <p className="text-[0.5rem] text-slate-400">{marketplaceRev?.totalWallets || 0} wallets</p>
+                </div>
+                <div>
+                  <p className="text-[0.6rem] text-slate-500 font-semibold">Pending Advisor Invoices</p>
+                  <p className="text-base font-extrabold text-amber-700">${((advisorRev?.pendingBillingCents || 0) / 100).toLocaleString()}</p>
+                  <p className="text-[0.5rem] text-slate-400">awaiting payment</p>
+                </div>
+                <div>
+                  <p className="text-[0.6rem] text-slate-500 font-semibold">Unpaid Article Fees</p>
+                  <p className="text-base font-extrabold text-amber-700">${((articleRev?.unpaidCents || 0) / 100).toLocaleString()}</p>
+                  <p className="text-[0.5rem] text-slate-400">approved, awaiting payment</p>
+                </div>
+                <div>
+                  <p className="text-[0.6rem] text-slate-500 font-semibold">Total Receivable</p>
+                  <p className="text-base font-extrabold text-slate-900">
+                    ${(((advisorRev?.pendingBillingCents || 0) + (articleRev?.unpaidCents || 0)) / 100).toLocaleString()}
+                  </p>
+                  <p className="text-[0.5rem] text-slate-400">leads + articles</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Advisor funnel */}
+            <div className="grid grid-cols-2 md:grid-cols-6 gap-2">
+              <div className="text-center p-2 bg-white rounded-lg border border-slate-100">
+                <p className="text-lg font-extrabold text-slate-900">{advisorRev?.activeAdvisors || 0}</p>
+                <p className="text-[0.55rem] text-slate-500">Active Advisors</p>
+              </div>
+              <div className="text-center p-2 bg-white rounded-lg border border-slate-100">
+                <p className="text-lg font-extrabold text-slate-900">{advisorRev?.totalLeads || 0}</p>
+                <p className="text-[0.55rem] text-slate-500">Total Leads</p>
+              </div>
+              <div className="text-center p-2 bg-white rounded-lg border border-slate-100">
+                <p className="text-lg font-extrabold text-slate-900">{advisorRev?.freeLeads || 0}</p>
+                <p className="text-[0.55rem] text-slate-500">Free Trial Leads</p>
+              </div>
+              <div className="text-center p-2 bg-white rounded-lg border border-slate-100">
+                <p className="text-lg font-extrabold text-slate-900">{advisorRev?.billedLeads || 0}</p>
+                <p className="text-[0.55rem] text-slate-500">Billed Leads</p>
+              </div>
+              <div className="text-center p-2 bg-white rounded-lg border border-slate-100">
+                <p className="text-lg font-extrabold text-slate-900">{advisorRev?.convertedLeads || 0}</p>
+                <p className="text-[0.55rem] text-slate-500">Converted</p>
+              </div>
+              <div className="text-center p-2 bg-white rounded-lg border border-slate-100">
+                <p className="text-lg font-extrabold text-slate-900">{advisorRev?.stripeConnected || 0}</p>
+                <p className="text-[0.55rem] text-slate-500">Stripe Connected</p>
+              </div>
             </div>
           </div>
 
