@@ -150,11 +150,11 @@ export default function CompareFooter({ sorted, brokers, activeFilter }: Props) 
           </Link>
         </div>
         <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 md:p-6 flex flex-col items-start gap-1.5 md:gap-0">
-          <Icon name="bell" size={18} className="text-slate-600 shrink-0 md:mb-2" />
-          <h2 className="text-xs md:text-lg font-bold text-slate-900">Fee Alerts</h2>
-          <p className="text-[0.58rem] md:text-xs text-slate-500 md:mb-4 hidden md:block">Get notified when any broker changes their fees.</p>
-          <Link href="/fee-alerts" className="mt-auto px-3 md:px-5 py-1.5 md:py-2.5 bg-slate-900 text-white text-[0.65rem] md:text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors">
-            Subscribe →
+          <Icon name="tag" size={18} className="text-slate-600 shrink-0 md:mb-2" />
+          <h2 className="text-xs md:text-lg font-bold text-slate-900">Current Deals</h2>
+          <p className="text-[0.58rem] md:text-xs text-slate-500 md:mb-4 hidden md:block">See the latest promotions from Australian platforms.</p>
+          <Link href="/deals" className="mt-auto px-3 md:px-5 py-1.5 md:py-2.5 bg-slate-900 text-white text-[0.65rem] md:text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors">
+            View Deals →
           </Link>
         </div>
       </div>

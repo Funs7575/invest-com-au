@@ -1169,8 +1169,8 @@ export default function BrokerReviewClient({
             <Link href="/compare" className="text-xs md:text-sm text-slate-600 font-semibold hover:text-slate-800 transition-colors border border-slate-200 rounded-lg px-3 py-2 md:px-4 hover:bg-slate-50">
               Compare All →
             </Link>
-            <Link href="/fee-alerts" className="text-xs md:text-sm text-slate-600 font-semibold hover:text-slate-800 transition-colors border border-slate-200 rounded-lg px-3 py-2 md:px-4 hover:bg-slate-50">
-              Fee Alerts →
+            <Link href="/deals" className="text-xs md:text-sm text-slate-600 font-semibold hover:text-slate-800 transition-colors border border-slate-200 rounded-lg px-3 py-2 md:px-4 hover:bg-slate-50">
+              Current Deals →
             </Link>
           </div>
         </div>
