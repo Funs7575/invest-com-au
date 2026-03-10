@@ -22,6 +22,7 @@ export const metadata = {
   },
   twitter: { card: "summary_large_image" as const },
   alternates: { canonical: "/consultations" },
+  robots: { index: false, follow: false },
 };
 
 export const revalidate = 3600;

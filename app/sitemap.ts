@@ -10,16 +10,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = await createClient();
 
   // Static pages with tiered priorities
-  const highPriority = new Set(["/compare", "/quiz", "/reviews", "/deals", "/pro", "/share-trading", "/crypto", "/savings", "/super", "/cfd", "/versus", "/how-to"]);
-  const medPriority = new Set(["/calculators", "/articles", "/scenarios", "/switch", "/stories", "/benchmark", "/health-scores", "/alerts", "/reports", "/whats-new", "/costs", "/fee-impact", "/advertise"]);
+  const highPriority = new Set(["/compare", "/quiz", "/reviews", "/deals", "/share-trading", "/crypto", "/savings", "/super", "/cfd", "/versus", "/how-to"]);
+  const medPriority = new Set(["/calculators", "/articles", "/scenarios", "/switch", "/stories", "/benchmark", "/health-scores", "/alerts", "/whats-new", "/costs", "/fee-impact"]);
   // Everything else (about, how-we-earn, privacy, methodology, terms, etc.) → 0.4
 
   const staticPages = [
     "", "/compare", "/versus", "/reviews", "/calculators",
     "/articles", "/scenarios", "/quiz", "/deals", "/stories", "/about", "/how-we-earn", "/privacy",
-    "/methodology", "/how-we-verify", "/terms", "/switch", "/editorial-policy", "/pro", "/benchmark",
-    "/health-scores", "/alerts", "/reports", "/whats-new", "/costs", "/fee-impact",
-    "/advertise", "/glossary", "/complaints", "/contact", "/consultations", "/courses", "/advisors", "/find-advisor",
+    "/methodology", "/how-we-verify", "/terms", "/switch", "/editorial-policy", "/benchmark",
+    "/health-scores", "/alerts", "/whats-new", "/costs", "/fee-impact",
+    "/glossary", "/complaints", "/contact", "/advisors", "/find-advisor",
     "/advisor-terms", "/broker-terms", "/content-license", "/expert", "/for-advisors",
     "/advisor-guides/how-to-choose-smsf-accountant",
     "/advisor-guides/how-to-choose-financial-planner",
@@ -39,9 +39,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/advisor-guides/tax-agent-vs-accountant",
     "/advisor-guides/mortgage-broker-vs-bank",
     "/advisor-guides/buyers-agent-vs-diy",
-    "/fee-alerts",
+    
     "/portfolio-calculator",
-    "/advisor-apply", "/for-advisors", "/expert", "/switching-calculator", "/savings-calculator", "/portfolio", "/dashboard",
+    "/advisor-apply", "/for-advisors", "/expert", "/switching-calculator", "/savings-calculator", "",
     "/share-trading", "/crypto", "/savings", "/super", "/cfd",
     "/how-to",
   ].map((path) => ({

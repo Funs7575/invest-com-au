@@ -27,7 +27,7 @@ const learnDropdown = [
   { label: "Articles", href: "/articles", desc: "News & analysis" },
   { label: "How-To Guides", href: "/how-to", desc: "Step-by-step tutorials" },
   { label: "Calculators", href: "/calculators", desc: "Brokerage, CGT & more" },
-  { label: "Courses", href: "/courses", desc: "In-depth learning" },
+  // { label: "Courses", href: "/courses", desc: "In-depth learning" }, // Hidden for launch
 ];
 
 const popularLinks = [
@@ -65,7 +65,7 @@ const mobileNavSections = [
       { name: "Articles", href: "/articles" },
       { name: "How-To Guides", href: "/how-to" },
       { name: "Calculators", href: "/calculators" },
-      { name: "Courses", href: "/courses" },
+      // { name: "Courses", href: "/courses" }, // Hidden for launch
     ],
   },
 ];
@@ -146,7 +146,7 @@ export default function Header() {
   const isAdvisorsActive = ["/advisors", "/find-advisor", "/advisor-guides", "/advisor"].some(
     (p) => pathname === p || pathname.startsWith(p + "/")
   );
-  const isLearnActive = ["/articles", "/article", "/how-to", "/calculators", "/courses"].some(
+  const isLearnActive = ["/articles", "/article", "/how-to", "/calculators"].some(
     (p) => pathname === p || pathname.startsWith(p + "/")
   );
 
@@ -176,28 +176,8 @@ export default function Header() {
             >
               Find Advisor
             </Link>
-            {/* Pro / Account */}
-            {!loading && (
-              user ? (
-                <Link
-                  href="/account"
-                  className="flex items-center gap-1.5 px-3 py-1.5 min-h-[44px] text-sm font-semibold rounded-full transition-colors border border-slate-200 text-slate-700 hover:bg-slate-50"
-                  title="My Account"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                  Account
-                </Link>
-              ) : (
-                <Link
-                  href="/pro"
-                  className="px-3 py-1.5 min-h-[44px] flex items-center bg-amber-500/10 text-amber-700 text-xs font-semibold rounded-full hover:bg-amber-500/20 transition-colors border border-amber-500/20"
-                >
-                  Pro
-                </Link>
-              )
-            )}
+            {/* Pro / Account — hidden for launch */}
+            {/* TODO: Re-enable when subscription product launches */}
             <ThemeToggle />
           </nav>
 
@@ -277,37 +257,10 @@ export default function Header() {
                   Find Advisor
                 </Link>
               </div>
-              <Link
-                href="/pro"
-                onClick={() => setMenuOpen(false)}
-                className="block py-2.5 min-h-[44px] flex items-center justify-center text-xs font-semibold text-center text-amber-700 bg-amber-50 rounded-lg hover:bg-amber-100 border border-amber-200 transition-colors"
-              >
-                Investor Pro
-              </Link>
+              {/* Pro button hidden for launch */}
             </div>
 
-            {/* Auth */}
-            <div className="pt-1.5 mt-1 border-t border-slate-100">
-              {!loading && (
-                user ? (
-                  <Link
-                    href="/account"
-                    onClick={() => setMenuOpen(false)}
-                    className="block px-3 py-2 min-h-[44px] flex items-center text-[0.8rem] font-medium text-slate-700 hover:bg-slate-50 rounded-lg transition-colors"
-                  >
-                    My Account
-                  </Link>
-                ) : (
-                  <Link
-                    href="/auth/login"
-                    onClick={() => setMenuOpen(false)}
-                    className="block px-3 py-2 min-h-[44px] flex items-center text-[0.8rem] font-medium text-slate-700 hover:bg-slate-50 rounded-lg transition-colors"
-                  >
-                    Sign In
-                  </Link>
-                )
-              )}
-            </div>
+            {/* Auth — hidden for launch */}
 
             {/* Popular Links */}
             <div className="pt-1.5 mt-1 border-t border-slate-100">

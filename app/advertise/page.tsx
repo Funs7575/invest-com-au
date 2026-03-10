@@ -19,6 +19,7 @@ export const metadata: Metadata = {
     title: "Advertise With Us | Invest.com.au",
     description: "Reach Australian investors actively choosing a broker. CPC campaigns, featured placements, and sponsorship packages.",
   },
+  robots: { index: false, follow: false },
 };
 
 const PLACEMENTS = [

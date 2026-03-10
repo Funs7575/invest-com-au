@@ -487,9 +487,9 @@ export default async function HomePage() {
             {/* CTA card */}
             <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-6 flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-6">
               <div className="flex-1 min-w-0">
-                <p className="text-sm md:text-base font-bold text-slate-900 mb-1">Book a free consultation — no obligation</p>
+                <p className="text-sm md:text-base font-bold text-slate-900 mb-1">Get matched with a verified advisor — free, no obligation</p>
                 <p className="text-xs md:text-sm text-slate-500">
-                  We connect investors with verified professionals. Request a consultation and the advisor contacts you directly.
+                  Tell us what you need help with and we&apos;ll connect you with a verified professional. Your details go to one advisor only.
                 </p>
               </div>
               <div className="flex gap-2 shrink-0 w-full md:w-auto">
@@ -593,9 +593,9 @@ export default async function HomePage() {
                     <div>
                       <h3 className="text-sm md:text-base font-bold text-slate-900 flex items-center gap-1.5">
                         <Icon name="users" size={16} className="text-violet-500" />
-                        Free Advisor Consultations
+                        Verified Financial Professionals
                       </h3>
-                      <p className="text-[0.65rem] md:text-xs text-slate-500 mt-0.5">Book a free 30-min call with a verified professional — no obligation</p>
+                      <p className="text-[0.65rem] md:text-xs text-slate-500 mt-0.5">Send a free enquiry to a verified advisor — exclusive, no obligation</p>
                     </div>
                     <Link href="/advisors" className="hidden md:flex text-xs font-semibold text-violet-600 hover:text-violet-800 transition-colors shrink-0 items-center gap-1">
                       Browse all <span>&rarr;</span>
@@ -917,9 +917,9 @@ export default async function HomePage() {
                 { href: "/portfolio-calculator", icon: "calculator", color: "from-violet-600 to-violet-500", shadow: "shadow-violet-500/15", title: "Portfolio Calculator", desc: "See exact fees at every broker" },
                 { href: "/switching-calculator", icon: "arrow-right-left", color: "from-emerald-600 to-emerald-500", shadow: "shadow-emerald-500/15", title: "Switching Calculator", desc: "How much are you overpaying?" },
                 { href: "/savings-calculator", icon: "piggy-bank", color: "from-blue-600 to-blue-500", shadow: "shadow-blue-500/15", title: "Savings Calculator", desc: "Are you earning enough?" },
-                { href: "/fee-alerts", icon: "bell", color: "from-amber-500 to-amber-400", shadow: "shadow-amber-500/15", title: "Fee Alerts", desc: "Know when fees change" },
-                { href: "/portfolio", icon: "shield-check", color: "from-indigo-600 to-indigo-500", shadow: "shadow-indigo-500/15", title: "Portfolio Monitor", desc: "Track fees in real-time" },
+                { href: "/compare", icon: "bar-chart", color: "from-amber-500 to-amber-400", shadow: "shadow-amber-500/15", title: "Compare Platforms", desc: "Side-by-side comparison" },
                 { href: "/calculators", icon: "bar-chart", color: "from-blue-600 to-blue-500", shadow: "shadow-blue-500/15", title: "All Calculators", desc: "CGT, FX, dividends & more" },
+                { href: "/best", icon: "shield-check", color: "from-indigo-600 to-indigo-500", shadow: "shadow-indigo-500/15", title: "Best Platforms", desc: "Top picks by category" },
                 { href: "/quiz", icon: "target", color: "from-slate-700 to-slate-600", shadow: "shadow-slate-500/15", title: "Platform Quiz", desc: "Best match in 60 seconds" },
                 { href: "/find-advisor", icon: "users", color: "from-violet-500 to-purple-500", shadow: "shadow-violet-500/15", title: "Find Advisor", desc: "Matched to your needs" },
               ].map((tool) => (

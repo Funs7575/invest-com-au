@@ -11,6 +11,7 @@ export const metadata: Metadata = {
     description: "Track your broker fees. Get alerts when prices change. Never overpay again.",
   },
   alternates: { canonical: "/portfolio" },
+  robots: { index: false, follow: false },
 };
 
 export default function PortfolioPage() {

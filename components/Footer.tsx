@@ -97,7 +97,6 @@ export default function Footer() {
                 <li><Link href="/best/term-deposits" className="hover:text-white transition-colors inline-block py-0.5">Term Deposits</Link></li>
                 <li><Link href="/versus" className="hover:text-white transition-colors inline-block py-0.5">Head-to-Head</Link></li>
                 <li><Link href="/deals" className="hover:text-white transition-colors inline-block py-0.5">Deals</Link></li>
-                <li><Link href="/fee-alerts" className="hover:text-white transition-colors inline-block py-0.5">Fee Alerts</Link></li>
               </ul>
             </div>
 
@@ -128,7 +127,6 @@ export default function Footer() {
                 <li><Link href="/broker-terms" className="hover:text-white transition-colors inline-block py-0.5">Advertiser Terms</Link></li>
                 <li><Link href="/complaints" className="hover:text-white transition-colors inline-block py-0.5">Complaints & AFCA</Link></li>
                 <li><Link href="/contact" className="hover:text-white transition-colors inline-block py-0.5">Contact</Link></li>
-                <li><Link href="/advertise" className="hover:text-white transition-colors inline-block py-0.5">Advertise</Link></li>
                 <li><Link href="/advisor-portal" className="hover:text-white transition-colors inline-block py-0.5">Advisor Portal</Link></li>
                 <li><Link href="/broker-portal/login" className="hover:text-white transition-colors inline-block py-0.5">Partner Login</Link></li>
               </ul>

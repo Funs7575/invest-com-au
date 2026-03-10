@@ -17,6 +17,7 @@ export const metadata: Metadata = {
     description: "Expert-led investing courses for Australians.",
     url: "/courses",
   },
+  robots: { index: false, follow: false },
 };
 
 export const revalidate = 3600;

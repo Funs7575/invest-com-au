@@ -20,6 +20,7 @@ export const metadata: Metadata = {
   },
   twitter: { card: "summary_large_image" as const },
   alternates: { canonical: "/pro" },
+  robots: { index: false, follow: false },
 };
 
 export default function ProPage() {
