@@ -42,33 +42,71 @@ export async function POST(request: NextRequest) {
     // Send email with magic link
     const RESEND_API_KEY = process.env.RESEND_API_KEY;
     const siteUrl = getSiteUrl(request.headers.get("host"));
+    const loginUrl = `${siteUrl}/advisor-portal?token=${token}`;
 
     if (RESEND_API_KEY) {
-      const loginUrl = `${siteUrl}/advisor-portal?token=${token}`;
-      await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${RESEND_API_KEY}` },
-        body: JSON.stringify({
-          from: "Invest.com.au <hello@invest.com.au>",
-          to: email,
-          subject: "Your Advisor Portal Login Link",
-          html: `
-            <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; color: #334155;">
-              <div style="background: #0f172a; padding: 20px 24px; border-radius: 12px 12px 0 0;">
-                <h1 style="color: white; margin: 0; font-size: 18px;">Invest.com.au — Advisor Portal</h1>
-              </div>
-              <div style="background: #f8fafc; padding: 24px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px;">
-                <p style="font-size: 15px;">Hi ${advisor.name?.split(" ")[0] || "there"},</p>
-                <p style="font-size: 14px; color: #64748b;">Click the button below to log into your advisor dashboard. This link expires in 15 minutes.</p>
-                <div style="text-align: center; margin: 24px 0;">
-                  <a href="${loginUrl}" style="display: inline-block; padding: 12px 32px; background: #0f172a; color: white; text-decoration: none; border-radius: 8px; font-size: 14px; font-weight: 600;">Log In to Dashboard →</a>
+      try {
+        const res = await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${RESEND_API_KEY}` },
+          body: JSON.stringify({
+            from: "Invest.com.au <hello@invest.com.au>",
+            to: email,
+            subject: "Your Advisor Portal Login Link",
+            html: `
+              <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; color: #334155;">
+                <div style="background: #0f172a; padding: 20px 24px; border-radius: 12px 12px 0 0;">
+                  <h1 style="color: white; margin: 0; font-size: 18px;">Invest.com.au — Advisor Portal</h1>
                 </div>
-                <p style="font-size: 12px; color: #94a3b8;">If you didn't request this, ignore this email. The link will expire automatically.</p>
+                <div style="background: #f8fafc; padding: 24px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px;">
+                  <p style="font-size: 15px;">Hi ${advisor.name?.split(" ")[0] || "there"},</p>
+                  <p style="font-size: 14px; color: #64748b;">Click the button below to log into your advisor dashboard. This link expires in 15 minutes.</p>
+                  <div style="text-align: center; margin: 24px 0;">
+                    <a href="${loginUrl}" style="display: inline-block; padding: 12px 32px; background: #0f172a; color: white; text-decoration: none; border-radius: 8px; font-size: 14px; font-weight: 600;">Log In to Dashboard →</a>
+                  </div>
+                  <p style="font-size: 12px; color: #94a3b8;">If you didn't request this, ignore this email. The link will expire automatically.</p>
+                </div>
               </div>
-            </div>
-          `,
-        }),
-      });
+            `,
+          }),
+        });
+        if (!res.ok) {
+          console.error("Resend email failed:", await res.text());
+        }
+      } catch (err) {
+        console.error("Resend email error:", err);
+      }
+    } else {
+      // Fallback: use Supabase Auth built-in email (works without custom domain)
+      try {
+        const { createClient: createAdminAuthClient } = await import("@supabase/supabase-js");
+        const supabaseAdmin = createAdminAuthClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.SUPABASE_SERVICE_ROLE_KEY!
+        );
+        
+        // Send a simple email via Supabase's built-in mailer
+        await supabaseAdmin.auth.admin.generateLink({
+          type: "magiclink",
+          email: email,
+          options: {
+            redirectTo: loginUrl,
+          },
+        });
+        
+        // Since generateLink doesn't auto-send, use signInWithOtp as fallback
+        const sbClient = await createClient();
+        await sbClient.auth.signInWithOtp({
+          email: email,
+          options: {
+            emailRedirectTo: `${siteUrl}/advisor-portal?token=${token}`,
+            shouldCreateUser: true,
+          },
+        });
+      } catch (err) {
+        console.error("Supabase OTP fallback error:", err);
+        // Still return success — don't reveal auth details
+      }
     }
 
     return NextResponse.json({ success: true });
