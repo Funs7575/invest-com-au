@@ -354,13 +354,11 @@ export default async function HomePage() {
         <div className="container-custom">
           <p className="text-[0.69rem] uppercase tracking-widest text-slate-500 text-center mb-3 font-medium">Platforms we compare</p>
           <div className="flex items-center justify-center gap-8 flex-wrap opacity-70">
-            {(brokers as Broker[])?.slice(0, 6).map((broker) => (
-              <div key={broker.id} className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-[0.69rem] font-bold shrink-0" style={{ backgroundColor: broker.color || '#64748b' }}>
-                  {broker.name?.slice(0, 2).toUpperCase()}
-                </div>
+            {(brokers as Broker[])?.slice(0, 8).map((broker) => (
+              <a key={broker.id} href={`/broker/${broker.slug}`} className="flex items-center gap-2 hover:opacity-100 transition-opacity">
+                <BrokerLogo broker={broker} size="sm" />
                 <span className="text-sm font-semibold text-slate-500">{broker.name}</span>
-              </div>
+              </a>
             ))}
           </div>
         </div>

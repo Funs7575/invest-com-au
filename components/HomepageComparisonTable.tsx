@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect } from "react";
 import type { Broker } from "@/lib/types";
 import { getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
+import BrokerLogo from "@/components/BrokerLogo";
 import { getMostRecentFeeCheck } from "@/lib/utils";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import PromoBadge from "@/components/PromoBadge";
@@ -204,9 +205,7 @@ export default function HomepageComparisonTable({
                 </td>
                 <td className="px-3 py-2.5">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center font-bold text-slate-900 text-xs shrink-0 transition-transform duration-200 group-hover:scale-110">
-                      {broker.name.substring(0, 2).toUpperCase()}
-                    </div>
+                    <BrokerLogo broker={broker} size="sm" className="transition-transform duration-200 group-hover:scale-110" />
                     <div>
                       <div className="flex items-center gap-1.5">
                         <a
@@ -295,9 +294,7 @@ export default function HomepageComparisonTable({
                   <span className="text-xs font-bold text-slate-400">{i + 1}</span>
                 )}
               </div>
-              <div className="w-8 h-8 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center font-bold text-slate-900 text-[0.65rem] shrink-0">
-                {broker.name.substring(0, 2).toUpperCase()}
-              </div>
+              <BrokerLogo broker={broker} size="sm" />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1 flex-wrap">
                   <a href={`/broker/${broker.slug}`} className="font-bold text-sm text-slate-900">

@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Broker, UserReview, BrokerReviewStats, SwitchStory } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL, trackPageDuration } from "@/lib/tracking";
+import BrokerLogo from "@/components/BrokerLogo";
 import ProUpsell from "@/components/ProUpsell";
 import { CURRENT_YEAR } from "@/lib/seo";
 import {
@@ -288,12 +289,7 @@ export default function BrokerReviewClient({
         {/* Header */}
         <div className="bg-white border border-slate-200 rounded-2xl p-4 md:p-6 mb-4 md:mb-6 shadow-sm">
           <div className="flex items-start gap-3 md:gap-4 mb-3 md:mb-4">
-            <div
-              className="w-12 h-12 md:w-16 md:h-16 rounded-xl flex items-center justify-center text-xl md:text-3xl font-bold shrink-0 shadow-sm"
-              style={{ background: `${b.color}15`, color: b.color, border: `2px solid ${b.color}30` }}
-            >
-              {b.icon || b.name.charAt(0)}
-            </div>
+            <BrokerLogo broker={b} size="xl" />
             <div className="min-w-0 flex-1">
               <h1 className="text-xl md:text-3xl font-extrabold leading-tight text-slate-900">{b.name} Review ({CURRENT_YEAR})</h1>
               <p className="text-slate-500 mt-0.5 md:mt-1 text-xs md:text-base">{b.tagline}</p>
@@ -974,12 +970,7 @@ export default function BrokerReviewClient({
                   key={d.slug}
                   className="border border-slate-200 rounded-xl p-3 md:p-4 hover:shadow-md transition-shadow flex items-start gap-3"
                 >
-                  <div
-                    className="w-10 h-10 rounded-lg flex items-center justify-center text-sm font-bold shrink-0"
-                    style={{ background: `${d.color}20`, color: d.color }}
-                  >
-                    {d.icon || d.name.charAt(0)}
-                  </div>
+                  <BrokerLogo broker={d} size="md" />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
                       <Link href={`/broker/${d.slug}`} className="font-bold text-sm hover:text-blue-700 transition-colors">
@@ -1039,11 +1030,8 @@ export default function BrokerReviewClient({
                   href={`/versus/${b.slug}-vs-${s.slug}`}
                   className="border border-slate-200 rounded-xl p-2.5 md:p-4 hover:shadow-md hover:border-slate-300 transition-all"
                 >
-                  <div
-                    className="w-8 h-8 md:w-10 md:h-10 rounded-lg flex items-center justify-center text-xs md:text-sm font-bold mb-1.5 md:mb-2"
-                    style={{ background: `${s.color}20`, color: s.color }}
-                  >
-                    {s.icon || s.name.charAt(0)}
+                  <div className="mb-1.5 md:mb-2">
+                    <BrokerLogo broker={s} size="md" />
                   </div>
                   <h3 className="font-bold text-xs md:text-sm">{s.name}</h3>
                   <div className="text-[0.62rem] md:text-xs text-amber">{renderStars(s.rating || 0)} <span className="text-slate-500">{s.rating}/5</span></div>
