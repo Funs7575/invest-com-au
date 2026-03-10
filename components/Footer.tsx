@@ -101,15 +101,20 @@ export default function Footer() {
             </div>
 
             <div>
-              <h4 className="text-white font-semibold mb-2 md:mb-4 text-xs md:text-sm">Advisors &amp; Tools</h4>
+              <h4 className="text-white font-semibold mb-2 md:mb-4 text-xs md:text-sm">Advisors</h4>
               <ul className="space-y-1 md:space-y-2 text-xs md:text-sm">
                 <li><Link href="/find-advisor" className="hover:text-white transition-colors inline-block py-0.5">Find an Advisor</Link></li>
                 <li><Link href="/advisors" className="hover:text-white transition-colors inline-block py-0.5">Advisor Directory</Link></li>
-                <li><Link href="/for-advisors" className="hover:text-white transition-colors inline-block py-0.5">List Your Practice</Link></li>
-                <li><Link href="/portfolio-calculator" className="hover:text-white transition-colors inline-block py-0.5">Portfolio Calculator</Link></li>
-                <li><Link href="/calculators" className="hover:text-white transition-colors inline-block py-0.5">All Calculators</Link></li>
-                <li><Link href="/articles" className="hover:text-white transition-colors inline-block py-0.5">Guides</Link></li>
+                <li><Link href="/advisor-guides" className="hover:text-white transition-colors inline-block py-0.5">Advisor Guides</Link></li>
                 <li><Link href="/expert" className="hover:text-white transition-colors inline-block py-0.5">Expert Insights</Link></li>
+                <li><Link href="/for-advisors" className="hover:text-white transition-colors inline-block py-0.5">List Your Practice</Link></li>
+              </ul>
+              <h4 className="text-white font-semibold mt-4 mb-2 md:mt-6 md:mb-4 text-xs md:text-sm">Learn</h4>
+              <ul className="space-y-1 md:space-y-2 text-xs md:text-sm">
+                <li><Link href="/articles" className="hover:text-white transition-colors inline-block py-0.5">Articles & Guides</Link></li>
+                <li><Link href="/how-to" className="hover:text-white transition-colors inline-block py-0.5">How-To Guides</Link></li>
+                <li><Link href="/calculators" className="hover:text-white transition-colors inline-block py-0.5">Calculators</Link></li>
+                <li><Link href="/glossary" className="hover:text-white transition-colors inline-block py-0.5">Glossary</Link></li>
                 <li><Link href="/quiz" className="hover:text-white transition-colors inline-block py-0.5">Platform Quiz</Link></li>
               </ul>
             </div>

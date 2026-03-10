@@ -19,15 +19,15 @@ const platformsDropdown = [
 const advisorsDropdown = [
   { label: "Find an Advisor", href: "/find-advisor", desc: "Match with a professional" },
   { label: "Advisor Directory", href: "/advisors", desc: "Browse all advisors" },
-  { label: "Advisor Reviews", href: "/reviews?tab=advisors", desc: "Ratings & feedback" },
   { label: "Advisor Guides", href: "/advisor-guides", desc: "How to choose & compare" },
+  { label: "Expert Insights", href: "/expert", desc: "Articles from verified advisors" },
 ];
 
 const learnDropdown = [
-  { label: "Articles", href: "/articles", desc: "News & analysis" },
+  { label: "Articles & Guides", href: "/articles", desc: "Investing news & education" },
   { label: "How-To Guides", href: "/how-to", desc: "Step-by-step tutorials" },
   { label: "Calculators", href: "/calculators", desc: "Brokerage, CGT & more" },
-  // { label: "Courses", href: "/courses", desc: "In-depth learning" }, // Hidden for launch
+  { label: "Glossary", href: "/glossary", desc: "Investing terms explained" },
 ];
 
 const popularLinks = [
@@ -57,15 +57,16 @@ const mobileNavSections = [
       { name: "Find an Advisor", href: "/find-advisor" },
       { name: "Advisor Directory", href: "/advisors" },
       { name: "Advisor Guides", href: "/advisor-guides" },
+      { name: "Expert Insights", href: "/expert" },
     ],
   },
   {
     title: "Learn",
     items: [
-      { name: "Articles", href: "/articles" },
+      { name: "Articles & Guides", href: "/articles" },
       { name: "How-To Guides", href: "/how-to" },
       { name: "Calculators", href: "/calculators" },
-      // { name: "Courses", href: "/courses" }, // Hidden for launch
+      { name: "Glossary", href: "/glossary" },
     ],
   },
 ];
@@ -143,10 +144,10 @@ export default function Header() {
   const isPlatformsActive = ["/compare", "/best", "/versus", "/deals", "/reviews", "/quiz"].some(
     (p) => pathname === p || pathname.startsWith(p + "/")
   );
-  const isAdvisorsActive = ["/advisors", "/find-advisor", "/advisor-guides", "/advisor"].some(
+  const isAdvisorsActive = ["/advisors", "/find-advisor", "/advisor-guides", "/advisor", "/expert"].some(
     (p) => pathname === p || pathname.startsWith(p + "/")
   );
-  const isLearnActive = ["/articles", "/article", "/how-to", "/calculators"].some(
+  const isLearnActive = ["/articles", "/article", "/how-to", "/calculators", "/glossary"].some(
     (p) => pathname === p || pathname.startsWith(p + "/")
   );
 
