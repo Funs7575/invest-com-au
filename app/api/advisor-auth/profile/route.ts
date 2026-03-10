@@ -1,11 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 async function getAdvisorId(request: NextRequest): Promise<number | null> {
+  const supabase = await createClient();
+  const admin = createAdminClient();
+  
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) {
+    const { data: advisor } = await admin
+      .from("professionals")
+      .select("id")
+      .or(`auth_user_id.eq.${user.id},email.eq.${user.email}`)
+      .in("status", ["active", "pending"])
+      .maybeSingle();
+    if (advisor) return advisor.id;
+  }
+  
   const sessionToken = request.cookies.get("advisor_session")?.value;
   if (!sessionToken) return null;
-  const supabase = await createClient();
-  const { data } = await supabase
+  const { data } = await admin
     .from("advisor_sessions")
     .select("professional_id, expires_at")
     .eq("session_token", sessionToken)

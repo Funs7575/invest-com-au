@@ -1,117 +1,127 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { randomBytes } from "crypto";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
 import { getSiteUrl } from "@/lib/url";
 
+/**
+ * POST /api/advisor-auth/login
+ * 
+ * Advisor login using Supabase Auth.
+ * Supports: magic link (OTP), password login, or signup.
+ */
 export async function POST(request: NextRequest) {
   try {
-    const { email } = await request.json();
+    const body = await request.json();
+    const { email, password, mode = "magic" } = body;
     if (!email) return NextResponse.json({ error: "Email required" }, { status: 400 });
 
-    // Rate limit: max 5 magic links per email per hour
-    if (await isRateLimited(`magic_link:${email.toLowerCase().trim()}`, 5, 60)) {
+    const trimmed = email.toLowerCase().trim();
+
+    if (await isRateLimited(`advisor_login:${trimmed}`, 5, 60)) {
       return NextResponse.json({ error: "Too many login attempts. Please try again later." }, { status: 429 });
     }
 
     const supabase = await createClient();
+    const admin = createAdminClient();
+    const siteUrl = getSiteUrl(request.headers.get("host"));
 
-    // Find advisor by email
-    const { data: advisor } = await supabase
+    // Check if this email is a registered advisor
+    const { data: advisor } = await admin
       .from("professionals")
-      .select("id, name, email")
-      .eq("email", email.toLowerCase().trim())
+      .select("id, name, email, status, auth_user_id")
+      .eq("email", trimmed)
       .in("status", ["active", "pending"])
-      .single();
+      .maybeSingle();
 
     if (!advisor) {
-      // Don't reveal if email exists — always return success
-      return NextResponse.json({ success: true });
+      if (mode === "magic") return NextResponse.json({ success: true, message: "If your email is registered, you'll receive a login link." });
+      return NextResponse.json({ error: "No advisor account found. Apply at /for-advisors to get started." }, { status: 404 });
     }
 
-    // Generate magic link token (valid 15 minutes)
-    const token = randomBytes(32).toString("hex");
-    const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString();
+    if (mode === "magic") {
+      const { error: otpError } = await supabase.auth.signInWithOtp({
+        email: trimmed,
+        options: {
+          emailRedirectTo: `${siteUrl}/auth/callback?next=/advisor-portal`,
+          shouldCreateUser: true,
+        },
+      });
 
-    await supabase.from("advisor_auth_tokens").insert({
-      professional_id: advisor.id,
-      token,
-      expires_at: expiresAt,
-    });
+      if (otpError) {
+        console.error("Advisor OTP error:", otpError.message);
+        return NextResponse.json({ error: "Failed to send login link. Please try again." }, { status: 500 });
+      }
 
-    // Send email with magic link
-    const RESEND_API_KEY = process.env.RESEND_API_KEY;
-    const siteUrl = getSiteUrl(request.headers.get("host"));
-    const loginUrl = `${siteUrl}/advisor-portal?token=${token}`;
+      return NextResponse.json({ success: true, message: "Check your email for a login link." });
+    }
 
-    if (RESEND_API_KEY) {
-      try {
-        const res = await fetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${RESEND_API_KEY}` },
-          body: JSON.stringify({
-            from: "Invest.com.au <hello@invest.com.au>",
-            to: email,
-            subject: "Your Advisor Portal Login Link",
-            html: `
-              <div style="font-family: Arial, sans-serif; max-width: 500px; margin: 0 auto; color: #334155;">
-                <div style="background: #0f172a; padding: 20px 24px; border-radius: 12px 12px 0 0;">
-                  <h1 style="color: white; margin: 0; font-size: 18px;">Invest.com.au — Advisor Portal</h1>
-                </div>
-                <div style="background: #f8fafc; padding: 24px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px;">
-                  <p style="font-size: 15px;">Hi ${advisor.name?.split(" ")[0] || "there"},</p>
-                  <p style="font-size: 14px; color: #64748b;">Click the button below to log into your advisor dashboard. This link expires in 15 minutes.</p>
-                  <div style="text-align: center; margin: 24px 0;">
-                    <a href="${loginUrl}" style="display: inline-block; padding: 12px 32px; background: #0f172a; color: white; text-decoration: none; border-radius: 8px; font-size: 14px; font-weight: 600;">Log In to Dashboard →</a>
-                  </div>
-                  <p style="font-size: 12px; color: #94a3b8;">If you didn't request this, ignore this email. The link will expire automatically.</p>
-                </div>
-              </div>
-            `,
-          }),
-        });
-        if (!res.ok) {
-          console.error("Resend email failed:", await res.text());
+    if (mode === "password") {
+      if (!password) return NextResponse.json({ error: "Password required" }, { status: 400 });
+
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email: trimmed,
+        password,
+      });
+
+      if (authError) {
+        return NextResponse.json({ error: authError.message === "Invalid login credentials" ? "Wrong email or password." : authError.message }, { status: 401 });
+      }
+
+      // Link auth user to professional if not linked
+      if (authData.user) {
+        await admin.from("professionals").update({
+          auth_user_id: authData.user.id,
+          last_login_at: new Date().toISOString(),
+        }).eq("id", advisor.id);
+      }
+
+      return NextResponse.json({ success: true, advisor: { id: advisor.id, name: advisor.name } });
+    }
+
+    if (mode === "signup") {
+      if (!password || password.length < 8) {
+        return NextResponse.json({ error: "Password must be at least 8 characters." }, { status: 400 });
+      }
+
+      if (advisor.auth_user_id) {
+        return NextResponse.json({ error: "Account already exists. Use login instead." }, { status: 409 });
+      }
+
+      const { data: signupData, error: signupError } = await supabase.auth.signUp({
+        email: trimmed,
+        password,
+        options: {
+          emailRedirectTo: `${siteUrl}/auth/callback?next=/advisor-portal`,
+          data: { advisor_id: advisor.id, name: advisor.name },
+        },
+      });
+
+      if (signupError) {
+        if (signupError.message.includes("already registered")) {
+          return NextResponse.json({ error: "Email already registered. Try logging in or use magic link." }, { status: 409 });
         }
-      } catch (err) {
-        console.error("Resend email error:", err);
+        return NextResponse.json({ error: signupError.message }, { status: 400 });
       }
-    } else {
-      // Fallback: use Supabase Auth built-in email (works without custom domain)
-      try {
-        const { createClient: createAdminAuthClient } = await import("@supabase/supabase-js");
-        const supabaseAdmin = createAdminAuthClient(
-          process.env.NEXT_PUBLIC_SUPABASE_URL!,
-          process.env.SUPABASE_SERVICE_ROLE_KEY!
-        );
-        
-        // Send a simple email via Supabase's built-in mailer
-        await supabaseAdmin.auth.admin.generateLink({
-          type: "magiclink",
-          email: email,
-          options: {
-            redirectTo: loginUrl,
-          },
-        });
-        
-        // Since generateLink doesn't auto-send, use signInWithOtp as fallback
-        const sbClient = await createClient();
-        await sbClient.auth.signInWithOtp({
-          email: email,
-          options: {
-            emailRedirectTo: `${siteUrl}/advisor-portal?token=${token}`,
-            shouldCreateUser: true,
-          },
-        });
-      } catch (err) {
-        console.error("Supabase OTP fallback error:", err);
-        // Still return success — don't reveal auth details
+
+      if (signupData.user) {
+        await admin.from("professionals").update({
+          auth_user_id: signupData.user.id,
+          last_login_at: new Date().toISOString(),
+          login_count: 1,
+        }).eq("id", advisor.id);
       }
+
+      return NextResponse.json({
+        success: true,
+        message: signupData.session ? "Account created! You're logged in." : "Check your email to confirm your account.",
+        needsConfirmation: !signupData.session,
+      });
     }
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ error: "Invalid mode" }, { status: 400 });
   } catch (error) {
     console.error("Advisor auth error:", error);
-    return NextResponse.json({ error: "Failed" }, { status: 500 });
+    return NextResponse.json({ error: "Something went wrong." }, { status: 500 });
   }
 }

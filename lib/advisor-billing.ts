@@ -5,9 +5,11 @@ import { logger } from "@/lib/logger";
 const log = logger("advisor-billing");
 
 /** Price per lead in cents after free tier is exhausted */
-export const DEFAULT_LEAD_PRICE_CENTS = 4900; // $49
-export const FREE_LEAD_LIMIT = 2;
-export const DEFAULT_TOPUP_CENTS = 20000; // A$200 credit top-up
+export const DEFAULT_LEAD_PRICE_CENTS = 3900; // A$39 per lead
+export const FREE_LEAD_LIMIT = 3; // 3 free leads to prove value
+export const DEFAULT_TOPUP_CENTS = 15000; // A$150 credit top-up (~4 leads)
+export const ARTICLE_STANDARD_PRICE_CENTS = 19900; // A$199 standard article
+export const ARTICLE_FEATURED_PRICE_CENTS = 39900; // A$399 featured article
 
 /**
  * Get or create a Stripe customer for a professional advisor.

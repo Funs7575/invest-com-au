@@ -1,11 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 async function getAdvisorId(request: NextRequest): Promise<number | null> {
+  const supabase = await createClient();
+  const admin = createAdminClient();
+  
+  // Try Supabase Auth first
+  const { data: { user } } = await supabase.auth.getUser();
+  if (user) {
+    const { data: advisor } = await admin
+      .from("professionals")
+      .select("id")
+      .or(`auth_user_id.eq.${user.id},email.eq.${user.email}`)
+      .in("status", ["active", "pending"])
+      .maybeSingle();
+    if (advisor) return advisor.id;
+  }
+  
+  // Fallback: legacy cookie session
   const sessionToken = request.cookies.get("advisor_session")?.value;
   if (!sessionToken) return null;
-  const supabase = await createClient();
-  const { data } = await supabase
+  const { data } = await admin
     .from("advisor_sessions")
     .select("professional_id, expires_at")
     .eq("session_token", sessionToken)
@@ -19,6 +35,7 @@ export async function GET(request: NextRequest) {
   if (!advisorId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
   const supabase = await createClient();
+  const admin = createAdminClient();
   const thirtyDaysAgo = new Date(Date.now() - 30 * 86400000).toISOString();
 
   const [
@@ -71,6 +88,26 @@ export async function GET(request: NextRequest) {
   const totalBilled = (billing || []).reduce((s, b) => s + (b.amount_cents || 0), 0);
   const pendingBilled = (billing || []).filter(b => b.status === "pending" || b.status === "invoiced").reduce((s, b) => s + (b.amount_cents || 0), 0);
 
+  // Fetch article analytics
+  const { data: articles } = await admin
+    .from("advisor_articles")
+    .select("id, title, slug, view_count, click_count, profile_clicks, lead_clicks, status")
+    .eq("professional_id", advisorId)
+    .eq("status", "published")
+    .order("view_count", { ascending: false });
+
+  // Fetch engagement analytics from analytics_events
+  const { data: engagementEvents } = await admin
+    .from("analytics_events")
+    .select("event_type")
+    .eq("metadata->>advisor_id", String(advisorId))
+    .gte("created_at", thirtyDaysAgo);
+
+  const engagementCounts: Record<string, number> = {};
+  for (const ev of engagementEvents || []) {
+    engagementCounts[ev.event_type] = (engagementCounts[ev.event_type] || 0) + 1;
+  }
+
   return NextResponse.json({
     leads: leads || [],
     stats: {
@@ -82,6 +119,19 @@ export async function GET(request: NextRequest) {
       totalBilledCents: totalBilled,
       pendingBilledCents: pendingBilled,
       reviewCount: reviews?.length || 0,
+      // Engagement analytics
+      phoneClicks: engagementCounts["advisor_phone_click"] || 0,
+      websiteClicks: engagementCounts["advisor_website_click"] || 0,
+      bookingClicks: engagementCounts["advisor_booking_click"] || 0,
+      articleViews: (articles || []).reduce((s: number, a: Record<string, unknown>) => s + (Number(a.view_count) || 0), 0),
+      searchImpressions: engagementCounts["advisor_search_impression"] || 0,
+      // Articles data
+      articles: (articles || []).map((a: Record<string, unknown>) => ({
+        title: a.title,
+        slug: a.slug,
+        views: a.view_count || 0,
+        clicks: a.profile_clicks || 0,
+      })),
     },
     viewsByDay: views || [],
     billing: billing || [],
