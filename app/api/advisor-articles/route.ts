@@ -99,8 +99,21 @@ export async function POST(request: NextRequest) {
   const wordCount = calcWordCount(content);
   const readTime = calcReadTime(wordCount);
 
-  if (isSubmit && wordCount < 300) {
-    return NextResponse.json({ error: "Articles must be at least 300 words. Current: " + wordCount }, { status: 400 });
+  if (isSubmit) {
+    if (wordCount < 300) {
+      return NextResponse.json({ error: `Articles must be at least 300 words. Current: ${wordCount}` }, { status: 400 });
+    }
+    // Server-side compliance checks
+    const lower = content.toLowerCase();
+    if (/(guaranteed returns|will earn|promise.*return|guaranteed.*profit)/i.test(content)) {
+      return NextResponse.json({ error: "Article contains performance guarantees. Please remove any language that promises or guarantees specific returns." }, { status: 400 });
+    }
+    if (/(contact me|call us|my firm|visit our website|book a consultation with me|sign up now)/i.test(content)) {
+      return NextResponse.json({ error: "Article contains promotional language (e.g. 'contact me', 'my firm'). Please remove self-promotion — your profile link is added automatically." }, { status: 400 });
+    }
+    if (title.trim().length < 15) {
+      return NextResponse.json({ error: "Title is too short. Use at least 15 characters for a descriptive headline." }, { status: 400 });
+    }
   }
 
   const articleSlug = slugify(title.trim()) + "-" + Date.now().toString(36);
@@ -206,8 +219,17 @@ export async function PUT(request: NextRequest) {
   }
 
   if (action === "submit") {
+    // Fetch current content for compliance checks if not provided in update
+    const checkContent = updates.content || (await supabase.from("advisor_articles").select("content, title").eq("id", id).single()).data?.content || "";
+    const checkTitle = updates.title || artTitle || "";
+    const submitWc = calcWordCount(checkContent);
+    if (submitWc < 300) return NextResponse.json({ error: `Articles must be at least 300 words. Current: ${submitWc}` }, { status: 400 });
+    if (/(guaranteed returns|will earn|promise.*return|guaranteed.*profit)/i.test(checkContent)) return NextResponse.json({ error: "Article contains performance guarantees." }, { status: 400 });
+    if (/(contact me|call us|my firm|visit our website|book a consultation with me|sign up now)/i.test(checkContent)) return NextResponse.json({ error: "Article contains promotional language." }, { status: 400 });
+
     const sf: Record<string, unknown> = { status: "submitted", submitted_at: new Date().toISOString() };
     for (const k of ["title", "content", "excerpt", "category"]) { if (updates[k]) sf[k] = updates[k]; }
+    if (updates.content) { sf.word_count = submitWc; sf.read_time = calcReadTime(submitWc); }
     const { error } = await supabase.from("advisor_articles").update(sf).eq("id", id);
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
     await logMod(supabase, id, "resubmitted", "advisor", undefined, oldStatus, "submitted");

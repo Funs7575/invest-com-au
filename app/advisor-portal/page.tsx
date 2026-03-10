@@ -1105,22 +1105,120 @@ function AdvisorArticlesSection({ advisorId }: { advisorId?: number }) {
     } finally { setSaving(false); }
   };
 
+  const [acknowledged, setAcknowledged] = useState(false);
+
+  // Live content compliance checks
+  const contentChecks = (() => {
+    const wc = content.split(/\s+/).filter(Boolean).length;
+    const lower = content.toLowerCase();
+    const checks: { key: string; label: string; pass: boolean; severity: "error" | "warn" | "info" }[] = [
+      { key: "words", label: `Minimum 600 words (${wc}/600)`, pass: wc >= 600, severity: wc < 300 ? "error" : "warn" },
+      { key: "title", label: "Title is 20-80 characters", pass: title.length >= 20 && title.length <= 80, severity: "warn" },
+      { key: "excerpt", label: "Excerpt is provided (50+ chars)", pass: (excerpt?.length || 0) >= 50, severity: "warn" },
+      { key: "no_promo", label: "No promotional language detected", pass: !/(contact me|call us|my firm|visit our website|book a consultation with me|sign up now)/i.test(content), severity: "error" },
+      { key: "no_guarantees", label: "No performance guarantees", pass: !/(guaranteed returns|will earn|promise.*return|guaranteed.*profit)/i.test(content), severity: "error" },
+      { key: "disclaimer", label: "Contains general advice disclaimer", pass: /(general (advice|information)|not personal (financial )?advice|consult a (qualified )?professional)/i.test(content) || wc < 200, severity: "warn" },
+      { key: "no_links", label: "No external self-promotion links", pass: !/(https?:\/\/(?!invest\.com\.au))/i.test(content) || /https?:\/\/(ato\.gov|asic\.gov|moneysmart)/i.test(content), severity: "warn" },
+      { key: "aus_focus", label: "References Australian context", pass: /(australia|australian|asic|ato|asx|super(annuation)?|centrelink|franking|aud)/i.test(lower) || wc < 200, severity: "info" },
+    ];
+    return checks;
+  })();
+  const hasErrors = contentChecks.some(c => !c.pass && c.severity === "error");
+  const passCount = contentChecks.filter(c => c.pass).length;
+
   if (loading) return <div className="animate-pulse space-y-3"><div className="h-8 w-48 bg-slate-200 rounded" /><div className="h-24 bg-slate-100 rounded-xl" /></div>;
 
   // ── EDITOR VIEW ──
   if (mode === "write") {
+    const wc = content.split(/\s+/).filter(Boolean).length;
     return (
       <div>
-        <button onClick={() => { resetForm(); setMode("list"); }} className="flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-700 mb-4">
+        <button onClick={() => { resetForm(); setAcknowledged(false); setMode("list"); }} className="flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-700 mb-4">
           <Icon name="arrow-left" size={14} /> Back to articles
         </button>
 
         <h2 className="text-lg font-bold text-slate-900 mb-4">{editId ? "Edit Article" : "Write New Article"}</h2>
 
+        {/* ═══ COMPLIANCE BRIEFING ═══ */}
+        <div className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-4 md:p-5 mb-5">
+          <div className="flex items-start gap-3 mb-3">
+            <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center shrink-0">
+              <Icon name="shield" size={16} />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-slate-900">Content & Compliance Guidelines</h3>
+              <p className="text-xs text-slate-500 mt-0.5">All articles are reviewed by our editorial team before publication. Please ensure your content meets these requirements.</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-3">
+            {/* Regulatory compliance */}
+            <div className="bg-white/70 border border-amber-100 rounded-lg p-3">
+              <h4 className="text-[0.65rem] font-bold text-amber-800 uppercase tracking-wide mb-1.5">Regulatory Requirements</h4>
+              <ul className="text-[0.62rem] text-slate-600 space-y-1">
+                <li className="flex gap-1.5"><span className="text-amber-500 shrink-0">⚖️</span> Include a <strong>general advice warning</strong> where applicable</li>
+                <li className="flex gap-1.5"><span className="text-amber-500 shrink-0">🚫</span> <strong>No performance guarantees</strong> — never promise or imply specific returns</li>
+                <li className="flex gap-1.5"><span className="text-amber-500 shrink-0">📋</span> State that content is <strong>general in nature, not personal advice</strong></li>
+                <li className="flex gap-1.5"><span className="text-amber-500 shrink-0">🇦🇺</span> Reference <strong>Australian regulations</strong> (ASIC, ATO, APRA) where relevant</li>
+              </ul>
+            </div>
+
+            {/* Content standards */}
+            <div className="bg-white/70 border border-amber-100 rounded-lg p-3">
+              <h4 className="text-[0.65rem] font-bold text-amber-800 uppercase tracking-wide mb-1.5">Content Standards</h4>
+              <ul className="text-[0.62rem] text-slate-600 space-y-1">
+                <li className="flex gap-1.5"><span className="text-amber-500 shrink-0">📝</span> Minimum <strong>600 words</strong>, recommended 800-1,500</li>
+                <li className="flex gap-1.5"><span className="text-amber-500 shrink-0">🎯</span> <strong>Educational and informational</strong> — not a sales pitch for your firm</li>
+                <li className="flex gap-1.5"><span className="text-amber-500 shrink-0">✅</span> <strong>Factual claims must be accurate</strong> and current (tax rates, rules, etc.)</li>
+                <li className="flex gap-1.5"><span className="text-amber-500 shrink-0">🆕</span> Must be <strong>100% original</strong> — not published elsewhere or AI-generated without editing</li>
+              </ul>
+            </div>
+
+            {/* What to avoid */}
+            <div className="bg-white/70 border border-red-100 rounded-lg p-3">
+              <h4 className="text-[0.65rem] font-bold text-red-700 uppercase tracking-wide mb-1.5">Will Be Rejected</h4>
+              <ul className="text-[0.62rem] text-slate-600 space-y-1">
+                <li className="flex gap-1.5"><span className="text-red-400 shrink-0">✗</span> Direct promotion of your firm or services (&quot;contact me&quot;, &quot;book a consultation&quot;)</li>
+                <li className="flex gap-1.5"><span className="text-red-400 shrink-0">✗</span> Specific product recommendations presented as personal advice</li>
+                <li className="flex gap-1.5"><span className="text-red-400 shrink-0">✗</span> External links to your own website or booking page</li>
+                <li className="flex gap-1.5"><span className="text-red-400 shrink-0">✗</span> Plagiarised, scraped, or unsubstantially AI-generated content</li>
+              </ul>
+            </div>
+
+            {/* What works well */}
+            <div className="bg-white/70 border border-emerald-100 rounded-lg p-3">
+              <h4 className="text-[0.65rem] font-bold text-emerald-700 uppercase tracking-wide mb-1.5">What Performs Best</h4>
+              <ul className="text-[0.62rem] text-slate-600 space-y-1">
+                <li className="flex gap-1.5"><span className="text-emerald-500 shrink-0">★</span> Real-world case studies (anonymised) from your practice</li>
+                <li className="flex gap-1.5"><span className="text-emerald-500 shrink-0">★</span> Practical step-by-step guidance readers can act on</li>
+                <li className="flex gap-1.5"><span className="text-emerald-500 shrink-0">★</span> Common mistakes or misconceptions you see clients make</li>
+                <li className="flex gap-1.5"><span className="text-emerald-500 shrink-0">★</span> Timely topics (EOFY, super changes, market events)</li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Dynamic guidelines from DB */}
+          {guidelines.length > 0 && (
+            <details className="group">
+              <summary className="text-[0.62rem] font-semibold text-amber-700 cursor-pointer hover:text-amber-900">View full editorial guidelines ({guidelines.length} rules)</summary>
+              <ul className="text-[0.62rem] text-slate-500 space-y-1 mt-2 pl-2 border-l-2 border-amber-200">
+                {guidelines.map(g => (
+                  <li key={g.key}><strong className="text-slate-600">{g.title}:</strong> {g.description}</li>
+                ))}
+              </ul>
+            </details>
+          )}
+
+          <p className="text-[0.56rem] text-amber-600 mt-2">Your published article will link to your professional profile, building your credibility and driving enquiries. Better content = more visibility.</p>
+        </div>
+
+        {/* ═══ ARTICLE FORM ═══ */}
         <div className="space-y-4">
           <div>
             <label className="block text-xs font-bold text-slate-700 mb-1">Title *</label>
             <input value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. 5 SMSF Mistakes I See Every Tax Season" className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30" />
+            {title.length > 0 && title.length < 20 && <p className="text-[0.58rem] text-amber-600 mt-0.5">Title should be at least 20 characters for good SEO</p>}
+            {title.length > 80 && <p className="text-[0.58rem] text-amber-600 mt-0.5">Title is over 80 characters — may be truncated in search results</p>}
           </div>
 
           <div className="grid grid-cols-2 gap-3">
@@ -1138,7 +1236,6 @@ function AdvisorArticlesSection({ advisorId }: { advisorId?: number }) {
             </div>
           </div>
 
-          {/* Tier explanation */}
           <div className="bg-violet-50 border border-violet-200 rounded-lg p-3">
             <p className="text-xs font-bold text-violet-700 mb-1">{PRICING_TIERS.find(t => t.key === tier)?.label}</p>
             <p className="text-xs text-violet-600">{PRICING_TIERS.find(t => t.key === tier)?.desc}</p>
@@ -1152,41 +1249,62 @@ function AdvisorArticlesSection({ advisorId }: { advisorId?: number }) {
 
           <div>
             <label className="block text-xs font-bold text-slate-700 mb-1">Content * <span className="font-normal text-slate-400">(Markdown supported)</span></label>
-            <textarea value={content} onChange={e => setContent(e.target.value)} placeholder="Write your article here. Use **bold**, *italic*, ## headings, and - bullet points." rows={16} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 resize-vertical font-mono" />
-            <p className="text-[0.58rem] text-slate-400 mt-1">{content.split(/\s+/).filter(Boolean).length} words</p>
+            <textarea value={content} onChange={e => setContent(e.target.value)} placeholder={"Write your article here. Use **bold**, *italic*, ## headings, and - bullet points.\n\nRemember to include a general advice disclaimer, e.g.:\n\"This is general information only and does not constitute personal financial advice. Consider your own circumstances before acting.\""} rows={16} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 resize-vertical font-mono" />
+            <div className="flex items-center justify-between mt-1">
+              <p className={`text-[0.58rem] ${wc < 600 ? "text-amber-600" : "text-emerald-600"}`}>{wc} words {wc < 600 ? `(${600 - wc} more needed)` : "✓"}</p>
+              <p className="text-[0.58rem] text-slate-400">~{Math.max(1, Math.ceil(wc / 250))} min read</p>
+            </div>
           </div>
 
-          <div className="bg-slate-50 border border-slate-200 rounded-lg p-3">
-            <h4 className="text-xs font-bold text-slate-700 mb-2">Submission Guidelines</h4>
-            {guidelines.length > 0 ? (
-              <ul className="text-[0.62rem] text-slate-500 space-y-1">
-                {guidelines.map(g => (
-                  <li key={g.key} className="flex gap-1.5">
-                    <span className="text-violet-400 mt-0.5 shrink-0">•</span>
-                    <span><strong className="text-slate-600">{g.title}:</strong> {g.description}</span>
-                  </li>
+          {/* ═══ LIVE COMPLIANCE CHECKS ═══ */}
+          {(content.length > 100 || title.length > 5) && (
+            <div className={`border rounded-xl p-3 ${hasErrors ? "bg-red-50 border-red-200" : passCount === contentChecks.length ? "bg-emerald-50 border-emerald-200" : "bg-amber-50 border-amber-200"}`}>
+              <div className="flex items-center gap-2 mb-2">
+                <Icon name={hasErrors ? "alert-triangle" : passCount === contentChecks.length ? "check-circle" : "info"} size={14} />
+                <h4 className="text-xs font-bold text-slate-700">
+                  Content Checks ({passCount}/{contentChecks.length} passing)
+                </h4>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-1">
+                {contentChecks.map(c => (
+                  <div key={c.key} className="flex items-center gap-1.5 text-[0.62rem]">
+                    <span className={c.pass ? "text-emerald-500" : c.severity === "error" ? "text-red-500" : "text-amber-500"}>
+                      {c.pass ? "✓" : c.severity === "error" ? "✗" : "!"}
+                    </span>
+                    <span className={c.pass ? "text-slate-500" : c.severity === "error" ? "text-red-700 font-semibold" : "text-amber-700"}>{c.label}</span>
+                  </div>
                 ))}
-              </ul>
-            ) : (
-              <ul className="text-[0.62rem] text-slate-500 space-y-0.5">
-                <li>• Minimum 600 words, recommended 800-1500</li>
-                <li>• Must be original content (not published elsewhere)</li>
-                <li>• Informational and educational — not a sales pitch</li>
-                <li>• Include practical takeaways readers can act on</li>
-                <li>• No specific product recommendations (general advice only)</li>
-              </ul>
-            )}
+              </div>
+              {hasErrors && <p className="text-[0.56rem] text-red-600 mt-1.5 font-semibold">Fix the errors above before submitting. Articles with compliance issues will be rejected.</p>}
+            </div>
+          )}
+
+          {/* ═══ ACKNOWLEDGEMENT + SUBMIT ═══ */}
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+            <label className="flex items-start gap-2.5 cursor-pointer">
+              <input type="checkbox" checked={acknowledged} onChange={e => setAcknowledged(e.target.checked)} className="w-4 h-4 mt-0.5 rounded border-slate-300 text-violet-600 focus:ring-violet-500" />
+              <span className="text-xs text-slate-600 leading-relaxed">
+                I confirm this article is <strong>original content</strong>, complies with the <strong>editorial guidelines</strong> above, does not constitute <strong>personal financial advice</strong>, and does not contain <strong>promotional material</strong> for my firm or any specific product. I understand articles that violate these guidelines will be rejected or require revision.
+              </span>
+            </label>
           </div>
 
           <div className="flex gap-2">
             <button onClick={() => handleSave("save")} disabled={saving || !title.trim() || !content.trim()} className="px-4 py-2.5 border border-slate-300 text-slate-700 text-sm font-semibold rounded-lg hover:bg-slate-50 disabled:opacity-40 transition-colors">
               {saving ? "Saving..." : "Save Draft"}
             </button>
-            <button onClick={() => handleSave("submit")} disabled={saving || !title.trim() || !content.trim() || content.split(/\s+/).length < 100} className="px-4 py-2.5 bg-violet-600 text-white text-sm font-bold rounded-lg hover:bg-violet-700 disabled:opacity-40 transition-colors">
+            <button
+              onClick={() => handleSave("submit")}
+              disabled={saving || !title.trim() || !content.trim() || wc < 300 || hasErrors || !acknowledged}
+              className="px-4 py-2.5 bg-violet-600 text-white text-sm font-bold rounded-lg hover:bg-violet-700 disabled:opacity-40 transition-colors"
+            >
               {saving ? "Submitting..." : "Submit for Review"}
             </button>
-            {content.split(/\s+/).length < 100 && content.length > 0 && (
-              <span className="self-center text-[0.62rem] text-amber-600">Min 100 words to submit ({content.split(/\s+/).filter(Boolean).length}/100)</span>
+            {!acknowledged && content.length > 100 && (
+              <span className="self-center text-[0.62rem] text-amber-600">Please acknowledge the guidelines above</span>
+            )}
+            {wc > 0 && wc < 300 && (
+              <span className="self-center text-[0.62rem] text-amber-600">Min 300 words to submit ({wc}/300)</span>
             )}
           </div>
         </div>
