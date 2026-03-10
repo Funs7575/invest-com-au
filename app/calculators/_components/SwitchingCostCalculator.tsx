@@ -128,7 +128,7 @@ export default function SwitchingCostCalculator({ brokers, searchParams }: Props
           ) : (
             <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 md:p-12 text-center h-full flex flex-col items-center justify-center">
               <Icon name="scale" size={32} className="text-slate-300 mx-auto mb-3 md:mb-4 md:!w-12 md:!h-12" />
-              <h3 className="text-base md:text-lg font-bold text-slate-900 mb-1">Compare Two Brokers</h3>
+              <h3 className="text-base md:text-lg font-bold text-slate-900 mb-1">Compare Two Platforms</h3>
               <p className="text-xs md:text-sm text-slate-500 max-w-xs">Select your current and target platform to see the cost analysis.</p>
             </div>
           )}

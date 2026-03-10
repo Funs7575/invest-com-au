@@ -189,7 +189,7 @@ export default function HowWeVerifyPage() {
                 href="/compare"
                 className="inline-block px-8 py-3 border border-slate-700 text-slate-700 font-semibold rounded-lg hover:bg-slate-700 hover:text-white transition-colors"
               >
-                Compare Brokers
+                Compare Platforms
               </Link>
             </div>
           </section>

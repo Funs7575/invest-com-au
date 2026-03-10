@@ -349,98 +349,47 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Broker Logo Strip — desktop only */}
-      <section className="hidden md:block py-4 bg-white border-b border-slate-100">
-        <div className="container-custom">
-          <p className="text-[0.69rem] uppercase tracking-widest text-slate-500 text-center mb-3 font-medium">Platforms we compare</p>
-          <div className="flex items-center justify-center gap-8 flex-wrap opacity-70">
-            {(brokers as Broker[])?.slice(0, 8).map((broker) => (
-              <a key={broker.id} href={`/broker/${broker.slug}`} className="flex items-center gap-2 hover:opacity-100 transition-opacity">
-                <BrokerLogo broker={broker} size="sm" />
-                <span className="text-sm font-semibold text-slate-500">{broker.name}</span>
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* Comparison Table */}
-      <ScrollFadeIn>
-        <section className="py-2.5 sm:py-8 md:py-16 bg-slate-50">
-          <div className="container-custom">
-            <div className="flex items-center justify-between gap-2 mb-1.5 sm:mb-5 md:mb-8">
-              <div>
-                <h2 className="text-base md:text-3xl font-extrabold text-slate-900">
-                  Top Rated Platforms
-                </h2>
-                <p className="text-[0.62rem] md:text-sm text-slate-400 mt-0.5 md:mt-1 flex items-center gap-1.5">
-                  <span className="hidden md:inline">Ranked by fees, features, and user experience<span className="mx-2 text-slate-300">&middot;</span></span>
-                  <FeesFreshnessIndicator lastChecked={getMostRecentFeeCheck((brokers as Broker[]) || [])} variant="inline" />
-                </p>
-              </div>
-              <Link
-                href="/compare"
-                className="md:hidden text-[0.69rem] font-semibold text-slate-500 hover:text-slate-900 shrink-0 inline-flex items-center px-1"
-              >
-                View all →
-              </Link>
-            </div>
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
-              <HomepageComparisonTable brokers={(brokers as Broker[]) || []} defaultTab="Share Trading" />
-            </div>
-            <div className="hidden sm:block text-center mt-5 md:mt-8">
-              <Link
-                href="/compare"
-                className="inline-block px-5 md:px-7 py-3 md:py-3.5 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 hover:scale-105 hover:shadow-lg transition-all duration-200 text-sm"
-              >
-                View All {brokerCount}+ Platforms &rarr;
-              </Link>
-            </div>
-          </div>
-        </section>
-      </ScrollFadeIn>
-
-      {/* Live Activity — fee changes + trending comparisons */}
-      {(feeChanges.length > 0 || popularComparisons.length > 0) && (
-        <section className="py-2 md:py-6 bg-white">
-          <div className="container-custom max-w-xl">
-            <LiveActivityTicker
-              feeChanges={feeChanges}
-              popularComparisons={popularComparisons}
-            />
-          </div>
-        </section>
-      )}
-
-      {/* ═══════ HOW IT WORKS — explains the two paths ═══════ */}
-      <section className="py-4 md:py-14 bg-white border-b border-slate-100">
-        <div className="container-custom max-w-3xl">
-          <p className="text-[0.62rem] md:text-xs text-slate-400 text-center uppercase tracking-widest font-semibold mb-1 md:mb-2">How it works</p>
-          <h2 className="text-base md:text-2xl font-extrabold text-slate-900 text-center mb-3 md:mb-8">Two Ways We Help You Invest</h2>
-          <div className="grid grid-cols-2 gap-3 md:gap-6">
-            <Link href="/compare" className="relative bg-white border border-slate-200 rounded-2xl p-3 md:p-7 card-hover group overflow-hidden">
+      {/* ═══════ DECISION SPLIT — 3-path fork ═══════ */}
+      <section className="py-4 md:py-12 bg-white border-b border-slate-100">
+        <div className="container-custom max-w-4xl">
+          <p className="text-[0.62rem] md:text-xs text-slate-400 text-center uppercase tracking-widest font-semibold mb-1 md:mb-2">Choose your path</p>
+          <h2 className="text-base md:text-2xl font-extrabold text-slate-900 text-center mb-3 md:mb-8">How Can We Help?</h2>
+          <div className="grid grid-cols-3 gap-2 md:gap-5">
+            <Link href="/compare" className="relative bg-white border border-slate-200 rounded-2xl p-3 md:p-6 card-hover group overflow-hidden">
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-slate-900 to-slate-600" />
-              <div className="w-9 h-9 md:w-14 md:h-14 bg-gradient-to-br from-slate-900 to-slate-700 rounded-xl flex items-center justify-center mb-2 md:mb-4 shadow-lg shadow-slate-900/20">
+              <div className="w-9 h-9 md:w-12 md:h-12 bg-gradient-to-br from-slate-900 to-slate-700 rounded-xl flex items-center justify-center mb-2 md:mb-3 shadow-lg shadow-slate-900/20">
                 <Icon name="bar-chart-2" size={18} className="text-white md:hidden" />
-                <Icon name="bar-chart-2" size={28} className="text-white hidden md:block" />
+                <Icon name="bar-chart-2" size={24} className="text-white hidden md:block" />
               </div>
-              <h3 className="text-xs md:text-lg font-bold text-slate-900 mb-0.5 md:mb-1.5 group-hover:text-slate-700">Compare Platforms</h3>
-              <p className="text-[0.6rem] md:text-sm text-slate-500 leading-relaxed">Compare fees, features, and safety across 33+ platforms. Shares, crypto, super, ETFs, and robo-advisors.</p>
-              <span className="hidden md:inline-block mt-3 text-xs font-bold text-slate-400 group-hover:text-slate-600 transition-colors">Explore →</span>
+              <h3 className="text-xs md:text-base font-bold text-slate-900 mb-0.5 md:mb-1 group-hover:text-slate-700">Compare Platforms</h3>
+              <p className="text-[0.58rem] md:text-sm text-slate-500 leading-relaxed hidden sm:block">I want to choose a platform myself</p>
+              <span className="hidden md:inline-block mt-2 text-xs font-bold text-slate-400 group-hover:text-slate-600 transition-colors">Explore →</span>
             </Link>
-            <Link href="/find-advisor" className="relative bg-white border border-violet-200 rounded-2xl p-3 md:p-7 card-hover group overflow-hidden">
+            <Link href="/find-advisor" className="relative bg-white border border-violet-200 rounded-2xl p-3 md:p-6 card-hover group overflow-hidden">
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-violet-600 to-violet-400" />
-              <div className="w-9 h-9 md:w-14 md:h-14 bg-gradient-to-br from-violet-600 to-violet-500 rounded-xl flex items-center justify-center mb-2 md:mb-4 shadow-lg shadow-violet-500/20">
+              <div className="w-9 h-9 md:w-12 md:h-12 bg-gradient-to-br from-violet-600 to-violet-500 rounded-xl flex items-center justify-center mb-2 md:mb-3 shadow-lg shadow-violet-500/20">
                 <Icon name="users" size={18} className="text-white md:hidden" />
-                <Icon name="users" size={28} className="text-white hidden md:block" />
+                <Icon name="users" size={24} className="text-white hidden md:block" />
               </div>
-              <h3 className="text-xs md:text-lg font-bold text-violet-900 mb-0.5 md:mb-1.5 group-hover:text-violet-700">Find an Advisor</h3>
-              <p className="text-[0.6rem] md:text-sm text-violet-600 leading-relaxed">Connect with verified SMSF accountants, financial planners, tax agents, and mortgage brokers.</p>
-              <span className="hidden md:inline-block mt-3 text-xs font-bold text-violet-400 group-hover:text-violet-600 transition-colors">Find yours →</span>
+              <h3 className="text-xs md:text-base font-bold text-violet-900 mb-0.5 md:mb-1 group-hover:text-violet-700">Find an Advisor</h3>
+              <p className="text-[0.58rem] md:text-sm text-violet-600 leading-relaxed hidden sm:block">I want help from a verified professional</p>
+              <span className="hidden md:inline-block mt-2 text-xs font-bold text-violet-400 group-hover:text-violet-600 transition-colors">Find yours →</span>
+            </Link>
+            <Link href="/quiz" className="relative bg-white border border-amber-200 rounded-2xl p-3 md:p-6 card-hover group overflow-hidden">
+              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 to-amber-400" />
+              <div className="w-9 h-9 md:w-12 md:h-12 bg-gradient-to-br from-amber-500 to-amber-400 rounded-xl flex items-center justify-center mb-2 md:mb-3 shadow-lg shadow-amber-500/20">
+                <Icon name="target" size={18} className="text-white md:hidden" />
+                <Icon name="target" size={24} className="text-white hidden md:block" />
+              </div>
+              <h3 className="text-xs md:text-base font-bold text-amber-900 mb-0.5 md:mb-1 group-hover:text-amber-700">Take the Quiz</h3>
+              <p className="text-[0.58rem] md:text-sm text-amber-700 leading-relaxed hidden sm:block">Not sure? Get a personalised match in 60s</p>
+              <span className="hidden md:inline-block mt-2 text-xs font-bold text-amber-400 group-hover:text-amber-600 transition-colors">Start →</span>
             </Link>
           </div>
         </div>
       </section>
+
 
       {/* ═══════ ADVISOR SECTION — moved up from bottom ═══════ */}
       <ScrollFadeIn>
@@ -510,6 +459,69 @@ export default async function HomePage() {
           </div>
         </section>
       </ScrollFadeIn>
+
+      {/* Broker Logo Strip — desktop only */}
+      <section className="hidden md:block py-4 bg-white border-b border-slate-100">
+        <div className="container-custom">
+          <p className="text-[0.69rem] uppercase tracking-widest text-slate-500 text-center mb-3 font-medium">Platforms we compare</p>
+          <div className="flex items-center justify-center gap-8 flex-wrap opacity-70">
+            {(brokers as Broker[])?.slice(0, 8).map((broker) => (
+              <a key={broker.id} href={`/broker/${broker.slug}`} className="flex items-center gap-2 hover:opacity-100 transition-opacity">
+                <BrokerLogo broker={broker} size="sm" />
+                <span className="text-sm font-semibold text-slate-500">{broker.name}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Comparison Table */}
+      <ScrollFadeIn>
+        <section className="py-2.5 sm:py-8 md:py-16 bg-slate-50">
+          <div className="container-custom">
+            <div className="flex items-center justify-between gap-2 mb-1.5 sm:mb-5 md:mb-8">
+              <div>
+                <h2 className="text-base md:text-3xl font-extrabold text-slate-900">
+                  Top Rated Platforms
+                </h2>
+                <p className="text-[0.62rem] md:text-sm text-slate-400 mt-0.5 md:mt-1 flex items-center gap-1.5">
+                  <span className="hidden md:inline">Ranked by fees, features, and user experience<span className="mx-2 text-slate-300">&middot;</span></span>
+                  <FeesFreshnessIndicator lastChecked={getMostRecentFeeCheck((brokers as Broker[]) || [])} variant="inline" />
+                </p>
+              </div>
+              <Link
+                href="/compare"
+                className="md:hidden text-[0.69rem] font-semibold text-slate-500 hover:text-slate-900 shrink-0 inline-flex items-center px-1"
+              >
+                View all →
+              </Link>
+            </div>
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
+              <HomepageComparisonTable brokers={(brokers as Broker[]) || []} defaultTab="Share Trading" />
+            </div>
+            <div className="hidden sm:block text-center mt-5 md:mt-8">
+              <Link
+                href="/compare"
+                className="inline-block px-5 md:px-7 py-3 md:py-3.5 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 hover:scale-105 hover:shadow-lg transition-all duration-200 text-sm"
+              >
+                View All {brokerCount}+ Platforms &rarr;
+              </Link>
+            </div>
+          </div>
+        </section>
+      </ScrollFadeIn>
+
+      {/* Live Activity — fee changes + trending comparisons */}
+      {(feeChanges.length > 0 || popularComparisons.length > 0) && (
+        <section className="py-2 md:py-6 bg-white">
+          <div className="container-custom max-w-xl">
+            <LiveActivityTicker
+              feeChanges={feeChanges}
+              popularComparisons={popularComparisons}
+            />
+          </div>
+        </section>
+      )}
 
       {/* Active Deals Section */}
       {(dealBrokers as Broker[])?.length > 0 && (

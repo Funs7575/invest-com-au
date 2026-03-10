@@ -42,7 +42,7 @@ export const metadata: Metadata = {
         url: "/api/og",
         width: 1200,
         height: 630,
-        alt: `${SITE_NAME} — Compare Australian Brokers`,
+        alt: `${SITE_NAME} — Compare Australian Investing Platforms`,
       },
     ],
   },

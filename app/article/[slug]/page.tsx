@@ -418,7 +418,7 @@ export default async function ArticlePage({
                   <div className="flex-1">
                     <h3 className="font-bold text-slate-900 mb-0.5 md:mb-1 text-sm md:text-base">Ready to act?</h3>
                     <p className="text-xs md:text-sm text-slate-600">
-                      Compare brokers from this article or use our quiz.
+                      Compare platforms from this article or use our quiz.
                     </p>
                   </div>
                   <div className="flex gap-2 shrink-0 w-full sm:w-auto">

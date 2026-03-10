@@ -40,7 +40,7 @@ const PLACEMENTS = [
   {
     name: "Quiz Results Boost",
     slug: "quiz-boost",
-    description: "Appear as a recommended broker in our personalised quiz results, reaching users with high purchase intent.",
+    description: "Appear as a recommended platform in our personalised quiz results, reaching users with high purchase intent.",
     type: "Featured",
     reach: "5,000+ monthly quiz completions",
   },
