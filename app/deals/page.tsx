@@ -9,7 +9,7 @@ import { sortWithSponsorship } from "@/lib/sponsorship";
 import DealsClient from "./DealsClient";
 import Icon from "@/components/Icon";
 
-const dealsTitle = `Investing Platform Deals & Promotions (${CURRENT_YEAR}) — Verified Offers`;
+const dealsTitle = `Platform Deals & Promotions (${CURRENT_YEAR})`;
 
 export const metadata: Metadata = {
   title: dealsTitle,

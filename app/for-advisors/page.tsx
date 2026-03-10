@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import Icon from "@/components/Icon";
 
 export const metadata: Metadata = {
-  title: "List Your Practice on Invest.com.au — Reach Australian Investors",
+  title: "List Your Practice — Reach Australian Investors",
   description:
     "Get qualified leads from Australian investors. Free profile, 3 free leads, then A$150 prepaid credit at $39/lead.",
   alternates: { canonical: "/for-advisors" },

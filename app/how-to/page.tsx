@@ -15,9 +15,9 @@ import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 
 export const revalidate = 3600;
 
-const pageTitle = `How-To Investing Guides for Australians (${CURRENT_YEAR})`;
+const pageTitle = `How-To Investing Guides (${CURRENT_YEAR})`;
 const pageDescription =
-  "Step-by-step investing guides for Australians. Learn how to buy shares, ETFs, Bitcoin, cryptocurrency, set up an SMSF, claim franking credits, invest in property, and more.";
+  "Step-by-step guides: buy shares, ETFs, Bitcoin, set up an SMSF, claim franking credits & more. Plain English for Australian investors.";
 
 export const metadata: Metadata = {
   title: `${pageTitle} | ${SITE_NAME}`,

@@ -4,7 +4,7 @@ import { getAllCategories } from "@/lib/best-broker-categories";
 import { absoluteUrl, breadcrumbJsonLd, REVIEW_AUTHOR, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 
-const bestTitle = `Best Investing Platforms in Australia (${CURRENT_YEAR}) — By Category`;
+const bestTitle = `Best Investing Platforms (${CURRENT_YEAR})`;
 
 export const metadata: Metadata = {
   title: bestTitle,

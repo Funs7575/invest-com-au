@@ -41,7 +41,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/advisor-guides/buyers-agent-vs-diy",
     
     "/portfolio-calculator",
-    "/advisor-apply", "/for-advisors", "/expert", "/switching-calculator", "/savings-calculator", "",
+    "/advisor-apply", "/switching-calculator", "/savings-calculator",
     "/share-trading", "/crypto", "/savings", "/super", "/cfd",
     "/how-to",
   ].map((path) => ({
@@ -180,7 +180,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "australiansuper-vs-hostplus", "australiansuper-vs-unisuper",
     "hostplus-vs-rest-super", "australiansuper-vs-qsuper",
     // Cross-type (popular search queries)
-    "stockspot-vs-vanguard-vap", "raiz-vs-spaceship",
+    "stockspot-vs-vanguard-vap",
     "brickx-vs-vanguard-vap",
   ];
 

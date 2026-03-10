@@ -8,7 +8,7 @@ import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 export const revalidate = 1800;
 
 export const metadata: Metadata = {
-  title: `Expert Insights — Advice from Verified Professionals (${CURRENT_YEAR})`,
+  title: `Expert Insights from Verified Advisors (${CURRENT_YEAR})`,
   description: "Read expert articles from verified Australian financial advisors, SMSF accountants, and tax agents. Practical investing insights you can act on.",
   robots: { index: true, follow: true },
   alternates: { canonical: "/expert" },

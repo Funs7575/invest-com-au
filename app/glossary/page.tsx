@@ -7,7 +7,7 @@ import GlossarySearch from "@/components/GlossarySearch";
 export const metadata: Metadata = {
   title: "Investing Glossary — Plain-English Definitions",
   description:
-    "A-Z glossary of Australian investing terms explained in plain English. Covers shares, ETFs, super, crypto, CFDs, property, robo-advisors, tax & regulatory jargon.",
+    "A-Z glossary of Australian investing terms in plain English. Shares, ETFs, super, crypto, CFDs, property & more.",
   alternates: { canonical: "/glossary" },
   openGraph: {
     title: "Investing Glossary — Invest.com.au",

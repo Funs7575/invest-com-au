@@ -21,7 +21,7 @@ import VersusHubSearch from "./VersusHubSearch";
 
 export const revalidate = 3600;
 
-const pageTitle = `Compare Brokers Head-to-Head (${CURRENT_YEAR}) | ${SITE_NAME}`;
+const pageTitle = `Compare Platforms Head-to-Head (${CURRENT_YEAR})`;
 const pageDescription =
   "Compare any two Australian brokers side by side. See fees, features, ratings, and our honest pick. Popular share broker and crypto exchange comparisons.";
 
