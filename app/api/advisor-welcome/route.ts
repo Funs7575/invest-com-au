@@ -1,8 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isRateLimited } from "@/lib/rate-limit";
+import { createClient } from "@/lib/supabase/server";
+import { getAdminEmails } from "@/lib/admin";
 
 export async function POST(request: NextRequest) {
   try {
+    // Admin-only: this sends welcome emails on behalf of the platform
+    const supabase = await createClient();
+    const { data: { user }, error: authErr } = await supabase.auth.getUser();
+    if (authErr || !user || !getAdminEmails().includes(user.email?.toLowerCase() || "")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
     if (await isRateLimited(`advisor_welcome:${ip}`, 5, 60)) {
       return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });

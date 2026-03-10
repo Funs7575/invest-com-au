@@ -5,9 +5,17 @@ import { isRateLimited } from "@/lib/rate-limit";
 
 import { notificationFooter } from "@/lib/email-templates";
 import { getSiteUrl } from "@/lib/url";
-import { getAdminEmail } from "@/lib/admin";
+import { getAdminEmail, getAdminEmails } from "@/lib/admin";
 
 const SITE_URL = getSiteUrl();
+
+/** Verify the current user is an admin. Returns email or null. */
+async function verifyAdmin(): Promise<string | null> {
+  const supabase = await createClient();
+  const { data: { user }, error } = await supabase.auth.getUser();
+  if (error || !user) return null;
+  return getAdminEmails().includes(user.email?.toLowerCase() || "") ? user.email! : null;
+}
 
 function calcWordCount(text: string): number {
   return text.trim().split(/\s+/).filter(Boolean).length;
@@ -43,7 +51,11 @@ export async function GET(request: NextRequest) {
   const slug = sp.get("slug");
 
   if (articleId) {
-    const { data } = await supabase.from("advisor_articles").select("*").eq("id", parseInt(articleId)).single();
+    // Single article by ID — admin only (contains unpublished/draft content)
+    const adminEmail = await verifyAdmin();
+    if (!adminEmail) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const admin = createAdminClient();
+    const { data } = await admin.from("advisor_articles").select("*").eq("id", parseInt(articleId)).single();
     if (!data) return NextResponse.json({ error: "Not found" }, { status: 404 });
     return NextResponse.json(data);
   }
@@ -61,14 +73,20 @@ export async function GET(request: NextRequest) {
   }
 
   if (mode === "admin") {
-    let q = supabase.from("advisor_articles").select("*, professionals!advisor_articles_professional_id_fkey(name, slug, firm_name, email)").order("created_at", { ascending: false });
+    const adminEmail = await verifyAdmin();
+    if (!adminEmail) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const admin = createAdminClient();
+    let q = admin.from("advisor_articles").select("*, professionals!advisor_articles_professional_id_fkey(name, slug, firm_name, email)").order("created_at", { ascending: false });
     if (sp.get("status")) q = q.eq("status", sp.get("status")!);
     const { data } = await q;
     return NextResponse.json(data || []);
   }
 
   if (mode === "moderation_log" && sp.get("article_id")) {
-    const { data } = await supabase.from("advisor_article_moderation_log").select("*").eq("article_id", parseInt(sp.get("article_id")!)).order("created_at", { ascending: false });
+    const adminEmail = await verifyAdmin();
+    if (!adminEmail) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const admin = createAdminClient();
+    const { data } = await admin.from("advisor_article_moderation_log").select("*").eq("article_id", parseInt(sp.get("article_id")!)).order("created_at", { ascending: false });
     return NextResponse.json(data || []);
   }
 
@@ -145,6 +163,13 @@ export async function PUT(request: NextRequest) {
   const body = await request.json();
   const { id, action, ...updates } = body;
   if (!id) return NextResponse.json({ error: "Article ID required" }, { status: 400 });
+
+  // Admin-only actions require auth verification
+  const ADMIN_ACTIONS = ["approve", "request_revision", "reject", "mark_paid", "waive_fee", "publish", "unpublish", "admin_edit"];
+  if (ADMIN_ACTIONS.includes(action)) {
+    const adminEmail = await verifyAdmin();
+    if (!adminEmail) return NextResponse.json({ error: "Unauthorized — admin access required" }, { status: 401 });
+  }
 
   const { data: cur } = await supabase.from("advisor_articles").select("status, title, author_name, slug, professionals!advisor_articles_professional_id_fkey(email, name)").eq("id", id).single();
   const oldStatus = cur?.status;
