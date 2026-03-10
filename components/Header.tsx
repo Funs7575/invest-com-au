@@ -168,7 +168,7 @@ export default function Header() {
               href="/quiz"
               className="px-3 py-1.5 bg-amber-600 text-white text-xs font-semibold rounded-lg hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:ring-offset-2 transition-colors"
             >
-              Quiz
+              Platform Quiz
             </Link>
             <Link
               href="/find-advisor"

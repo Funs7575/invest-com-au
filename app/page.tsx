@@ -310,7 +310,7 @@ export default async function HomePage() {
                 href="/quiz"
                 className="px-7 py-3.5 border-2 border-slate-300 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 hover:border-slate-400 hover:scale-105 transition-all duration-200 text-sm"
               >
-                60s Quiz &rarr;
+                Platform Quiz &rarr;
               </Link>
             </div>
             {/* Social proof */}
@@ -382,8 +382,8 @@ export default async function HomePage() {
                 <Icon name="target" size={18} className="text-white md:hidden" />
                 <Icon name="target" size={24} className="text-white hidden md:block" />
               </div>
-              <h3 className="text-xs md:text-base font-bold text-amber-900 mb-0.5 md:mb-1 group-hover:text-amber-700">Take the Quiz</h3>
-              <p className="text-[0.58rem] md:text-sm text-amber-700 leading-relaxed hidden sm:block">Not sure? Get a personalised match in 60s</p>
+              <h3 className="text-xs md:text-base font-bold text-amber-900 mb-0.5 md:mb-1 group-hover:text-amber-700">Platform Quiz</h3>
+              <p className="text-[0.58rem] md:text-sm text-amber-700 leading-relaxed hidden sm:block">Not sure which platform? Matched in 60 seconds</p>
               <span className="hidden md:inline-block mt-2 text-xs font-bold text-amber-400 group-hover:text-amber-600 transition-colors">Start →</span>
             </Link>
           </div>
