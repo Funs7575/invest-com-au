@@ -6,7 +6,8 @@ const log = logger("advisor-billing");
 
 /** Price per lead in cents after free tier is exhausted */
 export const DEFAULT_LEAD_PRICE_CENTS = 4900; // $49
-export const FREE_LEAD_LIMIT = 3;
+export const FREE_LEAD_LIMIT = 2;
+export const DEFAULT_TOPUP_CENTS = 20000; // A$200 credit top-up
 
 /**
  * Get or create a Stripe customer for a professional advisor.

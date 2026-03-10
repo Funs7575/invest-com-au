@@ -11,22 +11,24 @@ import ThemeToggle from "@/components/ThemeToggle";
 
 const navItems = [
   { href: "/broker-portal", label: "Dashboard", icon: "bar-chart" },
-  { href: "/broker-portal/campaigns", label: "Campaigns", icon: "megaphone" },
   { href: "/broker-portal/analytics", label: "Analytics", icon: "pie-chart" },
-  { href: "/broker-portal/wallet", label: "Wallet", icon: "wallet" },
-  { href: "/broker-portal/reports", label: "Reports", icon: "trending-up" },
-  { href: "/broker-portal/invoices", label: "Invoices", icon: "file-text" },
-  { href: "/broker-portal/conversions", label: "Conversions", icon: "target" },
-  { href: "/broker-portal/creatives", label: "Creatives", icon: "image" },
-  { href: "/broker-portal/creative-insights", label: "Creative Insights", icon: "bar-chart-2" },
-  { href: "/broker-portal/placements", label: "Placements", icon: "layout" },
-  { href: "/broker-portal/ab-tests", label: "A/B Tests", icon: "git-branch" },
-  { href: "/broker-portal/webhooks", label: "Webhooks", icon: "link" },
-  { href: "/broker-portal/packages", label: "Packages", icon: "package" },
-  { href: "/broker-portal/notifications", label: "Notifications", icon: "bell" },
-  { href: "/broker-portal/support", label: "Support", icon: "message-circle" },
   { href: "/broker-portal/settings", label: "Settings", icon: "settings" },
 ];
+
+// Full feature set — hidden for launch, re-enable in month 2-3
+// { href: "/broker-portal/campaigns", label: "Campaigns", icon: "megaphone" },
+// { href: "/broker-portal/wallet", label: "Wallet", icon: "wallet" },
+// { href: "/broker-portal/reports", label: "Reports", icon: "trending-up" },
+// { href: "/broker-portal/invoices", label: "Invoices", icon: "file-text" },
+// { href: "/broker-portal/conversions", label: "Conversions", icon: "target" },
+// { href: "/broker-portal/creatives", label: "Creatives", icon: "image" },
+// { href: "/broker-portal/creative-insights", label: "Creative Insights", icon: "bar-chart-2" },
+// { href: "/broker-portal/placements", label: "Placements", icon: "layout" },
+// { href: "/broker-portal/ab-tests", label: "A/B Tests", icon: "git-branch" },
+// { href: "/broker-portal/webhooks", label: "Webhooks", icon: "link" },
+// { href: "/broker-portal/packages", label: "Packages", icon: "package" },
+// { href: "/broker-portal/notifications", label: "Notifications", icon: "bell" },
+// { href: "/broker-portal/support", label: "Support", icon: "message-circle" },
 
 export default function BrokerPortalLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

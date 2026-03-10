@@ -15,6 +15,7 @@ type Advisor = {
   offer_text?: string; offer_terms?: string; offer_active?: boolean;
   firm_id?: number; is_firm_admin?: boolean; account_type?: string; status?: string;
   free_leads_used?: number; lead_price_cents?: number;
+  credit_balance_cents?: number; lifetime_credit_cents?: number; lifetime_lead_spend_cents?: number;
 };
 
 type FirmMember = { id: number; name: string; slug: string; email?: string; type: string; photo_url?: string; verified?: boolean; status?: string; created_at: string };
@@ -387,14 +388,41 @@ export default function AdvisorPortalPage() {
                 <div key={i} className="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-sm transition-shadow">
                   <div className="flex items-center justify-between mb-2">
                     <div className="text-xs text-slate-500 font-medium">{kpi.label}</div>
-                    <div className={`w-7 h-7 ${kpi.bg} rounded-lg flex items-center justify-center`}>
-                      <Icon name={kpi.icon} size={14} className={kpi.color} />
-                    </div>
+                    <div className={`w-8 h-8 ${kpi.bg} rounded-lg flex items-center justify-center`}><Icon name={kpi.icon} size={16} className={kpi.color} /></div>
                   </div>
-                  <div className={`text-2xl font-extrabold ${kpi.color}`}>{kpi.value}</div>
+                  <div className="text-2xl font-extrabold text-slate-900">{typeof kpi.value === "number" ? kpi.value.toLocaleString() : kpi.value}</div>
                   <div className="text-[0.62rem] text-slate-400 mt-0.5">{kpi.sub}</div>
                 </div>
               ))}
+            </div>
+
+            {/* Credit balance banner */}
+            <div className="bg-gradient-to-r from-violet-600 to-violet-800 rounded-xl p-4 mb-6 text-white flex items-center justify-between">
+              <div>
+                <p className="text-[0.65rem] font-semibold uppercase tracking-wider text-violet-200">Lead Credit Balance</p>
+                <p className="text-2xl font-extrabold">${((advisor?.credit_balance_cents || 0) / 100).toFixed(0)}</p>
+                <p className="text-[0.62rem] text-violet-200 mt-0.5">
+                  {(advisor?.free_leads_used || 0) < 2
+                    ? `${2 - (advisor?.free_leads_used || 0)} free leads remaining`
+                    : `$${((advisor?.lead_price_cents || 4900) / 100).toFixed(0)} per lead · ${Math.floor((advisor?.credit_balance_cents || 0) / (advisor?.lead_price_cents || 4900))} leads remaining`
+                  }
+                </p>
+              </div>
+              <button
+                onClick={async () => {
+                  const res = await fetch("/api/advisor-auth/topup", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ amount_cents: 20000 }),
+                  });
+                  const data = await res.json();
+                  if (data.url) window.location.href = data.url;
+                  else alert(data.error || "Failed to create top-up session");
+                }}
+                className="px-5 py-2.5 bg-white text-violet-700 text-sm font-bold rounded-lg hover:bg-violet-50 transition-colors shrink-0"
+              >
+                Top Up $200
+              </button>
             </div>
 
             {/* ── Profile Completeness ── */}
@@ -619,27 +647,44 @@ export default function AdvisorPortalPage() {
             <h1 className="text-xl font-bold text-slate-900 mb-1">Enquiries</h1>
             <p className="text-sm text-slate-500 mb-4">{stats?.totalLeads || 0} total · {leads.filter(l => l.status === "new").length} new</p>
 
-            {/* Lead pricing info */}
+            {/* Lead pricing & credit balance */}
             <div className="bg-violet-50 border border-violet-200 rounded-xl p-4 mb-5">
               <div className="flex items-start justify-between">
                 <div>
-                  <h3 className="text-xs font-bold text-violet-800 mb-1">Your Lead Pricing</h3>
+                  <h3 className="text-xs font-bold text-violet-800 mb-1">Your Lead Account</h3>
                   <p className="text-xs text-violet-600">
-                    {advisor?.free_leads_used !== undefined && advisor.free_leads_used < 3
-                      ? <>You have <strong>{3 - (advisor.free_leads_used || 0)} free leads</strong> remaining in your trial. After that, leads are <strong>${((advisor?.lead_price_cents || 4900) / 100).toFixed(0)}</strong> each.</>
-                      : <>Leads are <strong>${((advisor?.lead_price_cents || 4900) / 100).toFixed(0)}</strong> each. Each enquiry is exclusive to you — consumer details are not shared with other advisors.</>
+                    {advisor?.free_leads_used !== undefined && advisor.free_leads_used < 2
+                      ? <>You have <strong>{2 - (advisor.free_leads_used || 0)} free leads</strong> remaining. After that, leads cost <strong>${((advisor?.lead_price_cents || 4900) / 100).toFixed(0)}</strong> each, deducted from your credit balance.</>
+                      : (advisor?.credit_balance_cents || 0) > 0
+                        ? <>Leads are <strong>${((advisor?.lead_price_cents || 4900) / 100).toFixed(0)}</strong> each, deducted from your credit balance. Each enquiry is exclusive to you.</>
+                        : <>Your credit balance is empty. <strong>Top up to continue receiving leads.</strong> Leads cost ${((advisor?.lead_price_cents || 4900) / 100).toFixed(0)} each.</>
                     }
                   </p>
                 </div>
                 <div className="text-right shrink-0 ml-3">
-                  <span className="text-lg font-extrabold text-violet-900">${((advisor?.lead_price_cents || 4900) / 100).toFixed(0)}</span>
-                  <span className="text-[0.6rem] text-violet-500 block">per lead</span>
+                  <span className="text-lg font-extrabold text-violet-900">${((advisor?.credit_balance_cents || 0) / 100).toFixed(0)}</span>
+                  <span className="text-[0.6rem] text-violet-500 block">credit balance</span>
                 </div>
               </div>
-              <div className="flex flex-wrap gap-3 mt-2.5 pt-2.5 border-t border-violet-200/60 text-[0.6rem] text-violet-500">
-                <span>✓ Exclusive leads — only you receive the enquiry</span>
-                <span>✓ Dispute within 14 days for invalid leads</span>
-                <span>✓ Quality scored 0-100 on each lead</span>
+              <div className="flex items-center gap-2 mt-3 pt-3 border-t border-violet-200/60">
+                <button
+                  onClick={async () => {
+                    const res = await fetch("/api/advisor-auth/topup", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ amount_cents: 20000 }),
+                    });
+                    const data = await res.json();
+                    if (data.url) window.location.href = data.url;
+                    else alert(data.error || "Failed to create top-up session");
+                  }}
+                  className="px-3 py-1.5 bg-violet-600 text-white text-xs font-bold rounded-lg hover:bg-violet-700 transition-colors"
+                >
+                  Top Up $200
+                </button>
+                <span className="text-[0.6rem] text-violet-400">
+                  ${((advisor?.lead_price_cents || 4900) / 100).toFixed(0)}/lead · Exclusive · Dispute within 14 days
+                </span>
               </div>
             </div>
 

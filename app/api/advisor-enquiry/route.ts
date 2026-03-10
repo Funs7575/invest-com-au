@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { isRateLimited } from "@/lib/rate-limit";
 import { notificationFooter } from "@/lib/email-templates";
-import { createLeadInvoice } from "@/lib/advisor-billing";
 import { getSiteUrl } from "@/lib/url";
 
 export async function POST(request: NextRequest) {
@@ -103,55 +102,57 @@ export async function POST(request: NextRequest) {
     // Clamp 0-100
     score = Math.min(100, Math.max(0, score));
 
-    // ── Auto-Billing ──
-    // First 3 leads are free (trial), then charge per lead
+    // ── Auto-Billing (prepaid credit model) ──
+    // First 2 leads are free (trial), then deduct from credit balance
     const { data: advisor } = await supabase
       .from("professionals")
-      .select("free_leads_used, lead_price_cents")
+      .select("free_leads_used, lead_price_cents, credit_balance_cents, lifetime_lead_spend_cents")
       .eq("id", professional_id)
       .single();
 
     const freeUsed = advisor?.free_leads_used || 0;
-    const isFree = freeUsed < 3;
+    const isFree = freeUsed < 2; // 2 free leads
     const priceCents = isFree ? 0 : (advisor?.lead_price_cents || 4900);
+    const balance = advisor?.credit_balance_cents || 0;
+    const hasSufficientCredit = balance >= priceCents;
 
     // Update lead with quality score and billing
     await supabase.from("professional_leads").update({
       quality_score: score,
       quality_signals: signals,
-      billed: !isFree,
-      bill_amount_cents: priceCents,
+      billed: !isFree && hasSufficientCredit,
+      bill_amount_cents: isFree ? 0 : priceCents,
     }).eq("id", lead.id);
 
-    // Increment free leads counter
     if (isFree) {
+      // Increment free leads counter
       await supabase.from("professionals").update({
         free_leads_used: freeUsed + 1,
       }).eq("id", professional_id);
-    }
+    } else if (hasSufficientCredit) {
+      // Deduct from prepaid credit balance
+      await supabase.from("professionals").update({
+        credit_balance_cents: balance - priceCents,
+        lifetime_lead_spend_cents: (advisor?.lifetime_lead_spend_cents || 0) + priceCents,
+      }).eq("id", professional_id);
 
-    // Create billing record if not free
-    if (!isFree && priceCents > 0) {
-      const { data: billingRecord, error: billingError } = await supabase
-        .from("advisor_billing")
-        .insert({
-          professional_id,
-          lead_id: lead.id,
-          amount_cents: priceCents,
-          description: `Lead: ${user_name.trim()} (quality: ${score}/100)`,
-          status: "pending",
-        })
-        .select("id")
-        .single();
-
-      if (billingError) {
-        console.error("billing insert failed:", billingError.message);
-      } else if (billingRecord) {
-        // Fire-and-forget: create and send the Stripe invoice
-        createLeadInvoice(billingRecord.id).catch((err) =>
-          console.error("Lead invoice creation failed:", err)
-        );
-      }
+      // Create billing record (status: paid since deducted from credit)
+      await supabase.from("advisor_billing").insert({
+        professional_id,
+        lead_id: lead.id,
+        amount_cents: priceCents,
+        description: `Lead: ${user_name.trim()} (quality: ${score}/100) — deducted from credit`,
+        status: "paid",
+      });
+    } else {
+      // Insufficient credit — create pending billing record, lead still delivered
+      await supabase.from("advisor_billing").insert({
+        professional_id,
+        lead_id: lead.id,
+        amount_cents: priceCents,
+        description: `Lead: ${user_name.trim()} (quality: ${score}/100) — insufficient credit`,
+        status: "pending",
+      });
     }
 
     // Send notification email to the advisor (if they have an email)

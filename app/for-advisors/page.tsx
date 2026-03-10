@@ -40,7 +40,7 @@ export default async function ForAdvisorsPage() {
               See Pricing
             </a>
           </div>
-          <p className="text-violet-300 text-sm mt-4">No setup fee · 3 free leads · Cancel anytime</p>
+          <p className="text-violet-300 text-sm mt-4">No setup fee · 2 free leads · Cancel anytime</p>
         </div>
       </section>
 
@@ -101,7 +101,7 @@ export default async function ForAdvisorsPage() {
               <p className="text-3xl font-extrabold text-slate-900 mb-1">$0</p>
               <p className="text-sm text-slate-500 mb-5">First 3 leads free</p>
               <ul className="space-y-2 mb-6">
-                {["Profile page", "3 free leads", "Advisor dashboard", "Calendly integration", "Basic analytics"].map(f => (
+                {["Profile page", "2 free leads", "Advisor dashboard", "Calendly integration", "Basic analytics"].map(f => (
                   <li key={f} className="flex items-center gap-2 text-sm text-slate-700"><span className="text-emerald-500">✓</span>{f}</li>
                 ))}
               </ul>
@@ -115,7 +115,7 @@ export default async function ForAdvisorsPage() {
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 bg-violet-500 text-white text-xs font-bold rounded-full">Most Popular</div>
               <p className="text-sm font-bold text-violet-600 uppercase tracking-wider mb-1">Pay Per Lead</p>
               <p className="text-3xl font-extrabold text-slate-900 mb-1">$49<span className="text-lg text-slate-400 font-normal">/lead</span></p>
-              <p className="text-sm text-slate-500 mb-5">After 3 free trial leads</p>
+              <p className="text-sm text-slate-500 mb-5">After 2 free trial leads</p>
               <ul className="space-y-2 mb-6">
                 {["Everything in Free", "Unlimited leads", "Lead quality scoring", "Priority listing", "Email notifications", "Response time tracking"].map(f => (
                   <li key={f} className="flex items-center gap-2 text-sm text-slate-700"><span className="text-violet-500">✓</span>{f}</li>
@@ -202,7 +202,7 @@ export default async function ForAdvisorsPage() {
           <h2 className="text-2xl font-extrabold text-center mb-8">Frequently Asked Questions</h2>
           <div className="space-y-4">
             {[
-              { q: "How much does it cost to list?", a: "It's free to create your profile and receive your first 3 leads. After the trial, leads cost $49 each. There are no monthly fees, setup costs, or lock-in contracts." },
+              { q: "How much does it cost to list?", a: "It's free to create your profile and receive your first 2 leads. After that, top up with a $200 credit balance — each lead costs $49 and deducts from your balance. No monthly fees, no setup costs, no lock-in contracts." },
               { q: "What qualifies as a 'lead'?", a: "A lead is an enquiry submitted through your profile — the investor provides their name, email, and usually a phone number and message. Booking clicks (Calendly) are tracked separately." },
               { q: "How are leads allocated?", a: "Leads go directly to the advisor whose profile the investor enquires through. We don't share leads with multiple advisors — each lead is exclusive to you." },
               { q: "Can I set my own Calendly link?", a: "Yes. In your advisor portal, paste your Calendly or Cal.com link and it appears as a prominent 'Book Free Call' button on your profile. We handle the rest." },
@@ -227,7 +227,7 @@ export default async function ForAdvisorsPage() {
       <section className="py-16 md:py-20 px-4 bg-gradient-to-br from-violet-600 to-indigo-700 text-white text-center">
         <div className="max-w-2xl mx-auto">
           <h2 className="text-2xl md:text-4xl font-extrabold mb-4">Ready to Grow Your Practice?</h2>
-          <p className="text-violet-200 text-lg mb-8">Join {advisorCount || 8}+ advisors already listed. Start with 3 free leads — no credit card required.</p>
+          <p className="text-violet-200 text-lg mb-8">Join {advisorCount || 8}+ advisors already listed. Start with 2 free leads — no credit card required.</p>
           <Link href="/advisor-signup" className="inline-block px-10 py-4 bg-white text-violet-700 font-bold rounded-xl text-lg hover:bg-violet-50 transition-all shadow-lg">
             Apply Now — Free to Start →
           </Link>

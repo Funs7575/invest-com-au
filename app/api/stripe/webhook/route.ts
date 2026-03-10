@@ -346,6 +346,53 @@ export async function POST(request: NextRequest) {
         // to avoid double-crediting from two webhook endpoints.
         // creditWallet() also has idempotency protection via stripe_payment_intent_id.
 
+        // Handle advisor credit top-ups
+        if (session.metadata?.type === "advisor_credit_topup" && session.mode === "payment") {
+          const professionalId = parseInt(session.metadata.professional_id || "0");
+          const topupId = parseInt(session.metadata.topup_id || "0");
+          const amountCents = session.amount_total || 0;
+
+          if (professionalId && amountCents > 0) {
+            const supabase = createAdminClient();
+
+            // Idempotency: check if already processed
+            if (topupId) {
+              const { data: existing } = await supabase
+                .from("advisor_credit_topups")
+                .select("status")
+                .eq("id", topupId)
+                .single();
+              if (existing?.status === "completed") {
+                log.info("Advisor top-up already processed", { topupId, professionalId });
+                break;
+              }
+            }
+
+            // Credit the advisor's balance
+            const { data: pro } = await supabase
+              .from("professionals")
+              .select("credit_balance_cents, lifetime_credit_cents")
+              .eq("id", professionalId)
+              .single();
+
+            await supabase.from("professionals").update({
+              credit_balance_cents: (pro?.credit_balance_cents || 0) + amountCents,
+              lifetime_credit_cents: (pro?.lifetime_credit_cents || 0) + amountCents,
+            }).eq("id", professionalId);
+
+            // Mark top-up as completed
+            if (topupId) {
+              await supabase.from("advisor_credit_topups").update({
+                status: "completed",
+                stripe_payment_intent_id: session.payment_intent as string,
+                stripe_checkout_session_id: session.id,
+              }).eq("id", topupId);
+            }
+
+            log.info("Advisor credit topped up", { professionalId, amountCents, topupId });
+          }
+        }
+
         // Handle consultation bookings
         if (session.metadata?.type === "consultation" && session.mode === "payment") {
           const userId = session.metadata.supabase_user_id;

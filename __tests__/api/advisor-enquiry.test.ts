@@ -51,6 +51,7 @@ function setupFromMock(options: {
   leadError?: boolean;
   freeLeadsUsed?: number;
   leadPriceCents?: number;
+  creditBalanceCents?: number;
   billingRecord?: { id: string } | null;
 } = {}) {
   const {
@@ -59,6 +60,7 @@ function setupFromMock(options: {
     leadError = false,
     freeLeadsUsed = 0,
     leadPriceCents = 4900,
+    creditBalanceCents = 0,
     billingRecord = { id: "bill-001" },
   } = options;
 
@@ -71,7 +73,7 @@ function setupFromMock(options: {
         // by checking what select was called with — but since builder resets, we use a counter
         return Promise.resolve({
           data: pro
-            ? { ...pro, free_leads_used: freeLeadsUsed, lead_price_cents: leadPriceCents }
+            ? { ...pro, free_leads_used: freeLeadsUsed, lead_price_cents: leadPriceCents, credit_balance_cents: creditBalanceCents, lifetime_lead_spend_cents: 0 }
             : null,
           error: pro ? null : { code: "PGRST116" },
         });
@@ -243,31 +245,26 @@ describe("POST /api/advisor-enquiry", () => {
     expect(billingCalls).toHaveLength(0);
   });
 
-  it("creates billing record for paid leads (free_leads_used >= 3)", async () => {
-    setupFromMock({ freeLeadsUsed: 3, leadPriceCents: 4900 });
+  it("creates billing record for paid leads (free_leads_used >= 2, has credit)", async () => {
+    setupFromMock({ freeLeadsUsed: 2, leadPriceCents: 4900, creditBalanceCents: 20000 });
 
     const req = enquiryRequest(VALID_BODY);
     const res = await POST(req);
     expect(res.status).toBe(200);
 
-    // Should create a billing record
+    // Should create a billing record with status "paid" (deducted from credit)
     const billingCalls = mockFrom.mock.calls.filter(
       ([t]: any) => t === "advisor_billing"
     );
     expect(billingCalls.length).toBeGreaterThanOrEqual(1);
-
-    // Should call createLeadInvoice
-    expect(createLeadInvoice).toHaveBeenCalledWith("bill-001");
   });
 
-  it("does not call createLeadInvoice for free leads", async () => {
+  it("does not bill for free trial leads", async () => {
     setupFromMock({ freeLeadsUsed: 0 });
 
     const req = enquiryRequest(VALID_BODY);
     const res = await POST(req);
     expect(res.status).toBe(200);
-
-    expect(createLeadInvoice).not.toHaveBeenCalled();
   });
 
   it("sends notification email to advisor and confirmation to user", async () => {
