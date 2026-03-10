@@ -41,7 +41,7 @@ export default function PortfolioClient() {
 
   // Fetch broker list
   useEffect(() => {
-    fetch("/api/portfolio?brokers=1").catch(() => {});
+    fetch("/api/portfolio?brokers=1").catch((err) => console.error("Portfolio prefetch failed:", err));
     // Get brokers from compare page data
     const fetchBrokers = async () => {
       const res = await fetch("/api/shortlist?list=all");

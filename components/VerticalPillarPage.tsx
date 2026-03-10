@@ -797,7 +797,7 @@ export default function VerticalPillarPage({
                         className="flex items-center gap-3 p-3 bg-white border border-violet-100 rounded-xl hover:border-violet-300 hover:shadow-md transition-all group"
                       >
                         <img
-                          src={advisor.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(advisor.name)}&size=80&background=random`}
+                          src={advisor.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(advisor.name)}&size=80&background=7c3aed&color=fff`}
                           alt={advisor.name}
                           width={44}
                           height={44}

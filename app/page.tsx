@@ -611,7 +611,7 @@ export default async function HomePage() {
                         className="flex items-center gap-2.5 p-2.5 bg-white border border-slate-200 rounded-lg hover:border-violet-300 hover:shadow-sm transition-all group"
                       >
                         <Image
-                          src={advisor.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(advisor.name)}&size=80&background=random`}
+                          src={advisor.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(advisor.name)}&size=80&background=7c3aed&color=fff`}
                           alt={advisor.name}
                           width={40}
                           height={40}

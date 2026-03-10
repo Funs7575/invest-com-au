@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
+import { isValidEmail } from "@/lib/validate-email";
+import { logger } from "@/lib/logger";
+
+const log = logger("advisor-signup");
 
 function slugify(text: string): string {
   return text
@@ -38,7 +42,7 @@ export async function POST(request: NextRequest) {
     if (!name?.trim()) {
       return NextResponse.json({ error: "Full name is required." }, { status: 400 });
     }
-    if (!email?.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (!email?.trim() || !isValidEmail(email.trim())) {
       return NextResponse.json({ error: "A valid email address is required." }, { status: 400 });
     }
     if (!phone?.trim()) {
@@ -143,10 +147,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Log confirmation (no actual email for now)
-    console.log(
-      `[Advisor Signup] New advisor registered: ${name.trim()} (${email.trim().toLowerCase()}) — professional ID: ${professional.id}, slug: ${professional.slug}`
-    );
+    // Log confirmation
+    log.info("New advisor registered", {
+      name: name.trim(),
+      email: email.trim().toLowerCase(),
+      professionalId: professional.id,
+      slug: professional.slug,
+    });
 
     return NextResponse.json({
       success: true,

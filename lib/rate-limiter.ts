@@ -14,16 +14,21 @@ interface RateLimitEntry {
 
 export function createRateLimiter(windowMs: number, maxRequests: number) {
   const map = new Map<string, RateLimitEntry>();
+  let lastCleanup = Date.now();
 
-  // Clean up stale entries periodically to prevent memory leaks
-  setInterval(() => {
+  // Lazy cleanup: purge stale entries at most once per minute on access
+  // instead of using setInterval (which keeps serverless containers alive).
+  function cleanup() {
     const now = Date.now();
+    if (now - lastCleanup < 60_000) return;
+    lastCleanup = now;
     for (const [key, entry] of map.entries()) {
       if (now > entry.resetAt) map.delete(key);
     }
-  }, 60_000);
+  }
 
   return function isRateLimited(ip: string): boolean {
+    cleanup();
     const now = Date.now();
     const entry = map.get(ip);
 

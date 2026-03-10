@@ -210,7 +210,7 @@ function AdvisorReviewCard({ advisor }: { advisor: Professional }) {
         {/* Header with photo */}
         <div className="flex items-center gap-3 mb-3">
           <Image
-            src={advisor.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(advisor.name)}&size=80&background=random`}
+            src={advisor.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(advisor.name)}&size=80&background=7c3aed&color=fff`}
             alt={advisor.name}
             width={48}
             height={48}

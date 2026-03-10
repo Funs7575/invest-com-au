@@ -279,7 +279,7 @@ export default function FeeImpactClient({ brokers }: Props) {
           if (p.current_broker_slug) setCurrentBrokerSlug(p.current_broker_slug);
         }
       })
-      .catch(() => {});
+      .catch((err) => console.error("Failed to load fee-impact profile:", err));
   }, [authLoading, user, profileLoaded]);
 
   // Save profile handler
