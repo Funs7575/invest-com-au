@@ -184,6 +184,8 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
   const [stateFilter, setStateFilter] = useState<string>(initialState || "all");
   const [specialtyFilters, setSpecialtyFilters] = useState<string[]>([]);
   const [feeFilter, setFeeFilter] = useState<string>("all");
+  const [firmFilter, setFirmFilter] = useState<string>("all");
+  const [minRating, setMinRating] = useState<number>(0);
   const [verifiedOnly, setVerifiedOnly] = useState(false);
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<SortKey>("rating");
@@ -262,11 +264,17 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
     return () => clearTimeout(t);
   }, [updateURL]);
 
-  useEffect(() => { setPage(1); }, [typeFilter, stateFilter, specialtyFilters, feeFilter, verifiedOnly, search, sortBy, nearbyResults]);
+  useEffect(() => { setPage(1); }, [typeFilter, stateFilter, specialtyFilters, feeFilter, firmFilter, minRating, verifiedOnly, search, sortBy, nearbyResults]);
 
   const allSpecialties = useMemo(() => {
     const set = new Set<string>();
     professionals.forEach(p => p.specialties.forEach(s => set.add(s)));
+    return Array.from(set).sort();
+  }, [professionals]);
+
+  const allFirmNames = useMemo(() => {
+    const set = new Set<string>();
+    professionals.forEach(p => { if (p.firm_name) set.add(p.firm_name); });
     return Array.from(set).sort();
   }, [professionals]);
 
@@ -308,6 +316,8 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
       if (stateFilter !== "all" && p.location_state !== stateFilter) return false;
       if (verifiedOnly && !p.verified) return false;
       if (feeFilter !== "all" && p.fee_structure !== feeFilter) return false;
+      if (firmFilter !== "all" && p.firm_name !== firmFilter) return false;
+      if (minRating > 0 && (p.rating || 0) < minRating) return false;
       if (specialtyFilters.length > 0 && !specialtyFilters.every(sf => p.specialties.includes(sf))) return false;
       if (search) {
         const q = search.toLowerCase();
@@ -324,12 +334,12 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
       case "fee_high": result.sort((a, b) => (b.hourly_rate_cents || b.flat_fee_cents || 0) - (a.hourly_rate_cents || a.flat_fee_cents || 0)); break;
     }
     return result;
-  }, [professionals, nearbyResults, isLocationActive, typeFilter, stateFilter, specialtyFilters, feeFilter, verifiedOnly, search, sortBy]);
+  }, [professionals, nearbyResults, isLocationActive, typeFilter, stateFilter, specialtyFilters, feeFilter, firmFilter, minRating, verifiedOnly, search, sortBy]);
 
   const totalPages = Math.ceil(filtered.length / RESULTS_PER_PAGE);
   const paginatedResults = filtered.slice((page - 1) * RESULTS_PER_PAGE, page * RESULTS_PER_PAGE);
 
-  const activeFilterCount = [typeFilter !== "all", stateFilter !== "all", specialtyFilters.length > 0, feeFilter !== "all", verifiedOnly, isLocationActive].filter(Boolean).length;
+  const activeFilterCount = [typeFilter !== "all", stateFilter !== "all", specialtyFilters.length > 0, feeFilter !== "all", firmFilter !== "all", minRating > 0, verifiedOnly, isLocationActive].filter(Boolean).length;
 
   const contextParts: string[] = [];
   if (typeFilter !== "all") contextParts.push(TYPE_FILTERS.find(f => f.key === typeFilter)?.label || "");
@@ -340,6 +350,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
   const toggleSpecialty = (s: string) => setSpecialtyFilters(prev => prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s]);
   const clearAll = () => {
     setTypeFilter("all"); setStateFilter("all"); setSpecialtyFilters([]); setFeeFilter("all");
+    setFirmFilter("all"); setMinRating(0);
     setVerifiedOnly(false); setSearch(""); setSortBy("rating");
     setLocationSearch(null); setUserLat(null); setUserLng(null); setRadius(25);
   };
@@ -419,7 +430,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               </div>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
               <div>
                 <label className="text-xs font-bold text-slate-700 mb-1.5 block">State</label>
                 <select value={stateFilter} onChange={e => setStateFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30" disabled={isLocationActive}>
@@ -435,6 +446,23 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                   <option value="commission">Commission</option>
                   <option value="hybrid">Hybrid</option>
                   <option value="percentage of AUM">% of AUM</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-xs font-bold text-slate-700 mb-1.5 block">Advisory Firm</label>
+                <select value={firmFilter} onChange={e => setFirmFilter(e.target.value)} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30">
+                  <option value="all">All Firms</option>
+                  {allFirmNames.map(f => <option key={f} value={f}>{f}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="text-xs font-bold text-slate-700 mb-1.5 block">Min Rating</label>
+                <select value={minRating} onChange={e => setMinRating(Number(e.target.value))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500/30">
+                  <option value={0}>Any</option>
+                  <option value={4.5}>4.5+ ★</option>
+                  <option value={4.0}>4.0+ ★</option>
+                  <option value={3.5}>3.5+ ★</option>
+                  <option value={3.0}>3.0+ ★</option>
                 </select>
               </div>
               <div>
@@ -502,6 +530,18 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-700 text-[0.65rem] font-semibold rounded-full">
                 {feeFilter}
                 <button onClick={() => setFeeFilter("all")} className="hover:text-amber-900"><Icon name="x" size={12} /></button>
+              </span>
+            )}
+            {firmFilter !== "all" && (
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-indigo-100 text-indigo-700 text-[0.65rem] font-semibold rounded-full">
+                {firmFilter}
+                <button onClick={() => setFirmFilter("all")} className="hover:text-indigo-900"><Icon name="x" size={12} /></button>
+              </span>
+            )}
+            {minRating > 0 && (
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-amber-100 text-amber-700 text-[0.65rem] font-semibold rounded-full">
+                {minRating}+ ★
+                <button onClick={() => setMinRating(0)} className="hover:text-amber-900"><Icon name="x" size={12} /></button>
               </span>
             )}
             {verifiedOnly && (
