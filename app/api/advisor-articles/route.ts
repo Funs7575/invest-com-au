@@ -4,12 +4,24 @@ import { isRateLimited } from "@/lib/rate-limit";
 
 import { notificationFooter } from "@/lib/email-templates";
 import { getSiteUrl } from "@/lib/url";
-import { ADMIN_EMAIL } from "@/lib/admin";
+import { getAdminEmail } from "@/lib/admin";
 
 const SITE_URL = getSiteUrl();
 
+function calcWordCount(text: string): number {
+  return text.trim().split(/\s+/).filter(Boolean).length;
+}
+
+function calcReadTime(wordCount: number): number {
+  return Math.max(1, Math.round(wordCount / 220));
+}
+
+function slugify(text: string): string {
+  return text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 80);
+}
+
 async function logMod(supabase: Awaited<ReturnType<typeof createClient>>, articleId: number, action: string, by: string, notes?: string, oldStatus?: string, newStatus?: string) {
-  const { error } = await supabase.from("article_moderation_log").insert({ article_id: articleId, action, performed_by: by, notes, old_status: oldStatus, new_status: newStatus });
+  const { error } = await supabase.from("advisor_article_moderation_log").insert({ article_id: articleId, action, performed_by: by, notes, old_status: oldStatus, new_status: newStatus });
   if (error) console.error("moderation log insert failed:", error.message);
 }
 
@@ -55,7 +67,12 @@ export async function GET(request: NextRequest) {
   }
 
   if (mode === "moderation_log" && sp.get("article_id")) {
-    const { data } = await supabase.from("article_moderation_log").select("*").eq("article_id", parseInt(sp.get("article_id")!)).order("created_at", { ascending: false });
+    const { data } = await supabase.from("advisor_article_moderation_log").select("*").eq("article_id", parseInt(sp.get("article_id")!)).order("created_at", { ascending: false });
+    return NextResponse.json(data || []);
+  }
+
+  if (mode === "guidelines") {
+    const { data } = await supabase.from("article_guidelines").select("key, title, description, sort_order").eq("active", true).order("sort_order", { ascending: true });
     return NextResponse.json(data || []);
   }
 
@@ -77,20 +94,33 @@ export async function POST(request: NextRequest) {
   if (!pro) return NextResponse.json({ error: "Professional not found" }, { status: 404 });
 
   const isSubmit = action === "submit";
+  const wordCount = calcWordCount(content);
+  const readTime = calcReadTime(wordCount);
+
+  if (isSubmit && wordCount < 300) {
+    return NextResponse.json({ error: "Articles must be at least 300 words. Current: " + wordCount }, { status: 400 });
+  }
+
+  const articleSlug = slugify(title.trim()) + "-" + Date.now().toString(36);
+
   const { data: article, error } = await supabase.from("advisor_articles").insert({
     professional_id: pro.id, author_name: pro.name, author_firm: pro.firm_name, author_slug: pro.slug,
-    title: title.trim(), content: content.trim(), excerpt: excerpt?.trim() || content.trim().slice(0, 160) + "...",
+    author_photo_url: pro.photo_url || null,
+    title: title.trim(), slug: articleSlug, content: content.trim(),
+    excerpt: excerpt?.trim() || content.trim().replace(/[#*_\[\]]/g, "").slice(0, 160) + "...",
     category: category || "General", tags: tags || [], pricing_tier: pricing_tier || "standard",
     status: isSubmit ? "submitted" : "draft", submitted_at: isSubmit ? new Date().toISOString() : null,
-    price_cents: pricing_tier === "featured" ? 49900 : pricing_tier === "sponsored" ? 79900 : 29900,
+    word_count: wordCount, read_time: readTime, reading_time_mins: readTime,
+    price_cents: pricing_tier === "premium" ? 49900 : pricing_tier === "standard" ? 29900 : 0,
   }).select("id, slug, status").single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
   await logMod(supabase, article.id, isSubmit ? "submitted" : "draft_created", "advisor", undefined, undefined, article.status);
 
   if (isSubmit) {
-    await sendEmail(ADMIN_EMAIL, `New article: "${title}" by ${pro.name}`,
-      wrap("New Article Submitted", `<p style="color:#64748b;font-size:14px"><strong>${pro.name}</strong> (${pro.firm_name || "Independent"}) submitted an article.</p><p style="color:#334155;font-size:15px;font-weight:600">"${title}"</p><p style="color:#64748b;font-size:13px">Category: ${category || "General"} · Tier: ${pricing_tier || "standard"} · ${content.trim().split(/\s+/).length} words</p>`, "Review →", `${SITE_URL}/admin/advisor-articles`));
+    const adminEmail = getAdminEmail();
+    await sendEmail(adminEmail, `New article: "${title}" by ${pro.name}`,
+      wrap("New Article Submitted", `<p style="color:#64748b;font-size:14px"><strong>${pro.name}</strong> (${pro.firm_name || "Independent"}) submitted an article.</p><p style="color:#334155;font-size:15px;font-weight:600">"${title}"</p><p style="color:#64748b;font-size:13px">Category: ${category || "General"} \xb7 Tier: ${pricing_tier || "standard"} \xb7 ${wordCount} words \xb7 ${readTime} min read</p>`, "Review \u2192", `${SITE_URL}/admin/advisor-articles`));
   }
   return NextResponse.json(article);
 }
@@ -159,8 +189,13 @@ export async function PUT(request: NextRequest) {
 
   if (action === "admin_edit") {
     const fields: Record<string, unknown> = {};
-    for (const k of ["title", "content", "excerpt", "meta_title", "meta_description", "category"]) {
+    for (const k of ["title", "content", "excerpt", "meta_title", "meta_description", "category", "featured", "moderation_score", "related_broker_slugs", "related_advisor_types"]) {
       if (updates[k] !== undefined) fields[k] = updates[k];
+    }
+    if (updates.content) {
+      const wc = calcWordCount(updates.content);
+      fields.word_count = wc;
+      fields.read_time = calcReadTime(wc);
     }
     const { error } = await supabase.from("advisor_articles").update(fields).eq("id", id);
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
@@ -174,13 +209,18 @@ export async function PUT(request: NextRequest) {
     const { error } = await supabase.from("advisor_articles").update(sf).eq("id", id);
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
     await logMod(supabase, id, "resubmitted", "advisor", undefined, oldStatus, "submitted");
-    await sendEmail(ADMIN_EMAIL, `Resubmitted: "${artTitle}" by ${advName}`, wrap("Article Resubmitted", `<p style="color:#64748b;font-size:14px"><strong>${advName}</strong> revised and resubmitted their article.</p><p style="color:#334155;font-size:15px;font-weight:600">"${artTitle}"</p>`, "Review →", `${SITE_URL}/admin/advisor-articles`));
+    await sendEmail(getAdminEmail(), `Resubmitted: "${artTitle}" by ${advName}`, wrap("Article Resubmitted", `<p style="color:#64748b;font-size:14px"><strong>${advName}</strong> revised and resubmitted their article.</p><p style="color:#334155;font-size:15px;font-weight:600">"${artTitle}"</p>`, "Review →", `${SITE_URL}/admin/advisor-articles`));
     return NextResponse.json({ status: "submitted" });
   }
 
   // Generic save draft
   const df: Record<string, unknown> = {};
   for (const k of ["title", "content", "excerpt", "category", "pricing_tier"]) { if (updates[k]) df[k] = updates[k]; }
+  if (updates.content) {
+    const wc = calcWordCount(updates.content);
+    df.word_count = wc;
+    df.read_time = calcReadTime(wc);
+  }
   const { error } = await supabase.from("advisor_articles").update(df).eq("id", id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ updated: true });

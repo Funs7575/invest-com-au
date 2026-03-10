@@ -114,11 +114,13 @@ export interface Article {
   slug: string;
   excerpt?: string;
   category?: string;
+  content_type?: 'editorial' | 'how-to' | 'news' | 'review' | 'guide';
   content?: string;
   sections?: { heading: string; body: string }[];
   tags?: string[];
   read_time?: number;
   related_brokers?: string[];
+  related_advisor_types?: string[];
   related_calc?: string;
   cover_image_url?: string;
   evergreen: boolean;
@@ -136,6 +138,55 @@ export interface Article {
   changelog?: { date: string; summary: string }[];
   created_at: string;
   updated_at: string;
+}
+
+/** Advisor-submitted article (separate moderation pipeline) */
+export interface AdvisorArticle {
+  id: number;
+  professional_id: number;
+  author_name: string;
+  author_firm?: string;
+  author_slug?: string;
+  title: string;
+  slug: string;
+  excerpt?: string;
+  content: string;
+  category?: string;
+  tags?: string[];
+  cover_image_url?: string;
+  status: 'draft' | 'submitted' | 'in_review' | 'revision_requested' | 'approved' | 'published' | 'rejected';
+  admin_notes?: string;
+  rejection_reason?: string;
+  reviewed_by?: string;
+  reviewed_at?: string;
+  published_at?: string;
+  pricing_tier?: 'free' | 'standard' | 'premium';
+  price_cents?: number;
+  payment_status?: string;
+  meta_title?: string;
+  meta_description?: string;
+  canonical_url?: string;
+  view_count: number;
+  click_count: number;
+  word_count: number;
+  read_time: number;
+  featured: boolean;
+  moderation_score: number;
+  related_broker_slugs?: string[];
+  related_advisor_types?: string[];
+  created_at: string;
+  updated_at: string;
+  submitted_at?: string;
+  /** Joined from professionals table */
+  professionals?: {
+    name: string;
+    slug: string;
+    photo_url?: string;
+    verified: boolean;
+    type: string;
+    firm_name?: string;
+    email?: string;
+  };
 }
 
 export interface Scenario {

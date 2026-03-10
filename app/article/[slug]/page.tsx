@@ -595,6 +595,39 @@ export default async function ArticlePage({
                 );
               })()}
 
+              {/* Find an Advisor CTA — contextual based on article topic */}
+              {(() => {
+                const advisorCategories = ["smsf", "super", "tax", "strategy", "property"];
+                const isAdvisorRelevant = advisorCategories.some(c => 
+                  (a.category || "").toLowerCase().includes(c) || 
+                  (a.tags || []).some((t: string) => t.toLowerCase().includes(c))
+                );
+                if (!isAdvisorRelevant) return null;
+                const advisorType = (a.category || "").toLowerCase().includes("smsf") || (a.category || "").toLowerCase().includes("super") 
+                  ? "smsf_accountant" 
+                  : (a.category || "").toLowerCase().includes("tax") 
+                    ? "tax_agent"
+                    : (a.category || "").toLowerCase().includes("property")
+                      ? "property_advisor"
+                      : "financial_planner";
+                return (
+                  <div className="mt-6 md:mt-8 bg-violet-50 border border-violet-200 rounded-xl p-4 md:p-5">
+                    <h3 className="text-base md:text-lg font-bold mb-0.5 md:mb-1 text-violet-900">Need Professional Advice?</h3>
+                    <p className="text-xs md:text-sm text-violet-700 mb-3">
+                      Connect with a verified Australian {advisorType.replace(/_/g, " ")} for personalised guidance.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <Link href={`/advisors?type=${advisorType}`} className="px-4 py-2.5 bg-violet-600 text-white text-sm font-bold rounded-lg hover:bg-violet-700 transition-colors text-center">
+                        Find an Advisor
+                      </Link>
+                      <Link href={`/advisor-guides/${advisorType.replace(/_/g, "-")}`} className="px-4 py-2.5 border border-violet-300 text-violet-700 text-sm font-semibold rounded-lg hover:bg-violet-100 transition-colors text-center">
+                        How to Choose
+                      </Link>
+                    </div>
+                  </div>
+                );
+              })()}
+
               {/* Bottom CTA */}
               <div className="mt-8 md:mt-12 bg-slate-50 border border-slate-200 rounded-xl p-5 md:p-8 text-center">
                 <h3 className="text-xl md:text-2xl font-extrabold mb-1.5 md:mb-2 text-slate-900">

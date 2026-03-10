@@ -195,6 +195,22 @@ export default async function ExpertArticlePage({ params }: Props) {
               </div>
             </div>
           )}
+
+          {/* Cross-links: compare platforms & find advisors */}
+          <div className="mt-6 md:mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Link href="/compare" className="bg-slate-900 text-white rounded-xl p-4 hover:bg-slate-800 transition-colors group">
+              <h3 className="text-sm font-bold mb-1 flex items-center gap-1.5">
+                Compare Platforms <span className="group-hover:translate-x-0.5 transition-transform">→</span>
+              </h3>
+              <p className="text-xs text-slate-300">Side-by-side fee comparison of Australian brokers</p>
+            </Link>
+            <Link href="/advisors" className="bg-violet-600 text-white rounded-xl p-4 hover:bg-violet-700 transition-colors group">
+              <h3 className="text-sm font-bold mb-1 flex items-center gap-1.5">
+                Find an Advisor <span className="group-hover:translate-x-0.5 transition-transform">→</span>
+              </h3>
+              <p className="text-xs text-violet-200">Connect with verified financial professionals</p>
+            </Link>
+          </div>
         </div>
       </div>
     </>

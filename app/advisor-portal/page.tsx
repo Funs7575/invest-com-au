@@ -1036,9 +1036,9 @@ type ArticleItem = {
 
 const CATEGORIES = ["Investing", "Super & SMSF", "Tax & Strategy", "Property", "Retirement", "Insurance", "Estate Planning", "General"];
 const PRICING_TIERS = [
-  { key: "standard", label: "Standard — $299", desc: "Article with author byline + profile link", price: "$299" },
-  { key: "featured", label: "Featured — $499", desc: "Above + homepage Expert Insights + newsletter", price: "$499" },
-  { key: "sponsored", label: "Sponsored — $799", desc: "Above + pinned to top + social media promo", price: "$799" },
+  { key: "free", label: "Free", desc: "Article on your advisor profile only — no placement on hub", price: "Free" },
+  { key: "standard", label: "Standard — $299", desc: "Article with author byline + profile link on Expert hub", price: "$299" },
+  { key: "premium", label: "Premium — $499", desc: "Above + homepage Expert Insights + newsletter feature", price: "$499" },
 ];
 
 const STATUS_COLORS: Record<string, string> = {
@@ -1056,6 +1056,7 @@ function AdvisorArticlesSection({ advisorId }: { advisorId?: number }) {
   const [mode, setMode] = useState<"list" | "write">("list");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [guidelines, setGuidelines] = useState<{ key: string; title: string; description: string }[]>([]);
 
   // Editor state
   const [editId, setEditId] = useState<number | null>(null);
@@ -1071,6 +1072,10 @@ function AdvisorArticlesSection({ advisorId }: { advisorId?: number }) {
       .then(r => r.json())
       .then(setArticles)
       .finally(() => setLoading(false));
+    fetch("/api/advisor-articles?mode=guidelines")
+      .then(r => r.json())
+      .then(setGuidelines)
+      .catch(() => {});
   }, [advisorId, mode]);
 
   const resetForm = () => { setEditId(null); setTitle(""); setContent(""); setExcerpt(""); setCategory("General"); setTier("standard"); };
@@ -1152,14 +1157,25 @@ function AdvisorArticlesSection({ advisorId }: { advisorId?: number }) {
           </div>
 
           <div className="bg-slate-50 border border-slate-200 rounded-lg p-3">
-            <h4 className="text-xs font-bold text-slate-700 mb-1">Editorial Guidelines</h4>
-            <ul className="text-[0.62rem] text-slate-500 space-y-0.5">
-              <li>• Minimum 500 words, recommended 800-1500</li>
-              <li>• Must be original content (not published elsewhere)</li>
-              <li>• Informational and educational — not a sales pitch for your services</li>
-              <li>• Include practical takeaways readers can act on</li>
-              <li>• No specific product recommendations (general advice only)</li>
-            </ul>
+            <h4 className="text-xs font-bold text-slate-700 mb-2">Submission Guidelines</h4>
+            {guidelines.length > 0 ? (
+              <ul className="text-[0.62rem] text-slate-500 space-y-1">
+                {guidelines.map(g => (
+                  <li key={g.key} className="flex gap-1.5">
+                    <span className="text-violet-400 mt-0.5 shrink-0">•</span>
+                    <span><strong className="text-slate-600">{g.title}:</strong> {g.description}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <ul className="text-[0.62rem] text-slate-500 space-y-0.5">
+                <li>• Minimum 600 words, recommended 800-1500</li>
+                <li>• Must be original content (not published elsewhere)</li>
+                <li>• Informational and educational — not a sales pitch</li>
+                <li>• Include practical takeaways readers can act on</li>
+                <li>• No specific product recommendations (general advice only)</li>
+              </ul>
+            )}
           </div>
 
           <div className="flex gap-2">

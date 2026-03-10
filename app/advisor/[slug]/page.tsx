@@ -56,6 +56,7 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
   let reviews: import("@/lib/types").ProfessionalReview[] = [];
   let teamMembers: Professional[] = [];
   let firm: import("@/lib/types").AdvisorFirm | null = null;
+  let expertArticles: { id: number; title: string; slug: string; excerpt: string; category: string; published_at: string; reading_time_mins: number | null; view_count: number }[] = [];
 
   try {
     const queries: PromiseLike<unknown>[] = [
@@ -74,6 +75,13 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
         .eq("status", "approved")
         .order("created_at", { ascending: false })
         .limit(20),
+      supabase
+        .from("advisor_articles")
+        .select("id, title, slug, excerpt, category, published_at, reading_time_mins, view_count")
+        .eq("professional_id", pro.id)
+        .eq("status", "published")
+        .order("published_at", { ascending: false })
+        .limit(10),
     ];
 
     // If advisor is part of a firm, fetch team members and firm info
@@ -97,9 +105,10 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
     const results = await Promise.all(queries);
     similar = ((results[0] as { data: Professional[] | null }).data as Professional[]) || [];
     reviews = ((results[1] as { data: import("@/lib/types").ProfessionalReview[] | null }).data as import("@/lib/types").ProfessionalReview[]) || [];
-    if (pro.firm_id && results.length > 2) {
-      teamMembers = ((results[2] as { data: Professional[] | null }).data as Professional[]) || [];
-      firm = ((results[3] as { data: import("@/lib/types").AdvisorFirm | null }).data as import("@/lib/types").AdvisorFirm) || null;
+    expertArticles = ((results[2] as { data: typeof expertArticles | null }).data) || [];
+    if (pro.firm_id && results.length > 3) {
+      teamMembers = ((results[3] as { data: Professional[] | null }).data as Professional[]) || [];
+      firm = ((results[4] as { data: import("@/lib/types").AdvisorFirm | null }).data as import("@/lib/types").AdvisorFirm) || null;
     }
   } catch {
     // Secondary queries failed — continue with defaults
@@ -164,7 +173,7 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personLd) }} />
       {localBusinessLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessLd) }} />}
-      <AdvisorProfileClient professional={pro as Professional} similar={similar} reviews={reviews} teamMembers={teamMembers} firm={firm} />
+      <AdvisorProfileClient professional={pro as Professional} similar={similar} reviews={reviews} teamMembers={teamMembers} firm={firm} expertArticles={expertArticles} />
     </>
   );
 }

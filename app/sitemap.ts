@@ -239,6 +239,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
+  // Expert articles (advisor-authored)
+  const { data: expertArticleSlugs } = await supabase
+    .from("advisor_articles")
+    .select("slug, published_at")
+    .eq("status", "published");
+
+  const expertArticlePages = (expertArticleSlugs || []).map((a) => ({
+    url: `${baseUrl}/expert/${a.slug}`,
+    lastModified: a.published_at ? new Date(a.published_at) : new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
+
   // City / location investing pages
   const investingCityPages = [
     { url: `${baseUrl}/investing`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.7 },
@@ -250,5 +263,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   ];
 
-  return [...staticPages, ...bestPages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorLocationPages, ...investingCityPages];
+  return [...staticPages, ...bestPages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorLocationPages, ...investingCityPages];
 }

@@ -82,7 +82,9 @@ function BioSection({ name, bio }: { name: string; bio: string }) {
   );
 }
 
-export default function AdvisorProfileClient({ professional: pro, similar, reviews = [], teamMembers = [], firm }: { professional: Professional; similar: Professional[]; reviews?: ProfessionalReview[]; teamMembers?: Professional[]; firm?: AdvisorFirm | null }) {
+type ExpertArticle = { id: number; title: string; slug: string; excerpt: string; category: string; published_at: string; reading_time_mins: number | null; view_count: number };
+
+export default function AdvisorProfileClient({ professional: pro, similar, reviews = [], teamMembers = [], firm, expertArticles = [] }: { professional: Professional; similar: Professional[]; reviews?: ProfessionalReview[]; teamMembers?: Professional[]; firm?: AdvisorFirm | null; expertArticles?: ExpertArticle[] }) {
   const [formState, setFormState] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [formError, setFormError] = useState("");
   const [name, setName] = useState("");
@@ -583,6 +585,45 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
             />
           ) : null}
         </div>
+
+        {/* Expert articles by this advisor */}
+        {expertArticles.length > 0 && (
+          <div className="mb-4 md:mb-6">
+            <h2 className="text-sm md:text-base font-bold text-slate-900 mb-3">Expert Insights by {pro.name}</h2>
+            <div className="space-y-2.5">
+              {expertArticles.map((article) => (
+                <a
+                  key={article.id}
+                  href={`/expert/${article.slug}`}
+                  className="block bg-white border border-slate-200 rounded-xl p-3.5 hover:shadow-md hover:border-violet-200 transition-all group"
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-sm font-bold text-slate-900 group-hover:text-violet-700 transition-colors line-clamp-2">{article.title}</h3>
+                      {article.excerpt && (
+                        <p className="text-xs text-slate-500 mt-1 line-clamp-2">{article.excerpt}</p>
+                      )}
+                      <div className="flex items-center gap-2 mt-2">
+                        {article.category && (
+                          <span className="text-[0.58rem] font-semibold text-violet-600 bg-violet-50 px-1.5 py-0.5 rounded">{article.category}</span>
+                        )}
+                        {article.reading_time_mins && (
+                          <span className="text-[0.58rem] text-slate-400">{article.reading_time_mins} min read</span>
+                        )}
+                        {article.published_at && (
+                          <span className="text-[0.58rem] text-slate-400">{new Date(article.published_at).toLocaleDateString("en-AU", { month: "short", year: "numeric" })}</span>
+                        )}
+                      </div>
+                    </div>
+                    <span className="text-violet-500 group-hover:translate-x-0.5 transition-transform mt-1">
+                      <Icon name="arrow-right" size={16} />
+                    </span>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Similar advisors */}
         {similar.length > 0 && (
