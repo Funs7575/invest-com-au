@@ -41,6 +41,25 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Advisor not found." }, { status: 404 });
     }
 
+    // ── Duplicate Lead Protection ──
+    // Prevent the same email from enquiring to the same advisor within 24 hours
+    const normalizedEmail = user_email.trim().toLowerCase();
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const { data: existingLead } = await supabase
+      .from("professional_leads")
+      .select("id, created_at")
+      .eq("professional_id", professional_id)
+      .eq("user_email", normalizedEmail)
+      .gte("created_at", twentyFourHoursAgo)
+      .limit(1)
+      .maybeSingle();
+
+    if (existingLead) {
+      // Still return success to the consumer (don't reveal duplicate detection)
+      // but don't create a new lead or bill the advisor
+      return NextResponse.json({ success: true, lead_id: existingLead.id });
+    }
+
     // Create the lead record
     const { data: lead, error: leadError } = await supabase
       .from("professional_leads")

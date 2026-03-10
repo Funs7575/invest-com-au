@@ -14,6 +14,7 @@ type Advisor = {
   booking_link?: string; booking_intro?: string;
   offer_text?: string; offer_terms?: string; offer_active?: boolean;
   firm_id?: number; is_firm_admin?: boolean; account_type?: string; status?: string;
+  free_leads_used?: number; lead_price_cents?: number;
 };
 
 type FirmMember = { id: number; name: string; slug: string; email?: string; type: string; photo_url?: string; verified?: boolean; status?: string; created_at: string };
@@ -23,7 +24,7 @@ type Lead = {
   id: number; user_name: string; user_email: string; user_phone?: string;
   message?: string; source_page?: string; status: string; advisor_notes?: string;
   contacted_at?: string; converted_at?: string; created_at: string;
-  quality_score?: number;
+  quality_score?: number; bill_amount_cents: number; billed: boolean;
 };
 
 type BillingRecord = {
@@ -616,7 +617,31 @@ export default function AdvisorPortalPage() {
         {view === "leads" && (
           <>
             <h1 className="text-xl font-bold text-slate-900 mb-1">Enquiries</h1>
-            <p className="text-sm text-slate-500 mb-6">{stats?.totalLeads || 0} total · {leads.filter(l => l.status === "new").length} new</p>
+            <p className="text-sm text-slate-500 mb-4">{stats?.totalLeads || 0} total · {leads.filter(l => l.status === "new").length} new</p>
+
+            {/* Lead pricing info */}
+            <div className="bg-violet-50 border border-violet-200 rounded-xl p-4 mb-5">
+              <div className="flex items-start justify-between">
+                <div>
+                  <h3 className="text-xs font-bold text-violet-800 mb-1">Your Lead Pricing</h3>
+                  <p className="text-xs text-violet-600">
+                    {advisor?.free_leads_used !== undefined && advisor.free_leads_used < 3
+                      ? <>You have <strong>{3 - (advisor.free_leads_used || 0)} free leads</strong> remaining in your trial. After that, leads are <strong>${((advisor?.lead_price_cents || 4900) / 100).toFixed(0)}</strong> each.</>
+                      : <>Leads are <strong>${((advisor?.lead_price_cents || 4900) / 100).toFixed(0)}</strong> each. Each enquiry is exclusive to you — consumer details are not shared with other advisors.</>
+                    }
+                  </p>
+                </div>
+                <div className="text-right shrink-0 ml-3">
+                  <span className="text-lg font-extrabold text-violet-900">${((advisor?.lead_price_cents || 4900) / 100).toFixed(0)}</span>
+                  <span className="text-[0.6rem] text-violet-500 block">per lead</span>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-3 mt-2.5 pt-2.5 border-t border-violet-200/60 text-[0.6rem] text-violet-500">
+                <span>✓ Exclusive leads — only you receive the enquiry</span>
+                <span>✓ Dispute within 14 days for invalid leads</span>
+                <span>✓ Quality scored 0-100 on each lead</span>
+              </div>
+            </div>
 
             {leads.length === 0 ? (
               <div className="bg-white border border-slate-200 rounded-xl p-8 text-center">
@@ -651,6 +676,19 @@ export default function AdvisorPortalPage() {
                       <div className="bg-slate-50 rounded-lg p-3 text-xs text-slate-600 mb-3 leading-relaxed">{lead.message}</div>
                     )}
                     <div className="flex items-center gap-2 flex-wrap">
+                      {lead.quality_score != null && (
+                        <span className={`text-[0.56rem] font-semibold px-1.5 py-0.5 rounded-full ${
+                          lead.quality_score >= 60 ? "bg-emerald-100 text-emerald-700" :
+                          lead.quality_score >= 30 ? "bg-amber-100 text-amber-700" :
+                          "bg-slate-100 text-slate-500"
+                        }`}>Quality: {lead.quality_score}/100</span>
+                      )}
+                      {lead.bill_amount_cents > 0 && (
+                        <span className="text-[0.56rem] text-slate-400">${(lead.bill_amount_cents / 100).toFixed(0)} billed</span>
+                      )}
+                      {lead.bill_amount_cents === 0 && lead.billed === false && (
+                        <span className="text-[0.56rem] text-emerald-600 font-semibold">Free trial lead</span>
+                      )}
                       {lead.status === "new" && (
                         <button onClick={() => updateLeadStatus(lead.id, "contacted")} className="text-xs font-semibold text-blue-600 hover:text-blue-800 px-2 py-1 border border-blue-200 rounded-lg hover:bg-blue-50">Mark Contacted</button>
                       )}
@@ -660,25 +698,34 @@ export default function AdvisorPortalPage() {
                       {lead.status !== "lost" && lead.status !== "converted" && (
                         <button onClick={() => updateLeadStatus(lead.id, "lost")} className="text-xs font-semibold text-red-500 hover:text-red-700 px-2 py-1 border border-red-200 rounded-lg hover:bg-red-50">Mark Lost</button>
                       )}
-                      <button
-                        onClick={async () => {
-                          const reason = prompt("Dispute reason:\n1. spam\n2. wrong_number\n3. fake_details\n4. not_genuine\n5. duplicate\n6. other\n\nEnter reason:");
-                          if (!reason) return;
-                          const validReasons = ["spam", "wrong_number", "fake_details", "not_genuine", "duplicate", "other"];
-                          const r = validReasons.includes(reason) ? reason : "other";
-                          const details = r === "other" ? prompt("Please describe the issue:") : null;
-                          const res = await fetch("/api/advisor-auth/disputes", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ leadId: lead.id, reason: r, details }),
-                          });
-                          if (res.ok) alert("Dispute submitted. We'll review within 48 hours.");
-                          else { const d = await res.json(); alert(d.error || "Failed to submit dispute."); }
-                        }}
-                        className="text-xs font-semibold text-slate-400 hover:text-slate-600 px-2 py-1 border border-slate-200 rounded-lg hover:bg-slate-50"
-                      >
-                        Dispute
-                      </button>
+                      {(() => {
+                        const daysSince = Math.floor((Date.now() - new Date(lead.created_at).getTime()) / (1000 * 60 * 60 * 24));
+                        const canDispute = daysSince <= 14 && lead.billed;
+                        const daysLeft = 14 - daysSince;
+                        return (
+                          <button
+                            onClick={async () => {
+                              const reason = prompt("Dispute reason:\n1. spam\n2. wrong_number\n3. fake_details\n4. not_genuine\n5. duplicate\n6. other\n\nEnter reason:");
+                              if (!reason) return;
+                              const validReasons = ["spam", "wrong_number", "fake_details", "not_genuine", "duplicate", "other"];
+                              const r = validReasons.includes(reason) ? reason : "other";
+                              const details = r === "other" ? prompt("Please describe the issue:") : null;
+                              const res = await fetch("/api/advisor-auth/disputes", {
+                                method: "POST",
+                                headers: { "Content-Type": "application/json" },
+                                body: JSON.stringify({ leadId: lead.id, reason: r, details }),
+                              });
+                              if (res.ok) alert("Dispute submitted. We'll review within 10 business days.");
+                              else { const d = await res.json(); alert(d.error || "Failed to submit dispute."); }
+                            }}
+                            disabled={!canDispute}
+                            className={`text-xs font-semibold px-2 py-1 border rounded-lg ${canDispute ? "text-slate-400 hover:text-slate-600 border-slate-200 hover:bg-slate-50" : "text-slate-300 border-slate-100 cursor-not-allowed"}`}
+                            title={!canDispute ? (daysSince > 14 ? "Dispute window closed (14 days)" : "Free leads cannot be disputed") : `${daysLeft} days left to dispute`}
+                          >
+                            Dispute{canDispute && daysLeft <= 5 ? ` (${daysLeft}d left)` : ""}
+                          </button>
+                        );
+                      })()}
                       <input
                         type="text"
                         placeholder="Add a note..."

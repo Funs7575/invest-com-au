@@ -28,12 +28,28 @@ export async function POST(request: NextRequest) {
   // Verify lead belongs to this advisor
   const { data: lead } = await supabase
     .from("professional_leads")
-    .select("id, professional_id")
+    .select("id, professional_id, created_at, billed")
     .eq("id", leadId)
     .eq("professional_id", advisorId)
     .single();
 
   if (!lead) return NextResponse.json({ error: "Lead not found" }, { status: 404 });
+
+  // Enforce 14-day dispute window
+  const leadAge = Date.now() - new Date(lead.created_at).getTime();
+  const fourteenDays = 14 * 24 * 60 * 60 * 1000;
+  if (leadAge > fourteenDays) {
+    return NextResponse.json({
+      error: "Dispute window has closed. Leads can only be disputed within 14 days of delivery."
+    }, { status: 400 });
+  }
+
+  // Only allow disputes on billed leads
+  if (!lead.billed) {
+    return NextResponse.json({
+      error: "This lead was not billed (free trial lead) and cannot be disputed."
+    }, { status: 400 });
+  }
 
   // Check no existing dispute
   const { data: existingDispute } = await supabase
