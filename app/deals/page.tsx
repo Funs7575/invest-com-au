@@ -114,16 +114,16 @@ export default async function DealsPage() {
             </div>
           )}
 
-          {/* Advisor Free Consultations */}
+          {/* Featured Advisors */}
           {(topAdvisors?.length ?? 0) > 0 && (
             <div className="mt-8 md:mt-10">
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h2 className="text-base md:text-lg font-bold text-slate-900 flex items-center gap-2">
                     <Icon name="users" size={18} className="text-violet-500" />
-                    Free Advisor Consultations
+                    Verified Financial Advisors
                   </h2>
-                  <p className="text-[0.65rem] md:text-xs text-slate-500 mt-0.5">Book a free 30-minute call with a verified professional — no obligation</p>
+                  <p className="text-[0.65rem] md:text-xs text-slate-500 mt-0.5">Send a free enquiry to a verified professional — exclusive, no obligation</p>
                 </div>
                 <Link href="/advisors" className="text-xs font-semibold text-violet-600 hover:text-violet-800 transition-colors hidden md:flex items-center gap-1">
                   Browse all advisors &rarr;

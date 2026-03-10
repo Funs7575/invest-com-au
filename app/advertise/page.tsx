@@ -121,7 +121,7 @@ export default function AdvertisePage() {
             Reach Australian investors actively choosing a broker
           </h1>
           <p className="text-slate-300 text-base md:text-lg max-w-2xl mx-auto mb-8">
-            Invest.com.au is Australia&apos;s leading broker comparison platform. Our users are high-intent — they&apos;re actively researching and ready to open accounts.
+            Invest.com.au is Australia&apos;s leading independent investing comparison hub. Our users are high-intent — they&apos;re actively researching and ready to open accounts.
           </p>
           <div className="flex items-center justify-center gap-4 flex-wrap">
             <Link href="/broker-portal/register"

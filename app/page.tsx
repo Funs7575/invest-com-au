@@ -355,7 +355,7 @@ export default async function HomePage() {
         <div className="container-custom max-w-4xl">
           <p className="text-[0.62rem] md:text-xs text-slate-400 text-center uppercase tracking-widest font-semibold mb-1 md:mb-2">Choose your path</p>
           <h2 className="text-base md:text-2xl font-extrabold text-slate-900 text-center mb-3 md:mb-8">How Can We Help?</h2>
-          <div className="grid grid-cols-3 gap-2 md:gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 md:gap-5">
             <Link href="/compare" className="relative bg-white border border-slate-200 rounded-2xl p-3 md:p-6 card-hover group overflow-hidden">
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-slate-900 to-slate-600" />
               <div className="w-9 h-9 md:w-12 md:h-12 bg-gradient-to-br from-slate-900 to-slate-700 rounded-xl flex items-center justify-center mb-2 md:mb-3 shadow-lg shadow-slate-900/20">
@@ -363,7 +363,7 @@ export default async function HomePage() {
                 <Icon name="bar-chart-2" size={24} className="text-white hidden md:block" />
               </div>
               <h3 className="text-xs md:text-base font-bold text-slate-900 mb-0.5 md:mb-1 group-hover:text-slate-700">Compare Platforms</h3>
-              <p className="text-[0.58rem] md:text-sm text-slate-500 leading-relaxed hidden sm:block">I want to choose a platform myself</p>
+              <p className="text-[0.58rem] md:text-sm text-slate-500 leading-relaxed">I want to choose a platform myself</p>
               <span className="hidden md:inline-block mt-2 text-xs font-bold text-slate-400 group-hover:text-slate-600 transition-colors">Explore →</span>
             </Link>
             <Link href="/find-advisor" className="relative bg-white border border-violet-200 rounded-2xl p-3 md:p-6 card-hover group overflow-hidden">
@@ -373,7 +373,7 @@ export default async function HomePage() {
                 <Icon name="users" size={24} className="text-white hidden md:block" />
               </div>
               <h3 className="text-xs md:text-base font-bold text-violet-900 mb-0.5 md:mb-1 group-hover:text-violet-700">Find an Advisor</h3>
-              <p className="text-[0.58rem] md:text-sm text-violet-600 leading-relaxed hidden sm:block">I want help from a verified professional</p>
+              <p className="text-[0.58rem] md:text-sm text-violet-600 leading-relaxed">I want help from a verified professional</p>
               <span className="hidden md:inline-block mt-2 text-xs font-bold text-violet-400 group-hover:text-violet-600 transition-colors">Find yours →</span>
             </Link>
             <Link href="/quiz" className="relative bg-white border border-amber-200 rounded-2xl p-3 md:p-6 card-hover group overflow-hidden">
@@ -383,7 +383,7 @@ export default async function HomePage() {
                 <Icon name="target" size={24} className="text-white hidden md:block" />
               </div>
               <h3 className="text-xs md:text-base font-bold text-amber-900 mb-0.5 md:mb-1 group-hover:text-amber-700">Platform Quiz</h3>
-              <p className="text-[0.58rem] md:text-sm text-amber-700 leading-relaxed hidden sm:block">Not sure which platform? Matched in 60 seconds</p>
+              <p className="text-[0.58rem] md:text-sm text-amber-700 leading-relaxed">Not sure? Get a personalised match in 60 seconds</p>
               <span className="hidden md:inline-block mt-2 text-xs font-bold text-amber-400 group-hover:text-amber-600 transition-colors">Start →</span>
             </Link>
           </div>
@@ -598,7 +598,7 @@ export default async function HomePage() {
                   View all deals →
                 </Link>
               </div>
-              {/* Advisor free consultation banner */}
+              {/* Featured advisors banner */}
               {(featuredAdvisors?.length ?? 0) > 0 && (
                 <div className="mt-4 md:mt-6 border border-violet-200 rounded-xl bg-gradient-to-r from-violet-50 to-white p-3 md:p-5">
                   <div className="flex items-start md:items-center justify-between gap-3 mb-3">
@@ -926,7 +926,7 @@ export default async function HomePage() {
             <h2 className="text-lg md:text-2xl font-bold text-center mb-3 md:mb-8">Investing Tools &amp; Calculators</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
               {[
-                { href: "/portfolio-calculator", icon: "calculator", color: "from-violet-600 to-violet-500", shadow: "shadow-violet-500/15", title: "Portfolio Calculator", desc: "See exact fees at every broker" },
+                { href: "/portfolio-calculator", icon: "calculator", color: "from-violet-600 to-violet-500", shadow: "shadow-violet-500/15", title: "Portfolio Calculator", desc: "See exact fees at every platform" },
                 { href: "/switching-calculator", icon: "arrow-right-left", color: "from-emerald-600 to-emerald-500", shadow: "shadow-emerald-500/15", title: "Switching Calculator", desc: "How much are you overpaying?" },
                 { href: "/savings-calculator", icon: "piggy-bank", color: "from-blue-600 to-blue-500", shadow: "shadow-blue-500/15", title: "Savings Calculator", desc: "Are you earning enough?" },
                 { href: "/compare", icon: "bar-chart", color: "from-amber-500 to-amber-400", shadow: "shadow-amber-500/15", title: "Compare Platforms", desc: "Side-by-side comparison" },

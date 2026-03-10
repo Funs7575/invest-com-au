@@ -100,7 +100,7 @@ export default async function ForAdvisorsPage() {
             <div className="border border-slate-200 rounded-xl p-6">
               <p className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1">Free Trial</p>
               <p className="text-3xl font-extrabold text-slate-900 mb-1">$0</p>
-              <p className="text-sm text-slate-500 mb-5">First 3 leads free</p>
+              <p className="text-sm text-slate-500 mb-5">First 2 leads free</p>
               <ul className="space-y-2 mb-6">
                 {["Profile page", "2 free leads", "Advisor dashboard", "Calendly integration", "Basic analytics"].map(f => (
                   <li key={f} className="flex items-center gap-2 text-sm text-slate-700"><span className="text-emerald-500">✓</span>{f}</li>
