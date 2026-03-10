@@ -89,6 +89,7 @@ interface BrokerReviewProps {
   broker: Broker;
   similar: Broker[];
   relatedArticles?: RelatedArticle[];
+  expertArticles?: { id: number; title: string; slug: string; author_name: string; category: string; professionals?: unknown }[];
   authorName?: string;
   authorTitle?: string;
   authorUrl?: string;
@@ -175,6 +176,7 @@ export default function BrokerReviewClient({
   broker: b,
   similar,
   relatedArticles,
+  expertArticles = [],
   authorName,
   authorTitle,
   authorUrl,
@@ -248,6 +250,7 @@ export default function BrokerReviewClient({
     ...(relatedDeals.length > 0 ? [{ id: "deals", label: "Deals" }] : []),
     ...(similar.length > 0 ? [{ id: "similar", label: "vs Alternatives" }] : []),
     ...(relatedArticles && relatedArticles.length > 0 ? [{ id: "related-articles", label: "Related Guides" }] : []),
+    ...(expertArticles.length > 0 ? [{ id: "expert-insights", label: "Expert Insights" }] : []),
     { id: "questions", label: "Q&A" },
   ];
 
@@ -1085,6 +1088,33 @@ export default function BrokerReviewClient({
         )}
 
         {/* Advisor Cross-Links */}
+        {expertArticles.length > 0 && (
+          <>
+            <h2 className="text-lg md:text-xl font-extrabold mb-1.5 md:mb-2 scroll-mt-20">Expert Insights About {b.name}</h2>
+            <p className="text-xs md:text-sm text-slate-600 mb-3 md:mb-4">
+              What verified financial professionals say about {b.name}:
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-8">
+              {expertArticles.map((article) => {
+                const pro = (Array.isArray(article.professionals) ? article.professionals[0] : article.professionals) as { name?: string; slug?: string; photo_url?: string; verified?: boolean } | null;
+                return (
+                  <Link key={article.id} href={`/expert/${article.slug}`} className="border border-violet-100 bg-violet-50/30 rounded-xl p-3 md:p-4 hover:shadow-md hover:border-violet-200 transition-all">
+                    {article.category && (
+                      <span className="text-[0.58rem] font-bold text-violet-700 bg-violet-100 px-2 py-0.5 rounded-full">{article.category}</span>
+                    )}
+                    <h3 className="text-sm font-bold text-slate-900 mt-1.5 line-clamp-2">{article.title}</h3>
+                    <div className="flex items-center gap-2 mt-2 text-[0.62rem] text-slate-500">
+                      <span>By {article.author_name}</span>
+                      {pro?.verified && <span className="text-violet-600 font-semibold">✓ Verified</span>}
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </>
+        )}
+
+        {/* Advisor Cross-Links (by type) */}
         {PLATFORM_TO_ADVISORS[b.platform_type] && (
           <div className="bg-gradient-to-br from-violet-50 to-slate-50 border border-violet-200/60 rounded-xl p-4 md:p-6 mt-6 md:mt-8">
             <div className="flex items-center gap-2 mb-3">

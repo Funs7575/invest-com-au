@@ -121,6 +121,7 @@ export interface Article {
   read_time?: number;
   related_brokers?: string[];
   related_advisor_types?: string[];
+  related_verticals?: string[];
   related_calc?: string;
   cover_image_url?: string;
   evergreen: boolean;
@@ -170,10 +171,14 @@ export interface AdvisorArticle {
   click_count: number;
   word_count: number;
   read_time: number;
+  reading_time_mins?: number;
   featured: boolean;
   moderation_score: number;
+  author_photo_url?: string;
+  related_brokers?: string[];
   related_broker_slugs?: string[];
   related_advisor_types?: string[];
+  related_advisor_type?: string;
   created_at: string;
   updated_at: string;
   submitted_at?: string;

@@ -86,12 +86,19 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
     .map(({ broker: br }) => br);
 
   // Fetch articles, user reviews, switch stories, fee history, related deals (in parallel)
-  const [{ data: brokerArticles }, { data: userReviews }, { data: reviewStats }, { data: switchStoriesRaw }, { data: feeHistoryRaw }, { data: questionsRaw }, { data: relatedDealsRaw }] = await Promise.all([
+  const [{ data: brokerArticles }, { data: expertArticlesRaw }, { data: userReviews }, { data: reviewStats }, { data: switchStoriesRaw }, { data: feeHistoryRaw }, { data: questionsRaw }, { data: relatedDealsRaw }] = await Promise.all([
     supabase
       .from('articles')
       .select('id, title, slug, category, read_time')
       .contains('related_brokers', [slug])
       .limit(4),
+    supabase
+      .from('advisor_articles')
+      .select('id, title, slug, author_name, category, read_time, professionals!advisor_articles_professional_id_fkey(name, slug, photo_url, verified)')
+      .eq('status', 'published')
+      .contains('related_brokers', [slug])
+      .order('featured', { ascending: false })
+      .limit(3),
     supabase
       .from('user_reviews')
       .select('id, broker_id, broker_slug, display_name, rating, title, body, pros, cons, status, created_at')
@@ -229,6 +236,7 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
           broker={b}
           similar={similar}
           relatedArticles={(brokerArticles || []) as { id: number; title: string; slug: string; category?: string; read_time?: number }[]}
+          expertArticles={(expertArticlesRaw || []).map((a: Record<string, unknown>) => ({ id: a.id as number, title: a.title as string, slug: a.slug as string, author_name: a.author_name as string, category: a.category as string, professionals: a.professionals }))}
           authorName={brokerReviewer?.full_name || REVIEW_AUTHOR.name}
           authorTitle={REVIEW_AUTHOR.jobTitle}
           authorUrl={brokerReviewer ? `/reviewers/${brokerReviewer.slug}` : REVIEW_AUTHOR.url}

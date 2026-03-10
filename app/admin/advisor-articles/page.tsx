@@ -11,8 +11,9 @@ type Article = {
   admin_notes: string | null; rejection_reason: string | null;
   created_at: string; submitted_at: string | null; published_at: string | null;
   reviewed_at: string | null; reviewed_by: string | null;
-  view_count: number; click_count: number;
+  view_count: number; click_count: number; word_count: number;
   meta_title: string | null; meta_description: string | null;
+  related_brokers: string[]; related_advisor_types: string[]; featured: boolean;
   professionals?: { name: string; slug: string; firm_name: string; email: string } | null;
 };
 
@@ -43,6 +44,8 @@ export default function AdminAdvisorArticlesPage() {
   const [editExcerpt, setEditExcerpt] = useState("");
   const [editMetaTitle, setEditMetaTitle] = useState("");
   const [editMetaDesc, setEditMetaDesc] = useState("");
+  const [editRelatedBrokers, setEditRelatedBrokers] = useState("");
+  const [editFeatured, setEditFeatured] = useState(false);
 
   const fetchArticles = useCallback(async () => {
     const url = filter === "all" ? "/api/advisor-articles?mode=admin" : `/api/advisor-articles?mode=admin&status=${filter}`;
@@ -58,6 +61,7 @@ export default function AdminAdvisorArticlesPage() {
     setAdminNotes(a.admin_notes || "");
     setEditTitle(a.title); setEditContent(a.content); setEditExcerpt(a.excerpt || "");
     setEditMetaTitle(a.meta_title || ""); setEditMetaDesc(a.meta_description || "");
+    setEditRelatedBrokers((a.related_brokers || []).join(", ")); setEditFeatured(a.featured || false);
     setTab("review");
     // Fetch moderation log
     const res = await fetch(`/api/advisor-articles?mode=moderation_log&article_id=${a.id}`);
@@ -81,7 +85,7 @@ export default function AdminAdvisorArticlesPage() {
     setBusy(true);
     await fetch("/api/advisor-articles", {
       method: "PUT", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: selected.id, action: "admin_edit", title: editTitle, content: editContent, excerpt: editExcerpt, meta_title: editMetaTitle || undefined, meta_description: editMetaDesc || undefined }),
+      body: JSON.stringify({ id: selected.id, action: "admin_edit", title: editTitle, content: editContent, excerpt: editExcerpt, meta_title: editMetaTitle || undefined, meta_description: editMetaDesc || undefined, related_brokers: editRelatedBrokers.split(",").map(s => s.trim()).filter(Boolean), featured: editFeatured }),
     });
     // Refresh
     const res = await fetch(`/api/advisor-articles?mode=admin`);
@@ -278,6 +282,15 @@ export default function AdminAdvisorArticlesPage() {
                         <input value={editMetaDesc} onChange={e => setEditMetaDesc(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg" placeholder="Auto-generated if empty" />
                       </div>
                     </div>
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1">Related Broker Slugs <span className="font-normal text-slate-400">(comma-separated, shows on those broker pages)</span></label>
+                      <input value={editRelatedBrokers} onChange={e => setEditRelatedBrokers(e.target.value)} className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg" placeholder="e.g. selfwealth, stake, superhero" />
+                    </div>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input type="checkbox" checked={editFeatured} onChange={e => setEditFeatured(e.target.checked)} className="w-4 h-4 rounded border-slate-300 text-violet-600 focus:ring-violet-500" />
+                      <span className="text-xs font-bold text-slate-700">Featured</span>
+                      <span className="text-xs text-slate-400">— shows on homepage Expert Insights and top of hub</span>
+                    </label>
                     <button onClick={saveEdit} disabled={busy} className="px-4 py-2 bg-violet-600 text-white text-sm font-bold rounded-lg hover:bg-violet-700 disabled:opacity-50">
                       {busy ? "Saving..." : "Save Changes"}
                     </button>

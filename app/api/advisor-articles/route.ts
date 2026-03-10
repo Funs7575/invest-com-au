@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
 
 import { notificationFooter } from "@/lib/email-templates";
@@ -72,7 +73,8 @@ export async function GET(request: NextRequest) {
   }
 
   if (mode === "guidelines") {
-    const { data } = await supabase.from("article_guidelines").select("key, title, description, sort_order").eq("active", true).order("sort_order", { ascending: true });
+    const admin = createAdminClient();
+    const { data } = await admin.from("article_guidelines").select("key, title, description, sort_order").eq("active", true).order("sort_order", { ascending: true });
     return NextResponse.json(data || []);
   }
 
@@ -90,7 +92,7 @@ export async function POST(request: NextRequest) {
   const { professional_id, title, content, excerpt, category, tags, pricing_tier, action } = body;
   if (!professional_id || !title?.trim() || !content?.trim()) return NextResponse.json({ error: "Title and content required" }, { status: 400 });
 
-  const { data: pro } = await supabase.from("professionals").select("id, name, slug, firm_name, email").eq("id", professional_id).eq("status", "active").single();
+  const { data: pro } = await supabase.from("professionals").select("id, name, slug, firm_name, email, photo_url").eq("id", professional_id).eq("status", "active").single();
   if (!pro) return NextResponse.json({ error: "Professional not found" }, { status: 404 });
 
   const isSubmit = action === "submit";
@@ -189,7 +191,7 @@ export async function PUT(request: NextRequest) {
 
   if (action === "admin_edit") {
     const fields: Record<string, unknown> = {};
-    for (const k of ["title", "content", "excerpt", "meta_title", "meta_description", "category", "featured", "moderation_score", "related_broker_slugs", "related_advisor_types"]) {
+    for (const k of ["title", "content", "excerpt", "meta_title", "meta_description", "category", "featured", "related_brokers", "related_advisor_types"]) {
       if (updates[k] !== undefined) fields[k] = updates[k];
     }
     if (updates.content) {
