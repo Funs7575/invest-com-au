@@ -74,6 +74,20 @@ export async function POST(request: NextRequest) {
       `<strong>${name.trim()}</strong> (${account_type === 'firm' ? 'Firm' : 'Individual'}) applied as ${type}.<br/>Email: ${email}<br/>Firm: ${firm_name || 'N/A'}<br/><a href="https://invest.com.au/admin/advisors" style="color:#2563eb">Review in Admin →</a>`
     ).catch((err) => console.error("[advisor-apply] admin notification failed:", err));
 
+    // Record agreement acceptance
+    try {
+      const supabaseAdmin = (await import("@/lib/supabase/admin")).createAdminClient();
+      await supabaseAdmin.from("agreement_acceptances").insert({
+        user_type: "advisor",
+        agreement_type: "advisor_services",
+        agreement_version: "1.0",
+        email: email.toLowerCase().trim(),
+        accepted_by_name: name.trim(),
+        ip_address: ip,
+        user_agent: request.headers.get("user-agent") || null,
+      });
+    } catch (err) { console.error("[advisor-apply] agreement recording failed:", err); }
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Advisor apply error:", error);

@@ -38,7 +38,8 @@ export default function TermsPage() {
               <span className="text-brand">Terms of Use</span>
             </div>
 
-            <h1 className="text-2xl md:text-4xl font-extrabold mb-8">Terms of Use</h1>
+            <h1 className="text-2xl md:text-4xl font-extrabold mb-2">Terms of Use</h1>
+            <p className="text-xs text-slate-400 mb-8">Version 1.0 — Last updated 10 March 2026</p>
 
             <div className="space-y-6">
               {/* 1. Scope of Service */}

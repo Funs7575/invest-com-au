@@ -155,6 +155,26 @@ export async function POST(request: NextRequest) {
       slug: professional.slug,
     });
 
+    // Record agreement acceptance for audit trail
+    try {
+      await supabase.from("agreement_acceptances").insert({
+        user_type: "advisor",
+        agreement_type: "advisor_services",
+        agreement_version: "1.0",
+        professional_id: professional.id,
+        email: email.trim().toLowerCase(),
+        accepted_by_name: name.trim(),
+        ip_address: ip,
+        user_agent: request.headers.get("user-agent") || null,
+      });
+      await supabase.from("professionals").update({
+        terms_accepted_at: new Date().toISOString(),
+        terms_version: "1.0",
+      }).eq("id", professional.id);
+    } catch (err) {
+      log.warn("Agreement recording failed", { error: err instanceof Error ? err.message : String(err) });
+    }
+
     return NextResponse.json({
       success: true,
       message: "Advisor account created successfully.",

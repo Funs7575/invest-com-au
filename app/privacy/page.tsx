@@ -13,7 +13,7 @@ export default function PrivacyPage() {
       <div className="container-custom max-w-3xl">
         <h1 className="text-3xl font-extrabold mb-2">Privacy Policy</h1>
         <p className="text-sm text-slate-500 mb-8">
-          Last updated: 17 February 2026
+          Version 1.0 — Last updated: 17 February 2026
         </p>
 
         <div className="prose prose-slate max-w-none text-sm leading-relaxed space-y-6">
