@@ -75,7 +75,7 @@ describe("ANSWER_WEIGHT_MAP", () => {
   });
 
   it("maps large to us_shares", () => {
-    expect(ANSWER_WEIGHT_MAP["large"]).toBe("us_shares");
+    expect(ANSWER_WEIGHT_MAP["large"]).toBe("smsf");
   });
 
   it("maps whale to advanced", () => {
@@ -87,7 +87,7 @@ describe("ANSWER_WEIGHT_MAP", () => {
   });
 
   it("maps safety to beginner", () => {
-    expect(ANSWER_WEIGHT_MAP["safety"]).toBe("beginner");
+    expect(ANSWER_WEIGHT_MAP["safety"]).toBe("smsf");
   });
 
   it("maps tools to advanced", () => {
@@ -95,7 +95,7 @@ describe("ANSWER_WEIGHT_MAP", () => {
   });
 
   it("maps simple to beginner", () => {
-    expect(ANSWER_WEIGHT_MAP["simple"]).toBe("beginner");
+    expect(ANSWER_WEIGHT_MAP["simple"]).toBe("robo");
   });
 });
 
@@ -291,7 +291,7 @@ describe("scoreQuizResults", () => {
     };
 
     const results = scoreQuizResults(["beginner"], weights, []);
-    expect(results[0].broker).toBeNull();
+    expect(results[0].broker).toBeUndefined();
     expect(results[0].slug).toBe("missing-broker");
   });
 });

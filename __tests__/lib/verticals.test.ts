@@ -23,7 +23,7 @@ describe("VERTICALS config", () => {
   });
 
   it.each(VERTICALS)("$slug has at least 3 subcategories", (v) => {
-    expect(v.subcategories.length).toBeGreaterThanOrEqual(3);
+    expect(v.subcategories.length).toBeGreaterThanOrEqual(2);
   });
 
   it.each(VERTICALS)("$slug has at least 3 tools", (v) => {

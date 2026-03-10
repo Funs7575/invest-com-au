@@ -69,32 +69,32 @@ describe("getBenefitCta", () => {
   });
 
   it("returns deal-specific CTA when broker has a deal", () => {
-    const broker = makeBroker({ deal: true, deal_text: "Free trades for 30 days", name: "Stake" });
+    const broker = makeBroker({ deal: true, deal_text: "Free trades for 30 days", name: "Stake", affiliate_url: "https://example.com" });
     expect(getBenefitCta(broker, "compare")).toBe("Claim Stake Deal");
   });
 
   it("returns $0 brokerage CTA for compare context", () => {
-    const broker = makeBroker({ asx_fee_value: 0 });
+    const broker = makeBroker({ asx_fee_value: 0, affiliate_url: "https://example.com" });
     expect(getBenefitCta(broker, "compare")).toBe("Trade $0 Brokerage →");
   });
 
   it("returns low fee CTA for cheap brokers in compare", () => {
-    const broker = makeBroker({ asx_fee_value: 3, asx_fee: "$3" });
+    const broker = makeBroker({ asx_fee_value: 3, asx_fee: "$3", affiliate_url: "https://example.com" });
     expect(getBenefitCta(broker, "compare")).toBe("Trade from $3 →");
   });
 
   it("returns default for compare with normal fees", () => {
-    const broker = makeBroker({ asx_fee_value: 10 });
+    const broker = makeBroker({ asx_fee_value: 10, affiliate_url: "https://example.com" });
     expect(getBenefitCta(broker, "compare")).toBe("Open Free Account →");
   });
 
   it("returns calculator-specific CTA for $0 brokerage", () => {
-    const broker = makeBroker({ asx_fee_value: 0 });
+    const broker = makeBroker({ asx_fee_value: 0, affiliate_url: "https://example.com" });
     expect(getBenefitCta(broker, "calculator")).toBe("Try $0 Brokerage →");
   });
 
   it("returns quiz-specific default CTA", () => {
-    const broker = makeBroker({});
+    const broker = makeBroker({ affiliate_url: "https://example.com" });
     expect(getBenefitCta(broker, "quiz")).toBe("Get Started Free →");
   });
 });

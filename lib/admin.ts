@@ -3,16 +3,28 @@
  * and fallback avatar generation.
  *
  * Import this instead of re-declaring ADMIN_EMAILS in every API route.
+ *
+ * Use getAdminEmails() / getAdminEmail() in code that needs to respect
+ * test-time env overrides. The plain ADMIN_EMAILS / ADMIN_EMAIL constants
+ * are kept for backward-compat but read env at import time.
  */
 
-/** Admin email addresses parsed from environment variable */
-export const ADMIN_EMAILS = (
-  process.env.ADMIN_EMAILS || "admin@invest.com.au"
-)
-  .split(",")
-  .map((e) => e.trim().toLowerCase());
+/** Admin email addresses — reads env at call time (test-friendly) */
+export function getAdminEmails(): string[] {
+  return (process.env.ADMIN_EMAILS || "admin@invest.com.au")
+    .split(",")
+    .map((e) => e.trim().toLowerCase());
+}
 
-/** Primary admin email for transactional notifications */
+/** Backward-compatible constant */
+export const ADMIN_EMAILS = getAdminEmails();
+
+/** Primary admin email — reads env at call time (test-friendly) */
+export function getAdminEmail(): string {
+  return process.env.ADMIN_EMAIL || "admin@invest.com.au";
+}
+
+/** Backward-compatible constant */
 export const ADMIN_EMAIL =
   process.env.ADMIN_EMAIL || "admin@invest.com.au";
 
@@ -21,8 +33,6 @@ const AVATAR_BG = "7c3aed";
 
 /**
  * Generate a consistent fallback avatar URL for a given name.
- * Use this everywhere instead of ad-hoc ui-avatars.com strings
- * so the background colour is always consistent.
  */
 export function fallbackAvatarUrl(
   name: string,

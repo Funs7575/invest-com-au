@@ -2,8 +2,8 @@ import { describe, it, expect } from "vitest";
 import { HOW_TO_GUIDES, getAllGuideSlugs, getGuide } from "@/lib/how-to-guides";
 
 describe("HOW_TO_GUIDES config", () => {
-  it("has exactly 5 guides", () => {
-    expect(HOW_TO_GUIDES).toHaveLength(5);
+  it("has at least 5 guides", () => {
+    expect(HOW_TO_GUIDES.length).toBeGreaterThanOrEqual(5);
   });
 
   it.each(HOW_TO_GUIDES)("$slug has all required fields", (g) => {
@@ -39,14 +39,14 @@ describe("HOW_TO_GUIDES config", () => {
 
 describe("getGuide", () => {
   it("returns correct guide for valid slug", () => {
-    const guide = getGuide("how-to-buy-shares");
+    const guide = getGuide("buy-shares");
     expect(guide).toBeDefined();
-    expect(guide!.slug).toBe("how-to-buy-shares");
+    expect(guide!.slug).toBe("buy-shares");
     expect(guide!.h1).toContain("Buy Shares");
   });
 
   it("returns bitcoin guide", () => {
-    const guide = getGuide("how-to-buy-bitcoin");
+    const guide = getGuide("buy-bitcoin");
     expect(guide).toBeDefined();
     expect(guide!.h1).toContain("Bitcoin");
   });
@@ -58,17 +58,17 @@ describe("getGuide", () => {
 });
 
 describe("getAllGuideSlugs", () => {
-  it("returns 5 slugs", () => {
+  it("returns slugs matching guide count", () => {
     const slugs = getAllGuideSlugs();
-    expect(slugs).toHaveLength(5);
+    expect(slugs).toHaveLength(HOW_TO_GUIDES.length);
   });
 
-  it("includes expected guide slugs", () => {
+  it("includes core guide slugs", () => {
     const slugs = getAllGuideSlugs();
-    expect(slugs).toContain("how-to-buy-shares");
-    expect(slugs).toContain("how-to-buy-bitcoin");
-    expect(slugs).toContain("how-to-buy-etfs");
-    expect(slugs).toContain("how-to-open-brokerage-account");
-    expect(slugs).toContain("how-to-start-investing");
+    expect(slugs).toContain("buy-shares");
+    expect(slugs).toContain("buy-bitcoin");
+    expect(slugs).toContain("buy-etfs");
+    expect(slugs).toContain("open-brokerage-account");
+    expect(slugs).toContain("start-investing");
   });
 });

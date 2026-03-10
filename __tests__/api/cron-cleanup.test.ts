@@ -54,10 +54,12 @@ import { GET, runtime, maxDuration } from "@/app/api/cron/cleanup/route";
 describe("GET /api/cron/cleanup", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    process.env.CRON_SECRET = "test-cron-secret";
   });
 
   afterAll(() => {
     vi.restoreAllMocks();
+    delete process.env.CRON_SECRET;
   });
 
   // ── Config ──
@@ -70,7 +72,7 @@ describe("GET /api/cron/cleanup", () => {
   // ── Success case ──
 
   it("returns 200 with cleanup counts for all tables", async () => {
-    const res = await GET(new Request("http://localhost/api/cron/cleanup") as any);
+    const res = await GET(new Request("http://localhost/api/cron/cleanup", { headers: { authorization: "Bearer test-cron-secret" } }) as any);
     expect(res.status).toBe(200);
 
     const json = await res.json();
@@ -82,7 +84,7 @@ describe("GET /api/cron/cleanup", () => {
   });
 
   it("calls delete on all four tables", async () => {
-    await GET(new Request("http://localhost/api/cron/cleanup") as any);
+    await GET(new Request("http://localhost/api/cron/cleanup", { headers: { authorization: "Bearer test-cron-secret" } }) as any);
 
     const calledTables = mockFrom.mock.calls.map((call) => call[0]);
     expect(calledTables).toContain("rate_limits");
@@ -92,7 +94,7 @@ describe("GET /api/cron/cleanup", () => {
   });
 
   it("passes count: 'exact' to delete calls", async () => {
-    await GET(new Request("http://localhost/api/cron/cleanup") as any);
+    await GET(new Request("http://localhost/api/cron/cleanup", { headers: { authorization: "Bearer test-cron-secret" } }) as any);
 
     // Each table's delete should have been called with { count: "exact" }
     for (const call of mockFrom.mock.results) {
@@ -126,7 +128,7 @@ describe("GET /api/cron/cleanup", () => {
       return builder;
     });
 
-    const res = await GET(new Request("http://localhost/api/cron/cleanup") as any);
+    const res = await GET(new Request("http://localhost/api/cron/cleanup", { headers: { authorization: "Bearer test-cron-secret" } }) as any);
     expect(res.status).toBe(200);
 
     const json = await res.json();
@@ -152,7 +154,7 @@ describe("GET /api/cron/cleanup", () => {
       return builder;
     });
 
-    const res = await GET(new Request("http://localhost/api/cron/cleanup") as any);
+    const res = await GET(new Request("http://localhost/api/cron/cleanup", { headers: { authorization: "Bearer test-cron-secret" } }) as any);
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json.ok).toBe(true);

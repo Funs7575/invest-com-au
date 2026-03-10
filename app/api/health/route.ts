@@ -40,11 +40,11 @@ export async function GET(request: Request) {
   const cronStart = Date.now();
   try {
     const supabase = createAdminClient();
-    const cutoff = new Date(Date.now() - 26 * 60 * 60 * 1000).toISOString();
+    const cutoff = new Date(Date.now() - 26 * 60 * 60 * 1000).toISOString().split("T")[0]; // date only for stat_date
     const { error } = await supabase
       .from("campaign_daily_stats")
       .select("id", { count: "exact", head: true })
-      .gte("created_at", cutoff);
+      .gte("stat_date", cutoff);
     if (error) throw error;
     // If there are any active campaigns but zero stats in 26h, flag as issue
     checks.cron_freshness = { ok: true, latency_ms: Date.now() - cronStart };
@@ -61,7 +61,6 @@ export async function GET(request: Request) {
     "NEXT_PUBLIC_SUPABASE_URL",
     "NEXT_PUBLIC_SUPABASE_ANON_KEY",
     "SUPABASE_SERVICE_ROLE_KEY",
-    "STRIPE_SECRET_KEY",
     "CRON_SECRET",
   ];
   const missingEnv = requiredEnvVars.filter((v) => !process.env[v]);

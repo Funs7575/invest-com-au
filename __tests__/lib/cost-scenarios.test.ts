@@ -117,7 +117,7 @@ describe("us-shares-5000 cost calculation", () => {
 
   it("$0 brokerage + 0.7% FX = $35", () => {
     const broker = makeBroker({ us_fee_value: 0, fx_rate: 0.7 });
-    expect(scenario.calculateAnnualCost(broker)).toBe(35);
+    expect(scenario.calculateAnnualCost(broker)).toBeCloseTo(35);
   });
 
   it("filters out brokers without US fees", () => {

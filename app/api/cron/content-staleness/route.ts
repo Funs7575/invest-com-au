@@ -1,6 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
-import { ADMIN_EMAIL } from "@/lib/admin";
+import { getAdminEmail } from "@/lib/admin";
 
 export const runtime = "edge";
 export const maxDuration = 60;
@@ -106,7 +106,7 @@ export async function GET(req: NextRequest) {
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${RESEND_API_KEY}` },
         body: JSON.stringify({
           from: "Invest.com.au <hello@invest.com.au>",
-          to: ADMIN_EMAIL,
+          to: getAdminEmail(),
           subject: `${staleCount} article${staleCount !== 1 ? "s" : ""} need updating`,
           html: `<div style="font-family:Arial,sans-serif;max-width:500px"><h2 style="color:#0f172a;font-size:16px">Content Staleness Alert</h2><p style="color:#64748b;font-size:14px">${staleCount} article${staleCount !== 1 ? "s" : ""} scored above the staleness threshold and should be reviewed:</p><ul style="color:#334155;font-size:14px">${staleList}</ul><a href="${process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app"}/admin/articles" style="display:inline-block;padding:10px 20px;background:#0f172a;color:white;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;margin-top:8px">Review Articles →</a></div>`,
         }),
