@@ -149,9 +149,9 @@ export default function AlertsClient({ alerts }: { alerts: RegulatoryAlert[] }) 
                                 ))}
                               </div>
                               <div className="absolute inset-0 flex items-center justify-center">
-                                <Link href="/pro" className="px-3 py-1.5 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800">
-                                  Unlock Action Items — Pro
-                                </Link>
+                                <span className="px-3 py-1.5 bg-slate-200 text-slate-500 text-xs font-bold rounded-lg cursor-default">
+                                  Coming soon
+                                </span>
                               </div>
                             </div>
                           )}

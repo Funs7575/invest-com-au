@@ -5,7 +5,6 @@ import type { Broker } from "@/lib/types";
 import { trackEvent } from "@/lib/tracking";
 import { GENERAL_ADVICE_WARNING, PDS_CONSIDERATION, CFD_WARNING_SHORT, CRYPTO_WARNING, SUPER_WARNING_SHORT, AFCA_REFERENCE, FSG_NOTE } from "@/lib/compliance";
 import { downloadCSV } from "@/lib/csv-export";
-import ProUpsellBanner from "@/components/ProUpsellBanner";
 import Icon from "@/components/Icon";
 import AdSlot from "@/components/AdSlot";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
@@ -63,10 +62,7 @@ export default function CompareFooter({ sorted, brokers, activeFilter }: Props) 
         </div>
       )}
 
-      {/* Pro upsell */}
-      <div className="mt-6 md:mt-8">
-        <ProUpsellBanner variant="compact" />
-      </div>
+      {/* Pro upsell hidden for launch */}
 
       {/* Trust signals */}
       <div className="mt-4 md:mt-8 text-[0.62rem] md:text-xs text-slate-400 text-center">

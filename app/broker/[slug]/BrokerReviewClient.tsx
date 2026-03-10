@@ -7,7 +7,6 @@ import Link from "next/link";
 import type { Broker, UserReview, BrokerReviewStats, SwitchStory } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL, trackPageDuration } from "@/lib/tracking";
 import BrokerLogo from "@/components/BrokerLogo";
-import ProUpsell from "@/components/ProUpsell";
 import { CURRENT_YEAR } from "@/lib/seo";
 import {
   ADVERTISER_DISCLOSURE_SHORT,
@@ -1180,10 +1179,7 @@ export default function BrokerReviewClient({
           <LeadMagnet />
         </div>
 
-        {/* Pro upsell */}
-        <div className="mt-4">
-          <ProUpsell variant="fee-alert" />
-        </div>
+        {/* Pro upsell hidden for launch */}
 
         <RecentlyViewed currentSlug={b.slug} />
 

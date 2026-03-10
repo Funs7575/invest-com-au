@@ -355,11 +355,10 @@ export default function FeeImpactResults({
                     See the complete fee comparison and find the
                     cheapest broker for your trading style.
                   </p>
-                  <Link
-                    href="/pro"
-                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-brand text-white font-bold text-sm rounded-lg hover:bg-slate-800 transition-colors"
+                  <span
+                    className="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-200 text-slate-500 font-bold text-sm rounded-lg cursor-default"
                   >
-                    Upgrade to Pro
+                    Coming Soon
                     <svg
                       className="w-4 h-4"
                       fill="none"
@@ -373,7 +372,7 @@ export default function FeeImpactResults({
                         d="M9 5l7 7-7 7"
                       />
                     </svg>
-                  </Link>
+                  </span>
                 </div>
               </div>
             </div>

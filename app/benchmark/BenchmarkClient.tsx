@@ -322,7 +322,7 @@ export default function BenchmarkClient({ brokers }: { brokers: Broker[] }) {
                   disabled
                   className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm opacity-50 cursor-not-allowed"
                 >
-                  <option>Upgrade to Pro to compare</option>
+                  <option>Compare (coming soon)</option>
                 </select>
               </div>
             )}
@@ -479,12 +479,9 @@ export default function BenchmarkClient({ brokers }: { brokers: Broker[] }) {
                       <p className="text-xs text-slate-500 mb-3">
                         See all 6 dimensions with detailed rankings
                       </p>
-                      <Link
-                        href="/pro"
-                        className="inline-block px-4 py-2 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors"
-                      >
-                        Upgrade to Pro
-                      </Link>
+                      <span className="inline-block px-4 py-2 bg-slate-200 text-slate-500 text-sm font-bold rounded-lg cursor-default">
+                        Coming Soon
+                      </span>
                     </div>
                   </div>
                 </div>

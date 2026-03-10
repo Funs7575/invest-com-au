@@ -5,7 +5,6 @@ import type { Broker } from "@/lib/types";
 import { trackEvent } from "@/lib/tracking";
 import Icon from "@/components/Icon";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
-import ProUpsellBanner from "@/components/ProUpsellBanner";
 
 interface ScoredResult {
   slug: string;
@@ -92,10 +91,7 @@ export default function QuizResultsFooter({
         </div>
       )}
 
-      {/* Pro upsell — shown below results */}
-      <div className="mb-3 md:mb-6 result-card-in result-card-in-delay-5">
-        <ProUpsellBanner variant="inline" />
-      </div>
+      {/* Pro upsell hidden for launch */}
 
       <div className="my-3 md:my-6">
         <CompactDisclaimerLine />

@@ -132,7 +132,7 @@ export default function FeeImpactInputs({
       )}
       {!isPro && !!user && (
         <p className="mt-3 text-xs text-slate-400 text-center">
-          <Link href="/pro" className="text-slate-700 hover:underline font-medium">Upgrade to Pro</Link> to save your trading profile
+          <span className="text-slate-400">Profile saving coming soon</span>
         </p>
       )}
     </div>

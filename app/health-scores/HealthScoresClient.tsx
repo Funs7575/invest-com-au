@@ -243,9 +243,9 @@ export default function HealthScoresClient({
                       <div className="bg-white/90 border border-slate-200 rounded-xl p-5 text-center shadow-lg">
                         <p className="text-sm font-bold text-slate-900 mb-1">Full Safety Breakdown</p>
                         <p className="text-xs text-slate-500 mb-3">See all 5 dimensions with detailed notes</p>
-                        <Link href="/pro" className="inline-block px-4 py-2 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-colors">
-                          Upgrade to Pro
-                        </Link>
+                        <span className="inline-block px-4 py-2 bg-slate-200 text-slate-500 text-sm font-bold rounded-lg cursor-default">
+                          Coming Soon
+                        </span>
                       </div>
                     </div>
                   </div>
