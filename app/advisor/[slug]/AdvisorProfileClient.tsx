@@ -355,7 +355,7 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
         )}
 
         {/* Contact & Links */}
-        {(pro.website || pro.phone) && (
+        {(pro.website || pro.phone || pro.linkedin_url) && (
           <div className="flex flex-wrap gap-2 mb-4 md:mb-6">
             {pro.website && (
               <a
@@ -366,6 +366,17 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
               >
                 <Icon name="globe" size={14} className="text-slate-400" />
                 Visit Website
+              </a>
+            )}
+            {pro.linkedin_url && (
+              <a
+                href={pro.linkedin_url!}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-blue-700 hover:border-blue-300 hover:bg-blue-50 transition-all"
+              >
+                <Icon name="linkedin" size={14} className="text-blue-500" />
+                LinkedIn Profile
               </a>
             )}
             {pro.phone && (
@@ -409,6 +420,159 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
             </div>
           </div>
         )}
+
+        {/* Qualifications & Experience */}
+        {(pro.qualifications)?.length || pro.years_experience ? (
+          <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-5 mb-4 md:mb-6">
+            <h2 className="text-sm md:text-base font-bold text-slate-900 mb-3">Qualifications & Experience</h2>
+            <div className="space-y-2">
+              {pro.years_experience && (
+                <div className="flex items-center gap-2 text-xs md:text-sm text-slate-700">
+                  <Icon name="clock" size={14} className="text-slate-400 shrink-0" />
+                  <span><strong>{pro.years_experience as number}+ years</strong> of professional experience</span>
+                </div>
+              )}
+              {(pro.qualifications)?.map((q) => (
+                <div key={q} className="flex items-center gap-2 text-xs md:text-sm text-slate-700">
+                  <Icon name="award" size={14} className="text-violet-500 shrink-0" />
+                  <span>{q}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        {/* Education */}
+        {(pro.education)?.length ? (
+          <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-5 mb-4 md:mb-6">
+            <h2 className="text-sm md:text-base font-bold text-slate-900 mb-3">Education</h2>
+            <div className="space-y-2">
+              {(pro.education!).map((e, i) => (
+                <div key={i} className="flex items-start gap-2 text-xs md:text-sm text-slate-700">
+                  <Icon name="graduation-cap" size={14} className="text-slate-400 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-semibold">{e.degree}</p>
+                    <p className="text-slate-500">{e.institution}{e.year ? ` (${e.year})` : ""}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        {/* Memberships */}
+        {(pro.memberships)?.length ? (
+          <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-5 mb-4 md:mb-6">
+            <h2 className="text-sm md:text-base font-bold text-slate-900 mb-2">Professional Memberships</h2>
+            <div className="flex flex-wrap gap-2">
+              {(pro.memberships!).map((m) => (
+                <span key={m} className="text-xs md:text-sm font-medium px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">{m}</span>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        {/* Languages & Service Areas */}
+        {((pro.languages)?.length && (pro.languages!).length > 1) || (pro.service_areas)?.length ? (
+          <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-5 mb-4 md:mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {(pro.languages)?.length && (pro.languages!).length > 1 && (
+                <div>
+                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Languages</h3>
+                  <div className="flex flex-wrap gap-1.5">
+                    {(pro.languages!).map((l) => (
+                      <span key={l} className="text-xs px-2 py-1 rounded bg-blue-50 text-blue-700">{l}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {(pro.service_areas)?.length ? (
+                <div>
+                  <h3 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">Service Areas</h3>
+                  <div className="flex flex-wrap gap-1.5">
+                    {(pro.service_areas!).map((a) => (
+                      <span key={a} className="text-xs px-2 py-1 rounded bg-slate-100 text-slate-600">{a}</span>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+            </div>
+          </div>
+        ) : null}
+
+        {/* Meeting Types */}
+        {(pro.meeting_types)?.length ? (
+          <div className="flex flex-wrap gap-2 mb-4 md:mb-6">
+            {(pro.meeting_types!).map((mt) => (
+              <span key={mt} className="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full bg-violet-50 text-violet-700 border border-violet-200">
+                <Icon name={mt === "video" ? "video" : mt === "phone" ? "phone" : "map-pin"} size={12} />
+                {mt === "in-person" ? "In-Person" : mt === "video" ? "Video Call" : mt === "phone" ? "Phone" : mt}
+              </span>
+            ))}
+            {pro.accepting_new_clients === false && (
+              <span className="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full bg-red-50 text-red-600 border border-red-200">
+                Not accepting new clients
+              </span>
+            )}
+          </div>
+        ) : null}
+
+        {/* Ideal Client */}
+        {pro.ideal_client && (
+          <div className="bg-violet-50 border border-violet-200 rounded-xl p-4 md:p-5 mb-4 md:mb-6">
+            <h2 className="text-sm md:text-base font-bold text-violet-900 mb-1.5">Who I Work With</h2>
+            <p className="text-xs md:text-sm text-violet-700 leading-relaxed">{pro.ideal_client!}</p>
+          </div>
+        )}
+
+        {/* Video Introduction */}
+        {pro.intro_video_url && (
+          <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-5 mb-4 md:mb-6">
+            <h2 className="text-sm md:text-base font-bold text-slate-900 mb-3">Introduction Video</h2>
+            <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-slate-100">
+              <iframe
+                src={(pro.intro_video_url!).replace("watch?v=", "embed/").replace("youtu.be/", "youtube.com/embed/")}
+                className="absolute inset-0 w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                loading="lazy"
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Testimonials */}
+        {(pro.testimonials)?.length ? (
+          <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-5 mb-4 md:mb-6">
+            <h2 className="text-sm md:text-base font-bold text-slate-900 mb-3">Client Testimonials</h2>
+            <div className="space-y-3">
+              {(pro.testimonials!).map((t, i) => (
+                <blockquote key={i} className="border-l-2 border-violet-300 pl-3">
+                  <p className="text-xs md:text-sm text-slate-600 italic leading-relaxed">&ldquo;{t.quote}&rdquo;</p>
+                  <footer className="text-xs text-slate-400 mt-1">— {t.author}{t.date ? `, ${t.date}` : ""}</footer>
+                </blockquote>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        {/* FAQ */}
+        {(pro.faqs)?.length ? (
+          <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-5 mb-4 md:mb-6">
+            <h2 className="text-sm md:text-base font-bold text-slate-900 mb-3">Frequently Asked Questions</h2>
+            <div className="space-y-2">
+              {(pro.faqs!).map((faq, i) => (
+                <details key={i} className="group border border-slate-100 rounded-lg">
+                  <summary className="flex items-center justify-between cursor-pointer p-3 text-xs md:text-sm font-semibold text-slate-800 hover:bg-slate-50 rounded-lg">
+                    {faq.q}
+                    <Icon name="chevron-down" size={14} className="text-slate-400 group-open:rotate-180 transition-transform" />
+                  </summary>
+                  <div className="px-3 pb-3 text-xs md:text-sm text-slate-600 leading-relaxed">{faq.a}</div>
+                </details>
+              ))}
+            </div>
+          </div>
+        ) : null}
 
         {/* Booking Widget */}
         <div className="mb-4 md:mb-6">

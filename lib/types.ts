@@ -962,6 +962,25 @@ export interface Professional {
   onboarded_at?: string;
   created_at: string;
   updated_at: string;
+  // Enhanced profile fields
+  linkedin_url?: string;
+  twitter_url?: string;
+  qualifications?: string[];
+  years_experience?: number;
+  memberships?: string[];
+  languages?: string[];
+  service_areas?: string[];
+  meeting_types?: string[];
+  ideal_client?: string;
+  min_client_balance_cents?: number;
+  education?: { institution: string; degree: string; year?: number }[];
+  faqs?: { q: string; a: string }[];
+  testimonials?: { quote: string; author: string; date?: string }[];
+  intro_video_url?: string;
+  accepting_new_clients?: boolean;
+  profile_score?: number;
+  meta_title?: string;
+  meta_description?: string;
 }
 
 export interface ProfessionalLead {

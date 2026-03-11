@@ -11,12 +11,12 @@ export const revalidate = 1800;
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const supabase = await createClient();
-  const { data: pro } = await supabase.from("professionals").select("name, firm_name, type, location_display").eq("slug", slug).eq("status", "active").single();
+  const { data: pro } = await supabase.from("professionals").select("name, firm_name, type, location_display, meta_title, meta_description").eq("slug", slug).eq("status", "active").single();
   if (!pro) return {};
 
   const typeLabel = PROFESSIONAL_TYPE_LABELS[pro.type as keyof typeof PROFESSIONAL_TYPE_LABELS] || "Financial Professional";
-  const title = `${pro.name}${pro.firm_name ? ` — ${pro.firm_name}` : ""} | ${typeLabel}`;
-  const description = `${pro.name} is a verified ${typeLabel.toLowerCase()}${pro.location_display ? ` in ${pro.location_display}` : ""}. Request a free consultation on invest.com.au.`;
+  const title = pro.meta_title || `${pro.name}${pro.firm_name ? ` — ${pro.firm_name}` : ""} | ${typeLabel}`;
+  const description = pro.meta_description || `${pro.name} is a verified ${typeLabel.toLowerCase()}${pro.location_display ? ` in ${pro.location_display}` : ""}. Request a free consultation on invest.com.au.`;
 
   return {
     title,
@@ -129,15 +129,24 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
   ]);
 
   const profileUrl = absoluteUrl(`/advisor/${slug}`);
-  const personLd = {
+  const sameAs: string[] = [];
+  if (pro.website) sameAs.push(pro.website);
+  if (pro.linkedin_url) sameAs.push(pro.linkedin_url);
+  if (pro.twitter_url) sameAs.push(pro.twitter_url);
+
+  const personLd: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "Person",
     name: pro.name,
     url: profileUrl,
     jobTitle: PROFESSIONAL_TYPE_LABELS[pro.type as keyof typeof PROFESSIONAL_TYPE_LABELS],
     ...(pro.firm_name ? { worksFor: { "@type": "Organization", name: pro.firm_name } } : {}),
-    ...(pro.location_display ? { address: { "@type": "PostalAddress", addressLocality: pro.location_display } } : {}),
-    ...(pro.website ? { sameAs: pro.website } : {}),
+    ...(pro.location_display ? { address: { "@type": "PostalAddress", addressLocality: pro.location_display, addressCountry: "AU" } } : {}),
+    ...(sameAs.length ? { sameAs } : {}),
+    ...(pro.photo_url ? { image: pro.photo_url } : {}),
+    ...(pro.qualifications?.length ? { hasCredential: pro.qualifications.map((q: string) => ({ "@type": "EducationalOccupationalCredential", credentialCategory: q })) } : {}),
+    ...(pro.education?.length ? { alumniOf: pro.education.map((e: { institution: string; degree: string }) => ({ "@type": "EducationalOrganization", name: e.institution })) } : {}),
+    ...(pro.languages?.length && pro.languages.length > 1 ? { knowsLanguage: pro.languages } : {}),
   };
 
   // LocalBusiness schema for advisor firms — helps Google rich results
@@ -173,6 +182,17 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personLd) }} />
       {localBusinessLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessLd) }} />}
+      {pro.faqs?.length > 0 && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: pro.faqs.map((f: { q: string; a: string }) => ({
+            "@type": "Question",
+            name: f.q,
+            acceptedAnswer: { "@type": "Answer", text: f.a },
+          })),
+        }) }} />
+      )}
       <AdvisorProfileClient professional={pro as Professional} similar={similar} reviews={reviews} teamMembers={teamMembers} firm={firm} expertArticles={expertArticles} />
     </>
   );
