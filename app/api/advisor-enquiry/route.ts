@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
     // First 2 leads are free (trial), then deduct from credit balance
     const { data: advisor } = await supabase
       .from("professionals")
-      .select("free_leads_used, lead_price_cents, credit_balance_cents, lifetime_lead_spend_cents")
+      .select("free_leads_used, lead_price_cents, credit_balance_cents, lifetime_lead_spend_cents, total_leads, low_credit_alert_sent_at")
       .eq("id", professional_id)
       .single();
 
@@ -255,6 +255,58 @@ export async function POST(request: NextRequest) {
       ]);
     } catch {
       // Non-critical
+    }
+
+    // ── Update advisor aggregate stats ──
+    try {
+      await supabase.rpc("increment_advisor_lead_count", { advisor_id: professional_id });
+    } catch {
+      // Fall back to manual update if RPC doesn't exist
+      try {
+        await supabase.from("professionals").update({
+          last_lead_at: new Date().toISOString(),
+          total_leads: (advisor?.total_leads || 0) + 1,
+        }).eq("id", professional_id);
+      } catch { /* non-critical */ }
+    }
+
+    // ── Low Credit Warning Email ──
+    if (!isFree && advisor) {
+      const newBalance = hasSufficientCredit ? balance - priceCents : balance;
+      const lowCreditThreshold = (advisor.lead_price_cents || 4900) * 3; // 3 leads worth
+      if (newBalance <= lowCreditThreshold && newBalance > 0) {
+        // Send low credit warning if not sent in last 7 days
+        const lastAlert = (advisor as Record<string, unknown>).low_credit_alert_sent_at;
+        const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+        if (!lastAlert || (lastAlert as string) < sevenDaysAgo) {
+          try {
+            const RESEND_API_KEY = process.env.RESEND_API_KEY;
+            const siteUrl = getSiteUrl();
+            if (RESEND_API_KEY && pro.email) {
+              await fetch("https://api.resend.com/emails", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", Authorization: `Bearer ${RESEND_API_KEY}` },
+                body: JSON.stringify({
+                  from: "Invest.com.au <billing@invest.com.au>",
+                  to: pro.email,
+                  subject: `Low Credit Balance — ${Math.floor(newBalance / 100)} credits remaining`,
+                  html: `
+                    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+                      <h2 style="color: #0f172a;">Your lead credit balance is running low</h2>
+                      <p>Hi ${pro.name.split(" ")[0]},</p>
+                      <p>You have <strong>$${(newBalance / 100).toFixed(2)}</strong> remaining in your lead credit balance — enough for approximately ${Math.floor(newBalance / (advisor.lead_price_cents || 4900))} more leads.</p>
+                      <p>To ensure you don't miss any enquiries, top up your balance:</p>
+                      <a href="${siteUrl}/advisor-portal" style="display: inline-block; padding: 12px 24px; background: #0f172a; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">Top Up Credits</a>
+                      <p style="color: #94a3b8; font-size: 12px; margin-top: 16px;">Leads will still be delivered when your balance reaches $0, but they won't be billed until you top up.</p>
+                    </div>
+                  `,
+                }),
+              });
+              await supabase.from("professionals").update({ low_credit_alert_sent_at: new Date().toISOString() }).eq("id", professional_id);
+            }
+          } catch { /* non-critical */ }
+        }
+      }
     }
 
     return NextResponse.json({ success: true, lead_id: lead.id });

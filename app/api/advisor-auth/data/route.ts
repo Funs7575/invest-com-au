@@ -152,7 +152,7 @@ export async function PATCH(request: NextRequest) {
   // Verify lead belongs to this advisor
   const { data: lead } = await supabase
     .from("professional_leads")
-    .select("id, professional_id")
+    .select("id, professional_id, created_at")
     .eq("id", leadId)
     .eq("professional_id", advisorId)
     .single();
@@ -162,11 +162,42 @@ export async function PATCH(request: NextRequest) {
   const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
   if (status) {
     updates.status = status;
-    if (status === "contacted") updates.contacted_at = new Date().toISOString();
-    if (status === "converted") updates.converted_at = new Date().toISOString();
+    if (status === "contacted") {
+      updates.contacted_at = new Date().toISOString();
+      updates.responded_at = new Date().toISOString();
+      // Calculate response time in minutes from lead creation
+      if (lead.created_at) {
+        const created = new Date(lead.created_at as string).getTime();
+        const now = Date.now();
+        updates.response_time_minutes = Math.round((now - created) / 60000);
+      }
+    }
+    if (status === "converted") {
+      updates.converted_at = new Date().toISOString();
+      updates.outcome = "won";
+    }
+    if (status === "lost" || status === "rejected") {
+      updates.outcome = "lost";
+    }
   }
   if (notes !== undefined) updates.advisor_notes = notes;
 
   await supabase.from("professional_leads").update(updates).eq("id", leadId);
+
+  // Update advisor's average response time
+  if (status === "contacted" && updates.response_time_minutes) {
+    try {
+      const { data: allResponded } = await supabase
+        .from("professional_leads")
+        .select("response_time_minutes")
+        .eq("professional_id", lead.professional_id)
+        .not("response_time_minutes", "is", null);
+      if (allResponded && allResponded.length > 0) {
+        const avg = Math.round(allResponded.reduce((sum: number, l: { response_time_minutes: number }) => sum + l.response_time_minutes, 0) / allResponded.length);
+        await supabase.from("professionals").update({ avg_response_minutes: avg }).eq("id", lead.professional_id);
+      }
+    } catch { /* non-critical */ }
+  }
+
   return NextResponse.json({ success: true });
 }
