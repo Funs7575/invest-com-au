@@ -178,13 +178,14 @@ export default function GlossaryPage() {
 
                 <dl className="space-y-3 md:space-y-4">
                   {grouped[letter].map((entry) => (
-                    <div
+                    <Link
                       key={entry.term}
+                      href={`/glossary/${entry.slug}`}
                       id={`term-${entry.term.toLowerCase().replace(/\s+/g, "-")}`}
-                      className="bg-white border border-slate-150 rounded-lg p-3 md:p-4 hover:border-slate-300 transition-colors"
+                      className="block bg-white border border-slate-150 rounded-lg p-3 md:p-4 hover:border-violet-300 hover:shadow-sm transition-all group"
                     >
                       <dt className="flex items-center gap-2 mb-1 md:mb-1.5">
-                        <span className="text-sm md:text-base font-bold text-slate-900">
+                        <span className="text-sm md:text-base font-bold text-slate-900 group-hover:text-violet-700 transition-colors">
                           {entry.term}
                         </span>
                         {entry.category && (
@@ -196,7 +197,7 @@ export default function GlossaryPage() {
                       <dd className="text-xs md:text-sm text-slate-600 leading-relaxed">
                         {entry.definition}
                       </dd>
-                    </div>
+                    </Link>
                   ))}
                 </dl>
               </section>

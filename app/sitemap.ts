@@ -264,5 +264,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   ];
 
-  return [...staticPages, ...bestPages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorLocationPages, ...investingCityPages];
+  // Individual glossary term pages
+  const { GLOSSARY_ENTRIES } = await import("@/lib/glossary");
+  const glossaryPages = GLOSSARY_ENTRIES.map((entry) => ({
+    url: `${baseUrl}/glossary/${entry.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.4,
+  }));
+
+  // Advisor firm pages
+  const { data: firms } = await supabase
+    .from("advisor_firms")
+    .select("slug")
+    .eq("status", "active");
+  const firmPages = (firms || []).map((f) => ({
+    url: `${baseUrl}/firm/${f.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.6,
+  }));
+
+  return [...staticPages, ...bestPages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorLocationPages, ...investingCityPages, ...glossaryPages, ...firmPages];
 }
