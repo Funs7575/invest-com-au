@@ -165,11 +165,11 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
     } : {}),
     ...(pro.website ? { url: pro.website } : {}),
     ...(pro.phone ? { telephone: String(pro.phone) } : {}),
-    ...(pro.rating ? {
+    ...(pro.rating && pro.review_count > 0 ? {
       aggregateRating: {
         "@type": "AggregateRating",
         ratingValue: pro.rating,
-        reviewCount: pro.review_count || 1,
+        reviewCount: pro.review_count,
         bestRating: 5,
         worstRating: 1,
       }

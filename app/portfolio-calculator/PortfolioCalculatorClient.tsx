@@ -140,7 +140,7 @@ export default function PortfolioCalculatorClient({ brokers, inline }: { brokers
         </div>}
 
         {/* Input section */}
-        <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-6 mb-6">
+        <div className={inline ? "bg-white border border-slate-200 rounded-xl p-4 md:p-6 mb-4" : "bg-white border border-slate-200 rounded-xl p-4 md:p-6 mb-6"}>
           <h2 className="text-base md:text-lg font-bold text-slate-900 mb-4">Your Trading Activity</h2>
 
           {holdings.map((h, i) => (

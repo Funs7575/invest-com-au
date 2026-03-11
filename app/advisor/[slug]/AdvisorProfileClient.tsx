@@ -189,7 +189,7 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
                   <span className="text-[0.65rem] md:text-xs text-slate-400">{pro.location_display}</span>
                 )}
               </div>
-              {pro.rating > 0 && (
+              {pro.rating > 0 && pro.review_count > 0 && (
                 <div className="mt-1.5 text-xs">
                   <span className="text-amber-500">{renderStars(pro.rating)}</span>
                   <span className="text-slate-400 ml-1">{pro.rating}/5 ({pro.review_count} review{pro.review_count !== 1 ? "s" : ""})</span>
@@ -813,7 +813,7 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
                       <div className="text-[0.58rem] text-slate-400">{s.location_display}</div>
                     </div>
                   </div>
-                  {s.rating > 0 && (
+                  {s.rating > 0 && s.review_count > 0 && (
                     <div className="text-[0.58rem] text-slate-400">
                       <span className="text-amber-500">{renderStars(s.rating)}</span> {s.rating} · {s.fee_description}
                     </div>

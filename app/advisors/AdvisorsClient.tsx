@@ -742,7 +742,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                       </div>
                     )}
                     <div className="flex items-center gap-3 mt-1.5">
-                      {pro.rating > 0 && <span className="text-[0.62rem] md:text-xs"><span className="text-amber-500">{renderStars(pro.rating)}</span><span className="text-slate-400 ml-1">{pro.rating} ({pro.review_count})</span></span>}
+                      {pro.rating > 0 && pro.review_count > 0 && <span className="text-[0.62rem] md:text-xs"><span className="text-amber-500">{renderStars(pro.rating)}</span><span className="text-slate-400 ml-1">{pro.rating} ({pro.review_count})</span></span>}
                     </div>
                     {pro.specialties.length > 0 && (
                       <div className="flex flex-wrap gap-1 mt-2">
