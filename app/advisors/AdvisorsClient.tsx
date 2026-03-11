@@ -333,6 +333,13 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
       case "fee_low": result.sort((a, b) => (a.hourly_rate_cents || a.flat_fee_cents || 999999) - (b.hourly_rate_cents || b.flat_fee_cents || 999999)); break;
       case "fee_high": result.sort((a, b) => (b.hourly_rate_cents || b.flat_fee_cents || 0) - (a.hourly_rate_cents || a.flat_fee_cents || 0)); break;
     }
+    // Featured advisors always appear first within the chosen sort
+    const now = new Date();
+    result.sort((a, b) => {
+      const aFeatured = a.featured_until && new Date(a.featured_until) > now ? 1 : 0;
+      const bFeatured = b.featured_until && new Date(b.featured_until) > now ? 1 : 0;
+      return bFeatured - aFeatured;
+    });
     return result;
   }, [professionals, nearbyResults, isLocationActive, typeFilter, stateFilter, specialtyFilters, feeFilter, firmFilter, minRating, verifiedOnly, search, sortBy]);
 
@@ -653,7 +660,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
         ) : paginatedResults.length > 0 ? (
           <div className="space-y-2.5 md:space-y-3">
             {paginatedResults.map(pro => (
-              <Link key={pro.id} href={`/advisor/${pro.slug}`} className="block bg-white border border-slate-200 rounded-xl p-3.5 md:p-5 hover:shadow-lg hover:border-violet-200 hover:-translate-y-0.5 transition-all duration-200">
+              <Link key={pro.id} href={`/advisor/${pro.slug}`} className={`block bg-white border rounded-xl p-3.5 md:p-5 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 ${pro.featured_until && new Date(pro.featured_until) > new Date() ? "border-amber-300 ring-1 ring-amber-100 hover:border-amber-400" : "border-slate-200 hover:border-violet-200"}`}>
                 <div className="flex gap-3 md:gap-4">
                   {pro.photo_url ? (
                     <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl overflow-hidden shrink-0 ring-2 ring-violet-100">
@@ -671,6 +678,12 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                         <span className="shrink-0 text-[0.56rem] md:text-[0.62rem] font-bold px-1.5 py-0.5 rounded-full bg-violet-100 text-violet-700 flex items-center gap-0.5">
                           <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
                           Verified
+                        </span>
+                      )}
+                      {pro.featured_until && new Date(pro.featured_until) > new Date() && (
+                        <span className="shrink-0 text-[0.56rem] md:text-[0.62rem] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 flex items-center gap-0.5">
+                          <Icon name="star" size={10} className="text-amber-500" />
+                          Featured
                         </span>
                       )}
                     </div>

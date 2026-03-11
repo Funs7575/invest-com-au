@@ -48,6 +48,8 @@ export async function POST(request: NextRequest) {
     starter: { leads: 5, price_cents: 19900, per_lead_cents: 3980 },
     growth: { leads: 12, price_cents: 44900, per_lead_cents: 3742 },
     scale: { leads: 25, price_cents: 79900, per_lead_cents: 3196 },
+    featured_monthly: { leads: 0, price_cents: 14900, per_lead_cents: 0 },
+    expert_article: { leads: 0, price_cents: 29900, per_lead_cents: 0 },
   };
   
   const pack = packSlug ? PACKS[packSlug] : null;
@@ -102,8 +104,12 @@ export async function POST(request: NextRequest) {
         currency: "aud",
         unit_amount: amountCents,
         product_data: {
-          name: "Invest.com.au Lead Credit",
-          description: `A$${(amountCents / 100).toFixed(0)} credit for exclusive leads`,
+          name: packSlug === "featured_monthly" ? "Featured Advisor — 1 Month"
+            : packSlug === "expert_article" ? "Expert Article Publication"
+            : `Invest.com.au Lead Credit — ${pack?.leads || "Custom"} Leads`,
+          description: packSlug === "featured_monthly" ? "Priority listing, featured badge, and gold border for 30 days"
+            : packSlug === "expert_article" ? "SEO-optimised expert article published on invest.com.au"
+            : `A$${(amountCents / 100).toFixed(0)} credit for exclusive advisor leads`,
         },
       },
       quantity: 1,
@@ -111,7 +117,7 @@ export async function POST(request: NextRequest) {
     metadata: {
       professional_id: String(pro.id),
       topup_id: String(topup?.id || ""),
-      type: "advisor_credit_topup",
+      type: packSlug === "featured_monthly" ? "advisor_featured" : packSlug === "expert_article" ? "advisor_article" : "advisor_credit_topup",
       pack_slug: packSlug || "custom",
       pack_leads: pack ? String(pack.leads) : "",
       per_lead_cents: pack ? String(pack.per_lead_cents) : "",

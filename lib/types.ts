@@ -981,6 +981,7 @@ export interface Professional {
   profile_score?: number;
   meta_title?: string;
   meta_description?: string;
+  featured_until?: string;
 }
 
 export interface ProfessionalLead {

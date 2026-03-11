@@ -395,6 +395,19 @@ export async function POST(request: NextRequest) {
           }
         }
 
+        // Handle featured advisor purchase
+        if (session.metadata?.type === "advisor_featured" && session.mode === "payment") {
+          const professionalId = parseInt(session.metadata.professional_id || "0");
+          if (professionalId) {
+            const supabase = createAdminClient();
+            const featuredUntil = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(); // 30 days from now
+            await supabase.from("professionals").update({
+              featured_until: featuredUntil,
+            }).eq("id", professionalId);
+            log.info("Advisor featured activated", { professionalId, until: featuredUntil });
+          }
+        }
+
         // Handle consultation bookings
         if (session.metadata?.type === "consultation" && session.mode === "payment") {
           const userId = session.metadata.supabase_user_id;
