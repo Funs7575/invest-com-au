@@ -231,28 +231,20 @@ export default async function HomePage() {
             <p className="mt-1.5 text-[0.72rem] text-slate-500 leading-relaxed">
               Independent platform comparison &amp; verified financial advisors — free.
             </p>
-            {/* Primary CTA — matchmaker */}
+            {/* Single primary CTA */}
             <Link
               href="/start"
-              className="flex items-center justify-center gap-2 w-full mt-3 px-3 py-3 bg-violet-600 text-white font-bold rounded-xl text-[0.85rem] text-center active:scale-[0.98] transition-all shadow-lg shadow-violet-200"
+              className="flex items-center justify-center gap-2 w-full mt-3 px-3 py-3.5 bg-slate-900 text-white font-bold rounded-xl text-[0.85rem] text-center active:scale-[0.98] transition-all"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-              Find Your Best Path
+              Find Your Best Path &rarr;
             </Link>
-            {/* Secondary CTAs */}
-            <div className="flex items-center gap-2 mt-2">
-              <Link
-                href="/compare"
-                className="flex-1 px-3 py-2.5 bg-slate-900 text-white font-bold rounded-lg text-[0.8rem] text-center active:scale-[0.98] transition-all"
-              >
-                Compare Platforms
-              </Link>
-              <Link
-                href="/find-advisor"
-                className="flex-1 px-3 py-2.5 bg-amber-500 text-white font-bold rounded-lg text-[0.8rem] text-center active:scale-[0.98] transition-all"
-              >
-                Find Advisor
-              </Link>
+            {/* Subtle direct links for power users */}
+            <div className="flex items-center justify-center gap-4 mt-2.5 text-[0.7rem]">
+              <Link href="/compare" className="text-slate-500 font-semibold hover:text-slate-700">Compare Platforms</Link>
+              <span className="text-slate-300">·</span>
+              <Link href="/find-advisor" className="text-violet-600 font-semibold hover:text-violet-700">Find Advisor</Link>
+              <span className="text-slate-300">·</span>
+              <Link href="/calculators" className="text-slate-500 font-semibold hover:text-slate-700">Calculators</Link>
             </div>
             {/* Trust strip */}
             <div className="flex items-center justify-center gap-3 mt-3 text-[0.65rem] text-slate-400">
@@ -300,22 +292,17 @@ export default async function HomePage() {
             <div className="flex items-center justify-center gap-3 mt-6 mb-2 hero-fade-up hero-fade-up-4">
               <Link
                 href="/start"
-                className="px-7 py-3.5 bg-violet-600 text-white font-bold rounded-xl hover:bg-violet-700 hover:scale-105 hover:shadow-lg shadow-violet-200 transition-all duration-200 text-sm"
+                className="px-10 py-4 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 hover:scale-105 hover:shadow-xl transition-all duration-200 text-base"
               >
                 Find Your Best Path &rarr;
               </Link>
-              <Link
-                href="/compare"
-                className="px-7 py-3.5 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 hover:scale-105 hover:shadow-lg transition-all duration-200 text-sm"
-              >
-                Compare Platforms &rarr;
-              </Link>
-              <Link
-                href="/find-advisor"
-                className="px-7 py-3.5 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 hover:scale-105 hover:shadow-lg transition-all duration-200 text-sm"
-              >
-                Find an Advisor &rarr;
-              </Link>
+            </div>
+            {/* Direct links for power users */}
+            <div className="flex items-center justify-center gap-6 mt-3 hero-fade-up hero-fade-up-4 text-sm">
+              <Link href="/compare" className="text-slate-500 font-semibold hover:text-slate-700 transition-colors">Compare Platforms</Link>
+              <Link href="/find-advisor" className="text-violet-600 font-semibold hover:text-violet-700 transition-colors">Find an Advisor</Link>
+              <Link href="/calculators" className="text-slate-500 font-semibold hover:text-slate-700 transition-colors">Calculators</Link>
+              <Link href="/deals" className="text-slate-500 font-semibold hover:text-slate-700 transition-colors">Deals</Link>
             </div>
             {/* Social proof */}
             <div className="mt-4 hero-fade-up hero-fade-up-5 flex justify-center">
@@ -350,47 +337,6 @@ export default async function HomePage() {
           <Suspense fallback={null}>
             <PersonalizedRecommendations />
           </Suspense>
-        </div>
-      </section>
-
-
-      {/* ═══════ DECISION SPLIT — 3-path fork ═══════ */}
-      <section className="py-4 md:py-12 bg-white border-b border-slate-100">
-        <div className="container-custom max-w-4xl">
-          <p className="text-[0.62rem] md:text-xs text-slate-400 text-center uppercase tracking-widest font-semibold mb-1 md:mb-2">Choose your path</p>
-          <h2 className="text-base md:text-2xl font-extrabold text-slate-900 text-center mb-3 md:mb-8">How Can We Help?</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 md:gap-5">
-            <Link href="/compare" className="relative bg-white border border-slate-200 rounded-2xl p-3 md:p-6 card-hover group overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-slate-900 to-slate-600" />
-              <div className="w-9 h-9 md:w-12 md:h-12 bg-gradient-to-br from-slate-900 to-slate-700 rounded-xl flex items-center justify-center mb-2 md:mb-3 shadow-lg shadow-slate-900/20">
-                <Icon name="bar-chart-2" size={18} className="text-white md:hidden" />
-                <Icon name="bar-chart-2" size={24} className="text-white hidden md:block" />
-              </div>
-              <h3 className="text-xs md:text-base font-bold text-slate-900 mb-0.5 md:mb-1 group-hover:text-slate-700">Compare Platforms</h3>
-              <p className="text-[0.58rem] md:text-sm text-slate-500 leading-relaxed">I want to choose a platform myself</p>
-              <span className="hidden md:inline-block mt-2 text-xs font-bold text-slate-400 group-hover:text-slate-600 transition-colors">Explore →</span>
-            </Link>
-            <Link href="/find-advisor" className="relative bg-white border border-violet-200 rounded-2xl p-3 md:p-6 card-hover group overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-violet-600 to-violet-400" />
-              <div className="w-9 h-9 md:w-12 md:h-12 bg-gradient-to-br from-violet-600 to-violet-500 rounded-xl flex items-center justify-center mb-2 md:mb-3 shadow-lg shadow-violet-500/20">
-                <Icon name="users" size={18} className="text-white md:hidden" />
-                <Icon name="users" size={24} className="text-white hidden md:block" />
-              </div>
-              <h3 className="text-xs md:text-base font-bold text-violet-900 mb-0.5 md:mb-1 group-hover:text-violet-700">Find an Advisor</h3>
-              <p className="text-[0.58rem] md:text-sm text-violet-600 leading-relaxed">I want help from a verified professional</p>
-              <span className="hidden md:inline-block mt-2 text-xs font-bold text-violet-400 group-hover:text-violet-600 transition-colors">Find yours →</span>
-            </Link>
-            <Link href="/quiz" className="relative bg-white border border-amber-200 rounded-2xl p-3 md:p-6 card-hover group overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 to-amber-400" />
-              <div className="w-9 h-9 md:w-12 md:h-12 bg-gradient-to-br from-amber-500 to-amber-400 rounded-xl flex items-center justify-center mb-2 md:mb-3 shadow-lg shadow-amber-500/20">
-                <Icon name="target" size={18} className="text-white md:hidden" />
-                <Icon name="target" size={24} className="text-white hidden md:block" />
-              </div>
-              <h3 className="text-xs md:text-base font-bold text-amber-900 mb-0.5 md:mb-1 group-hover:text-amber-700">Platform Quiz</h3>
-              <p className="text-[0.58rem] md:text-sm text-amber-700 leading-relaxed">Not sure? Get a personalised match in 60 seconds</p>
-              <span className="hidden md:inline-block mt-2 text-xs font-bold text-amber-400 group-hover:text-amber-600 transition-colors">Start →</span>
-            </Link>
-          </div>
         </div>
       </section>
 
