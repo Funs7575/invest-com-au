@@ -674,8 +674,10 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
               </div>
 
               <p className="text-[0.56rem] md:text-[0.62rem] text-slate-400 text-center mt-3 leading-relaxed">
-                By submitting, you agree to our <Link href="/privacy" className="underline hover:text-slate-600">Privacy Policy</Link>. 
-                Your contact details are shared only with {pro.name} for the purpose of this enquiry.
+                By submitting, you consent to us sharing your name, email{phone ? ", phone number" : ""} and message with {pro.name} so they can respond to your enquiry.
+                We may also send you follow-up emails about your enquiry. You can unsubscribe at any time.
+                See our <Link href="/privacy" className="underline hover:text-slate-600">Privacy Policy</Link> for how we handle your data.
+                This is a no-obligation enquiry — you are not committing to any service.
               </p>
             </>
           )}
@@ -850,9 +852,11 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
         )}
 
         {/* Compliance */}
-        <div className="text-[0.56rem] md:text-xs text-slate-400 text-center leading-relaxed">
-          <p>Invest.com.au does not provide financial advice. We facilitate connections between users and registered financial professionals. 
-          Verify any advisor&apos;s credentials on the <a href="https://asic.gov.au/online-services/search-asics-registers/" target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-600">ASIC Register</a> before engaging their services.</p>
+        <div className="text-[0.56rem] md:text-xs text-slate-400 text-center leading-relaxed space-y-1.5 mt-4">
+          <p>Invest.com.au does not provide financial advice, deal in financial products, or hold an Australian Financial Services Licence (AFSL). 
+          We are an information and directory service only. We facilitate connections between users and registered financial professionals but do not supervise, endorse, or take responsibility for any advice provided.</p>
+          <p>Always verify an advisor&apos;s credentials independently on the <a href="https://asic.gov.au/online-services/search-asics-registers/" target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-600">ASIC Financial Advisers Register</a> or the <a href="https://www.tpb.gov.au/public-register" target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-600">TPB Register</a> before engaging their services.
+          If you have a complaint about a financial service, contact <a href="https://www.afca.org.au" target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-600">AFCA</a> (1800 931 678).</p>
         </div>
       </div>
 
