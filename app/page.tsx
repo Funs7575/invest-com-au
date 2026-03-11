@@ -234,7 +234,7 @@ export default async function HomePage() {
             {/* Single primary CTA */}
             <Link
               href="/start"
-              className="flex items-center justify-center gap-2 w-full mt-3 px-3 py-3.5 bg-slate-900 text-white font-bold rounded-xl text-[0.85rem] text-center active:scale-[0.98] transition-all"
+              className="flex items-center justify-center gap-2 w-full mt-3 px-3 py-3.5 bg-amber-500 text-white font-bold rounded-xl text-[0.85rem] text-center active:scale-[0.98] transition-all shadow-lg shadow-amber-200"
             >
               Find Your Best Path &rarr;
             </Link>
@@ -292,7 +292,7 @@ export default async function HomePage() {
             <div className="flex items-center justify-center gap-3 mt-6 mb-2 hero-fade-up hero-fade-up-4">
               <Link
                 href="/start"
-                className="px-10 py-4 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 hover:scale-105 hover:shadow-xl transition-all duration-200 text-base"
+                className="px-10 py-4 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 hover:scale-105 hover:shadow-xl shadow-amber-200 transition-all duration-200 text-base"
               >
                 Find Your Best Path &rarr;
               </Link>

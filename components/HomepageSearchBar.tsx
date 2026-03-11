@@ -59,7 +59,7 @@ export default function HomepageSearchBar() {
         />
         <button
           onClick={handleSearch}
-          className="hidden sm:block absolute right-2 top-1/2 -translate-y-1/2 bg-slate-900 hover:bg-slate-800 hover:scale-105 text-white font-bold px-5 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400/50 transition-all duration-200 text-sm"
+          className="hidden sm:block absolute right-2 top-1/2 -translate-y-1/2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-5 py-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-400/50 transition-all duration-200 text-sm"
         >
           {isAdvisorQuery ? "Find Advisors" : "Compare"}
         </button>
@@ -67,16 +67,16 @@ export default function HomepageSearchBar() {
 
       {/* Advisor detection hint */}
       {showHint && (
-        <div className="absolute left-0 right-0 mt-2 bg-violet-50 border border-violet-200 rounded-xl p-3 shadow-lg z-10 animate-in fade-in slide-in-from-top-2 duration-200">
-          <p className="text-xs text-violet-700 font-medium">
+        <div className="absolute left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl p-3 shadow-lg z-10 animate-in fade-in slide-in-from-top-2 duration-200">
+          <p className="text-xs text-slate-600 font-medium">
             Looking for a financial professional? Press Enter to search our{" "}
-            <span className="font-bold">advisor directory</span>, or{" "}
+            <span className="font-bold text-slate-800">advisor directory</span>, or{" "}
             <button
               onClick={() => {
                 setShowHint(false);
                 router.push(`/compare?q=${encodeURIComponent(query.trim())}`);
               }}
-              className="underline hover:text-violet-900 font-bold"
+              className="underline hover:text-slate-900 font-bold text-amber-600"
             >
               search platforms instead
             </button>
