@@ -482,24 +482,15 @@ export default function AdvisorPortalPage() {
                 <p className="text-[0.62rem] text-violet-200 mt-0.5">
                   {(advisor?.free_leads_used || 0) < 2
                     ? `${2 - (advisor?.free_leads_used || 0)} free leads remaining`
-                    : `$${((advisor?.lead_price_cents || 4900) / 100).toFixed(0)} per lead · ${Math.floor((advisor?.credit_balance_cents || 0) / (advisor?.lead_price_cents || 4900))} leads remaining`
+                    : `~${Math.floor((advisor?.credit_balance_cents || 0) / (advisor?.lead_price_cents || 3980))} leads remaining`
                   }
                 </p>
               </div>
               <button
-                onClick={async () => {
-                  const res = await fetch("/api/advisor-auth/topup", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ amount_cents: 20000 }),
-                  });
-                  const data = await res.json();
-                  if (data.url) window.location.href = data.url;
-                  else alert(data.error || "Failed to create top-up session");
-                }}
+                onClick={() => setView("billing")}
                 className="px-5 py-2.5 bg-white text-violet-700 text-sm font-bold rounded-lg hover:bg-violet-50 transition-colors shrink-0"
               >
-                Top Up $200
+                Buy Credits
               </button>
             </div>
 
@@ -732,10 +723,10 @@ export default function AdvisorPortalPage() {
                   <h3 className="text-xs font-bold text-violet-800 mb-1">Your Lead Account</h3>
                   <p className="text-xs text-violet-600">
                     {advisor?.free_leads_used !== undefined && advisor.free_leads_used < 2
-                      ? <>You have <strong>{2 - (advisor.free_leads_used || 0)} free leads</strong> remaining. After that, leads cost <strong>${((advisor?.lead_price_cents || 4900) / 100).toFixed(0)}</strong> each, deducted from your credit balance.</>
+                      ? <>You have <strong>{2 - (advisor.free_leads_used || 0)} free leads</strong> remaining. After that, leads are deducted from your credit balance.</>
                       : (advisor?.credit_balance_cents || 0) > 0
-                        ? <>Leads are <strong>${((advisor?.lead_price_cents || 4900) / 100).toFixed(0)}</strong> each, deducted from your credit balance. Each enquiry is exclusive to you.</>
-                        : <>Your credit balance is empty. <strong>Top up to continue receiving leads.</strong> Leads cost ${((advisor?.lead_price_cents || 4900) / 100).toFixed(0)} each.</>
+                        ? <>Leads are deducted from your credit balance. Each enquiry is exclusive to you.</>
+                        : <>Your credit balance is empty. <strong>Top up to continue receiving leads.</strong></>
                     }
                   </p>
                 </div>
@@ -744,25 +735,41 @@ export default function AdvisorPortalPage() {
                   <span className="text-[0.6rem] text-violet-500 block">credit balance</span>
                 </div>
               </div>
-              <div className="flex items-center gap-2 mt-3 pt-3 border-t border-violet-200/60">
-                <button
-                  onClick={async () => {
-                    const res = await fetch("/api/advisor-auth/topup", {
-                      method: "POST",
-                      headers: { "Content-Type": "application/json" },
-                      body: JSON.stringify({ amount_cents: 20000 }),
-                    });
-                    const data = await res.json();
-                    if (data.url) window.location.href = data.url;
-                    else alert(data.error || "Failed to create top-up session");
-                  }}
-                  className="px-3 py-1.5 bg-violet-600 text-white text-xs font-bold rounded-lg hover:bg-violet-700 transition-colors"
-                >
-                  Top Up $200
-                </button>
-                <span className="text-[0.6rem] text-violet-400">
-                  ${((advisor?.lead_price_cents || 4900) / 100).toFixed(0)}/lead · Exclusive · Dispute within 14 days
-                </span>
+              {/* Credit Pack Options */}
+              <div className="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-violet-200/60">
+                {[
+                  { name: "Starter", leads: 5, price: 199, slug: "starter", badge: "" },
+                  { name: "Growth", leads: 12, price: 449, slug: "growth", badge: "Popular" },
+                  { name: "Scale", leads: 25, price: 799, slug: "scale", badge: "Best Value" },
+                ].map((pack) => (
+                  <button
+                    key={pack.slug}
+                    onClick={async () => {
+                      const res = await fetch("/api/advisor-auth/topup", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ amount_cents: pack.price * 100, pack_slug: pack.slug }),
+                      });
+                      const data = await res.json();
+                      if (data.url) window.location.href = data.url;
+                      else alert(data.error || "Failed to create checkout session");
+                    }}
+                    className={`relative flex flex-col items-center p-2.5 rounded-lg border text-center transition-all ${
+                      pack.slug === "growth"
+                        ? "bg-violet-600 text-white border-violet-600 hover:bg-violet-700"
+                        : "bg-white text-slate-700 border-slate-200 hover:border-violet-300"
+                    }`}
+                  >
+                    {pack.badge && (
+                      <span className={`absolute -top-2 text-[0.5rem] font-bold px-1.5 py-0.5 rounded-full ${
+                        pack.slug === "growth" ? "bg-amber-400 text-amber-900" : "bg-emerald-100 text-emerald-700"
+                      }`}>{pack.badge}</span>
+                    )}
+                    <span className="text-[0.6rem] font-bold uppercase tracking-wider opacity-70 mt-1">{pack.name}</span>
+                    <span className="text-lg font-extrabold">${pack.price}</span>
+                    <span className="text-[0.55rem] opacity-70">{pack.leads} leads · ${Math.round(pack.price / pack.leads)}/ea</span>
+                  </button>
+                ))}
               </div>
             </div>
 
@@ -1052,36 +1059,74 @@ export default function AdvisorPortalPage() {
         {/* ─── BILLING ─── */}
         {view === "billing" && (
           <>
-            <h1 className="text-xl font-bold text-slate-900 mb-1">Billing</h1>
-            <p className="text-sm text-slate-500 mb-6">Track your enquiry charges and payment history.</p>
+            <h1 className="text-xl font-bold text-slate-900 mb-1">Billing & Credits</h1>
+            <p className="text-sm text-slate-500 mb-6">Purchase lead credits and view your payment history.</p>
+
+            {/* Current balance */}
+            <div className="bg-violet-50 border border-violet-200 rounded-xl p-5 mb-6">
+              <div className="flex items-center justify-between mb-1">
+                <h3 className="text-sm font-bold text-violet-900">Credit Balance</h3>
+                <span className="text-2xl font-extrabold text-violet-900">${((advisor?.credit_balance_cents || 0) / 100).toFixed(0)}</span>
+              </div>
+              <p className="text-xs text-violet-600">
+                ~{Math.floor((advisor?.credit_balance_cents || 0) / (advisor?.lead_price_cents || 3980))} leads remaining · Lifetime spend: ${((advisor?.lifetime_lead_spend_cents || 0) / 100).toFixed(0)}
+              </p>
+            </div>
+
+            {/* Credit Packs */}
+            <h2 className="text-base font-bold text-slate-900 mb-3">Buy Lead Credits</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-8">
+              {[
+                { name: "Starter", leads: 5, price: 199, perLead: 39.80, slug: "starter", badge: "", desc: "Perfect for testing" },
+                { name: "Growth", leads: 12, price: 449, perLead: 37.42, slug: "growth", badge: "Most Popular", desc: "Best for most advisors" },
+                { name: "Scale", leads: 25, price: 799, perLead: 31.96, slug: "scale", badge: "Best Value", desc: "20% savings per lead" },
+              ].map((pack) => (
+                <div key={pack.slug} className={`relative bg-white border rounded-xl p-5 text-center ${pack.slug === "growth" ? "border-violet-400 ring-2 ring-violet-100" : "border-slate-200"}`}>
+                  {pack.badge && (
+                    <span className={`absolute -top-2.5 left-1/2 -translate-x-1/2 text-[0.6rem] font-bold px-2.5 py-0.5 rounded-full whitespace-nowrap ${
+                      pack.slug === "growth" ? "bg-violet-600 text-white" : "bg-emerald-100 text-emerald-700"
+                    }`}>{pack.badge}</span>
+                  )}
+                  <h3 className="text-sm font-bold text-slate-900 mt-1">{pack.name}</h3>
+                  <div className="text-3xl font-extrabold text-slate-900 my-2">${pack.price}</div>
+                  <p className="text-xs text-slate-500 mb-1">{pack.leads} exclusive leads</p>
+                  <p className="text-xs text-slate-400 mb-3">${pack.perLead.toFixed(2)} per lead</p>
+                  <button
+                    onClick={async () => {
+                      const res = await fetch("/api/advisor-auth/topup", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ amount_cents: pack.price * 100, pack_slug: pack.slug }),
+                      });
+                      const data = await res.json();
+                      if (data.url) window.location.href = data.url;
+                      else alert(data.error || "Failed to create checkout session");
+                    }}
+                    className={`w-full py-2.5 rounded-lg text-sm font-bold transition-all ${
+                      pack.slug === "growth"
+                        ? "bg-violet-600 text-white hover:bg-violet-700"
+                        : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                    }`}
+                  >
+                    Buy {pack.name}
+                  </button>
+                  <p className="text-[0.6rem] text-slate-400 mt-2">{pack.desc}</p>
+                </div>
+              ))}
+            </div>
 
             {/* Billing summary */}
-            <div className="grid grid-cols-2 gap-3 mb-6">
+            <h2 className="text-base font-bold text-slate-900 mb-3">Payment History</h2>
+            <div className="grid grid-cols-2 gap-3 mb-4">
               <div className="bg-white border border-slate-200 rounded-xl p-4">
                 <div className="text-xs text-slate-500 font-medium">Total Charged</div>
                 <div className="text-2xl font-extrabold text-slate-900 mt-1">${((stats?.totalBilledCents || 0) / 100).toFixed(0)}</div>
-                <div className="text-[0.62rem] text-slate-400 mt-0.5">all time</div>
               </div>
               <div className="bg-white border border-slate-200 rounded-xl p-4">
                 <div className="text-xs text-slate-500 font-medium">Outstanding</div>
                 <div className="text-2xl font-extrabold text-amber-600 mt-1">${((stats?.pendingBilledCents || 0) / 100).toFixed(0)}</div>
-                <div className="text-[0.62rem] text-slate-400 mt-0.5">pending / invoiced</div>
               </div>
             </div>
-
-            {/* Free tier notice */}
-            {(stats?.totalBilledCents || 0) === 0 && (
-              <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 mb-6">
-                <h3 className="text-sm font-bold text-emerald-900 mb-1 flex items-center gap-2">
-                  <Icon name="gift" size={16} className="text-emerald-600" />
-                  You&apos;re on the Free Plan
-                </h3>
-                <p className="text-xs text-emerald-700 leading-relaxed">
-                  Your listing is currently free. We&apos;ll discuss per-enquiry pricing once you&apos;re seeing results from the platform.
-                  No charges will be applied without your agreement.
-                </p>
-              </div>
-            )}
 
             {/* Billing records */}
             {billing.length > 0 ? (

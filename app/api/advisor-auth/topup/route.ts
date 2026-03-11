@@ -41,7 +41,17 @@ export async function POST(request: NextRequest) {
   if (!advisorId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
   const body = await request.json().catch(() => ({}));
-  const amountCents = body.amount_cents || DEFAULT_TOPUP_CENTS;
+  const packSlug = body.pack_slug as string | undefined;
+  
+  // Pack pricing (must match credit_packs table)
+  const PACKS: Record<string, { leads: number; price_cents: number; per_lead_cents: number }> = {
+    starter: { leads: 5, price_cents: 19900, per_lead_cents: 3980 },
+    growth: { leads: 12, price_cents: 44900, per_lead_cents: 3742 },
+    scale: { leads: 25, price_cents: 79900, per_lead_cents: 3196 },
+  };
+  
+  const pack = packSlug ? PACKS[packSlug] : null;
+  const amountCents = pack ? pack.price_cents : (body.amount_cents || DEFAULT_TOPUP_CENTS);
 
   // Validate amount (min $50, max $2000)
   if (amountCents < 5000 || amountCents > 200000) {
@@ -102,6 +112,9 @@ export async function POST(request: NextRequest) {
       professional_id: String(pro.id),
       topup_id: String(topup?.id || ""),
       type: "advisor_credit_topup",
+      pack_slug: packSlug || "custom",
+      pack_leads: pack ? String(pack.leads) : "",
+      per_lead_cents: pack ? String(pack.per_lead_cents) : "",
     },
     success_url: `${siteUrl}/advisor-portal?topup=success`,
     cancel_url: `${siteUrl}/advisor-portal?topup=cancelled`,

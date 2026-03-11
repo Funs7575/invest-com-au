@@ -378,6 +378,8 @@ export async function POST(request: NextRequest) {
             await supabase.from("professionals").update({
               credit_balance_cents: (pro?.credit_balance_cents || 0) + amountCents,
               lifetime_credit_cents: (pro?.lifetime_credit_cents || 0) + amountCents,
+              // Update per-lead price if a pack was purchased (rewards bigger packs with lower per-lead rate)
+              ...(session.metadata?.per_lead_cents ? { lead_price_cents: parseInt(session.metadata.per_lead_cents) } : {}),
             }).eq("id", professionalId);
 
             // Mark top-up as completed
