@@ -137,6 +137,69 @@ export async function GET(req: NextRequest) {
               .maybeSingle();
             if (existing) continue;
 
+            // ── Evaluate auto-rules ──
+            const { data: autoRules } = await supabase
+              .from("fee_auto_rules")
+              .select("id, field_name, condition, action")
+              .eq("enabled", true)
+              .or(`field_name.eq.*,field_name.eq.${dbField}`);
+
+            let autoAction: string | null = null;
+            let matchedRuleId: number | null = null;
+
+            for (const rule of autoRules || []) {
+              const oldNum = currentVal ? parseFloat(currentVal.replace(/[^0-9.]/g, "")) : null;
+              const newNum = extractedValue ? parseFloat(extractedValue.replace(/[^0-9.]/g, "")) : null;
+              let matches = false;
+
+              if (rule.condition === "decrease_only" && oldNum != null && newNum != null && newNum < oldNum) matches = true;
+              if (rule.condition === "any_change") matches = true;
+              if (rule.condition === "increase_over_20pct" && oldNum != null && newNum != null && oldNum > 0 && (newNum - oldNum) / oldNum > 0.2) matches = true;
+              if (rule.condition === "value_over_5pct" && newNum != null && newNum > 5) matches = true;
+              if (rule.condition === "lost_dollar_prefix" && currentVal?.startsWith("$") && !extractedValue.startsWith("$")) matches = true;
+
+              if (matches) {
+                autoAction = rule.action;
+                matchedRuleId = rule.id;
+                break;
+              }
+            }
+
+            if (autoAction === "auto_reject") {
+              // Still log it but as auto-rejected
+              await supabase.from("fee_update_queue").insert({
+                broker_id: broker.id, broker_slug: broker.slug, broker_name: broker.name,
+                field_name: dbField, old_value: currentVal, new_value: extractedValue,
+                extracted_from: broker.fee_source_url,
+                status: "rejected", auto_applied: true, rule_id: matchedRuleId,
+                reviewed_by: "auto-rule", reviewed_at: new Date().toISOString(),
+              });
+              continue;
+            }
+
+            if (autoAction === "auto_approve") {
+              // Apply the change directly to the broker
+              const updateField: Record<string, unknown> = { [dbField]: extractedValue, fee_last_checked: new Date().toISOString() };
+              const numericMatch = extractedValue.match(/([\d.]+)/);
+              if (numericMatch) {
+                const numericFields: Record<string, string> = { asx_fee: "asx_fee_value", us_fee: "us_fee_value", fx_rate: "fx_rate" };
+                const numField = numericFields[dbField];
+                if (numField && numField !== dbField) updateField[numField] = parseFloat(numericMatch[1]);
+              }
+              await supabase.from("brokers").update(updateField).eq("id", broker.id);
+
+              // Log as auto-approved
+              await supabase.from("fee_update_queue").insert({
+                broker_id: broker.id, broker_slug: broker.slug, broker_name: broker.name,
+                field_name: dbField, old_value: currentVal, new_value: extractedValue,
+                extracted_from: broker.fee_source_url,
+                status: "approved", auto_applied: true, rule_id: matchedRuleId,
+                reviewed_by: "auto-rule", reviewed_at: new Date().toISOString(),
+              });
+              continue;
+            }
+
+            // No rule matched or flagged urgent — queue for manual review
             await supabase.from("fee_update_queue").insert({
               broker_id: broker.id,
               broker_slug: broker.slug,
@@ -146,6 +209,8 @@ export async function GET(req: NextRequest) {
               new_value: extractedValue,
               extracted_from: broker.fee_source_url,
               status: "pending",
+              priority: autoAction === "flag_urgent" ? "urgent" : "normal",
+              rule_id: matchedRuleId,
             });
             // Ignore insert errors for fee queue
           }
