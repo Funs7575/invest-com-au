@@ -416,8 +416,9 @@ export default function AdvisorPortalPage() {
           {navItems.map((item) => (
             <button
               key={item.key}
+              type="button"
               onClick={() => { setView(item.key as typeof view); if (item.key === "team") loadFirmData(); }}
-              className={`flex items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
+              className={`flex items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-inset ${
                 view === item.key
                   ? "border-slate-900 text-slate-900"
                   : "border-transparent text-slate-500 hover:text-slate-700"
@@ -745,6 +746,8 @@ export default function AdvisorPortalPage() {
                 ].map((pack) => (
                   <button
                     key={pack.slug}
+                    type="button"
+                    tabIndex={0}
                     onClick={async () => {
                       const res = await fetch("/api/advisor-auth/topup", {
                         method: "POST",
@@ -755,7 +758,7 @@ export default function AdvisorPortalPage() {
                       if (data.url) window.location.href = data.url;
                       else alert(data.error || "Failed to create checkout session");
                     }}
-                    className={`relative flex flex-col items-center p-2.5 rounded-lg border text-center transition-all ${
+                    className={`relative flex flex-col items-center p-2.5 rounded-lg border text-center transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 ${
                       pack.slug === "growth"
                         ? "bg-violet-600 text-white border-violet-600 hover:bg-violet-700"
                         : "bg-white text-slate-700 border-slate-200 hover:border-violet-300"
@@ -1103,7 +1106,7 @@ export default function AdvisorPortalPage() {
                       if (data.url) window.location.href = data.url;
                       else alert(data.error || "Failed to create checkout session");
                     }}
-                    className={`w-full py-2.5 rounded-lg text-sm font-bold transition-all ${
+                    className={`w-full py-2.5 rounded-lg text-sm font-bold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 ${
                       pack.slug === "growth"
                         ? "bg-violet-600 text-white hover:bg-violet-700"
                         : "bg-slate-100 text-slate-700 hover:bg-slate-200"
