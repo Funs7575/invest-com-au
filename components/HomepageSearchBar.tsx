@@ -43,7 +43,7 @@ export default function HomepageSearchBar() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto relative mt-3 md:mt-8">
+    <div className="max-w-2xl mx-auto relative mt-3 md:mt-8 z-20">
       <div className="relative">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
         <input
@@ -67,7 +67,7 @@ export default function HomepageSearchBar() {
 
       {/* Advisor detection hint */}
       {showHint && (
-        <div className="absolute left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl p-3 shadow-lg z-10 animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="absolute left-0 right-0 -bottom-1 translate-y-full bg-white border border-slate-200 rounded-xl p-3 shadow-xl z-50 animate-in fade-in slide-in-from-top-2 duration-200">
           <p className="text-xs text-slate-600 font-medium">
             Looking for a financial professional? Press Enter to search our{" "}
             <span className="font-bold text-slate-800">advisor directory</span>, or{" "}
