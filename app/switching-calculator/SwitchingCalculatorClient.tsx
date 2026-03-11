@@ -36,7 +36,7 @@ function calcAnnualCost(broker: Broker, trades: number, avgSize: number, usAlloc
   return asxCost + usCost + fxCost + inactivity;
 }
 
-export default function SwitchingCalculatorClient({ brokers }: { brokers: Broker[] }) {
+export default function SwitchingCalculatorClient({ brokers, inline }: { brokers: Broker[]; inline?: boolean }) {
   const [currentBroker, setCurrentBroker] = useState("");
   const [tradesPerYear, setTradesPerYear] = useState(24);
   const [avgTradeSize, setAvgTradeSize] = useState(2000);
@@ -74,18 +74,18 @@ export default function SwitchingCalculatorClient({ brokers }: { brokers: Broker
   };
 
   return (
-    <div className="py-5 md:py-12">
-      <div className="container-custom max-w-3xl">
-        <nav className="text-xs md:text-sm text-slate-500 mb-3">
+    <div className={inline ? "" : "py-5 md:py-12"}>
+      <div className={inline ? "" : "container-custom max-w-3xl"}>
+        {!inline && <nav className="text-xs md:text-sm text-slate-500 mb-3">
           <Link href="/" className="hover:text-slate-900">Home</Link>
           <span className="mx-1.5">/</span>
           <Link href="/calculators" className="hover:text-slate-900">Calculators</Link>
           <span className="mx-1.5">/</span>
           <span className="text-slate-700">Switching Calculator</span>
-        </nav>
+        </nav>}
 
         {/* Hero */}
-        <div className="bg-gradient-to-br from-emerald-600 to-emerald-800 rounded-2xl p-5 md:p-8 text-white mb-6 relative overflow-hidden">
+        {!inline && <div className="bg-gradient-to-br from-emerald-600 to-emerald-800 rounded-2xl p-5 md:p-8 text-white mb-6 relative overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.1),transparent_60%)]" />
           <div className="relative">
             <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-3">
@@ -95,7 +95,7 @@ export default function SwitchingCalculatorClient({ brokers }: { brokers: Broker
             <p className="text-sm md:text-base text-emerald-100">Enter your trading details below and we&apos;ll calculate your exact annual cost at every Australian broker — and how much you&apos;d save by switching.</p>
             <div className="mt-3"><SocialProofCounter variant="badge" /></div>
           </div>
-        </div>
+        </div>}
 
         {/* Calculator Inputs */}
         <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-6 mb-6">

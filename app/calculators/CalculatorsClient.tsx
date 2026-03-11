@@ -224,9 +224,9 @@ export default function CalculatorsClient({ brokers }: Props) {
           {activeCalc === "cgt" && <CgtCalculator searchParams={searchParams} />}
           {activeCalc === "chess" && <ChessLookup brokers={nonCryptoBrokers} searchParams={searchParams} />}
           {activeCalc === "fee-impact" && <FeeImpactTeaser brokers={nonCryptoBrokers} searchParams={searchParams} />}
-          {activeCalc === "portfolio" && <PortfolioCalculatorClient brokers={nonCryptoBrokers} />}
-          {activeCalc === "switch-calc" && <SwitchingCalculatorClient brokers={nonCryptoBrokers} />}
-          {activeCalc === "savings-calc" && <SavingsCalculatorClient accounts={brokers.filter(b => b.platform_type === "savings_account" || b.platform_type === "term_deposit").map(b => ({ id: b.id, slug: b.slug, name: b.name, platform_type: b.platform_type || "", asx_fee: b.asx_fee || "", rating: b.rating, affiliate_url: b.affiliate_url || "", color: b.color || "", min_deposit: b.min_deposit || "" })) as never} />}
+          {activeCalc === "portfolio" && <PortfolioCalculatorClient brokers={nonCryptoBrokers} inline />}
+          {activeCalc === "switch-calc" && <SwitchingCalculatorClient brokers={nonCryptoBrokers} inline />}
+          {activeCalc === "savings-calc" && <SavingsCalculatorClient accounts={brokers.filter(b => b.platform_type === "savings_account" || b.platform_type === "term_deposit").map(b => ({ id: b.id, slug: b.slug, name: b.name, platform_type: b.platform_type || "", asx_fee: b.asx_fee || "", rating: b.rating, affiliate_url: b.affiliate_url || "", color: b.color || "", min_deposit: b.min_deposit || "" })) as never} inline />}
 
           {/* Prev / Next navigation */}
           {currentInlineIdx >= 0 && (

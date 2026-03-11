@@ -20,7 +20,7 @@ function formatCurrency(n: number) {
   return n >= 1000 ? `$${(n / 1000).toFixed(1)}k` : `$${n.toFixed(0)}`;
 }
 
-export default function PortfolioCalculatorClient({ brokers }: { brokers: Broker[] }) {
+export default function PortfolioCalculatorClient({ brokers, inline }: { brokers: Broker[]; inline?: boolean }) {
   const [holdings, setHoldings] = useState<Holding[]>([
     { id: "1", market: "asx", trades_per_year: 12, avg_trade_size: 2000 },
   ]);
@@ -111,18 +111,18 @@ export default function PortfolioCalculatorClient({ brokers }: { brokers: Broker
   const savings = currentBrokerFees - cheapestFees;
 
   return (
-    <div className="py-5 md:py-12">
-      <div className="container-custom max-w-4xl">
-        <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
+    <div className={inline ? "" : "py-5 md:py-12"}>
+      <div className={inline ? "" : "container-custom max-w-4xl"}>
+        {!inline && <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
           <Link href="/" className="hover:text-slate-900">Home</Link>
           <span className="mx-1.5 md:mx-2">/</span>
           <Link href="/calculators" className="hover:text-slate-900">Calculators</Link>
           <span className="mx-1.5 md:mx-2">/</span>
           <span className="text-slate-700">Portfolio Fee Calculator</span>
-        </nav>
+        </nav>}
 
         {/* Hero */}
-        <div className="bg-gradient-to-br from-blue-50 to-violet-50 border border-blue-100 rounded-2xl p-4 md:p-8 mb-6">
+        {!inline && <div className="bg-gradient-to-br from-blue-50 to-violet-50 border border-blue-100 rounded-2xl p-4 md:p-8 mb-6">
           <div className="flex items-start gap-3 md:gap-4">
             <div className="w-10 h-10 md:w-14 md:h-14 bg-blue-600 rounded-xl flex items-center justify-center shrink-0">
               <Icon name="calculator" size={20} className="text-white md:hidden" />
@@ -137,7 +137,7 @@ export default function PortfolioCalculatorClient({ brokers }: { brokers: Broker
               </p>
             </div>
           </div>
-        </div>
+        </div>}
 
         {/* Input section */}
         <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-6 mb-6">

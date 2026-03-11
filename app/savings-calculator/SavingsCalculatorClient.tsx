@@ -21,7 +21,7 @@ function formatCurrency(n: number): string {
   return new Intl.NumberFormat("en-AU", { style: "currency", currency: "AUD", maximumFractionDigits: 0 }).format(n);
 }
 
-export default function SavingsCalculatorClient({ accounts }: { accounts: Account[] }) {
+export default function SavingsCalculatorClient({ accounts, inline }: { accounts: Account[]; inline?: boolean }) {
   const [balance, setBalance] = useState(25000);
   const [currentRate, setCurrentRate] = useState(0.5);
   const [showResults, setShowResults] = useState(false);
@@ -82,15 +82,15 @@ export default function SavingsCalculatorClient({ accounts }: { accounts: Accoun
   return (
     <div className="py-0">
       {/* Hero */}
-      <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white py-8 md:py-14 px-4">
+      {!inline && <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white py-8 md:py-14 px-4">
         <div className="container-custom max-w-3xl text-center">
           <h1 className="text-xl md:text-3xl font-extrabold mb-2">Are you earning enough on your savings?</h1>
           <p className="text-sm md:text-base text-blue-100">Enter your balance and current rate — we'll show you exactly how much more you could earn.</p>
           <div className="mt-3"><SocialProofCounter variant="badge" /></div>
         </div>
-      </div>
+      </div>}
 
-      <div className="container-custom max-w-3xl py-6 md:py-10">
+      <div className={inline ? "" : "container-custom max-w-3xl py-6 md:py-10"}>
         {/* Input form */}
         <div className="bg-white border border-slate-200 rounded-2xl p-5 md:p-8 shadow-sm mb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
