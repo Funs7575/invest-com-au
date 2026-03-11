@@ -12,6 +12,7 @@ const NAV_GROUPS = [
     items: [
       { href: "/admin", icon: "bar-chart", label: "Overview" },
       { href: "/admin/revenue", icon: "dollar-sign", label: "Revenue" },
+      { href: "/admin/finance", icon: "wallet", label: "Finance" },
       { href: "/admin/funnel", icon: "filter", label: "Funnel" },
       { href: "/admin/analytics", icon: "trending-up", label: "Traffic" },
     ],
