@@ -982,6 +982,23 @@ export interface Professional {
   meta_title?: string;
   meta_description?: string;
   featured_until?: string;
+  // Billing fields
+  credit_balance_cents?: number;
+  lifetime_credit_cents?: number;
+  lifetime_lead_spend_cents?: number;
+  free_leads_used?: number;
+  lead_price_cents?: number;
+  stripe_customer_id?: string;
+  // Admin fields
+  total_leads?: number;
+  leads_this_month?: number;
+  avg_response_minutes?: number;
+  admin_notes?: string;
+  admin_tags?: string[];
+  health_status?: string;
+  last_lead_at?: string;
+  last_login_at?: string;
+  login_count?: number;
 }
 
 export interface ProfessionalLead {

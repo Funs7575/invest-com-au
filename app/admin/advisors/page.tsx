@@ -96,6 +96,24 @@ export default function AdminAdvisorsPage() {
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Advisor Directory Management</h1>
 
+      {/* Quick health summary */}
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2 mb-6">
+        {[
+          { label: "Total Active", value: advisors.filter(a => a.status === "active").length, color: "text-slate-900" },
+          { label: "With Credit", value: advisors.filter(a => (a.credit_balance_cents || 0) > 0).length, color: "text-emerald-600" },
+          { label: "No Credit", value: advisors.filter(a => a.status === "active" && (a.credit_balance_cents || 0) <= 0 && (a.free_leads_used || 0) >= 2).length, color: "text-red-600" },
+          { label: "Low Credit", value: advisors.filter(a => (a.credit_balance_cents || 0) > 0 && (a.credit_balance_cents || 0) < (a.lead_price_cents || 3980) * 3).length, color: "text-amber-600" },
+          { label: "Pending", value: advisors.filter(a => a.status === "pending").length, color: "text-blue-600" },
+          { label: "Total Revenue", value: "$" + Math.round(advisors.reduce((sum, a) => sum + (a.lifetime_lead_spend_cents || 0), 0) / 100).toLocaleString(), color: "text-violet-700" },
+          { label: "Leads Today", value: leads.filter(l => new Date(l.created_at).toDateString() === new Date().toDateString()).length, color: "text-slate-900" },
+        ].map((stat) => (
+          <div key={stat.label} className="bg-white border border-slate-200 rounded-lg px-3 py-2 text-center">
+            <p className="text-[0.6rem] text-slate-500 font-medium uppercase tracking-wider">{stat.label}</p>
+            <p className={`text-lg font-extrabold ${stat.color}`}>{stat.value}</p>
+          </div>
+        ))}
+      </div>
+
       {/* Tabs */}
       <div className="flex gap-2 mb-6 flex-wrap">
         <button onClick={() => setTab("advisors")} className={`px-4 py-2 rounded-lg font-semibold text-sm ${tab === "advisors" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600"}`}>
@@ -220,6 +238,20 @@ export default function AdminAdvisorsPage() {
                 <label className="block text-xs font-semibold text-slate-600 mb-1">Bio</label>
                 <textarea value={editing.bio || ""} onChange={(e) => setEditing({ ...editing, bio: e.target.value })} rows={3} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="Professional bio..." />
               </div>
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">LinkedIn URL</label>
+                  <input value={(editing as Record<string, unknown>).linkedin_url as string || ""} onChange={(e) => setEditing({ ...editing, linkedin_url: e.target.value } as Partial<Professional>)} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="https://linkedin.com/in/..." />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">Years Experience</label>
+                  <input type="number" value={(editing as Record<string, unknown>).years_experience as number || ""} onChange={(e) => setEditing({ ...editing, years_experience: e.target.value ? parseInt(e.target.value) : undefined } as Partial<Professional>)} className="w-full px-3 py-2 border rounded-lg text-sm" placeholder="15" />
+                </div>
+              </div>
+              <div className="mt-4">
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Admin Notes (internal only)</label>
+                <textarea value={(editing as Record<string, unknown>).admin_notes as string || ""} onChange={(e) => setEditing({ ...editing, admin_notes: e.target.value } as Partial<Professional>)} rows={2} className="w-full px-3 py-2 border border-amber-200 bg-amber-50 rounded-lg text-sm" placeholder="Internal notes — not visible to the advisor..." />
+              </div>
               <div className="mt-4">
                 <label className="block text-xs font-semibold text-slate-600 mb-1">Specialties</label>
                 <div className="flex gap-2 mb-2">
@@ -267,7 +299,8 @@ export default function AdminAdvisorsPage() {
                     <th className="px-4 py-3 font-semibold text-slate-600">Name</th>
                     <th className="px-4 py-3 font-semibold text-slate-600">Type</th>
                     <th className="px-4 py-3 font-semibold text-slate-600">Location</th>
-                    <th className="px-4 py-3 font-semibold text-slate-600">Verified</th>
+                    <th className="px-4 py-3 font-semibold text-slate-600">Credits</th>
+                    <th className="px-4 py-3 font-semibold text-slate-600">Leads</th>
                     <th className="px-4 py-3 font-semibold text-slate-600">Status</th>
                     <th className="px-4 py-3 font-semibold text-slate-600">Actions</th>
                   </tr>
@@ -279,9 +312,18 @@ export default function AdminAdvisorsPage() {
                         <div className="font-semibold">{a.name}</div>
                         <div className="text-xs text-slate-400">{a.firm_name}</div>
                       </td>
-                      <td className="px-4 py-3 text-slate-600">{PROFESSIONAL_TYPE_LABELS[a.type]}</td>
-                      <td className="px-4 py-3 text-slate-600">{a.location_display || "—"}</td>
-                      <td className="px-4 py-3">{a.verified ? <span className="text-blue-600 font-semibold">Yes</span> : <span className="text-slate-400">No</span>}</td>
+                      <td className="px-4 py-3 text-slate-600 text-xs">{PROFESSIONAL_TYPE_LABELS[a.type]}</td>
+                      <td className="px-4 py-3 text-slate-600 text-xs">{a.location_display || "—"}</td>
+                      <td className="px-4 py-3">
+                        <span className={`text-xs font-bold ${
+                          (a.credit_balance_cents || 0) <= 0 && (a.free_leads_used || 0) >= 2 ? "text-red-600" :
+                          (a.credit_balance_cents || 0) < (a.lead_price_cents || 3980) * 3 ? "text-amber-600" :
+                          "text-emerald-600"
+                        }`}>
+                          ${Math.round((a.credit_balance_cents || 0) / 100)}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-xs text-slate-600">{a.total_leads || 0}</td>
                       <td className="px-4 py-3">
                         <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${a.status === "active" ? "bg-emerald-100 text-emerald-700" : a.status === "pending" ? "bg-amber-100 text-amber-700" : "bg-slate-100 text-slate-500"}`}>
                           {a.status}
