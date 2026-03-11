@@ -88,6 +88,16 @@ export default async function HowToGuidePage({
   // Other guides for related section
   const allGuides = getAllGuides().filter((g) => g.slug !== guide.slug);
 
+  // Fetch related articles based on guide slug keywords
+  const guideKeywords = guide.slug.split("-").filter((w) => w.length > 3);
+  const { data: relatedArticlesData } = await supabase
+    .from("articles")
+    .select("slug, title, category, read_time")
+    .eq("status", "published")
+    .overlaps("tags", guideKeywords)
+    .limit(4);
+  const relatedArticles = (relatedArticlesData as { slug: string; title: string; category: string; read_time: number }[]) || [];
+
   // JSON-LD
   const breadcrumbs = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
@@ -406,6 +416,26 @@ export default async function HowToGuidePage({
                     className="text-xs md:text-sm text-slate-600 border border-slate-200 px-3 py-1.5 rounded-lg hover:border-slate-400 hover:text-slate-900 transition-colors"
                   >
                     {page.label}
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Related Articles */}
+          {relatedArticles.length > 0 && (
+            <section className="mb-6 md:mb-10">
+              <h3 className="text-sm md:text-base font-bold text-slate-900 mb-2 md:mb-3">
+                Further Reading
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {relatedArticles.map((ra) => (
+                  <Link
+                    key={ra.slug}
+                    href={`/article/${ra.slug}`}
+                    className="text-xs md:text-sm text-slate-600 border border-slate-200 px-3 py-2 rounded-lg hover:border-violet-300 hover:text-violet-700 transition-colors"
+                  >
+                    {ra.title}
                   </Link>
                 ))}
               </div>

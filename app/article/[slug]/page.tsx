@@ -113,21 +113,32 @@ export default async function ArticlePage({
     .order("rating", { ascending: false })
     .limit(50);
 
+  // Related articles: same category (3) + cross-category by matching tags (3)
   const relatedArticlesPromise = a.category
-    ? supabase.from("articles").select("slug, title, category, read_time, id").eq("category", a.category).neq("slug", slug).limit(3)
+    ? supabase.from("articles").select("slug, title, category, read_time, id, tags").eq("status", "published").eq("category", a.category).neq("slug", slug).order("published_at", { ascending: false }).limit(3)
     : Promise.resolve({ data: null });
 
-  const [relatedBrokersRes, fxBrokersRes, allActiveBrokersRes, relatedArticlesRes] = await Promise.all([
+  const crossCategoryPromise = (a.tags && a.tags.length > 0)
+    ? supabase.from("articles").select("slug, title, category, read_time, id, tags").eq("status", "published").neq("category", a.category || "").neq("slug", slug).overlaps("tags", a.tags).order("published_at", { ascending: false }).limit(3)
+    : Promise.resolve({ data: null });
+
+  const [relatedBrokersRes, fxBrokersRes, allActiveBrokersRes, relatedArticlesRes, crossCategoryRes] = await Promise.all([
     relatedBrokersPromise,
     fxBrokersPromise,
     allActiveBrokersPromise,
     relatedArticlesPromise,
+    crossCategoryPromise,
   ]);
 
   let relatedBrokers = (relatedBrokersRes.data as Broker[]) || [];
   const allFxBrokers = (fxBrokersRes.data as Broker[]) || [];
   const allBrokersForWidget = (allActiveBrokersRes.data as Broker[]) || [];
-  const relatedArticles = (relatedArticlesRes.data as Article[]) || [];
+  const relatedArticles = [
+    ...((relatedArticlesRes.data || []) as Article[]),
+    ...((crossCategoryRes.data || []) as Article[]).filter(
+      (ca) => !(relatedArticlesRes.data || []).some((ra: { slug: string }) => ra.slug === ca.slug)
+    ),
+  ].slice(0, 6);
 
   let topPick: Broker | null = null;
   if (isEnhanced) {

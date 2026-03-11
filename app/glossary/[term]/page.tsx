@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { createClient } from "@/lib/supabase/server";
 import { GLOSSARY_ENTRIES, type GlossaryEntry } from "@/lib/glossary";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
@@ -48,6 +49,16 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
   if (!entry) notFound();
 
   const related = getRelatedTerms(entry);
+
+  // Fetch related articles by matching the term's category to article tags
+  const supabase = await createClient();
+  const termWords = entry.term.toLowerCase().split(/\s+/).filter((w) => w.length > 3);
+  const categoryTag = entry.category?.toLowerCase().replace(/\s+/g, "-").replace(/&/g, "").replace(/\//g, "-") || "";
+  const searchTags = [...termWords, categoryTag].filter(Boolean);
+  const { data: relatedArticles } = searchTags.length > 0
+    ? await supabase.from("articles").select("slug, title, read_time").eq("status", "published").overlaps("tags", searchTags).limit(3)
+    : { data: [] };
+
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -131,6 +142,25 @@ export default async function GlossaryTermPage({ params }: { params: Promise<{ t
                   >
                     <p className="text-sm font-bold text-slate-900 group-hover:text-violet-700">{r.term}</p>
                     <p className="text-xs text-slate-500 line-clamp-2 mt-0.5">{r.definition}</p>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Related Articles */}
+          {relatedArticles && relatedArticles.length > 0 && (
+            <div className="mt-8">
+              <h2 className="text-lg font-bold text-slate-900 mb-3">Learn More</h2>
+              <div className="space-y-2">
+                {relatedArticles.map((ra: { slug: string; title: string; read_time: number }) => (
+                  <Link
+                    key={ra.slug}
+                    href={`/article/${ra.slug}`}
+                    className="block bg-white border border-slate-200 rounded-lg p-3 hover:border-violet-300 hover:shadow-sm transition-all group"
+                  >
+                    <p className="text-sm font-bold text-slate-900 group-hover:text-violet-700">{ra.title}</p>
+                    <p className="text-xs text-slate-500 mt-0.5">{ra.read_time} min read</p>
                   </Link>
                 ))}
               </div>
