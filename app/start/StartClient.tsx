@@ -191,11 +191,11 @@ function computeRoute(answers: Answers): RouteResult {
   const compareHref = filter ? `/compare?filter=${filter}` : "/compare";
 
   const bestPageMap: Record<string, string> = {
-    start: "/best/beginners", wealth: "/best/share-trading", income: "/best/share-trading",
+    start: "/best/beginners", wealth: "/best/etf-investing", income: "/best/dividend-investing",
     switch: "/switching-calculator", crypto: "/best/crypto", super: "/best/super-funds",
-    property: "/best/property", help: "/find-advisor",
+    property: "/compare?filter=property", help: "/find-advisor",
   };
-  const bestHref = bestPageMap[goal || ""] || "/best/share-trading";
+  const bestHref = bestPageMap[goal || ""] || "/best/beginners";
 
   const guideMap: Record<string, { label: string; href: string }[]> = {
     start: [
