@@ -13,7 +13,7 @@ const EMPTY_ADVISOR: Partial<Professional> = {
 };
 
 export default function AdminAdvisorsPage() {
-  const [tab, setTab] = useState<"advisors" | "leads" | "reviews" | "outreach" | "applications" | "disputes">("advisors");
+  const [tab, setTab] = useState<"advisors" | "leads" | "reviews" | "outreach" | "applications" | "disputes" | "verification">("advisors");
   const [applications, setApplications] = useState<Record<string, unknown>[]>([]);
   const [disputes, setDisputes] = useState<Record<string, unknown>[]>([]);
   const [advisors, setAdvisors] = useState<Professional[]>([]);
@@ -133,6 +133,9 @@ export default function AdminAdvisorsPage() {
         </button>
         <button onClick={() => setTab("disputes")} className={`px-4 py-2 rounded-lg font-semibold text-sm ${tab === "disputes" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600"}`}>
           Disputes ({disputes.filter(d => d.status === "pending").length})
+        </button>
+        <button onClick={() => setTab("verification")} className={`px-4 py-2 rounded-lg font-semibold text-sm ${tab === "verification" ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600"}`}>
+          Verification
         </button>
       </div>
 
@@ -875,6 +878,112 @@ export default function AdminAdvisorsPage() {
               })}
             </div>
           )}
+        </div>
+      )}
+
+      {tab === "verification" && (
+        <div>
+          <p className="text-sm text-slate-600 mb-4">Advisor verification status, profile quality gates, and response SLA tracking.</p>
+
+          {/* Summary */}
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-2 mb-6">
+            <div className="bg-white border border-slate-200 rounded-lg p-3 text-center">
+              <p className="text-[0.6rem] text-slate-500 uppercase font-medium">Verified</p>
+              <p className="text-xl font-extrabold text-emerald-600">{advisors.filter(a => a.verified).length}</p>
+            </div>
+            <div className="bg-white border border-slate-200 rounded-lg p-3 text-center">
+              <p className="text-[0.6rem] text-slate-500 uppercase font-medium">Unverified</p>
+              <p className="text-xl font-extrabold text-amber-600">{advisors.filter(a => !a.verified && a.status === "active").length}</p>
+            </div>
+            <div className="bg-white border border-slate-200 rounded-lg p-3 text-center">
+              <p className="text-[0.6rem] text-slate-500 uppercase font-medium">Profile Passed</p>
+              <p className="text-xl font-extrabold text-emerald-600">{advisors.filter(a => a.profile_quality_gate === "passed").length}</p>
+            </div>
+            <div className="bg-white border border-slate-200 rounded-lg p-3 text-center">
+              <p className="text-[0.6rem] text-slate-500 uppercase font-medium">Profile Failed</p>
+              <p className="text-xl font-extrabold text-red-600">{advisors.filter(a => a.profile_quality_gate === "failed").length}</p>
+            </div>
+            <div className="bg-white border border-slate-200 rounded-lg p-3 text-center">
+              <p className="text-[0.6rem] text-slate-500 uppercase font-medium">Auto-Paused</p>
+              <p className="text-xl font-extrabold text-red-600">{advisors.filter(a => a.status === "paused" && a.auto_paused_at).length}</p>
+            </div>
+          </div>
+
+          {/* Advisor verification list */}
+          <div className="space-y-2">
+            {advisors.map(a => {
+              
+              return (
+                <div key={a.id} className={`bg-white border rounded-lg px-4 py-3 flex items-center gap-3 ${
+                  !a.verified ? "border-amber-200" : a.profile_quality_gate === "failed" ? "border-red-200" : "border-slate-200"
+                }`}>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-sm font-bold text-slate-900">{a.name}</span>
+                      {a.verified ? (
+                        <span className="text-[0.56rem] font-bold px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700">Verified</span>
+                      ) : (
+                        <span className="text-[0.56rem] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700">Unverified</span>
+                      )}
+                      {a.profile_quality_gate === "passed" && (
+                        <span className="text-[0.56rem] font-bold px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700">Profile OK</span>
+                      )}
+                      {a.profile_quality_gate === "failed" && (
+                        <span className="text-[0.56rem] font-bold px-1.5 py-0.5 rounded-full bg-red-100 text-red-700">Profile Incomplete</span>
+                      )}
+                      {a.status === "paused" && a.auto_paused_at && (
+                        <span className="text-[0.56rem] font-bold px-1.5 py-0.5 rounded-full bg-red-100 text-red-700">Auto-Paused</span>
+                      )}
+                    </div>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      {a.afsl_number && `AFSL: ${a.afsl_number}`}
+                      {a.last_verified_at && ` · Last checked: ${new Date(a.last_verified_at).toLocaleDateString("en-AU", { day: "numeric", month: "short" })}`}
+                      {a.unresponded_leads && a.unresponded_leads > 0 && ` · ${a.unresponded_leads} unresponded leads`}
+                      {a.profile_missing_fields && a.profile_missing_fields!.length > 0 && ` · Missing: ${a.profile_missing_fields!.join(", ")}`}
+                    </p>
+                  </div>
+                  <div className="flex gap-1.5 shrink-0">
+                    {!a.verified && (
+                      <button
+                        onClick={async () => {
+                          await supabase.from("professionals").update({ verified: true, verified_at: new Date().toISOString(), verified_by: "manual" }).eq("id", a.id);
+                          await supabase.from("advisor_verification_log").insert({ professional_id: a.id, action: "verified", method: "manual", performed_by: "admin" });
+                          loadData();
+                        }}
+                        className="px-2.5 py-1 text-[0.6rem] font-bold bg-emerald-600 text-white rounded-lg hover:bg-emerald-700"
+                      >
+                        Verify
+                      </button>
+                    )}
+                    {a.verified && (
+                      <button
+                        onClick={async () => {
+                          if (!confirm(`Revoke verification for ${a.name}?`)) return;
+                          await supabase.from("professionals").update({ verified: false, verification_notes: "Manually revoked by admin" }).eq("id", a.id);
+                          await supabase.from("advisor_verification_log").insert({ professional_id: a.id, action: "revoked", method: "manual", performed_by: "admin" });
+                          loadData();
+                        }}
+                        className="px-2.5 py-1 text-[0.6rem] font-semibold border border-red-200 text-red-600 rounded-lg hover:bg-red-50"
+                      >
+                        Revoke
+                      </button>
+                    )}
+                    {a.status === "paused" && (
+                      <button
+                        onClick={async () => {
+                          await supabase.from("professionals").update({ status: "active", auto_paused_at: null, auto_pause_reason: null }).eq("id", a.id);
+                          loadData();
+                        }}
+                        className="px-2.5 py-1 text-[0.6rem] font-bold bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                      >
+                        Reactivate
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
     </div>

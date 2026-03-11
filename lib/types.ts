@@ -999,6 +999,22 @@ export interface Professional {
   last_lead_at?: string;
   last_login_at?: string;
   login_count?: number;
+  // Verification fields
+  verified_at?: string;
+  verified_by?: string;
+  verification_method?: string;
+  last_verified_at?: string;
+  verification_failures?: number;
+  verification_notes?: string;
+  // Quality gate
+  profile_quality_gate?: string;
+  profile_gate_checked_at?: string;
+  profile_missing_fields?: string[];
+  // Response SLA
+  unresponded_leads?: number;
+  auto_paused_at?: string;
+  auto_pause_reason?: string;
+  pause_warning_sent_at?: string;
 }
 
 export interface ProfessionalLead {

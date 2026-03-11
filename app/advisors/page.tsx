@@ -28,6 +28,7 @@ export default async function AdvisorsPage() {
       .from("professionals")
       .select("*")
       .eq("status", "active")
+      .in("profile_quality_gate", ["passed", "pending"])
       .order("verified", { ascending: false })
       .order("rating", { ascending: false }),
     supabase
