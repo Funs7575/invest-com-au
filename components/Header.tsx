@@ -13,7 +13,8 @@ const platformsDropdown = [
   { label: "Broker vs Broker", href: "/versus", desc: "Head-to-head matchups" },
   { label: "Deals & Offers", href: "/deals", desc: "Current promotions" },
   { label: "Platform Reviews", href: "/reviews", desc: "User ratings & reviews" },
-  { label: "Platform Quiz", href: "/quiz", desc: "Get a personalised match" },
+  { label: "Find Your Path", href: "/start", desc: "Personalised recommendations" },
+  { label: "Platform Quiz", href: "/quiz", desc: "Get a platform match" },
 ];
 
 const advisorsDropdown = [
@@ -166,10 +167,10 @@ export default function Header() {
             <DesktopDropdown label="Learn" items={learnDropdown} isActive={isLearnActive} />
 
             <Link
-              href="/quiz"
-              className="px-3 py-1.5 bg-amber-600 text-white text-xs font-semibold rounded-lg hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:ring-offset-2 transition-colors"
+              href="/start"
+              className="px-3 py-1.5 bg-violet-600 text-white text-xs font-semibold rounded-lg hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-500/40 focus:ring-offset-2 transition-colors"
             >
-              Platform Quiz
+              Find Your Path
             </Link>
             <Link
               href="/find-advisor"
