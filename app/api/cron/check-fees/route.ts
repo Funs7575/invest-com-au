@@ -116,6 +116,27 @@ export async function GET(req: NextRequest) {
           const currentVal = currentValues[dbField];
           // Only queue if the value actually differs
           if (extractedValue && extractedValue !== currentVal) {
+            // ── Sanity checks — reject obviously bad scraper extractions ──
+            const numMatch = extractedValue.match(/^([\d.]+)%?$/);
+            const numVal = numMatch ? parseFloat(numMatch[1]) : null;
+
+            // FX rates should never be over 5% (scraper picking up random page percentages)
+            if (dbField === "fx_rate" && numVal !== null && numVal > 5) continue;
+            // Brokerage that was a $ amount shouldn't become a bare percentage
+            if ((dbField === "asx_fee" || dbField === "us_fee") && currentVal?.startsWith("$") && !extractedValue.startsWith("$") && numVal !== null && numVal > 1) continue;
+            // Values like "80%" or "100%" are page layout noise, not fee data
+            if (numVal !== null && numVal >= 50) continue;
+            // Skip duplicates — don't queue same broker+field+value if already pending
+            const { data: existing } = await supabase
+              .from("fee_update_queue")
+              .select("id")
+              .eq("broker_id", broker.id)
+              .eq("field_name", dbField)
+              .eq("new_value", extractedValue)
+              .eq("status", "pending")
+              .maybeSingle();
+            if (existing) continue;
+
             await supabase.from("fee_update_queue").insert({
               broker_id: broker.id,
               broker_slug: broker.slug,
