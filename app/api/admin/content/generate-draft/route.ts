@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
     ? `\nFocus on these brokers: ${(item.related_brokers as string[]).join(", ")}`
     : "";
 
-  const prompt = `You are writing an article for Invest.com.au, an Australian broker comparison website. Write for Australian retail investors.
+  const prompt = `You are writing an article for Invest.com.au, Australia's independent investing hub. Write for Australian retail investors.
 
 ARTICLE BRIEF:
 Title: ${item.title}

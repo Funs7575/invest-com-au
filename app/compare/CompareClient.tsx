@@ -28,6 +28,75 @@ type PlatformType = 'all' | 'shares' | 'crypto' | 'super' | 'robo' | 'savings' |
 type FeatureFilter = 'chess' | 'free' | 'smsf' | 'low-fx' | 'us' | 'has-deal';
 type SortCol = 'name' | 'asx_fee_value' | 'us_fee_value' | 'fx_rate' | 'rating';
 
+/* ─── Vertical-specific column/sort config ─── */
+const VERTICAL_CONFIG: Record<PlatformType, {
+  sortOptions: { col: SortCol; label: string }[];
+  featureLabel: string; // replaces "ASX Fee" in mobile cards etc.
+  featureFilters: FeatureFilter[];
+  description: string;
+}> = {
+  all: {
+    sortOptions: [{ col: 'rating', label: 'Rating' }, { col: 'asx_fee_value', label: 'ASX Fee' }, { col: 'us_fee_value', label: 'US Fee' }, { col: 'fx_rate', label: 'FX Rate' }, { col: 'name', label: 'Name' }],
+    featureLabel: 'ASX Fee',
+    featureFilters: ['chess', 'free', 'smsf', 'low-fx', 'us', 'has-deal'],
+    description: 'Compare fees, features & safety across Australian investing platforms.',
+  },
+  shares: {
+    sortOptions: [{ col: 'rating', label: 'Rating' }, { col: 'asx_fee_value', label: 'Brokerage' }, { col: 'us_fee_value', label: 'US Fee' }, { col: 'fx_rate', label: 'FX Rate' }, { col: 'name', label: 'Name' }],
+    featureLabel: 'Brokerage',
+    featureFilters: ['chess', 'free', 'smsf', 'low-fx', 'us', 'has-deal'],
+    description: 'Compare brokerage fees, CHESS sponsorship, market access & features.',
+  },
+  crypto: {
+    sortOptions: [{ col: 'rating', label: 'Rating' }, { col: 'asx_fee_value', label: 'Trading Fee' }, { col: 'name', label: 'Name' }],
+    featureLabel: 'Trading Fee',
+    featureFilters: ['has-deal'],
+    description: 'Compare spreads, AUD deposits, staking, custody & coin coverage.',
+  },
+  super: {
+    sortOptions: [{ col: 'rating', label: 'Rating' }, { col: 'asx_fee_value', label: 'Admin Fee' }, { col: 'name', label: 'Name' }],
+    featureLabel: 'Admin Fee',
+    featureFilters: ['has-deal'],
+    description: 'Compare admin fees, investment options, insurance & fund performance.',
+  },
+  robo: {
+    sortOptions: [{ col: 'rating', label: 'Rating' }, { col: 'asx_fee_value', label: 'Mgmt Fee' }, { col: 'name', label: 'Name' }],
+    featureLabel: 'Mgmt Fee',
+    featureFilters: ['has-deal'],
+    description: 'Compare management fees, portfolios, minimums & automation features.',
+  },
+  savings: {
+    sortOptions: [{ col: 'rating', label: 'Rating' }, { col: 'name', label: 'Name' }],
+    featureLabel: 'Interest Rate',
+    featureFilters: ['has-deal'],
+    description: 'Compare interest rates, bonus conditions & access for savings accounts.',
+  },
+  'term-deposits': {
+    sortOptions: [{ col: 'rating', label: 'Rating' }, { col: 'name', label: 'Name' }],
+    featureLabel: 'Rate',
+    featureFilters: ['has-deal'],
+    description: 'Compare term deposit rates, terms, minimum deposits & institutions.',
+  },
+  property: {
+    sortOptions: [{ col: 'rating', label: 'Rating' }, { col: 'asx_fee_value', label: 'Min Investment' }, { col: 'name', label: 'Name' }],
+    featureLabel: 'Min Investment',
+    featureFilters: ['has-deal'],
+    description: 'Compare property investment platforms, minimum investment & returns.',
+  },
+  cfd: {
+    sortOptions: [{ col: 'rating', label: 'Rating' }, { col: 'asx_fee_value', label: 'Commission' }, { col: 'fx_rate', label: 'Spread' }, { col: 'name', label: 'Name' }],
+    featureLabel: 'Commission',
+    featureFilters: ['has-deal'],
+    description: 'Compare CFD/forex spreads, commissions, leverage & regulation.',
+  },
+  research: {
+    sortOptions: [{ col: 'rating', label: 'Rating' }, { col: 'asx_fee_value', label: 'Price' }, { col: 'name', label: 'Name' }],
+    featureLabel: 'Price',
+    featureFilters: ['has-deal'],
+    description: 'Compare charting, screeners, alerts, portfolio tools & pricing.',
+  },
+};
+
 const platformTypes: { key: PlatformType; label: string; short?: string }[] = [
   { key: 'all', label: 'All Platforms' },
   { key: 'shares', label: 'Share Trading', short: 'Brokerages' },
@@ -528,13 +597,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             <div className="mb-4">
               <p className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-400 mb-2">Sort by</p>
               <div className="flex flex-wrap gap-2">
-                {([
-                  { col: 'rating' as SortCol, label: 'Rating' },
-                  { col: 'asx_fee_value' as SortCol, label: 'ASX Fee' },
-                  { col: 'us_fee_value' as SortCol, label: 'US Fee' },
-                  { col: 'fx_rate' as SortCol, label: 'FX Rate' },
-                  { col: 'name' as SortCol, label: 'Name' },
-                ] as { col: SortCol; label: string }[]).map(s => (
+                {(VERTICAL_CONFIG[activeFilter as PlatformType] || VERTICAL_CONFIG.all).sortOptions.map(s => (
                   <button
                     key={s.col}
                     onClick={() => handleSort(s.col)}

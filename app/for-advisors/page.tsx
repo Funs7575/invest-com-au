@@ -164,9 +164,9 @@ export default async function ForAdvisorsPage() {
             </div>
           </div>
           <p className="text-slate-600 max-w-lg mx-auto">
-            Invest.com.au is Australia&apos;s independent investing comparison platform, covering share brokers,
-            crypto exchanges, super funds, savings accounts, and more. Our visitors are actively researching
-            financial products — many need professional guidance.
+            Invest.com.au is Australia&apos;s independent investing hub — helping everyday Australians compare
+            platforms, find trusted advisors, and learn to invest smarter. Our visitors are actively researching
+            financial products and professional guidance.
           </p>
         </div>
       </section>
