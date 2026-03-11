@@ -69,7 +69,12 @@ export async function POST(request: NextRequest) {
 
   if (!pro) return NextResponse.json({ error: "Professional not found" }, { status: 404 });
 
-  const stripe = getStripe();
+  let stripe;
+  try {
+    stripe = getStripe();
+  } catch {
+    return NextResponse.json({ error: "Payment system is not configured yet. Please contact support." }, { status: 503 });
+  }
   const siteUrl = getSiteUrl();
 
   // Get or create Stripe customer

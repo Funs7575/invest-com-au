@@ -749,14 +749,19 @@ export default function AdvisorPortalPage() {
                     type="button"
                     tabIndex={0}
                     onClick={async () => {
-                      const res = await fetch("/api/advisor-auth/topup", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ amount_cents: pack.price * 100, pack_slug: pack.slug }),
-                      });
-                      const data = await res.json();
-                      if (data.url) window.location.href = data.url;
-                      else alert(data.error || "Failed to create checkout session");
+                      try {
+                        const res = await fetch("/api/advisor-auth/topup", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ amount_cents: pack.price * 100, pack_slug: pack.slug }),
+                        });
+                        const data = await res.json();
+                        if (data.url) window.location.href = data.url;
+                        else alert(data.error || "Failed to create checkout session. Please try again.");
+                      } catch (err) {
+                        alert("Something went wrong. Please check you're logged in and try again.");
+                        console.error("Topup error:", err);
+                      }
                     }}
                     className={`relative flex flex-col items-center p-2.5 rounded-lg border text-center transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 ${
                       pack.slug === "growth"
@@ -1096,15 +1101,21 @@ export default function AdvisorPortalPage() {
                   <p className="text-xs text-slate-500 mb-1">{pack.leads} exclusive leads</p>
                   <p className="text-xs text-slate-400 mb-3">${pack.perLead.toFixed(2)} per lead</p>
                   <button
+                    type="button"
                     onClick={async () => {
-                      const res = await fetch("/api/advisor-auth/topup", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ amount_cents: pack.price * 100, pack_slug: pack.slug }),
-                      });
-                      const data = await res.json();
-                      if (data.url) window.location.href = data.url;
-                      else alert(data.error || "Failed to create checkout session");
+                      try {
+                        const res = await fetch("/api/advisor-auth/topup", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ amount_cents: pack.price * 100, pack_slug: pack.slug }),
+                        });
+                        const data = await res.json();
+                        if (data.url) window.location.href = data.url;
+                        else alert(data.error || "Failed to create checkout session. Please try again.");
+                      } catch (err) {
+                        alert("Something went wrong. Please check you're logged in and try again.");
+                        console.error("Topup error:", err);
+                      }
                     }}
                     className={`w-full py-2.5 rounded-lg text-sm font-bold transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-2 ${
                       pack.slug === "growth"
@@ -1139,15 +1150,21 @@ export default function AdvisorPortalPage() {
                   <p className="text-xs text-amber-700 font-semibold">Active until {new Date(advisor.featured_until).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}</p>
                 ) : (
                   <button
+                    type="button"
                     onClick={async () => {
-                      const res = await fetch("/api/advisor-auth/topup", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ amount_cents: 14900, pack_slug: "featured_monthly" }),
-                      });
-                      const data = await res.json();
-                      if (data.url) window.location.href = data.url;
-                      else alert(data.error || "Failed to create checkout session");
+                      try {
+                        const res = await fetch("/api/advisor-auth/topup", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ amount_cents: 14900, pack_slug: "featured_monthly" }),
+                        });
+                        const data = await res.json();
+                        if (data.url) window.location.href = data.url;
+                        else alert(data.error || "Failed to create checkout session. Please try again.");
+                      } catch (err) {
+                        alert("Something went wrong. Please check you're logged in and try again.");
+                        console.error("Featured topup error:", err);
+                      }
                     }}
                     className="w-full py-2 rounded-lg text-sm font-bold bg-amber-500 text-white hover:bg-amber-600 transition-all"
                   >
