@@ -15,6 +15,11 @@ import FxFeeCalculator from "./_components/FxFeeCalculator";
 import CgtCalculator from "./_components/CgtCalculator";
 import ChessLookup from "./_components/ChessLookup";
 import FeeImpactTeaser from "./_components/FeeImpactTeaser";
+import dynamic from "next/dynamic";
+
+const PortfolioCalculatorClient = dynamic(() => import("@/app/portfolio-calculator/PortfolioCalculatorClient"), { loading: () => <div className="p-8 text-center text-slate-400">Loading calculator...</div> });
+const SwitchingCalculatorClient = dynamic(() => import("@/app/switching-calculator/SwitchingCalculatorClient"), { loading: () => <div className="p-8 text-center text-slate-400">Loading calculator...</div> });
+const SavingsCalculatorClient = dynamic(() => import("@/app/savings-calculator/SavingsCalculatorClient"), { loading: () => <div className="p-8 text-center text-slate-400">Loading calculator...</div> });
 
 /* ──────────────────────────────────────────────
    Types & constants
@@ -29,14 +34,14 @@ const CALCS: { id: CalcId; icon: string; title: string; subtitle: string; badge?
   { id: "cgt", icon: "calendar", title: "Tax on Profits", subtitle: "Estimate capital gains tax" },
   { id: "franking", icon: "coins", title: "Dividend Tax", subtitle: "Franking credits after tax" },
   { id: "chess", icon: "shield-check", title: "Share Safety", subtitle: "Is your platform CHESS sponsored?" },
-  { id: "fee-impact", icon: "calculator", title: "Fee Impact", subtitle: "Your total annual platform fees", badge: "PRO" },
-  { id: "portfolio" as CalcId, icon: "briefcase", title: "Portfolio Fees", subtitle: "Exact cost at every broker", href: "/portfolio-calculator" },
-  { id: "switch-calc" as CalcId, icon: "arrow-right-left", title: "Switching Calculator", subtitle: "How much could you save?", href: "/switching-calculator" },
-  { id: "savings-calc" as CalcId, icon: "piggy-bank", title: "Savings Calculator", subtitle: "Are you earning enough?", href: "/savings-calculator" },
+  { id: "fee-impact", icon: "calculator", title: "Fee Impact", subtitle: "Your total annual platform fees" },
+  { id: "portfolio" as CalcId, icon: "briefcase", title: "Portfolio Fees", subtitle: "Exact cost at every broker" },
+  { id: "switch-calc" as CalcId, icon: "arrow-right-left", title: "Switching Calculator", subtitle: "How much could you save?" },
+  { id: "savings-calc" as CalcId, icon: "piggy-bank", title: "Savings Calculator", subtitle: "Are you earning enough?" },
 ];
 
 // Inline-only calcs (no href) for swipe navigation
-const INLINE_CALC_IDS: CalcId[] = CALCS.filter(c => !c.href).map(c => c.id);
+const INLINE_CALC_IDS: CalcId[] = CALCS.map(c => c.id);
 
 /* ──────────────────────────────────────────────
    Root component
@@ -219,6 +224,9 @@ export default function CalculatorsClient({ brokers }: Props) {
           {activeCalc === "cgt" && <CgtCalculator searchParams={searchParams} />}
           {activeCalc === "chess" && <ChessLookup brokers={nonCryptoBrokers} searchParams={searchParams} />}
           {activeCalc === "fee-impact" && <FeeImpactTeaser brokers={nonCryptoBrokers} searchParams={searchParams} />}
+          {activeCalc === "portfolio" && <PortfolioCalculatorClient brokers={nonCryptoBrokers} />}
+          {activeCalc === "switch-calc" && <SwitchingCalculatorClient brokers={nonCryptoBrokers} />}
+          {activeCalc === "savings-calc" && <SavingsCalculatorClient accounts={brokers.filter(b => b.platform_type === "savings_account" || b.platform_type === "term_deposit").map(b => ({ id: b.id, slug: b.slug, name: b.name, platform_type: b.platform_type || "", asx_fee: b.asx_fee || "", rating: b.rating, affiliate_url: b.affiliate_url || "", color: b.color || "", min_deposit: b.min_deposit || "" })) as never} />}
 
           {/* Prev / Next navigation */}
           {currentInlineIdx >= 0 && (

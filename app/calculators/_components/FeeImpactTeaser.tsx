@@ -41,13 +41,9 @@ export default function FeeImpactTeaser({ brokers, searchParams }: Props) {
         <div className="lg:col-span-4 space-y-5">
           <InputField label="ASX Trades per Month" value={trades} onChange={setTrades} placeholder="4" />
 
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-sm">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-bold rounded-full">PRO</span>
-              <span className="font-bold text-amber-900">Full Calculator</span>
-            </div>
-            <p className="text-amber-800 text-xs leading-relaxed mb-3">
-              The full version includes US trades, FX fees, inactivity charges, and ranks every platform — not just the top 3.
+          <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 text-sm">
+            <p className="text-slate-600 text-xs leading-relaxed mb-3">
+              Need US trades, FX fees, inactivity charges, and full platform ranking?
             </p>
             <Link
               href="/fee-impact"
