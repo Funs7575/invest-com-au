@@ -7,9 +7,8 @@ import Icon from "@/components/Icon";
 import { CURRENT_YEAR } from "@/lib/seo";
 import { useSubscription } from "@/lib/hooks/useSubscription";
 
-const MIN_ENGAGEMENT_MS = 15_000; // Must be on page 15s before popup can fire
-const MOBILE_INACTIVITY_MS = 30_000; // 30s inactivity on mobile
-const MOBILE_SCROLL_DEPTH = 0.35; // Must scroll 35%+ of page on mobile
+const MIN_ENGAGEMENT_MS = 30_000; // Must be on page 30s before popup can fire
+const MOBILE_SCROLL_DEPTH = 0.50; // Must scroll 50%+ of page on mobile
 
 export default function ExitIntentPopup() {
   const [visible, setVisible] = useState(false);
@@ -32,6 +31,8 @@ export default function ExitIntentPopup() {
     if (sessionStorage.getItem("exitIntentShown") === "true") return;
     if (localStorage.getItem("exitIntentDismissed") === "true") return;
     if (window.location.pathname.startsWith("/admin")) return;
+    if (window.location.pathname.startsWith("/start")) return;
+    if (window.location.pathname.startsWith("/advisor-portal")) return;
     if (window.location.pathname === "/quiz") return;
     if (!isEngagedEnough()) return;
 
@@ -59,21 +60,9 @@ export default function ExitIntentPopup() {
       }
     };
 
-    // Mobile: show after inactivity, but only if user has scrolled enough
-    let inactivityTimer: ReturnType<typeof setTimeout>;
-    const resetInactivity = () => {
-      clearTimeout(inactivityTimer);
-      inactivityTimer = setTimeout(() => {
-        if (window.innerWidth < 768 && maxScrollDepth.current >= MOBILE_SCROLL_DEPTH) {
-          showPopup();
-        }
-      }, MOBILE_INACTIVITY_MS);
-    };
-
-    // Mobile: also trigger on back-button / visibility change (user switching tabs)
+    // Mobile: show ONLY when user switches tabs or presses back (genuine exit)
     const handleVisibilityChange = () => {
       if (document.visibilityState === "hidden" && window.innerWidth < 768) {
-        // User is leaving — mark for next visit or show on return
         if (isEngagedEnough() && maxScrollDepth.current >= MOBILE_SCROLL_DEPTH) {
           showPopup();
         }
@@ -81,19 +70,13 @@ export default function ExitIntentPopup() {
     };
 
     document.addEventListener("mouseleave", handleMouseLeave);
-    document.addEventListener("touchstart", resetInactivity, { passive: true });
     document.addEventListener("scroll", handleScroll, { passive: true });
-    document.addEventListener("scroll", resetInactivity, { passive: true });
     document.addEventListener("visibilitychange", handleVisibilityChange);
-    resetInactivity();
 
     return () => {
       document.removeEventListener("mouseleave", handleMouseLeave);
-      document.removeEventListener("touchstart", resetInactivity);
       document.removeEventListener("scroll", handleScroll);
-      document.removeEventListener("scroll", resetInactivity);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
-      clearTimeout(inactivityTimer);
     };
   }, [showPopup, isEngagedEnough]);
 
