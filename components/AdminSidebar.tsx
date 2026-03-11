@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import Icon from "@/components/Icon";
 
+/* ─── LIVE — core features in active daily use ─── */
 const NAV_GROUPS = [
   {
     label: "Dashboards",
@@ -12,8 +13,6 @@ const NAV_GROUPS = [
       { href: "/admin", icon: "bar-chart", label: "Overview" },
       { href: "/admin/revenue", icon: "dollar-sign", label: "Revenue" },
       { href: "/admin/funnel", icon: "filter", label: "Funnel" },
-      { href: "/admin/content-performance", icon: "zap", label: "Content Perf." },
-      { href: "/admin/email-performance", icon: "mail", label: "Email Perf." },
       { href: "/admin/analytics", icon: "trending-up", label: "Traffic" },
     ],
   },
@@ -23,7 +22,6 @@ const NAV_GROUPS = [
       { href: "/admin/data-health", icon: "activity", label: "Data Health" },
       { href: "/admin/seo-health", icon: "search", label: "SEO Health" },
       { href: "/admin/compliance", icon: "shield-check", label: "Compliance" },
-      { href: "/admin/competitors", icon: "eye", label: "Competitors" },
       { href: "/admin/bd-pipeline", icon: "target", label: "BD Pipeline" },
     ],
   },
@@ -51,7 +49,6 @@ const NAV_GROUPS = [
     label: "Revenue",
     items: [
       { href: "/admin/affiliate-links", icon: "link", label: "Affiliate Links" },
-      { href: "/admin/marketplace", icon: "coins", label: "Marketplace" },
       { href: "/admin/fee-queue", icon: "dollar-sign", label: "Fee Queue" },
       { href: "/admin/deal-of-month", icon: "trophy", label: "Deal of Month" },
     ],
@@ -61,31 +58,45 @@ const NAV_GROUPS = [
     items: [
       { href: "/admin/advisors", icon: "user", label: "Advisors" },
       { href: "/admin/advisor-performance", icon: "trending-up", label: "Advisor Perf." },
-      { href: "/admin/consultations", icon: "phone", label: "Consultations" },
     ],
   },
   {
     label: "Users",
     items: [
       { href: "/admin/subscribers", icon: "mail", label: "Subscribers" },
-      { href: "/admin/pro-subscribers", icon: "key", label: "Pro Members" },
       { href: "/admin/quiz-weights", icon: "settings", label: "Quiz Weights" },
+    ],
+  },
+  {
+    label: "Legal & Compliance",
+    items: [
+      { href: "/admin/legal", icon: "scale", label: "Legal Dashboard" },
+      { href: "/admin/audit-log", icon: "eye", label: "Audit Log" },
     ],
   },
   {
     label: "System",
     items: [
       { href: "/admin/team-members", icon: "user", label: "Team" },
-      { href: "/admin/audit-log", icon: "eye", label: "Audit Log" },
-      { href: "/admin/compliance", icon: "shield-check", label: "Compliance" },
       { href: "/admin/site-settings", icon: "settings", label: "Settings" },
     ],
   },
 ];
 
+/* ─── LAUNCHING SOON — built but not yet live on front-end ─── */
+const COMING_SOON_ITEMS = [
+  { href: "/admin/content-performance", icon: "zap", label: "Content Perf." },
+  { href: "/admin/email-performance", icon: "mail", label: "Email Perf." },
+  { href: "/admin/competitors", icon: "eye", label: "Competitors" },
+  { href: "/admin/marketplace", icon: "coins", label: "Ad Marketplace" },
+  { href: "/admin/pro-subscribers", icon: "key", label: "Pro Members" },
+  { href: "/admin/consultations", icon: "phone", label: "Consultations" },
+];
+
 export default function AdminSidebar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [showComingSoon, setShowComingSoon] = useState(false);
 
   return (
     <>
@@ -125,6 +136,31 @@ export default function AdminSidebar() {
               })}
             </div>
           ))}
+
+          {/* ─── Launching Soon (collapsible) ─── */}
+          <div className="pt-2 mt-2 border-t border-slate-800">
+            <button
+              onClick={() => setShowComingSoon(!showComingSoon)}
+              className="flex items-center justify-between w-full px-2 mb-1 group"
+            >
+              <p className="text-[0.5rem] font-bold text-amber-500/70 uppercase tracking-wider">Launching Soon</p>
+              <Icon name={showComingSoon ? "chevron-up" : "chevron-down"} size={12} className="text-slate-600 group-hover:text-slate-400" />
+            </button>
+            {showComingSoon && COMING_SOON_ITEMS.map(item => {
+              const active = pathname === item.href || pathname.startsWith(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setOpen(false)}
+                  className={`flex items-center gap-2 px-2.5 py-1.5 text-xs rounded-lg transition-colors ${active ? "bg-white/10 text-white font-semibold" : "text-slate-600 hover:text-slate-400 hover:bg-white/5"}`}
+                >
+                  <Icon name={item.icon} size={14} className={active ? "text-amber-400" : "text-slate-700"} />
+                  <span className="opacity-70">{item.label}</span>
+                </Link>
+              );
+            })}
+          </div>
         </nav>
 
         <div className="p-3 mt-4 border-t border-slate-800">
