@@ -142,6 +142,44 @@ export default function AboutPage() {
             </div>
           </section>
 
+          {/* Editorial Team */}
+          <section className="mb-10">
+            <h2 className="text-2xl font-extrabold text-brand mb-2">Our Editorial Team</h2>
+            <p className="text-sm text-slate-600 mb-4">Every article, review, and comparison on Invest.com.au is written, reviewed, and fact-checked by qualified professionals.</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {[
+                {
+                  name: "Finn Webster",
+                  role: "Founder & Lead Editor",
+                  credentials: "CFA Level II Candidate · Former equities analyst · Tested 20+ broker accounts",
+                  href: "/authors/finn-webster",
+                  desc: "Finn founded Invest.com.au to bring transparent, independent investing information to everyday Australians. He writes and edits our platform comparisons and investing guides.",
+                },
+                {
+                  name: "Alex Reid",
+                  role: "Fact-Checker & Reviewer",
+                  credentials: "Diploma of Financial Planning (RG146) · Former ASIC Compliance Analyst · FPA Member",
+                  href: "/reviewers/alex-reid",
+                  desc: "Alex fact-checks all content on the site. With 12 years in financial services including ASIC compliance, Alex ensures our information meets the highest accuracy standards.",
+                },
+                {
+                  name: "Editorial Team",
+                  role: "Research & Analysis",
+                  credentials: "Standardised 6-factor rating methodology · Quarterly fee audits · Independent of partnerships",
+                  href: "/authors/editorial-team",
+                  desc: "Our wider editorial team conducts the daily research, fee verification, and platform testing that powers every comparison on the site.",
+                },
+              ].map((person) => (
+                <Link key={person.name} href={person.href} className="bg-white border border-slate-200 rounded-xl p-4 hover:border-slate-300 hover:shadow-sm transition-all">
+                  <h3 className="font-bold text-sm text-slate-900">{person.name}</h3>
+                  <p className="text-xs text-violet-600 font-medium mt-0.5">{person.role}</p>
+                  <p className="text-xs text-slate-500 mt-2 leading-relaxed">{person.desc}</p>
+                  <p className="text-[0.65rem] text-slate-400 mt-2 leading-relaxed">{person.credentials}</p>
+                </Link>
+              ))}
+            </div>
+          </section>
+
           {/* What We Cover */}
           <section className="mb-10">
             <h2 className="text-2xl font-extrabold text-brand mb-3">What We Cover</h2>
