@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import Icon from "@/components/Icon";
 import { SITE_URL, absoluteUrl, CURRENT_YEAR } from "@/lib/seo";
+import { sanitizeHtml } from "@/lib/sanitize-html";
 
 export const revalidate = 3600;
 
@@ -72,19 +73,31 @@ export default async function ExpertArticlePage({ params }: Props) {
   };
 
   // Simple markdown to HTML (basic — headings, bold, italic, links, lists)
+  // Content is sanitized to prevent XSS from compromised admin/DB content
   function renderMarkdown(md: string): string {
-    return md
+    // Only allow links with http/https protocols (block javascript:, data:, etc.)
+    function safeLink(_match: string, text: string, url: string): string {
+      const trimmed = url.trim().toLowerCase();
+      if (trimmed.startsWith("http://") || trimmed.startsWith("https://") || trimmed.startsWith("/")) {
+        return `<a href="${url}" class="text-violet-600 hover:text-violet-800 underline" rel="noopener noreferrer">${text}</a>`;
+      }
+      return text; // Strip the link, keep the text
+    }
+
+    const raw = md
       .replace(/^### (.+)$/gm, '<h3 class="text-lg font-bold text-slate-900 mt-6 mb-2">$1</h3>')
       .replace(/^## (.+)$/gm, '<h2 class="text-xl font-bold text-slate-900 mt-8 mb-3">$1</h2>')
       .replace(/^# (.+)$/gm, '<h1 class="text-2xl font-extrabold text-slate-900 mt-8 mb-3">$1</h1>')
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
       .replace(/\*(.+?)\*/g, '<em>$1</em>')
-      .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-violet-600 hover:text-violet-800 underline">$1</a>')
+      .replace(/\[(.+?)\]\((.+?)\)/g, safeLink)
       .replace(/^- (.+)$/gm, '<li class="ml-4 list-disc text-slate-600">$1</li>')
       .replace(/^(\d+)\. (.+)$/gm, '<li class="ml-4 list-decimal text-slate-600">$2</li>')
       .replace(/\n\n/g, '</p><p class="text-sm md:text-base text-slate-600 leading-relaxed mb-4">')
       .replace(/^/, '<p class="text-sm md:text-base text-slate-600 leading-relaxed mb-4">')
       + '</p>';
+
+    return sanitizeHtml(raw);
   }
 
   return (

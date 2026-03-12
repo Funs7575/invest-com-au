@@ -42,7 +42,10 @@ export async function GET(request: NextRequest) {
     .order("created_at", { ascending: false })
     .limit(100);
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) {
+    console.error("[admin] list applications error:", error.message);
+    return NextResponse.json({ error: "Failed to load applications" }, { status: 500 });
+  }
   return NextResponse.json({ applications: data || [] });
 }
 

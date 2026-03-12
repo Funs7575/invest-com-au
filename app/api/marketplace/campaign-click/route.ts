@@ -1,21 +1,15 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { recordCpcClick } from "@/lib/marketplace/allocation";
 import { NextRequest, NextResponse } from "next/server";
-import { createHash } from "crypto";
 import { logger } from "@/lib/logger";
 import { createRateLimiter } from "@/lib/rate-limiter";
+import { hashIP } from "@/lib/hash-ip";
 
 const log = logger("campaign-click");
 
 export const runtime = "nodejs";
 
 const isRateLimited = createRateLimiter(60_000, 10); // 10 CPC clicks per minute per IP
-
-function hashIP(ip: string): string {
-  const salt = process.env.IP_HASH_SALT || "invest-com-au-2026";
-  if (!process.env.IP_HASH_SALT) log.warn("IP_HASH_SALT not set — using default. Set this env var in production.");
-  return createHash("sha256").update(salt + ip).digest("hex").slice(0, 16);
-}
 
 /**
  * POST /api/marketplace/campaign-click

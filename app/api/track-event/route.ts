@@ -1,17 +1,12 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from 'next/server';
-import { createHash } from 'crypto';
 import { createRateLimiter } from '@/lib/rate-limiter';
 import { logger } from '@/lib/logger';
+import { hashIP } from '@/lib/hash-ip';
 
 const log = logger('tracking');
 
 const isRateLimited = createRateLimiter(60_000, 60); // 60 events/min per IP
-
-function hashIP(ip: string): string {
-  const salt = process.env.IP_HASH_SALT || 'invest-com-au-2026';
-  return createHash('sha256').update(salt + ip).digest('hex').slice(0, 16);
-}
 
 const ALLOWED_EVENTS = new Set([
   'quiz_start',

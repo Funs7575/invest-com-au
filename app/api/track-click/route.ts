@@ -1,20 +1,13 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from 'next/server';
-import { createHash } from 'crypto';
 import { detectDeviceType } from '@/lib/device-detect';
 import { createRateLimiter } from '@/lib/rate-limiter';
 import { logger } from '@/lib/logger';
+import { hashIP } from '@/lib/hash-ip';
 
 const log = logger('tracking');
 
 const isRateLimited = createRateLimiter(60_000, 30); // 30 clicks/min per IP
-
-function hashIP(ip: string): string {
-  // Use SHA-256 with a salt for irreversible hashing
-  const salt = process.env.IP_HASH_SALT || 'invest-com-au-2026';
-  if (!process.env.IP_HASH_SALT) log.warn('IP_HASH_SALT not set — using default. Set this env var in production.');
-  return createHash('sha256').update(salt + ip).digest('hex').slice(0, 16);
-}
 
 export async function POST(request: NextRequest) {
   // Parse body with error handling

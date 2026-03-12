@@ -74,8 +74,12 @@ export async function GET(request: NextRequest) {
       if (specialty) query = query.contains("specialties", [specialty]);
       if (verified === "true") query = query.eq("verified", true);
       if (q) {
-        const term = `%${q}%`;
-        query = query.or(`name.ilike.${term},firm_name.ilike.${term},location_display.ilike.${term},location_suburb.ilike.${term}`);
+        // Sanitize search input: strip Supabase filter syntax characters to prevent filter injection
+        const sanitized = q.replace(/[%_.,()"'\\]/g, "");
+        if (sanitized.length > 0) {
+          const term = `%${sanitized}%`;
+          query = query.or(`name.ilike.${term},firm_name.ilike.${term},location_display.ilike.${term},location_suburb.ilike.${term}`);
+        }
       }
 
       switch (sort) {

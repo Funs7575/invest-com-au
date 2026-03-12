@@ -1,6 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { hashIP } from "@/lib/hash-ip";
 
 const log = logger("postback");
 
@@ -122,12 +123,7 @@ export async function POST(request: NextRequest) {
   // Get IP hash for fraud detection
   const forwarded = request.headers.get("x-forwarded-for");
   const ip = forwarded ? forwarded.split(",")[0].trim() : "unknown";
-  const { createHash } = await import("crypto");
-  const salt = process.env.IP_HASH_SALT || "invest-com-au-2026";
-  const ipHash = createHash("sha256")
-    .update(salt + ip)
-    .digest("hex")
-    .slice(0, 16);
+  const ipHash = hashIP(ip);
 
   // Insert conversion event (unique index on click_id,event_type catches races)
   const { data: conversion, error } = await supabase

@@ -51,8 +51,9 @@ export async function PATCH(req: NextRequest) {
         .in("id", ids);
 
       if (error) {
+        console.error("[admin] approve advisors error:", error.message);
         return NextResponse.json(
-          { error: "Failed to approve advisors: " + error.message },
+          { error: "Failed to approve advisors" },
           { status: 500 }
         );
       }
@@ -63,8 +64,9 @@ export async function PATCH(req: NextRequest) {
         .in("id", ids);
 
       if (error) {
+        console.error("[admin] reject advisors error:", error.message);
         return NextResponse.json(
-          { error: "Failed to reject advisors: " + error.message },
+          { error: "Failed to reject advisors" },
           { status: 500 }
         );
       }

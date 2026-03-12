@@ -1,8 +1,8 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
-import { createHash } from "crypto";
 import { detectDeviceType } from "@/lib/device-detect";
 import { logger } from "@/lib/logger";
+import { hashIP } from "@/lib/hash-ip";
 
 const log = logger("affiliate-redirect");
 
@@ -34,10 +34,6 @@ function isRateLimited(ip: string): boolean {
   return entry.count > MAX_REDIRECTS;
 }
 
-function hashIP(ip: string): string {
-  const salt = process.env.IP_HASH_SALT || "invest-com-au-2026";
-  return createHash("sha256").update(salt + ip).digest("hex").slice(0, 16);
-}
 
 export async function GET(
   request: NextRequest,

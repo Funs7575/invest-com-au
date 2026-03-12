@@ -56,8 +56,9 @@ export async function PATCH(req: NextRequest) {
       .in("id", ids);
 
     if (error) {
+      console.error(`[admin] ${action} reviews error:`, error.message);
       return NextResponse.json(
-        { error: `Failed to ${action} reviews: ` + error.message },
+        { error: `Failed to ${action} reviews` },
         { status: 500 }
       );
     }

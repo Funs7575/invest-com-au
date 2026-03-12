@@ -1,16 +1,11 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
-import { createHash } from "crypto";
 import { ADMIN_EMAILS } from "@/lib/admin";
+import { hashIP } from "@/lib/hash-ip";
 
 const WINDOW_MS = 60_000;
 const MAX_ATTEMPTS = 5;
-
-function hashIP(ip: string): string {
-  const salt = process.env.IP_HASH_SALT || "invest-com-au-2026";
-  return createHash("sha256").update(salt + ip).digest("hex").slice(0, 16);
-}
 
 function createAdminSupabase() {
   return createAdminClient();
