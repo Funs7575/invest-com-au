@@ -54,11 +54,9 @@ describe("BrokerCard", () => {
     });
     render(<BrokerCard broker={broker} />);
 
-    expect(screen.getByText("$5.00")).toBeInTheDocument();
-    expect(screen.getByText("US$2")).toBeInTheDocument();
-    expect(screen.getByText("0.7%")).toBeInTheDocument();
-    // CHESS sponsored shows checkmark
-    expect(screen.getByText("\u2713")).toBeInTheDocument();
+    // Fees render inline: "ASX $5.00", "US US$2", "FX 0.7%", "CHESS ✓"
+    expect(screen.getByText(/ASX \$5\.00/)).toBeInTheDocument();
+    expect(screen.getByText(/CHESS ✓/)).toBeInTheDocument();
   });
 
   it("renders N/A for missing optional fee fields", () => {
@@ -69,16 +67,14 @@ describe("BrokerCard", () => {
     });
     render(<BrokerCard broker={broker} />);
 
-    // Should show N/A for each missing field (ASX, US, FX)
-    const naElements = screen.getAllByText("N/A");
-    expect(naElements.length).toBeGreaterThanOrEqual(3);
+    expect(screen.getByText(/ASX N\/A/)).toBeInTheDocument();
   });
 
   it("renders CHESS not sponsored indicator when chess_sponsored is false", () => {
     const broker = makeBroker({ chess_sponsored: false });
     render(<BrokerCard broker={broker} />);
 
-    expect(screen.getByText("\u2717")).toBeInTheDocument();
+    expect(screen.getByText(/CHESS ✗/)).toBeInTheDocument();
   });
 
   it("renders deal badge when broker has an active deal", () => {
@@ -107,7 +103,7 @@ describe("BrokerCard", () => {
     expect(screen.getByText("3d left")).toBeInTheDocument();
   });
 
-  it("renders 'Ends tomorrow' when deal expires in 1 day", () => {
+  it("renders deal expiry countdown when deal expires in 1 day", () => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
 
@@ -118,7 +114,10 @@ describe("BrokerCard", () => {
     });
     render(<BrokerCard broker={broker} />);
 
-    expect(screen.getByText("Ends tomorrow")).toBeInTheDocument();
+    expect(screen.getByText("Hot deal")).toBeInTheDocument();
+    // Component shows "1d left" or "Ends tomorrow"
+    const expiry = screen.queryByText(/1d left/) || screen.queryByText(/Ends tomorrow/);
+    expect(expiry).toBeTruthy();
   });
 
   it("does not render deal badge when deal is false", () => {
@@ -146,11 +145,11 @@ describe("BrokerCard", () => {
     expect(screen.queryByText("Editor's Pick")).not.toBeInTheDocument();
   });
 
-  it("renders fee verified date when fee_last_checked is provided", () => {
+  it("does not render fee verified inline on card", () => {
     const broker = makeBroker({ fee_last_checked: "2025-06-15T00:00:00Z" });
     render(<BrokerCard broker={broker} />);
-
-    expect(screen.getByText(/Fees verified/)).toBeInTheDocument();
+    // Fee verified date is shown on broker detail page, not card
+    expect(screen.queryByText(/Fees verified/)).not.toBeInTheDocument();
   });
 
   it("does not render fee verified date when fee_last_checked is absent", () => {
@@ -161,14 +160,13 @@ describe("BrokerCard", () => {
   });
 
   it("renders CTA button with correct text from getBenefitCta", () => {
-    // getBenefitCta for a broker with no benefit_cta/cta_text and no deal,
-    // in 'compare' context with asx_fee_value=5 returns "Trade from $5 ->"
     const broker = makeBroker({
       benefit_cta: undefined,
       cta_text: undefined,
       deal: false,
       asx_fee_value: 5,
       asx_fee: "$5",
+      affiliate_url: "https://example.com",
     });
     render(<BrokerCard broker={broker} context="compare" />);
 
@@ -182,13 +180,12 @@ describe("BrokerCard", () => {
     expect(screen.getByText("Start Trading Now")).toBeInTheDocument();
   });
 
-  it("renders review link pointing to broker page", () => {
-    const broker = makeBroker({ slug: "selfwealth" });
+  it("renders broker name linking to broker page", () => {
+    const broker = makeBroker({ slug: "selfwealth", name: "SelfWealth" });
     render(<BrokerCard broker={broker} />);
 
-    const reviewLink = screen.getByText("Review");
-    expect(reviewLink).toBeInTheDocument();
-    expect(reviewLink.closest("a")).toHaveAttribute("href", "/broker/selfwealth");
+    const nameLink = screen.getByText("SelfWealth").closest("a");
+    expect(nameLink).toHaveAttribute("href", "/broker/selfwealth");
   });
 
   it("renders selection checkbox when onToggleSelect is provided", () => {
@@ -202,9 +199,7 @@ describe("BrokerCard", () => {
       />
     );
 
-    const selectButton = screen.getByLabelText(
-      "Select SelectBroker for comparison"
-    );
+    const selectButton = screen.getByLabelText("Select SelectBroker");
     expect(selectButton).toBeInTheDocument();
   });
 

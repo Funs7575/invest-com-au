@@ -102,13 +102,11 @@ describe("StarRatingInput", () => {
 
     // Stars 1-3 filled
     for (let i = 0; i < 3; i++) {
-      const path = svgs[i].querySelector("path");
-      expect(path?.getAttribute("fill")).toBe("#f59e0b");
+      expect(svgs[i].getAttribute("fill")).toBe("#f59e0b");
     }
     // Stars 4-5 unfilled
     for (let i = 3; i < 5; i++) {
-      const path = svgs[i].querySelector("path");
-      expect(path?.getAttribute("fill")).toBe("none");
+      expect(svgs[i].getAttribute("fill")).toBe("none");
     }
   });
 
