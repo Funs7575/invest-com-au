@@ -35,8 +35,8 @@ const popularLinks = [
   { label: `Best Platforms ${CURRENT_YEAR}`, href: "/article/best-share-trading-platforms-australia" },
   { label: "Best Super Funds", href: "/best/super-funds" },
   { label: "Find an Advisor", href: "/find-advisor" },
+  { label: "Mortgage Brokers", href: "/advisors/mortgage-brokers" },
   { label: "Best Crypto", href: "/article/best-crypto-exchanges-australia" },
-  { label: "Best Robo-Advisors", href: "/best/robo-advisors" },
   { label: "Best ETFs", href: "/article/best-etfs-australia" },
 ];
 
@@ -56,9 +56,9 @@ const mobileNavSections = [
     title: "Advisors",
     items: [
       { name: "Find an Advisor", href: "/find-advisor" },
+      { name: "Mortgage Brokers", href: "/advisors/mortgage-brokers" },
       { name: "Advisor Directory", href: "/advisors" },
       { name: "Advisor Guides", href: "/advisor-guides" },
-      { name: "Expert Insights", href: "/expert" },
     ],
   },
   {
