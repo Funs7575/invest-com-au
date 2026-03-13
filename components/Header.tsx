@@ -6,6 +6,23 @@ import { usePathname } from "next/navigation";
 import { useUser } from "@/lib/hooks/useUser";
 import { CURRENT_YEAR } from "@/lib/seo";
 import ThemeToggle from "@/components/ThemeToggle";
+import Icon from "@/components/Icon";
+
+const propertyDropdown = [
+  { label: "Mortgage Brokers", href: "/advisors/mortgage-brokers", desc: "Compare 30+ lenders — free" },
+  { label: "Buyer's Agents", href: "/advisors/buyers-agents", desc: "Off-market access & negotiation" },
+  { label: "Find an Advisor", href: "/find-advisor", desc: "Match with a verified professional" },
+  { label: "All Advisors", href: "/advisors", desc: "Browse all professionals" },
+];
+
+const wealthDropdown = [
+  { label: "Financial Planners", href: "/advisors/financial-planners", desc: "Wealth strategy & retirement" },
+  { label: "SMSF Accountants", href: "/advisors/smsf-accountants", desc: "Self-managed super specialists" },
+  { label: "Insurance Brokers", href: "/advisors/insurance-brokers", desc: "Life, income protection & business" },
+  { label: "Tax Agents", href: "/advisors/tax-agents", desc: "Tax planning & lodgement" },
+  { label: "Estate Planners", href: "/advisors/estate-planners", desc: "Wills, trusts & succession" },
+  { label: "Wealth Managers", href: "/advisors/wealth-managers", desc: "Portfolio management" },
+];
 
 const platformsDropdown = [
   { label: "Compare Platforms", href: "/compare", desc: "Side-by-side comparison tool" },
@@ -13,24 +30,7 @@ const platformsDropdown = [
   { label: "Broker vs Broker", href: "/versus", desc: "Head-to-head matchups" },
   { label: "Deals & Offers", href: "/deals", desc: "Current promotions" },
   { label: "Platform Reviews", href: "/reviews", desc: "User ratings & reviews" },
-  { label: "Find Your Path", href: "/start", desc: "Personalised recommendations" },
   { label: "Platform Quiz", href: "/quiz", desc: "Get a platform match" },
-];
-
-const advisorsDropdown = [
-  { label: "Mortgage Brokers", href: "/advisors/mortgage-brokers", desc: "Compare 30+ lenders — free" },
-  { label: "Buyer's Agents", href: "/advisors/buyers-agents", desc: "Off-market access & negotiation" },
-  { label: "Financial Planners", href: "/advisors/financial-planners", desc: "Wealth strategy & retirement" },
-  { label: "Insurance Brokers", href: "/advisors/insurance-brokers", desc: "Life, income protection & business" },
-  { label: "Find an Advisor", href: "/find-advisor", desc: "Match with a verified professional" },
-  { label: "All Advisors", href: "/advisors", desc: "Browse all professionals" },
-];
-
-const learnDropdown = [
-  { label: "Articles & Guides", href: "/articles", desc: "Investing news & education" },
-  { label: "How-To Guides", href: "/how-to", desc: "Step-by-step tutorials" },
-  { label: "Calculators", href: "/calculators", desc: "Brokerage, CGT & more" },
-  { label: "Glossary", href: "/glossary", desc: "Investing terms explained" },
 ];
 
 const popularLinks = [
@@ -42,21 +42,28 @@ const popularLinks = [
   { label: "Best ETFs", href: "/article/best-etfs-australia" },
 ];
 
-// Mobile nav — flat list grouped by section
 const mobileNavSections = [
   {
     title: "Property & Finance",
     items: [
       { name: "Mortgage Brokers", href: "/advisors/mortgage-brokers" },
       { name: "Buyer's Agents", href: "/advisors/buyers-agents" },
-      { name: "Financial Planners", href: "/advisors/financial-planners" },
-      { name: "Insurance Brokers", href: "/advisors/insurance-brokers" },
       { name: "Find an Advisor", href: "/find-advisor" },
       { name: "All Advisors", href: "/advisors" },
     ],
   },
   {
-    title: "Platforms",
+    title: "Wealth & SMSF",
+    items: [
+      { name: "Financial Planners", href: "/advisors/financial-planners" },
+      { name: "SMSF Accountants", href: "/advisors/smsf-accountants" },
+      { name: "Insurance Brokers", href: "/advisors/insurance-brokers" },
+      { name: "Tax Agents", href: "/advisors/tax-agents" },
+      { name: "Estate Planners", href: "/advisors/estate-planners" },
+    ],
+  },
+  {
+    title: "Compare Platforms",
     items: [
       { name: "Compare", href: "/compare" },
       { name: "Best Platforms", href: "/best" },
@@ -80,12 +87,10 @@ function DesktopDropdown({
   label,
   items,
   isActive,
-  accentColor = "blue",
 }: {
   label: string;
   items: { label: string; href: string; desc: string }[];
   isActive: boolean;
-  accentColor?: "blue" | "violet";
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -98,35 +103,29 @@ function DesktopDropdown({
     return () => clearTimeout(timeout.current);
   }, []);
 
-  const accentClasses = accentColor === "violet"
-    ? { active: "text-violet-700 font-bold", hover: "hover:bg-violet-50", indicator: "bg-violet-600" }
-    : { active: "text-blue-700 font-bold", hover: "hover:bg-blue-50", indicator: "bg-blue-600" };
-
   return (
     <div ref={ref} className="relative" onMouseEnter={enter} onMouseLeave={leave}>
       <button
         onClick={() => setOpen(!open)}
-        className={`text-sm font-medium transition-colors rounded px-1 py-1 focus:outline-none focus:ring-2 focus:ring-blue-700/40 flex items-center gap-0.5 ${
-          isActive ? accentClasses.active : "text-slate-700 hover:text-slate-900"
+        className={`px-4 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-bold rounded-lg transition-colors flex items-center gap-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-700/40 ${
+          isActive ? "text-slate-900 bg-slate-50" : ""
         }`}
       >
         {label}
-        <svg className={`w-3.5 h-3.5 transition-transform ${open ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
+        <Icon name="chevron-down" size={14} className={`text-slate-400 transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
       {open && (
-        <div className="absolute top-full left-1/2 -translate-x-1/2 pt-1.5 z-50">
-          <div className="bg-white rounded-xl border border-slate-200 shadow-lg py-1.5 min-w-[220px]">
+        <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-lg py-2 min-w-[240px]">
             {items.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={() => setOpen(false)}
-                className={`block px-4 py-2.5 ${accentClasses.hover} transition-colors group`}
+                className="block px-5 py-2.5 hover:bg-slate-50 transition-colors group"
               >
-                <div className="text-sm font-semibold text-slate-900 group-hover:text-slate-900">{item.label}</div>
-                <div className="text-[0.62rem] text-slate-400">{item.desc}</div>
+                <div className="text-sm font-bold text-slate-900">{item.label}</div>
+                <div className="text-xs text-slate-400">{item.desc}</div>
               </Link>
             ))}
           </div>
@@ -149,46 +148,55 @@ export default function Header() {
   const isPlatformsActive = ["/compare", "/best", "/versus", "/deals", "/reviews", "/quiz"].some(
     (p) => pathname === p || pathname.startsWith(p + "/")
   );
-  const isAdvisorsActive = ["/advisors", "/find-advisor", "/advisor-guides", "/advisor", "/expert"].some(
+  const isPropertyActive = ["/advisors/mortgage-brokers", "/advisors/buyers-agents", "/find-advisor"].some(
     (p) => pathname === p || pathname.startsWith(p + "/")
   );
-  const isLearnActive = ["/articles", "/article", "/how-to", "/calculators", "/glossary"].some(
+  const isWealthActive = ["/advisors/financial-planners", "/advisors/smsf-accountants", "/advisors/insurance-brokers", "/advisors/tax-agents", "/advisors/estate-planners", "/advisors/wealth-managers"].some(
     (p) => pathname === p || pathname.startsWith(p + "/")
   );
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-slate-200">
-      <div className="container-custom">
-        <div className="flex items-center justify-between h-12 md:h-16">
-          <Link href="/" className="flex items-center text-lg md:text-xl font-bold text-slate-900">
-            <span>Invest<span className="text-amber-500">.com.au</span></span>
+    <header className="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 shadow-[0_2px_20px_rgb(0,0,0,0.02)] transition-all duration-300">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16 lg:h-20 items-center">
+          {/* Logo */}
+          <Link href="/" className="flex-shrink-0 flex items-center group">
+            <div className="w-8 h-8 lg:w-9 lg:h-9 bg-gradient-to-br from-amber-400 to-amber-600 rounded-xl flex items-center justify-center mr-2.5 shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all">
+              <Icon name="landmark" size={18} className="text-slate-900" />
+            </div>
+            <span className="font-extrabold text-xl lg:text-2xl text-slate-900 tracking-tight">
+              Invest<span className="text-amber-600">.com.au</span>
+            </span>
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-2 lg:gap-3.5 ml-6" aria-label="Main navigation">
-            <DesktopDropdown label="Property & Finance" items={advisorsDropdown} isActive={isAdvisorsActive} accentColor="violet" />
-            <DesktopDropdown label="Platforms" items={platformsDropdown} isActive={isPlatformsActive} />
-            <DesktopDropdown label="Learn" items={learnDropdown} isActive={isLearnActive} />
-
-            <Link
-              href="/start"
-              className="px-3 py-1.5 bg-amber-500 text-white text-xs font-semibold rounded-lg hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-500/40 focus:ring-offset-2 transition-colors"
-            >
-              Find Your Path
-            </Link>
+          <nav className="hidden lg:flex space-x-1 items-center ml-8" aria-label="Main navigation">
             <Link
               href="/find-advisor"
-              className="px-3 py-1.5 bg-violet-600 text-white text-xs font-semibold rounded-lg hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-500/40 focus:ring-offset-2 transition-colors"
+              className="px-5 py-2 text-amber-800 font-extrabold bg-amber-50 rounded-lg transition-colors flex items-center gap-1.5 shadow-sm border border-amber-100 hover:bg-amber-100 text-sm"
             >
-              Find Advisor
+              Find an Expert
             </Link>
-            {/* Pro / Account — hidden for launch */}
-            {/* TODO: Re-enable when subscription product launches */}
-            <ThemeToggle />
+            <DesktopDropdown label="Property & Finance" items={propertyDropdown} isActive={isPropertyActive} />
+            <DesktopDropdown label="Wealth & SMSF" items={wealthDropdown} isActive={isWealthActive} />
+            <div className="h-6 w-px bg-slate-200 mx-2" />
+            <DesktopDropdown label="Compare Platforms" items={platformsDropdown} isActive={isPlatformsActive} />
           </nav>
 
+          {/* Desktop CTA + Theme */}
+          <div className="hidden lg:flex items-center gap-3">
+            <ThemeToggle />
+            <Link
+              href="/find-advisor"
+              className="bg-slate-900 hover:bg-slate-800 text-white px-6 py-2.5 rounded-xl font-extrabold transition-all shadow-[0_4px_14px_0_rgba(15,23,42,0.3)] hover:shadow-[0_6px_20px_rgba(15,23,42,0.23)] hover:-translate-y-0.5 flex items-center gap-2 text-sm"
+            >
+              Get Matched Free
+              <Icon name="arrow-right" size={16} className="text-amber-500" />
+            </Link>
+          </div>
+
           {/* Mobile: Theme + Hamburger */}
-          <div className="md:hidden flex items-center gap-1.5">
+          <div className="lg:hidden flex items-center gap-1.5">
             <ThemeToggle />
             <button
               onClick={() => setMenuOpen(!menuOpen)}
@@ -196,15 +204,15 @@ export default function Header() {
               aria-label={menuOpen ? "Close menu" : "Open menu"}
               aria-expanded={menuOpen}
             >
-            {menuOpen ? (
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            ) : (
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            )}
+              {menuOpen ? (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              )}
             </button>
           </div>
         </div>
@@ -212,22 +220,12 @@ export default function Header() {
 
       {/* Mobile Slide-out Menu */}
       {menuOpen && (
-        <div className="md:hidden border-t border-slate-200 bg-white max-h-[80vh] overflow-y-auto">
-          <nav className="container-custom py-3 space-y-1" aria-label="Mobile navigation">
-            {/* Beginner CTA */}
-            <Link
-              href="/article/how-to-invest-australia"
-              onClick={() => setMenuOpen(false)}
-              className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-slate-900 bg-slate-50 rounded-lg transition-colors"
-            >
-              <span className="shrink-0 w-5 h-5 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center text-[0.6rem] font-bold">?</span>
-              New to investing? Start here
-            </Link>
-
+        <div className="lg:hidden border-t border-slate-200 bg-white max-h-[80vh] overflow-y-auto">
+          <nav className="max-w-7xl mx-auto px-4 sm:px-6 py-3 space-y-1" aria-label="Mobile navigation">
             {/* Grouped sections */}
             {mobileNavSections.map((section) => (
-              <div key={section.title} className="pt-1.5 mt-1 border-t border-slate-100">
-                <p className="px-3 pt-1 pb-0.5 text-[0.62rem] font-semibold uppercase tracking-wider text-slate-400">{section.title}</p>
+              <div key={section.title} className="pt-1.5 mt-1 border-t border-slate-100 first:border-t-0 first:mt-0 first:pt-0">
+                <p className="px-3 pt-1 pb-0.5 text-[0.62rem] font-extrabold uppercase tracking-wider text-slate-400">{section.title}</p>
                 {section.items.map((item) => {
                   const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
                   return (
@@ -235,7 +233,7 @@ export default function Header() {
                       key={item.href}
                       href={item.href}
                       onClick={() => setMenuOpen(false)}
-                      className={`block px-3 py-2.5 min-h-[44px] flex items-center text-[0.8rem] font-medium rounded-lg transition-colors ${isActive ? "bg-blue-50 text-blue-700 font-bold" : "text-slate-700 hover:bg-slate-50"}`}
+                      className={`block px-3 py-2.5 min-h-[44px] flex items-center text-[0.8rem] font-medium rounded-lg transition-colors ${isActive ? "bg-amber-50 text-amber-800 font-bold" : "text-slate-700 hover:bg-slate-50"}`}
                       {...(isActive ? { "aria-current": "page" as const } : {})}
                     >
                       {item.name}
@@ -245,32 +243,36 @@ export default function Header() {
               </div>
             ))}
 
-            {/* Quiz + Advisor + Pro — action buttons */}
-            <div className="pt-1.5 mt-1 border-t border-slate-100 space-y-2 px-3">
+            {/* Action buttons */}
+            <div className="pt-2 mt-2 border-t border-slate-100 space-y-2 px-3">
+              <Link
+                href="/find-advisor"
+                onClick={() => setMenuOpen(false)}
+                className="block w-full py-3 min-h-[44px] text-center text-sm font-extrabold text-white bg-slate-900 rounded-xl hover:bg-slate-800 transition-colors"
+              >
+                Get Matched Free
+              </Link>
               <div className="flex gap-2">
                 <Link
                   href="/quiz"
                   onClick={() => setMenuOpen(false)}
-                  className="flex-1 py-2.5 min-h-[44px] flex items-center justify-center text-xs font-semibold text-center text-white bg-amber-600 rounded-lg hover:bg-amber-700 transition-colors"
+                  className="flex-1 py-2.5 min-h-[44px] flex items-center justify-center text-xs font-bold text-center text-amber-800 bg-amber-50 border border-amber-200 rounded-lg hover:bg-amber-100 transition-colors"
                 >
                   Platform Quiz
                 </Link>
                 <Link
-                  href="/find-advisor"
+                  href="/compare"
                   onClick={() => setMenuOpen(false)}
-                  className="flex-1 py-2.5 min-h-[44px] flex items-center justify-center text-xs font-semibold text-center text-white bg-violet-600 rounded-lg hover:bg-violet-700 transition-colors"
+                  className="flex-1 py-2.5 min-h-[44px] flex items-center justify-center text-xs font-bold text-center text-slate-700 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 transition-colors"
                 >
-                  Find Advisor
+                  Compare Platforms
                 </Link>
               </div>
-              {/* Pro button hidden for launch */}
             </div>
-
-            {/* Auth — hidden for launch */}
 
             {/* Popular Links */}
             <div className="pt-1.5 mt-1 border-t border-slate-100">
-              <p className="px-3 pt-1 pb-1 text-[0.62rem] font-semibold uppercase tracking-wider text-slate-400">Popular</p>
+              <p className="px-3 pt-1 pb-1 text-[0.62rem] font-extrabold uppercase tracking-wider text-slate-400">Popular</p>
               <div className="flex flex-wrap gap-1.5 px-3 pb-1">
                 {popularLinks.map((link) => (
                   <Link
