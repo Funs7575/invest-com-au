@@ -34,19 +34,6 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
 
       <DisclosureBanner variant="header" />
 
-      {/* Trust Notification Bar */}
-      <div className="bg-slate-900 text-slate-300 py-2 px-4 text-center text-[13px] font-semibold tracking-wide flex items-center justify-center gap-6 border-b border-slate-800">
-        <span className="flex items-center gap-2">
-          <Icon name="shield-check" size={16} className="text-emerald-400" />
-          <span className="hidden sm:inline">100% Independent &amp; Free Service</span>
-          <span className="sm:hidden">Independent &amp; Free</span>
-        </span>
-        <span className="hidden md:flex items-center gap-2 text-slate-400 border-l border-slate-700 pl-6">
-          <Icon name="shield-check" size={16} className="text-amber-500" />
-          113+ ASIC-Verified Professionals
-        </span>
-      </div>
-
       <Header />
       <main id="main-content" className="min-h-screen pb-14 sm:pb-0">{children}</main>
       <Footer />
