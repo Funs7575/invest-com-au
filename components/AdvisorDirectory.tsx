@@ -39,160 +39,134 @@ export default function AdvisorDirectory({ advisors }: { advisors: Advisor[] }) 
   const totalLabel = activeTab === "property" ? "Property Experts" : "Financial Experts";
 
   return (
-    <section className="py-16 md:py-24 bg-[#F8FAFC]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-4 md:py-12 bg-gradient-to-b from-violet-50/30 to-white">
+      <div className="container-custom">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 md:mb-12 gap-6">
-          <div className="max-w-2xl">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 mb-3 md:mb-4 tracking-tight">
-              Verified Professionals Network
-            </h2>
-            <p className="text-base md:text-lg text-slate-600 font-medium">
-              Prefer to browse? Review profiles of independent experts across Australia&apos;s most crucial financial sectors.
+        <div className="flex items-start justify-between gap-2 mb-3 md:mb-6">
+          <div>
+            <h2 className="text-lg md:text-2xl font-bold text-slate-900">Verified Financial Advisors</h2>
+            <p className="text-[0.69rem] md:text-sm text-slate-500 mt-0.5 md:mt-1">
+              <span className="hidden md:inline">Browse independent experts verified against ASIC registers across Australia</span>
+              <span className="md:hidden">ASIC-verified professionals across Australia</span>
             </p>
           </div>
-          {/* Tabs */}
-          <div className="flex bg-white p-1.5 rounded-xl w-max border border-slate-200 shadow-sm">
+          <Link href="/advisors" className="text-[0.69rem] font-semibold text-violet-600 hover:text-violet-800 shrink-0 min-h-[44px] inline-flex items-center px-1">
+            Browse all &rarr;
+          </Link>
+        </div>
+
+        {/* Tabs + Location filters */}
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-4 md:mb-6">
+          <div className="flex bg-white p-1 rounded-lg border border-slate-200 w-max">
             <button
               onClick={() => setActiveTab("property")}
-              className={`px-4 md:px-6 py-2.5 rounded-lg text-xs md:text-sm font-extrabold transition-all ${
+              className={`px-3 md:px-4 py-1.5 rounded-md text-xs md:text-sm font-semibold transition-all ${
                 activeTab === "property"
-                  ? "bg-slate-900 text-white shadow-md"
+                  ? "bg-violet-600 text-white shadow-sm"
                   : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
               }`}
             >
-              Property Investment &amp; Loans
+              Property &amp; Loans
             </button>
             <button
               onClick={() => setActiveTab("wealth")}
-              className={`px-4 md:px-6 py-2.5 rounded-lg text-xs md:text-sm font-extrabold transition-all ${
+              className={`px-3 md:px-4 py-1.5 rounded-md text-xs md:text-sm font-semibold transition-all ${
                 activeTab === "wealth"
-                  ? "bg-slate-900 text-white shadow-md"
+                  ? "bg-violet-600 text-white shadow-sm"
                   : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
               }`}
             >
-              Wealth Creation &amp; Super
+              Wealth &amp; Super
             </button>
           </div>
-        </div>
-
-        {/* Location filters */}
-        <div className="flex items-center gap-3 mb-8 md:mb-10 pb-2 overflow-x-auto scrollbar-hide border-b border-slate-200">
-          <Icon name="map-pin" size={18} className="text-slate-400 flex-shrink-0 mb-3" />
-          <span className="text-sm font-bold text-slate-700 mr-2 whitespace-nowrap mb-3">Target Region:</span>
-          {LOCATIONS.map((loc) => (
-            <button
-              key={loc}
-              onClick={() => setActiveLocation(loc)}
-              className={`px-5 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap flex-shrink-0 border mb-3 ${
-                activeLocation === loc
-                  ? "bg-amber-500 border-amber-500 text-slate-900 shadow-sm"
-                  : "bg-white border-slate-200 text-slate-600 hover:border-amber-300 hover:bg-amber-50"
-              }`}
-            >
-              {loc}
-            </button>
-          ))}
+          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
+            <Icon name="map-pin" size={14} className="text-slate-400 shrink-0" />
+            {LOCATIONS.map((loc) => (
+              <button
+                key={loc}
+                onClick={() => setActiveLocation(loc)}
+                className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-all border ${
+                  activeLocation === loc
+                    ? "bg-amber-500 border-amber-500 text-white"
+                    : "bg-white border-slate-200 text-slate-600 hover:border-amber-300 hover:bg-amber-50"
+                }`}
+              >
+                {loc}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Advisor cards grid */}
         {filtered.length > 0 ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3">
             {filtered.slice(0, 6).map((advisor) => (
-              <div
+              <Link
                 key={advisor.slug}
-                className="bg-white rounded-[1.5rem] border border-slate-200 shadow-sm hover:shadow-[0_20px_40px_rgb(0,0,0,0.08)] hover:border-amber-400 hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col group cursor-pointer relative"
+                href={`/advisor/${advisor.slug}`}
+                className="flex items-start gap-2.5 p-2.5 md:p-3.5 bg-white border border-violet-100 rounded-xl hover:border-violet-300 hover:shadow-md transition-all group"
               >
-                <Link href={`/advisor/${advisor.slug}`} className="flex flex-col flex-grow">
-                  <div className="p-6 md:p-8 flex-grow">
-                    <div className="flex gap-4 md:gap-5 items-center mb-5 md:mb-6">
-                      <Image
-                        src={
-                          advisor.photo_url ||
-                          `https://ui-avatars.com/api/?name=${encodeURIComponent(advisor.name)}&size=128&background=f59e0b&color=0f172a&bold=true`
-                        }
-                        alt={advisor.name}
-                        width={64}
-                        height={64}
-                        className="w-14 h-14 md:w-16 md:h-16 rounded-full object-cover border-[3px] border-slate-50 shadow-sm group-hover:border-amber-300 transition-colors"
-                        loading="lazy"
-                        sizes="64px"
-                      />
-                      <div>
-                        <h3 className="font-extrabold text-lg md:text-xl text-slate-900 leading-tight flex items-center gap-1.5">
-                          {advisor.name}
-                          <Icon name="shield-check" size={16} className="text-blue-500" />
-                        </h3>
-                        <p className="text-sm font-extrabold text-amber-600 mt-1">{typeLabel(advisor.type)}</p>
-                        {advisor.firm_name && (
-                          <p className="text-xs font-bold text-slate-500 mt-1 uppercase tracking-wide">{advisor.firm_name}</p>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-between mb-5 md:mb-6 pb-5 md:pb-6 border-b border-slate-100">
-                      {advisor.location_display && (
-                        <div className="flex items-center gap-1.5 text-sm font-bold text-slate-600 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
-                          <Icon name="map-pin" size={16} className="text-slate-400" />
-                          {advisor.location_display}
-                        </div>
-                      )}
-                      <div className="flex items-center gap-1.5 text-xs font-extrabold px-2.5 py-1.5 rounded-lg border shadow-sm bg-emerald-50 text-emerald-700 border-emerald-100">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                        Accepting Clients
-                      </div>
-                    </div>
-
-                    {advisor.specialties?.length > 0 && (
-                      <div className="space-y-3">
-                        <p className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                          <Icon name="trending-up" size={14} />
-                          Core Specialties
-                        </p>
-                        <div className="flex flex-wrap gap-2">
-                          {advisor.specialties.slice(0, 4).map((spec) => (
-                            <span
-                              key={spec}
-                              className="text-xs font-bold bg-white text-slate-700 px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm group-hover:bg-amber-50 group-hover:border-amber-200 group-hover:text-amber-900 transition-colors"
-                            >
-                              {spec}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
+                <Image
+                  src={
+                    advisor.photo_url ||
+                    `https://ui-avatars.com/api/?name=${encodeURIComponent(advisor.name)}&size=80&background=7c3aed&color=fff`
+                  }
+                  alt={advisor.name}
+                  width={48}
+                  height={48}
+                  className="rounded-full shrink-0 w-10 h-10 md:w-12 md:h-12"
+                  loading="lazy"
+                  sizes="48px"
+                />
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs md:text-sm font-bold text-slate-900 truncate group-hover:text-violet-700 transition-colors">{advisor.name}</p>
+                  <p className="text-[0.58rem] md:text-xs text-violet-600 font-medium">{typeLabel(advisor.type)}</p>
+                  {advisor.firm_name && <p className="text-[0.55rem] md:text-[0.65rem] text-slate-400 truncate">{advisor.firm_name}</p>}
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    {advisor.rating > 0 && <span className="text-[0.6rem] md:text-[0.65rem] text-amber-600 font-semibold">{advisor.rating}/5</span>}
+                    {advisor.location_display && <span className="text-[0.55rem] md:text-[0.6rem] text-slate-400">{advisor.location_display}</span>}
                   </div>
-                </Link>
-                <div className="p-5 md:p-6 border-t border-slate-100 bg-slate-50 flex items-center justify-between">
-                  <div className="flex items-center gap-1.5 text-xs text-emerald-800 font-extrabold bg-emerald-100/60 px-3 py-1.5 rounded-lg border border-emerald-200">
-                    <Icon name="shield-check" size={16} className="text-emerald-600" />
-                    ASIC Verified
-                  </div>
-                  <Link
-                    href={`/advisor/${advisor.slug}`}
-                    className="bg-white border-2 border-slate-200 text-slate-700 group-hover:border-slate-900 group-hover:bg-slate-900 group-hover:text-white px-4 md:px-5 py-2 md:py-2.5 rounded-xl text-xs md:text-sm font-extrabold transition-all shadow-sm"
-                  >
-                    Request Strategy Session
-                  </Link>
+                  {advisor.specialties?.length > 0 && (
+                    <div className="hidden md:flex flex-wrap gap-1 mt-1.5">
+                      {advisor.specialties.slice(0, 2).map((spec) => (
+                        <span key={spec} className="text-[0.55rem] bg-violet-50 text-violet-600 px-1.5 py-0.5 rounded border border-violet-100">
+                          {spec}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         ) : (
-          <div className="text-center py-16">
-            <p className="text-slate-500 font-medium">No advisors found for this region. Try &quot;All Australia&quot; to see all available professionals.</p>
+          <div className="text-center py-8">
+            <p className="text-sm text-slate-500">No advisors found for this region. Try &quot;All Australia&quot; to see all.</p>
           </div>
         )}
 
-        {/* View All button */}
-        <div className="mt-12 md:mt-16 flex justify-center">
-          <Link
-            href={activeTab === "property" ? "/advisors?type=mortgage_broker,buyers_agent" : "/advisors"}
-            className="bg-white border-2 border-slate-200 hover:border-slate-900 hover:bg-slate-900 hover:text-white text-slate-800 px-8 md:px-10 py-3.5 md:py-4 rounded-xl font-extrabold transition-all shadow-sm flex items-center gap-2 text-base md:text-lg"
-          >
-            View All {totalLabel}
-            <Icon name="arrow-right" size={20} />
-          </Link>
+        {/* CTA card */}
+        <div className="mt-4 md:mt-6 bg-white border border-slate-200 rounded-xl p-4 md:p-6 flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-6">
+          <div className="flex-1 min-w-0">
+            <p className="text-sm md:text-base font-bold text-slate-900 mb-1">Get matched with a verified advisor — free, no obligation</p>
+            <p className="text-xs md:text-sm text-slate-500">
+              Tell us what you need help with and we&apos;ll connect you with a verified professional. Your details go to one advisor only.
+            </p>
+          </div>
+          <div className="flex gap-2 shrink-0 w-full md:w-auto">
+            <Link
+              href="/find-advisor"
+              className="flex-1 md:flex-none text-center px-4 py-2.5 bg-violet-600 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-violet-700 transition-colors"
+            >
+              Find My Advisor
+            </Link>
+            <Link
+              href={activeTab === "property" ? "/advisors?type=mortgage_broker,buyers_agent" : "/advisors"}
+              className="flex-1 md:flex-none text-center px-4 py-2.5 border border-violet-300 text-violet-700 text-xs md:text-sm font-semibold rounded-lg hover:bg-violet-50 transition-colors"
+            >
+              View All {totalLabel}
+            </Link>
+          </div>
         </div>
       </div>
     </section>
