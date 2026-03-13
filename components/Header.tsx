@@ -161,9 +161,6 @@ export default function Header() {
         <div className="flex justify-between h-16 lg:h-20 items-center">
           {/* Logo */}
           <Link href="/" className="flex-shrink-0 flex items-center group">
-            <div className="w-8 h-8 lg:w-9 lg:h-9 bg-amber-500 rounded-xl flex items-center justify-center mr-2.5 shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all">
-              <Icon name="landmark" size={18} className="text-white" />
-            </div>
             <span className="font-bold text-xl lg:text-2xl text-slate-900 tracking-tight">
               Invest<span className="text-amber-500">.com.au</span>
             </span>
