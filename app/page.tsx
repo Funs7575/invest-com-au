@@ -239,12 +239,12 @@ export default async function HomePage() {
               Find Your Best Path &rarr;
             </Link>
             {/* Subtle direct links for power users */}
-            <div className="flex items-center justify-center gap-4 mt-2.5 text-[0.7rem]">
+            <div className="flex items-center justify-center gap-3 mt-2.5 text-[0.7rem] flex-wrap">
               <Link href="/compare" className="text-slate-500 font-semibold hover:text-slate-700">Compare Platforms</Link>
               <span className="text-slate-300">·</span>
               <Link href="/find-advisor" className="text-violet-600 font-semibold hover:text-violet-700">Find Advisor</Link>
               <span className="text-slate-300">·</span>
-              <Link href="/calculators" className="text-slate-500 font-semibold hover:text-slate-700">Calculators</Link>
+              <Link href="/advisors/mortgage-brokers" className="text-slate-500 font-semibold hover:text-slate-700">Mortgage Brokers</Link>
             </div>
             {/* Trust strip */}
             <div className="flex items-center justify-center gap-3 mt-3 text-[0.65rem] text-slate-400">
@@ -301,8 +301,8 @@ export default async function HomePage() {
             <div className="flex items-center justify-center gap-6 mt-3 hero-fade-up hero-fade-up-4 text-sm">
               <Link href="/compare" className="text-slate-500 font-semibold hover:text-slate-700 transition-colors">Compare Platforms</Link>
               <Link href="/find-advisor" className="text-violet-600 font-semibold hover:text-violet-700 transition-colors">Find an Advisor</Link>
+              <Link href="/advisors/mortgage-brokers" className="text-slate-500 font-semibold hover:text-slate-700 transition-colors">Mortgage Brokers</Link>
               <Link href="/calculators" className="text-slate-500 font-semibold hover:text-slate-700 transition-colors">Calculators</Link>
-              <Link href="/deals" className="text-slate-500 font-semibold hover:text-slate-700 transition-colors">Deals</Link>
             </div>
             {/* Social proof */}
             <div className="mt-4 hero-fade-up hero-fade-up-5 flex justify-center">
@@ -393,17 +393,17 @@ export default async function HomePage() {
               </div>
             )}
 
-            {/* Category pills */}
+            {/* Category pills — ordered by revenue potential */}
             <div className="flex gap-1.5 md:gap-2 mb-3 md:mb-4 overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
               {[
-                { label: "SMSF Accountants", href: "/advisors?type=smsf_accountant", icon: "building" },
-                { label: "Financial Planners", href: "/advisors?type=financial_planner", icon: "trending-up" },
-                { label: "Property Advisors", href: "/advisors?type=property_advisor", icon: "home" },
-                { label: "Tax Agents", href: "/advisors?type=tax_agent", icon: "calculator" },
-                { label: "Mortgage Brokers", href: "/advisors?type=mortgage_broker", icon: "landmark" },
-                { label: "Estate Planners", href: "/advisors?type=estate_planner", icon: "file-text" },
-                { label: "Insurance Brokers", href: "/advisors?type=insurance_broker", icon: "shield" },
-                { label: "Buyers Agents", href: "/advisors?type=buyers_agent", icon: "search" },
+                { label: "Mortgage Brokers", href: "/advisors/mortgage-brokers", icon: "landmark" },
+                { label: "Buyer's Agents", href: "/advisors/buyers-agents", icon: "search" },
+                { label: "Financial Planners", href: "/advisors/financial-planners", icon: "trending-up" },
+                { label: "Insurance Brokers", href: "/advisors/insurance-brokers", icon: "shield" },
+                { label: "SMSF Accountants", href: "/advisors/smsf-accountants", icon: "building" },
+                { label: "Tax Agents", href: "/advisors/tax-agents", icon: "calculator" },
+                { label: "Estate Planners", href: "/advisors/estate-planners", icon: "file-text" },
+                { label: "Wealth Managers", href: "/advisors/wealth-managers", icon: "briefcase" },
               ].map((cat) => (
                 <Link
                   key={cat.label}
@@ -831,11 +831,12 @@ export default async function HomePage() {
                   </div>
                   <div className="space-y-1.5">
                     {[
+                      { href: "/advisor-guides/mortgage-broker", title: "Choosing a Mortgage Broker", icon: "landmark" },
+                      { href: "/advisor-guides/buyers-agent", title: "Choosing a Buyer's Agent", icon: "search" },
                       { href: "/advisor-guides/financial-planner", title: "Choosing a Financial Planner", icon: "trending-up" },
+                      { href: "/advisor-guides/insurance-broker", title: "Choosing an Insurance Broker", icon: "shield" },
                       { href: "/advisor-guides/smsf-accountant", title: "Choosing an SMSF Accountant", icon: "building" },
                       { href: "/advisor-guides/tax-agent", title: "Choosing a Tax Agent", icon: "calculator" },
-                      { href: "/advisor-guides/mortgage-broker", title: "Choosing a Mortgage Broker", icon: "landmark" },
-                      { href: "/advisor-guides/financial-planner-vs-robo-advisor", title: "Financial Planner vs Robo-Advisor", icon: "arrow-right-left" },
                     ].map((guide) => (
                       <Link key={guide.href} href={guide.href} className="flex items-center gap-2 px-2.5 py-2 rounded-lg hover:bg-white hover:shadow-sm transition-all group">
                         <Icon name={guide.icon} size={14} className="text-violet-500 shrink-0" />
