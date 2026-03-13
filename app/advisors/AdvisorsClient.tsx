@@ -354,6 +354,19 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
   if (isLocationActive && locationSearch) contextParts.push(`near ${locationSearch.locality}`);
   if (specialtyFilters.length > 0) contextParts.push(`specialising in ${specialtyFilters.join(" + ")}`);
 
+  // Dynamic heading based on active filters
+  const activeTypeLabel = typeFilter !== "all" ? TYPE_FILTERS.find(f => f.key === typeFilter)?.label : null;
+  const dynamicTitle = activeTypeLabel
+    ? stateFilter !== "all"
+      ? `Find ${activeTypeLabel} in ${stateFilter}`
+      : `Find ${activeTypeLabel}`
+    : stateFilter !== "all"
+      ? `Find Financial Advisors in ${stateFilter}`
+      : pageTitle || "Find a Financial Advisor";
+  const dynamicDescription = activeTypeLabel
+    ? `Browse verified ${activeTypeLabel.toLowerCase()} across Australia. Filter by location, fees, and specialties.`
+    : pageDescription || "Browse verified Australian financial professionals. Filter by location, type, fees, and specialties.";
+
   const toggleSpecialty = (s: string) => setSpecialtyFilters(prev => prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s]);
   const clearAll = () => {
     setTypeFilter("all"); setStateFilter("all"); setSpecialtyFilters([]); setFeeFilter("all");
@@ -368,14 +381,14 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
         <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
           <Link href="/" className="hover:text-slate-900">Home</Link>
           <span className="mx-1.5 md:mx-2">/</span>
-          <span className="text-slate-700">Find an Advisor</span>
+          <span className="text-slate-700">{activeTypeLabel || "Find an Advisor"}</span>
         </nav>
 
         <div className="bg-gradient-to-br from-violet-50 to-slate-50 border border-violet-100 rounded-2xl p-4 md:p-8 mb-4 md:mb-6">
-          <h1 className="text-xl md:text-4xl font-extrabold mb-1.5 md:mb-3 text-slate-900">{pageTitle || "Find a Financial Advisor"}</h1>
+          <h1 className="text-xl md:text-4xl font-extrabold mb-1.5 md:mb-3 text-slate-900">{dynamicTitle}</h1>
           <p className="text-xs md:text-base text-slate-500 mb-3 md:mb-5">
-            <span className="md:hidden">{pageDescription ? pageDescription.slice(0, 60) + "..." : "Verified Australian financial professionals"}</span>
-            <span className="hidden md:inline">{pageDescription || "Browse verified Australian financial professionals. Filter by location, type, fees, and specialties."}</span>
+            <span className="md:hidden">{dynamicDescription.slice(0, 60)}...</span>
+            <span className="hidden md:inline">{dynamicDescription}</span>
           </p>
           <div className="flex items-center gap-3 md:gap-6 text-[0.62rem] md:text-xs text-slate-500">
             <span className="flex items-center gap-1.5"><span className="w-2 h-2 bg-violet-500 rounded-full" /><span className="font-semibold text-slate-700">{professionals.length}</span> advisors</span>
