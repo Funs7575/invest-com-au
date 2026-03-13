@@ -18,24 +18,25 @@ import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 import { getMostRecentFeeCheck } from "@/lib/utils";
 import Icon from "@/components/Icon";
 import BrokerLogo from "@/components/BrokerLogo";
+import HeroLeadCapture from "@/components/HeroLeadCapture";
 import { AFFILIATE_REL } from "@/lib/tracking";
 import { ORGANIZATION_JSONLD, SITE_URL, websiteJsonLd } from "@/lib/seo";
 // UserOnboarding modal removed — was blocking first-time visitors (P0 conversion issue)
 
 export const metadata = {
-  title: "Compare Investing Platforms & Find Advisors — Invest.com.au",
+  title: "Find Mortgage Brokers, Buyer's Agents & Financial Advisors — Invest.com.au",
   description:
-    "Find verified mortgage brokers, financial advisors, and buyer's agents — or compare Australian investing platforms. Real fees, real data, updated daily. Shares, crypto, super, robo-advisors and more.",
+    "Find verified mortgage brokers, buyer's agents, and financial advisors — or compare Australian investing platforms. Independent directory with ASIC-verified professionals. Free, no obligation.",
   openGraph: {
-    title: "Find Experts & Compare Platforms — Invest.com.au",
-    description: "Find verified mortgage brokers, financial advisors, and buyer's agents — or compare Australian investing platforms. Real fees, real data, updated daily.",
+    title: "Find Verified Advisors & Compare Platforms — Invest.com.au",
+    description: "Find verified mortgage brokers, buyer's agents, and financial advisors — or compare Australian investing platforms. ASIC-verified, independent, free.",
     url: "/",
     images: [{ url: "/api/og", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image" as const,
-    title: "Find Experts & Compare Platforms — Invest.com.au",
-    description: "Find verified mortgage brokers, financial advisors, and buyer's agents — or compare Australian investing platforms. Real fees, real data, updated daily.",
+    title: "Find Verified Advisors & Compare Platforms — Invest.com.au",
+    description: "Find verified mortgage brokers, buyer's agents, and financial advisors — or compare Australian investing platforms. ASIC-verified, independent, free.",
   },
   alternates: { canonical: "/" },
 };
@@ -220,90 +221,94 @@ export default async function HomePage() {
         }}
       />
 
-      {/* Hero Section */}
-      <section className="relative bg-white border-b border-slate-100 py-2.5 md:py-14 overflow-hidden">
+      {/* Hero Section — Advisor-first with lead capture */}
+      <section className="relative bg-gradient-to-b from-slate-50 to-white border-b border-slate-100 py-4 md:py-16 overflow-hidden">
         <div className="relative max-w-4xl mx-auto px-4 text-center">
-          {/* Mobile: premium compact hero */}
+          {/* Mobile: compact advisor-first hero */}
           <div className="md:hidden">
+            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white rounded-full text-[0.65rem] font-medium text-slate-500 mb-3 border border-slate-200">
+              <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
+              {(advisorCount || 0) > 0 ? `${advisorCount} verified advisors` : "Verified advisors"} + {brokerCount} platforms
+            </div>
             <h1 className="text-[1.4rem] font-extrabold text-slate-900 leading-[1.15] tracking-tight">
-              Find Experts.<br />Compare Platforms.
+              Find Your Perfect<br />Financial Expert.
             </h1>
             <p className="mt-1.5 text-[0.72rem] text-slate-500 leading-relaxed">
-              Mortgage brokers, buyer&apos;s agents, financial planners &amp; platform comparison — free.
+              ASIC-verified mortgage brokers, buyer&apos;s agents &amp; financial planners — matched to you, free.
             </p>
-            {/* Single primary CTA */}
-            <Link
-              href="/start"
-              className="flex items-center justify-center gap-2 w-full mt-3 px-3 py-3.5 bg-amber-500 text-white font-bold rounded-xl text-[0.85rem] text-center active:scale-[0.98] transition-all shadow-lg shadow-amber-200"
-            >
-              Find Your Best Path &rarr;
-            </Link>
-            {/* Subtle direct links for power users */}
-            <div className="flex items-center justify-center gap-3 mt-2.5 text-[0.7rem] flex-wrap">
-              <Link href="/compare" className="text-slate-500 font-semibold hover:text-slate-700">Compare Platforms</Link>
-              <span className="text-slate-300">·</span>
-              <Link href="/find-advisor" className="text-violet-600 font-semibold hover:text-violet-700">Find Advisor</Link>
-              <span className="text-slate-300">·</span>
-              <Link href="/advisors/mortgage-brokers" className="text-slate-500 font-semibold hover:text-slate-700">Mortgage Brokers</Link>
-            </div>
-            {/* Trust strip */}
-            <div className="flex items-center justify-center gap-3 mt-3 text-[0.65rem] text-slate-400">
-              <span className="flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
-                {brokerCount} platforms
-              </span>
-              <span className="text-slate-300">·</span>
-              <span>Verified advisors</span>
-              <span className="text-slate-300">·</span>
-              <span>100% free</span>
-            </div>
-          </div>
-          {/* Desktop: full hero */}
-          <div className="hidden md:block">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 rounded-full text-xs font-medium text-slate-600 mb-6 hero-fade-up hero-fade-up-1 border border-slate-200">
-              <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
-              {brokerCount} platforms + {(advisorCount || 0) > 0 ? `${advisorCount} advisors` : "verified advisors"} &middot; Updated {updatedDateStr}
-            </div>
-            <h1 className="text-5xl lg:text-6xl font-extrabold text-slate-900 hero-fade-up hero-fade-up-1 leading-tight">
-              Find Experts.<br />Compare Platforms.
-            </h1>
-            <p className="mt-5 text-xl text-slate-500 max-w-2xl mx-auto hero-fade-up hero-fade-up-2 leading-relaxed">
-              Find verified mortgage brokers, buyer&apos;s agents, financial planners, and insurance brokers — or compare investing platforms side-by-side. Independent, transparent, and free.
-            </p>
-            {/* Category strip — desktop only */}
-            <div className="flex items-center justify-center flex-wrap gap-2 mt-5 hero-fade-up hero-fade-up-2">
-              {categoryStrip.map((cat) => (
-                <Link
-                  key={cat.label}
-                  href={cat.href}
-                  className={`px-3 py-1.5 text-xs font-semibold rounded-full border transition-colors ${
-                    cat.label === "Advisors"
-                      ? "border-violet-200 text-violet-700 bg-violet-50 hover:bg-violet-100"
-                      : "border-slate-200 text-slate-600 bg-white hover:bg-slate-50 hover:border-slate-300"
-                  }`}
-                >
-                  {cat.label}
-                </Link>
-              ))}
-            </div>
-            <div className="hero-fade-up hero-fade-up-3">
-              <HomepageSearchBar />
-            </div>
-            <div className="flex items-center justify-center gap-3 mt-6 mb-2 hero-fade-up hero-fade-up-4">
-              <Link
-                href="/start"
-                className="px-10 py-4 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 hover:scale-105 hover:shadow-xl shadow-amber-200 transition-all duration-200 text-base"
-              >
-                Find Your Best Path &rarr;
+            {/* Mobile lead capture options */}
+            <div className="grid grid-cols-2 gap-2 mt-4">
+              <Link href="/advisors/mortgage-brokers" className="flex flex-col items-center p-3 border-2 border-slate-100 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all">
+                <div className="bg-blue-100 p-2 rounded-full mb-2">
+                  <Icon name="home" size={20} className="text-blue-700" />
+                </div>
+                <span className="font-bold text-xs text-slate-900">Buy a Home</span>
+                <span className="text-[0.6rem] text-slate-500">Mortgage Brokers</span>
+              </Link>
+              <Link href="/advisors/buyers-agents" className="flex flex-col items-center p-3 border-2 border-slate-100 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all">
+                <div className="bg-blue-100 p-2 rounded-full mb-2">
+                  <Icon name="building" size={20} className="text-blue-700" />
+                </div>
+                <span className="font-bold text-xs text-slate-900">Invest in Property</span>
+                <span className="text-[0.6rem] text-slate-500">Buyer&apos;s Agents</span>
+              </Link>
+              <Link href="/advisors/financial-planners" className="flex flex-col items-center p-3 border-2 border-slate-100 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all">
+                <div className="bg-blue-100 p-2 rounded-full mb-2">
+                  <Icon name="trending-up" size={20} className="text-blue-700" />
+                </div>
+                <span className="font-bold text-xs text-slate-900">Grow Wealth</span>
+                <span className="text-[0.6rem] text-slate-500">Financial Planners</span>
+              </Link>
+              <Link href="/advisors/smsf-accountants" className="flex flex-col items-center p-3 border-2 border-slate-100 rounded-xl hover:border-blue-500 hover:bg-blue-50 transition-all">
+                <div className="bg-blue-100 p-2 rounded-full mb-2">
+                  <Icon name="briefcase" size={20} className="text-blue-700" />
+                </div>
+                <span className="font-bold text-xs text-slate-900">Manage SMSF</span>
+                <span className="text-[0.6rem] text-slate-500">Accountants</span>
               </Link>
             </div>
-            {/* Direct links for power users */}
-            <div className="flex items-center justify-center gap-6 mt-3 hero-fade-up hero-fade-up-4 text-sm">
+            {/* Trust + secondary links */}
+            <div className="mt-3 text-center">
+              <p className="text-[0.62rem] text-slate-400 flex items-center justify-center gap-1">
+                <Icon name="shield-check" size={12} className="text-blue-500" />
+                Sent to exactly <strong className="text-slate-600">one verified match</strong>
+              </p>
+            </div>
+            <div className="flex items-center justify-center gap-3 mt-2.5 text-[0.7rem] flex-wrap">
+              <Link href="/compare" className="text-slate-500 font-semibold hover:text-slate-700">Compare Platforms</Link>
+              <span className="text-slate-300">&middot;</span>
+              <Link href="/start" className="text-amber-600 font-semibold hover:text-amber-700">Find Your Path</Link>
+              <span className="text-slate-300">&middot;</span>
+              <Link href="/advisors" className="text-violet-600 font-semibold hover:text-violet-700">All Advisors</Link>
+            </div>
+          </div>
+
+          {/* Desktop: full hero with lead-capture */}
+          <div className="hidden md:block">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-full text-xs font-medium text-slate-600 mb-6 hero-fade-up hero-fade-up-1 border border-slate-200 shadow-sm">
+              <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+              {(advisorCount || 0) > 0 ? `${advisorCount} verified advisors` : "Verified advisors"} + {brokerCount} platforms &middot; Updated {updatedDateStr}
+            </div>
+            <h1 className="text-5xl lg:text-6xl font-extrabold text-slate-900 hero-fade-up hero-fade-up-1 leading-tight">
+              Find Your Perfect<br />Financial Expert.
+            </h1>
+            <p className="mt-5 text-xl text-slate-500 max-w-2xl mx-auto hero-fade-up hero-fade-up-2 leading-relaxed">
+              Verified mortgage brokers, buyer&apos;s agents, financial planners, and insurance brokers — matched to your needs. Independent, ASIC-verified, and free.
+            </p>
+
+            {/* Interactive Lead Capture — desktop */}
+            <div className="mt-8 hero-fade-up hero-fade-up-3">
+              <HeroLeadCapture />
+            </div>
+
+            {/* Secondary actions */}
+            <div className="flex items-center justify-center gap-6 mt-6 hero-fade-up hero-fade-up-4 text-sm">
               <Link href="/compare" className="text-slate-500 font-semibold hover:text-slate-700 transition-colors">Compare Platforms</Link>
-              <Link href="/find-advisor" className="text-violet-600 font-semibold hover:text-violet-700 transition-colors">Find an Advisor</Link>
-              <Link href="/advisors/mortgage-brokers" className="text-slate-500 font-semibold hover:text-slate-700 transition-colors">Mortgage Brokers</Link>
+              <Link href="/start" className="text-amber-600 font-semibold hover:text-amber-700 transition-colors">Find Your Path</Link>
+              <Link href="/advisors" className="text-violet-600 font-semibold hover:text-violet-700 transition-colors">Browse All Advisors</Link>
               <Link href="/calculators" className="text-slate-500 font-semibold hover:text-slate-700 transition-colors">Calculators</Link>
             </div>
+
             {/* Social proof */}
             <div className="mt-4 hero-fade-up hero-fade-up-5 flex justify-center">
               <SocialProofCounter variant="badge" />
@@ -311,8 +316,8 @@ export default async function HomePage() {
             {/* Trust signals */}
             <div className="flex items-center justify-center flex-wrap gap-x-8 pt-4 text-xs text-slate-500 hero-fade-up hero-fade-up-5">
               <span className="flex items-center gap-1">
-                <svg className="w-4 h-4 text-slate-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-                ASIC-regulated
+                <svg className="w-4 h-4 text-emerald-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                ASIC-verified
               </span>
               <span className="flex items-center gap-1">
                 <svg className="w-4 h-4 text-slate-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
@@ -341,68 +346,248 @@ export default async function HomePage() {
       </section>
 
 
-      {/* ═══════ ADVISOR SECTION with proof ═══════ */}
+      {/* ═══════ PROPERTY PURCHASING & FINANCE — Tier 1 verticals ═══════ */}
       <ScrollFadeIn>
-        <section className="py-3 md:py-12 bg-gradient-to-b from-violet-50/30 to-white">
+        <section className="py-3 md:py-12 bg-gradient-to-b from-blue-50/40 to-white">
           <div className="container-custom">
             <div className="flex items-start justify-between gap-2 mb-2.5 md:mb-6">
               <div>
-                <h2 className="text-lg md:text-2xl font-bold">Verified Financial Advisors</h2>
+                <h2 className="text-lg md:text-2xl font-bold text-slate-900">Property Purchasing &amp; Finance</h2>
                 <p className="text-[0.69rem] md:text-sm text-slate-500 mt-0.5 md:mt-1">
-                  <span className="hidden md:inline">Mortgage brokers, buyer&apos;s agents, financial planners, insurance brokers, and more — verified against ASIC registers</span>
-                  <span className="md:hidden">ASIC-verified professionals across Australia</span>
+                  <span className="hidden md:inline">Verified mortgage brokers and buyer&apos;s agents — compare rates from 30+ lenders, free service</span>
+                  <span className="md:hidden">Mortgage brokers &amp; buyer&apos;s agents — free</span>
                 </p>
               </div>
-              <Link href="/advisors" className="text-[0.69rem] font-semibold text-violet-600 hover:text-violet-800 shrink-0 min-h-[44px] inline-flex items-center px-1">
-                Browse all →
+              <Link href="/advisors" className="text-[0.69rem] font-semibold text-blue-600 hover:text-blue-800 shrink-0 min-h-[44px] inline-flex items-center px-1">
+                All advisors &rarr;
               </Link>
             </div>
 
-            {/* Featured advisor cards — prioritise high-revenue verticals */}
+            {/* Mortgage Broker + Buyer's Agent cards — prominently displayed */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mb-4 md:mb-6">
+              {/* Mortgage Broker Card */}
+              <Link href="/advisors/mortgage-brokers" className="group bg-gradient-to-br from-rose-50 to-white border border-rose-200 rounded-xl p-4 md:p-6 hover:shadow-lg hover:border-rose-300 transition-all">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-12 h-12 rounded-xl bg-rose-100 flex items-center justify-center shrink-0">
+                    <Icon name="landmark" size={24} className="text-rose-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-base md:text-lg font-bold text-slate-900">Find a Mortgage Broker</h3>
+                    <p className="text-[0.65rem] md:text-xs text-slate-500">Free service — brokers are paid by lenders</p>
+                  </div>
+                </div>
+                <p className="text-xs md:text-sm text-slate-600 leading-relaxed mb-3">Compare rates from 30+ lenders. Home loans, refinancing, investment loans, and first home buyer grants — all handled for you.</p>
+                <div className="flex items-center justify-between">
+                  <span className="inline-flex items-center gap-1 text-xs md:text-sm font-semibold text-rose-600 group-hover:text-rose-700">
+                    Browse 20 mortgage brokers <span className="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+                  </span>
+                  <span className="text-[0.6rem] md:text-xs text-slate-400 flex items-center gap-1">
+                    <Icon name="shield-check" size={12} className="text-emerald-500" />
+                    ASIC-verified
+                  </span>
+                </div>
+              </Link>
+
+              {/* Buyer's Agent Card */}
+              <Link href="/advisors/buyers-agents" className="group bg-gradient-to-br from-teal-50 to-white border border-teal-200 rounded-xl p-4 md:p-6 hover:shadow-lg hover:border-teal-300 transition-all">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-12 h-12 rounded-xl bg-teal-100 flex items-center justify-center shrink-0">
+                    <Icon name="search" size={24} className="text-teal-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-base md:text-lg font-bold text-slate-900">Find a Buyer&apos;s Agent</h3>
+                    <p className="text-[0.65rem] md:text-xs text-slate-500">Expert negotiation &amp; off-market access</p>
+                  </div>
+                </div>
+                <p className="text-xs md:text-sm text-slate-600 leading-relaxed mb-3">Independent buyer&apos;s advocates who work for you — not the seller. Property search, auction bidding, and due diligence.</p>
+                <div className="flex items-center justify-between">
+                  <span className="inline-flex items-center gap-1 text-xs md:text-sm font-semibold text-teal-600 group-hover:text-teal-700">
+                    Browse 18 buyer&apos;s agents <span className="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+                  </span>
+                  <span className="text-[0.6rem] md:text-xs text-slate-400 flex items-center gap-1">
+                    <Icon name="shield-check" size={12} className="text-emerald-500" />
+                    ASIC-verified
+                  </span>
+                </div>
+              </Link>
+            </div>
+
+            {/* Featured property & finance advisors */}
             {(featuredAdvisors?.length ?? 0) > 0 && (() => {
-              const typeOrder: Record<string, number> = { mortgage_broker: 0, buyers_agent: 1, financial_planner: 2, insurance_broker: 3 };
-              const sorted = [...(featuredAdvisors as { slug: string; name: string; firm_name: string; type: string; location_display: string; rating: number; review_count: number; photo_url: string; fee_description: string; specialties: string[] }[])]
-                .sort((a, b) => (typeOrder[a.type] ?? 5) - (typeOrder[b.type] ?? 5));
+              const propertyTypes = new Set(["mortgage_broker", "buyers_agent"]);
+              const propertyAdvisors = (featuredAdvisors as { slug: string; name: string; firm_name: string; type: string; location_display: string; rating: number; review_count: number; photo_url: string; fee_description: string; specialties: string[] }[])
+                .filter(a => propertyTypes.has(a.type));
+              if (propertyAdvisors.length === 0) return null;
               return (
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 mb-4 md:mb-6">
-                {sorted.slice(0, 6).map((advisor) => {
-                  const typeLabel = advisor.type.replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase());
-                  return (
-                    <Link
-                      key={advisor.slug}
-                      href={`/advisor/${advisor.slug}`}
-                      className="flex items-start gap-2.5 p-2.5 md:p-3.5 bg-white border border-violet-100 rounded-xl hover:border-violet-300 hover:shadow-md transition-all group"
-                    >
-                      <Image
-                        src={advisor.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(advisor.name)}&size=80&background=7c3aed&color=fff`}
-                        alt={advisor.name}
-                        width={48}
-                        height={48}
-                        className="rounded-full shrink-0 w-10 h-10 md:w-12 md:h-12"
-                        loading="lazy"
-                        sizes="48px"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs md:text-sm font-bold text-slate-900 truncate group-hover:text-violet-700 transition-colors">{advisor.name}</p>
-                        <p className="text-[0.58rem] md:text-xs text-violet-600 font-medium">{typeLabel}</p>
-                        {advisor.firm_name && <p className="text-[0.55rem] md:text-[0.65rem] text-slate-400 truncate">{advisor.firm_name}</p>}
-                        <div className="flex items-center gap-1.5 mt-0.5">
-                          {advisor.rating > 0 && <span className="text-[0.6rem] md:text-[0.65rem] text-amber-600 font-semibold">{advisor.rating}/5</span>}
-                          {advisor.location_display && <span className="text-[0.55rem] md:text-[0.6rem] text-slate-400">{advisor.location_display}</span>}
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 mb-4">
+                  {propertyAdvisors.slice(0, 6).map((advisor) => {
+                    const typeLabel = advisor.type.replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase());
+                    return (
+                      <Link
+                        key={advisor.slug}
+                        href={`/advisor/${advisor.slug}`}
+                        className="flex items-start gap-2.5 p-2.5 md:p-3.5 bg-white border border-blue-100 rounded-xl hover:border-blue-300 hover:shadow-md transition-all group"
+                      >
+                        <Image
+                          src={advisor.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(advisor.name)}&size=80&background=2563eb&color=fff`}
+                          alt={advisor.name}
+                          width={48}
+                          height={48}
+                          className="rounded-full shrink-0 w-10 h-10 md:w-12 md:h-12"
+                          loading="lazy"
+                          sizes="48px"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs md:text-sm font-bold text-slate-900 truncate group-hover:text-blue-700 transition-colors">{advisor.name}</p>
+                          <p className="text-[0.58rem] md:text-xs text-blue-600 font-medium">{typeLabel}</p>
+                          {advisor.firm_name && <p className="text-[0.55rem] md:text-[0.65rem] text-slate-400 truncate">{advisor.firm_name}</p>}
+                          <div className="flex items-center gap-1.5 mt-0.5">
+                            {advisor.rating > 0 && <span className="text-[0.6rem] md:text-[0.65rem] text-amber-600 font-semibold">{advisor.rating}/5</span>}
+                            {advisor.location_display && <span className="text-[0.55rem] md:text-[0.6rem] text-slate-400">{advisor.location_display}</span>}
+                          </div>
                         </div>
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
+                      </Link>
+                    );
+                  })}
+                </div>
               );
             })()}
 
-            {/* Category pills — ordered by revenue potential */}
-            <div className="flex gap-1.5 md:gap-2 mb-3 md:mb-4 overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
+            {/* CTA card — property focused */}
+            <div className="bg-white border border-blue-200 rounded-xl p-4 md:p-6 flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-6">
+              <div className="flex-1 min-w-0">
+                <p className="text-sm md:text-base font-bold text-slate-900 mb-1">Need help with a home loan or property purchase?</p>
+                <p className="text-xs md:text-sm text-slate-500">
+                  Get matched with a verified mortgage broker or buyer&apos;s agent — free, no obligation. Your details go to one professional only.
+                </p>
+              </div>
+              <div className="flex gap-2 shrink-0 w-full md:w-auto">
+                <Link href="/find-advisor" className="flex-1 md:flex-none text-center px-4 py-2.5 bg-blue-600 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-blue-700 transition-colors">
+                  Get Matched
+                </Link>
+                <Link href="/advisors/mortgage-brokers" className="flex-1 md:flex-none text-center px-4 py-2.5 border border-blue-300 text-blue-700 text-xs md:text-sm font-semibold rounded-lg hover:bg-blue-50 transition-colors">
+                  Browse Brokers
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+      </ScrollFadeIn>
+
+      {/* ═══════ WEALTH & FINANCIAL PLANNING — Tier 1b ═══════ */}
+      <ScrollFadeIn>
+        <section className="py-3 md:py-10 bg-white">
+          <div className="container-custom">
+            <div className="flex items-start justify-between gap-2 mb-2.5 md:mb-6">
+              <div>
+                <h2 className="text-lg md:text-2xl font-bold text-slate-900">Wealth &amp; Financial Planning</h2>
+                <p className="text-[0.69rem] md:text-sm text-slate-500 mt-0.5 md:mt-1">
+                  <span className="hidden md:inline">Financial planners, insurance brokers, and wealth managers — verified against ASIC registers</span>
+                  <span className="md:hidden">Planners, insurance &amp; wealth managers</span>
+                </p>
+              </div>
+              <Link href="/advisors" className="text-[0.69rem] font-semibold text-violet-600 hover:text-violet-800 shrink-0 min-h-[44px] inline-flex items-center px-1">
+                Browse all &rarr;
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mb-4 md:mb-6">
+              {/* Financial Planner Card */}
+              <Link href="/advisors/financial-planners" className="group bg-gradient-to-br from-violet-50 to-white border border-violet-200 rounded-xl p-4 md:p-5 hover:shadow-md hover:border-violet-300 transition-all">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-10 h-10 rounded-lg bg-violet-100 flex items-center justify-center shrink-0">
+                    <Icon name="trending-up" size={20} className="text-violet-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm md:text-base font-bold text-slate-900">Financial Planners</h3>
+                    <p className="text-[0.65rem] md:text-xs text-slate-500">Wealth strategy &amp; retirement</p>
+                  </div>
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed">Comprehensive financial advice — retirement planning, wealth accumulation, superannuation strategy, and estate planning.</p>
+                <span className="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-violet-600 group-hover:text-violet-700">
+                  Browse financial planners <span className="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+                </span>
+              </Link>
+
+              {/* Insurance Broker Card */}
+              <Link href="/advisors/insurance-brokers" className="group bg-gradient-to-br from-sky-50 to-white border border-sky-200 rounded-xl p-4 md:p-5 hover:shadow-md hover:border-sky-300 transition-all">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-10 h-10 rounded-lg bg-sky-100 flex items-center justify-center shrink-0">
+                    <Icon name="shield" size={20} className="text-sky-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm md:text-base font-bold text-slate-900">Insurance Brokers</h3>
+                    <p className="text-[0.65rem] md:text-xs text-slate-500">Life, income protection &amp; business</p>
+                  </div>
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed">Compare policies from 10+ insurers. Is your super insurance enough? Our brokers find the gaps and fix them — free.</p>
+                <span className="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-sky-600 group-hover:text-sky-700">
+                  Browse insurance brokers <span className="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+                </span>
+              </Link>
+
+              {/* SMSF & Tax Card */}
+              <Link href="/advisors/smsf-accountants" className="group bg-gradient-to-br from-amber-50 to-white border border-amber-200 rounded-xl p-4 md:p-5 hover:shadow-md hover:border-amber-300 transition-all">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center shrink-0">
+                    <Icon name="briefcase" size={20} className="text-amber-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm md:text-base font-bold text-slate-900">SMSF &amp; Tax Specialists</h3>
+                    <p className="text-[0.65rem] md:text-xs text-slate-500">Self-managed super &amp; tax strategy</p>
+                  </div>
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed">SMSF setup and administration, investment structuring, and end-of-financial-year tax planning from specialist accountants.</p>
+                <span className="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-amber-600 group-hover:text-amber-700">
+                  Browse specialists <span className="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+                </span>
+              </Link>
+            </div>
+
+            {/* Featured wealth advisors */}
+            {(featuredAdvisors?.length ?? 0) > 0 && (() => {
+              const wealthTypes = new Set(["financial_planner", "insurance_broker", "smsf_accountant", "wealth_manager"]);
+              const wealthAdvisors = (featuredAdvisors as { slug: string; name: string; firm_name: string; type: string; location_display: string; rating: number; review_count: number; photo_url: string; fee_description: string; specialties: string[] }[])
+                .filter(a => wealthTypes.has(a.type));
+              if (wealthAdvisors.length === 0) return null;
+              return (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 mb-4">
+                  {wealthAdvisors.slice(0, 6).map((advisor) => {
+                    const typeLabel = advisor.type.replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase());
+                    return (
+                      <Link
+                        key={advisor.slug}
+                        href={`/advisor/${advisor.slug}`}
+                        className="flex items-start gap-2.5 p-2.5 md:p-3.5 bg-white border border-violet-100 rounded-xl hover:border-violet-300 hover:shadow-md transition-all group"
+                      >
+                        <Image
+                          src={advisor.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(advisor.name)}&size=80&background=7c3aed&color=fff`}
+                          alt={advisor.name}
+                          width={48}
+                          height={48}
+                          className="rounded-full shrink-0 w-10 h-10 md:w-12 md:h-12"
+                          loading="lazy"
+                          sizes="48px"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs md:text-sm font-bold text-slate-900 truncate group-hover:text-violet-700 transition-colors">{advisor.name}</p>
+                          <p className="text-[0.58rem] md:text-xs text-violet-600 font-medium">{typeLabel}</p>
+                          {advisor.firm_name && <p className="text-[0.55rem] md:text-[0.65rem] text-slate-400 truncate">{advisor.firm_name}</p>}
+                          <div className="flex items-center gap-1.5 mt-0.5">
+                            {advisor.rating > 0 && <span className="text-[0.6rem] md:text-[0.65rem] text-amber-600 font-semibold">{advisor.rating}/5</span>}
+                            {advisor.location_display && <span className="text-[0.55rem] md:text-[0.6rem] text-slate-400">{advisor.location_display}</span>}
+                          </div>
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              );
+            })()}
+
+            {/* All advisor category pills */}
+            <div className="flex gap-1.5 md:gap-2 overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
               {[
-                { label: "Mortgage Brokers", href: "/advisors/mortgage-brokers", icon: "landmark" },
-                { label: "Buyer's Agents", href: "/advisors/buyers-agents", icon: "search" },
                 { label: "Financial Planners", href: "/advisors/financial-planners", icon: "trending-up" },
                 { label: "Insurance Brokers", href: "/advisors/insurance-brokers", icon: "shield" },
                 { label: "SMSF Accountants", href: "/advisors/smsf-accountants", icon: "building" },
@@ -420,89 +605,104 @@ export default async function HomePage() {
                 </Link>
               ))}
             </div>
-
-            {/* CTA card */}
-            <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-6 flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-6">
-              <div className="flex-1 min-w-0">
-                <p className="text-sm md:text-base font-bold text-slate-900 mb-1">Get matched with a verified advisor — free, no obligation</p>
-                <p className="text-xs md:text-sm text-slate-500">
-                  Tell us what you need help with and we&apos;ll connect you with a verified professional. Your details go to one advisor only.
-                </p>
-              </div>
-              <div className="flex gap-2 shrink-0 w-full md:w-auto">
-                <Link
-                  href="/find-advisor"
-                  className="flex-1 md:flex-none text-center px-4 py-2.5 bg-violet-600 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-violet-700 transition-colors"
-                >
-                  Find My Advisor
-                </Link>
-                <Link
-                  href="/advisors"
-                  className="flex-1 md:flex-none text-center px-4 py-2.5 border border-violet-300 text-violet-700 text-xs md:text-sm font-semibold rounded-lg hover:bg-violet-50 transition-colors"
-                >
-                  Browse All
-                </Link>
-              </div>
-            </div>
           </div>
         </section>
       </ScrollFadeIn>
 
-      {/* ═══════ HIGH-VALUE VERTICALS — Mortgage + Buyer's Agent + Insurance ═══════ */}
+      {/* ═══════ SEASONAL EOFY / TAX TIME BLOCK ═══════ */}
+      {(() => {
+        const month = new Date().getMonth(); // 0-indexed: March=2, April=3, May=4, June=5
+        const isEofySeason = month >= 2 && month <= 6; // March through July
+        if (!isEofySeason) return null;
+        return (
+          <ScrollFadeIn>
+            <section className="py-3 md:py-10 bg-gradient-to-r from-amber-50 to-orange-50 border-y border-amber-200/50">
+              <div className="container-custom">
+                <div className="flex items-center gap-2 mb-2 md:mb-4">
+                  <div className="w-8 h-8 md:w-10 md:h-10 bg-amber-100 rounded-lg flex items-center justify-center shrink-0">
+                    <Icon name="calendar" size={20} className="text-amber-600" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg md:text-2xl font-bold text-slate-900">EOFY Tax Planning</h2>
+                    <p className="text-[0.69rem] md:text-sm text-amber-700">End-of-financial-year deadline approaching — get your tax strategy sorted</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <Link href="/advisors/tax-agents" className="group bg-white border border-amber-200 rounded-xl p-4 hover:shadow-md hover:border-amber-300 transition-all">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Icon name="calculator" size={18} className="text-amber-600" />
+                      <h3 className="font-bold text-sm text-slate-900">Find a Tax Agent</h3>
+                    </div>
+                    <p className="text-xs text-slate-600 leading-relaxed">Expert tax planning, deductions, and lodgement. Don&apos;t leave money on the table this EOFY.</p>
+                    <span className="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-amber-600 group-hover:text-amber-700">
+                      Browse tax agents <span className="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+                    </span>
+                  </Link>
+                  <Link href="/advisors/smsf-accountants" className="group bg-white border border-amber-200 rounded-xl p-4 hover:shadow-md hover:border-amber-300 transition-all">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Icon name="briefcase" size={18} className="text-amber-600" />
+                      <h3 className="font-bold text-sm text-slate-900">SMSF End-of-Year</h3>
+                    </div>
+                    <p className="text-xs text-slate-600 leading-relaxed">SMSF audit, compliance, and year-end reporting. Ensure your self-managed super is compliant before June 30.</p>
+                    <span className="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-amber-600 group-hover:text-amber-700">
+                      Browse SMSF accountants <span className="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+                    </span>
+                  </Link>
+                  <Link href="/advisors/financial-planners" className="group bg-white border border-amber-200 rounded-xl p-4 hover:shadow-md hover:border-amber-300 transition-all">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Icon name="trending-up" size={18} className="text-amber-600" />
+                      <h3 className="font-bold text-sm text-slate-900">Pre-EOFY Strategy</h3>
+                    </div>
+                    <p className="text-xs text-slate-600 leading-relaxed">Salary sacrifice, contribution caps, and tax-effective investment structuring — before the deadline hits.</p>
+                    <span className="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-amber-600 group-hover:text-amber-700">
+                      Browse financial planners <span className="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+                    </span>
+                  </Link>
+                </div>
+              </div>
+            </section>
+          </ScrollFadeIn>
+        );
+      })()}
+
+      {/* ═══════ CROSS-SELLING — Smart Recommendations ═══════ */}
       <ScrollFadeIn>
-        <section className="py-3 md:py-10 bg-white">
+        <section className="py-3 md:py-10 bg-slate-50/50">
           <div className="container-custom">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
-              {/* Mortgage Broker Card */}
-              <Link href="/advisors/mortgage-brokers" className="group bg-gradient-to-br from-rose-50 to-white border border-rose-200 rounded-xl p-4 md:p-5 hover:shadow-md hover:border-rose-300 transition-all">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 rounded-lg bg-rose-100 flex items-center justify-center shrink-0">
-                    <Icon name="landmark" size={20} className="text-rose-600" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm md:text-base font-bold text-slate-900">Find a Mortgage Broker</h3>
-                    <p className="text-[0.65rem] md:text-xs text-slate-500">Free service — brokers are paid by lenders</p>
-                  </div>
+            <div className="bg-white border border-slate-200 rounded-2xl p-5 md:p-8">
+              <h2 className="text-base md:text-xl font-bold text-slate-900 mb-1">Your financial journey doesn&apos;t stop at one step</h2>
+              <p className="text-xs md:text-sm text-slate-500 mb-4 md:mb-6">Most property buyers need multiple professionals. Here&apos;s the typical path:</p>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-4">
+                {[
+                  { step: "1", label: "Mortgage Broker", desc: "Secure your home loan", href: "/advisors/mortgage-brokers", color: "bg-rose-50 border-rose-200 text-rose-700" },
+                  { step: "2", label: "Buyer's Agent", desc: "Find the right property", href: "/advisors/buyers-agents", color: "bg-teal-50 border-teal-200 text-teal-700" },
+                  { step: "3", label: "Insurance Broker", desc: "Protect your investment", href: "/advisors/insurance-brokers", color: "bg-sky-50 border-sky-200 text-sky-700" },
+                  { step: "4", label: "Tax Agent", desc: "Structure for tax efficiency", href: "/advisors/tax-agents", color: "bg-amber-50 border-amber-200 text-amber-700" },
+                ].map((item) => (
+                  <Link key={item.step} href={item.href} className={`relative border rounded-xl p-4 ${item.color} hover:shadow-md transition-all group`}>
+                    <span className="absolute -top-2 -left-2 w-6 h-6 bg-slate-900 text-white text-xs font-bold rounded-full flex items-center justify-center">{item.step}</span>
+                    <p className="font-bold text-sm mt-1">{item.label}</p>
+                    <p className="text-xs opacity-80 mt-0.5">{item.desc}</p>
+                    <span className="text-xs font-semibold mt-2 inline-block group-hover:translate-x-0.5 transition-transform">Browse &rarr;</span>
+                  </Link>
+                ))}
+              </div>
+              {/* Life Events portal teaser */}
+              <div className="mt-5 md:mt-6 pt-4 border-t border-slate-100">
+                <p className="text-xs md:text-sm text-slate-500 mb-2 font-medium">Need help with a specific life event?</p>
+                <div className="flex gap-2 flex-wrap">
+                  {[
+                    { label: "Navigating Aged Care", href: "/advisors/aged-care-advisors" },
+                    { label: "Managing an Inheritance", href: "/advisors/estate-planners" },
+                    { label: "Managing Debt", href: "/advisors/debt-counsellors" },
+                    { label: "Crypto & Digital Assets", href: "/advisors/crypto-specialists" },
+                  ].map((event) => (
+                    <Link key={event.label} href={event.href} className="px-3 py-1.5 text-xs font-medium text-slate-600 bg-slate-100 rounded-full hover:bg-slate-200 hover:text-slate-900 transition-colors">
+                      {event.label}
+                    </Link>
+                  ))}
                 </div>
-                <p className="text-xs text-slate-600 leading-relaxed">Compare rates from 30+ lenders. Our brokers help with home loans, refinancing, investment loans, and first home buyer grants.</p>
-                <span className="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-rose-600 group-hover:text-rose-700">
-                  Browse 20 mortgage brokers <span className="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
-                </span>
-              </Link>
-
-              {/* Buyer's Agent Card */}
-              <Link href="/advisors/buyers-agents" className="group bg-gradient-to-br from-teal-50 to-white border border-teal-200 rounded-xl p-4 md:p-5 hover:shadow-md hover:border-teal-300 transition-all">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 rounded-lg bg-teal-100 flex items-center justify-center shrink-0">
-                    <Icon name="search" size={20} className="text-teal-600" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm md:text-base font-bold text-slate-900">Find a Buyer&apos;s Agent</h3>
-                    <p className="text-[0.65rem] md:text-xs text-slate-500">Expert negotiation &amp; off-market access</p>
-                  </div>
-                </div>
-                <p className="text-xs text-slate-600 leading-relaxed">Independent buyer&apos;s advocates who work for you — not the seller. Property search, auction bidding, and due diligence.</p>
-                <span className="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-teal-600 group-hover:text-teal-700">
-                  Browse 18 buyer&apos;s agents <span className="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
-                </span>
-              </Link>
-
-              {/* Insurance Broker Card */}
-              <Link href="/advisors/insurance-brokers" className="group bg-gradient-to-br from-sky-50 to-white border border-sky-200 rounded-xl p-4 md:p-5 hover:shadow-md hover:border-sky-300 transition-all">
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-10 h-10 rounded-lg bg-sky-100 flex items-center justify-center shrink-0">
-                    <Icon name="shield" size={20} className="text-sky-600" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm md:text-base font-bold text-slate-900">Find an Insurance Broker</h3>
-                    <p className="text-[0.65rem] md:text-xs text-slate-500">Life, income protection &amp; business cover</p>
-                  </div>
-                </div>
-                <p className="text-xs text-slate-600 leading-relaxed">Compare policies from 10+ insurers. Is your super insurance enough? Our brokers find the gaps and fix them — free.</p>
-                <span className="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-sky-600 group-hover:text-sky-700">
-                  Browse 18 insurance brokers <span className="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
-                </span>
-              </Link>
+              </div>
             </div>
           </div>
         </section>

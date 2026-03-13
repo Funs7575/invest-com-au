@@ -18,11 +18,12 @@ const platformsDropdown = [
 ];
 
 const advisorsDropdown = [
-  { label: "Find an Advisor", href: "/find-advisor", desc: "Match with a professional" },
   { label: "Mortgage Brokers", href: "/advisors/mortgage-brokers", desc: "Compare 30+ lenders — free" },
   { label: "Buyer's Agents", href: "/advisors/buyers-agents", desc: "Off-market access & negotiation" },
+  { label: "Financial Planners", href: "/advisors/financial-planners", desc: "Wealth strategy & retirement" },
   { label: "Insurance Brokers", href: "/advisors/insurance-brokers", desc: "Life, income protection & business" },
-  { label: "All Advisors", href: "/advisors", desc: "Browse all 113 professionals" },
+  { label: "Find an Advisor", href: "/find-advisor", desc: "Match with a verified professional" },
+  { label: "All Advisors", href: "/advisors", desc: "Browse all professionals" },
 ];
 
 const learnDropdown = [
@@ -44,12 +45,13 @@ const popularLinks = [
 // Mobile nav — flat list grouped by section
 const mobileNavSections = [
   {
-    title: "Advisors & Brokers",
+    title: "Property & Finance",
     items: [
-      { name: "Find an Advisor", href: "/find-advisor" },
       { name: "Mortgage Brokers", href: "/advisors/mortgage-brokers" },
       { name: "Buyer's Agents", href: "/advisors/buyers-agents" },
+      { name: "Financial Planners", href: "/advisors/financial-planners" },
       { name: "Insurance Brokers", href: "/advisors/insurance-brokers" },
+      { name: "Find an Advisor", href: "/find-advisor" },
       { name: "All Advisors", href: "/advisors" },
     ],
   },
@@ -164,7 +166,7 @@ export default function Header() {
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-2 lg:gap-3.5 ml-6" aria-label="Main navigation">
-            <DesktopDropdown label="Advisors" items={advisorsDropdown} isActive={isAdvisorsActive} accentColor="violet" />
+            <DesktopDropdown label="Property & Finance" items={advisorsDropdown} isActive={isAdvisorsActive} accentColor="violet" />
             <DesktopDropdown label="Platforms" items={platformsDropdown} isActive={isPlatformsActive} />
             <DesktopDropdown label="Learn" items={learnDropdown} isActive={isLearnActive} />
 
