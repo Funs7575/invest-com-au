@@ -211,7 +211,33 @@ export default async function HomePage() {
         advisors={(featuredAdvisors as { slug: string; name: string; firm_name?: string; type: string; location_display?: string; location_state?: string; rating: number; review_count: number; photo_url?: string; specialties: string[]; verified?: boolean }[]) || []}
       />
 
-      {/* ═══════ 3. HIGH-VALUE VERTICALS ═══════ */}
+      {/* ═══════ 3. CROSS-SELLING JOURNEY — immediately after advisors ═══════ */}
+      <ScrollFadeIn>
+        <section className="py-3 md:py-10 bg-white">
+          <div className="container-custom">
+            <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-6">
+              <h2 className="text-base md:text-xl font-bold text-slate-900 mb-1">Your financial journey doesn&apos;t stop at one step</h2>
+              <p className="text-xs md:text-sm text-slate-500 mb-4 md:mb-6">Most property buyers need multiple professionals. Here&apos;s the typical path:</p>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
+                {[
+                  { step: "1", label: "Mortgage Broker", desc: "Secure your home loan", href: "/advisors/mortgage-brokers", color: "bg-rose-50 border-rose-200 text-rose-700" },
+                  { step: "2", label: "Buyer's Agent", desc: "Find the right property", href: "/advisors/buyers-agents", color: "bg-teal-50 border-teal-200 text-teal-700" },
+                  { step: "3", label: "Insurance Broker", desc: "Protect your investment", href: "/advisors/insurance-brokers", color: "bg-sky-50 border-sky-200 text-sky-700" },
+                  { step: "4", label: "Tax Agent", desc: "Structure for efficiency", href: "/advisors/tax-agents", color: "bg-amber-50 border-amber-200 text-amber-700" },
+                ].map((item) => (
+                  <Link key={item.step} href={item.href} className={`relative border rounded-xl p-3 md:p-4 ${item.color} hover:shadow-md transition-all group`}>
+                    <span className="absolute -top-2 -left-2 w-6 h-6 bg-slate-900 text-white text-[0.6rem] font-bold rounded-full flex items-center justify-center shadow-sm">{item.step}</span>
+                    <p className="font-bold text-xs md:text-sm mt-1">{item.label}</p>
+                    <p className="text-[0.65rem] md:text-xs opacity-80 mt-0.5">{item.desc}</p>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      </ScrollFadeIn>
+
+      {/* ═══════ 4. HIGH-VALUE VERTICALS — reinforces the journey steps ═══════ */}
       <ScrollFadeIn>
         <section className="py-3 md:py-10 bg-white">
           <div className="container-custom">
@@ -268,7 +294,7 @@ export default async function HomePage() {
         </section>
       </ScrollFadeIn>
 
-      {/* ═══════ 4. EOFY SEASONAL BLOCK (March–July) ═══════ */}
+      {/* ═══════ 5. EOFY SEASONAL BLOCK (March–July) ═══════ */}
       {(() => {
         const month = new Date().getMonth();
         const isEofySeason = month >= 2 && month <= 6;
@@ -310,7 +336,37 @@ export default async function HomePage() {
         );
       })()}
 
-      {/* ═══════ 5. COMPARISON TABLE ═══════ */}
+      {/* ═══════ 6. TOOLS & CALCULATORS ═══════ */}
+      <ScrollFadeIn>
+        <section className="py-4 md:py-14 bg-slate-50">
+          <div className="container-custom">
+            <p className="text-[0.62rem] md:text-xs text-slate-400 text-center uppercase tracking-widest font-semibold mb-1 md:mb-2">Free tools</p>
+            <h2 className="text-lg md:text-2xl font-bold text-center mb-3 md:mb-8">Investing Tools &amp; Calculators</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
+              {[
+                { href: "/portfolio-calculator", icon: "calculator", color: "from-violet-600 to-violet-500", shadow: "shadow-violet-500/15", title: "Portfolio Calculator", desc: "See exact fees at every platform" },
+                { href: "/switching-calculator", icon: "arrow-right-left", color: "from-emerald-600 to-emerald-500", shadow: "shadow-emerald-500/15", title: "Switching Calculator", desc: "How much are you overpaying?" },
+                { href: "/savings-calculator", icon: "piggy-bank", color: "from-blue-600 to-blue-500", shadow: "shadow-blue-500/15", title: "Savings Calculator", desc: "Are you earning enough?" },
+                { href: "/compare", icon: "bar-chart", color: "from-amber-500 to-amber-400", shadow: "shadow-amber-500/15", title: "Compare Platforms", desc: "Side-by-side comparison" },
+                { href: "/calculators", icon: "bar-chart", color: "from-blue-600 to-blue-500", shadow: "shadow-blue-500/15", title: "All Calculators", desc: "CGT, FX, dividends & more" },
+                { href: "/best", icon: "shield-check", color: "from-indigo-600 to-indigo-500", shadow: "shadow-indigo-500/15", title: "Best Platforms", desc: "Top picks by category" },
+                { href: "/quiz", icon: "target", color: "from-slate-700 to-slate-600", shadow: "shadow-slate-500/15", title: "Platform Quiz", desc: "Best match in 60 seconds" },
+                { href: "/find-advisor", icon: "users", color: "from-violet-500 to-purple-500", shadow: "shadow-violet-500/15", title: "Find Advisor", desc: "Matched to your needs" },
+              ].map((tool) => (
+                <Link key={tool.href} href={tool.href} className="bg-white border border-slate-200 rounded-xl p-3 md:p-5 hover:shadow-md transition-all group">
+                  <div className={`w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br ${tool.color} rounded-lg flex items-center justify-center mb-2 md:mb-3 shadow-lg ${tool.shadow}`}>
+                    <Icon name={tool.icon} size={18} className="text-white" />
+                  </div>
+                  <h3 className="text-xs md:text-sm font-bold text-slate-900 mb-0.5 group-hover:text-slate-700">{tool.title}</h3>
+                  <p className="text-[0.65rem] md:text-xs text-slate-500">{tool.desc}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      </ScrollFadeIn>
+
+      {/* ═══════ 7. COMPARISON TABLE ═══════ */}
       <ScrollFadeIn>
         <section className="py-2.5 sm:py-8 md:py-16 bg-slate-50">
           <div className="container-custom">
@@ -346,7 +402,7 @@ export default async function HomePage() {
         </section>
       </ScrollFadeIn>
 
-      {/* ═══════ 6. ACTIVE DEALS ═══════ */}
+      {/* ═══════ 8. ACTIVE DEALS ═══════ */}
       {(dealBrokers as Broker[])?.length > 0 && (
         <ScrollFadeIn>
           <section className="py-3 md:py-12 bg-gradient-to-b from-amber-50/50 to-white">
@@ -409,7 +465,7 @@ export default async function HomePage() {
         </ScrollFadeIn>
       )}
 
-      {/* ═══════ 7. BEST PLATFORMS BY CATEGORY ═══════ */}
+      {/* ═══════ 9. BEST PLATFORMS BY CATEGORY ═══════ */}
       <ScrollFadeIn>
         <section className="py-2 md:py-8 bg-slate-50">
           <div className="container-custom">
@@ -454,7 +510,7 @@ export default async function HomePage() {
         </section>
       </ScrollFadeIn>
 
-      {/* ═══════ 8. TOP REVIEWED PLATFORMS ═══════ */}
+      {/* ═══════ 10. TOP REVIEWED PLATFORMS ═══════ */}
       <ScrollFadeIn>
         <section className="py-3 md:py-10 bg-white">
           <div className="container-custom">
@@ -474,7 +530,7 @@ export default async function HomePage() {
         </section>
       </ScrollFadeIn>
 
-      {/* ═══════ 9. ARTICLES & GUIDES ═══════ */}
+      {/* ═══════ 11. ARTICLES & GUIDES ═══════ */}
       {(articles as Article[])?.length > 0 && (
         <ScrollFadeIn>
           <section className="py-3 md:py-12 bg-white">
@@ -549,62 +605,6 @@ export default async function HomePage() {
           </section>
         </ScrollFadeIn>
       )}
-
-      {/* ═══════ 10. CROSS-SELLING JOURNEY ═══════ */}
-      <ScrollFadeIn>
-        <section className="py-3 md:py-10 bg-slate-50">
-          <div className="container-custom">
-            <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-6">
-              <h2 className="text-base md:text-xl font-bold text-slate-900 mb-1">Your financial journey doesn&apos;t stop at one step</h2>
-              <p className="text-xs md:text-sm text-slate-500 mb-4 md:mb-6">Most property buyers need multiple professionals. Here&apos;s the typical path:</p>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
-                {[
-                  { step: "1", label: "Mortgage Broker", desc: "Secure your home loan", href: "/advisors/mortgage-brokers", color: "bg-rose-50 border-rose-200 text-rose-700" },
-                  { step: "2", label: "Buyer's Agent", desc: "Find the right property", href: "/advisors/buyers-agents", color: "bg-teal-50 border-teal-200 text-teal-700" },
-                  { step: "3", label: "Insurance Broker", desc: "Protect your investment", href: "/advisors/insurance-brokers", color: "bg-sky-50 border-sky-200 text-sky-700" },
-                  { step: "4", label: "Tax Agent", desc: "Structure for efficiency", href: "/advisors/tax-agents", color: "bg-amber-50 border-amber-200 text-amber-700" },
-                ].map((item) => (
-                  <Link key={item.step} href={item.href} className={`relative border rounded-xl p-3 md:p-4 ${item.color} hover:shadow-md transition-all group`}>
-                    <span className="absolute -top-2 -left-2 w-6 h-6 bg-slate-900 text-white text-[0.6rem] font-bold rounded-full flex items-center justify-center shadow-sm">{item.step}</span>
-                    <p className="font-bold text-xs md:text-sm mt-1">{item.label}</p>
-                    <p className="text-[0.65rem] md:text-xs opacity-80 mt-0.5">{item.desc}</p>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-      </ScrollFadeIn>
-
-      {/* ═══════ 11. TOOLS & CALCULATORS ═══════ */}
-      <ScrollFadeIn>
-        <section className="py-4 md:py-14 bg-slate-50">
-          <div className="container-custom">
-            <p className="text-[0.62rem] md:text-xs text-slate-400 text-center uppercase tracking-widest font-semibold mb-1 md:mb-2">Free tools</p>
-            <h2 className="text-lg md:text-2xl font-bold text-center mb-3 md:mb-8">Investing Tools &amp; Calculators</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
-              {[
-                { href: "/portfolio-calculator", icon: "calculator", color: "from-violet-600 to-violet-500", shadow: "shadow-violet-500/15", title: "Portfolio Calculator", desc: "See exact fees at every platform" },
-                { href: "/switching-calculator", icon: "arrow-right-left", color: "from-emerald-600 to-emerald-500", shadow: "shadow-emerald-500/15", title: "Switching Calculator", desc: "How much are you overpaying?" },
-                { href: "/savings-calculator", icon: "piggy-bank", color: "from-blue-600 to-blue-500", shadow: "shadow-blue-500/15", title: "Savings Calculator", desc: "Are you earning enough?" },
-                { href: "/compare", icon: "bar-chart", color: "from-amber-500 to-amber-400", shadow: "shadow-amber-500/15", title: "Compare Platforms", desc: "Side-by-side comparison" },
-                { href: "/calculators", icon: "bar-chart", color: "from-blue-600 to-blue-500", shadow: "shadow-blue-500/15", title: "All Calculators", desc: "CGT, FX, dividends & more" },
-                { href: "/best", icon: "shield-check", color: "from-indigo-600 to-indigo-500", shadow: "shadow-indigo-500/15", title: "Best Platforms", desc: "Top picks by category" },
-                { href: "/quiz", icon: "target", color: "from-slate-700 to-slate-600", shadow: "shadow-slate-500/15", title: "Platform Quiz", desc: "Best match in 60 seconds" },
-                { href: "/find-advisor", icon: "users", color: "from-violet-500 to-purple-500", shadow: "shadow-violet-500/15", title: "Find Advisor", desc: "Matched to your needs" },
-              ].map((tool) => (
-                <Link key={tool.href} href={tool.href} className="bg-white border border-slate-200 rounded-xl p-3 md:p-5 hover:shadow-md transition-all group">
-                  <div className={`w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br ${tool.color} rounded-lg flex items-center justify-center mb-2 md:mb-3 shadow-lg ${tool.shadow}`}>
-                    <Icon name={tool.icon} size={18} className="text-white" />
-                  </div>
-                  <h3 className="text-xs md:text-sm font-bold text-slate-900 mb-0.5 group-hover:text-slate-700">{tool.title}</h3>
-                  <p className="text-[0.65rem] md:text-xs text-slate-500">{tool.desc}</p>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-      </ScrollFadeIn>
 
       {/* ═══════ 12. EMAIL CAPTURE ═══════ */}
       <ScrollFadeIn>
