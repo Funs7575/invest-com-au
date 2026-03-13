@@ -443,6 +443,66 @@ export default async function HomePage() {
         </section>
       </ScrollFadeIn>
 
+      {/* ═══════ HIGH-VALUE VERTICALS — Mortgage + Buyer's Agent + Insurance ═══════ */}
+      <ScrollFadeIn>
+        <section className="py-3 md:py-10 bg-white">
+          <div className="container-custom">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+              {/* Mortgage Broker Card */}
+              <Link href="/advisors/mortgage-brokers" className="group bg-gradient-to-br from-rose-50 to-white border border-rose-200 rounded-xl p-4 md:p-5 hover:shadow-md hover:border-rose-300 transition-all">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-10 h-10 rounded-lg bg-rose-100 flex items-center justify-center shrink-0">
+                    <Icon name="landmark" size={20} className="text-rose-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm md:text-base font-bold text-slate-900">Find a Mortgage Broker</h3>
+                    <p className="text-[0.65rem] md:text-xs text-slate-500">Free service — brokers are paid by lenders</p>
+                  </div>
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed">Compare rates from 30+ lenders. Our brokers help with home loans, refinancing, investment loans, and first home buyer grants.</p>
+                <span className="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-rose-600 group-hover:text-rose-700">
+                  Browse 20 mortgage brokers <span className="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+                </span>
+              </Link>
+
+              {/* Buyer's Agent Card */}
+              <Link href="/advisors/buyers-agents" className="group bg-gradient-to-br from-teal-50 to-white border border-teal-200 rounded-xl p-4 md:p-5 hover:shadow-md hover:border-teal-300 transition-all">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-10 h-10 rounded-lg bg-teal-100 flex items-center justify-center shrink-0">
+                    <Icon name="search" size={20} className="text-teal-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm md:text-base font-bold text-slate-900">Find a Buyer&apos;s Agent</h3>
+                    <p className="text-[0.65rem] md:text-xs text-slate-500">Expert negotiation &amp; off-market access</p>
+                  </div>
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed">Independent buyer&apos;s advocates who work for you — not the seller. Property search, auction bidding, and due diligence.</p>
+                <span className="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-teal-600 group-hover:text-teal-700">
+                  Browse 18 buyer&apos;s agents <span className="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+                </span>
+              </Link>
+
+              {/* Insurance Broker Card */}
+              <Link href="/advisors/insurance-brokers" className="group bg-gradient-to-br from-sky-50 to-white border border-sky-200 rounded-xl p-4 md:p-5 hover:shadow-md hover:border-sky-300 transition-all">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-10 h-10 rounded-lg bg-sky-100 flex items-center justify-center shrink-0">
+                    <Icon name="shield" size={20} className="text-sky-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm md:text-base font-bold text-slate-900">Find an Insurance Broker</h3>
+                    <p className="text-[0.65rem] md:text-xs text-slate-500">Life, income protection &amp; business cover</p>
+                  </div>
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed">Compare policies from 10+ insurers. Is your super insurance enough? Our brokers find the gaps and fix them — free.</p>
+                <span className="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-sky-600 group-hover:text-sky-700">
+                  Browse 18 insurance brokers <span className="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+                </span>
+              </Link>
+            </div>
+          </div>
+        </section>
+      </ScrollFadeIn>
+
       {/* Broker Logo Strip — desktop only */}
       <section className="hidden md:block py-4 bg-white border-b border-slate-100">
         <div className="container-custom">
@@ -489,6 +549,11 @@ export default async function HomePage() {
               >
                 View All {brokerCount}+ Platforms &rarr;
               </Link>
+              <p className="text-xs text-slate-400 mt-3">
+                Not sure which platform is right for you?{" "}
+                <Link href="/find-advisor" className="text-violet-600 font-semibold hover:text-violet-700">Talk to a financial advisor</Link> or{" "}
+                <Link href="/advisors/mortgage-brokers" className="text-rose-600 font-semibold hover:text-rose-700">find a mortgage broker</Link> — free, no obligation.
+              </p>
             </div>
           </div>
         </section>
