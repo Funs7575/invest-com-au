@@ -43,21 +43,20 @@ export default function HeroLeadCapture() {
   const [hovered, setHovered] = useState<string | null>(null);
 
   return (
-    <div className="bg-white rounded-[2rem] shadow-[0_20px_60px_rgb(0,0,0,0.08)] border border-slate-100 p-6 md:p-10 relative overflow-hidden">
-      {/* Premium amber accent bar */}
-      <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600" />
+    <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-6 md:p-8 relative overflow-hidden">
+      {/* Amber accent bar */}
+      <div className="absolute top-0 left-0 w-full h-1 bg-amber-500" />
 
       <div className="flex justify-between items-start mb-2">
-        <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900">What is your primary goal?</h2>
-        {/* Network Active badge */}
-        <div className="hidden sm:flex items-center gap-1.5 bg-emerald-50 text-emerald-700 text-[11px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider border border-emerald-100">
+        <h2 className="text-xl md:text-2xl font-bold text-slate-900">What is your primary goal?</h2>
+        <div className="hidden sm:flex items-center gap-1.5 bg-emerald-50 text-emerald-700 text-[11px] font-semibold px-2.5 py-1 rounded-full uppercase tracking-wider border border-emerald-100">
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
           Network Active
         </div>
       </div>
-      <p className="text-slate-500 mb-8 font-medium">Takes 60 seconds. Secure your free strategy session.</p>
+      <p className="text-sm text-slate-500 mb-6">Takes 60 seconds. Secure your free strategy session.</p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {options.map((opt) => {
           const isHovered = hovered === opt.id;
           return (
@@ -66,29 +65,29 @@ export default function HeroLeadCapture() {
               href={opt.href}
               onMouseEnter={() => setHovered(opt.id)}
               onMouseLeave={() => setHovered(null)}
-              className={`relative flex items-start text-left p-5 border-2 rounded-2xl transition-all duration-300 group ${
+              className={`relative flex items-start text-left p-4 border rounded-xl transition-all duration-200 group ${
                 isHovered
-                  ? "border-amber-500 bg-amber-50/30 shadow-lg -translate-y-0.5"
-                  : "border-slate-100 hover:border-amber-300 bg-white shadow-sm"
+                  ? "border-amber-500 bg-amber-50/50 shadow-md -translate-y-0.5"
+                  : "border-slate-200 hover:border-amber-300 bg-white shadow-sm"
               }`}
             >
               {opt.badge && (
-                <span className="absolute -top-3 right-4 bg-slate-900 text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-md">
+                <span className="absolute -top-2.5 right-3 bg-slate-900 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
                   {opt.badge}
                 </span>
               )}
               <div
-                className={`p-3.5 rounded-xl mr-4 transition-colors shadow-sm ${
+                className={`p-3 rounded-lg mr-3 transition-colors shrink-0 ${
                   isHovered
-                    ? "bg-amber-500 text-slate-900"
-                    : "bg-slate-50 border border-slate-100 text-slate-700 group-hover:bg-amber-100 group-hover:text-amber-800 group-hover:border-amber-200"
+                    ? "bg-amber-500 text-white"
+                    : "bg-slate-50 border border-slate-100 text-slate-600 group-hover:bg-amber-50 group-hover:text-amber-600 group-hover:border-amber-200"
                 }`}
               >
-                <Icon name={opt.icon} size={24} />
+                <Icon name={opt.icon} size={22} />
               </div>
               <div>
-                <span className="block font-extrabold text-slate-900 text-lg mb-0.5">{opt.label}</span>
-                <span className="block text-sm text-slate-500 font-medium">{opt.sub}</span>
+                <span className="block font-bold text-slate-900 text-base mb-0.5">{opt.label}</span>
+                <span className="block text-xs text-slate-500">{opt.sub}</span>
               </div>
             </Link>
           );
@@ -96,10 +95,10 @@ export default function HeroLeadCapture() {
       </div>
 
       {/* Trust signal */}
-      <div className="mt-8 pt-6 border-t border-slate-100 flex items-center justify-between">
-        <p className="text-sm font-bold text-slate-600 flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-200">
-          <Icon name="shield-check" size={16} className="text-emerald-500" />
-          Secure match. Sent to <strong className="text-slate-900">1 verified professional</strong> only.
+      <div className="mt-6 pt-4 border-t border-slate-100 flex items-center gap-2">
+        <Icon name="shield-check" size={16} className="text-emerald-500 shrink-0" />
+        <p className="text-xs text-slate-500">
+          Secure match. Sent to <strong className="text-slate-700">1 verified professional</strong> only.
         </p>
       </div>
     </div>

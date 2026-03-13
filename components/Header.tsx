@@ -161,11 +161,11 @@ export default function Header() {
         <div className="flex justify-between h-16 lg:h-20 items-center">
           {/* Logo */}
           <Link href="/" className="flex-shrink-0 flex items-center group">
-            <div className="w-8 h-8 lg:w-9 lg:h-9 bg-gradient-to-br from-amber-400 to-amber-600 rounded-xl flex items-center justify-center mr-2.5 shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all">
-              <Icon name="landmark" size={18} className="text-slate-900" />
+            <div className="w-8 h-8 lg:w-9 lg:h-9 bg-amber-500 rounded-xl flex items-center justify-center mr-2.5 shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all">
+              <Icon name="landmark" size={18} className="text-white" />
             </div>
-            <span className="font-extrabold text-xl lg:text-2xl text-slate-900 tracking-tight">
-              Invest<span className="text-amber-600">.com.au</span>
+            <span className="font-bold text-xl lg:text-2xl text-slate-900 tracking-tight">
+              Invest<span className="text-amber-500">.com.au</span>
             </span>
           </Link>
 
@@ -173,7 +173,7 @@ export default function Header() {
           <nav className="hidden lg:flex space-x-1 items-center ml-8" aria-label="Main navigation">
             <Link
               href="/find-advisor"
-              className="px-5 py-2 text-amber-800 font-extrabold bg-amber-50 rounded-lg transition-colors flex items-center gap-1.5 shadow-sm border border-amber-100 hover:bg-amber-100 text-sm"
+              className="px-4 py-2 text-amber-700 font-bold bg-amber-50 rounded-lg transition-colors flex items-center gap-1.5 border border-amber-200 hover:bg-amber-100 text-sm"
             >
               Find an Expert
             </Link>
@@ -188,10 +188,10 @@ export default function Header() {
             <ThemeToggle />
             <Link
               href="/find-advisor"
-              className="bg-slate-900 hover:bg-slate-800 text-white px-6 py-2.5 rounded-xl font-extrabold transition-all shadow-[0_4px_14px_0_rgba(15,23,42,0.3)] hover:shadow-[0_6px_20px_rgba(15,23,42,0.23)] hover:-translate-y-0.5 flex items-center gap-2 text-sm"
+              className="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2.5 rounded-lg font-bold transition-all shadow-sm hover:shadow-md flex items-center gap-2 text-sm"
             >
               Get Matched Free
-              <Icon name="arrow-right" size={16} className="text-amber-500" />
+              <Icon name="arrow-right" size={16} />
             </Link>
           </div>
 
