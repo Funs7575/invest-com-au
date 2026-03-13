@@ -50,15 +50,15 @@ const bestForCards = [
 ];
 
 const categoryStrip = [
+  { label: "Home Loans", href: "/advisors/mortgage-brokers" },
+  { label: "Advisors", href: "/find-advisor" },
   { label: "Shares", href: "/share-trading" },
+  { label: "Property", href: "/advisors/buyers-agents" },
+  { label: "Super", href: "/super" },
   { label: "Crypto", href: "/crypto" },
   { label: "ETFs", href: "/article/best-etfs-australia" },
-  { label: "Super", href: "/super" },
-  { label: "Robo-Advisors", href: "/best/robo-advisors" },
   { label: "Savings", href: "/savings" },
-  { label: "Term Deposits", href: "/best/term-deposits" },
-  { label: "Property", href: "/best/property-investing" },
-  { label: "Advisors", href: "/find-advisor" },
+  { label: "Insurance", href: "/advisors/insurance-brokers" },
   { label: "CFDs", href: "/cfd" },
 ];
 
@@ -349,7 +349,7 @@ export default async function HomePage() {
               <div>
                 <h2 className="text-lg md:text-2xl font-bold">Verified Financial Advisors</h2>
                 <p className="text-[0.69rem] md:text-sm text-slate-500 mt-0.5 md:mt-1">
-                  <span className="hidden md:inline">SMSF accountants, financial planners, property advisors, tax agents, and more — verified against ASIC registers</span>
+                  <span className="hidden md:inline">Mortgage brokers, buyer&apos;s agents, financial planners, insurance brokers, and more — verified against ASIC registers</span>
                   <span className="md:hidden">ASIC-verified professionals across Australia</span>
                 </p>
               </div>
@@ -358,10 +358,14 @@ export default async function HomePage() {
               </Link>
             </div>
 
-            {/* Featured advisor cards — real people, real photos */}
-            {(featuredAdvisors?.length ?? 0) > 0 && (
+            {/* Featured advisor cards — prioritise high-revenue verticals */}
+            {(featuredAdvisors?.length ?? 0) > 0 && (() => {
+              const typeOrder: Record<string, number> = { mortgage_broker: 0, buyers_agent: 1, financial_planner: 2, insurance_broker: 3 };
+              const sorted = [...(featuredAdvisors as { slug: string; name: string; firm_name: string; type: string; location_display: string; rating: number; review_count: number; photo_url: string; fee_description: string; specialties: string[] }[])]
+                .sort((a, b) => (typeOrder[a.type] ?? 5) - (typeOrder[b.type] ?? 5));
+              return (
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3 mb-4 md:mb-6">
-                {(featuredAdvisors as { slug: string; name: string; firm_name: string; type: string; location_display: string; rating: number; review_count: number; photo_url: string; fee_description: string; specialties: string[] }[]).slice(0, 6).map((advisor) => {
+                {sorted.slice(0, 6).map((advisor) => {
                   const typeLabel = advisor.type.replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase());
                   return (
                     <Link
@@ -391,7 +395,8 @@ export default async function HomePage() {
                   );
                 })}
               </div>
-            )}
+              );
+            })()}
 
             {/* Category pills — ordered by revenue potential */}
             <div className="flex gap-1.5 md:gap-2 mb-3 md:mb-4 overflow-x-auto scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">

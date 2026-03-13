@@ -471,12 +471,42 @@ export default async function ArticlePage({
                         </section>
                         {/* In-content ad after 2nd section (only if 4+ sections for density) */}
                         {i === 1 && a.sections!.length >= 4 && (
+                          <>
                           <AdSlot
                             placement="display-incontent-article"
                             variant="in-content"
                             page={pagePath}
                             brokers={allBrokersForWidget}
                           />
+                          {/* Mid-article advisor CTA — contextual to article topic */}
+                          {(() => {
+                            const cat2 = (a.category || "").toLowerCase();
+                            const tagStr2 = (a.tags || []).join(" ").toLowerCase();
+                            const slug2 = (a.slug || "").toLowerCase();
+                            const cmb = `${cat2} ${tagStr2} ${slug2}`;
+                            let midType = ""; let midLabel = ""; let midHref = ""; let midBg = "bg-violet-50"; let midBorder = "border-violet-200"; let midText = "text-violet-700"; let midBtn = "bg-violet-600 hover:bg-violet-700";
+                            if (cmb.match(/mortgage|home.loan|refinanc|first.home.buyer|stamp.duty|offset|borrow/)) {
+                              midType = "mortgage"; midLabel = "Compare rates from 30+ lenders through a free mortgage broker"; midHref = "/advisors/mortgage-brokers"; midBg = "bg-rose-50"; midBorder = "border-rose-200"; midText = "text-rose-700"; midBtn = "bg-rose-600 hover:bg-rose-700";
+                            } else if (cmb.match(/buyer.*agent|property.invest|investment.property|negative.gear/)) {
+                              midType = "buyer"; midLabel = "Find a buyer's agent to negotiate on your behalf"; midHref = "/advisors/buyers-agents"; midBg = "bg-teal-50"; midBorder = "border-teal-200"; midText = "text-teal-700"; midBtn = "bg-teal-600 hover:bg-teal-700";
+                            } else if (cmb.match(/insurance|income.protection|life.cover|tpd|trauma|landlord/)) {
+                              midType = "insurance"; midLabel = "Not sure if your cover is enough? Talk to an insurance broker — free"; midHref = "/advisors/insurance-brokers"; midBg = "bg-sky-50"; midBorder = "border-sky-200"; midText = "text-sky-700"; midBtn = "bg-sky-600 hover:bg-sky-700";
+                            } else if (cmb.match(/smsf|self.managed/)) {
+                              midType = "smsf"; midLabel = "Get expert SMSF advice from a verified accountant"; midHref = "/advisors/smsf-accountants"; midBg = "bg-blue-50"; midBorder = "border-blue-200"; midText = "text-blue-700"; midBtn = "bg-blue-600 hover:bg-blue-700";
+                            } else if (cmb.match(/tax|eofy|capital.gain|deduction|franking/)) {
+                              midType = "tax"; midLabel = "Maximise your deductions — talk to a tax agent"; midHref = "/advisors/tax-agents"; midBg = "bg-amber-50"; midBorder = "border-amber-200"; midText = "text-amber-700"; midBtn = "bg-amber-600 hover:bg-amber-700";
+                            }
+                            if (!midType) return null;
+                            return (
+                              <div className={`mt-4 ${midBg} border ${midBorder} rounded-lg p-3 md:p-4 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4`}>
+                                <p className={`text-xs md:text-sm ${midText} font-medium flex-1`}>{midLabel}</p>
+                                <Link href={midHref} className={`shrink-0 px-4 py-2 ${midBtn} text-white text-xs font-bold rounded-lg transition-colors`}>
+                                  Find one near you &rarr;
+                                </Link>
+                              </div>
+                            );
+                          })()}
+                          </>
                         )}
                       </div>
                     )
@@ -608,30 +638,72 @@ export default async function ArticlePage({
 
               {/* Find an Advisor CTA — contextual based on article topic */}
               {(() => {
-                const advisorCategories = ["smsf", "super", "tax", "strategy", "property"];
-                const isAdvisorRelevant = advisorCategories.some(c => 
-                  (a.category || "").toLowerCase().includes(c) || 
-                  (a.tags || []).some((t: string) => t.toLowerCase().includes(c))
-                );
-                if (!isAdvisorRelevant) return null;
-                const advisorType = (a.category || "").toLowerCase().includes("smsf") || (a.category || "").toLowerCase().includes("super") 
-                  ? "smsf_accountant" 
-                  : (a.category || "").toLowerCase().includes("tax") 
-                    ? "tax_agent"
-                    : (a.category || "").toLowerCase().includes("property")
-                      ? "property_advisor"
-                      : "financial_planner";
+                // Contextual advisor matching — route each article to the RIGHT advisor type
+                const cat = (a.category || "").toLowerCase();
+                const tagStr = (a.tags || []).join(" ").toLowerCase();
+                const slugStr = (a.slug || "").toLowerCase();
+                const combined = `${cat} ${tagStr} ${slugStr}`;
+                
+                let advisorType = "financial_planner";
+                let advisorLabel = "financial planner";
+                let advisorColor = "violet";
+                
+                if (combined.match(/mortgage|home.loan|refinanc|first.home.buyer|stamp.duty|offset.account|borrow/)) {
+                  advisorType = "mortgage_broker"; advisorLabel = "mortgage broker"; advisorColor = "rose";
+                } else if (combined.match(/buyer.*agent|property.invest|investment.property|negative.gear|first.investment/)) {
+                  advisorType = "buyers_agent"; advisorLabel = "buyer's agent"; advisorColor = "teal";
+                } else if (combined.match(/insurance|income.protection|life.cover|tpd|trauma|landlord.insurance|cyber.insurance/)) {
+                  advisorType = "insurance_broker"; advisorLabel = "insurance broker"; advisorColor = "sky";
+                } else if (combined.match(/smsf|self.managed/)) {
+                  advisorType = "smsf_accountant"; advisorLabel = "SMSF accountant"; advisorColor = "blue";
+                } else if (combined.match(/tax|eofy|capital.gain|deduction|franking|tax.loss/)) {
+                  advisorType = "tax_agent"; advisorLabel = "tax agent"; advisorColor = "amber";
+                } else if (combined.match(/crypto|bitcoin|defi|staking/)) {
+                  advisorType = "crypto_advisor"; advisorLabel = "crypto advisor"; advisorColor = "orange";
+                } else if (combined.match(/estate.plan|will|power.of.attorney|testamentary/)) {
+                  advisorType = "estate_planner"; advisorLabel = "estate planner"; advisorColor = "slate";
+                } else if (combined.match(/super|retirement|pension|preservation/)) {
+                  advisorType = "financial_planner"; advisorLabel = "financial planner"; advisorColor = "violet";
+                }
+                
+                const colorMap: Record<string, { bg: string; border: string; text: string; heading: string; btn: string; btnHover: string; outlineBorder: string; outlineText: string; outlineHover: string }> = {
+                  rose: { bg: "bg-rose-50", border: "border-rose-200", text: "text-rose-700", heading: "text-rose-900", btn: "bg-rose-600", btnHover: "hover:bg-rose-700", outlineBorder: "border-rose-300", outlineText: "text-rose-700", outlineHover: "hover:bg-rose-100" },
+                  teal: { bg: "bg-teal-50", border: "border-teal-200", text: "text-teal-700", heading: "text-teal-900", btn: "bg-teal-600", btnHover: "hover:bg-teal-700", outlineBorder: "border-teal-300", outlineText: "text-teal-700", outlineHover: "hover:bg-teal-100" },
+                  sky: { bg: "bg-sky-50", border: "border-sky-200", text: "text-sky-700", heading: "text-sky-900", btn: "bg-sky-600", btnHover: "hover:bg-sky-700", outlineBorder: "border-sky-300", outlineText: "text-sky-700", outlineHover: "hover:bg-sky-100" },
+                  blue: { bg: "bg-blue-50", border: "border-blue-200", text: "text-blue-700", heading: "text-blue-900", btn: "bg-blue-600", btnHover: "hover:bg-blue-700", outlineBorder: "border-blue-300", outlineText: "text-blue-700", outlineHover: "hover:bg-blue-100" },
+                  amber: { bg: "bg-amber-50", border: "border-amber-200", text: "text-amber-700", heading: "text-amber-900", btn: "bg-amber-600", btnHover: "hover:bg-amber-700", outlineBorder: "border-amber-300", outlineText: "text-amber-700", outlineHover: "hover:bg-amber-100" },
+                  orange: { bg: "bg-orange-50", border: "border-orange-200", text: "text-orange-700", heading: "text-orange-900", btn: "bg-orange-600", btnHover: "hover:bg-orange-700", outlineBorder: "border-orange-300", outlineText: "text-orange-700", outlineHover: "hover:bg-orange-100" },
+                  slate: { bg: "bg-slate-50", border: "border-slate-200", text: "text-slate-700", heading: "text-slate-900", btn: "bg-slate-600", btnHover: "hover:bg-slate-700", outlineBorder: "border-slate-300", outlineText: "text-slate-700", outlineHover: "hover:bg-slate-100" },
+                  violet: { bg: "bg-violet-50", border: "border-violet-200", text: "text-violet-700", heading: "text-violet-900", btn: "bg-violet-600", btnHover: "hover:bg-violet-700", outlineBorder: "border-violet-300", outlineText: "text-violet-700", outlineHover: "hover:bg-violet-100" },
+                };
+                const c = colorMap[advisorColor] || colorMap.violet;
+                const dirSlug = advisorType.replace(/_/g, "-") + "s";
+                
                 return (
-                  <div className="mt-6 md:mt-8 bg-violet-50 border border-violet-200 rounded-xl p-4 md:p-5">
-                    <h3 className="text-base md:text-lg font-bold mb-0.5 md:mb-1 text-violet-900">Need Professional Advice?</h3>
-                    <p className="text-xs md:text-sm text-violet-700 mb-3">
-                      Connect with a verified Australian {advisorType.replace(/_/g, " ")} for personalised guidance.
+                  <div className={`mt-6 md:mt-8 ${c.bg} border ${c.border} rounded-xl p-4 md:p-5`}>
+                    <h3 className={`text-base md:text-lg font-bold mb-0.5 md:mb-1 ${c.heading}`}>
+                      {advisorType === "mortgage_broker" ? "Need a Home Loan?" 
+                        : advisorType === "buyers_agent" ? "Buying Property?"
+                        : advisorType === "insurance_broker" ? "Is Your Cover Enough?"
+                        : "Need Professional Advice?"}
+                    </h3>
+                    <p className={`text-xs md:text-sm ${c.text} mb-3`}>
+                      {advisorType === "mortgage_broker" 
+                        ? "Compare rates from 30+ lenders through a verified mortgage broker — free, paid by the lender."
+                        : advisorType === "buyers_agent"
+                        ? "A buyer's agent negotiates on your behalf and finds off-market deals. Free initial consultation."
+                        : advisorType === "insurance_broker"
+                        ? "Most Australians are underinsured through super. A broker reviews your cover for free."
+                        : `Connect with a verified Australian ${advisorLabel} for personalised guidance.`}
                     </p>
                     <div className="flex flex-col sm:flex-row gap-2">
-                      <Link href={`/advisors?type=${advisorType}`} className="px-4 py-2.5 bg-violet-600 text-white text-sm font-bold rounded-lg hover:bg-violet-700 transition-colors text-center">
-                        Find an Advisor
+                      <Link href={`/advisors/${dirSlug}`} className={`px-4 py-2.5 ${c.btn} text-white text-sm font-bold rounded-lg ${c.btnHover} transition-colors text-center`}>
+                        {advisorType === "mortgage_broker" ? "Find a Mortgage Broker"
+                          : advisorType === "buyers_agent" ? "Find a Buyer's Agent"
+                          : advisorType === "insurance_broker" ? "Find an Insurance Broker"
+                          : `Find a ${advisorLabel.split(" ").map(w => w[0].toUpperCase() + w.slice(1)).join(" ")}`}
                       </Link>
-                      <Link href={`/advisor-guides/${advisorType.replace(/_/g, "-")}`} className="px-4 py-2.5 border border-violet-300 text-violet-700 text-sm font-semibold rounded-lg hover:bg-violet-100 transition-colors text-center">
+                      <Link href={`/advisor-guides/${advisorType.replace(/_/g, "-")}`} className={`px-4 py-2.5 border ${c.outlineBorder} ${c.outlineText} text-sm font-semibold rounded-lg ${c.outlineHover} transition-colors text-center`}>
                         How to Choose
                       </Link>
                     </div>

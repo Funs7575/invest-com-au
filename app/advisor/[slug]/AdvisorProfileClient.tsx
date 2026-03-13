@@ -881,7 +881,7 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
             </a>
           ) : (
             <a href="#enquiry" className="flex-1 py-3 bg-violet-600 text-white font-bold rounded-xl text-sm text-center">
-              Send Enquiry
+              Request Free Consultation
             </a>
           )}
           {pro.phone && (
@@ -889,6 +889,33 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
               <Icon name="phone" size={18} className="text-slate-600" />
             </a>
           )}
+        </div>
+      </div>
+
+      {/* Sticky desktop CTA — appears after scrolling past the enquiry form */}
+      <div className="hidden md:block fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-slate-200 shadow-[0_-2px_10px_rgba(0,0,0,0.05)] z-40">
+        <div className="container-custom py-2.5 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            {pro.photo_url && <Image src={pro.photo_url} alt="" width={32} height={32} className="rounded-full" />}
+            <span className="text-sm font-bold text-slate-900">{pro.name}</span>
+            {pro.verified && <span className="text-[0.56rem] font-bold px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700">Verified</span>}
+            <span className="text-xs text-slate-500">{pro.firm_name}</span>
+          </div>
+          <a href="#enquiry" className="px-6 py-2.5 bg-violet-600 text-white text-sm font-bold rounded-lg hover:bg-violet-700 transition-colors">
+            Request Free Consultation
+          </a>
+        </div>
+      </div>
+      {/* Sticky mobile CTA — always visible at bottom */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-slate-200 shadow-[0_-4px_12px_rgba(0,0,0,0.08)] z-40 safe-area-inset-bottom">
+        <div className="flex items-center gap-2 px-3 py-2">
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-bold text-slate-900 truncate">{pro.name}</p>
+            <p className="text-[0.6rem] text-slate-500 truncate">{pro.fee_description || "Free consultation"}</p>
+          </div>
+          <a href="#enquiry" className="shrink-0 px-5 py-2.5 bg-violet-600 text-white text-xs font-bold rounded-lg hover:bg-violet-700 transition-colors">
+            Enquire Free
+          </a>
         </div>
       </div>
       {/* Spacer for sticky CTA on mobile */}

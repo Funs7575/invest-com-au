@@ -8,7 +8,7 @@ import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 
 /* ─── Types ─── */
 type Step = 0 | 1 | 2 | 3 | 4;
-type GoalKey = "start" | "switch" | "wealth" | "income" | "crypto" | "super" | "property" | "help";
+type GoalKey = "start" | "switch" | "wealth" | "income" | "crypto" | "super" | "property" | "help" | "home";
 type ModeKey = "diy" | "help" | "unsure";
 type ComplexityKey = "simple" | "moderate" | "complex";
 type AmountKey = "small" | "medium" | "large" | "xlarge";
@@ -35,6 +35,7 @@ interface RouteResult {
 /* ─── Question Config ─── */
 const GOALS: { key: GoalKey; label: string; icon: string; sub: string }[] = [
   { key: "start", label: "Start investing", icon: "rocket", sub: "I'm new and want to get going" },
+  { key: "home", label: "Buy a home / Get a home loan", icon: "landmark", sub: "First home, refinancing, or investment loan" },
   { key: "switch", label: "Switch platforms", icon: "arrow-right-left", sub: "Find a better / cheaper option" },
   { key: "wealth", label: "Build long-term wealth", icon: "trending-up", sub: "ETFs, shares, or diversified growth" },
   { key: "income", label: "Earn income / dividends", icon: "coins", sub: "Regular income from investments" },
@@ -65,13 +66,24 @@ const AMOUNTS: { key: AmountKey; label: string; sub: string }[] = [
 
 /* ─── Dynamic priority options based on answers ─── */
 function getPriorityOptions(answers: Answers): { key: PriorityKey; label: string; icon: string }[] {
-  if (answers.mode === "help" || answers.goal === "help") {
+  if (answers.goal === "home" || answers.goal === "property") {
+    // Property/home loan goals → mortgage broker and buyer's agent first
     return [
+      { key: "mortgage-broker", label: "Mortgage broker", icon: "home" },
+      { key: "buyers-agent", label: "Buyer's agent", icon: "search" },
+      { key: "financial-planner", label: "Financial planner", icon: "briefcase" },
+      { key: "tax-agent", label: "Tax agent", icon: "file-text" },
+      { key: "not-sure", label: "I'm not sure what I need", icon: "help-circle" },
+    ];
+  }
+  if (answers.mode === "help" || answers.goal === "help") {
+    // General help → revenue-ranked order
+    return [
+      { key: "mortgage-broker", label: "Mortgage broker", icon: "home" },
+      { key: "buyers-agent", label: "Buyer's agent", icon: "search" },
       { key: "financial-planner", label: "Financial planner", icon: "briefcase" },
       { key: "smsf-accountant", label: "SMSF accountant", icon: "calculator" },
       { key: "tax-agent", label: "Tax agent", icon: "file-text" },
-      { key: "mortgage-broker", label: "Mortgage broker", icon: "home" },
-      { key: "buyers-agent", label: "Buyer's agent", icon: "search" },
       { key: "not-sure", label: "I'm not sure what I need", icon: "help-circle" },
     ];
   }
@@ -194,6 +206,7 @@ function computeRoute(answers: Answers): RouteResult {
     start: "/best/beginners", wealth: "/best/etf-investing", income: "/best/dividend-investing",
     switch: "/switching-calculator", crypto: "/best/crypto", super: "/best/super-funds",
     property: "/compare?filter=property", help: "/find-advisor",
+    home: "/advisors/mortgage-brokers",
   };
   const bestHref = bestPageMap[goal || ""] || "/best/beginners";
 

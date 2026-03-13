@@ -812,6 +812,24 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             )}
           </div>
         )}
+
+        {/* Advisor cross-sell — catch users who are comparison-fatigued */}
+        {sorted.length > 0 && (
+          <div className="mt-6 bg-violet-50 border border-violet-200 rounded-xl p-4 md:p-5 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+            <div className="flex-1">
+              <p className="text-sm font-bold text-violet-900 mb-0.5">Not sure which to pick?</p>
+              <p className="text-xs text-violet-700">A verified professional can help you make the right choice — free, no obligation.</p>
+            </div>
+            <div className="flex gap-2 shrink-0">
+              <Link href="/find-advisor" className="px-4 py-2.5 bg-violet-600 text-white text-xs font-bold rounded-lg hover:bg-violet-700 transition-colors">
+                Find an Advisor
+              </Link>
+              <Link href="/advisors/mortgage-brokers" className="px-4 py-2.5 border border-violet-300 text-violet-700 text-xs font-semibold rounded-lg hover:bg-violet-100 transition-colors">
+                Mortgage Brokers
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
