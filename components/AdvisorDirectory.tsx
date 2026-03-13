@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Icon from "@/components/Icon";
@@ -23,6 +23,9 @@ const PROPERTY_TYPES = new Set(["mortgage_broker", "buyers_agent"]);
 const WEALTH_TYPES = new Set(["financial_planner", "smsf_accountant", "insurance_broker", "tax_agent", "wealth_manager", "estate_planner"]);
 const LOCATIONS = ["All Australia", "NSW", "VIC", "QLD", "WA", "SA"];
 
+const PROPERTY_HEADINGS = ["Mortgage Broker", "Buyer\u2019s Agent", "Property Expert"];
+const WEALTH_HEADINGS = ["Financial Planner", "SMSF Accountant", "Insurance Broker", "Tax Agent"];
+
 function typeLabel(type: string): string {
   return type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
@@ -30,6 +33,12 @@ function typeLabel(type: string): string {
 export default function AdvisorDirectory({ advisors }: { advisors: Advisor[] }) {
   const [activeTab, setActiveTab] = useState<"property" | "wealth">("property");
   const [activeLocation, setActiveLocation] = useState("All Australia");
+  const [displayedHeading, setDisplayedHeading] = useState(PROPERTY_HEADINGS[0]);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  // Refs so the single interval never needs recreating
+  const tabRef = useRef(activeTab);
+  const indexRef = useRef(0);
 
   const typeFilter = activeTab === "property" ? PROPERTY_TYPES : WEALTH_TYPES;
   const filtered = advisors
@@ -38,39 +47,41 @@ export default function AdvisorDirectory({ advisors }: { advisors: Advisor[] }) 
 
   const totalLabel = activeTab === "property" ? "Property Experts" : "Financial Experts";
 
-  const headingByTab = activeTab === "property"
-    ? ["Mortgage Broker", "Buyer's Agent", "Property Expert"]
-    : ["Financial Planner", "SMSF Accountant", "Insurance Broker", "Tax Agent"];
-
-  const [headingIndex, setHeadingIndex] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
-
-  // Cycle heading every 3 seconds with proper cleanup
+  // Single stable interval — reads tab from ref, never recreated
   useEffect(() => {
-    let timeoutId: ReturnType<typeof setTimeout>;
+    let timeout: ReturnType<typeof setTimeout>;
     const interval = setInterval(() => {
       setIsAnimating(true);
-      timeoutId = setTimeout(() => {
-        setHeadingIndex((prev) => (prev + 1) % (activeTab === "property" ? 3 : 4));
+      timeout = setTimeout(() => {
+        const headings = tabRef.current === "property" ? PROPERTY_HEADINGS : WEALTH_HEADINGS;
+        indexRef.current = (indexRef.current + 1) % headings.length;
+        setDisplayedHeading(headings[indexRef.current]);
         setIsAnimating(false);
       }, 300);
     }, 3000);
-    return () => {
-      clearInterval(interval);
-      clearTimeout(timeoutId);
-    };
-  }, [activeTab]);
+    return () => { clearInterval(interval); clearTimeout(timeout); };
+  }, []);
+
+  // Tab change — updates refs + state in one go, no effect restart
+  const handleTabChange = useCallback((tab: "property" | "wealth") => {
+    tabRef.current = tab;
+    indexRef.current = 0;
+    const headings = tab === "property" ? PROPERTY_HEADINGS : WEALTH_HEADINGS;
+    setActiveTab(tab);
+    setDisplayedHeading(headings[0]);
+    setIsAnimating(false);
+  }, []);
 
   return (
     <section className="py-4 md:py-12 bg-gradient-to-b from-violet-50/30 to-white">
       <div className="container-custom">
-        {/* Header — Dynamic */}
+        {/* Header with dynamic cycling heading */}
         <div className="flex items-start justify-between gap-2 mb-3 md:mb-6">
           <div>
             <h2 className="text-lg md:text-2xl font-bold text-slate-900">
               Find a{" "}
               <span className={`inline-block transition-all duration-300 ${isAnimating ? "opacity-0 translate-y-2" : "opacity-100 translate-y-0"}`}>
-                <span className="text-violet-600">{headingByTab[headingIndex % headingByTab.length]}</span>
+                <span className="text-violet-600">{displayedHeading}</span>
               </span>
             </h2>
             <p className="text-[0.69rem] md:text-sm text-slate-500 mt-0.5 md:mt-1">
@@ -87,7 +98,7 @@ export default function AdvisorDirectory({ advisors }: { advisors: Advisor[] }) 
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-4 md:mb-6">
           <div className="flex bg-white p-1 rounded-lg border border-slate-200 w-max">
             <button
-              onClick={() => { setActiveTab("property"); setHeadingIndex(0); }}
+              onClick={() => handleTabChange("property")}
               className={`px-3 md:px-4 py-1.5 rounded-md text-xs md:text-sm font-semibold transition-all ${
                 activeTab === "property"
                   ? "bg-violet-600 text-white shadow-sm"
@@ -97,7 +108,7 @@ export default function AdvisorDirectory({ advisors }: { advisors: Advisor[] }) 
               Property &amp; Loans
             </button>
             <button
-              onClick={() => { setActiveTab("wealth"); setHeadingIndex(0); }}
+              onClick={() => handleTabChange("wealth")}
               className={`px-3 md:px-4 py-1.5 rounded-md text-xs md:text-sm font-semibold transition-all ${
                 activeTab === "wealth"
                   ? "bg-violet-600 text-white shadow-sm"
@@ -125,7 +136,7 @@ export default function AdvisorDirectory({ advisors }: { advisors: Advisor[] }) 
           </div>
         </div>
 
-        {/* Advisor cards grid */}
+        {/* Advisor cards */}
         {filtered.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3">
             {filtered.slice(0, 6).map((advisor) => (
@@ -135,10 +146,7 @@ export default function AdvisorDirectory({ advisors }: { advisors: Advisor[] }) 
                 className="flex items-start gap-2.5 p-2.5 md:p-3.5 bg-white border border-violet-100 rounded-xl hover:border-violet-300 hover:shadow-md transition-all group"
               >
                 <Image
-                  src={
-                    advisor.photo_url ||
-                    `https://ui-avatars.com/api/?name=${encodeURIComponent(advisor.name)}&size=80&background=7c3aed&color=fff`
-                  }
+                  src={advisor.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(advisor.name)}&size=80&background=7c3aed&color=fff`}
                   alt={advisor.name}
                   width={48}
                   height={48}
@@ -173,7 +181,7 @@ export default function AdvisorDirectory({ advisors }: { advisors: Advisor[] }) 
           </div>
         )}
 
-        {/* CTA card */}
+        {/* CTA */}
         <div className="mt-4 md:mt-6 bg-white border border-slate-200 rounded-xl p-4 md:p-6 flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-6">
           <div className="flex-1 min-w-0">
             <p className="text-sm md:text-base font-bold text-slate-900 mb-1">Get matched with a verified advisor — free, no obligation</p>
