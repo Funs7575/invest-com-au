@@ -161,9 +161,6 @@ export default function Header() {
         <div className="flex justify-between h-16 lg:h-20 items-center">
           {/* Logo */}
           <Link href="/" className="flex-shrink-0 flex items-center group">
-            <div className="w-8 h-8 lg:w-9 lg:h-9 bg-amber-500 rounded-xl flex items-center justify-center mr-2.5 shadow-sm group-hover:shadow-md group-hover:scale-105 transition-all">
-              <Icon name="landmark" size={18} className="text-white" />
-            </div>
             <span className="font-bold text-xl lg:text-2xl text-slate-900 tracking-tight">
               Invest<span className="text-amber-500">.com.au</span>
             </span>
@@ -171,12 +168,6 @@ export default function Header() {
 
           {/* Desktop Nav */}
           <nav className="hidden lg:flex space-x-1 items-center ml-8" aria-label="Main navigation">
-            <Link
-              href="/find-advisor"
-              className="px-4 py-2 text-amber-700 font-bold bg-amber-50 rounded-lg transition-colors flex items-center gap-1.5 border border-amber-200 hover:bg-amber-100 text-sm"
-            >
-              Find an Expert
-            </Link>
             <DesktopDropdown label="Property & Finance" items={propertyDropdown} isActive={isPropertyActive} />
             <DesktopDropdown label="Wealth & SMSF" items={wealthDropdown} isActive={isWealthActive} />
             <div className="h-6 w-px bg-slate-200 mx-2" />
