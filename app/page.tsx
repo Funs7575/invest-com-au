@@ -25,17 +25,17 @@ import { ORGANIZATION_JSONLD, SITE_URL, websiteJsonLd } from "@/lib/seo";
 export const metadata = {
   title: "Compare Investing Platforms & Find Advisors — Invest.com.au",
   description:
-    "Compare Australian investing platforms and find verified financial advisors. Real fees, real data, updated daily. Shares, crypto, super, robo-advisors and more.",
+    "Find verified mortgage brokers, financial advisors, and buyer's agents — or compare Australian investing platforms. Real fees, real data, updated daily. Shares, crypto, super, robo-advisors and more.",
   openGraph: {
-    title: "Compare Platforms & Find Advisors — Invest.com.au",
-    description: "Compare Australian investing platforms and find verified financial advisors. Real fees, real data, updated daily.",
+    title: "Find Experts & Compare Platforms — Invest.com.au",
+    description: "Find verified mortgage brokers, financial advisors, and buyer's agents — or compare Australian investing platforms. Real fees, real data, updated daily.",
     url: "/",
     images: [{ url: "/api/og", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image" as const,
-    title: "Compare Platforms & Find Advisors — Invest.com.au",
-    description: "Compare Australian investing platforms and find verified financial advisors. Real fees, real data, updated daily.",
+    title: "Find Experts & Compare Platforms — Invest.com.au",
+    description: "Find verified mortgage brokers, financial advisors, and buyer's agents — or compare Australian investing platforms. Real fees, real data, updated daily.",
   },
   alternates: { canonical: "/" },
 };
@@ -226,10 +226,10 @@ export default async function HomePage() {
           {/* Mobile: premium compact hero */}
           <div className="md:hidden">
             <h1 className="text-[1.4rem] font-extrabold text-slate-900 leading-[1.15] tracking-tight">
-              Compare Platforms.<br />Find Advisors.
+              Find Experts.<br />Compare Platforms.
             </h1>
             <p className="mt-1.5 text-[0.72rem] text-slate-500 leading-relaxed">
-              Independent platform comparison &amp; verified financial advisors — free.
+              Mortgage brokers, buyer&apos;s agents, financial planners &amp; platform comparison — free.
             </p>
             {/* Single primary CTA */}
             <Link
@@ -265,10 +265,10 @@ export default async function HomePage() {
               {brokerCount} platforms + {(advisorCount || 0) > 0 ? `${advisorCount} advisors` : "verified advisors"} &middot; Updated {updatedDateStr}
             </div>
             <h1 className="text-5xl lg:text-6xl font-extrabold text-slate-900 hero-fade-up hero-fade-up-1 leading-tight">
-              Compare Platforms.<br />Find Advisors.
+              Find Experts.<br />Compare Platforms.
             </h1>
             <p className="mt-5 text-xl text-slate-500 max-w-2xl mx-auto hero-fade-up hero-fade-up-2 leading-relaxed">
-              Compare fees, features, and safety across investing platforms — and find verified financial professionals for expert advice. Independent, transparent, and free.
+              Find verified mortgage brokers, buyer&apos;s agents, financial planners, and insurance brokers — or compare investing platforms side-by-side. Independent, transparent, and free.
             </p>
             {/* Category strip — desktop only */}
             <div className="flex items-center justify-center flex-wrap gap-2 mt-5 hero-fade-up hero-fade-up-2">
@@ -656,7 +656,7 @@ export default async function HomePage() {
 
       {/* Best For Hub */}
       <ScrollFadeIn>
-        <section className="py-3 md:py-12 bg-slate-50">
+        <section className="py-2 md:py-8 bg-slate-50">
           <div className="container-custom">
             <div className="flex items-start justify-between gap-2 mb-2 md:mb-8">
               <div>

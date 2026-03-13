@@ -19,9 +19,10 @@ const platformsDropdown = [
 
 const advisorsDropdown = [
   { label: "Find an Advisor", href: "/find-advisor", desc: "Match with a professional" },
-  { label: "Advisor Directory", href: "/advisors", desc: "Browse all advisors" },
-  { label: "Advisor Guides", href: "/advisor-guides", desc: "How to choose & compare" },
-  { label: "Expert Insights", href: "/expert", desc: "Articles from verified advisors" },
+  { label: "Mortgage Brokers", href: "/advisors/mortgage-brokers", desc: "Compare 30+ lenders — free" },
+  { label: "Buyer's Agents", href: "/advisors/buyers-agents", desc: "Off-market access & negotiation" },
+  { label: "Insurance Brokers", href: "/advisors/insurance-brokers", desc: "Life, income protection & business" },
+  { label: "All Advisors", href: "/advisors", desc: "Browse all 113 professionals" },
 ];
 
 const learnDropdown = [
@@ -32,16 +33,26 @@ const learnDropdown = [
 ];
 
 const popularLinks = [
-  { label: `Best Platforms ${CURRENT_YEAR}`, href: "/article/best-share-trading-platforms-australia" },
-  { label: "Best Super Funds", href: "/best/super-funds" },
-  { label: "Find an Advisor", href: "/find-advisor" },
   { label: "Mortgage Brokers", href: "/advisors/mortgage-brokers" },
-  { label: "Best Crypto", href: "/article/best-crypto-exchanges-australia" },
+  { label: "Find an Advisor", href: "/find-advisor" },
+  { label: `Best Platforms ${CURRENT_YEAR}`, href: "/article/best-share-trading-platforms-australia" },
+  { label: "Buyer's Agents", href: "/advisors/buyers-agents" },
+  { label: "Best Super Funds", href: "/best/super-funds" },
   { label: "Best ETFs", href: "/article/best-etfs-australia" },
 ];
 
 // Mobile nav — flat list grouped by section
 const mobileNavSections = [
+  {
+    title: "Advisors & Brokers",
+    items: [
+      { name: "Find an Advisor", href: "/find-advisor" },
+      { name: "Mortgage Brokers", href: "/advisors/mortgage-brokers" },
+      { name: "Buyer's Agents", href: "/advisors/buyers-agents" },
+      { name: "Insurance Brokers", href: "/advisors/insurance-brokers" },
+      { name: "All Advisors", href: "/advisors" },
+    ],
+  },
   {
     title: "Platforms",
     items: [
@@ -50,15 +61,6 @@ const mobileNavSections = [
       { name: "Deals & Offers", href: "/deals" },
       { name: "Reviews", href: "/reviews" },
       { name: "Broker vs Broker", href: "/versus" },
-    ],
-  },
-  {
-    title: "Advisors",
-    items: [
-      { name: "Find an Advisor", href: "/find-advisor" },
-      { name: "Mortgage Brokers", href: "/advisors/mortgage-brokers" },
-      { name: "Advisor Directory", href: "/advisors" },
-      { name: "Advisor Guides", href: "/advisor-guides" },
     ],
   },
   {
@@ -162,8 +164,8 @@ export default function Header() {
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-2 lg:gap-3.5 ml-6" aria-label="Main navigation">
-            <DesktopDropdown label="Platforms" items={platformsDropdown} isActive={isPlatformsActive} />
             <DesktopDropdown label="Advisors" items={advisorsDropdown} isActive={isAdvisorsActive} accentColor="violet" />
+            <DesktopDropdown label="Platforms" items={platformsDropdown} isActive={isPlatformsActive} />
             <DesktopDropdown label="Learn" items={learnDropdown} isActive={isLearnActive} />
 
             <Link
