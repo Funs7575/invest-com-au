@@ -110,9 +110,26 @@ export async function POST(request: NextRequest) {
       .eq("id", professional_id)
       .single();
 
+    const freeTrialCount = 2; // Default, overridden below if category pricing exists
     const freeUsed = advisor?.free_leads_used || 0;
-    const isFree = freeUsed < 2; // 2 free leads
-    const priceCents = isFree ? 0 : (advisor?.lead_price_cents || 4900);
+
+    // Get category default price if advisor has no custom price
+    let categoryPrice = 4900; // ultimate fallback
+    let categoryFreeLeads = 2;
+    if (!advisor?.lead_price_cents) {
+      const { data: catPricing } = await supabase
+        .from("lead_pricing")
+        .select("price_cents, free_trial_leads")
+        .eq("advisor_type", pro.type)
+        .single();
+      if (catPricing) {
+        categoryPrice = catPricing.price_cents;
+        categoryFreeLeads = catPricing.free_trial_leads;
+      }
+    }
+
+    const isFree = freeUsed < (categoryFreeLeads || freeTrialCount);
+    const priceCents = isFree ? 0 : (advisor?.lead_price_cents || categoryPrice);
     const balance = advisor?.credit_balance_cents || 0;
     const hasSufficientCredit = balance >= priceCents;
 
