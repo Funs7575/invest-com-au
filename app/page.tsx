@@ -294,6 +294,83 @@ export default async function HomePage() {
         </section>
       </ScrollFadeIn>
 
+      {/* ═══════ 11. ARTICLES & GUIDES ═══════ */}
+      {(articles as Article[])?.length > 0 && (
+        <ScrollFadeIn>
+          <section className="py-3 md:py-12 bg-white">
+            <div className="container-custom">
+              <div className="flex items-start justify-between gap-2 mb-2.5 md:mb-6">
+                <div>
+                  <h2 className="text-lg md:text-2xl font-bold">Learn &amp; Get Expert Help</h2>
+                  <p className="text-[0.69rem] md:text-sm text-slate-500 mt-0.5 md:mt-1">Guides, how-tos, and professional advice for smarter investing</p>
+                </div>
+                <Link href="/articles" className="text-[0.69rem] md:text-sm font-semibold text-slate-500 hover:text-slate-900 shrink-0 min-h-[44px] inline-flex items-center px-1">
+                  View all &rarr;
+                </Link>
+              </div>
+              <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {(articles as Article[]).slice(0, 6).map((article) => (
+                  <Link
+                    key={article.id}
+                    href={`/article/${article.slug}`}
+                    className="border border-slate-200 rounded-xl overflow-hidden hover:shadow-md hover:border-slate-300 transition-all group flex flex-col"
+                  >
+                    {article.cover_image_url && (
+                      <div className="aspect-[16/9] overflow-hidden bg-slate-100 relative">
+                        <Image src={article.cover_image_url} alt={article.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" loading="lazy" />
+                      </div>
+                    )}
+                    <div className="p-5 flex flex-col flex-1">
+                      {article.category && (
+                        <span className="inline-block self-start text-[0.69rem] font-bold uppercase tracking-wider text-slate-600 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full mb-3">
+                          {article.category}
+                        </span>
+                      )}
+                      <h3 className="font-bold text-slate-900 group-hover:text-slate-600 transition-colors mb-2 leading-snug">{article.title}</h3>
+                      <p className="text-sm text-slate-500 line-clamp-2 mb-3 flex-1">{article.excerpt}</p>
+                      <div className="flex items-center gap-3 text-xs text-slate-500">
+                        {article.read_time && <span>{article.read_time} min read</span>}
+                        <span className="text-slate-900 font-semibold group-hover:translate-x-0.5 transition-transform">Read Guide &rarr;</span>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+              {/* Mobile articles */}
+              <div className="md:hidden">
+                {(articles as Article[])[0] && (
+                  <Link href={`/article/${(articles as Article[])[0].slug}`} className="block mb-3 rounded-xl overflow-hidden border border-slate-200 group">
+                    {(articles as Article[])[0].cover_image_url && (
+                      <div className="aspect-[2/1] overflow-hidden bg-slate-100 relative">
+                        <Image src={(articles as Article[])[0].cover_image_url!} alt={(articles as Article[])[0].title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="100vw" loading="lazy" />
+                      </div>
+                    )}
+                    <div className="p-3">
+                      {(articles as Article[])[0].category && (
+                        <span className="text-[0.65rem] font-bold uppercase tracking-wider text-slate-500">{(articles as Article[])[0].category}</span>
+                      )}
+                      <h3 className="font-bold text-sm text-slate-900 leading-snug line-clamp-2 mt-0.5">{(articles as Article[])[0].title}</h3>
+                    </div>
+                  </Link>
+                )}
+                <div className="divide-y divide-slate-100">
+                  {(articles as Article[]).slice(1, 5).map((article) => (
+                    <Link key={article.id} href={`/article/${article.slug}`} className="flex items-start gap-3 py-2.5 group">
+                      <div className="flex-1 min-w-0">
+                        {article.category && <span className="text-[0.65rem] font-bold uppercase tracking-wider text-slate-500">{article.category}</span>}
+                        <h3 className="font-bold text-sm text-slate-900 leading-snug line-clamp-2 group-hover:text-slate-600 transition-colors">{article.title}</h3>
+                      </div>
+                      <div className="text-[0.62rem] text-slate-400 shrink-0 mt-1">{article.read_time && <span>{article.read_time} min</span>}</div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+        </ScrollFadeIn>
+      )}
+
+
       {/* ═══════ 5. EOFY SEASONAL BLOCK (March–July) ═══════ */}
       {(() => {
         const month = new Date().getMonth();
@@ -529,82 +606,6 @@ export default async function HomePage() {
           </div>
         </section>
       </ScrollFadeIn>
-
-      {/* ═══════ 11. ARTICLES & GUIDES ═══════ */}
-      {(articles as Article[])?.length > 0 && (
-        <ScrollFadeIn>
-          <section className="py-3 md:py-12 bg-white">
-            <div className="container-custom">
-              <div className="flex items-start justify-between gap-2 mb-2.5 md:mb-6">
-                <div>
-                  <h2 className="text-lg md:text-2xl font-bold">Learn &amp; Get Expert Help</h2>
-                  <p className="text-[0.69rem] md:text-sm text-slate-500 mt-0.5 md:mt-1">Guides, how-tos, and professional advice for smarter investing</p>
-                </div>
-                <Link href="/articles" className="text-[0.69rem] md:text-sm font-semibold text-slate-500 hover:text-slate-900 shrink-0 min-h-[44px] inline-flex items-center px-1">
-                  View all &rarr;
-                </Link>
-              </div>
-              <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-                {(articles as Article[]).slice(0, 6).map((article) => (
-                  <Link
-                    key={article.id}
-                    href={`/article/${article.slug}`}
-                    className="border border-slate-200 rounded-xl overflow-hidden hover:shadow-md hover:border-slate-300 transition-all group flex flex-col"
-                  >
-                    {article.cover_image_url && (
-                      <div className="aspect-[16/9] overflow-hidden bg-slate-100 relative">
-                        <Image src={article.cover_image_url} alt={article.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" loading="lazy" />
-                      </div>
-                    )}
-                    <div className="p-5 flex flex-col flex-1">
-                      {article.category && (
-                        <span className="inline-block self-start text-[0.69rem] font-bold uppercase tracking-wider text-slate-600 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full mb-3">
-                          {article.category}
-                        </span>
-                      )}
-                      <h3 className="font-bold text-slate-900 group-hover:text-slate-600 transition-colors mb-2 leading-snug">{article.title}</h3>
-                      <p className="text-sm text-slate-500 line-clamp-2 mb-3 flex-1">{article.excerpt}</p>
-                      <div className="flex items-center gap-3 text-xs text-slate-500">
-                        {article.read_time && <span>{article.read_time} min read</span>}
-                        <span className="text-slate-900 font-semibold group-hover:translate-x-0.5 transition-transform">Read Guide &rarr;</span>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-              {/* Mobile articles */}
-              <div className="md:hidden">
-                {(articles as Article[])[0] && (
-                  <Link href={`/article/${(articles as Article[])[0].slug}`} className="block mb-3 rounded-xl overflow-hidden border border-slate-200 group">
-                    {(articles as Article[])[0].cover_image_url && (
-                      <div className="aspect-[2/1] overflow-hidden bg-slate-100 relative">
-                        <Image src={(articles as Article[])[0].cover_image_url!} alt={(articles as Article[])[0].title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" sizes="100vw" loading="lazy" />
-                      </div>
-                    )}
-                    <div className="p-3">
-                      {(articles as Article[])[0].category && (
-                        <span className="text-[0.65rem] font-bold uppercase tracking-wider text-slate-500">{(articles as Article[])[0].category}</span>
-                      )}
-                      <h3 className="font-bold text-sm text-slate-900 leading-snug line-clamp-2 mt-0.5">{(articles as Article[])[0].title}</h3>
-                    </div>
-                  </Link>
-                )}
-                <div className="divide-y divide-slate-100">
-                  {(articles as Article[]).slice(1, 5).map((article) => (
-                    <Link key={article.id} href={`/article/${article.slug}`} className="flex items-start gap-3 py-2.5 group">
-                      <div className="flex-1 min-w-0">
-                        {article.category && <span className="text-[0.65rem] font-bold uppercase tracking-wider text-slate-500">{article.category}</span>}
-                        <h3 className="font-bold text-sm text-slate-900 leading-snug line-clamp-2 group-hover:text-slate-600 transition-colors">{article.title}</h3>
-                      </div>
-                      <div className="text-[0.62rem] text-slate-400 shrink-0 mt-1">{article.read_time && <span>{article.read_time} min</span>}</div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </section>
-        </ScrollFadeIn>
-      )}
 
       {/* ═══════ 12. EMAIL CAPTURE ═══════ */}
       <ScrollFadeIn>
