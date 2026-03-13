@@ -45,16 +45,20 @@ export default function AdvisorDirectory({ advisors }: { advisors: Advisor[] }) 
   const [headingIndex, setHeadingIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
 
-  // Cycle heading every 3 seconds
+  // Cycle heading every 3 seconds with proper cleanup
   useEffect(() => {
+    let timeoutId: ReturnType<typeof setTimeout>;
     const interval = setInterval(() => {
       setIsAnimating(true);
-      setTimeout(() => {
+      timeoutId = setTimeout(() => {
         setHeadingIndex((prev) => (prev + 1) % (activeTab === "property" ? 3 : 4));
         setIsAnimating(false);
       }, 300);
     }, 3000);
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      clearTimeout(timeoutId);
+    };
   }, [activeTab]);
 
   return (
@@ -185,7 +189,7 @@ export default function AdvisorDirectory({ advisors }: { advisors: Advisor[] }) 
               Find My Advisor
             </Link>
             <Link
-              href={activeTab === "property" ? "/advisors?type=mortgage_broker,buyers_agent" : "/advisors"}
+              href={activeTab === "property" ? "/advisors/mortgage-brokers" : "/advisors"}
               className="flex-1 md:flex-none text-center px-4 py-2.5 border border-violet-300 text-violet-700 text-xs md:text-sm font-semibold rounded-lg hover:bg-violet-50 transition-colors"
             >
               View All {totalLabel}
