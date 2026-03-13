@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Icon from "@/components/Icon";
@@ -38,13 +38,37 @@ export default function AdvisorDirectory({ advisors }: { advisors: Advisor[] }) 
 
   const totalLabel = activeTab === "property" ? "Property Experts" : "Financial Experts";
 
+  const headingByTab = activeTab === "property"
+    ? ["Mortgage Broker", "Buyer's Agent", "Property Expert"]
+    : ["Financial Planner", "SMSF Accountant", "Insurance Broker", "Tax Agent"];
+
+  const [headingIndex, setHeadingIndex] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  // Cycle heading every 3 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsAnimating(true);
+      setTimeout(() => {
+        setHeadingIndex((prev) => (prev + 1) % (activeTab === "property" ? 3 : 4));
+        setIsAnimating(false);
+      }, 300);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [activeTab]);
+
   return (
     <section className="py-4 md:py-12 bg-gradient-to-b from-violet-50/30 to-white">
       <div className="container-custom">
-        {/* Header */}
+        {/* Header — Dynamic */}
         <div className="flex items-start justify-between gap-2 mb-3 md:mb-6">
           <div>
-            <h2 className="text-lg md:text-2xl font-bold text-slate-900">Verified Financial Advisors</h2>
+            <h2 className="text-lg md:text-2xl font-bold text-slate-900">
+              Find a{" "}
+              <span className={`inline-block transition-all duration-300 ${isAnimating ? "opacity-0 translate-y-2" : "opacity-100 translate-y-0"}`}>
+                <span className="text-violet-600">{headingByTab[headingIndex % headingByTab.length]}</span>
+              </span>
+            </h2>
             <p className="text-[0.69rem] md:text-sm text-slate-500 mt-0.5 md:mt-1">
               <span className="hidden md:inline">Browse independent experts verified against ASIC registers across Australia</span>
               <span className="md:hidden">ASIC-verified professionals across Australia</span>
@@ -59,7 +83,7 @@ export default function AdvisorDirectory({ advisors }: { advisors: Advisor[] }) 
         <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-4 md:mb-6">
           <div className="flex bg-white p-1 rounded-lg border border-slate-200 w-max">
             <button
-              onClick={() => setActiveTab("property")}
+              onClick={() => { setActiveTab("property"); setHeadingIndex(0); }}
               className={`px-3 md:px-4 py-1.5 rounded-md text-xs md:text-sm font-semibold transition-all ${
                 activeTab === "property"
                   ? "bg-violet-600 text-white shadow-sm"
@@ -69,7 +93,7 @@ export default function AdvisorDirectory({ advisors }: { advisors: Advisor[] }) 
               Property &amp; Loans
             </button>
             <button
-              onClick={() => setActiveTab("wealth")}
+              onClick={() => { setActiveTab("wealth"); setHeadingIndex(0); }}
               className={`px-3 md:px-4 py-1.5 rounded-md text-xs md:text-sm font-semibold transition-all ${
                 activeTab === "wealth"
                   ? "bg-violet-600 text-white shadow-sm"
