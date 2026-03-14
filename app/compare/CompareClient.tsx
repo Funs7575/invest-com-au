@@ -256,6 +256,55 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
     return map;
   }, [cpcCampaigns]);
 
+  // Build a map of platform filter key → top broker logo URLs (up to 4 per category)
+  const filterLogos = useMemo(() => {
+    const PLATFORM_KEY_MAP: Record<string, PlatformType | 'crypto'> = {
+      shares: 'shares',
+      crypto: 'crypto',
+      robo: 'robo',
+      research: 'research',
+      super: 'super',
+      property: 'property',
+      cfd: 'cfd',
+      savings: 'savings',
+      'term-deposits': 'term-deposits',
+    };
+
+    const result: Record<string, { slug: string; name: string; logo_url?: string; color: string }[]> = {};
+
+    for (const [filterKey] of Object.entries(PLATFORM_KEY_MAP)) {
+      let matches: Broker[];
+      switch (filterKey) {
+        case 'shares': matches = brokers.filter(b => (b.platform_type || 'share_broker') === 'share_broker'); break;
+        case 'crypto': matches = brokers.filter(b => b.is_crypto); break;
+        case 'robo': matches = brokers.filter(b => b.platform_type === 'robo_advisor'); break;
+        case 'research': matches = brokers.filter(b => b.platform_type === 'research_tool'); break;
+        case 'super': matches = brokers.filter(b => b.platform_type === 'super_fund'); break;
+        case 'property': matches = brokers.filter(b => b.platform_type === 'property_platform'); break;
+        case 'cfd': matches = brokers.filter(b => b.platform_type === 'cfd_forex'); break;
+        case 'savings': matches = brokers.filter(b => b.platform_type === 'savings_account'); break;
+        case 'term-deposits': matches = brokers.filter(b => b.platform_type === 'term_deposit'); break;
+        default: matches = [];
+      }
+      // Sort by rating desc, take top 4 with logo_url
+      const withLogos = matches
+        .filter(b => b.logo_url)
+        .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
+        .slice(0, 4)
+        .map(b => ({ slug: b.slug, name: b.name, logo_url: b.logo_url, color: b.color }));
+      result[filterKey] = withLogos;
+    }
+
+    // "all" gets the top-rated from across all brokers
+    result['all'] = brokers
+      .filter(b => b.logo_url)
+      .sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0))
+      .slice(0, 5)
+      .map(b => ({ slug: b.slug, name: b.name, logo_url: b.logo_url, color: b.color }));
+
+    return result;
+  }, [brokers]);
+
   function toggleSelected(slug: string) {
     setSelected(prev => {
       const next = new Set(prev);
@@ -403,6 +452,62 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
     );
   };
 
+  /** Overlapping logo avatars for filter pills */
+  function LogoStack({ logos, max = 4, size = 20 }: { logos: { slug: string; name: string; logo_url?: string; color: string }[]; max?: number; size?: number }) {
+    const shown = logos.slice(0, max);
+    if (shown.length === 0) return null;
+    const overlap = Math.round(size * 0.3); // 30% overlap
+    return (
+      <span className="inline-flex items-center ml-1.5" style={{ marginRight: `${overlap}px` }}>
+        {shown.map((b, i) => {
+          const logoSrc = b.logo_url?.endsWith('.ico')
+            ? `/logos/png/${b.slug}.png`
+            : b.logo_url;
+          return (
+            <span
+              key={b.slug}
+              className="rounded-full border-2 border-white bg-white overflow-hidden shrink-0 shadow-sm"
+              style={{
+                width: size, height: size,
+                marginLeft: i === 0 ? 0 : -overlap,
+                zIndex: shown.length - i,
+                position: 'relative',
+              }}
+              title={b.name}
+            >
+              {logoSrc ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={logoSrc} alt="" width={size} height={size} className="w-full h-full object-contain" loading="lazy" />
+              ) : (
+                <span
+                  className="w-full h-full flex items-center justify-center text-[0.45rem] font-bold"
+                  style={{ background: `${b.color}20`, color: b.color }}
+                >
+                  {b.name.charAt(0)}
+                </span>
+              )}
+            </span>
+          );
+        })}
+        {logos.length > max && (
+          <span
+            className="rounded-full border-2 border-white bg-slate-100 text-slate-500 flex items-center justify-center shrink-0 shadow-sm"
+            style={{
+              width: size, height: size,
+              marginLeft: -overlap,
+              zIndex: 0,
+              position: 'relative',
+              fontSize: size * 0.35,
+              fontWeight: 700,
+            }}
+          >
+            +{logos.length - max}
+          </span>
+        )}
+      </span>
+    );
+  }
+
   return (
     <div className="pt-5 pb-8 md:py-12">
       <div className="container-custom">
@@ -480,7 +585,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
 
         {/* Desktop Filter System */}
         <div className="hidden md:block mb-4 space-y-3">
-          {/* Row 1: Platform type pills */}
+          {/* Row 1: Platform type pills with logos */}
           <div className="flex flex-wrap gap-2" role="tablist" aria-label="Platform type">
             {platformTypes.map(f => (
               <button
@@ -488,13 +593,20 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                 onClick={() => setActiveFilter(f.key)}
                 role="tab"
                 aria-selected={activeFilter === f.key}
-                className={`shrink-0 px-4 py-2 text-sm font-medium rounded-full transition-all ${
+                className={`shrink-0 px-4 py-2 text-sm font-medium rounded-full transition-all inline-flex items-center gap-0.5 ${
                   activeFilter === f.key
                     ? 'bg-blue-700 text-white shadow-sm scale-105'
                     : 'bg-slate-100 text-slate-700 hover:bg-slate-200 hover:scale-[1.02]'
                 }`}
               >
                 {f.label}
+                {filterLogos[f.key]?.length > 0 && (
+                  <LogoStack
+                    logos={filterLogos[f.key]}
+                    max={f.key === 'all' ? 5 : 3}
+                    size={activeFilter === f.key ? 22 : 20}
+                  />
+                )}
               </button>
             ))}
           </div>
@@ -620,13 +732,16 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
                   <button
                     key={f.key}
                     onClick={() => setActiveFilter(f.key)}
-                    className={`px-3 py-2 text-sm font-medium rounded-full ${
+                    className={`px-3 py-2 text-sm font-medium rounded-full inline-flex items-center gap-0.5 ${
                       activeFilter === f.key
                         ? 'bg-blue-700 text-white shadow-sm'
                         : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                     }`}
                   >
                     {f.short || f.label}
+                    {filterLogos[f.key]?.length > 0 && (
+                      <LogoStack logos={filterLogos[f.key]} max={3} size={18} />
+                    )}
                   </button>
                 ))}
               </div>
