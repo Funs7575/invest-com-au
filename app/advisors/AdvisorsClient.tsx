@@ -180,7 +180,21 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
     }, '/advisors');
   }, [professionals.length, initialType, initialState]);
 
-  const [typeFilter, setTypeFilter] = useState<ProfessionalType | "all">(initialType || "all");
+  const [typeFilters, setTypeFilters] = useState<Set<ProfessionalType>>(() => {
+    if (initialType) return new Set([initialType]);
+    return new Set();
+  });
+  const toggleType = (key: ProfessionalType | "all") => {
+    if (key === "all") {
+      setTypeFilters(new Set());
+    } else {
+      setTypeFilters(prev => {
+        const next = new Set(prev);
+        if (next.has(key)) next.delete(key); else next.add(key);
+        return next;
+      });
+    }
+  };
   const [stateFilter, setStateFilter] = useState<string>(initialState || "all");
   const [specialtyFilters, setSpecialtyFilters] = useState<string[]>([]);
   const [feeFilter, setFeeFilter] = useState<string>("all");
@@ -223,7 +237,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
       lng: String(userLng),
       ...(radius > 0 ? { radius: String(radius) } : { radius: "500" }),
       limit: "100",
-      ...(typeFilter !== "all" ? { type: typeFilter } : {}),
+      ...(typeFilters.size > 0 ? { type: Array.from(typeFilters).join(",") } : {}),
       ...(feeFilter !== "all" ? { fee_structure: feeFilter } : {}),
       ...(specialtyFilters.length > 0 ? { specialty: specialtyFilters[0] } : {}),
     });
@@ -232,7 +246,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
       .then(data => { setNearbyResults(data.advisors || []); setNearbyLoading(false); })
       .catch(() => setNearbyLoading(false));
     return () => controller.abort();
-  }, [userLat, userLng, radius, typeFilter, feeFilter, specialtyFilters, isLocationActive]);
+  }, [userLat, userLng, radius, typeFilters, feeFilter, specialtyFilters, isLocationActive]);
 
   useEffect(() => {
     if (initialType || initialState) return;
@@ -241,7 +255,10 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
     const sp = searchParams.get("specialty");
     const sort = searchParams.get("sort");
     const q = searchParams.get("q");
-    if (t && TYPE_FILTERS.some(f => f.key === t)) setTypeFilter(t as ProfessionalType);
+    if (t) {
+      const types = t.split(",").filter(v => TYPE_FILTERS.some(f => f.key === v)) as ProfessionalType[];
+      if (types.length > 0) setTypeFilters(new Set(types));
+    }
     if (s && AU_STATES.includes(s as typeof AU_STATES[number])) setStateFilter(s);
     if (sp) setSpecialtyFilters(sp.split(","));
     if (sort) setSortBy(sort as SortKey);
@@ -250,21 +267,21 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
 
   const updateURL = useCallback(() => {
     const params = new URLSearchParams();
-    if (typeFilter !== "all") params.set("type", typeFilter);
+    if (typeFilters.size > 0) params.set("type", Array.from(typeFilters).join(","));
     if (stateFilter !== "all") params.set("state", stateFilter);
     if (specialtyFilters.length) params.set("specialty", specialtyFilters.join(","));
     if (sortBy !== "rating") params.set("sort", sortBy);
     if (search) params.set("q", search);
     const qs = params.toString();
     router.replace(`/advisors${qs ? `?${qs}` : ""}`, { scroll: false });
-  }, [typeFilter, stateFilter, specialtyFilters, sortBy, search, router]);
+  }, [typeFilters, stateFilter, specialtyFilters, sortBy, search, router]);
 
   useEffect(() => {
     const t = setTimeout(updateURL, 300);
     return () => clearTimeout(t);
   }, [updateURL]);
 
-  useEffect(() => { setPage(1); }, [typeFilter, stateFilter, specialtyFilters, feeFilter, firmFilter, minRating, verifiedOnly, search, sortBy, nearbyResults]);
+  useEffect(() => { setPage(1); }, [typeFilters, stateFilter, specialtyFilters, feeFilter, firmFilter, minRating, verifiedOnly, search, sortBy, nearbyResults]);
 
   const allSpecialties = useMemo(() => {
     const set = new Set<string>();
@@ -312,7 +329,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
     }
 
     let result = professionals.filter(p => {
-      if (typeFilter !== "all" && p.type !== typeFilter) return false;
+      if (typeFilters.size > 0 && !typeFilters.has(p.type as ProfessionalType)) return false;
       if (stateFilter !== "all" && p.location_state !== stateFilter) return false;
       if (verifiedOnly && !p.verified) return false;
       if (feeFilter !== "all" && p.fee_structure !== feeFilter) return false;
@@ -341,21 +358,26 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
       return bFeatured - aFeatured;
     });
     return result;
-  }, [professionals, nearbyResults, isLocationActive, typeFilter, stateFilter, specialtyFilters, feeFilter, firmFilter, minRating, verifiedOnly, search, sortBy]);
+  }, [professionals, nearbyResults, isLocationActive, typeFilters, stateFilter, specialtyFilters, feeFilter, firmFilter, minRating, verifiedOnly, search, sortBy]);
 
   const totalPages = Math.ceil(filtered.length / RESULTS_PER_PAGE);
   const paginatedResults = filtered.slice((page - 1) * RESULTS_PER_PAGE, page * RESULTS_PER_PAGE);
 
-  const activeFilterCount = [typeFilter !== "all", stateFilter !== "all", specialtyFilters.length > 0, feeFilter !== "all", firmFilter !== "all", minRating > 0, verifiedOnly, isLocationActive].filter(Boolean).length;
+  const activeFilterCount = [typeFilters.size > 0, stateFilter !== "all", specialtyFilters.length > 0, feeFilter !== "all", firmFilter !== "all", minRating > 0, verifiedOnly, isLocationActive].filter(Boolean).length;
 
   const contextParts: string[] = [];
-  if (typeFilter !== "all") contextParts.push(TYPE_FILTERS.find(f => f.key === typeFilter)?.label || "");
+  if (typeFilters.size > 0) {
+    const labels = Array.from(typeFilters).map(t => TYPE_FILTERS.find(f => f.key === t)?.label).filter(Boolean);
+    contextParts.push(labels.join(" & ") || "");
+  }
   if (stateFilter !== "all") contextParts.push(`in ${stateFilter}`);
   if (isLocationActive && locationSearch) contextParts.push(`near ${locationSearch.locality}`);
   if (specialtyFilters.length > 0) contextParts.push(`specialising in ${specialtyFilters.join(" + ")}`);
 
   // Dynamic heading based on active filters
-  const activeTypeLabel = typeFilter !== "all" ? TYPE_FILTERS.find(f => f.key === typeFilter)?.label : null;
+  const activeTypeLabel = typeFilters.size > 0
+    ? Array.from(typeFilters).map(t => TYPE_FILTERS.find(f => f.key === t)?.label).filter(Boolean).join(" & ")
+    : null;
   const dynamicTitle = activeTypeLabel
     ? stateFilter !== "all"
       ? `Find ${activeTypeLabel} in ${stateFilter}`
@@ -369,7 +391,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
 
   const toggleSpecialty = (s: string) => setSpecialtyFilters(prev => prev.includes(s) ? prev.filter(x => x !== s) : [...prev, s]);
   const clearAll = () => {
-    setTypeFilter("all"); setStateFilter("all"); setSpecialtyFilters([]); setFeeFilter("all");
+    setTypeFilters(new Set()); setStateFilter("all"); setSpecialtyFilters([]); setFeeFilter("all");
     setFirmFilter("all"); setMinRating(0);
     setVerifiedOnly(false); setSearch(""); setSortBy("rating");
     setLocationSearch(null); setUserLat(null); setUserLng(null); setRadius(25);
@@ -441,10 +463,10 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               <label className="text-xs font-bold text-slate-700 mb-2 block">Advisor Type</label>
               <div className="flex flex-wrap gap-1.5">
                 {TYPE_FILTERS.map(f => (
-                  <button key={f.key} onClick={() => setTypeFilter(f.key)} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${typeFilter === f.key ? "bg-violet-600 text-white shadow-sm" : "bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200"}`}>
-                    <Icon name={f.icon} size={13} className={typeFilter === f.key ? "text-violet-200" : "text-slate-400"} />
+                  <button key={f.key} onClick={() => toggleType(f.key)} className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${(f.key === "all" ? typeFilters.size === 0 : typeFilters.has(f.key as ProfessionalType)) ? "bg-violet-600 text-white shadow-sm" : "bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200"}`}>
+                    <Icon name={f.icon} size={13} className={(f.key === "all" ? typeFilters.size === 0 : typeFilters.has(f.key as ProfessionalType)) ? "text-violet-200" : "text-slate-400"} />
                     {f.label}
-                    {typeCounts[f.key] ? <span className={typeFilter === f.key ? "text-violet-200" : "text-slate-400"}>({typeCounts[f.key]})</span> : null}
+                    {typeCounts[f.key] ? <span className={(f.key === "all" ? typeFilters.size === 0 : typeFilters.has(f.key as ProfessionalType)) ? "text-violet-200" : "text-slate-400"}>({typeCounts[f.key]})</span> : null}
                   </button>
                 ))}
               </div>
@@ -528,12 +550,12 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                 <button onClick={() => { setLocationSearch(null); setUserLat(null); setUserLng(null); }} className="hover:text-violet-900"><Icon name="x" size={12} /></button>
               </span>
             )}
-            {typeFilter !== "all" && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-violet-100 text-violet-700 text-[0.65rem] font-semibold rounded-full">
-                {TYPE_FILTERS.find(f => f.key === typeFilter)?.label}
-                <button onClick={() => setTypeFilter("all")} className="hover:text-violet-900"><Icon name="x" size={12} /></button>
+            {Array.from(typeFilters).map(t => (
+              <span key={t} className="inline-flex items-center gap-1 px-2.5 py-1 bg-violet-100 text-violet-700 text-[0.65rem] font-semibold rounded-full">
+                {TYPE_FILTERS.find(f => f.key === t)?.label}
+                <button onClick={() => toggleType(t)} className="hover:text-violet-900"><Icon name="x" size={12} /></button>
               </span>
-            )}
+            ))}
             {stateFilter !== "all" && (
               <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-100 text-blue-700 text-[0.65rem] font-semibold rounded-full">
                 {stateFilter}
