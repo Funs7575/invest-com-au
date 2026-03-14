@@ -68,13 +68,18 @@ function BioSection({ name, bio }: { name: string; bio: string }) {
   const [expanded, setExpanded] = useState(false);
   const isLong = bio.length > 300;
   return (
-    <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-5 mb-4 md:mb-6">
-      <h2 className="text-sm md:text-base font-bold text-slate-900 mb-2">About {name}</h2>
-      <p className={`text-xs md:text-sm text-slate-600 leading-relaxed whitespace-pre-line ${!expanded && isLong ? "line-clamp-4 md:line-clamp-none" : ""}`}>
+    <div className="bg-white border border-slate-200 rounded-xl p-5 md:p-6 mb-5 md:mb-8 shadow-sm">
+      <div className="flex items-center gap-2.5 mb-3">
+        <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
+          <Icon name="user" size={16} className="text-slate-500" />
+        </div>
+        <h2 className="text-base md:text-lg font-bold text-slate-900">About {name}</h2>
+      </div>
+      <p className={`text-sm md:text-base text-slate-600 leading-relaxed whitespace-pre-line ${!expanded && isLong ? "line-clamp-4 md:line-clamp-none" : ""}`}>
         {bio}
       </p>
       {isLong && !expanded && (
-        <button onClick={() => setExpanded(true)} className="md:hidden text-xs font-semibold text-violet-600 hover:text-violet-800 mt-1">
+        <button onClick={() => setExpanded(true)} className="md:hidden text-sm font-semibold text-violet-600 hover:text-violet-800 mt-2">
           Read more
         </button>
       )}
@@ -152,7 +157,7 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
 
   return (
     <div className="py-5 md:py-12">
-      <div className="container-custom max-w-3xl">
+      <div className="container-custom max-w-4xl">
         {/* Breadcrumb */}
         <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
           <Link href="/" className="hover:text-slate-900">Home</Link>
@@ -162,41 +167,68 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
           <span className="text-slate-700">{pro.name}</span>
         </nav>
 
-        {/* Profile header */}
-        <div className="relative bg-white border border-slate-200 rounded-2xl overflow-hidden mb-4 md:mb-6">
-          <div className="h-2 bg-gradient-to-r from-violet-600 via-violet-500 to-violet-400" />
-          <div className="p-4 md:p-6">
-          <div className="flex gap-4">
-            {/* Avatar */}
-            {pro.photo_url ? (
-              <Image src={pro.photo_url} alt={pro.name} width={80} height={80} className="w-16 h-16 md:w-20 md:h-20 rounded-full object-cover shrink-0 ring-2 ring-violet-100" />
-            ) : (
-              <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-gradient-to-br from-violet-100 to-violet-50 flex items-center justify-center text-lg md:text-xl font-bold text-violet-600 shrink-0 ring-2 ring-violet-100">
-                {pro.name.split(" ").map((n) => n[0]).join("")}
-              </div>
-            )}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-1">
-                <h1 className="text-lg md:text-2xl font-extrabold text-slate-900 truncate">{pro.name}</h1>
-                {pro.verified && (
-                  <span className="shrink-0 text-[0.62rem] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">Verified</span>
-                )}
-              </div>
-              {pro.firm_name && <div className="text-xs md:text-sm text-slate-600 mb-1">{pro.firm_name}</div>}
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-[0.65rem] md:text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full font-medium">{typeLabel}</span>
-                {pro.location_display && (
-                  <span className="text-[0.65rem] md:text-xs text-slate-400">{pro.location_display}</span>
-                )}
-              </div>
-              {pro.rating > 0 && pro.review_count > 0 && (
-                <div className="mt-1.5 text-xs">
-                  <span className="text-amber-500">{renderStars(pro.rating)}</span>
-                  <span className="text-slate-400 ml-1">{pro.rating}/5 ({pro.review_count} review{pro.review_count !== 1 ? "s" : ""})</span>
+        {/* Profile header — premium hero card */}
+        <div className="relative bg-white border border-slate-200 rounded-2xl overflow-hidden mb-4 md:mb-6 shadow-sm">
+          {/* Gradient banner */}
+          <div className="h-24 md:h-32 bg-gradient-to-br from-violet-600 via-violet-500 to-indigo-500 relative">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(255,255,255,0.15),transparent_60%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(255,255,255,0.1),transparent_50%)]" />
+          </div>
+          <div className="px-4 md:px-8 pb-5 md:pb-6 -mt-12 md:-mt-14 relative">
+            <div className="flex flex-col md:flex-row md:items-end gap-4">
+              {/* Avatar — larger and prominent */}
+              {pro.photo_url ? (
+                <Image src={pro.photo_url} alt={pro.name} width={160} height={160} className="w-24 h-24 md:w-36 md:h-36 rounded-2xl object-cover shrink-0 ring-4 ring-white shadow-lg" />
+              ) : (
+                <div className="w-24 h-24 md:w-36 md:h-36 rounded-2xl bg-gradient-to-br from-violet-100 to-violet-50 flex items-center justify-center text-2xl md:text-4xl font-bold text-violet-600 shrink-0 ring-4 ring-white shadow-lg">
+                  {pro.name.split(" ").map((n) => n[0]).join("")}
                 </div>
               )}
+              <div className="flex-1 min-w-0 pb-1">
+                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                  <h1 className="text-xl md:text-3xl font-extrabold text-slate-900">{pro.name}</h1>
+                  {pro.verified && (
+                    <span className="shrink-0 inline-flex items-center gap-1 text-[0.62rem] md:text-xs font-bold px-2 md:px-2.5 py-0.5 md:py-1 rounded-full bg-blue-100 text-blue-700">
+                      <Icon name="shield-check" size={12} className="hidden md:inline" />
+                      Verified
+                    </span>
+                  )}
+                </div>
+                {pro.firm_name && <div className="text-sm md:text-base text-slate-600 font-medium mb-1.5">{pro.firm_name}</div>}
+                <div className="flex items-center gap-2 md:gap-3 flex-wrap">
+                  <span className="text-xs md:text-sm bg-violet-100 text-violet-700 px-2.5 py-1 rounded-lg font-semibold">{typeLabel}</span>
+                  {pro.location_display && (
+                    <span className="inline-flex items-center gap-1 text-xs md:text-sm text-slate-500">
+                      <Icon name="map-pin" size={14} className="text-slate-400" />
+                      {pro.location_display}
+                    </span>
+                  )}
+                  {pro.rating > 0 && pro.review_count > 0 && (
+                    <span className="inline-flex items-center gap-1.5 text-xs md:text-sm">
+                      <span className="text-amber-500 font-semibold">{renderStars(pro.rating)}</span>
+                      <span className="text-slate-500">{pro.rating}/5 ({pro.review_count})</span>
+                    </span>
+                  )}
+                </div>
+                {/* Inline CTA row — desktop only */}
+                <div className="hidden md:flex items-center gap-3 mt-4">
+                  <a href="#enquiry" className="px-6 py-2.5 bg-violet-600 text-white text-sm font-bold rounded-lg hover:bg-violet-700 transition-colors shadow-sm">
+                    Request Free Consultation
+                  </a>
+                  {pro.booking_link && (
+                    <a href={pro.booking_link} target="_blank" rel="noopener noreferrer" className="px-5 py-2.5 border border-slate-200 text-slate-700 text-sm font-semibold rounded-lg hover:bg-slate-50 transition-colors">
+                      Book a Call
+                    </a>
+                  )}
+                  {pro.phone && (
+                    <a href={`tel:${pro.phone.replace(/\s/g, "")}`} className="px-4 py-2.5 border border-slate-200 text-slate-700 text-sm font-semibold rounded-lg hover:bg-slate-50 transition-colors inline-flex items-center gap-1.5">
+                      <Icon name="phone" size={14} className="text-slate-400" />
+                      Call
+                    </a>
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
           </div>
         </div>
 
@@ -257,20 +289,22 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
           </div>
         )}
 
-        {/* Quick facts grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 mb-4 md:mb-6">
+        {/* Quick facts grid — elevated */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 md:gap-4 mb-5 md:mb-8">
           {[
-            { label: "Type", value: typeLabel, icon: "briefcase", accent: "border-t-violet-500" },
-            { label: "Location", value: pro.location_display || "Australia", icon: "map-pin", accent: "border-t-blue-500" },
-            { label: "Fees", value: pro.fee_description || "Contact for pricing", icon: "coins", accent: "border-t-amber-500" },
-            { label: "Licence", value: pro.afsl_number || pro.registration_number || "Verified", icon: "shield-check", accent: "border-t-emerald-500" },
+            { label: "Type", value: typeLabel, icon: "briefcase", bg: "bg-violet-50", border: "border-violet-200", iconColor: "text-violet-500" },
+            { label: "Location", value: pro.location_display || "Australia", icon: "map-pin", bg: "bg-blue-50", border: "border-blue-200", iconColor: "text-blue-500" },
+            { label: "Fees", value: pro.fee_description || "Contact for pricing", icon: "coins", bg: "bg-amber-50", border: "border-amber-200", iconColor: "text-amber-500" },
+            { label: "Licence", value: pro.afsl_number || pro.registration_number || "Verified", icon: "shield-check", bg: "bg-emerald-50", border: "border-emerald-200", iconColor: "text-emerald-500" },
           ].map((f) => (
-            <div key={f.label} className={`bg-white border border-slate-200 border-t-2 ${f.accent} rounded-xl p-2.5 md:p-3`}>
-              <div className="flex items-center gap-1.5 mb-0.5">
-                <Icon name={f.icon} size={12} className="text-slate-400" />
-                <span className="text-[0.56rem] md:text-[0.62rem] text-slate-400 uppercase font-semibold tracking-wide">{f.label}</span>
+            <div key={f.label} className={`${f.bg} border ${f.border} rounded-xl p-3 md:p-4`}>
+              <div className="flex items-center gap-2 mb-1.5">
+                <div className={`w-7 h-7 md:w-8 md:h-8 rounded-lg ${f.bg} flex items-center justify-center`}>
+                  <Icon name={f.icon} size={16} className={f.iconColor} />
+                </div>
+                <span className="text-[0.62rem] md:text-xs text-slate-500 uppercase font-semibold tracking-wide">{f.label}</span>
               </div>
-              <div className="text-xs md:text-sm font-semibold text-slate-800 truncate">{f.value}</div>
+              <div className="text-xs md:text-sm font-bold text-slate-800 leading-snug line-clamp-2">{f.value}</div>
             </div>
           ))}
         </div>
@@ -411,11 +445,16 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
 
         {/* Specialties */}
         {pro.specialties.length > 0 && (
-          <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-5 mb-4 md:mb-6">
-            <h2 className="text-sm md:text-base font-bold text-slate-900 mb-2">Specialties</h2>
+          <div className="bg-white border border-slate-200 rounded-xl p-5 md:p-6 mb-5 md:mb-8 shadow-sm">
+            <div className="flex items-center gap-2.5 mb-3">
+              <div className="w-8 h-8 rounded-lg bg-violet-50 flex items-center justify-center">
+                <Icon name="target" size={16} className="text-violet-500" />
+              </div>
+              <h2 className="text-base md:text-lg font-bold text-slate-900">Specialties</h2>
+            </div>
             <div className="flex flex-wrap gap-2">
               {pro.specialties.map((s) => (
-                <span key={s} className="text-xs md:text-sm font-medium px-3 py-1 rounded-full bg-slate-50 text-slate-700 border border-slate-200">{s}</span>
+                <span key={s} className="text-xs md:text-sm font-medium px-3.5 py-1.5 rounded-lg bg-slate-50 text-slate-700 border border-slate-200 hover:border-slate-300 transition-colors">{s}</span>
               ))}
             </div>
           </div>
@@ -579,93 +618,102 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
           <BookingWidget advisorSlug={pro.slug} advisorName={pro.name} />
         </div>
 
-        {/* Enquiry form */}
-        <div id="enquiry" className="bg-white border border-slate-200 rounded-xl p-4 md:p-6 mb-4 md:mb-6 scroll-mt-20">
+        {/* Enquiry form — premium card */}
+        <div id="enquiry" className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-5 md:p-8 mb-5 md:mb-8 scroll-mt-20 shadow-lg text-white relative overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(139,92,246,0.15),transparent_60%)]" />
+          <div className="relative">
           {formState === "success" ? (
             <div className="text-center py-6">
-              <div className="w-14 h-14 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-3">
-                <Icon name="check" size={28} className="text-emerald-600" />
+              <div className="w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-4">
+                <Icon name="check" size={32} className="text-emerald-400" />
               </div>
-              <h3 className="text-base md:text-lg font-bold text-slate-900 mb-1">Enquiry Sent!</h3>
-              <p className="text-xs md:text-sm text-slate-500 mb-4">
+              <h3 className="text-lg md:text-xl font-bold mb-2">Enquiry Sent!</h3>
+              <p className="text-sm text-slate-300 mb-4">
                 {pro.name} will typically respond within 24 hours. Check your email for confirmation.
               </p>
-              <div className="bg-slate-50 rounded-lg p-3 text-left text-xs text-slate-600 space-y-1.5 max-w-sm mx-auto">
-                <div className="flex items-start gap-2"><span className="text-emerald-500 font-bold mt-0.5">1</span><span>You&apos;ll receive an email confirmation</span></div>
-                <div className="flex items-start gap-2"><span className="text-emerald-500 font-bold mt-0.5">2</span><span>{pro.name} reviews your request</span></div>
-                <div className="flex items-start gap-2"><span className="text-emerald-500 font-bold mt-0.5">3</span><span>They&apos;ll contact you to arrange a consultation</span></div>
-                <div className="flex items-start gap-2"><span className="text-emerald-500 font-bold mt-0.5">4</span><span>No obligation — you decide if it&apos;s a good fit</span></div>
+              <div className="bg-white/10 rounded-xl p-4 text-left text-sm text-slate-300 space-y-2 max-w-sm mx-auto">
+                <div className="flex items-start gap-2"><span className="text-emerald-400 font-bold mt-0.5">1</span><span>You&apos;ll receive an email confirmation</span></div>
+                <div className="flex items-start gap-2"><span className="text-emerald-400 font-bold mt-0.5">2</span><span>{pro.name} reviews your request</span></div>
+                <div className="flex items-start gap-2"><span className="text-emerald-400 font-bold mt-0.5">3</span><span>They&apos;ll contact you to arrange a consultation</span></div>
+                <div className="flex items-start gap-2"><span className="text-emerald-400 font-bold mt-0.5">4</span><span>No obligation — you decide if it&apos;s a good fit</span></div>
               </div>
-              <Link href="/advisors" className="inline-block mt-4 text-xs font-semibold text-blue-700 hover:text-blue-800 transition-colors">
+              <Link href="/advisors" className="inline-block mt-5 text-sm font-semibold text-violet-300 hover:text-violet-200 transition-colors">
                 Browse more advisors →
               </Link>
             </div>
           ) : (
             <>
-              <h2 className="text-sm md:text-lg font-bold text-slate-900 mb-1">Request a Free Consultation</h2>
-              <p className="text-[0.65rem] md:text-xs text-slate-400 mb-4">No obligation. Your details are shared only with {pro.name}.</p>
+              <div className="flex items-center gap-3 mb-1">
+                {pro.initial_consultation_free && (
+                  <span className="text-[0.62rem] md:text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 uppercase tracking-wider">Free</span>
+                )}
+              </div>
+              <h2 className="text-lg md:text-xl font-bold mb-1">Request a Free Consultation</h2>
+              <p className="text-xs md:text-sm text-slate-400 mb-5">No obligation. Your details are shared only with {pro.name}.</p>
 
               <div className="space-y-3">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Your name *</label>
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    onBlur={() => setTouched(p => ({ ...p, name: true }))}
-                    placeholder="Full name"
-                    className={`w-full px-3 py-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-400 ${nameError ? "border-red-300 bg-red-50/50" : "border-slate-200"}`}
-                  />
-                  {nameError && <p className="text-[0.62rem] text-red-500 mt-0.5">{nameError}</p>}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">Your name *</label>
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      onBlur={() => setTouched(p => ({ ...p, name: true }))}
+                      placeholder="Full name"
+                      className={`w-full px-3.5 py-3 text-sm bg-white/10 border rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-400 ${nameError ? "border-red-400" : "border-white/20"}`}
+                    />
+                    {nameError && <p className="text-[0.62rem] text-red-400 mt-0.5">{nameError}</p>}
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 mb-1.5">Email *</label>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      onBlur={() => setTouched(p => ({ ...p, email: true }))}
+                      placeholder="your@email.com"
+                      className={`w-full px-3.5 py-3 text-sm bg-white/10 border rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-400 ${emailError ? "border-red-400" : "border-white/20"}`}
+                    />
+                    {emailError && <p className="text-[0.62rem] text-red-400 mt-0.5">{emailError}</p>}
+                  </div>
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Email *</label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    onBlur={() => setTouched(p => ({ ...p, email: true }))}
-                    placeholder="your@email.com"
-                    className={`w-full px-3 py-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-400 ${emailError ? "border-red-300 bg-red-50/50" : "border-slate-200"}`}
-                  />
-                  {emailError && <p className="text-[0.62rem] text-red-500 mt-0.5">{emailError}</p>}
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">Phone <span className="text-slate-400 font-normal">(optional)</span></label>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">Phone <span className="text-slate-500 font-normal">(optional)</span></label>
                   <input
                     type="tel"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="04XX XXX XXX"
-                    className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-400"
+                    className="w-full px-3.5 py-3 text-sm bg-white/10 border border-white/20 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-400"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">What do you need help with? <span className="text-slate-400 font-normal">(optional)</span></label>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1.5">What do you need help with? <span className="text-slate-500 font-normal">(optional)</span></label>
                   <textarea
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     placeholder="Brief description of your situation..."
                     rows={3}
-                    className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/30 focus:border-violet-400 resize-vertical"
+                    className="w-full px-3.5 py-3 text-sm bg-white/10 border border-white/20 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-400 resize-vertical"
                   />
                 </div>
-                {formError && <p className="text-xs text-red-600 font-medium">{formError}</p>}
+                {formError && <p className="text-xs text-red-400 font-medium">{formError}</p>}
 
                 <button
                   onClick={handleSubmit}
                   disabled={!name.trim() || !email.trim() || formState === "submitting"}
-                  className="w-full py-3 bg-slate-900 text-white font-bold text-sm rounded-lg hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
+                  className="w-full py-3.5 bg-violet-600 text-white font-bold text-sm rounded-lg hover:bg-violet-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98] shadow-lg shadow-violet-600/25"
                 >
                   {formState === "submitting" ? "Sending..." : `Send Enquiry to ${pro.name.split(" ")[0]}`}
                 </button>
 
                 {formState === "error" && (
                   <div className="text-center">
-                    <p className="text-xs text-red-600 mb-2">Something went wrong. Please try again.</p>
+                    <p className="text-xs text-red-400 mb-2">Something went wrong. Please try again.</p>
                     <button
                       onClick={() => setFormState("idle")}
-                      className="text-xs font-semibold text-slate-600 hover:text-slate-900 underline"
+                      className="text-xs font-semibold text-slate-400 hover:text-white underline"
                     >
                       Try again
                     </button>
@@ -673,14 +721,15 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
                 )}
               </div>
 
-              <p className="text-[0.56rem] md:text-[0.62rem] text-slate-400 text-center mt-3 leading-relaxed">
+              <p className="text-[0.56rem] md:text-[0.62rem] text-slate-500 text-center mt-4 leading-relaxed">
                 By submitting, you consent to us sharing your name, email{phone ? ", phone number" : ""} and message with {pro.name} so they can respond to your enquiry.
                 We may also send you follow-up emails about your enquiry. You can unsubscribe at any time.
-                See our <Link href="/privacy" className="underline hover:text-slate-600">Privacy Policy</Link> for how we handle your data.
+                See our <Link href="/privacy" className="underline hover:text-slate-400">Privacy Policy</Link> for how we handle your data.
                 This is a no-obligation enquiry — you are not committing to any service.
               </p>
             </>
           )}
+          </div>
         </div>
 
         {/* Reviews section */}
