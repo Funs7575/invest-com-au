@@ -1123,6 +1123,13 @@ export interface AdvisorApplication {
   website?: string;
   fee_description?: string;
   referral_source?: string;
+  pitch_message?: string;
+  years_experience?: number;
+  client_types?: string;
+  languages?: string;
+  admin_notes?: string;
+  admin_priority?: string;
+  supply_gap_score?: number;
   status: 'pending' | 'approved' | 'rejected';
   professional_id?: number;
   firm_id?: number;

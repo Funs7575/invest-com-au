@@ -49,9 +49,13 @@ type FormData = {
   location_state: string;
   location_suburb: string;
   bio: string;
+  years_experience: string;
+  languages: string;
+  client_types: string;
   // Step 3
   fee_structure: string;
   fee_description: string;
+  pitch_message: string;
   // Legal
   termsAccepted: boolean;
 };
@@ -71,8 +75,12 @@ export default function AdvisorSignupPage() {
     location_state: "",
     location_suburb: "",
     bio: "",
+    years_experience: "",
+    languages: "",
+    client_types: "",
     fee_structure: "fee-for-service",
     fee_description: "",
+    pitch_message: "",
     termsAccepted: false,
   });
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
@@ -401,6 +409,42 @@ export default function AdvisorSignupPage() {
                 />
                 <p className="text-[0.65rem] text-slate-400 mt-0.5">{form.bio.length}/500 characters</p>
               </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className={labelClass}>Years of Experience</label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="60"
+                    value={form.years_experience}
+                    onChange={(e) => updateField("years_experience", e.target.value)}
+                    className={inputClass}
+                    placeholder="e.g. 12"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className={labelClass}>Languages Spoken</label>
+                  <input
+                    value={form.languages}
+                    onChange={(e) => updateField("languages", e.target.value)}
+                    className={inputClass}
+                    placeholder="e.g. English, Mandarin, Hindi"
+                  />
+                  <p className="text-[0.65rem] text-slate-400 mt-0.5">Comma-separated</p>
+                </div>
+              </div>
+
+              <div>
+                <label className={labelClass}>Ideal Client Types</label>
+                <input
+                  value={form.client_types}
+                  onChange={(e) => updateField("client_types", e.target.value)}
+                  className={inputClass}
+                  placeholder="e.g. SMSF trustees, retirees, high-net-worth individuals, first-home buyers"
+                />
+                <p className="text-[0.65rem] text-slate-400 mt-0.5">Who do you work best with? Comma-separated.</p>
+              </div>
             </div>
           )}
 
@@ -434,6 +478,19 @@ export default function AdvisorSignupPage() {
                   className={inputClass}
                   placeholder="Describe your fee structure, e.g. 'Initial consultation free. SOA from $3,300. Ongoing advice from $220/month.'"
                 />
+              </div>
+
+              <div>
+                <label className={labelClass}>Pitch Message</label>
+                <textarea
+                  value={form.pitch_message}
+                  onChange={(e) => updateField("pitch_message", e.target.value)}
+                  rows={3}
+                  className={inputClass}
+                  placeholder="Why should investors choose you? What makes your practice stand out?"
+                  maxLength={2000}
+                />
+                <p className="text-[0.65rem] text-slate-400 mt-0.5">{form.pitch_message.length}/2,000 characters — visible to our team during review</p>
               </div>
 
               <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mt-2">

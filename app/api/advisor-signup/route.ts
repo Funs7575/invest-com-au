@@ -36,6 +36,10 @@ export async function POST(request: NextRequest) {
       bio,
       fee_structure,
       fee_description,
+      pitch_message,
+      years_experience,
+      client_types,
+      languages,
     } = body;
 
     // Validate required fields
@@ -129,6 +133,10 @@ export async function POST(request: NextRequest) {
         bio: bio?.trim() || null,
         fee_structure: fee_structure || null,
         fee_description: fee_description?.trim() || null,
+        years_experience: years_experience ? parseInt(String(years_experience)) || null : null,
+        languages: languages
+          ? String(languages).split(",").map((l: string) => l.trim()).filter(Boolean)
+          : [],
         status: "pending",
         verified: false,
         profile_complete: false,
@@ -173,6 +181,34 @@ export async function POST(request: NextRequest) {
       }).eq("id", professional.id);
     } catch (err) {
       log.warn("Agreement recording failed", { error: err instanceof Error ? err.message : String(err) });
+    }
+
+    // Create advisor_application record for admin review pipeline
+    try {
+      await supabase.from("advisor_applications").insert({
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
+        phone: phone.trim(),
+        firm_name: firm_name?.trim() || null,
+        type,
+        afsl_number: afsl_number?.trim() || null,
+        registration_number: registration_number?.trim() || null,
+        abn: abn?.trim() || null,
+        location_state: location_state.trim(),
+        location_suburb: location_suburb.trim(),
+        specialties: Array.isArray(specialties) ? specialties.join(", ") : (specialties || null),
+        bio: bio?.trim() || null,
+        fee_description: fee_description?.trim() || null,
+        pitch_message: pitch_message?.trim()?.slice(0, 2000) || null,
+        years_experience: years_experience ? parseInt(String(years_experience)) || null : null,
+        client_types: client_types?.trim()?.slice(0, 500) || null,
+        languages: languages?.trim()?.slice(0, 200) || null,
+        account_type: "individual",
+        status: "pending",
+        professional_id: professional.id,
+      });
+    } catch (err) {
+      log.warn("Advisor application record creation failed", { error: err instanceof Error ? err.message : String(err) });
     }
 
     return NextResponse.json({
