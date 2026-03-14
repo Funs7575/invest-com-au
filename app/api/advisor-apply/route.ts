@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, firm_name, email, phone, type, afsl_number, registration_number, location_state, location_suburb, specialties, bio, website, fee_description, account_type, abn, photo_url } = body;
+    const { name, firm_name, email, phone, type, afsl_number, registration_number, location_state, location_suburb, specialties, bio, website, fee_description, account_type, abn, photo_url, pitch_message, years_experience, client_types, languages } = body;
 
     if (!name?.trim() || !email?.trim() || !type) {
       return NextResponse.json({ error: "Name, email, and advisor type are required." }, { status: 400 });
@@ -60,6 +60,10 @@ export async function POST(request: NextRequest) {
       abn: abn?.trim() || null,
       photo_url: photo_url?.trim() || null,
       referral_source: body.referral_source?.trim()?.slice(0, 200) || null,
+      pitch_message: pitch_message?.trim()?.slice(0, 2000) || null,
+      years_experience: years_experience ? parseInt(String(years_experience)) || null : null,
+      client_types: client_types?.trim()?.slice(0, 500) || null,
+      languages: languages?.trim()?.slice(0, 200) || null,
     });
 
     if (error) {
