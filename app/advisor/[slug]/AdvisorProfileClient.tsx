@@ -10,6 +10,7 @@ import BookingWidget from "@/components/BookingWidget";
 import AdvisorReviewForm from "@/components/AdvisorReviewForm";
 import { getStoredUtm } from "@/components/UtmCapture";
 import { trackEvent } from "@/lib/tracking";
+import { getVerificationConfig, getVerificationLinks } from "@/lib/advisor-verification";
 
 const TYPE_TO_PLATFORMS: Record<string, { label: string; href: string }[]> = {
   smsf_accountant: [
@@ -347,30 +348,59 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
           </div>
         )}
 
-        {/* Trust signals — ASIC verification link */}
-        {(pro.afsl_number || pro.registration_number) && (
-          <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 md:p-4 mb-4 md:mb-6 flex items-start gap-2.5">
-            <Icon name="shield-check" size={18} className="text-emerald-600 shrink-0 mt-0.5" />
-            <div className="flex-1 min-w-0">
-              <div className="text-xs md:text-sm font-bold text-emerald-900 mb-0.5">Credentials Verified</div>
-              <p className="text-[0.62rem] md:text-xs text-emerald-700 leading-relaxed">
-                {pro.name}&apos;s {pro.afsl_number ? "AFSL" : "registration"} ({pro.afsl_number || pro.registration_number}) has been verified against official records.
-                {" "}
-                <a
-                  href={pro.afsl_number
-                    ? `https://asic.gov.au/online-services/search-asics-registers/`
-                    : `https://www.tpb.gov.au/public-register`
-                  }
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline font-semibold hover:text-emerald-900"
-                >
-                  Verify on {pro.afsl_number ? "ASIC" : "TPB"} Register →
-                </a>
-              </p>
+        {/* Trust signals — regulatory verification */}
+        {(() => {
+          const vConfig = getVerificationConfig(pro.type);
+          const vLinks = getVerificationLinks(pro.type, pro.location_state || undefined);
+          const credentialNumber = pro.afsl_number || pro.registration_number;
+          return (
+            <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 md:p-5 mb-5 md:mb-8 shadow-sm">
+              <div className="flex items-start gap-3 mb-3">
+                <div className="w-9 h-9 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0">
+                  <Icon name="shield-check" size={18} className="text-emerald-600" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm md:text-base font-bold text-emerald-900 mb-0.5">Regulatory Credentials</div>
+                  <p className="text-xs md:text-sm text-emerald-700 leading-relaxed">
+                    {credentialNumber ? (
+                      <>{pro.name} holds {vConfig.primaryLicence.code} {credentialNumber}, verified against the {vConfig.primaryLicence.regulatorShort} register.</>
+                    ) : (
+                      <>{vConfig.disclosure}</>
+                    )}
+                  </p>
+                </div>
+              </div>
+              {/* Licence details */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-3">
+                <div className="bg-white/60 rounded-lg p-2.5">
+                  <div className="text-[0.58rem] font-bold text-emerald-600 uppercase tracking-wider mb-0.5">Primary licence</div>
+                  <div className="text-xs font-semibold text-emerald-900">{vConfig.primaryLicence.name}</div>
+                  <div className="text-[0.6rem] text-emerald-700">Regulated by {vConfig.primaryLicence.regulatorShort}</div>
+                </div>
+                <div className="bg-white/60 rounded-lg p-2.5">
+                  <div className="text-[0.58rem] font-bold text-emerald-600 uppercase tracking-wider mb-0.5">Insurance</div>
+                  <div className="text-xs font-semibold text-emerald-900">{vConfig.insurance.split(" — ")[0]}</div>
+                  <div className="text-[0.6rem] text-emerald-700">{vConfig.edr.split(".")[0]}</div>
+                </div>
+              </div>
+              {/* Verification links */}
+              <div className="flex flex-wrap gap-2">
+                {vLinks.map((link, i) => (
+                  <a
+                    key={i}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-emerald-200 rounded-lg text-xs font-semibold text-emerald-700 hover:border-emerald-400 hover:bg-emerald-50 transition-all"
+                  >
+                    <Icon name="external-link" size={12} className="text-emerald-500" />
+                    {link.label}
+                  </a>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* Special Offer */}
         {pro.offer_active && pro.offer_text && (
