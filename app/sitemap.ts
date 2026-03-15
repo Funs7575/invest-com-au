@@ -239,7 +239,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // Programmatic advisor type + state pages
-  const advisorTypes = ["smsf-accountants", "financial-planners", "property-advisors", "tax-agents", "mortgage-brokers", "estate-planners", "insurance-brokers", "buyers-agents", "wealth-managers", "aged-care-advisors", "crypto-advisors", "debt-counsellors"];
+  const advisorTypes = ["smsf-accountants", "financial-planners", "property-advisors", "tax-agents", "mortgage-brokers", "estate-planners", "insurance-brokers", "buyers-agents", "real-estate-agents", "wealth-managers", "aged-care-advisors", "crypto-advisors", "debt-counsellors"];
   const states = ["nsw", "vic", "qld", "wa", "sa", "tas", "act", "nt"];
 
   const advisorTypePages = advisorTypes.map((type) => ({

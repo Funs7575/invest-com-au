@@ -11,6 +11,7 @@ import Icon from "@/components/Icon";
 const propertyDropdown = [
   { label: "Mortgage Brokers", href: "/advisors/mortgage-brokers", desc: "Compare 30+ lenders — free" },
   { label: "Buyer's Agents", href: "/advisors/buyers-agents", desc: "Off-market access & negotiation" },
+  { label: "Real Estate Agents", href: "/advisors/real-estate-agents", desc: "Selling & listing specialists" },
   { label: "Find an Advisor", href: "/find-advisor", desc: "Match with a verified professional" },
   { label: "All Advisors", href: "/advisors", desc: "Browse all professionals" },
 ];
@@ -48,6 +49,7 @@ const mobileNavSections = [
     items: [
       { name: "Mortgage Brokers", href: "/advisors/mortgage-brokers" },
       { name: "Buyer's Agents", href: "/advisors/buyers-agents" },
+      { name: "Real Estate Agents", href: "/advisors/real-estate-agents" },
       { name: "Find an Advisor", href: "/find-advisor" },
       { name: "All Advisors", href: "/advisors" },
     ],
@@ -148,7 +150,7 @@ export default function Header() {
   const isPlatformsActive = ["/compare", "/best", "/versus", "/deals", "/reviews", "/quiz"].some(
     (p) => pathname === p || pathname.startsWith(p + "/")
   );
-  const isPropertyActive = ["/advisors/mortgage-brokers", "/advisors/buyers-agents", "/find-advisor"].some(
+  const isPropertyActive = ["/advisors/mortgage-brokers", "/advisors/buyers-agents", "/advisors/real-estate-agents", "/find-advisor"].some(
     (p) => pathname === p || pathname.startsWith(p + "/")
   );
   const isWealthActive = ["/advisors/financial-planners", "/advisors/smsf-accountants", "/advisors/insurance-brokers", "/advisors/tax-agents", "/advisors/estate-planners", "/advisors/wealth-managers"].some(

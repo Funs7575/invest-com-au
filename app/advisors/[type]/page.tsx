@@ -17,6 +17,7 @@ const SLUG_TO_TYPE: Record<string, ProfessionalType> = {
   "estate-planners": "estate_planner",
   "insurance-brokers": "insurance_broker",
   "buyers-agents": "buyers_agent",
+  "real-estate-agents": "real_estate_agent",
   "wealth-managers": "wealth_manager",
   "aged-care-advisors": "aged_care_advisor",
   "crypto-advisors": "crypto_advisor",
@@ -33,6 +34,7 @@ const TYPE_DESCRIPTIONS: Record<string, string> = {
   "estate-planners": "Find estate planning specialists for wills, trusts, succession planning, and intergenerational wealth transfer.",
   "insurance-brokers": "Compare insurance brokers for life insurance, TPD, income protection, and general insurance across Australia.",
   "buyers-agents": "Find qualified buyers agents to help you find, evaluate, and negotiate investment property purchases.",
+  "real-estate-agents": "Compare licensed real estate agents across Australia for selling residential and investment property. Find agents with strong local sales records.",
   "wealth-managers": "Browse wealth managers for high-net-worth portfolio management, asset allocation, and comprehensive wealth strategy.",
   "aged-care-advisors": "Find aged care advisors who specialise in residential aged care, home care packages, means testing, and retirement transitions.",
   "crypto-advisors": "Compare crypto and digital asset advisors for portfolio construction, tax planning, and DeFi strategy in Australia.",
@@ -80,6 +82,11 @@ const TYPE_FAQS: Record<string, { q: string; a: string }[]> = {
     { q: "What does a buyers agent do?", a: "A buyers agent searches for, evaluates, and negotiates property purchases on your behalf. They work exclusively for you — not the seller — and have access to off-market properties." },
     { q: "How much does a buyers agent charge?", a: "Typically 1.5–3% of the purchase price, or a fixed fee of $10,000–$25,000. Some charge a retainer plus a success fee." },
     { q: "Is a buyers agent worth it?", a: "For investment property, buyers agents often negotiate savings that exceed their fee. They also save significant time and reduce emotional decision-making." },
+  ],
+  "real-estate-agents": [
+    { q: "How much do real estate agents charge?", a: "Most Australian real estate agents charge a commission of 1.5–2.5% of the sale price, plus marketing costs ($2,000–$10,000+). Rates vary by state and property value." },
+    { q: "How do I choose a good real estate agent?", a: "Look at their recent sales in your suburb, average days on market, sale-to-list price ratio, and marketing approach. Ask for references from recent sellers." },
+    { q: "Should I use one agent or list with multiple?", a: "An exclusive listing with one agent is standard in Australia and usually gets better results — the agent invests more in marketing and is more motivated to achieve the best price." },
   ],
   "wealth-managers": [
     { q: "What's the difference between a wealth manager and a financial planner?", a: "Wealth managers typically serve high-net-worth clients ($500k+ portfolios) with comprehensive services including investment management, tax strategy, estate planning, and philanthropic giving — all under one roof." },
@@ -183,6 +190,16 @@ const TYPE_EDITORIAL: Record<string, { howToChoose: string[]; costGuide: string;
     ],
     costGuide: "Buyers agents typically charge 1.5–3% of the purchase price, or a fixed fee of $10,000–$25,000. Some charge a retainer ($2,000–$5,000) plus a success fee. For a $800k property, expect $12,000–$24,000.",
     industryInsight: "Buyers agents have grown rapidly in Australia, now representing over 10% of all residential property transactions in major cities. They're particularly valuable in competitive markets where off-market access gives a significant advantage.",
+  },
+  "real-estate-agents": {
+    howToChoose: [
+      "Check their recent sales in your suburb — not just total sales, but average days on market and sale-to-list ratio",
+      "Ask about their marketing plan: professional photography, floorplans, digital advertising, and open home strategy",
+      "Compare commission rates and what's included — some agents bundle marketing into their commission, others charge separately",
+      "Ask for references from recent vendors who sold similar properties in your area",
+    ],
+    costGuide: "Commission rates range from 1.5–2.5% of the sale price (lower in metro areas, higher in regional). Marketing costs are typically $2,000–$10,000+ depending on the campaign. Some agents offer tiered commission structures to incentivise a higher sale price.",
+    industryInsight: "The Australian real estate agent market is highly competitive, with over 50,000 licensed agents nationally. The best agents sell properties faster and for higher prices — top-performing agents typically achieve 5–10% more than average agents in the same area.",
   },
   "wealth-managers": {
     howToChoose: [

@@ -218,6 +218,15 @@ export const SPECIALTIES_BY_TYPE: Record<ProfessionalType, string[]> = {
     "Property Negotiation",
     "Development Feasibility",
   ],
+  real_estate_agent: [
+    "Residential Sales",
+    "Investment Property Sales",
+    "Auction Campaigns",
+    "Private Treaty Sales",
+    "Property Appraisals",
+    "Vendor Advocacy",
+    "Commercial Sales",
+  ],
   wealth_manager: [
     "Retirement Planning",
     "Wealth Accumulation",

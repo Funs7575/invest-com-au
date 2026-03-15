@@ -10,8 +10,6 @@ function escapeHtml(str: string): string {
     .replace(/"/g, "&quot;");
 }
 
-const supabaseAdmin = createAdminClient();
-
 /**
  * Internal notification API — sends broker notifications and optionally emails.
  * Called by other API routes / cron jobs / admin actions.
@@ -19,6 +17,7 @@ const supabaseAdmin = createAdminClient();
  */
 export async function POST(req: NextRequest) {
   try {
+    const supabaseAdmin = createAdminClient();
     // Simple auth — internal calls only (check for internal API key or service role)
     const authHeader = req.headers.get("x-internal-key");
     if (authHeader !== process.env.INTERNAL_API_KEY && authHeader !== process.env.SUPABASE_SERVICE_ROLE_KEY) {

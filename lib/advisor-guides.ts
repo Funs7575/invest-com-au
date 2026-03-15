@@ -343,6 +343,47 @@ export const ADVISOR_GUIDES: AdvisorGuide[] = [
     ],
   },
   {
+    slug: "how-to-choose-real-estate-agent",
+    type: "real_estate_agent",
+    title: "How to Choose a Real Estate Agent in Australia",
+    metaDescription: "A practical guide to choosing a real estate agent to sell your property — commissions, marketing, track record, and what to look for.",
+    intro: "Choosing the right real estate agent can mean the difference between a quick, profitable sale and months on the market at a discounted price. The best agents combine local knowledge, strong marketing, skilled negotiation, and a proven track record of results in your area. Here's how to find one.",
+    sections: [
+      {
+        heading: "What Does a Real Estate Agent Do?",
+        body: "A real estate agent (also called a selling agent or listing agent) manages the sale of your property from start to finish. This includes appraising the property, advising on pricing strategy, preparing and executing a marketing campaign, conducting open homes and private inspections, negotiating with buyers, and managing the process through to settlement. They represent the seller's interests throughout the transaction.",
+      },
+      {
+        heading: "How Much Do Real Estate Agents Charge?",
+        body: "Commission rates in Australia typically range from 1.5% to 2.5% of the sale price, with metro areas generally lower (1.5–2%) and regional areas higher (2–3%). Marketing costs are usually charged separately, ranging from $2,000 for basic campaigns to $10,000+ for premium campaigns with professional photography, video, and digital advertising. Some agents offer tiered commission structures — a base rate plus a bonus for exceeding a target price — which can align their incentives with yours.",
+      },
+      {
+        heading: "Licensing and Qualifications",
+        body: "All real estate agents in Australia must hold a valid real estate licence issued by the relevant state or territory authority. Agents should be a member of the Real Estate Institute in their state (e.g., REINSW, REIV, REIQ). Membership of the Real Estate Institute of Australia (REIA) indicates adherence to a national code of conduct. Check their licence status on your state's fair trading or consumer affairs website.",
+      },
+    ],
+    checklist: [
+      "Verify they hold a current real estate licence in your state",
+      "Review their recent sales in your suburb and price range",
+      "Ask about their average days on market vs suburb average",
+      "Get a detailed marketing plan and cost breakdown in writing",
+      "Compare commission rates from at least 3 agents",
+      "Ask for references from recent vendors",
+    ],
+    redFlags: [
+      "Suggesting an unrealistically high price to win your listing (known as 'buying the listing')",
+      "Vague or no marketing plan — every good agent has a clear strategy",
+      "Pressuring you to accept low offers early in the campaign",
+      "No recent sales in your suburb or property type",
+      "Unwilling to provide a written commission and fee agreement upfront",
+    ],
+    faqs: [
+      { q: "How do I compare real estate agents?", a: "Look at their recent sales in your area, average days on market, sale-to-list price ratio, marketing quality, and vendor reviews. A good agent should be able to show you comparable recent results." },
+      { q: "Should I choose auction or private treaty?", a: "This depends on your market. Auctions work well in competitive markets (Sydney, Melbourne inner suburbs) with strong buyer demand. Private treaty suits slower markets or unique properties. Your agent should advise based on current conditions." },
+      { q: "Can I negotiate the commission rate?", a: "Yes, commission is always negotiable in Australia. However, the cheapest agent isn't always the best value — an agent who achieves a 5% higher sale price more than covers a slightly higher commission." },
+    ],
+  },
+  {
     slug: "how-to-choose-wealth-manager",
     type: "wealth_manager",
     title: "How to Choose a Wealth Manager in Australia",

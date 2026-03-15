@@ -19,6 +19,7 @@ const TYPE_FILTERS: { key: ProfessionalType | "all"; label: string; icon: string
   { key: "estate_planner", label: "Estate Planners", icon: "file-text" },
   { key: "insurance_broker", label: "Insurance Brokers", icon: "shield" },
   { key: "buyers_agent", label: "Buyers Agents", icon: "search" },
+  { key: "real_estate_agent", label: "Real Estate Agents", icon: "map-pin" },
   { key: "wealth_manager", label: "Wealth Managers", icon: "briefcase" },
   { key: "aged_care_advisor", label: "Aged Care Advisors", icon: "heart" },
   { key: "crypto_advisor", label: "Crypto Advisors", icon: "bitcoin" },
