@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Broker } from "@/lib/types";
 import { trackEvent } from "@/lib/tracking";
+import { storeQualificationData } from "@/lib/qualification-store";
 import { getPlacementWinners, type PlacementWinner } from "@/lib/sponsorship";
 import { scoreQuizResults, type WeightKey, type QuizWeights } from "@/lib/quiz-scoring";
 
@@ -445,6 +446,14 @@ export default function QuizPage() {
           results: topResults,
           completedAt: new Date().toISOString(),
         }));
+
+        // Store qualification data for lead enrichment
+        storeQualificationData("quiz", {
+          answers,
+          top_match: results[0]?.slug || null,
+          results_count: results.length,
+          question_labels: questions.map(q => q.question_text),
+        });
       } catch { /* quota exceeded */ }
     }
   }, [step, questions.length, brokers.length, results, answers]);

@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import Icon from "@/components/Icon";
 import type { ProfessionalType } from "@/lib/types";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 import { trackEvent } from "@/lib/tracking";
+import { storeQualificationData } from "@/lib/qualification-store";
 
 const STEPS = [
   {
@@ -95,9 +97,23 @@ const ADVISOR_TIPS: Record<string, string[]> = {
 };
 
 export default function FindAdvisorPage() {
-  const [step, setStep] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [selectedType, setSelectedType] = useState<ProfessionalType | null>(null);
+  const searchParams = useSearchParams();
+  const needParam = searchParams.get("need");
+
+  // Check if the need param matches a valid option key
+  const prefilledNeed = useMemo(() => {
+    if (!needParam) return null;
+    const match = STEPS[0].options.find((o) => o.key === needParam);
+    return match && "type" in match ? { key: match.key, type: (match as { type: ProfessionalType }).type } : null;
+  }, [needParam]);
+
+  const [step, setStep] = useState(prefilledNeed ? 1 : 0);
+  const [answers, setAnswers] = useState<Record<string, string>>(
+    prefilledNeed ? { need: prefilledNeed.key } : {}
+  );
+  const [selectedType, setSelectedType] = useState<ProfessionalType | null>(
+    prefilledNeed ? prefilledNeed.type : null
+  );
   const [fade, setFade] = useState(false);
 
   const transition = useCallback((newStep: number) => {
@@ -274,6 +290,15 @@ function FindAdvisorResults({ selectedType, answers, getResultUrl, getResultLabe
       urgency: answers.urgency,
       state: answers.state,
     }, "/find-advisor");
+
+    // Store qualification data for lead enrichment
+    storeQualificationData("find_advisor", {
+      advisor_type: selectedType,
+      need: answers.need,
+      amount: answers.amount,
+      urgency: answers.urgency,
+      state: answers.state,
+    });
   }, [selectedType, answers]);
 
   const tips = selectedType && ADVISOR_TIPS[selectedType] ? ADVISOR_TIPS[selectedType] : [];

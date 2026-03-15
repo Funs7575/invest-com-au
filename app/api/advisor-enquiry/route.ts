@@ -4,6 +4,82 @@ import { isRateLimited } from "@/lib/rate-limit";
 import { notificationFooter } from "@/lib/email-templates";
 import { getSiteUrl } from "@/lib/url";
 
+// Format qualification data as HTML table rows for the advisor notification email
+function buildQualificationEmailRows(qd: { source: string; data: Record<string, unknown> }): string {
+  const data = qd.data;
+  if (!data || Object.keys(data).length === 0) return "";
+
+  const LABEL_MAP: Record<string, string> = {
+    advisor_type: "Service Needed",
+    need: "Category",
+    amount: "Value Range",
+    urgency: "Urgency",
+    state: "Location",
+    balance: "Savings Balance",
+    current_rate: "Current Rate",
+    income: "Income",
+    deposit: "Deposit",
+    borrowing_amount: "Borrowing Amount",
+    target_suburb: "Target Area",
+    current_broker: "Current Broker",
+    trades_per_year: "Trades/Year",
+    avg_trade_size: "Avg Trade Size",
+    us_allocation_pct: "US Allocation",
+    potential_savings: "Potential Savings",
+    cheapest_broker: "Best-Fit Platform",
+    top_match: "Quiz Top Match",
+    results_count: "Results Count",
+    max_extra_interest: "Extra Interest Potential",
+    top_account: "Top Account",
+    annual_fees: "Annual Fees",
+  };
+
+  const VALUE_MAP: Record<string, Record<string, string>> = {
+    amount: { small: "Under $50,000", medium: "$50k – $200k", large: "$200k – $500k", whale: "Over $500,000", unsure: "Not sure yet" },
+    urgency: { urgent: "This week", soon: "Within a month", exploring: "Just exploring" },
+    state: { NSW: "New South Wales", VIC: "Victoria", QLD: "Queensland", WA: "Western Australia", SA: "South Australia", other: "TAS/ACT/NT", any: "Remote/Online" },
+  };
+
+  const formatValue = (key: string, val: unknown): string => {
+    if (val === null || val === undefined) return "—";
+    // Check mapped values
+    if (VALUE_MAP[key] && typeof val === "string" && VALUE_MAP[key][val]) return VALUE_MAP[key][val];
+    // Format currency-like numbers
+    if (typeof val === "number") {
+      if (key.includes("balance") || key.includes("income") || key.includes("deposit") || key.includes("borrowing") || key.includes("savings") || key.includes("fees") || key.includes("trade_size") || key.includes("interest")) {
+        return `$${val.toLocaleString("en-AU")}`;
+      }
+      if (key.includes("rate") || key.includes("pct") || key.includes("allocation")) return `${val}%`;
+      return String(val);
+    }
+    if (Array.isArray(val)) return val.join(", ");
+    return String(val);
+  };
+
+  // Filter out internal/unneeded fields
+  const skipKeys = new Set(["captured_at", "question_labels", "answers", "holdings"]);
+  const rows = Object.entries(data)
+    .filter(([k, v]) => !skipKeys.has(k) && v !== null && v !== undefined)
+    .map(([k, v]) => {
+      const label = LABEL_MAP[k] || k.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+      return `<tr><td style="padding: 6px 0; font-size: 13px; color: #64748b; width: 120px;">${label}</td><td style="padding: 6px 0; font-size: 14px; font-weight: 600;">${formatValue(k, v)}</td></tr>`;
+    })
+    .join("");
+
+  if (!rows) return "";
+
+  const sourceLabel = qd.source.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+
+  return `
+    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
+      <p style="margin: 0 0 8px; font-size: 12px; font-weight: 700; color: #1e40af; text-transform: uppercase; letter-spacing: 0.5px;">Qualification Data (via ${sourceLabel})</p>
+      <table style="width: 100%; border-collapse: collapse; background: #eff6ff; border-radius: 8px; padding: 8px;">
+        ${rows}
+      </table>
+    </div>
+  `;
+}
+
 export async function POST(request: NextRequest) {
   try {
     // Rate limiting (DB-backed, survives serverless cold starts)
@@ -99,8 +175,23 @@ export async function POST(request: NextRequest) {
     if (body.quiz_completed) { score += 20; signals.quiz_completed = true; }
     if (body.calculator_used) { score += 15; signals.calculator_used = true; }
 
+    // Qualification data from quiz/calculator (structured data, not just booleans)
+    const qualificationData = body.qualification_data || null;
+    const hasQualificationData = qualificationData && qualificationData.source && qualificationData.data && Object.keys(qualificationData.data).length > 0;
+    if (hasQualificationData) {
+      score += 25;
+      signals.qualification = {
+        source: qualificationData.source,
+        data: qualificationData.data,
+        captured_at: qualificationData.captured_at,
+      };
+    }
+
     // Clamp 0-100
     score = Math.min(100, Math.max(0, score));
+
+    // Determine lead tier based on qualification data
+    const leadTier = hasQualificationData ? "qualified" : "standard";
 
     // ── Auto-Billing (prepaid credit model) ──
     // First 2 leads are free (trial), then deduct from credit balance
@@ -115,28 +206,34 @@ export async function POST(request: NextRequest) {
 
     // Get category default price if advisor has no custom price
     let categoryPrice = 4900; // ultimate fallback
+    let categoryQualifiedPrice = 9800; // fallback: 2x standard
     let categoryFreeLeads = 2;
     if (!advisor?.lead_price_cents) {
       const { data: catPricing } = await supabase
         .from("lead_pricing")
-        .select("price_cents, free_trial_leads")
+        .select("price_cents, qualified_price_cents, free_trial_leads")
         .eq("advisor_type", pro.type)
         .single();
       if (catPricing) {
         categoryPrice = catPricing.price_cents;
+        categoryQualifiedPrice = catPricing.qualified_price_cents || catPricing.price_cents * 2;
         categoryFreeLeads = catPricing.free_trial_leads;
       }
     }
 
     const isFree = freeUsed < (categoryFreeLeads || freeTrialCount);
-    const priceCents = isFree ? 0 : (advisor?.lead_price_cents || categoryPrice);
+    // Use qualified price when lead has qualification data
+    const basePriceCents = advisor?.lead_price_cents || categoryPrice;
+    const priceCents = isFree ? 0 : (leadTier === "qualified" ? (categoryQualifiedPrice || basePriceCents * 2) : basePriceCents);
     const balance = advisor?.credit_balance_cents || 0;
     const hasSufficientCredit = balance >= priceCents;
 
-    // Update lead with quality score and billing
+    // Update lead with quality score, billing, and qualification data
     await supabase.from("professional_leads").update({
       quality_score: score,
       quality_signals: signals,
+      qualification_data: hasQualificationData ? qualificationData : null,
+      lead_tier: leadTier,
       billed: !isFree && hasSufficientCredit,
       bill_amount_cents: isFree ? 0 : priceCents,
     }).eq("id", lead.id);
@@ -178,6 +275,12 @@ export async function POST(request: NextRequest) {
         const RESEND_API_KEY = process.env.RESEND_API_KEY;
         const siteUrl = getSiteUrl();
         if (RESEND_API_KEY) {
+          // Build qualification data rows for the email
+          const qualDataRows = hasQualificationData ? buildQualificationEmailRows(qualificationData) : "";
+          const tierBadge = leadTier === "qualified"
+            ? `<span style="display: inline-block; padding: 3px 10px; background: #dbeafe; color: #1e40af; border-radius: 20px; font-size: 11px; font-weight: 700; margin-left: 8px;">Qualified Lead</span>`
+            : "";
+
           await fetch("https://api.resend.com/emails", {
             method: "POST",
             headers: {
@@ -187,20 +290,21 @@ export async function POST(request: NextRequest) {
             body: JSON.stringify({
               from: "Invest.com.au <leads@invest.com.au>",
               to: pro.email,
-              subject: `New Enquiry from ${user_name.trim()} — Invest.com.au`,
+              subject: `${leadTier === "qualified" ? "⭐ Qualified Lead" : "New Enquiry"} from ${user_name.trim()} — Invest.com.au`,
               html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                   <div style="background: #0f172a; color: white; padding: 20px 24px; border-radius: 12px 12px 0 0;">
-                    <h2 style="margin: 0; font-size: 18px;">New Consultation Request</h2>
-                    <p style="margin: 4px 0 0; opacity: 0.7; font-size: 13px;">via Invest.com.au</p>
+                    <h2 style="margin: 0; font-size: 18px;">New Consultation Request${tierBadge}</h2>
+                    <p style="margin: 4px 0 0; opacity: 0.7; font-size: 13px;">via Invest.com.au · Quality Score: ${score}/100</p>
                   </div>
                   <div style="background: #f8fafc; padding: 24px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px;">
                     <table style="width: 100%; border-collapse: collapse;">
-                      <tr><td style="padding: 8px 0; font-size: 13px; color: #64748b; width: 100px;">Name</td><td style="padding: 8px 0; font-size: 14px; font-weight: 600;">${user_name.trim()}</td></tr>
+                      <tr><td style="padding: 8px 0; font-size: 13px; color: #64748b; width: 120px;">Name</td><td style="padding: 8px 0; font-size: 14px; font-weight: 600;">${user_name.trim()}</td></tr>
                       <tr><td style="padding: 8px 0; font-size: 13px; color: #64748b;">Email</td><td style="padding: 8px 0; font-size: 14px;"><a href="mailto:${user_email.trim()}" style="color: #2563eb;">${user_email.trim()}</a></td></tr>
                       ${user_phone ? `<tr><td style="padding: 8px 0; font-size: 13px; color: #64748b;">Phone</td><td style="padding: 8px 0; font-size: 14px;"><a href="tel:${user_phone.trim()}" style="color: #2563eb;">${user_phone.trim()}</a></td></tr>` : ""}
                       ${message ? `<tr><td style="padding: 8px 0; font-size: 13px; color: #64748b; vertical-align: top;">Message</td><td style="padding: 8px 0; font-size: 14px; line-height: 1.5;">${message.trim().replace(/\n/g, "<br>")}</td></tr>` : ""}
                     </table>
+                    ${qualDataRows}
                     <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
                       <a href="mailto:${user_email.trim()}?subject=Re: Your enquiry on Invest.com.au" style="display: inline-block; padding: 10px 24px; background: #0f172a; color: white; text-decoration: none; border-radius: 8px; font-size: 14px; font-weight: 600;">Reply to ${user_name.trim().split(" ")[0]}</a>
                       <a href="${siteUrl}/advisor-portal" style="display: inline-block; margin-left: 8px; padding: 10px 24px; background: #f1f5f9; color: #334155; text-decoration: none; border-radius: 8px; font-size: 14px; font-weight: 600;">View in Dashboard</a>
@@ -264,9 +368,11 @@ export async function POST(request: NextRequest) {
             professional_id,
             advisor_type: pro.type,
             quality_score: score,
+            lead_tier: leadTier,
             is_free_lead: isFree,
             has_phone: !!user_phone?.trim(),
             has_message: !!message?.trim(),
+            has_qualification_data: hasQualificationData,
           },
         },
       ]);

@@ -8,6 +8,7 @@ import { trackClick, getAffiliateLink, AFFILIATE_REL } from "@/lib/tracking";
 import type { Broker } from "@/lib/types";
 import LeadMagnet from "@/components/LeadMagnet";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
+import { storeQualificationData } from "@/lib/qualification-store";
 
 type Holding = {
   id: string;
@@ -211,7 +212,16 @@ export default function PortfolioCalculatorClient({ brokers, inline }: { brokers
           </div>
 
           <button
-            onClick={() => setShowResults(true)}
+            onClick={() => {
+              setShowResults(true);
+              storeQualificationData("portfolio_calculator", {
+                holdings: holdings.map(h => ({ market: h.market, trades_per_year: h.trades_per_year, avg_trade_size: h.avg_trade_size })),
+                current_broker: currentBroker || null,
+                cheapest_broker: results[0]?.broker.name || null,
+                annual_fees: results[0]?.totalFees || null,
+                potential_savings: savings > 0 ? savings : null,
+              });
+            }}
             className="mt-4 w-full md:w-auto px-6 py-3 bg-slate-900 text-white font-bold rounded-lg text-sm hover:bg-slate-800 transition-colors"
           >
             Calculate My Fees →

@@ -8,6 +8,7 @@ import SocialProofCounter from "@/components/SocialProofCounter";
 import { getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL, trackClick, trackPageDuration } from "@/lib/tracking";
 import { getStoredUtm } from "@/components/UtmCapture";
 import type { Broker } from "@/lib/types";
+import { storeQualificationData } from "@/lib/qualification-store";
 
 function parseFee(feeStr: string | null | undefined): { flat: number; pct: number } {
   if (!feeStr) return { flat: 0, pct: 0 };
@@ -59,6 +60,14 @@ export default function SwitchingCalculatorClient({ brokers, inline }: { brokers
 
   const handleCalculate = () => {
     setShowResults(true);
+    storeQualificationData("switching_calculator", {
+      current_broker: currentBroker || null,
+      trades_per_year: tradesPerYear,
+      avg_trade_size: avgTradeSize,
+      us_allocation_pct: usAllocation,
+      potential_savings: savings > 0 ? Math.round(savings) : null,
+      cheapest_broker: cheapest?.broker.name || null,
+    });
     // Track
     fetch("/api/track-event", { method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ event_type: "switching_calc_result", page: "/switching-calculator", metadata: { current: currentBroker, trades: tradesPerYear, avg_size: avgTradeSize, us_pct: usAllocation, savings: Math.round(savings) } })

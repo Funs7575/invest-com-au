@@ -7,6 +7,8 @@ interface PricingRow {
   id: number;
   advisor_type: string;
   price_cents: number;
+  qualified_price_cents: number | null;
+  exclusive_price_cents: number | null;
   min_price_cents: number;
   max_price_cents: number;
   free_trial_leads: number;
@@ -81,6 +83,8 @@ export default function AdminPricingPage() {
     setEditRow(row.advisor_type);
     setEditValues({
       price_cents: row.price_cents,
+      qualified_price_cents: row.qualified_price_cents ?? row.price_cents * 2,
+      exclusive_price_cents: row.exclusive_price_cents ?? row.price_cents * 3,
       min_price_cents: row.min_price_cents,
       max_price_cents: row.max_price_cents,
       free_trial_leads: row.free_trial_leads,
@@ -92,7 +96,7 @@ export default function AdminPricingPage() {
     setSaving(row.advisor_type);
     setMessage(null);
 
-    const updates: Record<string, number> = {};
+    const updates: Record<string, number | null> = {};
     const logEntries: { advisor_type: string; field_changed: string; old_value: string; new_value: string; changed_by: string }[] = [];
 
     if (editValues.price_cents !== undefined && editValues.price_cents !== row.price_cents) {
@@ -114,6 +118,14 @@ export default function AdminPricingPage() {
     if (editValues.featured_monthly_cents !== undefined && editValues.featured_monthly_cents !== row.featured_monthly_cents) {
       updates.featured_monthly_cents = editValues.featured_monthly_cents;
       logEntries.push({ advisor_type: row.advisor_type, field_changed: "featured_monthly_cents", old_value: String(row.featured_monthly_cents), new_value: String(editValues.featured_monthly_cents), changed_by: "admin" });
+    }
+    if (editValues.qualified_price_cents !== undefined && editValues.qualified_price_cents !== row.qualified_price_cents) {
+      updates.qualified_price_cents = editValues.qualified_price_cents;
+      logEntries.push({ advisor_type: row.advisor_type, field_changed: "qualified_price_cents", old_value: String(row.qualified_price_cents || 0), new_value: String(editValues.qualified_price_cents), changed_by: "admin" });
+    }
+    if (editValues.exclusive_price_cents !== undefined && editValues.exclusive_price_cents !== row.exclusive_price_cents) {
+      updates.exclusive_price_cents = editValues.exclusive_price_cents;
+      logEntries.push({ advisor_type: row.advisor_type, field_changed: "exclusive_price_cents", old_value: String(row.exclusive_price_cents || 0), new_value: String(editValues.exclusive_price_cents), changed_by: "admin" });
     }
 
     if (Object.keys(updates).length === 0) {
@@ -196,7 +208,9 @@ export default function AdminPricingPage() {
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200">
                 <th className="text-left px-4 py-3 font-semibold text-slate-700">Vertical</th>
-                <th className="text-center px-3 py-3 font-semibold text-slate-700">Lead Price</th>
+                <th className="text-center px-3 py-3 font-semibold text-slate-700">Standard</th>
+                <th className="text-center px-3 py-3 font-semibold text-blue-700">Qualified</th>
+                <th className="text-center px-3 py-3 font-semibold text-violet-700 hidden md:table-cell">Exclusive</th>
                 <th className="text-center px-3 py-3 font-semibold text-slate-700 hidden md:table-cell">Min</th>
                 <th className="text-center px-3 py-3 font-semibold text-slate-700 hidden md:table-cell">Max</th>
                 <th className="text-center px-3 py-3 font-semibold text-slate-700">Free Leads</th>
@@ -233,6 +247,36 @@ export default function AdminPricingPage() {
                         </div>
                       ) : (
                         <span className="font-bold text-slate-900 text-base">{formatCents(row.price_cents)}</span>
+                      )}
+                    </td>
+                    <td className="px-3 py-3 text-center">
+                      {isEditing ? (
+                        <div className="flex items-center justify-center gap-1">
+                          <span className="text-slate-400">$</span>
+                          <input
+                            type="number"
+                            className="w-16 px-2 py-1 border border-blue-300 rounded text-center text-sm font-bold"
+                            value={centsToInput(editValues.qualified_price_cents || 0)}
+                            onChange={(e) => setEditValues({ ...editValues, qualified_price_cents: inputToCents(e.target.value) })}
+                          />
+                        </div>
+                      ) : (
+                        <span className="font-bold text-blue-700 text-base">{formatCents(row.qualified_price_cents || row.price_cents * 2)}</span>
+                      )}
+                    </td>
+                    <td className="px-3 py-3 text-center hidden md:table-cell">
+                      {isEditing ? (
+                        <div className="flex items-center justify-center gap-1">
+                          <span className="text-slate-400">$</span>
+                          <input
+                            type="number"
+                            className="w-16 px-2 py-1 border border-violet-300 rounded text-center text-sm font-bold"
+                            value={centsToInput(editValues.exclusive_price_cents || 0)}
+                            onChange={(e) => setEditValues({ ...editValues, exclusive_price_cents: inputToCents(e.target.value) })}
+                          />
+                        </div>
+                      ) : (
+                        <span className="font-bold text-violet-700 text-base">{formatCents(row.exclusive_price_cents || row.price_cents * 3)}</span>
                       )}
                     </td>
                     <td className="px-3 py-3 text-center hidden md:table-cell">
