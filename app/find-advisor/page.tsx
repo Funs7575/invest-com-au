@@ -255,6 +255,19 @@ interface MatchedAdvisor {
   avg_response_minutes?: number | null;
 }
 
+interface MatchedResult {
+  id: number;
+  name: string;
+  firmName?: string | null;
+  typeLabel: string;
+  location: string;
+  slug: string;
+  photoUrl?: string | null;
+  rating?: number | null;
+  reviewCount: number;
+  freeConsultation: boolean;
+}
+
 function FindAdvisorResults({ selectedType, answers, getResultUrl, getResultLabel, onRestart }: {
   selectedType: ProfessionalType | null;
   answers: Record<string, string>;
@@ -264,6 +277,55 @@ function FindAdvisorResults({ selectedType, answers, getResultUrl, getResultLabe
 }) {
   const [matched, setMatched] = useState<MatchedAdvisor[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Lead capture form state
+  const [showLeadForm, setShowLeadForm] = useState(false);
+  const [leadFirstName, setLeadFirstName] = useState("");
+  const [leadEmail, setLeadEmail] = useState("");
+  const [leadPhone, setLeadPhone] = useState("");
+  const [leadConsent, setLeadConsent] = useState(false);
+  const [leadSubmitting, setLeadSubmitting] = useState(false);
+  const [leadErrors, setLeadErrors] = useState<Record<string, string>>({});
+  const [leadResult, setLeadResult] = useState<MatchedResult | null>(null);
+  const [leadError, setLeadError] = useState<string | null>(null);
+
+  const handleLeadSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const errors: Record<string, string> = {};
+    if (!leadFirstName.trim()) errors.firstName = "Please enter your first name";
+    if (!leadEmail.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(leadEmail)) errors.email = "Please enter a valid email";
+    if (!leadConsent) errors.consent = "You must agree to the Privacy Policy";
+    if (Object.keys(errors).length > 0) { setLeadErrors(errors); return; }
+
+    setLeadSubmitting(true);
+    setLeadError(null);
+    try {
+      const res = await fetch("/api/submit-lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          need: answers.need,
+          amount: answers.amount,
+          urgency: answers.urgency,
+          state: answers.state,
+          firstName: leadFirstName.trim(),
+          email: leadEmail.trim(),
+          phone: leadPhone.trim() || undefined,
+          consent: true,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setLeadError(data.error || "Something went wrong. Please try again.");
+      } else {
+        setLeadResult(data.advisor);
+      }
+    } catch {
+      setLeadError("Network error. Please try again.");
+    } finally {
+      setLeadSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     if (!selectedType) return;
@@ -413,10 +475,132 @@ function FindAdvisorResults({ selectedType, answers, getResultUrl, getResultLabe
         </div>
       )}
 
-      {/* CTA */}
-      <Link href={getResultUrl()} className="block w-full px-6 py-3.5 bg-violet-600 text-white font-bold text-sm rounded-xl hover:bg-violet-700 transition-all text-center shadow-lg shadow-violet-600/20 active:scale-[0.98] mb-4">
-        Browse all {getResultLabel()} →
-      </Link>
+      {/* Lead Capture / Match Confirmation */}
+      {leadResult ? (
+        /* ── Match Confirmed ── */
+        <div className="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-2xl p-5 mb-5">
+          <div className="text-center mb-4">
+            <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-3">
+              <Icon name="check-circle" size={24} className="text-emerald-600" />
+            </div>
+            <h2 className="text-lg font-extrabold text-slate-900 mb-1">You&apos;re matched!</h2>
+            <p className="text-xs text-slate-500">Check your inbox — confirmation email sent</p>
+          </div>
+          <div className="bg-white rounded-xl p-4 mb-4 border border-emerald-100 flex gap-3 items-start">
+            {leadResult.photoUrl ? (
+              <Image src={leadResult.photoUrl} alt={leadResult.name} width={48} height={48} className="w-12 h-12 rounded-xl object-cover shrink-0" />
+            ) : (
+              <div className="w-12 h-12 rounded-xl bg-violet-100 flex items-center justify-center text-base font-bold text-violet-600 shrink-0">
+                {leadResult.name.split(" ").map((n: string) => n[0]).join("")}
+              </div>
+            )}
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold text-slate-900">{leadResult.name}</p>
+              {leadResult.firmName && <p className="text-xs text-slate-500 truncate">{leadResult.firmName}</p>}
+              <p className="text-xs text-slate-500">{leadResult.typeLabel} · {leadResult.location}</p>
+              {leadResult.rating && (
+                <p className="text-xs text-amber-600 font-semibold mt-0.5">★ {leadResult.rating}/5 ({leadResult.reviewCount} reviews)</p>
+              )}
+              {leadResult.freeConsultation && (
+                <span className="inline-block text-[0.6rem] font-bold px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded mt-1">Free consultation</span>
+              )}
+            </div>
+          </div>
+          <ol className="space-y-2 mb-4">
+            {["They'll email you within 24 hours", "Book a free 30-minute call", "Get a personalised plan — no obligation"].map((step, i) => (
+              <li key={i} className="flex gap-2.5 text-xs text-slate-700">
+                <span className="w-5 h-5 rounded-full bg-violet-600 text-white text-[0.6rem] font-bold flex items-center justify-center shrink-0 mt-0.5">{i + 1}</span>
+                {step}
+              </li>
+            ))}
+          </ol>
+          <Link href={`/advisor/${leadResult.slug}`} className="block w-full text-center py-3 text-sm font-bold text-violet-600 hover:text-violet-800 border border-violet-200 rounded-xl transition-colors">
+            View {leadResult.name.split(" ")[0]}&apos;s full profile →
+          </Link>
+        </div>
+      ) : showLeadForm ? (
+        /* ── Contact Form ── */
+        <div className="bg-white border border-violet-200 rounded-2xl p-5 mb-5 shadow-sm">
+          <h2 className="text-base font-extrabold text-slate-900 mb-1">Get matched instantly</h2>
+          <p className="text-xs text-slate-500 mb-4">We&apos;ll connect you with a verified {PROFESSIONAL_TYPE_LABELS[selectedType!] || "advisor"} — free</p>
+          {leadError && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700">{leadError}</div>
+          )}
+          <form onSubmit={handleLeadSubmit} noValidate className="space-y-3">
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">First name</label>
+              <input
+                type="text"
+                value={leadFirstName}
+                onChange={e => setLeadFirstName(e.target.value)}
+                placeholder="John"
+                className={`w-full px-3 py-2.5 text-sm border rounded-lg outline-none transition-colors ${leadErrors.firstName ? "border-red-400 bg-red-50" : "border-slate-200 focus:border-violet-400"}`}
+              />
+              {leadErrors.firstName && <p className="mt-1 text-[0.65rem] text-red-600">{leadErrors.firstName}</p>}
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">Email address</label>
+              <input
+                type="email"
+                value={leadEmail}
+                onChange={e => setLeadEmail(e.target.value)}
+                placeholder="john@example.com"
+                className={`w-full px-3 py-2.5 text-sm border rounded-lg outline-none transition-colors ${leadErrors.email ? "border-red-400 bg-red-50" : "border-slate-200 focus:border-violet-400"}`}
+              />
+              {leadErrors.email && <p className="mt-1 text-[0.65rem] text-red-600">{leadErrors.email}</p>}
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">Phone <span className="text-slate-400 font-normal">(optional)</span></label>
+              <input
+                type="tel"
+                value={leadPhone}
+                onChange={e => setLeadPhone(e.target.value)}
+                placeholder="04XX XXX XXX"
+                className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg outline-none focus:border-violet-400 transition-colors"
+              />
+            </div>
+            <label className="flex items-start gap-2.5 p-3 bg-slate-50 rounded-lg cursor-pointer">
+              <input
+                type="checkbox"
+                checked={leadConsent}
+                onChange={e => setLeadConsent(e.target.checked)}
+                className="mt-0.5 w-4 h-4 rounded border-slate-300 text-violet-600 focus:ring-violet-400"
+              />
+              <span className="text-[0.68rem] text-slate-600 leading-relaxed">
+                I agree to Invest.com.au&apos;s{" "}
+                <Link href="/privacy" target="_blank" className="text-violet-600 underline">Privacy Policy</Link> and{" "}
+                <Link href="/terms" target="_blank" className="text-violet-600 underline">Terms</Link>. Your details go to ONE advisor only — no spam.
+              </span>
+            </label>
+            {leadErrors.consent && <p className="text-[0.65rem] text-red-600">{leadErrors.consent}</p>}
+            <div className="flex gap-2 pt-1">
+              <button type="button" onClick={() => setShowLeadForm(false)} className="px-4 py-2.5 text-xs font-semibold text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
+                Cancel
+              </button>
+              <button type="submit" disabled={leadSubmitting} className="flex-1 py-2.5 bg-violet-600 text-white font-bold text-sm rounded-lg hover:bg-violet-700 disabled:opacity-60 transition-colors flex items-center justify-center gap-2">
+                {leadSubmitting ? (
+                  <><svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>Matching...</>
+                ) : "Get Matched Free →"}
+              </button>
+            </div>
+          </form>
+        </div>
+      ) : (
+        /* ── Get Matched CTA ── */
+        <button
+          onClick={() => setShowLeadForm(true)}
+          className="block w-full px-6 py-3.5 bg-violet-600 text-white font-bold text-sm rounded-xl hover:bg-violet-700 transition-all text-center shadow-lg shadow-violet-600/20 active:scale-[0.98] mb-3"
+        >
+          ✓ Get Matched Free — let us connect you
+        </button>
+      )}
+
+      {/* Browse CTA (secondary) */}
+      {!leadResult && (
+        <Link href={getResultUrl()} className={`block w-full px-6 py-3 text-sm rounded-xl text-center transition-all active:scale-[0.98] mb-4 ${showLeadForm ? "bg-slate-100 text-slate-600 hover:bg-slate-200 font-semibold" : "border border-slate-200 text-slate-600 hover:border-slate-300 font-semibold"}`}>
+          Browse all {getResultLabel()} →
+        </Link>
+      )}
 
       {/* Summary */}
       <div className="bg-white border border-slate-200 rounded-xl p-4 mb-4 shadow-sm">
