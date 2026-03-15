@@ -204,6 +204,18 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
                 {pro.firm_name && <div className="text-sm md:text-base text-slate-600 font-medium mb-1.5">{pro.firm_name}</div>}
                 <div className="flex items-center gap-2 md:gap-3 flex-wrap">
                   <span className="text-xs md:text-sm bg-violet-100 text-violet-700 px-2.5 py-1 rounded-lg font-semibold">{typeLabel}</span>
+                  {pro.avg_response_minutes != null && pro.avg_response_minutes <= 120 && (
+                    <span className="inline-flex items-center gap-1 text-[0.62rem] md:text-xs font-bold px-2 md:px-2.5 py-0.5 md:py-1 rounded-full bg-emerald-100 text-emerald-700">
+                      <Icon name="zap" size={12} className="text-emerald-500" />
+                      Responds Fast
+                    </span>
+                  )}
+                  {pro.avg_response_minutes != null && pro.avg_response_minutes > 120 && pro.avg_response_minutes <= 1440 && (
+                    <span className="inline-flex items-center gap-1 text-[0.62rem] md:text-xs font-bold px-2 md:px-2.5 py-0.5 md:py-1 rounded-full bg-sky-100 text-sky-700">
+                      <Icon name="clock" size={12} className="text-sky-500" />
+                      Responds within 24hrs
+                    </span>
+                  )}
                   {pro.location_display && (
                     <span className="inline-flex items-center gap-1 text-xs md:text-sm text-slate-500">
                       <Icon name="map-pin" size={14} className="text-slate-400" />
