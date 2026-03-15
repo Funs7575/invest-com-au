@@ -10,6 +10,7 @@ import type { Broker } from "@/lib/types";
 import LeadMagnet from "@/components/LeadMagnet";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 import { storeQualificationData } from "@/lib/qualification-store";
+import AdvisorMatchCTA from "@/components/AdvisorMatchCTA";
 
 type Holding = {
   id: string;
@@ -346,6 +347,14 @@ export default function PortfolioCalculatorClient({ brokers, inline }: { brokers
                 <AdvisorPrompt context="tax" heading="Paying over $500/year in trading fees?" description="A tax agent can help you claim investment-related expenses as deductions, potentially saving more than the fees themselves." />
               </div>
             )}
+
+            <div className="mb-6">
+              <AdvisorMatchCTA
+                needKey="tax"
+                headline="Could you be claiming more on your investment fees?"
+                description="A tax agent can help you maximise deductions on brokerage, platform fees, and investment-related expenses."
+              />
+            </div>
 
             <LeadMagnet />
           </>

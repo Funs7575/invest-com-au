@@ -9,6 +9,7 @@ import { getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL, trackClick
 import { getStoredUtm } from "@/components/UtmCapture";
 import type { Broker } from "@/lib/types";
 import { storeQualificationData } from "@/lib/qualification-store";
+import AdvisorMatchCTA from "@/components/AdvisorMatchCTA";
 
 function parseFee(feeStr: string | null | undefined): { flat: number; pct: number } {
   if (!feeStr) return { flat: 0, pct: 0 };
@@ -239,6 +240,17 @@ export default function SwitchingCalculatorClient({ brokers, inline }: { brokers
                 </a>
               </div>
             )}
+          </div>
+        )}
+
+        {/* Advisor match CTA */}
+        {showResults && (
+          <div className="mt-6">
+            <AdvisorMatchCTA
+              needKey="planning"
+              headline="Need help optimising your investment setup?"
+              description="A financial planner can review your broker, portfolio structure, and tax position to make sure you're not leaving money on the table."
+            />
           </div>
         )}
 
