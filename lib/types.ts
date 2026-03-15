@@ -92,6 +92,12 @@ export interface Broker {
   commission_type?: string;
   commission_value?: number;
   estimated_epc?: number;
+  // Revenue optimization fields
+  cpa_value?: number;                // CPA in dollars (e.g. 400 = $400)
+  affiliate_priority?: 'high' | 'medium' | 'low' | null;
+  monthly_sponsorship_fee?: number;  // Monthly fee AUD (0 = organic)
+  promoted_placement?: boolean;      // Paid promoted position
+  deal_description?: string;
   fee_source_url?: string;
   fee_source_tcs_url?: string;
   fee_verified_date?: string;
