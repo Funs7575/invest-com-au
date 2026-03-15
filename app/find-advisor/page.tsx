@@ -1,261 +1,33 @@
 "use client";
 
-import { useState, useCallback, useEffect, useMemo } from "react";
-import { useSearchParams } from "next/navigation";
+import { useState, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import Icon from "@/components/Icon";
-import type { ProfessionalType } from "@/lib/types";
-import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
+import { ProgressBar } from "@/components/ui/ProgressBar";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Select } from "@/components/ui/Select";
+import { Card } from "@/components/ui/Card";
+import { Badge } from "@/components/ui/Badge";
 import { trackEvent } from "@/lib/tracking";
-import { storeQualificationData } from "@/lib/qualification-store";
 
-const STEPS = [
-  {
-    id: "need",
-    question: "What do you need help with?",
-    subtitle: "We'll match you with the right type of professional.",
-    options: [
-      { label: "Home Loan / Refinancing", desc: "Find the best mortgage rate for your situation", key: "mortgage", type: "mortgage_broker" as ProfessionalType, icon: "landmark", color: "bg-rose-50 border-rose-200" },
-      { label: "Buyers Agent", desc: "Help finding and negotiating property purchases", key: "buyers", type: "buyers_agent" as ProfessionalType, icon: "search", color: "bg-teal-50 border-teal-200" },
-      { label: "Financial Planning", desc: "Retirement, wealth building, or investment strategy", key: "planning", type: "financial_planner" as ProfessionalType, icon: "trending-up", color: "bg-violet-50 border-violet-200" },
-      { label: "Insurance", desc: "Life, TPD, income protection, or business cover", key: "insurance", type: "insurance_broker" as ProfessionalType, icon: "shield", color: "bg-sky-50 border-sky-200" },
-      { label: "SMSF Setup & Management", desc: "Set up or manage a self-managed super fund", key: "smsf", type: "smsf_accountant" as ProfessionalType, icon: "building", color: "bg-blue-50 border-blue-200" },
-      { label: "Tax Optimisation", desc: "Minimise tax on investments and capital gains", key: "tax", type: "tax_agent" as ProfessionalType, icon: "calculator", color: "bg-amber-50 border-amber-200" },
-      { label: "Wealth Management", desc: "Portfolio management for high-net-worth investors", key: "wealth", type: "wealth_manager" as ProfessionalType, icon: "briefcase", color: "bg-indigo-50 border-indigo-200" },
-      { label: "Estate Planning", desc: "Protect your assets and plan for the future", key: "estate", type: "estate_planner" as ProfessionalType, icon: "file-text", color: "bg-slate-100 border-slate-200" },
-      { label: "Property Investment", desc: "Advice on buying investment property", key: "property", type: "property_advisor" as ProfessionalType, icon: "home", color: "bg-emerald-50 border-emerald-200" },
-      { label: "Real Estate Agent", desc: "Selling or listing your property", key: "realestate", type: "real_estate_agent" as ProfessionalType, icon: "map-pin", color: "bg-lime-50 border-lime-200" },
-      { label: "Crypto & Digital Assets", desc: "Crypto portfolio strategy and tax planning", key: "crypto", type: "crypto_advisor" as ProfessionalType, icon: "bitcoin", color: "bg-orange-50 border-orange-200" },
-      { label: "Aged Care", desc: "Navigate aged care options, costs, and subsidies", key: "agedcare", type: "aged_care_advisor" as ProfessionalType, icon: "heart", color: "bg-pink-50 border-pink-200" },
-      { label: "Debt Help", desc: "Debt consolidation, budgeting, and financial recovery", key: "debt", type: "debt_counsellor" as ProfessionalType, icon: "credit-card", color: "bg-red-50 border-red-200" },
-    ],
-  },
-  {
-    id: "amount",
-    question: "What's the value you're looking to manage?",
-    subtitle: "This helps us match you with experienced advisors.",
-    options: [
-      { label: "Under $50,000", key: "small", icon: "coins", tip: "Many advisors offer fixed-fee services at this level" },
-      { label: "$50k – $200k", key: "medium", icon: "wallet", tip: "Most common range — plenty of advisor options" },
-      { label: "$200k – $500k", key: "large", icon: "trending-up", tip: "You may benefit from ongoing advice arrangements" },
-      { label: "Over $500,000", key: "whale", icon: "crown", tip: "At this level, specialised advice is especially valuable" },
-      { label: "Not sure yet", key: "unsure", icon: "help-circle", tip: "No problem — advisors can help you work this out" },
-    ],
-  },
-  {
-    id: "urgency",
-    question: "How soon do you need advice?",
-    subtitle: "We'll prioritise advisors who can help in your timeframe.",
-    options: [
-      { label: "This week", key: "urgent", icon: "zap" },
-      { label: "Within a month", key: "soon", icon: "calendar" },
-      { label: "Just exploring", key: "exploring", icon: "search" },
-    ],
-  },
-  {
-    id: "state",
-    question: "Where are you located?",
-    subtitle: "We'll show advisors near you — many also work remotely.",
-    options: [
-      { label: "New South Wales", key: "NSW", icon: "map-pin" },
-      { label: "Victoria", key: "VIC", icon: "map-pin" },
-      { label: "Queensland", key: "QLD", icon: "map-pin" },
-      { label: "Western Australia", key: "WA", icon: "map-pin" },
-      { label: "South Australia", key: "SA", icon: "map-pin" },
-      { label: "TAS / ACT / NT", key: "other", icon: "map-pin" },
-      { label: "Remote / Online", key: "any", icon: "globe" },
-    ],
-  },
-];
+// ─── Types ─────────────────────────────────────────────────────────────────
 
-const TYPE_SLUG_MAP: Record<ProfessionalType, string> = {
-  smsf_accountant: "smsf-accountants", financial_planner: "financial-planners",
-  property_advisor: "property-advisors", tax_agent: "tax-agents",
-  mortgage_broker: "mortgage-brokers", estate_planner: "estate-planners",
-  insurance_broker: "insurance-brokers", buyers_agent: "buyers-agents",
-  real_estate_agent: "real-estate-agents", wealth_manager: "wealth-managers",
-  aged_care_advisor: "aged-care-advisors",
-  crypto_advisor: "crypto-advisors", debt_counsellor: "debt-counsellors",
-};
-const STATE_SLUG_MAP: Record<string, string> = { NSW: "nsw", VIC: "vic", QLD: "qld", WA: "wa", SA: "sa" };
+type Intent = "buy_property" | "grow_wealth" | "protect_assets" | "business_tax";
 
-const ADVISOR_TIPS: Record<string, string[]> = {
-  smsf_accountant: ["Registered with the Tax Practitioners Board", "Ask about their SMSF audit experience", "Check if they handle investment strategy too"],
-  financial_planner: ["Must hold an AFSL or be an authorised representative", "Ask about fee structure upfront — fee-for-service is most transparent", "A Statement of Advice (SOA) is legally required before personal advice"],
-  property_advisor: ["Ask for comparable data, not just listings", "Check for developer commission conflicts", "Ask about their track record at your investment level"],
-  tax_agent: ["Registered with the TPB — verify their number", "Investment-savvy agents understand CGT, franking credits, and trusts", "Ask if they specialise in investor tax returns"],
-  mortgage_broker: ["Paid by lenders, not you — their service is free", "Ask how many lenders they compare", "Check MFAA or FBAA membership"],
-  estate_planner: ["More than just a will — covers trusts, powers of attorney, succession", "Review every 3-5 years or after major life events", "Ask about experience with blended families if relevant"],
-  insurance_broker: ["Check they compare multiple insurers, not just one", "Ask about their claims support process", "Ensure they're an authorised representative under an AFSL"],
-  buyers_agent: ["Ask for recent comparable purchases in your target area", "Check they have no relationship with selling agents", "REBAA membership is a good sign of professionalism"],
-  real_estate_agent: ["Check their recent sales history in your area", "Ask about their marketing strategy and reach", "Compare commission rates — typically 1.5–2.5% in Australia"],
-  wealth_manager: ["Ask about their investment philosophy and track record", "Understand all fees — management, performance, platform, and entry/exit", "Check they hold a CFP or CFA designation"],
-  aged_care_advisor: ["Ask about experience with Centrelink and DVA means testing", "They should explain RAD vs DAP options clearly", "Look for Aged Care Steps or similar specialist accreditation"],
-  crypto_advisor: ["Must hold an AFSL to provide crypto investment advice", "Ask how they track cost bases across exchanges and wallets", "Check they understand DeFi, staking, and airdrop tax treatment"],
-  debt_counsellor: ["Free counselling is available through the National Debt Helpline (1800 007 007)", "Be wary of 'debt management' companies that charge upfront fees", "Ask about all options including hardship provisions and debt agreements"],
-};
-
-export default function FindAdvisorPage() {
-  const searchParams = useSearchParams();
-  const needParam = searchParams.get("need");
-
-  // Check if the need param matches a valid option key
-  const prefilledNeed = useMemo(() => {
-    if (!needParam) return null;
-    const match = STEPS[0].options.find((o) => o.key === needParam);
-    return match && "type" in match ? { key: match.key, type: (match as { type: ProfessionalType }).type } : null;
-  }, [needParam]);
-
-  const [step, setStep] = useState(prefilledNeed ? 1 : 0);
-  const [answers, setAnswers] = useState<Record<string, string>>(
-    prefilledNeed ? { need: prefilledNeed.key } : {}
-  );
-  const [selectedType, setSelectedType] = useState<ProfessionalType | null>(
-    prefilledNeed ? prefilledNeed.type : null
-  );
-  const [fade, setFade] = useState(false);
-
-  const transition = useCallback((newStep: number) => {
-    setFade(true);
-    setTimeout(() => { setStep(newStep); setFade(false); }, 180);
-  }, []);
-
-  const handleAnswer = useCallback((stepId: string, key: string, type?: ProfessionalType) => {
-    setAnswers(prev => ({ ...prev, [stepId]: key }));
-    if (stepId === "need" && type) setSelectedType(type);
-    if (step < STEPS.length - 1) transition(step + 1);
-  }, [step, transition]);
-
-  const isComplete = answers.need && answers.amount && answers.urgency && answers.state;
-  const progress = ((step + (isComplete ? 1 : 0)) / STEPS.length) * 100;
-  const currentStep = STEPS[step];
-
-  const getResultUrl = () => {
-    if (!selectedType) return "/advisors";
-    const s = STATE_SLUG_MAP[answers.state];
-    return s ? `/advisors/${TYPE_SLUG_MAP[selectedType]}/${s}` : `/advisors/${TYPE_SLUG_MAP[selectedType]}`;
-  };
-  const getResultLabel = () => {
-    if (!selectedType) return "advisors";
-    const label = PROFESSIONAL_TYPE_LABELS[selectedType];
-    const st = answers.state;
-    return (st && st !== "other" && st !== "any") ? `${label}s in ${st}` : `${label}s`;
-  };
-
-  return (
-    <div className="min-h-[70vh] flex flex-col bg-gradient-to-b from-violet-50/40 to-white">
-      <div className="container-custom max-w-xl py-6 md:py-12 flex-1">
-
-        {/* Breadcrumb */}
-        <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
-          <Link href="/" className="hover:text-slate-900">Home</Link>
-          <span className="mx-1.5 md:mx-2">/</span>
-          <Link href="/advisors" className="hover:text-slate-900">Advisors</Link>
-          <span className="mx-1.5 md:mx-2">/</span>
-          <span className="text-slate-700">Find an Advisor</span>
-        </nav>
-
-        {/* Progress */}
-        <div className="mb-6 md:mb-8">
-          <div className="flex items-center justify-between mb-1.5">
-            <span className="text-[0.6rem] md:text-xs font-semibold text-slate-400">Step {Math.min(step + 1, STEPS.length)} of {STEPS.length}</span>
-            <span className="text-[0.6rem] md:text-xs font-bold text-violet-600">{Math.round(progress)}%</span>
-          </div>
-          <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-violet-500 to-violet-600 rounded-full transition-all duration-500 ease-out" style={{ width: `${progress}%` }} />
-          </div>
-        </div>
-
-        {!isComplete ? (
-          <div className={`transition-all duration-200 ${fade ? "opacity-0 translate-y-1" : "opacity-100 translate-y-0"}`}>
-            {step > 0 && (
-              <button onClick={() => transition(step - 1)} className="flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-700 mb-3 min-h-[44px]">
-                <Icon name="arrow-left" size={14} /> Back
-              </button>
-            )}
-
-            <h1 className="text-xl md:text-3xl font-extrabold text-slate-900 mb-1">{currentStep.question}</h1>
-            <p className="text-xs md:text-sm text-slate-500 mb-5">{currentStep.subtitle}</p>
-
-            <div className="space-y-2">
-              {currentStep.options.map((opt) => {
-                const sel = answers[currentStep.id] === opt.key;
-                return (
-                  <button
-                    key={opt.key}
-                    onClick={() => handleAnswer(currentStep.id, opt.key, "type" in opt ? (opt as { type: ProfessionalType }).type : undefined)}
-                    className={`w-full text-left p-3 md:p-3.5 rounded-xl border-2 transition-all active:scale-[0.99] group ${
-                      sel ? "border-violet-500 bg-violet-50/70 shadow-sm" : "border-slate-200 hover:border-violet-300 bg-white"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
-                        sel ? "bg-violet-100" : (step === 0 && "color" in opt) ? (opt as { color: string }).color.split(" ")[0] : "bg-slate-100 group-hover:bg-violet-50"
-                      }`}>
-                        <Icon name={opt.icon} size={18} className={sel ? "text-violet-600" : "text-slate-500 group-hover:text-violet-500"} />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <span className="text-sm font-semibold text-slate-800 block">{opt.label}</span>
-                        {"desc" in opt && <span className="text-[0.62rem] md:text-xs text-slate-500 block mt-0.5">{(opt as { desc: string }).desc}</span>}
-                      </div>
-                      {sel ? (
-                        <div className="w-5 h-5 rounded-full bg-violet-500 flex items-center justify-center shrink-0"><Icon name="check" size={12} className="text-white" /></div>
-                      ) : (
-                        <div className="w-5 h-5 rounded-full border-2 border-slate-200 shrink-0 group-hover:border-violet-300" />
-                      )}
-                    </div>
-                    {"tip" in opt && sel && (
-                      <div className="mt-2 ml-12 text-[0.58rem] md:text-xs text-violet-600 bg-violet-50 px-2.5 py-1.5 rounded-lg border border-violet-100">
-                        {(opt as { tip: string }).tip}
-                      </div>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        ) : (
-          /* ═══ RESULTS — fetch & show matched advisors ═══ */
-          <FindAdvisorResults
-            selectedType={selectedType}
-            answers={answers}
-            getResultUrl={getResultUrl}
-            getResultLabel={getResultLabel}
-            onRestart={() => { setStep(0); setAnswers({}); setSelectedType(null); }}
-          />
-        )}
-      </div>
-      <div className="text-center px-4 pb-4">
-        <p className="text-[0.56rem] md:text-xs text-slate-400">This is not financial advice. We help you find the right type of professional — the choice is yours.</p>
-      </div>
-    </div>
-  );
+interface QuizState {
+  step: number;
+  intent: Intent | null;
+  context: string[];
+  state: string;
+  budget: string;
+  firstName: string;
+  email: string;
+  phone: string;
+  consent: boolean;
 }
-
-/* ─── Results component with live advisor fetch ─── */
 
 interface MatchedAdvisor {
-  id: number;
-  slug: string;
-  name: string;
-  firm_name?: string;
-  type: string;
-  location_display?: string;
-  location_state?: string;
-  photo_url?: string;
-  rating: number;
-  review_count: number;
-  fee_description?: string;
-  specialties: string[];
-  verified: boolean;
-  offer_text?: string;
-  offer_active?: boolean;
-  initial_consultation_free?: boolean;
-  avg_response_minutes?: number | null;
-}
-
-interface MatchedResult {
   id: number;
   name: string;
   firmName?: string | null;
@@ -268,376 +40,655 @@ interface MatchedResult {
   freeConsultation: boolean;
 }
 
-function FindAdvisorResults({ selectedType, answers, getResultUrl, getResultLabel, onRestart }: {
-  selectedType: ProfessionalType | null;
-  answers: Record<string, string>;
-  getResultUrl: () => string;
-  getResultLabel: () => string;
-  onRestart: () => void;
-}) {
-  const [matched, setMatched] = useState<MatchedAdvisor[]>([]);
-  const [loading, setLoading] = useState(true);
+// ─── Step 1 data ──────────────────────────────────────────────────────────────
 
-  // Lead capture form state
-  const [showLeadForm, setShowLeadForm] = useState(false);
-  const [leadFirstName, setLeadFirstName] = useState("");
-  const [leadEmail, setLeadEmail] = useState("");
-  const [leadPhone, setLeadPhone] = useState("");
-  const [leadConsent, setLeadConsent] = useState(false);
-  const [leadSubmitting, setLeadSubmitting] = useState(false);
-  const [leadErrors, setLeadErrors] = useState<Record<string, string>>({});
-  const [leadResult, setLeadResult] = useState<MatchedResult | null>(null);
-  const [leadError, setLeadError] = useState<string | null>(null);
+const INTENT_OPTIONS = [
+  {
+    id: "buy_property" as Intent,
+    emoji: "🏠",
+    title: "Buy Property",
+    desc: "Purchase a home or investment property",
+    baseClass: "from-rose-50 to-orange-50 border-rose-200 hover:border-rose-400 hover:shadow-rose-100",
+    selClass: "from-rose-50 to-orange-50 border-rose-500 ring-2 ring-rose-200",
+  },
+  {
+    id: "grow_wealth" as Intent,
+    emoji: "📈",
+    title: "Grow Wealth",
+    desc: "Build long-term financial security",
+    baseClass: "from-emerald-50 to-teal-50 border-emerald-200 hover:border-emerald-400 hover:shadow-emerald-100",
+    selClass: "from-emerald-50 to-teal-50 border-emerald-500 ring-2 ring-emerald-200",
+  },
+  {
+    id: "protect_assets" as Intent,
+    emoji: "🛡️",
+    title: "Protect Assets",
+    desc: "Insurance, estate planning & succession",
+    baseClass: "from-blue-50 to-indigo-50 border-blue-200 hover:border-blue-400 hover:shadow-blue-100",
+    selClass: "from-blue-50 to-indigo-50 border-blue-500 ring-2 ring-blue-200",
+  },
+  {
+    id: "business_tax" as Intent,
+    emoji: "📊",
+    title: "Business / Tax",
+    desc: "SMSF setup, tax strategy & debt",
+    baseClass: "from-violet-50 to-purple-50 border-violet-200 hover:border-violet-400 hover:shadow-violet-100",
+    selClass: "from-violet-50 to-purple-50 border-violet-500 ring-2 ring-violet-200",
+  },
+];
 
-  const handleLeadSubmit = async (e: React.FormEvent) => {
+// ─── Step 2 context config ────────────────────────────────────────────────────
+
+const CONTEXT_CONFIG: Record<
+  Intent,
+  { title: string; subtitle: string; type: "checkbox" | "radio"; options: { id: string; label: string }[] }
+> = {
+  buy_property: {
+    title: "Tell us about your property plans",
+    subtitle: "Select all that apply",
+    type: "checkbox",
+    options: [
+      { id: "first_home", label: "I'm buying my first home" },
+      { id: "investment", label: "I'm buying an investment property" },
+      { id: "refinance", label: "I'm refinancing my current mortgage" },
+      { id: "buyers_agent", label: "I need a buyer's agent to find the right property" },
+      { id: "not_sure", label: "I'm not sure yet — I need general guidance" },
+    ],
+  },
+  grow_wealth: {
+    title: "Where are you at financially?",
+    subtitle: "Choose the option that best describes you",
+    type: "radio",
+    options: [
+      { id: "getting_started", label: "Just getting started (under $10k saved)" },
+      { id: "have_savings", label: "I have savings but no investing plan ($10k–$100k)" },
+      { id: "optimize", label: "I have investments and want to optimise ($100k+)" },
+      { id: "retirement", label: "I'm approaching retirement and need a strategy" },
+    ],
+  },
+  protect_assets: {
+    title: "What do you need to protect?",
+    subtitle: "Select all that apply",
+    type: "checkbox",
+    options: [
+      { id: "life_insurance", label: "Life insurance (cover for my dependents)" },
+      { id: "income_protection", label: "Income protection (if I can't work)" },
+      { id: "estate_planning", label: "Estate planning (will, power of attorney)" },
+      { id: "aged_care", label: "Aged care planning" },
+      { id: "business_succession", label: "Business succession planning" },
+    ],
+  },
+  business_tax: {
+    title: "What's your situation?",
+    subtitle: "Choose the option that best describes you",
+    type: "radio",
+    options: [
+      { id: "smsf_setup", label: "I want to set up an SMSF" },
+      { id: "smsf_manage", label: "I have an SMSF and need help managing it" },
+      { id: "tax_optimization", label: "I need tax optimisation advice" },
+      { id: "debt_restructure", label: "I have business debt I want to restructure" },
+      { id: "crypto_tax", label: "I need crypto tax help" },
+    ],
+  },
+};
+
+// ─── Step 3 select options ────────────────────────────────────────────────────
+
+const STATES = [
+  { value: "", label: "Select your state or territory…", disabled: true },
+  { value: "NSW", label: "New South Wales" },
+  { value: "VIC", label: "Victoria" },
+  { value: "QLD", label: "Queensland" },
+  { value: "WA", label: "Western Australia" },
+  { value: "SA", label: "South Australia" },
+  { value: "TAS", label: "Tasmania" },
+  { value: "ACT", label: "Australian Capital Territory" },
+  { value: "NT", label: "Northern Territory" },
+];
+
+const BUDGETS = [
+  { value: "", label: "Select a range (optional)…" },
+  { value: "under_100k", label: "Under $100k — just getting started" },
+  { value: "100k_500k", label: "$100k – $500k — building wealth" },
+  { value: "500k_2m", label: "$500k – $2M — established investor" },
+  { value: "over_2m", label: "$2M+ — high net worth" },
+  { value: "prefer_not_say", label: "Prefer not to say" },
+];
+
+function intentToNeed(intent: Intent): string {
+  return { buy_property: "mortgage", grow_wealth: "planning", protect_assets: "insurance", business_tax: "smsf" }[intent];
+}
+
+// ─── Main Page ────────────────────────────────────────────────────────────────
+
+export default function FindAdvisorPage() {
+  const [quiz, setQuiz] = useState<QuizState>({
+    step: 1, intent: null, context: [], state: "", budget: "",
+    firstName: "", email: "", phone: "", consent: false,
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [matched, setMatched] = useState<MatchedAdvisor | null>(null);
+  const [noMatch, setNoMatch] = useState(false);
+
+  const update = useCallback((updates: Partial<QuizState>) => {
+    setQuiz((prev) => ({ ...prev, ...updates }));
+  }, []);
+
+  const handleIntent = (intent: Intent) => {
+    update({ intent, step: 2, context: [] });
+    setErrors({});
+    trackEvent("find_advisor_step1", { intent }, "/find-advisor");
+  };
+
+  const toggleContext = (id: string, isRadio: boolean) => {
+    setQuiz((prev) => ({
+      ...prev,
+      context: isRadio ? [id] : prev.context.includes(id)
+        ? prev.context.filter((c) => c !== id)
+        : [...prev.context, id],
+    }));
+  };
+
+  const handleStep2Next = () => {
+    if (quiz.context.length === 0) { setErrors({ context: "Please select at least one option" }); return; }
+    setErrors({});
+    update({ step: 3 });
+    trackEvent("find_advisor_step2", { context: quiz.context }, "/find-advisor");
+  };
+
+  const handleStep3Next = () => {
+    if (!quiz.state) { setErrors({ state: "Please select your state or territory" }); return; }
+    setErrors({});
+    update({ step: 4 });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const errors: Record<string, string> = {};
-    if (!leadFirstName.trim()) errors.firstName = "Please enter your first name";
-    if (!leadEmail.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(leadEmail)) errors.email = "Please enter a valid email";
-    if (!leadConsent) errors.consent = "You must agree to the Privacy Policy";
-    if (Object.keys(errors).length > 0) { setLeadErrors(errors); return; }
+    const errs: Record<string, string> = {};
+    if (!quiz.firstName.trim()) errs.firstName = "Please enter your first name";
+    if (!quiz.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(quiz.email)) errs.email = "Please enter a valid email";
+    if (!quiz.consent) errs.consent = "You must agree to our Privacy Policy and Terms";
+    if (Object.keys(errs).length > 0) { setErrors(errs); return; }
 
-    setLeadSubmitting(true);
-    setLeadError(null);
+    setSubmitting(true);
+    setSubmitError(null);
+    setErrors({});
+
     try {
       const res = await fetch("/api/submit-lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          need: answers.need,
-          amount: answers.amount,
-          urgency: answers.urgency,
-          state: answers.state,
-          firstName: leadFirstName.trim(),
-          email: leadEmail.trim(),
-          phone: leadPhone.trim() || undefined,
+          need: intentToNeed(quiz.intent!),
+          amount: quiz.budget,
+          state: quiz.state,
+          firstName: quiz.firstName.trim(),
+          email: quiz.email.trim(),
+          phone: quiz.phone.trim() || undefined,
           consent: true,
+          qualificationData: {
+            source: "find_advisor",
+            data: { intent: quiz.intent, context: quiz.context, state: quiz.state, budget: quiz.budget },
+          },
         }),
       });
       const data = await res.json();
-      if (!res.ok) {
-        setLeadError(data.error || "Something went wrong. Please try again.");
-      } else {
-        setLeadResult(data.advisor);
-      }
+      if (res.status === 404) { setNoMatch(true); update({ step: 5 }); return; }
+      if (!res.ok) { setSubmitError(data.error || "Something went wrong."); return; }
+      setMatched(data.advisor);
+      update({ step: 5 });
+      trackEvent("find_advisor_complete", { intent: quiz.intent }, "/find-advisor");
     } catch {
-      setLeadError("Network error. Please try again.");
+      setSubmitError("Network error. Please try again.");
     } finally {
-      setLeadSubmitting(false);
+      setSubmitting(false);
     }
   };
 
-  useEffect(() => {
-    if (!selectedType) return;
-    setLoading(true);
-    const params = new URLSearchParams({
-      type: selectedType,
-      limit: "6",
-      sort: "relevance",
-      verified: "true",
-    });
-    if (answers.state && answers.state !== "other" && answers.state !== "any") {
-      params.set("state", answers.state);
-    }
-    fetch(`/api/advisor-search?${params}`)
-      .then(r => r.json())
-      .then(data => {
-        setMatched(data.advisors || []);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-
-    trackEvent("find_advisor_complete", {
-      type: selectedType,
-      amount: answers.amount,
-      urgency: answers.urgency,
-      state: answers.state,
-    }, "/find-advisor");
-
-    // Store qualification data for lead enrichment
-    storeQualificationData("find_advisor", {
-      advisor_type: selectedType,
-      need: answers.need,
-      amount: answers.amount,
-      urgency: answers.urgency,
-      state: answers.state,
-    });
-  }, [selectedType, answers]);
-
-  const tips = selectedType && ADVISOR_TIPS[selectedType] ? ADVISOR_TIPS[selectedType] : [];
-  const typeLabel = selectedType ? PROFESSIONAL_TYPE_LABELS[selectedType] : "Advisor";
+  const goBack = () => { setErrors({}); update({ step: quiz.step - 1 }); };
+  const restart = () => {
+    setQuiz({ step: 1, intent: null, context: [], state: "", budget: "", firstName: "", email: "", phone: "", consent: false });
+    setErrors({}); setSubmitError(null); setMatched(null); setNoMatch(false);
+  };
 
   return (
-    <div>
-      {/* Hero result */}
-      <div className="bg-gradient-to-br from-violet-600 to-violet-800 rounded-2xl p-5 md:p-8 text-white text-center mb-5 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.1),transparent_70%)]" />
-        <div className="relative">
-          <div className="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center mx-auto mb-3">
-            <Icon name="check" size={28} className="text-white" />
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-white py-8 md:py-16">
+      <div className="max-w-xl mx-auto px-4">
+
+        {/* Breadcrumb */}
+        <nav className="text-xs text-slate-400 mb-6" aria-label="Breadcrumb">
+          <Link href="/" className="hover:text-slate-700 transition-colors">Home</Link>
+          <span className="mx-1.5 text-slate-300">/</span>
+          <Link href="/advisors" className="hover:text-slate-700 transition-colors">Advisors</Link>
+          <span className="mx-1.5 text-slate-300">/</span>
+          <span className="text-slate-600 font-medium">Find an Advisor</span>
+        </nav>
+
+        {/* Progress bar */}
+        {quiz.step <= 4 && (
+          <div className="mb-8">
+            <ProgressBar currentStep={quiz.step} totalSteps={4} />
           </div>
-          <h1 className="text-xl md:text-2xl font-extrabold mb-1">
-            {matched.length > 0 ? `${matched.length} ${getResultLabel()} found` : `Your match: ${getResultLabel()}`}
-          </h1>
-          <p className="text-sm text-violet-200">Based on your answers, here&apos;s who can help.</p>
-        </div>
+        )}
+
+        {/* Step 1 */}
+        {quiz.step === 1 && <Step1 onSelect={handleIntent} />}
+
+        {/* Step 2 */}
+        {quiz.step === 2 && quiz.intent && (
+          <Step2
+            intent={quiz.intent}
+            selections={quiz.context}
+            onToggle={toggleContext}
+            onNext={handleStep2Next}
+            onBack={goBack}
+            error={errors.context}
+          />
+        )}
+
+        {/* Step 3 */}
+        {quiz.step === 3 && (
+          <Step3
+            stateValue={quiz.state}
+            budgetValue={quiz.budget}
+            onStateChange={(v) => update({ state: v })}
+            onBudgetChange={(v) => update({ budget: v })}
+            onNext={handleStep3Next}
+            onBack={goBack}
+            error={errors.state}
+          />
+        )}
+
+        {/* Step 4 */}
+        {quiz.step === 4 && (
+          <Step4
+            firstName={quiz.firstName}
+            email={quiz.email}
+            phone={quiz.phone}
+            consent={quiz.consent}
+            onChange={(f, v) => update({ [f]: v } as Partial<QuizState>)}
+            onSubmit={handleSubmit}
+            onBack={goBack}
+            submitting={submitting}
+            errors={errors}
+            submitError={submitError}
+          />
+        )}
+
+        {/* Step 5: success */}
+        {quiz.step === 5 && matched && (
+          <MatchConfirmation advisor={matched} userEmail={quiz.email} onRestart={restart} />
+        )}
+
+        {/* Step 5: no match */}
+        {quiz.step === 5 && noMatch && !matched && (
+          <NoMatchFallback intent={quiz.intent} userState={quiz.state} onRestart={restart} />
+        )}
+
+        {/* Legal footer */}
+        {quiz.step <= 4 && (
+          <p className="text-center text-xs text-slate-400 mt-8 leading-relaxed">
+            This is not financial advice. We help you find the right type of professional — the choice is always yours.
+          </p>
+        )}
       </div>
-
-      {/* Matched advisor cards */}
-      {loading ? (
-        <div className="space-y-3 mb-5">
-          {[0, 1, 2].map(i => (
-            <div key={i} className="bg-white border border-slate-200 rounded-xl p-4 animate-pulse">
-              <div className="flex gap-3">
-                <div className="w-14 h-14 bg-slate-200 rounded-xl shrink-0" />
-                <div className="flex-1">
-                  <div className="h-4 w-32 bg-slate-200 rounded mb-2" />
-                  <div className="h-3 w-24 bg-slate-100 rounded mb-1" />
-                  <div className="h-3 w-48 bg-slate-100 rounded" />
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : matched.length > 0 ? (
-        <div className="space-y-3 mb-5">
-          {matched.slice(0, 3).map((advisor, i) => (
-            <Link
-              key={advisor.id}
-              href={`/advisor/${advisor.slug}`}
-              className="block bg-white border border-slate-200 rounded-xl p-4 hover:border-violet-300 hover:shadow-md transition-all group"
-            >
-              <div className="flex gap-3">
-                {/* Photo */}
-                <div className="shrink-0">
-                  {advisor.photo_url ? (
-                    <Image src={advisor.photo_url} alt={advisor.name} width={56} height={56} className="w-14 h-14 rounded-xl object-cover" />
-                  ) : (
-                    <div className="w-14 h-14 rounded-xl bg-violet-100 flex items-center justify-center text-lg font-bold text-violet-600">
-                      {advisor.name.split(" ").map(n => n[0]).join("")}
-                    </div>
-                  )}
-                </div>
-                {/* Info */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    {i === 0 && <span className="text-[0.56rem] font-bold px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded">Top Match</span>}
-                    {advisor.verified && <span className="text-[0.56rem] font-bold px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded">Verified</span>}
-                    {advisor.avg_response_minutes != null && advisor.avg_response_minutes <= 120 && (
-                      <span className="text-[0.56rem] font-bold px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded flex items-center gap-0.5"><Icon name="zap" size={9} />Fast</span>
-                    )}
-                    {advisor.initial_consultation_free && <span className="text-[0.56rem] font-bold px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded">Free Consult</span>}
-                  </div>
-                  <p className="text-sm font-bold text-slate-900 group-hover:text-violet-700 transition-colors truncate">{advisor.name}</p>
-                  {advisor.firm_name && <p className="text-xs text-slate-500 truncate">{advisor.firm_name}</p>}
-                  <div className="flex items-center gap-2 mt-1 flex-wrap">
-                    {advisor.rating > 0 && (
-                      <span className="text-xs text-amber-600 font-semibold">★ {advisor.rating}/5</span>
-                    )}
-                    {advisor.review_count > 0 && (
-                      <span className="text-[0.62rem] text-slate-400">({advisor.review_count} reviews)</span>
-                    )}
-                    {advisor.location_display && (
-                      <span className="text-[0.62rem] text-slate-400 flex items-center gap-0.5"><Icon name="map-pin" size={10} />{advisor.location_display}</span>
-                    )}
-                  </div>
-                  {advisor.fee_description && (
-                    <p className="text-[0.62rem] text-slate-500 mt-1 line-clamp-1">{advisor.fee_description}</p>
-                  )}
-                </div>
-                {/* Arrow */}
-                <div className="shrink-0 flex items-center">
-                  <Icon name="chevron-right" size={18} className="text-slate-300 group-hover:text-violet-500 transition-colors" />
-                </div>
-              </div>
-              {advisor.offer_active && advisor.offer_text && (
-                <div className="mt-2 px-3 py-1.5 bg-violet-50 border border-violet-100 rounded-lg text-[0.62rem] text-violet-700 flex items-center gap-1.5">
-                  <Icon name="tag" size={12} className="text-violet-500" />
-                  {advisor.offer_text}
-                </div>
-              )}
-            </Link>
-          ))}
-          {matched.length > 3 && (
-            <Link
-              href={getResultUrl()}
-              className="block text-center py-3 text-xs font-semibold text-violet-600 hover:text-violet-800 transition-colors"
-            >
-              View all {matched.length} {getResultLabel()} →
-            </Link>
-          )}
-        </div>
-      ) : (
-        <div className="bg-white border border-slate-200 rounded-xl p-6 text-center mb-5">
-          <Icon name="search" size={24} className="text-slate-300 mx-auto mb-2" />
-          <p className="text-sm text-slate-600 mb-1">No advisors found matching your exact criteria.</p>
-          <p className="text-xs text-slate-400">Try browsing all {typeLabel}s across Australia.</p>
-        </div>
-      )}
-
-      {/* Lead Capture / Match Confirmation */}
-      {leadResult ? (
-        /* ── Match Confirmed ── */
-        <div className="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-2xl p-5 mb-5">
-          <div className="text-center mb-4">
-            <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-3">
-              <Icon name="check-circle" size={24} className="text-emerald-600" />
-            </div>
-            <h2 className="text-lg font-extrabold text-slate-900 mb-1">You&apos;re matched!</h2>
-            <p className="text-xs text-slate-500">Check your inbox — confirmation email sent</p>
-          </div>
-          <div className="bg-white rounded-xl p-4 mb-4 border border-emerald-100 flex gap-3 items-start">
-            {leadResult.photoUrl ? (
-              <Image src={leadResult.photoUrl} alt={leadResult.name} width={48} height={48} className="w-12 h-12 rounded-xl object-cover shrink-0" />
-            ) : (
-              <div className="w-12 h-12 rounded-xl bg-violet-100 flex items-center justify-center text-base font-bold text-violet-600 shrink-0">
-                {leadResult.name.split(" ").map((n: string) => n[0]).join("")}
-              </div>
-            )}
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-slate-900">{leadResult.name}</p>
-              {leadResult.firmName && <p className="text-xs text-slate-500 truncate">{leadResult.firmName}</p>}
-              <p className="text-xs text-slate-500">{leadResult.typeLabel} · {leadResult.location}</p>
-              {leadResult.rating && (
-                <p className="text-xs text-amber-600 font-semibold mt-0.5">★ {leadResult.rating}/5 ({leadResult.reviewCount} reviews)</p>
-              )}
-              {leadResult.freeConsultation && (
-                <span className="inline-block text-[0.6rem] font-bold px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded mt-1">Free consultation</span>
-              )}
-            </div>
-          </div>
-          <ol className="space-y-2 mb-4">
-            {["They'll email you within 24 hours", "Book a free 30-minute call", "Get a personalised plan — no obligation"].map((step, i) => (
-              <li key={i} className="flex gap-2.5 text-xs text-slate-700">
-                <span className="w-5 h-5 rounded-full bg-violet-600 text-white text-[0.6rem] font-bold flex items-center justify-center shrink-0 mt-0.5">{i + 1}</span>
-                {step}
-              </li>
-            ))}
-          </ol>
-          <Link href={`/advisor/${leadResult.slug}`} className="block w-full text-center py-3 text-sm font-bold text-violet-600 hover:text-violet-800 border border-violet-200 rounded-xl transition-colors">
-            View {leadResult.name.split(" ")[0]}&apos;s full profile →
-          </Link>
-        </div>
-      ) : showLeadForm ? (
-        /* ── Contact Form ── */
-        <div className="bg-white border border-violet-200 rounded-2xl p-5 mb-5 shadow-sm">
-          <h2 className="text-base font-extrabold text-slate-900 mb-1">Get matched instantly</h2>
-          <p className="text-xs text-slate-500 mb-4">We&apos;ll connect you with a verified {PROFESSIONAL_TYPE_LABELS[selectedType!] || "advisor"} — free</p>
-          {leadError && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-xs text-red-700">{leadError}</div>
-          )}
-          <form onSubmit={handleLeadSubmit} noValidate className="space-y-3">
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">First name</label>
-              <input
-                type="text"
-                value={leadFirstName}
-                onChange={e => setLeadFirstName(e.target.value)}
-                placeholder="John"
-                className={`w-full px-3 py-2.5 text-sm border rounded-lg outline-none transition-colors ${leadErrors.firstName ? "border-red-400 bg-red-50" : "border-slate-200 focus:border-violet-400"}`}
-              />
-              {leadErrors.firstName && <p className="mt-1 text-[0.65rem] text-red-600">{leadErrors.firstName}</p>}
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Email address</label>
-              <input
-                type="email"
-                value={leadEmail}
-                onChange={e => setLeadEmail(e.target.value)}
-                placeholder="john@example.com"
-                className={`w-full px-3 py-2.5 text-sm border rounded-lg outline-none transition-colors ${leadErrors.email ? "border-red-400 bg-red-50" : "border-slate-200 focus:border-violet-400"}`}
-              />
-              {leadErrors.email && <p className="mt-1 text-[0.65rem] text-red-600">{leadErrors.email}</p>}
-            </div>
-            <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Phone <span className="text-slate-400 font-normal">(optional)</span></label>
-              <input
-                type="tel"
-                value={leadPhone}
-                onChange={e => setLeadPhone(e.target.value)}
-                placeholder="04XX XXX XXX"
-                className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg outline-none focus:border-violet-400 transition-colors"
-              />
-            </div>
-            <label className="flex items-start gap-2.5 p-3 bg-slate-50 rounded-lg cursor-pointer">
-              <input
-                type="checkbox"
-                checked={leadConsent}
-                onChange={e => setLeadConsent(e.target.checked)}
-                className="mt-0.5 w-4 h-4 rounded border-slate-300 text-violet-600 focus:ring-violet-400"
-              />
-              <span className="text-[0.68rem] text-slate-600 leading-relaxed">
-                I agree to Invest.com.au&apos;s{" "}
-                <Link href="/privacy" target="_blank" className="text-violet-600 underline">Privacy Policy</Link> and{" "}
-                <Link href="/terms" target="_blank" className="text-violet-600 underline">Terms</Link>. Your details go to ONE advisor only — no spam.
-              </span>
-            </label>
-            {leadErrors.consent && <p className="text-[0.65rem] text-red-600">{leadErrors.consent}</p>}
-            <div className="flex gap-2 pt-1">
-              <button type="button" onClick={() => setShowLeadForm(false)} className="px-4 py-2.5 text-xs font-semibold text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
-                Cancel
-              </button>
-              <button type="submit" disabled={leadSubmitting} className="flex-1 py-2.5 bg-violet-600 text-white font-bold text-sm rounded-lg hover:bg-violet-700 disabled:opacity-60 transition-colors flex items-center justify-center gap-2">
-                {leadSubmitting ? (
-                  <><svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>Matching...</>
-                ) : "Get Matched Free →"}
-              </button>
-            </div>
-          </form>
-        </div>
-      ) : (
-        /* ── Get Matched CTA ── */
-        <button
-          onClick={() => setShowLeadForm(true)}
-          className="block w-full px-6 py-3.5 bg-violet-600 text-white font-bold text-sm rounded-xl hover:bg-violet-700 transition-all text-center shadow-lg shadow-violet-600/20 active:scale-[0.98] mb-3"
-        >
-          ✓ Get Matched Free — let us connect you
-        </button>
-      )}
-
-      {/* Browse CTA (secondary) */}
-      {!leadResult && (
-        <Link href={getResultUrl()} className={`block w-full px-6 py-3 text-sm rounded-xl text-center transition-all active:scale-[0.98] mb-4 ${showLeadForm ? "bg-slate-100 text-slate-600 hover:bg-slate-200 font-semibold" : "border border-slate-200 text-slate-600 hover:border-slate-300 font-semibold"}`}>
-          Browse all {getResultLabel()} →
-        </Link>
-      )}
-
-      {/* Summary */}
-      <div className="bg-white border border-slate-200 rounded-xl p-4 mb-4 shadow-sm">
-        <h3 className="text-[0.6rem] font-bold text-slate-400 uppercase tracking-wide mb-3">Your Profile</h3>
-        <div className="space-y-2">
-          {STEPS.map((s) => {
-            const a = s.options.find(o => o.key === answers[s.id]);
-            return (
-              <div key={s.id} className="flex items-center gap-3">
-                <div className="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center shrink-0">
-                  <Icon name={a?.icon || "check"} size={13} className="text-slate-500" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-[0.56rem] text-slate-400">{s.question.replace("?", "")}</div>
-                  <div className="text-xs font-semibold text-slate-800">{a?.label}</div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Tips */}
-      {tips.length > 0 && (
-        <div className="bg-violet-50 border border-violet-200 rounded-xl p-4 mb-5">
-          <h3 className="text-xs font-bold text-violet-700 mb-2 flex items-center gap-1.5">
-            <Icon name="lightbulb" size={14} /> Tips for choosing a {typeLabel}
-          </h3>
-          <ul className="space-y-1.5">
-            {tips.map((tip, i) => (
-              <li key={i} className="text-xs text-violet-600 flex items-start gap-2"><span className="text-violet-400 mt-0.5 shrink-0">•</span>{tip}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      <button onClick={onRestart} className="block mx-auto mt-3 text-xs text-slate-500 hover:text-slate-700 font-semibold">Start over</button>
     </div>
+  );
+}
+
+// ─── Step 1 ───────────────────────────────────────────────────────────────────
+
+function Step1({ onSelect }: { onSelect: (intent: Intent) => void }) {
+  return (
+    <Card variant="default" padding="lg">
+      <div className="mb-8">
+        <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-3 leading-tight">
+          What&apos;s your biggest<br className="hidden sm:block" /> financial priority right now?
+        </h1>
+        <p className="text-slate-500 text-sm leading-relaxed">
+          This helps us match you with the right type of professional.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {INTENT_OPTIONS.map((opt) => (
+          <button
+            key={opt.id}
+            onClick={() => onSelect(opt.id)}
+            className={`
+              group relative p-5 rounded-2xl border-2 bg-gradient-to-br text-left
+              transition-all duration-200 focus:outline-none focus-visible:ring-2
+              focus-visible:ring-amber-400 focus-visible:ring-offset-2
+              hover:shadow-lg hover:-translate-y-0.5 active:scale-[0.97]
+              ${opt.baseClass}
+            `}
+          >
+            <div className="text-3xl mb-3 leading-none" aria-hidden="true">{opt.emoji}</div>
+            <h3 className="text-base font-bold text-slate-900 mb-1">{opt.title}</h3>
+            <p className="text-xs text-slate-600 leading-relaxed">{opt.desc}</p>
+            <div className="absolute right-3.5 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 group-hover:translate-x-0.5">
+              <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-8 pt-6 border-t border-slate-100 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-slate-500">
+        {["ASIC-verified professionals", "100% free to use", "No spam — ever"].map((t) => (
+          <span key={t} className="flex items-center gap-1.5">
+            <svg className="w-3.5 h-3.5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            </svg>
+            {t}
+          </span>
+        ))}
+      </div>
+    </Card>
+  );
+}
+
+// ─── Step 2 ───────────────────────────────────────────────────────────────────
+
+function Step2({
+  intent, selections, onToggle, onNext, onBack, error,
+}: {
+  intent: Intent; selections: string[];
+  onToggle: (id: string, isRadio: boolean) => void;
+  onNext: () => void; onBack: () => void; error?: string;
+}) {
+  const config = CONTEXT_CONFIG[intent];
+  const isRadio = config.type === "radio";
+
+  return (
+    <Card variant="default" padding="lg">
+      <div className="mb-6">
+        <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2 leading-tight">{config.title}</h1>
+        <p className="text-slate-500 text-sm">{config.subtitle}</p>
+      </div>
+
+      <div className="space-y-2.5" role={isRadio ? "radiogroup" : "group"} aria-label={config.title}>
+        {config.options.map((opt) => {
+          const sel = selections.includes(opt.id);
+          return (
+            <label
+              key={opt.id}
+              className={`
+                flex items-center gap-3.5 p-4 border-2 rounded-xl cursor-pointer
+                transition-all duration-150 hover:border-amber-300 hover:bg-amber-50/50
+                ${sel ? "border-amber-400 bg-amber-50" : "border-slate-200 bg-white"}
+              `}
+            >
+              <input
+                type={isRadio ? "radio" : "checkbox"}
+                name={isRadio ? "quiz-context" : undefined}
+                checked={sel}
+                onChange={() => onToggle(opt.id, isRadio)}
+                className="w-4 h-4 shrink-0 accent-amber-500 border-slate-300 focus:ring-amber-400"
+              />
+              <span className="text-sm font-medium text-slate-800 leading-relaxed">{opt.label}</span>
+            </label>
+          );
+        })}
+      </div>
+
+      {error && (
+        <p className="mt-3 text-xs text-red-600 flex items-center gap-1.5" role="alert">
+          <svg className="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
+          {error}
+        </p>
+      )}
+
+      <div className="flex gap-3 mt-8">
+        <Button variant="ghost" onClick={onBack}>← Back</Button>
+        <Button variant="primary" onClick={onNext} disabled={selections.length === 0} className="flex-1">
+          Continue →
+        </Button>
+      </div>
+    </Card>
+  );
+}
+
+// ─── Step 3 ───────────────────────────────────────────────────────────────────
+
+function Step3({
+  stateValue, budgetValue, onStateChange, onBudgetChange, onNext, onBack, error,
+}: {
+  stateValue: string; budgetValue: string;
+  onStateChange: (v: string) => void; onBudgetChange: (v: string) => void;
+  onNext: () => void; onBack: () => void; error?: string;
+}) {
+  return (
+    <Card variant="default" padding="lg">
+      <div className="mb-8">
+        <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2 leading-tight">Where are you located?</h1>
+        <p className="text-slate-500 text-sm leading-relaxed">
+          We match you with advisors in your area — many also offer remote consultations.
+        </p>
+      </div>
+
+      <div className="space-y-6">
+        <Select
+          id="state-select"
+          label="State or Territory"
+          required
+          options={STATES}
+          value={stateValue}
+          onChange={(e) => onStateChange(e.target.value)}
+          error={error}
+        />
+        <div>
+          <Select
+            id="budget-select"
+            label="What's your situation worth?"
+            options={BUDGETS}
+            value={budgetValue}
+            onChange={(e) => onBudgetChange(e.target.value)}
+          />
+          <p className="text-xs text-slate-400 mt-1.5">
+            Optional — helps us match advisors experienced at your level
+          </p>
+        </div>
+      </div>
+
+      <div className="flex gap-3 mt-8">
+        <Button variant="ghost" onClick={onBack}>← Back</Button>
+        <Button variant="primary" onClick={onNext} disabled={!stateValue} className="flex-1">
+          Continue →
+        </Button>
+      </div>
+    </Card>
+  );
+}
+
+// ─── Step 4 ───────────────────────────────────────────────────────────────────
+
+function Step4({
+  firstName, email, phone, consent, onChange, onSubmit, onBack,
+  submitting, errors, submitError,
+}: {
+  firstName: string; email: string; phone: string; consent: boolean;
+  onChange: (field: string, value: string | boolean) => void;
+  onSubmit: (e: React.FormEvent) => void; onBack: () => void;
+  submitting: boolean; errors: Record<string, string>; submitError: string | null;
+}) {
+  return (
+    <Card variant="default" padding="lg">
+      <div className="mb-8">
+        <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2 leading-tight">
+          Almost there — where should we send your match?
+        </h1>
+        <p className="text-slate-500 text-sm leading-relaxed">
+          We&apos;ll connect you with a verified professional in your area within 24 hours.
+        </p>
+      </div>
+
+      {submitError && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700 flex items-start gap-2.5">
+          <svg className="w-4 h-4 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
+          {submitError}
+        </div>
+      )}
+
+      <form onSubmit={onSubmit} noValidate className="space-y-5">
+        <Input id="firstName" label="First name" type="text" required placeholder="John"
+          value={firstName} onChange={(e) => onChange("firstName", e.target.value)}
+          error={errors.firstName} autoComplete="given-name" />
+
+        <Input id="email" label="Email address" type="email" required placeholder="john@example.com"
+          value={email} onChange={(e) => onChange("email", e.target.value)}
+          hint="We'll send your match details here"
+          error={errors.email} autoComplete="email" />
+
+        <Input id="phone" label="Phone number" type="tel" placeholder="04XX XXX XXX"
+          value={phone} onChange={(e) => onChange("phone", e.target.value)}
+          hint="Optional — advisors may call to arrange a meeting"
+          autoComplete="tel" />
+
+        {/* Consent */}
+        <div className="space-y-1.5">
+          <label className="flex items-start gap-3 p-4 bg-slate-50 rounded-xl cursor-pointer hover:bg-slate-100 transition-colors">
+            <input
+              type="checkbox" checked={consent}
+              onChange={(e) => onChange("consent", e.target.checked)}
+              className="w-4 h-4 mt-0.5 rounded border-slate-300 accent-amber-500 focus:ring-amber-400 shrink-0"
+            />
+            <span className="text-xs text-slate-600 leading-relaxed">
+              I agree to Invest.com.au&apos;s{" "}
+              <Link href="/privacy" target="_blank" className="text-amber-600 hover:text-amber-700 underline">Privacy Policy</Link>
+              {" "}and{" "}
+              <Link href="/terms" target="_blank" className="text-amber-600 hover:text-amber-700 underline">Terms of Use</Link>.
+              {" "}<strong className="text-slate-700">Your details go to ONE matched advisor only — no spam.</strong>
+            </span>
+          </label>
+          {errors.consent && (
+            <p className="text-xs text-red-600 flex items-center gap-1.5 px-1" role="alert">
+              <svg className="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
+              {errors.consent}
+            </p>
+          )}
+        </div>
+
+        <div className="flex gap-3 pt-2">
+          <Button type="button" variant="ghost" onClick={onBack} disabled={submitting}>← Back</Button>
+          <Button type="submit" variant="primary" loading={submitting} disabled={submitting} className="flex-1">
+            {submitting ? "Finding your match…" : "Get Matched Free →"}
+          </Button>
+        </div>
+      </form>
+    </Card>
+  );
+}
+
+// ─── Match Confirmation ───────────────────────────────────────────────────────
+
+function MatchConfirmation({ advisor, userEmail, onRestart }: {
+  advisor: MatchedAdvisor; userEmail: string; onRestart: () => void;
+}) {
+  const initials = advisor.name.split(" ").map((n) => n[0]).join("").slice(0, 2);
+
+  return (
+    <div className="space-y-5">
+      {/* Success header */}
+      <div className="text-center py-4">
+        <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-4">
+          <svg className="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-1.5">Match Found!</h1>
+        <p className="text-sm text-slate-500">We&apos;ve connected you with a verified professional</p>
+      </div>
+
+      {/* Advisor card */}
+      <Card variant="default" padding="md">
+        <div className="flex items-start gap-4">
+          {advisor.photoUrl ? (
+            <Image src={advisor.photoUrl} alt={advisor.name} width={64} height={64} className="w-16 h-16 rounded-xl object-cover shrink-0" />
+          ) : (
+            <div className="w-16 h-16 rounded-xl bg-amber-100 flex items-center justify-center text-xl font-extrabold text-amber-700 shrink-0" aria-hidden="true">
+              {initials}
+            </div>
+          )}
+          <div className="flex-1 min-w-0">
+            <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
+              <Badge variant="success" size="sm">✓ Verified</Badge>
+              {advisor.freeConsultation && <Badge variant="gold" size="sm">Free consult</Badge>}
+            </div>
+            <h2 className="text-base font-extrabold text-slate-900 leading-snug">{advisor.name}</h2>
+            {advisor.firmName && <p className="text-xs text-slate-500 mt-0.5">{advisor.firmName}</p>}
+            <p className="text-sm text-slate-600 mt-0.5">{advisor.typeLabel} · {advisor.location}</p>
+            {advisor.rating && (
+              <p className="text-xs text-amber-600 font-semibold mt-1">★ {advisor.rating}/5 · {advisor.reviewCount} reviews</p>
+            )}
+          </div>
+        </div>
+      </Card>
+
+      {/* Next steps */}
+      <Card variant="flat" padding="md">
+        <h3 className="font-bold text-slate-900 text-sm mb-4">What happens next:</h3>
+        <ol className="space-y-3">
+          {[
+            `${advisor.name.split(" ")[0]} will email you at ${userEmail} within 24 hours`,
+            "You'll book a free initial consultation",
+            "They'll give you a personalised plan — no obligation to proceed",
+          ].map((step, i) => (
+            <li key={i} className="flex items-start gap-3">
+              <span className="w-5 h-5 rounded-full bg-amber-500 text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">{i + 1}</span>
+              <span className="text-sm text-slate-700 leading-relaxed">{step}</span>
+            </li>
+          ))}
+        </ol>
+      </Card>
+
+      {/* CTAs */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        <Button variant="primary" href={`/advisor/${advisor.slug}`} className="flex-1 justify-center">
+          View Full Profile →
+        </Button>
+        <Button variant="secondary" href="/advisors" className="flex-1 justify-center">
+          Browse Other Advisors
+        </Button>
+      </div>
+
+      <p className="text-center text-xs text-slate-400 leading-relaxed">
+        Check your inbox at <strong className="text-slate-600">{userEmail}</strong> for confirmation and next steps.
+      </p>
+
+      <div className="text-center">
+        <button onClick={onRestart} className="text-xs text-slate-400 hover:text-slate-600 transition-colors underline">
+          Start over
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ─── No Match Fallback ────────────────────────────────────────────────────────
+
+function NoMatchFallback({ intent, userState, onRestart }: {
+  intent: Intent | null; userState: string; onRestart: () => void;
+}) {
+  const intentLabel = INTENT_OPTIONS.find((o) => o.id === intent)?.title ?? "advisor";
+  return (
+    <Card variant="default" padding="lg" className="text-center">
+      <div className="w-14 h-14 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4">
+        <svg className="w-7 h-7 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+      </div>
+      <h2 className="text-xl font-extrabold text-slate-900 mb-2">We&apos;re expanding in {userState}</h2>
+      <p className="text-sm text-slate-500 mb-6 leading-relaxed">
+        We don&apos;t have a verified {intentLabel.toLowerCase()} in your area yet, but our network is growing fast. Browse all Australia-wide advisors or try different criteria.
+      </p>
+      <div className="flex flex-col gap-3">
+        <Button variant="primary" href="/advisors" className="justify-center">Browse All Advisors</Button>
+        <Button variant="secondary" onClick={onRestart} className="justify-center">Try Again</Button>
+      </div>
+    </Card>
   );
 }

@@ -2,10 +2,9 @@
 
 import { usePathname } from "next/navigation";
 import dynamic from "next/dynamic";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import DisclosureBanner from "@/components/DisclosureBanner";
-import Icon from "@/components/Icon";
+import { TopBar } from "@/components/layout/TopBar";
+import { Navigation } from "@/components/layout/Navigation";
+import { SiteFooter } from "@/components/layout/SiteFooter";
 
 // Lazy-load below-fold and event-driven components
 const CookieBanner = dynamic(() => import("@/components/CookieBanner"), { ssr: false });
@@ -32,11 +31,10 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
         Skip to main content
       </a>
 
-      <DisclosureBanner variant="header" />
-
-      <Header />
+      <TopBar />
+      <Navigation />
       <main id="main-content" className="min-h-screen pb-14 sm:pb-0">{children}</main>
-      <Footer />
+      <SiteFooter />
       <CookieBanner />
       <BackToTop />
       <QuizPromptBar />
