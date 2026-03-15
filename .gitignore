@@ -50,3 +50,4 @@ untitled folder*/
 index copy*.html
 package-lock.json
 supabase/.temp/
+.claude/worktrees/
