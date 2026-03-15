@@ -1046,7 +1046,6 @@ export const PROFESSIONAL_TYPE_LABELS: Record<ProfessionalType, string> = {
   aged_care_advisor: "Aged Care Advisor",
   crypto_advisor: "Crypto Advisor",
   debt_counsellor: "Debt Counsellor",
-  real_estate_agent: "Real Estate Agent",
 };
 
 export const PROFESSIONAL_TYPE_ICONS: Record<ProfessionalType, string> = {
@@ -1063,7 +1062,6 @@ export const PROFESSIONAL_TYPE_ICONS: Record<ProfessionalType, string> = {
   aged_care_advisor: "heart",
   crypto_advisor: "bitcoin",
   debt_counsellor: "credit-card",
-  real_estate_agent: "map",
 };
 
 export const AU_STATES = ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT"] as const;

@@ -22,7 +22,6 @@ const SLUG_TO_TYPE: Record<string, ProfessionalType> = {
   "aged-care-advisors": "aged_care_advisor",
   "crypto-advisors": "crypto_advisor",
   "debt-counsellors": "debt_counsellor",
-  "real-estate-agents": "real_estate_agent",
 };
 
 const TYPE_DESCRIPTIONS: Record<string, string> = {
@@ -39,7 +38,6 @@ const TYPE_DESCRIPTIONS: Record<string, string> = {
   "aged-care-advisors": "Find aged care advisors who specialise in residential aged care, home care packages, means testing, and retirement transitions.",
   "crypto-advisors": "Compare crypto and digital asset advisors for portfolio construction, tax planning, and DeFi strategy in Australia.",
   "debt-counsellors": "Find accredited debt counsellors for debt consolidation, hardship applications, budgeting, and financial recovery.",
-  "real-estate-agents": "Find licensed real estate agents for property sales, purchases, leasing, and property management across Australia.",
 };
 
 const TYPE_FAQS: Record<string, { q: string; a: string }[]> = {

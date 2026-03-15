@@ -27,7 +27,6 @@ const STEPS = [
       { label: "Crypto & Digital Assets", desc: "Crypto portfolio strategy and tax planning", key: "crypto", type: "crypto_advisor" as ProfessionalType, icon: "bitcoin", color: "bg-orange-50 border-orange-200" },
       { label: "Aged Care", desc: "Navigate aged care options, costs, and subsidies", key: "agedcare", type: "aged_care_advisor" as ProfessionalType, icon: "heart", color: "bg-pink-50 border-pink-200" },
       { label: "Debt Help", desc: "Debt consolidation, budgeting, and financial recovery", key: "debt", type: "debt_counsellor" as ProfessionalType, icon: "credit-card", color: "bg-red-50 border-red-200" },
-      { label: "Real Estate Agent", desc: "Selling, buying, or leasing residential or commercial property", key: "realestate", type: "real_estate_agent" as ProfessionalType, icon: "map", color: "bg-cyan-50 border-cyan-200" },
     ],
   },
   {
@@ -76,7 +75,6 @@ const TYPE_SLUG_MAP: Record<ProfessionalType, string> = {
   real_estate_agent: "real-estate-agents", wealth_manager: "wealth-managers",
   aged_care_advisor: "aged-care-advisors",
   crypto_advisor: "crypto-advisors", debt_counsellor: "debt-counsellors",
-  real_estate_agent: "real-estate-agents",
 };
 const STATE_SLUG_MAP: Record<string, string> = { NSW: "nsw", VIC: "vic", QLD: "qld", WA: "wa", SA: "sa" };
 
@@ -94,7 +92,6 @@ const ADVISOR_TIPS: Record<string, string[]> = {
   aged_care_advisor: ["Ask about experience with Centrelink and DVA means testing", "They should explain RAD vs DAP options clearly", "Look for Aged Care Steps or similar specialist accreditation"],
   crypto_advisor: ["Must hold an AFSL to provide crypto investment advice", "Ask how they track cost bases across exchanges and wallets", "Check they understand DeFi, staking, and airdrop tax treatment"],
   debt_counsellor: ["Free counselling is available through the National Debt Helpline (1800 007 007)", "Be wary of 'debt management' companies that charge upfront fees", "Ask about all options including hardship provisions and debt agreements"],
-  real_estate_agent: ["Must hold a state-based real estate licence — verify with your state's Fair Trading", "Ask about their average days on market and clearance rates", "Check recent sales in your area to gauge their local expertise"],
 };
 
 export default function FindAdvisorPage() {

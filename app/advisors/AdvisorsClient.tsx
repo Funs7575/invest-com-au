@@ -24,7 +24,6 @@ const TYPE_FILTERS: { key: ProfessionalType | "all"; label: string; icon: string
   { key: "aged_care_advisor", label: "Aged Care Advisors", icon: "heart" },
   { key: "crypto_advisor", label: "Crypto Advisors", icon: "bitcoin" },
   { key: "debt_counsellor", label: "Debt Counsellors", icon: "credit-card" },
-  { key: "real_estate_agent", label: "Real Estate Agents", icon: "map" },
 ];
 
 const RADIUS_OPTIONS = [
