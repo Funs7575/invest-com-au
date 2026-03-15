@@ -75,6 +75,18 @@
     {
       "path": "/api/cron/portfolio-monitor",
       "schedule": "0 8 1 * *"
+    },
+    {
+      "path": "/api/cron/rotate-featured-advisors",
+      "schedule": "0 0 * * 0"
+    },
+    {
+      "path": "/api/cron/refresh-revenue-view",
+      "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/cron/advisor-nudge",
+      "schedule": "0 9 * * *"
     }
   ]
 }

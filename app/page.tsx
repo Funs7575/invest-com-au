@@ -51,13 +51,15 @@ export const revalidate = 3600; // ISR: revalidate every hour
 export default async function HomePage() {
   const supabase = await createClient();
 
-  const BROKER_LISTING_COLUMNS = "id, name, slug, color, icon, logo_url, rating, asx_fee, asx_fee_value, us_fee, us_fee_value, fx_rate, chess_sponsored, smsf_support, is_crypto, platform_type, deal, deal_text, deal_expiry, deal_terms, deal_verified_date, deal_category, editors_pick, tagline, cta_text, affiliate_url, sponsorship_tier, benefit_cta, updated_at, fee_last_checked, status";
+  const BROKER_LISTING_COLUMNS = "id, name, slug, color, icon, logo_url, rating, asx_fee, asx_fee_value, us_fee, us_fee_value, fx_rate, chess_sponsored, smsf_support, is_crypto, platform_type, deal, deal_text, deal_expiry, deal_terms, deal_verified_date, deal_category, editors_pick, tagline, cta_text, affiliate_url, sponsorship_tier, benefit_cta, updated_at, fee_last_checked, status, cpa_value, promoted_placement, affiliate_priority";
 
   const [{ data: brokers }, { data: articles }, { count: advisorCount }, { data: featuredAdvisors }] = await Promise.all([
     supabase
       .from("brokers")
       .select(BROKER_LISTING_COLUMNS)
       .eq("status", "active")
+      // Revenue-weighted: promoted first, then sponsored tier, then by CPA+rating
+      .order("promoted_placement", { ascending: false })
       .order("rating", { ascending: false }),
     supabase
       .from("articles")

@@ -2,13 +2,11 @@
 
 import { useState, useCallback } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
 import { trackEvent } from "@/lib/tracking";
 
 // ─── Types ─────────────────────────────────────────────────────────────────
@@ -25,19 +23,6 @@ interface QuizState {
   email: string;
   phone: string;
   consent: boolean;
-}
-
-interface MatchedAdvisor {
-  id: number;
-  name: string;
-  firmName?: string | null;
-  typeLabel: string;
-  location: string;
-  slug: string;
-  photoUrl?: string | null;
-  rating?: number | null;
-  reviewCount: number;
-  freeConsultation: boolean;
 }
 
 // ─── Step 1 data ──────────────────────────────────────────────────────────────
@@ -156,7 +141,7 @@ const BUDGETS = [
 ];
 
 function intentToNeed(intent: Intent): string {
-  return { buy_property: "mortgage", grow_wealth: "planning", protect_assets: "insurance", business_tax: "smsf" }[intent];
+  return { buy_property: "mortgage", grow_wealth: "planning", protect_assets: "insurance", business_tax: "smsf" }[intent] ?? "planning";
 }
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
@@ -169,12 +154,16 @@ export default function FindAdvisorPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [matched, setMatched] = useState<MatchedAdvisor | null>(null);
-  const [noMatch, setNoMatch] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const update = useCallback((updates: Partial<QuizState>) => {
     setQuiz((prev) => ({ ...prev, ...updates }));
   }, []);
+
+  const restart = () => {
+    setQuiz({ step: 1, intent: null, context: [], state: "", budget: "", firstName: "", email: "", phone: "", consent: false });
+    setErrors({}); setSubmitError(null); setSubmitted(false);
+  };
 
   const handleIntent = (intent: Intent) => {
     update({ intent, step: 2, context: [] });
@@ -221,23 +210,22 @@ export default function FindAdvisorPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          need: intentToNeed(quiz.intent!),
-          amount: quiz.budget,
-          state: quiz.state,
-          firstName: quiz.firstName.trim(),
-          email: quiz.email.trim(),
-          phone: quiz.phone.trim() || undefined,
-          consent: true,
-          qualificationData: {
-            source: "find_advisor",
-            data: { intent: quiz.intent, context: quiz.context, state: quiz.state, budget: quiz.budget },
+          lead_type: "advisor",
+          user_email: quiz.email.trim(),
+          user_name: quiz.firstName.trim(),
+          user_phone: quiz.phone.trim() || undefined,
+          user_location_state: quiz.state,
+          user_intent: {
+            need: intentToNeed(quiz.intent!),
+            context: quiz.context,
+            budget: quiz.budget,
           },
+          source_page: "/find-advisor",
         }),
       });
       const data = await res.json();
-      if (res.status === 404) { setNoMatch(true); update({ step: 5 }); return; }
       if (!res.ok) { setSubmitError(data.error || "Something went wrong."); return; }
-      setMatched(data.advisor);
+      setSubmitted(true);
       update({ step: 5 });
       trackEvent("find_advisor_complete", { intent: quiz.intent }, "/find-advisor");
     } catch {
@@ -248,10 +236,6 @@ export default function FindAdvisorPage() {
   };
 
   const goBack = () => { setErrors({}); update({ step: quiz.step - 1 }); };
-  const restart = () => {
-    setQuiz({ step: 1, intent: null, context: [], state: "", budget: "", firstName: "", email: "", phone: "", consent: false });
-    setErrors({}); setSubmitError(null); setMatched(null); setNoMatch(false);
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-white py-8 md:py-16">
@@ -318,13 +302,8 @@ export default function FindAdvisorPage() {
         )}
 
         {/* Step 5: success */}
-        {quiz.step === 5 && matched && (
-          <MatchConfirmation advisor={matched} userEmail={quiz.email} onRestart={restart} />
-        )}
-
-        {/* Step 5: no match */}
-        {quiz.step === 5 && noMatch && !matched && (
-          <NoMatchFallback intent={quiz.intent} userState={quiz.state} onRestart={restart} />
+        {quiz.step === 5 && submitted && (
+          <MatchConfirmation userEmail={quiz.email} userFirstName={quiz.firstName} onRestart={restart} />
         )}
 
         {/* Legal footer */}
@@ -585,11 +564,9 @@ function Step4({
 
 // ─── Match Confirmation ───────────────────────────────────────────────────────
 
-function MatchConfirmation({ advisor, userEmail, onRestart }: {
-  advisor: MatchedAdvisor; userEmail: string; onRestart: () => void;
+function MatchConfirmation({ userEmail, userFirstName, onRestart }: {
+  userEmail: string; userFirstName: string; onRestart: () => void;
 }) {
-  const initials = advisor.name.split(" ").map((n) => n[0]).join("").slice(0, 2);
-
   return (
     <div className="space-y-5">
       {/* Success header */}
@@ -599,43 +576,18 @@ function MatchConfirmation({ advisor, userEmail, onRestart }: {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-1.5">Match Found!</h1>
-        <p className="text-sm text-slate-500">We&apos;ve connected you with a verified professional</p>
+        <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-1.5">Request Received!</h1>
+        <p className="text-sm text-slate-500">We&apos;ll match you with a verified professional shortly</p>
       </div>
-
-      {/* Advisor card */}
-      <Card variant="default" padding="md">
-        <div className="flex items-start gap-4">
-          {advisor.photoUrl ? (
-            <Image src={advisor.photoUrl} alt={advisor.name} width={64} height={64} className="w-16 h-16 rounded-xl object-cover shrink-0" />
-          ) : (
-            <div className="w-16 h-16 rounded-xl bg-amber-100 flex items-center justify-center text-xl font-extrabold text-amber-700 shrink-0" aria-hidden="true">
-              {initials}
-            </div>
-          )}
-          <div className="flex-1 min-w-0">
-            <div className="flex flex-wrap items-center gap-1.5 mb-1.5">
-              <Badge variant="success" size="sm">✓ Verified</Badge>
-              {advisor.freeConsultation && <Badge variant="gold" size="sm">Free consult</Badge>}
-            </div>
-            <h2 className="text-base font-extrabold text-slate-900 leading-snug">{advisor.name}</h2>
-            {advisor.firmName && <p className="text-xs text-slate-500 mt-0.5">{advisor.firmName}</p>}
-            <p className="text-sm text-slate-600 mt-0.5">{advisor.typeLabel} · {advisor.location}</p>
-            {advisor.rating && (
-              <p className="text-xs text-amber-600 font-semibold mt-1">★ {advisor.rating}/5 · {advisor.reviewCount} reviews</p>
-            )}
-          </div>
-        </div>
-      </Card>
 
       {/* Next steps */}
       <Card variant="flat" padding="md">
-        <h3 className="font-bold text-slate-900 text-sm mb-4">What happens next:</h3>
+        <h3 className="font-bold text-slate-900 text-sm mb-4">What happens next, {userFirstName}:</h3>
         <ol className="space-y-3">
           {[
-            `${advisor.name.split(" ")[0]} will email you at ${userEmail} within 24 hours`,
-            "You'll book a free initial consultation",
-            "They'll give you a personalised plan — no obligation to proceed",
+            `We'll find the best-matched advisor for your situation`,
+            `They'll reach out to you at ${userEmail} within 24 hours`,
+            "You'll book a free initial consultation — no obligation",
           ].map((step, i) => (
             <li key={i} className="flex items-start gap-3">
               <span className="w-5 h-5 rounded-full bg-amber-500 text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">{i + 1}</span>
@@ -647,16 +599,16 @@ function MatchConfirmation({ advisor, userEmail, onRestart }: {
 
       {/* CTAs */}
       <div className="flex flex-col sm:flex-row gap-3">
-        <Button variant="primary" href={`/advisor/${advisor.slug}`} className="flex-1 justify-center">
-          View Full Profile →
+        <Button variant="primary" href="/advisors" className="flex-1 justify-center">
+          Browse All Advisors →
         </Button>
-        <Button variant="secondary" href="/advisors" className="flex-1 justify-center">
-          Browse Other Advisors
+        <Button variant="secondary" href="/compare" className="flex-1 justify-center">
+          Compare Platforms
         </Button>
       </div>
 
       <p className="text-center text-xs text-slate-400 leading-relaxed">
-        Check your inbox at <strong className="text-slate-600">{userEmail}</strong> for confirmation and next steps.
+        Check your inbox at <strong className="text-slate-600">{userEmail}</strong> for confirmation.
       </p>
 
       <div className="text-center">
@@ -665,30 +617,5 @@ function MatchConfirmation({ advisor, userEmail, onRestart }: {
         </button>
       </div>
     </div>
-  );
-}
-
-// ─── No Match Fallback ────────────────────────────────────────────────────────
-
-function NoMatchFallback({ intent, userState, onRestart }: {
-  intent: Intent | null; userState: string; onRestart: () => void;
-}) {
-  const intentLabel = INTENT_OPTIONS.find((o) => o.id === intent)?.title ?? "advisor";
-  return (
-    <Card variant="default" padding="lg" className="text-center">
-      <div className="w-14 h-14 rounded-full bg-amber-100 flex items-center justify-center mx-auto mb-4">
-        <svg className="w-7 h-7 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
-      </div>
-      <h2 className="text-xl font-extrabold text-slate-900 mb-2">We&apos;re expanding in {userState}</h2>
-      <p className="text-sm text-slate-500 mb-6 leading-relaxed">
-        We don&apos;t have a verified {intentLabel.toLowerCase()} in your area yet, but our network is growing fast. Browse all Australia-wide advisors or try different criteria.
-      </p>
-      <div className="flex flex-col gap-3">
-        <Button variant="primary" href="/advisors" className="justify-center">Browse All Advisors</Button>
-        <Button variant="secondary" onClick={onRestart} className="justify-center">Try Again</Button>
-      </div>
-    </Card>
   );
 }
