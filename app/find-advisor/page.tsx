@@ -252,6 +252,7 @@ interface MatchedAdvisor {
   offer_text?: string;
   offer_active?: boolean;
   initial_consultation_free?: boolean;
+  avg_response_minutes?: number | null;
 }
 
 function FindAdvisorResults({ selectedType, answers, getResultUrl, getResultLabel, onRestart }: {
@@ -270,7 +271,7 @@ function FindAdvisorResults({ selectedType, answers, getResultUrl, getResultLabe
     const params = new URLSearchParams({
       type: selectedType,
       limit: "6",
-      sort: "rating",
+      sort: "relevance",
       verified: "true",
     });
     if (answers.state && answers.state !== "other" && answers.state !== "any") {
@@ -360,6 +361,9 @@ function FindAdvisorResults({ selectedType, answers, getResultUrl, getResultLabe
                   <div className="flex items-center gap-2 mb-0.5">
                     {i === 0 && <span className="text-[0.56rem] font-bold px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded">Top Match</span>}
                     {advisor.verified && <span className="text-[0.56rem] font-bold px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded">Verified</span>}
+                    {advisor.avg_response_minutes != null && advisor.avg_response_minutes <= 120 && (
+                      <span className="text-[0.56rem] font-bold px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded flex items-center gap-0.5"><Icon name="zap" size={9} />Fast</span>
+                    )}
                     {advisor.initial_consultation_free && <span className="text-[0.56rem] font-bold px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded">Free Consult</span>}
                   </div>
                   <p className="text-sm font-bold text-slate-900 group-hover:text-violet-700 transition-colors truncate">{advisor.name}</p>

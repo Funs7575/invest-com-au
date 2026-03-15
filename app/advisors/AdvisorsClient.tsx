@@ -722,6 +722,12 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                           Featured
                         </span>
                       )}
+                      {pro.avg_response_minutes != null && pro.avg_response_minutes <= 120 && (
+                        <span className="shrink-0 text-[0.56rem] md:text-[0.62rem] font-bold px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 flex items-center gap-0.5">
+                          <Icon name="zap" size={10} className="text-emerald-500" />
+                          Fast
+                        </span>
+                      )}
                     </div>
                     {pro.firm_name && (
                       <div className="text-[0.65rem] md:text-xs text-slate-500 truncate flex items-center gap-1.5">

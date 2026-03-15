@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
       // Standard Supabase query
       let query = supabase
         .from("professionals")
-        .select("id, slug, name, firm_name, type, specialties, location_state, location_suburb, location_display, location_postcode, photo_url, fee_structure, fee_description, hourly_rate_cents, flat_fee_cents, aum_percentage, initial_consultation_free, rating, review_count, verified, offer_text, offer_active, created_at", { count: "exact" })
+        .select("id, slug, name, firm_name, type, specialties, location_state, location_suburb, location_display, location_postcode, photo_url, fee_structure, fee_description, hourly_rate_cents, flat_fee_cents, aum_percentage, initial_consultation_free, rating, review_count, verified, offer_text, offer_active, created_at, avg_response_minutes, total_leads, featured_until, account_type", { count: "exact" })
         .eq("status", "active");
 
       if (type) query = query.eq("type", type);
@@ -78,17 +78,25 @@ export async function GET(request: NextRequest) {
         query = query.or(`name.ilike.${term},firm_name.ilike.${term},location_display.ilike.${term},location_suburb.ilike.${term}`);
       }
 
-      switch (sort) {
-        case "rating": query = query.order("rating", { ascending: false, nullsFirst: false }); break;
-        case "reviews": query = query.order("review_count", { ascending: false, nullsFirst: false }); break;
-        case "name": query = query.order("name", { ascending: true }); break;
-        case "newest": query = query.order("created_at", { ascending: false }); break;
-        case "fee_low": query = query.order("hourly_rate_cents", { ascending: true, nullsFirst: false }); break;
-        case "fee_high": query = query.order("hourly_rate_cents", { ascending: false, nullsFirst: false }); break;
-        default: query = query.order("rating", { ascending: false, nullsFirst: false });
-      }
+      // For "relevance" sort, fetch more and re-rank client-side with composite score.
+      // For all other sorts, use DB ordering.
+      const useRelevanceSort = sort === "relevance";
 
-      query = query.range(offset, offset + limit - 1);
+      if (!useRelevanceSort) {
+        switch (sort) {
+          case "rating": query = query.order("rating", { ascending: false, nullsFirst: false }); break;
+          case "reviews": query = query.order("review_count", { ascending: false, nullsFirst: false }); break;
+          case "name": query = query.order("name", { ascending: true }); break;
+          case "newest": query = query.order("created_at", { ascending: false }); break;
+          case "fee_low": query = query.order("hourly_rate_cents", { ascending: true, nullsFirst: false }); break;
+          case "fee_high": query = query.order("hourly_rate_cents", { ascending: false, nullsFirst: false }); break;
+          default: query = query.order("rating", { ascending: false, nullsFirst: false });
+        }
+        query = query.range(offset, offset + limit - 1);
+      } else {
+        // Fetch all matching, score and paginate in JS
+        query = query.order("rating", { ascending: false, nullsFirst: false });
+      }
 
       const { data, error, count } = await query;
       if (error) {
@@ -96,7 +104,48 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: "Search failed." }, { status: 500 });
       }
 
-      advisors = data ?? [];
+      if (useRelevanceSort && data) {
+        // Composite relevance scoring:
+        // - Rating weight: 35%
+        // - Review volume: 15%  (capped at 20 reviews = 1.0)
+        // - Response speed: 20% (< 2hrs = 1.0, < 12hrs = 0.7, < 24hrs = 0.4, else 0.1)
+        // - Verified: 15%
+        // - Featured: 10%
+        // - Has leads (active advisor): 5%
+        const scored = data.map((a: Record<string, unknown>) => {
+          const rating = (a.rating as number) || 0;
+          const reviews = (a.review_count as number) || 0;
+          const avgResp = a.avg_response_minutes as number | null;
+          const isVerified = a.verified as boolean;
+          const isFeatured = a.featured_until && new Date(a.featured_until as string) > new Date();
+          const hasLeads = ((a.total_leads as number) || 0) > 0;
+
+          const ratingScore = rating / 5;
+          const reviewScore = Math.min(reviews / 20, 1);
+          let responseScore = 0.1;
+          if (avgResp !== null && avgResp !== undefined) {
+            if (avgResp <= 120) responseScore = 1.0;
+            else if (avgResp <= 720) responseScore = 0.7;
+            else if (avgResp <= 1440) responseScore = 0.4;
+            else responseScore = 0.15;
+          }
+
+          const composite =
+            ratingScore * 0.35 +
+            reviewScore * 0.15 +
+            responseScore * 0.20 +
+            (isVerified ? 0.15 : 0) +
+            (isFeatured ? 0.10 : 0) +
+            (hasLeads ? 0.05 : 0);
+
+          return { ...a, _relevance: composite };
+        });
+
+        scored.sort((a: { _relevance: number }, b: { _relevance: number }) => b._relevance - a._relevance);
+        advisors = scored.slice(offset, offset + limit);
+      } else {
+        advisors = data ?? [];
+      }
       total = count ?? advisors.length;
     }
 
