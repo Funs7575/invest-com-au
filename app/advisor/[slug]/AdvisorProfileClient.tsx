@@ -11,6 +11,7 @@ import AdvisorReviewForm from "@/components/AdvisorReviewForm";
 import { getStoredUtm } from "@/components/UtmCapture";
 import { trackEvent } from "@/lib/tracking";
 import { getVerificationConfig, getVerificationLinks } from "@/lib/advisor-verification";
+import { getQualificationData } from "@/lib/qualification-store";
 
 const TYPE_TO_PLATFORMS: Record<string, { label: string; href: string }[]> = {
   smsf_accountant: [
@@ -146,6 +147,7 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
           pages_visited: typeof window !== 'undefined' ? parseInt(sessionStorage.getItem('pages_visited') || '1') : 1,
           quiz_completed: typeof window !== 'undefined' ? !!sessionStorage.getItem('quiz_completed') : false,
           calculator_used: typeof window !== 'undefined' ? !!sessionStorage.getItem('calculator_used') : false,
+          qualification_data: getQualificationData(),
           ...getStoredUtm(),
         }),
       });

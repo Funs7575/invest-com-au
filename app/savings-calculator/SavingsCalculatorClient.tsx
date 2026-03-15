@@ -6,6 +6,7 @@ import Icon from "@/components/Icon";
 import SocialProofCounter from "@/components/SocialProofCounter";
 import { trackEvent, trackClick, getAffiliateLink, AFFILIATE_REL, trackPageDuration } from "@/lib/tracking";
 import { getStoredUtm } from "@/components/UtmCapture";
+import { storeQualificationData } from "@/lib/qualification-store";
 
 type Account = {
   id: number; slug: string; name: string; platform_type: string;
@@ -48,6 +49,12 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
 
   const handleCalculate = () => {
     setShowResults(true);
+    storeQualificationData("savings_calculator", {
+      balance,
+      current_rate: currentRate,
+      max_extra_interest: maxExtra,
+      top_account: topAccount?.name || null,
+    });
     trackEvent("savings_calc_result", {
       balance,
       current_rate: currentRate,

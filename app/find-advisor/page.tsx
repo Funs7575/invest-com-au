@@ -8,6 +8,7 @@ import Icon from "@/components/Icon";
 import type { ProfessionalType } from "@/lib/types";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 import { trackEvent } from "@/lib/tracking";
+import { storeQualificationData } from "@/lib/qualification-store";
 
 const STEPS = [
   {
@@ -289,6 +290,15 @@ function FindAdvisorResults({ selectedType, answers, getResultUrl, getResultLabe
       urgency: answers.urgency,
       state: answers.state,
     }, "/find-advisor");
+
+    // Store qualification data for lead enrichment
+    storeQualificationData("find_advisor", {
+      advisor_type: selectedType,
+      need: answers.need,
+      amount: answers.amount,
+      urgency: answers.urgency,
+      state: answers.state,
+    });
   }, [selectedType, answers]);
 
   const tips = selectedType && ADVISOR_TIPS[selectedType] ? ADVISOR_TIPS[selectedType] : [];
