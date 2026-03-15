@@ -238,6 +238,7 @@ const VERTICALS: VerticalConfig[] = [
     advisorTypes: [
       { type: "financial_planner", label: "Financial Planners", href: "/advisors/financial-planners" },
       { type: "debt_counsellor", label: "Debt Counsellors", href: "/advisors/debt-counsellors" },
+      { type: "real_estate_agent", label: "Real Estate Agents", href: "/advisors/real-estate-agents" },
     ],
     sections: [
       {

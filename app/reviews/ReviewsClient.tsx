@@ -34,6 +34,7 @@ const ADVISOR_TABS = [
   { key: "insurance_broker", label: "Insurance Brokers" },
   { key: "aged_care_advisor", label: "Aged Care Advisors" },
   { key: "debt_counsellor", label: "Debt Counsellors" },
+  { key: "real_estate_agent", label: "Real Estate Agents" },
 ] as const;
 
 type AdvisorTabKey = (typeof ADVISOR_TABS)[number]["key"];

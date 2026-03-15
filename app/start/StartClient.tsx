@@ -139,7 +139,7 @@ function computeRoute(answers: Answers): RouteResult {
         "All advisors on Invest.com.au are ASIC-registered and independently verified.",
       ],
       actions: [
-        { label: `Find ${advisorLabel}s`, href: `/advisors/${advisorType}`, primary: true, icon: "users" },
+        { label: `Find ${advisorLabel}s`, href: `/find-advisor`, primary: true, icon: "users" },
         { label: "Compare platforms too", href: "/compare", icon: "bar-chart" },
       ],
       guides: [

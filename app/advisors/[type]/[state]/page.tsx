@@ -21,6 +21,7 @@ const SLUG_TO_TYPE: Record<string, ProfessionalType> = {
   "aged-care-advisors": "aged_care_advisor",
   "crypto-advisors": "crypto_advisor",
   "debt-counsellors": "debt_counsellor",
+  "real-estate-agents": "real_estate_agent",
 };
 
 const STATE_NAMES: Record<string, string> = {

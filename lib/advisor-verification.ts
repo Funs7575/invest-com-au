@@ -458,6 +458,39 @@ export const VERIFICATION_CONFIGS: Record<ProfessionalType, VerificationConfig> 
     cpd: "FCA members must complete ongoing professional development",
     disclosure: "Free financial counsellors are funded by government and do not sell products — they act in your interest only. Paid debt management services must hold an ACL with debt management authorisation since July 2021. Be cautious of paid services that charge upfront fees.",
   },
+
+  real_estate_agent: {
+    type: "real_estate_agent",
+    label: "Real Estate Agent",
+    primaryLicence: {
+      code: "RE",
+      name: "Real Estate Agent Licence",
+      regulator: "State Fair Trading / Office of Fair Trading",
+      regulatorShort: "State OFT",
+      verifyUrl: "",
+      verifyLabel: "Verify with State Fair Trading",
+      mandatory: true,
+      field: "registration_number",
+      description: "Real estate agents must hold a state-based licence to sell, buy, lease, or manage property on behalf of clients. Licensing requirements vary by state — NSW has a tiered Class 1/Class 2 system, while QLD requires a full licence from the OFT.",
+    },
+    additionalLicences: [],
+    qualifications: [
+      "Certificate IV in Real Estate Practice (CPP41419) — required in all states",
+      "Diploma of Property (Agency Management) (CPP51122) to operate own agency",
+      "State-specific registration or licence — requirements vary by jurisdiction",
+      "NSW: Class 2 licence (12+ months as assistant agent), Class 1 to operate agency",
+      "VIC: Agent's Representative Certificate or full Estate Agent Licence",
+      "QLD: Full Real Estate Licence from Office of Fair Trading",
+    ],
+    associations: [
+      { name: "Real Estate Institute of Australia", acronym: "REIA", url: "https://reia.asn.au" },
+      { name: "Real Estate Institute (state-based)", acronym: "REI", url: "https://reia.asn.au" },
+    ],
+    insurance: "Professional Indemnity Insurance — mandatory in most states. NSW requires minimum $1M per claim, $3M aggregate.",
+    edr: "Consumer complaints handled via State Fair Trading, Civil & Administrative Tribunal (e.g. NCAT in NSW). Not AFCA.",
+    cpd: "State-based CPD requirements. NSW mandates annual CPD training. QLD requires 2 sessions/year from June 2025. VIC requires ongoing training for licence renewal.",
+    disclosure: "Real estate agents are licensed under state-based property legislation, not federal ASIC regulation. Licensing requirements differ between states. Always verify an agent's licence with your state's Fair Trading or Office of Fair Trading before engaging their services.",
+  },
 };
 
 // ═══════════════════════════════════════════════════════════════════
@@ -519,7 +552,7 @@ export function getVerificationLinks(type: ProfessionalType, state?: string): {
   }
 
   // State-based register for buyers agents / property types
-  if ((type === "buyers_agent" || type === "property_advisor") && state && STATE_FAIR_TRADING_URLS[state]) {
+  if ((type === "buyers_agent" || type === "property_advisor" || type === "real_estate_agent") && state && STATE_FAIR_TRADING_URLS[state]) {
     const ft = STATE_FAIR_TRADING_URLS[state];
     links.push({
       label: `Verify on ${ft.name}`,

@@ -29,6 +29,7 @@ const TYPE_LABELS: Record<string, string> = {
   crypto_advisor: "Crypto Advisors",
   aged_care_advisor: "Aged Care Advisors",
   debt_counsellor: "Debt Counsellors",
+  real_estate_agent: "Real Estate Agents",
 };
 
 const TIER_COLORS: Record<string, string> = {

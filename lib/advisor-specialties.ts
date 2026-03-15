@@ -252,6 +252,20 @@ export const SPECIALTIES_BY_TYPE: Record<ProfessionalType, string[]> = {
     "Credit Repair",
     "Budget Coaching",
   ],
+  real_estate_agent: [
+    "Residential Sales",
+    "Residential Leasing",
+    "Commercial Sales",
+    "Commercial Leasing",
+    "Property Management",
+    "Auction Specialist",
+    "Off-the-Plan Sales",
+    "Rural & Regional",
+    "Prestige Property",
+    "First Home Buyers",
+    "Investment Property",
+    "Development Sites",
+  ],
 };
 
 // ═══════════════════════════════════════════════

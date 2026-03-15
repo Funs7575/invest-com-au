@@ -59,6 +59,10 @@ const TYPE_TO_PLATFORMS: Record<string, { label: string; href: string }[]> = {
     { label: "High-Interest Savings", href: "/best/high-interest-savings" },
     { label: "Savings Accounts", href: "/savings" },
   ],
+  real_estate_agent: [
+    { label: "Property Investing", href: "/best/property-investing" },
+    { label: "Best Savings Accounts", href: "/savings" },
+  ],
 };
 
 function renderStars(rating: number) {
