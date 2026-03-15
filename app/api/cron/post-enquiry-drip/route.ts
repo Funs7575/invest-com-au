@@ -350,5 +350,96 @@ export async function GET(req: Request) {
     }
   }
 
-  return NextResponse.json({ sent, checked: (leads || []).length });
+  // ═══════════════════════════════════════════════
+  // ADVISOR NUDGE: 3 days after lead creation, ask the advisor for an outcome update
+  // ═══════════════════════════════════════════════
+
+  const threeDaysAgo = new Date(Date.now() - 3 * 86400000).toISOString();
+  const tenDaysAgo = new Date(Date.now() - 10 * 86400000).toISOString();
+
+  const { data: nudgeLeads } = await supabase
+    .from("professional_leads")
+    .select("id, user_name, professional_id, created_at")
+    .eq("status", "new")
+    .is("advisor_nudge_sent_at", null)
+    .lte("created_at", threeDaysAgo)
+    .gte("created_at", tenDaysAgo)
+    .order("created_at", { ascending: true })
+    .limit(30);
+
+  // Fetch advisor details for nudge leads
+  const nudgeProIds = [...new Set((nudgeLeads || []).map(l => l.professional_id))];
+  const { data: nudgePros } = nudgeProIds.length > 0
+    ? await supabase.from("professionals").select("id, name, email").in("id", nudgeProIds)
+    : { data: [] };
+  const nudgeProMap = new Map((nudgePros || []).map(p => [p.id, p]));
+
+  let advisorNudgesSent = 0;
+
+  for (const lead of nudgeLeads || []) {
+    const advisor = nudgeProMap.get(lead.professional_id);
+    if (!advisor?.email) continue;
+
+    const userName = lead.user_name || "a potential client";
+    const createdDate = new Date(lead.created_at).toLocaleDateString("en-AU", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+
+    const nudgeSubject = `Did you contact ${userName}? Update your lead status`;
+    const nudgeHtml = `
+      <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto">
+        <h2 style="color:#0f172a;font-size:18px">Lead Status Update</h2>
+        <p style="color:#475569;font-size:14px;line-height:1.6">
+          Hi ${advisor.name || "there"},
+        </p>
+        <p style="color:#475569;font-size:14px;line-height:1.6">
+          You received an enquiry from <strong>${userName}</strong> on ${createdDate}.
+          Have you had a chance to follow up?
+        </p>
+        <p style="color:#475569;font-size:14px;line-height:1.6">
+          Please let us know the outcome so we can keep your lead pipeline accurate:
+        </p>
+        <div style="margin:20px 0;text-align:center">
+          <a href="${siteUrl}/advisor-portal?action=contacted&lead=${lead.id}" style="display:inline-block;padding:12px 20px;background:#7c3aed;color:white;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;margin:6px">
+            I contacted them
+          </a>
+          <a href="${siteUrl}/advisor-portal?action=converted&lead=${lead.id}" style="display:inline-block;padding:12px 20px;background:#16a34a;color:white;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;margin:6px">
+            Converted to client
+          </a>
+          <a href="${siteUrl}/advisor-portal?action=lost&lead=${lead.id}" style="display:inline-block;padding:12px 20px;background:#64748b;color:white;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;margin:6px">
+            Not interested
+          </a>
+        </div>
+        <p style="color:#94a3b8;font-size:12px;margin-top:20px">
+          Keeping your leads up to date helps us send you better-matched enquiries.
+        </p>
+        ${notificationFooter()}
+      </div>
+    `;
+
+    try {
+      await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${RESEND_API_KEY}` },
+        body: JSON.stringify({
+          from: "Invest.com.au <hello@invest.com.au>",
+          to: advisor.email,
+          subject: nudgeSubject,
+          html: nudgeHtml,
+        }),
+      });
+
+      await supabase.from("professional_leads").update({
+        advisor_nudge_sent_at: new Date().toISOString(),
+      }).eq("id", lead.id);
+
+      advisorNudgesSent++;
+    } catch (e) {
+      log.error("Advisor nudge email failed", { lead: lead.id, error: e instanceof Error ? e.message : String(e) });
+    }
+  }
+
+  return NextResponse.json({ sent, checked: (leads || []).length, advisor_nudges_sent: advisorNudgesSent });
 }

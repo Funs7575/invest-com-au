@@ -7,6 +7,7 @@ import SocialProofCounter from "@/components/SocialProofCounter";
 import { trackEvent, trackClick, getAffiliateLink, AFFILIATE_REL, trackPageDuration } from "@/lib/tracking";
 import { getStoredUtm } from "@/components/UtmCapture";
 import { storeQualificationData } from "@/lib/qualification-store";
+import AdvisorMatchCTA from "@/components/AdvisorMatchCTA";
 
 type Account = {
   id: number; slug: string; name: string; platform_type: string;
@@ -259,6 +260,14 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
                 </Link>
               </div>
             )}
+            <div className="mb-6">
+              <AdvisorMatchCTA
+                needKey="planning"
+                headline="Want a personalised savings strategy?"
+                description="A financial planner can help you structure your savings across accounts, super, and investments to maximise returns and minimise tax."
+              />
+            </div>
+
             <div className="bg-white border border-slate-200 rounded-2xl p-5 md:p-8">
               <h2 className="text-lg font-bold text-slate-900 mb-3">Why Your Savings Rate Matters</h2>
               <p className="text-sm text-slate-600 leading-relaxed mb-4">
