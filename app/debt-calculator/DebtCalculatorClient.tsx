@@ -7,7 +7,7 @@ import SocialProofCounter from "@/components/SocialProofCounter";
 import AdvisorMatchCTA from "@/components/AdvisorMatchCTA";
 import { trackEvent, trackPageDuration } from "@/lib/tracking";
 import { getStoredUtm } from "@/components/UtmCapture";
-import { storeQualificationData } from "@/lib/qualification";
+import { storeQualificationData } from "@/lib/qualification-store";
 
 type DebtType = "credit_card" | "personal_loan" | "car_loan" | "hecs" | "other";
 

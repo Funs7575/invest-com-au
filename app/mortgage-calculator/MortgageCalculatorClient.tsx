@@ -100,13 +100,12 @@ export default function MortgageCalculatorClient() {
 
   const handleCalculate = () => {
     setShowResults(true);
-    storeQualificationData({
-      mortgage_loan_amount: loanAmount,
-      mortgage_interest_rate: interestRate,
-      mortgage_loan_term: loanTerm,
-      mortgage_repayment_type: repaymentType,
-      mortgage_monthly: monthly,
-      source: "mortgage-calculator",
+    storeQualificationData("mortgage_calculator", {
+      loan_amount: loanAmount,
+      interest_rate: interestRate,
+      loan_term: loanTerm,
+      repayment_type: repaymentType,
+      monthly_repayment: monthly,
     });
     trackEvent("mortgage_calc_result", {
       loan_amount: loanAmount,

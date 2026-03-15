@@ -6,7 +6,7 @@ import Icon from "@/components/Icon";
 import SocialProofCounter from "@/components/SocialProofCounter";
 import { trackEvent, trackPageDuration } from "@/lib/tracking";
 import { getStoredUtm } from "@/components/UtmCapture";
-import { storeQualificationData } from "@/lib/qualificationStore";
+import { storeQualificationData } from "@/lib/qualification-store";
 import AdvisorMatchCTA from "@/components/AdvisorMatchCTA";
 
 function formatCurrency(n: number): string {
@@ -86,15 +86,14 @@ export default function RetirementCalculatorClient() {
       on_track: isOnTrack,
     }, "/retirement-calculator");
 
-    storeQualificationData({
-      source: "retirement-calculator",
-      currentAge,
-      retirementAge,
-      currentSuper,
-      annualSalary,
-      projectedSuper: Math.round(projectedSuper),
+    storeQualificationData("retirement_calculator", {
+      current_age: currentAge,
+      retirement_age: retirementAge,
+      current_super: currentSuper,
+      annual_salary: annualSalary,
+      projected_super: Math.round(projectedSuper),
       gap: Math.round(gap),
-      isOnTrack,
+      is_on_track: isOnTrack,
     });
   };
 
