@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { CURRENT_YEAR } from "@/lib/seo";
 import {
