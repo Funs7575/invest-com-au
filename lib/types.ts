@@ -913,7 +913,7 @@ export interface BrokerActivityLog {
 // Advisor Directory Types
 // ═══════════════════════════════════════════════
 
-export type ProfessionalType = 'smsf_accountant' | 'financial_planner' | 'property_advisor' | 'tax_agent' | 'mortgage_broker' | 'estate_planner' | 'insurance_broker' | 'buyers_agent' | 'wealth_manager' | 'aged_care_advisor' | 'crypto_advisor' | 'debt_counsellor' | 'real_estate_agent';
+export type ProfessionalType = 'smsf_accountant' | 'financial_planner' | 'property_advisor' | 'tax_agent' | 'mortgage_broker' | 'estate_planner' | 'insurance_broker' | 'buyers_agent' | 'real_estate_agent' | 'wealth_manager' | 'aged_care_advisor' | 'crypto_advisor' | 'debt_counsellor';
 
 export interface Professional {
   id: number;
@@ -1041,6 +1041,7 @@ export const PROFESSIONAL_TYPE_LABELS: Record<ProfessionalType, string> = {
   estate_planner: "Estate Planner",
   insurance_broker: "Insurance Broker",
   buyers_agent: "Buyers Agent",
+  real_estate_agent: "Real Estate Agent",
   wealth_manager: "Wealth Manager",
   aged_care_advisor: "Aged Care Advisor",
   crypto_advisor: "Crypto Advisor",
@@ -1057,6 +1058,7 @@ export const PROFESSIONAL_TYPE_ICONS: Record<ProfessionalType, string> = {
   estate_planner: "file-text",
   insurance_broker: "shield",
   buyers_agent: "search",
+  real_estate_agent: "map-pin",
   wealth_manager: "briefcase",
   aged_care_advisor: "heart",
   crypto_advisor: "bitcoin",

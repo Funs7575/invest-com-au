@@ -160,7 +160,7 @@ export default async function HomePage() {
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-slate-900 leading-tight mb-4 md:mb-5">
                 Expert advice,{" "}
                 <br className="hidden lg:block" />
-                <span className="text-amber-500">verified by us.</span>
+                <span className="text-amber-500">all in one place.</span>
               </h1>
 
               <p className="text-base md:text-lg text-slate-500 mb-6 md:mb-8 leading-relaxed max-w-xl mx-auto lg:mx-0">
