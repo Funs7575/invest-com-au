@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import Icon from "@/components/Icon";
 import type { ProfessionalType } from "@/lib/types";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
+import { trackEvent } from "@/lib/tracking";
 
 const STEPS = [
   {
@@ -195,64 +197,231 @@ export default function FindAdvisorPage() {
             </div>
           </div>
         ) : (
-          /* ═══ RESULTS ═══ */
-          <div>
-            <div className="bg-gradient-to-br from-violet-600 to-violet-800 rounded-2xl p-5 md:p-8 text-white text-center mb-5 relative overflow-hidden">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.1),transparent_70%)]" />
-              <div className="relative">
-                <div className="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center mx-auto mb-3">
-                  <Icon name="check" size={28} className="text-white" />
-                </div>
-                <h1 className="text-xl md:text-2xl font-extrabold mb-1">Your match: {getResultLabel()}</h1>
-                <p className="text-sm text-violet-200">Based on your answers, here&apos;s who can help.</p>
-              </div>
-            </div>
-
-            {/* Summary */}
-            <div className="bg-white border border-slate-200 rounded-xl p-4 mb-4 shadow-sm">
-              <h3 className="text-[0.6rem] font-bold text-slate-400 uppercase tracking-wide mb-3">Your Profile</h3>
-              <div className="space-y-2">
-                {STEPS.map((s) => {
-                  const a = s.options.find(o => o.key === answers[s.id]);
-                  return (
-                    <div key={s.id} className="flex items-center gap-3">
-                      <div className="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center shrink-0">
-                        <Icon name={a?.icon || "check"} size={13} className="text-slate-500" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-[0.56rem] text-slate-400">{s.question.replace("?", "")}</div>
-                        <div className="text-xs font-semibold text-slate-800">{a?.label}</div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Tips */}
-            {selectedType && ADVISOR_TIPS[selectedType] && (
-              <div className="bg-violet-50 border border-violet-200 rounded-xl p-4 mb-5">
-                <h3 className="text-xs font-bold text-violet-700 mb-2 flex items-center gap-1.5">
-                  <Icon name="lightbulb" size={14} /> Tips for choosing a {PROFESSIONAL_TYPE_LABELS[selectedType]}
-                </h3>
-                <ul className="space-y-1.5">
-                  {ADVISOR_TIPS[selectedType].map((tip, i) => (
-                    <li key={i} className="text-xs text-violet-600 flex items-start gap-2"><span className="text-violet-400 mt-0.5 shrink-0">•</span>{tip}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            <Link href={getResultUrl()} className="block w-full px-6 py-3.5 bg-violet-600 text-white font-bold text-sm rounded-xl hover:bg-violet-700 transition-all text-center shadow-lg shadow-violet-600/20 active:scale-[0.98]">
-              Browse {getResultLabel()} →
-            </Link>
-            <button onClick={() => { setStep(0); setAnswers({}); setSelectedType(null); }} className="block mx-auto mt-3 text-xs text-slate-500 hover:text-slate-700 font-semibold">Start over</button>
-          </div>
+          /* ═══ RESULTS — fetch & show matched advisors ═══ */
+          <FindAdvisorResults
+            selectedType={selectedType}
+            answers={answers}
+            getResultUrl={getResultUrl}
+            getResultLabel={getResultLabel}
+            onRestart={() => { setStep(0); setAnswers({}); setSelectedType(null); }}
+          />
         )}
       </div>
       <div className="text-center px-4 pb-4">
         <p className="text-[0.56rem] md:text-xs text-slate-400">This is not financial advice. We help you find the right type of professional — the choice is yours.</p>
       </div>
+    </div>
+  );
+}
+
+/* ─── Results component with live advisor fetch ─── */
+
+interface MatchedAdvisor {
+  id: number;
+  slug: string;
+  name: string;
+  firm_name?: string;
+  type: string;
+  location_display?: string;
+  location_state?: string;
+  photo_url?: string;
+  rating: number;
+  review_count: number;
+  fee_description?: string;
+  specialties: string[];
+  verified: boolean;
+  offer_text?: string;
+  offer_active?: boolean;
+  initial_consultation_free?: boolean;
+}
+
+function FindAdvisorResults({ selectedType, answers, getResultUrl, getResultLabel, onRestart }: {
+  selectedType: ProfessionalType | null;
+  answers: Record<string, string>;
+  getResultUrl: () => string;
+  getResultLabel: () => string;
+  onRestart: () => void;
+}) {
+  const [matched, setMatched] = useState<MatchedAdvisor[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!selectedType) return;
+    setLoading(true);
+    const params = new URLSearchParams({
+      type: selectedType,
+      limit: "6",
+      sort: "rating",
+      verified: "true",
+    });
+    if (answers.state && answers.state !== "other" && answers.state !== "any") {
+      params.set("state", answers.state);
+    }
+    fetch(`/api/advisor-search?${params}`)
+      .then(r => r.json())
+      .then(data => {
+        setMatched(data.advisors || []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+
+    trackEvent("find_advisor_complete", {
+      type: selectedType,
+      amount: answers.amount,
+      urgency: answers.urgency,
+      state: answers.state,
+    }, "/find-advisor");
+  }, [selectedType, answers]);
+
+  const tips = selectedType && ADVISOR_TIPS[selectedType] ? ADVISOR_TIPS[selectedType] : [];
+  const typeLabel = selectedType ? PROFESSIONAL_TYPE_LABELS[selectedType] : "Advisor";
+
+  return (
+    <div>
+      {/* Hero result */}
+      <div className="bg-gradient-to-br from-violet-600 to-violet-800 rounded-2xl p-5 md:p-8 text-white text-center mb-5 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.1),transparent_70%)]" />
+        <div className="relative">
+          <div className="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center mx-auto mb-3">
+            <Icon name="check" size={28} className="text-white" />
+          </div>
+          <h1 className="text-xl md:text-2xl font-extrabold mb-1">
+            {matched.length > 0 ? `${matched.length} ${getResultLabel()} found` : `Your match: ${getResultLabel()}`}
+          </h1>
+          <p className="text-sm text-violet-200">Based on your answers, here&apos;s who can help.</p>
+        </div>
+      </div>
+
+      {/* Matched advisor cards */}
+      {loading ? (
+        <div className="space-y-3 mb-5">
+          {[0, 1, 2].map(i => (
+            <div key={i} className="bg-white border border-slate-200 rounded-xl p-4 animate-pulse">
+              <div className="flex gap-3">
+                <div className="w-14 h-14 bg-slate-200 rounded-xl shrink-0" />
+                <div className="flex-1">
+                  <div className="h-4 w-32 bg-slate-200 rounded mb-2" />
+                  <div className="h-3 w-24 bg-slate-100 rounded mb-1" />
+                  <div className="h-3 w-48 bg-slate-100 rounded" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : matched.length > 0 ? (
+        <div className="space-y-3 mb-5">
+          {matched.slice(0, 3).map((advisor, i) => (
+            <Link
+              key={advisor.id}
+              href={`/advisor/${advisor.slug}`}
+              className="block bg-white border border-slate-200 rounded-xl p-4 hover:border-violet-300 hover:shadow-md transition-all group"
+            >
+              <div className="flex gap-3">
+                {/* Photo */}
+                <div className="shrink-0">
+                  {advisor.photo_url ? (
+                    <Image src={advisor.photo_url} alt={advisor.name} width={56} height={56} className="w-14 h-14 rounded-xl object-cover" />
+                  ) : (
+                    <div className="w-14 h-14 rounded-xl bg-violet-100 flex items-center justify-center text-lg font-bold text-violet-600">
+                      {advisor.name.split(" ").map(n => n[0]).join("")}
+                    </div>
+                  )}
+                </div>
+                {/* Info */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-0.5">
+                    {i === 0 && <span className="text-[0.56rem] font-bold px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded">Top Match</span>}
+                    {advisor.verified && <span className="text-[0.56rem] font-bold px-1.5 py-0.5 bg-blue-100 text-blue-700 rounded">Verified</span>}
+                    {advisor.initial_consultation_free && <span className="text-[0.56rem] font-bold px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded">Free Consult</span>}
+                  </div>
+                  <p className="text-sm font-bold text-slate-900 group-hover:text-violet-700 transition-colors truncate">{advisor.name}</p>
+                  {advisor.firm_name && <p className="text-xs text-slate-500 truncate">{advisor.firm_name}</p>}
+                  <div className="flex items-center gap-2 mt-1 flex-wrap">
+                    {advisor.rating > 0 && (
+                      <span className="text-xs text-amber-600 font-semibold">★ {advisor.rating}/5</span>
+                    )}
+                    {advisor.review_count > 0 && (
+                      <span className="text-[0.62rem] text-slate-400">({advisor.review_count} reviews)</span>
+                    )}
+                    {advisor.location_display && (
+                      <span className="text-[0.62rem] text-slate-400 flex items-center gap-0.5"><Icon name="map-pin" size={10} />{advisor.location_display}</span>
+                    )}
+                  </div>
+                  {advisor.fee_description && (
+                    <p className="text-[0.62rem] text-slate-500 mt-1 line-clamp-1">{advisor.fee_description}</p>
+                  )}
+                </div>
+                {/* Arrow */}
+                <div className="shrink-0 flex items-center">
+                  <Icon name="chevron-right" size={18} className="text-slate-300 group-hover:text-violet-500 transition-colors" />
+                </div>
+              </div>
+              {advisor.offer_active && advisor.offer_text && (
+                <div className="mt-2 px-3 py-1.5 bg-violet-50 border border-violet-100 rounded-lg text-[0.62rem] text-violet-700 flex items-center gap-1.5">
+                  <Icon name="tag" size={12} className="text-violet-500" />
+                  {advisor.offer_text}
+                </div>
+              )}
+            </Link>
+          ))}
+          {matched.length > 3 && (
+            <Link
+              href={getResultUrl()}
+              className="block text-center py-3 text-xs font-semibold text-violet-600 hover:text-violet-800 transition-colors"
+            >
+              View all {matched.length} {getResultLabel()} →
+            </Link>
+          )}
+        </div>
+      ) : (
+        <div className="bg-white border border-slate-200 rounded-xl p-6 text-center mb-5">
+          <Icon name="search" size={24} className="text-slate-300 mx-auto mb-2" />
+          <p className="text-sm text-slate-600 mb-1">No advisors found matching your exact criteria.</p>
+          <p className="text-xs text-slate-400">Try browsing all {typeLabel}s across Australia.</p>
+        </div>
+      )}
+
+      {/* CTA */}
+      <Link href={getResultUrl()} className="block w-full px-6 py-3.5 bg-violet-600 text-white font-bold text-sm rounded-xl hover:bg-violet-700 transition-all text-center shadow-lg shadow-violet-600/20 active:scale-[0.98] mb-4">
+        Browse all {getResultLabel()} →
+      </Link>
+
+      {/* Summary */}
+      <div className="bg-white border border-slate-200 rounded-xl p-4 mb-4 shadow-sm">
+        <h3 className="text-[0.6rem] font-bold text-slate-400 uppercase tracking-wide mb-3">Your Profile</h3>
+        <div className="space-y-2">
+          {STEPS.map((s) => {
+            const a = s.options.find(o => o.key === answers[s.id]);
+            return (
+              <div key={s.id} className="flex items-center gap-3">
+                <div className="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center shrink-0">
+                  <Icon name={a?.icon || "check"} size={13} className="text-slate-500" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[0.56rem] text-slate-400">{s.question.replace("?", "")}</div>
+                  <div className="text-xs font-semibold text-slate-800">{a?.label}</div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Tips */}
+      {tips.length > 0 && (
+        <div className="bg-violet-50 border border-violet-200 rounded-xl p-4 mb-5">
+          <h3 className="text-xs font-bold text-violet-700 mb-2 flex items-center gap-1.5">
+            <Icon name="lightbulb" size={14} /> Tips for choosing a {typeLabel}
+          </h3>
+          <ul className="space-y-1.5">
+            {tips.map((tip, i) => (
+              <li key={i} className="text-xs text-violet-600 flex items-start gap-2"><span className="text-violet-400 mt-0.5 shrink-0">•</span>{tip}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <button onClick={onRestart} className="block mx-auto mt-3 text-xs text-slate-500 hover:text-slate-700 font-semibold">Start over</button>
     </div>
   );
 }
