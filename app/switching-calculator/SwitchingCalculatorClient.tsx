@@ -77,7 +77,7 @@ export default function SwitchingCalculatorClient({ brokers, inline }: { brokers
   const handleEmailCapture = async () => {
     if (!email.trim()) return;
     await fetch("/api/email-capture", { method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: email.trim(), source: "switching_calculator", name: "", ...getStoredUtm() })
+      body: JSON.stringify({ email: email.trim(), source: "switching_calculator", name: "", context: { current_broker: currentBroker || null, trades_per_year: tradesPerYear, avg_trade_size: avgTradeSize, us_allocation_pct: usAllocation, potential_savings: savings > 0 ? Math.round(savings) : 0 }, ...getStoredUtm() })
     }).catch(() => {});
     setEmailCaptured(true);
   };

@@ -4,7 +4,8 @@ import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import { createClient } from "@/lib/supabase/client";
-import { trackClick, getAffiliateLink, AFFILIATE_REL } from "@/lib/tracking";
+import { trackClick, trackEvent, getAffiliateLink, AFFILIATE_REL } from "@/lib/tracking";
+import { getStoredUtm } from "@/components/UtmCapture";
 import type { Broker } from "@/lib/types";
 import LeadMagnet from "@/components/LeadMagnet";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
@@ -27,6 +28,8 @@ export default function PortfolioCalculatorClient({ brokers, inline }: { brokers
   ]);
   const [currentBroker, setCurrentBroker] = useState("");
   const [showResults, setShowResults] = useState(false);
+  const [email, setEmail] = useState("");
+  const [emailCaptured, setEmailCaptured] = useState(false);
 
   const addHolding = () => {
     setHoldings([...holdings, {
@@ -44,6 +47,29 @@ export default function PortfolioCalculatorClient({ brokers, inline }: { brokers
   const removeHolding = (id: string) => {
     if (holdings.length === 1) return;
     setHoldings(holdings.filter(h => h.id !== id));
+  };
+
+  const handleEmailCapture = async () => {
+    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return;
+    await fetch("/api/email-capture", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: email.trim(),
+        source: "portfolio-calculator",
+        name: "",
+        context: {
+          holdings: holdings.map(h => ({ market: h.market, trades_per_year: h.trades_per_year, avg_trade_size: h.avg_trade_size })),
+          current_broker: currentBroker || null,
+          cheapest_broker: results[0]?.broker.name || null,
+          annual_fees_cheapest: results[0]?.totalFees || null,
+          potential_savings: savings > 0 ? Math.round(savings) : 0,
+        },
+        ...getStoredUtm(),
+      }),
+    }).catch(() => {});
+    setEmailCaptured(true);
+    trackEvent("portfolio_calc_email", { email: email.trim() }, "/portfolio-calculator");
   };
 
   // Calculate fees for each broker
@@ -243,6 +269,23 @@ export default function PortfolioCalculatorClient({ brokers, inline }: { brokers
               </div>
             )}
 
+            {/* Email capture gate */}
+            {!emailCaptured && results.length > 5 && (
+              <div className="bg-slate-900 rounded-xl p-4 md:p-5 text-white mb-6">
+                <div className="flex items-start gap-3">
+                  <Icon name="mail" size={20} className="text-amber-400 shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-sm font-bold mb-1">See all {results.length} brokers ranked for your portfolio</p>
+                    <p className="text-xs text-slate-300 mb-3">Enter your email to unlock the full comparison + get a free personalised fee report.</p>
+                    <div className="flex gap-2">
+                      <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" className="flex-1 px-3 py-2 text-sm rounded-lg text-slate-900 border-0" />
+                      <button onClick={handleEmailCapture} className="px-4 py-2 bg-amber-500 text-white text-xs font-bold rounded-lg hover:bg-amber-600 shrink-0">Unlock Results</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Results table */}
             <div className="bg-white border border-slate-200 rounded-xl overflow-hidden mb-6">
               <div className="grid grid-cols-12 bg-slate-50 text-xs font-semibold text-slate-600 px-3 md:px-4 py-2.5 border-b border-slate-200">
@@ -252,7 +295,7 @@ export default function PortfolioCalculatorClient({ brokers, inline }: { brokers
                 <span className="col-span-4 md:col-span-3 text-right hidden md:block">vs Current</span>
                 <span className="col-span-4 md:col-span-3 text-right" />
               </div>
-              {results.slice(0, 15).map((r, i) => {
+              {(emailCaptured ? results.slice(0, 15) : results.slice(0, 5)).map((r, i) => {
                 const isCurrent = r.broker.slug === currentBroker;
                 const diff = currentBroker ? currentBrokerFees - r.totalFees : 0;
                 return (
