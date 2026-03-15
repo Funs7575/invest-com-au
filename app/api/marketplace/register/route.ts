@@ -13,10 +13,9 @@ function escapeHtml(str: string): string {
     .replace(/"/g, "&quot;");
 }
 
-const supabaseAdmin = createAdminClient();
-
 export async function POST(req: NextRequest) {
   try {
+    const supabaseAdmin = createAdminClient();
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
     if (await isRateLimited(`marketplace_register:${ip}`, 3, 60)) {
       return NextResponse.json({ error: "Too many registration attempts. Please try again later." }, { status: 429 });
