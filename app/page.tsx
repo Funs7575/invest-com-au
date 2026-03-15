@@ -13,6 +13,7 @@ import Icon from "@/components/Icon";
 import BrokerLogo from "@/components/BrokerLogo";
 import { AFFILIATE_REL } from "@/lib/tracking";
 import HeroLeadCapture from "@/components/HeroLeadCapture";
+import HomepageServiceSelector from "@/components/HomepageServiceSelector";
 import AdvisorDirectory from "@/components/AdvisorDirectory";
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 import { getMostRecentFeeCheck } from "@/lib/utils";
@@ -205,6 +206,15 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ═══════ 1b. SERVICE SELECTOR — "What do you need help with?" ═══════ */}
+      <ScrollFadeIn>
+        <section className="py-6 md:py-14 bg-slate-50 border-b border-slate-100">
+          <div className="container-custom">
+            <HomepageServiceSelector />
+          </div>
+        </section>
+      </ScrollFadeIn>
 
       {/* ═══════ 2. ADVISOR DIRECTORY — Tabbed ═══════ */}
       <AdvisorDirectory
