@@ -24,12 +24,61 @@ interface Answers {
 
 type RouteType = "diy" | "advisor" | "both" | "guide";
 
+interface AdvisorCombo {
+  type: string;
+  label: string;
+  reason: string;
+  icon: string;
+  href: string;
+}
+
 interface RouteResult {
   type: RouteType;
   headline: string;
   explanation: string[];
   actions: { label: string; href: string; primary?: boolean; icon: string }[];
   guides: { label: string; href: string }[];
+  recommended_combinations?: AdvisorCombo[];
+}
+
+/* ─── Cross-sell Combination Map ─── */
+const COMBO_MAP: Record<string, { type: string; label: string; reason: string; icon: string }[]> = {
+  "mortgage-broker": [
+    { type: "insurance-broker", label: "Insurance Broker", reason: "Protect your new home and income", icon: "shield" },
+    { type: "tax-agent", label: "Tax Agent", reason: "Maximise mortgage interest deductions", icon: "file-text" },
+  ],
+  "financial-planner": [
+    { type: "tax-agent", label: "Tax Agent", reason: "Optimise your tax position alongside your plan", icon: "file-text" },
+    { type: "insurance-broker", label: "Insurance Broker", reason: "Ensure adequate protection as your wealth grows", icon: "shield" },
+  ],
+  "buyers-agent": [
+    { type: "mortgage-broker", label: "Mortgage Broker", reason: "Secure the best loan for your purchase", icon: "home" },
+    { type: "insurance-broker", label: "Insurance Broker", reason: "Protect your investment property", icon: "shield" },
+  ],
+  "tax-agent": [
+    { type: "financial-planner", label: "Financial Planner", reason: "Align your tax strategy with long-term goals", icon: "briefcase" },
+  ],
+  "insurance-broker": [
+    { type: "financial-planner", label: "Financial Planner", reason: "Review your overall financial protection", icon: "briefcase" },
+  ],
+  "smsf-accountant": [
+    { type: "financial-planner", label: "Financial Planner", reason: "Investment strategy for your SMSF", icon: "briefcase" },
+    { type: "insurance-broker", label: "Insurance Broker", reason: "Life and TPD cover through your SMSF", icon: "shield" },
+  ],
+  "estate-planner": [
+    { type: "financial-planner", label: "Financial Planner", reason: "Align your estate plan with your wealth strategy", icon: "briefcase" },
+    { type: "insurance-broker", label: "Insurance Broker", reason: "Life insurance to protect your beneficiaries", icon: "shield" },
+  ],
+  "property-advisor": [
+    { type: "mortgage-broker", label: "Mortgage Broker", reason: "Finance your investment property", icon: "home" },
+    { type: "tax-agent", label: "Tax Agent", reason: "Negative gearing and capital gains planning", icon: "file-text" },
+  ],
+};
+
+/* Helper: map priority key → advisor slug for COMBO_MAP lookup */
+function getAdvisorSlugFromPriority(priority?: string): string {
+  if (!priority || priority === "not-sure") return "financial-planner";
+  return priority;
 }
 
 /* ─── Question Config ─── */
@@ -126,6 +175,16 @@ function computeRoute(answers: Answers): RouteResult {
       : priority === "buyers-agent" ? "buyer's agent"
       : "financial advisor";
 
+    // Build recommended advisor combinations
+    const advisorSlug = getAdvisorSlugFromPriority(priority);
+    const combos = (COMBO_MAP[advisorSlug] || []).map((c) => ({
+      type: c.type,
+      label: c.label,
+      reason: c.reason,
+      icon: c.icon,
+      href: `/find-advisor?need=${c.type}`,
+    }));
+
     return {
       type: "advisor",
       headline: `Talk to a verified ${advisorLabel}`,
@@ -147,6 +206,7 @@ function computeRoute(answers: Answers): RouteResult {
         { label: "What does advice cost?", href: "/article/financial-advisor-cost-australia" },
         { label: "Red flags to watch for", href: "/article/financial-advisor-red-flags" },
       ],
+      recommended_combinations: combos.length > 0 ? combos : undefined,
     };
   }
 
@@ -291,7 +351,18 @@ export default function StartClient() {
       setStep((step + 1) as Step);
     } else {
       // Last step — show results
-      trackEvent("matchmaker_complete", { ...next, [key]: value });
+      const finalAnswers = { ...next, [key]: value };
+      trackEvent("matchmaker_complete", finalAnswers);
+      // Persist matchmaker results (including combinations) for cross-page use
+      try {
+        const routeResult = computeRoute(finalAnswers as Answers);
+        localStorage.setItem("invest-matchmaker-result", JSON.stringify({
+          answers: finalAnswers,
+          type: routeResult.type,
+          recommended_combinations: routeResult.recommended_combinations || [],
+          completedAt: new Date().toISOString(),
+        }));
+      } catch { /* quota exceeded */ }
       setShowResult(true);
     }
   }, [answers, step]);
@@ -428,6 +499,42 @@ export default function StartClient() {
                 </Link>
               ))}
             </div>
+
+            {/* Recommended Team — advisor combinations */}
+            {result.recommended_combinations && result.recommended_combinations.length > 0 && (
+              <div className="bg-gradient-to-br from-violet-50 to-slate-50 border border-violet-200/60 rounded-xl p-4 md:p-5 mb-6">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-7 h-7 rounded-full bg-violet-100 flex items-center justify-center">
+                    <Icon name="users" size={14} className="text-violet-600" />
+                  </div>
+                  <h3 className="text-sm font-bold text-slate-800">Your Recommended Team</h3>
+                </div>
+                <p className="text-xs text-slate-500 mb-3">Based on your situation, these professionals complement your primary advisor:</p>
+                <div className="space-y-2.5">
+                  {result.recommended_combinations.map((combo) => (
+                    <div
+                      key={combo.type}
+                      className="flex items-start gap-3 bg-white border border-slate-200 rounded-lg p-3"
+                    >
+                      <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center shrink-0">
+                        <Icon name={combo.icon} size={18} className="text-slate-500" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <span className="text-sm font-bold text-slate-900">{combo.label}</span>
+                        <p className="text-xs text-slate-500 mt-0.5">{combo.reason}</p>
+                      </div>
+                      <Link
+                        href={combo.href}
+                        onClick={() => trackEvent("matchmaker_combo_click", { primary: answers.priority, combo_type: combo.type })}
+                        className="shrink-0 self-center px-3 py-1.5 text-[0.65rem] md:text-xs font-bold text-violet-700 border border-violet-200 rounded-lg hover:bg-violet-50 transition-colors whitespace-nowrap"
+                      >
+                        Find one
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Related guides */}
             <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 md:p-5 mb-6">
