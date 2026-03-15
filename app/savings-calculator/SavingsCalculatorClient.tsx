@@ -68,7 +68,7 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
     await fetch("/api/email-capture", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: email.trim(), source: "savings-calculator", name: "", ...getStoredUtm() }),
+      body: JSON.stringify({ email: email.trim(), source: "savings-calculator", name: "", context: { balance, current_rate: currentRate, top_account: topAccount?.name, max_extra: maxExtra > 0 ? Math.round(maxExtra) : 0 }, ...getStoredUtm() }),
     }).catch(() => {});
     setEmailSubmitted(true);
     setEmailGated(false);
