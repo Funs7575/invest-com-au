@@ -178,7 +178,7 @@ export default function Header() {
 
           {/* Desktop CTA + Theme */}
           <div className="hidden lg:flex items-center gap-3">
-            <ThemeToggle />
+            {/* ThemeToggle disabled — dark mode not yet styled */}
             <Link
               href="/find-advisor"
               className="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2.5 rounded-lg font-bold transition-all shadow-sm hover:shadow-md flex items-center gap-2 text-sm"
@@ -190,7 +190,7 @@ export default function Header() {
 
           {/* Mobile: Theme + Hamburger */}
           <div className="lg:hidden flex items-center gap-1.5">
-            <ThemeToggle />
+            {/* ThemeToggle disabled — dark mode not yet styled */}
             <button
               onClick={() => setMenuOpen(!menuOpen)}
               className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-700 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-700/40 rounded-lg transition-colors"

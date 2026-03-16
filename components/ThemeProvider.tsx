@@ -37,14 +37,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>("light");
   const [mounted, setMounted] = useState(false);
 
-  // Initialise from localStorage on mount
+  // Initialise — force light mode (dark mode styles not yet implemented)
   useEffect(() => {
-    const stored = localStorage.getItem("theme") as Theme | null;
-    const initial: Theme = stored === "light" || stored === "dark" || stored === "system" ? stored : "system";
-    setThemeState(initial);
-    const resolved = resolveTheme(initial);
-    setResolvedTheme(resolved);
-    applyTheme(resolved);
+    setThemeState("light");
+    localStorage.setItem("theme", "light");
+    setResolvedTheme("light");
+    applyTheme("light");
     setMounted(true);
   }, []);
 
