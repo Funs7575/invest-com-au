@@ -251,6 +251,9 @@ function FindAdvisorQuiz() {
   const [excludeIds, setExcludeIds] = useState<number[]>([]);
   const [noMoreMatches, setNoMoreMatches] = useState(false);
   const [rematching, setRematching] = useState(false);
+  const [otpStage, setOtpStage] = useState<"idle" | "sending" | "sent" | "verifying">("idle");
+  const [otpCode, setOtpCode] = useState("");
+  const [otpError, setOtpError] = useState<string | null>(null);
 
   // Restore persisted match on mount
   useEffect(() => {
@@ -338,17 +341,56 @@ function FindAdvisorQuiz() {
     return data;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const validateStep4 = () => {
     const errs: Record<string, string> = {};
     if (!quiz.firstName.trim()) errs.firstName = "Please enter your first name";
     if (!quiz.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(quiz.email)) errs.email = "Please enter a valid email";
     if (!quiz.consent) errs.consent = "You must agree to our Privacy Policy and Terms";
-    if (Object.keys(errs).length > 0) { setErrors(errs); return; }
+    return errs;
+  };
 
+  const handleSendOtp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const errs = validateStep4();
+    if (Object.keys(errs).length > 0) { setErrors(errs); return; }
+    setErrors({});
+    setOtpError(null);
+    setOtpStage("sending");
+    try {
+      const res = await fetch("/api/verify-otp/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: quiz.email.trim() }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setOtpError(data.error || "Failed to send code."); setOtpStage("idle"); return; }
+      setOtpStage("sent");
+    } catch {
+      setOtpError("Network error. Please try again.");
+      setOtpStage("idle");
+    }
+  };
+
+  const handleVerifyAndSubmit = async () => {
+    if (otpCode.trim().length !== 6) { setOtpError("Please enter the 6-digit code."); return; }
+    setOtpError(null);
+    setOtpStage("verifying");
+    try {
+      const res = await fetch("/api/verify-otp/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: quiz.email.trim(), code: otpCode.trim() }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setOtpError(data.error || "Incorrect code."); setOtpStage("sent"); return; }
+    } catch {
+      setOtpError("Network error. Please try again.");
+      setOtpStage("sent");
+      return;
+    }
+    // OTP verified — now submit the match
     setSubmitting(true);
     setSubmitError(null);
-    setErrors({});
 
     try {
       const data = await submitMatch(false);
@@ -478,11 +520,17 @@ function FindAdvisorQuiz() {
             phone={quiz.phone}
             consent={quiz.consent}
             onChange={(f, v) => update({ [f]: v } as Partial<QuizState>)}
-            onSubmit={handleSubmit}
+            onSubmit={handleSendOtp}
             onBack={goBack}
             submitting={submitting}
             errors={errors}
             submitError={submitError}
+            otpStage={otpStage}
+            otpCode={otpCode}
+            otpError={otpError}
+            onOtpCodeChange={setOtpCode}
+            onOtpVerify={handleVerifyAndSubmit}
+            onOtpResend={handleSendOtp}
           />
         )}
 
@@ -683,12 +731,20 @@ function Step3({
 function Step4({
   firstName, email, phone, consent, onChange, onSubmit, onBack,
   submitting, errors, submitError,
+  otpStage, otpCode, otpError, onOtpCodeChange, onOtpVerify, onOtpResend,
 }: {
   firstName: string; email: string; phone: string; consent: boolean;
   onChange: (field: string, value: string | boolean) => void;
   onSubmit: (e: React.FormEvent) => void; onBack: () => void;
   submitting: boolean; errors: Record<string, string>; submitError: string | null;
+  otpStage: "idle" | "sending" | "sent" | "verifying";
+  otpCode: string; otpError: string | null;
+  onOtpCodeChange: (v: string) => void;
+  onOtpVerify: () => void;
+  onOtpResend: (e: React.FormEvent) => void;
 }) {
+  const otpActive = otpStage === "sent" || otpStage === "verifying";
+
   return (
     <Card variant="default" padding="lg">
       <div className="mb-8">
@@ -710,24 +766,25 @@ function Step4({
       <form onSubmit={onSubmit} noValidate className="space-y-5">
         <Input id="firstName" label="First name" type="text" required placeholder="John"
           value={firstName} onChange={(e) => onChange("firstName", e.target.value)}
-          error={errors.firstName} autoComplete="given-name" />
+          error={errors.firstName} autoComplete="given-name" disabled={otpActive} />
 
         <Input id="email" label="Email address" type="email" required placeholder="john@example.com"
           value={email} onChange={(e) => onChange("email", e.target.value)}
-          hint="We'll send your match details here"
-          error={errors.email} autoComplete="email" />
+          hint={otpActive ? `Code sent to ${email}` : "We'll send a verification code here"}
+          error={errors.email} autoComplete="email" disabled={otpActive} />
 
         <Input id="phone" label="Phone number" type="tel" placeholder="04XX XXX XXX"
           value={phone} onChange={(e) => onChange("phone", e.target.value)}
           hint="Optional — advisors may call to arrange a meeting"
-          autoComplete="tel" />
+          autoComplete="tel" disabled={otpActive} />
 
         {/* Consent */}
         <div className="space-y-1.5">
-          <label className="flex items-start gap-3 p-4 bg-slate-50 rounded-xl cursor-pointer hover:bg-slate-100 transition-colors">
+          <label className={`flex items-start gap-3 p-4 bg-slate-50 rounded-xl transition-colors ${otpActive ? "opacity-60 cursor-default" : "cursor-pointer hover:bg-slate-100"}`}>
             <input
               type="checkbox" checked={consent}
-              onChange={(e) => onChange("consent", e.target.checked)}
+              onChange={(e) => !otpActive && onChange("consent", e.target.checked)}
+              disabled={otpActive}
               className="w-4 h-4 mt-0.5 rounded border-slate-300 accent-amber-500 focus:ring-amber-400 shrink-0"
             />
             <span className="text-xs text-slate-600 leading-relaxed">
@@ -746,13 +803,86 @@ function Step4({
           )}
         </div>
 
-        <div className="flex gap-3 pt-2">
-          <Button type="button" variant="ghost" onClick={onBack} disabled={submitting}>&larr; Back</Button>
-          <Button type="submit" variant="primary" loading={submitting} disabled={submitting} className="flex-1">
-            {submitting ? "Finding your match\u2026" : "Get Matched Free \u2192"}
-          </Button>
-        </div>
+        {!otpActive && (
+          <div className="flex gap-3 pt-2">
+            <Button type="button" variant="ghost" onClick={onBack} disabled={otpStage === "sending"}>&larr; Back</Button>
+            <Button type="submit" variant="primary" loading={otpStage === "sending"} disabled={otpStage === "sending"} className="flex-1">
+              {otpStage === "sending" ? "Sending code\u2026" : "Continue \u2192"}
+            </Button>
+          </div>
+        )}
       </form>
+
+      {/* OTP verification panel */}
+      {otpActive && (
+        <div className="mt-5 bg-amber-50 border border-amber-200 rounded-xl p-5">
+          <div className="flex items-start gap-3 mb-4">
+            <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+              <svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <div>
+              <p className="text-sm font-bold text-slate-900">Check your inbox</p>
+              <p className="text-xs text-slate-500 mt-0.5">We sent a 6-digit code to <strong>{email}</strong></p>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">Verification code</label>
+              <input
+                type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                maxLength={6}
+                value={otpCode}
+                onChange={(e) => onOtpCodeChange(e.target.value.replace(/\D/g, ""))}
+                onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); onOtpVerify(); } }}
+                placeholder="000000"
+                className="w-full px-4 py-3 text-center text-2xl font-bold tracking-[0.3em] border-2 border-slate-200 rounded-xl focus:outline-none focus:border-amber-500 bg-white"
+                autoFocus
+              />
+              {otpError && (
+                <p className="mt-1.5 text-xs text-red-600 flex items-center gap-1.5">
+                  <svg className="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
+                  {otpError}
+                </p>
+              )}
+            </div>
+
+            <Button
+              type="button"
+              variant="primary"
+              loading={otpStage === "verifying" || submitting}
+              disabled={otpCode.length < 6 || otpStage === "verifying" || submitting}
+              onClick={onOtpVerify}
+              className="w-full"
+            >
+              {otpStage === "verifying" || submitting ? "Verifying\u2026" : "Verify & Get Matched \u2192"}
+            </Button>
+
+            <p className="text-center text-xs text-slate-400">
+              Didn&apos;t get it?{" "}
+              <button
+                type="button"
+                onClick={onOtpResend}
+                className="text-amber-600 hover:text-amber-700 font-semibold"
+              >
+                Resend code
+              </button>
+              {" "}· Wrong email?{" "}
+              <button
+                type="button"
+                onClick={() => { onOtpCodeChange(""); window.location.reload(); }}
+                className="text-slate-500 hover:text-slate-700 font-semibold"
+              >
+                Start over
+              </button>
+            </p>
+          </div>
+        </div>
+      )}
     </Card>
   );
 }

@@ -91,12 +91,13 @@ export default function AdminConsultationsPage() {
       .select("*, consultant:team_members(id, full_name)")
       .order("sort_order", { ascending: true });
 
-    const normalized = ((consultData as unknown as any[]) || []).map((c) => ({
+    type RawConsultation = Omit<ConsultationRow, "consultant"> & {
+      consultant: ConsultationRow["consultant"] | ConsultationRow["consultant"][];
+    };
+    const normalized: ConsultationRow[] = ((consultData ?? []) as RawConsultation[]).map((c) => ({
       ...c,
-      consultant: Array.isArray(c.consultant)
-        ? c.consultant[0] ?? null
-        : c.consultant ?? null,
-    })) as ConsultationRow[];
+      consultant: Array.isArray(c.consultant) ? c.consultant[0] ?? null : c.consultant ?? null,
+    }));
     setConsultations(normalized);
 
     // Fetch team members for dropdown
@@ -113,12 +114,13 @@ export default function AdminConsultationsPage() {
       .order("booked_at", { ascending: false })
       .limit(100);
 
-    const normalizedBookings = ((bookingData as unknown as any[]) || []).map((b) => ({
+    type RawBooking = Omit<BookingRow, "consultation"> & {
+      consultation: BookingRow["consultation"] | BookingRow["consultation"][];
+    };
+    const normalizedBookings: BookingRow[] = ((bookingData ?? []) as RawBooking[]).map((b) => ({
       ...b,
-      consultation: Array.isArray(b.consultation)
-        ? b.consultation[0] ?? null
-        : b.consultation ?? null,
-    })) as BookingRow[];
+      consultation: Array.isArray(b.consultation) ? b.consultation[0] ?? null : b.consultation ?? null,
+    }));
     setBookings(normalizedBookings);
 
     setLoading(false);

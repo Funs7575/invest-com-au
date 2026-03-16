@@ -60,7 +60,7 @@ export default function SponsorBillingPage() {
 
     let created = 0;
     for (const broker of brokers) {
-      const tier = (broker as any).sponsorship_tier as string;
+      const tier = broker.sponsorship_tier ?? "";
       const pricing = TIER_PRICING[tier];
       if (!pricing) continue;
 
@@ -125,7 +125,7 @@ export default function SponsorBillingPage() {
 
   // Monthly revenue from active sponsorships
   const monthlyRevenue = brokers.reduce((sum, b) => {
-    const tier = (b as any).sponsorship_tier as string;
+    const tier = b.sponsorship_tier ?? "";
     return sum + (TIER_PRICING[tier]?.monthly || 0);
   }, 0);
 
@@ -209,9 +209,9 @@ export default function SponsorBillingPage() {
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {brokers.map(broker => {
-                    const tier = (broker as any).sponsorship_tier as string;
+                    const tier = broker.sponsorship_tier ?? "";
                     const pricing = TIER_PRICING[tier];
-                    const endDate = (broker as any).sponsorship_end;
+                    const endDate = broker.sponsorship_end;
                     const isExpiring = endDate && new Date(endDate).getTime() - Date.now() < 14 * 86400000;
                     const isExpired = endDate && new Date(endDate) < new Date();
 
@@ -236,8 +236,8 @@ export default function SponsorBillingPage() {
                           ${pricing?.monthly.toLocaleString() || "—"}
                         </td>
                         <td className="px-4 py-3 text-slate-600">
-                          {(broker as any).sponsorship_start
-                            ? new Date((broker as any).sponsorship_start).toLocaleDateString("en-AU")
+                          {broker.sponsorship_start
+                            ? new Date(broker.sponsorship_start).toLocaleDateString("en-AU")
                             : "—"}
                         </td>
                         <td className="px-4 py-3 text-slate-600">

@@ -93,8 +93,8 @@ export default function AdminArticlesPage() {
       changelog: (() => {
         try {
           const raw = formData.get("changelog") as string;
-          return raw ? JSON.parse(raw) : (editing as any)?.changelog || [];
-        } catch { return (editing as any)?.changelog || []; }
+          return raw ? JSON.parse(raw) : editing?.changelog || [];
+        } catch { return editing?.changelog || []; }
       })(),
     };
 
