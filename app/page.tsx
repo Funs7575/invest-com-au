@@ -149,9 +149,6 @@ export default async function HomePage() {
 
       {/* ═══════ 1. HERO ═══════ */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden">
-        {/* Subtle amber gradient top accent */}
-        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400" />
-
         <div className="container-custom py-10 md:py-16 lg:py-20">
           <div className="max-w-3xl mx-auto text-center">
             {/* Live badge */}
@@ -231,12 +228,7 @@ export default async function HomePage() {
         </section>
       </ScrollFadeIn>
 
-      {/* ═══════ 3. ADVISOR DIRECTORY ═══════ */}
-      <AdvisorDirectory
-        advisors={(featuredAdvisors as { slug: string; name: string; firm_name?: string; type: string; location_display?: string; location_state?: string; rating: number; review_count: number; photo_url?: string; specialties: string[]; verified?: boolean }[]) || []}
-      />
-
-      {/* ═══════ 4. TOP PLATFORMS ═══════ */}
+      {/* ═══════ 3. TOP PLATFORMS ═══════ */}
       <ScrollFadeIn>
         <section className="py-6 sm:py-10 md:py-16 bg-white">
           <div className="container-custom">
@@ -271,6 +263,11 @@ export default async function HomePage() {
           </div>
         </section>
       </ScrollFadeIn>
+
+      {/* ═══════ 4. ADVISOR DIRECTORY ═══════ */}
+      <AdvisorDirectory
+        advisors={(featuredAdvisors as { slug: string; name: string; firm_name?: string; type: string; location_display?: string; location_state?: string; rating: number; review_count: number; photo_url?: string; specialties: string[]; verified?: boolean }[]) || []}
+      />
 
       {/* ═══════ 5. ACTIVE DEALS ═══════ */}
       {(dealBrokers as Broker[])?.length > 0 && (
