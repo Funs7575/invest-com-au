@@ -40,10 +40,10 @@ export default function AdvisorDirectory({ advisors }: { advisors: Advisor[] }) 
   const tabHeading = activeTab === "property" ? "Property & Finance Expert" : "Financial Advisor";
 
   return (
-    <section className="py-4 md:py-12 bg-gradient-to-b from-amber-50/30 to-white">
+    <section className="py-10 md:py-16 bg-gradient-to-b from-amber-50/30 to-white">
       <div className="container-custom">
         {/* Header */}
-        <div className="flex items-start justify-between gap-2 mb-3 md:mb-6">
+        <div className="flex items-start justify-between gap-2 mb-4 md:mb-8">
           <div>
             <h2 className="text-lg md:text-2xl font-bold text-slate-900">
               Find a <span className="text-amber-600">{tabHeading}</span>
@@ -102,7 +102,7 @@ export default function AdvisorDirectory({ advisors }: { advisors: Advisor[] }) 
 
         {/* Advisor cards */}
         {filtered.length > 0 ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
             {filtered.slice(0, 6).map((advisor) => (
               <Link
                 key={advisor.slug}
