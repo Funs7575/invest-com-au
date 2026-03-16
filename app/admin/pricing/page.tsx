@@ -158,7 +158,31 @@ export default function AdminPricingPage() {
         // Don't retroactively change free leads for existing advisors
       }
 
-      setMessage({ type: "success", text: `${TYPE_LABELS[row.advisor_type] || row.advisor_type} pricing updated` });
+      // Notify advisors if the per-lead price changed
+      if (updates.price_cents !== undefined && updates.price_cents !== row.price_cents) {
+        try {
+          const notifyRes = await fetch("/api/admin/notify-price-change", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              advisor_type: row.advisor_type,
+              old_price_cents: row.price_cents,
+              new_price_cents: updates.price_cents,
+              field_changed: "price_cents",
+            }),
+          });
+          const notifyData = await notifyRes.json();
+          if (notifyData.notified > 0) {
+            setMessage({ type: "success", text: `${TYPE_LABELS[row.advisor_type] || row.advisor_type} pricing updated — ${notifyData.notified} advisor(s) notified` });
+          } else {
+            setMessage({ type: "success", text: `${TYPE_LABELS[row.advisor_type] || row.advisor_type} pricing updated (no active advisors to notify)` });
+          }
+        } catch {
+          setMessage({ type: "success", text: `${TYPE_LABELS[row.advisor_type] || row.advisor_type} pricing updated (notification failed — advisors not emailed)` });
+        }
+      } else {
+        setMessage({ type: "success", text: `${TYPE_LABELS[row.advisor_type] || row.advisor_type} pricing updated` });
+      }
     }
 
     setEditRow(null);
@@ -167,10 +191,45 @@ export default function AdminPricingPage() {
   };
 
   const handleApplyAll = async (type: string, priceCents: number) => {
-    if (!confirm(`Apply ${formatCents(priceCents)}/lead to ALL ${TYPE_LABELS[type]}? This will override individual pricing.`)) return;
+    if (!confirm(`Apply ${formatCents(priceCents)}/lead to ALL ${TYPE_LABELS[type]}? This will override individual pricing and notify all advisors.`)) return;
     setSaving(type);
+
+    // Get current category price for the notification
+    const currentRow = pricing.find(r => r.advisor_type === type);
+    const oldPrice = currentRow?.price_cents || priceCents;
+
     await supabase.from("professionals").update({ lead_price_cents: priceCents }).eq("type", type);
-    setMessage({ type: "success", text: `Applied ${formatCents(priceCents)} to all ${TYPE_LABELS[type]}` });
+
+    // Log the apply-all action
+    await supabase.from("lead_pricing_log").insert({
+      advisor_type: type,
+      field_changed: "apply_all",
+      old_value: String(oldPrice),
+      new_value: String(priceCents),
+      changed_by: "admin (apply all)",
+    });
+
+    // Notify advisors if price actually changed
+    if (oldPrice !== priceCents) {
+      try {
+        const notifyRes = await fetch("/api/admin/notify-price-change", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            advisor_type: type,
+            old_price_cents: oldPrice,
+            new_price_cents: priceCents,
+            field_changed: "apply_all",
+          }),
+        });
+        const notifyData = await notifyRes.json();
+        setMessage({ type: "success", text: `Applied ${formatCents(priceCents)} to all ${TYPE_LABELS[type]} — ${notifyData.notified || 0} advisor(s) notified` });
+      } catch {
+        setMessage({ type: "success", text: `Applied ${formatCents(priceCents)} to all ${TYPE_LABELS[type]} (notification failed)` });
+      }
+    } else {
+      setMessage({ type: "success", text: `Applied ${formatCents(priceCents)} to all ${TYPE_LABELS[type]}` });
+    }
     setSaving(null);
   };
 
