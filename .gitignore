@@ -48,6 +48,6 @@ Screenshot *.png
 broker-comparison-*-admin
 untitled folder*/
 index copy*.html
-package-lock.json
+# package-lock.json
 supabase/.temp/
 .claude/worktrees/
