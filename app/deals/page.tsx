@@ -120,12 +120,12 @@ export default async function DealsPage() {
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h2 className="text-base md:text-lg font-bold text-slate-900 flex items-center gap-2">
-                    <Icon name="users" size={18} className="text-violet-500" />
+                    <Icon name="users" size={18} className="text-amber-500" />
                     Verified Financial Advisors
                   </h2>
                   <p className="text-[0.65rem] md:text-xs text-slate-500 mt-0.5">Send a free enquiry to a verified professional — exclusive, no obligation</p>
                 </div>
-                <Link href="/advisors" className="text-xs font-semibold text-violet-600 hover:text-violet-800 transition-colors hidden md:flex items-center gap-1">
+                <Link href="/advisors" className="text-xs font-semibold text-amber-600 hover:text-amber-800 transition-colors hidden md:flex items-center gap-1">
                   Browse all advisors &rarr;
                 </Link>
               </div>
@@ -136,7 +136,7 @@ export default async function DealsPage() {
                     <Link
                       key={advisor.slug}
                       href={`/advisor/${advisor.slug}`}
-                      className="flex items-start gap-3 p-3.5 bg-white border border-violet-100 rounded-xl hover:border-violet-300 hover:shadow-md transition-all group"
+                      className="flex items-start gap-3 p-3.5 bg-white border border-amber-100 rounded-xl hover:border-amber-300 hover:shadow-md transition-all group"
                     >
                       <Image
                         src={advisor.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(advisor.name)}&size=80&background=7c3aed&color=fff`}
@@ -146,9 +146,9 @@ export default async function DealsPage() {
                         className="rounded-full shrink-0"
                       />
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-bold text-slate-900 group-hover:text-violet-700 transition-colors">{advisor.name}</p>
+                        <p className="text-sm font-bold text-slate-900 group-hover:text-amber-700 transition-colors">{advisor.name}</p>
                         <p className="text-[0.65rem] text-slate-500">{advisor.firm_name}</p>
-                        <p className="text-[0.6rem] text-violet-600 font-medium mt-0.5">{typeLabel} &middot; {advisor.location_display}</p>
+                        <p className="text-[0.6rem] text-amber-600 font-medium mt-0.5">{typeLabel} &middot; {advisor.location_display}</p>
                         <div className="flex items-center gap-1.5 mt-1">
                           <span className="text-[0.62rem] text-amber-600 font-bold">{advisor.rating}/5</span>
                           <span className="text-[0.58rem] text-slate-400">({advisor.review_count} reviews)</span>
@@ -159,8 +159,8 @@ export default async function DealsPage() {
                 })}
               </div>
               <div className="text-center mt-3">
-                <Link href="/find-advisor" className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-violet-600 text-white text-xs font-bold rounded-lg hover:bg-violet-700 transition-colors">
-                  <Icon name="search" size={14} className="text-violet-200" />
+                <Link href="/find-advisor" className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors">
+                  <Icon name="search" size={14} className="text-amber-200" />
                   Find Your Advisor
                 </Link>
               </div>

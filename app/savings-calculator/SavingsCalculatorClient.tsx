@@ -90,10 +90,10 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
   return (
     <div className="py-0">
       {/* Hero */}
-      {!inline && <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white py-8 md:py-14 px-4">
+      {!inline && <div className="bg-gradient-to-br from-amber-500 via-amber-600 to-amber-800 text-white py-8 md:py-14 px-4">
         <div className="container-custom max-w-3xl text-center">
           <h1 className="text-xl md:text-3xl font-extrabold mb-2">Are you earning enough on your savings?</h1>
-          <p className="text-sm md:text-base text-blue-100">Enter your balance and current rate — we'll show you exactly how much more you could earn.</p>
+          <p className="text-sm md:text-base text-amber-100">Enter your balance and current rate — we'll show you exactly how much more you could earn.</p>
           <div className="mt-3"><SocialProofCounter variant="badge" /></div>
         </div>
       </div>}
@@ -110,12 +110,12 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
                   type="number"
                   value={balance}
                   onChange={e => setBalance(Math.max(0, parseInt(e.target.value) || 0))}
-                  className="w-full pl-8 pr-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 outline-none"
+                  className="w-full pl-8 pr-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 outline-none"
                 />
               </div>
               <div className="flex gap-1.5 mt-2">
                 {[5000, 10000, 25000, 50000, 100000].map(v => (
-                  <button key={v} onClick={() => setBalance(v)} className={`text-[0.56rem] px-2 py-1 rounded-full font-semibold transition-all ${balance === v ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
+                  <button key={v} onClick={() => setBalance(v)} className={`text-[0.56rem] px-2 py-1 rounded-full font-semibold transition-all ${balance === v ? "bg-amber-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
                     {v >= 1000 ? `$${v / 1000}k` : `$${v}`}
                   </button>
                 ))}
@@ -129,13 +129,13 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
                   step="0.1"
                   value={currentRate}
                   onChange={e => setCurrentRate(Math.max(0, Math.min(10, parseFloat(e.target.value) || 0)))}
-                  className="w-full pr-8 pl-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 outline-none"
+                  className="w-full pr-8 pl-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 outline-none"
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">%</span>
               </div>
               <div className="flex gap-1.5 mt-2">
                 {[0, 0.5, 1.0, 2.0, 3.0, 4.0].map(v => (
-                  <button key={v} onClick={() => setCurrentRate(v)} className={`text-[0.56rem] px-2 py-1 rounded-full font-semibold transition-all ${currentRate === v ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
+                  <button key={v} onClick={() => setCurrentRate(v)} className={`text-[0.56rem] px-2 py-1 rounded-full font-semibold transition-all ${currentRate === v ? "bg-amber-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
                     {v}%
                   </button>
                 ))}
@@ -144,7 +144,7 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
           </div>
           <button
             onClick={handleCalculate}
-            className="w-full mt-5 px-6 py-3.5 bg-blue-600 text-white text-base font-bold rounded-xl hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl"
+            className="w-full mt-5 px-6 py-3.5 bg-amber-500 text-white text-base font-bold rounded-xl hover:bg-amber-600 transition-all shadow-lg hover:shadow-xl"
           >
             Calculate My Savings →
           </button>
@@ -219,7 +219,7 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
                       target="_blank"
                       rel={AFFILIATE_REL}
                       onClick={() => trackClick(account.slug, account.name, "savings-calc", "/savings-calculator", "savings")}
-                      className="hidden md:inline-block px-3 py-1.5 bg-blue-600 text-white text-xs font-bold rounded-lg hover:bg-blue-700 transition-all"
+                      className="hidden md:inline-block px-3 py-1.5 bg-amber-500 text-white text-xs font-bold rounded-lg hover:bg-amber-600 transition-all"
                     >
                       Visit →
                     </a>
@@ -234,7 +234,7 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
                   <p className="text-xs text-slate-500 mb-3">Enter your email to unlock the full comparison</p>
                   <div className="flex gap-2 max-w-xs mx-auto">
                     <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" className="flex-1 px-3 py-2 text-sm border border-slate-200 rounded-lg" />
-                    <button onClick={handleEmailSubmit} className="px-4 py-2 bg-blue-600 text-white text-sm font-bold rounded-lg hover:bg-blue-700">Unlock</button>
+                    <button onClick={handleEmailSubmit} className="px-4 py-2 bg-amber-500 text-white text-sm font-bold rounded-lg hover:bg-amber-600">Unlock</button>
                   </div>
                 </div>
               )}

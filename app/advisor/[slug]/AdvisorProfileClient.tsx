@@ -85,7 +85,7 @@ function BioSection({ name, bio }: { name: string; bio: string }) {
         {bio}
       </p>
       {isLong && !expanded && (
-        <button onClick={() => setExpanded(true)} className="md:hidden text-sm font-semibold text-violet-600 hover:text-violet-800 mt-2">
+        <button onClick={() => setExpanded(true)} className="md:hidden text-sm font-semibold text-amber-600 hover:text-amber-800 mt-2">
           Read more
         </button>
       )}
@@ -177,7 +177,7 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
         {/* Profile header — premium hero card */}
         <div className="relative bg-white border border-slate-200 rounded-2xl overflow-hidden mb-4 md:mb-6 shadow-sm">
           {/* Gradient banner */}
-          <div className="h-24 md:h-32 bg-gradient-to-br from-violet-600 via-violet-500 to-indigo-500 relative">
+          <div className="h-24 md:h-32 bg-gradient-to-br from-amber-600 via-amber-500 to-indigo-500 relative">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(255,255,255,0.15),transparent_60%)]" />
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,rgba(255,255,255,0.1),transparent_50%)]" />
           </div>
@@ -187,7 +187,7 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
               {pro.photo_url ? (
                 <Image src={pro.photo_url} alt={pro.name} width={160} height={160} className="w-24 h-24 md:w-36 md:h-36 rounded-2xl object-cover shrink-0 ring-4 ring-white shadow-lg" />
               ) : (
-                <div className="w-24 h-24 md:w-36 md:h-36 rounded-2xl bg-gradient-to-br from-violet-100 to-violet-50 flex items-center justify-center text-2xl md:text-4xl font-bold text-violet-600 shrink-0 ring-4 ring-white shadow-lg">
+                <div className="w-24 h-24 md:w-36 md:h-36 rounded-2xl bg-gradient-to-br from-amber-100 to-amber-50 flex items-center justify-center text-2xl md:text-4xl font-bold text-amber-600 shrink-0 ring-4 ring-white shadow-lg">
                   {pro.name.split(" ").map((n) => n[0]).join("")}
                 </div>
               )}
@@ -203,7 +203,7 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
                 </div>
                 {pro.firm_name && <div className="text-sm md:text-base text-slate-600 font-medium mb-1.5">{pro.firm_name}</div>}
                 <div className="flex items-center gap-2 md:gap-3 flex-wrap">
-                  <span className="text-xs md:text-sm bg-violet-100 text-violet-700 px-2.5 py-1 rounded-lg font-semibold">{typeLabel}</span>
+                  <span className="text-xs md:text-sm bg-amber-100 text-amber-700 px-2.5 py-1 rounded-lg font-semibold">{typeLabel}</span>
                   {pro.avg_response_minutes != null && pro.avg_response_minutes <= 120 && (
                     <span className="inline-flex items-center gap-1 text-[0.62rem] md:text-xs font-bold px-2 md:px-2.5 py-0.5 md:py-1 rounded-full bg-emerald-100 text-emerald-700">
                       <Icon name="zap" size={12} className="text-emerald-500" />
@@ -231,7 +231,7 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
                 </div>
                 {/* Inline CTA row — desktop only */}
                 <div className="hidden md:flex items-center gap-3 mt-4">
-                  <a href="#enquiry" className="px-6 py-2.5 bg-violet-600 text-white text-sm font-bold rounded-lg hover:bg-violet-700 transition-colors shadow-sm">
+                  <a href="#enquiry" className="px-6 py-2.5 bg-amber-600 text-white text-sm font-bold rounded-lg hover:bg-amber-700 transition-colors shadow-sm">
                     Request Free Consultation
                   </a>
                   {pro.booking_link && (
@@ -311,7 +311,7 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
         {/* Quick facts grid — elevated */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 md:gap-4 mb-5 md:mb-8">
           {[
-            { label: "Type", value: typeLabel, icon: "briefcase", bg: "bg-violet-50", border: "border-violet-200", iconColor: "text-violet-500" },
+            { label: "Type", value: typeLabel, icon: "briefcase", bg: "bg-amber-50", border: "border-amber-200", iconColor: "text-amber-500" },
             { label: "Location", value: pro.location_display || "Australia", icon: "map-pin", bg: "bg-blue-50", border: "border-blue-200", iconColor: "text-blue-500" },
             { label: "Fees", value: pro.fee_description || "Contact for pricing", icon: "coins", bg: "bg-amber-50", border: "border-amber-200", iconColor: "text-amber-500" },
             { label: "Licence", value: pro.afsl_number || pro.registration_number || "Verified", icon: "shield-check", bg: "bg-emerald-50", border: "border-emerald-200", iconColor: "text-emerald-500" },
@@ -422,15 +422,15 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
 
         {/* Special Offer */}
         {pro.offer_active && pro.offer_text && (
-          <div className="bg-gradient-to-r from-violet-50 to-violet-100/50 border border-violet-200 rounded-xl p-4 md:p-5 mb-4 md:mb-6">
+          <div className="bg-gradient-to-r from-amber-50 to-amber-100/50 border border-amber-200 rounded-xl p-4 md:p-5 mb-4 md:mb-6">
             <div className="flex items-start gap-3">
-              <div className="w-9 h-9 rounded-full bg-violet-200 flex items-center justify-center shrink-0">
-                <Icon name="tag" size={18} className="text-violet-600" />
+              <div className="w-9 h-9 rounded-full bg-amber-200 flex items-center justify-center shrink-0">
+                <Icon name="tag" size={18} className="text-amber-600" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[0.58rem] font-bold uppercase tracking-wider text-violet-500 mb-0.5">Special Offer</p>
-                <p className="text-sm md:text-base font-bold text-violet-900">{pro.offer_text}</p>
-                {pro.offer_terms && <p className="text-[0.62rem] md:text-xs text-violet-600 mt-1">{pro.offer_terms}</p>}
+                <p className="text-[0.58rem] font-bold uppercase tracking-wider text-amber-500 mb-0.5">Special Offer</p>
+                <p className="text-sm md:text-base font-bold text-amber-900">{pro.offer_text}</p>
+                {pro.offer_terms && <p className="text-[0.62rem] md:text-xs text-amber-600 mt-1">{pro.offer_terms}</p>}
               </div>
             </div>
           </div>
@@ -495,8 +495,8 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
         {pro.specialties.length > 0 && (
           <div className="bg-white border border-slate-200 rounded-xl p-5 md:p-6 mb-5 md:mb-8 shadow-sm">
             <div className="flex items-center gap-2.5 mb-3">
-              <div className="w-8 h-8 rounded-lg bg-violet-50 flex items-center justify-center">
-                <Icon name="target" size={16} className="text-violet-500" />
+              <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
+                <Icon name="target" size={16} className="text-amber-500" />
               </div>
               <h2 className="text-base md:text-lg font-bold text-slate-900">Specialties</h2>
             </div>
@@ -521,7 +521,7 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
               )}
               {(pro.qualifications)?.map((q) => (
                 <div key={q} className="flex items-center gap-2 text-xs md:text-sm text-slate-700">
-                  <Icon name="award" size={14} className="text-violet-500 shrink-0" />
+                  <Icon name="award" size={14} className="text-amber-500 shrink-0" />
                   <span>{q}</span>
                 </div>
               ))}
@@ -591,7 +591,7 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
         {(pro.meeting_types)?.length ? (
           <div className="flex flex-wrap gap-2 mb-4 md:mb-6">
             {(pro.meeting_types!).map((mt) => (
-              <span key={mt} className="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full bg-violet-50 text-violet-700 border border-violet-200">
+              <span key={mt} className="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
                 <Icon name={mt === "video" ? "video" : mt === "phone" ? "phone" : "map-pin"} size={12} />
                 {mt === "in-person" ? "In-Person" : mt === "video" ? "Video Call" : mt === "phone" ? "Phone" : mt}
               </span>
@@ -606,9 +606,9 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
 
         {/* Ideal Client */}
         {pro.ideal_client && (
-          <div className="bg-violet-50 border border-violet-200 rounded-xl p-4 md:p-5 mb-4 md:mb-6">
-            <h2 className="text-sm md:text-base font-bold text-violet-900 mb-1.5">Who I Work With</h2>
-            <p className="text-xs md:text-sm text-violet-700 leading-relaxed">{pro.ideal_client!}</p>
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 md:p-5 mb-4 md:mb-6">
+            <h2 className="text-sm md:text-base font-bold text-amber-900 mb-1.5">Who I Work With</h2>
+            <p className="text-xs md:text-sm text-amber-700 leading-relaxed">{pro.ideal_client!}</p>
           </div>
         )}
 
@@ -634,7 +634,7 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
             <h2 className="text-sm md:text-base font-bold text-slate-900 mb-3">Client Testimonials</h2>
             <div className="space-y-3">
               {(pro.testimonials!).map((t, i) => (
-                <blockquote key={i} className="border-l-2 border-violet-300 pl-3">
+                <blockquote key={i} className="border-l-2 border-amber-300 pl-3">
                   <p className="text-xs md:text-sm text-slate-600 italic leading-relaxed">&ldquo;{t.quote}&rdquo;</p>
                   <footer className="text-xs text-slate-400 mt-1">— {t.author}{t.date ? `, ${t.date}` : ""}</footer>
                 </blockquote>
@@ -685,7 +685,7 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
                 <div className="flex items-start gap-2"><span className="text-emerald-400 font-bold mt-0.5">3</span><span>They&apos;ll contact you to arrange a consultation</span></div>
                 <div className="flex items-start gap-2"><span className="text-emerald-400 font-bold mt-0.5">4</span><span>No obligation — you decide if it&apos;s a good fit</span></div>
               </div>
-              <Link href="/advisors" className="inline-block mt-5 text-sm font-semibold text-violet-300 hover:text-violet-200 transition-colors">
+              <Link href="/advisors" className="inline-block mt-5 text-sm font-semibold text-amber-300 hover:text-amber-200 transition-colors">
                 Browse more advisors →
               </Link>
             </div>
@@ -709,7 +709,7 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
                       onChange={(e) => setName(e.target.value)}
                       onBlur={() => setTouched(p => ({ ...p, name: true }))}
                       placeholder="Full name"
-                      className={`w-full px-3.5 py-3 text-sm bg-white/10 border rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-400 ${nameError ? "border-red-400" : "border-white/20"}`}
+                      className={`w-full px-3.5 py-3 text-sm bg-white/10 border rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-400 ${nameError ? "border-red-400" : "border-white/20"}`}
                     />
                     {nameError && <p className="text-[0.62rem] text-red-400 mt-0.5">{nameError}</p>}
                   </div>
@@ -721,7 +721,7 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
                       onChange={(e) => setEmail(e.target.value)}
                       onBlur={() => setTouched(p => ({ ...p, email: true }))}
                       placeholder="your@email.com"
-                      className={`w-full px-3.5 py-3 text-sm bg-white/10 border rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-400 ${emailError ? "border-red-400" : "border-white/20"}`}
+                      className={`w-full px-3.5 py-3 text-sm bg-white/10 border rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-400 ${emailError ? "border-red-400" : "border-white/20"}`}
                     />
                     {emailError && <p className="text-[0.62rem] text-red-400 mt-0.5">{emailError}</p>}
                   </div>
@@ -733,7 +733,7 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="04XX XXX XXX"
-                    className="w-full px-3.5 py-3 text-sm bg-white/10 border border-white/20 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-400"
+                    className="w-full px-3.5 py-3 text-sm bg-white/10 border border-white/20 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-400"
                   />
                 </div>
                 <div>
@@ -743,7 +743,7 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
                     onChange={(e) => setMessage(e.target.value)}
                     placeholder="Brief description of your situation..."
                     rows={3}
-                    className="w-full px-3.5 py-3 text-sm bg-white/10 border border-white/20 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-violet-500/50 focus:border-violet-400 resize-vertical"
+                    className="w-full px-3.5 py-3 text-sm bg-white/10 border border-white/20 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-400 resize-vertical"
                   />
                 </div>
                 {formError && <p className="text-xs text-red-400 font-medium">{formError}</p>}
@@ -751,7 +751,7 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
                 <button
                   onClick={handleSubmit}
                   disabled={!name.trim() || !email.trim() || formState === "submitting"}
-                  className="w-full py-3.5 bg-violet-600 text-white font-bold text-sm rounded-lg hover:bg-violet-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98] shadow-lg shadow-violet-600/25"
+                  className="w-full py-3.5 bg-amber-600 text-white font-bold text-sm rounded-lg hover:bg-amber-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-[0.98] shadow-lg shadow-amber-600/25"
                 >
                   {formState === "submitting" ? "Sending..." : `Send Enquiry to ${pro.name.split(" ")[0]}`}
                 </button>
@@ -858,17 +858,17 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
                 <a
                   key={article.id}
                   href={`/expert/${article.slug}`}
-                  className="block bg-white border border-slate-200 rounded-xl p-3.5 hover:shadow-md hover:border-violet-200 transition-all group"
+                  className="block bg-white border border-slate-200 rounded-xl p-3.5 hover:shadow-md hover:border-amber-200 transition-all group"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-sm font-bold text-slate-900 group-hover:text-violet-700 transition-colors line-clamp-2">{article.title}</h3>
+                      <h3 className="text-sm font-bold text-slate-900 group-hover:text-amber-700 transition-colors line-clamp-2">{article.title}</h3>
                       {article.excerpt && (
                         <p className="text-xs text-slate-500 mt-1 line-clamp-2">{article.excerpt}</p>
                       )}
                       <div className="flex items-center gap-2 mt-2">
                         {article.category && (
-                          <span className="text-[0.58rem] font-semibold text-violet-600 bg-violet-50 px-1.5 py-0.5 rounded">{article.category}</span>
+                          <span className="text-[0.58rem] font-semibold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">{article.category}</span>
                         )}
                         {article.reading_time_mins && (
                           <span className="text-[0.58rem] text-slate-400">{article.reading_time_mins} min read</span>
@@ -878,7 +878,7 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
                         )}
                       </div>
                     </div>
-                    <span className="text-violet-500 group-hover:translate-x-0.5 transition-transform mt-1">
+                    <span className="text-amber-500 group-hover:translate-x-0.5 transition-transform mt-1">
                       <Icon name="arrow-right" size={16} />
                     </span>
                   </div>
@@ -972,12 +972,12 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
                   body: JSON.stringify({ event_type: "booking_click", page: `/advisor/${pro.slug}`, metadata: { advisor: pro.slug, source: "sticky_mobile" } }),
                 }).catch(() => {});
               }}
-              className="flex-1 py-3 bg-violet-600 text-white font-bold rounded-xl text-sm text-center"
+              className="flex-1 py-3 bg-amber-600 text-white font-bold rounded-xl text-sm text-center"
             >
               Book Free Call
             </a>
           ) : (
-            <a href="#enquiry" className="flex-1 py-3 bg-violet-600 text-white font-bold rounded-xl text-sm text-center">
+            <a href="#enquiry" className="flex-1 py-3 bg-amber-600 text-white font-bold rounded-xl text-sm text-center">
               Request Free Consultation
             </a>
           )}
@@ -998,7 +998,7 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
             {pro.verified && <span className="text-[0.56rem] font-bold px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700">Verified</span>}
             <span className="text-xs text-slate-500">{pro.firm_name}</span>
           </div>
-          <a href="#enquiry" className="px-6 py-2.5 bg-violet-600 text-white text-sm font-bold rounded-lg hover:bg-violet-700 transition-colors">
+          <a href="#enquiry" className="px-6 py-2.5 bg-amber-600 text-white text-sm font-bold rounded-lg hover:bg-amber-700 transition-colors">
             Request Free Consultation
           </a>
         </div>
@@ -1010,7 +1010,7 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
             <p className="text-xs font-bold text-slate-900 truncate">{pro.name}</p>
             <p className="text-[0.6rem] text-slate-500 truncate">{pro.fee_description || "Free consultation"}</p>
           </div>
-          <a href="#enquiry" className="shrink-0 px-5 py-2.5 bg-violet-600 text-white text-xs font-bold rounded-lg hover:bg-violet-700 transition-colors">
+          <a href="#enquiry" className="shrink-0 px-5 py-2.5 bg-amber-600 text-white text-xs font-bold rounded-lg hover:bg-amber-700 transition-colors">
             Enquire Free
           </a>
         </div>

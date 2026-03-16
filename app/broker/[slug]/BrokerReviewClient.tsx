@@ -130,7 +130,7 @@ function formatFieldName(name: string): string {
 
 const CATEGORY_COLORS: Record<string, string> = {
   tax: "bg-purple-100 text-purple-700",
-  beginners: "bg-blue-100 text-blue-700",
+  beginners: "bg-amber-100 text-amber-700",
   smsf: "bg-emerald-100 text-emerald-700",
   strategy: "bg-amber-100 text-amber-700",
   news: "bg-red-100 text-red-700",
@@ -296,7 +296,7 @@ export default function BrokerReviewClient({
                 <span className="text-amber-400 text-sm">{renderStars(b.rating || 0)}</span>
                 <span className="text-sm font-bold text-slate-700">{b.rating}/5</span>
                 {b.chess_sponsored && (
-                  <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">CHESS</span>
+                  <span className="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-semibold rounded-full">CHESS</span>
                 )}
                 {b.deal && (
                   <span className="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-semibold rounded-full">Deal Active</span>
@@ -407,15 +407,15 @@ export default function BrokerReviewClient({
         )}
 
         {/* Who Is This Best For? */}
-        <div id="best-for" className="bg-blue-50 border border-blue-200 rounded-xl p-4 md:p-6 mb-6 md:mb-8 scroll-mt-20">
+        <div id="best-for" className="bg-amber-50 border border-amber-200 rounded-xl p-4 md:p-6 mb-6 md:mb-8 scroll-mt-20">
           <div className="flex items-center gap-2 mb-3">
-            <Icon name="target" size={20} className="text-blue-700 shrink-0" />
+            <Icon name="target" size={20} className="text-amber-700 shrink-0" />
             <h2 className="text-base md:text-lg font-extrabold text-slate-900">Who Is {b.name} Best For?</h2>
           </div>
           <ul className="space-y-2">
             {bestFor.map((item, i) => (
               <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
-                <span className="text-blue-600 font-bold mt-0.5">✓</span>
+                <span className="text-amber-600 font-bold mt-0.5">✓</span>
                 <span>{item}</span>
               </li>
             ))}
@@ -513,7 +513,7 @@ export default function BrokerReviewClient({
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 mb-6 md:mb-8">
           {[
             { label: "ASX Fee", value: b.asx_fee || "N/A", sub: b.asx_fee_value != null && b.asx_fee_value === 0 ? "Free" : undefined, accent: "border-t-emerald-500" },
-            { label: "US Fee", value: b.us_fee || "N/A", sub: b.platform_type === "crypto_exchange" ? "N/A" : undefined, accent: "border-t-blue-500" },
+            { label: "US Fee", value: b.us_fee || "N/A", sub: b.platform_type === "crypto_exchange" ? "N/A" : undefined, accent: "border-t-amber-500" },
             { label: "FX Rate", value: b.fx_rate != null ? `${b.fx_rate}%` : "N/A", accent: "border-t-amber-500" },
             { label: "Safety", value: b.chess_sponsored ? "CHESS" : b.platform_type === "crypto_exchange" ? "AUSTRAC" : "Custodian", accent: "border-t-violet-500" },
           ].map((stat, i) => (
@@ -803,11 +803,11 @@ export default function BrokerReviewClient({
             )}
 
             {b.platform_type === "super_fund" && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                <h3 className="font-semibold text-blue-800 mb-1 text-xs flex items-center gap-1.5">
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                <h3 className="font-semibold text-amber-800 mb-1 text-xs flex items-center gap-1.5">
                   <span>🏛️</span> Super Fund Switching Warning — ASIC RG 183
                 </h3>
-                <p className="text-xs text-blue-700 leading-relaxed">{SUPER_WARNING}</p>
+                <p className="text-xs text-amber-700 leading-relaxed">{SUPER_WARNING}</p>
               </div>
             )}
 
@@ -873,7 +873,7 @@ export default function BrokerReviewClient({
                 {feeHistory.map((c) => (
                   <div key={c.id} className="flex items-start gap-3 bg-white border border-slate-200 rounded-lg px-4 py-3">
                     <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded mt-0.5 ${
-                      c.change_type === 'update' ? 'bg-blue-50 text-blue-700' :
+                      c.change_type === 'update' ? 'bg-amber-50 text-amber-700' :
                       c.change_type === 'add' ? 'bg-emerald-50 text-emerald-700' :
                       'bg-red-50 text-red-700'
                     }`}>
@@ -889,7 +889,7 @@ export default function BrokerReviewClient({
                             <div className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
                               <span className="line-through text-red-400 truncate max-w-[180px]">{c.old_value || '\u2014'}</span>
                               <span className="text-slate-300">{'\u2192'}</span>
-                              <span className="text-blue-700 font-medium truncate max-w-[180px]">{c.new_value || '\u2014'}</span>
+                              <span className="text-amber-700 font-medium truncate max-w-[180px]">{c.new_value || '\u2014'}</span>
                             </div>
                           )}
                           {c.change_type === 'add' && <p className="text-xs text-emerald-700 mt-0.5">{c.new_value}</p>}
