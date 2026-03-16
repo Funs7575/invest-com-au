@@ -1,7 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { isRateLimited } from "@/lib/rate-limit";
-import { isValidEmail } from "@/lib/validate-email";
+import { isValidEmail, isDisposableEmail } from "@/lib/validate-email";
 import { logger } from "@/lib/logger";
 import { extractUtm, type UtmParams } from "@/lib/utm";
 import { sendNewLeadNotification, sendLeadConfirmationToUser } from "@/lib/advisor-emails";
@@ -108,8 +108,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid lead_type" }, { status: 400 });
   }
 
+  // Honeypot: bots fill hidden fields that real users never see
+  if (body.website || body.fax || body.company_url) {
+    return NextResponse.json({ success: true, lead_id: null, matched: null });
+  }
+
   if (!isValidEmail(user_email as string)) {
     return NextResponse.json({ error: "Valid email required" }, { status: 400 });
+  }
+
+  // Reject disposable/throwaway email domains — advisors pay per lead
+  if (isDisposableEmail(user_email as string)) {
+    return NextResponse.json({ error: "Please use a real email address." }, { status: 400 });
   }
 
   // Rate limit
