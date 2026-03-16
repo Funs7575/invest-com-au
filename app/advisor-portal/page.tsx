@@ -63,6 +63,7 @@ export default function AdvisorPortalPage() {
   const [viewsByDay, setViewsByDay] = useState<ViewDay[]>([]);
   const [billing, setBilling] = useState<BillingRecord[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [categoryPricing, setCategoryPricing] = useState<{ price_cents: number; free_trial_leads: number; featured_monthly_cents: number } | null>(null);
   const [weeklyEnquiries, setWeeklyEnquiries] = useState<WeeklyEnquiry[]>([]);
   const [profileCompleteness, setProfileCompleteness] = useState<ProfileCompleteness | null>(null);
   const [loading, setLoading] = useState(true);
@@ -178,6 +179,7 @@ export default function AdvisorPortalPage() {
         setReviews(data.reviews);
         setWeeklyEnquiries(data.weeklyEnquiries || []);
         setProfileCompleteness(data.profileCompleteness || null);
+        if (data.categoryPricing) setCategoryPricing(data.categoryPricing);
         if (data.advisor) setAdvisor(data.advisor);
       }
     } catch { /* ignore */ }
@@ -776,8 +778,8 @@ export default function AdvisorPortalPage() {
                 <div>
                   <h3 className="text-xs font-bold text-violet-800 mb-1">Your Lead Account</h3>
                   <p className="text-xs text-violet-600">
-                    {advisor?.free_leads_used !== undefined && advisor.free_leads_used < 2
-                      ? <>You have <strong>{2 - (advisor.free_leads_used || 0)} free leads</strong> remaining. After that, leads are deducted from your credit balance.</>
+                    {advisor?.free_leads_used !== undefined && advisor.free_leads_used < (categoryPricing?.free_trial_leads || 2)
+                      ? <>You have <strong>{(categoryPricing?.free_trial_leads || 2) - (advisor.free_leads_used || 0)} free leads</strong> remaining. After that, leads are deducted from your credit balance at ${((advisor?.lead_price_cents || categoryPricing?.price_cents || 4900) / 100).toFixed(0)}/lead.</>
                       : (advisor?.credit_balance_cents || 0) > 0
                         ? <>Leads are deducted from your credit balance. Each enquiry is exclusive to you.</>
                         : <>Your credit balance is empty. <strong>Top up to continue receiving leads.</strong></>
@@ -1130,7 +1132,7 @@ export default function AdvisorPortalPage() {
                 <span className="text-2xl font-extrabold text-violet-900">${((advisor?.credit_balance_cents || 0) / 100).toFixed(0)}</span>
               </div>
               <p className="text-xs text-violet-600">
-                ~{Math.floor((advisor?.credit_balance_cents || 0) / (advisor?.lead_price_cents || 3980))} leads remaining · Lifetime spend: ${((advisor?.lifetime_lead_spend_cents || 0) / 100).toFixed(0)}
+                ~{Math.floor((advisor?.credit_balance_cents || 0) / (advisor?.lead_price_cents || categoryPricing?.price_cents || 4900))} leads remaining · ${((advisor?.lead_price_cents || categoryPricing?.price_cents || 4900) / 100).toFixed(0)}/lead · Lifetime spend: ${((advisor?.lifetime_lead_spend_cents || 0) / 100).toFixed(0)}
               </p>
             </div>
 

@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
     { data: reviews },
     { data: bookings },
   ] = await Promise.all([
-    // Advisor profile (for completeness check)
+    // Advisor profile (for completeness check + billing)
     supabase
       .from("professionals")
       .select(
@@ -79,6 +79,17 @@ export async function GET(request: NextRequest) {
       .eq("professional_id", advisorId)
       .gte("created_at", thirtyDaysAgo),
   ]);
+
+  // Fetch category pricing for this advisor's type
+  let categoryPricing = null;
+  if (advisor?.type) {
+    const { data: catPricing } = await supabase
+      .from("lead_pricing")
+      .select("price_cents, free_trial_leads, featured_monthly_cents")
+      .eq("advisor_type", advisor.type)
+      .single();
+    categoryPricing = catPricing;
+  }
 
   // --- Stats ---
   const totalViews30d = (views || []).reduce(
@@ -161,6 +172,7 @@ export async function GET(request: NextRequest) {
   return NextResponse.json({
     advisor,
     leads: allLeads,
+    categoryPricing,
     stats: {
       totalViews30d,
       totalLeads,

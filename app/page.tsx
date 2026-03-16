@@ -183,18 +183,18 @@ export default async function HomePage() {
             </div>
 
             {/* Trust signals */}
-            <div className="flex items-center justify-center flex-wrap gap-x-7 gap-y-2.5 text-xs text-slate-500">
-              <span className="flex items-center gap-1.5">
-                <Icon name="shield-check" size={14} className="text-emerald-500" />
-                ASIC-verified professionals
+            <div className="flex items-center justify-center flex-wrap gap-x-4 gap-y-1.5 text-[0.65rem] md:text-xs text-slate-500">
+              <span className="flex items-center gap-1">
+                <Icon name="shield-check" size={12} className="text-emerald-500" />
+                ASIC-verified
               </span>
-              <span className="flex items-center gap-1.5">
-                <Icon name="check-circle" size={14} className="text-emerald-500" />
+              <span className="flex items-center gap-1">
+                <Icon name="check-circle" size={12} className="text-emerald-500" />
                 100% independent
               </span>
-              <span className="flex items-center gap-1.5">
-                <Icon name="check-circle" size={14} className="text-amber-500" />
-                No cost, no commitment
+              <span className="flex items-center gap-1">
+                <Icon name="check-circle" size={12} className="text-amber-500" />
+                No cost
               </span>
             </div>
           </div>
@@ -344,20 +344,20 @@ export default async function HomePage() {
                     <p className="text-xs md:text-sm text-amber-700 font-medium">End-of-financial-year deadline approaching</p>
                   </div>
                 </div>
-                <div className="grid md:grid-cols-3 gap-3 md:gap-4">
+                <div className="grid md:grid-cols-3 gap-2 md:gap-4">
                   {[
                     { href: "/advisors/tax-agents", icon: "calculator", title: "Find a Tax Agent", desc: "Expert tax planning, deductions, and lodgement." },
                     { href: "/advisors/smsf-accountants", icon: "briefcase", title: "SMSF End-of-Year", desc: "SMSF audit, compliance, and year-end reporting." },
                     { href: "/advisors/financial-planners", icon: "trending-up", title: "Pre-EOFY Strategy", desc: "Salary sacrifice, contribution caps, and structuring." },
                   ].map((card) => (
-                    <Link key={card.href} href={card.href} className="group bg-white border border-amber-200 rounded-xl p-4 md:p-5 hover:shadow-md hover:border-amber-300 transition-all">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Icon name={card.icon} size={18} className="text-amber-600" />
-                        <h3 className="font-bold text-sm md:text-base text-slate-900">{card.title}</h3>
+                    <Link key={card.href} href={card.href} className="group bg-white border border-amber-200 rounded-xl p-3 md:p-5 hover:shadow-md hover:border-amber-300 transition-all flex md:block items-center gap-3">
+                      <div className="flex items-center gap-2 md:mb-2 shrink-0">
+                        <Icon name={card.icon} size={16} className="text-amber-600" />
+                        <h3 className="font-bold text-sm text-slate-900">{card.title}</h3>
                       </div>
-                      <p className="text-xs text-slate-600 leading-relaxed">{card.desc}</p>
-                      <span className="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-amber-600 group-hover:text-amber-700">
-                        Browse experts <span className="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+                      <p className="hidden md:block text-xs text-slate-600 leading-relaxed">{card.desc}</p>
+                      <span className="ml-auto md:ml-0 inline-flex items-center gap-1 md:mt-2 text-xs font-semibold text-amber-600 group-hover:text-amber-700 shrink-0">
+                        <span className="hidden md:inline">Browse experts</span> <span className="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
                       </span>
                     </Link>
                   ))}

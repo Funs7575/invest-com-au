@@ -266,6 +266,8 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
     if (q) setSearch(q);
   }, [searchParams, initialType, initialState]);
 
+  const initialRenderRef = useRef(true);
+
   const updateURL = useCallback(() => {
     const params = new URLSearchParams();
     if (typeFilters.size > 0) params.set("type", Array.from(typeFilters).join(","));
@@ -274,10 +276,19 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
     if (sortBy !== "rating") params.set("sort", sortBy);
     if (search) params.set("q", search);
     const qs = params.toString();
-    router.replace(`/advisors${qs ? `?${qs}` : ""}`, { scroll: false });
-  }, [typeFilters, stateFilter, specialtyFilters, sortBy, search, router]);
+    const newPath = `/advisors${qs ? `?${qs}` : ""}`;
+    // Skip if URL hasn't changed (prevents initial load re-render cycle)
+    const currentQs = searchParams.toString();
+    if (qs === currentQs) return;
+    router.replace(newPath, { scroll: false });
+  }, [typeFilters, stateFilter, specialtyFilters, sortBy, search, router, searchParams]);
 
   useEffect(() => {
+    // Skip the very first render to prevent immediate router.replace on page load
+    if (initialRenderRef.current) {
+      initialRenderRef.current = false;
+      return;
+    }
     const t = setTimeout(updateURL, 300);
     return () => clearTimeout(t);
   }, [updateURL]);
