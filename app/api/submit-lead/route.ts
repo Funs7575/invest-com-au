@@ -4,7 +4,7 @@ import { isRateLimited } from "@/lib/rate-limit";
 import { isValidEmail, isDisposableEmail } from "@/lib/validate-email";
 import { logger } from "@/lib/logger";
 import { extractUtm, type UtmParams } from "@/lib/utm";
-import { sendLeadConfirmationToUser } from "@/lib/advisor-emails";
+import { sendNewLeadNotification, sendLeadConfirmationToUser } from "@/lib/advisor-emails";
 
 export const runtime = "edge";
 
@@ -367,17 +367,29 @@ export async function POST(request: NextRequest) {
       .then(() => null, () => null);
   }
 
-  // Send user confirmation email immediately (non-blocking).
-  // Advisor notification is held until user confirms via /api/submit-lead/confirm,
-  // or auto-sent by the cron after 15 minutes.
-  if (matchedAdvisor && !rematch) {
-    sendLeadConfirmationToUser(
-      normalizedEmail,
-      typeof user_name === "string" ? user_name.trim() : "there",
+  // Send email notifications (non-blocking)
+  // On rematch, notify the new advisor but don't re-send the user confirmation
+  if (matchedAdvisor && matchedAdvisor.email) {
+    sendNewLeadNotification(
+      matchedAdvisor.email as string,
       matchedAdvisor.name as string,
-      matchedAdvisor.type as string,
-      (matchedAdvisor.firm_name as string) || null,
+      typeof user_name === "string" ? user_name.trim() : "A potential client",
+      normalizedEmail,
+      typeof user_phone === "string" ? user_phone.trim() : null,
+      userState,
+      need,
+      context,
     ).catch(() => null);
+
+    if (!rematch) {
+      sendLeadConfirmationToUser(
+        normalizedEmail,
+        typeof user_name === "string" ? user_name.trim() : "there",
+        matchedAdvisor.name as string,
+        matchedAdvisor.type as string,
+        (matchedAdvisor.firm_name as string) || null,
+      ).catch(() => null);
+    }
   }
 
   log.info("Lead submitted with match", {
