@@ -6,7 +6,10 @@ import { makeRequest, createChainableBuilder } from "@/__tests__/helpers";
 const mockFrom = vi.fn();
 
 vi.mock("@/lib/supabase/server", () => ({
-  createClient: vi.fn(async () => ({ from: mockFrom })),
+  createClient: vi.fn(async () => ({
+    from: mockFrom,
+    rpc: vi.fn(() => Promise.resolve({ data: null, error: null })),
+  })),
 }));
 
 vi.mock("@/lib/rate-limit", () => ({
@@ -164,7 +167,7 @@ describe("POST /api/advisor-enquiry", () => {
     const res = await POST(req);
     expect(res.status).toBe(400);
     const json = await res.json();
-    expect(json.error).toContain("Invalid email");
+    expect(json.error).toContain("valid");
   });
 
   it("returns 404 when professional not found", async () => {
