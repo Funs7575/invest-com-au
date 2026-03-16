@@ -17,6 +17,7 @@ import { trackEvent } from "@/lib/tracking";
 type Intent = "buy_property" | "grow_wealth" | "protect_assets" | "business_tax";
 
 interface MatchedAdvisor {
+  id: number;
   slug: string;
   name: string;
   firm_name: string | null;
@@ -42,12 +43,45 @@ interface QuizState {
   consent: boolean;
 }
 
+// ─── Session persistence helpers ─────────────────────────────────────────────
+
+const STORAGE_KEY = "invest_quiz_match";
+
+interface PersistedMatch {
+  matchedAdvisors: MatchedAdvisor[];
+  excludeIds: number[];
+  quizData: { intent: string; context: string[]; state: string; budget: string; firstName: string; email: string };
+  timestamp: number;
+}
+
+function saveMatchToStorage(data: PersistedMatch) {
+  try { sessionStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch {}
+}
+
+function loadMatchFromStorage(): PersistedMatch | null {
+  try {
+    const raw = sessionStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const data = JSON.parse(raw) as PersistedMatch;
+    // Expire after 1 hour
+    if (Date.now() - data.timestamp > 60 * 60 * 1000) {
+      sessionStorage.removeItem(STORAGE_KEY);
+      return null;
+    }
+    return data;
+  } catch { return null; }
+}
+
+function clearMatchStorage() {
+  try { sessionStorage.removeItem(STORAGE_KEY); } catch {}
+}
+
 // ─── Step 1 data ──────────────────────────────────────────────────────────────
 
 const INTENT_OPTIONS = [
   {
     id: "buy_property" as Intent,
-    emoji: "🏠",
+    emoji: "\u{1F3E0}",
     title: "Buy Property",
     desc: "Purchase a home or investment property",
     baseClass: "from-rose-50 to-orange-50 border-rose-200 hover:border-rose-400 hover:shadow-rose-100",
@@ -55,7 +89,7 @@ const INTENT_OPTIONS = [
   },
   {
     id: "grow_wealth" as Intent,
-    emoji: "📈",
+    emoji: "\u{1F4C8}",
     title: "Grow Wealth",
     desc: "Build long-term financial security",
     baseClass: "from-emerald-50 to-teal-50 border-emerald-200 hover:border-emerald-400 hover:shadow-emerald-100",
@@ -63,7 +97,7 @@ const INTENT_OPTIONS = [
   },
   {
     id: "protect_assets" as Intent,
-    emoji: "🛡️",
+    emoji: "\u{1F6E1}\uFE0F",
     title: "Protect Assets",
     desc: "Insurance, estate planning & succession",
     baseClass: "from-blue-50 to-indigo-50 border-blue-200 hover:border-blue-400 hover:shadow-blue-100",
@@ -71,7 +105,7 @@ const INTENT_OPTIONS = [
   },
   {
     id: "business_tax" as Intent,
-    emoji: "📊",
+    emoji: "\u{1F4CA}",
     title: "Business / Tax",
     desc: "SMSF setup, tax strategy & debt",
     baseClass: "from-violet-50 to-purple-50 border-violet-200 hover:border-violet-400 hover:shadow-violet-100",
@@ -103,7 +137,7 @@ const CONTEXT_CONFIG: Record<
     type: "radio",
     options: [
       { id: "getting_started", label: "Just getting started (under $10k saved)" },
-      { id: "have_savings", label: "I have savings but no investing plan ($10k–$100k)" },
+      { id: "have_savings", label: "I have savings but no investing plan ($10k\u2013$100k)" },
       { id: "optimize", label: "I have investments and want to optimise ($100k+)" },
       { id: "retirement", label: "I'm approaching retirement and need a strategy" },
     ],
@@ -121,7 +155,7 @@ const CONTEXT_CONFIG: Record<
     ],
   },
   business_tax: {
-    title: "What's your situation?",
+    title: "What\u2019s your situation?",
     subtitle: "Choose the option that best describes you",
     type: "radio",
     options: [
@@ -137,7 +171,7 @@ const CONTEXT_CONFIG: Record<
 // ─── Step 3 select options ────────────────────────────────────────────────────
 
 const STATES = [
-  { value: "", label: "Select your state or territory…", disabled: true },
+  { value: "", label: "Select your state or territory\u2026", disabled: true },
   { value: "NSW", label: "New South Wales" },
   { value: "VIC", label: "Victoria" },
   { value: "QLD", label: "Queensland" },
@@ -149,11 +183,11 @@ const STATES = [
 ];
 
 const BUDGETS = [
-  { value: "", label: "Select a range (optional)…" },
-  { value: "under_100k", label: "Under $100k — just getting started" },
-  { value: "100k_500k", label: "$100k – $500k — building wealth" },
-  { value: "500k_2m", label: "$500k – $2M — established investor" },
-  { value: "over_2m", label: "$2M+ — high net worth" },
+  { value: "", label: "Select a range (optional)\u2026" },
+  { value: "under_100k", label: "Under $100k \u2014 just getting started" },
+  { value: "100k_500k", label: "$100k \u2013 $500k \u2014 building wealth" },
+  { value: "500k_2m", label: "$500k \u2013 $2M \u2014 established investor" },
+  { value: "over_2m", label: "$2M+ \u2014 high net worth" },
   { value: "prefer_not_say", label: "Prefer not to say" },
 ];
 
@@ -208,11 +242,37 @@ function FindAdvisorQuiz() {
       }
     }
   }, [needParam, appliedNeed]);
+
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
-  const [matchedAdvisor, setMatchedAdvisor] = useState<MatchedAdvisor | null>(null);
+  const [matchedAdvisors, setMatchedAdvisors] = useState<MatchedAdvisor[]>([]);
+  const [excludeIds, setExcludeIds] = useState<number[]>([]);
+  const [noMoreMatches, setNoMoreMatches] = useState(false);
+  const [rematching, setRematching] = useState(false);
+
+  // Restore persisted match on mount
+  useEffect(() => {
+    const saved = loadMatchFromStorage();
+    if (saved && saved.matchedAdvisors.length > 0) {
+      setMatchedAdvisors(saved.matchedAdvisors);
+      setExcludeIds(saved.excludeIds);
+      setSubmitted(true);
+      setQuiz(prev => ({
+        ...prev,
+        step: 5,
+        intent: (saved.quizData.intent as Intent) || prev.intent,
+        context: saved.quizData.context || prev.context,
+        state: saved.quizData.state || prev.state,
+        budget: saved.quizData.budget || prev.budget,
+        firstName: saved.quizData.firstName || prev.firstName,
+        email: saved.quizData.email || prev.email,
+      }));
+    }
+  }, []);
+
+  const currentMatch = matchedAdvisors.length > 0 ? matchedAdvisors[matchedAdvisors.length - 1] : null;
 
   const update = useCallback((updates: Partial<QuizState>) => {
     setQuiz((prev) => ({ ...prev, ...updates }));
@@ -220,7 +280,9 @@ function FindAdvisorQuiz() {
 
   const restart = () => {
     setQuiz({ step: 1, intent: null, context: [], state: "", budget: "", firstName: "", email: "", phone: "", consent: false });
-    setErrors({}); setSubmitError(null); setSubmitted(false); setMatchedAdvisor(null);
+    setErrors({}); setSubmitError(null); setSubmitted(false);
+    setMatchedAdvisors([]); setExcludeIds([]); setNoMoreMatches(false);
+    clearMatchStorage();
   };
 
   const handleIntent = (intent: Intent) => {
@@ -251,6 +313,31 @@ function FindAdvisorQuiz() {
     update({ step: 4 });
   };
 
+  const submitMatch = async (isRematch: boolean = false) => {
+    const res = await fetch("/api/submit-lead", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        lead_type: "advisor",
+        user_email: quiz.email.trim(),
+        user_name: quiz.firstName.trim(),
+        user_phone: quiz.phone.trim() || undefined,
+        user_location_state: quiz.state,
+        user_intent: {
+          need: intentToNeed(quiz.intent!),
+          context: quiz.context,
+          budget: quiz.budget,
+        },
+        source_page: "/find-advisor",
+        exclude_advisor_ids: isRematch ? excludeIds : [],
+        rematch: isRematch,
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Something went wrong.");
+    return data;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const errs: Record<string, string> = {};
@@ -264,33 +351,72 @@ function FindAdvisorQuiz() {
     setErrors({});
 
     try {
-      const res = await fetch("/api/submit-lead", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          lead_type: "advisor",
-          user_email: quiz.email.trim(),
-          user_name: quiz.firstName.trim(),
-          user_phone: quiz.phone.trim() || undefined,
-          user_location_state: quiz.state,
-          user_intent: {
-            need: intentToNeed(quiz.intent!),
+      const data = await submitMatch(false);
+      if (data.matched) {
+        const advisor = data.matched as MatchedAdvisor;
+        setMatchedAdvisors([advisor]);
+        setExcludeIds([advisor.id]);
+        // Persist to sessionStorage
+        saveMatchToStorage({
+          matchedAdvisors: [advisor],
+          excludeIds: [advisor.id],
+          quizData: {
+            intent: quiz.intent || "",
             context: quiz.context,
+            state: quiz.state,
             budget: quiz.budget,
+            firstName: quiz.firstName,
+            email: quiz.email,
           },
-          source_page: "/find-advisor",
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) { setSubmitError(data.error || "Something went wrong."); return; }
-      if (data.matched) setMatchedAdvisor(data.matched);
+          timestamp: Date.now(),
+        });
+      }
       setSubmitted(true);
       update({ step: 5 });
       trackEvent("find_advisor_complete", { intent: quiz.intent, matched: !!data.matched }, "/find-advisor");
-    } catch {
-      setSubmitError("Network error. Please try again.");
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : "Network error. Please try again.");
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleRematch = async () => {
+    setRematching(true);
+    setSubmitError(null);
+
+    try {
+      const data = await submitMatch(true);
+
+      if (data.no_more_matches) {
+        setNoMoreMatches(true);
+        trackEvent("find_advisor_no_more_matches", { intent: quiz.intent, matched_count: matchedAdvisors.length }, "/find-advisor");
+      } else if (data.matched) {
+        const advisor = data.matched as MatchedAdvisor;
+        const newAdvisors = [...matchedAdvisors, advisor];
+        const newExclude = [...excludeIds, advisor.id];
+        setMatchedAdvisors(newAdvisors);
+        setExcludeIds(newExclude);
+        // Update persistence
+        saveMatchToStorage({
+          matchedAdvisors: newAdvisors,
+          excludeIds: newExclude,
+          quizData: {
+            intent: quiz.intent || "",
+            context: quiz.context,
+            state: quiz.state,
+            budget: quiz.budget,
+            firstName: quiz.firstName,
+            email: quiz.email,
+          },
+          timestamp: Date.now(),
+        });
+        trackEvent("find_advisor_rematch", { intent: quiz.intent, new_advisor: advisor.slug, match_number: newAdvisors.length }, "/find-advisor");
+      }
+    } catch {
+      setSubmitError("Couldn't find another match. Please try again.");
+    } finally {
+      setRematching(false);
     }
   };
 
@@ -365,8 +491,13 @@ function FindAdvisorQuiz() {
           <MatchConfirmation
             userEmail={quiz.email}
             userFirstName={quiz.firstName}
-            matchedAdvisor={matchedAdvisor}
+            currentMatch={currentMatch}
+            allMatches={matchedAdvisors}
+            onRematch={handleRematch}
+            rematching={rematching}
+            noMoreMatches={noMoreMatches}
             onRestart={restart}
+            submitError={submitError}
           />
         )}
 
@@ -421,7 +552,7 @@ function Step1({ onSelect }: { onSelect: (intent: Intent) => void }) {
       </div>
 
       <div className="mt-8 pt-6 border-t border-slate-100 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-slate-500">
-        {["ASIC-verified professionals", "100% free to use", "No spam — ever"].map((t) => (
+        {["ASIC-verified professionals", "100% free to use", "No spam \u2014 ever"].map((t) => (
           <span key={t} className="flex items-center gap-1.5">
             <svg className="w-3.5 h-3.5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
@@ -486,9 +617,9 @@ function Step2({
       )}
 
       <div className="flex gap-3 mt-8">
-        <Button variant="ghost" onClick={onBack}>← Back</Button>
+        <Button variant="ghost" onClick={onBack}>&larr; Back</Button>
         <Button variant="primary" onClick={onNext} disabled={selections.length === 0} className="flex-1">
-          Continue →
+          Continue &rarr;
         </Button>
       </div>
     </Card>
@@ -538,9 +669,9 @@ function Step3({
       </div>
 
       <div className="flex gap-3 mt-8">
-        <Button variant="ghost" onClick={onBack}>← Back</Button>
+        <Button variant="ghost" onClick={onBack}>&larr; Back</Button>
         <Button variant="primary" onClick={onNext} disabled={!stateValue} className="flex-1">
-          Continue →
+          Continue &rarr;
         </Button>
       </div>
     </Card>
@@ -616,9 +747,9 @@ function Step4({
         </div>
 
         <div className="flex gap-3 pt-2">
-          <Button type="button" variant="ghost" onClick={onBack} disabled={submitting}>← Back</Button>
+          <Button type="button" variant="ghost" onClick={onBack} disabled={submitting}>&larr; Back</Button>
           <Button type="submit" variant="primary" loading={submitting} disabled={submitting} className="flex-1">
-            {submitting ? "Finding your match…" : "Get Matched Free →"}
+            {submitting ? "Finding your match\u2026" : "Get Matched Free \u2192"}
           </Button>
         </div>
       </form>
@@ -632,8 +763,9 @@ function typeLabel(type: string): string {
   return type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-function MatchConfirmation({ userEmail, userFirstName, matchedAdvisor, onRestart }: {
-  userEmail: string; userFirstName: string; matchedAdvisor: MatchedAdvisor | null; onRestart: () => void;
+function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches, onRematch, rematching, noMoreMatches, onRestart, submitError }: {
+  userEmail: string; userFirstName: string; currentMatch: MatchedAdvisor | null; allMatches: MatchedAdvisor[];
+  onRematch: () => void; rematching: boolean; noMoreMatches: boolean; onRestart: () => void; submitError: string | null;
 }) {
   return (
     <div className="space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -645,17 +777,22 @@ function MatchConfirmation({ userEmail, userFirstName, matchedAdvisor, onRestart
           </svg>
         </div>
         <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-1">
-          {matchedAdvisor ? "You've been matched!" : "Request Received!"}
+          {currentMatch ? "You\u2019ve been matched!" : "Request Received!"}
         </h1>
         <p className="text-sm text-slate-500">
-          {matchedAdvisor
-            ? `Great news ${userFirstName} — we found the perfect advisor for you`
+          {currentMatch
+            ? `Great news ${userFirstName} \u2014 we found the perfect advisor for you`
             : "We'll match you with a verified professional shortly"}
         </p>
+        {allMatches.length > 1 && (
+          <p className="text-xs text-amber-600 font-semibold mt-1">
+            Match {allMatches.length} of {allMatches.length}{noMoreMatches ? " (all available)" : ""}
+          </p>
+        )}
       </div>
 
       {/* Matched advisor card */}
-      {matchedAdvisor && (
+      {currentMatch && (
         <div className="relative overflow-hidden rounded-2xl border-2 border-amber-200 bg-gradient-to-br from-amber-50/80 via-white to-white shadow-lg">
           {/* Match quality bar */}
           <div className="bg-gradient-to-r from-amber-500 to-amber-400 px-4 py-2.5 flex items-center justify-between">
@@ -663,7 +800,7 @@ function MatchConfirmation({ userEmail, userFirstName, matchedAdvisor, onRestart
               <Icon name="zap" size={14} className="text-white" />
               <span className="text-xs font-bold tracking-wide uppercase">Your Matched Advisor</span>
             </div>
-            {matchedAdvisor.verified && (
+            {currentMatch.verified && (
               <div className="flex items-center gap-1 bg-white/20 backdrop-blur-sm rounded-full px-2.5 py-0.5">
                 <Icon name="shield-check" size={12} className="text-white" />
                 <span className="text-[0.65rem] font-semibold text-white">ASIC Verified</span>
@@ -676,8 +813,8 @@ function MatchConfirmation({ userEmail, userFirstName, matchedAdvisor, onRestart
             <div className="flex items-start gap-4 mb-5">
               <div className="relative shrink-0">
                 <Image
-                  src={matchedAdvisor.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(matchedAdvisor.name)}&size=160&background=f59e0b&color=fff&bold=true`}
-                  alt={matchedAdvisor.name}
+                  src={currentMatch.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(currentMatch.name)}&size=160&background=f59e0b&color=fff&bold=true`}
+                  alt={currentMatch.name}
                   width={72}
                   height={72}
                   className="rounded-xl object-cover w-16 h-16 md:w-[72px] md:h-[72px] ring-2 ring-amber-200"
@@ -687,19 +824,19 @@ function MatchConfirmation({ userEmail, userFirstName, matchedAdvisor, onRestart
                 </div>
               </div>
               <div className="flex-1 min-w-0">
-                <h2 className="text-lg md:text-xl font-extrabold text-slate-900 leading-tight">{matchedAdvisor.name}</h2>
-                <p className="text-sm font-semibold text-amber-600 mt-0.5">{typeLabel(matchedAdvisor.type)}</p>
-                {matchedAdvisor.firm_name && (
-                  <p className="text-xs text-slate-500 mt-0.5">{matchedAdvisor.firm_name}</p>
+                <h2 className="text-lg md:text-xl font-extrabold text-slate-900 leading-tight">{currentMatch.name}</h2>
+                <p className="text-sm font-semibold text-amber-600 mt-0.5">{typeLabel(currentMatch.type)}</p>
+                {currentMatch.firm_name && (
+                  <p className="text-xs text-slate-500 mt-0.5">{currentMatch.firm_name}</p>
                 )}
                 <div className="flex items-center gap-3 mt-2">
-                  {matchedAdvisor.rating > 0 && (
+                  {currentMatch.rating > 0 && (
                     <div className="flex items-center gap-1">
                       <div className="flex">
                         {Array.from({ length: 5 }).map((_, i) => (
                           <svg
                             key={i}
-                            className={`w-3.5 h-3.5 ${i < Math.round(matchedAdvisor.rating) ? "text-amber-400" : "text-slate-200"}`}
+                            className={`w-3.5 h-3.5 ${i < Math.round(currentMatch.rating) ? "text-amber-400" : "text-slate-200"}`}
                             fill="currentColor"
                             viewBox="0 0 20 20"
                           >
@@ -707,14 +844,14 @@ function MatchConfirmation({ userEmail, userFirstName, matchedAdvisor, onRestart
                           </svg>
                         ))}
                       </div>
-                      <span className="text-xs font-bold text-slate-700">{matchedAdvisor.rating}</span>
-                      <span className="text-xs text-slate-400">({matchedAdvisor.review_count})</span>
+                      <span className="text-xs font-bold text-slate-700">{currentMatch.rating}</span>
+                      <span className="text-xs text-slate-400">({currentMatch.review_count})</span>
                     </div>
                   )}
-                  {matchedAdvisor.location_display && (
+                  {currentMatch.location_display && (
                     <span className="text-xs text-slate-500 flex items-center gap-1">
                       <Icon name="map-pin" size={11} className="text-slate-400" />
-                      {matchedAdvisor.location_display}
+                      {currentMatch.location_display}
                     </span>
                   )}
                 </div>
@@ -722,11 +859,11 @@ function MatchConfirmation({ userEmail, userFirstName, matchedAdvisor, onRestart
             </div>
 
             {/* Specialties */}
-            {matchedAdvisor.specialties?.length > 0 && (
+            {currentMatch.specialties?.length > 0 && (
               <div className="mb-4">
                 <p className="text-[0.65rem] font-semibold text-slate-400 uppercase tracking-wider mb-2">Specialties</p>
                 <div className="flex flex-wrap gap-1.5">
-                  {matchedAdvisor.specialties.slice(0, 5).map((spec) => (
+                  {currentMatch.specialties.slice(0, 5).map((spec) => (
                     <span key={spec} className="text-xs bg-amber-50 text-amber-700 border border-amber-200 px-2.5 py-1 rounded-lg font-medium">
                       {spec}
                     </span>
@@ -736,22 +873,88 @@ function MatchConfirmation({ userEmail, userFirstName, matchedAdvisor, onRestart
             )}
 
             {/* Fee info */}
-            {matchedAdvisor.fee_description && (
+            {currentMatch.fee_description && (
               <div className="bg-slate-50 rounded-xl p-3 mb-4 flex items-start gap-2">
                 <Icon name="coins" size={14} className="text-slate-400 shrink-0 mt-0.5" />
-                <p className="text-xs text-slate-600 leading-relaxed">{matchedAdvisor.fee_description}</p>
+                <p className="text-xs text-slate-600 leading-relaxed">{currentMatch.fee_description}</p>
               </div>
             )}
 
             {/* CTA */}
             <Link
-              href={`/advisor/${matchedAdvisor.slug}`}
+              href={`/advisor/${currentMatch.slug}`}
               className="flex items-center justify-center gap-2 w-full py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl transition-all shadow-sm hover:shadow-md text-sm"
             >
               View Full Profile
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
             </Link>
           </div>
+        </div>
+      )}
+
+      {/* Previously matched advisors */}
+      {allMatches.length > 1 && (
+        <div>
+          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Previous Matches</p>
+          <div className="space-y-2">
+            {allMatches.slice(0, -1).reverse().map((advisor) => (
+              <Link
+                key={advisor.id}
+                href={`/advisor/${advisor.slug}`}
+                className="flex items-center gap-3 p-3 bg-slate-50 border border-slate-200 rounded-xl hover:bg-slate-100 transition-colors"
+              >
+                <Image
+                  src={advisor.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(advisor.name)}&size=80&background=f59e0b&color=fff&bold=true`}
+                  alt={advisor.name}
+                  width={40}
+                  height={40}
+                  className="rounded-lg object-cover w-10 h-10 shrink-0"
+                />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-slate-800 truncate">{advisor.name}</p>
+                  <p className="text-xs text-slate-500">{typeLabel(advisor.type)}{advisor.location_display ? ` \u2022 ${advisor.location_display}` : ""}</p>
+                </div>
+                <div className="flex items-center gap-1 text-xs text-amber-500 font-semibold shrink-0">
+                  <span>{advisor.rating}</span>
+                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Rematch button */}
+      {currentMatch && !noMoreMatches && (
+        <button
+          onClick={onRematch}
+          disabled={rematching}
+          className="w-full py-3 border-2 border-dashed border-slate-300 rounded-xl text-sm font-semibold text-slate-600 hover:border-amber-400 hover:text-amber-700 hover:bg-amber-50/50 transition-all disabled:opacity-50"
+        >
+          {rematching ? (
+            <span className="flex items-center justify-center gap-2">
+              <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+              Finding another advisor...
+            </span>
+          ) : (
+            <span className="flex items-center justify-center gap-2">
+              <Icon name="refresh-cw" size={14} />
+              Match me with a different advisor
+            </span>
+          )}
+        </button>
+      )}
+
+      {noMoreMatches && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-center">
+          <p className="text-sm font-semibold text-amber-800 mb-1">You&apos;ve seen all available matches</p>
+          <p className="text-xs text-amber-600">We&apos;ve matched you with every advisor available for your criteria. Browse our full directory for more options.</p>
+        </div>
+      )}
+
+      {submitError && (
+        <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700 text-center">
+          {submitError}
         </div>
       )}
 
@@ -762,16 +965,16 @@ function MatchConfirmation({ userEmail, userFirstName, matchedAdvisor, onRestart
           What happens next, {userFirstName}:
         </h3>
         <ol className="space-y-3">
-          {(matchedAdvisor
+          {(currentMatch
             ? [
-                `${matchedAdvisor.name} has been notified of your enquiry`,
+                `${currentMatch.name} has been notified of your enquiry`,
                 `They'll reach out to you at ${userEmail} within 24 hours`,
-                "You'll book a free initial consultation — no obligation",
+                "You'll book a free initial consultation \u2014 no obligation",
               ]
             : [
                 "We'll find the best-matched advisor for your situation",
                 `They'll reach out to you at ${userEmail} within 24 hours`,
-                "You'll book a free initial consultation — no obligation",
+                "You'll book a free initial consultation \u2014 no obligation",
               ]
           ).map((step, i) => (
             <li key={i} className="flex items-start gap-3">

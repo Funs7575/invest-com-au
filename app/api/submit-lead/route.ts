@@ -35,7 +35,6 @@ function resolveAdvisorTypes(need: string, context?: string[]): string[] {
 
   const types = new Set(baseTypes);
 
-  // Add more specific types based on context selections
   for (const c of context) {
     if (c === "first_home" || c === "refinance") types.add("mortgage_broker");
     if (c === "investment") { types.add("mortgage_broker"); types.add("property_advisor"); }
@@ -52,6 +51,10 @@ function resolveAdvisorTypes(need: string, context?: string[]): string[] {
   return [...types];
 }
 
+/* ─── Common select fields for matching queries ─── */
+
+const MATCH_SELECT = "id, slug, name, firm_name, type, photo_url, rating, review_count, location_display, location_state, specialties, fee_description, verified, bio, email";
+
 /**
  * POST /api/submit-lead
  *
@@ -60,6 +63,10 @@ function resolveAdvisorTypes(need: string, context?: string[]): string[] {
  *   2. Location (user's state)
  *   3. Rating & reviews (highest first)
  *   4. Round-robin fairness (skip advisors who got a lead in the last 24h)
+ *   5. Exclusion list (skip advisors the user was already matched with)
+ *
+ * Supports `exclude_advisor_ids` to avoid re-matching the same advisor.
+ * Supports `rematch: true` to request a different advisor (skips lead creation emails on rematch).
  *
  * Returns matched advisor profile for immediate display.
  */
@@ -81,6 +88,8 @@ export async function POST(request: NextRequest) {
     professional_id,
     broker_slug,
     source_page,
+    exclude_advisor_ids,
+    rematch,
   } = body as {
     lead_type?: string;
     user_email?: string;
@@ -91,6 +100,8 @@ export async function POST(request: NextRequest) {
     professional_id?: number;
     broker_slug?: string;
     source_page?: string;
+    exclude_advisor_ids?: number[];
+    rematch?: boolean;
   };
 
   if (!lead_type || !["advisor", "platform"].includes(lead_type)) {
@@ -110,6 +121,7 @@ export async function POST(request: NextRequest) {
 
   const utm = extractUtm(body);
   const supabase = createAdminClient();
+  const normalizedEmail = (user_email as string).toLowerCase().trim();
 
   // ─── Platform leads (unchanged) ───
   if (lead_type === "platform") {
@@ -128,7 +140,7 @@ export async function POST(request: NextRequest) {
       .insert({
         lead_type,
         broker_id,
-        user_email: (user_email as string).toLowerCase().trim(),
+        user_email: normalizedEmail,
         user_name: typeof user_name === "string" ? user_name.trim() : null,
         user_phone: typeof user_phone === "string" ? user_phone.trim() : null,
         source_page: typeof source_page === "string" ? source_page : null,
@@ -155,71 +167,124 @@ export async function POST(request: NextRequest) {
   const advisorTypes = resolveAdvisorTypes(need, context);
   const userState = typeof user_location_state === "string" ? user_location_state : null;
 
+  // Build exclusion list: client-provided + any advisors this email was matched with in last 7 days
+  const excludeIds = new Set<number>(Array.isArray(exclude_advisor_ids) ? exclude_advisor_ids : []);
+
+  // Look up recent matches for this email to prevent cross-system duplicates
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  const { data: recentLeads } = await supabase
+    .from("leads")
+    .select("professional_id")
+    .eq("user_email", normalizedEmail)
+    .eq("lead_type", "advisor")
+    .gte("created_at", sevenDaysAgo)
+    .not("professional_id", "is", null);
+
+  if (recentLeads) {
+    for (const rl of recentLeads) {
+      if (rl.professional_id) excludeIds.add(rl.professional_id as number);
+    }
+  }
+
+  // Also check professional_leads (direct enquiry system) for cross-system dedup
+  const { data: recentEnquiries } = await supabase
+    .from("professional_leads")
+    .select("professional_id")
+    .eq("user_email", normalizedEmail)
+    .gte("created_at", sevenDaysAgo);
+
+  if (recentEnquiries) {
+    for (const re of recentEnquiries) {
+      if (re.professional_id) excludeIds.add(re.professional_id as number);
+    }
+  }
+
+  const excludeArray = [...excludeIds];
+
   // 24h ago for round-robin fairness
   const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
-  // Try matching: same state, no recent lead, best rated
+  // Helper: build match query with exclusion
+  function buildMatchQuery(opts: { state?: string; roundRobin?: boolean; anyType?: boolean }) {
+    let query = supabase
+      .from("professionals")
+      .select(MATCH_SELECT)
+      .eq("status", "active")
+      .eq("verified", true);
+
+    if (opts.state) query = query.eq("location_state", opts.state);
+    if (!opts.anyType) query = query.in("type", advisorTypes);
+    if (opts.roundRobin) query = query.or(`last_lead_date.is.null,last_lead_date.lt.${oneDayAgo}`);
+    if (excludeArray.length > 0) {
+      // Exclude already-matched advisors
+      for (const id of excludeArray) {
+        query = query.neq("id", id);
+      }
+    }
+
+    return query
+      .order("rating", { ascending: false })
+      .order("review_count", { ascending: false })
+      .limit(1);
+  }
+
+  // Try matching with 4-level fallback
   let matchedAdvisor: Record<string, unknown> | null = null;
 
-  // Attempt 1: Same state + not recently matched
+  // Attempt 1: Same state + round-robin + exclusion
   if (userState) {
-    const { data } = await supabase
-      .from("professionals")
-      .select("id, slug, name, firm_name, type, photo_url, rating, review_count, location_display, location_state, specialties, fee_description, verified, bio, email")
-      .eq("status", "active")
-      .eq("verified", true)
-      .eq("location_state", userState)
-      .in("type", advisorTypes)
-      .or(`last_lead_date.is.null,last_lead_date.lt.${oneDayAgo}`)
-      .order("rating", { ascending: false })
-      .order("review_count", { ascending: false })
-      .limit(1);
-
+    const { data } = await buildMatchQuery({ state: userState, roundRobin: true });
     if (data && data.length > 0) matchedAdvisor = data[0];
   }
 
-  // Attempt 2: Same state, any advisor (ignore round-robin)
+  // Attempt 2: Same state + exclusion (ignore round-robin)
   if (!matchedAdvisor && userState) {
-    const { data } = await supabase
-      .from("professionals")
-      .select("id, slug, name, firm_name, type, photo_url, rating, review_count, location_display, location_state, specialties, fee_description, verified, bio, email")
-      .eq("status", "active")
-      .eq("verified", true)
-      .eq("location_state", userState)
-      .in("type", advisorTypes)
-      .order("rating", { ascending: false })
-      .order("review_count", { ascending: false })
-      .limit(1);
-
+    const { data } = await buildMatchQuery({ state: userState });
     if (data && data.length > 0) matchedAdvisor = data[0];
   }
 
-  // Attempt 3: Any state, best available
+  // Attempt 3: Any state + exclusion
   if (!matchedAdvisor) {
-    const { data } = await supabase
-      .from("professionals")
-      .select("id, slug, name, firm_name, type, photo_url, rating, review_count, location_display, location_state, specialties, fee_description, verified, bio, email")
-      .eq("status", "active")
-      .eq("verified", true)
-      .in("type", advisorTypes)
-      .order("rating", { ascending: false })
-      .order("review_count", { ascending: false })
-      .limit(1);
-
+    const { data } = await buildMatchQuery({});
     if (data && data.length > 0) matchedAdvisor = data[0];
   }
 
-  // Attempt 4: Absolute fallback — any advisor
+  // Attempt 4: Any advisor + exclusion (any type)
   if (!matchedAdvisor) {
+    const { data } = await buildMatchQuery({ anyType: true });
+    if (data && data.length > 0) matchedAdvisor = data[0];
+  }
+
+  // Attempt 5: Absolute fallback — if all advisors excluded, tell user
+  if (!matchedAdvisor && excludeArray.length > 0) {
+    // Try without exclusions to see if there are ANY advisors
     const { data } = await supabase
       .from("professionals")
-      .select("id, slug, name, firm_name, type, photo_url, rating, review_count, location_display, location_state, specialties, fee_description, verified, bio, email")
+      .select(MATCH_SELECT)
       .eq("status", "active")
       .eq("verified", true)
       .order("rating", { ascending: false })
       .limit(1);
 
-    if (data && data.length > 0) matchedAdvisor = data[0];
+    if (!data || data.length === 0) {
+      // No advisors at all
+      return NextResponse.json({
+        success: true,
+        lead_id: null,
+        matched: null,
+        no_more_matches: true,
+        message: "We've matched you with all available advisors in this category. Browse our full directory for more options.",
+      });
+    }
+
+    // All advisors already matched — return signal to frontend
+    return NextResponse.json({
+      success: true,
+      lead_id: null,
+      matched: null,
+      no_more_matches: true,
+      message: "You've been matched with all available advisors for your criteria. Browse our full directory for more options.",
+    });
   }
 
   const matchedId = matchedAdvisor ? (matchedAdvisor.id as number) : null;
@@ -246,7 +311,7 @@ export async function POST(request: NextRequest) {
     .insert({
       lead_type,
       professional_id: resolvedProfessionalId,
-      user_email: (user_email as string).toLowerCase().trim(),
+      user_email: normalizedEmail,
       user_name: typeof user_name === "string" ? user_name.trim() : null,
       user_phone: typeof user_phone === "string" ? user_phone.trim() : null,
       user_location_state: userState,
@@ -273,9 +338,9 @@ export async function POST(request: NextRequest) {
       .insert({
         professional_id: resolvedProfessionalId,
         user_name: typeof user_name === "string" ? user_name.trim() : null,
-        user_email: (user_email as string).toLowerCase().trim(),
+        user_email: normalizedEmail,
         user_phone: typeof user_phone === "string" ? user_phone.trim() : null,
-        message: `Auto-matched via quiz. Need: ${need}. Context: ${(context || []).join(", ")}. Budget: ${user_intent?.budget || "not specified"}.`,
+        message: `Auto-matched via quiz${rematch ? " (rematch)" : ""}. Need: ${need}. Context: ${(context || []).join(", ")}. Budget: ${user_intent?.budget || "not specified"}.`,
         source_page: typeof source_page === "string" ? source_page : null,
         utm_source: (utm as UtmParams).utm_source ?? null,
         utm_medium: (utm as UtmParams).utm_medium ?? null,
@@ -293,27 +358,28 @@ export async function POST(request: NextRequest) {
   }
 
   // Send email notifications (non-blocking)
+  // On rematch, notify the new advisor but don't re-send the user confirmation
   if (matchedAdvisor && matchedAdvisor.email) {
-    // Notify the advisor
     sendNewLeadNotification(
       matchedAdvisor.email as string,
       matchedAdvisor.name as string,
       typeof user_name === "string" ? user_name.trim() : "A potential client",
-      (user_email as string).toLowerCase().trim(),
+      normalizedEmail,
       typeof user_phone === "string" ? user_phone.trim() : null,
       userState,
       need,
       context,
     ).catch(() => null);
 
-    // Confirm to the user
-    sendLeadConfirmationToUser(
-      (user_email as string).toLowerCase().trim(),
-      typeof user_name === "string" ? user_name.trim() : "there",
-      matchedAdvisor.name as string,
-      matchedAdvisor.type as string,
-      (matchedAdvisor.firm_name as string) || null,
-    ).catch(() => null);
+    if (!rematch) {
+      sendLeadConfirmationToUser(
+        normalizedEmail,
+        typeof user_name === "string" ? user_name.trim() : "there",
+        matchedAdvisor.name as string,
+        matchedAdvisor.type as string,
+        (matchedAdvisor.firm_name as string) || null,
+      ).catch(() => null);
+    }
   }
 
   log.info("Lead submitted with match", {
@@ -321,6 +387,8 @@ export async function POST(request: NextRequest) {
     matched_advisor_id: matchedId,
     advisor_types: advisorTypes,
     state: userState,
+    rematch: !!rematch,
+    excluded: excludeArray.length,
   });
 
   return NextResponse.json({
@@ -328,6 +396,7 @@ export async function POST(request: NextRequest) {
     lead_id: lead?.id,
     matched: matchedAdvisor
       ? {
+          id: matchedAdvisor.id,
           slug: matchedAdvisor.slug,
           name: matchedAdvisor.name,
           firm_name: matchedAdvisor.firm_name || null,
@@ -341,5 +410,6 @@ export async function POST(request: NextRequest) {
           verified: matchedAdvisor.verified || false,
         }
       : null,
+    no_more_matches: false,
   });
 }
