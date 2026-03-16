@@ -56,10 +56,10 @@ const learnMenu = {
     { label: "Best ETFs in Australia", href: "/article/best-etfs-australia" },
   ],
   topics: [
-    { label: "Investing Basics", href: "/articles?topic=investing-basics" },
-    { label: "Tax & Super", href: "/articles?topic=tax-strategy" },
-    { label: "Property Investing", href: "/articles?topic=property" },
-    { label: "Crypto & Digital Assets", href: "/articles?topic=crypto" },
+    { label: "Investing Basics", href: "/articles?category=beginners" },
+    { label: "Tax & Super", href: "/articles?category=tax" },
+    { label: "Property Investing", href: "/articles?category=property" },
+    { label: "Crypto & Digital Assets", href: "/articles?category=crypto" },
   ],
   tools: [
     { label: "All Calculators", href: "/calculators" },
