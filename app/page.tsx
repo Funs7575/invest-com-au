@@ -327,8 +327,8 @@ export default async function HomePage() {
         </ScrollFadeIn>
       )}
 
-      {/* ═══════ 6. EOFY SEASONAL (March–July) ═══════ */}
-      {(() => {
+      {/* ═══════ 6. EOFY SEASONAL (March–July) — hidden ═══════ */}
+      {false && (() => {
         const month = new Date().getMonth();
         if (month < 2 || month > 6) return null;
         return (
