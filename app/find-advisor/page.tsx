@@ -50,6 +50,7 @@ const STORAGE_KEY = "invest_quiz_match";
 interface PersistedMatch {
   matchedAdvisors: MatchedAdvisor[];
   excludeIds: number[];
+  leadIds: number[];
   quizData: { intent: string; context: string[]; state: string; budget: string; firstName: string; email: string };
   timestamp: number;
 }
@@ -249,6 +250,7 @@ function FindAdvisorQuiz() {
   const [submitted, setSubmitted] = useState(false);
   const [matchedAdvisors, setMatchedAdvisors] = useState<MatchedAdvisor[]>([]);
   const [excludeIds, setExcludeIds] = useState<number[]>([]);
+  const [leadIds, setLeadIds] = useState<number[]>([]);
   const [noMoreMatches, setNoMoreMatches] = useState(false);
   const [rematching, setRematching] = useState(false);
   const [otpStage, setOtpStage] = useState<"idle" | "sending" | "sent" | "verifying">("idle");
@@ -261,6 +263,7 @@ function FindAdvisorQuiz() {
     if (saved && saved.matchedAdvisors.length > 0) {
       setMatchedAdvisors(saved.matchedAdvisors);
       setExcludeIds(saved.excludeIds);
+      setLeadIds(saved.leadIds ?? []);
       setSubmitted(true);
       setQuiz(prev => ({
         ...prev,
@@ -334,6 +337,7 @@ function FindAdvisorQuiz() {
         source_page: "/find-advisor",
         exclude_advisor_ids: isRematch ? excludeIds : [],
         rematch: isRematch,
+        prev_lead_ids: isRematch ? leadIds : [],
       }),
     });
     const data = await res.json();
@@ -396,12 +400,15 @@ function FindAdvisorQuiz() {
       const data = await submitMatch(false);
       if (data.matched) {
         const advisor = data.matched as MatchedAdvisor;
+        const initialLeadIds = data.lead_id ? [data.lead_id as number] : [];
         setMatchedAdvisors([advisor]);
         setExcludeIds([advisor.id]);
+        setLeadIds(initialLeadIds);
         // Persist to sessionStorage
         saveMatchToStorage({
           matchedAdvisors: [advisor],
           excludeIds: [advisor.id],
+          leadIds: initialLeadIds,
           quizData: {
             intent: quiz.intent || "",
             context: quiz.context,
@@ -437,12 +444,16 @@ function FindAdvisorQuiz() {
         const advisor = data.matched as MatchedAdvisor;
         const newAdvisors = [...matchedAdvisors, advisor];
         const newExclude = [...excludeIds, advisor.id];
+        // Only keep the new lead ID — previous ones were cancelled by the API
+        const newLeadIds = data.lead_id ? [data.lead_id as number] : [];
         setMatchedAdvisors(newAdvisors);
         setExcludeIds(newExclude);
+        setLeadIds(newLeadIds);
         // Update persistence
         saveMatchToStorage({
           matchedAdvisors: newAdvisors,
           excludeIds: newExclude,
+          leadIds: newLeadIds,
           quizData: {
             intent: quiz.intent || "",
             context: quiz.context,

@@ -90,6 +90,7 @@ export async function POST(request: NextRequest) {
     source_page,
     exclude_advisor_ids,
     rematch,
+    prev_lead_ids,
   } = body as {
     lead_type?: string;
     user_email?: string;
@@ -102,6 +103,7 @@ export async function POST(request: NextRequest) {
     source_page?: string;
     exclude_advisor_ids?: number[];
     rematch?: boolean;
+    prev_lead_ids?: number[];
   };
 
   if (!lead_type || !["advisor", "platform"].includes(lead_type)) {
@@ -312,6 +314,39 @@ export async function POST(request: NextRequest) {
     if (advisor) {
       const tierFees: Record<string, number> = { gold: 6000, silver: 8000, bronze: 10000 };
       revenue_value_cents = tierFees[(advisor.advisor_tier as string) || "bronze"] ?? 10000;
+    }
+  }
+
+  // On rematch: cancel previous leads so only the new advisor has an active lead
+  if (rematch && Array.isArray(prev_lead_ids) && prev_lead_ids.length > 0) {
+    const validPrevIds = prev_lead_ids.filter((id) => typeof id === "number");
+    if (validPrevIds.length > 0) {
+      // Cancel in leads table
+      supabase
+        .from("leads")
+        .update({ status: "replaced" })
+        .in("id", validPrevIds)
+        .eq("user_email", normalizedEmail) // safety: only cancel leads belonging to this user
+        .then(() => null, () => null);
+
+      // Also cancel in professional_leads (advisor dashboard) — match by lead's professional_id
+      supabase
+        .from("leads")
+        .select("professional_id")
+        .in("id", validPrevIds)
+        .eq("user_email", normalizedEmail)
+        .then(({ data: prevLeads }) => {
+          if (!prevLeads) return;
+          const prevProfIds = prevLeads.map((l) => l.professional_id).filter(Boolean) as number[];
+          if (prevProfIds.length > 0) {
+            supabase
+              .from("professional_leads")
+              .update({ status: "replaced" })
+              .in("professional_id", prevProfIds)
+              .eq("user_email", normalizedEmail)
+              .then(() => null, () => null);
+          }
+        }, () => null);
     }
   }
 
