@@ -96,7 +96,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(data || []);
   }
 
-  let q = supabase.from("advisor_articles").select("id, title, slug, excerpt, category, tags, author_name, author_firm, author_slug, cover_image_url, published_at, view_count, professionals!advisor_articles_professional_id_fkey(name, slug, photo_url, verified, type)").eq("status", "published").order("published_at", { ascending: false });
+  const q = supabase.from("advisor_articles").select("id, title, slug, excerpt, category, tags, author_name, author_firm, author_slug, cover_image_url, published_at, view_count, professionals!advisor_articles_professional_id_fkey(name, slug, photo_url, verified, type)").eq("status", "published").order("published_at", { ascending: false });
   const { data } = await q.limit(50);
   return NextResponse.json(data || []);
 }

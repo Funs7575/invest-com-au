@@ -66,7 +66,7 @@ export function scoreQuizResults(
 
   // Apply subtle sponsor boost: a featured_partner in positions 1-5
   // gets swapped up by 1 position (preserves trust -- max 1 slot)
-  let boosted = applyQuizSponsorBoost(scored, 1, 5);
+  const boosted = applyQuizSponsorBoost(scored, 1, 5);
 
   // Apply marketplace campaign boost: if a quiz-boost campaign winner
   // exists in the scored list (positions 1-5), swap them up by 1 position

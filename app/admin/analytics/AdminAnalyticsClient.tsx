@@ -433,7 +433,7 @@ export default function AdminAnalyticsClient() {
 
         // Look up broker names
         const brokerSlugs = Object.keys(brokerSpend);
-        let brokerNameLookup: Record<string, string> = {};
+        const brokerNameLookup: Record<string, string> = {};
         if (brokerSlugs.length > 0) {
           const { data: brokerNames } = await supabase
             .from("brokers")

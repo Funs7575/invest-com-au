@@ -15,7 +15,7 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next()
   }
 
-  let response = NextResponse.next({ request })
+  const response = NextResponse.next({ request })
 
   // ── Security headers ─────────────────────────────────────────
   response.headers.set('X-Frame-Options', 'SAMEORIGIN')

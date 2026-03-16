@@ -62,7 +62,7 @@ export default function ReportsPage() {
       setLoading(false);
     };
     load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [days, dateMode, customFrom, customTo]);
 
   // Filtered stats based on drill-down
