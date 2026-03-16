@@ -3,7 +3,6 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import type { Broker, BrokerBenchmark, BenchmarkDimension } from "@/lib/types";
-import { useSubscription } from "@/lib/hooks/useSubscription";
 import { trackEvent } from "@/lib/tracking";
 import Icon from "@/components/Icon";
 
@@ -234,7 +233,6 @@ function PercentileBar({
 }
 
 export default function BenchmarkClient({ brokers }: { brokers: Broker[] }) {
-  const { isPro, loading: authLoading } = useSubscription();
   const [selectedSlug, setSelectedSlug] = useState("");
   const [compareSlug, setCompareSlug] = useState("");
 
@@ -296,36 +294,22 @@ export default function BenchmarkClient({ brokers }: { brokers: Broker[] }) {
           </div>
           <div>
             <label className="block text-sm font-semibold text-slate-700 mb-1">
-              Compare With{" "}
-              {!isPro && !authLoading && (
-                <span className="text-xs text-amber-600 font-normal">(Pro)</span>
-              )}
+              Compare With
             </label>
-            {isPro ? (
-              <select
-                value={compareSlug}
-                onChange={(e) => setCompareSlug(e.target.value)}
-                className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700"
-              >
-                <option value="">None</option>
-                {brokers
-                  .filter((b) => b.slug !== selectedSlug)
-                  .map((b) => (
-                    <option key={b.slug} value={b.slug}>
-                      {b.name}
-                    </option>
-                  ))}
-              </select>
-            ) : (
-              <div className="relative">
-                <select
-                  disabled
-                  className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm opacity-50 cursor-not-allowed"
-                >
-                  <option>Compare (coming soon)</option>
-                </select>
-              </div>
-            )}
+            <select
+              value={compareSlug}
+              onChange={(e) => setCompareSlug(e.target.value)}
+              className="w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-blue-700 focus:ring-1 focus:ring-blue-700"
+            >
+              <option value="">None</option>
+              {brokers
+                .filter((b) => b.slug !== selectedSlug)
+                .map((b) => (
+                  <option key={b.slug} value={b.slug}>
+                    {b.name}
+                  </option>
+                ))}
+            </select>
           </div>
         </div>
 
@@ -431,62 +415,18 @@ export default function BenchmarkClient({ brokers }: { brokers: Broker[] }) {
         {selected && (
           <div className="bg-white border border-slate-200 rounded-2xl p-6 mb-8">
             <h2 className="text-lg font-extrabold mb-4">Dimension Breakdown</h2>
-            {isPro || authLoading ? (
-              <div className="space-y-4">
-                {DIMENSIONS.map((d) => (
-                  <PercentileBar
-                    key={d.key}
-                    value={selected.percentiles[d.key]}
-                    color={selected.color}
-                    label={d.label}
-                    rank={selected.ranks[d.key]}
-                    total={brokers.length}
-                  />
-                ))}
-              </div>
-            ) : (
-              <>
-                <div className="space-y-4 mb-4">
-                  {DIMENSIONS.slice(0, 2).map((d) => (
-                    <PercentileBar
-                      key={d.key}
-                      value={selected.percentiles[d.key]}
-                      color={selected.color}
-                      label={d.label}
-                      rank={selected.ranks[d.key]}
-                      total={brokers.length}
-                    />
-                  ))}
-                </div>
-                <div className="relative">
-                  <div className="space-y-4 blur-sm pointer-events-none select-none">
-                    {DIMENSIONS.slice(2).map((d) => (
-                      <PercentileBar
-                        key={d.key}
-                        value={selected.percentiles[d.key]}
-                        color={selected.color}
-                        label={d.label}
-                        rank={selected.ranks[d.key]}
-                        total={brokers.length}
-                      />
-                    ))}
-                  </div>
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="bg-white/90 border border-slate-200 rounded-xl p-5 text-center shadow-lg">
-                      <p className="text-sm font-bold text-slate-900 mb-1">
-                        Unlock Full Breakdown
-                      </p>
-                      <p className="text-xs text-slate-500 mb-3">
-                        See all 6 dimensions with detailed rankings
-                      </p>
-                      <span className="inline-block px-4 py-2 bg-slate-200 text-slate-500 text-sm font-bold rounded-lg cursor-default">
-                        Coming Soon
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </>
-            )}
+            <div className="space-y-4">
+              {DIMENSIONS.map((d) => (
+                <PercentileBar
+                  key={d.key}
+                  value={selected.percentiles[d.key]}
+                  color={selected.color}
+                  label={d.label}
+                  rank={selected.ranks[d.key]}
+                  total={brokers.length}
+                />
+              ))}
+            </div>
           </div>
         )}
 

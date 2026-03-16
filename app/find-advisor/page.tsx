@@ -251,6 +251,7 @@ function FindAdvisorQuiz() {
   const [excludeIds, setExcludeIds] = useState<number[]>([]);
   const [noMoreMatches, setNoMoreMatches] = useState(false);
   const [rematching, setRematching] = useState(false);
+  const [currentLeadId, setCurrentLeadId] = useState<number | null>(null);
 
   // Restore persisted match on mount
   useEffect(() => {
@@ -352,6 +353,7 @@ function FindAdvisorQuiz() {
 
     try {
       const data = await submitMatch(false);
+      if (data.lead_id) setCurrentLeadId(data.lead_id);
       if (data.matched) {
         const advisor = data.matched as MatchedAdvisor;
         setMatchedAdvisors([advisor]);
@@ -498,6 +500,7 @@ function FindAdvisorQuiz() {
             noMoreMatches={noMoreMatches}
             onRestart={restart}
             submitError={submitError}
+            leadId={currentLeadId}
           />
         )}
 
@@ -763,10 +766,31 @@ function typeLabel(type: string): string {
   return type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches, onRematch, rematching, noMoreMatches, onRestart, submitError }: {
+function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches, onRematch, rematching, noMoreMatches, onRestart, submitError, leadId }: {
   userEmail: string; userFirstName: string; currentMatch: MatchedAdvisor | null; allMatches: MatchedAdvisor[];
   onRematch: () => void; rematching: boolean; noMoreMatches: boolean; onRestart: () => void; submitError: string | null;
+  leadId: number | null;
 }) {
+  const [confirming, setConfirming] = useState(false);
+  const [confirmed, setConfirmed] = useState(false);
+
+  const handleConfirm = async () => {
+    if (!leadId || confirmed || confirming) return;
+    setConfirming(true);
+    try {
+      await fetch("/api/submit-lead/confirm", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ lead_id: leadId, user_email: userEmail }),
+      });
+      setConfirmed(true);
+    } catch {
+      // Silent fail — cron will auto-notify within 15 min
+    } finally {
+      setConfirming(false);
+    }
+  };
+
   return (
     <div className="space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Success header */}
@@ -880,14 +904,42 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
               </div>
             )}
 
-            {/* CTA */}
-            <Link
-              href={`/advisor/${currentMatch.slug}`}
-              className="flex items-center justify-center gap-2 w-full py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl transition-all shadow-sm hover:shadow-md text-sm"
-            >
-              View Full Profile
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-            </Link>
+            {/* CTAs */}
+            <div className="space-y-2.5">
+              {/* Confirm interest */}
+              {leadId && !confirmed && (
+                <button
+                  onClick={handleConfirm}
+                  disabled={confirming}
+                  className="flex items-center justify-center gap-2 w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition-all shadow-sm text-sm disabled:opacity-60"
+                >
+                  {confirming ? (
+                    <>
+                      <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>
+                      Confirming...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                      Yes, connect me with {currentMatch.name.split(" ")[0]}
+                    </>
+                  )}
+                </button>
+              )}
+              {confirmed && (
+                <div className="flex items-center justify-center gap-2 w-full py-3 bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold rounded-xl text-sm">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                  Connected! {currentMatch.name.split(" ")[0]} has been notified.
+                </div>
+              )}
+              <Link
+                href={`/advisor/${currentMatch.slug}`}
+                className={`flex items-center justify-center gap-2 w-full py-3 font-bold rounded-xl transition-all shadow-sm hover:shadow-md text-sm ${confirmed ? "bg-amber-500 hover:bg-amber-600 text-white" : "bg-white border-2 border-amber-400 text-amber-700 hover:bg-amber-50"}`}
+              >
+                View Full Profile
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+              </Link>
+            </div>
           </div>
         </div>
       )}

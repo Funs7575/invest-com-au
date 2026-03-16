@@ -477,24 +477,76 @@ export default function AdvisorPortalPage() {
             </div>
 
             {/* Credit balance banner */}
-            <div className="bg-gradient-to-r from-violet-600 to-violet-800 rounded-xl p-4 mb-6 text-white flex items-center justify-between">
-              <div>
-                <p className="text-[0.65rem] font-semibold uppercase tracking-wider text-violet-200">Lead Credit Balance</p>
-                <p className="text-2xl font-extrabold">${((advisor?.credit_balance_cents || 0) / 100).toFixed(0)}</p>
-                <p className="text-[0.62rem] text-violet-200 mt-0.5">
-                  {(advisor?.free_leads_used || 0) < 2
-                    ? `${2 - (advisor?.free_leads_used || 0)} free leads remaining`
-                    : `~${Math.floor((advisor?.credit_balance_cents || 0) / (advisor?.lead_price_cents || 3980))} leads remaining`
-                  }
-                </p>
-              </div>
-              <button
-                onClick={() => setView("billing")}
-                className="px-5 py-2.5 bg-white text-violet-700 text-sm font-bold rounded-lg hover:bg-violet-50 transition-colors shrink-0"
-              >
-                Buy Credits
-              </button>
-            </div>
+            {(() => {
+              const balance = advisor?.credit_balance_cents || 0;
+              const leadPrice = advisor?.lead_price_cents || 3980;
+              const freeLeadsUsed = advisor?.free_leads_used || 0;
+              const hasFreeLeads = freeLeadsUsed < 2;
+              const leadsRemaining = hasFreeLeads ? (2 - freeLeadsUsed) : Math.floor(balance / leadPrice);
+              const isLow = !hasFreeLeads && leadsRemaining <= 2 && balance > 0;
+              const isEmpty = !hasFreeLeads && balance <= 0;
+
+              return (
+                <>
+                  {/* Critical: empty balance warning */}
+                  {isEmpty && (
+                    <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-4 flex items-start gap-3">
+                      <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+                        <Icon name="alert-triangle" size={16} className="text-red-600" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-bold text-red-800">Credit balance empty — leads paused</p>
+                        <p className="text-xs text-red-600 mt-0.5">You won't receive new enquiries until you top up your credit balance.</p>
+                      </div>
+                      <button
+                        onClick={() => setView("billing")}
+                        className="px-3 py-1.5 bg-red-600 text-white text-xs font-bold rounded-lg hover:bg-red-700 transition-colors shrink-0"
+                      >
+                        Top Up Now
+                      </button>
+                    </div>
+                  )}
+                  {/* Warning: low balance */}
+                  {isLow && (
+                    <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4 flex items-start gap-3">
+                      <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+                        <Icon name="alert-triangle" size={16} className="text-amber-600" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm font-bold text-amber-800">Low credit balance — {leadsRemaining} lead{leadsRemaining !== 1 ? "s" : ""} remaining</p>
+                        <p className="text-xs text-amber-600 mt-0.5">Top up soon to avoid missing incoming enquiries.</p>
+                      </div>
+                      <button
+                        onClick={() => setView("billing")}
+                        className="px-3 py-1.5 bg-amber-500 text-white text-xs font-bold rounded-lg hover:bg-amber-600 transition-colors shrink-0"
+                      >
+                        Top Up
+                      </button>
+                    </div>
+                  )}
+                  <div className={`rounded-xl p-4 mb-6 text-white flex items-center justify-between ${isEmpty ? "bg-gradient-to-r from-red-700 to-red-900" : isLow ? "bg-gradient-to-r from-amber-500 to-amber-700" : "bg-gradient-to-r from-violet-600 to-violet-800"}`}>
+                    <div>
+                      <p className={`text-[0.65rem] font-semibold uppercase tracking-wider ${isEmpty ? "text-red-200" : isLow ? "text-amber-100" : "text-violet-200"}`}>Lead Credit Balance</p>
+                      <p className="text-2xl font-extrabold">${(balance / 100).toFixed(0)}</p>
+                      <p className={`text-[0.62rem] mt-0.5 ${isEmpty ? "text-red-200" : isLow ? "text-amber-100" : "text-violet-200"}`}>
+                        {hasFreeLeads
+                          ? `${2 - freeLeadsUsed} free leads remaining`
+                          : isEmpty
+                            ? "No credits — top up to receive leads"
+                            : `~${leadsRemaining} leads remaining`
+                        }
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setView("billing")}
+                      className="px-5 py-2.5 bg-white text-sm font-bold rounded-lg hover:opacity-90 transition-opacity shrink-0 text-slate-800"
+                    >
+                      Buy Credits
+                    </button>
+                  </div>
+                </>
+              );
+            })()}
 
             {/* ── Profile Completeness ── */}
             {profileCompleteness && profileCompleteness.score < 100 && (

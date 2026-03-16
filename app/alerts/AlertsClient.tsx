@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import type { RegulatoryAlert } from "@/lib/types";
-import { useSubscription } from "@/lib/hooks/useSubscription";
 
 const ALERT_TYPES = [
   { key: "all", label: "All" },
@@ -27,7 +26,6 @@ const TYPE_STYLES: Record<string, string> = {
 };
 
 export default function AlertsClient({ alerts }: { alerts: RegulatoryAlert[] }) {
-  const { isPro } = useSubscription();
   const [filter, setFilter] = useState("all");
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
@@ -123,38 +121,23 @@ export default function AlertsClient({ alerts }: { alerts: RegulatoryAlert[] }) 
                         <p className="text-sm text-slate-700 leading-relaxed">{alert.body}</p>
                       )}
 
-                      {/* Action items — Pro only for full detail */}
+                      {/* Action items */}
                       {alert.action_items && alert.action_items.length > 0 && (
                         <div>
                           <h4 className="text-xs font-bold text-slate-700 mb-2">Action Items</h4>
-                          {isPro ? (
-                            <ul className="space-y-1.5">
-                              {alert.action_items.map((item, i) => (
-                                <li key={i} className="text-xs text-slate-600 flex items-start gap-2">
-                                  <span className="text-emerald-500 mt-0.5 shrink-0">✓</span>
-                                  <span>
-                                    {item.text}
-                                    {item.url && (
-                                      <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-slate-700 hover:underline ml-1">→</a>
-                                    )}
-                                  </span>
-                                </li>
-                              ))}
-                            </ul>
-                          ) : (
-                            <div className="relative">
-                              <div className="blur-sm pointer-events-none select-none space-y-1">
-                                {alert.action_items.slice(0, 3).map((item, i) => (
-                                  <p key={i} className="text-xs text-slate-400">✓ {item.text}</p>
-                                ))}
-                              </div>
-                              <div className="absolute inset-0 flex items-center justify-center">
-                                <span className="px-3 py-1.5 bg-slate-200 text-slate-500 text-xs font-bold rounded-lg cursor-default">
-                                  Coming soon
+                          <ul className="space-y-1.5">
+                            {alert.action_items.map((item, i) => (
+                              <li key={i} className="text-xs text-slate-600 flex items-start gap-2">
+                                <span className="text-emerald-500 mt-0.5 shrink-0">✓</span>
+                                <span>
+                                  {item.text}
+                                  {item.url && (
+                                    <a href={item.url} target="_blank" rel="noopener noreferrer" className="text-slate-700 hover:underline ml-1">→</a>
+                                  )}
                                 </span>
-                              </div>
-                            </div>
-                          )}
+                              </li>
+                            ))}
+                          </ul>
                         </div>
                       )}
 
