@@ -91,6 +91,8 @@ export async function POST(request: NextRequest) {
     exclude_advisor_ids,
     rematch,
     prev_lead_ids,
+    dry_run,
+    confirm_advisor_id,
   } = body as {
     lead_type?: string;
     user_email?: string;
@@ -104,6 +106,10 @@ export async function POST(request: NextRequest) {
     exclude_advisor_ids?: number[];
     rematch?: boolean;
     prev_lead_ids?: number[];
+    /** If true: run matching logic and return advisor, but skip all DB writes and emails */
+    dry_run?: boolean;
+    /** If set: skip matching, create lead directly for this advisor ID */
+    confirm_advisor_id?: number;
   };
 
   if (!lead_type || !["advisor", "platform"].includes(lead_type)) {
@@ -178,6 +184,123 @@ export async function POST(request: NextRequest) {
   const context = user_intent?.context || [];
   const advisorTypes = resolveAdvisorTypes(need, context);
   const userState = typeof user_location_state === "string" ? user_location_state : null;
+
+  // ─── confirm_advisor_id fast-path ───
+  // User already previewed an advisor and clicked "Connect" — skip matching,
+  // fetch that specific advisor and proceed straight to lead creation.
+  if (confirm_advisor_id) {
+    const { data: confirmedAdvisor } = await supabase
+      .from("professionals")
+      .select(MATCH_SELECT)
+      .eq("id", confirm_advisor_id)
+      .eq("status", "active")
+      .single();
+
+    if (!confirmedAdvisor) {
+      return NextResponse.json({ error: "Advisor not found" }, { status: 404 });
+    }
+
+    // Fall through to lead creation with this advisor pre-resolved.
+    // We reassign matchedAdvisor below by jumping past the matching block.
+    // Use a goto-equivalent: wrap remainder in a labeled block isn't possible in TS,
+    // so we set a flag and skip the matching section entirely.
+    const resolvedAdvisor = confirmedAdvisor as Record<string, unknown>;
+    const resolvedId = confirm_advisor_id;
+
+    let revenue_value_cents_confirmed = 0;
+    const { data: tierData } = await supabase
+      .from("professionals")
+      .select("advisor_tier")
+      .eq("id", resolvedId)
+      .single();
+    if (tierData) {
+      const tierFees: Record<string, number> = { gold: 6000, silver: 8000, bronze: 10000 };
+      revenue_value_cents_confirmed = tierFees[(tierData.advisor_tier as string) || "bronze"] ?? 10000;
+    }
+
+    const { data: confirmedLead, error: confirmedLeadError } = await supabase
+      .from("leads")
+      .insert({
+        lead_type,
+        professional_id: resolvedId,
+        user_email: normalizedEmail,
+        user_name: typeof user_name === "string" ? user_name.trim() : null,
+        user_phone: typeof user_phone === "string" ? user_phone.trim() : null,
+        user_location_state: userState,
+        user_intent: user_intent ?? null,
+        revenue_value_cents: revenue_value_cents_confirmed,
+        source_page: typeof source_page === "string" ? source_page : null,
+        utm_source: (utm as UtmParams).utm_source ?? null,
+        utm_medium: (utm as UtmParams).utm_medium ?? null,
+        utm_campaign: (utm as UtmParams).utm_campaign ?? null,
+        status: "sent",
+        advisor_notified_at: new Date().toISOString(),
+      })
+      .select("id")
+      .single();
+
+    if (confirmedLeadError) {
+      log.error("Confirmed lead insert failed", { error: confirmedLeadError.message });
+      return NextResponse.json({ error: "Failed to save lead" }, { status: 500 });
+    }
+
+    supabase.from("professional_leads").insert({
+      professional_id: resolvedId,
+      user_name: typeof user_name === "string" ? user_name.trim() : null,
+      user_email: normalizedEmail,
+      user_phone: typeof user_phone === "string" ? user_phone.trim() : null,
+      message: `Auto-matched via quiz (confirmed). Need: ${need}. Context: ${(context || []).join(", ")}. Budget: ${user_intent?.budget || "not specified"}.`,
+      source_page: typeof source_page === "string" ? source_page : null,
+      utm_source: (utm as UtmParams).utm_source ?? null,
+      utm_medium: (utm as UtmParams).utm_medium ?? null,
+      utm_campaign: (utm as UtmParams).utm_campaign ?? null,
+      status: "new",
+    }).then(() => null, () => null);
+
+    supabase.from("professionals").update({ last_lead_date: new Date().toISOString() }).eq("id", resolvedId).then(() => null, () => null);
+
+    if (resolvedAdvisor.email) {
+      sendNewLeadNotification(
+        resolvedAdvisor.email as string,
+        resolvedAdvisor.name as string,
+        typeof user_name === "string" ? user_name.trim() : "A potential client",
+        normalizedEmail,
+        typeof user_phone === "string" ? user_phone.trim() : null,
+        userState,
+        need,
+        context,
+      ).catch(() => null);
+
+      sendLeadConfirmationToUser(
+        normalizedEmail,
+        typeof user_name === "string" ? user_name.trim() : "there",
+        resolvedAdvisor.name as string,
+        resolvedAdvisor.type as string,
+        (resolvedAdvisor.firm_name as string) || null,
+      ).catch(() => null);
+    }
+
+    log.info("Confirmed lead submitted", { lead_id: confirmedLead?.id, advisor_id: resolvedId });
+
+    return NextResponse.json({
+      success: true,
+      lead_id: confirmedLead?.id,
+      matched: {
+        id: resolvedAdvisor.id,
+        slug: resolvedAdvisor.slug,
+        name: resolvedAdvisor.name,
+        firm_name: resolvedAdvisor.firm_name,
+        type: resolvedAdvisor.type,
+        photo_url: resolvedAdvisor.photo_url,
+        rating: resolvedAdvisor.rating,
+        review_count: resolvedAdvisor.review_count,
+        location_display: resolvedAdvisor.location_display,
+        specialties: resolvedAdvisor.specialties,
+        fee_description: resolvedAdvisor.fee_description,
+        verified: resolvedAdvisor.verified,
+      },
+    });
+  }
 
   // Build exclusion list: client-provided + any advisors this email was matched with in last 7 days
   const excludeIds = new Set<number>(Array.isArray(exclude_advisor_ids) ? exclude_advisor_ids : []);
@@ -300,6 +423,31 @@ export async function POST(request: NextRequest) {
   }
 
   const matchedId = matchedAdvisor ? (matchedAdvisor.id as number) : null;
+
+  // ─── dry_run: return matched advisor without creating any lead or sending emails ───
+  if (dry_run) {
+    log.info("Dry-run match", { advisor_id: matchedId, excluded: excludeArray.length });
+    return NextResponse.json({
+      success: true,
+      lead_id: null,
+      matched: matchedAdvisor
+        ? {
+            id: matchedAdvisor.id,
+            slug: matchedAdvisor.slug,
+            name: matchedAdvisor.name,
+            firm_name: matchedAdvisor.firm_name,
+            type: matchedAdvisor.type,
+            photo_url: matchedAdvisor.photo_url,
+            rating: matchedAdvisor.rating,
+            review_count: matchedAdvisor.review_count,
+            location_display: matchedAdvisor.location_display,
+            specialties: matchedAdvisor.specialties,
+            fee_description: matchedAdvisor.fee_description,
+            verified: matchedAdvisor.verified,
+          }
+        : null,
+    });
+  }
 
   // Get advisor lead fee from tier
   let revenue_value_cents = 0;

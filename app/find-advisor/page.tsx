@@ -251,6 +251,8 @@ function FindAdvisorQuiz() {
   const [matchedAdvisors, setMatchedAdvisors] = useState<MatchedAdvisor[]>([]);
   const [excludeIds, setExcludeIds] = useState<number[]>([]);
   const [leadIds, setLeadIds] = useState<number[]>([]);
+  const [confirming, setConfirming] = useState(false);
+  const [confirmedAdvisorId, setConfirmedAdvisorId] = useState<number | null>(null);
   const [noMoreMatches, setNoMoreMatches] = useState(false);
   const [rematching, setRematching] = useState(false);
   const [otpStage, setOtpStage] = useState<"idle" | "sending" | "sent" | "verifying">("idle");
@@ -319,7 +321,8 @@ function FindAdvisorQuiz() {
     update({ step: 4 });
   };
 
-  const submitMatch = async (isRematch: boolean = false) => {
+  /** Find a matching advisor WITHOUT creating a lead or sending any emails (dry run). */
+  const findMatch = async (excludeList: number[] = []) => {
     const res = await fetch("/api/submit-lead", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -335,9 +338,33 @@ function FindAdvisorQuiz() {
           budget: quiz.budget,
         },
         source_page: "/find-advisor",
-        exclude_advisor_ids: isRematch ? excludeIds : [],
-        rematch: isRematch,
-        prev_lead_ids: isRematch ? leadIds : [],
+        exclude_advisor_ids: excludeList,
+        dry_run: true,
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Something went wrong.");
+    return data;
+  };
+
+  /** Confirm a previewed advisor: creates the lead and sends advisor email. */
+  const confirmMatch = async (advisorId: number) => {
+    const res = await fetch("/api/submit-lead", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        lead_type: "advisor",
+        user_email: quiz.email.trim(),
+        user_name: quiz.firstName.trim(),
+        user_phone: quiz.phone.trim() || undefined,
+        user_location_state: quiz.state,
+        user_intent: {
+          need: intentToNeed(quiz.intent!),
+          context: quiz.context,
+          budget: quiz.budget,
+        },
+        source_page: "/find-advisor",
+        confirm_advisor_id: advisorId,
       }),
     });
     const data = await res.json();
@@ -392,23 +419,22 @@ function FindAdvisorQuiz() {
       setOtpStage("sent");
       return;
     }
-    // OTP verified — now submit the match
+    // OTP verified — find a match preview (no lead created, no email sent yet)
     setSubmitting(true);
     setSubmitError(null);
 
     try {
-      const data = await submitMatch(false);
+      const data = await findMatch([]);
       if (data.matched) {
         const advisor = data.matched as MatchedAdvisor;
-        const initialLeadIds = data.lead_id ? [data.lead_id as number] : [];
         setMatchedAdvisors([advisor]);
         setExcludeIds([advisor.id]);
-        setLeadIds(initialLeadIds);
-        // Persist to sessionStorage
+        setLeadIds([]);
+        setConfirmedAdvisorId(null);
         saveMatchToStorage({
           matchedAdvisors: [advisor],
           excludeIds: [advisor.id],
-          leadIds: initialLeadIds,
+          leadIds: [],
           quizData: {
             intent: quiz.intent || "",
             context: quiz.context,
@@ -430,12 +456,44 @@ function FindAdvisorQuiz() {
     }
   };
 
+  const handleConfirm = async (advisor: MatchedAdvisor) => {
+    setConfirming(true);
+    setSubmitError(null);
+    try {
+      const data = await confirmMatch(advisor.id);
+      if (data.lead_id) {
+        setConfirmedAdvisorId(advisor.id);
+        setLeadIds([data.lead_id as number]);
+        saveMatchToStorage({
+          matchedAdvisors,
+          excludeIds,
+          leadIds: [data.lead_id as number],
+          quizData: {
+            intent: quiz.intent || "",
+            context: quiz.context,
+            state: quiz.state,
+            budget: quiz.budget,
+            firstName: quiz.firstName,
+            email: quiz.email,
+          },
+          timestamp: Date.now(),
+        });
+        trackEvent("find_advisor_confirmed", { intent: quiz.intent, advisor: advisor.slug }, "/find-advisor");
+      }
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : "Couldn't confirm. Please try again.");
+    } finally {
+      setConfirming(false);
+    }
+  };
+
   const handleRematch = async () => {
     setRematching(true);
     setSubmitError(null);
 
     try {
-      const data = await submitMatch(true);
+      // dry_run: find next advisor preview without creating any lead or sending emails
+      const data = await findMatch(excludeIds);
 
       if (data.no_more_matches) {
         setNoMoreMatches(true);
@@ -444,16 +502,13 @@ function FindAdvisorQuiz() {
         const advisor = data.matched as MatchedAdvisor;
         const newAdvisors = [...matchedAdvisors, advisor];
         const newExclude = [...excludeIds, advisor.id];
-        // Only keep the new lead ID — previous ones were cancelled by the API
-        const newLeadIds = data.lead_id ? [data.lead_id as number] : [];
         setMatchedAdvisors(newAdvisors);
         setExcludeIds(newExclude);
-        setLeadIds(newLeadIds);
-        // Update persistence
+        setConfirmedAdvisorId(null); // new preview — not yet confirmed
         saveMatchToStorage({
           matchedAdvisors: newAdvisors,
           excludeIds: newExclude,
-          leadIds: newLeadIds,
+          leadIds, // unchanged — no new lead yet
           quizData: {
             intent: quiz.intent || "",
             context: quiz.context,
@@ -557,6 +612,9 @@ function FindAdvisorQuiz() {
             noMoreMatches={noMoreMatches}
             onRestart={restart}
             submitError={submitError}
+            onConfirm={handleConfirm}
+            confirming={confirming}
+            confirmedAdvisorId={confirmedAdvisorId}
           />
         )}
 
@@ -904,10 +962,12 @@ function typeLabel(type: string): string {
   return type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches, onRematch, rematching, noMoreMatches, onRestart, submitError }: {
+function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches, onRematch, rematching, noMoreMatches, onRestart, submitError, onConfirm, confirming, confirmedAdvisorId }: {
   userEmail: string; userFirstName: string; currentMatch: MatchedAdvisor | null; allMatches: MatchedAdvisor[];
   onRematch: () => void; rematching: boolean; noMoreMatches: boolean; onRestart: () => void; submitError: string | null;
+  onConfirm: (advisor: MatchedAdvisor) => void; confirming: boolean; confirmedAdvisorId: number | null;
 }) {
+  const isCurrentConfirmed = !!(currentMatch && confirmedAdvisorId === currentMatch.id);
   return (
     <div className="space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Success header */}
@@ -918,11 +978,13 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
           </svg>
         </div>
         <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-1">
-          {currentMatch ? "You\u2019ve been matched!" : "Request Received!"}
+          {isCurrentConfirmed ? "You\u2019re connected!" : currentMatch ? "We found a match!" : "Request Received!"}
         </h1>
         <p className="text-sm text-slate-500">
-          {currentMatch
-            ? `Great news ${userFirstName} \u2014 we found the perfect advisor for you`
+          {isCurrentConfirmed
+            ? `${currentMatch!.name} has been notified and will be in touch shortly`
+            : currentMatch
+            ? `${userFirstName}, review this advisor and confirm if you\u2019d like to connect`
             : "We'll match you with a verified professional shortly"}
         </p>
         {allMatches.length > 1 && (
@@ -1022,13 +1084,39 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
             )}
 
             {/* CTA */}
-            <Link
-              href={`/advisor/${currentMatch.slug}`}
-              className="flex items-center justify-center gap-2 w-full py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl transition-all shadow-sm hover:shadow-md text-sm"
-            >
-              View Full Profile
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-            </Link>
+            {isCurrentConfirmed ? (
+              <div className="space-y-2">
+                <div className="flex items-center justify-center gap-2 w-full py-3 bg-emerald-100 text-emerald-700 font-bold rounded-xl text-sm">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
+                  Request sent — {currentMatch.name} will be in touch
+                </div>
+                <Link
+                  href={`/advisor/${currentMatch.slug}`}
+                  className="flex items-center justify-center gap-2 w-full py-2.5 border border-slate-200 rounded-xl text-sm text-slate-600 hover:bg-slate-50 transition-colors"
+                >
+                  View Full Profile
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <button
+                  onClick={() => onConfirm(currentMatch)}
+                  disabled={confirming}
+                  className="flex items-center justify-center gap-2 w-full py-3 bg-amber-500 hover:bg-amber-600 disabled:opacity-60 text-white font-bold rounded-xl transition-all shadow-sm hover:shadow-md text-sm"
+                >
+                  {confirming ? "Sending request…" : `Connect with ${currentMatch.name}`}
+                  {!confirming && <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}
+                </button>
+                <Link
+                  href={`/advisor/${currentMatch.slug}`}
+                  className="flex items-center justify-center gap-2 w-full py-2.5 border border-slate-200 rounded-xl text-sm text-slate-600 hover:bg-slate-50 transition-colors"
+                >
+                  View Full Profile first
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -1065,8 +1153,8 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
         </div>
       )}
 
-      {/* Rematch button */}
-      {currentMatch && !noMoreMatches && (
+      {/* Rematch button — hidden once user has confirmed an advisor */}
+      {currentMatch && !noMoreMatches && !isCurrentConfirmed && (
         <button
           onClick={onRematch}
           disabled={rematching}
