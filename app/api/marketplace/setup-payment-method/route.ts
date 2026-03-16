@@ -16,8 +16,8 @@ export async function POST(request: NextRequest) {
     // Auth via cookies
     const cookieHeader = request.headers.get("cookie") || "";
     const supabaseAuth = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
       {
         cookies: {
           getAll() {
@@ -117,8 +117,8 @@ export async function PATCH(request: NextRequest) {
   try {
     const cookieHeader = request.headers.get("cookie") || "";
     const supabaseAuth = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
       {
         cookies: {
           getAll() {

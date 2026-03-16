@@ -11,8 +11,8 @@ async function getBrokerSlug(request: NextRequest): Promise<{ slug: string; acco
   const cookieHeader = request.headers.get("cookie") || "";
   const { createServerClient } = await import("@supabase/ssr");
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
     { cookies: { getAll() { return cookieHeader.split(";").map(c => { const [name, ...v] = c.trim().split("="); return { name, value: v.join("=") }; }); } } }
   );
   const { data: { user } } = await supabase.auth.getUser();

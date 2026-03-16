@@ -17,8 +17,8 @@ export async function POST(request: NextRequest) {
     const cookieHeader = request.headers.get("cookie") || "";
     const { createServerClient } = await import("@supabase/ssr");
     const supabaseAuth = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      process.env.NEXT_PUBLIC_SUPABASE_URL || "",
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "",
       {
         cookies: {
           getAll() {
