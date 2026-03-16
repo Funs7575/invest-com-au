@@ -318,7 +318,7 @@ const VERTICALS: VerticalConfig[] = [
       { label: "SMSF", href: "/best/smsf", description: "Self-managed super fund platforms with low admin costs and flexibility" },
     ],
     tools: [
-      { label: "Compare Super Funds", href: "/compare?category=super", icon: "bar-chart" },
+      { label: "Compare Super Funds", href: "/compare/super", icon: "bar-chart" },
       { label: "Find Your Match", href: "/quiz", icon: "target" },
       { label: "Fee Impact Calculator", href: "/fee-impact", icon: "calculator" },
     ],

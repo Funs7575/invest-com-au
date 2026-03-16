@@ -1041,7 +1041,7 @@ For REIT and ETF investors, monitor your portfolio allocation and rebalance if p
       { heading: "Switch via MyGov (Easiest Method)", body: "The simplest way to switch super is through your MyGov account linked to the ATO. Log in, go to Super, select 'Transfer super', choose the fund to transfer from and to, and submit. The transfer typically takes 3-5 business days. You can also use the new fund's rollover form. Make sure you only consolidate into one fund to avoid paying multiple sets of fees." },
     ],
     relatedBrokerFilter: (b) => b.platform_type === "super_fund",
-    relatedBestPages: [{ label: "Best Super Funds", href: "/best/super-funds" }, { label: "Super Fund Comparison", href: "/compare?category=super" }],
+    relatedBestPages: [{ label: "Best Super Funds", href: "/best/super-funds" }, { label: "Super Fund Comparison", href: "/compare/super" }],
     faqs: [
       { question: "Can I lose money by switching super funds?", answer: "You could lose insurance cover if you don't arrange new cover before cancelling. Investment-wise, switching doesn't trigger CGT as super is a tax-sheltered environment." },
       { question: "Should I consolidate multiple super accounts?", answer: "Generally yes — multiple accounts mean multiple sets of fees and insurance premiums. Consolidate into the best-performing, lowest-fee fund. Exception: keep separate accounts if one has grandfathered insurance terms." },

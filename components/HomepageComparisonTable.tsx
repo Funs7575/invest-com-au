@@ -186,9 +186,9 @@ export default function HomepageComparisonTable({
                 key={broker.id}
                 className={`group hover:bg-slate-50/80 transition-colors ${
                   isCampaignWinner
-                    ? "bg-blue-50/30 border-l-2 border-l-blue-400"
+                    ? "bg-amber-50/30 border-l-2 border-l-amber-400"
                     : isSponsored(broker)
-                    ? "bg-blue-50/30 border-l-2 border-l-blue-400"
+                    ? "bg-amber-50/30 border-l-2 border-l-amber-400"
                     : isTopRated
                     ? "bg-amber-50/40 border-l-2 border-l-amber-400"
                     : editorPicks[broker.slug]
