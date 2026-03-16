@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { ProgressBar } from "@/components/ui/ProgressBar";
@@ -160,13 +161,53 @@ function intentToNeed(intent: Intent): string {
   return { buy_property: "mortgage", grow_wealth: "planning", protect_assets: "insurance", business_tax: "smsf" }[intent] ?? "planning";
 }
 
+const NEED_TO_INTENT: Record<string, Intent> = {
+  mortgage: "buy_property",
+  buyers: "buy_property",
+  insurance: "protect_assets",
+  planning: "grow_wealth",
+  tax: "business_tax",
+  wealth: "grow_wealth",
+  smsf: "business_tax",
+  estate: "protect_assets",
+  agedcare: "protect_assets",
+  property: "buy_property",
+  crypto: "business_tax",
+};
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function FindAdvisorPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gradient-to-b from-slate-50 via-white to-white py-8 md:py-16"><div className="max-w-xl mx-auto px-4 text-center text-slate-400 text-sm">Loading quiz...</div></div>}>
+      <FindAdvisorQuiz />
+    </Suspense>
+  );
+}
+
+function FindAdvisorQuiz() {
+  const searchParams = useSearchParams();
+  const needParam = searchParams.get("need");
+  const prefilledIntent = needParam ? NEED_TO_INTENT[needParam] || null : null;
+
   const [quiz, setQuiz] = useState<QuizState>({
-    step: 1, intent: null, context: [], state: "", budget: "",
+    step: prefilledIntent ? 2 : 1,
+    intent: prefilledIntent,
+    context: [], state: "", budget: "",
     firstName: "", email: "", phone: "", consent: false,
   });
+
+  // Handle late searchParams changes (e.g. client-side navigation)
+  const [appliedNeed, setAppliedNeed] = useState<string | null>(needParam);
+  useEffect(() => {
+    if (needParam && needParam !== appliedNeed) {
+      const intent = NEED_TO_INTENT[needParam] || null;
+      if (intent) {
+        setQuiz(prev => ({ ...prev, step: 2, intent, context: [] }));
+        setAppliedNeed(needParam);
+      }
+    }
+  }, [needParam, appliedNeed]);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
