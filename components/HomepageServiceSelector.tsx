@@ -4,13 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 
-/**
- * Life-events concierge widget — progressive disclosure.
- * Step 1: Pick a broad life event (4 options, not 13).
- * Step 2: See the 2-3 relevant professionals for that event.
- * Solves Hick's Law / choice paralysis on the homepage.
- */
-
 interface Professional {
   label: string;
   desc: string;
@@ -26,6 +19,7 @@ interface LifeEvent {
   icon: string;
   color: string;
   bgColor: string;
+  selectedBg: string;
   professionals: Professional[];
 }
 
@@ -36,7 +30,8 @@ const LIFE_EVENTS: LifeEvent[] = [
     subtitle: "Home loan, buyers agent, insurance",
     icon: "home",
     color: "text-rose-600",
-    bgColor: "bg-rose-50 border-rose-200 hover:border-rose-300",
+    bgColor: "bg-white border-slate-200 hover:border-amber-300 hover:bg-amber-50/30",
+    selectedBg: "bg-rose-50 border-rose-300 shadow-sm",
     professionals: [
       { label: "Mortgage Broker", desc: "Compare rates from 30+ lenders — free, paid by lenders", needKey: "mortgage", icon: "landmark", color: "bg-rose-50 text-rose-600" },
       { label: "Buyer's Agent", desc: "Independent negotiation, off-market access, due diligence", needKey: "buyers", icon: "search", color: "bg-teal-50 text-teal-600" },
@@ -48,12 +43,13 @@ const LIFE_EVENTS: LifeEvent[] = [
     label: "Grow Wealth",
     subtitle: "Financial planning, tax, investing",
     icon: "trending-up",
-    color: "text-violet-600",
-    bgColor: "bg-violet-50 border-violet-200 hover:border-violet-300",
+    color: "text-amber-600",
+    bgColor: "bg-white border-slate-200 hover:border-amber-300 hover:bg-amber-50/30",
+    selectedBg: "bg-amber-50 border-amber-300 shadow-sm",
     professionals: [
-      { label: "Financial Planner", desc: "Retirement, super, wealth building — personalised strategy", needKey: "planning", icon: "trending-up", color: "bg-violet-50 text-violet-600" },
-      { label: "Tax Agent", desc: "Minimise tax on investments, capital gains, and deductions", needKey: "tax", icon: "calculator", color: "bg-amber-50 text-amber-600" },
-      { label: "Wealth Manager", desc: "Portfolio management for high-net-worth investors", needKey: "wealth", icon: "briefcase", color: "bg-indigo-50 text-indigo-600" },
+      { label: "Financial Planner", desc: "Retirement, super, wealth building — personalised strategy", needKey: "planning", icon: "trending-up", color: "bg-amber-50 text-amber-600" },
+      { label: "Tax Agent", desc: "Minimise tax on investments, capital gains, and deductions", needKey: "tax", icon: "calculator", color: "bg-slate-100 text-slate-600" },
+      { label: "Wealth Manager", desc: "Portfolio management for high-net-worth investors", needKey: "wealth", icon: "briefcase", color: "bg-emerald-50 text-emerald-600" },
     ],
   },
   {
@@ -62,7 +58,8 @@ const LIFE_EVENTS: LifeEvent[] = [
     subtitle: "Estate, insurance, aged care",
     icon: "shield-check",
     color: "text-emerald-600",
-    bgColor: "bg-emerald-50 border-emerald-200 hover:border-emerald-300",
+    bgColor: "bg-white border-slate-200 hover:border-amber-300 hover:bg-amber-50/30",
+    selectedBg: "bg-emerald-50 border-emerald-300 shadow-sm",
     professionals: [
       { label: "Estate Planner", desc: "Wills, trusts, powers of attorney, succession planning", needKey: "estate", icon: "file-text", color: "bg-slate-100 text-slate-600" },
       { label: "Insurance Broker", desc: "Life, income protection, business, and key person cover", needKey: "insurance", icon: "shield", color: "bg-sky-50 text-sky-600" },
@@ -74,10 +71,11 @@ const LIFE_EVENTS: LifeEvent[] = [
     label: "Business & Specialist",
     subtitle: "SMSF, crypto, debt, property investment",
     icon: "building",
-    color: "text-amber-600",
-    bgColor: "bg-amber-50 border-amber-200 hover:border-amber-300",
+    color: "text-slate-700",
+    bgColor: "bg-white border-slate-200 hover:border-amber-300 hover:bg-amber-50/30",
+    selectedBg: "bg-slate-50 border-slate-300 shadow-sm",
     professionals: [
-      { label: "SMSF Accountant", desc: "Setup, compliance, audit, and investment strategy", needKey: "smsf", icon: "building", color: "bg-blue-50 text-blue-600" },
+      { label: "SMSF Accountant", desc: "Setup, compliance, audit, and investment strategy", needKey: "smsf", icon: "building", color: "bg-amber-50 text-amber-600" },
       { label: "Property Advisor", desc: "Investment property strategy and portfolio building", needKey: "property", icon: "home", color: "bg-emerald-50 text-emerald-600" },
       { label: "Crypto Advisor", desc: "Portfolio strategy, DeFi, and tax planning", needKey: "crypto", icon: "bitcoin", color: "bg-orange-50 text-orange-600" },
     ],
@@ -91,51 +89,55 @@ export default function HomepageServiceSelector() {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 mb-1 text-center">
-        What&apos;s your goal?
+      <p className="text-[0.65rem] md:text-xs text-amber-600 text-center uppercase tracking-widest font-bold mb-1.5">Find the right professional</p>
+      <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 mb-1.5 text-center">
+        What do you need help with?
       </h2>
-      <p className="text-sm text-slate-500 mb-5 text-center">
-        Pick a goal and we&apos;ll show you the right professionals.
+      <p className="text-sm text-slate-500 mb-6 text-center">
+        Select a goal and we&apos;ll show you the right professionals for your situation.
       </p>
 
       {/* Step 1: Life event cards */}
-      <div className="grid grid-cols-2 gap-2 md:gap-3">
+      <div className="grid grid-cols-2 gap-2.5 md:gap-3">
         {LIFE_EVENTS.map((event) => (
           <button
             key={event.key}
             onClick={() => setSelected(selected === event.key ? null : event.key)}
-            className={`text-left border rounded-xl p-3 md:p-4 transition-all ${
+            className={`text-left border-2 rounded-2xl p-3.5 md:p-4 transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 ${
               selected === event.key
-                ? `${event.bgColor} ring-2 ring-offset-1 ring-slate-300 shadow-sm`
-                : "bg-white border-slate-200 hover:border-slate-300 hover:shadow-sm"
+                ? event.selectedBg
+                : event.bgColor
             }`}
           >
-            <div className="flex items-center gap-2 mb-1">
-              <Icon name={event.icon} size={18} className={selected === event.key ? event.color : "text-slate-400"} />
-              <span className="text-sm md:text-base font-bold text-slate-900">{event.label}</span>
+            <div className="flex items-center gap-2 mb-1.5">
+              <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${selected === event.key ? "bg-white/70" : "bg-slate-100"}`}>
+                <Icon name={event.icon} size={16} className={selected === event.key ? event.color : "text-slate-500"} />
+              </div>
+              <span className="text-sm md:text-base font-bold text-slate-900 leading-tight">{event.label}</span>
             </div>
-            <p className="text-[0.65rem] md:text-xs text-slate-500 leading-snug">{event.subtitle}</p>
+            <p className="text-[0.65rem] md:text-xs text-slate-500 leading-snug pl-9">{event.subtitle}</p>
           </button>
         ))}
       </div>
 
-      {/* Step 2: Reveal professionals (progressive disclosure) */}
+      {/* Step 2: Reveal professionals */}
       {activeEvent && (
         <div className="mt-4 space-y-2 animate-in fade-in slide-in-from-top-2 duration-200">
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2.5 px-1">Recommended professionals</p>
           {activeEvent.professionals.map((pro) => (
             <Link
               key={pro.needKey}
               href={`/find-advisor?need=${pro.needKey}`}
-              className="flex items-center gap-3 p-3 md:p-3.5 bg-white border border-slate-200 rounded-xl hover:border-violet-300 hover:shadow-sm transition-all group"
+              className="flex items-center gap-3 p-3 md:p-3.5 bg-white border border-slate-200 rounded-xl hover:border-amber-300 hover:shadow-sm hover:bg-amber-50/20 transition-all group"
             >
-              <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${pro.color.split(" ")[0]}`}>
+              <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${pro.color.split(" ")[0]}`}>
                 <Icon name={pro.icon} size={18} className={pro.color.split(" ")[1]} />
               </div>
               <div className="flex-1 min-w-0">
                 <span className="text-sm font-semibold text-slate-800 block">{pro.label}</span>
-                <span className="text-[0.62rem] md:text-xs text-slate-500 block mt-0.5">{pro.desc}</span>
+                <span className="text-[0.62rem] md:text-xs text-slate-500 block mt-0.5 leading-snug">{pro.desc}</span>
               </div>
-              <span className="text-xs font-semibold text-violet-600 shrink-0 group-hover:translate-x-0.5 transition-transform">
+              <span className="text-xs font-bold text-amber-600 shrink-0 group-hover:translate-x-0.5 transition-transform">
                 Match &rarr;
               </span>
             </Link>
@@ -143,13 +145,14 @@ export default function HomepageServiceSelector() {
         </div>
       )}
 
-      <div className="text-center mt-5">
+      <div className="text-center mt-6">
         <Link
           href="/find-advisor"
-          className="inline-flex items-center gap-1.5 text-sm font-semibold text-violet-600 hover:text-violet-700 transition-colors"
+          className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-amber-500 text-white text-sm font-bold rounded-xl hover:bg-amber-600 shadow-sm hover:shadow-md transition-all"
         >
-          Not sure? Take the full quiz <span>&rarr;</span>
+          Take the Full Matching Quiz &rarr;
         </Link>
+        <p className="text-xs text-slate-400 mt-2">Free · 4 questions · 60 seconds</p>
       </div>
     </div>
   );
