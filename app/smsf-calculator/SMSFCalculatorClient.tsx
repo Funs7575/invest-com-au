@@ -155,10 +155,10 @@ export default function SMSFCalculatorClient() {
   return (
     <div className="py-0">
       {/* Hero */}
-      <div className="bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white py-8 md:py-14 px-4">
+      <div className="bg-gradient-to-br from-amber-500 via-amber-600 to-amber-800 text-white py-8 md:py-14 px-4">
         <div className="container-custom max-w-3xl text-center">
           <h1 className="text-xl md:text-3xl font-extrabold mb-2">Is a Self-Managed Super Fund right for you?</h1>
-          <p className="text-sm md:text-base text-blue-100">Enter your super details below — we&apos;ll compare your current fund against running an SMSF.</p>
+          <p className="text-sm md:text-base text-amber-100">Enter your super details below — we&apos;ll compare your current fund against running an SMSF.</p>
           <div className="mt-3"><SocialProofCounter variant="badge" /></div>
         </div>
       </div>
@@ -176,12 +176,12 @@ export default function SMSFCalculatorClient() {
                   type="number"
                   value={balance}
                   onChange={e => setBalance(Math.max(0, parseInt(e.target.value) || 0))}
-                  className="w-full pl-8 pr-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 outline-none"
+                  className="w-full pl-8 pr-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 outline-none"
                 />
               </div>
               <div className="flex gap-1.5 mt-2">
                 {[100_000, 200_000, 300_000, 500_000, 1_000_000].map(v => (
-                  <button key={v} onClick={() => setBalance(v)} className={`text-[0.56rem] px-2 py-1 rounded-full font-semibold transition-all ${balance === v ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
+                  <button key={v} onClick={() => setBalance(v)} className={`text-[0.56rem] px-2 py-1 rounded-full font-semibold transition-all ${balance === v ? "bg-amber-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
                     {v >= 1_000_000 ? `$${v / 1_000_000}M` : `$${v / 1000}k`}
                   </button>
                 ))}
@@ -197,7 +197,7 @@ export default function SMSFCalculatorClient() {
                   type="number"
                   value={annualContribution}
                   onChange={e => setAnnualContribution(Math.max(0, parseInt(e.target.value) || 0))}
-                  className="w-full pl-8 pr-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 outline-none"
+                  className="w-full pl-8 pr-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 outline-none"
                 />
               </div>
               <p className="text-[0.6rem] text-slate-400 mt-1">Concessional cap $30,000/yr (2024-25)</p>
@@ -212,13 +212,13 @@ export default function SMSFCalculatorClient() {
                   step="0.1"
                   value={currentFeePercent}
                   onChange={e => setCurrentFeePercent(Math.max(0, Math.min(5, parseFloat(e.target.value) || 0)))}
-                  className="w-full pr-8 pl-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 outline-none"
+                  className="w-full pr-8 pl-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 outline-none"
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">%</span>
               </div>
               <div className="flex gap-1.5 mt-2">
                 {[0.5, 0.8, 1.0, 1.2, 1.5, 2.0].map(v => (
-                  <button key={v} onClick={() => setCurrentFeePercent(v)} className={`text-[0.56rem] px-2 py-1 rounded-full font-semibold transition-all ${currentFeePercent === v ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
+                  <button key={v} onClick={() => setCurrentFeePercent(v)} className={`text-[0.56rem] px-2 py-1 rounded-full font-semibold transition-all ${currentFeePercent === v ? "bg-amber-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
                     {v}%
                   </button>
                 ))}
@@ -234,13 +234,13 @@ export default function SMSFCalculatorClient() {
                   step="0.5"
                   value={expectedReturn}
                   onChange={e => setExpectedReturn(Math.max(0, Math.min(15, parseFloat(e.target.value) || 0)))}
-                  className="w-full pr-8 pl-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 outline-none"
+                  className="w-full pr-8 pl-4 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 outline-none"
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">%</span>
               </div>
               <div className="flex gap-1.5 mt-2">
                 {[5, 6, 7, 8, 9, 10].map(v => (
-                  <button key={v} onClick={() => setExpectedReturn(v)} className={`text-[0.56rem] px-2 py-1 rounded-full font-semibold transition-all ${expectedReturn === v ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
+                  <button key={v} onClick={() => setExpectedReturn(v)} className={`text-[0.56rem] px-2 py-1 rounded-full font-semibold transition-all ${expectedReturn === v ? "bg-amber-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
                     {v}%
                   </button>
                 ))}
@@ -255,13 +255,13 @@ export default function SMSFCalculatorClient() {
                   type="number"
                   value={yearsToRetirement}
                   onChange={e => setYearsToRetirement(Math.max(1, Math.min(50, parseInt(e.target.value) || 0)))}
-                  className="w-full pl-4 pr-12 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 outline-none"
+                  className="w-full pl-4 pr-12 py-3 text-lg font-bold border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500/20 focus:border-amber-400 outline-none"
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 font-semibold">years</span>
               </div>
               <div className="flex gap-1.5 mt-2">
                 {[5, 10, 15, 20, 25, 30].map(v => (
-                  <button key={v} onClick={() => setYearsToRetirement(v)} className={`text-[0.56rem] px-2 py-1 rounded-full font-semibold transition-all ${yearsToRetirement === v ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
+                  <button key={v} onClick={() => setYearsToRetirement(v)} className={`text-[0.56rem] px-2 py-1 rounded-full font-semibold transition-all ${yearsToRetirement === v ? "bg-amber-500 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
                     {v}yr
                   </button>
                 ))}
@@ -271,7 +271,7 @@ export default function SMSFCalculatorClient() {
 
           <button
             onClick={handleCalculate}
-            className="w-full mt-5 px-6 py-3.5 bg-blue-600 text-white text-base font-bold rounded-xl hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl"
+            className="w-full mt-5 px-6 py-3.5 bg-amber-500 text-white text-base font-bold rounded-xl hover:bg-amber-600 transition-all shadow-lg hover:shadow-xl"
           >
             Compare SMSF vs Current Fund →
           </button>
