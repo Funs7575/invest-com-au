@@ -127,13 +127,6 @@ export const GLOSSARY_ENTRIES: GlossaryEntry[] = [
       "An order to buy or sell only at a specific price (or better). You control the price, but the trade may not happen if the price isn't reached.",
     category: "Share Trading",
   },
-  {
-    term: "Dollar Cost Averaging",
-    slug: "dollar-cost-averaging",
-    definition:
-      "Investing a fixed amount at regular intervals (e.g. $500/month) regardless of price. Reduces the impact of market volatility over time.",
-    category: "Strategy",
-  },
 
   // ─── Tax & Compliance ───
   {
@@ -704,6 +697,228 @@ export const GLOSSARY_ENTRIES: GlossaryEntry[] = [
     definition:
       "How quickly and easily an asset can be converted to cash without significantly affecting its price. ASX blue chips and major ETFs are highly liquid; property and unlisted investments are illiquid.",
     category: "General",
+  },
+
+  // ─── General Investing (new) ───
+  {
+    term: "Dollar-Cost Averaging",
+    slug: "dollar-cost-averaging",
+    definition:
+      "Investing a fixed amount at regular intervals regardless of price, automatically buying more units when prices are low and fewer when high. Removes emotion from timing decisions.",
+    category: "General",
+  },
+  {
+    term: "Asset Allocation",
+    slug: "asset-allocation",
+    definition:
+      "How you divide your portfolio across different asset classes — shares, bonds, property, cash. Your allocation should reflect your goals and risk tolerance.",
+    category: "General",
+  },
+  {
+    term: "Passive Investing",
+    slug: "passive-investing",
+    definition:
+      "An investment approach that tracks a market index rather than trying to beat it. Typically done through ETFs. Lower fees and historically outperforms most active managers over the long term.",
+    category: "General",
+  },
+  {
+    term: "Active Investing",
+    slug: "active-investing",
+    definition:
+      "Picking individual shares or timing the market to try to outperform a benchmark. Higher fees and most active fund managers underperform their index over 10+ years.",
+    category: "General",
+  },
+  {
+    term: "Portfolio Rebalancing",
+    slug: "portfolio-rebalancing",
+    definition:
+      "Adjusting your portfolio back to your target allocation after market movements shift the weights. E.g. if shares rise to 75% of your portfolio but your target is 70%, you sell some shares to rebalance.",
+    category: "General",
+  },
+  {
+    term: "Managed Fund",
+    slug: "managed-fund",
+    definition:
+      "A pooled investment where a professional fund manager makes investment decisions on behalf of investors. Unlike ETFs, most managed funds are not listed on the ASX and are bought/sold at end-of-day prices.",
+    category: "General",
+  },
+  {
+    term: "Infrastructure Fund",
+    slug: "infrastructure-fund",
+    definition:
+      "A fund that invests in physical infrastructure assets like toll roads, airports, ports, and utilities. Typically offers stable, inflation-linked income streams. Examples: APA Group, Transurban, IFT.",
+    category: "General",
+  },
+
+  // ─── Share Trading (new) ───
+  {
+    term: "Listed Investment Company",
+    slug: "listed-investment-company",
+    definition:
+      "An ASX-listed company that holds a portfolio of investments. Like an ETF but structured as a company. Trades at a premium or discount to its net asset value (NAV). Examples: AFI, MLT, ARG.",
+    category: "Share Trading",
+  },
+  {
+    term: "Net Asset Value",
+    slug: "net-asset-value",
+    definition:
+      "The per-unit value of a fund's assets minus liabilities. For ETFs, the share price trades close to NAV. For LICs, the share price can trade at a premium or discount to NAV.",
+    category: "Share Trading",
+  },
+  {
+    term: "Earnings Per Share",
+    slug: "earnings-per-share",
+    definition:
+      "A company's net profit divided by the number of shares on issue. Higher EPS generally means the company is more profitable. Used to calculate the P/E ratio.",
+    category: "Share Trading",
+  },
+  {
+    term: "Price-to-Book Ratio",
+    slug: "price-to-book-ratio",
+    definition:
+      "A company's share price divided by its book value per share (assets minus liabilities). A ratio below 1 may indicate the shares are undervalued relative to assets.",
+    category: "Share Trading",
+  },
+  {
+    term: "Return on Equity",
+    slug: "return-on-equity",
+    definition:
+      "How much profit a company generates for each dollar of shareholder equity. A higher ROE generally means management is using capital efficiently. Look for sustained ROE above 15%.",
+    category: "Share Trading",
+  },
+  {
+    term: "Economic Moat",
+    slug: "economic-moat",
+    definition:
+      "A sustainable competitive advantage that protects a company's profits from competitors. Coined by Warren Buffett. Examples: brand strength (CBA), switching costs (Xero), cost advantages (Woolworths).",
+    category: "Share Trading",
+  },
+  {
+    term: "Value Investing",
+    slug: "value-investing",
+    definition:
+      "Buying shares that appear underpriced relative to their intrinsic value — often measured by P/E, P/B, or dividend yield. Made famous by Warren Buffett and Benjamin Graham.",
+    category: "Share Trading",
+  },
+  {
+    term: "Growth Investing",
+    slug: "growth-investing",
+    definition:
+      "Focusing on companies expected to grow earnings faster than average, often reinvesting profits rather than paying dividends. Examples: tech stocks, small-cap innovators. Higher risk, higher potential return.",
+    category: "Share Trading",
+  },
+  {
+    term: "Ex-Dividend Date",
+    slug: "ex-dividend-date",
+    definition:
+      "The date from which new buyers are no longer entitled to receive the upcoming dividend. If you buy shares on or after the ex-dividend date, you won't receive that payment. The share price typically falls by roughly the dividend amount on this date.",
+    category: "Share Trading",
+  },
+  {
+    term: "Rights Issue",
+    slug: "rights-issue",
+    definition:
+      "When a company offers existing shareholders the right to buy additional new shares at a discounted price, usually to raise capital. Shareholders can exercise the right (buy the shares) or sell the rights on the ASX.",
+    category: "Share Trading",
+  },
+  {
+    term: "Share Buyback",
+    slug: "share-buyback",
+    definition:
+      "When a company repurchases its own shares from the market, reducing the total shares on issue. Often signals management believes the shares are undervalued. Increases earnings per share for remaining shareholders.",
+    category: "Share Trading",
+  },
+
+  // ─── Super (new) ───
+  {
+    term: "Accumulation Phase",
+    slug: "accumulation-phase",
+    definition:
+      "The period during your working life when you are building your super balance through contributions and investment returns. Earnings in accumulation phase are taxed at 15%.",
+    category: "Super",
+  },
+  {
+    term: "Pension Phase",
+    slug: "pension-phase",
+    definition:
+      "When you convert your super into an income stream (account-based pension) in retirement. Investment earnings and income payments are tax-free (up to the transfer balance cap of $1.9 million in 2026).",
+    category: "Super",
+  },
+  {
+    term: "Transition to Retirement",
+    slug: "transition-to-retirement",
+    definition:
+      "A strategy for Australians aged 60-67 who are still working but want to access some of their super as an income stream. Allows salary sacrificing more into super while drawing down a pension, potentially improving tax efficiency.",
+    category: "Super",
+  },
+  {
+    term: "Non-Concessional Contributions",
+    slug: "non-concessional-contributions",
+    definition:
+      "After-tax super contributions (i.e. not tax-deductible). The annual cap is $120,000 in 2026. You can make up to $360,000 in one year using the bring-forward rule if you're under 75 and your total super balance allows.",
+    category: "Super",
+  },
+  {
+    term: "Bring-Forward Rule",
+    slug: "bring-forward-rule",
+    definition:
+      "Allows you to contribute up to three years of non-concessional contributions in a single year ($360,000 in 2026), if your total super balance is below $1.66 million. Useful for large lump-sum contributions.",
+    category: "Super",
+  },
+  {
+    term: "Binding Death Benefit Nomination",
+    slug: "binding-death-benefit-nomination",
+    definition:
+      "A legal instruction to your super fund specifying who receives your super balance when you die. A valid binding nomination overrides the trustee's discretion. Must usually be renewed every 3 years unless 'non-lapsing'.",
+    category: "Super",
+  },
+
+  // ─── CFD & Forex (new) ───
+  {
+    term: "Options",
+    slug: "options",
+    definition:
+      "Contracts giving the right (but not obligation) to buy (call option) or sell (put option) an asset at a set price before a set date. Used for hedging or speculation. Complex instruments suitable only for experienced investors.",
+    category: "CFD & Forex",
+  },
+  {
+    term: "Futures",
+    slug: "futures",
+    definition:
+      "Contracts obligating you to buy or sell an asset at a predetermined price on a future date. Used by institutional investors to hedge or speculate on commodities, indices, and currencies. High leverage and risk.",
+    category: "CFD & Forex",
+  },
+  {
+    term: "Margin Call",
+    slug: "margin-call",
+    definition:
+      "A demand from your broker to deposit more funds when your account falls below the minimum margin requirement. Failure to meet a margin call results in your positions being automatically closed at a loss.",
+    category: "CFD & Forex",
+  },
+
+  // ─── Property (new) ───
+  {
+    term: "Gearing",
+    slug: "gearing",
+    definition:
+      "Borrowing money to invest. Positive gearing means rental income exceeds costs (profit). Negative gearing means costs exceed income (a tax-deductible loss). Neutral gearing means income equals costs.",
+    category: "Property",
+  },
+  {
+    term: "Stamp Duty",
+    slug: "stamp-duty",
+    definition:
+      "A state government tax on property purchases, calculated as a percentage of the purchase price. One of the largest upfront costs of buying property. Rates vary by state; first home buyers often receive concessions.",
+    category: "Property",
+  },
+
+  // ─── Tax (new) ───
+  {
+    term: "Capital Works Deduction",
+    slug: "capital-works-deduction",
+    definition:
+      "A tax deduction for the cost of constructing or renovating income-producing property, claimed at 2.5% per year over 40 years. Different from depreciation, which covers removable items like appliances and carpets.",
+    category: "Tax",
   },
 ];
 
