@@ -27,7 +27,7 @@ export async function GET(req: Request) {
   const RESEND_API_KEY = process.env.RESEND_API_KEY;
   if (!RESEND_API_KEY) return NextResponse.json({ error: "No RESEND_API_KEY" }, { status: 500 });
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest.com.au";
 
   // Get portfolios with alerts enabled
   const { data: portfolios } = await supabase

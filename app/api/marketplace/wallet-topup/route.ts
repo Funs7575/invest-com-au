@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     }
 
     const amountCents = amountDollars * 100;
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app";
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest.com.au";
 
     // Create invoice record (pending)
     const admin = createAdminClient();

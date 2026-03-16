@@ -154,7 +154,7 @@ export default function AttributionAnalyticsPage() {
 
     // Fetch placement names
     const slugs = Object.keys(placementMap);
-    let placementNames: Record<string, string> = {};
+    const placementNames: Record<string, string> = {};
     if (slugs.length > 0) {
       const { data: placementData } = await supabase
         .from("marketplace_placements")

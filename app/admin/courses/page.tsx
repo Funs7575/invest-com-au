@@ -77,10 +77,11 @@ export default function AdminCoursesPage() {
       .order("sort_order", { ascending: true });
 
     // Supabase returns joined relations as arrays; normalise to single object
-    const normalized = ((coursesData as unknown as any[]) || []).map((c) => ({
+    type RawCourse = Omit<CourseRow, "creator"> & { creator: CourseRow["creator"] | CourseRow["creator"][] };
+    const normalized: CourseRow[] = ((coursesData ?? []) as RawCourse[]).map((c) => ({
       ...c,
       creator: Array.isArray(c.creator) ? c.creator[0] ?? null : c.creator ?? null,
-    })) as CourseRow[];
+    }));
     setCourses(normalized);
 
     // Fetch team members for creator dropdown
@@ -97,8 +98,9 @@ export default function AdminCoursesPage() {
       .select("creator_id, total_amount, creator_amount, platform_amount, creator:team_members(full_name)");
 
     // Group by creator
+    type RawRevenue = { creator_id: number; total_amount: number; creator_amount: number; platform_amount: number; creator: { full_name: string } | { full_name: string }[] | null };
     const grouped = new Map<number, RevenueByCreator>();
-    ((revenueData as any[]) || []).forEach((r: any) => {
+    ((revenueData ?? []) as RawRevenue[]).forEach((r) => {
       const existing = grouped.get(r.creator_id);
       if (existing) {
         existing.total_revenue += r.total_amount;

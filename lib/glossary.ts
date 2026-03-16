@@ -127,13 +127,6 @@ export const GLOSSARY_ENTRIES: GlossaryEntry[] = [
       "An order to buy or sell only at a specific price (or better). You control the price, but the trade may not happen if the price isn't reached.",
     category: "Share Trading",
   },
-  {
-    term: "Dollar Cost Averaging",
-    slug: "dollar-cost-averaging",
-    definition:
-      "Investing a fixed amount at regular intervals (e.g. $500/month) regardless of price. Reduces the impact of market volatility over time.",
-    category: "Strategy",
-  },
 
   // ─── Tax & Compliance ───
   {
@@ -506,6 +499,426 @@ export const GLOSSARY_ENTRIES: GlossaryEntry[] = [
     definition:
       "Sponsored Reporting Service — CHESS-sponsored holders receive statements directly from the ASX registry (Computershare or Link Market Services) confirming their holdings.",
     category: "Share Trading",
+  },
+  // ─── Property Investing ───
+  {
+    term: "LVR",
+    slug: "lvr",
+    definition:
+      "Loan-to-Value Ratio — the percentage of a property's value that you're borrowing. e.g. borrowing $400,000 on a $500,000 property = 80% LVR. Above 80% usually requires Lenders Mortgage Insurance.",
+    category: "Property",
+  },
+  {
+    term: "LMI",
+    slug: "lmi",
+    definition:
+      "Lenders Mortgage Insurance — a one-off insurance premium you pay when borrowing more than 80% of a property's value. Protects the lender (not you) if you default. Can cost $5,000–$30,000+.",
+    category: "Property",
+  },
+  {
+    term: "Offset Account",
+    slug: "offset-account",
+    definition:
+      "A savings account linked to your mortgage. Money in the offset reduces the loan balance that interest is calculated on. e.g. $50,000 in offset on a $500,000 loan = interest charged on $450,000.",
+    category: "Property",
+  },
+  {
+    term: "Capital Growth",
+    slug: "capital-growth",
+    definition:
+      "The increase in an asset's value over time. e.g. a property bought for $600,000 that's now worth $750,000 has had $150,000 (25%) capital growth.",
+    category: "Property",
+  },
+  {
+    term: "Equity",
+    slug: "equity",
+    definition:
+      "The portion of a property you actually own — the property's value minus what you owe on the mortgage. Can be used as security to borrow for further investments.",
+    category: "Property",
+  },
+  {
+    term: "Settlement",
+    slug: "settlement",
+    definition:
+      "The legal process of transferring property ownership from seller to buyer. In Australia, settlement typically takes 30–90 days after contracts are exchanged.",
+    category: "Property",
+  },
+
+  // ─── Bonds & Fixed Income ───
+  {
+    term: "Bond",
+    slug: "bond",
+    definition:
+      "A loan you make to a government or company in exchange for regular interest payments and your money back at maturity. Generally lower risk than shares but lower returns.",
+    category: "General",
+  },
+  {
+    term: "Term Deposit",
+    slug: "term-deposit",
+    definition:
+      "A bank deposit where you lock your money away for a fixed period (1 month to 5 years) at a guaranteed interest rate. Safe but inflexible — early withdrawal incurs penalties.",
+    category: "General",
+  },
+  {
+    term: "Yield",
+    slug: "yield",
+    definition:
+      "The income return on an investment, expressed as a percentage. e.g. a share paying $2 in annual dividends with a $40 price has a 5% dividend yield.",
+    category: "General",
+  },
+  {
+    term: "Coupon Rate",
+    slug: "coupon-rate",
+    definition:
+      "The annual interest rate paid by a bond, expressed as a percentage of its face value. e.g. a $1,000 bond with a 4% coupon pays $40/year in interest.",
+    category: "General",
+  },
+
+  // ─── Insurance & Protection ───
+  {
+    term: "Income Protection",
+    slug: "income-protection",
+    definition:
+      "Insurance that replaces up to 75% of your income if you can't work due to illness or injury. Premiums are generally tax-deductible in Australia.",
+    category: "Insurance",
+  },
+  {
+    term: "TPD Insurance",
+    slug: "tpd-insurance",
+    definition:
+      "Total and Permanent Disability insurance — pays a lump sum if you become permanently unable to work. Often held inside super to reduce out-of-pocket cost.",
+    category: "Insurance",
+  },
+  {
+    term: "Life Insurance",
+    slug: "life-insurance",
+    definition:
+      "Pays a lump sum to your beneficiaries if you die. Can be held inside or outside super. The amount should cover debts, living expenses for dependants, and future goals.",
+    category: "Insurance",
+  },
+
+  // ─── More Tax & Compliance ───
+  {
+    term: "Trust",
+    slug: "trust",
+    definition:
+      "A legal structure where a trustee holds assets on behalf of beneficiaries. Family (discretionary) trusts allow flexible distribution of investment income to reduce overall tax.",
+    category: "Tax",
+  },
+  {
+    term: "Marginal Tax Rate",
+    slug: "marginal-tax-rate",
+    definition:
+      "The tax rate you pay on each additional dollar of income. In Australia, rates range from 0% (under $18,200) to 45% (over $190,000) plus the 2% Medicare levy.",
+    category: "Tax",
+  },
+  {
+    term: "PAYG",
+    slug: "payg",
+    definition:
+      "Pay As You Go — Australia's system for collecting income tax throughout the year (via employer withholding) rather than in one lump sum at tax time.",
+    category: "Tax",
+  },
+  {
+    term: "Cost Base",
+    slug: "cost-base",
+    definition:
+      "The original cost of an investment plus associated costs (brokerage, stamp duty). Used to calculate capital gains or losses when you sell.",
+    category: "Tax",
+  },
+
+  // ─── Advanced Investing ───
+  {
+    term: "Blue Chip",
+    slug: "blue-chip",
+    definition:
+      "Large, well-established companies with a long history of reliable performance. In Australia, blue chips include BHP, CBA, CSL, and Woolworths. Lower risk but also lower growth potential than small caps.",
+    category: "Share Trading",
+  },
+  {
+    term: "Small Cap",
+    slug: "small-cap",
+    definition:
+      "A company with a relatively small market capitalisation (typically under $2 billion in Australia). Higher growth potential but also higher risk and volatility than large caps.",
+    category: "Share Trading",
+  },
+  {
+    term: "Market Capitalisation",
+    slug: "market-capitalisation",
+    definition:
+      "The total value of a company's shares — calculated by multiplying the share price by the number of shares on issue. Used to classify companies as large cap, mid cap, or small cap.",
+    category: "Share Trading",
+  },
+  {
+    term: "IPO",
+    slug: "ipo",
+    definition:
+      "Initial Public Offering — when a private company lists on the stock exchange for the first time, offering shares to the public. Can be high-reward but also high-risk.",
+    category: "Share Trading",
+  },
+  {
+    term: "Vesting",
+    slug: "vesting",
+    definition:
+      "The process by which you gain full ownership of employer-granted shares or options over time. Common in startup and tech company compensation packages.",
+    category: "Share Trading",
+  },
+  {
+    term: "ASX 200",
+    slug: "asx-200",
+    definition:
+      "An index of the 200 largest companies listed on the ASX by market capitalisation. The main benchmark for the Australian share market's performance.",
+    category: "General",
+  },
+  {
+    term: "Bear Market",
+    slug: "bear-market",
+    definition:
+      "A sustained decline in the market — typically defined as a 20%+ drop from recent highs. The opposite of a bull market. Bear markets are normal and historically temporary.",
+    category: "General",
+  },
+  {
+    term: "Bull Market",
+    slug: "bull-market",
+    definition:
+      "A sustained period of rising share prices. Generally defined as a 20%+ rise from recent lows. Bull markets tend to last longer than bear markets.",
+    category: "General",
+  },
+  {
+    term: "Volatility",
+    slug: "volatility",
+    definition:
+      "How much an investment's price fluctuates over time. High volatility means bigger price swings (up and down). Crypto and small caps are high volatility; bonds and term deposits are low volatility.",
+    category: "General",
+  },
+  {
+    term: "Liquidity",
+    slug: "liquidity",
+    definition:
+      "How quickly and easily an asset can be converted to cash without significantly affecting its price. ASX blue chips and major ETFs are highly liquid; property and unlisted investments are illiquid.",
+    category: "General",
+  },
+
+  // ─── General Investing (new) ───
+  {
+    term: "Dollar-Cost Averaging",
+    slug: "dollar-cost-averaging",
+    definition:
+      "Investing a fixed amount at regular intervals regardless of price, automatically buying more units when prices are low and fewer when high. Removes emotion from timing decisions.",
+    category: "General",
+  },
+  {
+    term: "Asset Allocation",
+    slug: "asset-allocation",
+    definition:
+      "How you divide your portfolio across different asset classes — shares, bonds, property, cash. Your allocation should reflect your goals and risk tolerance.",
+    category: "General",
+  },
+  {
+    term: "Passive Investing",
+    slug: "passive-investing",
+    definition:
+      "An investment approach that tracks a market index rather than trying to beat it. Typically done through ETFs. Lower fees and historically outperforms most active managers over the long term.",
+    category: "General",
+  },
+  {
+    term: "Active Investing",
+    slug: "active-investing",
+    definition:
+      "Picking individual shares or timing the market to try to outperform a benchmark. Higher fees and most active fund managers underperform their index over 10+ years.",
+    category: "General",
+  },
+  {
+    term: "Portfolio Rebalancing",
+    slug: "portfolio-rebalancing",
+    definition:
+      "Adjusting your portfolio back to your target allocation after market movements shift the weights. E.g. if shares rise to 75% of your portfolio but your target is 70%, you sell some shares to rebalance.",
+    category: "General",
+  },
+  {
+    term: "Managed Fund",
+    slug: "managed-fund",
+    definition:
+      "A pooled investment where a professional fund manager makes investment decisions on behalf of investors. Unlike ETFs, most managed funds are not listed on the ASX and are bought/sold at end-of-day prices.",
+    category: "General",
+  },
+  {
+    term: "Infrastructure Fund",
+    slug: "infrastructure-fund",
+    definition:
+      "A fund that invests in physical infrastructure assets like toll roads, airports, ports, and utilities. Typically offers stable, inflation-linked income streams. Examples: APA Group, Transurban, IFT.",
+    category: "General",
+  },
+
+  // ─── Share Trading (new) ───
+  {
+    term: "Listed Investment Company",
+    slug: "listed-investment-company",
+    definition:
+      "An ASX-listed company that holds a portfolio of investments. Like an ETF but structured as a company. Trades at a premium or discount to its net asset value (NAV). Examples: AFI, MLT, ARG.",
+    category: "Share Trading",
+  },
+  {
+    term: "Net Asset Value",
+    slug: "net-asset-value",
+    definition:
+      "The per-unit value of a fund's assets minus liabilities. For ETFs, the share price trades close to NAV. For LICs, the share price can trade at a premium or discount to NAV.",
+    category: "Share Trading",
+  },
+  {
+    term: "Earnings Per Share",
+    slug: "earnings-per-share",
+    definition:
+      "A company's net profit divided by the number of shares on issue. Higher EPS generally means the company is more profitable. Used to calculate the P/E ratio.",
+    category: "Share Trading",
+  },
+  {
+    term: "Price-to-Book Ratio",
+    slug: "price-to-book-ratio",
+    definition:
+      "A company's share price divided by its book value per share (assets minus liabilities). A ratio below 1 may indicate the shares are undervalued relative to assets.",
+    category: "Share Trading",
+  },
+  {
+    term: "Return on Equity",
+    slug: "return-on-equity",
+    definition:
+      "How much profit a company generates for each dollar of shareholder equity. A higher ROE generally means management is using capital efficiently. Look for sustained ROE above 15%.",
+    category: "Share Trading",
+  },
+  {
+    term: "Economic Moat",
+    slug: "economic-moat",
+    definition:
+      "A sustainable competitive advantage that protects a company's profits from competitors. Coined by Warren Buffett. Examples: brand strength (CBA), switching costs (Xero), cost advantages (Woolworths).",
+    category: "Share Trading",
+  },
+  {
+    term: "Value Investing",
+    slug: "value-investing",
+    definition:
+      "Buying shares that appear underpriced relative to their intrinsic value — often measured by P/E, P/B, or dividend yield. Made famous by Warren Buffett and Benjamin Graham.",
+    category: "Share Trading",
+  },
+  {
+    term: "Growth Investing",
+    slug: "growth-investing",
+    definition:
+      "Focusing on companies expected to grow earnings faster than average, often reinvesting profits rather than paying dividends. Examples: tech stocks, small-cap innovators. Higher risk, higher potential return.",
+    category: "Share Trading",
+  },
+  {
+    term: "Ex-Dividend Date",
+    slug: "ex-dividend-date",
+    definition:
+      "The date from which new buyers are no longer entitled to receive the upcoming dividend. If you buy shares on or after the ex-dividend date, you won't receive that payment. The share price typically falls by roughly the dividend amount on this date.",
+    category: "Share Trading",
+  },
+  {
+    term: "Rights Issue",
+    slug: "rights-issue",
+    definition:
+      "When a company offers existing shareholders the right to buy additional new shares at a discounted price, usually to raise capital. Shareholders can exercise the right (buy the shares) or sell the rights on the ASX.",
+    category: "Share Trading",
+  },
+  {
+    term: "Share Buyback",
+    slug: "share-buyback",
+    definition:
+      "When a company repurchases its own shares from the market, reducing the total shares on issue. Often signals management believes the shares are undervalued. Increases earnings per share for remaining shareholders.",
+    category: "Share Trading",
+  },
+
+  // ─── Super (new) ───
+  {
+    term: "Accumulation Phase",
+    slug: "accumulation-phase",
+    definition:
+      "The period during your working life when you are building your super balance through contributions and investment returns. Earnings in accumulation phase are taxed at 15%.",
+    category: "Super",
+  },
+  {
+    term: "Pension Phase",
+    slug: "pension-phase",
+    definition:
+      "When you convert your super into an income stream (account-based pension) in retirement. Investment earnings and income payments are tax-free (up to the transfer balance cap of $1.9 million in 2026).",
+    category: "Super",
+  },
+  {
+    term: "Transition to Retirement",
+    slug: "transition-to-retirement",
+    definition:
+      "A strategy for Australians aged 60-67 who are still working but want to access some of their super as an income stream. Allows salary sacrificing more into super while drawing down a pension, potentially improving tax efficiency.",
+    category: "Super",
+  },
+  {
+    term: "Non-Concessional Contributions",
+    slug: "non-concessional-contributions",
+    definition:
+      "After-tax super contributions (i.e. not tax-deductible). The annual cap is $120,000 in 2026. You can make up to $360,000 in one year using the bring-forward rule if you're under 75 and your total super balance allows.",
+    category: "Super",
+  },
+  {
+    term: "Bring-Forward Rule",
+    slug: "bring-forward-rule",
+    definition:
+      "Allows you to contribute up to three years of non-concessional contributions in a single year ($360,000 in 2026), if your total super balance is below $1.66 million. Useful for large lump-sum contributions.",
+    category: "Super",
+  },
+  {
+    term: "Binding Death Benefit Nomination",
+    slug: "binding-death-benefit-nomination",
+    definition:
+      "A legal instruction to your super fund specifying who receives your super balance when you die. A valid binding nomination overrides the trustee's discretion. Must usually be renewed every 3 years unless 'non-lapsing'.",
+    category: "Super",
+  },
+
+  // ─── CFD & Forex (new) ───
+  {
+    term: "Options",
+    slug: "options",
+    definition:
+      "Contracts giving the right (but not obligation) to buy (call option) or sell (put option) an asset at a set price before a set date. Used for hedging or speculation. Complex instruments suitable only for experienced investors.",
+    category: "CFD & Forex",
+  },
+  {
+    term: "Futures",
+    slug: "futures",
+    definition:
+      "Contracts obligating you to buy or sell an asset at a predetermined price on a future date. Used by institutional investors to hedge or speculate on commodities, indices, and currencies. High leverage and risk.",
+    category: "CFD & Forex",
+  },
+  {
+    term: "Margin Call",
+    slug: "margin-call",
+    definition:
+      "A demand from your broker to deposit more funds when your account falls below the minimum margin requirement. Failure to meet a margin call results in your positions being automatically closed at a loss.",
+    category: "CFD & Forex",
+  },
+
+  // ─── Property (new) ───
+  {
+    term: "Gearing",
+    slug: "gearing",
+    definition:
+      "Borrowing money to invest. Positive gearing means rental income exceeds costs (profit). Negative gearing means costs exceed income (a tax-deductible loss). Neutral gearing means income equals costs.",
+    category: "Property",
+  },
+  {
+    term: "Stamp Duty",
+    slug: "stamp-duty",
+    definition:
+      "A state government tax on property purchases, calculated as a percentage of the purchase price. One of the largest upfront costs of buying property. Rates vary by state; first home buyers often receive concessions.",
+    category: "Property",
+  },
+
+  // ─── Tax (new) ───
+  {
+    term: "Capital Works Deduction",
+    slug: "capital-works-deduction",
+    definition:
+      "A tax deduction for the cost of constructing or renovating income-producing property, claimed at 2.5% per year over 40 years. Different from depreciation, which covers removable items like appliances and carpets.",
+    category: "Tax",
   },
 ];
 

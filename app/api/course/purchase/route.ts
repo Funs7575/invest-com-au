@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
 
     // Create Checkout Session (one-time payment, NOT subscription)
     const siteUrl =
-      process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app";
+      process.env.NEXT_PUBLIC_SITE_URL || "https://invest.com.au";
 
     const session = await getStripe().checkout.sessions.create({
       customer: customerId,

@@ -340,7 +340,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
       return result;
     }
 
-    let result = professionals.filter(p => {
+    const result = professionals.filter(p => {
       if (typeFilters.size > 0 && !typeFilters.has(p.type as ProfessionalType)) return false;
       if (stateFilter !== "all" && p.location_state !== stateFilter) return false;
       if (verifiedOnly && !p.verified) return false;

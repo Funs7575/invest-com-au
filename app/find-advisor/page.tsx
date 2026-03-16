@@ -50,6 +50,8 @@ const STORAGE_KEY = "invest_quiz_match";
 interface PersistedMatch {
   matchedAdvisors: MatchedAdvisor[];
   excludeIds: number[];
+  leadIds: number[];
+  confirmedAdvisorId: number | null;
   quizData: { intent: string; context: string[]; state: string; budget: string; firstName: string; email: string };
   timestamp: number;
 }
@@ -224,11 +226,33 @@ function FindAdvisorQuiz() {
   const needParam = searchParams.get("need");
   const prefilledIntent = needParam ? NEED_TO_INTENT[needParam] || null : null;
 
-  const [quiz, setQuiz] = useState<QuizState>({
-    step: prefilledIntent ? 2 : 1,
-    intent: prefilledIntent,
-    context: [], state: "", budget: "",
-    firstName: "", email: "", phone: "", consent: false,
+  // Read sessionStorage once synchronously so all lazy initialisers share the same
+  // parsed value — avoids 5 separate JSON.parse calls and, crucially, avoids the
+  // two-render flash (step-1 paint → useEffect → step-5 repaint).
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const _savedMatch = typeof sessionStorage !== "undefined" ? loadMatchFromStorage() : null;
+  const savedMatch = _savedMatch && _savedMatch.matchedAdvisors.length > 0 ? _savedMatch : null;
+
+  const [quiz, setQuiz] = useState<QuizState>(() => {
+    if (savedMatch) {
+      return {
+        step: 5,
+        intent: (savedMatch.quizData.intent as Intent) ?? (prefilledIntent ?? null),
+        context: savedMatch.quizData.context ?? [],
+        state: savedMatch.quizData.state ?? "",
+        budget: savedMatch.quizData.budget ?? "",
+        firstName: savedMatch.quizData.firstName ?? "",
+        email: savedMatch.quizData.email ?? "",
+        phone: "",
+        consent: false,
+      };
+    }
+    return {
+      step: prefilledIntent ? 2 : 1,
+      intent: prefilledIntent,
+      context: [], state: "", budget: "",
+      firstName: "", email: "", phone: "", consent: false,
+    };
   });
 
   // Handle late searchParams changes (e.g. client-side navigation)
@@ -246,31 +270,18 @@ function FindAdvisorQuiz() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [submitted, setSubmitted] = useState(false);
-  const [matchedAdvisors, setMatchedAdvisors] = useState<MatchedAdvisor[]>([]);
-  const [excludeIds, setExcludeIds] = useState<number[]>([]);
+  const [submitted, setSubmitted] = useState(!!savedMatch);
+  const [matchedAdvisors, setMatchedAdvisors] = useState<MatchedAdvisor[]>(() => savedMatch?.matchedAdvisors ?? []);
+  const [excludeIds, setExcludeIds] = useState<number[]>(() => savedMatch?.excludeIds ?? []);
+  const [leadIds, setLeadIds] = useState<number[]>(() => savedMatch?.leadIds ?? []);
+  const [confirming, setConfirming] = useState(false);
+  const [confirmedAdvisorId, setConfirmedAdvisorId] = useState<number | null>(() => savedMatch?.confirmedAdvisorId ?? null);
   const [noMoreMatches, setNoMoreMatches] = useState(false);
   const [rematching, setRematching] = useState(false);
+  const [otpStage, setOtpStage] = useState<"idle" | "sending" | "sent" | "verifying">("idle");
+  const [otpCode, setOtpCode] = useState("");
+  const [otpError, setOtpError] = useState<string | null>(null);
 
-  // Restore persisted match on mount
-  useEffect(() => {
-    const saved = loadMatchFromStorage();
-    if (saved && saved.matchedAdvisors.length > 0) {
-      setMatchedAdvisors(saved.matchedAdvisors);
-      setExcludeIds(saved.excludeIds);
-      setSubmitted(true);
-      setQuiz(prev => ({
-        ...prev,
-        step: 5,
-        intent: (saved.quizData.intent as Intent) || prev.intent,
-        context: saved.quizData.context || prev.context,
-        state: saved.quizData.state || prev.state,
-        budget: saved.quizData.budget || prev.budget,
-        firstName: saved.quizData.firstName || prev.firstName,
-        email: saved.quizData.email || prev.email,
-      }));
-    }
-  }, []);
 
   const currentMatch = matchedAdvisors.length > 0 ? matchedAdvisors[matchedAdvisors.length - 1] : null;
 
@@ -313,7 +324,8 @@ function FindAdvisorQuiz() {
     update({ step: 4 });
   };
 
-  const submitMatch = async (isRematch: boolean = false) => {
+  /** Find a matching advisor WITHOUT creating a lead or sending any emails (dry run). */
+  const findMatch = async (excludeList: number[] = []) => {
     const res = await fetch("/api/submit-lead", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -329,8 +341,8 @@ function FindAdvisorQuiz() {
           budget: quiz.budget,
         },
         source_page: "/find-advisor",
-        exclude_advisor_ids: isRematch ? excludeIds : [],
-        rematch: isRematch,
+        exclude_advisor_ids: excludeList,
+        dry_run: true,
       }),
     });
     const data = await res.json();
@@ -338,28 +350,95 @@ function FindAdvisorQuiz() {
     return data;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  /** Confirm a previewed advisor: creates the lead and sends advisor email. */
+  const confirmMatch = async (advisorId: number) => {
+    const res = await fetch("/api/submit-lead", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        lead_type: "advisor",
+        user_email: quiz.email.trim(),
+        user_name: quiz.firstName.trim(),
+        user_phone: quiz.phone.trim() || undefined,
+        user_location_state: quiz.state,
+        user_intent: {
+          need: intentToNeed(quiz.intent!),
+          context: quiz.context,
+          budget: quiz.budget,
+        },
+        source_page: "/find-advisor",
+        confirm_advisor_id: advisorId,
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Something went wrong.");
+    return data;
+  };
+
+  const validateStep4 = () => {
     const errs: Record<string, string> = {};
     if (!quiz.firstName.trim()) errs.firstName = "Please enter your first name";
     if (!quiz.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(quiz.email)) errs.email = "Please enter a valid email";
     if (!quiz.consent) errs.consent = "You must agree to our Privacy Policy and Terms";
-    if (Object.keys(errs).length > 0) { setErrors(errs); return; }
+    return errs;
+  };
 
+  const handleSendOtp = async (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    const errs = validateStep4();
+    if (Object.keys(errs).length > 0) { setErrors(errs); return; }
+    setErrors({});
+    setOtpError(null);
+    setOtpStage("sending");
+    try {
+      const res = await fetch("/api/verify-otp/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: quiz.email.trim() }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setOtpError(data.error || "Failed to send code."); setOtpStage("idle"); return; }
+      setOtpStage("sent");
+    } catch {
+      setOtpError("Network error. Please try again.");
+      setOtpStage("idle");
+    }
+  };
+
+  const handleVerifyAndSubmit = async () => {
+    if (otpCode.trim().length !== 6) { setOtpError("Please enter the 6-digit code."); return; }
+    setOtpError(null);
+    setOtpStage("verifying");
+    try {
+      const res = await fetch("/api/verify-otp/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: quiz.email.trim(), code: otpCode.trim() }),
+      });
+      const data = await res.json();
+      if (!res.ok) { setOtpError(data.error || "Incorrect code."); setOtpStage("sent"); return; }
+    } catch {
+      setOtpError("Network error. Please try again.");
+      setOtpStage("sent");
+      return;
+    }
+    // OTP verified — find a match preview (no lead created, no email sent yet)
     setSubmitting(true);
     setSubmitError(null);
-    setErrors({});
 
     try {
-      const data = await submitMatch(false);
+      const data = await findMatch([]);
       if (data.matched) {
         const advisor = data.matched as MatchedAdvisor;
         setMatchedAdvisors([advisor]);
         setExcludeIds([advisor.id]);
-        // Persist to sessionStorage
+        setLeadIds([]);
+        setConfirmedAdvisorId(null);
         saveMatchToStorage({
           matchedAdvisors: [advisor],
           excludeIds: [advisor.id],
+          leadIds: [],
+          confirmedAdvisorId: null,
           quizData: {
             intent: quiz.intent || "",
             context: quiz.context,
@@ -381,12 +460,45 @@ function FindAdvisorQuiz() {
     }
   };
 
+  const handleConfirm = async (advisor: MatchedAdvisor) => {
+    setConfirming(true);
+    setSubmitError(null);
+    try {
+      const data = await confirmMatch(advisor.id);
+      if (data.lead_id) {
+        setConfirmedAdvisorId(advisor.id);
+        setLeadIds([data.lead_id as number]);
+        saveMatchToStorage({
+          matchedAdvisors,
+          excludeIds,
+          leadIds: [data.lead_id as number],
+          confirmedAdvisorId: advisor.id,
+          quizData: {
+            intent: quiz.intent || "",
+            context: quiz.context,
+            state: quiz.state,
+            budget: quiz.budget,
+            firstName: quiz.firstName,
+            email: quiz.email,
+          },
+          timestamp: Date.now(),
+        });
+        trackEvent("find_advisor_confirmed", { intent: quiz.intent, advisor: advisor.slug }, "/find-advisor");
+      }
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : "Couldn't confirm. Please try again.");
+    } finally {
+      setConfirming(false);
+    }
+  };
+
   const handleRematch = async () => {
     setRematching(true);
     setSubmitError(null);
 
     try {
-      const data = await submitMatch(true);
+      // dry_run: find next advisor preview without creating any lead or sending emails
+      const data = await findMatch(excludeIds);
 
       if (data.no_more_matches) {
         setNoMoreMatches(true);
@@ -397,10 +509,12 @@ function FindAdvisorQuiz() {
         const newExclude = [...excludeIds, advisor.id];
         setMatchedAdvisors(newAdvisors);
         setExcludeIds(newExclude);
-        // Update persistence
+        setConfirmedAdvisorId(null); // new preview — not yet confirmed
         saveMatchToStorage({
           matchedAdvisors: newAdvisors,
           excludeIds: newExclude,
+          leadIds, // unchanged — no new lead yet
+          confirmedAdvisorId: null, // new preview — not yet confirmed
           quizData: {
             intent: quiz.intent || "",
             context: quiz.context,
@@ -478,11 +592,17 @@ function FindAdvisorQuiz() {
             phone={quiz.phone}
             consent={quiz.consent}
             onChange={(f, v) => update({ [f]: v } as Partial<QuizState>)}
-            onSubmit={handleSubmit}
+            onSubmit={handleSendOtp}
             onBack={goBack}
             submitting={submitting}
             errors={errors}
             submitError={submitError}
+            otpStage={otpStage}
+            otpCode={otpCode}
+            otpError={otpError}
+            onOtpCodeChange={setOtpCode}
+            onOtpVerify={handleVerifyAndSubmit}
+            onOtpResend={handleSendOtp}
           />
         )}
 
@@ -498,6 +618,9 @@ function FindAdvisorQuiz() {
             noMoreMatches={noMoreMatches}
             onRestart={restart}
             submitError={submitError}
+            onConfirm={handleConfirm}
+            confirming={confirming}
+            confirmedAdvisorId={confirmedAdvisorId}
           />
         )}
 
@@ -683,12 +806,20 @@ function Step3({
 function Step4({
   firstName, email, phone, consent, onChange, onSubmit, onBack,
   submitting, errors, submitError,
+  otpStage, otpCode, otpError, onOtpCodeChange, onOtpVerify, onOtpResend,
 }: {
   firstName: string; email: string; phone: string; consent: boolean;
   onChange: (field: string, value: string | boolean) => void;
   onSubmit: (e: React.FormEvent) => void; onBack: () => void;
   submitting: boolean; errors: Record<string, string>; submitError: string | null;
+  otpStage: "idle" | "sending" | "sent" | "verifying";
+  otpCode: string; otpError: string | null;
+  onOtpCodeChange: (v: string) => void;
+  onOtpVerify: () => void;
+  onOtpResend: (e: React.SyntheticEvent) => void;
 }) {
+  const otpActive = otpStage === "sent" || otpStage === "verifying";
+
   return (
     <Card variant="default" padding="lg">
       <div className="mb-8">
@@ -710,24 +841,25 @@ function Step4({
       <form onSubmit={onSubmit} noValidate className="space-y-5">
         <Input id="firstName" label="First name" type="text" required placeholder="John"
           value={firstName} onChange={(e) => onChange("firstName", e.target.value)}
-          error={errors.firstName} autoComplete="given-name" />
+          error={errors.firstName} autoComplete="given-name" disabled={otpActive} />
 
         <Input id="email" label="Email address" type="email" required placeholder="john@example.com"
           value={email} onChange={(e) => onChange("email", e.target.value)}
-          hint="We'll send your match details here"
-          error={errors.email} autoComplete="email" />
+          hint={otpActive ? `Code sent to ${email}` : "We'll send a verification code here"}
+          error={errors.email} autoComplete="email" disabled={otpActive} />
 
         <Input id="phone" label="Phone number" type="tel" placeholder="04XX XXX XXX"
           value={phone} onChange={(e) => onChange("phone", e.target.value)}
           hint="Optional — advisors may call to arrange a meeting"
-          autoComplete="tel" />
+          autoComplete="tel" disabled={otpActive} />
 
         {/* Consent */}
         <div className="space-y-1.5">
-          <label className="flex items-start gap-3 p-4 bg-slate-50 rounded-xl cursor-pointer hover:bg-slate-100 transition-colors">
+          <label className={`flex items-start gap-3 p-4 bg-slate-50 rounded-xl transition-colors ${otpActive ? "opacity-60 cursor-default" : "cursor-pointer hover:bg-slate-100"}`}>
             <input
               type="checkbox" checked={consent}
-              onChange={(e) => onChange("consent", e.target.checked)}
+              onChange={(e) => !otpActive && onChange("consent", e.target.checked)}
+              disabled={otpActive}
               className="w-4 h-4 mt-0.5 rounded border-slate-300 accent-amber-500 focus:ring-amber-400 shrink-0"
             />
             <span className="text-xs text-slate-600 leading-relaxed">
@@ -746,13 +878,86 @@ function Step4({
           )}
         </div>
 
-        <div className="flex gap-3 pt-2">
-          <Button type="button" variant="ghost" onClick={onBack} disabled={submitting}>&larr; Back</Button>
-          <Button type="submit" variant="primary" loading={submitting} disabled={submitting} className="flex-1">
-            {submitting ? "Finding your match\u2026" : "Get Matched Free \u2192"}
-          </Button>
-        </div>
+        {!otpActive && (
+          <div className="flex gap-3 pt-2">
+            <Button type="button" variant="ghost" onClick={onBack} disabled={otpStage === "sending"}>&larr; Back</Button>
+            <Button type="submit" variant="primary" loading={otpStage === "sending"} disabled={otpStage === "sending"} className="flex-1">
+              {otpStage === "sending" ? "Sending code\u2026" : "Continue \u2192"}
+            </Button>
+          </div>
+        )}
       </form>
+
+      {/* OTP verification panel */}
+      {otpActive && (
+        <div className="mt-5 bg-amber-50 border border-amber-200 rounded-xl p-5">
+          <div className="flex items-start gap-3 mb-4">
+            <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+              <svg className="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <div>
+              <p className="text-sm font-bold text-slate-900">Check your inbox</p>
+              <p className="text-xs text-slate-500 mt-0.5">We sent a 6-digit code to <strong>{email}</strong></p>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">Verification code</label>
+              <input
+                type="text"
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                maxLength={6}
+                value={otpCode}
+                onChange={(e) => onOtpCodeChange(e.target.value.replace(/\D/g, ""))}
+                onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); onOtpVerify(); } }}
+                placeholder="000000"
+                className="w-full px-4 py-3 text-center text-2xl font-bold tracking-[0.3em] border-2 border-slate-200 rounded-xl focus:outline-none focus:border-amber-500 bg-white"
+                autoFocus
+              />
+              {otpError && (
+                <p className="mt-1.5 text-xs text-red-600 flex items-center gap-1.5">
+                  <svg className="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
+                  {otpError}
+                </p>
+              )}
+            </div>
+
+            <Button
+              type="button"
+              variant="primary"
+              loading={otpStage === "verifying" || submitting}
+              disabled={otpCode.length < 6 || otpStage === "verifying" || submitting}
+              onClick={onOtpVerify}
+              className="w-full"
+            >
+              {otpStage === "verifying" || submitting ? "Verifying\u2026" : "Verify & Get Matched \u2192"}
+            </Button>
+
+            <p className="text-center text-xs text-slate-400">
+              Didn&apos;t get it?{" "}
+              <button
+                type="button"
+                onClick={onOtpResend}
+                className="text-amber-600 hover:text-amber-700 font-semibold"
+              >
+                Resend code
+              </button>
+              {" "}· Wrong email?{" "}
+              <button
+                type="button"
+                onClick={() => { clearMatchStorage(); onOtpCodeChange(""); window.location.reload(); }}
+                className="text-slate-500 hover:text-slate-700 font-semibold"
+              >
+                Start over
+              </button>
+            </p>
+          </div>
+        </div>
+      )}
     </Card>
   );
 }
@@ -763,10 +968,12 @@ function typeLabel(type: string): string {
   return type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches, onRematch, rematching, noMoreMatches, onRestart, submitError }: {
+function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches, onRematch, rematching, noMoreMatches, onRestart, submitError, onConfirm, confirming, confirmedAdvisorId }: {
   userEmail: string; userFirstName: string; currentMatch: MatchedAdvisor | null; allMatches: MatchedAdvisor[];
   onRematch: () => void; rematching: boolean; noMoreMatches: boolean; onRestart: () => void; submitError: string | null;
+  onConfirm: (advisor: MatchedAdvisor) => void; confirming: boolean; confirmedAdvisorId: number | null;
 }) {
+  const isCurrentConfirmed = !!(currentMatch && confirmedAdvisorId === currentMatch.id);
   return (
     <div className="space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Success header */}
@@ -777,11 +984,13 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
           </svg>
         </div>
         <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-1">
-          {currentMatch ? "You\u2019ve been matched!" : "Request Received!"}
+          {isCurrentConfirmed ? "You\u2019re connected!" : currentMatch ? "We found a match!" : "Request Received!"}
         </h1>
         <p className="text-sm text-slate-500">
-          {currentMatch
-            ? `Great news ${userFirstName} \u2014 we found the perfect advisor for you`
+          {isCurrentConfirmed
+            ? `${currentMatch!.name} has been notified and will be in touch shortly`
+            : currentMatch
+            ? `${userFirstName}, review this advisor and confirm if you\u2019d like to connect`
             : "We'll match you with a verified professional shortly"}
         </p>
         {allMatches.length > 1 && (
@@ -881,13 +1090,39 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
             )}
 
             {/* CTA */}
-            <Link
-              href={`/advisor/${currentMatch.slug}`}
-              className="flex items-center justify-center gap-2 w-full py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl transition-all shadow-sm hover:shadow-md text-sm"
-            >
-              View Full Profile
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-            </Link>
+            {isCurrentConfirmed ? (
+              <div className="space-y-2">
+                <div className="flex items-center justify-center gap-2 w-full py-3 bg-emerald-100 text-emerald-700 font-bold rounded-xl text-sm">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
+                  Request sent — {currentMatch.name} will be in touch
+                </div>
+                <Link
+                  href={`/advisor/${currentMatch.slug}`}
+                  className="flex items-center justify-center gap-2 w-full py-2.5 border border-slate-200 rounded-xl text-sm text-slate-600 hover:bg-slate-50 transition-colors"
+                >
+                  View Full Profile
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <button
+                  onClick={() => onConfirm(currentMatch)}
+                  disabled={confirming}
+                  className="flex items-center justify-center gap-2 w-full py-3 bg-amber-500 hover:bg-amber-600 disabled:opacity-60 text-white font-bold rounded-xl transition-all shadow-sm hover:shadow-md text-sm"
+                >
+                  {confirming ? "Sending request…" : `Connect with ${currentMatch.name}`}
+                  {!confirming && <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}
+                </button>
+                <Link
+                  href={`/advisor/${currentMatch.slug}`}
+                  className="flex items-center justify-center gap-2 w-full py-2.5 border border-slate-200 rounded-xl text-sm text-slate-600 hover:bg-slate-50 transition-colors"
+                >
+                  View Full Profile first
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -924,8 +1159,8 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
         </div>
       )}
 
-      {/* Rematch button */}
-      {currentMatch && !noMoreMatches && (
+      {/* Rematch button — hidden once user has confirmed an advisor */}
+      {currentMatch && !noMoreMatches && !isCurrentConfirmed && (
         <button
           onClick={onRematch}
           disabled={rematching}

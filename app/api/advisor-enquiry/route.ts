@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { isRateLimited } from "@/lib/rate-limit";
-import { isValidEmail } from "@/lib/validate-email";
+import { isValidEmail, isDisposableEmail } from "@/lib/validate-email";
 import { notificationFooter } from "@/lib/email-templates";
 import { getSiteUrl } from "@/lib/url";
+import { isValidAuPhone } from "@/lib/validate-phone";
 
 // Format qualification data as HTML table rows for the advisor notification email
 function buildQualificationEmailRows(qd: { source: string; data: Record<string, unknown> }): string {
@@ -92,14 +93,15 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { professional_id, user_name, user_email, user_phone, message, source_page } = body;
 
+    // Honeypot: bots fill hidden fields that real users never see
+    if (body.website || body.fax || body.company_url) {
+      // Silent reject — return fake success so bots don't retry
+      return NextResponse.json({ success: true, lead_id: null });
+    }
+
     // Validation
     if (!professional_id || !user_name?.trim() || !user_email?.trim()) {
       return NextResponse.json({ error: "Name and email are required." }, { status: 400 });
-    }
-
-    // Honeypot fields — bots fill hidden fields
-    if (body.website || body.fax || body.company_url) {
-      return NextResponse.json({ success: true }); // Silent reject
     }
 
     // Field length limits — prevent oversized payloads
@@ -110,6 +112,11 @@ export async function POST(request: NextRequest) {
     // Email validation (includes disposable domain check)
     if (!isValidEmail(user_email)) {
       return NextResponse.json({ error: "Please use a valid, non-disposable email address." }, { status: 400 });
+    }
+
+    // Reject disposable/throwaway email domains — advisors pay per lead
+    if (isDisposableEmail(user_email)) {
+      return NextResponse.json({ error: "Please use a real email address." }, { status: 400 });
     }
 
     const supabase = await createClient();
@@ -172,8 +179,10 @@ export async function POST(request: NextRequest) {
     const signals: Record<string, unknown> = {};
     let score = 0;
 
-    // Has a phone number (+20 — serious enquiry)
-    if (user_phone?.trim()) { score += 20; signals.has_phone = true; }
+    // Has a valid Australian phone number (+20 — serious enquiry)
+    // Requires valid AU format to prevent fake/junk phones from inflating quality score
+    const hasValidPhone = isValidAuPhone(user_phone || "");
+    if (hasValidPhone) { score += 20; signals.has_phone = true; }
     // Wrote a message (+15 — engaged)
     if (message?.trim() && message.trim().length > 30) { score += 15; signals.has_message = true; }
     // Came from a specific page (+10 — was researching)
@@ -250,17 +259,18 @@ export async function POST(request: NextRequest) {
 
     if (isFree) {
       // Increment free leads counter — atomic to prevent race condition
-      await supabase.rpc('increment_field', { 
-        table_name: 'professionals', 
-        field_name: 'free_leads_used', 
-        row_id: professional_id, 
-        amount: 1 
-      }).catch(() => {
+      const rpcResult = await supabase.rpc('increment_field', {
+        table_name: 'professionals',
+        field_name: 'free_leads_used',
+        row_id: professional_id,
+        amount: 1
+      });
+      if (rpcResult.error) {
         // Fallback if RPC doesn't exist
-        supabase.from("professionals").update({
+        await supabase.from("professionals").update({
           free_leads_used: freeUsed + 1,
         }).eq("id", professional_id);
-      });
+      }
     } else if (hasSufficientCredit) {
       // Atomic deduction — prevents race condition where two simultaneous leads
       // both read the same balance and both deduct, causing double-billing.

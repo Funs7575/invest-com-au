@@ -102,8 +102,8 @@ export default function FeeImpactInputs({
         charges — to calculate your real annual cost.
       </div>
 
-      {/* Save profile button (Pro only) */}
-      {isPro && (
+      {/* Save profile button (logged-in users) */}
+      {!!user && (
         <button
           onClick={onSaveProfile}
           disabled={saving}
@@ -129,11 +129,6 @@ export default function FeeImpactInputs({
             </>
           )}
         </button>
-      )}
-      {!isPro && !!user && (
-        <p className="mt-3 text-xs text-slate-400 text-center">
-          <span className="text-slate-400">Profile saving coming soon</span>
-        </p>
       )}
     </div>
   );

@@ -1,7 +1,7 @@
 import type { TeamMember, Broker, Course } from "./types";
 
 export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app";
+  process.env.NEXT_PUBLIC_SITE_URL || "https://invest.com.au";
 
 export const SITE_NAME = "Invest.com.au";
 

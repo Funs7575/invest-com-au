@@ -13,7 +13,7 @@ async function getAdvisorId(request: NextRequest): Promise<number | null> {
     const { data: advisor } = await admin
       .from("professionals")
       .select("id")
-      .or(`auth_user_id.eq.${user.id},email.eq.${user.email}`)
+      .eq("auth_user_id", user.id)
       .in("status", ["active", "pending"])
       .maybeSingle();
     if (advisor) return advisor.id;

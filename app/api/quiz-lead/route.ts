@@ -1,7 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from 'next/server';
 import { createRateLimiter } from '@/lib/rate-limiter';
-import { isValidEmail } from '@/lib/validate-email';
+import { isValidEmail, isDisposableEmail } from '@/lib/validate-email';
 import { logger } from '@/lib/logger';
 import { extractUtm, utmForInsert } from '@/lib/utm';
 
@@ -221,9 +221,12 @@ export async function POST(request: NextRequest) {
   const utm = extractUtm(body as Record<string, unknown>);
 
   // Validate email
-
   if (!isValidEmail(email as string)) {
     return NextResponse.json({ error: 'Valid email required' }, { status: 400 });
+  }
+
+  if (isDisposableEmail(email as string)) {
+    return NextResponse.json({ error: 'Please use a real email address.' }, { status: 400 });
   }
 
   const forwarded = request.headers.get('x-forwarded-for');

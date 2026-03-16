@@ -6,7 +6,7 @@ import { getAllCitySlugs } from "@/lib/cities";
 import { getAllGuideSlugs } from "@/lib/how-to-guides";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest.com.au";
   const supabase = await createClient();
 
   // Static pages with tiered priorities
@@ -44,6 +44,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/advisor-apply", "/switching-calculator", "/savings-calculator",
     "/share-trading", "/crypto", "/savings", "/super", "/cfd",
     "/how-to",
+    // Additional public pages
+    "/tools", "/rates", "/properties", "/pro", "/jobs",
+    "/advertise", "/advertiser-terms",
+    // More advisor-guides
+    "/advisor-guides/how-to-choose-real-estate-agent",
+    // Calculators
+    "/mortgage-calculator", "/retirement-calculator", "/smsf-calculator",
+    "/debt-calculator", "/property-yield-calculator", "/fee-impact",
   ].map((path) => ({
     url: `${baseUrl}${path}`,
     lastModified: new Date(),
@@ -216,6 +224,74 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "stockspot-vs-vanguard-vap", "brickx-vs-vanguard-vap",
     "commsec-vs-vanguard-personal-investor", "stake-vs-spaceship",
     "commbank-pocket-vs-stake", "superhero-vs-raiz",
+
+    // Share brokers — extended combos
+    "pearler-vs-commsec", "pearler-vs-moomoo", "pearler-vs-interactive-brokers",
+    "webull-vs-selfwealth", "webull-vs-interactive-brokers", "webull-vs-superhero",
+    "tiger-brokers-vs-selfwealth", "tiger-brokers-vs-interactive-brokers",
+    "etoro-vs-interactive-brokers", "etoro-vs-selfwealth", "etoro-vs-superhero",
+    "ig-vs-moomoo", "ig-vs-selfwealth", "ig-vs-interactive-brokers",
+    "sharesies-vs-commsec", "sharesies-vs-moomoo", "sharesies-vs-pearler",
+    "opentrader-vs-stake", "opentrader-vs-moomoo",
+    "nabtrade-vs-interactive-brokers", "nabtrade-vs-cmc-markets",
+    "saxo-vs-interactive-brokers", "saxo-vs-stake", "saxo-vs-moomoo",
+    "vanguard-personal-investor-vs-commsec", "vanguard-personal-investor-vs-stake",
+    "betashares-direct-vs-commsec", "betashares-direct-vs-pearler",
+    "hm-bradfield-vs-commsec", "hm-bradfield-vs-stake",
+
+    // Crypto — more pairs
+    "coinspot-vs-btcmarkets", "swyftx-vs-btcmarkets", "coinjar-vs-btcmarkets",
+    "coinspot-vs-binance", "swyftx-vs-binance", "kraken-vs-binance",
+    "coinspot-vs-bybit", "swyftx-vs-bybit", "binance-vs-bybit",
+    "coinspot-vs-gemini", "coinspot-vs-cointree",
+    "digital-surge-vs-swyftx", "digital-surge-vs-coinspot",
+    "independent-reserve-vs-btcmarkets", "kraken-vs-independent-reserve",
+
+    // Robo-advisors — more pairs
+    "stockspot-vs-betashares-direct", "raiz-vs-betashares-direct",
+    "spaceship-vs-betashares-direct", "stockspot-vs-pearler",
+    "raiz-vs-pearler", "spaceship-vs-pearler",
+    "vanguard-personal-investor-vs-stockspot", "six-park-vs-vanguard-personal-investor",
+    "investsmart-vs-raiz", "investsmart-vs-spaceship",
+
+    // Super funds — more pairs
+    "aware-super-vs-hesta", "aware-super-vs-cbus", "aware-super-vs-rest-super",
+    "sunsuper-vs-australiansuper", "sunsuper-vs-hostplus",
+    "ngsuper-vs-australiansuper", "ngsuper-vs-hostplus",
+    "legalsuper-vs-australiansuper", "media-super-vs-australiansuper",
+    "spirit-super-vs-australiansuper", "tasplan-vs-australiansuper",
+    "hostplus-vs-rest-super", "unisuper-vs-aware-super",
+    "cbus-vs-rest-super", "hesta-vs-rest-super",
+    "colonial-first-state-vs-australiansuper",
+    "amp-super-vs-australiansuper", "bt-super-vs-australiansuper",
+    "mercer-super-vs-australiansuper",
+
+    // Savings accounts — more pairs
+    "macquarie-savings-vs-boq-future-saver",
+    "ubank-save-vs-boq-future-saver", "westpac-life-vs-ubank-save",
+    "westpac-life-vs-macquarie-savings", "bankwest-bonus-saver-vs-ing-savings-maximiser",
+    "commbank-netbank-saver-vs-ing-savings-maximiser",
+    "anz-plus-save-vs-ubank-save", "anz-plus-save-vs-macquarie-savings",
+    "nab-reward-saver-vs-ing-savings-maximiser",
+    "suncorp-growth-saver-vs-ing-savings-maximiser",
+    "rabobank-premium-saver-vs-ing-savings-maximiser",
+    "rabobank-premium-saver-vs-macquarie-savings",
+
+    // Term deposits — more pairs
+    "judo-bank-td-vs-rabobank-td", "judo-bank-td-vs-commbank-term-deposit",
+    "macquarie-term-deposit-vs-commbank-term-deposit",
+    "ing-term-deposit-vs-commbank-term-deposit",
+    "bankwest-term-deposit-vs-judo-bank-td",
+    "auswide-term-deposit-vs-judo-bank-td",
+
+    // CFD — more pairs
+    "pepperstone-vs-plus500", "ic-markets-vs-plus500",
+    "ig-markets-vs-cmc-markets-cfds", "ig-markets-vs-fp-markets",
+    "axi-vs-ig-markets", "axi-vs-fp-markets",
+    "eightcap-vs-ic-markets", "eightcap-vs-ig-markets",
+    "fusion-markets-vs-pepperstone", "fusion-markets-vs-ig-markets",
+    "thinkmarkets-vs-ic-markets", "thinkmarkets-vs-ig-markets",
+    "axitrader-vs-pepperstone", "activtrades-vs-pepperstone",
   ];
 
   const versusPages = versusPopularPairs.map((pair) => ({
@@ -275,16 +351,42 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "newcastle", "wollongong", "geelong", "sunshine-coast", "townsville", "cairns", "toowoomba",
     "ballarat", "bendigo", "launceston", "central-coast",
     // City + type combos (high search volume)
+    // Financial planners — all major cities
     "sydney-financial-planner", "melbourne-financial-planner", "brisbane-financial-planner",
-    "perth-financial-planner", "adelaide-financial-planner",
+    "perth-financial-planner", "adelaide-financial-planner", "canberra-financial-planner",
+    "gold-coast-financial-planner", "hobart-financial-planner", "darwin-financial-planner",
+    "newcastle-financial-planner", "wollongong-financial-planner", "geelong-financial-planner",
+    "sunshine-coast-financial-planner", "townsville-financial-planner",
+    // SMSF accountants — major cities
     "sydney-smsf", "melbourne-smsf", "brisbane-smsf",
+    "perth-smsf", "adelaide-smsf", "canberra-smsf", "gold-coast-smsf",
+    // Tax agents — major cities
     "sydney-tax-agent", "melbourne-tax-agent", "brisbane-tax-agent",
+    "perth-tax-agent", "adelaide-tax-agent", "canberra-tax-agent",
+    // Mortgage brokers — all major cities
     "sydney-mortgage-broker", "melbourne-mortgage-broker", "brisbane-mortgage-broker",
-    "perth-mortgage-broker", "gold-coast-mortgage-broker",
+    "perth-mortgage-broker", "gold-coast-mortgage-broker", "adelaide-mortgage-broker",
+    "canberra-mortgage-broker", "hobart-mortgage-broker", "newcastle-mortgage-broker",
+    "wollongong-mortgage-broker", "geelong-mortgage-broker", "sunshine-coast-mortgage-broker",
+    // Property & buyers agents
     "sydney-property-advisor", "melbourne-property-advisor", "brisbane-property-advisor",
+    "perth-property-advisor", "adelaide-property-advisor",
     "sydney-buyers-agent", "melbourne-buyers-agent", "brisbane-buyers-agent",
-    "sydney-accountant", "melbourne-accountant",
-    "sydney-wealth-manager", "melbourne-wealth-manager",
+    "perth-buyers-agent", "gold-coast-buyers-agent", "adelaide-buyers-agent",
+    "canberra-buyers-agent", "newcastle-buyers-agent", "sunshine-coast-buyers-agent",
+    // Accountants
+    "sydney-accountant", "melbourne-accountant", "brisbane-accountant",
+    "perth-accountant", "adelaide-accountant",
+    // Wealth managers
+    "sydney-wealth-manager", "melbourne-wealth-manager", "brisbane-wealth-manager",
+    "perth-wealth-manager",
+    // Estate planners
+    "sydney-estate-planner", "melbourne-estate-planner", "brisbane-estate-planner",
+    // Insurance brokers
+    "sydney-insurance-broker", "melbourne-insurance-broker", "brisbane-insurance-broker",
+    // Real estate agents
+    "sydney-real-estate-agent", "melbourne-real-estate-agent", "brisbane-real-estate-agent",
+    "perth-real-estate-agent", "gold-coast-real-estate-agent",
   ];
   const advisorLocationPages = advisorLocationSlugs.map(slug => ({
     url: `${baseUrl}/find-advisor/${slug}`,

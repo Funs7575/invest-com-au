@@ -9,5 +9,5 @@ export function getSiteUrl(requestHost?: string | null): string {
   if (requestHost && !requestHost.includes("localhost")) {
     return `https://${requestHost}`;
   }
-  return "https://invest-com-au.vercel.app";
+  return "https://invest.com.au";
 }

@@ -130,7 +130,7 @@ export default async function ArticlePage({
     crossCategoryPromise,
   ]);
 
-  let relatedBrokers = (relatedBrokersRes.data as Broker[]) || [];
+  const relatedBrokers = (relatedBrokersRes.data as Broker[]) || [];
   const allFxBrokers = (fxBrokersRes.data as Broker[]) || [];
   const allBrokersForWidget = (allActiveBrokersRes.data as Broker[]) || [];
   const relatedArticles = [
