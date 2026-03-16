@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, lead_id: null, matched: null });
   }
 
-  if (!isValidEmail(user_email as string)) {
+  if (!user_email || !isValidEmail(user_email as string)) {
     return NextResponse.json({ error: "Valid email required" }, { status: 400 });
   }
 
@@ -200,6 +200,40 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Advisor not found" }, { status: 404 });
     }
 
+    // Dedup: prevent double-lead if user clicks "Connect" twice (network retry / double-click)
+    const sevenDaysAgoConfirm = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+    const { data: existingLead } = await supabase
+      .from("leads")
+      .select("id")
+      .eq("user_email", normalizedEmail)
+      .eq("professional_id", confirm_advisor_id)
+      .eq("lead_type", "advisor")
+      .gte("created_at", sevenDaysAgoConfirm)
+      .limit(1)
+      .single();
+
+    if (existingLead) {
+      log.info("Duplicate confirm suppressed", { lead_id: existingLead.id, advisor_id: confirm_advisor_id });
+      return NextResponse.json({
+        success: true,
+        lead_id: existingLead.id,
+        matched: {
+          id: confirmedAdvisor.id,
+          slug: confirmedAdvisor.slug,
+          name: confirmedAdvisor.name,
+          firm_name: confirmedAdvisor.firm_name,
+          type: confirmedAdvisor.type,
+          photo_url: confirmedAdvisor.photo_url,
+          rating: confirmedAdvisor.rating,
+          review_count: confirmedAdvisor.review_count,
+          location_display: confirmedAdvisor.location_display,
+          specialties: confirmedAdvisor.specialties,
+          fee_description: confirmedAdvisor.fee_description,
+          verified: confirmedAdvisor.verified,
+        },
+      });
+    }
+
     // Fall through to lead creation with this advisor pre-resolved.
     // We reassign matchedAdvisor below by jumping past the matching block.
     // Use a goto-equivalent: wrap remainder in a labeled block isn't possible in TS,
@@ -244,7 +278,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Failed to save lead" }, { status: 500 });
     }
 
-    supabase.from("professional_leads").insert({
+    const { error: plError } = await supabase.from("professional_leads").insert({
       professional_id: resolvedId,
       user_name: typeof user_name === "string" ? user_name.trim() : null,
       user_email: normalizedEmail,
@@ -255,9 +289,11 @@ export async function POST(request: NextRequest) {
       utm_medium: (utm as UtmParams).utm_medium ?? null,
       utm_campaign: (utm as UtmParams).utm_campaign ?? null,
       status: "new",
-    }).then(() => null, () => null);
+    });
+    if (plError) log.error("professional_leads insert failed (confirm path)", { error: plError.message, advisor_id: resolvedId });
 
-    supabase.from("professionals").update({ last_lead_date: new Date().toISOString() }).eq("id", resolvedId).then(() => null, () => null);
+    const { error: lldError } = await supabase.from("professionals").update({ last_lead_date: new Date().toISOString() }).eq("id", resolvedId);
+    if (lldError) log.error("last_lead_date update failed (confirm path)", { error: lldError.message, advisor_id: resolvedId });
 
     if (resolvedAdvisor.email) {
       sendNewLeadNotification(
@@ -527,7 +563,7 @@ export async function POST(request: NextRequest) {
 
   // Also insert into professional_leads for the advisor's dashboard
   if (resolvedProfessionalId) {
-    supabase
+    const { error: plError2 } = await supabase
       .from("professional_leads")
       .insert({
         professional_id: resolvedProfessionalId,
@@ -540,15 +576,15 @@ export async function POST(request: NextRequest) {
         utm_medium: (utm as UtmParams).utm_medium ?? null,
         utm_campaign: (utm as UtmParams).utm_campaign ?? null,
         status: "new",
-      })
-      .then(() => null, () => null);
+      });
+    if (plError2) log.error("professional_leads insert failed", { error: plError2.message, advisor_id: resolvedProfessionalId });
 
     // Update advisor's last_lead_date for round-robin
-    supabase
+    const { error: lldError2 } = await supabase
       .from("professionals")
       .update({ last_lead_date: new Date().toISOString() })
-      .eq("id", resolvedProfessionalId)
-      .then(() => null, () => null);
+      .eq("id", resolvedProfessionalId);
+    if (lldError2) log.error("last_lead_date update failed", { error: lldError2.message, advisor_id: resolvedProfessionalId });
   }
 
   // Send email notifications (non-blocking)

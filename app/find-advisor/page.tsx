@@ -51,6 +51,7 @@ interface PersistedMatch {
   matchedAdvisors: MatchedAdvisor[];
   excludeIds: number[];
   leadIds: number[];
+  confirmedAdvisorId: number | null;
   quizData: { intent: string; context: string[]; state: string; budget: string; firstName: string; email: string };
   timestamp: number;
 }
@@ -266,16 +267,18 @@ function FindAdvisorQuiz() {
       setMatchedAdvisors(saved.matchedAdvisors);
       setExcludeIds(saved.excludeIds);
       setLeadIds(saved.leadIds ?? []);
+      setConfirmedAdvisorId(saved.confirmedAdvisorId ?? null);
       setSubmitted(true);
       setQuiz(prev => ({
         ...prev,
         step: 5,
-        intent: (saved.quizData.intent as Intent) || prev.intent,
-        context: saved.quizData.context || prev.context,
-        state: saved.quizData.state || prev.state,
-        budget: saved.quizData.budget || prev.budget,
-        firstName: saved.quizData.firstName || prev.firstName,
-        email: saved.quizData.email || prev.email,
+        // Use nullish coalescing so empty string doesn't fall back to stale prev value
+        intent: (saved.quizData.intent as Intent) ?? prev.intent,
+        context: saved.quizData.context ?? prev.context,
+        state: saved.quizData.state ?? prev.state,
+        budget: saved.quizData.budget ?? prev.budget,
+        firstName: saved.quizData.firstName ?? prev.firstName,
+        email: saved.quizData.email ?? prev.email,
       }));
     }
   }, []);
@@ -435,6 +438,7 @@ function FindAdvisorQuiz() {
           matchedAdvisors: [advisor],
           excludeIds: [advisor.id],
           leadIds: [],
+          confirmedAdvisorId: null,
           quizData: {
             intent: quiz.intent || "",
             context: quiz.context,
@@ -468,6 +472,7 @@ function FindAdvisorQuiz() {
           matchedAdvisors,
           excludeIds,
           leadIds: [data.lead_id as number],
+          confirmedAdvisorId: advisor.id,
           quizData: {
             intent: quiz.intent || "",
             context: quiz.context,
@@ -509,6 +514,7 @@ function FindAdvisorQuiz() {
           matchedAdvisors: newAdvisors,
           excludeIds: newExclude,
           leadIds, // unchanged — no new lead yet
+          confirmedAdvisorId: null, // new preview — not yet confirmed
           quizData: {
             intent: quiz.intent || "",
             context: quiz.context,
@@ -943,7 +949,7 @@ function Step4({
               {" "}· Wrong email?{" "}
               <button
                 type="button"
-                onClick={() => { onOtpCodeChange(""); window.location.reload(); }}
+                onClick={() => { clearMatchStorage(); onOtpCodeChange(""); window.location.reload(); }}
                 className="text-slate-500 hover:text-slate-700 font-semibold"
               >
                 Start over
