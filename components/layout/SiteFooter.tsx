@@ -32,9 +32,9 @@ export function SiteFooter() {
                 { label: "Compare All", href: "/compare" },
                 { label: "Share Trading", href: "/compare?category=shares" },
                 { label: "Crypto Exchanges", href: "/compare?category=crypto" },
-                { label: "Super Funds", href: "/best/super-funds" },
-                { label: "Robo-Advisors", href: "/best/robo-advisors" },
-                { label: "Savings Accounts", href: "/compare?filter=savings" },
+                { label: "Super Funds", href: "/compare/super" },
+                { label: "ETFs", href: "/compare/etfs" },
+                { label: "Insurance", href: "/compare/insurance" },
                 { label: "Current Deals", href: "/deals" },
                 { label: `Best Platforms ${CURRENT_YEAR}`, href: "/best" },
               ].map((item) => (

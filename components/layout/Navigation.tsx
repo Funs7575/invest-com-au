@@ -17,10 +17,10 @@ const platformsMenu = {
   byCategory: [
     { label: "Share Trading", href: "/compare?category=shares" },
     { label: "Crypto Exchanges", href: "/compare?category=crypto" },
-    { label: "Super Funds", href: "/best/super-funds" },
+    { label: "Super Funds", href: "/compare/super" },
+    { label: "ETFs", href: "/compare/etfs" },
+    { label: "Insurance", href: "/compare/insurance" },
     { label: "Robo-Advisors", href: "/best/robo-advisors" },
-    { label: "Savings Accounts", href: "/compare?filter=savings" },
-    { label: "Term Deposits", href: "/best/term-deposits" },
   ],
   tools: [
     { label: `Best Platforms ${CURRENT_YEAR}`, href: "/best" },

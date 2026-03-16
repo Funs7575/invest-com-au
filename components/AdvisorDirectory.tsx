@@ -19,8 +19,8 @@ interface Advisor {
   verified?: boolean;
 }
 
-const PROPERTY_TYPES = new Set(["mortgage_broker", "buyers_agent"]);
-const WEALTH_TYPES = new Set(["financial_planner", "smsf_accountant", "insurance_broker", "tax_agent", "wealth_manager", "estate_planner"]);
+const PROPERTY_TYPES = new Set(["mortgage_broker", "buyers_agent", "real_estate_agent", "property_advisor"]);
+const WEALTH_TYPES = new Set(["financial_planner", "smsf_accountant", "insurance_broker", "tax_agent", "wealth_manager", "estate_planner", "crypto_advisor", "aged_care_advisor", "debt_counsellor"]);
 const LOCATIONS = ["All Australia", "NSW", "VIC", "QLD", "WA", "SA"];
 
 function typeLabel(type: string): string {
@@ -40,20 +40,20 @@ export default function AdvisorDirectory({ advisors }: { advisors: Advisor[] }) 
   const tabHeading = activeTab === "property" ? "Property & Finance Expert" : "Financial Advisor";
 
   return (
-    <section className="py-4 md:py-12 bg-gradient-to-b from-violet-50/30 to-white">
+    <section className="py-4 md:py-12 bg-gradient-to-b from-amber-50/30 to-white">
       <div className="container-custom">
         {/* Header */}
         <div className="flex items-start justify-between gap-2 mb-3 md:mb-6">
           <div>
             <h2 className="text-lg md:text-2xl font-bold text-slate-900">
-              Find a <span className="text-violet-600">{tabHeading}</span>
+              Find a <span className="text-amber-600">{tabHeading}</span>
             </h2>
             <p className="text-[0.69rem] md:text-sm text-slate-500 mt-0.5 md:mt-1">
               <span className="hidden md:inline">Browse independent experts verified against ASIC registers across Australia</span>
               <span className="md:hidden">ASIC-verified professionals across Australia</span>
             </p>
           </div>
-          <Link href="/advisors" className="text-[0.69rem] font-semibold text-violet-600 hover:text-violet-800 shrink-0 min-h-[44px] inline-flex items-center px-1">
+          <Link href="/advisors" className="text-[0.69rem] font-semibold text-amber-600 hover:text-amber-800 shrink-0 min-h-[44px] inline-flex items-center px-1">
             Browse all &rarr;
           </Link>
         </div>
@@ -65,7 +65,7 @@ export default function AdvisorDirectory({ advisors }: { advisors: Advisor[] }) 
               onClick={() => setActiveTab("property")}
               className={`px-3 md:px-4 py-1.5 rounded-md text-xs md:text-sm font-semibold transition-all ${
                 activeTab === "property"
-                  ? "bg-violet-600 text-white shadow-sm"
+                  ? "bg-amber-500 text-white shadow-sm"
                   : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
               }`}
             >
@@ -75,7 +75,7 @@ export default function AdvisorDirectory({ advisors }: { advisors: Advisor[] }) 
               onClick={() => setActiveTab("wealth")}
               className={`px-3 md:px-4 py-1.5 rounded-md text-xs md:text-sm font-semibold transition-all ${
                 activeTab === "wealth"
-                  ? "bg-violet-600 text-white shadow-sm"
+                  ? "bg-amber-500 text-white shadow-sm"
                   : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
               }`}
             >
@@ -107,10 +107,10 @@ export default function AdvisorDirectory({ advisors }: { advisors: Advisor[] }) 
               <Link
                 key={advisor.slug}
                 href={`/advisor/${advisor.slug}`}
-                className="flex items-start gap-2.5 p-2.5 md:p-3.5 bg-white border border-violet-100 rounded-xl hover:border-violet-300 hover:shadow-md transition-all group"
+                className="flex items-start gap-2.5 p-2.5 md:p-3.5 bg-white border border-amber-100 rounded-xl hover:border-amber-300 hover:shadow-md transition-all group"
               >
                 <Image
-                  src={advisor.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(advisor.name)}&size=80&background=7c3aed&color=fff`}
+                  src={advisor.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(advisor.name)}&size=80&background=f59e0b&color=fff`}
                   alt={advisor.name}
                   width={48}
                   height={48}
@@ -119,8 +119,8 @@ export default function AdvisorDirectory({ advisors }: { advisors: Advisor[] }) 
                   sizes="48px"
                 />
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs md:text-sm font-bold text-slate-900 truncate group-hover:text-violet-700 transition-colors">{advisor.name}</p>
-                  <p className="text-[0.58rem] md:text-xs text-violet-600 font-medium">{typeLabel(advisor.type)}</p>
+                  <p className="text-xs md:text-sm font-bold text-slate-900 truncate group-hover:text-amber-700 transition-colors">{advisor.name}</p>
+                  <p className="text-[0.58rem] md:text-xs text-amber-600 font-medium">{typeLabel(advisor.type)}</p>
                   {advisor.firm_name && <p className="text-[0.55rem] md:text-[0.65rem] text-slate-400 truncate">{advisor.firm_name}</p>}
                   <div className="flex items-center gap-1.5 mt-0.5">
                     {advisor.rating > 0 && <span className="text-[0.6rem] md:text-[0.65rem] text-amber-600 font-semibold">{advisor.rating}/5</span>}
@@ -129,7 +129,7 @@ export default function AdvisorDirectory({ advisors }: { advisors: Advisor[] }) 
                   {advisor.specialties?.length > 0 && (
                     <div className="hidden md:flex flex-wrap gap-1 mt-1.5">
                       {advisor.specialties.slice(0, 2).map((spec) => (
-                        <span key={spec} className="text-[0.55rem] bg-violet-50 text-violet-600 px-1.5 py-0.5 rounded border border-violet-100">
+                        <span key={spec} className="text-[0.55rem] bg-amber-50 text-amber-600 px-1.5 py-0.5 rounded border border-amber-100">
                           {spec}
                         </span>
                       ))}
@@ -156,13 +156,13 @@ export default function AdvisorDirectory({ advisors }: { advisors: Advisor[] }) 
           <div className="flex gap-2 shrink-0 w-full md:w-auto">
             <Link
               href="/find-advisor"
-              className="flex-1 md:flex-none text-center px-4 py-2.5 bg-violet-600 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-violet-700 transition-colors"
+              className="flex-1 md:flex-none text-center px-4 py-2.5 bg-amber-500 text-white text-xs md:text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors"
             >
               Find My Advisor
             </Link>
             <Link
               href={activeTab === "property" ? "/advisors/mortgage-brokers" : "/advisors"}
-              className="flex-1 md:flex-none text-center px-4 py-2.5 border border-violet-300 text-violet-700 text-xs md:text-sm font-semibold rounded-lg hover:bg-violet-50 transition-colors"
+              className="flex-1 md:flex-none text-center px-4 py-2.5 border border-amber-300 text-amber-700 text-xs md:text-sm font-semibold rounded-lg hover:bg-amber-50 transition-colors"
             >
               View All {totalLabel}
             </Link>
