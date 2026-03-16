@@ -2,12 +2,18 @@ import { getStripe } from "@/lib/stripe";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
+import { isRateLimited } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 
 const log = logger("course");
 
 export async function POST(request: NextRequest) {
   try {
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
+    if (await isRateLimited(`course_purchase:${ip}`, 5, 60)) {
+      return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+    }
+
     // Authenticate user
     const supabase = await createClient();
     const {

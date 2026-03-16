@@ -1,3 +1,4 @@
+import { isRateLimited } from "@/lib/rate-limit";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { adjustWallet } from "@/lib/marketplace/wallet";
@@ -11,6 +12,10 @@ const log = logger("wallet");
  */
 export async function POST(request: NextRequest) {
   try {
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
+    if (await isRateLimited(`wallet-adjust:${ip}`, 10, 60)) {
+      return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+    }
     const supabase = createAdminClient();
 
     // Verify caller is admin by checking the cookie-based session

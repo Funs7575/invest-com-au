@@ -1,3 +1,4 @@
+import { isRateLimited } from "@/lib/rate-limit";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getSiteUrl } from "@/lib/url";
@@ -13,6 +14,10 @@ type Outcome = (typeof VALID_OUTCOMES)[number];
  */
 export async function POST(request: NextRequest) {
   try {
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
+    if (await isRateLimited(`lead-outcome:${ip}`, 10, 60)) {
+      return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+    }
     const body = await request.json();
     const { lead_id, outcome, sale_price_cents, success_fee_cents, notes } = body;
 

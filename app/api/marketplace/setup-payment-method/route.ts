@@ -1,3 +1,4 @@
+import { isRateLimited } from "@/lib/rate-limit";
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createServerClient } from "@supabase/ssr";
@@ -13,6 +14,10 @@ const log = logger("payment-setup");
  */
 export async function POST(request: NextRequest) {
   try {
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
+    if (await isRateLimited(`setup-payment-method:${ip}`, 10, 60)) {
+      return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+    }
     // Auth via cookies
     const cookieHeader = request.headers.get("cookie") || "";
     const supabaseAuth = createServerClient(

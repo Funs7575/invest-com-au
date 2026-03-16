@@ -1,3 +1,4 @@
+import { isRateLimited } from "@/lib/rate-limit";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -29,6 +30,11 @@ async function getAdvisorId(request: NextRequest): Promise<number | null> {
 }
 
 export async function PATCH(request: NextRequest) {
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
+  if (await isRateLimited(`profile_update:${ip}`, 20, 60)) {
+    return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+  }
+
   const advisorId = await getAdvisorId(request);
   if (!advisorId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
