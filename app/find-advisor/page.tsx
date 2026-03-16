@@ -2,16 +2,32 @@
 
 import { useState, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Card } from "@/components/ui/Card";
+import Icon from "@/components/Icon";
 import { trackEvent } from "@/lib/tracking";
 
 // ─── Types ─────────────────────────────────────────────────────────────────
 
 type Intent = "buy_property" | "grow_wealth" | "protect_assets" | "business_tax";
+
+interface MatchedAdvisor {
+  slug: string;
+  name: string;
+  firm_name: string | null;
+  type: string;
+  photo_url: string | null;
+  rating: number;
+  review_count: number;
+  location_display: string | null;
+  specialties: string[];
+  fee_description: string | null;
+  verified: boolean;
+}
 
 interface QuizState {
   step: number;
@@ -155,6 +171,7 @@ export default function FindAdvisorPage() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
+  const [matchedAdvisor, setMatchedAdvisor] = useState<MatchedAdvisor | null>(null);
 
   const update = useCallback((updates: Partial<QuizState>) => {
     setQuiz((prev) => ({ ...prev, ...updates }));
@@ -162,7 +179,7 @@ export default function FindAdvisorPage() {
 
   const restart = () => {
     setQuiz({ step: 1, intent: null, context: [], state: "", budget: "", firstName: "", email: "", phone: "", consent: false });
-    setErrors({}); setSubmitError(null); setSubmitted(false);
+    setErrors({}); setSubmitError(null); setSubmitted(false); setMatchedAdvisor(null);
   };
 
   const handleIntent = (intent: Intent) => {
@@ -225,9 +242,10 @@ export default function FindAdvisorPage() {
       });
       const data = await res.json();
       if (!res.ok) { setSubmitError(data.error || "Something went wrong."); return; }
+      if (data.matched) setMatchedAdvisor(data.matched);
       setSubmitted(true);
       update({ step: 5 });
-      trackEvent("find_advisor_complete", { intent: quiz.intent }, "/find-advisor");
+      trackEvent("find_advisor_complete", { intent: quiz.intent, matched: !!data.matched }, "/find-advisor");
     } catch {
       setSubmitError("Network error. Please try again.");
     } finally {
@@ -303,7 +321,12 @@ export default function FindAdvisorPage() {
 
         {/* Step 5: success */}
         {quiz.step === 5 && submitted && (
-          <MatchConfirmation userEmail={quiz.email} userFirstName={quiz.firstName} onRestart={restart} />
+          <MatchConfirmation
+            userEmail={quiz.email}
+            userFirstName={quiz.firstName}
+            matchedAdvisor={matchedAdvisor}
+            onRestart={restart}
+          />
         )}
 
         {/* Legal footer */}
@@ -564,31 +587,152 @@ function Step4({
 
 // ─── Match Confirmation ───────────────────────────────────────────────────────
 
-function MatchConfirmation({ userEmail, userFirstName, onRestart }: {
-  userEmail: string; userFirstName: string; onRestart: () => void;
+function typeLabel(type: string): string {
+  return type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+function MatchConfirmation({ userEmail, userFirstName, matchedAdvisor, onRestart }: {
+  userEmail: string; userFirstName: string; matchedAdvisor: MatchedAdvisor | null; onRestart: () => void;
 }) {
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Success header */}
-      <div className="text-center py-4">
-        <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-4">
-          <svg className="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <div className="text-center py-3">
+        <div className="w-14 h-14 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-3">
+          <svg className="w-7 h-7 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-1.5">Request Received!</h1>
-        <p className="text-sm text-slate-500">We&apos;ll match you with a verified professional shortly</p>
+        <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-1">
+          {matchedAdvisor ? "You've been matched!" : "Request Received!"}
+        </h1>
+        <p className="text-sm text-slate-500">
+          {matchedAdvisor
+            ? `Great news ${userFirstName} — we found the perfect advisor for you`
+            : "We'll match you with a verified professional shortly"}
+        </p>
       </div>
+
+      {/* Matched advisor card */}
+      {matchedAdvisor && (
+        <div className="relative overflow-hidden rounded-2xl border-2 border-amber-200 bg-gradient-to-br from-amber-50/80 via-white to-white shadow-lg">
+          {/* Match quality bar */}
+          <div className="bg-gradient-to-r from-amber-500 to-amber-400 px-4 py-2.5 flex items-center justify-between">
+            <div className="flex items-center gap-2 text-white">
+              <Icon name="zap" size={14} className="text-white" />
+              <span className="text-xs font-bold tracking-wide uppercase">Your Matched Advisor</span>
+            </div>
+            {matchedAdvisor.verified && (
+              <div className="flex items-center gap-1 bg-white/20 backdrop-blur-sm rounded-full px-2.5 py-0.5">
+                <Icon name="shield-check" size={12} className="text-white" />
+                <span className="text-[0.65rem] font-semibold text-white">ASIC Verified</span>
+              </div>
+            )}
+          </div>
+
+          <div className="p-5 md:p-6">
+            {/* Profile row */}
+            <div className="flex items-start gap-4 mb-5">
+              <div className="relative shrink-0">
+                <Image
+                  src={matchedAdvisor.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(matchedAdvisor.name)}&size=160&background=f59e0b&color=fff&bold=true`}
+                  alt={matchedAdvisor.name}
+                  width={72}
+                  height={72}
+                  className="rounded-xl object-cover w-16 h-16 md:w-[72px] md:h-[72px] ring-2 ring-amber-200"
+                />
+                <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 rounded-full border-2 border-white flex items-center justify-center">
+                  <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                </div>
+              </div>
+              <div className="flex-1 min-w-0">
+                <h2 className="text-lg md:text-xl font-extrabold text-slate-900 leading-tight">{matchedAdvisor.name}</h2>
+                <p className="text-sm font-semibold text-amber-600 mt-0.5">{typeLabel(matchedAdvisor.type)}</p>
+                {matchedAdvisor.firm_name && (
+                  <p className="text-xs text-slate-500 mt-0.5">{matchedAdvisor.firm_name}</p>
+                )}
+                <div className="flex items-center gap-3 mt-2">
+                  {matchedAdvisor.rating > 0 && (
+                    <div className="flex items-center gap-1">
+                      <div className="flex">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <svg
+                            key={i}
+                            className={`w-3.5 h-3.5 ${i < Math.round(matchedAdvisor.rating) ? "text-amber-400" : "text-slate-200"}`}
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                          </svg>
+                        ))}
+                      </div>
+                      <span className="text-xs font-bold text-slate-700">{matchedAdvisor.rating}</span>
+                      <span className="text-xs text-slate-400">({matchedAdvisor.review_count})</span>
+                    </div>
+                  )}
+                  {matchedAdvisor.location_display && (
+                    <span className="text-xs text-slate-500 flex items-center gap-1">
+                      <Icon name="map-pin" size={11} className="text-slate-400" />
+                      {matchedAdvisor.location_display}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Specialties */}
+            {matchedAdvisor.specialties?.length > 0 && (
+              <div className="mb-4">
+                <p className="text-[0.65rem] font-semibold text-slate-400 uppercase tracking-wider mb-2">Specialties</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {matchedAdvisor.specialties.slice(0, 5).map((spec) => (
+                    <span key={spec} className="text-xs bg-amber-50 text-amber-700 border border-amber-200 px-2.5 py-1 rounded-lg font-medium">
+                      {spec}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Fee info */}
+            {matchedAdvisor.fee_description && (
+              <div className="bg-slate-50 rounded-xl p-3 mb-4 flex items-start gap-2">
+                <Icon name="coins" size={14} className="text-slate-400 shrink-0 mt-0.5" />
+                <p className="text-xs text-slate-600 leading-relaxed">{matchedAdvisor.fee_description}</p>
+              </div>
+            )}
+
+            {/* CTA */}
+            <Link
+              href={`/advisor/${matchedAdvisor.slug}`}
+              className="flex items-center justify-center gap-2 w-full py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl transition-all shadow-sm hover:shadow-md text-sm"
+            >
+              View Full Profile
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* Next steps */}
       <Card variant="flat" padding="md">
-        <h3 className="font-bold text-slate-900 text-sm mb-4">What happens next, {userFirstName}:</h3>
+        <h3 className="font-bold text-slate-900 text-sm mb-3.5 flex items-center gap-2">
+          <Icon name="clock" size={14} className="text-amber-500" />
+          What happens next, {userFirstName}:
+        </h3>
         <ol className="space-y-3">
-          {[
-            `We'll find the best-matched advisor for your situation`,
-            `They'll reach out to you at ${userEmail} within 24 hours`,
-            "You'll book a free initial consultation — no obligation",
-          ].map((step, i) => (
+          {(matchedAdvisor
+            ? [
+                `${matchedAdvisor.name} has been notified of your enquiry`,
+                `They'll reach out to you at ${userEmail} within 24 hours`,
+                "You'll book a free initial consultation — no obligation",
+              ]
+            : [
+                "We'll find the best-matched advisor for your situation",
+                `They'll reach out to you at ${userEmail} within 24 hours`,
+                "You'll book a free initial consultation — no obligation",
+              ]
+          ).map((step, i) => (
             <li key={i} className="flex items-start gap-3">
               <span className="w-5 h-5 rounded-full bg-amber-500 text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">{i + 1}</span>
               <span className="text-sm text-slate-700 leading-relaxed">{step}</span>
@@ -597,10 +741,24 @@ function MatchConfirmation({ userEmail, userFirstName, onRestart }: {
         </ol>
       </Card>
 
+      {/* Trust signals */}
+      <div className="flex items-center justify-center flex-wrap gap-x-5 gap-y-2 py-2">
+        {[
+          { icon: "shield-check", text: "Your details go to one advisor only", color: "text-emerald-500" },
+          { icon: "lock", text: "Data encrypted & secure", color: "text-slate-400" },
+          { icon: "x-circle", text: "Unsubscribe anytime", color: "text-slate-400" },
+        ].map((item) => (
+          <span key={item.text} className="flex items-center gap-1.5 text-xs text-slate-500">
+            <Icon name={item.icon} size={13} className={item.color} />
+            {item.text}
+          </span>
+        ))}
+      </div>
+
       {/* CTAs */}
       <div className="flex flex-col sm:flex-row gap-3">
-        <Button variant="primary" href="/advisors" className="flex-1 justify-center">
-          Browse All Advisors →
+        <Button variant="secondary" href="/advisors" className="flex-1 justify-center">
+          Browse All Advisors
         </Button>
         <Button variant="secondary" href="/compare" className="flex-1 justify-center">
           Compare Platforms
@@ -608,12 +766,12 @@ function MatchConfirmation({ userEmail, userFirstName, onRestart }: {
       </div>
 
       <p className="text-center text-xs text-slate-400 leading-relaxed">
-        Check your inbox at <strong className="text-slate-600">{userEmail}</strong> for confirmation.
+        Confirmation sent to <strong className="text-slate-600">{userEmail}</strong>
       </p>
 
       <div className="text-center">
         <button onClick={onRestart} className="text-xs text-slate-400 hover:text-slate-600 transition-colors underline">
-          Start over
+          Start over with a different goal
         </button>
       </div>
     </div>
