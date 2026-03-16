@@ -149,20 +149,20 @@ export default async function HomePage() {
 
       {/* ═══════ 1. HERO ═══════ */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden">
-        <div className="container-custom py-8 md:py-12 lg:py-14">
+        <div className="container-custom py-6 md:py-12 lg:py-14">
           <div className="max-w-3xl mx-auto text-center">
             {/* Live badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-amber-50 border border-amber-200 rounded-full text-xs font-semibold text-amber-800 mb-4 md:mb-5">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-50 border border-amber-200 rounded-full text-[0.65rem] md:text-xs font-semibold text-amber-800 mb-3 md:mb-5">
               <span className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse" />
               {brokerCount}+ platforms &middot; {(advisorCount || 0) > 0 ? `${advisorCount}` : "Verified"} advisors &middot; Updated {updatedDateStr}
             </div>
 
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 leading-[1.1] mb-4 tracking-tight">
+            <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 leading-[1.1] mb-3 md:mb-4 tracking-tight">
               Australia&apos;s financial hub,{" "}
               <span className="text-amber-500">all in one place.</span>
             </h1>
 
-            <p className="text-base md:text-lg lg:text-xl text-slate-500 mb-6 leading-relaxed max-w-2xl mx-auto">
+            <p className="text-sm md:text-lg lg:text-xl text-slate-500 mb-5 md:mb-6 leading-relaxed max-w-2xl mx-auto">
               Match with verified mortgage brokers, buyer&apos;s agents, and financial advisors — or compare investing platforms side-by-side. Independent, free, no obligation.
             </p>
 
@@ -183,36 +183,36 @@ export default async function HomePage() {
             </div>
 
             {/* Trust signals */}
-            <div className="flex items-center justify-center flex-wrap gap-x-7 gap-y-2.5 text-xs text-slate-500">
-              <span className="flex items-center gap-1.5">
-                <Icon name="shield-check" size={14} className="text-emerald-500" />
-                ASIC-verified professionals
+            <div className="flex items-center justify-center flex-wrap gap-x-4 gap-y-1.5 text-[0.65rem] md:text-xs text-slate-500">
+              <span className="flex items-center gap-1">
+                <Icon name="shield-check" size={12} className="text-emerald-500" />
+                ASIC-verified
               </span>
-              <span className="flex items-center gap-1.5">
-                <Icon name="check-circle" size={14} className="text-emerald-500" />
+              <span className="flex items-center gap-1">
+                <Icon name="check-circle" size={12} className="text-emerald-500" />
                 100% independent
               </span>
-              <span className="flex items-center gap-1.5">
-                <Icon name="check-circle" size={14} className="text-amber-500" />
-                No cost, no commitment
+              <span className="flex items-center gap-1">
+                <Icon name="check-circle" size={12} className="text-amber-500" />
+                No cost
               </span>
             </div>
           </div>
 
           {/* Social proof strip */}
-          <div className="mt-8 border-t border-slate-100 pt-5">
-            <div className="grid grid-cols-3 gap-4 max-w-lg mx-auto text-center">
+          <div className="mt-5 border-t border-slate-100 pt-4">
+            <div className="grid grid-cols-3 gap-2 max-w-sm mx-auto text-center">
               <div>
-                <p className="text-2xl md:text-3xl font-extrabold text-slate-900">{brokerCount}+</p>
-                <p className="text-xs text-slate-500 mt-0.5">Platforms rated</p>
+                <p className="text-xl md:text-3xl font-extrabold text-slate-900">{brokerCount}+</p>
+                <p className="text-[0.65rem] md:text-xs text-slate-500">Platforms rated</p>
               </div>
               <div>
-                <p className="text-2xl md:text-3xl font-extrabold text-slate-900">{(advisorCount || 0) > 0 ? `${advisorCount}+` : "100+"}</p>
-                <p className="text-xs text-slate-500 mt-0.5">Verified advisors</p>
+                <p className="text-xl md:text-3xl font-extrabold text-slate-900">{(advisorCount || 0) > 0 ? `${advisorCount}+` : "100+"}</p>
+                <p className="text-[0.65rem] md:text-xs text-slate-500">Verified advisors</p>
               </div>
               <div>
-                <p className="text-2xl md:text-3xl font-extrabold text-slate-900">Free</p>
-                <p className="text-xs text-slate-500 mt-0.5">Always free to use</p>
+                <p className="text-xl md:text-3xl font-extrabold text-slate-900">Free</p>
+                <p className="text-[0.65rem] md:text-xs text-slate-500">Always free to use</p>
               </div>
             </div>
           </div>
@@ -344,20 +344,20 @@ export default async function HomePage() {
                     <p className="text-xs md:text-sm text-amber-700 font-medium">End-of-financial-year deadline approaching</p>
                   </div>
                 </div>
-                <div className="grid md:grid-cols-3 gap-3 md:gap-4">
+                <div className="grid md:grid-cols-3 gap-2 md:gap-4">
                   {[
                     { href: "/advisors/tax-agents", icon: "calculator", title: "Find a Tax Agent", desc: "Expert tax planning, deductions, and lodgement." },
                     { href: "/advisors/smsf-accountants", icon: "briefcase", title: "SMSF End-of-Year", desc: "SMSF audit, compliance, and year-end reporting." },
                     { href: "/advisors/financial-planners", icon: "trending-up", title: "Pre-EOFY Strategy", desc: "Salary sacrifice, contribution caps, and structuring." },
                   ].map((card) => (
-                    <Link key={card.href} href={card.href} className="group bg-white border border-amber-200 rounded-xl p-4 md:p-5 hover:shadow-md hover:border-amber-300 transition-all">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Icon name={card.icon} size={18} className="text-amber-600" />
-                        <h3 className="font-bold text-sm md:text-base text-slate-900">{card.title}</h3>
+                    <Link key={card.href} href={card.href} className="group bg-white border border-amber-200 rounded-xl p-3 md:p-5 hover:shadow-md hover:border-amber-300 transition-all flex md:block items-center gap-3">
+                      <div className="flex items-center gap-2 md:mb-2 shrink-0">
+                        <Icon name={card.icon} size={16} className="text-amber-600" />
+                        <h3 className="font-bold text-sm text-slate-900">{card.title}</h3>
                       </div>
-                      <p className="text-xs text-slate-600 leading-relaxed">{card.desc}</p>
-                      <span className="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-amber-600 group-hover:text-amber-700">
-                        Browse experts <span className="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+                      <p className="hidden md:block text-xs text-slate-600 leading-relaxed">{card.desc}</p>
+                      <span className="ml-auto md:ml-0 inline-flex items-center gap-1 md:mt-2 text-xs font-semibold text-amber-600 group-hover:text-amber-700 shrink-0">
+                        <span className="hidden md:inline">Browse experts</span> <span className="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
                       </span>
                     </Link>
                   ))}
