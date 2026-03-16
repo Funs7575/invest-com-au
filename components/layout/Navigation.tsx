@@ -83,7 +83,7 @@ function MegaMenuDropdown({
   isActive?: boolean;
 }) {
   const [open, setOpen] = useState(false);
-  const timeout = useRef<ReturnType<typeof setTimeout>>();
+  const timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const ref = useRef<HTMLDivElement>(null);
 
   const enter = useCallback(() => {
