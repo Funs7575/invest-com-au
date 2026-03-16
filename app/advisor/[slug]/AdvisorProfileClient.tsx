@@ -104,6 +104,23 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
   const [message, setMessage] = useState("");
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
+  // Detect if user was already matched with this advisor via the quiz
+  const [alreadyMatched, setAlreadyMatched] = useState(false);
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem("invest_quiz_match");
+      if (raw) {
+        const data = JSON.parse(raw);
+        if (data.matchedAdvisors?.some((a: { slug: string }) => a.slug === pro.slug)) {
+          setAlreadyMatched(true);
+          // Pre-fill form with saved quiz data
+          if (data.quizData?.firstName) setName(data.quizData.firstName);
+          if (data.quizData?.email) setEmail(data.quizData.email);
+        }
+      }
+    } catch {}
+  }, [pro.slug]);
+
   // Review form state
   const [reviewFormOpen, setReviewFormOpen] = useState(false);
   const [reviewState, setReviewState] = useState<"idle" | "success">("idle");
@@ -666,9 +683,25 @@ export default function AdvisorProfileClient({ professional: pro, similar, revie
           <BookingWidget advisorSlug={pro.slug} advisorName={pro.name} />
         </div>
 
+        {/* Already matched banner */}
+        {alreadyMatched && formState !== "success" && (
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4 md:mb-6 flex items-start gap-3">
+            <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center shrink-0 mt-0.5">
+              <Icon name="check-circle" size={16} className="text-amber-600" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-amber-900">You&apos;ve been matched with {pro.name}</p>
+              <p className="text-xs text-amber-700 mt-0.5">
+                {pro.name} has already been notified of your enquiry via the advisor quiz. They&apos;ll reach out to you within 24 hours.
+                If you&apos;d like to add more details, use the form below.
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Enquiry form — premium card */}
         <div id="enquiry" className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-5 md:p-8 mb-5 md:mb-8 scroll-mt-20 shadow-lg text-white relative overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(139,92,246,0.15),transparent_60%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(245,158,11,0.15),transparent_60%)]" />
           <div className="relative">
           {formState === "success" ? (
             <div className="text-center py-6">

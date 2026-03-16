@@ -122,15 +122,15 @@ export default function BookingWidget({ advisorSlug, advisorName }: { advisorSlu
     // External booking link (Calendly, Cal.com, etc.)
     if (bookingLink) {
       return (
-        <div className="bg-gradient-to-br from-violet-50 to-indigo-50 border border-violet-200 rounded-xl overflow-hidden">
+        <div className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-xl overflow-hidden">
           <div className="p-4 md:p-5">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-8 h-8 bg-violet-100 rounded-lg flex items-center justify-center">
-                <Icon name="calendar" size={18} className="text-violet-600" />
+              <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center">
+                <Icon name="calendar" size={18} className="text-amber-600" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-violet-900">Book a Free Consultation</h3>
-                <p className="text-[0.6rem] text-violet-600">30-minute video or phone call</p>
+                <h3 className="text-sm font-bold text-amber-900">Book a Free Consultation</h3>
+                <p className="text-[0.6rem] text-amber-600">30-minute video or phone call</p>
               </div>
             </div>
             {bookingIntro && <p className="text-xs text-slate-600 mb-3">{bookingIntro}</p>}
@@ -150,12 +150,12 @@ export default function BookingWidget({ advisorSlug, advisorName }: { advisorSlu
                   }),
                 }).catch(() => {});
               }}
-              className="block w-full text-center px-4 py-3 bg-violet-600 text-white font-bold rounded-xl hover:bg-violet-700 transition-all text-sm shadow-sm hover:shadow-md"
+              className="block w-full text-center px-4 py-3 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 transition-all text-sm shadow-sm hover:shadow-md"
             >
-              Choose a Time →
+              Choose a Time &rarr;
             </a>
-            <p className="text-[0.5rem] text-violet-400 text-center mt-2">
-              {bookingLink.includes("calendly") ? "Powered by Calendly" : bookingLink.includes("cal.com") ? "Powered by Cal.com" : "Opens booking calendar"} · No obligation · Free initial consultation
+            <p className="text-[0.5rem] text-amber-400 text-center mt-2">
+              {bookingLink.includes("calendly") ? "Powered by Calendly" : bookingLink.includes("cal.com") ? "Powered by Cal.com" : "Opens booking calendar"} &middot; No obligation &middot; Free initial consultation
             </p>
           </div>
         </div>
