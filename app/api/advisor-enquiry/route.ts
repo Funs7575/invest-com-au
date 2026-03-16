@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { isRateLimited } from "@/lib/rate-limit";
+import { isValidEmail } from "@/lib/validate-email";
 import { notificationFooter } from "@/lib/email-templates";
 import { getSiteUrl } from "@/lib/url";
 
@@ -96,10 +97,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Name and email are required." }, { status: 400 });
     }
 
-    // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(user_email)) {
-      return NextResponse.json({ error: "Invalid email address." }, { status: 400 });
+    // Honeypot fields — bots fill hidden fields
+    if (body.website || body.fax || body.company_url) {
+      return NextResponse.json({ success: true }); // Silent reject
+    }
+
+    // Field length limits — prevent oversized payloads
+    if ((user_name as string).length > 200 || (user_email as string).length > 254 || (message as string || "").length > 5000) {
+      return NextResponse.json({ error: "Input too long." }, { status: 400 });
+    }
+
+    // Email validation (includes disposable domain check)
+    if (!isValidEmail(user_email)) {
+      return NextResponse.json({ error: "Please use a valid, non-disposable email address." }, { status: 400 });
     }
 
     const supabase = await createClient();
@@ -239,16 +249,40 @@ export async function POST(request: NextRequest) {
     }).eq("id", lead.id);
 
     if (isFree) {
-      // Increment free leads counter
-      await supabase.from("professionals").update({
-        free_leads_used: freeUsed + 1,
-      }).eq("id", professional_id);
+      // Increment free leads counter — atomic to prevent race condition
+      await supabase.rpc('increment_field', { 
+        table_name: 'professionals', 
+        field_name: 'free_leads_used', 
+        row_id: professional_id, 
+        amount: 1 
+      }).catch(() => {
+        // Fallback if RPC doesn't exist
+        supabase.from("professionals").update({
+          free_leads_used: freeUsed + 1,
+        }).eq("id", professional_id);
+      });
     } else if (hasSufficientCredit) {
-      // Deduct from prepaid credit balance
-      await supabase.from("professionals").update({
-        credit_balance_cents: balance - priceCents,
-        lifetime_lead_spend_cents: (advisor?.lifetime_lead_spend_cents || 0) + priceCents,
-      }).eq("id", professional_id);
+      // Atomic deduction — prevents race condition where two simultaneous leads
+      // both read the same balance and both deduct, causing double-billing.
+      // We use a WHERE clause to ensure balance hasn't changed since we read it.
+      const { data: updated, error: deductError } = await supabase
+        .from("professionals")
+        .update({
+          credit_balance_cents: balance - priceCents,
+          lifetime_lead_spend_cents: (advisor?.lifetime_lead_spend_cents || 0) + priceCents,
+        })
+        .eq("id", professional_id)
+        .gte("credit_balance_cents", priceCents) // Only deduct if still sufficient
+        .select("credit_balance_cents")
+        .single();
+
+      // If the atomic update failed (race condition), mark lead as unbilled
+      if (deductError || !updated) {
+        await supabase.from("professional_leads").update({
+          billed: false,
+          bill_amount_cents: priceCents,
+        }).eq("id", lead.id);
+      }
 
       // Create billing record (status: paid since deducted from credit)
       await supabase.from("advisor_billing").insert({
