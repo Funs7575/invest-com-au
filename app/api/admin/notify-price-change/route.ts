@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { ADMIN_EMAILS } from "@/lib/admin";
 import { sendEmail } from "@/lib/resend";
+import { isRateLimited } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 
 const log = logger("notify-price-change");
@@ -29,6 +30,11 @@ function formatCents(cents: number): string {
 
 export async function POST(request: NextRequest) {
   try {
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
+    if (await isRateLimited(`admin_notify:${ip}`, 10, 300)) {
+      return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+    }
+
     // Admin check via Supabase auth
     const supabaseAuth = await createClient();
     const { data: { user } } = await supabaseAuth.auth.getUser();

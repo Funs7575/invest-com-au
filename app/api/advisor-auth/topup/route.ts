@@ -4,6 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { getStripe } from "@/lib/stripe";
 import { getSiteUrl } from "@/lib/url";
 import { DEFAULT_TOPUP_CENTS } from "@/lib/advisor-billing";
+import { isRateLimited } from "@/lib/rate-limit";
 
 async function getAdvisorId(request: NextRequest): Promise<number | null> {
   const supabase = await createClient();
@@ -37,6 +38,11 @@ async function getAdvisorId(request: NextRequest): Promise<number | null> {
  * Default: A$200 top-up.
  */
 export async function POST(request: NextRequest) {
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
+  if (await isRateLimited(`topup:${ip}`, 5, 60)) {
+    return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
+  }
+
   const advisorId = await getAdvisorId(request);
   if (!advisorId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 

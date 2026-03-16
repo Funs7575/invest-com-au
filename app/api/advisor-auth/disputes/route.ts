@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { ADMIN_EMAIL } from "@/lib/admin";
+import { isRateLimited } from "@/lib/rate-limit";
 
 async function getAdvisorId(request: NextRequest): Promise<number | null> {
   const supabase = await createClient();
@@ -33,6 +34,11 @@ async function getAdvisorId(request: NextRequest): Promise<number | null> {
 
 // Create a dispute
 export async function POST(request: NextRequest) {
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
+  if (await isRateLimited(`dispute:${ip}`, 5, 300)) {
+    return NextResponse.json({ error: "Too many dispute requests. Please try again later." }, { status: 429 });
+  }
+
   const advisorId = await getAdvisorId(request);
   if (!advisorId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
