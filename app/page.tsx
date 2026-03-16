@@ -149,25 +149,25 @@ export default async function HomePage() {
 
       {/* ═══════ 1. HERO ═══════ */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden">
-        <div className="container-custom py-10 md:py-16 lg:py-20">
+        <div className="container-custom py-12 md:py-20 lg:py-24">
           <div className="max-w-3xl mx-auto text-center">
             {/* Live badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-amber-50 border border-amber-200 rounded-full text-xs font-semibold text-amber-800 mb-6">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-amber-50 border border-amber-200 rounded-full text-xs font-semibold text-amber-800 mb-6 md:mb-8">
               <span className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse" />
               {brokerCount}+ platforms &middot; {(advisorCount || 0) > 0 ? `${advisorCount}` : "Verified"} advisors &middot; Updated {updatedDateStr}
             </div>
 
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 leading-[1.1] mb-5 tracking-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 leading-[1.1] mb-5 md:mb-6 tracking-tight">
               Australia&apos;s financial hub,{" "}
               <span className="text-amber-500">all in one place.</span>
             </h1>
 
-            <p className="text-base md:text-lg lg:text-xl text-slate-500 mb-8 leading-relaxed max-w-2xl mx-auto">
+            <p className="text-base md:text-lg lg:text-xl text-slate-500 mb-8 md:mb-10 leading-relaxed max-w-2xl mx-auto">
               Match with verified mortgage brokers, buyer&apos;s agents, and financial advisors — or compare investing platforms side-by-side. Independent, free, no obligation.
             </p>
 
             {/* Primary CTAs */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-8">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-8 md:mb-10">
               <Link
                 href="/find-advisor"
                 className="w-full sm:w-auto px-7 py-3.5 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 shadow-md hover:shadow-lg transition-all text-sm"
@@ -200,19 +200,19 @@ export default async function HomePage() {
           </div>
 
           {/* Social proof strip */}
-          <div className="mt-10 md:mt-12 border-t border-slate-100 pt-6">
+          <div className="mt-12 md:mt-16 border-t border-slate-100 pt-8 md:pt-10">
             <div className="grid grid-cols-3 gap-4 max-w-lg mx-auto text-center">
               <div>
                 <p className="text-2xl md:text-3xl font-extrabold text-slate-900">{brokerCount}+</p>
-                <p className="text-xs text-slate-500 mt-0.5">Platforms rated</p>
+                <p className="text-xs text-slate-500 mt-1">Platforms rated</p>
               </div>
               <div>
                 <p className="text-2xl md:text-3xl font-extrabold text-slate-900">{(advisorCount || 0) > 0 ? `${advisorCount}+` : "100+"}</p>
-                <p className="text-xs text-slate-500 mt-0.5">Verified advisors</p>
+                <p className="text-xs text-slate-500 mt-1">Verified advisors</p>
               </div>
               <div>
                 <p className="text-2xl md:text-3xl font-extrabold text-slate-900">Free</p>
-                <p className="text-xs text-slate-500 mt-0.5">Always free to use</p>
+                <p className="text-xs text-slate-500 mt-1">Always free to use</p>
               </div>
             </div>
           </div>
@@ -221,7 +221,7 @@ export default async function HomePage() {
 
       {/* ═══════ 2. WHAT DO YOU NEED HELP WITH? ═══════ */}
       <ScrollFadeIn>
-        <section className="py-8 md:py-14 bg-slate-50 border-b border-slate-100">
+        <section className="py-10 md:py-16 bg-slate-50 border-b border-slate-100">
           <div className="container-custom">
             <HomepageServiceSelector />
           </div>
@@ -235,9 +235,9 @@ export default async function HomePage() {
 
       {/* ═══════ 4. TOP PLATFORMS ═══════ */}
       <ScrollFadeIn>
-        <section className="py-6 sm:py-10 md:py-16 bg-white">
+        <section className="py-10 md:py-16 bg-white">
           <div className="container-custom">
-            <div className="flex items-center justify-between gap-2 mb-4 sm:mb-6 md:mb-8">
+            <div className="flex items-center justify-between gap-2 mb-6 md:mb-10">
               <div>
                 <h2 className="text-xl md:text-3xl font-extrabold text-slate-900">Top Rated Platforms</h2>
                 <p className="text-xs md:text-sm text-slate-400 mt-1 flex items-center gap-1.5">
@@ -252,7 +252,7 @@ export default async function HomePage() {
             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm">
               <HomepageComparisonTable brokers={(brokers as Broker[]) || []} defaultTab="Share Trading" />
             </div>
-            <div className="hidden sm:block text-center mt-6 md:mt-8">
+            <div className="hidden sm:block text-center mt-8 md:mt-10">
               <Link
                 href="/compare"
                 className="inline-block px-6 md:px-8 py-3 md:py-3.5 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 hover:shadow-md transition-all text-sm"
@@ -272,9 +272,9 @@ export default async function HomePage() {
       {/* ═══════ 5. ACTIVE DEALS ═══════ */}
       {(dealBrokers as Broker[])?.length > 0 && (
         <ScrollFadeIn>
-          <section className="py-4 md:py-12 bg-gradient-to-b from-amber-50/60 to-white border-y border-amber-100">
+          <section className="py-10 md:py-16 bg-gradient-to-b from-amber-50/60 to-white border-y border-amber-100">
             <div className="container-custom">
-              <div className="flex items-start justify-between gap-2 mb-4 md:mb-6">
+              <div className="flex items-start justify-between gap-2 mb-6 md:mb-8">
                 <div>
                   <h2 className="text-lg md:text-2xl font-bold">Current Platform Deals</h2>
                   <p className="text-xs md:text-sm text-slate-500 mt-0.5">Verified promotions from Australian trading platforms</p>
@@ -333,9 +333,9 @@ export default async function HomePage() {
         if (month < 2 || month > 6) return null;
         return (
           <ScrollFadeIn>
-            <section className="py-5 md:py-10 bg-gradient-to-r from-amber-50 to-orange-50 border-y border-amber-200/50">
+            <section className="py-10 md:py-16 bg-gradient-to-r from-amber-50 to-orange-50 border-y border-amber-200/50">
               <div className="container-custom">
-                <div className="flex items-center gap-3 mb-4 md:mb-6">
+                <div className="flex items-center gap-3 mb-6 md:mb-8">
                   <div className="w-10 h-10 bg-amber-100 border border-amber-200 rounded-xl flex items-center justify-center shrink-0">
                     <Icon name="calendar" size={20} className="text-amber-600" />
                   </div>
@@ -371,9 +371,9 @@ export default async function HomePage() {
       {/* ═══════ 7. ARTICLES & GUIDES ═══════ */}
       {(articles as Article[])?.length > 0 && (
         <ScrollFadeIn>
-          <section className="py-6 md:py-14 bg-slate-50">
+          <section className="py-10 md:py-16 bg-slate-50">
             <div className="container-custom">
-              <div className="flex items-start justify-between gap-2 mb-5 md:mb-8">
+              <div className="flex items-start justify-between gap-2 mb-6 md:mb-10">
                 <div>
                   <h2 className="text-xl md:text-2xl font-bold text-slate-900">Learn &amp; Get Expert Help</h2>
                   <p className="text-xs md:text-sm text-slate-500 mt-1">Guides, how-tos, and professional advice for smarter investing</p>
@@ -382,7 +382,7 @@ export default async function HomePage() {
                   View all &rarr;
                 </Link>
               </div>
-              <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+              <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {(articles as Article[]).slice(0, 6).map((article) => (
                   <Link
                     key={article.id}
@@ -446,11 +446,11 @@ export default async function HomePage() {
 
       {/* ═══════ 8. TOOLS & CALCULATORS ═══════ */}
       <ScrollFadeIn>
-        <section className="py-6 md:py-14 bg-white">
+        <section className="py-10 md:py-16 bg-white">
           <div className="container-custom">
-            <p className="text-[0.65rem] md:text-xs text-amber-600 text-center uppercase tracking-widest font-bold mb-1 md:mb-2">Free tools</p>
-            <h2 className="text-xl md:text-2xl font-bold text-center text-slate-900 mb-4 md:mb-8">Investing Tools &amp; Calculators</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
+            <p className="text-[0.65rem] md:text-xs text-amber-600 text-center uppercase tracking-widest font-bold mb-2">Free tools</p>
+            <h2 className="text-xl md:text-2xl font-bold text-center text-slate-900 mb-6 md:mb-10">Investing Tools &amp; Calculators</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5">
               {[
                 { href: "/portfolio-calculator", icon: "calculator", color: "from-amber-500 to-amber-400", shadow: "shadow-amber-500/20", title: "Portfolio Calculator", desc: "See exact fees at every platform" },
                 { href: "/switching-calculator", icon: "arrow-right-left", color: "from-emerald-600 to-emerald-500", shadow: "shadow-emerald-500/15", title: "Switching Calculator", desc: "How much are you overpaying?" },
@@ -476,9 +476,9 @@ export default async function HomePage() {
 
       {/* ═══════ 9. BEST PLATFORMS BY CATEGORY ═══════ */}
       <ScrollFadeIn>
-        <section className="py-4 md:py-12 bg-slate-50 border-y border-slate-100">
+        <section className="py-10 md:py-16 bg-slate-50 border-y border-slate-100">
           <div className="container-custom">
-            <div className="flex items-start justify-between gap-2 mb-4 md:mb-8">
+            <div className="flex items-start justify-between gap-2 mb-6 md:mb-10">
               <div>
                 <h2 className="text-xl md:text-3xl font-bold text-slate-900">Best Platforms by Category</h2>
                 <p className="text-xs md:text-base text-slate-500 mt-1">Curated picks ranked by fees, features, and user experience</p>
@@ -487,7 +487,7 @@ export default async function HomePage() {
                 View all &rarr;
               </Link>
             </div>
-            <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+            <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
               {bestForCards.map((card) => (
                 <Link key={card.title} href={card.href} className={`border rounded-2xl p-4 md:p-5 hover:shadow-md transition-all ${card.color}`}>
                   <Icon name={card.icon} size={24} className="mb-2.5 opacity-80" />
@@ -518,10 +518,10 @@ export default async function HomePage() {
 
       {/* ═══════ 10. TOP REVIEWED PLATFORMS ═══════ */}
       <ScrollFadeIn>
-        <section className="py-5 md:py-10 bg-white">
+        <section className="py-10 md:py-16 bg-white">
           <div className="container-custom">
-            <h2 className="text-lg md:text-2xl font-bold text-slate-900 mb-3 md:mb-5">Top Reviewed Platforms</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
+            <h2 className="text-lg md:text-2xl font-bold text-slate-900 mb-5 md:mb-8">Top Reviewed Platforms</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
               {(brokers as Broker[])?.filter(b => b.rating && b.rating >= 4.0).sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 8).map(b => (
                 <Link key={b.slug} href={`/broker/${b.slug}`} className="flex items-center gap-2.5 p-2.5 md:p-3 rounded-xl border border-slate-100 hover:border-amber-200 hover:bg-amber-50/30 hover:shadow-sm transition-all group">
                   <BrokerLogo broker={b} size="sm" />
@@ -538,7 +538,7 @@ export default async function HomePage() {
 
       {/* ═══════ 11. EMAIL CAPTURE ═══════ */}
       <ScrollFadeIn>
-        <section className="py-6 md:py-12 bg-slate-50 border-t border-slate-100">
+        <section className="py-10 md:py-16 bg-slate-50 border-t border-slate-100">
           <div className="container-custom">
             <div className="max-w-xl mx-auto">
               <LeadMagnet />
