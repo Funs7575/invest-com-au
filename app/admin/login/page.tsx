@@ -29,7 +29,7 @@ function AdminLoginForm() {
 
     try {
       const supabase = createClient();
-      const siteUrl = typeof window !== "undefined" ? window.location.origin : "https://invest-com-au.vercel.app";
+      const siteUrl = typeof window !== "undefined" ? window.location.origin : "https://invest.com.au";
 
       const { error: authError } = await supabase.auth.signInWithOtp({
         email: trimmed,
@@ -203,7 +203,7 @@ function AdminLoginForm() {
                   setLoading(true);
                   setError("");
                   const supabase = createClient();
-                  const siteUrl = typeof window !== "undefined" ? window.location.origin : "https://invest-com-au.vercel.app";
+                  const siteUrl = typeof window !== "undefined" ? window.location.origin : "https://invest.com.au";
                   const { error: resetErr } = await supabase.auth.resetPasswordForEmail(trimmed, {
                     redirectTo: `${siteUrl}/auth/callback?next=/admin`,
                   });

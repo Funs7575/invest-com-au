@@ -119,7 +119,7 @@ export async function GET(req: NextRequest) {
                       <p>You have <strong>${unresponded} enquiries</strong> that haven't been responded to in over 72 hours.</p>
                       <p>Quick responses lead to better conversion rates and happier clients. Advisors who respond within 24 hours see <strong>3x higher conversion</strong>.</p>
                       <p><strong>Important:</strong> If leads remain unresponded for 7 days, your profile may be temporarily paused to protect lead quality for consumers.</p>
-                      <a href="https://invest-com-au.vercel.app/advisor-portal" style="display: inline-block; padding: 12px 24px; background: #0f172a; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">View Your Leads</a>
+                      <a href="https://invest.com.au/advisor-portal" style="display: inline-block; padding: 12px 24px; background: #0f172a; color: white; text-decoration: none; border-radius: 8px; font-weight: bold;">View Your Leads</a>
                     </div>
                   `,
                 }),

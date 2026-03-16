@@ -35,7 +35,7 @@ export async function POST() {
 
     // Create portal session
     const siteUrl =
-      process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app";
+      process.env.NEXT_PUBLIC_SITE_URL || "https://invest.com.au";
 
     const session = await getStripe().billingPortal.sessions.create({
       customer: profile.stripe_customer_id,

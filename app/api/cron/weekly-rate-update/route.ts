@@ -8,7 +8,7 @@ const log = logger("cron-weekly-rate-update");
 export const runtime = "edge";
 export const maxDuration = 30;
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://invest.com.au";
 
 const CALCULATOR_SOURCES = [
   "savings-calculator",

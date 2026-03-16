@@ -6,7 +6,7 @@ import { getAllCitySlugs } from "@/lib/cities";
 import { getAllGuideSlugs } from "@/lib/how-to-guides";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest.com.au";
   const supabase = await createClient();
 
   // Static pages with tiered priorities

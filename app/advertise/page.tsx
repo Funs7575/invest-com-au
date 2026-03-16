@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest-com-au.vercel.app";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest.com.au";
 
 export const metadata: Metadata = {
   title: "Advertise With Us | Invest.com.au",
