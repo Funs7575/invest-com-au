@@ -507,6 +507,204 @@ export const GLOSSARY_ENTRIES: GlossaryEntry[] = [
       "Sponsored Reporting Service — CHESS-sponsored holders receive statements directly from the ASX registry (Computershare or Link Market Services) confirming their holdings.",
     category: "Share Trading",
   },
+  // ─── Property Investing ───
+  {
+    term: "LVR",
+    slug: "lvr",
+    definition:
+      "Loan-to-Value Ratio — the percentage of a property's value that you're borrowing. e.g. borrowing $400,000 on a $500,000 property = 80% LVR. Above 80% usually requires Lenders Mortgage Insurance.",
+    category: "Property",
+  },
+  {
+    term: "LMI",
+    slug: "lmi",
+    definition:
+      "Lenders Mortgage Insurance — a one-off insurance premium you pay when borrowing more than 80% of a property's value. Protects the lender (not you) if you default. Can cost $5,000–$30,000+.",
+    category: "Property",
+  },
+  {
+    term: "Offset Account",
+    slug: "offset-account",
+    definition:
+      "A savings account linked to your mortgage. Money in the offset reduces the loan balance that interest is calculated on. e.g. $50,000 in offset on a $500,000 loan = interest charged on $450,000.",
+    category: "Property",
+  },
+  {
+    term: "Capital Growth",
+    slug: "capital-growth",
+    definition:
+      "The increase in an asset's value over time. e.g. a property bought for $600,000 that's now worth $750,000 has had $150,000 (25%) capital growth.",
+    category: "Property",
+  },
+  {
+    term: "Equity",
+    slug: "equity",
+    definition:
+      "The portion of a property you actually own — the property's value minus what you owe on the mortgage. Can be used as security to borrow for further investments.",
+    category: "Property",
+  },
+  {
+    term: "Settlement",
+    slug: "settlement",
+    definition:
+      "The legal process of transferring property ownership from seller to buyer. In Australia, settlement typically takes 30–90 days after contracts are exchanged.",
+    category: "Property",
+  },
+
+  // ─── Bonds & Fixed Income ───
+  {
+    term: "Bond",
+    slug: "bond",
+    definition:
+      "A loan you make to a government or company in exchange for regular interest payments and your money back at maturity. Generally lower risk than shares but lower returns.",
+    category: "General",
+  },
+  {
+    term: "Term Deposit",
+    slug: "term-deposit",
+    definition:
+      "A bank deposit where you lock your money away for a fixed period (1 month to 5 years) at a guaranteed interest rate. Safe but inflexible — early withdrawal incurs penalties.",
+    category: "General",
+  },
+  {
+    term: "Yield",
+    slug: "yield",
+    definition:
+      "The income return on an investment, expressed as a percentage. e.g. a share paying $2 in annual dividends with a $40 price has a 5% dividend yield.",
+    category: "General",
+  },
+  {
+    term: "Coupon Rate",
+    slug: "coupon-rate",
+    definition:
+      "The annual interest rate paid by a bond, expressed as a percentage of its face value. e.g. a $1,000 bond with a 4% coupon pays $40/year in interest.",
+    category: "General",
+  },
+
+  // ─── Insurance & Protection ───
+  {
+    term: "Income Protection",
+    slug: "income-protection",
+    definition:
+      "Insurance that replaces up to 75% of your income if you can't work due to illness or injury. Premiums are generally tax-deductible in Australia.",
+    category: "Insurance",
+  },
+  {
+    term: "TPD Insurance",
+    slug: "tpd-insurance",
+    definition:
+      "Total and Permanent Disability insurance — pays a lump sum if you become permanently unable to work. Often held inside super to reduce out-of-pocket cost.",
+    category: "Insurance",
+  },
+  {
+    term: "Life Insurance",
+    slug: "life-insurance",
+    definition:
+      "Pays a lump sum to your beneficiaries if you die. Can be held inside or outside super. The amount should cover debts, living expenses for dependants, and future goals.",
+    category: "Insurance",
+  },
+
+  // ─── More Tax & Compliance ───
+  {
+    term: "Trust",
+    slug: "trust",
+    definition:
+      "A legal structure where a trustee holds assets on behalf of beneficiaries. Family (discretionary) trusts allow flexible distribution of investment income to reduce overall tax.",
+    category: "Tax",
+  },
+  {
+    term: "Marginal Tax Rate",
+    slug: "marginal-tax-rate",
+    definition:
+      "The tax rate you pay on each additional dollar of income. In Australia, rates range from 0% (under $18,200) to 45% (over $190,000) plus the 2% Medicare levy.",
+    category: "Tax",
+  },
+  {
+    term: "PAYG",
+    slug: "payg",
+    definition:
+      "Pay As You Go — Australia's system for collecting income tax throughout the year (via employer withholding) rather than in one lump sum at tax time.",
+    category: "Tax",
+  },
+  {
+    term: "Cost Base",
+    slug: "cost-base",
+    definition:
+      "The original cost of an investment plus associated costs (brokerage, stamp duty). Used to calculate capital gains or losses when you sell.",
+    category: "Tax",
+  },
+
+  // ─── Advanced Investing ───
+  {
+    term: "Blue Chip",
+    slug: "blue-chip",
+    definition:
+      "Large, well-established companies with a long history of reliable performance. In Australia, blue chips include BHP, CBA, CSL, and Woolworths. Lower risk but also lower growth potential than small caps.",
+    category: "Share Trading",
+  },
+  {
+    term: "Small Cap",
+    slug: "small-cap",
+    definition:
+      "A company with a relatively small market capitalisation (typically under $2 billion in Australia). Higher growth potential but also higher risk and volatility than large caps.",
+    category: "Share Trading",
+  },
+  {
+    term: "Market Capitalisation",
+    slug: "market-capitalisation",
+    definition:
+      "The total value of a company's shares — calculated by multiplying the share price by the number of shares on issue. Used to classify companies as large cap, mid cap, or small cap.",
+    category: "Share Trading",
+  },
+  {
+    term: "IPO",
+    slug: "ipo",
+    definition:
+      "Initial Public Offering — when a private company lists on the stock exchange for the first time, offering shares to the public. Can be high-reward but also high-risk.",
+    category: "Share Trading",
+  },
+  {
+    term: "Vesting",
+    slug: "vesting",
+    definition:
+      "The process by which you gain full ownership of employer-granted shares or options over time. Common in startup and tech company compensation packages.",
+    category: "Share Trading",
+  },
+  {
+    term: "ASX 200",
+    slug: "asx-200",
+    definition:
+      "An index of the 200 largest companies listed on the ASX by market capitalisation. The main benchmark for the Australian share market's performance.",
+    category: "General",
+  },
+  {
+    term: "Bear Market",
+    slug: "bear-market",
+    definition:
+      "A sustained decline in the market — typically defined as a 20%+ drop from recent highs. The opposite of a bull market. Bear markets are normal and historically temporary.",
+    category: "General",
+  },
+  {
+    term: "Bull Market",
+    slug: "bull-market",
+    definition:
+      "A sustained period of rising share prices. Generally defined as a 20%+ rise from recent lows. Bull markets tend to last longer than bear markets.",
+    category: "General",
+  },
+  {
+    term: "Volatility",
+    slug: "volatility",
+    definition:
+      "How much an investment's price fluctuates over time. High volatility means bigger price swings (up and down). Crypto and small caps are high volatility; bonds and term deposits are low volatility.",
+    category: "General",
+  },
+  {
+    term: "Liquidity",
+    slug: "liquidity",
+    definition:
+      "How quickly and easily an asset can be converted to cash without significantly affecting its price. ASX blue chips and major ETFs are highly liquid; property and unlisted investments are illiquid.",
+    category: "General",
+  },
 ];
 
 // Populate the flat GLOSSARY lookup from entries
