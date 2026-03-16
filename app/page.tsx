@@ -228,12 +228,7 @@ export default async function HomePage() {
         </section>
       </ScrollFadeIn>
 
-      {/* ═══════ 3. ADVISOR DIRECTORY ═══════ */}
-      <AdvisorDirectory
-        advisors={(featuredAdvisors as { slug: string; name: string; firm_name?: string; type: string; location_display?: string; location_state?: string; rating: number; review_count: number; photo_url?: string; specialties: string[]; verified?: boolean }[]) || []}
-      />
-
-      {/* ═══════ 4. TOP PLATFORMS ═══════ */}
+      {/* ═══════ 3. TOP PLATFORMS ═══════ */}
       <ScrollFadeIn>
         <section className="py-10 md:py-16 bg-white">
           <div className="container-custom">
@@ -268,6 +263,11 @@ export default async function HomePage() {
           </div>
         </section>
       </ScrollFadeIn>
+
+      {/* ═══════ 4. ADVISOR DIRECTORY ═══════ */}
+      <AdvisorDirectory
+        advisors={(featuredAdvisors as { slug: string; name: string; firm_name?: string; type: string; location_display?: string; location_state?: string; rating: number; review_count: number; photo_url?: string; specialties: string[]; verified?: boolean }[]) || []}
+      />
 
       {/* ═══════ 5. ACTIVE DEALS ═══════ */}
       {(dealBrokers as Broker[])?.length > 0 && (
