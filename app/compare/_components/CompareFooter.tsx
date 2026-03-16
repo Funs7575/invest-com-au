@@ -138,10 +138,10 @@ export default function CompareFooter({ sorted, brokers, activeFilter }: Props) 
           </Link>
         </div>
         <div className="bg-white border border-slate-200 rounded-xl p-3 md:p-6 flex flex-col items-start gap-1.5 md:gap-0">
-          <Icon name="calculator" size={18} className="text-violet-600 shrink-0 md:mb-2" />
+          <Icon name="calculator" size={18} className="text-amber-600 shrink-0 md:mb-2" />
           <h2 className="text-xs md:text-lg font-bold text-slate-900">Fee Calculator</h2>
           <p className="text-[0.58rem] md:text-xs text-slate-500 md:mb-4 hidden md:block">See exact fees for your portfolio at every broker.</p>
-          <Link href="/portfolio-calculator" className="mt-auto px-3 md:px-5 py-1.5 md:py-2.5 bg-violet-600 text-white text-[0.65rem] md:text-sm font-bold rounded-lg hover:bg-violet-700 transition-colors">
+          <Link href="/portfolio-calculator" className="mt-auto px-3 md:px-5 py-1.5 md:py-2.5 bg-amber-600 text-white text-[0.65rem] md:text-sm font-bold rounded-lg hover:bg-amber-700 transition-colors">
             Calculate →
           </Link>
         </div>
