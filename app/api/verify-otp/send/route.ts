@@ -1,6 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
-import { isValidEmail } from "@/lib/validate-email";
+import { isValidEmail, isDisposableEmail } from "@/lib/validate-email";
 import { isRateLimited } from "@/lib/rate-limit";
 
 export const runtime = "edge";
@@ -27,8 +27,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Please enter a valid email address." }, { status: 400 });
   }
 
+  if (isDisposableEmail(email)) {
+    return NextResponse.json({ error: "Please use a real email address." }, { status: 400 });
+  }
+
   const normalizedEmail = email.toLowerCase().trim();
-  const code = String(Math.floor(100000 + Math.random() * 900000));
+  const arr = new Uint32Array(1);
+  crypto.getRandomValues(arr);
+  const code = String(100000 + (arr[0] % 900000));
   const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString(); // 10 min
 
   const supabase = createAdminClient();

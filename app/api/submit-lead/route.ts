@@ -332,6 +332,7 @@ export async function POST(request: NextRequest) {
       utm_medium: (utm as UtmParams).utm_medium ?? null,
       utm_campaign: (utm as UtmParams).utm_campaign ?? null,
       status: "sent",
+      advisor_notified_at: resolvedProfessionalId ? new Date().toISOString() : null,
     })
     .select("id")
     .single();

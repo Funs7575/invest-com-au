@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
     supabase
       .from("professionals")
       .select(
-        "id, name, slug, firm_name, email, photo_url, type, location_display, rating, review_count, verified, bio, specialties, fee_structure, fee_description, website, phone, booking_link, booking_intro"
+        "id, name, slug, firm_name, email, photo_url, type, location_display, rating, review_count, verified, bio, specialties, fee_structure, fee_description, website, phone, booking_link, booking_intro, credit_balance_cents, lead_price_cents, free_leads_used"
       )
       .eq("id", advisorId)
       .single(),

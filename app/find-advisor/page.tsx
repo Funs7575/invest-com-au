@@ -349,7 +349,7 @@ function FindAdvisorQuiz() {
     return errs;
   };
 
-  const handleSendOtp = async (e: React.FormEvent) => {
+  const handleSendOtp = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     const errs = validateStep4();
     if (Object.keys(errs).length > 0) { setErrors(errs); return; }
@@ -741,7 +741,7 @@ function Step4({
   otpCode: string; otpError: string | null;
   onOtpCodeChange: (v: string) => void;
   onOtpVerify: () => void;
-  onOtpResend: (e: React.FormEvent) => void;
+  onOtpResend: (e: React.SyntheticEvent) => void;
 }) {
   const otpActive = otpStage === "sent" || otpStage === "verifying";
 

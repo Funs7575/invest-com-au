@@ -11,7 +11,7 @@
 
 /** Admin email addresses — reads env at call time (test-friendly) */
 export function getAdminEmails(): string[] {
-  return (process.env.ADMIN_EMAILS || "admin@invest.com.au,finnduns@gmail.com,finn@invest.com.au")
+  return (process.env.ADMIN_EMAILS || "admin@invest.com.au,finn@invest.com.au")
     .split(",")
     .map((e) => e.trim().toLowerCase());
 }
