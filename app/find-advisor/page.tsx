@@ -226,11 +226,33 @@ function FindAdvisorQuiz() {
   const needParam = searchParams.get("need");
   const prefilledIntent = needParam ? NEED_TO_INTENT[needParam] || null : null;
 
-  const [quiz, setQuiz] = useState<QuizState>({
-    step: prefilledIntent ? 2 : 1,
-    intent: prefilledIntent,
-    context: [], state: "", budget: "",
-    firstName: "", email: "", phone: "", consent: false,
+  // Read sessionStorage once synchronously so all lazy initialisers share the same
+  // parsed value — avoids 5 separate JSON.parse calls and, crucially, avoids the
+  // two-render flash (step-1 paint → useEffect → step-5 repaint).
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const _savedMatch = typeof sessionStorage !== "undefined" ? loadMatchFromStorage() : null;
+  const savedMatch = _savedMatch && _savedMatch.matchedAdvisors.length > 0 ? _savedMatch : null;
+
+  const [quiz, setQuiz] = useState<QuizState>(() => {
+    if (savedMatch) {
+      return {
+        step: 5,
+        intent: (savedMatch.quizData.intent as Intent) ?? (prefilledIntent ?? null),
+        context: savedMatch.quizData.context ?? [],
+        state: savedMatch.quizData.state ?? "",
+        budget: savedMatch.quizData.budget ?? "",
+        firstName: savedMatch.quizData.firstName ?? "",
+        email: savedMatch.quizData.email ?? "",
+        phone: "",
+        consent: false,
+      };
+    }
+    return {
+      step: prefilledIntent ? 2 : 1,
+      intent: prefilledIntent,
+      context: [], state: "", budget: "",
+      firstName: "", email: "", phone: "", consent: false,
+    };
   });
 
   // Handle late searchParams changes (e.g. client-side navigation)
@@ -248,40 +270,18 @@ function FindAdvisorQuiz() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [submitted, setSubmitted] = useState(false);
-  const [matchedAdvisors, setMatchedAdvisors] = useState<MatchedAdvisor[]>([]);
-  const [excludeIds, setExcludeIds] = useState<number[]>([]);
-  const [leadIds, setLeadIds] = useState<number[]>([]);
+  const [submitted, setSubmitted] = useState(!!savedMatch);
+  const [matchedAdvisors, setMatchedAdvisors] = useState<MatchedAdvisor[]>(() => savedMatch?.matchedAdvisors ?? []);
+  const [excludeIds, setExcludeIds] = useState<number[]>(() => savedMatch?.excludeIds ?? []);
+  const [leadIds, setLeadIds] = useState<number[]>(() => savedMatch?.leadIds ?? []);
   const [confirming, setConfirming] = useState(false);
-  const [confirmedAdvisorId, setConfirmedAdvisorId] = useState<number | null>(null);
+  const [confirmedAdvisorId, setConfirmedAdvisorId] = useState<number | null>(() => savedMatch?.confirmedAdvisorId ?? null);
   const [noMoreMatches, setNoMoreMatches] = useState(false);
   const [rematching, setRematching] = useState(false);
   const [otpStage, setOtpStage] = useState<"idle" | "sending" | "sent" | "verifying">("idle");
   const [otpCode, setOtpCode] = useState("");
   const [otpError, setOtpError] = useState<string | null>(null);
 
-  // Restore persisted match on mount
-  useEffect(() => {
-    const saved = loadMatchFromStorage();
-    if (saved && saved.matchedAdvisors.length > 0) {
-      setMatchedAdvisors(saved.matchedAdvisors);
-      setExcludeIds(saved.excludeIds);
-      setLeadIds(saved.leadIds ?? []);
-      setConfirmedAdvisorId(saved.confirmedAdvisorId ?? null);
-      setSubmitted(true);
-      setQuiz(prev => ({
-        ...prev,
-        step: 5,
-        // Use nullish coalescing so empty string doesn't fall back to stale prev value
-        intent: (saved.quizData.intent as Intent) ?? prev.intent,
-        context: saved.quizData.context ?? prev.context,
-        state: saved.quizData.state ?? prev.state,
-        budget: saved.quizData.budget ?? prev.budget,
-        firstName: saved.quizData.firstName ?? prev.firstName,
-        email: saved.quizData.email ?? prev.email,
-      }));
-    }
-  }, []);
 
   const currentMatch = matchedAdvisors.length > 0 ? matchedAdvisors[matchedAdvisors.length - 1] : null;
 
