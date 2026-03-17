@@ -9,11 +9,13 @@ import ThemeToggle from "@/components/ThemeToggle";
 import Icon from "@/components/Icon";
 
 const propertyDropdown = [
+  { label: "Investment Property", href: "/property", desc: "New developments, suburb data & more" },
+  { label: "New Developments", href: "/property/listings", desc: "Off-the-plan apartments & houses" },
+  { label: "Buyer's Agents", href: "/property/buyer-agents", desc: "Negotiation & off-market access" },
+  { label: "Suburb Research", href: "/property/suburbs", desc: "Yields, growth & vacancy data" },
+  { label: "Investment Loans", href: "/property/finance", desc: "Compare rates from major lenders" },
   { label: "Mortgage Brokers", href: "/advisors/mortgage-brokers", desc: "Compare 30+ lenders — free" },
-  { label: "Buyer's Agents", href: "/advisors/buyers-agents", desc: "Off-market access & negotiation" },
-  { label: "Real Estate Agents", href: "/advisors/real-estate-agents", desc: "Selling & listing specialists" },
   { label: "Find an Advisor", href: "/find-advisor", desc: "Match with a verified professional" },
-  { label: "All Advisors", href: "/advisors", desc: "Browse all professionals" },
 ];
 
 const wealthDropdown = [
@@ -45,10 +47,19 @@ const popularLinks = [
 
 const mobileNavSections = [
   {
-    title: "Property & Finance",
+    title: "Investment Property",
+    items: [
+      { name: "Property Hub", href: "/property" },
+      { name: "New Developments", href: "/property/listings" },
+      { name: "Buyer's Agents", href: "/property/buyer-agents" },
+      { name: "Suburb Research", href: "/property/suburbs" },
+      { name: "Investment Loans", href: "/property/finance" },
+    ],
+  },
+  {
+    title: "Advisors & Finance",
     items: [
       { name: "Mortgage Brokers", href: "/advisors/mortgage-brokers" },
-      { name: "Buyer's Agents", href: "/advisors/buyers-agents" },
       { name: "Real Estate Agents", href: "/advisors/real-estate-agents" },
       { name: "Find an Advisor", href: "/find-advisor" },
       { name: "All Advisors", href: "/advisors" },
@@ -150,7 +161,7 @@ export default function Header() {
   const isPlatformsActive = ["/compare", "/best", "/versus", "/deals", "/reviews", "/quiz"].some(
     (p) => pathname === p || pathname.startsWith(p + "/")
   );
-  const isPropertyActive = ["/advisors/mortgage-brokers", "/advisors/buyers-agents", "/advisors/real-estate-agents", "/find-advisor"].some(
+  const isPropertyActive = ["/property", "/advisors/mortgage-brokers", "/advisors/buyers-agents", "/advisors/real-estate-agents", "/find-advisor"].some(
     (p) => pathname === p || pathname.startsWith(p + "/")
   );
   const isWealthActive = ["/advisors/financial-planners", "/advisors/smsf-accountants", "/advisors/insurance-brokers", "/advisors/tax-agents", "/advisors/estate-planners", "/advisors/wealth-managers"].some(
