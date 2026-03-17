@@ -269,6 +269,46 @@ export default async function HomePage() {
         </section>
       </ScrollFadeIn>
 
+      {/* ═══════ 4B. PROPERTY INVESTMENT ═══════ */}
+      <ScrollFadeIn>
+        <section className="py-6 md:py-10 bg-slate-50 border-y border-slate-100">
+          <div className="container-custom">
+            <div className="flex items-start justify-between gap-2 mb-4 md:mb-6">
+              <div>
+                <h2 className="text-xl md:text-2xl font-bold text-slate-900">Investment Property</h2>
+                <p className="text-xs md:text-sm text-slate-500 mt-1">New developments, buyer&apos;s agents &amp; suburb data</p>
+              </div>
+              <Link href="/property/listings" className="text-xs md:text-sm font-semibold text-amber-600 hover:text-amber-700 shrink-0 min-h-[44px] inline-flex items-center px-1">
+                View all &rarr;
+              </Link>
+            </div>
+            <div className="grid md:grid-cols-3 gap-3 md:gap-4">
+              <Link href="/property/listings" className="bg-white border border-slate-200 rounded-2xl p-4 md:p-5 hover:shadow-md hover:border-slate-300 transition-all group">
+                <div className="w-9 h-9 bg-gradient-to-br from-amber-500 to-amber-400 rounded-xl flex items-center justify-center mb-2.5 shadow-md shadow-amber-500/20">
+                  <Icon name="building" size={18} className="text-white" />
+                </div>
+                <h3 className="font-bold text-sm text-slate-900 mb-0.5 group-hover:text-slate-700">New Developments</h3>
+                <p className="text-xs text-slate-500">Off-the-plan apartments, townhouses &amp; house and land</p>
+              </Link>
+              <Link href="/property/buyer-agents" className="bg-white border border-slate-200 rounded-2xl p-4 md:p-5 hover:shadow-md hover:border-slate-300 transition-all group">
+                <div className="w-9 h-9 bg-gradient-to-br from-slate-800 to-slate-700 rounded-xl flex items-center justify-center mb-2.5 shadow-md shadow-slate-500/15">
+                  <Icon name="users" size={18} className="text-white" />
+                </div>
+                <h3 className="font-bold text-sm text-slate-900 mb-0.5 group-hover:text-slate-700">Buyer&apos;s Agents</h3>
+                <p className="text-xs text-slate-500">Verified agents who negotiate on your behalf</p>
+              </Link>
+              <Link href="/property/suburbs" className="bg-white border border-slate-200 rounded-2xl p-4 md:p-5 hover:shadow-md hover:border-slate-300 transition-all group">
+                <div className="w-9 h-9 bg-gradient-to-br from-emerald-600 to-emerald-500 rounded-xl flex items-center justify-center mb-2.5 shadow-md shadow-emerald-500/15">
+                  <Icon name="bar-chart" size={18} className="text-white" />
+                </div>
+                <h3 className="font-bold text-sm text-slate-900 mb-0.5 group-hover:text-slate-700">Suburb Research</h3>
+                <p className="text-xs text-slate-500">Median prices, yields, vacancy rates &amp; growth data</p>
+              </Link>
+            </div>
+          </div>
+        </section>
+      </ScrollFadeIn>
+
       {/* ═══════ 5. ACTIVE DEALS ═══════ */}
       {(dealBrokers as Broker[])?.length > 0 && (
         <ScrollFadeIn>

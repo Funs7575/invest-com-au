@@ -56,6 +56,15 @@ const NAV_GROUPS = [
     ],
   },
   {
+    label: "Property",
+    items: [
+      { href: "/admin/property", icon: "building", label: "Property Overview" },
+      { href: "/admin/property/listings", icon: "home", label: "Listings" },
+      { href: "/admin/property/leads", icon: "users", label: "Property Leads" },
+      { href: "/admin/property/developers", icon: "briefcase", label: "Developers" },
+    ],
+  },
+  {
     label: "Advisors",
     items: [
       { href: "/admin/advisors", icon: "user", label: "Advisors" },
