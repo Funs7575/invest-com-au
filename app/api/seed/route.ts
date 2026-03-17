@@ -8,6 +8,11 @@ const log = logger("seed");
 const ADMIN_DOMAIN = "@invest.com.au";
 
 export async function POST() {
+  // Block in production
+  if (process.env.NODE_ENV === "production") {
+    return NextResponse.json({ error: "Not available in production" }, { status: 403 });
+  }
+
   try {
     const supabase = await createClient();
 

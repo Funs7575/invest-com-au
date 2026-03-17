@@ -134,7 +134,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Action must be 'approve' or 'reject'" }, { status: 400 });
     }
 
-    const supabase = await createClient();
+    const supabase = createAdminClient();
     const table = type === "question" ? "broker_questions" : "broker_answers";
     const newStatus = action === "approve" ? "approved" : "rejected";
 
