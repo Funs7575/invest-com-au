@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
-import { OFF_THE_PLAN_WARNING, PROPERTY_DISCLAIMER_SHORT } from "@/lib/compliance";
+import { OFF_THE_PLAN_WARNING, PROPERTY_DISCLAIMER_SHORT, PROPERTY_INDICATIVE_PRICES, PROPERTY_TAX_NOTE } from "@/lib/compliance";
 import Icon from "@/components/Icon";
 import PropertyEnquiryForm from "./PropertyEnquiryForm";
 
@@ -138,18 +138,18 @@ export default async function PropertyListingPage({ params }: { params: Promise<
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
                 <div className="bg-slate-50 rounded-xl p-3 text-center">
                   <p className="text-lg font-extrabold text-slate-900">{formatPrice(listing.price_from_cents)}</p>
-                  <p className="text-[0.65rem] text-slate-400">From</p>
+                  <p className="text-[0.65rem] text-slate-400">From (indicative)</p>
                 </div>
                 {listing.price_to_cents && (
                   <div className="bg-slate-50 rounded-xl p-3 text-center">
                     <p className="text-lg font-extrabold text-slate-900">{formatPrice(listing.price_to_cents)}</p>
-                    <p className="text-[0.65rem] text-slate-400">To</p>
+                    <p className="text-[0.65rem] text-slate-400">To (indicative)</p>
                   </div>
                 )}
                 {listing.rental_yield_estimate && (
                   <div className="bg-emerald-50 rounded-xl p-3 text-center">
                     <p className="text-lg font-extrabold text-emerald-700">{listing.rental_yield_estimate}%</p>
-                    <p className="text-[0.65rem] text-emerald-600">Est. Rental Yield</p>
+                    <p className="text-[0.65rem] text-emerald-600">Est. Yield (pre-tax)</p>
                   </div>
                 )}
                 {listing.bedrooms_min && (
@@ -162,6 +162,11 @@ export default async function PropertyListingPage({ params }: { params: Promise<
                 )}
               </div>
             </div>
+
+            {/* Indicative price note */}
+            <p className="text-[0.62rem] text-slate-400 leading-relaxed -mt-2">
+              {PROPERTY_INDICATIVE_PRICES}
+            </p>
 
             {/* Description */}
             {listing.description && (
@@ -233,6 +238,7 @@ export default async function PropertyListingPage({ params }: { params: Promise<
                 <Link href="/property/suburbs" className="inline-flex items-center gap-1 mt-3 text-xs font-semibold text-amber-600 hover:text-amber-700">
                   Research more suburbs &rarr;
                 </Link>
+                <p className="text-[0.62rem] text-slate-400 mt-2 leading-relaxed">{PROPERTY_TAX_NOTE}</p>
               </div>
             )}
 

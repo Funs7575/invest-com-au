@@ -172,6 +172,7 @@ export function SiteFooter() {
                 { label: "Terms", href: "/terms" },
                 { label: "Advisor Terms", href: "/advisor-terms" },
                 { label: "Advertiser Terms", href: "/advertiser-terms" },
+                { label: "Accessibility", href: "/accessibility" },
                 { label: "AFCA", href: "https://www.afca.org.au", external: true },
               ].map((item) => (
                 <Link

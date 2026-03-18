@@ -265,3 +265,67 @@ export const ENQUIRY_CONSENT_TEXT =
   "I agree to the Privacy Policy and Terms of Use. I consent to my details being shared with " +
   "the selected provider to respond to this enquiry. I understand I may receive follow-up " +
   "communications and can opt out at any time.";
+
+// ═══════════════════════════════════════════════════════════════════
+// ADDITIONAL COMPLIANCE (NCCP / GDPR / ACCESSIBILITY / PROPERTY)
+// ═══════════════════════════════════════════════════════════════════
+
+/**
+ * NCCP Act credit assistance note.
+ * National Consumer Credit Protection Act 2009 prohibits providing
+ * "credit assistance" without an Australian Credit Licence (ACL).
+ * Must appear on any page comparing credit products (home loans, etc.)
+ * to confirm the site is providing information only, not credit assistance.
+ */
+export const NCCP_CREDIT_NOTE =
+  "Invest.com.au does not hold an Australian Credit Licence (ACL) and does not provide " +
+  "credit assistance as defined under the National Consumer Credit Protection Act 2009. " +
+  "Rates and loan information are indicative only and do not constitute a credit quote or " +
+  "recommendation. For credit assistance, consult a licensed mortgage broker or lender.";
+
+/**
+ * Property indicative price note.
+ * Addresses underquoting laws in NSW (Property and Stock Agents Regulation 2022)
+ * and VIC (Estate Agents Act 1980). Prices on off-the-plan listings are developer-
+ * supplied estimates and have not been independently verified.
+ */
+export const PROPERTY_INDICATIVE_PRICES =
+  "Prices shown are indicative estimates provided by the developer and have not been " +
+  "independently verified by Invest.com.au. Actual prices at settlement may differ. " +
+  "Always obtain formal pricing from the developer or your solicitor.";
+
+/**
+ * Property tax note.
+ * Required near rental yield and capital growth figures.
+ * Property investment has significant tax implications including CGT, land tax,
+ * and depreciation. Users should consult a registered tax agent.
+ */
+export const PROPERTY_TAX_NOTE =
+  "Yields and growth figures are pre-tax estimates. Property investment has significant " +
+  "tax implications (CGT, land tax, negative gearing). Consult a registered tax agent.";
+
+/**
+ * GDPR rights note — for users in the European Economic Area.
+ * GDPR (EU) 2016/679 has extraterritorial reach for EU residents.
+ * Australian sites with EU users must provide a legal basis for processing
+ * and disclose additional rights.
+ */
+export const GDPR_RIGHTS_NOTE =
+  "If you are located in the European Economic Area (EEA), you have additional rights " +
+  "under the General Data Protection Regulation (GDPR), including the right to data " +
+  "portability and the right to erasure ('right to be forgotten'). Our legal basis for " +
+  "processing your data is legitimate interest (site analytics and fraud prevention) or " +
+  "consent (where you have opted in to communications). To exercise your GDPR rights, " +
+  "contact privacy@invest.com.au. If you are unsatisfied with our response, you may " +
+  "lodge a complaint with your national data protection authority.";
+
+/**
+ * Data processor note — for privacy policy third-party section.
+ * APP 8 of the Australian Privacy Act and GDPR Article 28 require that when
+ * personal data is shared with overseas processors, appropriate protections are in place.
+ */
+export const DATA_PROCESSOR_NOTE =
+  "Our service providers act as data processors on our behalf. We have data processing " +
+  "agreements (DPAs) or equivalent contractual protections in place with Supabase (database), " +
+  "Vercel (hosting), and Google (analytics). These agreements require processors to handle " +
+  "your data only on our instructions and in accordance with applicable privacy laws.";

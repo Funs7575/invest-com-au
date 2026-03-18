@@ -849,6 +849,13 @@ export default function AdvisorProfileClient({
                             ) : null}
                           </div>
                         )}
+                        <a
+                          href={`mailto:moderation@invest.com.au?subject=Flag+review+%23${r.id}&body=I+would+like+to+flag+review+%23${r.id}+on+the+profile+of+${encodeURIComponent(pro.name)}.+Reason:%0A%0A`}
+                          className="inline-block text-[0.6rem] text-slate-300 hover:text-slate-500 mt-2 transition-colors"
+                          aria-label="Flag this review for moderation"
+                        >
+                          Flag review
+                        </a>
                       </div>
                     ))}
                   </div>
