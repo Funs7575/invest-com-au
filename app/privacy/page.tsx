@@ -13,7 +13,7 @@ export default function PrivacyPage() {
       <div className="container-custom max-w-3xl">
         <h1 className="text-3xl font-extrabold mb-2">Privacy Policy</h1>
         <p className="text-sm text-slate-500 mb-8">
-          Version 1.1 — Last updated: 18 March 2026
+          Version 1.2 — Last updated: 18 March 2026
         </p>
 
         <div className="prose prose-slate max-w-none text-sm leading-relaxed space-y-6">
@@ -45,7 +45,7 @@ export default function PrivacyPage() {
                 PDF).
               </li>
               <li>
-                <strong>Name, email, and phone number</strong> — when you submit
+                <strong>Name, email, phone number, country of residence, investment budget, and purchase timeline</strong> — when you submit
                 an enquiry form (e.g. property enquiry, buyer&apos;s agent
                 contact, advisor matching). This data is shared with the
                 specific provider you enquired about.
@@ -97,10 +97,12 @@ export default function PrivacyPage() {
               </li>
               <li>
                 <strong>Property enquiries:</strong> If you submit an enquiry about a
-                property listing or buyer&apos;s agent, your name, email, phone (if
-                provided), budget, timeline, and message are shared with the relevant
-                developer or agent. Your details are shared only with the provider you
-                enquired about.
+                property listing, your name, email, phone (if provided), country of
+                residence, investment budget, purchase timeline, and message are shared
+                with the specific property developer for that listing. If you contact a
+                buyer&apos;s agent, your details are shared with that agent only.
+                Your details are shared only with the provider you enquired about and
+                are not sold or passed to other parties.
               </li>
               <li>
                 To improve our website, content, and user experience through
@@ -201,11 +203,60 @@ export default function PrivacyPage() {
                 affiliate link, the partner may set their own cookies. We do not
                 share your email or personal data with affiliate partners.
               </li>
+              <li>
+                <strong>Advisors and financial professionals</strong> — when you
+                submit an advisor enquiry, your contact details are shared with
+                the specific advisor you selected.
+              </li>
+              <li>
+                <strong>Property developers and buyer&apos;s agents</strong> — when
+                you submit a property enquiry, your contact details are shared
+                with the specific developer or agent you enquired about. We
+                require all listed parties to handle your data in accordance with
+                applicable privacy laws.
+              </li>
             </ul>
           </section>
 
           <section>
-            <h2 className="text-lg font-bold mb-2">7. Data Security</h2>
+            <h2 className="text-lg font-bold mb-2">
+              7. User-Generated Content (Reviews &amp; Articles)
+            </h2>
+            <p className="text-slate-600 mb-2">
+              Our site allows users to submit reviews of advisors and financial
+              platforms, and allows verified advisors to publish articles.
+            </p>
+            <ul className="list-disc pl-5 text-slate-600 space-y-1">
+              <li>
+                <strong>Reviews:</strong> If you submit a review, your display
+                name (or &quot;Anonymous&quot; if you choose) and the content of
+                your review may be published publicly. We store your email
+                address to verify the review and for moderation purposes — it
+                is not published.
+              </li>
+              <li>
+                <strong>Advisor articles:</strong> Articles published by advisors
+                include the advisor&apos;s name and firm. We retain authorship
+                records for editorial purposes.
+              </li>
+              <li>
+                <strong>Moderation:</strong> We reserve the right to moderate,
+                edit, or remove user-submitted content that violates our content
+                standards or applicable law.
+              </li>
+              <li>
+                <strong>Deletion requests:</strong> You may request removal of
+                your review by contacting{" "}
+                <a href="mailto:privacy@invest.com.au" className="underline">
+                  privacy@invest.com.au
+                </a>
+                .
+              </li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-bold mb-2">8. Data Security</h2>
             <p className="text-slate-600">
               We take reasonable steps to protect your personal information from
               misuse, interference, loss, and unauthorised access. Email
@@ -218,7 +269,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-lg font-bold mb-2">
-              8. Your Rights Under the Privacy Act
+              9. Your Rights Under the Privacy Act
             </h2>
             <p className="text-slate-600 mb-2">
               Under the Australian Privacy Act 1988, you have the right to:
@@ -255,7 +306,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-lg font-bold mb-2">
-              9. Email Communications (Spam Act 2003)
+              10. Email Communications (Spam Act 2003)
             </h2>
             <p className="text-slate-600">
               All commercial electronic messages sent by Invest.com.au comply
@@ -270,7 +321,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-lg font-bold mb-2">
-              10. Changes to This Policy
+              11. Changes to This Policy
             </h2>
             <p className="text-slate-600">
               We may update this Privacy Policy from time to time. Any changes
@@ -281,7 +332,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-lg font-bold mb-2">11. Contact Us</h2>
+            <h2 className="text-lg font-bold mb-2">12. Contact Us</h2>
             <p className="text-slate-600">
               If you have any questions about this Privacy Policy, or wish to
               make a complaint about how we have handled your personal

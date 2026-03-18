@@ -112,7 +112,7 @@ export default function BrokerTermsPage() {
               <p>
                 For questions about this Agreement, contact us at{" "}
                 <a href="mailto:partnerships@invest.com.au" className="text-slate-700 underline hover:text-slate-900">partnerships@invest.com.au</a>{" "}
-                or write to: {COMPANY_LEGAL_NAME}, PO Box 123, Melbourne VIC 3000.
+                or email: partners@invest.com.au.
               </p>
             </S>
           </div>
