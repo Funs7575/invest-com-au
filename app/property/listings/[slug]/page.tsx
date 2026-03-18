@@ -1,10 +1,17 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import { OFF_THE_PLAN_WARNING, PROPERTY_DISCLAIMER_SHORT, PROPERTY_INDICATIVE_PRICES, PROPERTY_TAX_NOTE } from "@/lib/compliance";
 import Icon from "@/components/Icon";
 import PropertyEnquiryForm from "./PropertyEnquiryForm";
+
+const PLACEHOLDER_IMAGES: Record<string, string> = {
+  apartment: "/images/property/apartment-placeholder.svg",
+  house_land: "/images/property/house-placeholder.svg",
+  townhouse: "/images/property/townhouse-placeholder.svg",
+};
 
 export const revalidate = 3600;
 
@@ -102,18 +109,78 @@ export default async function PropertyListingPage({ params }: { params: Promise<
         <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Left Column — 2/3 */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Image Gallery placeholder */}
-            <div className="aspect-[16/9] bg-gradient-to-br from-slate-100 to-slate-200 rounded-2xl flex items-center justify-center relative">
-              <Icon name="building" size={60} className="text-slate-300" />
-              <div className="absolute bottom-3 left-3 flex gap-2">
-                {listing.sponsored && (
-                  <span className="text-[0.6rem] font-bold uppercase tracking-wider text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">Sponsored</span>
-                )}
-                <span className="text-[0.65rem] font-bold uppercase tracking-wider text-slate-600 bg-white/90 px-2 py-0.5 rounded-full">
-                  {listing.property_type === "house_land" ? "House & Land" : listing.property_type === "townhouse" ? "Townhouse" : "Apartment"}
-                </span>
-              </div>
-            </div>
+            {/* Image Gallery */}
+            {(() => {
+              const images: string[] = Array.isArray(listing.images) ? listing.images : [];
+              const placeholder = PLACEHOLDER_IMAGES[listing.property_type as string] ?? PLACEHOLDER_IMAGES.apartment;
+              const heroSrc = images[0] ?? placeholder;
+              const isExternal = heroSrc.startsWith("http");
+              const thumbnails = images.slice(1, 5);
+              return (
+                <div>
+                  {/* Hero image */}
+                  <div className="relative w-full aspect-[16/9] rounded-2xl overflow-hidden bg-slate-100">
+                    {isExternal ? (
+                      <Image
+                        src={heroSrc}
+                        alt={listing.title}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, 66vw"
+                        priority
+                      />
+                    ) : (
+                      // Local SVG placeholder — use img tag (unoptimized SVG)
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={heroSrc}
+                        alt={listing.title}
+                        className="w-full h-full object-cover"
+                      />
+                    )}
+                    {/* Gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
+                    {/* Badges */}
+                    <div className="absolute bottom-3 left-3 flex gap-2">
+                      {listing.sponsored && (
+                        <span className="text-[0.6rem] font-bold uppercase tracking-wider text-amber-700 bg-amber-50/95 border border-amber-200 px-2 py-0.5 rounded-full shadow-sm">Sponsored</span>
+                      )}
+                      <span className="text-[0.65rem] font-bold uppercase tracking-wider text-slate-700 bg-white/95 px-2 py-0.5 rounded-full shadow-sm">
+                        {listing.property_type === "house_land" ? "House & Land" : listing.property_type === "townhouse" ? "Townhouse" : "Apartment"}
+                      </span>
+                    </div>
+                    {/* Image count badge */}
+                    {images.length > 1 && (
+                      <div className="absolute bottom-3 right-3 flex items-center gap-1 bg-black/60 text-white text-[0.65rem] font-semibold px-2 py-0.5 rounded-full">
+                        <Icon name="image" size={11} />
+                        <span>{images.length} photos</span>
+                      </div>
+                    )}
+                  </div>
+                  {/* Thumbnail strip */}
+                  {thumbnails.length > 0 && (
+                    <div className="grid grid-cols-4 gap-2 mt-2">
+                      {thumbnails.map((src, i) => (
+                        <div key={i} className="relative aspect-[4/3] rounded-lg overflow-hidden bg-slate-100">
+                          <Image
+                            src={src}
+                            alt={`${listing.title} photo ${i + 2}`}
+                            fill
+                            className="object-cover"
+                            sizes="25vw"
+                          />
+                          {i === thumbnails.length - 1 && images.length > 5 && (
+                            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                              <span className="text-white text-sm font-bold">+{images.length - 5}</span>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
 
             {/* Title & Key Stats */}
             <div>

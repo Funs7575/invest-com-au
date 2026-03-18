@@ -1,0 +1,97 @@
+<svg viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#e0e7ff"/>
+      <stop offset="70%" style="stop-color:#f0f4ff"/>
+      <stop offset="100%" style="stop-color:#f8fafc"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#sky)"/>
+  <!-- Soft sun -->
+  <circle cx="1050" cy="110" r="75" fill="rgba(254,240,180,0.55)"/>
+  <circle cx="1050" cy="110" r="48" fill="rgba(253,230,140,0.7)"/>
+  <!-- Clouds -->
+  <ellipse cx="300" cy="90" rx="110" ry="38" fill="rgba(255,255,255,0.8)"/>
+  <ellipse cx="400" cy="78" rx="80" ry="32" fill="rgba(255,255,255,0.75)"/>
+  <ellipse cx="700" cy="65" rx="95" ry="34" fill="rgba(255,255,255,0.72)"/>
+  <!-- Townhouse unit 1 (left) -->
+  <rect x="110" y="250" width="230" height="425" fill="#e2e8f0" stroke="rgba(148,163,184,0.3)" stroke-width="1.5"/>
+  <polygon points="90,255 225,130 360,255" fill="#94a3b8"/>
+  <rect x="185" y="130" width="26" height="90" fill="#7f8ea5"/>
+  <!-- Unit 1 windows -->
+  <rect x="135" y="295" width="75" height="65" fill="rgba(186,230,253,0.75)" stroke="rgba(148,163,184,0.5)" stroke-width="1.5"/>
+  <line x1="172" y1="295" x2="172" y2="360" stroke="rgba(148,163,184,0.5)" stroke-width="1.5"/>
+  <rect x="238" y="295" width="75" height="65" fill="rgba(186,230,253,0.75)" stroke="rgba(148,163,184,0.5)" stroke-width="1.5"/>
+  <line x1="275" y1="295" x2="275" y2="360" stroke="rgba(148,163,184,0.5)" stroke-width="1.5"/>
+  <!-- Unit 1 door -->
+  <rect x="170" y="520" width="65" height="155" fill="rgba(99,102,241,0.2)" stroke="rgba(99,102,241,0.35)" stroke-width="1.5"/>
+  <circle cx="226" cy="600" r="5" fill="rgba(99,102,241,0.5)"/>
+  <!-- Unit 1 garage -->
+  <rect x="110" y="390" width="120" height="285" fill="rgba(203,213,225,0.7)" stroke="rgba(148,163,184,0.3)" stroke-width="1"/>
+  <g stroke="rgba(148,163,184,0.5)" stroke-width="1.2" fill="none">
+    <rect x="118" y="400" width="104" height="260" rx="1"/>
+    <line x1="118" y1="435" x2="222" y2="435"/>
+    <line x1="118" y1="470" x2="222" y2="470"/>
+    <line x1="118" y1="505" x2="222" y2="505"/>
+    <line x1="118" y1="540" x2="222" y2="540"/>
+    <line x1="118" y1="575" x2="222" y2="575"/>
+  </g>
+  <!-- Townhouse unit 2 (middle - slightly larger/featured) -->
+  <rect x="355" y="210" width="260" height="465" fill="#f1f5f9" stroke="rgba(148,163,184,0.3)" stroke-width="1.5"/>
+  <polygon points="330,215 485,70 640,215" fill="#7c8ea6"/>
+  <!-- Feature balcony -->
+  <rect x="375" y="350" width="220" height="10" fill="#94a3b8"/>
+  <g stroke="rgba(148,163,184,0.6)" stroke-width="1.5">
+    <line x1="375" y1="350" x2="375" y2="430"/>
+    <line x1="595" y1="350" x2="595" y2="430"/>
+    <line x1="404" y1="350" x2="404" y2="430"/>
+    <line x1="433" y1="350" x2="433" y2="430"/>
+    <line x1="462" y1="350" x2="462" y2="430"/>
+    <line x1="491" y1="350" x2="491" y2="430"/>
+    <line x1="520" y1="350" x2="520" y2="430"/>
+    <line x1="549" y1="350" x2="549" y2="430"/>
+    <line x1="578" y1="350" x2="578" y2="430"/>
+    <line x1="375" y1="430" x2="595" y2="430"/>
+  </g>
+  <!-- Unit 2 windows -->
+  <rect x="380" y="255" width="95" height="75" fill="rgba(186,230,253,0.8)" stroke="rgba(148,163,184,0.5)" stroke-width="1.5"/>
+  <line x1="427" y1="255" x2="427" y2="330" stroke="rgba(148,163,184,0.5)" stroke-width="1.5"/>
+  <rect x="490" y="255" width="95" height="75" fill="rgba(186,230,253,0.8)" stroke="rgba(148,163,184,0.5)" stroke-width="1.5"/>
+  <line x1="537" y1="255" x2="537" y2="330" stroke="rgba(148,163,184,0.5)" stroke-width="1.5"/>
+  <!-- Unit 2 door (prominent) -->
+  <rect x="437" y="535" width="80" height="140" fill="rgba(79,70,229,0.25)" stroke="rgba(79,70,229,0.4)" stroke-width="2"/>
+  <rect x="455" y="545" width="28" height="45" fill="rgba(165,180,252,0.4)"/>
+  <rect x="491" y="545" width="14" height="45" fill="rgba(165,180,252,0.4)"/>
+  <circle cx="497" cy="610" r="6" fill="rgba(79,70,229,0.5)"/>
+  <!-- Unit 2 step -->
+  <rect x="420" y="673" width="114" height="8" fill="rgba(148,163,184,0.5)" rx="1"/>
+  <!-- Townhouse unit 3 (right) -->
+  <rect x="630" y="250" width="230" height="425" fill="#e8edf4" stroke="rgba(148,163,184,0.3)" stroke-width="1.5"/>
+  <polygon points="610,255 745,130 880,255" fill="#94a3b8"/>
+  <!-- Unit 3 windows -->
+  <rect x="655" y="295" width="75" height="65" fill="rgba(186,230,253,0.75)" stroke="rgba(148,163,184,0.5)" stroke-width="1.5"/>
+  <line x1="692" y1="295" x2="692" y2="360" stroke="rgba(148,163,184,0.5)" stroke-width="1.5"/>
+  <rect x="758" y="295" width="75" height="65" fill="rgba(186,230,253,0.75)" stroke="rgba(148,163,184,0.5)" stroke-width="1.5"/>
+  <line x1="795" y1="295" x2="795" y2="360" stroke="rgba(148,163,184,0.5)" stroke-width="1.5"/>
+  <!-- Unit 3 door -->
+  <rect x="693" y="520" width="65" height="155" fill="rgba(99,102,241,0.2)" stroke="rgba(99,102,241,0.35)" stroke-width="1.5"/>
+  <circle cx="749" cy="600" r="5" fill="rgba(99,102,241,0.5)"/>
+  <!-- Unit 3 garage -->
+  <rect x="750" y="390" width="110" height="285" fill="rgba(203,213,225,0.7)" stroke="rgba(148,163,184,0.3)" stroke-width="1"/>
+  <g stroke="rgba(148,163,184,0.5)" stroke-width="1.2" fill="none">
+    <rect x="758" y="400" width="94" height="260" rx="1"/>
+    <line x1="758" y1="435" x2="852" y2="435"/>
+    <line x1="758" y1="470" x2="852" y2="470"/>
+    <line x1="758" y1="505" x2="852" y2="505"/>
+    <line x1="758" y1="540" x2="852" y2="540"/>
+    <line x1="758" y1="575" x2="852" y2="575"/>
+  </g>
+  <!-- Lawn strip -->
+  <rect x="0" y="635" width="1200" height="40" fill="rgba(134,200,130,0.35)"/>
+  <!-- Background trees -->
+  <circle cx="970" cy="330" r="65" fill="rgba(74,180,100,0.35)"/>
+  <circle cx="1010" cy="305" r="50" fill="rgba(74,180,100,0.38)"/>
+  <rect x="1004" y="355" width="12" height="80" fill="rgba(50,140,70,0.35)"/>
+  <circle cx="50" cy="350" r="55" fill="rgba(74,180,100,0.3)"/>
+  <rect x="45" y="390" width="10" height="70" fill="rgba(50,140,70,0.3)"/>
+</svg>

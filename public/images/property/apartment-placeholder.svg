@@ -1,0 +1,100 @@
+<svg viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#c7d2fe"/>
+      <stop offset="60%" style="stop-color:#e0e7ff"/>
+      <stop offset="100%" style="stop-color:#f1f5f9"/>
+    </linearGradient>
+    <linearGradient id="tower1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#94a3b8"/>
+      <stop offset="100%" style="stop-color:#cbd5e1"/>
+    </linearGradient>
+    <linearGradient id="tower2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#a8b8cc"/>
+      <stop offset="100%" style="stop-color:#dde4ed"/>
+    </linearGradient>
+    <linearGradient id="ground" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#e2e8f0"/>
+      <stop offset="100%" style="stop-color:#cbd5e1"/>
+    </linearGradient>
+  </defs>
+  <!-- Sky -->
+  <rect width="1200" height="675" fill="url(#sky)"/>
+  <!-- Horizon glow -->
+  <ellipse cx="600" cy="540" rx="700" ry="180" fill="rgba(255,255,255,0.3)"/>
+  <!-- Sun/light source -->
+  <circle cx="950" cy="140" r="70" fill="rgba(255,248,220,0.5)"/>
+  <circle cx="950" cy="140" r="45" fill="rgba(255,240,180,0.7)"/>
+  <!-- Background tall buildings -->
+  <rect x="100" y="260" width="80" height="415" fill="rgba(180,192,210,0.4)"/>
+  <rect x="190" y="200" width="60" height="475" fill="rgba(170,185,205,0.4)"/>
+  <rect x="260" y="320" width="70" height="355" fill="rgba(180,195,215,0.35)"/>
+  <rect x="850" y="240" width="90" height="435" fill="rgba(175,190,210,0.4)"/>
+  <rect x="950" y="190" width="75" height="485" fill="rgba(165,182,205,0.4)"/>
+  <rect x="1030" y="280" width="85" height="395" fill="rgba(180,195,218,0.35)"/>
+  <!-- Main tower - Centre -->
+  <rect x="370" y="80" width="220" height="595" fill="url(#tower1)"/>
+  <!-- Tower windows grid -->
+  <g fill="rgba(200,220,255,0.7)">
+    <!-- Row 1 -->
+    <rect x="388" y="105" width="25" height="35"/><rect x="423" y="105" width="25" height="35"/>
+    <rect x="458" y="105" width="25" height="35"/><rect x="493" y="105" width="25" height="35"/>
+    <rect x="528" y="105" width="25" height="35"/>
+    <!-- Row 2 -->
+    <rect x="388" y="155" width="25" height="35"/><rect x="423" y="155" width="25" height="35"/>
+    <rect x="458" y="155" width="25" height="35"/><rect x="493" y="155" width="25" height="35"/>
+    <rect x="528" y="155" width="25" height="35"/>
+    <!-- Row 3 -->
+    <rect x="388" y="205" width="25" height="35"/><rect x="423" y="205" width="25" height="35"/>
+    <rect x="458" y="205" width="25" height="35"/><rect x="493" y="205" width="25" height="35"/>
+    <rect x="528" y="205" width="25" height="35"/>
+    <!-- Row 4 - some lit up amber -->
+    <rect x="388" y="255" width="25" height="35" fill="rgba(251,191,36,0.6)"/><rect x="423" y="255" width="25" height="35"/>
+    <rect x="458" y="255" width="25" height="35" fill="rgba(251,191,36,0.4)"/><rect x="493" y="255" width="25" height="35"/>
+    <rect x="528" y="255" width="25" height="35" fill="rgba(251,191,36,0.5)"/>
+    <!-- Rows 5-8 -->
+    <rect x="388" y="305" width="25" height="35"/><rect x="423" y="305" width="25" height="35"/>
+    <rect x="458" y="305" width="25" height="35"/><rect x="493" y="305" width="25" height="35"/>
+    <rect x="528" y="305" width="25" height="35"/>
+    <rect x="388" y="355" width="25" height="35"/><rect x="423" y="355" width="25" height="35"/>
+    <rect x="493" y="355" width="25" height="35"/><rect x="528" y="355" width="25" height="35"/>
+    <rect x="388" y="405" width="25" height="35"/><rect x="458" y="405" width="25" height="35"/>
+    <rect x="493" y="405" width="25" height="35" fill="rgba(251,191,36,0.4)"/>
+    <rect x="388" y="455" width="25" height="35"/><rect x="423" y="455" width="25" height="35"/>
+    <rect x="528" y="455" width="25" height="35"/>
+  </g>
+  <!-- Side podium building -->
+  <rect x="590" y="280" width="180" height="395" fill="url(#tower2)"/>
+  <g fill="rgba(200,218,245,0.65)">
+    <rect x="608" y="300" width="22" height="30"/><rect x="640" y="300" width="22" height="30"/>
+    <rect x="672" y="300" width="22" height="30"/><rect x="704" y="300" width="22" height="30"/>
+    <rect x="736" y="300" width="22" height="30"/>
+    <rect x="608" y="345" width="22" height="30"/><rect x="672" y="345" width="22" height="30"/>
+    <rect x="704" y="345" width="22" height="30" fill="rgba(251,191,36,0.5)"/>
+    <rect x="608" y="390" width="22" height="30"/><rect x="640" y="390" width="22" height="30"/>
+    <rect x="736" y="390" width="22" height="30"/>
+    <rect x="640" y="435" width="22" height="30"/><rect x="672" y="435" width="22" height="30"/>
+    <rect x="704" y="435" width="22" height="30"/>
+    <rect x="608" y="480" width="22" height="30" fill="rgba(251,191,36,0.4)"/>
+    <rect x="672" y="480" width="22" height="30"/>
+  </g>
+  <!-- Ground / podium -->
+  <rect x="330" y="610" width="540" height="65" fill="url(#ground)"/>
+  <!-- Entrance canopy -->
+  <rect x="440" y="595" width="120" height="20" fill="rgba(148,163,184,0.8)" rx="2"/>
+  <rect x="490" y="615" width="20" height="40" fill="rgba(148,163,184,0.7)"/>
+  <!-- Trees -->
+  <circle cx="350" cy="598" r="28" fill="rgba(134,168,130,0.6)"/>
+  <rect x="347" y="618" width="6" height="40" fill="rgba(100,130,95,0.5)"/>
+  <circle cx="870" cy="592" r="32" fill="rgba(134,168,130,0.55)"/>
+  <rect x="867" y="615" width="6" height="43" fill="rgba(100,130,95,0.5)"/>
+  <!-- Foreground road -->
+  <rect x="0" y="640" width="1200" height="35" fill="rgba(148,163,184,0.3)"/>
+  <!-- Camera icon centre top as placeholder indicator -->
+  <g transform="translate(560, 30)" opacity="0.35">
+    <rect x="0" y="8" width="80" height="55" rx="6" fill="rgba(100,116,139,0.6)" stroke="rgba(100,116,139,0.8)" stroke-width="2"/>
+    <circle cx="40" cy="35" r="14" fill="none" stroke="rgba(100,116,139,0.8)" stroke-width="2"/>
+    <circle cx="40" cy="35" r="8" fill="rgba(100,116,139,0.5)"/>
+    <rect x="26" y="6" width="20" height="8" rx="3" fill="rgba(100,116,139,0.6)"/>
+  </g>
+</svg>
