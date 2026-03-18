@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { ENQUIRY_CONSENT_TEXT } from "@/lib/compliance";
 
 const BUDGET_OPTIONS = [
   "Under $500k",
@@ -35,6 +37,7 @@ export default function PropertyEnquiryForm({
     investment_budget: "",
     timeline: "",
     user_message: "",
+    consent: false,
     // Honeypots
     website: "",
     fax: "",
@@ -159,16 +162,34 @@ export default function PropertyEnquiryForm({
         <input type="text" name="website" value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} className="hidden" tabIndex={-1} autoComplete="off" aria-hidden="true" />
         <input type="text" name="fax" value={form.fax} onChange={(e) => setForm({ ...form, fax: e.target.value })} className="hidden" tabIndex={-1} autoComplete="off" aria-hidden="true" />
 
+        {/* Consent checkbox */}
+        <label className="flex items-start gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            required
+            checked={form.consent}
+            onChange={(e) => setForm({ ...form, consent: e.target.checked })}
+            className="mt-0.5 rounded border-slate-300 text-amber-500 focus:ring-amber-500/30"
+          />
+          <span className="text-[0.6rem] md:text-xs text-slate-500 leading-relaxed">
+            I agree to the{" "}
+            <Link href="/privacy" className="underline hover:text-slate-700">Privacy Policy</Link>
+            {" "}and{" "}
+            <Link href="/terms" className="underline hover:text-slate-700">Terms of Use</Link>.
+            I consent to my details being shared with {developerName} to respond to this enquiry.
+          </span>
+        </label>
+
         <button
           type="submit"
-          disabled={submitting}
+          disabled={submitting || !form.consent}
           className="w-full py-3 bg-amber-500 text-white font-bold rounded-lg hover:bg-amber-600 disabled:opacity-50 transition-all text-sm"
         >
           {submitting ? "Sending..." : "Send Enquiry — Free"}
         </button>
 
-        <p className="text-[0.6rem] text-slate-400 text-center leading-relaxed">
-          By submitting, you agree to our privacy policy. Your details will be shared with {developerName} only. No spam, no obligation.
+        <p className="text-[0.56rem] text-slate-400 text-center leading-relaxed">
+          No spam, no obligation. You may receive follow-up communications and can opt out at any time.
         </p>
       </div>
     </form>

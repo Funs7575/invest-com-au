@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE, CRYPTO_WARNING, REGULATORY_NOTE, AFSL_STATUS_DISCLOSURE, COMPANY_LEGAL_NAME, COMPANY_ACN, COMPANY_ABN } from "@/lib/compliance";
+import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE, CRYPTO_WARNING, REGULATORY_NOTE, AFSL_STATUS_DISCLOSURE, FSG_NOTE, COMPANY_LEGAL_NAME, COMPANY_ACN, COMPANY_ABN } from "@/lib/compliance";
 
 const sections = [
   { title: "Affiliate Disclosure", content: ADVERTISER_DISCLOSURE },
+  { title: "Financial Services Guide", content: FSG_NOTE },
   { title: "Crypto Warning", content: CRYPTO_WARNING },
   { title: "Regulatory Note", content: REGULATORY_NOTE },
   { title: "AFSL Status", content: AFSL_STATUS_DISCLOSURE },
@@ -32,6 +33,12 @@ export default function Footer() {
                   <p className="text-[0.69rem] md:text-xs font-bold text-slate-700 mb-0.5">General Advice Warning</p>
                   <p className="text-[0.69rem] md:text-xs text-slate-600 leading-relaxed font-medium">
                     {GENERAL_ADVICE_WARNING}
+                  </p>
+                  <p className="text-[0.62rem] md:text-[0.69rem] text-slate-500 leading-relaxed mt-1.5">
+                    Consider your objectives, financial situation and needs before acting. See our{" "}
+                    <Link href="/terms" className="underline hover:text-slate-700">Terms of Use</Link>,{" "}
+                    <Link href="/privacy" className="underline hover:text-slate-700">Privacy Policy</Link>, and{" "}
+                    <Link href="/how-we-earn" className="underline hover:text-slate-700">How We Earn</Link>.
                   </p>
                 </div>
               </div>
@@ -108,6 +115,14 @@ export default function Footer() {
                 <li><Link href="/advisor-guides" className="hover:text-white transition-colors inline-block py-0.5">Advisor Guides</Link></li>
                 <li><Link href="/expert" className="hover:text-white transition-colors inline-block py-0.5">Expert Insights</Link></li>
                 <li><Link href="/for-advisors" className="hover:text-white transition-colors inline-block py-0.5">List Your Practice</Link></li>
+              </ul>
+              <h4 className="text-white font-semibold mt-4 mb-2 md:mt-6 md:mb-4 text-xs md:text-sm">Property</h4>
+              <ul className="space-y-1 md:space-y-2 text-xs md:text-sm">
+                <li><Link href="/property" className="hover:text-white transition-colors inline-block py-0.5">Property Hub</Link></li>
+                <li><Link href="/property/listings" className="hover:text-white transition-colors inline-block py-0.5">New Developments</Link></li>
+                <li><Link href="/property/buyer-agents" className="hover:text-white transition-colors inline-block py-0.5">Buyer&apos;s Agents</Link></li>
+                <li><Link href="/property/suburbs" className="hover:text-white transition-colors inline-block py-0.5">Suburb Research</Link></li>
+                <li><Link href="/property/finance" className="hover:text-white transition-colors inline-block py-0.5">Investment Loans</Link></li>
               </ul>
               <h4 className="text-white font-semibold mt-4 mb-2 md:mt-6 md:mb-4 text-xs md:text-sm">Learn</h4>
               <ul className="space-y-1 md:space-y-2 text-xs md:text-sm">

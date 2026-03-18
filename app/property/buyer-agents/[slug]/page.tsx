@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { BUYER_AGENT_DISCLOSURE } from "@/lib/compliance";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import BuyerAgentContactForm from "./BuyerAgentContactForm";
@@ -186,6 +187,11 @@ export default async function BuyerAgentProfilePage({ params }: { params: Promis
                   Visit Website &rarr;
                 </a>
               )}
+
+              {/* Buyer Agent Disclosure */}
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-3">
+                <p className="text-[0.56rem] md:text-[0.62rem] text-slate-500 leading-relaxed">{BUYER_AGENT_DISCLOSURE}</p>
+              </div>
             </div>
           </div>
         </div>

@@ -13,7 +13,7 @@ export default function PrivacyPage() {
       <div className="container-custom max-w-3xl">
         <h1 className="text-3xl font-extrabold mb-2">Privacy Policy</h1>
         <p className="text-sm text-slate-500 mb-8">
-          Version 1.0 — Last updated: 17 February 2026
+          Version 1.1 — Last updated: 18 March 2026
         </p>
 
         <div className="prose prose-slate max-w-none text-sm leading-relaxed space-y-6">
@@ -43,6 +43,19 @@ export default function PrivacyPage() {
                 <strong>Email address</strong> — when you voluntarily subscribe
                 to our newsletter or download resources (e.g. the Fee Audit
                 PDF).
+              </li>
+              <li>
+                <strong>Name, email, and phone number</strong> — when you submit
+                an enquiry form (e.g. property enquiry, buyer&apos;s agent
+                contact, advisor matching). This data is shared with the
+                specific provider you enquired about.
+              </li>
+              <li>
+                <strong>Quiz and matching data</strong> — your answers to our
+                platform quiz or advisor matching tool, used to generate
+                personalised results. These are stored locally in your browser
+                and optionally sent with your email if you choose to receive
+                results.
               </li>
               <li>
                 <strong>Usage data</strong> — anonymous analytics data such as
@@ -81,6 +94,13 @@ export default function PrivacyPage() {
                 through our advisor directory, your name, email, phone (if provided), and
                 message are shared with the specific advisor you contacted. Your details
                 are shared only with that advisor and are not sold to any third party.
+              </li>
+              <li>
+                <strong>Property enquiries:</strong> If you submit an enquiry about a
+                property listing or buyer&apos;s agent, your name, email, phone (if
+                provided), budget, timeline, and message are shared with the relevant
+                developer or agent. Your details are shared only with the provider you
+                enquired about.
               </li>
               <li>
                 To improve our website, content, and user experience through

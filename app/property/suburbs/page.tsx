@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
+import PropertyDisclaimer from "@/components/PropertyDisclaimer";
+import { SUBURB_DATA_DISCLAIMER } from "@/lib/compliance";
 
 interface SuburbData {
   id: number;
@@ -223,6 +225,24 @@ export default function SuburbResearchPage() {
                 </div>
               </div>
             )}
+          </div>
+        </div>
+      </section>
+
+      {/* Data Disclaimer */}
+      <section className="pb-6 md:pb-8">
+        <div className="container-custom">
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 md:p-5">
+            <div className="flex items-start gap-2">
+              <svg className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div>
+                <p className="text-xs font-bold text-slate-600 mb-1">Data Disclaimer</p>
+                <p className="text-[0.65rem] md:text-xs text-slate-500 leading-relaxed">{SUBURB_DATA_DISCLAIMER}</p>
+                <PropertyDisclaimer />
+              </div>
+            </div>
           </div>
         </div>
       </section>

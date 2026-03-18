@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
+import { LOAN_COMPARISON_DISCLAIMER } from "@/lib/compliance";
 import Icon from "@/components/Icon";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
+import PropertyDisclaimer from "@/components/PropertyDisclaimer";
 
 export const metadata = {
   title: "Investment Loan Comparison — Compare Rates from Major Lenders — Invest.com.au",
@@ -104,10 +106,18 @@ export default function PropertyFinancePage() {
               </table>
             </div>
 
-            <p className="text-[0.65rem] text-slate-400 mt-3">
-              Rates are indicative only and subject to change. Comparison rates based on a $500,000 loan over 25 years.
-              Always compare the full cost including fees and features. Information as of March 2026.
-            </p>
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mt-4">
+              <div className="flex items-start gap-2">
+                <svg className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div>
+                  <p className="text-xs font-bold text-amber-800 mb-1">Loan Comparison Disclaimer</p>
+                  <p className="text-[0.65rem] md:text-xs text-amber-700 leading-relaxed">{LOAN_COMPARISON_DISCLAIMER}</p>
+                  <PropertyDisclaimer />
+                </div>
+              </div>
+            </div>
           </div>
         </section>
       </ScrollFadeIn>
@@ -139,7 +149,7 @@ export default function PropertyFinancePage() {
                 </Link>
               </div>
               <p className="text-xs text-slate-400 mt-4">
-                Invest.com.au is not a lender. We connect you with verified mortgage brokers who have access to 30+ lenders.
+                Invest.com.au is not a lender or mortgage broker. We connect you with verified mortgage brokers who have access to 30+ lenders. We may receive a referral fee.
               </p>
             </div>
           </div>
