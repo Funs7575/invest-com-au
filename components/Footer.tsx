@@ -9,7 +9,6 @@ const sections = [
   { title: "Financial Services Guide", content: FSG_NOTE },
   { title: "Crypto Warning", content: CRYPTO_WARNING },
   { title: "Regulatory Note", content: REGULATORY_NOTE },
-  { title: "AFSL Status", content: AFSL_STATUS_DISCLOSURE },
 ];
 
 export default function Footer() {
@@ -37,11 +36,21 @@ export default function Footer() {
                   <p className="text-[0.62rem] md:text-[0.69rem] text-slate-500 leading-relaxed mt-1.5">
                     Consider your objectives, financial situation and needs before acting. See our{" "}
                     <Link href="/terms" className="underline hover:text-slate-700">Terms of Use</Link>,{" "}
-                    <Link href="/privacy" className="underline hover:text-slate-700">Privacy Policy</Link>, and{" "}
-                    <Link href="/how-we-earn" className="underline hover:text-slate-700">How We Earn</Link>.
+                    <Link href="/privacy" className="underline hover:text-slate-700">Privacy Policy</Link>,{" "}
+                    <Link href="/how-we-earn" className="underline hover:text-slate-700">How We Earn</Link>, and{" "}
+                    <Link href="/fsg" className="underline hover:text-slate-700">FSG</Link>.
                   </p>
                 </div>
               </div>
+            </div>
+
+            {/* AFSL Status — always visible per ASIC requirements */}
+            <div className="border-t border-slate-200 py-2 md:py-3">
+              <p className="text-[0.62rem] md:text-xs font-semibold text-slate-500 mb-0.5">AFSL &amp; Licensing Status</p>
+              <p className="text-[0.62rem] md:text-xs text-slate-500 leading-relaxed">
+                {AFSL_STATUS_DISCLOSURE}{" "}
+                <Link href="/fsg" className="underline hover:text-slate-700">Financial Services Guide →</Link>
+              </p>
             </div>
 
             {sections.map((section, i) => (
@@ -143,7 +152,9 @@ export default function Footer() {
                 <li><Link href="/privacy" className="hover:text-white transition-colors inline-block py-0.5">Privacy</Link></li>
                 <li><Link href="/methodology" className="hover:text-white transition-colors inline-block py-0.5">Methodology</Link></li>
                 <li><Link href="/terms" className="hover:text-white transition-colors inline-block py-0.5">Terms</Link></li>
+                <li><Link href="/fsg" className="hover:text-white transition-colors inline-block py-0.5">FSG</Link></li>
                 <li><Link href="/advisor-terms" className="hover:text-white transition-colors inline-block py-0.5">Advisor Terms</Link></li>
+                <li><Link href="/developer-terms" className="hover:text-white transition-colors inline-block py-0.5">Developer Terms</Link></li>
                 <li><Link href="/broker-terms" className="hover:text-white transition-colors inline-block py-0.5">Advertiser Terms</Link></li>
                 <li><Link href="/complaints" className="hover:text-white transition-colors inline-block py-0.5">Complaints & AFCA</Link></li>
                 <li><Link href="/contact" className="hover:text-white transition-colors inline-block py-0.5">Contact</Link></li>

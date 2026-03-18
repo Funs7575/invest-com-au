@@ -131,7 +131,7 @@ export default function AdvertiserTermsPage() {
               <p className="text-sm text-slate-600">
                 For advertising enquiries or questions about this Agreement, contact us at{" "}
                 <a href="mailto:advertise@invest.com.au" className="text-slate-700 underline hover:text-slate-900">advertise@invest.com.au</a>{" "}
-                or write to: {COMPANY_LEGAL_NAME}, PO Box 123, Melbourne VIC 3000.
+                or email: partners@invest.com.au.
               </p>
             </section>
           </div>
