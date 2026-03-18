@@ -122,7 +122,12 @@ export default async function PropertyListingPage({ params }: { params: Promise<
                   {listing.city} &middot; {listing.suburb}, {listing.state}
                 </span>
                 {listing.firb_approved && (
-                  <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">FIRB Approved</span>
+                  <span
+                    className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full"
+                    title="The developer has obtained FIRB approval for this project. Foreign purchasers must still obtain their own FIRB clearance before purchasing."
+                  >
+                    FIRB Approved
+                  </span>
                 )}
                 {listing.off_the_plan && (
                   <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">Off the Plan</span>
@@ -167,6 +172,11 @@ export default async function PropertyListingPage({ params }: { params: Promise<
             <p className="text-[0.62rem] text-slate-400 leading-relaxed -mt-2">
               {PROPERTY_INDICATIVE_PRICES}
             </p>
+            {listing.firb_approved && (
+              <p className="text-[0.62rem] text-slate-400 leading-relaxed">
+                FIRB note: This project has received FIRB approval from the developer. Foreign purchasers must independently obtain their own FIRB clearance prior to purchasing. Seek advice from a qualified solicitor regarding FIRB obligations.
+              </p>
+            )}
 
             {/* Description */}
             {listing.description && (
