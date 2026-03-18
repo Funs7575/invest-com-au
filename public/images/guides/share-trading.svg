@@ -1,0 +1,32 @@
+<svg viewBox="0 0 800 160" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#064e3b"/>
+      <stop offset="100%" style="stop-color:#065f46"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="160" fill="url(#bg)"/>
+  <g stroke="rgba(255,255,255,0.04)" stroke-width="1">
+    <line x1="0" y1="40" x2="800" y2="40"/><line x1="0" y1="80" x2="800" y2="80"/><line x1="0" y1="120" x2="800" y2="120"/>
+  </g>
+  <!-- area chart -->
+  <path d="M0,145 L100,135 L200,120 L300,95 L400,75 L500,55 L600,38 L700,22 L800,15 L800,160 L0,160Z" fill="rgba(52,211,153,0.12)"/>
+  <polyline points="0,145 100,135 200,120 300,95 400,75 500,55 600,38 700,22 800,15" stroke="#34d399" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- ASX label -->
+  <rect x="50" y="25" width="70" height="28" rx="5" fill="rgba(52,211,153,0.2)" stroke="rgba(52,211,153,0.4)" stroke-width="1.5"/>
+  <text x="63" y="44" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="rgba(52,211,153,0.9)">ASX</text>
+  <!-- trending up arrow icon right -->
+  <g transform="translate(620, 40)" stroke="rgba(52,211,153,0.7)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <polyline points="0,80 30,50 50,65 80,20"/>
+    <polyline points="60,20 80,20 80,40"/>
+  </g>
+  <!-- candlestick mini cluster -->
+  <g>
+    <line x1="260" y1="50" x2="260" y2="110" stroke="#34d399" stroke-width="1.5"/>
+    <rect x="254" y="62" width="12" height="35" fill="#34d399" rx="1"/>
+    <line x1="290" y1="55" x2="290" y2="105" stroke="#f87171" stroke-width="1.5"/>
+    <rect x="284" y="68" width="12" height="28" fill="#f87171" rx="1"/>
+    <line x1="320" y1="42" x2="320" y2="95" stroke="#34d399" stroke-width="1.5"/>
+    <rect x="314" y="55" width="12" height="32" fill="#34d399" rx="1"/>
+  </g>
+</svg>

@@ -1,0 +1,52 @@
+<svg viewBox="0 0 800 160" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#78350f"/>
+      <stop offset="100%" style="stop-color:#92400e"/>
+    </linearGradient>
+    <linearGradient id="bg2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7c2d12"/>
+      <stop offset="100%" style="stop-color:#9a3412"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="160" fill="url(#bg2)"/>
+  <!-- city skyline -->
+  <g fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5">
+    <!-- building 1 -->
+    <rect x="60" y="90" width="40" height="70"/>
+    <polygon points="60,90 80,70 100,90"/>
+    <rect x="73" y="100" width="14" height="18" fill="rgba(255,220,100,0.3)"/>
+    <rect x="73" y="125" width="14" height="18" fill="rgba(255,220,100,0.2)"/>
+    <!-- building 2 tall -->
+    <rect x="115" y="50" width="30" height="110"/>
+    <rect x="122" y="62" width="8" height="12" fill="rgba(255,220,100,0.3)"/>
+    <rect x="122" y="82" width="8" height="12" fill="rgba(255,220,100,0.2)"/>
+    <rect x="122" y="102" width="8" height="12" fill="rgba(255,220,100,0.3)"/>
+    <rect x="122" y="122" width="8" height="12" fill="rgba(255,220,100,0.2)"/>
+    <!-- building 3 -->
+    <rect x="160" y="75" width="50" height="85"/>
+    <polygon points="160,75 185,52 210,75"/>
+    <rect x="168" y="88" width="14" height="14" fill="rgba(255,220,100,0.25)"/>
+    <rect x="190" y="88" width="14" height="14" fill="rgba(255,220,100,0.25)"/>
+    <!-- building 4 short -->
+    <rect x="225" y="105" width="35" height="55"/>
+    <rect x="232" y="115" width="10" height="12" fill="rgba(255,220,100,0.2)"/>
+    <!-- building 5 -->
+    <rect x="275" y="65" width="45" height="95"/>
+    <rect x="282" y="78" width="12" height="12" fill="rgba(255,220,100,0.3)"/>
+    <rect x="300" y="78" width="12" height="12" fill="rgba(255,220,100,0.25)"/>
+    <rect x="282" y="98" width="12" height="12" fill="rgba(255,220,100,0.2)"/>
+    <rect x="300" y="98" width="12" height="12" fill="rgba(255,220,100,0.3)"/>
+  </g>
+  <!-- ground line -->
+  <line x1="0" y1="160" x2="400" y2="160" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+  <!-- growth chart right side -->
+  <path d="M420,145 L500,130 L560,110 L620,85 L680,60 L760,35 L800,25 L800,160 L420,160Z" fill="rgba(251,146,60,0.12)"/>
+  <polyline points="420,145 500,130 560,110 620,85 680,60 760,35 800,25" stroke="#fb923c" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- key/house icons -->
+  <g transform="translate(440, 28)" fill="none" stroke="rgba(251,146,60,0.6)" stroke-width="2" stroke-linecap="round">
+    <circle cx="10" cy="10" r="8"/>
+    <rect x="15" y="8" width="22" height="4" rx="1"/>
+    <rect x="30" y="12" width="4" height="5" rx="1"/>
+  </g>
+</svg>
