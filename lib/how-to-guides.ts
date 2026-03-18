@@ -1557,6 +1557,334 @@ For REIT and ETF investors, monitor your portfolio allocation and rebalance if p
     ],
     verticalLink: "/property",
   },
+  {
+    slug: "rebalance-portfolio",
+    title: "How to Rebalance Your Investment Portfolio in Australia (2026)",
+    h1: "How to Rebalance Your Investment Portfolio",
+    metaDescription:
+      "Learn how to rebalance your investment portfolio in Australia. Step-by-step guide covering when to rebalance, tax-smart strategies, and how to avoid common mistakes. Updated 2026.",
+    intro:
+      "Rebalancing is the process of realigning your portfolio back to its target asset allocation after market movements have shifted the mix. Over time, assets that perform well grow to represent a larger share of your portfolio — increasing risk. A portfolio that started as 70% shares and 30% bonds may drift to 85% shares after a bull run, meaning far more risk than you originally intended. This guide shows you exactly how to rebalance your Australian portfolio efficiently and tax-effectively.",
+    steps: [
+      {
+        heading: "Know Your Target Asset Allocation",
+        body: `Rebalancing starts with having a written target allocation — what percentage of your portfolio should sit in each asset class. Common examples:\n\n- **Aggressive (long time horizon):** 90% shares (70% global, 20% Australian), 10% cash/bonds\n- **Balanced:** 70% shares, 20% fixed income, 10% cash\n- **Conservative (near retirement):** 40% shares, 40% bonds/fixed income, 20% cash\n\nIf you don't have a written target, set one before you rebalance. Your target should reflect your time horizon, risk tolerance, and income needs — not the current market environment. Changing your allocation in response to market conditions is market timing, not rebalancing.\n\nWrite down your target in a spreadsheet or investment journal alongside the date you set it. This discipline prevents you from unconsciously moving the goalposts after a correction.`,
+      },
+      {
+        heading: "Calculate Your Current Portfolio Drift",
+        body: `Export your current holdings from your broker(s) and calculate the current dollar value and percentage of each asset class. Compare to your target. A drift of +/-5% is a common threshold for triggering a rebalance. Some investors use a calendar approach — rebalance quarterly or annually regardless of drift.\n\nDon't forget to include all accounts: broker account, super, SMSFs, bonds/term deposits, and any investment property equity if you're tracking a full net-worth allocation. Your super balance may be doing the heavy lifting in fixed income without you realising it.`,
+      },
+      {
+        heading: "Choose a Rebalancing Method",
+        body: `There are two main rebalancing approaches — and the tax-smart choice is to use new money first:\n\n**Method 1 — New contributions (tax-free):** Direct new investment money into underweight asset classes rather than selling overweight assets. No CGT, no transaction costs from selling. This is the preferred method for investors still in the accumulation phase with regular contributions.\n\n**Method 2 — Sell overweight, buy underweight:** When new contributions aren't enough, sell some of the overweight assets and reinvest into underweight ones. This triggers CGT on any gains. To minimise tax: hold assets over 12 months before selling to access the 50% CGT discount, offset gains with any losses in your portfolio, and sell in low-income years where possible.\n\n**Method 3 — Dividend reinvestment:** Direct dividend reinvestment into underweight asset classes via DRP plans or manual reinvestment. Gradual but effective over time.`,
+      },
+      {
+        heading: "Account for Tax Before Selling",
+        body: `Before you sell anything, calculate the tax impact:\n\n1. **Check holding periods:** Any asset held under 12 months attracts full CGT at your marginal rate. Assets held over 12 months get the 50% discount. If an overweight asset is approaching 12 months, delay selling by a few weeks to qualify.\n\n2. **Identify available losses:** Check for unrealised losses in your portfolio that could offset gains. Selling a loss-making position before the end of the tax year allows you to crystallise the loss and offset it against rebalancing gains.\n\n3. **Super is tax-efficient to rebalance:** If you hold assets in super (especially SMSF), rebalancing within the fund incurs only 10% CGT on gains — far less than outside super. Prioritise rebalancing within super before selling in your personal account.`,
+      },
+      {
+        heading: "Execute the Trades",
+        body: `With your plan ready, execute in this order:\n\n1. **Buy underweight assets first** using available cash and upcoming contributions. This avoids the need to sell at all if you have sufficient new money.\n\n2. **Process the sells**: Log into your broker platform, place sell orders for the overweight positions you've identified. For ASX-listed ETFs and shares, settlement is T+2 — cash available two business days after the sale.\n\n3. **Complete the buys**: Once the sold funds settle, place buy orders for the underweight positions.\n\n4. **Record everything**: Note the date, price, units, and proceeds of every transaction for your tax records.\n\nFor most retail investors, rebalancing once a year is sufficient. Over-rebalancing generates unnecessary transaction costs and CGT events without meaningfully improving outcomes.`,
+      },
+      {
+        heading: "Automate Where Possible",
+        body: `The best rebalancing strategy is one you'll actually do. Automation removes friction:\n\n- **Diversified multi-asset ETFs** (VDHG, DHHF): These ETFs rebalance internally — you never need to manually rebalance between asset classes. Ideal for simple, low-maintenance portfolios.\n\n- **Robo-advisors** (Stockspot, InvestSMART): Automatically rebalance your portfolio when drift exceeds thresholds.\n\n- **Automatic DRP on ETFs:** Some brokers allow automatic dividend reinvestment into specific holdings, which can gradually rebalance toward underweight positions.\n\n- **Calendar reminder**: Set a recurring annual event (e.g., 1 July each year) to review your portfolio allocation.`,
+      },
+    ],
+    relatedBrokerFilter: (b: Broker) => b.platform_type === "share_broker",
+    relatedBestPages: [
+      { label: "Best Low-Fee Platforms", href: "/best/low-fees" },
+      { label: "Best ETF Platforms", href: "/best/etf-platforms" },
+      { label: "Best Robo-Advisors", href: "/best/robo-advisors" },
+    ],
+    faqs: [
+      {
+        question: "How often should I rebalance my portfolio?",
+        answer:
+          "Annual rebalancing is sufficient for most investors. Research shows that rebalancing more frequently produces similar risk-adjusted outcomes but generates more CGT events and transaction costs. A common approach: rebalance when any asset class drifts more than 5% from target OR once a year — whichever comes first.",
+      },
+      {
+        question: "Does rebalancing trigger tax in Australia?",
+        answer:
+          "Selling an asset at a profit triggers Capital Gains Tax. For assets held over 12 months, you receive the 50% CGT discount — only half the gain is added to your taxable income. The tax-smart approach is to rebalance primarily by directing new contributions to underweight asset classes, avoiding the need to sell entirely.",
+      },
+      {
+        question: "What is the best way to rebalance an ETF portfolio in Australia?",
+        answer:
+          "The simplest approach is to use new contributions. Each time you invest, buy the ETF that is most underweight relative to your target. This avoids selling and the associated CGT. When contributions aren't enough, sell the most overweight ETF and buy the most underweight — preferably after 12 months to access the CGT discount.",
+      },
+      {
+        question: "Should I rebalance my super separately from my broker account?",
+        answer:
+          "Yes — treat your super and outside-super investments as separate pools. Rebalancing inside super is tax-advantaged (max 10% CGT vs your marginal rate outside super), so prioritise rebalancing within your SMSF or industry fund before touching your personal brokerage account.",
+      },
+    ],
+    verticalLink: "/investing",
+  },
+  {
+    slug: "create-investment-plan",
+    title: "How to Create an Investment Plan in Australia (2026) — Step-by-Step",
+    h1: "How to Create an Investment Plan in Australia",
+    metaDescription:
+      "How to write a personal investment plan in Australia. Set financial goals, choose asset classes, select platforms, and build a strategy that matches your timeline and risk tolerance. Updated 2026.",
+    intro:
+      "An investment plan is a written document that defines your financial goals, the strategy you'll use to reach them, and the rules you'll follow when markets get emotional. Without a plan, investing becomes reactive — you buy when markets are rising and sell when they're falling, which is the opposite of what generates long-term wealth. This guide walks you through every component of a solid investment plan for an Australian investor.",
+    steps: [
+      {
+        heading: "Define Your Financial Goals",
+        body: `Every investment plan starts with a clear answer to: what am I investing for? Goals drive every other decision — time horizon, risk tolerance, and asset class selection all flow from here.\n\nCommon Australian investor goals and typical timeframes:\n- **First home deposit** — 3–7 years\n- **Children's education** — 5–15 years\n- **Financial independence / FIRE** — 10–25 years\n- **Supplementing retirement income** — Ongoing\n\nFor each goal, write down: (1) the target dollar amount, (2) the target date, and (3) the current savings toward it. This clarity makes it possible to calculate exactly how much you need to invest and at what expected return to reach the target.`,
+      },
+      {
+        heading: "Understand Your Time Horizon and Risk Tolerance",
+        body: `Time horizon and risk tolerance determine your asset allocation:\n\n**Time horizon** is simple — how many years until you need the money? Longer horizons allow more exposure to volatile growth assets because you have time to recover from downturns.\n\n**Risk tolerance** has two dimensions: (1) your financial ability to tolerate losses (emergency fund? stable income? no margin debt?) and (2) your emotional ability to stay the course during a 30–40% market drop without panic-selling.\n\nA common mistake is confusing risk capacity (financial ability) with risk tolerance (emotional comfort). Overestimating your emotional tolerance leads to panic-selling at the worst time. Honest self-assessment: could you watch a $100,000 portfolio fall to $65,000 and not sell? If not, reduce your equity allocation.`,
+      },
+      {
+        heading: "Choose Your Asset Allocation",
+        body: `Asset allocation — how much goes into shares, bonds, property, and cash — is responsible for the majority of long-term portfolio return variation. Suggested starting points by time horizon:\n\n**10+ years:** 80–100% growth assets (shares, listed property), 0–20% defensive\n**5–10 years:** 60–80% growth, 20–40% defensive\n**2–5 years:** 40–60% growth, 40–60% defensive\n**Under 2 years:** 0–30% growth, 70–100% defensive\n\nWithin the growth allocation, typical Australian diversification: 30–40% Australian shares (franking credit advantage), 40–50% global shares, 10–15% listed property/REITs.\n\nWrite the percentages down — this is your investment policy statement and the foundation of all future decisions.`,
+      },
+      {
+        heading: "Select Your Investment Vehicles",
+        body: `Once you have a target allocation, choose the specific vehicles:\n\n**For most Australians, low-cost index ETFs are the best starting point.** Example all-ETF portfolio:\n\n- **Australian shares:** VAS (MER 0.07%) or A200 (MER 0.04%)\n- **Global shares:** IVV (MER 0.03%) or VGS (MER 0.18%)\n- **Fixed income:** VBND (MER 0.20%)\n\nAlternatively, a single diversified ETF handles everything: VDHG (90% growth/10% defensive, MER 0.27%) or DHHF (100% shares, MER 0.19%).\n\n**Superannuation is an asset class too.** Factor your super investment mix into your overall allocation. You may not need additional bonds outside super if super already provides defensive exposure.`,
+      },
+      {
+        heading: "Choose Your Brokerage Platform",
+        body: `Key criteria for choosing a broker for your investment plan:\n\n**CHESS sponsorship:** Shares held in your own name on the ASX register. Important for ownership security and broker portability.\n\n**Brokerage fees:** A $10 brokerage on a $1,000 monthly investment = 1% fee drag. Zero-brokerage platforms mean more of every contribution goes to work.\n\n**Auto-invest tools:** Some platforms allow recurring auto-investment into specific ETFs — making regular investing automatic and frictionless.\n\n**International market access:** If your plan includes global ETFs, check whether your broker offers direct NYSE/NASDAQ access or CHESS-quoted international ETFs.`,
+      },
+      {
+        heading: "Write It Down and Set a Review Schedule",
+        body: `Your plan is only real if it's written down. A one-page investment policy statement (IPS) should capture:\n\n1. **Goals:** Each goal, dollar target, and timeline\n2. **Asset allocation:** Target percentages for each asset class\n3. **Holdings:** Which specific ETFs/funds represent each allocation\n4. **Contribution schedule:** How much invested monthly/quarterly\n5. **Rebalancing rule:** When and how you'll rebalance\n6. **Rules for changing the plan:** Life events only — not market movements\n\nReview annually, or after major life events (marriage, children, job change, inheritance). The single most powerful thing your investment plan does is stop you from making emotional decisions during market downturns.`,
+      },
+    ],
+    relatedBrokerFilter: (b: Broker) => b.platform_type === "share_broker",
+    relatedBestPages: [
+      { label: "Best Brokers for Beginners", href: "/best/beginners" },
+      { label: "Best Low-Fee Platforms", href: "/best/low-fees" },
+      { label: "Best ETF Platforms", href: "/best/etf-platforms" },
+    ],
+    faqs: [
+      {
+        question: "Do I need a financial adviser to create an investment plan?",
+        answer:
+          "Not necessarily. For straightforward goals (index ETF investing, long time horizon, no complex tax situation), a DIY investment plan is entirely achievable. ASIC's MoneySmart website provides free, unbiased tools. However, if you have complex circumstances — significant assets, SMSF, business interests, or approaching retirement — a qualified AFS licence holder can add substantial value.",
+      },
+      {
+        question: "How much money do I need to start an investment plan in Australia?",
+        answer:
+          "You can start with as little as $100 on zero-brokerage platforms. For brokers charging $5–10 brokerage, it makes sense to invest at least $1,000–$2,000 per trade. The more important question is regularity — $500 per month consistently for 20 years outperforms most lump-sum strategies.",
+      },
+      {
+        question: "What is a reasonable expected return for an Australian investment portfolio?",
+        answer:
+          "Historical long-run returns: Australian shares ~9.5%/year (including dividends), global shares ~10%/year. A 70/30 growth/defensive portfolio has historically returned ~7–8% annually. Subtract inflation (~3%) for real returns. Past returns don't guarantee future results, but long-run diversified equity returns have consistently exceeded inflation over 10+ year periods.",
+      },
+      {
+        question: "Should my investment plan include superannuation?",
+        answer:
+          "Absolutely — super is the most tax-effective investment structure available to Australians. Your plan should address: which fund to use, what investment option to select, whether to make additional concessional contributions, and how super integrates with your outside-super portfolio allocation.",
+      },
+    ],
+    verticalLink: "/investing",
+  },
+  {
+    slug: "invest-small-amounts",
+    title: "How to Invest Small Amounts of Money in Australia (2026)",
+    h1: "How to Invest Small Amounts of Money in Australia",
+    metaDescription:
+      "How to invest $100, $500, or $1,000 in Australia. Best platforms for small investors, micro-investing apps, fractional shares, and ETFs. Start investing with any amount in 2026.",
+    intro:
+      "You don't need thousands of dollars to start investing in Australia. With zero-brokerage platforms, micro-investing apps, and fractional shares, you can put $100 to work in global markets in under 10 minutes. The bigger barrier for most people isn't access — it's knowing where to start. This guide explains the best ways to invest small amounts in Australia, and how to scale up from there.",
+    steps: [
+      {
+        heading: "Understand How Fees Affect Small Investments",
+        body: `Fees are the most important consideration when investing small amounts. On traditional brokers charging $10–$20 per trade, a $200 investment loses 5–10% to brokerage before your shares move — you need significant growth just to break even on fees.\n\nThe solution is choosing the right platform for your investment size:\n\n**Zero brokerage platforms (Stake, moomoo):** $0 per trade on ASX ETFs and shares. Ideal for any amount.\n\n**Micro-investing apps (Raiz, Spaceship):** Invest spare change or set small recurring contributions from $5/month. Pre-built diversified portfolios. Higher management fees (0.275–0.5% annually) but no per-trade brokerage.\n\n**Low-cost CHESS-sponsored brokers (Selfwealth, Superhero):** Fixed $5–9.50 brokerage per trade. Reasonable for $1,000+ trades, expensive for $100 trades.\n\nMatch your platform to your investment amount. For regular investments under $500, zero-brokerage or micro-investing is clearly preferable.`,
+      },
+      {
+        heading: "Choose Between Micro-Investing and Direct ETF Investing",
+        body: `Two main approaches for small investors:\n\n**Micro-investing apps (Raiz, Spaceship Voyager):**\n- Invest from $5 with round-up features\n- Fully managed diversified portfolios\n- No brokerage, but ongoing management fee (Spaceship: free under $5k; Raiz: $4.50/month)\n- Best for: absolute beginners wanting fully hands-off investing\n\n**Direct ASX ETF investing (via zero-brokerage broker):**\n- Buy ETFs like VAS, IVV, DHHF directly on the ASX\n- Very low ongoing fees (ETF MER 0.04–0.27%, no platform fee on zero-brokerage platforms)\n- You choose and manage your own allocations\n- Best for: investors comfortable selecting their own ETFs\n\nFor most people starting out, a micro-investing app is a great way to begin building the habit. As your balance grows past $5,000–$10,000, switching to direct ETFs typically reduces ongoing costs significantly.`,
+      },
+      {
+        heading: "Start with a Simple ETF Portfolio",
+        body: `If investing directly, keep your portfolio simple. A one or two ETF portfolio is entirely appropriate for small investors:\n\n**One fund option:**\n- DHHF (BetaShares Diversified All Growth, MER 0.19%): 100% shares, globally diversified, auto-rebalancing built in.\n- VDHG (Vanguard Diversified High Growth, MER 0.27%): 90% shares, 10% bonds — slightly less volatile.\n\n**Two fund option:**\n- VAS (Australian shares, MER 0.07%) + IVV or VGS (global shares, MER 0.03–0.18%)\n- Direct each new contribution to whichever is most underweight to rebalance naturally.\n\nStart simple. $100/month invested consistently from age 25 at 8% annual return over 40 years becomes over $320,000 — the amount matters less than consistency and starting early.`,
+      },
+      {
+        heading: "Set Up a Regular Auto-Investment",
+        body: `The single biggest lever for small investors is automation. A monthly direct debit to your investment account removes decision-making friction and ensures you invest in down markets as well as up.\n\n**Setting up automatic investing:**\n- On Raiz/Spaceship: set a recurring weekly or monthly transfer in-app\n- On Stake: use the recurring buy feature for select ETFs\n- On moomoo: set up an auto-invest plan for ASX ETFs\n- On other brokers: set a monthly bank transfer on payday and manually invest on a set day\n\nAligning your investment transfer with your pay cycle ensures you invest before spending. Even $100–$200 per month is a meaningful start. Commit to investing a percentage of every pay rise to accelerate wealth accumulation without reducing your current lifestyle.`,
+      },
+      {
+        heading: "Understand Tax on Small Investments",
+        body: `Even small investment portfolios have tax obligations:\n\n**Dividends are taxable income.** ETF distributions and dividends are added to your taxable income. Your broker issues an annual tax statement (July–August) with all details and attached franking credits. Enter these in your tax return.\n\n**Capital gains:** Selling shares or ETFs at a profit triggers CGT. For assets held over 12 months, you receive a 50% CGT discount.\n\n**Franking credits:** Australian ETFs like VAS distribute franked dividends — the included tax credits offset your income tax or can be refunded if you're in a low tax bracket.\n\n**Below the tax-free threshold:** If total taxable income is under $18,200, you pay no income tax. But you still need to file a tax return to claim any franking credit refunds.`,
+      },
+      {
+        heading: "Build Gradually and Scale Up",
+        body: `Starting small is how most successful long-term investors began. The most important outcome of your first year investing is building habits and knowledge, not returns.\n\n**Year 1 milestones:**\n- Choose a platform and make your first investment\n- Set up a monthly automatic contribution\n- Learn to read your portfolio statement and tax report\n- Experience one market dip without panic-selling\n\n**Year 2–3:**\n- Increase monthly contributions as income grows\n- Consider whether to switch from micro-investing app to direct ETFs\n- Open a CHESS-sponsored account for larger amounts\n\n**When you reach $10,000–$20,000:**\n- Reassess platform fees (direct ETF investing typically cheaper than micro-apps at this scale)\n- Consider adding a second ETF for broader diversification\n- Look into super contributions above the compulsory guarantee`,
+      },
+    ],
+    relatedBrokerFilter: (b: Broker) =>
+      b.platform_type === "share_broker" && (b.asx_fee_value ?? 100) <= 5,
+    relatedBestPages: [
+      { label: "Best Brokers for Beginners", href: "/best/beginners" },
+      { label: "Best for Micro-Investing", href: "/best/micro-investing" },
+      { label: "Best Free Brokerage", href: "/best/free-brokerage" },
+    ],
+    faqs: [
+      {
+        question: "Can I invest $100 in Australia?",
+        answer:
+          "Yes — on zero-brokerage platforms like Stake or moomoo, you can invest $100 with no fees. On micro-investing apps like Raiz and Spaceship, you can invest as little as $5. The key consideration for very small amounts is the ongoing management fee as a percentage of your balance — Raiz charges $4.50/month (5.4% annually on a $1,000 balance). As your balance grows, costs become less significant as a percentage.",
+      },
+      {
+        question: "Is it worth investing $500 in shares in Australia?",
+        answer:
+          "Yes, particularly on a zero-brokerage platform. $500 invested in a broad ETF like DHHF incurs no trade cost and immediately starts compounding. $500 plus $100/month for 10 years becomes approximately $19,000 at 8% growth. The real power is adding to it regularly.",
+      },
+      {
+        question: "What is the best micro-investing app in Australia?",
+        answer:
+          "Raiz and Spaceship Voyager are the two most popular. Spaceship has no management fee on balances under $5,000 and offers curated portfolios including a tech-focused option. Raiz charges $4.50/month and offers more diversified options with bank account round-up integration. For pure simplicity on small balances, Spaceship's free tier is hard to beat.",
+      },
+      {
+        question: "Should I pay off debt before investing small amounts?",
+        answer:
+          "It depends on the interest rate. High-interest debt (credit cards at 15–22%) should generally be cleared before investing. HECS/HELP debt (indexed to CPI, ~3–4%) can coexist with investing. Low-rate home loan debt (5–6%) is borderline — many Australians split surplus income between extra repayments and investing.",
+      },
+    ],
+    verticalLink: "/investing",
+  },
+  {
+    slug: "build-passive-income",
+    title: "How to Build a Passive Income Portfolio in Australia (2026)",
+    h1: "How to Build a Passive Income Portfolio in Australia",
+    metaDescription:
+      "How to generate passive income from investing in Australia. Dividend shares, high-yield ETFs, franking credits, REITs, and a step-by-step income portfolio strategy. Updated 2026.",
+    intro:
+      "Passive income from investments — dividends, distributions, and rental income — is the foundation of financial independence for millions of Australians. Unlike a salary, it doesn't require your time to earn. This guide shows you how to build a portfolio that generates growing, tax-effective passive income through ASX dividend shares, income-focused ETFs, REITs, and the unique advantage of franking credits.",
+    steps: [
+      {
+        heading: "Define Your Passive Income Target",
+        body: `Start by knowing what you're aiming for. Calculate your annual living expenses and determine how much passive income you need:\n\n- **Partial supplement:** $10,000–$20,000/year\n- **Replace a modest salary:** $40,000–$60,000/year\n- **Full financial independence:** $70,000–$100,000+/year\n\nReverse-engineer the portfolio size required using your target yield. At a 4% gross yield:\n- $20,000 income → $500,000 portfolio\n- $60,000 income → $1,500,000 portfolio\n\nWith franking credits, the effective return is higher. A 4% fully franked Australian portfolio has an effective pre-tax yield of ~5.7%. For a retiree paying 0% tax, the cash yield including franking refunds can exceed the stated dividend yield significantly.`,
+      },
+      {
+        heading: "Understand the Income Sources Available",
+        body: `Australia's income investing landscape is unusually rich:\n\n**Fully franked dividends:** Australian companies pay 30% corporate tax and pass the credit to shareholders via franking credits. For investors with marginal rates below 30%, the excess is refunded as cash — making Australian dividends worth significantly more in after-tax terms.\n\n**High-yield ASX shares:** Big four banks (CBA, NAB, ANZ, WBC), BHP, and Telstra consistently pay large fully-franked dividends — 4–8% yield before grossing up.\n\n**Listed Investment Companies (LICs):** AFIC, Argo, and Milton hold diversified ASX portfolios with decades-long track records of steady, growing dividends and built-in dividend smoothing reserves.\n\n**High-yield ETFs (VHY, HVST):** Diversified baskets of high-yielding Australian shares, available as a single ASX ETF.\n\n**A-REITs:** Listed property trusts (Scentre Group, Charter Hall) distribute quarterly rental income at 3–6% yields.`,
+      },
+      {
+        heading: "Build Your Core Income Portfolio",
+        body: `A well-structured Australian income portfolio combines several streams:\n\n**Core layer — diversified income ETFs (50–60%):**\n- VHY (Vanguard High Yield ETF, MER 0.25%): ~5% yield, largely franked\n- LICs (AFIC, Argo): long-term dividend track record, trade like shares\n\n**Australian blue-chip shares (20–30%):**\nDirect holdings in 8–15 quality dividend payers across sectors: banks (CBA, NAB), miners (BHP), retail (Wesfarmers), telecom (Telstra), infrastructure (APA Group). Diversify across sectors — don't overweight any single industry.\n\n**A-REITs for property income (10–20%):**\nMVA (VanEck Australian Property ETF) or direct REIT holdings provide quarterly distributions from commercial property rents.\n\n**International income (0–20%):**\nVHYL (Vanguard International High Yield) for global dividend diversification — note these are unfranked, so less tax-efficient for Australian residents.`,
+      },
+      {
+        heading: "Maximise After-Tax Income with Franking Credits",
+        body: `Franking credits are the most underused income tool available to Australian investors:\n\n**For investors below the 30% tax bracket:** Every dollar of fully franked dividends can deliver a tax refund. A $7,000 fully franked dividend comes with $3,000 in franking credits — if your marginal rate is 0% or 19%, you receive the excess as a cash refund.\n\n**SMSF in pension phase:** All franking credit refunds within an SMSF in pension mode are 100% tax-free — the most powerful application of franking credits for retirees.\n\n**How to claim:** Your broker's annual tax statement lists all franking credits received. Enter these in your tax return (Item 12 for individuals) — your tax software handles the calculation automatically.`,
+      },
+      {
+        heading: "Track, Review, and Grow Your Income",
+        body: `Building a passive income portfolio is a multi-year project. Track your progress:\n\n**Monthly:** Record dividends received, distributions, and franking credits. Portfolio tracking apps like Sharesight specifically track dividend income and franking credits for Australian tax purposes.\n\n**Annual review:** Calculate total dividend/distribution income for the year. Is your income growing via: (a) adding capital, (b) company dividend growth, or (c) reinvesting dividends?\n\n**Dividend reinvestment (DRIP):** Many ASX companies offer DRPs where dividends automatically purchase additional shares — typically at a small discount, with no brokerage. This compounds your income holdings without additional cash.`,
+      },
+      {
+        heading: "Structure for Tax Efficiency",
+        body: `How your portfolio is structured legally significantly impacts after-tax returns:\n\n**Personal name:** Simplest. Income taxed at marginal rate. 50% CGT discount applies.\n\n**Joint name (couples):** Split income between two tax returns, reducing the average marginal rate if one partner earns less.\n\n**Family trust:** Income distributed to lower-income beneficiaries each year. Best for portfolios over $300,000 with multiple family members.\n\n**SMSF in accumulation:** Income taxed at 15%, capital gains at 10% (with 12-month discount).\n\n**SMSF in pension phase:** All investment income and capital gains tax-free (subject to $1.9M transfer balance cap) — the gold standard for income investing in retirement.\n\nGet financial advice before selecting a structure — optimal choice depends on your income, family situation, and time horizon.`,
+      },
+    ],
+    relatedBrokerFilter: (b: Broker) =>
+      b.platform_type === "share_broker" && b.chess_sponsored === true,
+    relatedBestPages: [
+      { label: "Best for Dividend Investing", href: "/best/dividend-investing" },
+      { label: "Best for SMSF Investors", href: "/best/smsf" },
+      { label: "Best CHESS-Sponsored Brokers", href: "/best/chess-sponsored" },
+    ],
+    faqs: [
+      {
+        question: "How much money do I need to generate $1,000 per month in passive income?",
+        answer:
+          "At a 5% grossed-up yield (typical for a well-structured Australian income portfolio), you need $240,000 invested to generate $12,000/year ($1,000/month). At 4% yield, the required portfolio is $300,000. Franking credit refunds for retirees or low-income earners can significantly boost effective income beyond the stated dividend yield.",
+      },
+      {
+        question: "What is the best dividend ETF in Australia?",
+        answer:
+          "The most popular is VHY (Vanguard Australian Shares High Yield ETF, MER 0.25%), which tracks the highest-yielding 40% of ASX shares and delivers around 4.5–5.5% gross yield, largely franked. HVST (BetaShares Australian Dividend Harvester, MER 0.76%) targets higher income but has higher fees. For broader diversification including international dividends, VHYL complements a domestic income focus.",
+      },
+      {
+        question: "Are dividend shares better than growth ETFs for passive income?",
+        answer:
+          "For investors who need regular cash income (retirees, semi-retired), dividend-focused portfolios are preferable because they generate income without requiring you to sell assets. For investors who don't need current income, there's no mathematical difference between taking dividends vs selling equivalent growth periodically. Choose dividend stocks if you need the cash flow; choose total return ETFs if you don't.",
+      },
+      {
+        question: "How do franking credits work for passive income investors?",
+        answer:
+          "When an Australian company pays a fully franked dividend, it passes a 30% corporate tax credit to shareholders. You include both the cash dividend and the franking credit in your tax return. If your marginal rate is below 30%, the ATO refunds the excess credit as cash. For retirees with low taxable income, franking credits can add 20–40% to the effective value of Australian dividends.",
+      },
+    ],
+    verticalLink: "/investing",
+  },
+  {
+    slug: "invest-in-index-funds",
+    title: "How to Invest in Index Funds in Australia (2026) — Beginner's Guide",
+    h1: "How to Invest in Index Funds in Australia",
+    metaDescription:
+      "Learn how to invest in index funds in Australia. What index funds are, the best ASX-listed options, how to choose the right fund, and a step-by-step guide for beginners. Updated 2026.",
+    intro:
+      "Index funds are one of the most powerful investment vehicles available to ordinary Australians — and one of the most underutilised. Rather than trying to pick winning stocks, an index fund simply owns every company in an index (like the ASX 200 or S&P 500), delivering market-average returns at a fraction of the cost of actively managed funds. Backed by decades of evidence and championed by investors from Warren Buffett to Jack Bogle, index investing is the default strategy for most successful long-term investors. Here's how to get started in Australia.",
+    steps: [
+      {
+        heading: "Understand What Index Funds Are (and Why They Work)",
+        body: `An index fund is a pooled investment that tracks a market index — a predefined list of companies. The S&P/ASX 200 includes the 200 largest ASX-listed companies by market cap. An ASX 200 index fund owns all 200 companies in proportion to their size.\n\nWhy index funds beat most active management:\n- **Cost:** Index ETFs in Australia cost 0.03–0.20%/year. Actively managed funds cost 0.5–1.5%. Over 30 years, this fee difference compounds enormously.\n- **Consistency:** Research consistently shows 80–90% of active fund managers underperform their index benchmark over 10+ year periods after fees.\n- **Diversification:** One purchase instantly diversifies across hundreds of companies, eliminating individual company risk.\n\nIn Australia, index funds are almost exclusively offered as Exchange-Traded Funds (ETFs) — listed securities that trade on the ASX like shares. You buy them through any standard Australian share broker.`,
+      },
+      {
+        heading: "Choose the Right Index Funds for Your Goals",
+        body: `The most important decision is which index to track. Key options for Australian investors:\n\n**Australian market:**\n- **VAS** (Vanguard Australian Shares, MER 0.07%): ASX 300 — 300 largest Australian companies\n- **A200** (BetaShares Australia 200, MER 0.04%): ASX 200 — cheapest broad Australian ETF\n- **IOZ** (iShares Core S&P/ASX 200, MER 0.05%)\n\n**Global market:**\n- **IVV** (iShares Core S&P 500, MER 0.03%): 500 largest US companies — most popular global ETF in Australia\n- **VGS** (Vanguard MSCI International, MER 0.18%): Developed markets ex-Australia (23 countries)\n- **IWLD** (iShares MSCI World, MER 0.09%): Global developed markets\n\n**All-in-one diversified:**\n- **DHHF** (BetaShares Diversified All Growth, MER 0.19%): Australian + global + emerging markets in one fund\n- **VDHG** (Vanguard Diversified High Growth, MER 0.27%): 90% shares/10% bonds\n\nFor most beginners, starting with a single all-in-one ETF (DHHF or VDHG) or a simple two-fund combination (VAS + IVV) covers virtually all the diversification needed.`,
+      },
+      {
+        heading: "Open a Share Brokerage Account",
+        body: `To buy index fund ETFs in Australia, you need a share brokerage account. ASX ETFs are purchased like ordinary shares — no special account required.\n\n**For most beginners, a zero-brokerage or low-brokerage CHESS-sponsored account is ideal:**\n\n- **Stake:** $0 brokerage on ASX ETFs and shares. CHESS-sponsored.\n- **moomoo:** $0 brokerage on ASX trades. Strong research tools.\n- **Superhero:** $2 brokerage for ETFs. CHESS-sponsored.\n- **Selfwealth:** $9.50 flat brokerage. CHESS-sponsored.\n\nTo open an account: provide full name, DOB, address, Tax File Number, and photo ID. Most accounts open within minutes electronically. Transfer funds via PayID, BPAY, or bank transfer.`,
+      },
+      {
+        heading: "Place Your First Index Fund Order",
+        body: `Once your account is funded:\n\n1. Log into your broker platform or app\n2. Search for the ETF by its ASX code (e.g., "VAS" or "DHHF")\n3. Select "Buy"\n4. Choose **Market order** (executes at current price) or **Limit order** (set maximum price)\n5. Enter the number of units or dollar amount\n6. Review: confirm units, estimated total cost, and any brokerage fee\n7. Confirm the order\n\nThe order executes during ASX trading hours (10am–4pm AEST, Mon–Fri). Settlement occurs T+2. Your portfolio shows the position as 'pending settlement' until then.\n\nFor liquid, well-traded ETFs like VAS and IVV, market orders are fine — the bid/ask spread is tiny. For smaller or less liquid ETFs, limit orders prevent paying an inflated price.`,
+      },
+      {
+        heading: "Invest Regularly Using Dollar-Cost Averaging",
+        body: `One-off investments are a start, but the real power of index investing comes from regular contributions over a long period — dollar-cost averaging (DCA).\n\nWith DCA, you invest a fixed dollar amount at regular intervals regardless of market conditions. When the market is down, you buy more units at a lower price. Over time, this smooths your average cost and removes the stress of timing the market.\n\n**Setting up automatic DCA:**\n- Set up a recurring transfer from your bank to your brokerage account on payday\n- Some platforms (moomoo, Stake) offer automated recurring investment features\n\nConsistency matters more than timing. Missing even the 10 best trading days in a decade significantly reduces long-term returns — and those best days often occur during volatile markets when emotions tempt investors to sit on cash.`,
+      },
+      {
+        heading: "Manage Your Portfolio Over Time",
+        body: `Index fund investing doesn't require constant attention — that's one of its primary advantages. Periodic management is worthwhile:\n\n**Annual tasks:**\n- Review asset allocation and rebalance if significant drift has occurred\n- Confirm your chosen ETFs still align with your goals\n- Reconcile your annual tax statement and claim any franking credits\n- Consider increasing contributions if your income has grown\n\n**What NOT to do:**\n- Don't check daily — this encourages emotional decision-making\n- Don't chase recent outperformers — past performance doesn't predict future returns\n- Don't sell during corrections unless your life circumstances have changed\n\n**Long-term expectations:** The ASX 200 has returned approximately 9.5% annually over 30 years including dividends. The S&P 500 has returned ~10–11% USD annually. These returns include multiple recessions and crashes — the key was staying invested.`,
+      },
+    ],
+    relatedBrokerFilter: (b: Broker) =>
+      b.platform_type === "share_broker" && (b.asx_fee_value ?? 100) <= 10,
+    relatedBestPages: [
+      { label: "Best ETF Platforms", href: "/best/etf-platforms" },
+      { label: "Best Brokers for Beginners", href: "/best/beginners" },
+      { label: "Best Low-Fee Brokers", href: "/best/low-fees" },
+    ],
+    faqs: [
+      {
+        question: "What is the difference between an index fund and an ETF in Australia?",
+        answer:
+          "In Australia, the terms are often used interchangeably. An ETF (Exchange-Traded Fund) is the delivery mechanism — it's listed on the ASX and traded like a share. An index fund is the strategy — it passively tracks an index. Almost all Australian retail index funds are structured as ETFs. There are also unlisted index managed funds (Vanguard's direct range), but for most retail investors, ASX-listed index ETFs are the standard form.",
+      },
+      {
+        question: "What are the best index funds in Australia in 2026?",
+        answer:
+          "The most widely held index ETFs are: VAS (Vanguard Australian Shares, MER 0.07%), A200 (BetaShares Australia 200, MER 0.04%), IVV (iShares S&P 500, MER 0.03%), VGS (Vanguard International Shares, MER 0.18%), DHHF (all-in-one, MER 0.19%), and VDHG (all-in-one with bonds, MER 0.27%). For beginners, DHHF or VAS+IVV are the most popular low-cost starting points.",
+      },
+      {
+        question: "How much do I need to start investing in index funds in Australia?",
+        answer:
+          "On zero-brokerage platforms, you can start with as little as $100. DHHF trades at approximately $35/unit, VAS at ~$100/unit. On brokers that charge $5–10 brokerage per trade, it makes economic sense to invest at least $1,000–$2,000 per trade to keep fees below 0.5–1%.",
+      },
+      {
+        question: "Should I choose Australian or global index funds?",
+        answer:
+          "Both. Australian index funds (VAS, A200) provide ASX exposure plus franking credits on dividends. However, Australia represents only ~2% of global market capitalisation, so a portfolio limited to Australian shares is highly concentrated. Most advisers recommend 30–40% Australian shares for the franking benefit and 60–70% global (via IVV, VGS) for diversification and access to sectors underrepresented on the ASX such as technology and healthcare.",
+      },
+      {
+        question: "Are index funds safe in Australia?",
+        answer:
+          "Index funds are ASIC-regulated products managed by licensed fund managers. They're not protected against market losses — they fall in value when markets fall. However, broad diversification eliminates company-specific risk, making them lower risk than individual stocks. The primary risk is short-to-medium term volatility, which is why a long time horizon (5+ years) is recommended.",
+      },
+    ],
+    verticalLink: "/investing",
+  },
 ];
 
 /** Get all guide slugs for static params */
