@@ -160,7 +160,6 @@ export const SCENARIO_CONTENT: Record<string, ScenarioGuideContent> = {
       { label: "Fee Calculator", href: "/calculators?calc=trade-cost" },
     ],
   },
-};
 
   "first-home-buyer": {
     sections: [
