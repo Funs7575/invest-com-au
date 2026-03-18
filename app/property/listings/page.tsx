@@ -29,6 +29,12 @@ interface Listing {
   property_developers?: { name: string; logo_url: string | null; slug: string } | null;
 }
 
+const PLACEHOLDER_IMAGES: Record<string, string> = {
+  apartment: "/images/property/apartment-placeholder.svg",
+  house_land: "/images/property/house-placeholder.svg",
+  townhouse: "/images/property/townhouse-placeholder.svg",
+};
+
 const CITIES = ["All", "Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide"];
 const TYPES = [
   { value: "All", label: "All Types" },
@@ -176,8 +182,12 @@ export default function PropertyListingsPage() {
                     href={`/property/listings/${listing.slug}`}
                     className="border border-slate-200 bg-white rounded-2xl overflow-hidden hover:shadow-md hover:border-slate-300 transition-all group"
                   >
-                    <div className="aspect-[16/10] bg-gradient-to-br from-slate-100 to-slate-200 relative flex items-center justify-center">
-                      <Icon name="building" size={36} className="text-slate-300" />
+                    <div className="aspect-[16/10] relative overflow-hidden bg-slate-100">
+                      <img
+                        src={listing.images?.[0] || PLACEHOLDER_IMAGES[listing.property_type] || "/images/property/apartment-placeholder.svg"}
+                        alt={listing.title}
+                        className="w-full h-full object-cover"
+                      />
                       {listing.sponsored && (
                         <span className="absolute top-2 left-2 text-[0.6rem] font-bold uppercase tracking-wider text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">
                           Sponsored
