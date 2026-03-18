@@ -7,10 +7,25 @@ import {
 } from "@/lib/compliance";
 
 export const metadata = {
-  title: "Advertiser Terms & Conditions — Invest.com.au",
-  description: "Terms and conditions for advertisers and commercial partners on Invest.com.au. Covers sponsored content, display advertising, and affiliate partnerships.",
+  title: "Advertiser & Affiliate Partner Terms — Invest.com.au",
+  description:
+    "Terms governing commercial partnerships, affiliate arrangements, and sponsored content on Invest.com.au. Covers editorial independence, commission attribution, disclosure obligations, and GST.",
   alternates: { canonical: "/advertiser-terms" },
   robots: { index: true, follow: true },
+  openGraph: {
+    title: "Advertiser & Affiliate Partner Terms — Invest.com.au",
+    description:
+      "Terms governing commercial partnerships, affiliate arrangements, and sponsored content on Invest.com.au. Editorial independence maintained.",
+    url: "/advertiser-terms",
+    images: [
+      {
+        url: "/api/og?title=Advertiser+%26+Affiliate+Partner+Terms&subtitle=Editorial+Independence+%7C+Commission+Disclosure+%7C+GST&type=default",
+        width: 1200,
+        height: 630,
+      },
+    ],
+  },
+  twitter: { card: "summary_large_image" as const },
 };
 
 const EFFECTIVE_DATE = "16 March 2026";

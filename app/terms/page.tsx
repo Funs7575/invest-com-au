@@ -9,9 +9,25 @@ import {
 } from "@/lib/compliance";
 
 export const metadata = {
-  title: "Terms of Use",
-  description: "Terms of use for Invest.com.au",
+  title: "Terms of Use — Invest.com.au",
+  description:
+    "Terms and conditions governing your use of Invest.com.au. Covers subscriptions, billing, 7-day refund policy, user content, affiliate disclosures, and dispute resolution.",
   alternates: { canonical: "/terms" },
+  robots: { index: true, follow: true },
+  openGraph: {
+    title: "Terms of Use — Invest.com.au",
+    description:
+      "Terms and conditions governing your use of Invest.com.au. Covers subscriptions, billing, refund policy, user content, and affiliate disclosures.",
+    url: "/terms",
+    images: [
+      {
+        url: "/api/og?title=Terms+of+Use&subtitle=Subscriptions+%7C+Refund+Policy+%7C+Affiliate+Disclosures&type=default",
+        width: 1200,
+        height: 630,
+      },
+    ],
+  },
+  twitter: { card: "summary_large_image" as const },
 };
 
 export default function TermsPage() {

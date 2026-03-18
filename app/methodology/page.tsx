@@ -18,6 +18,7 @@ export const metadata = {
     ],
   },
   alternates: { canonical: "/methodology" },
+  twitter: { card: "summary_large_image" as const },
 };
 
 const CATEGORIES = [

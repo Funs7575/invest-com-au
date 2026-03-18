@@ -1,14 +1,37 @@
 import type { Metadata } from "next";
+import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy",
+  title: "Privacy Policy — Invest.com.au",
   description:
-    "How Invest.com.au collects, uses, and protects your personal information under the Australian Privacy Act 1988 and GDPR.",
+    "How Invest.com.au collects, uses, and protects your personal information under the Australian Privacy Act 1988 and GDPR. Covers cookies, analytics, affiliate tracking, and your data rights.",
   alternates: { canonical: "/privacy" },
+  robots: { index: true, follow: true },
+  openGraph: {
+    title: "Privacy Policy — Invest.com.au",
+    description:
+      "How Invest.com.au collects, uses, and protects your personal information under the Australian Privacy Act 1988 and GDPR.",
+    url: "/privacy",
+    images: [
+      {
+        url: "/api/og?title=Privacy+Policy&subtitle=Australian+Privacy+Act+%7C+GDPR+%7C+Your+Data+Rights&type=default",
+        width: 1200,
+        height: 630,
+      },
+    ],
+  },
+  twitter: { card: "summary_large_image" as const },
 };
+
+const breadcrumbLd = breadcrumbJsonLd([
+  { name: "Home", url: absoluteUrl("/") },
+  { name: "Privacy Policy" },
+]);
 
 export default function PrivacyPage() {
   return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
     <div className="py-5 md:py-12">
       <div className="container-custom max-w-3xl">
         <h1 className="text-3xl font-extrabold mb-2">Privacy Policy</h1>
@@ -426,5 +449,6 @@ export default function PrivacyPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

@@ -9,9 +9,24 @@ import {
 
 export const metadata = {
   title: "Advisor Services Agreement — Invest.com.au",
-  description: "Terms and conditions for financial professionals listed on the Invest.com.au advisor directory.",
+  description:
+    "Terms and conditions for financial advisors, accountants, and mortgage brokers listed on the Invest.com.au directory. Covers eligibility, lead handling, billing, auto-renewal, and compliance obligations.",
   alternates: { canonical: "/advisor-terms" },
   robots: { index: true, follow: true },
+  openGraph: {
+    title: "Advisor Services Agreement — Invest.com.au",
+    description:
+      "Terms for financial professionals listed on Invest.com.au. Covers eligibility, lead handling, billing, and compliance obligations.",
+    url: "/advisor-terms",
+    images: [
+      {
+        url: "/api/og?title=Advisor+Services+Agreement&subtitle=Listing+Terms+for+Financial+Professionals&type=default",
+        width: 1200,
+        height: 630,
+      },
+    ],
+  },
+  twitter: { card: "summary_large_image" as const },
 };
 
 const EFFECTIVE_DATE = "10 March 2026";
