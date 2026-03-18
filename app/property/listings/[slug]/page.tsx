@@ -1,10 +1,17 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
-import { OFF_THE_PLAN_WARNING, PROPERTY_DISCLAIMER_SHORT } from "@/lib/compliance";
+import { OFF_THE_PLAN_WARNING, PROPERTY_DISCLAIMER_SHORT, PROPERTY_INDICATIVE_PRICES, PROPERTY_TAX_NOTE } from "@/lib/compliance";
 import Icon from "@/components/Icon";
 import PropertyEnquiryForm from "./PropertyEnquiryForm";
+
+const PLACEHOLDER_IMAGES: Record<string, string> = {
+  apartment: "/images/property/apartment-placeholder.svg",
+  house_land: "/images/property/house-placeholder.svg",
+  townhouse: "/images/property/townhouse-placeholder.svg",
+};
 
 export const revalidate = 3600;
 
@@ -102,18 +109,78 @@ export default async function PropertyListingPage({ params }: { params: Promise<
         <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Left Column — 2/3 */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Image Gallery placeholder */}
-            <div className="aspect-[16/9] bg-gradient-to-br from-slate-100 to-slate-200 rounded-2xl flex items-center justify-center relative">
-              <Icon name="building" size={60} className="text-slate-300" />
-              <div className="absolute bottom-3 left-3 flex gap-2">
-                {listing.sponsored && (
-                  <span className="text-[0.6rem] font-bold uppercase tracking-wider text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full">Sponsored</span>
-                )}
-                <span className="text-[0.65rem] font-bold uppercase tracking-wider text-slate-600 bg-white/90 px-2 py-0.5 rounded-full">
-                  {listing.property_type === "house_land" ? "House & Land" : listing.property_type === "townhouse" ? "Townhouse" : "Apartment"}
-                </span>
-              </div>
-            </div>
+            {/* Image Gallery */}
+            {(() => {
+              const images: string[] = Array.isArray(listing.images) ? listing.images : [];
+              const placeholder = PLACEHOLDER_IMAGES[listing.property_type as string] ?? PLACEHOLDER_IMAGES.apartment;
+              const heroSrc = images[0] ?? placeholder;
+              const isExternal = heroSrc.startsWith("http");
+              const thumbnails = images.slice(1, 5);
+              return (
+                <div>
+                  {/* Hero image */}
+                  <div className="relative w-full aspect-[16/9] rounded-2xl overflow-hidden bg-slate-100">
+                    {isExternal ? (
+                      <Image
+                        src={heroSrc}
+                        alt={listing.title}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, 66vw"
+                        priority
+                      />
+                    ) : (
+                      // Local SVG placeholder — use img tag (unoptimized SVG)
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={heroSrc}
+                        alt={listing.title}
+                        className="w-full h-full object-cover"
+                      />
+                    )}
+                    {/* Gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
+                    {/* Badges */}
+                    <div className="absolute bottom-3 left-3 flex gap-2">
+                      {listing.sponsored && (
+                        <span className="text-[0.6rem] font-bold uppercase tracking-wider text-amber-700 bg-amber-50/95 border border-amber-200 px-2 py-0.5 rounded-full shadow-sm">Sponsored</span>
+                      )}
+                      <span className="text-[0.65rem] font-bold uppercase tracking-wider text-slate-700 bg-white/95 px-2 py-0.5 rounded-full shadow-sm">
+                        {listing.property_type === "house_land" ? "House & Land" : listing.property_type === "townhouse" ? "Townhouse" : "Apartment"}
+                      </span>
+                    </div>
+                    {/* Image count badge */}
+                    {images.length > 1 && (
+                      <div className="absolute bottom-3 right-3 flex items-center gap-1 bg-black/60 text-white text-[0.65rem] font-semibold px-2 py-0.5 rounded-full">
+                        <Icon name="image" size={11} />
+                        <span>{images.length} photos</span>
+                      </div>
+                    )}
+                  </div>
+                  {/* Thumbnail strip */}
+                  {thumbnails.length > 0 && (
+                    <div className="grid grid-cols-4 gap-2 mt-2">
+                      {thumbnails.map((src, i) => (
+                        <div key={i} className="relative aspect-[4/3] rounded-lg overflow-hidden bg-slate-100">
+                          <Image
+                            src={src}
+                            alt={`${listing.title} photo ${i + 2}`}
+                            fill
+                            className="object-cover"
+                            sizes="25vw"
+                          />
+                          {i === thumbnails.length - 1 && images.length > 5 && (
+                            <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                              <span className="text-white text-sm font-bold">+{images.length - 5}</span>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
 
             {/* Title & Key Stats */}
             <div>
@@ -122,7 +189,12 @@ export default async function PropertyListingPage({ params }: { params: Promise<
                   {listing.city} &middot; {listing.suburb}, {listing.state}
                 </span>
                 {listing.firb_approved && (
-                  <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">FIRB Approved</span>
+                  <span
+                    className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full"
+                    title="The developer has obtained FIRB approval for this project. Foreign purchasers must still obtain their own FIRB clearance before purchasing."
+                  >
+                    FIRB Approved
+                  </span>
                 )}
                 {listing.off_the_plan && (
                   <span className="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">Off the Plan</span>
@@ -138,18 +210,18 @@ export default async function PropertyListingPage({ params }: { params: Promise<
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
                 <div className="bg-slate-50 rounded-xl p-3 text-center">
                   <p className="text-lg font-extrabold text-slate-900">{formatPrice(listing.price_from_cents)}</p>
-                  <p className="text-[0.65rem] text-slate-400">From</p>
+                  <p className="text-[0.65rem] text-slate-400">From (indicative)</p>
                 </div>
                 {listing.price_to_cents && (
                   <div className="bg-slate-50 rounded-xl p-3 text-center">
                     <p className="text-lg font-extrabold text-slate-900">{formatPrice(listing.price_to_cents)}</p>
-                    <p className="text-[0.65rem] text-slate-400">To</p>
+                    <p className="text-[0.65rem] text-slate-400">To (indicative)</p>
                   </div>
                 )}
                 {listing.rental_yield_estimate && (
                   <div className="bg-emerald-50 rounded-xl p-3 text-center">
                     <p className="text-lg font-extrabold text-emerald-700">{listing.rental_yield_estimate}%</p>
-                    <p className="text-[0.65rem] text-emerald-600">Est. Rental Yield</p>
+                    <p className="text-[0.65rem] text-emerald-600">Est. Yield (pre-tax)</p>
                   </div>
                 )}
                 {listing.bedrooms_min && (
@@ -162,6 +234,16 @@ export default async function PropertyListingPage({ params }: { params: Promise<
                 )}
               </div>
             </div>
+
+            {/* Indicative price note */}
+            <p className="text-[0.62rem] text-slate-400 leading-relaxed -mt-2">
+              {PROPERTY_INDICATIVE_PRICES}
+            </p>
+            {listing.firb_approved && (
+              <p className="text-[0.62rem] text-slate-400 leading-relaxed">
+                FIRB note: This project has received FIRB approval from the developer. Foreign purchasers must independently obtain their own FIRB clearance prior to purchasing. Seek advice from a qualified solicitor regarding FIRB obligations.
+              </p>
+            )}
 
             {/* Description */}
             {listing.description && (
@@ -233,6 +315,7 @@ export default async function PropertyListingPage({ params }: { params: Promise<
                 <Link href="/property/suburbs" className="inline-flex items-center gap-1 mt-3 text-xs font-semibold text-amber-600 hover:text-amber-700">
                   Research more suburbs &rarr;
                 </Link>
+                <p className="text-[0.62rem] text-slate-400 mt-2 leading-relaxed">{PROPERTY_TAX_NOTE}</p>
               </div>
             )}
 

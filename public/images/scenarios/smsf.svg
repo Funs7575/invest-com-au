@@ -1,0 +1,39 @@
+<svg viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#7c3aed"/>
+      <stop offset="100%" style="stop-color:#4f46e5"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="200" fill="url(#bg)"/>
+  <!-- grid lines subtle -->
+  <g stroke="rgba(255,255,255,0.05)" stroke-width="1">
+    <line x1="0" y1="50" x2="800" y2="50"/>
+    <line x1="0" y1="100" x2="800" y2="100"/>
+    <line x1="0" y1="150" x2="800" y2="150"/>
+  </g>
+  <!-- shield shape -->
+  <path d="M180,30 L240,30 L260,55 L220,145 L180,145 L140,55 Z" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.7)" stroke-width="2.5" stroke-linejoin="round"/>
+  <!-- shield inner checkmark -->
+  <polyline points="165,90 195,120 255,65" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- building columns right of shield -->
+  <g fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.4)" stroke-width="1.5">
+    <rect x="300" y="100" width="16" height="65" rx="1"/>
+    <rect x="326" y="80" width="16" height="85" rx="1"/>
+    <rect x="352" y="60" width="16" height="105" rx="1"/>
+    <rect x="378" y="40" width="16" height="125" rx="1"/>
+    <!-- base line -->
+    <rect x="290" y="164" width="115" height="6" rx="2"/>
+    <!-- roof -->
+    <polygon points="280,100 453,100 405,72 328,72" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.35)" stroke-width="1.5"/>
+  </g>
+  <!-- portfolio doughnut chart right -->
+  <g transform="translate(580, 100)">
+    <circle cx="0" cy="0" r="65" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="24"/>
+    <circle cx="0" cy="0" r="65" fill="none" stroke="rgba(167,139,250,0.8)" stroke-width="24" stroke-dasharray="163 246" stroke-dashoffset="0"/>
+    <circle cx="0" cy="0" r="65" fill="none" stroke="rgba(129,140,248,0.7)" stroke-width="24" stroke-dasharray="98 311" stroke-dashoffset="-163"/>
+    <circle cx="0" cy="0" r="65" fill="none" stroke="rgba(196,181,253,0.6)" stroke-width="24" stroke-dasharray="49 360" stroke-dashoffset="-261"/>
+    <circle cx="0" cy="0" r="42" fill="rgba(79,70,229,0.8)"/>
+    <text x="0" y="6" text-anchor="middle" font-family="system-ui,sans-serif" font-size="13" font-weight="bold" fill="white">SMSF</text>
+  </g>
+</svg>

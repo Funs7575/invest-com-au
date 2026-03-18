@@ -12,7 +12,15 @@ export const metadata: Metadata = {
     description:
       "Our commitment to editorial integrity, content accuracy, and transparent financial product coverage.",
     url: absoluteUrl("/editorial-policy"),
+    images: [
+      {
+        url: "/api/og?title=Editorial+Policy&subtitle=Independence+%7C+Accuracy+%7C+Transparency&type=default",
+        width: 1200,
+        height: 630,
+      },
+    ],
   },
+  twitter: { card: "summary_large_image" as const },
 };
 
 const breadcrumbLd = breadcrumbJsonLd([

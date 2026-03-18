@@ -7,10 +7,25 @@ import {
 } from "@/lib/compliance";
 
 export const metadata = {
-  title: "Advertiser Terms & Conditions — Invest.com.au",
-  description: "Terms and conditions for advertisers and commercial partners on Invest.com.au. Covers sponsored content, display advertising, and affiliate partnerships.",
+  title: "Advertiser & Affiliate Partner Terms — Invest.com.au",
+  description:
+    "Terms governing commercial partnerships, affiliate arrangements, and sponsored content on Invest.com.au. Covers editorial independence, commission attribution, disclosure obligations, and GST.",
   alternates: { canonical: "/advertiser-terms" },
   robots: { index: true, follow: true },
+  openGraph: {
+    title: "Advertiser & Affiliate Partner Terms — Invest.com.au",
+    description:
+      "Terms governing commercial partnerships, affiliate arrangements, and sponsored content on Invest.com.au. Editorial independence maintained.",
+    url: "/advertiser-terms",
+    images: [
+      {
+        url: "/api/og?title=Advertiser+%26+Affiliate+Partner+Terms&subtitle=Editorial+Independence+%7C+Commission+Disclosure+%7C+GST&type=default",
+        width: 1200,
+        height: 630,
+      },
+    ],
+  },
+  twitter: { card: "summary_large_image" as const },
 };
 
 const EFFECTIVE_DATE = "16 March 2026";
@@ -115,19 +130,25 @@ export default function AdvertiserTermsPage() {
               <p>Upon termination, all outstanding fees remain payable. Sections relating to indemnification, limitation of liability, intellectual property, and governing law survive termination.</p>
             </S>
 
-            <S n={13} title="Governing Law and Disputes">
+            <S n={13} title="GST">
+              <p>
+                All fees and charges referred to in this Agreement are expressed exclusive of Goods and Services Tax (GST) unless otherwise stated. Where a supply under this Agreement is a taxable supply for the purposes of the A New Tax System (Goods and Services Tax) Act 1999 (Cth), the recipient will pay the GST-exclusive amount plus GST on receipt of a valid tax invoice. Both parties warrant they are registered for GST (ABN 90 093 882 421 for {COMPANY_LEGAL_NAME}).
+              </p>
+            </S>
+
+            <S n={14} title="Governing Law and Disputes">
               <p>This Agreement is governed by the laws of Victoria, Australia. Each party submits to the non-exclusive jurisdiction of the courts of Victoria and any courts of appeal from them.</p>
               <p>Before commencing formal dispute resolution, the parties agree to attempt to resolve any dispute by good faith negotiation for a period of 14 business days from written notice of the dispute.</p>
             </S>
 
-            <S n={14} title="General">
+            <S n={15} title="General">
               <p>This Agreement, together with any insertion order or partnership agreement, constitutes the entire agreement between the parties regarding advertising on the Platform. We may amend these terms with 30 days&apos; notice via email. Continued advertising after the notice period constitutes acceptance of the amended terms.</p>
               <p>If any provision of this Agreement is found to be invalid or unenforceable, the remaining provisions continue in full force and effect.</p>
             </S>
 
             {/* Contact */}
             <section className="bg-slate-50 border border-slate-200 rounded-xl p-5 md:p-6">
-              <h2 className="text-base md:text-lg font-bold text-slate-900 mb-2">15. Contact</h2>
+              <h2 className="text-base md:text-lg font-bold text-slate-900 mb-2">16. Contact</h2>
               <p className="text-sm text-slate-600">
                 For advertising enquiries or questions about this Agreement, contact us at{" "}
                 <a href="mailto:advertise@invest.com.au" className="text-slate-700 underline hover:text-slate-900">advertise@invest.com.au</a>{" "}

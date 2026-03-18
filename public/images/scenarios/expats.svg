@@ -1,0 +1,34 @@
+<svg viewBox="0 0 800 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0891b2"/>
+      <stop offset="100%" style="stop-color:#0e7490"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="200" fill="url(#bg)"/>
+  <!-- globe circle -->
+  <circle cx="200" cy="100" r="80" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+  <!-- globe latitude lines -->
+  <ellipse cx="200" cy="100" rx="80" ry="30" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+  <ellipse cx="200" cy="100" rx="80" ry="60" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+  <!-- globe longitude lines -->
+  <ellipse cx="200" cy="100" rx="35" ry="80" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+  <ellipse cx="200" cy="100" rx="65" ry="80" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+  <!-- equator line -->
+  <line x1="120" y1="100" x2="280" y2="100" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+  <line x1="200" y1="20" x2="200" y2="180" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+  <!-- location pin -->
+  <circle cx="245" cy="72" r="7" fill="white" opacity="0.9"/>
+  <path d="M245,79 L245,92" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity="0.9"/>
+  <!-- currency symbols floating -->
+  <text x="380" y="80" font-family="system-ui,sans-serif" font-size="32" font-weight="bold" fill="rgba(255,255,255,0.25)">$</text>
+  <text x="450" y="55" font-family="system-ui,sans-serif" font-size="24" font-weight="bold" fill="rgba(255,255,255,0.2)">£</text>
+  <text x="510" y="90" font-family="system-ui,sans-serif" font-size="28" font-weight="bold" fill="rgba(255,255,255,0.2)">€</text>
+  <text x="580" y="65" font-family="system-ui,sans-serif" font-size="22" font-weight="bold" fill="rgba(255,255,255,0.18)">¥</text>
+  <!-- arrows connecting -->
+  <path d="M420,95 Q500,70 565,85" stroke="rgba(255,255,255,0.35)" stroke-width="2" fill="none" stroke-dasharray="5,4"/>
+  <polygon points="565,85 558,78 558,92" fill="rgba(255,255,255,0.35)"/>
+  <!-- ASX tag -->
+  <rect x="640" y="110" width="100" height="32" rx="6" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+  <text x="666" y="131" font-family="system-ui,sans-serif" font-size="13" font-weight="700" fill="rgba(255,255,255,0.8)">ASX</text>
+</svg>

@@ -23,6 +23,10 @@ const nextConfig: NextConfig = {
         hostname: "randomuser.me",
         pathname: "/api/**",
       },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
     ],
   },
   async headers() {

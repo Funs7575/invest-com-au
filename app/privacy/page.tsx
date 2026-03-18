@@ -1,19 +1,42 @@
 import type { Metadata } from "next";
+import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy",
+  title: "Privacy Policy — Invest.com.au",
   description:
-    "How Invest.com.au collects, uses, and protects your personal information under the Australian Privacy Act 1988.",
+    "How Invest.com.au collects, uses, and protects your personal information under the Australian Privacy Act 1988 and GDPR. Covers cookies, analytics, affiliate tracking, and your data rights.",
   alternates: { canonical: "/privacy" },
+  robots: { index: true, follow: true },
+  openGraph: {
+    title: "Privacy Policy — Invest.com.au",
+    description:
+      "How Invest.com.au collects, uses, and protects your personal information under the Australian Privacy Act 1988 and GDPR.",
+    url: "/privacy",
+    images: [
+      {
+        url: "/api/og?title=Privacy+Policy&subtitle=Australian+Privacy+Act+%7C+GDPR+%7C+Your+Data+Rights&type=default",
+        width: 1200,
+        height: 630,
+      },
+    ],
+  },
+  twitter: { card: "summary_large_image" as const },
 };
+
+const breadcrumbLd = breadcrumbJsonLd([
+  { name: "Home", url: absoluteUrl("/") },
+  { name: "Privacy Policy" },
+]);
 
 export default function PrivacyPage() {
   return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
     <div className="py-5 md:py-12">
       <div className="container-custom max-w-3xl">
         <h1 className="text-3xl font-extrabold mb-2">Privacy Policy</h1>
         <p className="text-sm text-slate-500 mb-8">
-          Version 1.2 — Last updated: 18 March 2026
+          Version 1.3 — Last updated: 18 March 2026
         </p>
 
         <div className="prose prose-slate max-w-none text-sm leading-relaxed space-y-6">
@@ -184,19 +207,28 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-lg font-bold mb-2">
-              6. Third-Party Disclosure
+              6. Third-Party Disclosure &amp; Data Processors
             </h2>
             <p className="text-slate-600 mb-2">
               We may share limited information with the following third parties:
             </p>
             <ul className="list-disc pl-5 text-slate-600 space-y-1">
               <li>
-                <strong>Supabase</strong> (database hosting) — email addresses
-                are stored securely in our Supabase database.
+                <strong>Supabase</strong> (database hosting, USA) — email
+                addresses and enquiry data are stored in our Supabase database.
+                Supabase processes data on our behalf under a Data Processing
+                Agreement (DPA).
               </li>
               <li>
-                <strong>Vercel</strong> (website hosting) — standard web server
-                logs.
+                <strong>Vercel</strong> (website hosting, USA) — standard web
+                server logs. Vercel processes data on our behalf under their
+                standard DPA.
+              </li>
+              <li>
+                <strong>Google Analytics</strong> (analytics, USA) — anonymised
+                usage data is sent to Google. IP addresses are anonymised before
+                transmission. Google processes data under their Data Processing
+                Terms.
               </li>
               <li>
                 <strong>Affiliate partners</strong> — when you click an
@@ -216,6 +248,12 @@ export default function PrivacyPage() {
                 applicable privacy laws.
               </li>
             </ul>
+            <p className="text-slate-600 mt-2">
+              Where personal data is transferred to service providers outside
+              Australia, we take reasonable steps under APP 8 to ensure those
+              recipients comply with the Australian Privacy Principles, including
+              through contractual data processing agreements.
+            </p>
           </section>
 
           <section>
@@ -306,7 +344,56 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-lg font-bold mb-2">
-              10. Email Communications (Spam Act 2003)
+              10. European Economic Area — GDPR Rights
+            </h2>
+            <p className="text-slate-600 mb-2">
+              If you are located in the European Economic Area (EEA), you have
+              additional rights under the General Data Protection Regulation
+              (GDPR) (EU) 2016/679:
+            </p>
+            <ul className="list-disc pl-5 text-slate-600 space-y-1">
+              <li>
+                <strong>Legal basis for processing</strong> — we rely on
+                legitimate interests (site analytics and fraud prevention) or
+                consent (where you have opted in to communications) as our legal
+                basis for processing personal data.
+              </li>
+              <li>
+                <strong>Data portability</strong> — you may request a
+                machine-readable copy of personal data you have provided to us.
+              </li>
+              <li>
+                <strong>Right to erasure</strong> (&quot;right to be
+                forgotten&quot;) — you may request deletion of your personal
+                data, subject to legal obligations that require us to retain
+                certain records.
+              </li>
+              <li>
+                <strong>Right to object</strong> — you may object to processing
+                based on legitimate interests at any time.
+              </li>
+              <li>
+                <strong>Supervisory authority</strong> — if you are
+                dissatisfied with our response, you may lodge a complaint with
+                your national data protection authority (e.g. the ICO in the UK,
+                or the relevant EU DPA).
+              </li>
+            </ul>
+            <p className="text-slate-600 mt-2">
+              To exercise GDPR rights, contact{" "}
+              <a
+                href="mailto:privacy@invest.com.au"
+                className="text-slate-700 hover:text-slate-900 underline"
+              >
+                privacy@invest.com.au
+              </a>
+              . We will respond within 30 days.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-bold mb-2">
+              11. Email Communications (Spam Act 2003)
             </h2>
             <p className="text-slate-600">
               All commercial electronic messages sent by Invest.com.au comply
@@ -321,7 +408,7 @@ export default function PrivacyPage() {
 
           <section>
             <h2 className="text-lg font-bold mb-2">
-              11. Changes to This Policy
+              12. Changes to This Policy
             </h2>
             <p className="text-slate-600">
               We may update this Privacy Policy from time to time. Any changes
@@ -332,7 +419,7 @@ export default function PrivacyPage() {
           </section>
 
           <section>
-            <h2 className="text-lg font-bold mb-2">12. Contact Us</h2>
+            <h2 className="text-lg font-bold mb-2">13. Contact Us</h2>
             <p className="text-slate-600">
               If you have any questions about this Privacy Policy, or wish to
               make a complaint about how we have handled your personal
@@ -362,5 +449,6 @@ export default function PrivacyPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

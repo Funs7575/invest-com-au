@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import { getAllGuides } from "@/lib/how-to-guides";
 import {
@@ -50,7 +51,82 @@ const GUIDE_ICONS: Record<string, string> = {
   "claim-franking-credits": "dollar-sign",
   "buy-cryptocurrency": "cpu",
   "invest-in-property": "home",
+  "rebalance-portfolio": "refresh-cw",
+  "create-investment-plan": "file-text",
+  "invest-small-amounts": "trending-up",
+  "build-passive-income": "dollar-sign",
+  "invest-in-index-funds": "bar-chart-2",
+  "dollar-cost-averaging": "repeat",
+  "tax-loss-harvesting": "scissors",
+  "dividend-investing-australia": "percent",
+  "negative-gear-property": "home",
+  "retire-early-australia": "sun",
+  "consolidate-super": "shield",
+  "salary-sacrifice-super": "shield",
+  "claim-lost-super": "search",
+  "compare-super-funds": "bar-chart-2",
+  "invest-in-etfs-for-beginners": "pie-chart",
+  "build-share-portfolio": "layers",
+  "invest-in-reits": "home",
+  "invest-in-gold": "circle",
+  "invest-in-managed-funds": "briefcase",
+  "invest-for-children": "heart",
+  "transfer-shares-between-brokers": "arrow-right",
+  "set-up-family-trust-investing": "users",
+  "start-forex-trading": "globe",
+  "choose-robo-advisor": "cpu",
+  "refinance-home-loan": "home",
+  "use-stock-screener": "filter",
+  "buy-government-bonds-australia": "shield",
+  "open-high-interest-savings": "dollar-sign",
+  "build-emergency-fund": "umbrella",
+  "buy-term-deposit": "lock",
 };
+
+// Category groupings by verticalLink
+const CATEGORIES: {
+  label: string;
+  verticalLink: string;
+  image: string;
+  description: string;
+}[] = [
+  {
+    label: "Getting Started & Strategy",
+    verticalLink: "/investing",
+    image: "/images/guides/investing.svg",
+    description: "Foundational guides for building your investment strategy",
+  },
+  {
+    label: "Share Trading & ASX",
+    verticalLink: "/share-trading",
+    image: "/images/guides/share-trading.svg",
+    description: "Step-by-step guides to buying and managing Australian shares",
+  },
+  {
+    label: "Cryptocurrency",
+    verticalLink: "/crypto",
+    image: "/images/guides/crypto.svg",
+    description: "How to buy, store, and manage crypto assets in Australia",
+  },
+  {
+    label: "Property Investing",
+    verticalLink: "/property",
+    image: "/images/guides/property.svg",
+    description: "Property investment strategies for Australian investors",
+  },
+  {
+    label: "Superannuation & Retirement",
+    verticalLink: "/super",
+    image: "/images/guides/super.svg",
+    description: "SMSF setup, contributions, and retirement planning guides",
+  },
+  {
+    label: "Savings & Term Deposits",
+    verticalLink: "/savings",
+    image: "/images/guides/savings.svg",
+    description: "High-interest savings, emergency funds, and term deposits",
+  },
+];
 
 export default function HowToHubPage() {
   const guides = getAllGuides();
@@ -83,6 +159,16 @@ export default function HowToHubPage() {
     })),
   };
 
+  // Group guides by verticalLink
+  const guidesByCategory = CATEGORIES.map((cat) => ({
+    ...cat,
+    guides: guides.filter((g) => g.verticalLink === cat.verticalLink),
+  })).filter((cat) => cat.guides.length > 0);
+
+  // Uncategorised guides (verticalLinks not in CATEGORIES)
+  const knownLinks = new Set(CATEGORIES.map((c) => c.verticalLink));
+  const otherGuides = guides.filter((g) => !knownLinks.has(g.verticalLink));
+
   return (
     <>
       <script
@@ -106,7 +192,7 @@ export default function HowToHubPage() {
           <h1 className="text-xl md:text-4xl font-extrabold mb-1.5 md:mb-3">
             How-To Investing Guides for Australians
           </h1>
-          <p className="text-xs md:text-base text-slate-500 mb-4 md:mb-8 max-w-2xl">
+          <p className="text-xs md:text-base text-slate-500 mb-6 md:mb-10 max-w-2xl">
             <span className="hidden md:inline">
               Step-by-step guides to help you start investing, buy your first
               shares, set up a brokerage account, and more. Written for
@@ -117,42 +203,88 @@ export default function HowToHubPage() {
             </span>
           </p>
 
-          {/* Guide grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mb-8 md:mb-12">
-            {guides.map((guide) => (
-              <Link
-                key={guide.slug}
-                href={`/how-to/${guide.slug}`}
-                className="group block p-4 md:p-5 border border-slate-200 rounded-xl hover:border-slate-700 hover:shadow-md transition-all bg-white"
-              >
-                <div className="flex items-start gap-3">
-                  <Icon
-                    name={GUIDE_ICONS[guide.slug] || "book-open"}
-                    size={24}
-                    className="text-slate-700 shrink-0 mt-0.5"
+          {/* Category sections */}
+          <div className="space-y-8 md:space-y-12 mb-8 md:mb-12">
+            {guidesByCategory.map((cat) => (
+              <section key={cat.verticalLink}>
+                {/* Category header with image */}
+                <div className="relative rounded-xl overflow-hidden mb-4 h-24 md:h-32">
+                  <Image
+                    src={cat.image}
+                    alt={cat.label}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 896px"
                   />
-                  <div className="min-w-0">
-                    <h2 className="text-sm md:text-lg font-bold group-hover:text-slate-900 transition-colors leading-tight mb-1">
-                      {guide.h1}
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent" />
+                  <div className="absolute inset-0 flex flex-col justify-center px-4 md:px-6">
+                    <h2 className="text-base md:text-xl font-bold text-white leading-tight">
+                      {cat.label}
                     </h2>
-                    <p className="text-[0.65rem] md:text-sm text-slate-500 line-clamp-2">
-                      {guide.intro.slice(0, 140)}...
+                    <p className="hidden md:block text-xs text-white/70 mt-0.5">
+                      {cat.description}
                     </p>
-                    <div className="flex items-center gap-2 mt-2">
-                      <span className="text-[0.6rem] md:text-xs text-slate-400">
-                        {guide.steps.length} steps
-                      </span>
-                      <span className="text-[0.6rem] md:text-xs text-slate-400">
-                        ~10 min read
-                      </span>
-                    </div>
-                    <span className="inline-block text-xs md:text-sm font-semibold text-slate-700 mt-2 group-hover:underline">
-                      Read Guide
-                    </span>
                   </div>
                 </div>
-              </Link>
+
+                {/* Guides in this category */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {cat.guides.map((guide) => (
+                    <Link
+                      key={guide.slug}
+                      href={`/how-to/${guide.slug}`}
+                      className="group flex items-start gap-3 p-4 border border-slate-200 rounded-xl hover:border-slate-700 hover:shadow-md transition-all bg-white"
+                    >
+                      <Icon
+                        name={GUIDE_ICONS[guide.slug] || "book-open"}
+                        size={20}
+                        className="text-slate-500 group-hover:text-slate-700 shrink-0 mt-0.5 transition-colors"
+                      />
+                      <div className="min-w-0">
+                        <h3 className="text-sm md:text-base font-semibold text-slate-800 group-hover:text-slate-900 leading-snug mb-0.5 transition-colors">
+                          {guide.h1}
+                        </h3>
+                        <p className="text-[0.65rem] md:text-xs text-slate-400 line-clamp-1">
+                          {guide.steps.length} steps · ~10 min read
+                        </p>
+                      </div>
+                      <span className="text-slate-300 group-hover:text-slate-600 transition-colors ml-auto shrink-0 text-base">→</span>
+                    </Link>
+                  ))}
+                </div>
+              </section>
             ))}
+
+            {/* Remaining guides not in a defined category */}
+            {otherGuides.length > 0 && (
+              <section>
+                <h2 className="text-base md:text-lg font-bold text-slate-700 mb-3">More Guides</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {otherGuides.map((guide) => (
+                    <Link
+                      key={guide.slug}
+                      href={`/how-to/${guide.slug}`}
+                      className="group flex items-start gap-3 p-4 border border-slate-200 rounded-xl hover:border-slate-700 hover:shadow-md transition-all bg-white"
+                    >
+                      <Icon
+                        name={GUIDE_ICONS[guide.slug] || "book-open"}
+                        size={20}
+                        className="text-slate-500 group-hover:text-slate-700 shrink-0 mt-0.5 transition-colors"
+                      />
+                      <div className="min-w-0">
+                        <h3 className="text-sm md:text-base font-semibold text-slate-800 group-hover:text-slate-900 leading-snug mb-0.5 transition-colors">
+                          {guide.h1}
+                        </h3>
+                        <p className="text-[0.65rem] md:text-xs text-slate-400 line-clamp-1">
+                          {guide.steps.length} steps · ~10 min read
+                        </p>
+                      </div>
+                      <span className="text-slate-300 group-hover:text-slate-600 transition-colors ml-auto shrink-0 text-base">→</span>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            )}
           </div>
 
           {/* CTA */}

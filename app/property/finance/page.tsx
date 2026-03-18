@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
-import { LOAN_COMPARISON_DISCLAIMER } from "@/lib/compliance";
+import { LOAN_COMPARISON_DISCLAIMER, NCCP_CREDIT_NOTE } from "@/lib/compliance";
 import Icon from "@/components/Icon";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
 import PropertyDisclaimer from "@/components/PropertyDisclaimer";
@@ -114,6 +114,7 @@ export default function PropertyFinancePage() {
                 <div>
                   <p className="text-xs font-bold text-amber-800 mb-1">Loan Comparison Disclaimer</p>
                   <p className="text-[0.65rem] md:text-xs text-amber-700 leading-relaxed">{LOAN_COMPARISON_DISCLAIMER}</p>
+                  <p className="text-[0.6rem] text-amber-600 leading-relaxed mt-1">{NCCP_CREDIT_NOTE}</p>
                   <PropertyDisclaimer />
                 </div>
               </div>

@@ -1,0 +1,82 @@
+<svg viewBox="0 0 1200 675" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#bfdbfe"/>
+      <stop offset="55%" style="stop-color:#dbeafe"/>
+      <stop offset="100%" style="stop-color:#f0f9ff"/>
+    </linearGradient>
+    <linearGradient id="house" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#e2e8f0"/>
+      <stop offset="100%" style="stop-color:#f1f5f9"/>
+    </linearGradient>
+    <linearGradient id="roof" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#94a3b8"/>
+      <stop offset="100%" style="stop-color:#64748b"/>
+    </linearGradient>
+    <linearGradient id="lawn" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#86efac"/>
+      <stop offset="100%" style="stop-color:#4ade80"/>
+    </linearGradient>
+  </defs>
+  <!-- Sky -->
+  <rect width="1200" height="675" fill="url(#sky)"/>
+  <!-- Sun -->
+  <circle cx="200" cy="130" r="65" fill="rgba(255,248,200,0.65)"/>
+  <circle cx="200" cy="130" r="42" fill="rgba(255,240,160,0.8)"/>
+  <!-- Clouds -->
+  <ellipse cx="450" cy="100" rx="90" ry="35" fill="rgba(255,255,255,0.75)"/>
+  <ellipse cx="540" cy="90" rx="65" ry="30" fill="rgba(255,255,255,0.8)"/>
+  <ellipse cx="380" cy="105" rx="55" ry="28" fill="rgba(255,255,255,0.7)"/>
+  <ellipse cx="900" cy="80" rx="100" ry="38" fill="rgba(255,255,255,0.7)"/>
+  <ellipse cx="980" cy="70" rx="70" ry="32" fill="rgba(255,255,255,0.75)"/>
+  <!-- Background trees -->
+  <circle cx="130" cy="410" r="55" fill="rgba(74,200,100,0.4)"/>
+  <circle cx="160" cy="390" r="40" fill="rgba(74,200,100,0.45)"/>
+  <rect x="155" y="435" width="10" height="55" fill="rgba(50,140,70,0.4)"/>
+  <circle cx="1060" cy="400" r="60" fill="rgba(74,200,100,0.38)"/>
+  <circle cx="1090" cy="380" r="45" fill="rgba(74,200,100,0.42)"/>
+  <rect x="1085" y="430" width="10" height="60" fill="rgba(50,140,70,0.38)"/>
+  <!-- House body -->
+  <rect x="280" y="310" width="640" height="340" fill="url(#house)" stroke="rgba(148,163,184,0.4)" stroke-width="2"/>
+  <!-- Roof -->
+  <polygon points="240,315 600,100 960,315" fill="url(#roof)"/>
+  <!-- Roof ridge cap -->
+  <line x1="240" y1="315" x2="960" y2="315" stroke="rgba(100,116,139,0.5)" stroke-width="3"/>
+  <!-- Chimney -->
+  <rect x="740" y="140" width="40" height="100" fill="#94a3b8"/>
+  <rect x="735" y="136" width="50" height="12" fill="#7f8ea5"/>
+  <!-- Garage -->
+  <rect x="280" y="420" width="200" height="230" fill="rgba(203,213,225,0.8)" stroke="rgba(148,163,184,0.4)" stroke-width="1.5"/>
+  <!-- Garage door panels -->
+  <g stroke="rgba(148,163,184,0.6)" stroke-width="1.5" fill="none">
+    <rect x="295" y="435" width="170" height="200" rx="2"/>
+    <line x1="295" y1="475" x2="465" y2="475"/>
+    <line x1="295" y1="515" x2="465" y2="515"/>
+    <line x1="295" y1="555" x2="465" y2="555"/>
+    <line x1="295" y1="595" x2="465" y2="595"/>
+    <line x1="380" y1="435" x2="380" y2="635"/>
+  </g>
+  <!-- Front door -->
+  <rect x="540" y="450" width="90" height="200" fill="rgba(99,102,241,0.25)" stroke="rgba(99,102,241,0.4)" stroke-width="2"/>
+  <rect x="563" y="455" width="23" height="55" fill="rgba(165,180,252,0.4)"/>
+  <rect x="594" y="455" width="23" height="55" fill="rgba(165,180,252,0.4)"/>
+  <circle cx="586" cy="552" r="6" fill="rgba(99,102,241,0.6)"/>
+  <!-- Front door step -->
+  <rect x="520" y="648" width="130" height="12" fill="rgba(148,163,184,0.6)" rx="2"/>
+  <!-- Windows -->
+  <rect x="510" y="360" width="80" height="70" fill="rgba(186,230,253,0.7)" stroke="rgba(148,163,184,0.5)" stroke-width="2"/>
+  <line x1="550" y1="360" x2="550" y2="430" stroke="rgba(148,163,184,0.5)" stroke-width="1.5"/>
+  <line x1="510" y1="395" x2="590" y2="395" stroke="rgba(148,163,184,0.5)" stroke-width="1.5"/>
+  <rect x="720" y="360" width="100" height="70" fill="rgba(186,230,253,0.7)" stroke="rgba(148,163,184,0.5)" stroke-width="2"/>
+  <line x1="770" y1="360" x2="770" y2="430" stroke="rgba(148,163,184,0.5)" stroke-width="1.5"/>
+  <line x1="720" y1="395" x2="820" y2="395" stroke="rgba(148,163,184,0.5)" stroke-width="1.5"/>
+  <!-- Lawn -->
+  <rect x="0" y="620" width="1200" height="55" fill="url(#lawn)" opacity="0.5"/>
+  <rect x="0" y="650" width="1200" height="25" fill="rgba(134,168,130,0.4)"/>
+  <!-- Driveway -->
+  <polygon points="280,650 480,650 540,675 220,675" fill="rgba(148,163,184,0.35)"/>
+  <!-- Garden plants -->
+  <circle cx="488" cy="635" r="20" fill="rgba(74,200,100,0.55)"/>
+  <circle cx="690" cy="640" r="18" fill="rgba(74,200,100,0.5)"/>
+  <circle cx="840" cy="633" r="22" fill="rgba(74,200,100,0.52)"/>
+</svg>

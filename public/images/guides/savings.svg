@@ -1,0 +1,33 @@
+<svg viewBox="0 0 800 160" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#065f46"/>
+      <stop offset="100%" style="stop-color:#047857"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="160" fill="url(#bg)"/>
+  <!-- ground -->
+  <ellipse cx="200" cy="158" rx="130" ry="12" fill="rgba(0,0,0,0.15)"/>
+  <!-- plant pot -->
+  <path d="M158,140 L170,160 L230,160 L242,140 Z" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+  <!-- stem -->
+  <path d="M200,140 Q200,100 200,80" stroke="rgba(255,255,255,0.7)" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- leaves -->
+  <path d="M200,110 Q170,90 155,60 Q185,75 200,110Z" fill="rgba(52,211,153,0.7)" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+  <path d="M200,90 Q230,70 245,40 Q215,55 200,90Z" fill="rgba(52,211,153,0.65)" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+  <path d="M200,75 Q175,58 172,30 Q195,48 200,75Z" fill="rgba(52,211,153,0.6)" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+  <!-- coins in pot -->
+  <g fill="rgba(251,191,36,0.6)" stroke="rgba(251,191,36,0.4)" stroke-width="1">
+    <ellipse cx="190" cy="142" rx="14" ry="5"/>
+    <ellipse cx="212" cy="144" rx="12" ry="4"/>
+  </g>
+  <!-- savings rate line chart -->
+  <polyline points="320,140 380,125 440,115 500,95 560,78 620,60 680,45 760,30" stroke="#34d399" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M320,140 L380,125 L440,115 L500,95 L560,78 L620,60 L680,45 L760,30 L760,160 L320,160Z" fill="rgba(52,211,153,0.1)"/>
+  <!-- percent labels -->
+  <text x="325" y="155" font-family="system-ui,sans-serif" font-size="10" fill="rgba(255,255,255,0.3)">5.00%</text>
+  <text x="730" y="46" font-family="system-ui,sans-serif" font-size="10" fill="rgba(255,255,255,0.5)">5.50%</text>
+  <!-- HISA label -->
+  <rect x="590" y="115" width="90" height="28" rx="5" fill="rgba(52,211,153,0.15)" stroke="rgba(52,211,153,0.35)" stroke-width="1.5"/>
+  <text x="608" y="133" font-family="system-ui,sans-serif" font-size="12" font-weight="700" fill="rgba(52,211,153,0.9)">HISA</text>
+</svg>

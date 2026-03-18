@@ -9,9 +9,24 @@ import {
 
 export const metadata = {
   title: "Advisor Services Agreement — Invest.com.au",
-  description: "Terms and conditions for financial professionals listed on the Invest.com.au advisor directory.",
+  description:
+    "Terms and conditions for financial advisors, accountants, and mortgage brokers listed on the Invest.com.au directory. Covers eligibility, lead handling, billing, auto-renewal, and compliance obligations.",
   alternates: { canonical: "/advisor-terms" },
   robots: { index: true, follow: true },
+  openGraph: {
+    title: "Advisor Services Agreement — Invest.com.au",
+    description:
+      "Terms for financial professionals listed on Invest.com.au. Covers eligibility, lead handling, billing, and compliance obligations.",
+    url: "/advisor-terms",
+    images: [
+      {
+        url: "/api/og?title=Advisor+Services+Agreement&subtitle=Listing+Terms+for+Financial+Professionals&type=default",
+        width: 1200,
+        height: 630,
+      },
+    ],
+  },
+  twitter: { card: "summary_large_image" as const },
 };
 
 const EFFECTIVE_DATE = "10 March 2026";
@@ -75,7 +90,9 @@ export default function AdvisorTermsPage() {
             </S>
 
             <S n={5} title="Fees, Billing, and Disputes">
-              <p>Listing fees, per-lead fees, article publication fees, and any other charges are as set out in your portal dashboard or as separately agreed in writing. We may change fees with 30 days&apos; written notice.</p>
+              <p>Listing fees, per-lead fees, article publication fees, and any other charges are as set out in your portal dashboard or as separately agreed in writing. All fees are in Australian dollars and are exclusive of Goods and Services Tax (GST). GST will be added where applicable and is your responsibility as the recipient of the taxable supply. We will provide a valid tax invoice for all charges. We may change fees with 30 days&apos; written notice.</p>
+              <p><strong>Subscription auto-renewal:</strong> Paid advisor subscription plans (Basic, Professional, Premium) renew automatically at the end of each billing period (monthly or annual). You authorise us to charge your nominated payment method on each renewal date. You may cancel at any time via your advisor portal; cancellation takes effect at the end of the current billing period and access continues until then.</p>
+              <p><strong>Refunds:</strong> If you cancel your subscription within 7 days of the initial purchase date, you may request a full refund of the first payment. Refunds are not available for renewals or after the 7-day window, except where required by the Australian Consumer Law. To request a refund, contact <a href="mailto:partners@invest.com.au" className="underline hover:text-slate-900">partners@invest.com.au</a>.</p>
               <p>Lead disputes must be submitted within 14 days of the lead being delivered. A valid dispute is one where the lead contains demonstrably invalid contact information, the enquiry is clearly unrelated to financial services, or the same lead was delivered as a duplicate. We will review disputes within 10 business days and either credit or decline the dispute at our reasonable discretion.</p>
               <p>Overdue payments may result in listing suspension. We reserve the right to charge interest on overdue amounts at the rate prescribed under the Penalty Interest Rates Act 1983 (Vic).</p>
             </S>

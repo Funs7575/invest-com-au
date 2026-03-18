@@ -9,9 +9,25 @@ import {
 } from "@/lib/compliance";
 
 export const metadata = {
-  title: "Terms of Use",
-  description: "Terms of use for Invest.com.au",
+  title: "Terms of Use — Invest.com.au",
+  description:
+    "Terms and conditions governing your use of Invest.com.au. Covers subscriptions, billing, 7-day refund policy, user content, affiliate disclosures, and dispute resolution.",
   alternates: { canonical: "/terms" },
+  robots: { index: true, follow: true },
+  openGraph: {
+    title: "Terms of Use — Invest.com.au",
+    description:
+      "Terms and conditions governing your use of Invest.com.au. Covers subscriptions, billing, refund policy, user content, and affiliate disclosures.",
+    url: "/terms",
+    images: [
+      {
+        url: "/api/og?title=Terms+of+Use&subtitle=Subscriptions+%7C+Refund+Policy+%7C+Affiliate+Disclosures&type=default",
+        width: 1200,
+        height: 630,
+      },
+    ],
+  },
+  twitter: { card: "summary_large_image" as const },
 };
 
 export default function TermsPage() {
@@ -43,7 +59,7 @@ export default function TermsPage() {
             </div>
 
             <h1 className="text-2xl md:text-4xl font-extrabold mb-2">Terms of Use</h1>
-            <p className="text-xs text-slate-400 mb-8">Version 1.1 — Last updated 18 March 2026</p>
+            <p className="text-xs text-slate-400 mb-8">Version 1.2 — Last updated 18 March 2026</p>
 
             <div className="space-y-6">
               <S n={1} title="Scope of Service">
@@ -160,7 +176,54 @@ export default function TermsPage() {
                 </p>
               </S>
 
-              <S n={9} title="Governing Law &amp; Dispute Resolution">
+              <S n={9} title="Subscriptions, Billing &amp; Refunds">
+                <p>
+                  {SITE_NAME} may offer paid subscription plans (&quot;Pro&quot;
+                  or similar) that provide access to premium features. The following
+                  terms apply to all subscription purchases:
+                </p>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>
+                    <strong>Auto-renewal:</strong> Subscriptions automatically renew
+                    at the end of each billing period (monthly or annual) at the
+                    then-current price. You authorise us to charge your payment method
+                    on each renewal date. We will notify you of any price change before
+                    it takes effect.
+                  </li>
+                  <li>
+                    <strong>Cancellation:</strong> You may cancel at any time via your
+                    account settings or by contacting{" "}
+                    <a href="mailto:hello@invest.com.au" className="underline hover:text-slate-900">
+                      hello@invest.com.au
+                    </a>
+                    . Cancellation takes effect at the end of the current billing
+                    period — you retain access until then.
+                  </li>
+                  <li>
+                    <strong>7-day refund window:</strong> If you are not satisfied
+                    with a subscription, you may request a full refund within 7 days
+                    of initial purchase. Self-service refunds are available in your
+                    account settings. After 7 days, subscription fees are
+                    non-refundable except where required by the Australian Consumer Law.
+                  </li>
+                  <li>
+                    <strong>GST:</strong> All subscription prices are displayed in
+                    Australian dollars and include GST where applicable.
+                  </li>
+                  <li>
+                    <strong>Price changes:</strong> We reserve the right to change
+                    subscription pricing with 30 days&apos; notice. Continued use
+                    after the notice period constitutes acceptance of the new price.
+                  </li>
+                  <li>
+                    <strong>Free trials:</strong> Where a free trial is offered, you
+                    will be charged at the end of the trial period unless you cancel
+                    before it ends.
+                  </li>
+                </ul>
+              </S>
+
+              <S n={10} title="Governing Law, Dispute Resolution &amp; Force Majeure">
                 <p>
                   These Terms are governed by the laws of the State of Victoria,
                   Australia. You agree to submit to the non-exclusive jurisdiction
@@ -177,21 +240,36 @@ export default function TermsPage() {
                   resolution through the courts of Victoria.
                 </p>
                 <p>
-                  If you are a consumer with a complaint about a financial product
-                  recommended or compared on this site, you may also contact the
-                  Australian Financial Complaints Authority (AFCA) at{" "}
+                  <strong>AFCA — complaints about financial providers:</strong> If
+                  you have a complaint about a specific financial product, broker, or
+                  advisor listed on this site, you may contact the Australian Financial
+                  Complaints Authority (AFCA) at{" "}
                   <a href="https://www.afca.org.au" target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-900">
                     afca.org.au
                   </a>{" "}
-                  or 1800 931 678. See our{" "}
+                  or 1800 931 678. AFCA handles complaints against AFSL holders and
+                  credit licensees — it does not handle complaints about {SITE_NAME}
+                  itself, as we are an information service and do not hold an AFSL.
+                  For complaints about {SITE_NAME}, contact{" "}
+                  <a href="mailto:complaints@invest.com.au" className="underline hover:text-slate-900">
+                    complaints@invest.com.au
+                  </a>
+                  . See our{" "}
                   <Link href="/complaints" className="underline hover:text-slate-900">
                     Complaints &amp; AFCA page
                   </Link>
                   .
                 </p>
+                <p>
+                  <strong>Force majeure:</strong> {SITE_NAME} is not liable for any
+                  failure or delay in performance due to causes beyond our reasonable
+                  control, including but not limited to natural disasters, acts of
+                  government, infrastructure outages, cyber attacks, or pandemic
+                  restrictions.
+                </p>
               </S>
 
-              <S n={10} title="Changes to Terms">
+              <S n={11} title="Changes to Terms">
                 <p>
                   We may update these terms from time to time. Any material changes
                   will be posted on this page with an updated &quot;Last
@@ -200,7 +278,34 @@ export default function TermsPage() {
                 </p>
               </S>
 
-              <S n={11} title="Contact">
+              <S n={12} title="General">
+                <p>
+                  <strong>Entire agreement:</strong> These Terms, together with our
+                  Privacy Policy and any applicable service-specific terms (e.g.
+                  Advisor Services Agreement), constitute the entire agreement between
+                  you and {SITE_NAME} regarding your use of this site. They supersede
+                  all prior representations and agreements.
+                </p>
+                <p>
+                  <strong>Severability:</strong> If any provision of these Terms is
+                  found to be invalid or unenforceable, the remaining provisions
+                  continue in full force and effect.
+                </p>
+                <p>
+                  <strong>Assignment:</strong> You may not assign your rights or
+                  obligations under these Terms without our prior written consent.
+                  We may assign our rights and obligations (for example, in connection
+                  with a business sale or restructure) with 30 days&apos; notice
+                  to you.
+                </p>
+                <p>
+                  <strong>Waiver:</strong> Our failure to enforce any provision of
+                  these Terms does not constitute a waiver of that provision or our
+                  right to enforce it in the future.
+                </p>
+              </S>
+
+              <S n={13} title="Contact">
                 <p>
                   Questions about these terms? Email us at{" "}
                   <a
