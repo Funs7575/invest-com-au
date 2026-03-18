@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
+import { OFF_THE_PLAN_WARNING, PROPERTY_DISCLAIMER_SHORT } from "@/lib/compliance";
 import Icon from "@/components/Icon";
 import PropertyEnquiryForm from "./PropertyEnquiryForm";
 
@@ -295,6 +296,13 @@ export default async function PropertyListingPage({ params }: { params: Promise<
                 <Link href="/property/buyer-agents" className="inline-block px-5 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-lg hover:bg-slate-800 transition-all">
                   Find a Buyer&apos;s Agent
                 </Link>
+              </div>
+
+              {/* Off-the-plan Disclaimer */}
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                <p className="text-[0.6rem] md:text-xs font-bold text-amber-800 mb-1">Off-the-Plan Risk Warning</p>
+                <p className="text-[0.56rem] md:text-[0.65rem] text-amber-700 leading-relaxed">{OFF_THE_PLAN_WARNING}</p>
+                <p className="text-[0.56rem] md:text-[0.6rem] text-amber-600 mt-1.5">{PROPERTY_DISCLAIMER_SHORT}</p>
               </div>
             </div>
           </div>

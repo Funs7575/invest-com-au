@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
+import { PROPERTY_GENERAL_DISCLAIMER } from "@/lib/compliance";
 import Icon from "@/components/Icon";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
+import PropertyDisclaimer from "@/components/PropertyDisclaimer";
 
 export const metadata = {
   title: "Property Investment Australia — New Developments, Buyer's Agents & Suburb Data",
@@ -252,6 +254,24 @@ export default async function PropertyHubPage() {
           </div>
         </section>
       </ScrollFadeIn>
+
+      {/* Property Disclaimer */}
+      <section className="py-6 md:py-8 bg-white border-t border-slate-100">
+        <div className="container-custom">
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 md:p-5">
+            <div className="flex items-start gap-2">
+              <svg className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div>
+                <p className="text-xs font-bold text-slate-600 mb-1">Important Information</p>
+                <p className="text-[0.65rem] md:text-xs text-slate-500 leading-relaxed">{PROPERTY_GENERAL_DISCLAIMER}</p>
+                <PropertyDisclaimer />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

@@ -196,3 +196,72 @@ export const TFN_NOTICE =
   "If you do not provide your Tax File Number (TFN) to your broker or super fund, " +
   "tax may be withheld at the highest marginal rate. Providing your TFN is voluntary but " +
   "recommended. Your TFN is protected by law and can only be used for lawful purposes.";
+
+// ═══════════════════════════════════════════════════════════════════
+// PROPERTY INVESTMENT COMPLIANCE
+// ═══════════════════════════════════════════════════════════════════
+
+/**
+ * Property investment general disclaimer.
+ * Required on all property listing, suburb data, and buyer agent pages.
+ */
+export const PROPERTY_GENERAL_DISCLAIMER =
+  "Property information on Invest.com.au is general in nature and should not be relied upon as " +
+  "a substitute for professional advice. Median prices, rental yields, vacancy rates, and " +
+  "capital growth figures are indicative only and based on publicly available data. " +
+  "Past performance is not a reliable indicator of future results. Property values can go down " +
+  "as well as up. Always conduct your own due diligence and seek independent legal, financial, " +
+  "and property advice before making any investment decision.";
+
+/** Short property disclaimer for inline use near CTAs */
+export const PROPERTY_DISCLAIMER_SHORT =
+  "General information only — not a property investment recommendation. Seek independent advice.";
+
+/**
+ * Off-the-plan risk warning.
+ * Required near any new development / off-the-plan listing.
+ */
+export const OFF_THE_PLAN_WARNING =
+  "Off-the-plan purchases carry additional risks including construction delays, changes to " +
+  "finishes or layouts, developer insolvency, and potential valuation shortfalls at settlement. " +
+  "Review all contracts with a qualified solicitor or conveyancer before signing.";
+
+/**
+ * Buyer agent disclosure.
+ * Required on buyer agent directory and profile pages.
+ */
+export const BUYER_AGENT_DISCLOSURE =
+  "Invest.com.au is not a licensed real estate agent. Buyer's agents listed on this site are " +
+  "independent professionals. Verify that your chosen agent holds a valid real estate licence " +
+  "in the relevant state or territory. We may receive a referral fee from listed agents. " +
+  "This does not affect our independent ratings.";
+
+/**
+ * Loan comparison disclaimer.
+ * Required on investment loan comparison pages.
+ */
+export const LOAN_COMPARISON_DISCLAIMER =
+  "Invest.com.au is not a lender or mortgage broker. Loan rates shown are indicative only, " +
+  "based on publicly available information, and subject to change without notice. " +
+  "Comparison rates are based on a $150,000 loan over 25 years. Your actual rate may differ " +
+  "based on your financial circumstances. Always obtain a formal quote from the lender. " +
+  "Consider seeking advice from a licensed mortgage broker or financial adviser.";
+
+/**
+ * Suburb data disclaimer.
+ * Required on suburb research tool pages.
+ */
+export const SUBURB_DATA_DISCLAIMER =
+  "Suburb data is sourced from publicly available datasets and may not reflect the most " +
+  "recent market conditions. Median prices, rental yields, and growth figures are estimates " +
+  "only. Invest.com.au does not guarantee the accuracy or completeness of this data. " +
+  "Always verify data with multiple sources before making investment decisions.";
+
+/**
+ * Enquiry form consent text.
+ * Required on all property enquiry and contact forms.
+ */
+export const ENQUIRY_CONSENT_TEXT =
+  "I agree to the Privacy Policy and Terms of Use. I consent to my details being shared with " +
+  "the selected provider to respond to this enquiry. I understand I may receive follow-up " +
+  "communications and can opt out at any time.";

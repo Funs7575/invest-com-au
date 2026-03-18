@@ -80,7 +80,11 @@ export default function QuizResultsFooter({
               {gateStatus === "error" && (
                 <p className="text-[0.62rem] md:text-xs text-red-500 mt-1">Something went wrong. Please try again.</p>
               )}
-              <p className="text-[0.56rem] md:text-xs text-slate-400 mt-1.5 md:mt-2">No spam. Unsubscribe anytime. <Link href="/privacy" className="underline hover:text-slate-900">Privacy Policy</Link></p>
+              <p className="text-[0.56rem] md:text-xs text-slate-400 mt-1.5 md:mt-2">
+                By submitting, you consent to receiving emails from Invest.com.au. No spam. Unsubscribe anytime.{" "}
+                <Link href="/privacy" className="underline hover:text-slate-900">Privacy Policy</Link> &middot;{" "}
+                <Link href="/terms" className="underline hover:text-slate-900">Terms</Link>
+              </p>
             </div>
           </div>
         </div>

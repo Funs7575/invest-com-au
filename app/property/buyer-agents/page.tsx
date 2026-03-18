@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { createBrowserClient } from "@supabase/ssr";
 import Icon from "@/components/Icon";
+import PropertyDisclaimer from "@/components/PropertyDisclaimer";
+import { BUYER_AGENT_DISCLOSURE } from "@/lib/compliance";
 
 interface BuyerAgent {
   id: number;
@@ -186,6 +188,24 @@ export default function BuyerAgentsPage() {
               ))}
             </div>
           )}
+        </div>
+      </section>
+
+      {/* Buyer Agent Disclosure */}
+      <section className="pb-6 md:pb-8">
+        <div className="container-custom">
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 md:p-5">
+            <div className="flex items-start gap-2">
+              <svg className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <div>
+                <p className="text-xs font-bold text-slate-600 mb-1">Important Disclosure</p>
+                <p className="text-[0.65rem] md:text-xs text-slate-500 leading-relaxed">{BUYER_AGENT_DISCLOSURE}</p>
+                <PropertyDisclaimer />
+              </div>
+            </div>
+          </div>
         </div>
       </section>
     </div>

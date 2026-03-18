@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 export default function BuyerAgentContactForm({
   agentName,
@@ -11,7 +12,7 @@ export default function BuyerAgentContactForm({
   agentEmail: string | null;
   agencyName: string;
 }) {
-  const [form, setForm] = useState({ name: "", email: "", phone: "", message: "", website: "" });
+  const [form, setForm] = useState({ name: "", email: "", phone: "", message: "", consent: false, website: "" });
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
@@ -63,10 +64,29 @@ export default function BuyerAgentContactForm({
         <input type="tel" placeholder="Phone number" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500" />
         <textarea placeholder="Tell us about your property goals (optional)" rows={3} maxLength={2000} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 resize-none" />
         <input type="text" name="website" value={form.website} onChange={(e) => setForm({ ...form, website: e.target.value })} className="hidden" tabIndex={-1} autoComplete="off" aria-hidden="true" />
-        <button type="submit" disabled={submitting} className="w-full py-3 bg-amber-500 text-white font-bold rounded-lg hover:bg-amber-600 disabled:opacity-50 transition-all text-sm">
+
+        {/* Consent checkbox */}
+        <label className="flex items-start gap-2 cursor-pointer">
+          <input
+            type="checkbox"
+            required
+            checked={form.consent}
+            onChange={(e) => setForm({ ...form, consent: e.target.checked })}
+            className="mt-0.5 rounded border-slate-300 text-amber-500 focus:ring-amber-500/30"
+          />
+          <span className="text-[0.6rem] md:text-xs text-slate-500 leading-relaxed">
+            I agree to the{" "}
+            <Link href="/privacy" className="underline hover:text-slate-700">Privacy Policy</Link>
+            {" "}and{" "}
+            <Link href="/terms" className="underline hover:text-slate-700">Terms of Use</Link>.
+            I consent to my details being shared with {agentName} to respond to this enquiry.
+          </span>
+        </label>
+
+        <button type="submit" disabled={submitting || !form.consent} className="w-full py-3 bg-amber-500 text-white font-bold rounded-lg hover:bg-amber-600 disabled:opacity-50 transition-all text-sm">
           {submitting ? "Sending..." : "Request Free Consultation"}
         </button>
-        <p className="text-[0.6rem] text-slate-400 text-center">No obligation, no cost. Your details are only shared with {agentName}.</p>
+        <p className="text-[0.56rem] text-slate-400 text-center">No obligation, no cost. You may receive follow-up communications and can opt out at any time.</p>
       </div>
     </form>
   );
