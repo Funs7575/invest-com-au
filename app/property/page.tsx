@@ -6,6 +6,7 @@ import { PROPERTY_GENERAL_DISCLAIMER } from "@/lib/compliance";
 import Icon from "@/components/Icon";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
 import PropertyDisclaimer from "@/components/PropertyDisclaimer";
+import { getListingImages } from "@/lib/property-images";
 
 export const metadata = {
   title: "Property Investment Australia — New Developments, Buyer's Agents & Suburb Data",
@@ -189,20 +190,14 @@ export default async function PropertyHubPage() {
               {/* Large hero card (first listing) */}
               {featuredListings![0] && (() => {
                 const hero = featuredListings![0];
-                const img = hero.images?.[0];
+                const heroImgs = getListingImages(hero.slug, hero.images, hero.property_type);
                 return (
                   <Link
                     href={`/property/listings/${hero.slug}`}
                     className="block rounded-2xl overflow-hidden border border-slate-200 hover:shadow-xl hover:border-slate-300 transition-all group mb-4 relative"
                   >
                     <div className="aspect-[21/9] md:aspect-[3/1] relative bg-slate-100 overflow-hidden">
-                      {img ? (
-                        <img src={img} alt={hero.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                      ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-slate-700 via-slate-600 to-slate-800 flex items-center justify-center">
-                          <Icon name="building" size={64} className="text-slate-400" />
-                        </div>
-                      )}
+                      <img src={heroImgs[0]} alt={hero.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                       {/* Gradient overlay */}
                       <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent" />
                       {/* Badges top */}
@@ -244,7 +239,7 @@ export default async function PropertyHubPage() {
               {(featuredListings!.length > 1) && (
                 <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
                   {featuredListings!.slice(1).map((listing) => {
-                    const img = listing.images?.[0];
+                    const imgs = getListingImages(listing.slug, listing.images, listing.property_type);
                     return (
                       <Link
                         key={listing.id}
@@ -252,13 +247,7 @@ export default async function PropertyHubPage() {
                         className="border border-slate-200 bg-white rounded-xl overflow-hidden hover:shadow-lg hover:border-slate-300 transition-all group"
                       >
                         <div className="aspect-[4/3] relative overflow-hidden bg-slate-100">
-                          {img ? (
-                            <img src={img} alt={listing.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                          ) : (
-                            <div className="w-full h-full bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center">
-                              <Icon name="building" size={32} className="text-slate-400" />
-                            </div>
-                          )}
+                          <img src={imgs[0]} alt={listing.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                           {/* Gradient overlay bottom */}
                           <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-slate-900/60 to-transparent" />
                           {/* Yield badge */}

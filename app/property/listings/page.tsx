@@ -5,6 +5,7 @@ import Link from "next/link";
 import Icon from "@/components/Icon";
 import PropertyDisclaimer from "@/components/PropertyDisclaimer";
 import { OFF_THE_PLAN_WARNING, PROPERTY_DISCLAIMER_SHORT } from "@/lib/compliance";
+import { getListingImages } from "@/lib/property-images";
 
 interface Listing {
   id: number;
@@ -252,21 +253,11 @@ export default function PropertyListingsPage() {
                   className="block rounded-2xl overflow-hidden border border-slate-200 hover:shadow-xl hover:border-slate-300 transition-all group mb-5 relative"
                 >
                   <div className="aspect-[21/9] md:aspect-[3/1] relative bg-slate-100 overflow-hidden">
-                    {heroListing.images?.[0] ? (
-                      <img
-                        src={heroListing.images[0]}
-                        alt={heroListing.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                      />
-                    ) : (
-                      <div className="w-full h-full bg-gradient-to-br from-slate-700 via-slate-600 to-slate-800 flex items-center justify-center">
-                        <img
-                          src={PLACEHOLDER[heroListing.property_type] || PLACEHOLDER.apartment}
-                          alt={heroListing.title}
-                          className="h-3/4 w-auto object-contain opacity-30"
-                        />
-                      </div>
-                    )}
+                    <img
+                      src={getListingImages(heroListing.slug, heroListing.images, heroListing.property_type)[0]}
+                      alt={heroListing.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    />
                     {/* Gradient overlay */}
                     <div className="absolute inset-0 bg-gradient-to-r from-slate-900/80 via-slate-900/30 to-transparent" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-transparent to-transparent" />
@@ -326,8 +317,7 @@ export default function PropertyListingsPage() {
               {/* ── Grid ─────────────────────── */}
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {gridListings.map((listing) => {
-                  const img = listing.images?.[0];
-                  const placeholder = PLACEHOLDER[listing.property_type] || PLACEHOLDER.apartment;
+                  const imgs = getListingImages(listing.slug, listing.images, listing.property_type);
                   return (
                     <Link
                       key={listing.id}
@@ -336,17 +326,11 @@ export default function PropertyListingsPage() {
                     >
                       {/* Image area */}
                       <div className="aspect-[4/3] relative overflow-hidden bg-slate-100 shrink-0">
-                        {img ? (
-                          <img
-                            src={img}
-                            alt={listing.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center p-8">
-                            <img src={placeholder} alt={listing.title} className="h-full w-auto object-contain opacity-50" />
-                          </div>
-                        )}
+                        <img
+                          src={imgs[0]}
+                          alt={listing.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
                         {/* Gradient overlay for badges */}
                         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-transparent" />
 
