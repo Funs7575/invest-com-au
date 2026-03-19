@@ -6,12 +6,7 @@ import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import { OFF_THE_PLAN_WARNING, PROPERTY_DISCLAIMER_SHORT, PROPERTY_INDICATIVE_PRICES, PROPERTY_TAX_NOTE } from "@/lib/compliance";
 import Icon from "@/components/Icon";
 import PropertyEnquiryForm from "./PropertyEnquiryForm";
-
-const PLACEHOLDER_IMAGES: Record<string, string> = {
-  apartment: "/images/property/apartment-placeholder.svg",
-  house_land: "/images/property/house-placeholder.svg",
-  townhouse: "/images/property/townhouse-placeholder.svg",
-};
+import { getListingImages } from "@/lib/property-images";
 
 export const revalidate = 3600;
 
@@ -111,33 +106,21 @@ export default async function PropertyListingPage({ params }: { params: Promise<
           <div className="lg:col-span-2 space-y-6">
             {/* Image Gallery */}
             {(() => {
-              const images: string[] = Array.isArray(listing.images) ? listing.images : [];
-              const placeholder = PLACEHOLDER_IMAGES[listing.property_type as string] ?? PLACEHOLDER_IMAGES.apartment;
-              const heroSrc = images[0] ?? placeholder;
-              const isExternal = heroSrc.startsWith("http");
+              const images = getListingImages(listing.slug, listing.images, listing.property_type);
+              const heroSrc = images[0];
               const thumbnails = images.slice(1, 5);
               return (
                 <div>
                   {/* Hero image */}
                   <div className="relative w-full aspect-[16/9] rounded-2xl overflow-hidden bg-slate-100">
-                    {isExternal ? (
-                      <Image
-                        src={heroSrc}
-                        alt={listing.title}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 100vw, 66vw"
-                        priority
-                      />
-                    ) : (
-                      // Local SVG placeholder — use img tag (unoptimized SVG)
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={heroSrc}
-                        alt={listing.title}
-                        className="w-full h-full object-cover"
-                      />
-                    )}
+                    <Image
+                      src={heroSrc}
+                      alt={listing.title}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 66vw"
+                      priority
+                    />
                     {/* Gradient overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
                     {/* Badges */}

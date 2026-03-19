@@ -92,11 +92,11 @@ export default function BrokerComparisonTable({
       </div>
 
       {/* Desktop Table */}
-      <div className="hidden md:block border border-slate-200 rounded-xl overflow-hidden">
+      <div className="hidden md:block border border-slate-200 rounded-xl overflow-x-auto">
         <table className="w-full">
           <thead className="bg-slate-50 border-b border-slate-200">
             <tr>
-              <th className="px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
+              <th className="sticky left-0 z-10 bg-slate-50 px-5 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider">
                 Broker
               </th>
               <th className="px-5 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">
@@ -119,7 +119,7 @@ export default function BrokerComparisonTable({
                 key={b.slug}
                 className="hover:bg-slate-50 transition-colors group"
               >
-                <td className="px-5 py-4">
+                <td className="sticky left-0 z-10 bg-white group-hover:bg-slate-50 px-5 py-4">
                   <div className="flex items-center gap-3">
                     <div
                       className="w-10 h-10 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 group-hover:scale-105 transition-transform"

@@ -18,7 +18,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "", "/compare", "/versus", "/reviews", "/calculators",
     "/articles", "/scenarios", "/start", "/quiz", "/deals", "/stories", "/about", "/how-we-earn", "/privacy",
     "/methodology", "/how-we-verify", "/terms", "/switch", "/editorial-policy", "/benchmark",
-    "/health-scores", "/alerts", "/whats-new", "/costs", "/fee-impact",
+    "/health-scores", "/alerts", "/whats-new", "/costs", "/fee-impact", "/fee-alerts", "/score",
     "/glossary", "/complaints", "/contact", "/advisors", "/find-advisor",
     "/advisor-terms", "/broker-terms", "/content-license", "/expert", "/for-advisors", "/advisor-guides",
     "/advisor-guides/how-to-choose-smsf-accountant",

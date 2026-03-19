@@ -162,8 +162,8 @@ export default function HomepageComparisonTable({
         <table className="w-full compare-table">
           <thead>
             <tr className="border-y border-slate-100">
-              <th scope="col" className="pl-5 pr-2 py-2 text-left font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400 w-10">#</th>
-              <th scope="col" className="px-3 py-2 text-left font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400 w-[28%]">Platform</th>
+              <th scope="col" className="sticky left-0 z-10 bg-white pl-5 pr-2 py-2 text-left font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400 w-10">#</th>
+              <th scope="col" className="sticky left-10 z-10 bg-white px-3 py-2 text-left font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400 w-[28%]">Platform</th>
               <th scope="col" className="px-3 py-2 text-left font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400"><JargonTooltip term="ASX Fee" /></th>
               <th scope="col" className="px-3 py-2 text-left font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400"><JargonTooltip term="US Fee" /></th>
               <th scope="col" className="px-3 py-2 text-left font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400 whitespace-nowrap"><JargonTooltip term="FX Rate" /></th>
@@ -196,14 +196,14 @@ export default function HomepageComparisonTable({
                     : ""
                 }`}
               >
-                <td className="pl-5 pr-2 py-2.5 text-xs text-slate-400 font-medium">
+                <td className="sticky left-0 z-10 bg-inherit pl-5 pr-2 py-2.5 text-xs text-slate-400 font-medium">
                   {isTopRated ? (
                     <span className="text-amber-500 text-sm" title="Top Rated">🏆</span>
                   ) : (
                     i + 1
                   )}
                 </td>
-                <td className="px-3 py-2.5">
+                <td className="sticky left-10 z-10 bg-inherit px-3 py-2.5">
                   <div className="flex items-center gap-2.5">
                     <BrokerLogo broker={broker} size="sm" className="transition-transform duration-200 group-hover:scale-110" />
                     <div>
@@ -361,6 +361,11 @@ export default function HomepageComparisonTable({
             </p>
           ) : null;
         })()}
+        <p className="text-[0.62rem] text-slate-400">
+          Before applying, check the product&apos;s{" "}
+          <a href="https://asic.gov.au/regulatory-resources/financial-services/financial-product-advice/target-market-determinations/" target="_blank" rel="noopener noreferrer" className="underline hover:text-slate-600">Target Market Determination (TMD)</a>{" "}
+          to confirm it suits your needs and objectives.
+        </p>
       </div>
     </div>
   );

@@ -18,14 +18,16 @@ import FeeImpactTeaser from "./_components/FeeImpactTeaser";
 import InlinePortfolioCalc from "./_components/InlinePortfolioCalc";
 import InlineSwitchingCalc from "./_components/InlineSwitchingCalc";
 import InlineSavingsCalc from "./_components/InlineSavingsCalc";
+import TotalCostCalculator from "./_components/TotalCostCalculator";
 
 /* ──────────────────────────────────────────────
    Types & constants
    ────────────────────────────────────────────── */
 interface Props { brokers: Broker[] }
-type CalcId = "trade-cost" | "fx" | "switching" | "cgt" | "franking" | "chess" | "fee-impact" | "portfolio" | "switch-calc" | "savings-calc";
+type CalcId = "trade-cost" | "fx" | "switching" | "cgt" | "franking" | "chess" | "fee-impact" | "portfolio" | "switch-calc" | "savings-calc" | "tco";
 
 const CALCS: { id: CalcId; icon: string; title: string; subtitle: string; badge?: string; href?: string }[] = [
+  { id: "tco", icon: "receipt", title: "Yearly TCO", subtitle: "Total annual cost across all your trades", badge: "NEW" },
   { id: "trade-cost", icon: "dollar-sign", title: "Trade Cost", subtitle: "What does a trade really cost at each platform?" },
   { id: "fx", icon: "globe", title: "US Share Costs", subtitle: "What do international trades really cost?" },
   { id: "switching", icon: "arrow-right-left", title: "Compare Fees", subtitle: "Is it worth switching platforms?" },
@@ -48,7 +50,7 @@ export default function CalculatorsClient({ brokers }: Props) {
   const searchParams = useSearchParams();
   const initialCalc = searchParams.get("calc") as CalcId | null;
   const hasScrolled = useRef(false);
-  const [activeCalc, setActiveCalc] = useState<CalcId>(initialCalc || "trade-cost");
+  const [activeCalc, setActiveCalc] = useState<CalcId>(initialCalc || "tco");
   const touchStart = useRef<{ x: number; y: number } | null>(null);
   const pillScrollRef = useRef<HTMLDivElement>(null);
 
@@ -215,6 +217,7 @@ export default function CalculatorsClient({ brokers }: Props) {
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
+          {activeCalc === "tco" && <TotalCostCalculator brokers={nonCryptoBrokers} searchParams={searchParams} />}
           {activeCalc === "trade-cost" && <TradeCostCalculator brokers={nonCryptoBrokers} searchParams={searchParams} />}
           {activeCalc === "franking" && <FrankingCalculator searchParams={searchParams} />}
           {activeCalc === "switching" && <SwitchingCostCalculator brokers={nonCryptoBrokers} searchParams={searchParams} />}

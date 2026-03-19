@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { fireEvent } from "@testing-library/react";
 import { render, screen, waitFor } from "./setup";
 import CalculatorsClient from "@/app/calculators/CalculatorsClient";
 import type { Broker } from "@/lib/types";
@@ -138,13 +139,15 @@ describe("CalculatorsClient", () => {
   });
 
   describe("Trade Cost Calculator (default)", () => {
-    it("renders Trade Cost Calculator by default", () => {
+    it("renders Trade Cost Calculator when selected", () => {
       render(<CalculatorsClient brokers={brokers} />);
+      fireEvent.click(screen.getAllByText("Trade Cost")[0]);
       expect(screen.getByText("Trade Cost Calculator")).toBeInTheDocument();
     });
 
     it("shows default trade amount input", () => {
       render(<CalculatorsClient brokers={brokers} />);
+      fireEvent.click(screen.getAllByText("Trade Cost")[0]);
       const input = screen.getByLabelText("Trade amount in AUD");
       expect(input).toBeInTheDocument();
       expect(input).toHaveValue(5000);
@@ -152,12 +155,14 @@ describe("CalculatorsClient", () => {
 
     it("renders ASX and US market buttons", () => {
       render(<CalculatorsClient brokers={brokers} />);
+      fireEvent.click(screen.getAllByText("Trade Cost")[0]);
       expect(screen.getByRole("button", { name: "ASX" })).toBeInTheDocument();
       expect(screen.getByRole("button", { name: "US" })).toBeInTheDocument();
     });
 
     it("renders quick amount buttons", () => {
       render(<CalculatorsClient brokers={brokers} />);
+      fireEvent.click(screen.getAllByText("Trade Cost")[0]);
       expect(screen.getByText("$500")).toBeInTheDocument();
       expect(screen.getByText("$1,000")).toBeInTheDocument();
       expect(screen.getByText("$5,000")).toBeInTheDocument();
@@ -186,13 +191,14 @@ describe("CalculatorsClient", () => {
 
     it("shows savings callout when there are multiple results", () => {
       render(<CalculatorsClient brokers={brokers} />);
-
+      fireEvent.click(screen.getAllByText("Trade Cost")[0]);
       expect(screen.getByText(/Savings:/)).toBeInTheDocument();
     });
 
     it("shows no-results or handles crypto-only gracefully", () => {
       // Only crypto brokers -> ASX results may be empty
       render(<CalculatorsClient brokers={[cryptoBroker]} />);
+      fireEvent.click(screen.getAllByText("Trade Cost")[0]);
       // Should render without crashing
       expect(screen.getByText("Trade Cost Calculator")).toBeInTheDocument();
     });
@@ -208,6 +214,7 @@ describe("CalculatorsClient", () => {
 
     it("handles zero trade amount gracefully", async () => {
       render(<CalculatorsClient brokers={brokers} />);
+      fireEvent.click(screen.getAllByText("Trade Cost")[0]);
 
       const input = screen.getByLabelText("Trade amount in AUD");
       await import("@testing-library/user-event").then(async (mod) => {
