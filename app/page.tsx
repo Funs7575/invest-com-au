@@ -21,17 +21,17 @@ import { ORGANIZATION_JSONLD, SITE_URL } from "@/lib/seo";
 export const metadata = {
   title: "Find Mortgage Brokers, Buyer's Agents & Financial Advisors — Invest.com.au",
   description:
-    "Find verified mortgage brokers, buyer's agents, and financial advisors — or compare Australian investing platforms. Independent directory with ASIC-verified professionals. Free, no obligation.",
+    "Find verified mortgage brokers, buyer's agents, and financial advisors — or compare Australian investing platforms. Data-driven ratings, transparent methodology. Free, no obligation.",
   openGraph: {
     title: "Find Verified Advisors & Compare Platforms — Invest.com.au",
-    description: "Find verified mortgage brokers, buyer's agents, and financial advisors — or compare Australian investing platforms. ASIC-verified, independent, free.",
+    description: "Find verified mortgage brokers, buyer's agents, and financial advisors — or compare Australian investing platforms. Objective ratings, transparent methodology, free.",
     url: "/",
     images: [{ url: "/api/og", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image" as const,
     title: "Find Verified Advisors & Compare Platforms — Invest.com.au",
-    description: "Find verified mortgage brokers, buyer's agents, and financial advisors — or compare Australian investing platforms. ASIC-verified, independent, free.",
+    description: "Find verified mortgage brokers, buyer's agents, and financial advisors — or compare Australian investing platforms. Objective ratings, transparent methodology, free.",
   },
   alternates: { canonical: "/" },
 };
@@ -186,11 +186,11 @@ export default async function HomePage() {
             <div className="flex items-center justify-center flex-wrap gap-x-4 gap-y-1.5 text-[0.65rem] md:text-xs text-slate-500">
               <span className="flex items-center gap-1">
                 <Icon name="shield-check" size={12} className="text-emerald-500" />
-                ASIC-verified
+                AU-Registered (ACN 093 882 421)
               </span>
               <span className="flex items-center gap-1">
                 <Icon name="check-circle" size={12} className="text-emerald-500" />
-                100% independent
+                Objective Ratings
               </span>
               <span className="flex items-center gap-1">
                 <Icon name="check-circle" size={12} className="text-amber-500" />
