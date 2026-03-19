@@ -233,42 +233,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ═══════ 1B. WHY TRUST US (item 24) ═══════ */}
-      <ScrollFadeIn>
-        <section className="py-5 md:py-8 bg-slate-900 border-b border-slate-800">
-          <div className="container-custom">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-4xl mx-auto">
-              <div className="flex items-start gap-3">
-                <div className="w-8 h-8 bg-amber-500/20 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
-                  <Icon name="shield-check" size={16} className="text-amber-400" />
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-white mb-0.5">Editorial independence</p>
-                  <p className="text-xs text-slate-400 leading-snug">Our ratings are never for sale. No platform can pay to improve their ranking or receive a better review.</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <div className="w-8 h-8 bg-amber-500/20 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
-                  <Icon name="check-circle" size={16} className="text-amber-400" />
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-white mb-0.5">Tested with real accounts</p>
-                  <p className="text-xs text-slate-400 leading-snug">Every platform we rate has been tested with a real funded account. We verify fees ourselves — not from press releases.</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <div className="w-8 h-8 bg-amber-500/20 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
-                  <Icon name="calendar" size={16} className="text-amber-400" />
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-white mb-0.5">Updated {updatedMonth}</p>
-                  <p className="text-xs text-slate-400 leading-snug">Fees, features, and rankings are reviewed regularly. We flag when data was last verified on every table.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-      </ScrollFadeIn>
 
       {/* ═══════ 2. WHAT DO YOU NEED HELP WITH? ═══════ */}
       <ScrollFadeIn>
