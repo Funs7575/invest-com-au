@@ -148,52 +148,52 @@ export default async function HomePage() {
 
       {/* ═══════ 1. HERO ═══════ */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden">
-        <div className="container-custom py-8 md:py-12 lg:py-14">
+        <div className="container-custom py-5 md:py-8 lg:py-10">
           <div className="max-w-3xl mx-auto text-center">
 
             {/* Updated badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-slate-900 border border-slate-800 rounded-full text-xs font-semibold text-white mb-4 md:mb-5">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-900 border border-slate-800 rounded-full text-xs font-semibold text-white mb-3">
               <span className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-pulse" />
               Updated {updatedMonth} &middot; {brokerCount}+ platforms compared
             </div>
 
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 leading-[1.1] mb-4 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-slate-900 leading-[1.1] mb-3 tracking-tight">
               Stop overpaying fees.{" "}
               <span className="text-amber-500">Find the right platform or advisor in 60 seconds.</span>
             </h1>
 
-            <p className="text-base md:text-lg lg:text-xl text-slate-600 mb-6 leading-relaxed max-w-2xl mx-auto">
+            <p className="text-sm md:text-base text-slate-600 mb-4 leading-relaxed max-w-2xl mx-auto">
               Compare every Australian investing platform side-by-side — or get matched with a verified mortgage broker, buyer&apos;s agent, or financial advisor. Independent, always free, no obligation.
             </p>
 
             {/* Primary CTAs */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 mb-4">
               <Link
                 href="/find-advisor"
-                className="w-full sm:w-auto px-7 py-3.5 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 shadow-md hover:shadow-lg transition-all text-sm"
+                className="w-full sm:w-auto px-6 py-3 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 shadow-md hover:shadow-lg transition-all text-sm"
               >
                 Find My Advisor — Free &rarr;
               </Link>
               <Link
                 href="/compare"
-                className="hidden sm:inline-flex w-auto px-7 py-3.5 border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all text-sm items-center justify-center"
+                className="hidden sm:inline-flex w-auto px-6 py-3 border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all text-sm items-center justify-center"
               >
                 Compare Platforms
               </Link>
             </div>
 
             {/* Trust signals */}
-            <div className="flex items-center justify-center flex-wrap gap-x-5 gap-y-1.5 text-xs text-slate-600">
+            <div className="flex items-center justify-center flex-wrap gap-x-4 gap-y-1 text-xs text-slate-600">
               <span className="flex items-center gap-1.5">
-                <Icon name="shield-check" size={13} className="text-emerald-500" />
+                <Icon name="shield-check" size={12} className="text-emerald-500" />
                 Independently reviewed — ratings not for sale
               </span>
               <span className="flex items-center gap-1.5">
-                <Icon name="check-circle" size={13} className="text-emerald-500" />
+                <Icon name="check-circle" size={12} className="text-emerald-500" />
                 {brokerCount}+ platforms tested with real accounts
               </span>
               <span className="flex items-center gap-1.5">
-                <Icon name="check-circle" size={13} className="text-amber-500" />
+                <Icon name="check-circle" size={12} className="text-amber-500" />
                 Always free — no sign-up required
               </span>
             </div>
@@ -201,11 +201,11 @@ export default async function HomePage() {
 
           {/* Platform logo trust strip */}
           {featuredPlatforms.length > 0 && (
-            <div className="mt-8 border-t border-slate-100 pt-5">
-              <p className="text-center text-[0.65rem] font-semibold uppercase tracking-widest text-slate-400 mb-3">
+            <div className="mt-5 border-t border-slate-100 pt-4">
+              <p className="text-center text-[0.65rem] font-semibold uppercase tracking-widest text-slate-400 mb-2.5">
                 Platforms we&apos;ve independently tested &amp; reviewed
               </p>
-              <div className="flex items-center justify-center gap-4 md:gap-6 flex-wrap">
+              <div className="flex items-center justify-center gap-3 md:gap-5 flex-wrap">
                 {featuredPlatforms.map((b) => (
                   <Link key={b.slug} href={`/broker/${b.slug}`} className="opacity-60 hover:opacity-100 transition-opacity" title={b.name}>
                     <BrokerLogo broker={b} size="sm" />
@@ -216,17 +216,17 @@ export default async function HomePage() {
           )}
 
           {/* Social proof strip */}
-          <div className="mt-6 grid grid-cols-3 gap-4 max-w-lg mx-auto text-center">
+          <div className="mt-4 grid grid-cols-3 gap-3 max-w-md mx-auto text-center">
             <div>
-              <p className="text-2xl md:text-3xl font-extrabold text-slate-900">{brokerCount}+</p>
+              <p className="text-xl md:text-2xl font-extrabold text-slate-900">{brokerCount}+</p>
               <p className="text-xs text-slate-600 mt-0.5">Platforms independently rated</p>
             </div>
             <div>
-              <p className="text-2xl md:text-3xl font-extrabold text-slate-900">{(advisorCount || 0) > 0 ? `${advisorCount}+` : "100+"}</p>
+              <p className="text-xl md:text-2xl font-extrabold text-slate-900">{(advisorCount || 0) > 0 ? `${advisorCount}+` : "100+"}</p>
               <p className="text-xs text-slate-600 mt-0.5">Advisors matched this month</p>
             </div>
             <div>
-              <p className="text-2xl md:text-3xl font-extrabold text-slate-900">$0</p>
+              <p className="text-xl md:text-2xl font-extrabold text-slate-900">$0</p>
               <p className="text-xs text-slate-600 mt-0.5">Cost — free forever</p>
             </div>
           </div>
