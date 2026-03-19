@@ -4,7 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE, CRYPTO_WARNING, REGULATORY_NOTE, AFSL_STATUS_DISCLOSURE, FSG_NOTE, COMPANY_LEGAL_NAME, COMPANY_ACN, COMPANY_ABN } from "@/lib/compliance";
 
-const sections = [
+// Collapsible sections (less critical detail, users can expand if needed)
+const collapsibleSections = [
   { title: "Affiliate Disclosure", content: ADVERTISER_DISCLOSURE },
   { title: "Financial Services Guide", content: FSG_NOTE },
   { title: "Crypto Warning", content: CRYPTO_WARNING },
@@ -16,53 +17,49 @@ export default function Footer() {
 
   return (
     <>
-      {/* Legal Disclaimers — light background, visually separate from footer */}
-      <div className="bg-slate-50 border-t border-b border-slate-200 mt-4 md:mt-20">
-        <div className="container-custom">
-          <div className="py-2 md:py-3">
-            <p className="text-[0.69rem] md:text-xs font-semibold text-slate-500 pt-1 md:pt-2 pb-0.5 md:pb-1">Legal &amp; Disclaimers</p>
-
-            {/* General Advice Warning — always visible for ASIC compliance */}
-            <div className="border-t border-slate-200 py-2 md:py-3">
-              <div className="flex items-start gap-1.5">
-                <svg className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <div>
-                  <p className="text-[0.69rem] md:text-xs font-bold text-slate-700 mb-0.5">General Advice Warning</p>
-                  <p className="text-[0.69rem] md:text-xs text-slate-600 leading-relaxed font-medium">
-                    {GENERAL_ADVICE_WARNING}
-                  </p>
-                  <p className="text-[0.62rem] md:text-[0.69rem] text-slate-500 leading-relaxed mt-1.5">
-                    Consider your objectives, financial situation and needs before acting. See our{" "}
-                    <Link href="/terms" className="underline hover:text-slate-700">Terms of Use</Link>,{" "}
-                    <Link href="/privacy" className="underline hover:text-slate-700">Privacy Policy</Link>,{" "}
-                    <Link href="/how-we-earn" className="underline hover:text-slate-700">How We Earn</Link>, and{" "}
-                    <Link href="/fsg" className="underline hover:text-slate-700">FSG</Link>.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* AFSL Status — always visible per ASIC requirements */}
-            <div className="border-t border-slate-200 py-2 md:py-3">
-              <p className="text-[0.62rem] md:text-xs font-semibold text-slate-500 mb-0.5">AFSL &amp; Licensing Status</p>
-              <p className="text-[0.62rem] md:text-xs text-slate-500 leading-relaxed">
+      {/* Persistent Legal Banner — always visible, not collapsible */}
+      <div className="bg-amber-50/60 border-t border-b border-amber-100 mt-4 md:mt-16">
+        <div className="container-custom py-3 md:py-4">
+          <div className="flex items-start gap-2.5">
+            <svg className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div className="flex-1">
+              <p className="text-xs font-bold text-slate-700 mb-0.5">General Advice Warning</p>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                {GENERAL_ADVICE_WARNING}
+              </p>
+              <p className="text-[0.69rem] text-slate-500 leading-relaxed mt-1.5">
+                Consider your objectives, financial situation and needs before acting. See our{" "}
+                <Link href="/terms" className="underline hover:text-slate-700">Terms of Use</Link>,{" "}
+                <Link href="/privacy" className="underline hover:text-slate-700">Privacy Policy</Link>,{" "}
+                <Link href="/how-we-earn" className="underline hover:text-slate-700">How We Earn</Link>, and{" "}
+                <Link href="/fsg" className="underline hover:text-slate-700">FSG</Link>.
+              </p>
+              <p className="text-[0.69rem] text-slate-500 mt-1.5 leading-relaxed">
                 {AFSL_STATUS_DISCLOSURE}{" "}
-                <Link href="/fsg" className="underline hover:text-slate-700">Financial Services Guide →</Link>
+                <Link href="/fsg" className="underline hover:text-slate-700">View Financial Services Guide →</Link>
               </p>
             </div>
+          </div>
+        </div>
+      </div>
 
-            {sections.map((section, i) => (
+      {/* Collapsible detail sections */}
+      <div className="bg-slate-50 border-b border-slate-200">
+        <div className="container-custom">
+          <div className="py-1">
+            <p className="text-[0.65rem] font-semibold text-slate-400 uppercase tracking-wider pt-2 pb-1">Additional Disclosures</p>
+            {collapsibleSections.map((section, i) => (
               <div key={i} className="border-t border-slate-200">
                 <button
                   onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                  className="w-full flex items-center justify-between py-2 md:py-2.5 text-[0.69rem] md:text-xs text-slate-500 hover:text-slate-700 transition-colors"
+                  className="w-full flex items-center justify-between py-2 text-[0.69rem] text-slate-500 hover:text-slate-700 transition-colors"
                   aria-expanded={openIndex === i}
                   aria-controls={`disclaimer-${i}`}
                   aria-label={`Toggle ${section.title}`}
                 >
-                  <span className="font-semibold text-slate-700">{section.title}</span>
+                  <span className="font-semibold text-slate-600">{section.title}</span>
                   <svg
                     className={`w-3 h-3 transition-transform duration-200 ${openIndex === i ? "rotate-180" : ""}`}
                     fill="none"
@@ -79,7 +76,7 @@ export default function Footer() {
                   className="overflow-hidden transition-all duration-200"
                   style={{ maxHeight: openIndex === i ? "300px" : "0" }}
                 >
-                  <p className="text-[0.69rem] md:text-xs text-slate-500 leading-relaxed pb-2 md:pb-3">
+                  <p className="text-[0.69rem] text-slate-500 leading-relaxed pb-2 md:pb-3">
                     {section.content}
                   </p>
                 </div>
@@ -91,79 +88,86 @@ export default function Footer() {
 
       {/* Footer */}
       <footer className="bg-slate-800 text-slate-300">
-        <div className="container-custom py-5 md:py-12">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-8">
+        <div className="container-custom py-6 md:py-12">
+          {/* 5-column grid — Advisors and Property are now separate columns */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 md:gap-6">
+
+            {/* Brand */}
             <div className="col-span-2 sm:col-span-3 md:col-span-1">
-              <h3 className="text-white font-bold text-sm md:text-base mb-1 md:mb-4">Invest.com.au</h3>
-              <p className="text-xs md:text-sm leading-relaxed">
-                <span className="hidden md:inline">Australia&apos;s independent investing hub. Compare platforms, find verified advisors — shares, crypto, super &amp; more.</span>
-                <span className="md:hidden text-slate-400">Compare platforms &amp; find advisors.</span>
+              <h3 className="text-white font-extrabold text-sm md:text-base mb-2 md:mb-3">
+                Invest<span className="text-amber-400">.com.au</span>
+              </h3>
+              <p className="text-xs md:text-sm leading-relaxed text-slate-400">
+                <span className="hidden md:inline">Australia&apos;s independent investing hub. Compare platforms, find verified advisors — shares, crypto, super, property &amp; more. Always free.</span>
+                <span className="md:hidden text-slate-400">Compare platforms &amp; find verified advisors. Always free.</span>
               </p>
             </div>
 
+            {/* Platforms */}
             <div>
-              <h4 className="text-white font-semibold mb-2 md:mb-4 text-xs md:text-sm">Platforms</h4>
-              <ul className="space-y-1 md:space-y-2 text-xs md:text-sm">
+              <h4 className="text-white font-semibold mb-2 md:mb-3 text-xs md:text-sm">Platforms</h4>
+              <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm">
                 <li><Link href="/compare" className="hover:text-white transition-colors inline-block py-0.5">Compare All</Link></li>
                 <li><Link href="/compare?category=shares" className="hover:text-white transition-colors inline-block py-0.5">Share Trading</Link></li>
                 <li><Link href="/compare?category=crypto" className="hover:text-white transition-colors inline-block py-0.5">Crypto Exchanges</Link></li>
-                <li><Link href="/best/super-funds" className="hover:text-white transition-colors inline-block py-0.5">Super Funds</Link></li>
+                <li><Link href="/compare/super" className="hover:text-white transition-colors inline-block py-0.5">Super Funds</Link></li>
                 <li><Link href="/best/robo-advisors" className="hover:text-white transition-colors inline-block py-0.5">Robo-Advisors</Link></li>
                 <li><Link href="/compare?filter=savings" className="hover:text-white transition-colors inline-block py-0.5">Savings Accounts</Link></li>
-                <li><Link href="/best/term-deposits" className="hover:text-white transition-colors inline-block py-0.5">Term Deposits</Link></li>
                 <li><Link href="/versus" className="hover:text-white transition-colors inline-block py-0.5">Head-to-Head</Link></li>
                 <li><Link href="/deals" className="hover:text-white transition-colors inline-block py-0.5">Deals</Link></li>
               </ul>
             </div>
 
+            {/* Advisors — own column */}
             <div>
-              <h4 className="text-white font-semibold mb-2 md:mb-4 text-xs md:text-sm">Advisors</h4>
-              <ul className="space-y-1 md:space-y-2 text-xs md:text-sm">
-                <li><Link href="/find-advisor" className="hover:text-white transition-colors inline-block py-0.5">Find an Advisor</Link></li>
+              <h4 className="text-white font-semibold mb-2 md:mb-3 text-xs md:text-sm">Advisors</h4>
+              <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm">
+                <li><Link href="/find-advisor" className="hover:text-white transition-colors inline-block py-0.5">Find My Advisor — Free</Link></li>
                 <li><Link href="/advisors" className="hover:text-white transition-colors inline-block py-0.5">Advisor Directory</Link></li>
-                <li><Link href="/advisor-guides" className="hover:text-white transition-colors inline-block py-0.5">Advisor Guides</Link></li>
-                <li><Link href="/expert" className="hover:text-white transition-colors inline-block py-0.5">Expert Insights</Link></li>
+                <li><Link href="/advisors/mortgage-brokers" className="hover:text-white transition-colors inline-block py-0.5">Mortgage Brokers</Link></li>
+                <li><Link href="/advisors/financial-planners" className="hover:text-white transition-colors inline-block py-0.5">Financial Planners</Link></li>
+                <li><Link href="/advisors/smsf-accountants" className="hover:text-white transition-colors inline-block py-0.5">SMSF Accountants</Link></li>
+                <li><Link href="/advisors/tax-agents" className="hover:text-white transition-colors inline-block py-0.5">Tax Agents</Link></li>
                 <li><Link href="/for-advisors" className="hover:text-white transition-colors inline-block py-0.5">List Your Practice</Link></li>
               </ul>
-              <h4 className="text-white font-semibold mt-4 mb-2 md:mt-6 md:mb-4 text-xs md:text-sm">Property</h4>
-              <ul className="space-y-1 md:space-y-2 text-xs md:text-sm">
+            </div>
+
+            {/* Property — own column */}
+            <div>
+              <h4 className="text-white font-semibold mb-2 md:mb-3 text-xs md:text-sm">Property</h4>
+              <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm">
                 <li><Link href="/property" className="hover:text-white transition-colors inline-block py-0.5">Property Hub</Link></li>
                 <li><Link href="/property/listings" className="hover:text-white transition-colors inline-block py-0.5">New Developments</Link></li>
                 <li><Link href="/property/buyer-agents" className="hover:text-white transition-colors inline-block py-0.5">Buyer&apos;s Agents</Link></li>
                 <li><Link href="/property/suburbs" className="hover:text-white transition-colors inline-block py-0.5">Suburb Research</Link></li>
                 <li><Link href="/property/finance" className="hover:text-white transition-colors inline-block py-0.5">Investment Loans</Link></li>
+                <li><Link href="/articles?category=property" className="hover:text-white transition-colors inline-block py-0.5">Property Guides</Link></li>
               </ul>
-              <h4 className="text-white font-semibold mt-4 mb-2 md:mt-6 md:mb-4 text-xs md:text-sm">Learn</h4>
-              <ul className="space-y-1 md:space-y-2 text-xs md:text-sm">
-                <li><Link href="/articles" className="hover:text-white transition-colors inline-block py-0.5">Articles & Guides</Link></li>
-                <li><Link href="/how-to" className="hover:text-white transition-colors inline-block py-0.5">How-To Guides</Link></li>
+            </div>
+
+            {/* Learn + About (consolidated) */}
+            <div>
+              <h4 className="text-white font-semibold mb-2 md:mb-3 text-xs md:text-sm">Learn</h4>
+              <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm mb-4 md:mb-5">
+                <li><Link href="/articles" className="hover:text-white transition-colors inline-block py-0.5">Articles &amp; Guides</Link></li>
                 <li><Link href="/calculators" className="hover:text-white transition-colors inline-block py-0.5">Calculators</Link></li>
                 <li><Link href="/glossary" className="hover:text-white transition-colors inline-block py-0.5">Glossary</Link></li>
                 <li><Link href="/quiz" className="hover:text-white transition-colors inline-block py-0.5">Platform Quiz</Link></li>
               </ul>
-            </div>
-
-            <div className="col-span-2 sm:col-span-1">
-              <h4 className="text-white font-semibold mb-2 md:mb-4 text-xs md:text-sm">About</h4>
-              <ul className="grid grid-cols-2 sm:grid-cols-1 gap-x-4 gap-y-1 md:space-y-2 text-xs md:text-sm">
+              <h4 className="text-white font-semibold mb-2 md:mb-3 text-xs md:text-sm">Company</h4>
+              <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm">
                 <li><Link href="/about" className="hover:text-white transition-colors inline-block py-0.5">About Us</Link></li>
-                <li><Link href="/editorial-policy" className="hover:text-white transition-colors inline-block py-0.5">Editorial</Link></li>
-                <li><Link href="/how-we-earn" className="hover:text-white transition-colors inline-block py-0.5">How We Earn</Link></li>
-                <li><Link href="/privacy" className="hover:text-white transition-colors inline-block py-0.5">Privacy</Link></li>
                 <li><Link href="/methodology" className="hover:text-white transition-colors inline-block py-0.5">Methodology</Link></li>
-                <li><Link href="/terms" className="hover:text-white transition-colors inline-block py-0.5">Terms</Link></li>
-                <li><Link href="/fsg" className="hover:text-white transition-colors inline-block py-0.5">FSG</Link></li>
-                <li><Link href="/advisor-terms" className="hover:text-white transition-colors inline-block py-0.5">Advisor Terms</Link></li>
-                <li><Link href="/developer-terms" className="hover:text-white transition-colors inline-block py-0.5">Developer Terms</Link></li>
-                <li><Link href="/broker-terms" className="hover:text-white transition-colors inline-block py-0.5">Advertiser Terms</Link></li>
-                <li><Link href="/complaints" className="hover:text-white transition-colors inline-block py-0.5">Complaints & AFCA</Link></li>
+                <li><Link href="/editorial-policy" className="hover:text-white transition-colors inline-block py-0.5">Editorial Policy</Link></li>
+                <li><Link href="/how-we-earn" className="hover:text-white transition-colors inline-block py-0.5">How We Earn</Link></li>
+                <li><Link href="/complaints" className="hover:text-white transition-colors inline-block py-0.5">Complaints &amp; AFCA</Link></li>
                 <li><Link href="/contact" className="hover:text-white transition-colors inline-block py-0.5">Contact</Link></li>
-                <li><Link href="/advisor-portal" className="hover:text-white transition-colors inline-block py-0.5">Advisor Portal</Link></li>
+                <li><Link href="/legal" className="hover:text-white transition-colors inline-block py-0.5">Legal</Link></li>
               </ul>
             </div>
           </div>
 
-          <div className="border-t border-slate-700/40 mt-4 md:mt-8 pt-3 md:pt-8 text-xs md:text-sm text-center space-y-0.5 md:space-y-1">
+          <div className="border-t border-slate-700/40 mt-4 md:mt-8 pt-3 md:pt-6 text-xs md:text-sm text-center space-y-0.5 md:space-y-1">
             <p>&copy; {new Date().getFullYear()} {COMPANY_LEGAL_NAME}. All rights reserved.</p>
             <p className="text-[0.62rem] md:text-xs text-slate-400">ACN {COMPANY_ACN} | ABN {COMPANY_ABN}</p>
           </div>

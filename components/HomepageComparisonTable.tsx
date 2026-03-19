@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
+import Link from "next/link";
 import type { Broker } from "@/lib/types";
 import { getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
 import BrokerLogo from "@/components/BrokerLogo";
@@ -14,7 +15,8 @@ import { filterByFrequencyCap } from "@/lib/marketplace/frequency-cap";
 import JargonTooltip from "@/components/JargonTooltip";
 import ShortlistButton from "@/components/ShortlistButton";
 
-const TAB_OPTIONS = ["All Platforms", "Share Trading", "Crypto Exchanges", "Super Funds", "Robo-Advisors", "Savings", "Term Deposits", "Property", "CFD & Forex", "Research Tools", "SMSF"] as const;
+// Homepage shows focused categories only — niche tabs live on /compare
+const TAB_OPTIONS = ["All Platforms", "Share Trading", "Super Funds", "Robo-Advisors", "Savings", "Crypto Exchanges"] as const;
 type TabOption = (typeof TAB_OPTIONS)[number];
 
 function getCategories(broker: Broker): string[] {
@@ -130,8 +132,8 @@ export default function HomepageComparisonTable({
     <div>
       {/* Filter Tabs */}
       <div className="px-3 pt-2 pb-1 md:px-5 md:pt-5 md:pb-2">
-        <div className="flex items-center justify-between">
-          <div className="flex gap-1.5 md:gap-2 overflow-x-auto md:overflow-x-visible md:flex-wrap scrollbar-hide" role="tablist" aria-label="Platform category filter">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex gap-1.5 md:gap-2 overflow-x-auto scrollbar-hide" role="tablist" aria-label="Platform category filter">
             {TAB_OPTIONS.map((tab) => (
               <button
                 key={tab}
@@ -148,12 +150,13 @@ export default function HomepageComparisonTable({
               </button>
             ))}
           </div>
-          <a
-            href="#advertiser-disclosure"
-            className="hidden md:inline text-[0.69rem] text-slate-400 underline hover:text-slate-600 transition-colors shrink-0 ml-4"
+          {/* Sticky View All link — always visible */}
+          <Link
+            href="/compare"
+            className="shrink-0 text-[0.69rem] font-semibold text-amber-600 hover:text-amber-800 transition-colors whitespace-nowrap"
           >
-            Advertiser Disclosure
-          </a>
+            View full comparison &rarr;
+          </Link>
         </div>
       </div>
 
@@ -166,9 +169,14 @@ export default function HomepageComparisonTable({
               <th scope="col" className="sticky left-10 z-10 bg-white px-3 py-2 text-left font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400 w-[28%]">Platform</th>
               <th scope="col" className="px-3 py-2 text-left font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400"><JargonTooltip term="ASX Fee" /></th>
               <th scope="col" className="px-3 py-2 text-left font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400"><JargonTooltip term="US Fee" /></th>
-              <th scope="col" className="px-3 py-2 text-left font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400 whitespace-nowrap"><JargonTooltip term="FX Rate" /></th>
+              <th scope="col" className="px-3 py-2 text-left font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400 whitespace-nowrap"><JargonTooltip term="Intl. Fee" /></th>
               <th scope="col" className="px-3 py-2 text-center font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400"><JargonTooltip term="CHESS" /></th>
-              <th scope="col" className="px-3 py-2 text-center font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400">Rating</th>
+              <th scope="col" className="px-3 py-2 text-center font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400">
+                <span className="flex items-center gap-1 justify-center">
+                  Rating
+                  <Link href="/methodology" className="text-amber-500 hover:text-amber-700 transition-colors font-normal normal-case tracking-normal text-[0.6rem]" title="How we rate platforms">(how we rate)</Link>
+                </span>
+              </th>
               <th scope="col" className="px-3 py-2 pr-5 text-center font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400 w-[155px]"></th>
             </tr>
           </thead>
@@ -221,7 +229,13 @@ export default function HomepageComparisonTable({
                         )}
                       </div>
                       {!isSponsored(broker) && !isCampaignWinner && editorPicks[broker.slug] && (
-                        <div className="text-[0.69rem] font-bold text-slate-500 uppercase tracking-wide">
+                        <div className={`text-[0.65rem] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-full ${
+                          editorPicks[broker.slug] === "Editor\u2019s Choice"
+                            ? "bg-amber-100 text-amber-700 border border-amber-200"
+                            : editorPicks[broker.slug] === "Lowest Fees"
+                            ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                            : "bg-slate-100 text-slate-600 border border-slate-200"
+                        }`}>
                           {editorPicks[broker.slug]}
                         </div>
                       )}
