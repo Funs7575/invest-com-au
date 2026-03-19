@@ -8,19 +8,24 @@ import { CURRENT_YEAR } from "@/lib/seo";
 // ─── Mega-menu data ───────────────────────────────────────────────────────────
 
 const platformsMenu = {
-  popular: [
-    { label: "Interactive Brokers", href: "/broker/interactive-brokers", badge: "Editor's Choice" },
-    { label: "CMC Markets", href: "/broker/cmc-markets", badge: "Best Deal" },
-    { label: "Stake", href: "/broker/stake" },
-    { label: "Moomoo", href: "/broker/moomoo" },
-  ],
   byCategory: [
-    { label: "Share Trading", href: "/compare?category=shares" },
-    { label: "Crypto Exchanges", href: "/compare?category=crypto" },
-    { label: "Super Funds", href: "/compare/super" },
-    { label: "ETFs", href: "/compare/etfs" },
-    { label: "Insurance", href: "/compare/insurance" },
-    { label: "Robo-Advisors", href: "/best/robo-advisors" },
+    { label: "Share Trading", href: "/compare?category=shares", desc: "ASX & international shares" },
+    { label: "Super Funds", href: "/compare/super", desc: "Compare fees & performance" },
+    { label: "Savings Accounts", href: "/compare?filter=savings", desc: "High interest & at-call accounts" },
+    { label: "ETFs", href: "/compare/etfs", desc: "Diversified index investing" },
+    { label: "Robo-Advisors", href: "/best/robo-advisors", desc: "Automated portfolio management" },
+    {
+      label: "Crypto Exchanges",
+      href: "/compare?category=crypto",
+      desc: "AUSTRAC-registered platforms",
+      riskLabel: "High Risk",
+    },
+    {
+      label: "CFD & Forex",
+      href: "/compare?category=cfd",
+      desc: "Derivatives & currency trading",
+      riskLabel: "High Risk",
+    },
   ],
   tools: [
     { label: `Best Platforms ${CURRENT_YEAR}`, href: "/best" },
@@ -34,16 +39,13 @@ const platformsMenu = {
 
 const propertyMenu = {
   listings: [
-    { label: "Investment Property Hub", href: "/property", desc: "Your property investing home base" },
     { label: "New Developments", href: "/property/listings", desc: "Off-the-plan apartments & houses" },
     { label: "Suburb Research", href: "/property/suburbs", desc: "Yields, growth & vacancy data" },
     { label: "Investment Loans", href: "/property/finance", desc: "Compare rates from 8 lenders" },
   ],
-  agents: [
+  professionals: [
     { label: "Buyer's Agents", href: "/property/buyer-agents", desc: "Verified — free consultation" },
-    { label: "Mortgage Brokers", href: "/advisors/mortgage-brokers", desc: "Compare 30+ lenders — free" },
     { label: "Real Estate Agents", href: "/advisors/real-estate-agents", desc: "Selling & listing specialists" },
-    { label: "Find Any Advisor", href: "/find-advisor", desc: "Match with a verified professional" },
   ],
 };
 
@@ -92,10 +94,12 @@ function MegaMenuDropdown({
   label,
   children,
   isActive,
+  menuWidth = "min-w-[560px]",
 }: {
   label: string;
   children: React.ReactNode;
   isActive?: boolean;
+  menuWidth?: string;
 }) {
   const [open, setOpen] = useState(false);
   const timeout = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -143,7 +147,7 @@ function MegaMenuDropdown({
 
       {open && (
         <div
-          className="absolute left-0 top-full pt-2 z-50 min-w-[600px]"
+          className={`absolute left-0 top-full pt-2 z-50 ${menuWidth}`}
           role="menu"
         >
           <div className="bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/60 overflow-hidden">
@@ -155,55 +159,38 @@ function MegaMenuDropdown({
   );
 }
 
-// ─── Mobile menu ──────────────────────────────────────────────────────────────
+// ─── Mobile menu — collapsed to 3 sections ───────────────────────────────────
 
 const mobileSections = [
-  {
-    title: "Investment Property",
-    items: [
-      { name: "Property Hub", href: "/property" },
-      { name: "New Developments", href: "/property/listings" },
-      { name: "Suburb Research", href: "/property/suburbs" },
-      { name: "Investment Loans", href: "/property/finance" },
-      { name: "Buyer's Agents", href: "/property/buyer-agents" },
-    ],
-  },
-  {
-    title: "Advisors & Finance",
-    items: [
-      { name: "Mortgage Brokers", href: "/advisors/mortgage-brokers" },
-      { name: "Real Estate Agents", href: "/advisors/real-estate-agents" },
-      { name: "Find an Advisor", href: "/find-advisor" },
-      { name: "All Advisors", href: "/advisors" },
-    ],
-  },
-  {
-    title: "Wealth & SMSF",
-    items: [
-      { name: "Financial Planners", href: "/advisors/financial-planners" },
-      { name: "SMSF Accountants", href: "/advisors/smsf-accountants" },
-      { name: "Insurance Brokers", href: "/advisors/insurance-brokers" },
-      { name: "Tax Agents", href: "/advisors/tax-agents" },
-      { name: "Estate Planners", href: "/advisors/estate-planners" },
-    ],
-  },
   {
     title: "Compare Platforms",
     items: [
       { name: "Compare All Platforms", href: "/compare" },
       { name: "Best Platforms", href: "/best" },
+      { name: "Share Trading", href: "/compare?category=shares" },
+      { name: "Super Funds", href: "/compare/super" },
+      { name: "Savings Accounts", href: "/compare?filter=savings" },
       { name: "Deals & Offers", href: "/deals" },
-      { name: "Broker vs Broker", href: "/versus" },
       { name: "Platform Quiz", href: "/quiz" },
+    ],
+  },
+  {
+    title: "Property & Advisors",
+    items: [
+      { name: "Mortgage Brokers", href: "/advisors/mortgage-brokers" },
+      { name: "Buyer's Agents", href: "/advisors/buyers-agents" },
+      { name: "Financial Planners", href: "/advisors/financial-planners" },
+      { name: "Investment Property", href: "/property" },
+      { name: "All Advisors", href: "/advisors" },
     ],
   },
   {
     title: "Learn",
     items: [
       { name: "Articles & Guides", href: "/articles" },
-      { name: "How-To Guides", href: "/how-to" },
       { name: "Calculators", href: "/calculators" },
       { name: "Glossary", href: "/glossary" },
+      { name: "How-To Guides", href: "/how-to" },
     ],
   },
 ];
@@ -230,7 +217,7 @@ export function Navigation() {
   );
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-slate-200 shadow-[0_1px_0_0_rgba(0,0,0,0.04)]">
+    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-slate-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 lg:h-[68px] items-center justify-between gap-4">
 
@@ -246,61 +233,66 @@ export function Navigation() {
           {/* Desktop Nav */}
           <nav className="hidden lg:flex items-center gap-1" aria-label="Main navigation">
 
-            {/* Platforms Mega-Menu */}
-            <MegaMenuDropdown label="Platforms" isActive={isPlatformsActive}>
-              <div className="grid grid-cols-3 gap-0 p-6">
-                <div>
-                  <p className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider mb-3">Popular</p>
-                  <div className="space-y-1">
-                    {platformsMenu.popular.map((item) => (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 hover:bg-amber-50 hover:text-amber-900 rounded-lg transition-colors"
-                      >
-                        {item.label}
-                        {item.badge && (
-                          <span className="text-[0.6rem] font-bold px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded-full">
-                            {item.badge}
-                          </span>
-                        )}
-                      </Link>
-                    ))}
+            {/* Compare Platforms Mega-Menu */}
+            <MegaMenuDropdown label="Compare Platforms" isActive={isPlatformsActive} menuWidth="min-w-[540px]">
+              <div className="p-6">
+                {/* Quiz CTA card — replaces the "Popular" section */}
+                <Link
+                  href="/quiz"
+                  className="flex items-center justify-between p-3.5 bg-gradient-to-r from-amber-50 to-amber-100/60 border border-amber-200 rounded-xl mb-5 hover:border-amber-300 transition-colors group"
+                >
+                  <div>
+                    <p className="font-bold text-slate-900 text-sm">Not sure where to start?</p>
+                    <p className="text-xs text-slate-500 mt-0.5">Take the 60-second Platform Quiz — get a personalised match</p>
                   </div>
-                </div>
-                <div>
-                  <p className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider mb-3">By Category</p>
-                  <div className="space-y-1">
-                    {platformsMenu.byCategory.map((item) => (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        className="block px-3 py-2 text-sm text-slate-700 hover:bg-amber-50 hover:text-amber-900 rounded-lg transition-colors"
-                      >
-                        {item.label}
-                      </Link>
-                    ))}
+                  <svg className="w-5 h-5 text-amber-500 shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+
+                <div className="grid grid-cols-2 gap-6">
+                  <div>
+                    <p className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider mb-3">By Category</p>
+                    <div className="space-y-0.5">
+                      {platformsMenu.byCategory.map((item) => (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className="block px-3 py-2 rounded-lg hover:bg-amber-50 transition-colors"
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-semibold text-slate-800">{item.label}</span>
+                            {item.riskLabel && (
+                              <span className="text-[0.58rem] font-bold px-1.5 py-0.5 bg-red-50 text-red-600 rounded-full border border-red-100 uppercase tracking-wide">
+                                {item.riskLabel}
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-xs text-slate-400">{item.desc}</div>
+                        </Link>
+                      ))}
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <p className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider mb-3">Tools & Lists</p>
-                  <div className="space-y-1">
-                    {platformsMenu.tools.map((item) => (
-                      <Link
-                        key={item.href}
-                        href={item.href}
-                        className="block px-3 py-2 text-sm text-slate-700 hover:bg-amber-50 hover:text-amber-900 rounded-lg transition-colors"
-                      >
-                        {item.label}
-                      </Link>
-                    ))}
+                  <div>
+                    <p className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider mb-3">Tools & Lists</p>
+                    <div className="space-y-0.5">
+                      {platformsMenu.tools.map((item) => (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className="block px-3 py-2 text-sm text-slate-700 hover:bg-amber-50 hover:text-amber-900 rounded-lg transition-colors"
+                        >
+                          {item.label}
+                        </Link>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
             </MegaMenuDropdown>
 
             {/* Property Mega-Menu */}
-            <MegaMenuDropdown label="Property" isActive={isPropertyActive}>
+            <MegaMenuDropdown label="Property" isActive={isPropertyActive} menuWidth="min-w-[480px]">
               <div className="p-6">
                 {/* Top CTA */}
                 <Link
@@ -320,7 +312,7 @@ export function Navigation() {
                   <div>
                     <p className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider mb-3">Listings & Research</p>
                     <div className="space-y-1">
-                      {propertyMenu.listings.slice(1).map((item) => (
+                      {propertyMenu.listings.map((item) => (
                         <Link
                           key={item.href}
                           href={item.href}
@@ -335,7 +327,7 @@ export function Navigation() {
                   <div>
                     <p className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider mb-3">Professionals</p>
                     <div className="space-y-1">
-                      {propertyMenu.agents.map((item) => (
+                      {propertyMenu.professionals.map((item) => (
                         <Link
                           key={item.href}
                           href={item.href}
@@ -352,7 +344,7 @@ export function Navigation() {
             </MegaMenuDropdown>
 
             {/* Advisors Mega-Menu */}
-            <MegaMenuDropdown label="Advisors" isActive={isAdvisorsActive}>
+            <MegaMenuDropdown label="Advisors" isActive={isAdvisorsActive} menuWidth="min-w-[480px]">
               <div className="p-6">
                 {/* Top CTA */}
                 <Link
@@ -360,8 +352,8 @@ export function Navigation() {
                   className="flex items-center justify-between p-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl mb-5 hover:border-amber-300 transition-colors group"
                 >
                   <div>
-                    <p className="font-bold text-slate-900 text-sm">Get Matched Free</p>
-                    <p className="text-xs text-slate-500 mt-0.5">Answer 4 questions — we'll find your best fit</p>
+                    <p className="font-bold text-slate-900 text-sm">Find My Advisor — Free</p>
+                    <p className="text-xs text-slate-500 mt-0.5">Answer 4 questions — we&apos;ll find your best fit, no obligation</p>
                   </div>
                   <svg className="w-5 h-5 text-amber-500 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -404,7 +396,7 @@ export function Navigation() {
             </MegaMenuDropdown>
 
             {/* Learn Mega-Menu */}
-            <MegaMenuDropdown label="Learn" isActive={isLearnActive}>
+            <MegaMenuDropdown label="Learn" isActive={isLearnActive} menuWidth="min-w-[540px]">
               <div className="grid grid-cols-3 gap-0 p-6">
                 <div>
                   <p className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider mb-3">Popular Guides</p>
@@ -452,19 +444,13 @@ export function Navigation() {
             </MegaMenuDropdown>
           </nav>
 
-          {/* Desktop CTAs */}
-          <div className="hidden lg:flex items-center gap-3">
-            <Link
-              href="/compare"
-              className="text-sm font-semibold text-slate-600 hover:text-slate-900 transition-colors px-3 py-2 rounded-lg hover:bg-slate-50"
-            >
-              Compare
-            </Link>
+          {/* Desktop CTA — single primary action only */}
+          <div className="hidden lg:flex items-center">
             <Link
               href="/find-advisor"
               className="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm hover:shadow-md active:scale-[0.97] flex items-center gap-2"
             >
-              Find Advisor
+              Find My Advisor — Free
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
@@ -475,9 +461,9 @@ export function Navigation() {
           <div className="lg:hidden flex items-center gap-2">
             <Link
               href="/find-advisor"
-              className="bg-amber-500 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all hover:bg-amber-600"
+              className="bg-amber-500 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all hover:bg-amber-600 min-h-[44px] flex items-center"
             >
-              Find Advisor
+              Find My Advisor — Free
             </Link>
             <button
               onClick={() => setMobileOpen((v) => !v)}
@@ -500,7 +486,7 @@ export function Navigation() {
         </div>
       </div>
 
-      {/* Mobile slide-down menu */}
+      {/* Mobile slide-down menu — 3 sections */}
       {mobileOpen && (
         <div
           id="mobile-menu"
@@ -537,31 +523,15 @@ export function Navigation() {
               </div>
             ))}
 
-            {/* Bottom action buttons */}
-            <div className="border-t border-slate-100 pt-4 mt-2 space-y-2 pb-2">
+            {/* Single full-width CTA */}
+            <div className="border-t border-slate-100 pt-4 mt-2 pb-2">
               <Link
                 href="/find-advisor"
                 onClick={() => setMobileOpen(false)}
-                className="flex items-center justify-center w-full py-3.5 min-h-[48px] bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm rounded-xl transition-colors"
+                className="flex items-center justify-center w-full py-3.5 min-h-[52px] bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm rounded-xl transition-colors"
               >
-                Find an Advisor — Free
+                Find My Advisor — Free &rarr;
               </Link>
-              <div className="grid grid-cols-2 gap-2">
-                <Link
-                  href="/compare"
-                  onClick={() => setMobileOpen(false)}
-                  className="flex items-center justify-center py-3 min-h-[48px] border border-slate-200 text-slate-700 font-semibold text-xs rounded-xl hover:bg-slate-50 transition-colors"
-                >
-                  Compare Platforms
-                </Link>
-                <Link
-                  href="/quiz"
-                  onClick={() => setMobileOpen(false)}
-                  className="flex items-center justify-center py-3 min-h-[48px] border border-amber-200 bg-amber-50 text-amber-800 font-semibold text-xs rounded-xl hover:bg-amber-100 transition-colors"
-                >
-                  Platform Quiz
-                </Link>
-              </div>
             </div>
           </nav>
         </div>
