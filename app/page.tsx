@@ -13,6 +13,7 @@ import Icon from "@/components/Icon";
 import BrokerLogo from "@/components/BrokerLogo";
 import { AFFILIATE_REL } from "@/lib/tracking";
 import HomepageServiceSelector from "@/components/HomepageServiceSelector";
+import HeroLeadCapture from "@/components/HeroLeadCapture";
 import AdvisorDirectory from "@/components/AdvisorDirectory";
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 import { getMostRecentFeeCheck } from "@/lib/utils";
@@ -146,14 +147,14 @@ export default async function HomePage() {
         }}
       />
 
-      {/* ═══════ 1. HERO + SERVICE SELECTOR (two-column) ═══════ */}
+      {/* ═══════ 1. HERO (two-column desktop, stacked mobile) ═══════ */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden">
-        <div className="container-custom py-8 md:py-10 lg:py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-8 lg:gap-12 items-start">
+        <div className="container-custom py-8 md:py-12 lg:py-14">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-8 lg:gap-12 items-start">
 
             {/* LEFT: Hero content */}
             <div>
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-slate-900 border border-slate-800 rounded-full text-xs font-semibold text-white mb-4">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-slate-900 border border-slate-800 rounded-full text-xs font-semibold text-white mb-4 md:mb-5">
                 <span className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-pulse" />
                 Updated {updatedMonth} &middot; {brokerCount}+ platforms compared
               </div>
@@ -230,17 +231,60 @@ export default async function HomePage() {
               )}
             </div>
 
-            {/* RIGHT: Service selector card */}
-            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5">
-              <p className="text-xs text-amber-600 uppercase tracking-widest font-bold mb-1">Find the right professional</p>
-              <h2 className="text-base font-extrabold text-slate-900 mb-1">What do you need help with?</h2>
-              <p className="text-xs text-slate-500 mb-4">Select your goal — free consultation, no obligation.</p>
-              <HomepageServiceSelector compact />
+            {/* RIGHT: Lead capture card — desktop only side-by-side, hidden on mobile (shown above via stacking) */}
+            <div className="hidden lg:block">
+              <HeroLeadCapture />
             </div>
 
           </div>
         </div>
       </section>
+
+      {/* ═══════ 1B. WHY TRUST US (item 24) ═══════ */}
+      <ScrollFadeIn>
+        <section className="py-5 md:py-8 bg-slate-900 border-b border-slate-800">
+          <div className="container-custom">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-4xl mx-auto">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 bg-amber-500/20 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+                  <Icon name="shield-check" size={16} className="text-amber-400" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-white mb-0.5">Editorial independence</p>
+                  <p className="text-xs text-slate-400 leading-snug">Our ratings are never for sale. No platform can pay to improve their ranking or receive a better review.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 bg-amber-500/20 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+                  <Icon name="check-circle" size={16} className="text-amber-400" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-white mb-0.5">Tested with real accounts</p>
+                  <p className="text-xs text-slate-400 leading-snug">Every platform we rate has been tested with a real funded account. We verify fees ourselves — not from press releases.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 bg-amber-500/20 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+                  <Icon name="calendar" size={16} className="text-amber-400" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-white mb-0.5">Updated {updatedMonth}</p>
+                  <p className="text-xs text-slate-400 leading-snug">Fees, features, and rankings are reviewed regularly. We flag when data was last verified on every table.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </ScrollFadeIn>
+
+      {/* ═══════ 2. WHAT DO YOU NEED HELP WITH? ═══════ */}
+      <ScrollFadeIn>
+        <section className="py-6 md:py-10 bg-slate-50 border-b border-slate-100">
+          <div className="container-custom">
+            <HomepageServiceSelector />
+          </div>
+        </section>
+      </ScrollFadeIn>
 
       {/* ═══════ 3. ADVISOR DIRECTORY ═══════ */}
       <AdvisorDirectory
