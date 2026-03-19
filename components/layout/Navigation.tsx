@@ -32,6 +32,21 @@ const platformsMenu = {
   ],
 };
 
+const propertyMenu = {
+  listings: [
+    { label: "Investment Property Hub", href: "/property", desc: "Your property investing home base" },
+    { label: "New Developments", href: "/property/listings", desc: "Off-the-plan apartments & houses" },
+    { label: "Suburb Research", href: "/property/suburbs", desc: "Yields, growth & vacancy data" },
+    { label: "Investment Loans", href: "/property/finance", desc: "Compare rates from 8 lenders" },
+  ],
+  agents: [
+    { label: "Buyer's Agents", href: "/property/buyer-agents", desc: "Verified — free consultation" },
+    { label: "Mortgage Brokers", href: "/advisors/mortgage-brokers", desc: "Compare 30+ lenders — free" },
+    { label: "Real Estate Agents", href: "/advisors/real-estate-agents", desc: "Selling & listing specialists" },
+    { label: "Find Any Advisor", href: "/find-advisor", desc: "Match with a verified professional" },
+  ],
+};
+
 const advisorsMenu = {
   property: [
     { label: "Mortgage Brokers", href: "/advisors/mortgage-brokers", desc: "Compare 30+ lenders — free" },
@@ -144,10 +159,19 @@ function MegaMenuDropdown({
 
 const mobileSections = [
   {
-    title: "Property & Finance",
+    title: "Investment Property",
+    items: [
+      { name: "Property Hub", href: "/property" },
+      { name: "New Developments", href: "/property/listings" },
+      { name: "Suburb Research", href: "/property/suburbs" },
+      { name: "Investment Loans", href: "/property/finance" },
+      { name: "Buyer's Agents", href: "/property/buyer-agents" },
+    ],
+  },
+  {
+    title: "Advisors & Finance",
     items: [
       { name: "Mortgage Brokers", href: "/advisors/mortgage-brokers" },
-      { name: "Buyer's Agents", href: "/advisors/buyers-agents" },
       { name: "Real Estate Agents", href: "/advisors/real-estate-agents" },
       { name: "Find an Advisor", href: "/find-advisor" },
       { name: "All Advisors", href: "/advisors" },
@@ -193,6 +217,9 @@ export function Navigation() {
   useEffect(() => { setMobileOpen(false); }, [pathname]);
 
   const isPlatformsActive = ["/compare", "/best", "/versus", "/deals", "/broker"].some(
+    (p) => pathname === p || pathname.startsWith(p + "/")
+  );
+  const isPropertyActive = ["/property"].some(
     (p) => pathname === p || pathname.startsWith(p + "/")
   );
   const isAdvisorsActive = ["/advisors", "/find-advisor", "/advisor/"].some(
@@ -267,6 +294,58 @@ export function Navigation() {
                         {item.label}
                       </Link>
                     ))}
+                  </div>
+                </div>
+              </div>
+            </MegaMenuDropdown>
+
+            {/* Property Mega-Menu */}
+            <MegaMenuDropdown label="Property" isActive={isPropertyActive}>
+              <div className="p-6">
+                {/* Top CTA */}
+                <Link
+                  href="/property"
+                  className="flex items-center justify-between p-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl mb-5 hover:border-amber-300 transition-colors group"
+                >
+                  <div>
+                    <p className="font-bold text-slate-900 text-sm">Investment Property Hub</p>
+                    <p className="text-xs text-slate-500 mt-0.5">Listings · Suburb data · Buyer&apos;s agents · Loans</p>
+                  </div>
+                  <svg className="w-5 h-5 text-amber-500 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+
+                <div className="grid grid-cols-2 gap-6">
+                  <div>
+                    <p className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider mb-3">Listings & Research</p>
+                    <div className="space-y-1">
+                      {propertyMenu.listings.slice(1).map((item) => (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className="block px-3 py-2.5 rounded-lg hover:bg-amber-50 transition-colors"
+                        >
+                          <div className="text-sm font-semibold text-slate-800">{item.label}</div>
+                          <div className="text-xs text-slate-400">{item.desc}</div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider mb-3">Professionals</p>
+                    <div className="space-y-1">
+                      {propertyMenu.agents.map((item) => (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className="block px-3 py-2.5 rounded-lg hover:bg-amber-50 transition-colors"
+                        >
+                          <div className="text-sm font-semibold text-slate-800">{item.label}</div>
+                          <div className="text-xs text-slate-400">{item.desc}</div>
+                        </Link>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
