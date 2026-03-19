@@ -146,104 +146,101 @@ export default async function HomePage() {
         }}
       />
 
-      {/* ═══════ 1. HERO ═══════ */}
+      {/* ═══════ 1. HERO + SERVICE SELECTOR (two-column) ═══════ */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden">
-        <div className="container-custom py-8 md:py-12 lg:py-14">
-          <div className="max-w-3xl mx-auto text-center">
+        <div className="container-custom py-8 md:py-10 lg:py-12">
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-8 lg:gap-12 items-start">
 
-            {/* Updated badge — clean white text on amber, no amber-on-amber */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-slate-900 border border-slate-800 rounded-full text-xs font-semibold text-white mb-4 md:mb-5">
-              <span className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-pulse" />
-              Updated {updatedMonth} &middot; {brokerCount}+ platforms compared
-            </div>
-
-            {/* New problem-led headline (item 25) */}
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 leading-[1.1] mb-4 tracking-tight">
-              Stop overpaying fees.{" "}
-              <span className="text-amber-500">Find the right platform or advisor in 60 seconds.</span>
-            </h1>
-
-            {/* Clearer subheading — single primary job first (item 26) */}
-            <p className="text-base md:text-lg lg:text-xl text-slate-600 mb-6 leading-relaxed max-w-2xl mx-auto">
-              Compare every Australian investing platform side-by-side — or get matched with a verified mortgage broker, buyer&apos;s agent, or financial advisor. Independent, always free, no obligation.
-            </p>
-
-            {/* Primary CTAs */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
-              <Link
-                href="/find-advisor"
-                className="w-full sm:w-auto px-7 py-3.5 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 shadow-md hover:shadow-lg transition-all text-sm"
-              >
-                Find My Advisor — Free &rarr;
-              </Link>
-              {/* Secondary CTA hidden on mobile (item 32) */}
-              <Link
-                href="/compare"
-                className="hidden sm:inline-flex w-auto px-7 py-3.5 border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all text-sm items-center justify-center"
-              >
-                Compare Platforms
-              </Link>
-            </div>
-
-            {/* Improved trust signals — specific proof points (items 27–29) */}
-            <div className="flex items-center justify-center flex-wrap gap-x-5 gap-y-1.5 text-xs text-slate-600">
-              <span className="flex items-center gap-1.5">
-                <Icon name="shield-check" size={13} className="text-emerald-500" />
-                Independently reviewed — ratings not for sale
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Icon name="check-circle" size={13} className="text-emerald-500" />
-                {brokerCount}+ platforms tested with real accounts
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Icon name="check-circle" size={13} className="text-amber-500" />
-                Always free — no sign-up required
-              </span>
-            </div>
-          </div>
-
-          {/* Platform logo trust strip — visual proof of coverage (item 31) */}
-          {featuredPlatforms.length > 0 && (
-            <div className="mt-8 border-t border-slate-100 pt-5">
-              <p className="text-center text-[0.65rem] font-semibold uppercase tracking-widest text-slate-400 mb-3">
-                Platforms we&apos;ve independently tested &amp; reviewed
-              </p>
-              <div className="flex items-center justify-center gap-4 md:gap-6 flex-wrap">
-                {featuredPlatforms.map((b) => (
-                  <Link key={b.slug} href={`/broker/${b.slug}`} className="opacity-60 hover:opacity-100 transition-opacity" title={b.name}>
-                    <BrokerLogo broker={b} size="sm" />
-                  </Link>
-                ))}
+            {/* LEFT: Hero content */}
+            <div>
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-slate-900 border border-slate-800 rounded-full text-xs font-semibold text-white mb-4">
+                <span className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-pulse" />
+                Updated {updatedMonth} &middot; {brokerCount}+ platforms compared
               </div>
-            </div>
-          )}
 
-          {/* Social proof strip — outcome-focused labels (item 30) */}
-          <div className="mt-6 grid grid-cols-3 gap-4 max-w-lg mx-auto text-center">
-            <div>
-              <p className="text-2xl md:text-3xl font-extrabold text-slate-900">{brokerCount}+</p>
-              <p className="text-xs text-slate-600 mt-0.5">Platforms independently rated</p>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 leading-[1.1] mb-4 tracking-tight">
+                Stop overpaying fees.{" "}
+                <span className="text-amber-500">Find the right platform or advisor in 60 seconds.</span>
+              </h1>
+
+              <p className="text-base md:text-lg text-slate-600 mb-6 leading-relaxed max-w-xl">
+                Compare every Australian investing platform side-by-side — or get matched with a verified mortgage broker, buyer&apos;s agent, or financial advisor. Independent, always free, no obligation.
+              </p>
+
+              <div className="flex flex-col sm:flex-row items-start gap-3 mb-5">
+                <Link
+                  href="/find-advisor"
+                  className="w-full sm:w-auto px-7 py-3.5 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 shadow-md hover:shadow-lg transition-all text-sm"
+                >
+                  Find My Advisor — Free &rarr;
+                </Link>
+                <Link
+                  href="/compare"
+                  className="w-full sm:w-auto px-7 py-3.5 border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all text-sm flex items-center justify-center"
+                >
+                  Compare Platforms
+                </Link>
+              </div>
+
+              <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-slate-600 mb-6">
+                <span className="flex items-center gap-1.5">
+                  <Icon name="shield-check" size={13} className="text-emerald-500" />
+                  Independently reviewed — ratings not for sale
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <Icon name="check-circle" size={13} className="text-emerald-500" />
+                  {brokerCount}+ platforms tested with real accounts
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <Icon name="check-circle" size={13} className="text-amber-500" />
+                  Always free — no sign-up required
+                </span>
+              </div>
+
+              {/* Stats */}
+              <div className="grid grid-cols-3 gap-4 max-w-sm">
+                <div>
+                  <p className="text-2xl md:text-3xl font-extrabold text-slate-900">{brokerCount}+</p>
+                  <p className="text-xs text-slate-600 mt-0.5">Platforms rated</p>
+                </div>
+                <div>
+                  <p className="text-2xl md:text-3xl font-extrabold text-slate-900">{(advisorCount || 0) > 0 ? `${advisorCount}+` : "100+"}</p>
+                  <p className="text-xs text-slate-600 mt-0.5">Advisors matched</p>
+                </div>
+                <div>
+                  <p className="text-2xl md:text-3xl font-extrabold text-slate-900">$0</p>
+                  <p className="text-xs text-slate-600 mt-0.5">Cost — free forever</p>
+                </div>
+              </div>
+
+              {/* Platform logos */}
+              {featuredPlatforms.length > 0 && (
+                <div className="mt-6 pt-5 border-t border-slate-100">
+                  <p className="text-[0.65rem] font-semibold uppercase tracking-widest text-slate-400 mb-3">
+                    Platforms we&apos;ve independently tested &amp; reviewed
+                  </p>
+                  <div className="flex items-center gap-4 flex-wrap">
+                    {featuredPlatforms.map((b) => (
+                      <Link key={b.slug} href={`/broker/${b.slug}`} className="opacity-60 hover:opacity-100 transition-opacity" title={b.name}>
+                        <BrokerLogo broker={b} size="sm" />
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
-            <div>
-              <p className="text-2xl md:text-3xl font-extrabold text-slate-900">{(advisorCount || 0) > 0 ? `${advisorCount}+` : "100+"}</p>
-              <p className="text-xs text-slate-600 mt-0.5">Advisors matched this month</p>
+
+            {/* RIGHT: Service selector card */}
+            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+              <p className="text-xs text-amber-600 uppercase tracking-widest font-bold mb-1">Find the right professional</p>
+              <h2 className="text-base font-extrabold text-slate-900 mb-1">What do you need help with?</h2>
+              <p className="text-xs text-slate-500 mb-4">Select your goal — free consultation, no obligation.</p>
+              <HomepageServiceSelector compact />
             </div>
-            <div>
-              <p className="text-2xl md:text-3xl font-extrabold text-slate-900">$0</p>
-              <p className="text-xs text-slate-600 mt-0.5">Cost — free forever</p>
-            </div>
+
           </div>
         </div>
       </section>
-
-      {/* ═══════ 2. WHAT DO YOU NEED HELP WITH? ═══════ */}
-      <ScrollFadeIn>
-        <section className="py-6 md:py-10 bg-slate-50 border-b border-slate-100">
-          <div className="container-custom">
-            <HomepageServiceSelector />
-          </div>
-        </section>
-      </ScrollFadeIn>
 
       {/* ═══════ 3. ADVISOR DIRECTORY ═══════ */}
       <AdvisorDirectory

@@ -202,21 +202,25 @@ const LIFE_EVENTS: LifeEvent[] = [
   },
 ];
 
-export default function HomepageServiceSelector() {
+export default function HomepageServiceSelector({ compact = false }: { compact?: boolean }) {
   // Pre-select "Grow Wealth" by default — it's the most common intent
   const [selected, setSelected] = useState<string>("wealth");
 
   const activeEvent = LIFE_EVENTS.find((e) => e.key === selected);
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <p className="text-xs text-amber-600 text-center uppercase tracking-widest font-bold mb-1.5">Find the right professional</p>
-      <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 mb-1.5 text-center">
-        What do you need help with?
-      </h2>
-      <p className="text-sm text-slate-600 mb-5 text-center max-w-lg mx-auto">
-        Select your goal and we&apos;ll show you exactly which professional to speak to — free, no obligation.
-      </p>
+    <div className={compact ? "" : "max-w-2xl mx-auto"}>
+      {!compact && (
+        <>
+          <p className="text-xs text-amber-600 text-center uppercase tracking-widest font-bold mb-1.5">Find the right professional</p>
+          <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 mb-1.5 text-center">
+            What do you need help with?
+          </h2>
+          <p className="text-sm text-slate-600 mb-5 text-center max-w-lg mx-auto">
+            Select your goal and we&apos;ll show you exactly which professional to speak to — free, no obligation.
+          </p>
+        </>
+      )}
 
       {/* Life event cards — 5 options in responsive grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-2.5">
