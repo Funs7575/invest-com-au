@@ -1,5 +1,10 @@
 import { vi } from "vitest";
 
+// jsdom doesn't implement scrollIntoView — mock it when running in browser-like env
+if (typeof Element !== "undefined") {
+  Element.prototype.scrollIntoView = vi.fn();
+}
+
 // Mock environment variables needed by API routes
 process.env.NEXT_PUBLIC_SUPABASE_URL = "https://test.supabase.co";
 process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-role-key";
