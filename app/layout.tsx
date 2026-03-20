@@ -84,8 +84,6 @@ export default function RootLayout({
       {/* Inline script adds .js-ready immediately so CSS animations only run when JS is available.
           Without this, hero-fade-up starts at opacity:0 and stays invisible until JS loads. */}
       <head>
-        {/* Google tag (gtag.js) — immediately after <head> as required */}
-        <GoogleAnalytics />
         {/* Preconnect to external APIs for faster initial requests */}
         <link rel="preconnect" href="https://guggzyqceattncjwvgyc.supabase.co" />
         <link rel="dns-prefetch" href="https://guggzyqceattncjwvgyc.supabase.co" />
@@ -112,6 +110,7 @@ export default function RootLayout({
             </p>
           </div>
         </noscript>
+        <GoogleAnalytics />
         <Suspense fallback={null}><UtmCapture /></Suspense>
 
         <ThemeProvider>
