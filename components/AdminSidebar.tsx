@@ -86,6 +86,12 @@ const NAV_GROUPS = [
     ],
   },
   {
+    label: "AI",
+    items: [
+      { href: "/admin/ai-assistant", icon: "zap", label: "AI Assistant" },
+    ],
+  },
+  {
     label: "System",
     items: [
       { href: "/admin/team-members", icon: "user", label: "Team" },
