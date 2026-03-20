@@ -126,7 +126,7 @@ async function executeTool(name: string, input: Record<string, unknown>): Promis
           supabase.from("affiliate_clicks").select("id", { count: "exact", head: true }),
           supabase.from("email_captures").select("id", { count: "exact", head: true }),
           supabase.from("professionals").select("id", { count: "exact", head: true }).eq("status", "active"),
-          supabase.rpc("get_active_pro_count").catch(() => ({ data: 0 })),
+          supabase.rpc("get_active_pro_count").then(r => r, () => ({ data: 0 })),
           supabase.from("campaigns").select("id", { count: "exact", head: true }).eq("status", "active"),
         ]);
 
@@ -371,7 +371,7 @@ export async function POST(req: NextRequest) {
                   send({ type: "tool_start", name: event.content_block.name, id: event.content_block.id });
                   contentBlocks[currentBlockIndex] = { ...event.content_block, input: {} };
                 } else if (event.content_block.type === "text") {
-                  contentBlocks[currentBlockIndex] = { type: "text", text: "" };
+                  contentBlocks[currentBlockIndex] = { type: "text", text: "", citations: [] };
                 } else if (event.content_block.type === "thinking") {
                   contentBlocks[currentBlockIndex] = { type: "thinking", thinking: "", signature: "" };
                 }
