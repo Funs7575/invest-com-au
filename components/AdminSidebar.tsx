@@ -11,6 +11,7 @@ const NAV_GROUPS = [
     label: "Dashboards",
     items: [
       { href: "/admin", icon: "bar-chart", label: "Overview" },
+      { href: "/admin/ai-assistant", icon: "cpu", label: "AI Assistant" },
       { href: "/admin/revenue", icon: "dollar-sign", label: "Revenue" },
       { href: "/admin/pricing", icon: "tag", label: "Lead Pricing" },
       { href: "/admin/finance", icon: "wallet", label: "Finance" },
@@ -83,12 +84,6 @@ const NAV_GROUPS = [
     items: [
       { href: "/admin/legal", icon: "scale", label: "Legal Dashboard" },
       { href: "/admin/audit-log", icon: "eye", label: "Audit Log" },
-    ],
-  },
-  {
-    label: "AI",
-    items: [
-      { href: "/admin/ai-assistant", icon: "zap", label: "AI Assistant" },
     ],
   },
   {
