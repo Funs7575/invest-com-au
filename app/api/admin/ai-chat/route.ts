@@ -24,7 +24,9 @@ You help the admin:
 - Track revenue and subscribers
 - Trigger deploys or config changes
 - Run queries to debug issues
+- **Make edits**: approve/reject moderation items, update broker details, publish/unpublish articles, toggle automations, manage subscribers
 
+When taking write actions, always confirm what you did clearly. If a destructive action is requested without clear intent, ask for confirmation first.
 Always be concise and actionable. When querying data, summarise the key insights rather than dumping raw data. If a tool fails due to missing credentials, explain what env var is needed.`;
 
 const TOOLS: Anthropic.Tool[] = [
@@ -112,6 +114,99 @@ const TOOLS: Anthropic.Tool[] = [
       required: [],
     },
   },
+  // ─── WRITE TOOLS ────────────────────────────────────────────────────────────
+  {
+    name: "approve_moderation_item",
+    description: "Approve or reject a moderation item — advisor articles, user reviews, switch stories, advisor applications, fee changes, or lead disputes.",
+    input_schema: {
+      type: "object",
+      properties: {
+        type: {
+          type: "string",
+          enum: ["advisor_article", "user_review", "switch_story", "advisor_application", "fee_change", "lead_dispute"],
+          description: "The type of item to moderate",
+        },
+        id: { type: "string", description: "The item ID" },
+        action: { type: "string", enum: ["approve", "reject"], description: "Whether to approve or reject" },
+        reason: { type: "string", description: "Optional reason for the decision (used for rejections)" },
+      },
+      required: ["type", "id", "action"],
+    },
+  },
+  {
+    name: "update_broker",
+    description: "Update a broker's details — fees, affiliate URL, status, ranking, sponsored flag, or any other allowed field.",
+    input_schema: {
+      type: "object",
+      properties: {
+        broker_slug: { type: "string", description: "The broker's slug identifier (e.g. 'commbank', 'stake')" },
+        updates: {
+          type: "object",
+          description: "Key-value pairs of fields to update. Allowed fields: status, asx_fee, asx_fee_value, us_fee, us_fee_value, fx_rate, inactivity_fee, fee_source_url, affiliate_url, sponsored, ranking, minimum_deposit, account_fee.",
+          properties: {
+            status: { type: "string", enum: ["active", "inactive", "coming_soon"] },
+            asx_fee: { type: "string" },
+            asx_fee_value: { type: "number" },
+            us_fee: { type: "string" },
+            us_fee_value: { type: "number" },
+            fx_rate: { type: "number" },
+            inactivity_fee: { type: "string" },
+            fee_source_url: { type: "string" },
+            affiliate_url: { type: "string" },
+            sponsored: { type: "boolean" },
+            ranking: { type: "number" },
+            minimum_deposit: { type: "string" },
+            account_fee: { type: "string" },
+          },
+        },
+      },
+      required: ["broker_slug", "updates"],
+    },
+  },
+  {
+    name: "publish_article",
+    description: "Publish, unpublish, or set an article to draft. Works for both regular articles and advisor articles.",
+    input_schema: {
+      type: "object",
+      properties: {
+        id: { type: "string", description: "Article ID" },
+        type: { type: "string", enum: ["article", "advisor_article"], description: "Type of article (default: article)" },
+        action: { type: "string", enum: ["publish", "unpublish", "draft"], description: "Action to take" },
+      },
+      required: ["id", "action"],
+    },
+  },
+  {
+    name: "toggle_autopilot",
+    description: "Enable or disable an autopilot automation, or toggle the master autopilot switch.",
+    input_schema: {
+      type: "object",
+      properties: {
+        automation_id: {
+          type: "string",
+          description: "The automation ID (e.g. 'check-fees', 'expire-deals', 'marketplace-stats', 'quiz-follow-up', 'weekly-newsletter', 'check-affiliate-links', 'low-balance-alerts', 'welcome-drip', 'auto-publish', 'content-staleness', 'retry-webhooks') or 'master' to toggle the master switch.",
+        },
+        enabled: { type: "boolean", description: "true to enable, false to disable" },
+      },
+      required: ["automation_id", "enabled"],
+    },
+  },
+  {
+    name: "manage_subscriber",
+    description: "Look up, unsubscribe, or resubscribe an email subscriber.",
+    input_schema: {
+      type: "object",
+      properties: {
+        email: { type: "string", description: "The subscriber's email address" },
+        action: {
+          type: "string",
+          enum: ["get_info", "unsubscribe", "resubscribe"],
+          description: "Action to perform",
+        },
+      },
+      required: ["email", "action"],
+    },
+  },
 ];
 
 async function executeTool(name: string, input: Record<string, unknown>): Promise<string> {
@@ -159,7 +254,7 @@ async function executeTool(name: string, input: Record<string, unknown>): Promis
           "professional_leads", "user_reviews", "advisor_articles", "campaigns",
           "campaign_events", "scenarios", "quiz_questions", "fee_update_queue",
           "lead_disputes", "advisor_applications", "switch_stories", "analytics_events",
-          "audit_log", "subscriptions",
+          "audit_log", "subscriptions", "site_settings",
         ];
 
         if (!allowedTables.includes(table)) {
@@ -190,7 +285,7 @@ async function executeTool(name: string, input: Record<string, unknown>): Promis
           supabase.from("advisor_applications").select("id, full_name, email, created_at", { count: "exact" }).eq("status", "pending").limit(10),
           supabase.from("professional_reviews").select("id, reviewer_name, created_at", { count: "exact" }).eq("status", "pending").limit(5),
           supabase.from("lead_disputes").select("id, reason, created_at", { count: "exact" }).eq("status", "pending").limit(5),
-          supabase.from("fee_update_queue").select("id, broker_name, created_at", { count: "exact" }).eq("status", "pending").limit(5),
+          supabase.from("fee_update_queue").select("id, broker_name, field_name, old_value, new_value, created_at", { count: "exact" }).eq("status", "pending").limit(5),
         ]);
 
         return JSON.stringify({
@@ -254,7 +349,6 @@ async function executeTool(name: string, input: Record<string, unknown>): Promis
         const token = process.env.VERCEL_API_TOKEN;
         if (!token) return "Error: VERCEL_API_TOKEN env var not set.";
 
-        // Get latest deployment to redeploy from
         const listRes = await fetch(
           `https://api.vercel.com/v6/deployments?projectId=${VERCEL_PROJECT_ID}&limit=1&target=production`,
           { headers: { Authorization: `Bearer ${token}` } }
@@ -309,6 +403,229 @@ async function executeTool(name: string, input: Record<string, unknown>): Promis
           new_subscribers: { count: emails.data?.length, items: emails.data },
           new_reviews: { count: reviews.data?.length, items: reviews.data },
         });
+      }
+
+      // ─── WRITE TOOLS ─────────────────────────────────────────────────────────
+
+      case "approve_moderation_item": {
+        const { type, id, action, reason } = input as {
+          type: string; id: string; action: "approve" | "reject"; reason?: string;
+        };
+
+        const now = new Date().toISOString();
+        const newStatus = action === "approve" ? "approved" : "rejected";
+
+        const tableMap: Record<string, { table: string; statusField: string; approvedStatus?: string; rejectedStatus?: string }> = {
+          advisor_article:      { table: "advisor_articles", statusField: "status", approvedStatus: "published", rejectedStatus: "rejected" },
+          user_review:          { table: "user_reviews", statusField: "status" },
+          switch_story:         { table: "switch_stories", statusField: "status" },
+          advisor_application:  { table: "advisor_applications", statusField: "status" },
+          fee_change:           { table: "fee_update_queue", statusField: "status" },
+          lead_dispute:         { table: "lead_disputes", statusField: "status" },
+        };
+
+        const mapping = tableMap[type];
+        if (!mapping) return `Error: Unknown moderation type "${type}"`;
+
+        const resolvedStatus = action === "approve"
+          ? (mapping.approvedStatus ?? "approved")
+          : (mapping.rejectedStatus ?? "rejected");
+
+        const updatePayload: Record<string, unknown> = {
+          [mapping.statusField]: resolvedStatus,
+          reviewed_at: now,
+        };
+
+        if (type === "advisor_article" && action === "approve") {
+          updatePayload.published_at = now;
+        }
+
+        if (reason) updatePayload.rejection_reason = reason;
+
+        const { error } = await supabase.from(mapping.table).update(updatePayload).eq("id", id);
+        if (error) return `Error updating ${type}: ${error.message}`;
+
+        // If approving a fee change, apply it to the broker
+        if (type === "fee_change" && action === "approve") {
+          const { data: feeItem } = await supabase
+            .from("fee_update_queue")
+            .select("broker_slug, field_name, new_value")
+            .eq("id", id)
+            .single();
+
+          if (feeItem?.broker_slug && feeItem?.field_name) {
+            await supabase
+              .from("brokers")
+              .update({ [feeItem.field_name]: feeItem.new_value, fee_last_checked: now })
+              .eq("slug", feeItem.broker_slug);
+          }
+        }
+
+        await supabase.from("admin_audit_log").insert({
+          action: `ai:${action}_${type}`,
+          details: `${action}d ${type} id=${id}${reason ? ` — reason: ${reason}` : ""}`,
+          created_at: now,
+        });
+
+        return JSON.stringify({ success: true, message: `${type} ${id} has been ${action}d.` });
+      }
+
+      case "update_broker": {
+        const { broker_slug, updates } = input as {
+          broker_slug: string;
+          updates: Record<string, unknown>;
+        };
+
+        const allowedFields = [
+          "status", "asx_fee", "asx_fee_value", "us_fee", "us_fee_value",
+          "fx_rate", "inactivity_fee", "fee_source_url", "affiliate_url",
+          "sponsored", "ranking", "minimum_deposit", "account_fee",
+        ];
+
+        const sanitized: Record<string, unknown> = {};
+        for (const [key, val] of Object.entries(updates)) {
+          if (allowedFields.includes(key)) sanitized[key] = val;
+        }
+
+        if (Object.keys(sanitized).length === 0) {
+          return `Error: No valid fields to update. Allowed fields: ${allowedFields.join(", ")}`;
+        }
+
+        // Verify broker exists
+        const { data: broker } = await supabase
+          .from("brokers")
+          .select("id, name, slug")
+          .eq("slug", broker_slug)
+          .single();
+
+        if (!broker) return `Error: Broker with slug "${broker_slug}" not found.`;
+
+        const { error } = await supabase.from("brokers").update(sanitized).eq("slug", broker_slug);
+        if (error) return `Error updating broker: ${error.message}`;
+
+        await supabase.from("admin_audit_log").insert({
+          action: "ai:update_broker",
+          details: `Updated broker ${broker.name} (${broker_slug}): ${JSON.stringify(sanitized)}`,
+          created_at: new Date().toISOString(),
+        });
+
+        return JSON.stringify({
+          success: true,
+          message: `Broker "${broker.name}" updated successfully.`,
+          fields_updated: Object.keys(sanitized),
+        });
+      }
+
+      case "publish_article": {
+        const { id, type = "article", action } = input as {
+          id: string; type?: "article" | "advisor_article"; action: "publish" | "unpublish" | "draft";
+        };
+
+        const table = type === "advisor_article" ? "advisor_articles" : "articles";
+        const statusMap = { publish: "published", unpublish: "unpublished", draft: "draft" };
+        const newStatus = statusMap[action];
+
+        const updatePayload: Record<string, unknown> = { status: newStatus };
+        if (action === "publish") updatePayload.published_at = new Date().toISOString();
+
+        // Verify article exists
+        const { data: article } = await supabase
+          .from(table)
+          .select("id, title")
+          .eq("id", id)
+          .single();
+
+        if (!article) return `Error: Article with id "${id}" not found in ${table}.`;
+
+        const { error } = await supabase.from(table).update(updatePayload).eq("id", id);
+        if (error) return `Error updating article: ${error.message}`;
+
+        await supabase.from("admin_audit_log").insert({
+          action: `ai:${action}_article`,
+          details: `${action}d ${type} "${article.title}" (id=${id})`,
+          created_at: new Date().toISOString(),
+        });
+
+        return JSON.stringify({
+          success: true,
+          message: `Article "${article.title}" has been ${action}d.`,
+        });
+      }
+
+      case "toggle_autopilot": {
+        const { automation_id, enabled } = input as { automation_id: string; enabled: boolean };
+
+        const key = automation_id === "master" ? "autopilot_enabled" : `autopilot_${automation_id}`;
+
+        const { error } = await supabase
+          .from("site_settings")
+          .upsert({ key, value: enabled ? "true" : "false", updated_at: new Date().toISOString() }, { onConflict: "key" });
+
+        if (error) return `Error toggling autopilot: ${error.message}`;
+
+        await supabase.from("admin_audit_log").insert({
+          action: "ai:toggle_autopilot",
+          details: `${enabled ? "Enabled" : "Disabled"} autopilot: ${automation_id}`,
+          created_at: new Date().toISOString(),
+        });
+
+        const label = automation_id === "master" ? "Master autopilot" : `Automation "${automation_id}"`;
+        return JSON.stringify({
+          success: true,
+          message: `${label} has been ${enabled ? "enabled" : "disabled"}.`,
+        });
+      }
+
+      case "manage_subscriber": {
+        const { email, action } = input as { email: string; action: "get_info" | "unsubscribe" | "resubscribe" };
+
+        if (action === "get_info") {
+          const [capture, subscription] = await Promise.all([
+            supabase.from("email_captures").select("*").eq("email", email).maybeSingle(),
+            supabase.from("subscriptions").select("*").eq("email", email).maybeSingle(),
+          ]);
+
+          return JSON.stringify({
+            email_capture: capture.data,
+            subscription: subscription.data,
+          });
+        }
+
+        if (action === "unsubscribe") {
+          const [r1, r2] = await Promise.all([
+            supabase.from("email_captures").update({ unsubscribed: true, unsubscribed_at: new Date().toISOString() }).eq("email", email),
+            supabase.from("subscriptions").update({ status: "cancelled", cancelled_at: new Date().toISOString() }).eq("email", email),
+          ]);
+
+          if (r1.error && r2.error) return `Error unsubscribing: ${r1.error.message}`;
+
+          await supabase.from("admin_audit_log").insert({
+            action: "ai:unsubscribe",
+            details: `Unsubscribed ${email}`,
+            created_at: new Date().toISOString(),
+          });
+
+          return JSON.stringify({ success: true, message: `${email} has been unsubscribed.` });
+        }
+
+        if (action === "resubscribe") {
+          const { error } = await supabase
+            .from("email_captures")
+            .update({ unsubscribed: false, unsubscribed_at: null })
+            .eq("email", email);
+
+          if (error) return `Error resubscribing: ${error.message}`;
+
+          await supabase.from("admin_audit_log").insert({
+            action: "ai:resubscribe",
+            details: `Resubscribed ${email}`,
+            created_at: new Date().toISOString(),
+          });
+
+          return JSON.stringify({ success: true, message: `${email} has been resubscribed.` });
+        }
+
+        return `Error: Unknown action "${action}"`;
       }
 
       default:
