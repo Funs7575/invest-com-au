@@ -17,7 +17,7 @@ type Insurer = {
   key_features: string[];
 };
 
-/* ─── Hardcoded data — 13 leading Australian insurers ─── */
+/* ─── Hardcoded data — 13 leading Australian insurers (last verified: March 2026) ─── */
 
 const INSURERS: Insurer[] = [
   {

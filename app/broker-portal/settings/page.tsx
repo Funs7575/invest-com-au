@@ -250,7 +250,7 @@ export default function SettingsPage() {
             <p className="text-sm text-slate-600">You must accept the marketplace terms before creating campaigns.</p>
             <label className="flex items-start gap-2">
               <input type="checkbox" checked={termsChecked} onChange={(e) => setTermsChecked(e.target.checked)} className="mt-1" />
-              <span className="text-sm text-slate-700">I accept the <a href="/terms" className="text-slate-900 underline">Marketplace Terms and Conditions</a> (v1.0)</span>
+              <span className="text-sm text-slate-700">I accept the <a href="/broker-terms" className="text-slate-900 underline">Advertising &amp; Listing Terms</a> and <a href="/terms" className="text-slate-900 underline">Terms of Use</a> (v1.0)</span>
             </label>
             <button
               onClick={handleAcceptTerms}

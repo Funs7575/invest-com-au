@@ -12,10 +12,12 @@ interface Message {
 const SUGGESTIONS = [
   "What are today's key stats?",
   "Show me pending moderation items",
+  "Approve all pending user reviews",
+  "Which brokers are missing affiliate URLs?",
+  "Disable the weekly-newsletter automation",
+  "Unsubscribe user@example.com",
   "What's the latest Vercel deployment status?",
-  "How many clicks have we had in the last 24 hours?",
-  "List brokers missing affiliate URLs",
-  "Show me the most recent subscribers",
+  "Publish article [id] to live",
 ];
 
 export default function AiAssistantPage() {
@@ -39,6 +41,11 @@ export default function AiAssistantPage() {
     trigger_redeploy: "Triggering redeploy",
     get_stripe_overview: "Fetching Stripe data",
     get_recent_activity: "Loading recent activity",
+    approve_moderation_item: "Moderating item",
+    update_broker: "Updating broker",
+    publish_article: "Publishing article",
+    toggle_autopilot: "Toggling automation",
+    manage_subscriber: "Managing subscriber",
   };
 
   async function sendMessage(text: string) {

@@ -93,6 +93,10 @@
       "schedule": "0 8 * * 1"
     },
     {
+      "path": "/api/cron/confirm-lead-notify",
+      "schedule": "*/10 * * * *"
+    },
+    {
       "path": "/api/admin/run-migration",
       "schedule": "0 */6 * * *"
     }

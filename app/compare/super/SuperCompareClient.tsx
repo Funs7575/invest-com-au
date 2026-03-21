@@ -19,13 +19,13 @@ type SuperFund = {
   description: string;
 };
 
-/* ─── Hardcoded data — 15 popular Australian super funds ─── */
+/* ─── Hardcoded data — 15 popular Australian super funds (last verified: March 2026) ─── */
 
 const SUPER_FUNDS: SuperFund[] = [
   {
     name: "AustralianSuper",
     type: "Industry",
-    balanced_fee_pct: 0.69,
+    balanced_fee_pct: 0.67,
     investment_options: 12,
     insurance_included: true,
     description:
@@ -43,7 +43,7 @@ const SUPER_FUNDS: SuperFund[] = [
   {
     name: "UniSuper",
     type: "Industry",
-    balanced_fee_pct: 0.56,
+    balanced_fee_pct: 0.63,
     investment_options: 18,
     insurance_included: true,
     description:
@@ -52,7 +52,7 @@ const SUPER_FUNDS: SuperFund[] = [
   {
     name: "Hostplus",
     type: "Industry",
-    balanced_fee_pct: 0.68,
+    balanced_fee_pct: 0.85,
     investment_options: 14,
     insurance_included: true,
     description:
@@ -124,7 +124,7 @@ const SUPER_FUNDS: SuperFund[] = [
   {
     name: "Vanguard Super",
     type: "Retail/Index",
-    balanced_fee_pct: 0.58,
+    balanced_fee_pct: 0.56,
     investment_options: 6,
     insurance_included: false,
     description:

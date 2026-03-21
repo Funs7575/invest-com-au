@@ -124,6 +124,9 @@ export default function CompareDesktopTable({
                         <span className="text-[0.69rem] font-bold px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded-full uppercase tracking-wide">Sponsored</span>
                       )}
                       {!campaignWinners.some(w => w.broker_slug === broker.slug) && <SponsorBadge broker={broker} />}
+                      {broker.affiliate_url && !isSponsored(broker) && !campaignWinners.some(w => w.broker_slug === broker.slug) && (
+                        <span title="We may earn a commission if you visit this platform" className="text-[0.62rem] font-semibold px-1.5 py-0.5 bg-slate-100 text-slate-400 rounded-full uppercase tracking-wide">Ad</span>
+                      )}
                     </div>
                     {!isSponsored(broker) && editorPicks[broker.slug] && (
                       <div className="text-[0.69rem] font-extrabold text-slate-700 uppercase tracking-wide">

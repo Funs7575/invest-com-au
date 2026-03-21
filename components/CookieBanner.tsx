@@ -27,7 +27,7 @@ export default function CookieBanner() {
   const [isVisible, setIsVisible] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [showPrefs, setShowPrefs] = useState(false);
-  const [prefs, setPrefs] = useState<CookiePreferences>({ essential: true, analytics: true, affiliate: true });
+  const [prefs, setPrefs] = useState<CookiePreferences>(DEFAULT_PREFS);
 
   useEffect(() => {
     const consent = localStorage.getItem("cookie-consent");
