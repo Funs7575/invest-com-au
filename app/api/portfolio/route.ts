@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
 
   const { data: portfolio } = await supabase
     .from("user_portfolios")
-    .select("*")
+    .select("id, email, name, holdings, total_balance_cents, annual_fees_cents, optimal_fees_cents, savings_cents, optimal_broker_slug, last_checked_at, updated_at")
     .eq("email", email)
     .maybeSingle();
 
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
   // Get unread alerts
   const { data: alerts } = await supabase
     .from("portfolio_alerts")
-    .select("*")
+    .select("id, portfolio_id, alert_type, message, broker_slug, old_fee, new_fee, is_read, created_at")
     .eq("portfolio_id", portfolio.id)
     .order("created_at", { ascending: false })
     .limit(20);

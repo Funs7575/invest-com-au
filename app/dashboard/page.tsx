@@ -120,7 +120,18 @@ export default function DashboardPage() {
     return (
       <div className="py-12 text-center">
         <Icon name="alert-triangle" size={32} className="text-slate-300 mx-auto mb-3" />
-        <p className="text-sm text-slate-600">{error || "No data available"}</p>
+        <p className="text-sm text-slate-600 mb-4">{error || "No data available"}</p>
+        <div className="flex items-center justify-center gap-3">
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 text-sm font-bold bg-slate-900 text-white rounded-lg hover:bg-slate-700 transition-colors"
+          >
+            Retry
+          </button>
+          <Link href="/admin" className="px-4 py-2 text-sm font-bold border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-50 transition-colors">
+            Go to Admin
+          </Link>
+        </div>
       </div>
     );
   }

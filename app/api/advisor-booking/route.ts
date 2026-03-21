@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
   // Get their availability schedule
   const { data: schedule } = await supabase
     .from("advisor_booking_slots")
-    .select("*")
+    .select("id, professional_id, day_of_week, start_time, end_time, slot_duration_mins, is_active")
     .eq("professional_id", advisor.id)
     .eq("is_active", true)
     .order("day_of_week")

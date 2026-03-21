@@ -17,7 +17,7 @@ export async function GET() {
 
     const { data: profile } = await supabase
       .from("fee_profiles")
-      .select("*")
+      .select("user_id, asx_trades_per_month, us_trades_per_month, avg_trade_size, portfolio_value, current_broker_slug, updated_at")
       .eq("user_id", user.id)
       .maybeSingle();
 
