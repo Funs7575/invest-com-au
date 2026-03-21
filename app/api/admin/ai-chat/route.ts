@@ -641,7 +641,7 @@ export async function POST(req: NextRequest) {
     const { messages } = await req.json() as { messages: Anthropic.MessageParam[] };
 
     if (!process.env.ANTHROPIC_API_KEY) {
-      return new Response(JSON.stringify({ error: "ANTHROPIC_API_KEY not configured" }), {
+      return new Response(JSON.stringify({ error: "ANTHROPIC_API_KEY is not configured. Add it to your Vercel environment variables." }), {
         status: 500,
         headers: { "Content-Type": "application/json" },
       });
@@ -760,7 +760,15 @@ export async function POST(req: NextRequest) {
           send({ type: "done" });
           controller.close();
         } catch (err) {
-          send({ type: "error", message: err instanceof Error ? err.message : "Unknown error" });
+          // Detect Anthropic billing / credit errors
+          const msg = err instanceof Error ? err.message : String(err);
+          const isBillingError = msg.includes("credit balance is too low") || msg.includes("insufficient_quota") || (err as { status?: number }).status === 402;
+          send({
+            type: "error",
+            message: isBillingError
+              ? "Anthropic API credits exhausted. Go to console.anthropic.com → Plans & Billing to top up, then retry."
+              : msg || "Unknown error",
+          });
           controller.close();
         }
       },
