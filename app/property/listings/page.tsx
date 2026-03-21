@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import ListingsClient from "./ListingsClient";
 
@@ -14,5 +15,9 @@ export const metadata: Metadata = {
 };
 
 export default function PropertyListingsPage() {
-  return <ListingsClient />;
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-white" />}>
+      <ListingsClient />
+    </Suspense>
+  );
 }

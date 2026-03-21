@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import PropertyDisclaimer from "@/components/PropertyDisclaimer";
-import { OFF_THE_PLAN_WARNING, PROPERTY_DISCLAIMER_SHORT } from "@/lib/compliance";
+import { OFF_THE_PLAN_WARNING } from "@/lib/compliance";
 import { getListingImages } from "@/lib/property-images";
 
 interface Listing {
@@ -24,24 +25,45 @@ interface Listing {
   featured: boolean;
   firb_approved: boolean;
   off_the_plan: boolean;
+  new_development: boolean;
+  foreign_buyer_eligible: boolean;
   bedrooms_min: number | null;
   bedrooms_max: number | null;
   images: string[];
   property_developers?: { name: string; logo_url: string | null; slug: string } | null;
 }
 
-const PLACEHOLDER: Record<string, string> = {
-  apartment: "/images/property/apartment-placeholder.svg",
-  house_land: "/images/property/house-placeholder.svg",
-  townhouse: "/images/property/townhouse-placeholder.svg",
-};
-
 const CITIES = ["All", "Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide"];
+
 const TYPES = [
   { value: "All", label: "All Types" },
   { value: "apartment", label: "Apartment" },
   { value: "townhouse", label: "Townhouse" },
   { value: "house_land", label: "House & Land" },
+];
+
+const BEDS = [
+  { value: "0", label: "Any" },
+  { value: "1", label: "1+" },
+  { value: "2", label: "2+" },
+  { value: "3", label: "3+" },
+  { value: "4", label: "4+" },
+];
+
+const PRICE_RANGES = [
+  { value: "all", label: "Any Price", min: null as number | null, max: null as number | null },
+  { value: "u500k", label: "Under $500k", min: null, max: 50000000 },
+  { value: "500k-750k", label: "$500k–$750k", min: 50000000, max: 75000000 },
+  { value: "750k-1m", label: "$750k–$1M", min: 75000000, max: 100000000 },
+  { value: "1m-1.5m", label: "$1M–$1.5M", min: 100000000, max: 150000000 },
+  { value: "1.5m+", label: "$1.5M+", min: 150000000, max: null },
+];
+
+const SORT_OPTIONS = [
+  { value: "default", label: "Newest First" },
+  { value: "price_asc", label: "Price: Low → High" },
+  { value: "price_desc", label: "Price: High → Low" },
+  { value: "yield_desc", label: "Highest Yield" },
 ];
 
 const TYPE_LABELS: Record<string, string> = {
@@ -73,25 +95,81 @@ function BedroomRange({ min, max }: { min: number | null; max: number | null }) 
   );
 }
 
+function PillBtn({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`px-3 py-1.5 text-xs font-bold rounded-lg whitespace-nowrap transition-all ${
+        active
+          ? "bg-slate-900 text-white shadow-sm"
+          : "bg-slate-50 border border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-100"
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
 export default function ListingsClient() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const [city, setCity] = useState(searchParams.get("city") || "All");
+  const [type, setType] = useState(searchParams.get("type") || "All");
+  const [bedsMin, setBedsMin] = useState(searchParams.get("beds") || "0");
+  const [priceRange, setPriceRange] = useState(searchParams.get("price") || "all");
+  const [sortBy, setSortBy] = useState(searchParams.get("sort") || "default");
+  const [firbOnly, setFirbOnly] = useState(searchParams.get("firb") === "true");
+  const [otpOnly, setOtpOnly] = useState(searchParams.get("otp") === "true");
+  const [newDevOnly, setNewDevOnly] = useState(searchParams.get("new_dev") === "true");
+  const [foreignBuyer, setForeignBuyer] = useState(searchParams.get("foreign_buyer") === "true");
+  const [page, setPage] = useState(parseInt(searchParams.get("page") || "1", 10));
+
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
-  const [city, setCity] = useState("All");
-  const [type, setType] = useState("All");
-  const [firbOnly, setFirbOnly] = useState(false);
-  const [otpOnly, setOtpOnly] = useState(false);
-  const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
+
+  // Persist filters to URL
+  useEffect(() => {
+    const p = new URLSearchParams();
+    if (city !== "All") p.set("city", city);
+    if (type !== "All") p.set("type", type);
+    if (bedsMin !== "0") p.set("beds", bedsMin);
+    if (priceRange !== "all") p.set("price", priceRange);
+    if (sortBy !== "default") p.set("sort", sortBy);
+    if (firbOnly) p.set("firb", "true");
+    if (otpOnly) p.set("otp", "true");
+    if (newDevOnly) p.set("new_dev", "true");
+    if (foreignBuyer) p.set("foreign_buyer", "true");
+    if (page > 1) p.set("page", String(page));
+    const qs = p.toString();
+    router.replace(`${pathname}${qs ? `?${qs}` : ""}`, { scroll: false });
+  }, [city, type, bedsMin, priceRange, sortBy, firbOnly, otpOnly, newDevOnly, foreignBuyer, page, router, pathname]);
 
   const fetchListings = useCallback(async () => {
     setLoading(true);
     const params = new URLSearchParams({ page: String(page) });
     if (city !== "All") params.set("city", city);
     if (type !== "All") params.set("type", type);
+    if (bedsMin !== "0") params.set("beds_min", bedsMin);
+    if (sortBy !== "default") params.set("sort", sortBy);
+    const priceData = PRICE_RANGES.find((p) => p.value === priceRange);
+    if (priceData?.min != null) params.set("price_min", String(priceData.min));
+    if (priceData?.max != null) params.set("price_max", String(priceData.max));
     if (firbOnly) params.set("firb_approved", "true");
     if (otpOnly) params.set("off_the_plan", "true");
-
+    if (newDevOnly) params.set("new_development", "true");
+    if (foreignBuyer) params.set("foreign_buyer_eligible", "true");
     try {
       const res = await fetch(`/api/property/listings?${params}`);
       const data = await res.json();
@@ -103,10 +181,35 @@ export default function ListingsClient() {
     } finally {
       setLoading(false);
     }
-  }, [city, type, firbOnly, otpOnly, page]);
+  }, [city, type, bedsMin, priceRange, sortBy, firbOnly, otpOnly, newDevOnly, foreignBuyer, page]);
 
   useEffect(() => { fetchListings(); }, [fetchListings]);
-  useEffect(() => { setPage(1); }, [city, type, firbOnly, otpOnly]);
+  useEffect(() => { setPage(1); }, [city, type, bedsMin, priceRange, sortBy, firbOnly, otpOnly, newDevOnly, foreignBuyer]);
+
+  const clearAll = () => {
+    setCity("All");
+    setType("All");
+    setBedsMin("0");
+    setPriceRange("all");
+    setSortBy("default");
+    setFirbOnly(false);
+    setOtpOnly(false);
+    setNewDevOnly(false);
+    setForeignBuyer(false);
+    setPage(1);
+  };
+
+  type ActiveFilter = { key: string; label: string; clear: () => void };
+  const activeFilters: ActiveFilter[] = [
+    city !== "All" ? { key: "city", label: city, clear: () => setCity("All") } : null,
+    type !== "All" ? { key: "type", label: TYPES.find((t) => t.value === type)?.label || type, clear: () => setType("All") } : null,
+    bedsMin !== "0" ? { key: "beds", label: `${bedsMin}+ Beds`, clear: () => setBedsMin("0") } : null,
+    priceRange !== "all" ? { key: "price", label: PRICE_RANGES.find((p) => p.value === priceRange)?.label || "", clear: () => setPriceRange("all") } : null,
+    firbOnly ? { key: "firb", label: "FIRB Approved", clear: () => setFirbOnly(false) } : null,
+    otpOnly ? { key: "otp", label: "Off the Plan", clear: () => setOtpOnly(false) } : null,
+    newDevOnly ? { key: "new_dev", label: "New Development", clear: () => setNewDevOnly(false) } : null,
+    foreignBuyer ? { key: "foreign_buyer", label: "Foreign Buyer OK", clear: () => setForeignBuyer(false) } : null,
+  ].filter((f): f is ActiveFilter => f !== null);
 
   const heroListing = listings[0] && (listings[0].sponsored || listings[0].featured) ? listings[0] : null;
   const gridListings = heroListing ? listings.slice(1) : listings;
@@ -156,55 +259,112 @@ export default function ListingsClient() {
 
       {/* ── Filter Bar ───────────────────────────── */}
       <section className="bg-white border-b border-slate-200 sticky top-16 lg:top-20 z-30 shadow-sm">
-        <div className="container-custom py-3">
-          <div className="flex flex-wrap items-center gap-2 md:gap-3">
-            {/* City pills */}
-            <div className="flex gap-1 overflow-x-auto scrollbar-hide">
-              {CITIES.map((c) => (
-                <button
-                  key={c}
-                  onClick={() => setCity(c)}
-                  className={`px-3 py-1.5 text-xs font-bold rounded-lg whitespace-nowrap transition-all ${
-                    city === c
-                      ? "bg-slate-900 text-white shadow-sm"
-                      : "bg-slate-50 border border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-100"
-                  }`}
-                >
-                  {c}
-                </button>
+        <div className="container-custom py-2.5 space-y-2.5">
+
+          {/* Row 1: City */}
+          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide pb-0.5">
+            <span className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-400 shrink-0 mr-1">City</span>
+            {CITIES.map((c) => (
+              <PillBtn key={c} active={city === c} onClick={() => setCity(c)}>{c}</PillBtn>
+            ))}
+          </div>
+
+          {/* Row 2: Type + Beds */}
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Type pills */}
+            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
+              <span className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-400 shrink-0 mr-1">Type</span>
+              {TYPES.map((t) => (
+                <PillBtn key={t.value} active={type === t.value} onClick={() => setType(t.value)}>{t.label}</PillBtn>
               ))}
             </div>
 
             <div className="h-5 w-px bg-slate-200 hidden md:block" />
 
-            {/* Type select */}
-            <select
-              value={type}
-              onChange={(e) => setType(e.target.value)}
-              className="px-3 py-1.5 text-xs font-semibold bg-slate-50 border border-slate-200 rounded-lg text-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-400/30 hover:border-slate-300 cursor-pointer"
-            >
-              {TYPES.map((t) => (
-                <option key={t.value} value={t.value}>{t.label}</option>
+            {/* Beds pills */}
+            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide">
+              <span className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-400 shrink-0 mr-1">Beds</span>
+              {BEDS.map((b) => (
+                <PillBtn key={b.value} active={bedsMin === b.value} onClick={() => setBedsMin(b.value)}>{b.label}</PillBtn>
               ))}
-            </select>
+            </div>
+          </div>
 
-            <div className="h-5 w-px bg-slate-200 hidden md:block" />
+          {/* Row 3: Price + Sort */}
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Price pills */}
+            <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-hide flex-1 min-w-0">
+              <span className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-400 shrink-0 mr-1">Price</span>
+              {PRICE_RANGES.map((p) => (
+                <PillBtn key={p.value} active={priceRange === p.value} onClick={() => setPriceRange(p.value)}>{p.label}</PillBtn>
+              ))}
+            </div>
 
-            {/* Toggles */}
-            <label className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 cursor-pointer hover:text-slate-900 transition-colors">
+            {/* Sort */}
+            <div className="flex items-center gap-1.5 shrink-0">
+              <span className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-400">Sort</span>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="px-3 py-1.5 text-xs font-semibold bg-slate-50 border border-slate-200 rounded-lg text-slate-700 focus:outline-none focus:ring-2 focus:ring-amber-400/30 hover:border-slate-300 cursor-pointer"
+              >
+                {SORT_OPTIONS.map((s) => (
+                  <option key={s.value} value={s.value}>{s.label}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Row 4: Toggles + Result count */}
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
+            <label className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 cursor-pointer hover:text-slate-900 transition-colors select-none">
               <input type="checkbox" checked={firbOnly} onChange={(e) => setFirbOnly(e.target.checked)} className="rounded border-slate-300 text-amber-500 focus:ring-amber-500/30 w-3.5 h-3.5" />
               FIRB Approved
             </label>
-            <label className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 cursor-pointer hover:text-slate-900 transition-colors">
+            <label className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 cursor-pointer hover:text-slate-900 transition-colors select-none">
               <input type="checkbox" checked={otpOnly} onChange={(e) => setOtpOnly(e.target.checked)} className="rounded border-slate-300 text-amber-500 focus:ring-amber-500/30 w-3.5 h-3.5" />
               Off the Plan
             </label>
+            <label className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 cursor-pointer hover:text-slate-900 transition-colors select-none">
+              <input type="checkbox" checked={newDevOnly} onChange={(e) => setNewDevOnly(e.target.checked)} className="rounded border-slate-300 text-amber-500 focus:ring-amber-500/30 w-3.5 h-3.5" />
+              New Development
+            </label>
+            <label className="flex items-center gap-1.5 text-xs font-semibold text-slate-600 cursor-pointer hover:text-slate-900 transition-colors select-none">
+              <input type="checkbox" checked={foreignBuyer} onChange={(e) => setForeignBuyer(e.target.checked)} className="rounded border-slate-300 text-amber-500 focus:ring-amber-500/30 w-3.5 h-3.5" />
+              Foreign Buyer Eligible
+            </label>
 
-            {/* Result count */}
-            {!loading && total > 0 && (
-              <span className="ml-auto text-xs text-slate-400 hidden md:block">{total} listing{total !== 1 ? "s" : ""}</span>
+            {!loading && (
+              <span className="ml-auto text-xs text-slate-400 shrink-0">
+                {total} listing{total !== 1 ? "s" : ""}
+              </span>
             )}
           </div>
+
+          {/* Row 5: Active filter chips (only when filters are applied) */}
+          {activeFilters.length > 0 && (
+            <div className="flex flex-wrap items-center gap-1.5 pt-0.5 border-t border-slate-100">
+              <span className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-400 mr-0.5">Active</span>
+              {activeFilters.map((f) => (
+                <button
+                  key={f.key}
+                  onClick={f.clear}
+                  className="flex items-center gap-1 px-2 py-1 text-[0.65rem] font-bold rounded-md bg-amber-50 border border-amber-200 text-amber-700 hover:bg-amber-100 hover:border-amber-300 transition-colors"
+                >
+                  {f.label}
+                  <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              ))}
+              <button
+                onClick={clearAll}
+                className="ml-1 text-[0.65rem] font-bold text-slate-400 hover:text-slate-700 underline underline-offset-2 transition-colors"
+              >
+                Clear all
+              </button>
+            </div>
+          )}
         </div>
       </section>
 
@@ -213,7 +373,6 @@ export default function ListingsClient() {
         <div className="container-custom">
           {loading ? (
             <div className="space-y-4">
-              {/* Hero skeleton */}
               <div className="rounded-2xl overflow-hidden border border-slate-200 animate-pulse">
                 <div className="aspect-[3/1] bg-slate-100" />
               </div>
@@ -236,9 +395,9 @@ export default function ListingsClient() {
                 <Icon name="building" size={32} className="text-slate-300" />
               </div>
               <p className="text-slate-600 font-semibold mb-1">No listings match your filters</p>
-              <p className="text-sm text-slate-400 mb-4">Try changing your city or property type</p>
+              <p className="text-sm text-slate-400 mb-4">Try adjusting your city, price range, or other filters</p>
               <button
-                onClick={() => { setCity("All"); setType("All"); setFirbOnly(false); setOtpOnly(false); }}
+                onClick={clearAll}
                 className="px-4 py-2 text-sm font-bold text-amber-600 bg-amber-50 border border-amber-200 rounded-lg hover:bg-amber-100 transition-colors"
               >
                 Clear all filters
@@ -258,11 +417,8 @@ export default function ListingsClient() {
                       alt={heroListing.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     />
-                    {/* Gradient overlay */}
                     <div className="absolute inset-0 bg-gradient-to-r from-slate-900/80 via-slate-900/30 to-transparent" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-transparent to-transparent" />
-
-                    {/* Badges */}
                     <div className="absolute top-3 left-3 flex gap-2">
                       {heroListing.sponsored && (
                         <span className="text-[0.6rem] font-bold uppercase tracking-wider text-amber-700 bg-amber-50 border border-amber-200 px-2 py-1 rounded-full">Sponsored</span>
@@ -276,8 +432,6 @@ export default function ListingsClient() {
                         </span>
                       )}
                     </div>
-
-                    {/* Content overlay */}
                     <div className="absolute bottom-0 left-0 right-0 p-5 md:p-8 flex items-end justify-between gap-4">
                       <div className="min-w-0">
                         <p className="text-xs text-white/60 mb-1">{heroListing.city} · {heroListing.suburb} · {heroListing.state}</p>
@@ -285,12 +439,18 @@ export default function ListingsClient() {
                         {heroListing.developer_name && (
                           <p className="text-xs text-white/60">{heroListing.developer_name}</p>
                         )}
-                        <div className="flex flex-wrap gap-3 mt-2">
+                        <div className="flex flex-wrap gap-2 mt-2">
                           {heroListing.firb_approved && (
                             <span className="text-[0.6rem] font-bold text-emerald-300 bg-emerald-900/50 px-2 py-1 rounded-md">FIRB Approved</span>
                           )}
                           {heroListing.off_the_plan && (
                             <span className="text-[0.6rem] font-bold text-blue-300 bg-blue-900/50 px-2 py-1 rounded-md">Off the Plan</span>
+                          )}
+                          {heroListing.new_development && (
+                            <span className="text-[0.6rem] font-bold text-purple-300 bg-purple-900/50 px-2 py-1 rounded-md">New Development</span>
+                          )}
+                          {heroListing.foreign_buyer_eligible && (
+                            <span className="text-[0.6rem] font-bold text-sky-300 bg-sky-900/50 px-2 py-1 rounded-md">Foreign Buyer OK</span>
                           )}
                           <BedroomRange min={heroListing.bedrooms_min} max={heroListing.bedrooms_max} />
                         </div>
@@ -324,17 +484,13 @@ export default function ListingsClient() {
                       href={`/property/listings/${listing.slug}`}
                       className="border border-slate-200 bg-white rounded-2xl overflow-hidden hover:shadow-lg hover:border-slate-300 transition-all group flex flex-col"
                     >
-                      {/* Image area */}
                       <div className="aspect-[4/3] relative overflow-hidden bg-slate-100 shrink-0">
                         <img
                           src={imgs[0]}
                           alt={listing.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
-                        {/* Gradient overlay for badges */}
                         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-transparent" />
-
-                        {/* Top badges */}
                         <div className="absolute top-2 left-2 flex gap-1.5">
                           {listing.sponsored && (
                             <span className="text-[0.55rem] font-bold uppercase tracking-wider text-amber-700 bg-amber-50/95 border border-amber-200 px-1.5 py-0.5 rounded-full">Sponsored</span>
@@ -345,8 +501,6 @@ export default function ListingsClient() {
                             </span>
                           )}
                         </div>
-
-                        {/* Bottom overlay */}
                         <div className="absolute bottom-2 left-2 right-2 flex items-end justify-between">
                           <div className="flex gap-1 flex-wrap">
                             {listing.firb_approved && (
@@ -354,6 +508,12 @@ export default function ListingsClient() {
                             )}
                             {listing.off_the_plan && (
                               <span className="text-[0.55rem] font-bold text-white bg-blue-600/80 backdrop-blur-sm px-1.5 py-0.5 rounded-md">Off Plan</span>
+                            )}
+                            {listing.new_development && (
+                              <span className="text-[0.55rem] font-bold text-white bg-purple-600/80 backdrop-blur-sm px-1.5 py-0.5 rounded-md">New Dev</span>
+                            )}
+                            {listing.foreign_buyer_eligible && (
+                              <span className="text-[0.55rem] font-bold text-white bg-sky-600/80 backdrop-blur-sm px-1.5 py-0.5 rounded-md">Foreign OK</span>
                             )}
                           </div>
                           {listing.rental_yield_estimate && (
@@ -364,14 +524,12 @@ export default function ListingsClient() {
                         </div>
                       </div>
 
-                      {/* Card body */}
                       <div className="p-4 flex flex-col flex-1">
                         <p className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-400 mb-1">{listing.city} · {listing.suburb}</p>
                         <h3 className="font-bold text-slate-900 group-hover:text-slate-700 transition-colors mb-1.5 line-clamp-2 text-sm leading-snug">{listing.title}</h3>
                         {(listing.developer_name || listing.property_developers?.name) && (
                           <p className="text-xs text-slate-400 mb-2">{listing.developer_name || listing.property_developers?.name}</p>
                         )}
-
                         <div className="mt-auto pt-3 border-t border-slate-100">
                           <div className="flex items-end justify-between gap-2">
                             <div>
