@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import StarRatingInput from "./StarRatingInput";
 import { createClient } from "@/lib/supabase/client";
+import { trackEvent } from "@/lib/tracking";
 
 interface BrokerOption {
   slug: string;
@@ -106,6 +107,7 @@ export default function SwitchStoryForm({
 
       if (res.ok) {
         setStatus("success");
+        trackEvent("switch_story_submitted", { source_broker: sourceBroker, dest_broker: destBroker });
       } else {
         const data = await res.json();
         setErrorMsg(data.error || "Something went wrong. Please try again.");

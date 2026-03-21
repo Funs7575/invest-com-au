@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ENQUIRY_CONSENT_TEXT } from "@/lib/compliance";
+import { trackEvent } from "@/lib/tracking";
 
 const BUDGET_OPTIONS = [
   "Under $500k",
@@ -67,6 +68,13 @@ export default function PropertyEnquiryForm({
         setError(data.error || "Something went wrong. Please try again.");
       } else {
         setSuccess(true);
+        trackEvent("property_enquiry_submitted", {
+          listing_id: listingId,
+          listing_title: listingTitle,
+          developer_name: developerName,
+          budget: form.investment_budget,
+          timeline: form.timeline,
+        });
       }
     } catch {
       setError("Network error. Please try again.");

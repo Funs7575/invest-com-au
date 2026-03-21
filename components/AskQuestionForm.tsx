@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { trackEvent } from "@/lib/tracking";
 
 interface AskQuestionFormProps {
   brokerSlug: string;
@@ -54,6 +55,7 @@ export default function AskQuestionForm({ brokerSlug, brokerName, pageType = "br
       setQuestion("");
       setDisplayName("");
       setEmail("");
+      trackEvent("question_submitted", { broker_slug: brokerSlug, broker_name: brokerName, page_type: pageType });
     } catch (err) {
       setStatus("error");
       setErrorMsg(err instanceof Error ? err.message : "Something went wrong");

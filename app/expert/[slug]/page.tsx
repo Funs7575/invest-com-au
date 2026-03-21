@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import Icon from "@/components/Icon";
 import { SITE_URL, absoluteUrl, CURRENT_YEAR } from "@/lib/seo";
@@ -118,7 +119,7 @@ export default async function ExpertArticlePage({ params }: Props) {
             <div className="flex items-center gap-3 mt-4 pt-4 border-t border-slate-100">
               <Link href={`/advisor/${pro?.slug}`} className="shrink-0">
                 {pro?.photo_url ? (
-                  <img src={pro.photo_url} alt={pro.name} className="w-10 h-10 rounded-full object-cover ring-2 ring-violet-100" />
+                  <Image src={pro.photo_url} alt={pro.name} width={40} height={40} className="w-10 h-10 rounded-full object-cover ring-2 ring-violet-100" />
                 ) : (
                   <div className="w-10 h-10 rounded-full bg-violet-100 flex items-center justify-center text-sm font-bold text-violet-600">
                     {pro?.name?.split(" ").map((n: string) => n[0]).join("") || "?"}
@@ -149,7 +150,7 @@ export default async function ExpertArticlePage({ params }: Props) {
               <div className="flex items-start gap-4">
                 <Link href={`/advisor/${pro.slug}`} className="shrink-0">
                   {pro.photo_url ? (
-                    <img src={pro.photo_url} alt={pro.name} className="w-16 h-16 rounded-xl object-cover ring-2 ring-violet-100" />
+                    <Image src={pro.photo_url} alt={pro.name} width={64} height={64} className="w-16 h-16 rounded-xl object-cover ring-2 ring-violet-100" />
                   ) : (
                     <div className="w-16 h-16 rounded-xl bg-violet-100 flex items-center justify-center text-lg font-bold text-violet-600">
                       {pro.name?.split(" ").map((n: string) => n[0]).join("")}
