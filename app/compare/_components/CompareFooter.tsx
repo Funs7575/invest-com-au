@@ -77,12 +77,12 @@ export default function CompareFooter({ sorted, brokers, activeFilter }: Props) 
       </div>
 
       {/* General Advice Warning */}
-      <p className="mt-2 md:mt-3 text-[0.58rem] md:text-[0.69rem] text-slate-400 text-center leading-relaxed max-w-3xl mx-auto">
+      <p className="mt-2 md:mt-3 text-[0.69rem] md:text-xs text-slate-400 text-center leading-relaxed max-w-3xl mx-auto">
         {GENERAL_ADVICE_WARNING}
       </p>
 
       {/* Contextual risk warnings based on active filter */}
-      <div className="mt-2 text-[0.55rem] md:text-[0.62rem] text-slate-400 text-center leading-relaxed max-w-3xl mx-auto space-y-1.5">
+      <div className="mt-2 text-[0.65rem] md:text-[0.72rem] text-slate-400 text-center leading-relaxed max-w-3xl mx-auto space-y-1.5">
         <p>{PDS_CONSIDERATION} {FSG_NOTE}</p>
         {(activeFilter === 'cfd' || activeFilter === 'all') && (
           <p className="text-red-400/80">{CFD_WARNING_SHORT}</p>

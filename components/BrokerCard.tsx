@@ -66,9 +66,14 @@ export default memo(function BrokerCard({
         <div className="flex items-center gap-2.5 mb-2">
           <BrokerLogo broker={broker} size="md" />
           <div className="flex-1 min-w-0">
-            <a href={`/broker/${broker.slug}`} className="font-bold text-sm text-slate-900 hover:text-slate-700 transition-colors block truncate">
-              {broker.name}
-            </a>
+            <div className="flex items-center gap-1.5">
+              <a href={`/broker/${broker.slug}`} className="font-bold text-sm text-slate-900 hover:text-slate-700 transition-colors truncate">
+                {broker.name}
+              </a>
+              {broker.affiliate_url && !isSponsoredBroker && (
+                <span title="We may earn a commission if you visit this platform" className="text-[0.6rem] font-semibold px-1 py-0.5 bg-slate-100 text-slate-400 rounded uppercase tracking-wide shrink-0">Ad</span>
+              )}
+            </div>
             <div className="flex items-center gap-1.5">
               <span className="text-amber-400 text-xs">{renderStars(broker.rating || 0)}</span>
               <span className="text-[0.65rem] font-semibold text-slate-500">{broker.rating}/5</span>
