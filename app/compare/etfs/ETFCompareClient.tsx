@@ -19,7 +19,7 @@ interface ETF {
   description: string;
 }
 
-/* ─── Hardcoded ETF Data ─── */
+/* ─── Hardcoded ETF Data (last verified: March 2026) ─── */
 
 const ETF_DATA: ETF[] = [
   { ticker: "VAS", name: "Vanguard Australian Shares Index", provider: "Vanguard", mer: 0.07, category: "Australian Shares", description: "Tracks the S&P/ASX 300 Index, providing broad exposure to Australian large-, mid- and small-cap shares." },

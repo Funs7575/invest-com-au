@@ -19,7 +19,7 @@ type SuperFund = {
   description: string;
 };
 
-/* ─── Hardcoded data — 15 popular Australian super funds ─── */
+/* ─── Hardcoded data — 15 popular Australian super funds (last verified: March 2026) ─── */
 
 const SUPER_FUNDS: SuperFund[] = [
   {
