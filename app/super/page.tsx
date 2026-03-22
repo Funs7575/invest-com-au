@@ -5,6 +5,7 @@ import { getVerticalBySlug } from "@/lib/verticals";
 import { absoluteUrl } from "@/lib/seo";
 import { boostFeaturedPartner } from "@/lib/sponsorship";
 import VerticalPillarPage from "@/components/VerticalPillarPage";
+import ForeignInvestorCallout from "@/components/ForeignInvestorCallout";
 
 const vertical = getVerticalBySlug("super")!;
 
@@ -79,12 +80,19 @@ export default async function SuperPage() {
     .limit(3);
 
   return (
-    <VerticalPillarPage
-      config={vertical}
-      brokers={sorted}
-      relatedArticles={relatedArticles}
-      advisors={advisors || []}
-      expertArticles={expertArticles || []}
-    />
+    <>
+      <ForeignInvestorCallout
+        href="/foreign-investment/super"
+        verticalName="super (DASP)"
+        keyRule="Temporary visa holders: employer super guarantee applies (11.5%) · DASP withholding 35% (or 65% for Working Holiday Makers) when leaving Australia"
+      />
+      <VerticalPillarPage
+        config={vertical}
+        brokers={sorted}
+        relatedArticles={relatedArticles}
+        advisors={advisors || []}
+        expertArticles={expertArticles || []}
+      />
+    </>
   );
 }

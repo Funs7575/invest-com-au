@@ -256,10 +256,30 @@ export default async function PropertyListingPage({ params }: { params: Promise<
             <p className="text-[0.62rem] text-slate-400 leading-relaxed -mt-2">
               {PROPERTY_INDICATIVE_PRICES}
             </p>
-            {listing.firb_approved && (
-              <p className="text-[0.62rem] text-slate-400 leading-relaxed">
-                FIRB note: This project has received FIRB approval from the developer. Foreign purchasers must independently obtain their own FIRB clearance prior to purchasing. Seek advice from a qualified solicitor regarding FIRB obligations.
-              </p>
+            {(listing.firb_approved || listing.foreign_buyer_eligible) && (
+              <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+                <div className="flex items-start gap-2.5">
+                  <svg className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <div>
+                    <p className="text-xs font-bold text-emerald-800 mb-1">
+                      {listing.firb_approved ? "FIRB Approved Development" : "Foreign Buyer Eligible"}
+                    </p>
+                    <p className="text-[0.65rem] text-emerald-700 leading-relaxed mb-2">
+                      {listing.firb_approved
+                        ? "The developer has obtained FIRB approval for this project. Foreign non-residents and temporary visa holders may be eligible to purchase. Each buyer must still obtain their own individual FIRB clearance before exchanging contracts."
+                        : "This development is eligible for purchase by foreign buyers. Individual FIRB approval may be required. Seek advice from an Australian solicitor before proceeding."}
+                    </p>
+                    <Link
+                      href="/property/foreign-investment"
+                      className="inline-flex items-center gap-1 text-[0.65rem] font-bold text-emerald-700 hover:text-emerald-800 underline underline-offset-2"
+                    >
+                      Read our Foreign Investment Guide &rarr;
+                    </Link>
+                  </div>
+                </div>
+              </div>
             )}
 
             {/* Description */}

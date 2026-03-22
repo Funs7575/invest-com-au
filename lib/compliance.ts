@@ -295,6 +295,32 @@ export const PROPERTY_INDICATIVE_PRICES =
   "Always obtain formal pricing from the developer or your solicitor.";
 
 /**
+ * FIRB general disclaimer.
+ * Required on all pages discussing FIRB, foreign investment rules, or foreign buyer eligibility.
+ * The Foreign Acquisitions and Takeovers Act 1975 (Cth) and FIRB policies change regularly.
+ * This disclaimer ensures users seek qualified legal/migration advice.
+ */
+export const FIRB_DISCLAIMER =
+  "Information about FIRB (Foreign Investment Review Board) requirements is general in nature " +
+  "and does not constitute legal advice. Foreign investment rules, thresholds, and application " +
+  "fees are updated regularly by the Australian Government. Always obtain independent legal " +
+  "advice from an Australian solicitor or registered migration agent before purchasing property " +
+  "as a foreign investor. Invest.com.au accepts no liability for decisions made in reliance on " +
+  "this information.";
+
+/**
+ * Foreign buyer stamp duty surcharge warning.
+ * Required wherever state-based surcharge figures are displayed.
+ * Rates shown are indicative and verified as at March 2026 — state governments
+ * change these without notice.
+ */
+export const FOREIGN_BUYER_STAMP_DUTY_WARNING =
+  "Foreign purchaser stamp duty surcharge rates shown are indicative as at March 2026. " +
+  "State and territory governments may change rates at any time. Always verify the current " +
+  "rate with the relevant state revenue office or your solicitor before signing contracts. " +
+  "Additional annual land tax surcharges may also apply in some states.";
+
+/**
  * Property tax note.
  * Required near rental yield and capital growth figures.
  * Property investment has significant tax implications including CGT, land tax,
@@ -329,3 +355,78 @@ export const DATA_PROCESSOR_NOTE =
   "agreements (DPAs) or equivalent contractual protections in place with Supabase (database), " +
   "Vercel (hosting), and Google (analytics). These agreements require processors to handle " +
   "your data only on our instructions and in accordance with applicable privacy laws.";
+
+// ═══════════════════════════════════════════════════════════════════
+// FOREIGN INVESTMENT COMPLIANCE
+// ═══════════════════════════════════════════════════════════════════
+
+/**
+ * General foreign investor disclaimer.
+ * Required on all cross-vertical foreign investment pages.
+ * Tax and regulatory rules for foreign investors change frequently.
+ */
+export const FOREIGN_INVESTOR_GENERAL_DISCLAIMER =
+  "Information about foreign investment in Australia is general in nature and does not " +
+  "constitute legal, tax, or financial advice. Australian tax laws, withholding tax rates, " +
+  "FIRB rules, and regulatory requirements for foreign investors are updated regularly. " +
+  "Your specific obligations depend on your visa status, country of residence, tax residency, " +
+  "and the type of investment. Always seek advice from a registered Australian tax agent and, " +
+  "where applicable, an Australian solicitor or migration agent before investing.";
+
+/**
+ * Withholding tax note.
+ * Required on any page showing withholding tax rates for dividends, interest, or royalties.
+ * Rates shown are based on ATO published rates as at March 2026.
+ */
+export const WITHHOLDING_TAX_NOTE =
+  "Withholding tax rates shown are indicative as at March 2026, based on the ATO's " +
+  "published schedules and applicable Double Tax Agreements (DTAs). Actual rates may " +
+  "differ based on the type of income, your specific visa and residency status, treaty " +
+  "interpretation, and any conditions within the applicable DTA. Always verify your " +
+  "withholding obligations with a registered tax agent or the ATO.";
+
+/**
+ * DASP warning — the 35–65% withholding rate is counterintuitive and must be disclosed prominently.
+ * Required on all superannuation pages referencing DASP.
+ */
+export const DASP_WARNING =
+  "DASP (Departing Australia Superannuation Payment) withholding rates are 35% for most " +
+  "temporary visa holders (on the taxed element) and 65% for Working Holiday Makers — these " +
+  "rates are set by the Australian Government and cannot be reduced. This means you will " +
+  "receive significantly less than your super account balance. Always confirm your super " +
+  "balance and calculate the after-tax amount before relying on DASP funds.";
+
+/**
+ * Non-resident tax note.
+ * Required on pages explaining Australian income tax rules for non-residents.
+ */
+export const NON_RESIDENT_TAX_NOTE =
+  "As an Australian tax non-resident, you are generally taxed only on income that is " +
+  "sourced in Australia. Unlike residents, you do not have access to the tax-free threshold " +
+  "($18,200), the Medicare levy reduction, or the 50% CGT discount. Tax obligations depend " +
+  "on the type of income and your country of residence. Seek advice from a registered " +
+  "Australian tax agent to understand your specific obligations.";
+
+/**
+ * DTA disclaimer.
+ * Required on any page displaying DTA rates or claiming DTA benefits.
+ * Treaty provisions are complex and subject to interpretation.
+ */
+export const DTA_DISCLAIMER =
+  "Double Tax Agreement (DTA) rates shown are indicative only. The actual benefit available " +
+  "under a specific DTA depends on treaty conditions, your specific residency status in both " +
+  "countries, the type of income, and the ATO's interpretation of the treaty. DTA provisions " +
+  "are complex legal instruments. Do not rely solely on the table shown — verify your specific " +
+  "entitlements with a tax professional experienced in international taxation.";
+
+/**
+ * Non-resident broker eligibility note.
+ * Required on pages listing broker eligibility for non-residents.
+ * Broker policies change frequently — NULL means unknown, not confirmed ineligible.
+ */
+export const BROKER_NON_RESIDENT_NOTE =
+  "Broker eligibility for non-residents and temporary visa holders is subject to each " +
+  "broker's own policies, which can change at any time. Eligibility shown reflects our " +
+  "best knowledge as at the date of last review. We cannot guarantee accuracy — always " +
+  "verify directly with the broker before opening an account. Some brokers may accept " +
+  "non-residents for new accounts but have restrictions for existing customers who move overseas.";

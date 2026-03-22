@@ -5,6 +5,7 @@ import { getVerticalBySlug } from "@/lib/verticals";
 import { absoluteUrl } from "@/lib/seo";
 import { boostFeaturedPartner } from "@/lib/sponsorship";
 import VerticalPillarPage from "@/components/VerticalPillarPage";
+import ForeignInvestorCallout from "@/components/ForeignInvestorCallout";
 
 const vertical = getVerticalBySlug("cfd")!;
 
@@ -79,12 +80,19 @@ export default async function CfdPage() {
     .limit(3);
 
   return (
-    <VerticalPillarPage
-      config={vertical}
-      brokers={sorted}
-      relatedArticles={relatedArticles}
-      advisors={advisors || []}
-      expertArticles={expertArticles || []}
-    />
+    <>
+      <ForeignInvestorCallout
+        href="/foreign-investment"
+        verticalName="CFD & Forex"
+        keyRule="Most ASIC-regulated CFD brokers accept non-residents · ASIC leverage limits apply to all retail clients · CFD profits may be taxable Australian income"
+      />
+      <VerticalPillarPage
+        config={vertical}
+        brokers={sorted}
+        relatedArticles={relatedArticles}
+        advisors={advisors || []}
+        expertArticles={expertArticles || []}
+      />
+    </>
   );
 }

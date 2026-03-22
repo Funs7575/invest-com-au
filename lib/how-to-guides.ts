@@ -1885,6 +1885,348 @@ For REIT and ETF investors, monitor your portfolio allocation and rebalance if p
     ],
     verticalLink: "/investing",
   },
+
+  // ─── Foreign Investment Guides ────────────────────────────────────────────
+
+  {
+    slug: "invest-in-australia-as-non-resident",
+    title: "How to Invest in Australia as a Non-Resident (2026) — Complete Guide",
+    h1: "How to Invest in Australia as a Non-Resident",
+    metaDescription:
+      "Step-by-step guide to investing in Australia as a non-resident. Open a brokerage account, understand withholding tax, avoid common mistakes, and find the right platforms. Updated March 2026.",
+    intro:
+      "Non-residents can invest in Australian shares, crypto, and property — but the rules are different from what Australian residents experience. You'll face withholding tax on dividends and interest, stricter KYC checks, and limited broker options if you don't have an Australian address. This guide walks you through every step, from understanding your tax obligations to opening accounts and making your first investment.",
+    steps: [
+      {
+        heading: "Understand your tax obligations first",
+        body: `Before investing a single dollar, understand how Australian tax applies to non-residents. The key rules:
+
+**Dividends:** Unfranked dividends attract 30% withholding tax (WHT) — reduced to typically 15% if your country has a Double Tax Agreement (DTA) with Australia (USA, UK, NZ, etc.). Fully franked dividends attract 0% WHT (tax already paid by the company).
+
+**Interest:** Australian bank interest attracts 10% WHT — deducted automatically by the bank.
+
+**CGT on shares:** Non-residents are generally EXEMPT from Australian CGT on listed shares (portfolio holdings under 10%). This is a significant advantage.
+
+**CGT on property:** Non-residents are NOT exempt from CGT on Australian real property. Full non-resident CGT rates apply.
+
+**No tax-free threshold:** Non-residents are taxed from the first dollar of Australian income at 32.5% (up to $120,000).
+
+Check whether your country has a DTA with Australia — this is the single most important factor affecting your after-tax returns. Visit our Tax Guide for non-residents.`,
+      },
+      {
+        heading: "Choose what to invest in",
+        body: `The most accessible investments for non-residents without an Australian address are:
+
+**Australian shares and ETFs** — available via Interactive Brokers (the most non-resident-friendly broker). Gives exposure to ASX-listed companies, ETFs, and international markets via a single account. Dividend withholding tax applies, but the CGT exemption is a major advantage.
+
+**Crypto** — most AUSTRAC-registered exchanges accept non-residents. Lower barriers to entry than share brokers. No WHT on crypto gains.
+
+**Property** — possible but complex: FIRB approval required, stamp duty surcharges of 7–8%, limited to new dwellings (non-residents cannot buy established homes). Requires professional legal advice.
+
+**Savings accounts** — difficult to open without an Australian address. 10% WHT on interest. Usually not worth the effort for non-residents compared to home-country alternatives.`,
+      },
+      {
+        heading: "Open a brokerage or exchange account",
+        body: `For shares: Interactive Brokers is the leading option for non-residents without an Australian address. It accepts clients in 200+ countries and provides access to ASX shares, ETFs, and global markets. Sign-up is online: passport, overseas address, and source of funds declaration. Account opening takes 1–3 business days.
+
+For crypto: Major AUSTRAC-registered exchanges (CoinSpot, Swyftx, Binance AU) accept non-residents. You'll need a passport and overseas proof of address. Enhanced KYC may require additional documentation for larger account limits. Fund via international wire transfer (AUD bank account not required).
+
+For both: Declare your non-resident status upfront. This ensures correct withholding tax rates are applied. If you don't declare, the platform may withhold at the top marginal rate.`,
+      },
+      {
+        heading: "Complete enhanced KYC verification",
+        body: `As a non-resident, expect a more thorough identity verification process than domestic customers. Required documents typically include:
+
+- Valid passport (not a driver's licence — most platforms require passport for international ID)
+- Proof of overseas address: utility bill, bank statement, or government letter dated within 3 months
+- For larger account limits or deposits: source of funds declaration (e.g., employment income letter, recent payslips, bank statements)
+- Some platforms require a "liveness check" — a selfie or short video holding your ID
+
+Allow 24–72 hours for enhanced KYC to be processed. Have documents ready in advance in clear PDF or photo format.`,
+      },
+      {
+        heading: "Fund your account and declare non-resident status",
+        body: `Funding an Australian brokerage or exchange account from overseas:
+
+- International wire transfer (SWIFT) is universally accepted — but can incur FX fees and take 1–3 business days
+- Some platforms accept Wise or other money transfer services (check platform-specific guidance)
+- Credit/debit card funding is available on some crypto exchanges (higher fees)
+
+When funding, declare your non-residency to the broker or exchange. For share brokers, provide your TFN (if you have one) or a written declaration that you're a non-resident for tax purposes. This ensures the correct withholding rate (e.g., 15% DTA rate rather than 30%) is applied to your dividends.
+
+For US shares, complete a W-8BEN form — this certifies your non-US status and entitles you to the reduced US dividend withholding rate under the Australia-US DTA.`,
+      },
+      {
+        heading: "Monitor and report correctly in your home country",
+        body: `Australian withholding tax is a final tax — you don't need to lodge an Australian return for passive dividend or interest income. However, you likely need to declare Australian investment income in your home country's tax return.
+
+Key records to keep:
+- Brokerage transaction history (buy/sell dates, prices, quantities)
+- Dividend statements showing the gross dividend and WHT deducted
+- Annual tax summary from your broker (most provide these for each calendar year)
+
+If you receive fully franked Australian dividends, the gross-up amount (dividend + franking credit) may need to be declared in your home country even though you didn't receive the credit. Get advice from a tax professional in your home country familiar with cross-border investment income.
+
+Consider consulting an Australian tax agent if you have rental income, business income, or capital gains on Australian property — these may require an Australian return.`,
+      },
+    ],
+    relatedBrokerFilter: (b: Broker) => b.platform_type === "share_broker" && (b as any).accepts_non_residents === true,
+    relatedBestPages: [
+      { label: "Foreign Investment Hub", href: "/foreign-investment" },
+      { label: "Tax Guide for Non-Residents", href: "/foreign-investment/tax" },
+      { label: "Share Brokers for Non-Residents", href: "/foreign-investment/shares" },
+    ],
+    faqs: [
+      {
+        question: "Can I open an Australian brokerage account without an Australian address?",
+        answer:
+          "Very few Australian brokers accept non-residents without an Australian address. Interactive Brokers is the primary option — it operates in 200+ countries and doesn't require an Australian residential address.",
+      },
+      {
+        question: "Do non-residents pay capital gains tax in Australia on share sales?",
+        answer:
+          "Generally no. Non-residents are typically exempt from Australian CGT on gains from listed Australian company shares (Section 855-10 exemption), provided they hold less than 10% of the company. This exemption does NOT apply to Australian real property.",
+      },
+      {
+        question: "What is the withholding tax rate for non-residents on dividends?",
+        answer:
+          "30% on unfranked dividends, reduced to typically 15% if your country has a DTA with Australia. Fully franked dividends attract 0% WHT (tax already paid via the imputation system). The rate is applied automatically by the company's share registry.",
+      },
+      {
+        question: "Do I need a Tax File Number (TFN) as a non-resident?",
+        answer:
+          "You don't need a TFN, but you must declare your non-resident status to your broker. Without a TFN or non-residency declaration, the broker must withhold at the top marginal rate. You can apply for a TFN as a non-resident if you have a valid visa or Australian income.",
+      },
+    ],
+    verticalLink: "/foreign-investment",
+  },
+  {
+    slug: "claim-dasp-super",
+    title: "How to Claim DASP Superannuation in Australia (2026) — Step-by-Step",
+    h1: "How to Claim Your Super via DASP When Leaving Australia",
+    metaDescription:
+      "Step-by-step guide to claiming Departing Australia Superannuation Payment (DASP). Who's eligible, DASP withholding rates (35% or 65%), how to apply online, and what to expect. Updated March 2026.",
+    intro:
+      "If you worked in Australia on a temporary visa, your employer paid superannuation on your wages. When you leave Australia permanently, you can claim that super back through DASP (Departing Australia Superannuation Payment). But there's a catch: the ATO withholds 35% (or 65% for Working Holiday Makers) before paying you. This guide walks you through the exact steps.",
+    steps: [
+      {
+        heading: "Check you meet the eligibility requirements",
+        body: `Before applying for DASP, you must meet ALL of the following:
+
+1. You held an eligible temporary visa (not a permanent resident or citizen)
+2. Your temporary visa has ceased — either expired, cancelled, or you've departed and it's expired
+3. You have permanently departed Australia (or intend to — you must have left)
+4. You are NOT an Australian or New Zealand citizen
+
+NZ citizens have a better option: the Trans-Tasman Retirement Savings Portability Scheme allows you to transfer your Australian super to a KiwiSaver fund instead of taking DASP — which avoids the withholding tax.
+
+**Working Holiday Makers (subclass 417 and 462):** You're eligible for DASP but your withholding rate is 65% across all components — not 35%.`,
+      },
+      {
+        heading: "Find all your super funds",
+        body: `Many people working in Australia accumulate super across multiple funds — especially if they worked for different employers. Before you leave (or while you still have access to myGov), find all your super:
+
+1. Set up a myGov account (mygov.gov.au) and link it to the ATO
+2. In the ATO section, go to Super → My super — this shows all your super accounts
+3. Note the fund name, ABN, and member number for each
+
+Consider consolidating into a single fund before leaving — this simplifies the DASP claim (one application instead of many). Check for any exit fees or insurance implications before consolidating.
+
+If you don't have myGov access, you can use the ATO's Super Seeker or call the ATO on 13 28 65.`,
+      },
+      {
+        heading: "Gather your documents",
+        body: `For the online DASP application, you'll need:
+
+- Your passport (the same one used when working in Australia)
+- Your super fund details: fund name, ABN, and member number (from your member statements or MyGov)
+- Tax File Number (if you have one — not mandatory but speeds processing)
+- Australian bank account details (if you have one — for direct payment) OR overseas bank account details
+- Evidence your visa has ceased (the DASP system usually verifies this automatically via the Department of Home Affairs, but have your visa grant letter handy)
+
+If you have multiple funds, gather details for each.`,
+      },
+      {
+        heading: "Apply online via the DASP portal",
+        body: `The DASP application is completely online at ato.gov.au/dasp.
+
+Steps in the portal:
+1. Create or log in to the DASP portal (separate from myGov)
+2. Select "Apply for DASP" and enter your passport details
+3. The system automatically checks your visa status with the Department of Home Affairs
+4. Add each super fund: fund name, ABN, member number, your date of birth, estimated balance
+5. Provide your payment details: Australian or overseas bank account, or request a cheque
+6. Submit and note your application reference number
+
+The portal submits your application electronically to each fund. Processing takes up to 28 days per fund — AUSTRAC identity verification must be completed before payment is released.`,
+      },
+      {
+        heading: "Understand the withholding and receive payment",
+        body: `Once the fund processes your DASP claim, they will:
+
+1. Calculate the DASP withholding tax on each component
+2. Deduct the withholding tax
+3. Transfer the remaining amount to your nominated account
+
+For most temporary visa holders (not WHM):
+- Taxed element: 35% withheld → you receive 65 cents per dollar
+- Tax-free component: 0% withheld → you receive 100 cents per dollar
+
+For Working Holiday Makers: 65% withheld across all components → you receive 35 cents per dollar.
+
+Payment can be made to an Australian or overseas bank account. International transfers may take an additional 3–5 business days after the fund releases the funds.
+
+**Important:** DASP withholding is a final Australian tax. You don't need to lodge an Australian tax return for DASP only. However, declare the DASP payment in your home country's tax return as required.`,
+      },
+    ],
+    relatedBrokerFilter: (b: Broker) => b.platform_type === "super_fund",
+    relatedBestPages: [
+      { label: "Super & DASP Guide", href: "/foreign-investment/super" },
+      { label: "Foreign Investment Hub", href: "/foreign-investment" },
+      { label: "Compare Super Funds", href: "/super" },
+    ],
+    faqs: [
+      {
+        question: "How much of my super will I receive through DASP?",
+        answer:
+          "For most temporary visa holders: approximately 65% (35% withholding on the taxed element). For Working Holiday Makers (subclass 417 and 462): approximately 35% (65% withholding on all components). Tax-free components (from after-tax contributions) are returned at 100%.",
+      },
+      {
+        question: "Can I claim DASP before leaving Australia?",
+        answer:
+          "No. DASP can only be claimed after your temporary visa has ceased and you have departed Australia. You cannot access super while your visa is still valid.",
+      },
+      {
+        question: "Is there a time limit to claim DASP?",
+        answer:
+          "No hard time limit. However, after 2 years of inactivity, super may be transferred to the ATO as 'lost super'. You can still claim it from the ATO's lost super register — it's preserved indefinitely.",
+      },
+      {
+        question: "What if my employer didn't pay super?",
+        answer:
+          "Employer super guarantee is mandatory for all employees (including temporary visa holders) earning over $450/month (since 2022, all workers). If super wasn't paid, report to the ATO or Fair Work Australia. The ATO can recover unpaid super from employers.",
+      },
+    ],
+    verticalLink: "/foreign-investment/super",
+  },
+  {
+    slug: "withholding-tax-australia-non-resident",
+    title: "Understanding Australian Withholding Tax for Non-Residents (2026)",
+    h1: "Australian Withholding Tax for Non-Residents — Complete Explainer",
+    metaDescription:
+      "How Australian withholding tax works for non-residents. Rates by income type (dividends 30%, interest 10%), DTA treaty reductions, franking credits, and what you actually receive. Updated March 2026.",
+    intro:
+      "Withholding tax is the mechanism Australia uses to collect tax from non-residents on income sourced here. Unlike residents who pay tax via assessments and returns, most non-resident investment income is taxed at source — the company, bank, or fund deducts the tax before paying you. Understanding these rates, and how Double Tax Agreements can reduce them, is fundamental to investing in Australia from overseas.",
+    steps: [
+      {
+        heading: "Understand which income types attract withholding tax",
+        body: `Australian withholding tax applies to different types of income at different rates:
+
+**Dividends (unfranked): 30%** — The most significant rate. Applied on the unfranked portion of any dividend paid to a non-resident. If your country has a DTA with Australia, this is typically reduced to 15%.
+
+**Dividends (fully franked): 0%** — If the Australian company has paid 30% corporate tax on its profits, the dividend is "franked" and no additional withholding applies. Major Australian blue-chip companies (CBA, BHP, CSL, etc.) typically pay heavily franked dividends — this is a major advantage for non-residents.
+
+**Interest: 10%** — Applied to interest paid by Australian banks, bonds, and other debt instruments. This rate is rarely reduced below 10% by DTAs.
+
+**Royalties: 30%** — Applied to royalties paid to non-residents. Often reduced significantly by DTA (to 5–15%).
+
+**Rental income, business income:** Not subject to withholding — instead taxed at non-resident marginal rates via the standard assessment process. An Australian tax return is required.`,
+      },
+      {
+        heading: "Check if your country has a Double Tax Agreement (DTA)",
+        body: `Australia has DTAs with 40+ countries. These treaties set lower withholding rates that override the standard rates above.
+
+**Key DTA countries and their dividend WHT rates:**
+- USA: 15% (instead of 30%)
+- UK: 15%
+- NZ: 15%
+- Japan: 10%
+- Singapore: 15%
+- Germany: 15%
+- France: 15%
+- China: 15%
+
+**Countries WITHOUT a DTA with Australia (full 30% applies):**
+- UAE, Saudi Arabia, Taiwan, Brazil, Nigeria
+
+Check our full DTA table at /foreign-investment/tax for all 30+ countries.
+
+To claim DTA rates: provide your residency details to your broker. For some countries, a tax residency certificate may be required. Your broker or fund will apply the correct rate automatically once residency is confirmed.`,
+      },
+      {
+        heading: "Understand franking credits — and why non-residents can't claim refunds",
+        body: `Australia's imputation system means companies pay 30% corporate tax on profits before paying dividends. When they pay dividends to shareholders, they "attach" franking credits representing the corporate tax already paid.
+
+For Australian residents: franking credits offset their personal tax bill, and if the credit exceeds their tax liability, they get a refund. This is why Australian investors love franked dividends.
+
+For non-residents: the zero withholding on franked dividends is the only benefit — you cannot claim a refund of franking credits. You receive the gross dividend without additional withholding, but the franking credits have no direct cash value to you.
+
+Practical implication: an Australian company paying a 70% franked dividend would attract WHT on only 30% of the dividend amount (the unfranked portion). A fully franked dividend has no Australian tax for non-residents.`,
+      },
+      {
+        heading: "See what you actually receive after withholding",
+        body: `Here's how withholding tax affects what you actually receive:
+
+**Example 1: Unfranked dividend (no DTA country)**
+- Declared dividend: $100
+- WHT at 30%: −$30
+- You receive: $70
+
+**Example 2: Unfranked dividend (DTA country, e.g. USA)**
+- Declared dividend: $100
+- WHT at 15% (DTA rate): −$15
+- You receive: $85
+
+**Example 3: Fully franked dividend (any non-resident)**
+- Declared dividend: $100 + $42.86 franking credit attached
+- WHT: $0 (fully franked, no withholding)
+- You receive: $100
+
+**Example 4: Australian bank interest**
+- Interest accrued: $1,000
+- WHT at 10%: −$100
+- You receive: $900`,
+      },
+      {
+        heading: "Claim foreign tax offsets in your home country",
+        body: `The Australian withholding tax you pay is usually a foreign tax credit in your home country. How this works:
+
+1. Australia taxes your Australian investment income via withholding
+2. You declare the gross Australian income in your home country's tax return
+3. You claim a foreign income tax offset for the Australian WHT paid
+4. Your home country taxes you on the Australian income, then deducts the Australian tax already paid
+5. Net result: tax is generally paid once (at the higher of the two countries' rates)
+
+The mechanics vary by country — some give a direct credit, others give an exemption or deduction. Consult a tax professional in your home country who understands cross-border investment income.
+
+Note: if your home country's tax rate on dividend income is lower than the Australian WHT rate (e.g., your home country taxes dividends at 10% and Australia withheld 15%), you may not get a full offset — the "excess" Australian tax is lost.`,
+      },
+    ],
+    relatedBrokerFilter: (b: Broker) => b.platform_type === "share_broker",
+    relatedBestPages: [
+      { label: "Tax Guide for Non-Residents", href: "/foreign-investment/tax" },
+      { label: "Foreign Investment Hub", href: "/foreign-investment" },
+      { label: "Share Brokers for Non-Residents", href: "/foreign-investment/shares" },
+    ],
+    faqs: [
+      {
+        question: "Is Australian withholding tax the same as income tax?",
+        answer:
+          "For non-residents, withholding tax on passive income (dividends, interest) IS the final tax — you don't lodge a return to pay additional tax, and you can't get a refund. For rental income and business income, the standard non-resident income tax rates apply instead via an assessment.",
+      },
+      {
+        question: "How do I apply for DTA-reduced withholding rates?",
+        answer:
+          "Inform your broker of your residency status. They will apply the DTA rate automatically. For some countries, you may need to provide a tax residency certificate from your home country's tax authority. If you've had too much withholding deducted, you may be able to lodge a request for refund — seek professional advice.",
+      },
+      {
+        question: "Does withholding tax apply to Australian ETFs?",
+        answer:
+          "Yes. Australian ETFs distribute income (dividends, interest, capital gains) to unit holders. Non-residents receive distributions after withholding tax is deducted on the applicable portions. Distributions may consist of various components — some attracting WHT, some not. Check the ETF's distribution statement for details.",
+      },
+    ],
+    verticalLink: "/foreign-investment/tax",
+  },
 ];
 
 /** Get all guide slugs for static params */

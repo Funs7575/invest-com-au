@@ -5,6 +5,7 @@ import { getVerticalBySlug } from "@/lib/verticals";
 import { absoluteUrl } from "@/lib/seo";
 import { boostFeaturedPartner } from "@/lib/sponsorship";
 import VerticalPillarPage from "@/components/VerticalPillarPage";
+import ForeignInvestorCallout from "@/components/ForeignInvestorCallout";
 
 const vertical = getVerticalBySlug("savings")!;
 
@@ -79,12 +80,19 @@ export default async function SavingsPage() {
     .limit(3);
 
   return (
-    <VerticalPillarPage
-      config={vertical}
-      brokers={sorted}
-      relatedArticles={relatedArticles}
-      advisors={advisors || []}
-      expertArticles={expertArticles || []}
-    />
+    <>
+      <ForeignInvestorCallout
+        href="/foreign-investment/savings"
+        verticalName="Australian savings"
+        keyRule="10% withholding tax on interest for non-residents · $250k government guarantee applies · most banks require Australian address"
+      />
+      <VerticalPillarPage
+        config={vertical}
+        brokers={sorted}
+        relatedArticles={relatedArticles}
+        advisors={advisors || []}
+        expertArticles={expertArticles || []}
+      />
+    </>
   );
 }
