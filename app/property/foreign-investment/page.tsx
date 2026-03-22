@@ -67,15 +67,29 @@ export default function ForeignInvestmentPage() {
         }}
       />
 
+      {/* ── Hub cross-link banner ──────────────────── */}
+      <div className="bg-amber-50 border-b border-amber-200 py-3">
+        <div className="container-custom flex flex-col sm:flex-row items-start sm:items-center gap-2 justify-between">
+          <p className="text-xs text-amber-800 leading-snug">
+            <span className="font-bold">This page covers property only.</span> Foreign investment rules also apply to shares, crypto, savings, and super.
+          </p>
+          <Link href="/foreign-investment" className="shrink-0 text-xs font-bold text-amber-700 hover:text-amber-900 underline underline-offset-2 whitespace-nowrap">
+            View complete Foreign Investment Hub &rarr;
+          </Link>
+        </div>
+      </div>
+
       {/* ── Hero ────────────────────────────────────── */}
       <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-10 md:py-14">
         <div className="container-custom">
-          <nav className="text-xs text-slate-400 mb-5 flex items-center gap-1.5">
+          <nav className="text-xs text-slate-400 mb-5 flex items-center gap-1.5 flex-wrap">
             <Link href="/" className="hover:text-slate-200">Home</Link>
+            <span>/</span>
+            <Link href="/foreign-investment" className="hover:text-slate-200">Foreign Investment</Link>
             <span>/</span>
             <Link href="/property" className="hover:text-slate-200">Property</Link>
             <span>/</span>
-            <span className="text-slate-300">Foreign Investment Guide</span>
+            <span className="text-slate-300">FIRB Guide</span>
           </nav>
 
           <div className="grid md:grid-cols-2 gap-8 items-center">

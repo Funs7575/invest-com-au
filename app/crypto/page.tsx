@@ -5,6 +5,7 @@ import { getVerticalBySlug } from "@/lib/verticals";
 import { absoluteUrl } from "@/lib/seo";
 import { boostFeaturedPartner } from "@/lib/sponsorship";
 import VerticalPillarPage from "@/components/VerticalPillarPage";
+import ForeignInvestorCallout from "@/components/ForeignInvestorCallout";
 
 const vertical = getVerticalBySlug("crypto")!;
 
@@ -79,12 +80,19 @@ export default async function CryptoPage() {
     .limit(3);
 
   return (
-    <VerticalPillarPage
-      config={vertical}
-      brokers={sorted}
-      relatedArticles={relatedArticles}
-      advisors={advisors || []}
-      expertArticles={expertArticles || []}
-    />
+    <>
+      <ForeignInvestorCallout
+        href="/foreign-investment/crypto"
+        verticalName="crypto"
+        keyRule="Most AUSTRAC exchanges accept non-residents with enhanced KYC · CGT likely exempt for non-residents · no WHT on crypto"
+      />
+      <VerticalPillarPage
+        config={vertical}
+        brokers={sorted}
+        relatedArticles={relatedArticles}
+        advisors={advisors || []}
+        expertArticles={expertArticles || []}
+      />
+    </>
   );
 }

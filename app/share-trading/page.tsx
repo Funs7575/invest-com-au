@@ -5,6 +5,7 @@ import { getVerticalBySlug } from "@/lib/verticals";
 import { absoluteUrl } from "@/lib/seo";
 import { boostFeaturedPartner } from "@/lib/sponsorship";
 import VerticalPillarPage from "@/components/VerticalPillarPage";
+import ForeignInvestorCallout from "@/components/ForeignInvestorCallout";
 
 const vertical = getVerticalBySlug("share-trading")!;
 
@@ -79,12 +80,19 @@ export default async function ShareTradingPage() {
     .limit(3);
 
   return (
-    <VerticalPillarPage
-      config={vertical}
-      brokers={sorted}
-      relatedArticles={relatedArticles}
-      advisors={advisors || []}
-      expertArticles={expertArticles || []}
-    />
+    <>
+      <ForeignInvestorCallout
+        href="/foreign-investment/shares"
+        verticalName="Australian shares"
+        keyRule="30% WHT on unfranked dividends (reduced by DTA) · CGT exempt for non-residents on most listed shares · limited broker access without Australian address"
+      />
+      <VerticalPillarPage
+        config={vertical}
+        brokers={sorted}
+        relatedArticles={relatedArticles}
+        advisors={advisors || []}
+        expertArticles={expertArticles || []}
+      />
+    </>
   );
 }

@@ -14,9 +14,20 @@ const propertyDropdown = [
   { label: "Buyer's Agents", href: "/property/buyer-agents", desc: "Negotiation & off-market access" },
   { label: "Suburb Research", href: "/property/suburbs", desc: "Yields, growth & vacancy data" },
   { label: "Investment Loans", href: "/property/finance", desc: "Compare rates from major lenders" },
-  { label: "Foreign Investment", href: "/property/foreign-investment", desc: "FIRB guide, surcharges & eligibility" },
+  { label: "FIRB & Foreign Buyers", href: "/property/foreign-investment", desc: "FIRB guide, surcharges & eligibility" },
   { label: "Mortgage Brokers", href: "/advisors/mortgage-brokers", desc: "Compare 30+ lenders — free" },
   { label: "Find an Advisor", href: "/find-advisor", desc: "Match with a verified professional" },
+];
+
+const foreignDropdown = [
+  { label: "Foreign Investment Hub", href: "/foreign-investment", desc: "Start here — all verticals covered" },
+  { label: "Shares for Non-Residents", href: "/foreign-investment/shares", desc: "Broker eligibility & withholding tax" },
+  { label: "Crypto for Non-Residents", href: "/foreign-investment/crypto", desc: "AUSTRAC KYC & CGT treatment" },
+  { label: "Savings & Interest WHT", href: "/foreign-investment/savings", desc: "10% withholding on interest" },
+  { label: "Super & DASP", href: "/foreign-investment/super", desc: "Claim your super when leaving (35–65%)" },
+  { label: "Tax Guide (DTA & WHT)", href: "/foreign-investment/tax", desc: "DTA treaties, CGT rules & residency" },
+  { label: "Property (FIRB Guide)", href: "/property/foreign-investment", desc: "FIRB approval, stamp duty surcharges" },
+  { label: "Find an Advisor", href: "/advisors/tax-agents", desc: "International tax specialists" },
 ];
 
 const wealthDropdown = [
@@ -48,6 +59,17 @@ const popularLinks = [
 
 const mobileNavSections = [
   {
+    title: "Investing from Abroad",
+    items: [
+      { name: "Foreign Investment Hub", href: "/foreign-investment" },
+      { name: "Shares for Non-Residents", href: "/foreign-investment/shares" },
+      { name: "Crypto for Non-Residents", href: "/foreign-investment/crypto" },
+      { name: "Savings & Interest WHT", href: "/foreign-investment/savings" },
+      { name: "Super & DASP", href: "/foreign-investment/super" },
+      { name: "Tax Guide (DTA & WHT)", href: "/foreign-investment/tax" },
+    ],
+  },
+  {
     title: "Investment Property",
     items: [
       { name: "Property Hub", href: "/property" },
@@ -55,7 +77,7 @@ const mobileNavSections = [
       { name: "Buyer's Agents", href: "/property/buyer-agents" },
       { name: "Suburb Research", href: "/property/suburbs" },
       { name: "Investment Loans", href: "/property/finance" },
-      { name: "Foreign Investment", href: "/property/foreign-investment" },
+      { name: "FIRB & Foreign Buyers", href: "/property/foreign-investment" },
     ],
   },
   {
@@ -169,6 +191,7 @@ export default function Header() {
   const isWealthActive = ["/advisors/financial-planners", "/advisors/smsf-accountants", "/advisors/insurance-brokers", "/advisors/tax-agents", "/advisors/estate-planners", "/advisors/wealth-managers"].some(
     (p) => pathname === p || pathname.startsWith(p + "/")
   );
+  const isForeignActive = pathname === "/foreign-investment" || pathname.startsWith("/foreign-investment/");
 
   return (
     <header className="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 shadow-[0_2px_20px_rgb(0,0,0,0.02)] transition-all duration-300">
@@ -187,6 +210,8 @@ export default function Header() {
             <DesktopDropdown label="Wealth & SMSF" items={wealthDropdown} isActive={isWealthActive} />
             <div className="h-6 w-px bg-slate-200 mx-2" />
             <DesktopDropdown label="Compare Platforms" items={platformsDropdown} isActive={isPlatformsActive} />
+            <div className="h-6 w-px bg-slate-200 mx-2" />
+            <DesktopDropdown label="Investing from Abroad" items={foreignDropdown} isActive={isForeignActive} />
           </nav>
 
           {/* Desktop CTA + Theme */}
