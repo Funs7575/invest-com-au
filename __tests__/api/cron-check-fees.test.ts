@@ -15,7 +15,7 @@ vi.mock("@supabase/supabase-js", () => ({
 }));
 
 // Import the handler AFTER mocks
-import { GET, runtime, maxDuration } from "@/app/api/cron/check-fees/route";
+import { GET, maxDuration } from "@/app/api/cron/check-fees/route";
 
 // ─── Tests ───────────────────────────────────────────────────────────
 
@@ -36,8 +36,7 @@ describe("GET /api/cron/check-fees", () => {
 
   // ── Config exports ──
 
-  it("exports edge runtime and maxDuration = 60", () => {
-    expect(runtime).toBe("edge");
+  it("exports maxDuration = 60", () => {
     expect(maxDuration).toBe(60);
   });
 

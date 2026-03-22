@@ -2224,6 +2224,11 @@ Note: if your home country's tax rate on dividend income is lower than the Austr
         answer:
           "Yes. Australian ETFs distribute income (dividends, interest, capital gains) to unit holders. Non-residents receive distributions after withholding tax is deducted on the applicable portions. Distributions may consist of various components — some attracting WHT, some not. Check the ETF's distribution statement for details.",
       },
+      {
+        question: "Do I need to lodge an Australian tax return as a non-resident investor?",
+        answer:
+          "Generally no — if your only Australian income is passive investment income (dividends, interest, distributions), withholding tax is the final tax and no Australian tax return is required. However, if you earn Australian rental income, business income, or capital gains from Australian property, you must lodge a non-resident Australian tax return. Seek advice from a tax professional familiar with cross-border taxation.",
+      },
     ],
     verticalLink: "/foreign-investment/tax",
   },

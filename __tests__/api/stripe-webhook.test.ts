@@ -139,6 +139,7 @@ describe("POST /api/stripe/webhook", () => {
     for (const key of Object.keys(supabaseCalls)) {
       delete supabaseCalls[key];
     }
+    process.env.STRIPE_WEBHOOK_SECRET = "whsec_test_secret";
     mockHandleInvoicePaid.mockResolvedValue(undefined);
     mockHandleInvoicePaymentFailed.mockResolvedValue(undefined);
   });
