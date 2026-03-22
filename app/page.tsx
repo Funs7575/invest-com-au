@@ -263,7 +263,29 @@ export default async function HomePage() {
       </section>
 
 
-      {/* ═══════ 1B. MONEY ROW — top affiliate promos ═══════ */}
+      {/* ═══════ 1B. TRUST ANCHOR — E-E-A-T strip ═══════ */}
+      <section className="bg-slate-50 border-b border-slate-100 py-3">
+        <div className="container-custom">
+          <div className="flex items-center justify-center flex-wrap gap-x-6 gap-y-2 text-xs font-semibold text-slate-600">
+            <span className="flex items-center gap-1.5">
+              <Icon name="shield-check" size={14} className="text-emerald-500" />
+              100% Independent Research
+            </span>
+            <span className="text-slate-300 hidden sm:block" aria-hidden="true">|</span>
+            <span className="flex items-center gap-1.5">
+              <Icon name="check-circle" size={14} className="text-emerald-500" />
+              ASIC-Verified Professionals
+            </span>
+            <span className="text-slate-300 hidden sm:block" aria-hidden="true">|</span>
+            <span className="flex items-center gap-1.5">
+              <Icon name="check-circle" size={14} className="text-emerald-500" />
+              Zero Hidden Markups
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════ 1C. MONEY ROW — top affiliate promos ═══════ */}
       {dealBrokers.length > 0 && (
         <section className="bg-slate-900 border-b border-slate-800 py-3 overflow-x-auto">
           <div className="container-custom">
@@ -303,13 +325,39 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* ═══════ 2. TOP PLATFORMS — core product, first thing users scroll into ═══════ */}
+      {/* ═══════ 2. ALPHA CATCHER — single unified quiz CTA ═══════ */}
+      <ScrollFadeIn>
+        <section className="py-12 md:py-20 bg-slate-900">
+          <div className="container-custom">
+            <div className="max-w-2xl mx-auto text-center">
+              <p className="text-xs font-bold uppercase tracking-widest text-amber-400 mb-3">Free assessment — 60 seconds</p>
+              <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4 leading-tight">
+                Stop guessing.<br className="hidden sm:block" /> Find the right strategy in 60 seconds.
+              </h2>
+              <p className="text-slate-400 text-sm md:text-base mb-8 max-w-lg mx-auto leading-relaxed">
+                Answer 4 quick questions and we&apos;ll match you with the best platform and advisor for your exact situation — free, no obligation, no sign-up required.
+              </p>
+              <Link
+                href="/quiz"
+                className="inline-flex items-center gap-2.5 px-8 py-4 bg-amber-500 hover:bg-amber-400 text-slate-900 font-extrabold text-base rounded-xl transition-all shadow-lg shadow-amber-500/20 hover:-translate-y-0.5 active:scale-[0.97]"
+              >
+                Start My Free Assessment
+                <Icon name="arrow-right" size={18} />
+              </Link>
+              <p className="text-slate-600 text-xs mt-4">
+                ASIC-verified results &middot; No credit card &middot; Cancel anytime
+              </p>
+            </div>
+          </div>
+        </section>
+      </ScrollFadeIn>
+
+      {/* ═══════ 3. TOP PLATFORMS — SEO data engine ═══════ */}
       <ScrollFadeIn>
         <section className="py-6 md:py-10 bg-white">
           <div className="container-custom">
             <div className="flex items-start justify-between gap-2 mb-4 md:mb-6">
               <div>
-                {/* Editorial independence callout inline */}
                 <p className="text-xs font-semibold text-emerald-600 uppercase tracking-wide mb-1 flex items-center gap-1">
                   <Icon name="shield-check" size={12} className="text-emerald-500" />
                   Ratings not for sale &middot; independently reviewed
@@ -344,73 +392,6 @@ export default async function HomePage() {
                 — free, no obligation.
               </p>
             </div>
-          </div>
-        </section>
-      </ScrollFadeIn>
-
-      {/* ═══════ 3. ADVISOR QUIZ — lead-gen entry point ═══════ */}
-      <ScrollFadeIn>
-        <section className="py-8 md:py-12 bg-slate-50 border-b border-slate-100">
-          <div className="container-custom">
-            <div className="max-w-2xl mx-auto text-center mb-6">
-              <p className="text-xs font-bold uppercase tracking-widest text-amber-600 mb-2">Free matching service</p>
-              <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 mb-2">
-                Need expert advice? Get matched in 4 questions.
-              </h2>
-              <p className="text-sm text-slate-600 max-w-lg mx-auto">
-                Tell us what you need and we&apos;ll connect you with the right ASIC-verified professional — free, no obligation.
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 max-w-3xl mx-auto">
-              <Link
-                href="/find-advisor?need=smsf"
-                className="group flex flex-col items-start gap-3 p-5 bg-white border border-slate-200 rounded-2xl hover:border-amber-300 hover:shadow-md transition-all"
-              >
-                <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-400 rounded-xl flex items-center justify-center shadow-md shadow-amber-500/20">
-                  <Icon name="coins" size={20} className="text-white" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-bold text-slate-900 mb-1">Superannuation &amp; SMSF</h3>
-                  <p className="text-xs text-slate-500 leading-relaxed">Self-managed super, fund selection &amp; retirement strategy</p>
-                </div>
-                <span className="text-xs font-semibold text-amber-600 group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
-                  Start matching <Icon name="arrow-right" size={12} />
-                </span>
-              </Link>
-              <Link
-                href="/find-advisor?need=mortgage"
-                className="group flex flex-col items-start gap-3 p-5 bg-white border border-slate-200 rounded-2xl hover:border-amber-300 hover:shadow-md transition-all"
-              >
-                <div className="w-10 h-10 bg-gradient-to-br from-sky-500 to-sky-400 rounded-xl flex items-center justify-center shadow-md shadow-sky-500/20">
-                  <Icon name="building" size={20} className="text-white" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-bold text-slate-900 mb-1">Property &amp; Mortgages</h3>
-                  <p className="text-xs text-slate-500 leading-relaxed">Mortgage brokers, buyer&apos;s agents &amp; investment loans</p>
-                </div>
-                <span className="text-xs font-semibold text-amber-600 group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
-                  Start matching <Icon name="arrow-right" size={12} />
-                </span>
-              </Link>
-              <Link
-                href="/find-advisor?need=planning"
-                className="group flex flex-col items-start gap-3 p-5 bg-white border border-slate-200 rounded-2xl hover:border-amber-300 hover:shadow-md transition-all"
-              >
-                <div className="w-10 h-10 bg-gradient-to-br from-violet-600 to-violet-500 rounded-xl flex items-center justify-center shadow-md shadow-violet-500/15">
-                  <Icon name="trending-up" size={20} className="text-white" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-bold text-slate-900 mb-1">Wealth Planning</h3>
-                  <p className="text-xs text-slate-500 leading-relaxed">Financial planners, tax agents &amp; wealth managers</p>
-                </div>
-                <span className="text-xs font-semibold text-amber-600 group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
-                  Start matching <Icon name="arrow-right" size={12} />
-                </span>
-              </Link>
-            </div>
-            <p className="text-center text-xs text-slate-400 mt-4">
-              Each match is ASIC-verified &middot; Free, no obligation &middot; Results in under 60 seconds
-            </p>
           </div>
         </section>
       </ScrollFadeIn>
