@@ -397,9 +397,7 @@ export default async function HomePage() {
       </ScrollFadeIn>
 
       {/* ═══════ 4. ADVISOR DIRECTORY ═══════ */}
-      <AdvisorDirectory
-        advisors={(featuredAdvisors as { slug: string; name: string; firm_name?: string; type: string; location_display?: string; location_state?: string; rating: number; review_count: number; photo_url?: string; specialties: string[]; verified?: boolean }[]) || []}
-      />
+      <AdvisorDirectory />
 
       {/* ═══════ 5. INVESTMENT PROPERTY HUB (items 47–50) ═══════ */}
       <ScrollFadeIn>
