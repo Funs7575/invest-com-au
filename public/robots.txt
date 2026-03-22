@@ -14,4 +14,4 @@ Disallow: /shortlist/
 Disallow: /unsubscribe
 
 # Sitemap
-Sitemap: https://invest-com-au.vercel.app/sitemap.xml
+Sitemap: https://invest.com.au/sitemap.xml

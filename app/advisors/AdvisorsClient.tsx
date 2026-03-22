@@ -711,7 +711,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                 <div className="flex gap-3 md:gap-4">
                   {pro.photo_url ? (
                     <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl overflow-hidden shrink-0 ring-2 ring-amber-100">
-                      <img src={pro.photo_url} alt={pro.name} className="w-full h-full object-cover" />
+                      <Image src={pro.photo_url} alt={pro.name} width={64} height={64} className="w-full h-full object-cover" />
                     </div>
                   ) : (
                     <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl bg-gradient-to-br from-amber-100 to-slate-100 flex items-center justify-center text-sm md:text-lg font-bold text-amber-600 shrink-0">

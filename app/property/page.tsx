@@ -197,7 +197,7 @@ export default async function PropertyHubPage() {
                     className="block rounded-2xl overflow-hidden border border-slate-200 hover:shadow-xl hover:border-slate-300 transition-all group mb-4 relative"
                   >
                     <div className="aspect-[21/9] md:aspect-[3/1] relative bg-slate-100 overflow-hidden">
-                      <img src={heroImgs[0]} alt={hero.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                      <Image src={heroImgs[0]} alt={hero.title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" sizes="100vw" priority />
                       {/* Gradient overlay */}
                       <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent" />
                       {/* Badges top */}
@@ -247,7 +247,7 @@ export default async function PropertyHubPage() {
                         className="border border-slate-200 bg-white rounded-xl overflow-hidden hover:shadow-lg hover:border-slate-300 transition-all group"
                       >
                         <div className="aspect-[4/3] relative overflow-hidden bg-slate-100">
-                          <img src={imgs[0]} alt={listing.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                          <Image src={imgs[0]} alt={listing.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 50vw, 33vw" />
                           {/* Gradient overlay bottom */}
                           <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-slate-900/60 to-transparent" />
                           {/* Yield badge */}
@@ -328,7 +328,7 @@ export default async function PropertyHubPage() {
               ].map((type) => (
                 <Link key={type.href} href={type.href} className="bg-white border border-slate-200 rounded-2xl overflow-hidden hover:shadow-lg hover:border-slate-300 transition-all group">
                   <div className="aspect-[3/2] bg-slate-100 relative overflow-hidden flex items-center justify-center p-8">
-                    <img src={type.img} alt={type.label} className="h-full w-auto object-contain opacity-60 group-hover:scale-105 transition-transform duration-500" />
+                    <Image src={type.img} alt={type.label} fill className="object-contain opacity-60 group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 50vw, 33vw" />
                     <span className={`absolute top-3 right-3 text-[0.6rem] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${type.badgeColor}`}>{type.badge}</span>
                   </div>
                   <div className="p-4 md:p-5">

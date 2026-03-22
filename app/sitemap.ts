@@ -448,5 +448,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  return [...staticPages, ...bestPages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorCityPages, ...advisorLocationPages, ...investingCityPages, ...glossaryPages, ...firmPages];
+  // Property listing pages
+  const { data: propertyListings } = await supabase
+    .from("property_listings")
+    .select("slug, updated_at")
+    .in("status", ["active", "coming_soon"]);
+  const propertyListingPages = (propertyListings || []).map((l) => ({
+    url: `${baseUrl}/property/listings/${l.slug}`,
+    lastModified: l.updated_at ? new Date(l.updated_at) : new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
+
+  // Property static hub pages
+  const propertyHubPages = [
+    { url: `${baseUrl}/property`, priority: 0.8 },
+    { url: `${baseUrl}/property/listings`, priority: 0.8 },
+    { url: `${baseUrl}/property/suburbs`, priority: 0.7 },
+    { url: `${baseUrl}/property/buyer-agents`, priority: 0.7 },
+  ].map((p) => ({ ...p, lastModified: new Date(), changeFrequency: "weekly" as const }));
+
+  return [...staticPages, ...bestPages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorCityPages, ...advisorLocationPages, ...investingCityPages, ...glossaryPages, ...firmPages, ...propertyListingPages, ...propertyHubPages];
 }

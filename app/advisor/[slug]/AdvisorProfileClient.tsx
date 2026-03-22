@@ -464,7 +464,7 @@ export default function AdvisorProfileClient({
                         <Link key={m.id} href={`/advisor/${m.slug}`}
                           className="shrink-0 flex items-center gap-2.5 px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl hover:border-blue-200 hover:bg-blue-50 transition-all">
                           {m.photo_url ? (
-                            <img src={m.photo_url} alt={m.name} className="w-9 h-9 rounded-full object-cover shrink-0" />
+                            <Image src={m.photo_url} alt={m.name} width={36} height={36} className="w-9 h-9 rounded-full object-cover shrink-0" />
                           ) : (
                             <div className="w-9 h-9 rounded-full bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-500 shrink-0">
                               {m.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
@@ -944,7 +944,7 @@ export default function AdvisorProfileClient({
                       className="bg-white border border-slate-200 rounded-2xl p-4 hover:shadow-md hover:border-amber-200 transition-all group">
                       <div className="flex items-center gap-3 mb-3">
                         {s.photo_url ? (
-                          <img src={s.photo_url} alt={s.name} className="w-12 h-12 rounded-xl object-cover shrink-0" />
+                          <Image src={s.photo_url} alt={s.name} width={48} height={48} className="w-12 h-12 rounded-xl object-cover shrink-0" />
                         ) : (
                           <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-100 to-amber-50 flex items-center justify-center text-sm font-black text-amber-600 shrink-0">
                             {s.name.split(" ").map((n) => n[0]).join("").slice(0, 2)}
@@ -1248,7 +1248,7 @@ export default function AdvisorProfileClient({
       <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-slate-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] z-40">
         <div className="flex items-center gap-3 px-4 py-3">
           {pro.photo_url ? (
-            <img src={pro.photo_url} alt="" className="w-10 h-10 rounded-xl object-cover shrink-0" />
+            <Image src={pro.photo_url} alt="" width={40} height={40} className="w-10 h-10 rounded-xl object-cover shrink-0" />
           ) : (
             <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center text-sm font-black text-amber-600 shrink-0">
               {initials}

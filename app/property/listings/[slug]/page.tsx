@@ -34,7 +34,16 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       title: `${listing.title} — ${listing.suburb} — Invest.com.au`,
       description: listing.description?.slice(0, 160),
       url: `/property/listings/${slug}`,
+      images: [
+        {
+          url: `/api/og?title=${encodeURIComponent(listing.title)}&sub=${encodeURIComponent(`${listing.suburb}, ${listing.state} · From ${formatPrice(listing.price_from_cents)}`)}`,
+          width: 1200,
+          height: 630,
+          alt: listing.title,
+        },
+      ],
     },
+    twitter: { card: "summary_large_image" },
     alternates: { canonical: `/property/listings/${slug}` },
   };
 }
@@ -86,6 +95,31 @@ export default async function PropertyListingPage({ params }: { params: Promise<
             { name: "Listings", url: `${SITE_URL}/property/listings` },
             { name: listing.title },
           ])),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "RealEstateListing",
+            name: listing.title,
+            description: listing.description || undefined,
+            url: `${SITE_URL}/property/listings/${listing.slug}`,
+            offers: {
+              "@type": "Offer",
+              priceCurrency: "AUD",
+              price: Math.round(listing.price_from_cents / 100),
+              availability: listing.status === "active" ? "https://schema.org/InStock" : "https://schema.org/PreOrder",
+            },
+            address: {
+              "@type": "PostalAddress",
+              addressLocality: listing.suburb,
+              addressRegion: listing.state,
+              addressCountry: "AU",
+            },
+            ...(developer ? { seller: { "@type": "Organization", name: developer.name, ...(developer.website ? { url: developer.website } : {}) } } : {}),
+          }),
         }}
       />
 
