@@ -26,6 +26,7 @@ const platformsMenu = {
       desc: "Derivatives & currency trading",
       riskLabel: "High Risk",
     },
+    { label: "Investing from Overseas", href: "/foreign-investment", desc: "Platforms, tax & FIRB rules for international investors" },
   ],
   tools: [
     { label: `Best Platforms ${CURRENT_YEAR}`, href: "/best" },
@@ -42,6 +43,7 @@ const propertyMenu = {
     { label: "New Developments", href: "/property/listings", desc: "Off-the-plan apartments & houses" },
     { label: "Suburb Research", href: "/property/suburbs", desc: "Yields, growth & vacancy data" },
     { label: "Investment Loans", href: "/property/finance", desc: "Compare rates from 8 lenders" },
+    { label: "Foreign Buyer Rules (FIRB)", href: "/property/foreign-investment", desc: "FIRB calculator & compliance guide" },
   ],
   professionals: [
     { label: "Buyer's Agents", href: "/property/buyer-agents", desc: "Verified — free consultation" },
@@ -172,6 +174,7 @@ const mobileSections = [
       { name: "Savings Accounts", href: "/compare?filter=savings" },
       { name: "Deals & Offers", href: "/deals" },
       { name: "Platform Quiz", href: "/quiz" },
+      { name: "Investing from Overseas", href: "/foreign-investment" },
     ],
   },
   {

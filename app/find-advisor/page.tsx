@@ -85,7 +85,7 @@ const INTENT_OPTIONS = [
     id: "buy_property" as Intent,
     emoji: "\u{1F3E0}",
     title: "Buy Property",
-    desc: "Purchase a home or investment property",
+    desc: "Find a mortgage broker, buyer's agent, or refinancing help",
     baseClass: "from-rose-50 to-orange-50 border-rose-200 hover:border-rose-400 hover:shadow-rose-100",
     selClass: "from-rose-50 to-orange-50 border-rose-500 ring-2 ring-rose-200",
   },
@@ -93,7 +93,7 @@ const INTENT_OPTIONS = [
     id: "grow_wealth" as Intent,
     emoji: "\u{1F4C8}",
     title: "Grow Wealth",
-    desc: "Build long-term financial security",
+    desc: "Get a financial planner for investing, super, or retirement",
     baseClass: "from-emerald-50 to-teal-50 border-emerald-200 hover:border-emerald-400 hover:shadow-emerald-100",
     selClass: "from-emerald-50 to-teal-50 border-emerald-500 ring-2 ring-emerald-200",
   },
@@ -101,15 +101,15 @@ const INTENT_OPTIONS = [
     id: "protect_assets" as Intent,
     emoji: "\u{1F6E1}\uFE0F",
     title: "Protect Assets",
-    desc: "Insurance, estate planning & succession",
+    desc: "Life insurance, income protection, wills & estate planning",
     baseClass: "from-blue-50 to-indigo-50 border-blue-200 hover:border-blue-400 hover:shadow-blue-100",
     selClass: "from-blue-50 to-indigo-50 border-blue-500 ring-2 ring-blue-200",
   },
   {
     id: "business_tax" as Intent,
     emoji: "\u{1F4CA}",
-    title: "Business / Tax",
-    desc: "SMSF setup, tax strategy & debt",
+    title: "Tax & SMSF",
+    desc: "Self-managed super (SMSF), tax advice, or crypto tax help",
     baseClass: "from-violet-50 to-purple-50 border-violet-200 hover:border-violet-400 hover:shadow-violet-100",
     selClass: "from-violet-50 to-purple-50 border-violet-500 ring-2 ring-violet-200",
   },
@@ -186,10 +186,10 @@ const STATES = [
 
 const BUDGETS = [
   { value: "", label: "Select a range (optional)\u2026" },
-  { value: "under_100k", label: "Under $100k \u2014 just getting started" },
-  { value: "100k_500k", label: "$100k \u2013 $500k \u2014 building wealth" },
-  { value: "500k_2m", label: "$500k \u2013 $2M \u2014 established investor" },
-  { value: "over_2m", label: "$2M+ \u2014 high net worth" },
+  { value: "under_100k", label: "Under $100k" },
+  { value: "100k_500k", label: "$100k \u2013 $500k" },
+  { value: "500k_2m", label: "$500k \u2013 $2M" },
+  { value: "over_2m", label: "$2M+" },
   { value: "prefer_not_say", label: "Prefer not to say" },
 ];
 
@@ -780,13 +780,13 @@ function Step3({
         <div>
           <Select
             id="budget-select"
-            label="What's your situation worth?"
+            label="Approximate investable assets or portfolio size"
             options={BUDGETS}
             value={budgetValue}
             onChange={(e) => onBudgetChange(e.target.value)}
           />
           <p className="text-xs text-slate-400 mt-1.5">
-            Optional — helps us match advisors experienced at your level
+            Optional — helps us match you with advisors experienced at your level
           </p>
         </div>
       </div>

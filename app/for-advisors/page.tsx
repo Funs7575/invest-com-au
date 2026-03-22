@@ -29,20 +29,24 @@ export default async function ForAdvisorsPage() {
           <h1 className="text-3xl md:text-5xl font-extrabold mb-4 leading-tight">
             Get Qualified Leads from<br />Australian Investors
           </h1>
-          <p className="text-lg md:text-xl text-violet-100 mb-8 max-w-2xl mx-auto leading-relaxed">
-            Thousands of Australians visit Invest.com.au every month to compare investment platforms.
-            Many need professional advice — SMSF setup, tax planning, retirement strategy.
-            Put your practice in front of them.
+          <p className="text-lg md:text-xl text-violet-100 mb-6 max-w-2xl mx-auto leading-relaxed">
+            Australian investors visit Invest.com.au to compare platforms and find trusted professionals.
+            Get matched with investors actively seeking SMSF setup, tax planning, mortgage brokering, and retirement advice.
           </p>
+          {/* Lead hook — most important selling point, prominently placed */}
+          <div className="inline-flex items-center gap-3 bg-white/10 border border-white/20 rounded-2xl px-5 py-3 mb-6">
+            <span className="text-2xl font-extrabold text-white">3 free leads</span>
+            <span className="text-violet-200 text-sm">to get started — no credit card, no setup fee</span>
+          </div>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link href="/advisor-signup" className="px-8 py-4 bg-white text-violet-700 font-bold rounded-xl text-lg hover:bg-violet-50 transition-all shadow-lg">
-              Apply Now — It&apos;s Free to Start
+              Apply Now — Free to Start
             </Link>
             <a href="#pricing" className="px-8 py-4 border-2 border-white/30 text-white font-bold rounded-xl text-lg hover:bg-white/10 transition-all">
               See Pricing
             </a>
           </div>
-          <p className="text-violet-300 text-sm mt-4">No setup fee · 3 free leads · Cancel anytime</p>
+          <p className="text-violet-300 text-sm mt-4">After your 3 free leads: $39/lead, no monthly minimums, cancel anytime</p>
         </div>
       </section>
 
@@ -131,8 +135,8 @@ export default async function ForAdvisorsPage() {
             {/* Expert Articles */}
             <div className="border border-slate-200 rounded-xl p-6">
               <p className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1">Expert Articles</p>
-              <p className="text-3xl font-extrabold text-slate-900 mb-1">From $299</p>
-              <p className="text-sm text-slate-500 mb-5">One-off content pieces</p>
+              <p className="text-3xl font-extrabold text-slate-900 mb-1">$199–$599</p>
+              <p className="text-sm text-slate-500 mb-5">One-off thought leadership pieces</p>
               <ul className="space-y-2 mb-6">
                 {["Standard ($199) — Article + byline", "Featured ($399) — + Homepage + newsletter", "Sponsored ($599) — + Pinned + social promo", "Professional editing included", "Permanent placement"].map(f => (
                   <li key={f} className="flex items-center gap-2 text-sm text-slate-700"><span className="text-emerald-500">✓</span>{f}</li>
@@ -151,16 +155,16 @@ export default async function ForAdvisorsPage() {
         <div className="max-w-3xl mx-auto text-center">
           <div className="grid grid-cols-3 gap-6 mb-8">
             <div>
-              <p className="text-3xl font-extrabold text-slate-900">{advisorCount || 8}+</p>
+              <p className="text-3xl font-extrabold text-slate-900">{advisorCount && advisorCount > 0 ? `${advisorCount}+` : "Growing"}</p>
               <p className="text-sm text-slate-500">Listed Advisors</p>
             </div>
             <div>
-              <p className="text-3xl font-extrabold text-slate-900">{((leadCount || 0) * 10) || "250"}+</p>
-              <p className="text-sm text-slate-500">Investor Enquiries</p>
+              <p className="text-3xl font-extrabold text-slate-900">{leadCount && leadCount > 0 ? `${leadCount}+` : "Active"}</p>
+              <p className="text-sm text-slate-500">Investor Leads Submitted</p>
             </div>
             <div>
               <p className="text-3xl font-extrabold text-slate-900">9</p>
-              <p className="text-sm text-slate-500">Categories Covered</p>
+              <p className="text-sm text-slate-500">Advisor Categories</p>
             </div>
           </div>
           <p className="text-slate-600 max-w-lg mx-auto">
@@ -229,7 +233,7 @@ export default async function ForAdvisorsPage() {
       <section className="py-16 md:py-20 px-4 bg-gradient-to-br from-violet-600 to-indigo-700 text-white text-center">
         <div className="max-w-2xl mx-auto">
           <h2 className="text-2xl md:text-4xl font-extrabold mb-4">Ready to Grow Your Practice?</h2>
-          <p className="text-violet-200 text-lg mb-8">Join {advisorCount || 8}+ advisors already listed. Start with 3 free leads — no credit card required.</p>
+          <p className="text-violet-200 text-lg mb-8">Start with 3 free leads — no credit card, no setup fee, no lock-in contracts.</p>
           <Link href="/advisor-signup" className="inline-block px-10 py-4 bg-white text-violet-700 font-bold rounded-xl text-lg hover:bg-violet-50 transition-all shadow-lg">
             Apply Now — Free to Start →
           </Link>
