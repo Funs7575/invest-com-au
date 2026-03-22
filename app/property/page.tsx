@@ -273,56 +273,87 @@ export default async function PropertyHubPage() {
       <ScrollFadeIn>
         <section className="py-8 md:py-12 bg-slate-50 border-y border-slate-100">
           <div className="container-custom">
-            <div className="text-center mb-6">
-              <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Browse by Type</p>
-              <h2 className="text-xl md:text-2xl font-extrabold text-slate-900">Find your investment type</h2>
+            <div className="flex items-end justify-between gap-2 mb-6">
+              <div>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Browse by Type</p>
+                <h2 className="text-xl md:text-2xl font-extrabold text-slate-900">What are you looking for?</h2>
+              </div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {[
                 {
                   label: "Apartments & Units",
-                  sub: "Off-the-plan & new builds. Lower entry price, strong rental demand near CBDs.",
+                  sub: "Off-the-plan & new builds near CBDs. Lower entry price with strong rental demand.",
                   href: "/property/listings?type=apartment",
-                  img: "/images/property/apartment-placeholder.svg",
+                  icon: "building",
+                  gradient: "from-amber-500 to-amber-400",
+                  bg: "bg-amber-50",
+                  accent: "text-amber-600",
                   badge: "Most Popular",
-                  badgeColor: "bg-amber-100 text-amber-700",
-                  stats: ["Lower entry cost", "Strong yield", "FIRB eligible"],
+                  badgeCls: "bg-amber-100 text-amber-700",
+                  stats: [
+                    { icon: "trending-down", label: "Lower entry cost" },
+                    { icon: "percent", label: "Strong rental yield" },
+                    { icon: "globe", label: "FIRB eligible options" },
+                  ],
                 },
                 {
                   label: "Townhouses",
-                  sub: "Modern townhouse communities. Popular with families seeking space close to the city.",
+                  sub: "Modern communities close to schools & parks. Great for families wanting space without the land.",
                   href: "/property/listings?type=townhouse",
-                  img: "/images/property/townhouse-placeholder.svg",
+                  icon: "home",
+                  gradient: "from-emerald-600 to-emerald-500",
+                  bg: "bg-emerald-50",
+                  accent: "text-emerald-600",
                   badge: "High Demand",
-                  badgeColor: "bg-emerald-100 text-emerald-700",
-                  stats: ["Dual living options", "Capital growth", "Low maintenance"],
+                  badgeCls: "bg-emerald-100 text-emerald-700",
+                  stats: [
+                    { icon: "users", label: "Dual living options" },
+                    { icon: "trending-up", label: "Capital growth" },
+                    { icon: "settings", label: "Low maintenance" },
+                  ],
                 },
                 {
                   label: "House & Land",
-                  sub: "Greenfield estates in growth corridors. Stamp duty savings and depreciation benefits.",
+                  sub: "Greenfield estates in growth corridors. Maximise depreciation and save on stamp duty.",
                   href: "/property/listings?type=house_land",
-                  img: "/images/property/house-placeholder.svg",
+                  icon: "map-pin",
+                  gradient: "from-slate-700 to-slate-600",
+                  bg: "bg-slate-50",
+                  accent: "text-slate-700",
                   badge: "Tax Benefits",
-                  badgeColor: "bg-blue-100 text-blue-700",
-                  stats: ["Stamp duty savings", "Depreciation", "New build"],
+                  badgeCls: "bg-slate-100 text-slate-600",
+                  stats: [
+                    { icon: "landmark", label: "Stamp duty savings" },
+                    { icon: "file-text", label: "Full depreciation" },
+                    { icon: "star", label: "Brand new build" },
+                  ],
                 },
               ].map((type) => (
-                <Link key={type.href} href={type.href} className="bg-white border border-slate-200 rounded-2xl overflow-hidden hover:shadow-lg hover:border-slate-300 transition-all group">
-                  <div className="aspect-[3/2] bg-slate-100 relative overflow-hidden flex items-center justify-center p-8">
-                    <Image src={type.img} alt={type.label} fill className="object-contain opacity-60 group-hover:scale-105 transition-transform duration-500" sizes="(max-width: 768px) 50vw, 33vw" />
-                    <span className={`absolute top-3 right-3 text-[0.6rem] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${type.badgeColor}`}>{type.badge}</span>
+                <Link key={type.href} href={type.href} className="bg-white border border-slate-200 rounded-2xl overflow-hidden hover:shadow-lg hover:border-slate-300 transition-all group flex flex-col">
+                  {/* Visual header */}
+                  <div className={`${type.bg} px-6 pt-7 pb-5 relative`}>
+                    <span className={`absolute top-3 right-3 text-[0.6rem] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${type.badgeCls}`}>{type.badge}</span>
+                    <div className={`w-14 h-14 bg-gradient-to-br ${type.gradient} rounded-2xl flex items-center justify-center mb-4 shadow-md group-hover:scale-105 transition-transform duration-300`}>
+                      <Icon name={type.icon} size={26} className="text-white" />
+                    </div>
+                    <h3 className="font-extrabold text-slate-900 text-base mb-1">{type.label}</h3>
+                    <p className="text-xs text-slate-500 leading-relaxed">{type.sub}</p>
                   </div>
-                  <div className="p-4 md:p-5">
-                    <h3 className="font-bold text-slate-900 mb-1.5 group-hover:text-slate-700 transition-colors">{type.label}</h3>
-                    <p className="text-xs text-slate-500 mb-3 leading-relaxed">{type.sub}</p>
-                    <div className="flex flex-wrap gap-1">
-                      {type.stats.map((s) => (
-                        <span key={s} className="text-[0.6rem] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">{s}</span>
-                      ))}
-                    </div>
-                    <div className="mt-3 text-xs font-bold text-amber-600 group-hover:text-amber-700 flex items-center gap-1">
+                  {/* Stats list */}
+                  <div className="px-6 py-4 flex flex-col gap-2 flex-1">
+                    {type.stats.map((s) => (
+                      <div key={s.label} className="flex items-center gap-2">
+                        <Icon name={s.icon} size={13} className={`${type.accent} shrink-0`} />
+                        <span className="text-xs text-slate-600">{s.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                  {/* CTA footer */}
+                  <div className="px-6 pb-5">
+                    <span className={`text-xs font-bold ${type.accent} group-hover:underline flex items-center gap-1`}>
                       Browse {type.label.split(" ")[0]} <span className="group-hover:translate-x-0.5 transition-transform">&rarr;</span>
-                    </div>
+                    </span>
                   </div>
                 </Link>
               ))}
