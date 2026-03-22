@@ -221,7 +221,7 @@ export default function Header() {
               href="/find-advisor"
               className="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2.5 rounded-lg font-bold transition-all shadow-sm hover:shadow-md flex items-center gap-2 text-sm"
             >
-              Get Matched Free
+              Match With an Advisor
               <Icon name="arrow-right" size={16} />
             </Link>
           </div>
@@ -281,7 +281,7 @@ export default function Header() {
                 onClick={() => setMenuOpen(false)}
                 className="block w-full py-3 min-h-[44px] text-center text-sm font-extrabold text-white bg-slate-900 rounded-xl hover:bg-slate-800 transition-colors"
               >
-                Get Matched Free
+                Match With an Advisor
               </Link>
               <div className="flex gap-2">
                 <Link

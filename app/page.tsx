@@ -12,7 +12,6 @@ import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import Icon from "@/components/Icon";
 import BrokerLogo from "@/components/BrokerLogo";
 import { AFFILIATE_REL } from "@/lib/tracking";
-import HomepageServiceSelector from "@/components/HomepageServiceSelector";
 import AdvisorDirectory from "@/components/AdvisorDirectory";
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 import { getMostRecentFeeCheck } from "@/lib/utils";
@@ -158,27 +157,63 @@ export default async function HomePage() {
             </div>
 
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-slate-900 leading-[1.1] mb-3 tracking-tight">
-              Stop overpaying fees.{" "}
-              <span className="text-amber-500">Find the right platform or advisor in 60 seconds.</span>
+              Invest Smarter.{" "}
+              <span className="text-amber-500">Pay Less Fees.</span>
             </h1>
 
-            <p className="text-sm md:text-base text-slate-600 mb-4 leading-relaxed max-w-2xl mx-auto">
-              Compare every Australian investing platform side-by-side — or get matched with a verified mortgage broker, buyer&apos;s agent, or financial advisor. Independent, always free, no obligation.
+            <p className="text-sm md:text-base text-slate-600 mb-5 leading-relaxed max-w-2xl mx-auto">
+              What do you want to do today?
             </p>
 
-            {/* Primary CTAs */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 mb-4">
-              <Link
-                href="/find-advisor"
-                className="w-full sm:w-auto px-6 py-3 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 shadow-md hover:shadow-lg transition-all text-sm"
-              >
-                Find My Advisor — Free &rarr;
-              </Link>
+            {/* Split Router — 4 intent options */}
+            <div className="grid grid-cols-2 gap-2.5 max-w-xl mx-auto mb-4">
               <Link
                 href="/compare"
-                className="hidden sm:inline-flex w-auto px-6 py-3 border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all text-sm items-center justify-center"
+                className="group flex flex-col items-start gap-1.5 p-3.5 bg-white border border-amber-200 rounded-xl hover:border-amber-400 hover:shadow-md transition-all text-left"
               >
-                Compare Platforms
+                <div className="w-8 h-8 bg-gradient-to-br from-amber-500 to-amber-400 rounded-lg flex items-center justify-center shadow-sm shadow-amber-500/20">
+                  <Icon name="trending-up" size={16} className="text-white" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-slate-900 leading-snug">Compare Trading Platforms</p>
+                  <p className="text-[0.65rem] text-slate-500 mt-0.5">Fees, features &amp; ratings</p>
+                </div>
+              </Link>
+              <Link
+                href="/compare?type=savings"
+                className="group flex flex-col items-start gap-1.5 p-3.5 bg-white border border-amber-200 rounded-xl hover:border-amber-400 hover:shadow-md transition-all text-left"
+              >
+                <div className="w-8 h-8 bg-gradient-to-br from-amber-500 to-amber-400 rounded-lg flex items-center justify-center shadow-sm shadow-amber-500/20">
+                  <Icon name="piggy-bank" size={16} className="text-white" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-slate-900 leading-snug">Find a High-Yield Savings Account</p>
+                  <p className="text-[0.65rem] text-slate-500 mt-0.5">Best rates right now</p>
+                </div>
+              </Link>
+              <Link
+                href="/find-advisor"
+                className="group flex flex-col items-start gap-1.5 p-3.5 bg-white border border-slate-200 rounded-xl hover:border-slate-400 hover:shadow-md transition-all text-left"
+              >
+                <div className="w-8 h-8 bg-gradient-to-br from-slate-800 to-slate-700 rounded-lg flex items-center justify-center shadow-sm shadow-slate-500/15">
+                  <Icon name="users" size={16} className="text-white" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-slate-900 leading-snug">Find a Financial Advisor</p>
+                  <p className="text-[0.65rem] text-slate-500 mt-0.5">ASIC-verified, free match</p>
+                </div>
+              </Link>
+              <Link
+                href="/property"
+                className="group flex flex-col items-start gap-1.5 p-3.5 bg-white border border-slate-200 rounded-xl hover:border-slate-400 hover:shadow-md transition-all text-left"
+              >
+                <div className="w-8 h-8 bg-gradient-to-br from-slate-800 to-slate-700 rounded-lg flex items-center justify-center shadow-sm shadow-slate-500/15">
+                  <Icon name="building" size={16} className="text-white" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-slate-900 leading-snug">Buy Investment Property</p>
+                  <p className="text-[0.65rem] text-slate-500 mt-0.5">Data, agents &amp; loans</p>
+                </div>
               </Link>
             </div>
 
@@ -234,11 +269,109 @@ export default async function HomePage() {
       </section>
 
 
-      {/* ═══════ 2. WHAT DO YOU NEED HELP WITH? ═══════ */}
-      <ScrollFadeIn>
-        <section className="py-6 md:py-10 bg-slate-50 border-b border-slate-100">
+      {/* ═══════ 1B. MONEY ROW — top affiliate promos ═══════ */}
+      {dealBrokers.length > 0 && (
+        <section className="bg-slate-900 border-b border-slate-800 py-3 overflow-x-auto">
           <div className="container-custom">
-            <HomepageServiceSelector />
+            <div className="flex items-center gap-2 md:gap-3 flex-nowrap md:flex-wrap md:justify-center">
+              <span className="shrink-0 text-[0.6rem] font-extrabold uppercase tracking-widest text-slate-500 hidden md:block pr-1">
+                Live Deals
+              </span>
+              {dealBrokers.map((broker) => {
+                const affiliateLink = `/go/${broker.slug}`;
+                return (
+                  <a
+                    key={broker.id}
+                    href={affiliateLink}
+                    target="_blank"
+                    rel={AFFILIATE_REL}
+                    className="shrink-0 flex items-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-amber-500/40 rounded-lg px-3 py-2 transition-all group"
+                  >
+                    <span className="text-[0.55rem] font-bold uppercase tracking-wider bg-amber-500 text-white px-1.5 py-0.5 rounded-full shrink-0">
+                      Verified Promo
+                    </span>
+                    <BrokerLogo broker={broker} size="xs" />
+                    <span className="text-xs font-semibold text-slate-200 group-hover:text-white whitespace-nowrap max-w-[180px] truncate">
+                      {broker.deal_text}
+                    </span>
+                    <Icon name="arrow-right" size={12} className="text-amber-400 shrink-0" />
+                  </a>
+                );
+              })}
+              <a
+                href="/deals"
+                className="shrink-0 text-[0.7rem] font-semibold text-slate-400 hover:text-amber-400 transition-colors whitespace-nowrap pl-1"
+              >
+                View all deals &rarr;
+              </a>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ═══════ 2. ADVISOR QUIZ — lead-gen entry point ═══════ */}
+      <ScrollFadeIn>
+        <section className="py-8 md:py-12 bg-slate-50 border-b border-slate-100">
+          <div className="container-custom">
+            <div className="max-w-2xl mx-auto text-center mb-6">
+              <p className="text-xs font-bold uppercase tracking-widest text-amber-600 mb-2">Free matching service</p>
+              <h2 className="text-xl md:text-2xl font-extrabold text-slate-900 mb-2">
+                Stop guessing. Get matched in 4 questions.
+              </h2>
+              <p className="text-sm text-slate-600 max-w-lg mx-auto">
+                Tell us what you need and we&apos;ll connect you with the right ASIC-verified professional — free, no obligation.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 max-w-3xl mx-auto">
+              <Link
+                href="/find-advisor?need=smsf"
+                className="group flex flex-col items-start gap-3 p-5 bg-white border border-slate-200 rounded-2xl hover:border-amber-300 hover:shadow-md transition-all"
+              >
+                <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-400 rounded-xl flex items-center justify-center shadow-md shadow-amber-500/20">
+                  <Icon name="coins" size={20} className="text-white" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-bold text-slate-900 mb-1">Superannuation &amp; SMSF</h3>
+                  <p className="text-xs text-slate-500 leading-relaxed">Self-managed super, fund selection &amp; retirement strategy</p>
+                </div>
+                <span className="text-xs font-semibold text-amber-600 group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
+                  Start matching <Icon name="arrow-right" size={12} />
+                </span>
+              </Link>
+              <Link
+                href="/find-advisor?need=mortgage"
+                className="group flex flex-col items-start gap-3 p-5 bg-white border border-slate-200 rounded-2xl hover:border-amber-300 hover:shadow-md transition-all"
+              >
+                <div className="w-10 h-10 bg-gradient-to-br from-slate-800 to-slate-700 rounded-xl flex items-center justify-center shadow-md shadow-slate-500/15">
+                  <Icon name="building" size={20} className="text-white" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-bold text-slate-900 mb-1">Property &amp; Mortgages</h3>
+                  <p className="text-xs text-slate-500 leading-relaxed">Mortgage brokers, buyer&apos;s agents &amp; investment loans</p>
+                </div>
+                <span className="text-xs font-semibold text-amber-600 group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
+                  Start matching <Icon name="arrow-right" size={12} />
+                </span>
+              </Link>
+              <Link
+                href="/find-advisor?need=planning"
+                className="group flex flex-col items-start gap-3 p-5 bg-white border border-slate-200 rounded-2xl hover:border-amber-300 hover:shadow-md transition-all"
+              >
+                <div className="w-10 h-10 bg-gradient-to-br from-emerald-600 to-emerald-500 rounded-xl flex items-center justify-center shadow-md shadow-emerald-500/15">
+                  <Icon name="trending-up" size={20} className="text-white" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-bold text-slate-900 mb-1">Wealth Planning</h3>
+                  <p className="text-xs text-slate-500 leading-relaxed">Financial planners, tax agents &amp; wealth managers</p>
+                </div>
+                <span className="text-xs font-semibold text-amber-600 group-hover:translate-x-0.5 transition-transform inline-flex items-center gap-1">
+                  Start matching <Icon name="arrow-right" size={12} />
+                </span>
+              </Link>
+            </div>
+            <p className="text-center text-xs text-slate-400 mt-4">
+              Each lead-gen match is ASIC-verified &middot; Free, no obligation &middot; Results in under 60 seconds
+            </p>
           </div>
         </section>
       </ScrollFadeIn>
