@@ -37,6 +37,7 @@ export function SiteFooter() {
                 { label: "Insurance", href: "/compare/insurance" },
                 { label: "Current Deals", href: "/deals" },
                 { label: `Best Platforms ${CURRENT_YEAR}`, href: "/best" },
+                { label: "Investing from Overseas", href: "/foreign-investment" },
               ].map((item) => (
                 <li key={item.href}>
                   <Link href={item.href} className="hover:text-amber-400 transition-colors">
