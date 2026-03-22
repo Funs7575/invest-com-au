@@ -2,7 +2,6 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { getAdminEmail } from "@/lib/admin";
 
-export const runtime = "edge";
 export const maxDuration = 60;
 
 function simpleHash(str: string): string {
