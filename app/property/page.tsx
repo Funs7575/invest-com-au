@@ -82,65 +82,51 @@ export default async function PropertyHubPage() {
       />
 
       {/* ── Hero ─────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-        {/* Decorative grid */}
-        <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")" }} />
-        {/* Amber glow */}
-        <div className="absolute top-0 right-0 w-[600px] h-[400px] bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
-
-        <div className="container-custom py-12 md:py-20 relative">
-          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-            {/* Left: text */}
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-amber-500/20 border border-amber-500/30 rounded-full text-xs font-semibold text-amber-300 mb-5">
-                <span className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-pulse" />
-                New developments · Buyer&apos;s agents · Suburb data
-              </div>
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white leading-[1.1] mb-4 tracking-tight">
-                Australia&apos;s #1{" "}
-                <span className="text-amber-400">property investment</span>{" "}
-                guide.
-              </h1>
-              <p className="text-base md:text-lg text-slate-300 mb-8 leading-relaxed">
-                Browse new developments, find a verified buyer&apos;s agent, research suburb data, and compare investment loans — all in one place.
-              </p>
-              <div className="flex flex-col sm:flex-row items-center gap-3">
-                <Link href="/property/listings" className="w-full sm:w-auto px-7 py-3.5 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-400 shadow-lg shadow-amber-500/25 transition-all text-sm">
-                  Browse Developments &rarr;
-                </Link>
-                <Link href="/property/buyer-agents" className="w-full sm:w-auto px-7 py-3.5 border border-white/20 text-white font-semibold rounded-xl hover:bg-white/10 transition-all text-sm">
-                  Find a Buyer&apos;s Agent
-                </Link>
-              </div>
+      <section className="relative bg-white border-b border-slate-100 overflow-hidden">
+        <div className="container-custom py-5 md:py-8 lg:py-10">
+          <div className="max-w-3xl mx-auto text-center">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-900 border border-slate-800 rounded-full text-xs font-semibold text-white mb-3">
+              <span className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-pulse" />
+              New developments · Buyer&apos;s agents · Suburb data
             </div>
-
-            {/* Right: visual grid */}
-            <div className="hidden lg:grid grid-cols-2 gap-3">
-              {/* Quick stats cards */}
-              {[
-                { icon: "building", label: "New Apartments", sub: "Off the plan · FIRB approved options", color: "from-amber-500/20 to-amber-600/10", border: "border-amber-500/20", badge: "New" },
-                { icon: "home", label: "House & Land", sub: "Greenfield estates · Major cities", color: "from-emerald-500/20 to-emerald-600/10", border: "border-emerald-500/20", badge: "Popular" },
-                { icon: "bar-chart-2", label: "Top Suburbs", sub: "10yr capital growth · Yield data", color: "from-blue-500/20 to-blue-600/10", border: "border-blue-500/20", badge: "Research" },
-                { icon: "users", label: "Buyer&apos;s Agents", sub: "Verified · Free consultation", color: "from-purple-500/20 to-purple-600/10", border: "border-purple-500/20", badge: "Verified" },
-              ].map((card, i) => (
-                <div key={i} className={`bg-gradient-to-br ${card.color} border ${card.border} rounded-2xl p-4 backdrop-blur-sm`}>
-                  <div className="flex items-center justify-between mb-3">
-                    <Icon name={card.icon} size={20} className="text-white/70" />
-                    <span className="text-[0.6rem] font-bold text-white/50 uppercase tracking-wider bg-white/10 px-2 py-0.5 rounded-full">{card.badge}</span>
-                  </div>
-                  <p className="text-sm font-bold text-white mb-1" dangerouslySetInnerHTML={{ __html: card.label }} />
-                  <p className="text-[0.65rem] text-white/50 leading-snug">{card.sub}</p>
-                </div>
-              ))}
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-slate-900 leading-[1.1] mb-3 tracking-tight">
+              Australia&apos;s #1{" "}
+              <span className="text-amber-500">property investment</span>{" "}
+              guide.
+            </h1>
+            <p className="text-sm md:text-base text-slate-600 mb-4 leading-relaxed max-w-2xl mx-auto">
+              Browse new developments, find a verified buyer&apos;s agent, research suburb data, and compare investment loans — all in one place.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5 mb-4">
+              <Link href="/property/listings" className="w-full sm:w-auto px-6 py-3 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 shadow-md hover:shadow-lg transition-all text-sm">
+                Browse Developments &rarr;
+              </Link>
+              <Link href="/property/buyer-agents" className="hidden sm:inline-flex w-auto px-6 py-3 border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all text-sm items-center justify-center">
+                Find a Buyer&apos;s Agent
+              </Link>
+            </div>
+            <div className="flex items-center justify-center flex-wrap gap-x-4 gap-y-1 text-xs text-slate-600">
+              <span className="flex items-center gap-1.5">
+                <Icon name="shield-check" size={12} className="text-emerald-500" />
+                Independent — not a developer
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Icon name="check-circle" size={12} className="text-emerald-500" />
+                50+ new developments listed
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Icon name="check-circle" size={12} className="text-amber-500" />
+                Always free, no obligation
+              </span>
             </div>
           </div>
 
           {/* Stats bar */}
-          <div className="mt-10 md:mt-14 grid grid-cols-2 md:grid-cols-4 gap-4 pt-8 md:pt-10 border-t border-white/10">
+          <div className="mt-5 border-t border-slate-100 pt-4 grid grid-cols-2 md:grid-cols-4 gap-3 max-w-2xl mx-auto text-center">
             {stats.map((s) => (
-              <div key={s.label} className="text-center">
-                <div className="text-2xl md:text-3xl font-extrabold text-amber-400">{s.value}</div>
-                <div className="text-xs text-slate-400 mt-0.5">{s.label}</div>
+              <div key={s.label}>
+                <p className="text-xl md:text-2xl font-extrabold text-slate-900">{s.value}</p>
+                <p className="text-xs text-slate-600 mt-0.5">{s.label}</p>
               </div>
             ))}
           </div>
