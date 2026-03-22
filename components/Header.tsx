@@ -14,6 +14,7 @@ const propertyDropdown = [
   { label: "Buyer's Agents", href: "/property/buyer-agents", desc: "Negotiation & off-market access" },
   { label: "Suburb Research", href: "/property/suburbs", desc: "Yields, growth & vacancy data" },
   { label: "Investment Loans", href: "/property/finance", desc: "Compare rates from major lenders" },
+  { label: "Foreign Investment", href: "/property/foreign-investment", desc: "FIRB guide, surcharges & eligibility" },
   { label: "Mortgage Brokers", href: "/advisors/mortgage-brokers", desc: "Compare 30+ lenders — free" },
   { label: "Find an Advisor", href: "/find-advisor", desc: "Match with a verified professional" },
 ];
@@ -54,6 +55,7 @@ const mobileNavSections = [
       { name: "Buyer's Agents", href: "/property/buyer-agents" },
       { name: "Suburb Research", href: "/property/suburbs" },
       { name: "Investment Loans", href: "/property/finance" },
+      { name: "Foreign Investment", href: "/property/foreign-investment" },
     ],
   },
   {

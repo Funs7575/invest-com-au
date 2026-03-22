@@ -295,6 +295,32 @@ export const PROPERTY_INDICATIVE_PRICES =
   "Always obtain formal pricing from the developer or your solicitor.";
 
 /**
+ * FIRB general disclaimer.
+ * Required on all pages discussing FIRB, foreign investment rules, or foreign buyer eligibility.
+ * The Foreign Acquisitions and Takeovers Act 1975 (Cth) and FIRB policies change regularly.
+ * This disclaimer ensures users seek qualified legal/migration advice.
+ */
+export const FIRB_DISCLAIMER =
+  "Information about FIRB (Foreign Investment Review Board) requirements is general in nature " +
+  "and does not constitute legal advice. Foreign investment rules, thresholds, and application " +
+  "fees are updated regularly by the Australian Government. Always obtain independent legal " +
+  "advice from an Australian solicitor or registered migration agent before purchasing property " +
+  "as a foreign investor. Invest.com.au accepts no liability for decisions made in reliance on " +
+  "this information.";
+
+/**
+ * Foreign buyer stamp duty surcharge warning.
+ * Required wherever state-based surcharge figures are displayed.
+ * Rates shown are indicative and verified as at March 2026 — state governments
+ * change these without notice.
+ */
+export const FOREIGN_BUYER_STAMP_DUTY_WARNING =
+  "Foreign purchaser stamp duty surcharge rates shown are indicative as at March 2026. " +
+  "State and territory governments may change rates at any time. Always verify the current " +
+  "rate with the relevant state revenue office or your solicitor before signing contracts. " +
+  "Additional annual land tax surcharges may also apply in some states.";
+
+/**
  * Property tax note.
  * Required near rental yield and capital growth figures.
  * Property investment has significant tax implications including CGT, land tax,

@@ -127,7 +127,7 @@ export default async function PropertyHubPage() {
                 { icon: "building", label: "New Developments", sub: "Off-the-plan apartments, townhouses & house and land", href: "/property/listings", iconBg: "bg-amber-500", border: "hover:border-amber-200 hover:bg-amber-50/60" },
                 { icon: "users", label: "Buyer's Agents", sub: "Verified agents who negotiate on your behalf", href: "/property/buyer-agents", iconBg: "bg-slate-800", border: "hover:border-slate-300 hover:bg-slate-50" },
                 { icon: "bar-chart-2", label: "Suburb Research", sub: "Median prices, yields, vacancy & growth data", href: "/property/suburbs", iconBg: "bg-emerald-600", border: "hover:border-emerald-200 hover:bg-emerald-50/60" },
-                { icon: "landmark", label: "Investment Loans", sub: "Compare rates from 8+ lenders — free pre-approval", href: "/property/finance", iconBg: "bg-sky-600", border: "hover:border-sky-200 hover:bg-sky-50/60" },
+                { icon: "globe", label: "Foreign Investors", sub: "FIRB guide, stamp duty surcharges & eligible properties", href: "/property/foreign-investment", iconBg: "bg-violet-600", border: "hover:border-violet-200 hover:bg-violet-50/60" },
               ].map((card) => (
                 <Link key={card.href} href={card.href} className={`bg-white border border-slate-200 rounded-2xl p-4 md:p-5 transition-all group ${card.border}`}>
                   <div className={`w-9 h-9 ${card.iconBg} rounded-xl flex items-center justify-center mb-3 shadow-sm`}>
@@ -487,6 +487,33 @@ export default async function PropertyHubPage() {
                   Compare Loan Rates &rarr;
                 </Link>
               </div>
+            </div>
+          </div>
+        </section>
+      </ScrollFadeIn>
+
+      {/* ── Foreign Investor Callout ──────────────── */}
+      <ScrollFadeIn>
+        <section className="py-8 md:py-10 bg-white border-t border-slate-100">
+          <div className="container-custom">
+            <div className="bg-gradient-to-r from-violet-50 to-slate-50 border border-violet-200 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center gap-5 md:gap-8">
+              <div className="w-12 h-12 bg-violet-600 rounded-2xl flex items-center justify-center shrink-0 shadow-md">
+                <Icon name="globe" size={22} className="text-white" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-base md:text-lg font-extrabold text-slate-900 mb-1">
+                  Buying Australian property as a foreign investor?
+                </h3>
+                <p className="text-xs md:text-sm text-slate-600 leading-relaxed">
+                  Understand FIRB approval requirements, state stamp duty surcharges (7–8%), eligible property types, and application fees before you buy. Our guide covers everything foreign non-residents and temporary visa holders need to know.
+                </p>
+              </div>
+              <Link
+                href="/property/foreign-investment"
+                className="shrink-0 px-5 py-3 bg-violet-600 hover:bg-violet-700 text-white font-bold text-sm rounded-xl transition-colors shadow-sm text-center whitespace-nowrap"
+              >
+                Read the FIRB Guide &rarr;
+              </Link>
             </div>
           </div>
         </section>

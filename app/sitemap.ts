@@ -466,6 +466,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/property/listings`, priority: 0.8 },
     { url: `${baseUrl}/property/suburbs`, priority: 0.7 },
     { url: `${baseUrl}/property/buyer-agents`, priority: 0.7 },
+    { url: `${baseUrl}/property/foreign-investment`, priority: 0.8 },
   ].map((p) => ({ ...p, lastModified: new Date(), changeFrequency: "weekly" as const }));
 
   return [...staticPages, ...bestPages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorCityPages, ...advisorLocationPages, ...investingCityPages, ...glossaryPages, ...firmPages, ...propertyListingPages, ...propertyHubPages];
