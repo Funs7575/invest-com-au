@@ -287,10 +287,10 @@ export default async function HomePage() {
 
       {/* ═══════ 1C. MONEY ROW — top affiliate promos ═══════ */}
       {dealBrokers.length > 0 && (
-        <section className="bg-slate-900 border-b border-slate-800 py-3 overflow-x-auto">
+        <section className="bg-white border-b border-slate-200 py-3 overflow-x-auto">
           <div className="container-custom">
             <div className="flex items-center gap-2 md:gap-3 flex-nowrap md:flex-wrap md:justify-center">
-              <span className="shrink-0 text-[0.6rem] font-extrabold uppercase tracking-widest text-slate-500 hidden md:block pr-1">
+              <span className="shrink-0 text-[0.6rem] font-extrabold uppercase tracking-widest text-slate-400 hidden md:block pr-1">
                 Live Deals
               </span>
               {dealBrokers.map((broker) => {
@@ -301,22 +301,22 @@ export default async function HomePage() {
                     href={affiliateLink}
                     target="_blank"
                     rel={AFFILIATE_REL}
-                    className="shrink-0 flex items-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-amber-500/40 rounded-lg px-3 py-2 transition-all group"
+                    className="shrink-0 flex items-center gap-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-amber-400/60 rounded-lg px-3 py-2 transition-all group"
                   >
                     <span className="text-[0.55rem] font-bold uppercase tracking-wider bg-amber-500 text-white px-1.5 py-0.5 rounded-full shrink-0">
                       Verified Promo
                     </span>
                     <BrokerLogo broker={broker} size="xs" />
-                    <span className="text-xs font-semibold text-slate-200 group-hover:text-white whitespace-nowrap max-w-[180px] truncate">
+                    <span className="text-xs font-semibold text-slate-700 group-hover:text-slate-900 whitespace-nowrap max-w-[180px] truncate">
                       {broker.deal_text}
                     </span>
-                    <Icon name="arrow-right" size={12} className="text-amber-400 shrink-0" />
+                    <Icon name="arrow-right" size={12} className="text-amber-500 shrink-0" />
                   </a>
                 );
               })}
               <a
                 href="/deals"
-                className="shrink-0 text-[0.7rem] font-semibold text-slate-400 hover:text-amber-400 transition-colors whitespace-nowrap pl-1"
+                className="shrink-0 text-[0.7rem] font-semibold text-slate-400 hover:text-amber-500 transition-colors whitespace-nowrap pl-1"
               >
                 View all deals &rarr;
               </a>
@@ -327,14 +327,14 @@ export default async function HomePage() {
 
       {/* ═══════ 2. ALPHA CATCHER — single unified quiz CTA ═══════ */}
       <ScrollFadeIn>
-        <section className="py-12 md:py-20 bg-slate-900">
+        <section className="py-12 md:py-20 bg-slate-50 border-b border-slate-100">
           <div className="container-custom">
             <div className="max-w-2xl mx-auto text-center">
-              <p className="text-xs font-bold uppercase tracking-widest text-amber-400 mb-3">Free assessment — 60 seconds</p>
-              <h2 className="text-2xl md:text-4xl font-extrabold text-white mb-4 leading-tight">
+              <p className="text-xs font-bold uppercase tracking-widest text-amber-500 mb-3">Free assessment — 60 seconds</p>
+              <h2 className="text-2xl md:text-4xl font-extrabold text-slate-900 mb-4 leading-tight">
                 Stop guessing.<br className="hidden sm:block" /> Find the right strategy in 60 seconds.
               </h2>
-              <p className="text-slate-400 text-sm md:text-base mb-8 max-w-lg mx-auto leading-relaxed">
+              <p className="text-slate-500 text-sm md:text-base mb-8 max-w-lg mx-auto leading-relaxed">
                 Answer 4 quick questions and we&apos;ll match you with the best platform and advisor for your exact situation — free, no obligation, no sign-up required.
               </p>
               <Link
@@ -344,7 +344,7 @@ export default async function HomePage() {
                 Start My Free Assessment
                 <Icon name="arrow-right" size={18} />
               </Link>
-              <p className="text-slate-600 text-xs mt-4">
+              <p className="text-slate-400 text-xs mt-4">
                 ASIC-verified results &middot; No credit card &middot; Cancel anytime
               </p>
             </div>
