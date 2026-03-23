@@ -233,25 +233,23 @@ export default function AdvisorProfileClient({
 
         {/* ── HERO CARD ──────────────────────────────── */}
         <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden mb-6">
-          {/* Banner */}
-          <div className="h-36 md:h-52 bg-slate-800 relative overflow-hidden">
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.04),transparent_60%)]" />
-          </div>
+          {/* Accent bar */}
+          <div className="h-1.5 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400" />
 
           {/* Profile content */}
-          <div className="px-5 md:px-10 pb-7 -mt-14 md:-mt-20 relative">
-            <div className="flex flex-col md:flex-row md:items-end gap-5 md:gap-7">
+          <div className="px-5 md:px-10 pt-8 pb-7 relative">
+            <div className="flex flex-col md:flex-row md:items-center gap-6 md:gap-8">
               {/* Avatar */}
               {pro.photo_url ? (
                 <Image
                   src={pro.photo_url}
                   alt={pro.name}
-                  width={160}
-                  height={160}
-                  className="w-24 h-24 md:w-40 md:h-40 rounded-2xl object-cover shrink-0 ring-4 ring-white shadow-xl"
+                  width={220}
+                  height={220}
+                  className="w-32 h-32 md:w-52 md:h-52 rounded-2xl object-cover shrink-0 shadow-xl ring-1 ring-slate-200"
                 />
               ) : (
-                <div className="w-24 h-24 md:w-40 md:h-40 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center text-3xl md:text-5xl font-black text-white shrink-0 ring-4 ring-white shadow-xl">
+                <div className="w-32 h-32 md:w-52 md:h-52 rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center text-4xl md:text-6xl font-black text-white shrink-0 shadow-xl ring-1 ring-slate-200">
                   {initials}
                 </div>
               )}
@@ -336,7 +334,7 @@ export default function AdvisorProfileClient({
                 <div className="hidden md:flex items-center gap-3 flex-wrap">
                   <a
                     href="#contact"
-                    className="px-7 py-3 bg-amber-600 text-white font-bold text-sm rounded-xl hover:bg-amber-500 transition-all shadow-md shadow-amber-200/50 active:scale-[0.98]"
+                    className="px-7 py-3 bg-amber-500 text-slate-900 font-bold text-sm rounded-xl hover:bg-amber-400 transition-all shadow-md shadow-amber-200/50 active:scale-[0.98]"
                   >
                     Request Free Consultation
                   </a>
@@ -1269,7 +1267,7 @@ export default function AdvisorProfileClient({
           <div className="flex items-center gap-3">
             <a
               href="#contact"
-              className="px-7 py-2.5 bg-amber-600 text-white font-black text-sm rounded-xl hover:bg-amber-500 transition-all shadow-sm shadow-amber-200/50"
+              className="px-7 py-2.5 bg-amber-500 text-slate-900 font-black text-sm rounded-xl hover:bg-amber-400 transition-all shadow-sm shadow-amber-200/50"
             >
               Request Free Consultation
             </a>
