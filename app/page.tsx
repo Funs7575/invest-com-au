@@ -337,7 +337,7 @@ export default async function HomePage() {
                 <Icon name="arrow-right" size={18} />
               </Link>
               <p className="text-slate-400 text-xs mt-4">
-                ASIC-verified results &middot; No credit card &middot; Cancel anytime
+                Free &middot; No sign-up required &middot; Takes 60 seconds
               </p>
             </div>
           </div>
