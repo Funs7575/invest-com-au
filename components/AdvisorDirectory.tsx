@@ -91,10 +91,10 @@ export default function AdvisorDirectory() {
 
               {/* Primary CTA */}
               <Link
-                href="/quiz"
+                href="/find-advisor"
                 className="inline-flex items-center justify-center gap-2 px-7 py-3.5 min-h-[52px] bg-amber-500 hover:bg-amber-600 text-white text-sm md:text-base font-bold rounded-xl shadow-md shadow-amber-500/25 hover:shadow-amber-500/40 transition-all"
               >
-                Take the Assessment to Get Matched
+                {isProperty ? "Match Me With a Property Expert" : "Match Me With a Financial Advisor"}
                 <Icon name="arrow-right" size={16} className="text-white" />
               </Link>
 

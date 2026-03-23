@@ -196,7 +196,7 @@ export default async function HomePage() {
                 href="/find-advisor"
                 className="group flex flex-col items-start gap-1.5 p-3.5 bg-white border border-slate-200 rounded-xl hover:border-amber-400 hover:shadow-md transition-all text-left"
               >
-                <div className="w-8 h-8 bg-gradient-to-br from-violet-600 to-violet-500 rounded-lg flex items-center justify-center shadow-sm shadow-violet-500/15">
+                <div className="w-8 h-8 bg-gradient-to-br from-slate-800 to-slate-700 rounded-lg flex items-center justify-center shadow-sm shadow-slate-500/15">
                   <Icon name="users" size={16} className="text-white" />
                 </div>
                 <div>
@@ -208,7 +208,7 @@ export default async function HomePage() {
                 href="/property"
                 className="group flex flex-col items-start gap-1.5 p-3.5 bg-white border border-slate-200 rounded-xl hover:border-amber-400 hover:shadow-md transition-all text-left"
               >
-                <div className="w-8 h-8 bg-gradient-to-br from-emerald-600 to-emerald-500 rounded-lg flex items-center justify-center shadow-sm shadow-emerald-500/15">
+                <div className="w-8 h-8 bg-gradient-to-br from-slate-700 to-slate-600 rounded-lg flex items-center justify-center shadow-sm shadow-slate-500/15">
                   <Icon name="building" size={16} className="text-white" />
                 </div>
                 <div>
@@ -221,11 +221,11 @@ export default async function HomePage() {
             {/* Trust signals */}
             <div className="flex items-center justify-center flex-wrap gap-x-4 gap-y-1 text-xs text-slate-600">
               <span className="flex items-center gap-1.5">
-                <Icon name="shield-check" size={12} className="text-emerald-500" />
+                <Icon name="shield-check" size={12} className="text-amber-500" />
                 Independently reviewed — ratings not for sale
               </span>
               <span className="flex items-center gap-1.5">
-                <Icon name="check-circle" size={12} className="text-emerald-500" />
+                <Icon name="check-circle" size={12} className="text-amber-500" />
                 {brokerCount}+ platforms tested with real accounts
               </span>
               <span className="flex items-center gap-1.5">
@@ -260,17 +260,17 @@ export default async function HomePage() {
         <div className="container-custom">
           <div className="flex items-center justify-center flex-wrap gap-x-6 gap-y-2 text-xs font-semibold text-slate-600">
             <span className="flex items-center gap-1.5">
-              <Icon name="shield-check" size={14} className="text-emerald-500" />
+              <Icon name="shield-check" size={14} className="text-amber-500" />
               100% Independent Research
             </span>
             <span className="text-slate-300 hidden sm:block" aria-hidden="true">|</span>
             <span className="flex items-center gap-1.5">
-              <Icon name="check-circle" size={14} className="text-emerald-500" />
+              <Icon name="check-circle" size={14} className="text-amber-500" />
               ASIC-Verified Professionals
             </span>
             <span className="text-slate-300 hidden sm:block" aria-hidden="true">|</span>
             <span className="flex items-center gap-1.5">
-              <Icon name="check-circle" size={14} className="text-emerald-500" />
+              <Icon name="check-circle" size={14} className="text-amber-500" />
               Zero Hidden Markups
             </span>
           </div>
@@ -350,8 +350,8 @@ export default async function HomePage() {
           <div className="container-custom">
             <div className="flex items-start justify-between gap-2 mb-4 md:mb-6">
               <div>
-                <p className="text-xs font-semibold text-emerald-600 uppercase tracking-wide mb-1 flex items-center gap-1">
-                  <Icon name="shield-check" size={12} className="text-emerald-500" />
+                <p className="text-xs font-semibold text-amber-600 uppercase tracking-wide mb-1 flex items-center gap-1">
+                  <Icon name="shield-check" size={12} className="text-amber-500" />
                   Ratings not for sale &middot; independently reviewed
                 </p>
                 <h2 className="text-xl md:text-3xl font-extrabold text-slate-900">
