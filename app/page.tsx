@@ -330,7 +330,7 @@ export default async function HomePage() {
                 Answer 4 quick questions and we&apos;ll match you with the best platform and advisor for your exact situation — free, no obligation, no sign-up required.
               </p>
               <Link
-                href="/quiz"
+                href="/start"
                 className="inline-flex items-center gap-2.5 px-8 py-4 bg-amber-500 hover:bg-amber-400 text-slate-900 font-extrabold text-base rounded-xl transition-all shadow-lg shadow-amber-500/20 hover:-translate-y-0.5 active:scale-[0.97]"
               >
                 Start My Free Assessment
