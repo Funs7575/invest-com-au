@@ -76,11 +76,11 @@ export default function AdvisorDirectory() {
               {/* Trust signals row */}
               <div className="flex items-center justify-center flex-wrap gap-x-5 gap-y-2 text-xs text-slate-500 mb-6">
                 <span className="flex items-center gap-1.5">
-                  <Icon name="shield-check" size={13} className="text-emerald-500" />
+                  <Icon name="shield-check" size={13} className="text-amber-500" />
                   ASIC-verified professionals only
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <Icon name="check-circle" size={13} className="text-emerald-500" />
+                  <Icon name="check-circle" size={13} className="text-amber-500" />
                   Your details go to one advisor — never sold
                 </span>
                 <span className="flex items-center gap-1.5">

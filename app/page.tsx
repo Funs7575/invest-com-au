@@ -529,18 +529,21 @@ export default async function HomePage() {
       <ScrollFadeIn>
         <section className="py-6 md:py-10 bg-slate-50 border-t border-slate-100">
           <div className="container-custom">
-            <p className="text-xs text-amber-600 text-center uppercase tracking-widest font-bold mb-2">Free tools</p>
-            <h2 className="text-xl md:text-2xl font-bold text-center text-slate-900 mb-4 md:mb-6">Investing Tools &amp; Calculators</h2>
+            <div className="flex items-center justify-between mb-4 md:mb-6">
+              <div>
+                <p className="text-xs text-amber-600 uppercase tracking-widest font-bold mb-1">Free tools</p>
+                <h2 className="text-xl md:text-2xl font-bold text-slate-900">Investing Tools &amp; Calculators</h2>
+              </div>
+              <Link href="/calculators" className="text-xs md:text-sm font-semibold text-slate-500 hover:text-amber-600 transition-colors shrink-0">
+                View All Calculators &rarr;
+              </Link>
+            </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
               {[
                 { href: "/portfolio-calculator", icon: "calculator", color: "from-amber-500 to-amber-400", shadow: "shadow-amber-500/20", title: "Portfolio Calculator", desc: "See exact fees at every platform" },
-                { href: "/switching-calculator", icon: "arrow-right-left", color: "from-emerald-600 to-emerald-500", shadow: "shadow-emerald-500/15", title: "Switching Calculator", desc: "How much are you overpaying?" },
-                { href: "/savings-calculator", icon: "piggy-bank", color: "from-slate-700 to-slate-600", shadow: "shadow-slate-500/15", title: "Savings Calculator", desc: "Are you earning enough?" },
-                { href: "/compare", icon: "bar-chart", color: "from-amber-600 to-amber-500", shadow: "shadow-amber-500/20", title: "Compare Platforms", desc: "Full side-by-side comparison" },
-                { href: "/calculators", icon: "coins", color: "from-slate-700 to-slate-600", shadow: "shadow-slate-500/15", title: "All Calculators", desc: "CGT, FX, dividends & more" },
-                { href: "/best", icon: "shield-check", color: "from-emerald-600 to-emerald-500", shadow: "shadow-emerald-500/15", title: "Best Platforms", desc: "Top picks by category" },
-                { href: "/quiz", icon: "target", color: "from-amber-500 to-amber-400", shadow: "shadow-amber-500/20", title: "Platform Quiz", desc: "Best match in 60 seconds" },
-                { href: "/find-advisor", icon: "users", color: "from-slate-800 to-slate-700", shadow: "shadow-slate-500/15", title: "Find Advisor", desc: "Matched to your needs, free" },
+                { href: "/switching-calculator", icon: "arrow-right-left", color: "from-slate-700 to-slate-600", shadow: "shadow-slate-500/15", title: "Switching Calculator", desc: "How much are you overpaying?" },
+                { href: "/savings-calculator", icon: "piggy-bank", color: "from-amber-600 to-amber-500", shadow: "shadow-amber-500/20", title: "Savings Calculator", desc: "Are you earning enough?" },
+                { href: "/mortgage-calculator", icon: "home", color: "from-slate-700 to-slate-600", shadow: "shadow-slate-500/15", title: "Borrowing Power", desc: "How much can you borrow?" },
               ].map((tool) => (
                 <Link key={tool.href} href={tool.href} className="bg-white border border-slate-200 rounded-xl p-3 md:p-5 hover:shadow-md hover:border-slate-300 transition-all group">
                   <div className={`w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br ${tool.color} rounded-xl flex items-center justify-center mb-2 md:mb-3 shadow-md ${tool.shadow}`}>
