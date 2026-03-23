@@ -450,10 +450,10 @@ export function Navigation() {
           {/* Desktop CTA — unified funnel entry point */}
           <div className="hidden lg:flex items-center">
             <Link
-              href="/start"
-              className="bg-violet-600 hover:bg-violet-700 text-white px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm hover:shadow-md active:scale-[0.97] flex items-center gap-2"
+              href="/find-advisor"
+              className="bg-amber-500 hover:bg-amber-600 text-slate-900 px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm hover:shadow-md active:scale-[0.97] flex items-center gap-2"
             >
-              Find Your Best Path
+              Find My Advisor
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
@@ -463,10 +463,10 @@ export function Navigation() {
           {/* Mobile hamburger */}
           <div className="lg:hidden flex items-center gap-2">
             <Link
-              href="/start"
-              className="bg-violet-600 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all hover:bg-violet-700 min-h-[44px] flex items-center"
+              href="/find-advisor"
+              className="bg-amber-500 text-slate-900 px-4 py-2 rounded-lg text-xs font-bold transition-all hover:bg-amber-600 min-h-[44px] flex items-center"
             >
-              Best Path
+              Find Advisor
             </Link>
             <button
               onClick={() => setMobileOpen((v) => !v)}

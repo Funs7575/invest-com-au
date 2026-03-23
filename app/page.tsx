@@ -218,14 +218,6 @@ export default async function HomePage() {
               </Link>
             </div>
 
-            {/* Beginner escape hatch — quiz prompt */}
-            <p className="text-[0.72rem] text-slate-500 mb-4">
-              New to investing or not sure where to start?{" "}
-              <Link href="/quiz" className="text-amber-600 font-semibold hover:text-amber-700 underline underline-offset-2">
-                Take the free 60-second quiz &rarr;
-              </Link>
-            </p>
-
             {/* Trust signals */}
             <div className="flex items-center justify-center flex-wrap gap-x-4 gap-y-1 text-xs text-slate-600">
               <span className="flex items-center gap-1.5">
@@ -396,57 +388,66 @@ export default async function HomePage() {
         </section>
       </ScrollFadeIn>
 
-      {/* ═══════ 4. ADVISOR DIRECTORY ═══════ */}
-      <AdvisorDirectory />
-
-      {/* ═══════ 5. INVESTMENT PROPERTY HUB (items 47–50) ═══════ */}
-      <ScrollFadeIn>
-        <section className="py-6 md:py-10 bg-slate-50 border-y border-slate-100">
-          <div className="container-custom">
-            <div className="flex items-start justify-between gap-2 mb-4 md:mb-6">
-              <div>
-                <h2 className="text-xl md:text-2xl font-bold text-slate-900">Investment Property Hub</h2>
-                <p className="text-xs md:text-sm text-slate-600 mt-1">Listings, buyer&apos;s agents, suburb data &amp; investment loans</p>
+      {/* ═══════ 4. CURRENT PLATFORM DEALS ═══════ */}
+      {(dealBrokers as Broker[])?.length >= 3 && (
+        <ScrollFadeIn>
+          <section className="py-6 md:py-10 bg-gradient-to-b from-amber-50/60 to-white border-y border-amber-100">
+            <div className="container-custom">
+              <div className="flex items-start justify-between gap-2 mb-4 md:mb-6">
+                <div>
+                  <h2 className="text-lg md:text-2xl font-bold text-slate-900">Current Platform Deals</h2>
+                  <p className="text-xs md:text-sm text-slate-600 mt-0.5">Verified promotions from Australian trading platforms — {updatedMonth}</p>
+                </div>
+                <Link href="/deals" className="text-xs md:text-sm font-semibold text-amber-600 hover:text-amber-700 shrink-0 min-h-[44px] inline-flex items-center px-1">
+                  View All &rarr;
+                </Link>
               </div>
-              <Link href="/property" className="text-xs md:text-sm font-semibold text-amber-600 hover:text-amber-700 shrink-0 min-h-[44px] inline-flex items-center px-1">
-                View all &rarr;
-              </Link>
+              <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {(dealBrokers as Broker[]).map((broker) => (
+                  <DealCard key={broker.id} broker={broker} />
+                ))}
+              </div>
+              <div className="md:hidden space-y-2">
+                {(dealBrokers as Broker[]).map((broker) => {
+                  const expiryDate = broker.deal_expiry ? new Date(broker.deal_expiry) : null;
+                  const daysLeft = expiryDate ? Math.max(0, Math.ceil((expiryDate.getTime() - Date.now()) / 86400000)) : null;
+                  const isUrgent = daysLeft !== null && daysLeft <= 7;
+                  const affiliateLink = `/go/${broker.slug}`;
+                  return (
+                    <div key={broker.id} className="border border-slate-200 rounded-xl p-3 bg-white">
+                      <div className="flex items-center gap-2 mb-2">
+                        <BrokerLogo broker={broker} size="sm" />
+                        <div className="flex-1 min-w-0">
+                          <span className="font-bold text-sm text-slate-900 truncate block">{broker.name}</span>
+                          <span className="text-xs text-slate-400">{broker.rating}/5</span>
+                        </div>
+                        <a href={affiliateLink} target="_blank" rel={AFFILIATE_REL} className="shrink-0 px-3 py-1.5 min-h-[44px] flex items-center bg-amber-500 text-white text-xs font-bold rounded-lg active:scale-[0.98] transition-all">
+                          Claim &rarr;
+                        </a>
+                      </div>
+                      <div className="bg-amber-50 rounded-lg px-2.5 py-2 flex items-start gap-1.5">
+                        <Icon name="flame" size={12} className="text-amber-500 shrink-0 mt-0.5" />
+                        <p className="text-xs text-slate-700 font-medium leading-snug line-clamp-2 flex-1">{broker.deal_text}</p>
+                        {isUrgent && daysLeft !== null && (
+                          <span className="shrink-0 text-xs font-bold px-1.5 py-0.5 rounded-full bg-red-100 text-red-600 animate-pulse whitespace-nowrap">
+                            {daysLeft}d left
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="mt-3 md:mt-4">
+                <CompactDisclaimerLine />
+              </div>
             </div>
-            {/* 4 property cards (item 48) */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-              <Link href="/property/listings" className="bg-white border border-slate-200 rounded-2xl p-4 md:p-5 hover:shadow-md hover:border-slate-300 transition-all group">
-                <div className="w-9 h-9 bg-gradient-to-br from-amber-500 to-amber-400 rounded-xl flex items-center justify-center mb-2.5 shadow-md shadow-amber-500/20">
-                  <Icon name="building" size={18} className="text-white" />
-                </div>
-                <h3 className="font-bold text-sm text-slate-900 mb-0.5 group-hover:text-slate-700">New Developments</h3>
-                <p className="text-xs text-slate-600">Off-the-plan apartments, townhouses &amp; house and land</p>
-              </Link>
-              <Link href="/property/buyer-agents" className="bg-white border border-slate-200 rounded-2xl p-4 md:p-5 hover:shadow-md hover:border-slate-300 transition-all group">
-                <div className="w-9 h-9 bg-gradient-to-br from-slate-800 to-slate-700 rounded-xl flex items-center justify-center mb-2.5 shadow-md shadow-slate-500/15">
-                  <Icon name="users" size={18} className="text-white" />
-                </div>
-                <h3 className="font-bold text-sm text-slate-900 mb-0.5 group-hover:text-slate-700">Buyer&apos;s Agents</h3>
-                <p className="text-xs text-slate-600">Verified agents who negotiate on your behalf</p>
-              </Link>
-              <Link href="/property/suburbs" className="bg-white border border-slate-200 rounded-2xl p-4 md:p-5 hover:shadow-md hover:border-slate-300 transition-all group">
-                <div className="w-9 h-9 bg-gradient-to-br from-emerald-600 to-emerald-500 rounded-xl flex items-center justify-center mb-2.5 shadow-md shadow-emerald-500/15">
-                  <Icon name="bar-chart" size={18} className="text-white" />
-                </div>
-                <h3 className="font-bold text-sm text-slate-900 mb-0.5 group-hover:text-slate-700">Suburb Research</h3>
-                <p className="text-xs text-slate-600">Median prices, yields, vacancy rates &amp; growth data</p>
-              </Link>
-              {/* 4th card — Investment Loans (item 48) */}
-              <Link href="/property/finance" className="bg-white border border-slate-200 rounded-2xl p-4 md:p-5 hover:shadow-md hover:border-slate-300 transition-all group">
-                <div className="w-9 h-9 bg-gradient-to-br from-sky-600 to-sky-500 rounded-xl flex items-center justify-center mb-2.5 shadow-md shadow-sky-500/15">
-                  <Icon name="landmark" size={18} className="text-white" />
-                </div>
-                <h3 className="font-bold text-sm text-slate-900 mb-0.5 group-hover:text-slate-700">Investment Loans</h3>
-                <p className="text-xs text-slate-600">Compare rates from 8+ lenders — free pre-approval</p>
-              </Link>
-            </div>
-          </div>
-        </section>
-      </ScrollFadeIn>
+          </section>
+        </ScrollFadeIn>
+      )}
+
+      {/* ═══════ 5. ADVISOR DIRECTORY ═══════ */}
+      <AdvisorDirectory />
 
       {/* ═══════ 6. ARTICLES & GUIDES ═══════ */}
       {(articles as Article[])?.length > 0 && (
@@ -518,64 +519,6 @@ export default async function HomePage() {
                     </Link>
                   ))}
                 </div>
-              </div>
-            </div>
-          </section>
-        </ScrollFadeIn>
-      )}
-
-      {/* ═══════ 7. ACTIVE DEALS (moved after articles, item 23) ═══════ */}
-      {(dealBrokers as Broker[])?.length >= 3 && (
-        <ScrollFadeIn>
-          <section className="py-6 md:py-10 bg-gradient-to-b from-amber-50/60 to-white border-y border-amber-100">
-            <div className="container-custom">
-              <div className="flex items-start justify-between gap-2 mb-4 md:mb-6">
-                <div>
-                  <h2 className="text-lg md:text-2xl font-bold text-slate-900">Current Platform Deals</h2>
-                  <p className="text-xs md:text-sm text-slate-600 mt-0.5">Verified promotions from Australian trading platforms — {updatedMonth}</p>
-                </div>
-                <Link href="/deals" className="text-xs md:text-sm font-semibold text-amber-600 hover:text-amber-700 shrink-0 min-h-[44px] inline-flex items-center px-1">
-                  View All &rarr;
-                </Link>
-              </div>
-              <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {(dealBrokers as Broker[]).map((broker) => (
-                  <DealCard key={broker.id} broker={broker} />
-                ))}
-              </div>
-              <div className="md:hidden space-y-2">
-                {(dealBrokers as Broker[]).map((broker) => {
-                  const expiryDate = broker.deal_expiry ? new Date(broker.deal_expiry) : null;
-                  const daysLeft = expiryDate ? Math.max(0, Math.ceil((expiryDate.getTime() - Date.now()) / 86400000)) : null;
-                  const isUrgent = daysLeft !== null && daysLeft <= 7;
-                  const affiliateLink = `/go/${broker.slug}`;
-                  return (
-                    <div key={broker.id} className="border border-slate-200 rounded-xl p-3 bg-white">
-                      <div className="flex items-center gap-2 mb-2">
-                        <BrokerLogo broker={broker} size="sm" />
-                        <div className="flex-1 min-w-0">
-                          <span className="font-bold text-sm text-slate-900 truncate block">{broker.name}</span>
-                          <span className="text-xs text-slate-400">{broker.rating}/5</span>
-                        </div>
-                        <a href={affiliateLink} target="_blank" rel={AFFILIATE_REL} className="shrink-0 px-3 py-1.5 min-h-[44px] flex items-center bg-amber-500 text-white text-xs font-bold rounded-lg active:scale-[0.98] transition-all">
-                          Claim &rarr;
-                        </a>
-                      </div>
-                      <div className="bg-amber-50 rounded-lg px-2.5 py-2 flex items-start gap-1.5">
-                        <Icon name="flame" size={12} className="text-amber-500 shrink-0 mt-0.5" />
-                        <p className="text-xs text-slate-700 font-medium leading-snug line-clamp-2 flex-1">{broker.deal_text}</p>
-                        {isUrgent && daysLeft !== null && (
-                          <span className="shrink-0 text-xs font-bold px-1.5 py-0.5 rounded-full bg-red-100 text-red-600 animate-pulse whitespace-nowrap">
-                            {daysLeft}d left
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-              <div className="mt-3 md:mt-4">
-                <CompactDisclaimerLine />
               </div>
             </div>
           </section>
