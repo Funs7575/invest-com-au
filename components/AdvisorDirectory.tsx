@@ -76,11 +76,11 @@ export default function AdvisorDirectory() {
               {/* Trust signals row */}
               <div className="flex items-center justify-center flex-wrap gap-x-5 gap-y-2 text-xs text-slate-500 mb-6">
                 <span className="flex items-center gap-1.5">
-                  <Icon name="shield-check" size={13} className="text-emerald-500" />
+                  <Icon name="shield-check" size={13} className="text-amber-500" />
                   ASIC-verified professionals only
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <Icon name="check-circle" size={13} className="text-emerald-500" />
+                  <Icon name="check-circle" size={13} className="text-amber-500" />
                   Your details go to one advisor — never sold
                 </span>
                 <span className="flex items-center gap-1.5">
@@ -91,10 +91,10 @@ export default function AdvisorDirectory() {
 
               {/* Primary CTA */}
               <Link
-                href="/quiz"
+                href="/find-advisor"
                 className="inline-flex items-center justify-center gap-2 px-7 py-3.5 min-h-[52px] bg-amber-500 hover:bg-amber-600 text-white text-sm md:text-base font-bold rounded-xl shadow-md shadow-amber-500/25 hover:shadow-amber-500/40 transition-all"
               >
-                Take the Assessment to Get Matched
+                {isProperty ? "Match Me With a Property Expert" : "Match Me With a Financial Advisor"}
                 <Icon name="arrow-right" size={16} className="text-white" />
               </Link>
 

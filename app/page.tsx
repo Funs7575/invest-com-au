@@ -196,7 +196,7 @@ export default async function HomePage() {
                 href="/find-advisor"
                 className="group flex flex-col items-start gap-1.5 p-3.5 bg-white border border-slate-200 rounded-xl hover:border-amber-400 hover:shadow-md transition-all text-left"
               >
-                <div className="w-8 h-8 bg-gradient-to-br from-violet-600 to-violet-500 rounded-lg flex items-center justify-center shadow-sm shadow-violet-500/15">
+                <div className="w-8 h-8 bg-gradient-to-br from-slate-800 to-slate-700 rounded-lg flex items-center justify-center shadow-sm shadow-slate-500/15">
                   <Icon name="users" size={16} className="text-white" />
                 </div>
                 <div>
@@ -208,7 +208,7 @@ export default async function HomePage() {
                 href="/property"
                 className="group flex flex-col items-start gap-1.5 p-3.5 bg-white border border-slate-200 rounded-xl hover:border-amber-400 hover:shadow-md transition-all text-left"
               >
-                <div className="w-8 h-8 bg-gradient-to-br from-emerald-600 to-emerald-500 rounded-lg flex items-center justify-center shadow-sm shadow-emerald-500/15">
+                <div className="w-8 h-8 bg-gradient-to-br from-slate-700 to-slate-600 rounded-lg flex items-center justify-center shadow-sm shadow-slate-500/15">
                   <Icon name="building" size={16} className="text-white" />
                 </div>
                 <div>
@@ -221,11 +221,11 @@ export default async function HomePage() {
             {/* Trust signals */}
             <div className="flex items-center justify-center flex-wrap gap-x-4 gap-y-1 text-xs text-slate-600">
               <span className="flex items-center gap-1.5">
-                <Icon name="shield-check" size={12} className="text-emerald-500" />
+                <Icon name="shield-check" size={12} className="text-amber-500" />
                 Independently reviewed — ratings not for sale
               </span>
               <span className="flex items-center gap-1.5">
-                <Icon name="check-circle" size={12} className="text-emerald-500" />
+                <Icon name="check-circle" size={12} className="text-amber-500" />
                 {brokerCount}+ platforms tested with real accounts
               </span>
               <span className="flex items-center gap-1.5">
@@ -260,17 +260,17 @@ export default async function HomePage() {
         <div className="container-custom">
           <div className="flex items-center justify-center flex-wrap gap-x-6 gap-y-2 text-xs font-semibold text-slate-600">
             <span className="flex items-center gap-1.5">
-              <Icon name="shield-check" size={14} className="text-emerald-500" />
+              <Icon name="shield-check" size={14} className="text-amber-500" />
               100% Independent Research
             </span>
             <span className="text-slate-300 hidden sm:block" aria-hidden="true">|</span>
             <span className="flex items-center gap-1.5">
-              <Icon name="check-circle" size={14} className="text-emerald-500" />
+              <Icon name="check-circle" size={14} className="text-amber-500" />
               ASIC-Verified Professionals
             </span>
             <span className="text-slate-300 hidden sm:block" aria-hidden="true">|</span>
             <span className="flex items-center gap-1.5">
-              <Icon name="check-circle" size={14} className="text-emerald-500" />
+              <Icon name="check-circle" size={14} className="text-amber-500" />
               Zero Hidden Markups
             </span>
           </div>
@@ -330,14 +330,14 @@ export default async function HomePage() {
                 Answer 4 quick questions and we&apos;ll match you with the best platform and advisor for your exact situation — free, no obligation, no sign-up required.
               </p>
               <Link
-                href="/quiz"
+                href="/start"
                 className="inline-flex items-center gap-2.5 px-8 py-4 bg-amber-500 hover:bg-amber-400 text-slate-900 font-extrabold text-base rounded-xl transition-all shadow-lg shadow-amber-500/20 hover:-translate-y-0.5 active:scale-[0.97]"
               >
                 Start My Free Assessment
                 <Icon name="arrow-right" size={18} />
               </Link>
               <p className="text-slate-400 text-xs mt-4">
-                ASIC-verified results &middot; No credit card &middot; Cancel anytime
+                Free &middot; No sign-up required &middot; Takes 60 seconds
               </p>
             </div>
           </div>
@@ -350,8 +350,8 @@ export default async function HomePage() {
           <div className="container-custom">
             <div className="flex items-start justify-between gap-2 mb-4 md:mb-6">
               <div>
-                <p className="text-xs font-semibold text-emerald-600 uppercase tracking-wide mb-1 flex items-center gap-1">
-                  <Icon name="shield-check" size={12} className="text-emerald-500" />
+                <p className="text-xs font-semibold text-amber-600 uppercase tracking-wide mb-1 flex items-center gap-1">
+                  <Icon name="shield-check" size={12} className="text-amber-500" />
                   Ratings not for sale &middot; independently reviewed
                 </p>
                 <h2 className="text-xl md:text-3xl font-extrabold text-slate-900">
@@ -529,18 +529,21 @@ export default async function HomePage() {
       <ScrollFadeIn>
         <section className="py-6 md:py-10 bg-slate-50 border-t border-slate-100">
           <div className="container-custom">
-            <p className="text-xs text-amber-600 text-center uppercase tracking-widest font-bold mb-2">Free tools</p>
-            <h2 className="text-xl md:text-2xl font-bold text-center text-slate-900 mb-4 md:mb-6">Investing Tools &amp; Calculators</h2>
+            <div className="flex items-center justify-between mb-4 md:mb-6">
+              <div>
+                <p className="text-xs text-amber-600 uppercase tracking-widest font-bold mb-1">Free tools</p>
+                <h2 className="text-xl md:text-2xl font-bold text-slate-900">Investing Tools &amp; Calculators</h2>
+              </div>
+              <Link href="/calculators" className="text-xs md:text-sm font-semibold text-slate-500 hover:text-amber-600 transition-colors shrink-0">
+                View All Calculators &rarr;
+              </Link>
+            </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
               {[
                 { href: "/portfolio-calculator", icon: "calculator", color: "from-amber-500 to-amber-400", shadow: "shadow-amber-500/20", title: "Portfolio Calculator", desc: "See exact fees at every platform" },
-                { href: "/switching-calculator", icon: "arrow-right-left", color: "from-emerald-600 to-emerald-500", shadow: "shadow-emerald-500/15", title: "Switching Calculator", desc: "How much are you overpaying?" },
-                { href: "/savings-calculator", icon: "piggy-bank", color: "from-slate-700 to-slate-600", shadow: "shadow-slate-500/15", title: "Savings Calculator", desc: "Are you earning enough?" },
-                { href: "/compare", icon: "bar-chart", color: "from-amber-600 to-amber-500", shadow: "shadow-amber-500/20", title: "Compare Platforms", desc: "Full side-by-side comparison" },
-                { href: "/calculators", icon: "coins", color: "from-slate-700 to-slate-600", shadow: "shadow-slate-500/15", title: "All Calculators", desc: "CGT, FX, dividends & more" },
-                { href: "/best", icon: "shield-check", color: "from-emerald-600 to-emerald-500", shadow: "shadow-emerald-500/15", title: "Best Platforms", desc: "Top picks by category" },
-                { href: "/quiz", icon: "target", color: "from-amber-500 to-amber-400", shadow: "shadow-amber-500/20", title: "Platform Quiz", desc: "Best match in 60 seconds" },
-                { href: "/find-advisor", icon: "users", color: "from-slate-800 to-slate-700", shadow: "shadow-slate-500/15", title: "Find Advisor", desc: "Matched to your needs, free" },
+                { href: "/switching-calculator", icon: "arrow-right-left", color: "from-slate-700 to-slate-600", shadow: "shadow-slate-500/15", title: "Switching Calculator", desc: "How much are you overpaying?" },
+                { href: "/savings-calculator", icon: "piggy-bank", color: "from-amber-600 to-amber-500", shadow: "shadow-amber-500/20", title: "Savings Calculator", desc: "Are you earning enough?" },
+                { href: "/mortgage-calculator", icon: "home", color: "from-slate-700 to-slate-600", shadow: "shadow-slate-500/15", title: "Borrowing Power", desc: "How much can you borrow?" },
               ].map((tool) => (
                 <Link key={tool.href} href={tool.href} className="bg-white border border-slate-200 rounded-xl p-3 md:p-5 hover:shadow-md hover:border-slate-300 transition-all group">
                   <div className={`w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br ${tool.color} rounded-xl flex items-center justify-center mb-2 md:mb-3 shadow-md ${tool.shadow}`}>

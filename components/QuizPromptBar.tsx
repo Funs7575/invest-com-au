@@ -17,12 +17,15 @@ export default function QuizPromptBar() {
     pathname === "/quiz" ||
     pathname === "/compare" ||
     pathname.startsWith("/admin") ||
+    pathname.startsWith("/advisor/") ||
     pathname.startsWith("/broker/") ||
     pathname.startsWith("/versus");
 
   // Pages where the desktop scroll-triggered bar should hide
   const isHiddenDesktop =
-    pathname === "/quiz" || pathname.startsWith("/admin");
+    pathname === "/quiz" ||
+    pathname.startsWith("/admin") ||
+    pathname.startsWith("/advisor/");
 
   // Mobile: show after user scrolls past first viewport
   useEffect(() => {
@@ -92,7 +95,7 @@ export default function QuizPromptBar() {
             </Link>
             <Link
               href="/find-advisor"
-              className="flex-1 text-center py-2.5 bg-violet-600 text-white text-[0.75rem] font-bold rounded-lg hover:bg-violet-700 active:scale-[0.98] transition-all min-h-[40px] flex items-center justify-center"
+              className="flex-1 text-center py-2.5 bg-slate-800 text-white text-[0.75rem] font-bold rounded-lg hover:bg-slate-900 active:scale-[0.98] transition-all min-h-[40px] flex items-center justify-center"
             >
               Find Advisor
             </Link>
@@ -120,7 +123,7 @@ export default function QuizPromptBar() {
               </Link>
               <Link
                 href="/find-advisor"
-                className="px-5 py-2.5 bg-violet-600 text-white text-sm font-bold rounded-lg hover:bg-violet-700 active:scale-[0.97] transition-all"
+                className="px-5 py-2.5 bg-slate-800 text-white text-sm font-bold rounded-lg hover:bg-slate-900 active:scale-[0.97] transition-all"
               >
                 Find Advisor &rarr;
               </Link>

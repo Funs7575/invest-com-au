@@ -44,7 +44,7 @@ export default function BackToTop() {
           cy="22"
           r={R}
           fill="none"
-          stroke="#15803d"
+          stroke="#f59e0b"
           strokeWidth="2"
           strokeDasharray={C}
           strokeDashoffset={offset}
