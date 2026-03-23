@@ -92,10 +92,10 @@ export default function AdvisorDirectory() {
               {/* Primary CTA */}
               <Link
                 href="/find-advisor"
-                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 min-h-[52px] bg-amber-500 hover:bg-amber-600 text-white text-sm md:text-base font-bold rounded-xl shadow-md shadow-amber-500/25 hover:shadow-amber-500/40 transition-all"
+                className="inline-flex items-center justify-center gap-2 px-7 py-3.5 min-h-[52px] bg-amber-500 hover:bg-amber-600 text-slate-900 text-sm md:text-base font-bold rounded-xl shadow-md shadow-amber-500/25 hover:shadow-amber-500/40 transition-all"
               >
                 {isProperty ? "Match Me With a Property Expert" : "Match Me With a Financial Advisor"}
-                <Icon name="arrow-right" size={16} className="text-white" />
+                <Icon name="arrow-right" size={16} className="text-slate-900" />
               </Link>
 
               <p className="mt-3 text-[0.7rem] text-slate-400">Free · No obligation · Takes 60 seconds</p>
