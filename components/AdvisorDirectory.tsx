@@ -55,11 +55,7 @@ export default function AdvisorDirectory() {
           <div className="p-6 md:p-8 lg:p-10">
             <div className="max-w-2xl mx-auto text-center">
               {/* Icon */}
-              <div className={`w-14 h-14 mx-auto mb-4 rounded-2xl flex items-center justify-center shadow-md ${
-                isProperty
-                  ? "bg-gradient-to-br from-emerald-600 to-emerald-500 shadow-emerald-500/20"
-                  : "bg-gradient-to-br from-violet-600 to-violet-500 shadow-violet-500/20"
-              }`}>
+              <div className="w-14 h-14 mx-auto mb-4 rounded-2xl flex items-center justify-center shadow-md bg-gradient-to-br from-amber-500 to-amber-400 shadow-amber-500/20">
                 <Icon name={isProperty ? "building" : "users"} size={26} className="text-white" />
               </div>
 
