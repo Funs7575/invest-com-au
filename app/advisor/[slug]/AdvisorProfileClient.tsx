@@ -234,10 +234,8 @@ export default function AdvisorProfileClient({
         {/* ── HERO CARD ──────────────────────────────── */}
         <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden mb-6">
           {/* Banner */}
-          <div className="h-36 md:h-52 bg-gradient-to-br from-amber-500 via-amber-600 to-indigo-600 relative overflow-hidden">
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.18),transparent_55%)]" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_85%,rgba(99,102,241,0.35),transparent_50%)]" />
-            <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/10 to-transparent" />
+          <div className="h-36 md:h-52 bg-slate-800 relative overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.04),transparent_60%)]" />
           </div>
 
           {/* Profile content */}
@@ -346,13 +344,6 @@ export default function AdvisorProfileClient({
                     <a href={pro.booking_link} target="_blank" rel="noopener noreferrer"
                       className="px-5 py-3 bg-white border border-slate-200 text-slate-700 font-semibold text-sm rounded-xl hover:border-slate-300 hover:bg-slate-50 transition-all">
                       Book a Call
-                    </a>
-                  )}
-                  {pro.phone && (
-                    <a href={`tel:${pro.phone.replace(/\s/g, "")}`}
-                      className="px-5 py-3 bg-white border border-slate-200 text-slate-700 font-semibold text-sm rounded-xl hover:border-slate-300 hover:bg-slate-50 transition-all flex items-center gap-2">
-                      <Icon name="phone" size={14} className="text-slate-400" />
-                      {pro.phone}
                     </a>
                   )}
                   <button
@@ -525,7 +516,7 @@ export default function AdvisorProfileClient({
               <SectionCard title="Specialties" icon="target">
                 <div className="flex flex-wrap gap-2.5">
                   {pro.specialties.map((s) => (
-                    <span key={s} className="text-sm font-semibold px-4 py-2 rounded-xl bg-amber-50 text-amber-800 border border-amber-200 hover:border-amber-300 transition-colors">
+                    <span key={s} className="text-sm font-semibold px-4 py-2 rounded-xl bg-slate-100 text-slate-700 border border-slate-200">
                       {s}
                     </span>
                   ))}
@@ -584,7 +575,7 @@ export default function AdvisorProfileClient({
                       <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Professional Memberships</h3>
                       <div className="flex flex-wrap gap-2.5">
                         {(pro.memberships!).map((m) => (
-                          <span key={m} className="text-sm font-bold px-4 py-2 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200">
+                          <span key={m} className="text-sm font-bold px-4 py-2 rounded-xl bg-slate-100 text-slate-700 border border-slate-200">
                             {m}
                           </span>
                         ))}
@@ -624,18 +615,18 @@ export default function AdvisorProfileClient({
             ) : null}
 
             {/* Regulatory Credentials */}
-            <div id="credentials" className="bg-emerald-50 border border-emerald-200 rounded-2xl overflow-hidden">
-              <div className="flex items-center gap-3 px-6 py-4 border-b border-emerald-200 bg-emerald-100/60">
-                <div className="w-9 h-9 rounded-xl bg-emerald-200 flex items-center justify-center shrink-0">
-                  <Icon name="shield-check" size={17} className="text-emerald-700" />
+            <div id="credentials" className="bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden">
+              <div className="flex items-center gap-3 px-6 py-4 border-b border-slate-200 bg-slate-100/60">
+                <div className="w-9 h-9 rounded-xl bg-slate-200 flex items-center justify-center shrink-0">
+                  <Icon name="shield-check" size={17} className="text-slate-600" />
                 </div>
                 <div>
-                  <h2 className="text-sm font-bold text-emerald-900">Regulatory Credentials</h2>
-                  <p className="text-xs text-emerald-600">Verified against official government registers</p>
+                  <h2 className="text-sm font-bold text-slate-900">Regulatory Credentials</h2>
+                  <p className="text-xs text-slate-500">Verified against official government registers</p>
                 </div>
               </div>
               <div className="p-6">
-                <p className="text-sm text-emerald-800 mb-5 leading-relaxed">
+                <p className="text-sm text-slate-700 mb-5 leading-relaxed">
                   {credentialNumber ? (
                     <>
                       {pro.name} holds {vConfig.primaryLicence.code}{" "}
@@ -646,13 +637,13 @@ export default function AdvisorProfileClient({
                   )}
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
-                  <div className="bg-white rounded-xl p-4 border border-emerald-100">
-                    <div className="text-xs font-bold text-emerald-500 uppercase tracking-wider mb-1.5">Primary Licence</div>
+                  <div className="bg-white rounded-xl p-4 border border-slate-100">
+                    <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Primary Licence</div>
                     <div className="text-sm font-bold text-slate-800 mb-0.5">{vConfig.primaryLicence.name}</div>
                     <div className="text-xs text-slate-500">Regulated by {vConfig.primaryLicence.regulatorShort}</div>
                   </div>
-                  <div className="bg-white rounded-xl p-4 border border-emerald-100">
-                    <div className="text-xs font-bold text-emerald-500 uppercase tracking-wider mb-1.5">Insurance</div>
+                  <div className="bg-white rounded-xl p-4 border border-slate-100">
+                    <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5">Insurance</div>
                     <div className="text-sm font-bold text-slate-800 mb-0.5">{vConfig.insurance.split(" — ")[0]}</div>
                     <div className="text-xs text-slate-500">{vConfig.edr.split(".")[0]}</div>
                   </div>
@@ -660,8 +651,8 @@ export default function AdvisorProfileClient({
                 <div className="flex flex-wrap gap-2">
                   {vLinks.map((link, i) => (
                     <a key={i} href={link.url} target="_blank" rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 px-4 py-2 bg-white border border-emerald-200 rounded-xl text-xs font-bold text-emerald-700 hover:border-emerald-400 hover:bg-emerald-50 transition-all">
-                      <Icon name="external-link" size={12} className="text-emerald-500" />
+                      className="inline-flex items-center gap-1.5 px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-700 hover:border-slate-300 hover:bg-slate-50 transition-all">
+                      <Icon name="external-link" size={12} className="text-slate-400" />
                       {link.label}
                     </a>
                   ))}
@@ -1185,19 +1176,10 @@ export default function AdvisorProfileClient({
             </div>
 
             {/* Contact details */}
-            {(pro.phone || pro.website || pro.linkedin_url) && (
+            {(pro.website || pro.linkedin_url) && (
               <div className="bg-white border border-slate-200 rounded-2xl p-5">
                 <h3 className="text-xs font-black text-slate-400 uppercase tracking-wider mb-3">Contact Details</h3>
                 <div className="space-y-2">
-                  {pro.phone && (
-                    <a href={`tel:${pro.phone.replace(/\s/g, "")}`}
-                      className="flex items-center gap-3 py-2 text-sm text-slate-700 hover:text-amber-700 transition-colors group">
-                      <div className="w-9 h-9 rounded-xl bg-slate-100 group-hover:bg-amber-50 flex items-center justify-center shrink-0 transition-colors">
-                        <Icon name="phone" size={15} className="text-slate-400 group-hover:text-amber-500 transition-colors" />
-                      </div>
-                      <span className="font-semibold">{pro.phone}</span>
-                    </a>
-                  )}
                   {pro.website && (
                     <a
                       href={pro.website.startsWith("http") ? pro.website : `https://${pro.website}`}
@@ -1266,14 +1248,6 @@ export default function AdvisorProfileClient({
           >
             Enquire Free
           </a>
-          {pro.phone && (
-            <a
-              href={`tel:${pro.phone.replace(/\s/g, "")}`}
-              className="shrink-0 w-11 h-11 border border-slate-200 rounded-xl flex items-center justify-center hover:bg-slate-50 transition-colors"
-            >
-              <Icon name="phone" size={18} className="text-slate-600" />
-            </a>
-          )}
         </div>
       </div>
 
@@ -1293,13 +1267,6 @@ export default function AdvisorProfileClient({
             </div>
           </div>
           <div className="flex items-center gap-3">
-            {pro.phone && (
-              <a href={`tel:${pro.phone.replace(/\s/g, "")}`}
-                className="px-4 py-2.5 border border-slate-200 text-slate-700 text-sm font-semibold rounded-xl hover:border-slate-300 transition-all flex items-center gap-2">
-                <Icon name="phone" size={14} />
-                {pro.phone}
-              </a>
-            )}
             <a
               href="#contact"
               className="px-7 py-2.5 bg-amber-600 text-white font-black text-sm rounded-xl hover:bg-amber-500 transition-all shadow-sm shadow-amber-200/50"

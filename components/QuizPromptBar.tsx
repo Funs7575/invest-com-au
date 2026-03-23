@@ -17,12 +17,15 @@ export default function QuizPromptBar() {
     pathname === "/quiz" ||
     pathname === "/compare" ||
     pathname.startsWith("/admin") ||
+    pathname.startsWith("/advisor/") ||
     pathname.startsWith("/broker/") ||
     pathname.startsWith("/versus");
 
   // Pages where the desktop scroll-triggered bar should hide
   const isHiddenDesktop =
-    pathname === "/quiz" || pathname.startsWith("/admin");
+    pathname === "/quiz" ||
+    pathname.startsWith("/admin") ||
+    pathname.startsWith("/advisor/");
 
   // Mobile: show after user scrolls past first viewport
   useEffect(() => {
