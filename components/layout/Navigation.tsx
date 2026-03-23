@@ -167,13 +167,13 @@ const mobileSections = [
   {
     title: "Compare Platforms",
     items: [
+      { name: "Find Your Best Path (60s)", href: "/start" },
       { name: "Compare All Platforms", href: "/compare" },
       { name: "Best Platforms", href: "/best" },
       { name: "Share Trading", href: "/compare?category=shares" },
       { name: "Super Funds", href: "/compare/super" },
       { name: "Savings Accounts", href: "/compare?filter=savings" },
       { name: "Deals & Offers", href: "/deals" },
-      { name: "Platform Quiz", href: "/quiz" },
       { name: "Investing from Overseas", href: "/foreign-investment" },
     ],
   },
@@ -239,16 +239,16 @@ export function Navigation() {
             {/* Compare Platforms Mega-Menu */}
             <MegaMenuDropdown label="Compare Platforms" isActive={isPlatformsActive} menuWidth="min-w-[540px]">
               <div className="p-6">
-                {/* Quiz CTA card — replaces the "Popular" section */}
+                {/* Unified funnel CTA card */}
                 <Link
-                  href="/quiz"
-                  className="flex items-center justify-between p-3.5 bg-gradient-to-r from-amber-50 to-amber-100/60 border border-amber-200 rounded-xl mb-5 hover:border-amber-300 transition-colors group"
+                  href="/start"
+                  className="flex items-center justify-between p-3.5 bg-gradient-to-r from-violet-50 to-violet-100/60 border border-violet-200 rounded-xl mb-5 hover:border-violet-300 transition-colors group"
                 >
                   <div>
                     <p className="font-bold text-slate-900 text-sm">Not sure where to start?</p>
-                    <p className="text-xs text-slate-500 mt-0.5">Take the 60-second Platform Quiz — get a personalised match</p>
+                    <p className="text-xs text-slate-500 mt-0.5">Find Your Best Path — 60-second quiz, platform or advisor</p>
                   </div>
-                  <svg className="w-5 h-5 text-amber-500 shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <svg className="w-5 h-5 text-violet-500 shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </Link>
@@ -447,13 +447,13 @@ export function Navigation() {
             </MegaMenuDropdown>
           </nav>
 
-          {/* Desktop CTA — single primary action only */}
+          {/* Desktop CTA — unified funnel entry point */}
           <div className="hidden lg:flex items-center">
             <Link
-              href="/find-advisor"
-              className="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm hover:shadow-md active:scale-[0.97] flex items-center gap-2"
+              href="/start"
+              className="bg-violet-600 hover:bg-violet-700 text-white px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm hover:shadow-md active:scale-[0.97] flex items-center gap-2"
             >
-              Find My Advisor — Free
+              Find Your Best Path
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
@@ -463,10 +463,10 @@ export function Navigation() {
           {/* Mobile hamburger */}
           <div className="lg:hidden flex items-center gap-2">
             <Link
-              href="/find-advisor"
-              className="bg-amber-500 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all hover:bg-amber-600 min-h-[44px] flex items-center"
+              href="/start"
+              className="bg-violet-600 text-white px-4 py-2 rounded-lg text-xs font-bold transition-all hover:bg-violet-700 min-h-[44px] flex items-center"
             >
-              Find My Advisor — Free
+              Best Path
             </Link>
             <button
               onClick={() => setMobileOpen((v) => !v)}
