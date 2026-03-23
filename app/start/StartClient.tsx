@@ -5,6 +5,7 @@ import Link from "next/link";
 import Icon from "@/components/Icon";
 import { trackEvent } from "@/lib/tracking";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
+import { storeQualificationData } from "@/lib/qualification-store";
 
 /* ─── Types ─── */
 type Step = 0 | 1 | 2 | 3 | 4;
@@ -362,7 +363,12 @@ export default function StartClient() {
           recommended_combinations: routeResult.recommended_combinations || [],
           completedAt: new Date().toISOString(),
         }));
-      } catch { /* quota exceeded */ }
+        // Store in qualification-store so advisor profile enquiries are enriched
+        storeQualificationData("matchmaker", {
+          ...finalAnswers,
+          route_type: routeResult.type,
+        });
+      } catch { /* quota exceeded or storage unavailable */ }
       setShowResult(true);
     }
   }, [answers, step]);

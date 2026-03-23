@@ -211,6 +211,45 @@ const NEED_TO_INTENT: Record<string, Intent> = {
   crypto: "business_tax",
 };
 
+// ─── Matchmaker bridge ────────────────────────────────────────────────────────
+// Maps the /start matchmaker priority answers to find-advisor intents so users
+// arriving from the unified funnel (without a ?need= param) are pre-qualified.
+
+const PRIORITY_TO_NEED: Record<string, string> = {
+  "mortgage-broker": "mortgage",
+  "buyers-agent": "buyers",
+  "financial-planner": "planning",
+  "smsf-accountant": "smsf",
+  "tax-agent": "tax",
+  "insurance-broker": "insurance",
+  "wealth": "wealth",
+};
+
+const GOAL_TO_NEED: Record<string, string> = {
+  home: "mortgage",
+  property: "property",
+  wealth: "wealth",
+  crypto: "crypto",
+  super: "smsf",
+  income: "planning",
+};
+
+function getMatchmakerIntent(): Intent | null {
+  if (typeof localStorage === "undefined") return null;
+  try {
+    const raw = localStorage.getItem("invest-matchmaker-result");
+    if (!raw) return null;
+    const data = JSON.parse(raw) as { answers?: Record<string, string>; type?: string; completedAt?: string };
+    // Only use if completed within the last 30 minutes
+    if (!data.completedAt || Date.now() - new Date(data.completedAt).getTime() > 30 * 60 * 1000) return null;
+    // Only apply when matchmaker routed to advisor or both paths
+    if (data.type !== "advisor" && data.type !== "both") return null;
+    const answers = data.answers ?? {};
+    const needKey = PRIORITY_TO_NEED[answers.priority ?? ""] ?? GOAL_TO_NEED[answers.goal ?? ""] ?? null;
+    return needKey ? (NEED_TO_INTENT[needKey] ?? null) : null;
+  } catch { return null; }
+}
+
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function FindAdvisorPage() {
@@ -233,11 +272,16 @@ function FindAdvisorQuiz() {
   const _savedMatch = typeof sessionStorage !== "undefined" ? loadMatchFromStorage() : null;
   const savedMatch = _savedMatch && _savedMatch.matchedAdvisors.length > 0 ? _savedMatch : null;
 
+  // If no explicit ?need= param, check whether the user just came through the
+  // /start matchmaker and use that context to pre-fill their intent.
+  const matchmakerIntent = !prefilledIntent ? getMatchmakerIntent() : null;
+  const initialIntent = prefilledIntent ?? matchmakerIntent ?? null;
+
   const [quiz, setQuiz] = useState<QuizState>(() => {
     if (savedMatch) {
       return {
         step: 5,
-        intent: (savedMatch.quizData.intent as Intent) ?? (prefilledIntent ?? null),
+        intent: (savedMatch.quizData.intent as Intent) ?? (initialIntent ?? null),
         context: savedMatch.quizData.context ?? [],
         state: savedMatch.quizData.state ?? "",
         budget: savedMatch.quizData.budget ?? "",
@@ -248,8 +292,8 @@ function FindAdvisorQuiz() {
       };
     }
     return {
-      step: prefilledIntent ? 2 : 1,
-      intent: prefilledIntent,
+      step: initialIntent ? 2 : 1,
+      intent: initialIntent,
       context: [], state: "", budget: "",
       firstName: "", email: "", phone: "", consent: false,
     };
