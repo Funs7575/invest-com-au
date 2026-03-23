@@ -162,7 +162,7 @@ export default function StickyAdFooter({ brokers }: { brokers?: Broker[] }) {
           onClick={() =>
             trackClick(broker!.slug, broker!.name, "display-sticky", pathname, "ad", undefined, PLACEMENT)
           }
-          className="shrink-0 px-3 sm:px-4 py-1.5 bg-blue-600 text-white text-xs font-bold rounded-lg hover:bg-blue-700 transition-colors"
+          className="shrink-0 px-3 sm:px-4 py-1.5 bg-amber-500 text-white text-xs font-bold rounded-lg hover:bg-amber-600 transition-colors"
         >
           Learn More →
         </a>

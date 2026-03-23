@@ -242,13 +242,13 @@ export function Navigation() {
                 {/* Unified funnel CTA card */}
                 <Link
                   href="/start"
-                  className="flex items-center justify-between p-3.5 bg-gradient-to-r from-violet-50 to-violet-100/60 border border-violet-200 rounded-xl mb-5 hover:border-violet-300 transition-colors group"
+                  className="flex items-center justify-between p-3.5 bg-gradient-to-r from-amber-50 to-amber-100/60 border border-amber-200 rounded-xl mb-5 hover:border-amber-300 transition-colors group"
                 >
                   <div>
                     <p className="font-bold text-slate-900 text-sm">Not sure where to start?</p>
                     <p className="text-xs text-slate-500 mt-0.5">Find Your Best Path — 60-second quiz, platform or advisor</p>
                   </div>
-                  <svg className="w-5 h-5 text-violet-500 shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <svg className="w-5 h-5 text-amber-600 shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </Link>
