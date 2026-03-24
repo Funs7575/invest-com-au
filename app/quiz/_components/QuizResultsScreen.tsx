@@ -272,38 +272,77 @@ export default function QuizResultsScreen({
           </div>
         )}
 
-        {/* Advisor Recommendation — contextual for investor type */}
+        {/* Advisor Recommendation — revenue-priority ordered upsell */}
         {(() => {
-          const advisorContexts: { condition: boolean; type: string; heading: string; desc: string; context: "smsf" | "high-value" | "tax" | "property" | "general" }[] = [
-            { condition: answers.includes('super') || answers.includes('smsf'), type: "smsf_accountant", heading: "Setting up an SMSF?", desc: "You'll need a specialist SMSF accountant for setup, compliance, and annual audits. Most SMSF setups cost $1,500–$3,000.", context: "smsf" },
-            { condition: answers.includes('property'), type: "property_advisor", heading: "Considering property?", desc: "A property advisor can model whether investment property or shares better suits your goals and timeline.", context: "property" },
-            { condition: answers.includes('large') || answers.includes('whale'), type: "financial_planner", heading: "Investing $100k+?", desc: "At this level, a one-off financial plan ($2,500–$5,500) could save thousands in tax and optimise your portfolio structure.", context: "high-value" },
-            { condition: answers.includes('crypto'), type: "crypto_advisor", heading: "Navigating crypto?", desc: "A crypto-specialist advisor can help with portfolio construction, DeFi strategy, and complex crypto tax obligations.", context: "general" },
+          // Revenue-ranked order: mortgage broker ($300-$2000 CPA) first, then buyer's agent,
+          // financial planner, SMSF, crypto tax. All conditions evaluated; highest-revenue match wins.
+          const advisorContexts: { condition: boolean; type: string; advisorHref: string; heading: string; desc: string; context: "mortgage" | "property" | "smsf" | "high-value" | "tax" | "general" }[] = [
+            {
+              condition: answers.includes('home') || (answers.includes('property') && (answers.includes('large') || answers.includes('whale') || answers.includes('xlarge'))),
+              type: "mortgage-broker",
+              advisorHref: "/advisors/mortgage-brokers",
+              heading: "Need a mortgage broker?",
+              desc: "A broker compares 30+ lenders to find the best rate for your situation — free to use, paid by the lender.",
+              context: "mortgage",
+            },
+            {
+              condition: answers.includes('property'),
+              type: "buyers-agent",
+              advisorHref: "/advisors/buyers-agents",
+              heading: "Considering investment property?",
+              desc: "A buyer's agent finds off-market deals, negotiates price, and can save you more than their fee on a typical purchase.",
+              context: "property",
+            },
+            {
+              condition: answers.includes('large') || answers.includes('whale') || answers.includes('xlarge'),
+              type: "financial-planner",
+              advisorHref: "/advisors/financial-planners",
+              heading: "Investing $100k+?",
+              desc: "At this level, a one-off financial plan ($2,500–$5,500) can optimise your tax position and portfolio structure significantly.",
+              context: "high-value",
+            },
+            {
+              condition: answers.includes('super') || answers.includes('smsf'),
+              type: "smsf-accountant",
+              advisorHref: "/advisors/smsf-accountants",
+              heading: "Setting up an SMSF?",
+              desc: "You'll need a specialist SMSF accountant for setup, compliance, and annual audits. Most setups cost $1,500–$3,000.",
+              context: "smsf",
+            },
+            {
+              condition: answers.includes('crypto'),
+              type: "tax-agent",
+              advisorHref: "/advisors/tax-agents",
+              heading: "Crypto tax getting complex?",
+              desc: "A crypto-specialist tax agent can handle DeFi, staking, and CGT calculations — and may save more than their fee.",
+              context: "general",
+            },
           ];
+          // First match wins — list is revenue-ranked so highest-value advisor type always surfaces
           const match = advisorContexts.find(c => c.condition);
           if (!match) return null;
           return (
             <div className="mb-4 md:mb-6 result-card-in result-card-in-delay-3">
-              <div className="bg-gradient-to-br from-violet-50 to-slate-50 border border-violet-200/60 rounded-xl p-4 md:p-5">
+              <div className="bg-gradient-to-br from-amber-50 to-slate-50 border border-amber-200/60 rounded-xl p-4 md:p-5">
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-full bg-violet-100 flex items-center justify-center shrink-0">
-                    <Icon name="users" size={20} className="text-violet-600" />
+                  <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
+                    <Icon name="users" size={20} className="text-amber-600" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[0.58rem] md:text-[0.62rem] font-bold uppercase tracking-wider text-violet-600 mb-0.5">Based on your answers</p>
+                    <p className="text-[0.58rem] md:text-[0.62rem] font-bold uppercase tracking-wider text-amber-600 mb-0.5">Based on your answers</p>
                     <h3 className="text-sm md:text-base font-bold text-slate-900 mb-1">{match.heading}</h3>
                     <p className="text-xs md:text-sm text-slate-500 mb-3 leading-relaxed">{match.desc}</p>
                     <div className="flex flex-wrap gap-2">
                       <Link
-                        href={`/advisors?type=${match.type}`}
-                        className="px-3 py-1.5 md:px-4 md:py-2 bg-violet-600 text-white text-[0.65rem] md:text-xs font-bold rounded-lg hover:bg-violet-700 transition-colors"
+                        href={match.advisorHref}
+                        className="px-3 py-1.5 md:px-4 md:py-2 bg-amber-500 text-white text-[0.65rem] md:text-xs font-bold rounded-lg hover:bg-amber-600 transition-colors"
                         onClick={() => trackEvent("quiz_advisor_click", { type: match.type, context: match.context })}
                       >
                         Browse Verified Professionals →
                       </Link>
                       <Link
-                        href="/advisors"
-                        className="px-3 py-1.5 md:px-4 md:py-2 border border-violet-200 text-violet-700 text-[0.65rem] md:text-xs font-semibold rounded-lg hover:bg-violet-50 transition-colors"
+                        href="/find-advisor"
+                        className="px-3 py-1.5 md:px-4 md:py-2 border border-amber-200 text-amber-700 text-[0.65rem] md:text-xs font-semibold rounded-lg hover:bg-amber-50 transition-colors"
                       >
                         All Advisor Types
                       </Link>

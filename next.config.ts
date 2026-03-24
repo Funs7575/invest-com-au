@@ -102,6 +102,12 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      // /start is retired — the unified quiz at /quiz serves both DIY and advisor tracks
+      {
+        source: "/start",
+        destination: "/quiz",
+        permanent: false,
+      },
       {
         source: "/course",
         destination: "/courses/investing-101",

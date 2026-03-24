@@ -218,10 +218,10 @@ export default function Header() {
           <div className="hidden lg:flex items-center gap-3">
             {/* ThemeToggle disabled — dark mode not yet styled */}
             <Link
-              href="/find-advisor"
+              href="/quiz"
               className="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2.5 rounded-lg font-bold transition-all shadow-sm hover:shadow-md flex items-center gap-2 text-sm"
             >
-              Match With an Advisor
+              Find My Match
               <Icon name="arrow-right" size={16} />
             </Link>
           </div>
@@ -277,19 +277,19 @@ export default function Header() {
             {/* Action buttons */}
             <div className="pt-2 mt-2 border-t border-slate-100 space-y-2 px-3">
               <Link
-                href="/find-advisor"
+                href="/quiz"
                 onClick={() => setMenuOpen(false)}
-                className="block w-full py-3 min-h-[44px] text-center text-sm font-extrabold text-white bg-slate-900 rounded-xl hover:bg-slate-800 transition-colors"
+                className="block w-full py-3 min-h-[44px] text-center text-sm font-extrabold text-white bg-amber-500 rounded-xl hover:bg-amber-600 transition-colors"
               >
-                Match With an Advisor
+                Find My Match
               </Link>
               <div className="flex gap-2">
                 <Link
-                  href="/quiz"
+                  href="/find-advisor"
                   onClick={() => setMenuOpen(false)}
-                  className="flex-1 py-2.5 min-h-[44px] flex items-center justify-center text-xs font-bold text-center text-amber-800 bg-amber-50 border border-amber-200 rounded-lg hover:bg-amber-100 transition-colors"
+                  className="flex-1 py-2.5 min-h-[44px] flex items-center justify-center text-xs font-bold text-center text-slate-700 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 transition-colors"
                 >
-                  Platform Quiz
+                  Find Advisor
                 </Link>
                 <Link
                   href="/compare"

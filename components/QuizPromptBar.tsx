@@ -89,15 +89,9 @@ export default function QuizPromptBar() {
             )}
             <Link
               href="/quiz"
-              className="flex-1 text-center py-2.5 bg-amber-500 text-white text-[0.75rem] font-bold rounded-lg hover:bg-amber-600 active:scale-[0.98] transition-all min-h-[40px] flex items-center justify-center"
+              className="flex-1 text-center py-2.5 bg-amber-500 text-white text-[0.75rem] font-bold rounded-lg hover:bg-amber-600 active:scale-[0.98] transition-all min-h-[40px] flex items-center justify-center gap-1.5"
             >
-              Platform Quiz
-            </Link>
-            <Link
-              href="/find-advisor"
-              className="flex-1 text-center py-2.5 bg-slate-800 text-white text-[0.75rem] font-bold rounded-lg hover:bg-slate-900 active:scale-[0.98] transition-all min-h-[40px] flex items-center justify-center"
-            >
-              Find Advisor
+              Find My Match →
             </Link>
           </div>
         </div>
@@ -119,13 +113,7 @@ export default function QuizPromptBar() {
                 href="/quiz"
                 className="px-5 py-2.5 bg-amber-500 text-white text-sm font-bold rounded-lg hover:bg-amber-600 active:scale-[0.97] transition-all"
               >
-                Platform Quiz &rarr;
-              </Link>
-              <Link
-                href="/find-advisor"
-                className="px-5 py-2.5 bg-slate-800 text-white text-sm font-bold rounded-lg hover:bg-slate-900 active:scale-[0.97] transition-all"
-              >
-                Find Advisor &rarr;
+                Find My Match &rarr;
               </Link>
               <button
                 onClick={handleDesktopDismiss}
