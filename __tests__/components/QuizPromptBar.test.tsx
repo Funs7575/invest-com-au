@@ -95,8 +95,7 @@ describe("QuizPromptBar", () => {
     render(<QuizPromptBar />);
     act(() => { window.dispatchEvent(new Event("scroll")); });
 
-    expect(screen.queryByText("Platform Quiz")).toBeInTheDocument();
-    expect(screen.queryByText("Find Advisor")).toBeInTheDocument();
+    expect(screen.queryByText(/Find My Match/)).toBeInTheDocument();
   });
 
   it("hides both bars on /quiz page", () => {
@@ -209,18 +208,7 @@ describe("QuizPromptBar", () => {
     render(<QuizPromptBar />);
     act(() => { window.dispatchEvent(new Event("scroll")); });
 
-    const quizLink = screen.getByText("Platform Quiz");
+    const quizLink = screen.getByText(/Find My Match/);
     expect(quizLink.closest("a")).toHaveAttribute("href", "/quiz");
-  });
-
-  it("renders advisor link pointing to /find-advisor", () => {
-    scrollY = 500;
-    mockUsePathname.mockReturnValue("/article/test");
-
-    render(<QuizPromptBar />);
-    act(() => { window.dispatchEvent(new Event("scroll")); });
-
-    const advisorLink = screen.getByText("Find Advisor");
-    expect(advisorLink.closest("a")).toHaveAttribute("href", "/find-advisor");
   });
 });
