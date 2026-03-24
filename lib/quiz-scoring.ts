@@ -3,6 +3,7 @@ import { applyQuizSponsorBoost } from "./sponsorship";
 
 export type WeightKey = "beginner" | "low_fee" | "us_shares" | "smsf" | "crypto" | "advanced" | "property" | "robo";
 export type QuizWeights = Record<WeightKey, number>;
+export type AmountKey = "small" | "medium" | "large" | "xlarge";
 
 export interface ScoredResult {
   slug: string;
@@ -10,45 +11,81 @@ export interface ScoredResult {
   broker?: Broker;
 }
 
+/**
+ * Maps goal/experience/priority answer keys → weight dimensions.
+ *
+ * IMPORTANT: Amount keys (small/medium/large/xlarge/whale) are deliberately
+ * NOT in this map. Amount is now applied as a score multiplier via
+ * AMOUNT_MULTIPLIER so it doesn't double-count against experience categories.
+ * (Previously "small" mapped to "beginner", causing a collision where a rich
+ * beginner with $4,999 was scored identically to a broke beginner.)
+ */
 export const ANSWER_WEIGHT_MAP: Record<string, WeightKey> = {
-  // Q1: What is your main investing goal?
+  // Q1: Goal
   crypto: "crypto",
   trade: "advanced",
   income: "low_fee",
   grow: "beginner",
   property: "property",
+  "property-reit": "property",
+  "property-super": "smsf",
   super: "smsf",
   automate: "robo",
-  // Q2: How experienced are you?
+  // Experience
   beginner: "beginner",
   intermediate: "low_fee",
   pro: "advanced",
-  // Q3: How much are you looking to invest?
-  small: "beginner",
-  medium: "low_fee",
-  large: "smsf",
-  whale: "advanced",
-  // Q4: What matters most to you?
+  // Priority / what matters most (DIY track Q5)
   fees: "low_fee",
+  "lowest-fees": "low_fee",
   safety: "smsf",
   tools: "advanced",
   simple: "robo",
   handsfree: "robo",
+  "ease-of-use": "beginner",
+  "research-tools": "advanced",
+  dividends: "low_fee",
+  "super-options": "smsf",
+  "coin-range": "crypto",
+  "best-for-etfs": "low_fee",
+};
+
+/**
+ * Amount multipliers — scale the total score by portfolio size.
+ * Higher amounts → platform quality and feature depth matter more.
+ * Lower amounts → accessibility and low fees matter more.
+ * These multipliers are subtle: they shift rankings by ~10-20%, not dominate.
+ */
+export const AMOUNT_MULTIPLIER: Record<AmountKey, number> = {
+  small: 0.9,
+  medium: 1.0,
+  large: 1.1,
+  xlarge: 1.2,
 };
 
 export function scoreQuizResults(
   answers: string[],
   weights: Record<string, QuizWeights>,
   brokers: Broker[],
-  quizCampaignWinners: { broker_slug: string }[] = []
+  quizCampaignWinners: { broker_slug: string }[] = [],
+  amount?: AmountKey
 ): ScoredResult[] {
+  const multiplier = amount ? (AMOUNT_MULTIPLIER[amount] ?? 1.0) : 1.0;
+
   const scored = Object.entries(weights).map(([slug, scores]) => {
     let total = 0;
 
     answers.forEach((key) => {
-      const weightKey = ANSWER_WEIGHT_MAP[key] || "beginner";
-      total += scores[weightKey] || 0;
+      const weightKey = ANSWER_WEIGHT_MAP[key];
+      if (weightKey) {
+        total += scores[weightKey] || 0;
+      }
+      // Amount keys are intentionally not in ANSWER_WEIGHT_MAP — they never add
+      // to category weights, preventing the beginner/amount collision bug.
     });
+
+    // Apply amount multiplier AFTER summing category weights
+    total *= multiplier;
 
     const broker = brokers.find((b) => b.slug === slug);
     if (broker?.rating) total *= 1 + (broker.rating - 4) * 0.1;
@@ -56,7 +93,7 @@ export function scoreQuizResults(
     return { slug, total, broker: broker || undefined };
   });
 
-  // Tiebreaker: sort by score DESC, then rating DESC, then name ASC
+  // Tiebreaker: score DESC → rating DESC → name ASC
   scored.sort(
     (a, b) =>
       b.total - a.total ||
@@ -64,12 +101,10 @@ export function scoreQuizResults(
       (a.broker?.name ?? "").localeCompare(b.broker?.name ?? "")
   );
 
-  // Apply subtle sponsor boost: a featured_partner in positions 1-5
-  // gets swapped up by 1 position (preserves trust -- max 1 slot)
+  // Subtle sponsor boost: featured_partner in positions 1-5 gets swapped up 1
   const boosted = applyQuizSponsorBoost(scored, 1, 5);
 
-  // Apply marketplace campaign boost: if a quiz-boost campaign winner
-  // exists in the scored list (positions 1-5), swap them up by 1 position
+  // Marketplace campaign boost: quiz-boost winner in 1-5 gets swapped up 1
   if (quizCampaignWinners.length > 0) {
     const campaignSlugs = new Set(
       quizCampaignWinners.map((w) => w.broker_slug)
