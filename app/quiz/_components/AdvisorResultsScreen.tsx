@@ -5,6 +5,7 @@ import Link from "next/link";
 import Icon from "@/components/Icon";
 import type { Broker } from "@/lib/types";
 import { trackEvent } from "@/lib/tracking";
+import QuizComparisonTable from "./QuizComparisonTable";
 
 interface AdvisorCombo {
   type: string;
@@ -273,10 +274,10 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
           </div>
         )}
 
-        {/* Platform cross-sell */}
+        {/* Platform cross-sell — full comparison table */}
         {topPlatforms.length > 0 && (
-          <div className="border border-slate-200 rounded-xl p-4 md:p-5 mb-5">
-            <div className="flex items-center gap-2 mb-1">
+          <div className="mb-5">
+            <div className="flex items-center gap-2 mb-2">
               <Icon name="bar-chart" size={16} className="text-slate-500" />
               <h3 className="text-sm font-bold text-slate-800">
                 While you wait — compare top platforms
@@ -285,37 +286,10 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
             <p className="text-xs text-slate-500 mb-3">
               You can also start investing yourself alongside professional advice.
             </p>
-            <div className="space-y-2">
-              {topPlatforms.map((r, i) =>
-                r.broker ? (
-                  <Link
-                    key={r.slug}
-                    href={`/broker/${r.broker.slug}`}
-                    onClick={() => trackEvent("advisor_platform_crosssell", { slug: r.slug, position: i + 1 }, "/quiz")}
-                    className="flex items-center gap-3 p-2.5 rounded-lg border border-slate-100 hover:border-slate-300 hover:bg-slate-50 transition-all group"
-                  >
-                    <span className="w-5 h-5 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-500 shrink-0">
-                      {i + 1}
-                    </span>
-                    <div className="flex-1 min-w-0">
-                      <span className="text-sm font-bold text-slate-900">{r.broker.name}</span>
-                      {r.broker.tagline && (
-                        <p className="text-xs text-slate-500 truncate">{r.broker.tagline}</p>
-                      )}
-                    </div>
-                    {r.broker.rating && (
-                      <span className="text-xs font-semibold text-amber-600 shrink-0">
-                        {r.broker.rating}/5
-                      </span>
-                    )}
-                    <Icon name="chevron-right" size={14} className="text-slate-400 group-hover:text-slate-600 shrink-0" />
-                  </Link>
-                ) : null
-              )}
-            </div>
+            <QuizComparisonTable allResults={topPlatforms} />
             <Link
               href="/compare"
-              className="block text-center mt-3 text-xs font-semibold text-amber-600 hover:text-amber-700"
+              className="block text-center mt-1 text-xs font-semibold text-amber-600 hover:text-amber-700"
             >
               Compare all platforms →
             </Link>

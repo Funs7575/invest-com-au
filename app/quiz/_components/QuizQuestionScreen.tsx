@@ -1,10 +1,8 @@
 "use client";
 
-import { useRef } from "react";
-
 interface QuizQuestion {
   question_text: string;
-  options: { label: string; key: string }[];
+  options: { label: string; key: string; sub?: string }[];
 }
 
 interface Props {
@@ -14,6 +12,8 @@ interface Props {
   animating: boolean;
   fetchError: string | null;
   resumePrompt: boolean;
+  questionIndex?: number;    // optional override for progress bar (0-based)
+  totalQuestions?: number;   // optional override for total count
   onAnswer: (key: string) => void;
   onBack: () => void;
   onResume: () => void;
@@ -28,13 +28,17 @@ export default function QuizQuestionScreen({
   animating,
   fetchError,
   resumePrompt,
+  questionIndex,
+  totalQuestions,
   onAnswer,
   onBack,
   onResume,
   onStartOver,
   questionHeadingRef,
 }: Props) {
-  const current = questions[step];
+  const current = questions[step] ?? questions[0];
+  const displayIndex = questionIndex !== undefined ? questionIndex : step;
+  const displayTotal = totalQuestions !== undefined ? totalQuestions : questions.length;
 
   return (
     <div className="pt-5 pb-8 md:py-12">
@@ -46,8 +50,8 @@ export default function QuizQuestionScreen({
           </div>
         )}
 
-        {/* Resume prompt — shown when saved progress exists */}
-        {resumePrompt && step === 0 && (
+        {/* Resume prompt */}
+        {resumePrompt && displayIndex === 0 && (
           <div className="mb-4 md:mb-6 bg-amber-50 border border-amber-200 rounded-lg p-3 md:p-4 flex items-center justify-between gap-3" style={{ animation: "resultCardIn 0.3s ease-out" }}>
             <div>
               <p className="text-xs md:text-sm font-semibold text-amber-800">Welcome back!</p>
@@ -70,13 +74,13 @@ export default function QuizQuestionScreen({
           </div>
         )}
 
-        {/* Progress dots — hidden on mobile (progress bar is enough) */}
+        {/* Progress dots — desktop only */}
         <div className="hidden md:flex items-center justify-center gap-1.5 md:gap-2 mb-4 md:mb-8">
-          {questions.map((_, i) => (
+          {Array.from({ length: displayTotal }).map((_, i) => (
             <div
               key={i}
               className={`w-2.5 h-2.5 md:w-3 md:h-3 rounded-full transition-colors ${
-                i < step ? 'bg-amber-500' : i === step ? 'bg-amber-500 ring-2 ring-amber-500/30 ring-offset-2' : 'bg-slate-200'
+                i < displayIndex ? 'bg-amber-500' : i === displayIndex ? 'bg-amber-500 ring-2 ring-amber-500/30 ring-offset-2' : 'bg-slate-200'
               }`}
             />
           ))}
@@ -85,27 +89,25 @@ export default function QuizQuestionScreen({
         {/* Progress bar */}
         <div className="mb-1.5 md:mb-2">
           <div className="flex justify-between text-[0.62rem] md:text-xs text-slate-500 mb-0.5 md:mb-1">
-            <span>Question {step + 1} of {questions.length}</span>
-            <span>{Math.round(((step + 1) / questions.length) * 100)}%</span>
+            <span>Question {displayIndex + 1} of {displayTotal}</span>
+            <span>{Math.round(((displayIndex + 1) / displayTotal) * 100)}%</span>
           </div>
           <div
             className="h-1 md:h-1.5 bg-slate-100 rounded-full overflow-hidden"
             role="progressbar"
-            aria-valuenow={step + 1}
+            aria-valuenow={displayIndex + 1}
             aria-valuemin={1}
-            aria-valuemax={questions.length}
-            aria-label={`Question ${step + 1} of ${questions.length}`}
+            aria-valuemax={displayTotal}
+            aria-label={`Question ${displayIndex + 1} of ${displayTotal}`}
           >
-            <div className="h-full bg-amber-500 rounded-full transition-all duration-500" style={{ width: `${((step + 1) / questions.length) * 100}%` }} />
+            <div className="h-full bg-amber-500 rounded-full transition-all duration-500" style={{ width: `${((displayIndex + 1) / displayTotal) * 100}%` }} />
           </div>
         </div>
 
-        <div key={step} className="quiz-question-enter" aria-live="polite">
-          {step > 0 && (
+        <div key={displayIndex} className="quiz-question-enter" aria-live="polite">
+          {displayIndex > 0 && (
             <button
-              onClick={() => {
-                onBack();
-              }}
+              onClick={onBack}
               className="flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-slate-700 mt-2 mb-1 min-h-[44px] transition-colors"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
@@ -121,9 +123,9 @@ export default function QuizQuestionScreen({
           </h1>
 
           <div className="space-y-2 md:space-y-3" role="radiogroup" aria-label={current.question_text}>
-            {current.options.map((opt: { label: string; key: string }) => (
+            {current.options.map((opt) => (
               <button
-                key={opt.label}
+                key={opt.key}
                 onClick={() => onAnswer(opt.key)}
                 disabled={animating}
                 role="radio"
@@ -135,20 +137,25 @@ export default function QuizQuestionScreen({
                     : "border-slate-200 hover:border-slate-700 hover:bg-slate-700/5"
                 } ${animating && selectedKey !== opt.key ? "opacity-50" : ""}`}
               >
-                <span className="flex items-center gap-2 md:gap-3">
+                <span className="flex items-start gap-2 md:gap-3">
                   {selectedKey === opt.key && (
-                    <svg className="w-4 h-4 md:w-5 md:h-5 text-emerald-600 shrink-0 check-pop" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 md:w-5 md:h-5 text-emerald-600 shrink-0 check-pop mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
                     </svg>
                   )}
-                  {opt.label}
+                  <span>
+                    <span className="block">{opt.label}</span>
+                    {opt.sub && (
+                      <span className="block text-[0.65rem] md:text-xs text-slate-400 font-normal mt-0.5">{opt.sub}</span>
+                    )}
+                  </span>
                 </span>
               </button>
             ))}
           </div>
         </div>
 
-        {step > 0 && (
+        {displayIndex > 0 && (
           <button
             onClick={onBack}
             className="mt-3 md:mt-6 px-3 py-2 min-h-[44px] inline-flex items-center text-xs md:text-sm text-slate-500 hover:text-slate-700 active:text-slate-900 transition-colors rounded-lg"
