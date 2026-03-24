@@ -3,7 +3,7 @@ import { applyQuizSponsorBoost } from "./sponsorship";
 
 export type WeightKey = "beginner" | "low_fee" | "us_shares" | "smsf" | "crypto" | "advanced" | "property" | "robo";
 export type QuizWeights = Record<WeightKey, number>;
-export type AmountKey = "small" | "medium" | "large" | "xlarge";
+export type AmountKey = "small" | "medium" | "large" | "xlarge" | "whale";
 
 export interface ScoredResult {
   slug: string;
@@ -61,6 +61,8 @@ export const AMOUNT_MULTIPLIER: Record<AmountKey, number> = {
   medium: 1.0,
   large: 1.1,
   xlarge: 1.2,
+  // "whale" is the fallback quiz key for $100k+ — same multiplier as xlarge
+  whale: 1.2,
 };
 
 export function scoreQuizResults(

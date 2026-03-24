@@ -408,8 +408,11 @@ export default function QuizPage() {
   const [showScoring, setShowScoring] = useState(false);
 
   // P1 #5: Memoize results to avoid recalculating on every render
+  // Extract the amount answer (Q3, answers[2]) and pass it as a multiplier so
+  // portfolio size scales scores without double-counting against category weights.
   const results = useMemo(() => {
-    return scoreQuizResults(answers, weights, brokers, quizCampaignWinners);
+    const amountAnswer = answers[2] as import("@/lib/quiz-scoring").AmountKey | undefined;
+    return scoreQuizResults(answers, weights, brokers, quizCampaignWinners, amountAnswer);
   }, [answers, weights, brokers, quizCampaignWinners]);
 
   // Check if any result is a crypto broker (for crypto warning)

@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     ],
   },
   twitter: { card: "summary_large_image" },
-  alternates: { canonical: "/start" },
+  alternates: { canonical: "/quiz" },
 };
 
 export default function StartPage() {
