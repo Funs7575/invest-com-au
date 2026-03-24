@@ -48,21 +48,21 @@ export default function QuizQuestionScreen({
 
         {/* Resume prompt — shown when saved progress exists */}
         {resumePrompt && step === 0 && (
-          <div className="mb-4 md:mb-6 bg-blue-50 border border-blue-200 rounded-lg p-3 md:p-4 flex items-center justify-between gap-3" style={{ animation: "resultCardIn 0.3s ease-out" }}>
+          <div className="mb-4 md:mb-6 bg-amber-50 border border-amber-200 rounded-lg p-3 md:p-4 flex items-center justify-between gap-3" style={{ animation: "resultCardIn 0.3s ease-out" }}>
             <div>
-              <p className="text-xs md:text-sm font-semibold text-blue-800">Welcome back!</p>
-              <p className="text-[0.62rem] md:text-xs text-blue-600">You have a quiz in progress. Pick up where you left off?</p>
+              <p className="text-xs md:text-sm font-semibold text-amber-800">Welcome back!</p>
+              <p className="text-[0.62rem] md:text-xs text-amber-700">You have a quiz in progress. Pick up where you left off?</p>
             </div>
             <div className="flex gap-2 shrink-0">
               <button
                 onClick={onResume}
-                className="px-3 py-1.5 bg-blue-700 text-white text-xs font-bold rounded-lg hover:bg-blue-800 transition-colors"
+                className="px-3 py-1.5 bg-amber-500 text-white text-xs font-bold rounded-lg hover:bg-amber-600 transition-colors"
               >
                 Resume
               </button>
               <button
                 onClick={onStartOver}
-                className="px-3 py-1.5 bg-white text-blue-700 text-xs font-semibold border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors"
+                className="px-3 py-1.5 bg-white text-amber-700 text-xs font-semibold border border-amber-200 rounded-lg hover:bg-amber-50 transition-colors"
               >
                 Start Over
               </button>
@@ -76,7 +76,7 @@ export default function QuizQuestionScreen({
             <div
               key={i}
               className={`w-2.5 h-2.5 md:w-3 md:h-3 rounded-full transition-colors ${
-                i < step ? 'bg-blue-700' : i === step ? 'bg-blue-700 ring-2 ring-blue-700/30 ring-offset-2' : 'bg-slate-200'
+                i < step ? 'bg-amber-500' : i === step ? 'bg-amber-500 ring-2 ring-amber-500/30 ring-offset-2' : 'bg-slate-200'
               }`}
             />
           ))}
@@ -96,7 +96,7 @@ export default function QuizQuestionScreen({
             aria-valuemax={questions.length}
             aria-label={`Question ${step + 1} of ${questions.length}`}
           >
-            <div className="h-full bg-blue-700 rounded-full transition-all duration-500" style={{ width: `${((step + 1) / questions.length) * 100}%` }} />
+            <div className="h-full bg-amber-500 rounded-full transition-all duration-500" style={{ width: `${((step + 1) / questions.length) * 100}%` }} />
           </div>
         </div>
 
