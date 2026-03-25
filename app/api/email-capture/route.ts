@@ -221,7 +221,7 @@ export async function POST(request: NextRequest) {
 
   if (existing && existing.length > 0) {
     // Email already captured — return success without re-inserting or re-emailing
-    return NextResponse.json({ success: true, message: 'Already subscribed' });
+    return NextResponse.json({ success: true, emailSent: false, alreadySubscribed: true });
   }
 
   // Save email to database (with optional calculator/quiz context)

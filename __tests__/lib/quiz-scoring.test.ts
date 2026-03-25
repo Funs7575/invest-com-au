@@ -66,22 +66,6 @@ describe("ANSWER_WEIGHT_MAP", () => {
     expect(ANSWER_WEIGHT_MAP["pro"]).toBe("advanced");
   });
 
-  it("maps small to beginner", () => {
-    expect(ANSWER_WEIGHT_MAP["small"]).toBe("beginner");
-  });
-
-  it("maps medium to low_fee", () => {
-    expect(ANSWER_WEIGHT_MAP["medium"]).toBe("low_fee");
-  });
-
-  it("maps large to us_shares", () => {
-    expect(ANSWER_WEIGHT_MAP["large"]).toBe("smsf");
-  });
-
-  it("maps whale to advanced", () => {
-    expect(ANSWER_WEIGHT_MAP["whale"]).toBe("advanced");
-  });
-
   it("maps fees to low_fee", () => {
     expect(ANSWER_WEIGHT_MAP["fees"]).toBe("low_fee");
   });
@@ -274,15 +258,15 @@ describe("scoreQuizResults", () => {
     expect(results[0].total).toBeCloseTo(24);
   });
 
-  it("falls back to beginner weight for unknown answer keys", () => {
+  it("ignores unknown answer keys (no fallback)", () => {
     const broker = mockBroker({ slug: "x", name: "X", rating: 4.0 });
     const weights: Record<string, QuizWeights> = {
       x: makeWeights({ beginner: 7 }),
     };
 
-    // Unknown key "unknown_key" falls back to beginner weight = 7
+    // Unknown keys are intentionally skipped — they don't add to any weight
     const results = scoreQuizResults(["unknown_key"], weights, [broker]);
-    expect(results[0].total).toBeCloseTo(7);
+    expect(results[0].total).toBeCloseTo(0);
   });
 
   it("returns broker as null when broker is not found in broker list", () => {

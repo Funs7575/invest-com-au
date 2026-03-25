@@ -71,8 +71,8 @@ export default function AdvisorPrompt({ type, heading, description, context = "g
         href={`/advisors?type=${advisorType}`}
         className="flex items-center gap-2.5 p-2.5 md:p-3 bg-slate-50 border border-slate-200 rounded-lg hover:border-slate-400 hover:bg-slate-100 transition-all group"
       >
-        <div className="w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center shrink-0 group-hover:bg-violet-200 transition-colors">
-          <Icon name={config.icon} size={14} className="text-violet-600" />
+        <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center shrink-0 group-hover:bg-amber-200 transition-colors">
+          <Icon name={config.icon} size={14} className="text-amber-600" />
         </div>
         <div className="flex-1 min-w-0">
           <div className="text-xs font-bold text-slate-900">{displayHeading}</div>
@@ -83,10 +83,10 @@ export default function AdvisorPrompt({ type, heading, description, context = "g
   }
 
   return (
-    <div className="bg-gradient-to-br from-violet-50 to-slate-50 border border-violet-200/60 rounded-xl p-3.5 md:p-5">
+    <div className="bg-gradient-to-br from-amber-50 to-slate-50 border border-amber-200/60 rounded-xl p-3.5 md:p-5">
       <div className="flex items-start gap-3">
-        <div className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-violet-100 flex items-center justify-center shrink-0">
-          <Icon name={config.icon} size={18} className="text-violet-600" />
+        <div className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
+          <Icon name={config.icon} size={18} className="text-amber-600" />
         </div>
         <div className="flex-1 min-w-0">
           <h3 className="text-sm md:text-base font-bold text-slate-900 mb-0.5">{displayHeading}</h3>

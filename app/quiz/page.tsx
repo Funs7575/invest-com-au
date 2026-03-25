@@ -6,11 +6,29 @@ import type { Broker } from "@/lib/types";
 import { trackEvent } from "@/lib/tracking";
 import { storeQualificationData } from "@/lib/qualification-store";
 import { getPlacementWinners, type PlacementWinner } from "@/lib/sponsorship";
-import { scoreQuizResults, type WeightKey, type QuizWeights } from "@/lib/quiz-scoring";
+import { scoreQuizResults, type WeightKey, type QuizWeights, type AmountKey } from "@/lib/quiz-scoring";
 
 import QuizQuestionScreen from "./_components/QuizQuestionScreen";
 import QuizAnalyzingScreen from "./_components/QuizAnalyzingScreen";
 import QuizResultsScreen from "./_components/QuizResultsScreen";
+import QuizEmailGate from "./_components/QuizEmailGate";
+import AdvisorResultsScreen from "./_components/AdvisorResultsScreen";
+
+/* ─── Types ─── */
+type QuestionId = "goal" | "mode" | "experience" | "complexity" | "amount" | "priority" | "advisor_type" | "property_sub";
+type QuizTrack = "diy" | "advisor";
+type Phase = "questions" | "email-gate" | "analyzing" | "diy-results" | "advisor-results";
+
+interface UnifiedAnswers {
+  goal?: string;
+  mode?: string;
+  experience?: string;
+  complexity?: string;
+  amount?: string;
+  priority?: string;
+  advisor_type?: string;
+  property_sub?: string;
+}
 
 interface QuizWeight {
   broker_slug: string;
@@ -24,161 +42,213 @@ interface QuizWeight {
   robo_weight: number;
 }
 
-// Fallback questions if DB fetch fails
-const fallbackQuestions = [
-  { question_text: "What is your main investing goal?", options: [
-    { label: "Long-Term Growth", key: "grow" },
-    { label: "Buy Crypto", key: "crypto" },
-    { label: "Active Trading", key: "trade" },
-    { label: "Hands-Off / Automated", key: "automate" },
-    { label: "Retirement / Super", key: "super" },
-    { label: "Property", key: "property" },
-  ] },
-  { question_text: "How experienced are you with investing?", options: [
-    { label: "Complete Beginner", key: "beginner" },
-    { label: "Some Experience", key: "intermediate" },
-    { label: "Advanced / Professional", key: "pro" },
-  ] },
-  { question_text: "How much are you looking to invest?", options: [
-    { label: "Under $5,000", key: "small" },
-    { label: "$5,000 - $50,000", key: "medium" },
-    { label: "$50,000 - $100,000", key: "large" },
-    { label: "$100,000+", key: "whale" },
-  ] },
-  { question_text: "What matters most to you?", options: [
-    { label: "Lowest Fees", key: "fees" },
-    { label: "Safety (CHESS)", key: "safety" },
-    { label: "Best Tools & Research", key: "tools" },
-    { label: "Simplicity / Set & Forget", key: "simple" },
-  ] },
-];
+/* ─── Unified question definitions ─── */
+const UNIFIED_QUESTIONS: Record<QuestionId, { text: string; options: { key: string; label: string; sub?: string }[] }> = {
+  goal: {
+    text: "What are you trying to do?",
+    options: [
+      { key: "grow", label: "Start investing / Long-term growth", sub: "ETFs, shares, or building wealth over time" },
+      { key: "income", label: "Earn income / dividends", sub: "Regular income from investments" },
+      { key: "crypto", label: "Buy crypto", sub: "Bitcoin, Ethereum, altcoins" },
+      { key: "trade", label: "Active trading", sub: "Frequent trades, CFDs, or short-term strategies" },
+      { key: "automate", label: "Hands-off / automated investing", sub: "Set and forget, robo-advisors" },
+      { key: "super", label: "Retirement / Super / SMSF", sub: "Optimise my superannuation" },
+      { key: "property", label: "Property investing", sub: "Physical property, REITs, or through super" },
+      { key: "home", label: "Buy a home or get a loan", sub: "First home, refinance, or investment loan" },
+      { key: "help", label: "Get expert help", sub: "I'd like professional guidance" },
+    ],
+  },
+  mode: {
+    text: "Do you want to do this yourself or get expert help?",
+    options: [
+      { key: "diy", label: "Do it myself", sub: "I'll choose my own platform and investments" },
+      { key: "help", label: "Get expert help", sub: "I'd like professional guidance" },
+      { key: "unsure", label: "I'm not sure yet", sub: "Show me both options" },
+    ],
+  },
+  experience: {
+    text: "How experienced are you with investing?",
+    options: [
+      { key: "beginner", label: "Complete beginner", sub: "Just getting started" },
+      { key: "intermediate", label: "Some experience", sub: "I've invested before but want to improve" },
+      { key: "pro", label: "Advanced / professional", sub: "I know what I'm doing" },
+    ],
+  },
+  complexity: {
+    text: "How complex is your situation?",
+    options: [
+      { key: "simple", label: "Simple", sub: "Just getting started, straightforward situation" },
+      { key: "moderate", label: "Moderate", sub: "Some assets, want to make good decisions" },
+      { key: "complex", label: "Complex", sub: "Tax, SMSF, property, business, or multiple goals" },
+    ],
+  },
+  amount: {
+    text: "How much are you looking to invest?",
+    options: [
+      { key: "small", label: "Under $10,000", sub: "Starting small" },
+      { key: "medium", label: "$10,000 – $100,000", sub: "Building a portfolio" },
+      { key: "large", label: "$100,000 – $500,000", sub: "Significant savings" },
+      { key: "whale", label: "$500,000+", sub: "Major wealth decisions" },
+    ],
+  },
+  priority: {
+    text: "What matters most to you?",
+    options: [
+      { key: "fees", label: "Lowest fees", sub: "Minimise brokerage and ongoing costs" },
+      { key: "safety", label: "Safety (CHESS sponsored)", sub: "Shares held directly in your name" },
+      { key: "tools", label: "Best tools & research", sub: "Advanced charting, analysis, screeners" },
+      { key: "simple", label: "Simplicity / set & forget", sub: "Easy, automated, and stress-free" },
+    ],
+  },
+  advisor_type: {
+    text: "What type of expert are you looking for?",
+    options: [
+      { key: "mortgage-broker", label: "Mortgage broker", sub: "Home loans, refinancing, investment loans" },
+      { key: "buyers-agent", label: "Buyer's agent", sub: "Find and negotiate property purchases" },
+      { key: "financial-planner", label: "Financial planner", sub: "Investment strategy, tax, retirement planning" },
+      { key: "smsf-accountant", label: "SMSF accountant", sub: "Set up and manage a self-managed super fund" },
+      { key: "tax-agent", label: "Tax agent", sub: "Tax returns, crypto CGT, deductions" },
+      { key: "not-sure", label: "I'm not sure what I need", sub: "Help me figure out the right expert" },
+    ],
+  },
+  property_sub: {
+    text: "How do you want to invest in property?",
+    options: [
+      { key: "physical", label: "Buy physical property", sub: "Direct ownership — house, apartment, or investment property" },
+      { key: "property-reit", label: "Invest in REITs / fractional property", sub: "Property funds, BrickX, or listed property trusts" },
+      { key: "property-super", label: "Use super for property (SMSF)", sub: "Self-managed super fund property strategy" },
+    ],
+  },
+};
 
-// Fallback scoring weights — researched from actual platform features & fees
-// Scale: 0 (irrelevant) to 10 (best-in-class for this category)
-// beginner: ease of use, educational resources, simple UX
-// low_fee: competitive pricing for typical retail investor ($1k-$10k trades)
-// us_shares: US market access, low FX fees, fractional shares
-// smsf: SMSF support, CHESS sponsorship, safety/regulation
-// crypto: crypto range, staking, AUSTRAC registration
-// advanced: pro tools, charting, options, APIs, market depth
-// property: property/REIT exposure, fractional property
-// robo: automated investing, hands-off portfolio management
+/* ─── Navigation logic ─── */
+function resolveTrack(a: UnifiedAnswers): QuizTrack {
+  if (a.goal === "help" || a.goal === "home") return "advisor";
+  if (a.mode === "help") return "advisor";
+  if (a.property_sub === "physical") return "advisor";
+  return "diy";
+}
+
+function getNextId(id: QuestionId, a: UnifiedAnswers): QuestionId | null {
+  const track = resolveTrack(a);
+  switch (id) {
+    case "goal":
+      return (a.goal === "help" || a.goal === "home") ? "complexity" : "mode";
+    case "mode":
+      return track === "advisor" ? "complexity" : "experience";
+    case "experience":
+    case "complexity":
+      return "amount";
+    case "amount":
+      return track === "advisor" ? "advisor_type" : "priority";
+    case "priority":
+    case "advisor_type":
+      return a.goal === "property" ? "property_sub" : null;
+    case "property_sub":
+      return null;
+  }
+}
+
+function getTotalSteps(a: UnifiedAnswers): number {
+  const skipMode = a.goal === "help" || a.goal === "home";
+  const hasPropertySub = a.goal === "property";
+  return (skipMode ? 4 : 5) + (hasPropertySub ? 1 : 0);
+}
+
+function inferAdvisorType(a: UnifiedAnswers): string {
+  if (a.advisor_type && a.advisor_type !== "not-sure") return a.advisor_type;
+  if (a.property_sub === "physical") return "buyers-agent";
+  if (a.goal === "home") return "mortgage-broker";
+  if (a.goal === "property") return "buyers-agent";
+  if (a.goal === "super") return "smsf-accountant";
+  if (a.goal === "crypto") return "tax-agent";
+  if (a.amount === "large" || a.amount === "whale") return "financial-planner";
+  return a.advisor_type || "financial-planner";
+}
+
+// Convert unified answers to a flat string array for the platform scoring engine
+// Format: [goal, experience, amount, priority, property_sub?]
+// — index 0 = goal (interest), index 1 = experience, index 2 = amount (multiplier), index 3 = priority
+function toScoringAnswers(a: UnifiedAnswers): string[] {
+  return [
+    a.goal,
+    a.experience,
+    a.amount,
+    a.priority,
+    a.property_sub,
+  ].filter(Boolean) as string[];
+}
+
+/* ─── Fallback scoring weights ─── */
 const fallbackScores: Record<string, Record<WeightKey, number>> = {
   // ── Share brokers ──
-  // Interactive Brokers: $6/0.08% ASX, $0.005/share US, 0.002% FX, CHESS, SMSF, 170+ markets
   "interactive-brokers": { beginner: 3, low_fee: 7, us_shares: 10, smsf: 8, crypto: 0, advanced: 10, property: 0, robo: 0 },
-  // CMC Markets: $0 first trade/day <$1k, $0 US, 0.6% FX, CHESS, good tools
   "cmc-markets": { beginner: 7, low_fee: 9, us_shares: 8, smsf: 5, crypto: 0, advanced: 7, property: 0, robo: 0 },
-  // Stake: $3 ASX, US$3 US, 0.7% FX, CHESS, clean mobile app
   "stake": { beginner: 8, low_fee: 8, us_shares: 9, smsf: 3, crypto: 0, advanced: 4, property: 0, robo: 0 },
-  // Moomoo: $0 ASX promo / $3 standard, $0 US, 0.35% FX, not CHESS, interest on cash
   "moomoo": { beginner: 7, low_fee: 9, us_shares: 9, smsf: 2, crypto: 0, advanced: 7, property: 0, robo: 0 },
-  // SelfWealth: $9.50 flat, CHESS, SMSF, HK market access
   "selfwealth": { beginner: 6, low_fee: 6, us_shares: 6, smsf: 8, crypto: 0, advanced: 4, property: 0, robo: 0 },
-  // CommSec: $5-$29.95, CBA integration, CHESS, trusted brand, high fees
   "commsec": { beginner: 9, low_fee: 2, us_shares: 4, smsf: 7, crypto: 0, advanced: 5, property: 0, robo: 0 },
-  // Superhero: $2/$0.01% ASX, not CHESS (custodial), US access
   "superhero": { beginner: 8, low_fee: 9, us_shares: 7, smsf: 3, crypto: 3, advanced: 3, property: 0, robo: 0 },
-  // Tiger Brokers: $3 ASX CHESS, competitive US, good tools
   "tiger-brokers": { beginner: 5, low_fee: 8, us_shares: 8, smsf: 3, crypto: 0, advanced: 7, property: 0, robo: 0 },
-  // IG: $0 US, $5 ASX, advanced platform, CFDs available
   "ig": { beginner: 4, low_fee: 6, us_shares: 8, smsf: 5, crypto: 0, advanced: 8, property: 0, robo: 0 },
-  // Saxo: tiered pricing, wide global access, professional tools
   "saxo": { beginner: 3, low_fee: 5, us_shares: 8, smsf: 5, crypto: 0, advanced: 9, property: 0, robo: 0 },
-  // NABtrade: bank-backed, CHESS, higher fees, trusted
   "nabtrade": { beginner: 7, low_fee: 3, us_shares: 4, smsf: 7, crypto: 0, advanced: 4, property: 0, robo: 0 },
-  // ANZ Share Investing: bank-backed, higher fees
   "anz-share-investing": { beginner: 6, low_fee: 2, us_shares: 3, smsf: 6, crypto: 0, advanced: 3, property: 0, robo: 0 },
-  // Webull: $0 ASX CHESS, $0 US, interest on cash, newer entrant
   "webull": { beginner: 7, low_fee: 10, us_shares: 9, smsf: 3, crypto: 3, advanced: 6, property: 0, robo: 0 },
-
   // ── Crypto exchanges ──
-  // Swyftx: 0.6% spread, 300+ coins, AUSTRAC, beginner-friendly
   "swyftx": { beginner: 8, low_fee: 6, us_shares: 0, smsf: 2, crypto: 9, advanced: 5, property: 0, robo: 0 },
-  // CoinSpot: 1% instant buy / 0.1% market, 400+ coins, AUSTRAC, very easy
   "coinspot": { beginner: 10, low_fee: 4, us_shares: 0, smsf: 2, crypto: 9, advanced: 2, property: 0, robo: 0 },
-  // Binance: lowest fees globally, 600+ coins, advanced tools
   "binance": { beginner: 3, low_fee: 10, us_shares: 0, smsf: 0, crypto: 10, advanced: 9, property: 0, robo: 0 },
-  // Kraken: strong security, proof of reserves, staking, mid fees
   "kraken": { beginner: 4, low_fee: 7, us_shares: 0, smsf: 0, crypto: 9, advanced: 8, property: 0, robo: 0 },
-  // BTC Markets: Australian, AUSTRAC, SMSF support, moderate fees
   "btc-markets": { beginner: 5, low_fee: 5, us_shares: 0, smsf: 5, crypto: 8, advanced: 5, property: 0, robo: 0 },
-  // Coinstash: Australian, beginner-focused, limited coins
   "coinstash": { beginner: 8, low_fee: 6, us_shares: 0, smsf: 2, crypto: 6, advanced: 2, property: 0, robo: 0 },
-  // Independent Reserve: AUSTRAC, SMSF, institutional-grade
   "independent-reserve": { beginner: 4, low_fee: 6, us_shares: 0, smsf: 6, crypto: 8, advanced: 6, property: 0, robo: 0 },
-
   // ── Robo-advisors ──
-  // Stockspot: oldest AU robo, 0.4-0.66% fee, CHESS/HIN, gold allocation, $2k min
   "stockspot": { beginner: 9, low_fee: 6, us_shares: 3, smsf: 5, crypto: 0, advanced: 2, property: 2, robo: 10 },
-  // Raiz: micro-investing, round-ups, 0.275%/$5.50mo, managed fund (no CHESS)
   "raiz": { beginner: 10, low_fee: 7, us_shares: 2, smsf: 2, crypto: 2, advanced: 1, property: 2, robo: 9 },
-  // Spaceship: $0 fee under $5k, growth-focused, no CHESS, modern app
   "spaceship": { beginner: 9, low_fee: 9, us_shares: 4, smsf: 1, crypto: 0, advanced: 1, property: 0, robo: 8 },
-  // SixPark: similar to Stockspot, CHESS/HIN, property REIT allocation
   "sixpark": { beginner: 8, low_fee: 6, us_shares: 3, smsf: 6, crypto: 0, advanced: 2, property: 3, robo: 9 },
-  // Pearler: $6.50 brokerage, auto-invest, long-term focus, CHESS
   "pearler": { beginner: 7, low_fee: 6, us_shares: 5, smsf: 4, crypto: 0, advanced: 3, property: 0, robo: 7 },
-  // Vanguard Personal Investor: low ETF fees, $0 brokerage on Vanguard ETFs, trusted brand
   "vanguard-personal-investor": { beginner: 7, low_fee: 8, us_shares: 3, smsf: 4, crypto: 0, advanced: 2, property: 2, robo: 6 },
-
   // ── Super funds ──
-  // AustralianSuper: largest fund, low fees, strong performance, MySuper
   "australian-super": { beginner: 8, low_fee: 8, us_shares: 2, smsf: 0, crypto: 0, advanced: 2, property: 4, robo: 7 },
-  // Hostplus: low fees, strong long-term returns, industry fund
   "hostplus": { beginner: 7, low_fee: 9, us_shares: 2, smsf: 0, crypto: 0, advanced: 2, property: 3, robo: 6 },
-  // Rest Super: younger demographic, app-focused, moderate fees
   "rest-super": { beginner: 7, low_fee: 6, us_shares: 1, smsf: 0, crypto: 0, advanced: 1, property: 2, robo: 6 },
-  // Aware Super: merged fund, competitive fees, ESG options
   "aware-super": { beginner: 6, low_fee: 7, us_shares: 1, smsf: 0, crypto: 0, advanced: 2, property: 3, robo: 5 },
-  // Spaceship Super: growth-focused super, tech-heavy, younger audience
   "spaceship-super": { beginner: 9, low_fee: 7, us_shares: 3, smsf: 0, crypto: 0, advanced: 1, property: 0, robo: 8 },
-
   // ── Property platforms ──
-  // BrickX: fractional property, $250 min, rental income, liquid
   "brickx": { beginner: 7, low_fee: 5, us_shares: 0, smsf: 3, crypto: 0, advanced: 2, property: 10, robo: 4 },
-  // DomaCom: fractional property, crowdfunding model, higher min
   "domacom": { beginner: 3, low_fee: 4, us_shares: 0, smsf: 4, crypto: 0, advanced: 4, property: 9, robo: 2 },
-  // VentureCrowd: property + venture capital, accredited investors
   "venturecrowd": { beginner: 2, low_fee: 3, us_shares: 0, smsf: 3, crypto: 0, advanced: 5, property: 8, robo: 1 },
-
   // ── Research tools ──
-  // Simply Wall St: visual stock analysis, snowflake charts, freemium
   "simply-wall-st": { beginner: 7, low_fee: 5, us_shares: 7, smsf: 2, crypto: 0, advanced: 8, property: 0, robo: 0 },
-  // TradingView: best-in-class charting, social, freemium
   "tradingview": { beginner: 3, low_fee: 5, us_shares: 6, smsf: 1, crypto: 4, advanced: 10, property: 0, robo: 0 },
-  // Market Index: free ASX data, news, simple portfolio tracker
   "market-index": { beginner: 8, low_fee: 8, us_shares: 3, smsf: 2, crypto: 0, advanced: 5, property: 0, robo: 0 },
-
   // ── CFD & Forex ──
-  // Pepperstone: tight spreads, MT4/MT5, ASIC regulated, pro tools
   "pepperstone": { beginner: 3, low_fee: 7, us_shares: 3, smsf: 0, crypto: 3, advanced: 9, property: 0, robo: 0 },
-  // CMC Markets CFDs: wide range, good platform, ASIC
   "cmc-markets-cfds": { beginner: 4, low_fee: 6, us_shares: 3, smsf: 0, crypto: 2, advanced: 8, property: 0, robo: 0 },
-  // IC Markets: raw spreads, ECN, popular with scalpers
   "ic-markets": { beginner: 2, low_fee: 8, us_shares: 2, smsf: 0, crypto: 2, advanced: 10, property: 0, robo: 0 },
-  // FP Markets: IRESS + MT4/5, ASIC, competitive spreads
   "fp-markets": { beginner: 3, low_fee: 7, us_shares: 3, smsf: 0, crypto: 2, advanced: 8, property: 0, robo: 0 },
 };
 
-const QUIZ_STORAGE_KEY = "invest-quiz-progress";
+const QUIZ_STORAGE_KEY = "invest-quiz-v2-progress";
 
-function loadSavedProgress(): { step: number; answers: string[] } | null {
+function loadSavedProgress(): { currentId: QuestionId; answers: UnifiedAnswers; history: QuestionId[] } | null {
   try {
     const raw = localStorage.getItem(QUIZ_STORAGE_KEY);
     if (!raw) return null;
     const parsed = JSON.parse(raw);
-    if (parsed && typeof parsed.step === "number" && Array.isArray(parsed.answers)) {
+    if (parsed && parsed.currentId && parsed.answers && Array.isArray(parsed.history)) {
       return parsed;
     }
-  } catch { /* ignore corrupt data */ }
+  } catch { /* ignore */ }
   return null;
 }
 
-function saveProgress(step: number, answers: string[]) {
+function saveProgress(currentId: QuestionId, answers: UnifiedAnswers, history: QuestionId[]) {
   try {
-    localStorage.setItem(QUIZ_STORAGE_KEY, JSON.stringify({ step, answers }));
-  } catch { /* quota exceeded etc */ }
+    localStorage.setItem(QUIZ_STORAGE_KEY, JSON.stringify({ currentId, answers, history }));
+  } catch { /* quota exceeded */ }
 }
 
 function clearProgress() {
@@ -188,68 +258,61 @@ function clearProgress() {
 }
 
 export default function QuizPage() {
-  const [step, setStep] = useState(0);
-  const [answers, setAnswers] = useState<string[]>([]);
-  const [questions, setQuestions] = useState(fallbackQuestions);
-  const [brokers, setBrokers] = useState<Broker[]>([]);
-  const [weights, setWeights] = useState<Record<string, QuizWeights>>(fallbackScores);
-  const [copied, setCopied] = useState(false);
+  const [phase, setPhase] = useState<Phase>("questions");
+  const [currentId, setCurrentId] = useState<QuestionId>("goal");
+  const [answers, setAnswers] = useState<UnifiedAnswers>({});
+  const [history, setHistory] = useState<QuestionId[]>([]);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [animating, setAnimating] = useState(false);
-  const [revealing, setRevealing] = useState(false);
-  const [emailGate, setEmailGate] = useState(false);
-  const [gateEmail, setGateEmail] = useState("");
-  const [gateName, setGateName] = useState("");
-  const [gateConsent, setGateConsent] = useState(false);
-  const [gateStatus, setGateStatus] = useState<"idle" | "loading" | "error">("idle");
-  const [fetchError, setFetchError] = useState<string | null>(null);
-  const [quizCampaignWinners, setQuizCampaignWinners] = useState<PlacementWinner[]>([]);
   const [resumePrompt, setResumePrompt] = useState(false);
+
+  // Email gate state
+  const [emailStatus, setEmailStatus] = useState<"idle" | "loading" | "error">("idle");
+
+  // Results UI state
+  const [copied, setCopied] = useState(false);
+  const [showScoring, setShowScoring] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
+
+  // Data
+  const [brokers, setBrokers] = useState<Broker[]>([]);
+  const [weights, setWeights] = useState<Record<string, QuizWeights>>(fallbackScores);
+  const [quizCampaignWinners, setQuizCampaignWinners] = useState<PlacementWinner[]>([]);
+
   const mountedRef = useRef(true);
   const questionHeadingRef = useRef<HTMLHeadingElement>(null);
 
   // Restore saved progress on mount
   useEffect(() => {
     const saved = loadSavedProgress();
-    if (saved && saved.step > 0 && saved.step < fallbackQuestions.length) {
+    if (saved && saved.history.length > 0) {
       setResumePrompt(true);
     }
   }, []);
 
-  // Cleanup ref for unmount protection (P0 #4)
   useEffect(() => {
     mountedRef.current = true;
     return () => { mountedRef.current = false; };
   }, []);
 
-  // Fetch marketplace campaign winners for quiz-boost placement
   useEffect(() => {
     getPlacementWinners("quiz-boost").then((winners) => {
       if (mountedRef.current) setQuizCampaignWinners(winners);
     });
   }, []);
 
-  // Parallelised Supabase queries with error handling (P0 #3, P1 #10)
   useEffect(() => {
     const supabase = createClient();
-
     Promise.all([
       supabase.from('brokers').select('*').eq('status', 'active').order('rating', { ascending: false }),
-      supabase.from('quiz_questions').select('*').eq('active', true).order('order_index'),
       supabase.from('quiz_weights').select('*'),
-    ]).then(([brokerRes, questionsRes, weightsRes]) => {
+    ]).then(([brokerRes, weightsRes]) => {
       if (!mountedRef.current) return;
-
       if (brokerRes.error) {
         setFetchError("Failed to load broker data. Using cached results.");
       } else if (brokerRes.data) {
         setBrokers(brokerRes.data);
       }
-
-      if (questionsRes.data && questionsRes.data.length > 0) {
-        setQuestions(questionsRes.data);
-      }
-
       if (weightsRes.data && weightsRes.data.length > 0) {
         const w: Record<string, QuizWeights> = {};
         weightsRes.data.forEach((row: QuizWeight) => {
@@ -267,92 +330,178 @@ export default function QuizPage() {
         setWeights(w);
       }
     }).catch(() => {
-      if (mountedRef.current) {
-        setFetchError("Failed to load quiz data. Using cached results.");
-      }
+      if (mountedRef.current) setFetchError("Failed to load quiz data. Using cached results.");
     });
   }, []);
 
+  // Compute scored results (memoised)
+  const scoringAnswers = useMemo(() => toScoringAnswers(answers), [answers]);
+  const results = useMemo(() => {
+    return scoreQuizResults(scoringAnswers, weights, brokers, quizCampaignWinners, answers.amount as AmountKey | undefined);
+  }, [scoringAnswers, weights, brokers, quizCampaignWinners, answers.amount]);
+
+  const hasCryptoResult = useMemo(() => results.some(r => r.broker?.is_crypto), [results]);
+
+  // Track completion + persist results
+  useEffect(() => {
+    if ((phase === "diy-results" || phase === "advisor-results") && brokers.length > 0) {
+      trackEvent('quiz_complete', { answers: scoringAnswers, top_broker: results[0]?.slug || null }, '/quiz');
+      trackEvent('quiz_completed', { top_match: results[0]?.slug || null }, '/quiz');
+      try {
+        const topResults = results.slice(0, 5).filter(r => r.broker).map(r => ({
+          slug: r.slug, name: r.broker!.name, score: r.total,
+          logo_url: r.broker!.logo_url || null, color: r.broker!.color,
+          tagline: r.broker!.tagline || null, rating: r.broker!.rating || null,
+        }));
+        localStorage.setItem('invest-quiz-results', JSON.stringify({
+          answers: scoringAnswers, results: topResults, completedAt: new Date().toISOString(),
+        }));
+        storeQualificationData("quiz", {
+          answers: scoringAnswers, top_match: results[0]?.slug || null, results_count: results.length,
+        });
+      } catch { /* quota exceeded */ }
+    }
+  }, [phase, brokers.length, results, scoringAnswers]);
+
+  /* ─── Handlers ─── */
+
   const handleAnswer = (key: string) => {
     if (animating) return;
-    if (step === 0) {
+    if (history.length === 0) {
       trackEvent('quiz_start', { first_answer: key }, '/quiz');
     }
-    // Track each step for funnel analysis
-    trackEvent('quiz_step', { step: step + 1, total_steps: questions.length, answer: key }, '/quiz');
-    // Show selected confirmation then advance
+    trackEvent('quiz_step', { question: currentId, answer: key }, '/quiz');
+
     setSelectedKey(key);
     setAnimating(true);
-    const newAnswers = [...answers, key];
-    const isFinal = step + 1 >= questions.length;
+
+    const newAnswers = { ...answers, [currentId]: key };
 
     setTimeout(() => {
-      if (!mountedRef.current) return; // P0 #4: prevent state update after unmount
+      if (!mountedRef.current) return;
       setAnswers(newAnswers);
       setSelectedKey(null);
-      if (isFinal) {
-        // Clear saved progress — quiz is complete
+      setAnimating(false);
+
+      const track = resolveTrack(newAnswers);
+      const nextId = getNextId(currentId, newAnswers);
+
+      const newHistory = [...history, currentId];
+
+      if (nextId === null) {
+        // Last question answered
         clearProgress();
-        // Show "Analyzing" transition, then go straight to results
-        setRevealing(true);
-        setAnimating(false);
-        setTimeout(() => {
-          if (!mountedRef.current) return;
-          setRevealing(false);
-          setStep(step + 1);
-        }, 1800);
+        if (track === "advisor") {
+          // Advisor track — go directly to advisor results
+          setHistory(newHistory);
+          setPhase("advisor-results");
+        } else {
+          // DIY track — show email gate first
+          setHistory(newHistory);
+          setPhase("email-gate");
+        }
       } else {
-        const nextStep = step + 1;
-        setStep(nextStep);
-        setAnimating(false);
-        // Save progress to localStorage
-        saveProgress(nextStep, newAnswers);
-        // P1 #8: Focus management — move focus to next question heading
-        requestAnimationFrame(() => {
-          questionHeadingRef.current?.focus();
-        });
+        setHistory(newHistory);
+        setCurrentId(nextId);
+        saveProgress(nextId, newAnswers, newHistory);
+        requestAnimationFrame(() => { questionHeadingRef.current?.focus(); });
       }
     }, 350);
+  };
+
+  const handleBack = () => {
+    if (phase === "email-gate") {
+      setPhase("questions");
+      return;
+    }
+    if (history.length > 0) {
+      const prev = history[history.length - 1];
+      const newHistory = history.slice(0, -1);
+      setHistory(newHistory);
+      setCurrentId(prev);
+      // Remove the answer for the question we're going back from
+      const newAnswers = { ...answers };
+      delete newAnswers[currentId as keyof UnifiedAnswers];
+      setAnswers(newAnswers);
+      saveProgress(prev, newAnswers, newHistory);
+    }
+  };
+
+  const handleEmailGateSubmit = async (email: string, name: string) => {
+    setEmailStatus("loading");
+    try {
+      const res = await fetch("/api/quiz-lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          name: name || undefined,
+          answers: scoringAnswers,
+          top_match_slug: results[0]?.slug || null,
+        }),
+      });
+      if (!res.ok) throw new Error("Failed");
+      trackEvent("quiz_lead_capture", { source: "quiz", top_match: results[0]?.slug }, "/quiz");
+      trackEvent("pdf_opt_in", { source: "quiz" }, "/quiz");
+      setEmailStatus("idle");
+    } catch {
+      setEmailStatus("error");
+    }
+    // Always proceed to results regardless of email submission success/failure
+    setPhase("analyzing");
+    setTimeout(() => {
+      if (!mountedRef.current) return;
+      setPhase("diy-results");
+    }, 1800);
+  };
+
+  const handleEmailGateSkip = () => {
+    setPhase("analyzing");
+    setTimeout(() => {
+      if (!mountedRef.current) return;
+      setPhase("diy-results");
+    }, 1800);
   };
 
   const handleShareResult = async () => {
     const shareUrl = window.location.href;
     const topBrokerName = results[0]?.broker?.name || "my top platform";
     const shareText = `I just found ${topBrokerName} as my best platform match on Invest.com.au! Take the quiz:`;
-
-    // Try Web Share API first (mobile-native sharing)
     if (typeof navigator.share === "function") {
       try {
         await navigator.share({ title: "My Platform Match", text: shareText, url: shareUrl });
         trackEvent("quiz_share", { method: "native", top_broker: results[0]?.slug }, "/quiz");
         return;
-      } catch {
-        // User cancelled or API failed — fall through to clipboard
-      }
+      } catch { /* cancelled */ }
     }
-
-    // Fallback: copy to clipboard
     try {
       await navigator.clipboard.writeText(shareUrl);
     } catch {
-      const textarea = document.createElement("textarea");
-      textarea.value = shareUrl;
-      document.body.appendChild(textarea);
-      textarea.select();
+      const ta = document.createElement("textarea");
+      ta.value = shareUrl;
+      document.body.appendChild(ta);
+      ta.select();
       document.execCommand("copy");
-      document.body.removeChild(textarea);
+      document.body.removeChild(ta);
     }
     setCopied(true);
     trackEvent("quiz_share", { method: "clipboard", top_broker: results[0]?.slug }, "/quiz");
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // Generate personalized match reasons based on user answers and broker strengths
+  const handleRestart = () => {
+    clearProgress();
+    setPhase("questions");
+    setCurrentId("goal");
+    setAnswers({});
+    setHistory([]);
+    setShowScoring(false);
+  };
+
+  // Generate match reasons for platform results
   const getMatchReasons = (userAnswers: string[], broker: Broker): string[] => {
     const reasons: string[] = [];
     const pt = broker.platform_type;
-
-    // Platform-type specific reasons
     if (pt === 'robo_advisor') {
       reasons.push('Automated portfolio management — hands-off investing');
       if (userAnswers.includes('beginner') || userAnswers.includes('simple') || userAnswers.includes('automate'))
@@ -367,10 +516,8 @@ export default function QuizPage() {
         reasons.push('Strong long-term performance track record');
     } else if (pt === 'property_platform') {
       reasons.push('Property investing without buying a whole house');
-      if (userAnswers.includes('property'))
+      if (userAnswers.some(a => a.startsWith('property')))
         reasons.push('Fractional property ownership with rental income');
-      if (userAnswers.includes('income'))
-        reasons.push('Rental income and property returns');
     } else if (pt === 'cfd_forex') {
       reasons.push('Access to leveraged trading across multiple markets');
       if (userAnswers.includes('pro'))
@@ -380,7 +527,6 @@ export default function QuizPage() {
       if (userAnswers.includes('crypto'))
         reasons.push('Wide range of cryptocurrencies available');
     } else {
-      // share_broker (default)
       if (userAnswers.includes('fees') || userAnswers.includes('income'))
         reasons.push(`Low brokerage fees (${broker.asx_fee || 'competitive rates'})`);
       if (userAnswers.includes('safety') && broker.chess_sponsored)
@@ -390,8 +536,6 @@ export default function QuizPage() {
       if (broker.smsf_support && (userAnswers.includes('super') || userAnswers.includes('grow')))
         reasons.push('Supports SMSF accounts for tax-effective investing');
     }
-
-    // Universal reasons
     if (userAnswers.includes('beginner') || userAnswers.includes('simple') || userAnswers.includes('automate'))
       if (!reasons.some(r => r.includes('beginner') || r.includes('hands-off') || r.includes('set-and-forget')))
         reasons.push('Simple, beginner-friendly platform and interface');
@@ -400,155 +544,87 @@ export default function QuizPage() {
         reasons.push('Competitive international fees for larger portfolios');
     if (broker.rating && broker.rating >= 4.5)
       reasons.push(`Highly rated (${broker.rating}/5) by our editorial team`);
-
     if (!reasons.length) reasons.push('Strong overall score across your selected criteria');
     return reasons.slice(0, 4);
   };
 
-  const [showScoring, setShowScoring] = useState(false);
+  /* ─── Render ─── */
 
-  // P1 #5: Memoize results to avoid recalculating on every render
-  const results = useMemo(() => {
-    return scoreQuizResults(answers, weights, brokers, quizCampaignWinners);
-  }, [answers, weights, brokers, quizCampaignWinners]);
+  if (phase === "analyzing") {
+    return <QuizAnalyzingScreen />;
+  }
 
-  // Check if any result is a crypto broker (for crypto warning)
-  const hasCryptoResult = useMemo(
-    () => results.some(r => r.broker?.is_crypto),
-    [results]
-  );
-
-  // Track quiz completion when user reaches results + persist for PersonalizedRecommendations
-  useEffect(() => {
-    if (step >= questions.length && step > 0 && brokers.length > 0) {
-      trackEvent('quiz_complete', {
-        answers,
-        top_broker: results[0]?.slug || null,
-        results_count: results.length,
-      }, '/quiz');
-      trackEvent('quiz_completed', {
-        top_match: results[0]?.slug || null,
-        results_count: results.length,
-      }, '/quiz');
-      // Persist top results so other pages can show personalized recommendations
-      try {
-        const topResults = results.slice(0, 5).filter(r => r.broker).map(r => ({
-          slug: r.slug,
-          name: r.broker!.name,
-          score: r.total,
-          logo_url: r.broker!.logo_url || null,
-          color: r.broker!.color,
-          tagline: r.broker!.tagline || null,
-          rating: r.broker!.rating || null,
-        }));
-        localStorage.setItem('invest-quiz-results', JSON.stringify({
-          answers,
-          results: topResults,
-          completedAt: new Date().toISOString(),
-        }));
-
-        // Store qualification data for lead enrichment
-        storeQualificationData("quiz", {
-          answers,
-          top_match: results[0]?.slug || null,
-          results_count: results.length,
-          question_labels: questions.map(q => q.question_text),
-        });
-      } catch { /* quota exceeded */ }
-    }
-  }, [step, questions.length, brokers.length, results, answers]);
-
-  // Email gate submit handler
-  const handleGateSubmit = async () => {
-    if (!gateEmail || !gateEmail.includes("@") || !gateConsent) return;
-    setGateStatus("loading");
-    try {
-      const res = await fetch("/api/quiz-lead", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: gateEmail,
-          name: gateName || undefined,
-          answers,
-          top_match_slug: results[0]?.slug || null,
-        }),
-      });
-      if (!res.ok) throw new Error("Failed");
-      trackEvent("quiz_lead_capture", { source: "quiz", answers, top_match: results[0]?.slug }, "/quiz");
-      trackEvent("pdf_opt_in", { source: "quiz" }, "/quiz");
-    } catch {
-      // P0 #2: Set error state so user sees feedback
-      setGateStatus("error");
-      return; // Stay on gate so user can retry
-    }
-    setGateStatus("idle");
-    setEmailGate(false);
-    setStep(step + 1);
-  };
-
-  const handleGateSkip = () => {
-    setGateStatus("idle");
-    setEmailGate(false);
-    setStep(step + 1);
-  };
-
-  // Email gate no longer blocks results — email capture moved below results
-
-  // Results screen
-  if (step >= questions.length) {
+  if (phase === "diy-results") {
     return (
       <QuizResultsScreen
         results={results}
-        answers={answers}
+        answers={scoringAnswers}
         hasCryptoResult={hasCryptoResult}
-        emailGate={emailGate}
-        gateEmail={gateEmail}
-        gateStatus={gateStatus}
+        emailGate={false}
+        gateEmail=""
+        gateStatus="idle"
         copied={copied}
         showScoring={showScoring}
         onSetShowScoring={setShowScoring}
-        onGateEmailChange={setGateEmail}
-        onGateSubmit={handleGateSubmit}
-        onEmailGateSent={() => setEmailGate(true)}
-        onGateConsentSet={() => setGateConsent(true)}
+        onGateEmailChange={() => {}}
+        onGateSubmit={() => {}}
+        onEmailGateSent={() => {}}
+        onGateConsentSet={() => {}}
         onShareResult={handleShareResult}
-        onRestart={() => { clearProgress(); setStep(0); setAnswers([]); }}
+        onRestart={handleRestart}
         getMatchReasons={getMatchReasons}
       />
     );
   }
 
-  // Analyzing transition screen
-  if (revealing) {
-    return <QuizAnalyzingScreen />;
+  if (phase === "advisor-results") {
+    return (
+      <AdvisorResultsScreen
+        advisorType={inferAdvisorType(answers)}
+        quizAnswers={answers as Record<string, string>}
+        platformResults={results}
+        onRestart={handleRestart}
+      />
+    );
   }
 
-  // Question screen
+  if (phase === "email-gate") {
+    return (
+      <QuizEmailGate
+        onSubmit={handleEmailGateSubmit}
+        onSkip={handleEmailGateSkip}
+        status={emailStatus}
+      />
+    );
+  }
+
+  // Questions phase
+  const current = UNIFIED_QUESTIONS[currentId];
+  const questionIndex = history.length; // 0-based
+  const totalSteps = getTotalSteps(answers);
+
   return (
     <QuizQuestionScreen
-      step={step}
-      questions={questions}
+      step={questionIndex}
+      questions={[{ question_text: current.text, options: current.options }]}
       selectedKey={selectedKey}
       animating={animating}
       fetchError={fetchError}
       resumePrompt={resumePrompt}
+      questionIndex={questionIndex}
+      totalQuestions={totalSteps}
       onAnswer={handleAnswer}
-      onBack={() => {
-        const prevStep = step - 1;
-        const prevAnswers = answers.slice(0, -1);
-        setStep(prevStep);
-        setAnswers(prevAnswers);
-        saveProgress(prevStep, prevAnswers);
-      }}
+      onBack={handleBack}
       onResume={() => {
         const saved = loadSavedProgress();
         if (saved) {
-          setStep(saved.step);
+          setCurrentId(saved.currentId);
           setAnswers(saved.answers);
+          setHistory(saved.history);
         }
         setResumePrompt(false);
       }}
-      onStartOver={() => { clearProgress(); setResumePrompt(false); }}
+      onStartOver={() => { clearProgress(); setResumePrompt(false); handleRestart(); }}
       questionHeadingRef={questionHeadingRef}
     />
   );

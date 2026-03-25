@@ -8,7 +8,7 @@ export default function QuizAnalyzingScreen() {
           {/* Animated analyzing spinner */}
           <div className="relative w-12 h-12 md:w-16 md:h-16 mb-4 md:mb-6">
             <div className="absolute inset-0 rounded-full border-3 md:border-4 border-slate-200" />
-            <div className="absolute inset-0 rounded-full border-3 md:border-4 border-transparent border-t-blue-700 analyzing-ring-spin" />
+            <div className="absolute inset-0 rounded-full border-3 md:border-4 border-transparent border-t-amber-500 analyzing-ring-spin" />
           </div>
 
           <h2 className="text-base md:text-xl font-bold mb-1 md:mb-2 reveal-text-in">
@@ -20,9 +20,9 @@ export default function QuizAnalyzingScreen() {
 
           {/* Animated progress dots */}
           <div className="flex gap-1.5 md:gap-2 mt-4 md:mt-6">
-            <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-blue-700 analyzing-dot-1" />
-            <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-blue-700 analyzing-dot-2" />
-            <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-blue-700 analyzing-dot-3" />
+            <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-amber-500 analyzing-dot-1" />
+            <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-amber-500 analyzing-dot-2" />
+            <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-amber-500 analyzing-dot-3" />
           </div>
         </div>
       </div>

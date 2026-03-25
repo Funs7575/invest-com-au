@@ -99,9 +99,6 @@ export default function RootLayout({
         />
       </head>
       <body className={inter.className}>
-        <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-slate-900 focus:text-white focus:rounded-lg focus:text-sm focus:font-semibold">
-          Skip to content
-        </a>
         <noscript>
           <div style={{ padding: "1rem", textAlign: "center", background: "#f8fafc", borderBottom: "1px solid #e2e8f0" }}>
             <p style={{ fontSize: "0.875rem", color: "#334155" }}>

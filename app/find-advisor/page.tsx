@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect, Suspense } from "react";
+import { useState, useCallback, useEffect, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -36,6 +36,8 @@ interface QuizState {
   intent: Intent | null;
   context: string[];
   state: string;
+  postcode: string;
+  suburb: string;
   budget: string;
   firstName: string;
   email: string;
@@ -52,7 +54,7 @@ interface PersistedMatch {
   excludeIds: number[];
   leadIds: number[];
   confirmedAdvisorId: number | null;
-  quizData: { intent: string; context: string[]; state: string; budget: string; firstName: string; email: string };
+  quizData: { intent: string; context: string[]; state: string; postcode: string; suburb: string; budget: string; firstName: string; email: string };
   timestamp: number;
 }
 
@@ -284,6 +286,8 @@ function FindAdvisorQuiz() {
         intent: (savedMatch.quizData.intent as Intent) ?? (initialIntent ?? null),
         context: savedMatch.quizData.context ?? [],
         state: savedMatch.quizData.state ?? "",
+        postcode: savedMatch.quizData.postcode ?? "",
+        suburb: savedMatch.quizData.suburb ?? "",
         budget: savedMatch.quizData.budget ?? "",
         firstName: savedMatch.quizData.firstName ?? "",
         email: savedMatch.quizData.email ?? "",
@@ -294,7 +298,7 @@ function FindAdvisorQuiz() {
     return {
       step: initialIntent ? 2 : 1,
       intent: initialIntent,
-      context: [], state: "", budget: "",
+      context: [], state: "", postcode: "", suburb: "", budget: "",
       firstName: "", email: "", phone: "", consent: false,
     };
   });
@@ -334,7 +338,7 @@ function FindAdvisorQuiz() {
   }, []);
 
   const restart = () => {
-    setQuiz({ step: 1, intent: null, context: [], state: "", budget: "", firstName: "", email: "", phone: "", consent: false });
+    setQuiz({ step: 1, intent: null, context: [], state: "", postcode: "", suburb: "", budget: "", firstName: "", email: "", phone: "", consent: false });
     setErrors({}); setSubmitError(null); setSubmitted(false);
     setMatchedAdvisors([]); setExcludeIds([]); setNoMoreMatches(false);
     clearMatchStorage();
@@ -363,7 +367,7 @@ function FindAdvisorQuiz() {
   };
 
   const handleStep3Next = () => {
-    if (!quiz.state) { setErrors({ state: "Please select your state or territory" }); return; }
+    if (!quiz.state) { setErrors({ state: "Please enter a postcode or select your state or territory" }); return; }
     setErrors({});
     update({ step: 4 });
   };
@@ -379,6 +383,8 @@ function FindAdvisorQuiz() {
         user_name: quiz.firstName.trim(),
         user_phone: quiz.phone.trim() || undefined,
         user_location_state: quiz.state,
+        user_postcode: quiz.postcode || undefined,
+        user_suburb: quiz.suburb || undefined,
         user_intent: {
           need: intentToNeed(quiz.intent!),
           context: quiz.context,
@@ -405,6 +411,8 @@ function FindAdvisorQuiz() {
         user_name: quiz.firstName.trim(),
         user_phone: quiz.phone.trim() || undefined,
         user_location_state: quiz.state,
+        user_postcode: quiz.postcode || undefined,
+        user_suburb: quiz.suburb || undefined,
         user_intent: {
           need: intentToNeed(quiz.intent!),
           context: quiz.context,
@@ -487,6 +495,8 @@ function FindAdvisorQuiz() {
             intent: quiz.intent || "",
             context: quiz.context,
             state: quiz.state,
+            postcode: quiz.postcode,
+            suburb: quiz.suburb,
             budget: quiz.budget,
             firstName: quiz.firstName,
             email: quiz.email,
@@ -521,6 +531,8 @@ function FindAdvisorQuiz() {
             intent: quiz.intent || "",
             context: quiz.context,
             state: quiz.state,
+            postcode: quiz.postcode,
+            suburb: quiz.suburb,
             budget: quiz.budget,
             firstName: quiz.firstName,
             email: quiz.email,
@@ -563,6 +575,8 @@ function FindAdvisorQuiz() {
             intent: quiz.intent || "",
             context: quiz.context,
             state: quiz.state,
+            postcode: quiz.postcode,
+            suburb: quiz.suburb,
             budget: quiz.budget,
             firstName: quiz.firstName,
             email: quiz.email,
@@ -619,8 +633,11 @@ function FindAdvisorQuiz() {
         {quiz.step === 3 && (
           <Step3
             stateValue={quiz.state}
+            postcodeValue={quiz.postcode}
+            suburbValue={quiz.suburb}
             budgetValue={quiz.budget}
             onStateChange={(v) => update({ state: v })}
+            onPostcodeChange={(postcode, state, suburb) => update({ postcode, state, suburb })}
             onBudgetChange={(v) => update({ budget: v })}
             onNext={handleStep3Next}
             onBack={goBack}
@@ -795,13 +812,97 @@ function Step2({
 
 // ─── Step 3 ───────────────────────────────────────────────────────────────────
 
+interface PostcodeSuggestion {
+  postcode: string;
+  locality: string;
+  state: string;
+}
+
 function Step3({
-  stateValue, budgetValue, onStateChange, onBudgetChange, onNext, onBack, error,
+  stateValue, postcodeValue, suburbValue, budgetValue,
+  onStateChange, onPostcodeChange, onBudgetChange, onNext, onBack, error,
 }: {
-  stateValue: string; budgetValue: string;
-  onStateChange: (v: string) => void; onBudgetChange: (v: string) => void;
+  stateValue: string; postcodeValue: string; suburbValue: string; budgetValue: string;
+  onStateChange: (v: string) => void;
+  onPostcodeChange: (postcode: string, state: string, suburb: string) => void;
+  onBudgetChange: (v: string) => void;
   onNext: () => void; onBack: () => void; error?: string;
 }) {
+  const [postcodeInput, setPostcodeInput] = useState(postcodeValue);
+  const [suggestions, setSuggestions] = useState<PostcodeSuggestion[]>([]);
+  const [lookupStatus, setLookupStatus] = useState<"idle" | "loading" | "found" | "notfound">("idle");
+  const [showStateDropdown, setShowStateDropdown] = useState(!postcodeValue && !stateValue);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Initialise showStateDropdown properly: show it only if no postcode was already set
+  useEffect(() => {
+    if (postcodeValue) {
+      setLookupStatus("found");
+      setShowStateDropdown(false);
+    } else if (stateValue) {
+      setShowStateDropdown(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handlePostcodeInput = (value: string) => {
+    const digits = value.replace(/\D/g, "").slice(0, 4);
+    setPostcodeInput(digits);
+
+    // Clear previous derived state/suburb if user clears the field
+    if (!digits) {
+      onPostcodeChange("", "", "");
+      setSuggestions([]);
+      setLookupStatus("idle");
+      setShowStateDropdown(true);
+      return;
+    }
+
+    setShowStateDropdown(false);
+
+    // Debounce lookup
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (digits.length < 4) {
+      setSuggestions([]);
+      setLookupStatus("idle");
+      onPostcodeChange(digits, "", "");
+      return;
+    }
+
+    setLookupStatus("loading");
+    debounceRef.current = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/advisor-search/postcodes?q=${encodeURIComponent(digits)}`);
+        const data = await res.json();
+        const results: PostcodeSuggestion[] = data.postcodes ?? [];
+        if (results.length > 0) {
+          setSuggestions(results);
+          setLookupStatus("found");
+          // Auto-select if exact match
+          const exact = results.find((r) => r.postcode === digits);
+          const pick = exact ?? results[0];
+          onPostcodeChange(pick.postcode, pick.state, pick.locality);
+        } else {
+          setSuggestions([]);
+          setLookupStatus("notfound");
+          onPostcodeChange(digits, "", "");
+        }
+      } catch {
+        setSuggestions([]);
+        setLookupStatus("notfound");
+      }
+    }, 400);
+  };
+
+  const handleSuggestionSelect = (s: PostcodeSuggestion) => {
+    setPostcodeInput(s.postcode);
+    setSuggestions([]);
+    setLookupStatus("found");
+    onPostcodeChange(s.postcode, s.state, s.locality);
+  };
+
+  const hasValidLocation = !!stateValue;
+
   return (
     <Card variant="default" padding="lg">
       <div className="mb-8">
@@ -811,16 +912,115 @@ function Step3({
         </p>
       </div>
 
-      <div className="space-y-6">
-        <Select
-          id="state-select"
-          label="State or Territory"
-          required
-          options={STATES}
-          value={stateValue}
-          onChange={(e) => onStateChange(e.target.value)}
-          error={error}
-        />
+      <div className="space-y-5">
+        {/* Postcode — primary input */}
+        <div>
+          <label htmlFor="postcode-input" className="block text-sm font-semibold text-slate-700 mb-1.5">
+            Postcode <span className="text-slate-400 font-normal">(recommended)</span>
+          </label>
+          <div className="relative">
+            <input
+              id="postcode-input"
+              type="text"
+              inputMode="numeric"
+              maxLength={4}
+              value={postcodeInput}
+              onChange={(e) => handlePostcodeInput(e.target.value)}
+              placeholder="e.g. 2000"
+              className={`
+                w-full px-4 py-3 border-2 rounded-xl text-slate-900 text-sm
+                focus:outline-none focus:border-amber-500 transition-colors bg-white
+                ${error && !postcodeInput ? "border-red-400" : "border-slate-200"}
+              `}
+              autoComplete="postal-code"
+            />
+            {lookupStatus === "loading" && (
+              <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                <svg className="w-4 h-4 text-slate-400 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                </svg>
+              </div>
+            )}
+          </div>
+
+          {/* Suburb auto-fill result */}
+          {lookupStatus === "found" && suburbValue && (
+            <div className="mt-2 flex items-center gap-2">
+              <svg className="w-3.5 h-3.5 text-emerald-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              <span className="text-sm font-medium text-slate-700">{suburbValue}, {stateValue}</span>
+            </div>
+          )}
+
+          {/* Multiple suggestions dropdown */}
+          {suggestions.length > 1 && (
+            <div className="mt-1 border border-slate-200 rounded-xl bg-white shadow-md overflow-hidden z-10">
+              {suggestions.map((s) => (
+                <button
+                  key={`${s.postcode}-${s.locality}`}
+                  type="button"
+                  onClick={() => handleSuggestionSelect(s)}
+                  className="w-full text-left px-4 py-2.5 text-sm hover:bg-amber-50 transition-colors border-b border-slate-100 last:border-0"
+                >
+                  <span className="font-medium text-slate-800">{s.locality}</span>
+                  <span className="text-slate-500 ml-1.5">{s.postcode}, {s.state}</span>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {lookupStatus === "notfound" && postcodeInput.length === 4 && (
+            <p className="mt-1.5 text-xs text-amber-700 flex items-center gap-1.5">
+              <svg className="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
+              Postcode not found — please select your state below
+            </p>
+          )}
+
+          {/* "Don't know postcode" toggle */}
+          {lookupStatus === "idle" && !postcodeInput && (
+            <button
+              type="button"
+              onClick={() => setShowStateDropdown(true)}
+              className="mt-1.5 text-xs text-amber-600 hover:text-amber-700 font-medium"
+            >
+              Don&apos;t know your postcode? Select state instead
+            </button>
+          )}
+        </div>
+
+        {/* State dropdown — fallback */}
+        {(showStateDropdown || lookupStatus === "notfound" || (!postcodeInput && stateValue)) && (
+          <div className="pt-1">
+            <Select
+              id="state-select"
+              label="State or Territory"
+              required={!stateValue}
+              options={STATES}
+              value={stateValue}
+              onChange={(e) => {
+                onStateChange(e.target.value);
+                // If they select state manually, clear any partial postcode lookup
+                if (postcodeInput && lookupStatus !== "found") {
+                  setPostcodeInput("");
+                  onPostcodeChange("", e.target.value, "");
+                }
+              }}
+              error={!postcodeInput ? error : undefined}
+            />
+          </div>
+        )}
+
+        {/* Combined error */}
+        {error && !stateValue && !postcodeInput && (
+          <p className="text-xs text-red-600 flex items-center gap-1.5 -mt-3" role="alert">
+            <svg className="w-3.5 h-3.5 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" /></svg>
+            {error}
+          </p>
+        )}
+
+        {/* Budget */}
         <div>
           <Select
             id="budget-select"
@@ -837,7 +1037,7 @@ function Step3({
 
       <div className="flex gap-3 mt-8">
         <Button variant="ghost" onClick={onBack}>&larr; Back</Button>
-        <Button variant="primary" onClick={onNext} disabled={!stateValue} className="flex-1">
+        <Button variant="primary" onClick={onNext} disabled={!hasValidLocation} className="flex-1">
           Continue &rarr;
         </Button>
       </div>

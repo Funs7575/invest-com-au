@@ -45,58 +45,6 @@ export default function QuizResultsFooter({
 }: Props) {
   return (
     <>
-      {/* Email capture — non-blocking, below results */}
-      {!emailGate && (
-        <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 md:p-5 mb-3 md:mb-6 result-card-in result-card-in-delay-5">
-          <div className="flex items-start gap-2.5 md:gap-4">
-            <Icon name="mail" size={20} className="text-slate-700 shrink-0 md:hidden" />
-            <Icon name="mail" size={28} className="text-slate-700 shrink-0 hidden md:block" />
-            <div className="flex-1">
-              <h3 className="font-bold text-xs md:text-sm mb-0.5 md:mb-1">Get your results emailed</h3>
-              <p className="text-[0.62rem] md:text-xs text-slate-500 mb-2 md:mb-3">We&apos;ll send your shortlist + our free fee comparison PDF.</p>
-              <div className="flex flex-col sm:flex-row gap-1.5 md:gap-2">
-                <input
-                  type="email"
-                  placeholder="you@email.com"
-                  autoComplete="email"
-                  aria-label="Email address for quiz results"
-                  value={gateEmail}
-                  onChange={(e) => onGateEmailChange(e.target.value)}
-                  className="flex-1 px-2.5 py-2 md:px-3 rounded-lg border border-slate-200 text-xs md:text-sm focus:outline-none focus:ring-2 focus:ring-blue-700/30 focus:border-blue-700"
-                />
-                <button
-                  onClick={async () => {
-                    if (!gateEmail || !gateEmail.includes("@")) return;
-                    onGateConsentSet();
-                    await onGateSubmit();
-                    onEmailGateSent();
-                  }}
-                  disabled={gateStatus === "loading" || !gateEmail.includes("@")}
-                  className="px-3 py-2 md:px-4 bg-slate-900 text-white text-xs md:text-sm font-semibold rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-60 shrink-0"
-                >
-                  {gateStatus === "loading" ? "Sending..." : "Email Me"}
-                </button>
-              </div>
-              {gateStatus === "error" && (
-                <p className="text-[0.62rem] md:text-xs text-red-500 mt-1">Something went wrong. Please try again.</p>
-              )}
-              <p className="text-[0.56rem] md:text-xs text-slate-400 mt-1.5 md:mt-2">
-                By submitting, you consent to receiving emails from Invest.com.au. No spam. Unsubscribe anytime.{" "}
-                <Link href="/privacy" className="underline hover:text-slate-900">Privacy Policy</Link> &middot;{" "}
-                <Link href="/terms" className="underline hover:text-slate-900">Terms</Link>
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-      {emailGate && (
-        <div className="bg-slate-50 border border-slate-200 rounded-xl p-3 md:p-4 mb-3 md:mb-6 text-center">
-          <span className="text-xs md:text-sm text-slate-700 font-medium">✓ Results sent to {gateEmail}</span>
-        </div>
-      )}
-
-      {/* Pro upsell hidden for launch */}
-
       <div className="my-3 md:my-6">
         <CompactDisclaimerLine />
       </div>
@@ -174,7 +122,7 @@ export default function QuizResultsFooter({
           {typeof navigator !== "undefined" && "share" in navigator && (
             <button
               onClick={onShareResult}
-              className="w-10 h-10 rounded-lg bg-violet-100 hover:bg-violet-200 text-violet-600 flex items-center justify-center transition-colors"
+              className="w-10 h-10 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-600 flex items-center justify-center transition-colors"
               aria-label="Share"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" /></svg>

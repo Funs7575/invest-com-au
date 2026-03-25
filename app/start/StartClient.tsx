@@ -23,7 +23,7 @@ interface Answers {
   priority?: PriorityKey;
 }
 
-type RouteType = "diy" | "advisor" | "both" | "guide";
+type RouteType = "diy" | "advisor" | "both";
 
 interface AdvisorCombo {
   type: string;
@@ -211,24 +211,25 @@ function computeRoute(answers: Answers): RouteResult {
     };
   }
 
-  // Guide-first route (unsure + simple + small)
+  // Beginner route (unsure + simple + small) — never a dead end, always revenue-generating
   if (mode === "unsure" && complexity === "simple" && amount === "small") {
     return {
-      type: "guide",
-      headline: "Start with the basics — then decide",
+      type: "diy",
+      headline: "Here are the best beginner platforms for you",
       explanation: [
-        "You're early in your journey, which is a great place to be.",
-        "We recommend reading a quick guide before choosing a platform or advisor.",
-        "Once you're ready, our comparison tools will help you find the right fit.",
+        "You're early in your investing journey — a great place to start.",
+        "Starting small is fine; many top platforms have no minimum balance.",
+        "We recommend comparing 2–3 options before opening an account.",
       ],
       actions: [
-        { label: "How to start investing", href: "/how-to/start-investing", primary: true, icon: "book-open" },
-        { label: "Compare beginner platforms", href: "/best/beginners", icon: "bar-chart" },
+        { label: "See top beginner picks", href: "/best/beginners", primary: true, icon: "award" },
+        { label: "Compare all platforms", href: "/compare", icon: "bar-chart" },
+        { label: "Talk to an advisor", href: "/find-advisor", icon: "users" },
       ],
       guides: [
+        { label: "How to start investing", href: "/how-to/start-investing" },
         { label: "ETF investing for beginners", href: "/how-to/invest-in-etfs-for-beginners" },
         { label: "How much should I invest?", href: "/article/salary-vs-investing" },
-        { label: "Take the platform quiz", href: "/quiz" },
       ],
     };
   }
@@ -387,7 +388,7 @@ export default function StartClient() {
         <div className="mb-6 md:mb-10">
           <div className="h-1 bg-slate-100 rounded-full overflow-hidden">
             <div
-              className="h-full bg-violet-600 rounded-full transition-all duration-500 ease-out"
+              className="h-full bg-amber-500 rounded-full transition-all duration-500 ease-out"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -461,14 +462,12 @@ export default function StartClient() {
             <div className="text-center mb-6">
               <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold ${
                 result.type === "advisor" ? "bg-amber-100 text-amber-800"
-                : result.type === "both" ? "bg-violet-100 text-violet-800"
-                : result.type === "guide" ? "bg-blue-100 text-blue-800"
+                : result.type === "both" ? "bg-amber-100 text-amber-800"
                 : "bg-emerald-100 text-emerald-800"
               }`}>
-                <Icon name={result.type === "advisor" ? "users" : result.type === "guide" ? "book-open" : "trending-up"} size={14} />
+                <Icon name={result.type === "advisor" || result.type === "both" ? "users" : "trending-up"} size={14} />
                 {result.type === "advisor" ? "Expert help recommended"
                   : result.type === "both" ? "Two paths to consider"
-                  : result.type === "guide" ? "Start with a guide"
                   : "DIY platform match"}
               </span>
             </div>
@@ -508,10 +507,10 @@ export default function StartClient() {
 
             {/* Recommended Team — advisor combinations */}
             {result.recommended_combinations && result.recommended_combinations.length > 0 && (
-              <div className="bg-gradient-to-br from-violet-50 to-slate-50 border border-violet-200/60 rounded-xl p-4 md:p-5 mb-6">
+              <div className="bg-gradient-to-br from-amber-50 to-slate-50 border border-amber-200/60 rounded-xl p-4 md:p-5 mb-6">
                 <div className="flex items-center gap-2 mb-3">
-                  <div className="w-7 h-7 rounded-full bg-violet-100 flex items-center justify-center">
-                    <Icon name="users" size={14} className="text-violet-600" />
+                  <div className="w-7 h-7 rounded-full bg-amber-100 flex items-center justify-center">
+                    <Icon name="users" size={14} className="text-amber-600" />
                   </div>
                   <h3 className="text-sm font-bold text-slate-800">Your Recommended Team</h3>
                 </div>
@@ -532,7 +531,7 @@ export default function StartClient() {
                       <Link
                         href={combo.href}
                         onClick={() => trackEvent("matchmaker_combo_click", { primary: answers.priority, combo_type: combo.type })}
-                        className="shrink-0 self-center px-3 py-1.5 text-[0.65rem] md:text-xs font-bold text-violet-700 border border-violet-200 rounded-lg hover:bg-violet-50 transition-colors whitespace-nowrap"
+                        className="shrink-0 self-center px-3 py-1.5 text-[0.65rem] md:text-xs font-bold text-amber-700 border border-amber-200 rounded-lg hover:bg-amber-50 transition-colors whitespace-nowrap"
                       >
                         Find one
                       </Link>
@@ -550,7 +549,7 @@ export default function StartClient() {
                   <Link
                     key={guide.href}
                     href={guide.href}
-                    className="flex items-center gap-2 text-sm text-slate-600 hover:text-violet-700 transition-colors"
+                    className="flex items-center gap-2 text-sm text-slate-600 hover:text-amber-600 transition-colors"
                   >
                     <Icon name="book-open" size={14} className="text-slate-400" />
                     {guide.label}
@@ -606,12 +605,12 @@ function QuestionStep({
             onClick={() => onSelect(opt.key)}
             className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl border text-left transition-all ${
               selected === opt.key
-                ? "bg-violet-50 border-violet-400 ring-2 ring-violet-200"
+                ? "bg-amber-50 border-amber-400 ring-2 ring-amber-200"
                 : "bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50 active:scale-[0.99]"
             }`}
           >
             <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${
-              selected === opt.key ? "bg-violet-600 text-white" : "bg-slate-100 text-slate-500"
+              selected === opt.key ? "bg-amber-500 text-white" : "bg-slate-100 text-slate-500"
             }`}>
               <Icon name={opt.icon} size={20} />
             </div>

@@ -99,12 +99,11 @@ describe("scoreQuizResults", () => {
     expect(alphaResult?.total).toBeCloseTo(10.5);
   });
 
-  it("falls back to 'beginner' weight for unknown answer keys", () => {
+  it("ignores unknown answer keys (no fallback to beginner)", () => {
     const results = scoreQuizResults(["unknown_answer"], weights, brokers);
-    // unknown maps to "beginner" weight key
+    // unknown keys are skipped — total stays 0
     const alphaResult = results.find((r) => r.slug === "alpha");
-    // alpha beginner weight = 10, rating mult = 1.05 -> 10.5
-    expect(alphaResult?.total).toBeCloseTo(10.5);
+    expect(alphaResult?.total).toBeCloseTo(0);
   });
 
   it("returns empty array when no brokers and no weights provided", () => {

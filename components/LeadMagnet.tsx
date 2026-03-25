@@ -69,12 +69,12 @@ export default function LeadMagnet() {
       {status === "success" ? (
         <div className="bg-slate-100 border border-slate-200 rounded-lg p-3 md:p-4 text-center">
           <div className="text-sm md:text-lg font-bold mb-0.5 md:mb-1 text-slate-900">
-            {emailSent ? 'Check your inbox!' : 'You\'re signed up!'}
+            {emailSent ? 'Check your inbox!' : 'You\'re already subscribed!'}
           </div>
           <p className="text-xs md:text-sm text-slate-600">
             {emailSent
               ? `We've sent the ${CURRENT_YEAR} Fee Audit to your email.`
-              : `We'll send you the ${CURRENT_YEAR} Fee Audit shortly.`}
+              : `The ${CURRENT_YEAR} Fee Audit was previously sent to your email.`}
           </p>
         </div>
       ) : (
