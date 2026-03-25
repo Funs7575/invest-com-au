@@ -147,106 +147,58 @@ export default async function HomePage() {
 
       {/* ═══════ 1. HERO ═══════ */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden">
-        <div className="container-custom py-5 md:py-8 lg:py-10">
+        <div className="container-custom py-8 md:py-14 lg:py-16">
           <div className="max-w-3xl mx-auto text-center">
 
             {/* Updated badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-900 border border-slate-800 rounded-full text-xs font-semibold text-white mb-3">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-900 border border-slate-800 rounded-full text-xs font-semibold text-white mb-4">
               <span className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-pulse" />
               Updated {updatedMonth} &middot; {brokerCount}+ platforms compared
             </div>
 
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-slate-900 leading-[1.1] mb-3 tracking-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 leading-[1.1] mb-4 tracking-tight">
               Invest Smarter.{" "}
               <span className="text-amber-500">Pay Less in Fees.</span>
             </h1>
 
-            <p className="text-sm md:text-base text-slate-600 mb-5 leading-relaxed max-w-2xl mx-auto">
-              Australia&apos;s free, independent hub to compare {brokerCount}+ investing platforms and find verified financial advisors — no sign-up, no obligation.
+            <p className="text-base md:text-lg text-slate-600 mb-8 leading-relaxed max-w-2xl mx-auto">
+              Australia&apos;s independent hub to match you with the right platforms, advisors, and property experts in 60 seconds.
             </p>
 
-            {/* Split Router — 4 intent options */}
-            <p className="text-[0.7rem] font-bold uppercase tracking-widest text-slate-400 mb-2.5">What are you looking for?</p>
-            <div className="grid grid-cols-2 gap-2.5 max-w-xl mx-auto mb-3">
+            {/* Primary CTA */}
+            <div className="mb-6">
               <Link
-                href="/compare"
-                className="group flex flex-col items-start gap-1.5 p-3.5 bg-white border border-slate-200 rounded-xl hover:border-amber-400 hover:shadow-md transition-all text-left"
+                href="/quiz"
+                className="inline-flex items-center gap-2.5 px-10 py-4 bg-amber-500 hover:bg-amber-400 text-slate-900 font-extrabold text-lg rounded-xl transition-all shadow-xl shadow-amber-500/25 hover:-translate-y-0.5 active:scale-[0.97]"
               >
-                <div className="w-8 h-8 bg-gradient-to-br from-amber-500 to-amber-400 rounded-lg flex items-center justify-center shadow-sm shadow-amber-500/20">
-                  <Icon name="trending-up" size={16} className="text-white" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-slate-900 leading-snug">Compare Trading Platforms</p>
-                  <p className="text-[0.65rem] text-slate-500 mt-0.5">Fees, features &amp; ratings</p>
-                </div>
-              </Link>
-              <Link
-                href="/compare?type=savings"
-                className="group flex flex-col items-start gap-1.5 p-3.5 bg-white border border-slate-200 rounded-xl hover:border-amber-400 hover:shadow-md transition-all text-left"
-              >
-                <div className="w-8 h-8 bg-gradient-to-br from-sky-500 to-sky-400 rounded-lg flex items-center justify-center shadow-sm shadow-sky-500/20">
-                  <Icon name="piggy-bank" size={16} className="text-white" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-slate-900 leading-snug">Find a High-Yield Savings Account</p>
-                  <p className="text-[0.65rem] text-slate-500 mt-0.5">Best rates right now</p>
-                </div>
-              </Link>
-              <Link
-                href="/find-advisor"
-                className="group flex flex-col items-start gap-1.5 p-3.5 bg-white border border-slate-200 rounded-xl hover:border-amber-400 hover:shadow-md transition-all text-left"
-              >
-                <div className="w-8 h-8 bg-gradient-to-br from-violet-600 to-violet-500 rounded-lg flex items-center justify-center shadow-sm shadow-violet-500/15">
-                  <Icon name="users" size={16} className="text-white" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-slate-900 leading-snug">Find a Financial Advisor</p>
-                  <p className="text-[0.65rem] text-slate-500 mt-0.5">ASIC-verified, free match</p>
-                </div>
-              </Link>
-              <Link
-                href="/property"
-                className="group flex flex-col items-start gap-1.5 p-3.5 bg-white border border-slate-200 rounded-xl hover:border-amber-400 hover:shadow-md transition-all text-left"
-              >
-                <div className="w-8 h-8 bg-gradient-to-br from-emerald-600 to-emerald-500 rounded-lg flex items-center justify-center shadow-sm shadow-emerald-500/15">
-                  <Icon name="building" size={16} className="text-white" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-slate-900 leading-snug">Buy Investment Property</p>
-                  <p className="text-[0.65rem] text-slate-500 mt-0.5">Data, agents &amp; loans</p>
-                </div>
+                Start My Free Match
+                <Icon name="arrow-right" size={20} />
               </Link>
             </div>
 
-            {/* Beginner escape hatch */}
-            <p className="text-[0.72rem] text-slate-500 mb-4">
-              Not sure where to start?{" "}
-              <Link href="/quiz" className="text-amber-600 font-semibold hover:text-amber-700 underline underline-offset-2">
-                Take the free 60-second quiz &rarr;
-              </Link>
-            </p>
-
-            {/* Trust signals */}
-            <div className="flex items-center justify-center flex-wrap gap-x-4 gap-y-1 text-xs text-slate-600">
+            {/* Trust bar */}
+            <div className="flex items-center justify-center flex-wrap gap-x-5 gap-y-1.5 text-sm font-semibold text-slate-600">
               <span className="flex items-center gap-1.5">
-                <Icon name="shield-check" size={12} className="text-amber-500" />
-                Independently reviewed — ratings not for sale
+                <Icon name="check-circle" size={15} className="text-amber-500" />
+                {brokerCount}+ Platforms Tested
               </span>
+              <span className="text-slate-300 hidden sm:block" aria-hidden="true">|</span>
               <span className="flex items-center gap-1.5">
-                <Icon name="check-circle" size={12} className="text-amber-500" />
-                {brokerCount}+ platforms tested with real accounts
+                <Icon name="shield-check" size={15} className="text-amber-500" />
+                ASIC-Verified Professionals
               </span>
+              <span className="text-slate-300 hidden sm:block" aria-hidden="true">|</span>
               <span className="flex items-center gap-1.5">
-                <Icon name="check-circle" size={12} className="text-amber-500" />
-                Always free — no sign-up required
+                <Icon name="check-circle" size={15} className="text-amber-500" />
+                100% Independent
               </span>
             </div>
           </div>
 
           {/* Platform logo trust strip */}
           {featuredPlatforms.length > 0 && (
-            <div className="mt-5 border-t border-slate-100 pt-4">
-              <p className="text-center text-[0.65rem] font-semibold uppercase tracking-widest text-slate-400 mb-2.5">
+            <div className="mt-8 border-t border-slate-100 pt-5">
+              <p className="text-center text-[0.65rem] font-semibold uppercase tracking-widest text-slate-400 mb-3">
                 Platforms we&apos;ve independently tested &amp; reviewed
               </p>
               <div className="flex items-center justify-center gap-3 md:gap-5 flex-wrap">
@@ -285,7 +237,69 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ═══════ 1C. MONEY ROW — top affiliate promos ═══════ */}
+      {/* ═══════ 1C. DIRECTORY GRID — browse by category ═══════ */}
+      <section className="bg-white border-b border-slate-100 py-10 md:py-14">
+        <div className="container-custom">
+          <div className="max-w-3xl mx-auto text-center mb-8">
+            <h2 className="text-xl md:text-2xl font-extrabold text-slate-900">
+              Know exactly what you need?{" "}
+              <span className="text-slate-500 font-semibold">Browse by category.</span>
+            </h2>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 max-w-4xl mx-auto">
+            <Link
+              href="/compare"
+              className="group flex flex-col items-start gap-3 p-4 md:p-5 bg-white border-2 border-slate-200 rounded-xl hover:border-amber-400 hover:shadow-md transition-all text-left"
+            >
+              <div className="w-10 h-10 bg-amber-50 border border-amber-200 rounded-lg flex items-center justify-center group-hover:bg-amber-100 transition-colors">
+                <Icon name="trending-up" size={18} className="text-amber-600" />
+              </div>
+              <div>
+                <p className="text-sm font-bold text-slate-900 leading-snug mb-0.5">Compare Platforms</p>
+                <p className="text-xs text-slate-500">Stocks, ETFs, Crypto</p>
+              </div>
+            </Link>
+            <Link
+              href="/find-advisor"
+              className="group flex flex-col items-start gap-3 p-4 md:p-5 bg-white border-2 border-slate-200 rounded-xl hover:border-amber-400 hover:shadow-md transition-all text-left"
+            >
+              <div className="w-10 h-10 bg-violet-50 border border-violet-200 rounded-lg flex items-center justify-center group-hover:bg-violet-100 transition-colors">
+                <Icon name="users" size={18} className="text-violet-600" />
+              </div>
+              <div>
+                <p className="text-sm font-bold text-slate-900 leading-snug mb-0.5">Find an Advisor</p>
+                <p className="text-xs text-slate-500">Financial Planners, SMSF</p>
+              </div>
+            </Link>
+            <Link
+              href="/property"
+              className="group flex flex-col items-start gap-3 p-4 md:p-5 bg-white border-2 border-slate-200 rounded-xl hover:border-amber-400 hover:shadow-md transition-all text-left"
+            >
+              <div className="w-10 h-10 bg-emerald-50 border border-emerald-200 rounded-lg flex items-center justify-center group-hover:bg-emerald-100 transition-colors">
+                <Icon name="building" size={18} className="text-emerald-600" />
+              </div>
+              <div>
+                <p className="text-sm font-bold text-slate-900 leading-snug mb-0.5">Property Experts</p>
+                <p className="text-xs text-slate-500">Buyer&apos;s Agents, Brokers</p>
+              </div>
+            </Link>
+            <Link
+              href="/compare?type=savings"
+              className="group flex flex-col items-start gap-3 p-4 md:p-5 bg-white border-2 border-slate-200 rounded-xl hover:border-amber-400 hover:shadow-md transition-all text-left"
+            >
+              <div className="w-10 h-10 bg-sky-50 border border-sky-200 rounded-lg flex items-center justify-center group-hover:bg-sky-100 transition-colors">
+                <Icon name="piggy-bank" size={18} className="text-sky-600" />
+              </div>
+              <div>
+                <p className="text-sm font-bold text-slate-900 leading-snug mb-0.5">High-Yield Savings</p>
+                <p className="text-xs text-slate-500">Best Rates Today</p>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════ 1E. MONEY ROW — top affiliate promos ═══════ */}
       {dealBrokers.length > 0 && (
         <section className="bg-white border-b border-slate-200 py-3 overflow-x-auto">
           <div className="container-custom">
