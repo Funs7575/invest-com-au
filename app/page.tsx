@@ -339,33 +339,6 @@ export default async function HomePage() {
         </section>
       )}
 
-      {/* ═══════ 2. ALPHA CATCHER — single unified quiz CTA ═══════ */}
-      <ScrollFadeIn>
-        <section className="py-12 md:py-20 bg-slate-50 border-b border-slate-100">
-          <div className="container-custom">
-            <div className="max-w-2xl mx-auto text-center">
-              <p className="text-xs font-bold uppercase tracking-widest text-amber-500 mb-3">Free assessment — 60 seconds</p>
-              <h2 className="text-2xl md:text-4xl font-extrabold text-slate-900 mb-4 leading-tight">
-                Stop guessing.<br className="hidden sm:block" /> Find the right match in 60 seconds.
-              </h2>
-              <p className="text-slate-500 text-sm md:text-base mb-8 max-w-lg mx-auto leading-relaxed">
-                Answer a few quick questions and we&apos;ll match you with the best platform or advisor for your exact situation — free, no obligation, no sign-up required.
-              </p>
-              <Link
-                href="/quiz"
-                className="inline-flex items-center gap-2.5 px-8 py-4 bg-amber-500 hover:bg-amber-400 text-slate-900 font-extrabold text-base rounded-xl transition-all shadow-lg shadow-amber-500/20 hover:-translate-y-0.5 active:scale-[0.97]"
-              >
-                Start My Free Match
-                <Icon name="arrow-right" size={18} />
-              </Link>
-              <p className="text-slate-400 text-xs mt-4">
-                Free &middot; No sign-up required &middot; Takes 60 seconds
-              </p>
-            </div>
-          </div>
-        </section>
-      </ScrollFadeIn>
-
       {/* ═══════ 3. TOP PLATFORMS — SEO data engine ═══════ */}
       <ScrollFadeIn>
         <section className="py-6 md:py-10 bg-white">

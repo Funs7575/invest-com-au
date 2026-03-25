@@ -221,7 +221,7 @@ export default function Header() {
               href="/quiz"
               className="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2.5 rounded-lg font-bold transition-all shadow-sm hover:shadow-md flex items-center gap-2 text-sm"
             >
-              Find My Match
+              Start Free Match
               <Icon name="arrow-right" size={16} />
             </Link>
           </div>
@@ -281,7 +281,7 @@ export default function Header() {
                 onClick={() => setMenuOpen(false)}
                 className="block w-full py-3 min-h-[44px] text-center text-sm font-extrabold text-white bg-amber-500 rounded-xl hover:bg-amber-600 transition-colors"
               >
-                Find My Match
+                Start Free Match
               </Link>
               <div className="flex gap-2">
                 <Link
