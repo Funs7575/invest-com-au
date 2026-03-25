@@ -165,31 +165,66 @@ export default async function HomePage() {
               Australia&apos;s free, independent hub to compare {brokerCount}+ investing platforms and find verified financial advisors — no sign-up, no obligation.
             </p>
 
-            {/* Single unified CTA — removes choice paralysis from 4-tile split */}
-            <Link
-              href="/quiz"
-              className="inline-flex items-center gap-2.5 px-8 py-4 bg-amber-500 hover:bg-amber-400 text-slate-900 font-extrabold text-base rounded-xl transition-all shadow-lg shadow-amber-500/20 hover:-translate-y-0.5 active:scale-[0.97] mb-3"
-            >
-              Start My Free Match
-              <Icon name="arrow-right" size={18} />
-            </Link>
-            {/* Micro-trust lines */}
-            <div className="flex items-center justify-center flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500 mb-3">
-              <span className="flex items-center gap-1">
-                <Icon name="bar-chart-2" size={12} className="text-amber-500" />
-                Platform recommendation
-              </span>
-              <span className="hidden sm:block text-slate-300" aria-hidden="true">·</span>
-              <span className="flex items-center gap-1">
-                <Icon name="users" size={12} className="text-amber-500" />
-                Advisor matching
-              </span>
-              <span className="hidden sm:block text-slate-300" aria-hidden="true">·</span>
-              <span className="flex items-center gap-1">
-                <Icon name="check-circle" size={12} className="text-amber-500" />
-                Free, no sign-up
-              </span>
+            {/* Split Router — 4 intent options */}
+            <p className="text-[0.7rem] font-bold uppercase tracking-widest text-slate-400 mb-2.5">What are you looking for?</p>
+            <div className="grid grid-cols-2 gap-2.5 max-w-xl mx-auto mb-3">
+              <Link
+                href="/compare"
+                className="group flex flex-col items-start gap-1.5 p-3.5 bg-white border border-slate-200 rounded-xl hover:border-amber-400 hover:shadow-md transition-all text-left"
+              >
+                <div className="w-8 h-8 bg-gradient-to-br from-amber-500 to-amber-400 rounded-lg flex items-center justify-center shadow-sm shadow-amber-500/20">
+                  <Icon name="trending-up" size={16} className="text-white" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-slate-900 leading-snug">Compare Trading Platforms</p>
+                  <p className="text-[0.65rem] text-slate-500 mt-0.5">Fees, features &amp; ratings</p>
+                </div>
+              </Link>
+              <Link
+                href="/compare?type=savings"
+                className="group flex flex-col items-start gap-1.5 p-3.5 bg-white border border-slate-200 rounded-xl hover:border-amber-400 hover:shadow-md transition-all text-left"
+              >
+                <div className="w-8 h-8 bg-gradient-to-br from-sky-500 to-sky-400 rounded-lg flex items-center justify-center shadow-sm shadow-sky-500/20">
+                  <Icon name="piggy-bank" size={16} className="text-white" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-slate-900 leading-snug">Find a High-Yield Savings Account</p>
+                  <p className="text-[0.65rem] text-slate-500 mt-0.5">Best rates right now</p>
+                </div>
+              </Link>
+              <Link
+                href="/find-advisor"
+                className="group flex flex-col items-start gap-1.5 p-3.5 bg-white border border-slate-200 rounded-xl hover:border-amber-400 hover:shadow-md transition-all text-left"
+              >
+                <div className="w-8 h-8 bg-gradient-to-br from-violet-600 to-violet-500 rounded-lg flex items-center justify-center shadow-sm shadow-violet-500/15">
+                  <Icon name="users" size={16} className="text-white" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-slate-900 leading-snug">Find a Financial Advisor</p>
+                  <p className="text-[0.65rem] text-slate-500 mt-0.5">ASIC-verified, free match</p>
+                </div>
+              </Link>
+              <Link
+                href="/property"
+                className="group flex flex-col items-start gap-1.5 p-3.5 bg-white border border-slate-200 rounded-xl hover:border-amber-400 hover:shadow-md transition-all text-left"
+              >
+                <div className="w-8 h-8 bg-gradient-to-br from-emerald-600 to-emerald-500 rounded-lg flex items-center justify-center shadow-sm shadow-emerald-500/15">
+                  <Icon name="building" size={16} className="text-white" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-slate-900 leading-snug">Buy Investment Property</p>
+                  <p className="text-[0.65rem] text-slate-500 mt-0.5">Data, agents &amp; loans</p>
+                </div>
+              </Link>
             </div>
+
+            {/* Beginner escape hatch */}
+            <p className="text-[0.72rem] text-slate-500 mb-4">
+              Not sure where to start?{" "}
+              <Link href="/quiz" className="text-amber-600 font-semibold hover:text-amber-700 underline underline-offset-2">
+                Take the free 60-second quiz &rarr;
+              </Link>
+            </p>
 
             {/* Trust signals */}
             <div className="flex items-center justify-center flex-wrap gap-x-4 gap-y-1 text-xs text-slate-600">
