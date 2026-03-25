@@ -28,7 +28,7 @@ export default function CTAStack({
         target="_blank"
         rel={AFFILIATE_REL}
         onClick={() => trackClick(broker.slug, broker.name, 'cta-stack-primary', window.location.pathname, context)}
-        className="inline-block px-8 py-3.5 bg-amber-500 text-white font-bold rounded-lg hover:bg-amber-600 hover:shadow-lg transition-all active:scale-[0.98] text-lg mb-3"
+        className="inline-block px-8 py-3.5 bg-amber-500 text-white font-bold rounded-lg hover:bg-amber-600 hover:shadow-lg active:bg-amber-700 active:shadow-none transition-all active:scale-[0.98] text-lg mb-3"
       >
         {getBenefitCta(broker, context)}
       </a>

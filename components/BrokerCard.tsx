@@ -86,7 +86,7 @@ export default memo(function BrokerCard({
               target="_blank"
               rel={AFFILIATE_REL}
               onClick={() => trackClick(broker.slug, broker.name, 'compare-mobile', window.location.pathname, context)}
-              className="px-3 py-1.5 text-[0.69rem] font-bold rounded-lg bg-amber-500 text-white hover:bg-amber-600 active:scale-[0.98] transition-all"
+              className="px-3 py-1.5 text-[0.69rem] font-bold rounded-lg bg-amber-500 text-white hover:bg-amber-600 active:bg-amber-700 active:scale-[0.98] transition-all"
             >
               {getBenefitCta(broker, context)}
             </a>

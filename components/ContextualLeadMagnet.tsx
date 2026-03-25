@@ -77,6 +77,7 @@ export default function ContextualLeadMagnet({ segment = "fee-audit" }: { segmen
   const [email, setEmail] = useState("");
   const [consent, setConsent] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [emailSent, setEmailSent] = useState(false);
   const { isPro } = useSubscription();
 
   // Ad-free: hide lead magnets for Pro users
@@ -94,6 +95,8 @@ export default function ContextualLeadMagnet({ segment = "fee-audit" }: { segmen
         body: JSON.stringify({ email, source: config.source }),
       });
       if (res.ok) {
+        const data = await res.json();
+        setEmailSent(!!data.emailSent);
         setStatus("success");
         setEmail("");
         trackEvent("pdf_opt_in", { source: config.source, segment });
@@ -115,8 +118,12 @@ export default function ContextualLeadMagnet({ segment = "fee-audit" }: { segmen
 
       {status === "success" ? (
         <div className="bg-slate-100 border border-slate-200 rounded-lg p-4 text-center">
-          <div className="text-lg font-bold mb-1 text-slate-900">{config.successTitle}</div>
-          <p className="text-sm text-slate-600">{config.successText}</p>
+          <div className="text-lg font-bold mb-1 text-slate-900">
+            {emailSent ? config.successTitle : "You're already subscribed!"}
+          </div>
+          <p className="text-sm text-slate-600">
+            {emailSent ? config.successText : "We previously sent this to your email."}
+          </p>
         </div>
       ) : (
         <form onSubmit={handleSubmit} noValidate className="space-y-3">
