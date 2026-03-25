@@ -220,7 +220,7 @@ export function Navigation() {
   );
 
   return (
-    <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-slate-200 shadow-sm">
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 lg:h-[68px] items-center justify-between gap-4">
 
@@ -351,12 +351,12 @@ export function Navigation() {
               <div className="p-6">
                 {/* Top CTA */}
                 <Link
-                  href="/find-advisor"
+                  href="/quiz"
                   className="flex items-center justify-between p-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl mb-5 hover:border-amber-300 transition-colors group"
                 >
                   <div>
-                    <p className="font-bold text-slate-900 text-sm">Find My Advisor — Free</p>
-                    <p className="text-xs text-slate-500 mt-0.5">Answer 4 questions — we&apos;ll find your best fit, no obligation</p>
+                    <p className="font-bold text-slate-900 text-sm">Start My Free Match</p>
+                    <p className="text-xs text-slate-500 mt-0.5">60-second quiz — platform or advisor, free, no obligation</p>
                   </div>
                   <svg className="w-5 h-5 text-amber-500 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -450,10 +450,10 @@ export function Navigation() {
           {/* Desktop CTA — unified funnel entry point */}
           <div className="hidden lg:flex items-center">
             <Link
-              href="/find-advisor"
+              href="/quiz"
               className="bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-900 px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm hover:shadow-md active:scale-[0.97] flex items-center gap-2"
             >
-              Find My Advisor
+              Start Free Match
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
@@ -463,10 +463,10 @@ export function Navigation() {
           {/* Mobile hamburger */}
           <div className="lg:hidden flex items-center gap-2">
             <Link
-              href="/find-advisor"
+              href="/quiz"
               className="bg-amber-500 text-slate-900 px-4 py-2 rounded-lg text-xs font-bold transition-all hover:bg-amber-600 min-h-[44px] flex items-center"
             >
-              Find Advisor
+              Start Match
             </Link>
             <button
               onClick={() => setMobileOpen((v) => !v)}
@@ -529,11 +529,11 @@ export function Navigation() {
             {/* Single full-width CTA */}
             <div className="border-t border-slate-100 pt-4 mt-2 pb-2">
               <Link
-                href="/find-advisor"
+                href="/quiz"
                 onClick={() => setMobileOpen(false)}
                 className="flex items-center justify-center w-full py-3.5 min-h-[52px] bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm rounded-xl transition-colors"
               >
-                Find My Advisor — Free &rarr;
+                Start My Free Match &rarr;
               </Link>
             </div>
           </nav>
