@@ -157,3 +157,92 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }
+
+// PATCH — revoke or resend an invitation
+export async function PATCH(request: NextRequest) {
+  try {
+    const sessionToken = request.cookies.get("advisor_session")?.value;
+    if (!sessionToken) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+
+    const supabase = await createClient();
+
+    const { data: session } = await supabase
+      .from("advisor_sessions")
+      .select("professional_id, expires_at")
+      .eq("session_token", sessionToken)
+      .single();
+
+    if (!session || new Date(session.expires_at) < new Date()) {
+      return NextResponse.json({ error: "Session expired" }, { status: 401 });
+    }
+
+    const { data: advisor } = await supabase
+      .from("professionals")
+      .select("id, name, firm_id, is_firm_admin")
+      .eq("id", session.professional_id)
+      .single();
+
+    if (!advisor?.is_firm_admin || !advisor.firm_id) {
+      return NextResponse.json({ error: "Only firm admins can manage invitations" }, { status: 403 });
+    }
+
+    const body = await request.json();
+    const { inviteId, action } = body;
+
+    if (!inviteId || !["revoke", "resend"].includes(action)) {
+      return NextResponse.json({ error: "inviteId and action (revoke|resend) required" }, { status: 400 });
+    }
+
+    // Verify the invite belongs to this firm
+    const { data: invite } = await supabase
+      .from("advisor_firm_invitations")
+      .select("id, email, name, status, firm_id")
+      .eq("id", inviteId)
+      .eq("firm_id", advisor.firm_id)
+      .single();
+
+    if (!invite) return NextResponse.json({ error: "Invitation not found" }, { status: 404 });
+
+    if (action === "revoke") {
+      if (invite.status !== "pending") {
+        return NextResponse.json({ error: "Only pending invitations can be revoked" }, { status: 400 });
+      }
+      await supabase.from("advisor_firm_invitations").update({ status: "revoked" }).eq("id", inviteId);
+      return NextResponse.json({ success: true });
+    }
+
+    // resend — create a fresh token and update the invitation
+    if (invite.status !== "pending" && invite.status !== "expired") {
+      return NextResponse.json({ error: "Only pending or expired invitations can be resent" }, { status: 400 });
+    }
+
+    const { data: firm } = await supabase
+      .from("advisor_firms")
+      .select("name, max_seats, status")
+      .eq("id", advisor.firm_id)
+      .single();
+
+    if (!firm || firm.status !== "active") {
+      return NextResponse.json({ error: "Firm not active" }, { status: 400 });
+    }
+
+    const newToken = randomBytes(32).toString("hex");
+    const newExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+
+    await supabase
+      .from("advisor_firm_invitations")
+      .update({ token: newToken, status: "pending", expires_at: newExpiresAt })
+      .eq("id", inviteId);
+
+    const siteUrl = getSiteUrl(request.headers.get("host"));
+    const acceptUrl = `${siteUrl}/advisor-apply?invite=${newToken}`;
+    sendFirmInvitation(invite.email, invite.name || undefined, firm.name, advisor.name, acceptUrl).catch((err) =>
+      console.error("[firm-invite] resend email failed:", err)
+    );
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("[firm-invite] patch error:", error);
+    return NextResponse.json({ error: "Internal error" }, { status: 500 });
+  }
+}
