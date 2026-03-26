@@ -19,8 +19,26 @@ type Advisor = {
   featured_until?: string;
 };
 
-type FirmMember = { id: number; name: string; slug: string; email?: string; type: string; photo_url?: string; verified?: boolean; status?: string; created_at: string };
+type FirmMember = { id: number; name: string; slug: string; email?: string; type: string; photo_url?: string; verified?: boolean; status?: string; created_at: string; role?: string; is_firm_admin?: boolean };
 type FirmInvite = { id: number; email: string; name?: string; status: string; created_at: string; expires_at: string };
+
+type FirmDetails = {
+  id: number; name: string; slug: string; abn?: string; acn?: string; afsl_number?: string;
+  website?: string; phone?: string; email?: string; logo_url?: string; bio?: string;
+  location_state?: string; location_suburb?: string; max_seats: number; status: string;
+};
+
+type FirmAnalyticsMember = FirmMember & {
+  leads30d: number; totalLeads: number; views30d: number;
+  totalBilledCents: number; convertedLeads: number; conversionRate: string;
+  credit_balance_cents?: number;
+};
+
+type FirmAnalyticsSummary = {
+  totalMembers: number; totalLeads: number; totalLeads30d: number; totalViews30d: number;
+  totalConverted: number; conversionRate: string; totalBilledCents: number;
+  totalCreditCents: number; avgRating: string | null;
+};
 
 type Lead = {
   id: number; user_name: string; user_email: string; user_phone?: string;
@@ -60,6 +78,17 @@ export default function AdvisorPortalPage() {
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteName, setInviteName] = useState("");
   const [inviteStatus, setInviteStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [firmDetails, setFirmDetails] = useState<FirmDetails | null>(null);
+  const [firmMemberCount, setFirmMemberCount] = useState(0);
+  const [firmAnalytics, setFirmAnalytics] = useState<{ members: FirmAnalyticsMember[]; summary: FirmAnalyticsSummary | null } | null>(null);
+  const [firmTab, setFirmTab] = useState<"members" | "analytics" | "settings">("members");
+  const [editingFirm, setEditingFirm] = useState<Partial<FirmDetails> | null>(null);
+  const [savingFirm, setSavingFirm] = useState(false);
+  const [firmSaved, setFirmSaved] = useState(false);
+  const [seatRequestSeats, setSeatRequestSeats] = useState("");
+  const [seatRequestReason, setSeatRequestReason] = useState("");
+  const [seatRequestStatus, setSeatRequestStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [inviteActionStatus, setInviteActionStatus] = useState<Record<number, "idle" | "loading" | "done" | "error">>({});
   const [viewsByDay, setViewsByDay] = useState<ViewDay[]>([]);
   const [billing, setBilling] = useState<BillingRecord[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -108,11 +137,30 @@ export default function AdvisorPortalPage() {
 
   const loadFirmData = useCallback(async () => {
     try {
-      const res = await fetch("/api/advisor-auth/firm/invite");
-      if (res.ok) {
-        const data = await res.json();
+      const [inviteRes, firmRes] = await Promise.all([
+        fetch("/api/advisor-auth/firm/invite"),
+        fetch("/api/advisor-auth/firm"),
+      ]);
+      if (inviteRes.ok) {
+        const data = await inviteRes.json();
         setFirmMembers(data.members || []);
         setFirmInvites(data.invitations || []);
+      }
+      if (firmRes.ok) {
+        const data = await firmRes.json();
+        setFirmDetails(data.firm || null);
+        setFirmMemberCount(data.memberCount || 0);
+        setEditingFirm(data.firm || null);
+      }
+    } catch { /* ignore */ }
+  }, []);
+
+  const loadFirmAnalytics = useCallback(async () => {
+    try {
+      const res = await fetch("/api/advisor-auth/firm/analytics");
+      if (res.ok) {
+        const data = await res.json();
+        setFirmAnalytics(data);
       }
     } catch { /* ignore */ }
   }, []);
@@ -419,7 +467,7 @@ export default function AdvisorPortalPage() {
             <button
               key={item.key}
               type="button"
-              onClick={() => { setView(item.key as typeof view); if (item.key === "team") loadFirmData(); }}
+              onClick={() => { setView(item.key as typeof view); if (item.key === "team") { loadFirmData(); } }}
               className={`flex items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-inset ${
                 view === item.key
                   ? "border-slate-900 text-slate-900"
@@ -1420,71 +1468,458 @@ export default function AdvisorPortalPage() {
         {/* ─── TEAM (firm admins only) ─── */}
         {view === "team" && isFirmAdmin && (
           <div>
-            <h2 className="text-lg font-bold text-slate-900 mb-1">Team Management</h2>
-            <p className="text-sm text-slate-500 mb-6">Invite advisors to join your firm on Invest.com.au. Each member gets their own verified profile.</p>
-
-            {/* Invite form */}
-            <div className="bg-white border border-slate-200 rounded-xl p-5 mb-6">
-              <h3 className="text-sm font-bold text-slate-900 mb-3">Invite a Team Member</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <input value={inviteName} onChange={(e) => setInviteName(e.target.value)} placeholder="Name (optional)" className="px-3 py-2 border border-slate-200 rounded-lg text-sm" />
-                <input type="email" value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} placeholder="Email address *" className="px-3 py-2 border border-slate-200 rounded-lg text-sm" />
-                <button onClick={sendInvite} disabled={inviteStatus === "sending" || !inviteEmail.trim()} className="px-4 py-2 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 transition-colors">
-                  {inviteStatus === "sending" ? "Sending..." : inviteStatus === "sent" ? "Sent!" : "Send Invite"}
-                </button>
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-lg font-bold text-slate-900">{firmDetails?.name || "Team"}</h2>
+                <p className="text-xs text-slate-500 mt-0.5">{firmMemberCount} of {firmDetails?.max_seats || 10} seats used</p>
               </div>
-              {inviteStatus === "error" && <p className="text-xs text-red-600 mt-2">Failed to send invite. Please try again.</p>}
+              {/* Seat bar */}
+              <div className="flex items-center gap-2">
+                <div className="w-24 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                  <div className="h-full bg-violet-500 rounded-full" style={{ width: `${Math.min((firmMemberCount / (firmDetails?.max_seats || 10)) * 100, 100)}%` }} />
+                </div>
+                <span className="text-[0.62rem] text-slate-400">{firmMemberCount}/{firmDetails?.max_seats || 10}</span>
+              </div>
             </div>
 
-            {/* Current members */}
-            <div className="bg-white border border-slate-200 rounded-xl p-5 mb-6">
-              <h3 className="text-sm font-bold text-slate-900 mb-3">Team Members ({firmMembers.length})</h3>
-              {firmMembers.length === 0 ? (
-                <p className="text-sm text-slate-400">No team members yet. Invite your first advisor above.</p>
-              ) : (
-                <div className="divide-y divide-slate-100">
-                  {firmMembers.map((m) => (
-                    <div key={m.id} className="py-3 flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        {m.photo_url ? (
-                          <img src={m.photo_url} alt="" className="w-8 h-8 rounded-full object-cover" />
-                        ) : (
-                          <div className="w-8 h-8 bg-violet-100 rounded-full flex items-center justify-center text-xs font-bold text-violet-600">{m.name?.[0]}</div>
-                        )}
+            {/* Sub-tabs */}
+            <div className="flex gap-1 mb-5 bg-slate-100 p-1 rounded-lg w-fit">
+              {(["members", "analytics", "settings"] as const).map((t) => (
+                <button key={t} onClick={() => { setFirmTab(t); if (t === "analytics" && !firmAnalytics) loadFirmAnalytics(); }}
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${firmTab === t ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}>
+                  {t === "members" ? "Members & Invites" : t === "analytics" ? "Analytics" : "Firm Settings"}
+                </button>
+              ))}
+            </div>
+
+            {/* ── MEMBERS TAB ── */}
+            {firmTab === "members" && (
+              <>
+                {/* Invite form */}
+                <div className="bg-white border border-slate-200 rounded-xl p-5 mb-5">
+                  <h3 className="text-sm font-bold text-slate-900 mb-3">Invite a Team Member</h3>
+                  {firmMemberCount >= (firmDetails?.max_seats || 10) ? (
+                    <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-xs text-amber-700">
+                      <strong>Seat limit reached.</strong> You&apos;ve used all {firmDetails?.max_seats} seats. Go to <button onClick={() => setFirmTab("settings")} className="underline font-semibold">Firm Settings</button> to request more seats.
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                      <input value={inviteName} onChange={(e) => setInviteName(e.target.value)} placeholder="Name (optional)" className="px-3 py-2 border border-slate-200 rounded-lg text-sm" />
+                      <input type="email" value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} placeholder="Email address *" className="px-3 py-2 border border-slate-200 rounded-lg text-sm" />
+                      <button onClick={sendInvite} disabled={inviteStatus === "sending" || !inviteEmail.trim()} className="px-4 py-2 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 transition-colors">
+                        {inviteStatus === "sending" ? "Sending..." : inviteStatus === "sent" ? "Sent!" : "Send Invite"}
+                      </button>
+                    </div>
+                  )}
+                  {inviteStatus === "error" && <p className="text-xs text-red-600 mt-2">Failed to send invite. Please try again.</p>}
+                </div>
+
+                {/* Current members */}
+                <div className="bg-white border border-slate-200 rounded-xl p-5 mb-5">
+                  <h3 className="text-sm font-bold text-slate-900 mb-3">Team Members ({firmMembers.length})</h3>
+                  {firmMembers.length === 0 ? (
+                    <p className="text-sm text-slate-400">No team members yet. Invite your first advisor above.</p>
+                  ) : (
+                    <div className="divide-y divide-slate-100">
+                      {firmMembers.map((m) => (
+                        <div key={m.id} className="py-3 flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-3 min-w-0">
+                            {m.photo_url ? (
+                              <img src={m.photo_url} alt="" className="w-9 h-9 rounded-full object-cover shrink-0" />
+                            ) : (
+                              <div className="w-9 h-9 bg-violet-100 rounded-full flex items-center justify-center text-xs font-bold text-violet-600 shrink-0">{m.name?.[0]}</div>
+                            )}
+                            <div className="min-w-0">
+                              <div className="text-sm font-semibold text-slate-900 flex items-center gap-1.5">
+                                {m.name}
+                                {m.id === advisor?.id && <span className="text-[0.5rem] bg-violet-100 text-violet-700 px-1 py-0.5 rounded font-bold uppercase">You</span>}
+                              </div>
+                              <div className="text-[0.62rem] text-slate-500 truncate">{m.email} · {PROFESSIONAL_TYPE_LABELS[m.type as keyof typeof PROFESSIONAL_TYPE_LABELS] || m.type}</div>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 shrink-0">
+                            {m.verified && <span className="text-[0.56rem] bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded font-semibold hidden md:inline">Verified</span>}
+                            {/* Role selector */}
+                            <select
+                              value={m.role || (m.is_firm_admin ? "owner" : "member")}
+                              disabled={m.id === advisor?.id}
+                              onChange={async (e) => {
+                                const newRole = e.target.value;
+                                const res = await fetch("/api/advisor-auth/firm/member", {
+                                  method: "PATCH",
+                                  headers: { "Content-Type": "application/json" },
+                                  body: JSON.stringify({ memberId: m.id, role: newRole }),
+                                });
+                                if (res.ok) {
+                                  setFirmMembers(prev => prev.map(fm => fm.id === m.id ? { ...fm, role: newRole, is_firm_admin: newRole !== "member" } : fm));
+                                } else {
+                                  const d = await res.json();
+                                  alert(d.error || "Failed to update role");
+                                }
+                              }}
+                              className="text-[0.62rem] border border-slate-200 rounded px-1.5 py-1 bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              <option value="owner">Owner</option>
+                              <option value="manager">Manager</option>
+                              <option value="member">Member</option>
+                            </select>
+                            <span className={`text-[0.56rem] px-1.5 py-0.5 rounded font-semibold ${m.status === "active" ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>{m.status}</span>
+                            {m.id !== advisor?.id && (
+                              <button
+                                onClick={async () => {
+                                  if (!confirm(`Remove ${m.name} from the firm? Their individual profile will remain active.`)) return;
+                                  const res = await fetch(`/api/advisor-auth/firm/member?memberId=${m.id}`, { method: "DELETE" });
+                                  if (res.ok) {
+                                    setFirmMembers(prev => prev.filter(fm => fm.id !== m.id));
+                                    setFirmMemberCount(c => c - 1);
+                                  } else {
+                                    const d = await res.json();
+                                    alert(d.error || "Failed to remove member");
+                                  }
+                                }}
+                                className="text-[0.56rem] text-red-500 hover:text-red-700 border border-red-200 px-1.5 py-0.5 rounded hover:bg-red-50 transition-colors"
+                              >
+                                Remove
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Invitations */}
+                {firmInvites.length > 0 && (
+                  <div className="bg-white border border-slate-200 rounded-xl p-5">
+                    <h3 className="text-sm font-bold text-slate-900 mb-3">Invitations</h3>
+                    <div className="divide-y divide-slate-100">
+                      {firmInvites.map((inv) => (
+                        <div key={inv.id} className="py-3 flex items-center justify-between gap-3">
+                          <div className="min-w-0">
+                            <div className="text-sm font-medium text-slate-900">{inv.name || inv.email}</div>
+                            {inv.name && <div className="text-[0.62rem] text-slate-500">{inv.email}</div>}
+                            <div className="text-[0.56rem] text-slate-400 mt-0.5">
+                              Sent {new Date(inv.created_at).toLocaleDateString("en-AU", { day: "numeric", month: "short" })} ·{" "}
+                              {inv.status === "pending" ? `Expires ${new Date(inv.expires_at).toLocaleDateString("en-AU", { day: "numeric", month: "short" })}` : `Status: ${inv.status}`}
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <span className={`text-[0.56rem] px-1.5 py-0.5 rounded font-semibold ${
+                              inv.status === "pending" ? "bg-amber-50 text-amber-700" :
+                              inv.status === "accepted" ? "bg-emerald-50 text-emerald-700" :
+                              inv.status === "revoked" ? "bg-red-50 text-red-600" :
+                              "bg-slate-100 text-slate-500"
+                            }`}>{inv.status}</span>
+                            {(inv.status === "pending" || inv.status === "expired") && (
+                              <button
+                                disabled={inviteActionStatus[inv.id] === "loading"}
+                                onClick={async () => {
+                                  setInviteActionStatus(prev => ({ ...prev, [inv.id]: "loading" }));
+                                  const res = await fetch("/api/advisor-auth/firm/invite", {
+                                    method: "PATCH",
+                                    headers: { "Content-Type": "application/json" },
+                                    body: JSON.stringify({ inviteId: inv.id, action: "resend" }),
+                                  });
+                                  if (res.ok) {
+                                    setInviteActionStatus(prev => ({ ...prev, [inv.id]: "done" }));
+                                    setTimeout(() => setInviteActionStatus(prev => ({ ...prev, [inv.id]: "idle" })), 3000);
+                                    loadFirmData();
+                                  } else {
+                                    const d = await res.json();
+                                    alert(d.error || "Failed to resend");
+                                    setInviteActionStatus(prev => ({ ...prev, [inv.id]: "error" }));
+                                  }
+                                }}
+                                className="text-[0.56rem] text-blue-600 border border-blue-200 px-1.5 py-0.5 rounded hover:bg-blue-50 transition-colors disabled:opacity-50"
+                              >
+                                {inviteActionStatus[inv.id] === "loading" ? "…" : inviteActionStatus[inv.id] === "done" ? "Sent!" : "Resend"}
+                              </button>
+                            )}
+                            {inv.status === "pending" && (
+                              <button
+                                disabled={inviteActionStatus[inv.id] === "loading"}
+                                onClick={async () => {
+                                  if (!confirm("Revoke this invitation?")) return;
+                                  setInviteActionStatus(prev => ({ ...prev, [inv.id]: "loading" }));
+                                  const res = await fetch("/api/advisor-auth/firm/invite", {
+                                    method: "PATCH",
+                                    headers: { "Content-Type": "application/json" },
+                                    body: JSON.stringify({ inviteId: inv.id, action: "revoke" }),
+                                  });
+                                  if (res.ok) {
+                                    loadFirmData();
+                                  } else {
+                                    const d = await res.json();
+                                    alert(d.error || "Failed to revoke");
+                                    setInviteActionStatus(prev => ({ ...prev, [inv.id]: "error" }));
+                                  }
+                                }}
+                                className="text-[0.56rem] text-red-500 border border-red-200 px-1.5 py-0.5 rounded hover:bg-red-50 transition-colors disabled:opacity-50"
+                              >
+                                Revoke
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+
+            {/* ── ANALYTICS TAB ── */}
+            {firmTab === "analytics" && (
+              <>
+                {!firmAnalytics ? (
+                  <div className="flex items-center justify-center py-12">
+                    <div className="w-6 h-6 border-2 border-slate-200 border-t-violet-600 rounded-full animate-spin" />
+                  </div>
+                ) : (
+                  <>
+                    {firmAnalytics.summary && (
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+                        {[
+                          { label: "Total Views (30d)", value: firmAnalytics.summary.totalViews30d, icon: "eye", color: "text-blue-600", bg: "bg-blue-50" },
+                          { label: "Enquiries (30d)", value: firmAnalytics.summary.totalLeads30d, icon: "inbox", color: "text-violet-600", bg: "bg-violet-50" },
+                          { label: "Conversion Rate", value: firmAnalytics.summary.conversionRate, icon: "target", color: "text-emerald-600", bg: "bg-emerald-50" },
+                          { label: "Total Credits", value: `$${((firmAnalytics.summary.totalCreditCents || 0) / 100).toFixed(0)}`, icon: "credit-card", color: "text-amber-600", bg: "bg-amber-50" },
+                        ].map((s, i) => (
+                          <div key={i} className="bg-white border border-slate-200 rounded-xl p-4">
+                            <div className={`w-8 h-8 ${s.bg} rounded-lg flex items-center justify-center mb-2`}>
+                              <Icon name={s.icon} size={16} className={s.color} />
+                            </div>
+                            <p className="text-lg font-bold text-slate-900">{typeof s.value === "number" ? s.value.toLocaleString() : s.value}</p>
+                            <p className="text-xs text-slate-500">{s.label}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+                      <div className="px-4 py-3 border-b border-slate-100">
+                        <h3 className="text-sm font-bold text-slate-900">Performance by Member</h3>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left text-xs">
+                          <thead>
+                            <tr className="bg-slate-50 text-[0.62rem] font-semibold text-slate-500 uppercase tracking-wider">
+                              <th className="px-4 py-2">Advisor</th>
+                              <th className="px-4 py-2 text-right">Views (30d)</th>
+                              <th className="px-4 py-2 text-right">Leads (30d)</th>
+                              <th className="px-4 py-2 text-right">Converted</th>
+                              <th className="px-4 py-2 text-right">Credits</th>
+                              <th className="px-4 py-2 text-right">Total Billed</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-slate-100">
+                            {firmAnalytics.members.map((m) => (
+                              <tr key={m.id} className="hover:bg-slate-50 transition-colors">
+                                <td className="px-4 py-2.5">
+                                  <div className="flex items-center gap-2">
+                                    {m.photo_url ? (
+                                      <img src={m.photo_url} alt="" className="w-6 h-6 rounded-full object-cover shrink-0" />
+                                    ) : (
+                                      <div className="w-6 h-6 bg-violet-100 rounded-full flex items-center justify-center text-[0.56rem] font-bold text-violet-600 shrink-0">{m.name?.[0]}</div>
+                                    )}
+                                    <div>
+                                      <div className="font-semibold text-slate-900 text-xs">{m.name}</div>
+                                      <div className="text-[0.56rem] text-slate-400">{m.role || "member"}</div>
+                                    </div>
+                                  </div>
+                                </td>
+                                <td className="px-4 py-2.5 text-right font-medium text-slate-700">{m.views30d}</td>
+                                <td className="px-4 py-2.5 text-right font-medium text-slate-700">{m.leads30d}</td>
+                                <td className="px-4 py-2.5 text-right">
+                                  <span className={`text-[0.56rem] font-semibold ${m.convertedLeads > 0 ? "text-emerald-600" : "text-slate-400"}`}>{m.convertedLeads} ({m.conversionRate})</span>
+                                </td>
+                                <td className="px-4 py-2.5 text-right text-slate-600">${((m.credit_balance_cents || 0) / 100).toFixed(0)}</td>
+                                <td className="px-4 py-2.5 text-right text-slate-600">${((m.totalBilledCents || 0) / 100).toFixed(0)}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                          {firmAnalytics.summary && (
+                            <tfoot>
+                              <tr className="bg-slate-50 font-bold text-xs border-t border-slate-200">
+                                <td className="px-4 py-2.5 text-slate-700">Total ({firmAnalytics.summary.totalMembers} members)</td>
+                                <td className="px-4 py-2.5 text-right text-slate-700">{firmAnalytics.summary.totalViews30d}</td>
+                                <td className="px-4 py-2.5 text-right text-slate-700">{firmAnalytics.summary.totalLeads30d}</td>
+                                <td className="px-4 py-2.5 text-right text-emerald-700">{firmAnalytics.summary.totalConverted} ({firmAnalytics.summary.conversionRate})</td>
+                                <td className="px-4 py-2.5 text-right text-slate-700">${((firmAnalytics.summary.totalCreditCents || 0) / 100).toFixed(0)}</td>
+                                <td className="px-4 py-2.5 text-right text-slate-700">${((firmAnalytics.summary.totalBilledCents || 0) / 100).toFixed(0)}</td>
+                              </tr>
+                            </tfoot>
+                          )}
+                        </table>
+                      </div>
+                    </div>
+                  </>
+                )}
+              </>
+            )}
+
+            {/* ── SETTINGS TAB ── */}
+            {firmTab === "settings" && editingFirm && (
+              <>
+                <div className="bg-white border border-slate-200 rounded-xl p-5 mb-5">
+                  <h3 className="text-sm font-bold text-slate-900 mb-4">Firm Profile</h3>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 mb-1">Firm Name</label>
+                      <input
+                        value={editingFirm.name || ""}
+                        onChange={(e) => setEditingFirm(f => ({ ...f, name: e.target.value }))}
+                        className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
+                        placeholder="e.g. Chen Advisory Group"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 mb-1">About the Firm</label>
+                      <textarea
+                        value={editingFirm.bio || ""}
+                        onChange={(e) => setEditingFirm(f => ({ ...f, bio: e.target.value }))}
+                        rows={4}
+                        className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
+                        placeholder="Describe your firm and its approach..."
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-600 mb-1">Website</label>
+                        <input value={editingFirm.website || ""} onChange={(e) => setEditingFirm(f => ({ ...f, website: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="https://..." />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-600 mb-1">Phone</label>
+                        <input value={editingFirm.phone || ""} onChange={(e) => setEditingFirm(f => ({ ...f, phone: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="02 XXXX XXXX" />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-600 mb-1">Email</label>
+                        <input type="email" value={editingFirm.email || ""} onChange={(e) => setEditingFirm(f => ({ ...f, email: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="info@firm.com.au" />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-600 mb-1">ABN</label>
+                        <input value={editingFirm.abn || ""} onChange={(e) => setEditingFirm(f => ({ ...f, abn: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="XX XXX XXX XXX" />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-600 mb-1">AFSL Number</label>
+                        <input value={editingFirm.afsl_number || ""} onChange={(e) => setEditingFirm(f => ({ ...f, afsl_number: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="e.g. 234567" />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-600 mb-1">State</label>
+                        <select value={editingFirm.location_state || ""} onChange={(e) => setEditingFirm(f => ({ ...f, location_state: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm">
+                          <option value="">Select...</option>
+                          {["NSW","VIC","QLD","WA","SA","TAS","ACT","NT"].map(s => <option key={s} value={s}>{s}</option>)}
+                        </select>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 mb-1">Suburb</label>
+                      <input value={editingFirm.location_suburb || ""} onChange={(e) => setEditingFirm(f => ({ ...f, location_suburb: e.target.value }))} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="Sydney CBD" />
+                    </div>
+                    <div className="flex items-center gap-3 pt-2">
+                      <button
+                        onClick={async () => {
+                          setSavingFirm(true);
+                          try {
+                            const res = await fetch("/api/advisor-auth/firm", {
+                              method: "PATCH",
+                              headers: { "Content-Type": "application/json" },
+                              body: JSON.stringify(editingFirm),
+                            });
+                            if (res.ok) {
+                              const data = await res.json();
+                              setFirmDetails(data.firm);
+                              setEditingFirm(data.firm);
+                              setFirmSaved(true);
+                              setTimeout(() => setFirmSaved(false), 3000);
+                            } else {
+                              const d = await res.json();
+                              alert(d.error || "Failed to save");
+                            }
+                          } finally { setSavingFirm(false); }
+                        }}
+                        disabled={savingFirm}
+                        className="px-5 py-2.5 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 transition-colors"
+                      >
+                        {savingFirm ? "Saving..." : "Save Changes"}
+                      </button>
+                      {firmSaved && <span className="text-sm text-emerald-600 font-medium">Saved!</span>}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Seat upgrade */}
+                <div className="bg-white border border-slate-200 rounded-xl p-5">
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <h3 className="text-sm font-bold text-slate-900">Seat Limit</h3>
+                      <p className="text-xs text-slate-500 mt-0.5">Currently {firmMemberCount} of {firmDetails?.max_seats || 10} seats used.</p>
+                    </div>
+                    <span className={`text-xs font-bold px-2 py-1 rounded-full ${firmMemberCount >= (firmDetails?.max_seats || 10) ? "bg-red-100 text-red-700" : "bg-emerald-50 text-emerald-700"}`}>
+                      {firmDetails?.max_seats || 10} seats
+                    </span>
+                  </div>
+
+                  {seatRequestStatus === "sent" ? (
+                    <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 text-sm text-emerald-700">
+                      Request sent! Our team will review and update your seat limit within 1 business day.
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      <div className="grid grid-cols-2 gap-3">
                         <div>
-                          <div className="text-sm font-semibold text-slate-900">{m.name}</div>
-                          <div className="text-[0.62rem] text-slate-500">{m.email} · {PROFESSIONAL_TYPE_LABELS[m.type as keyof typeof PROFESSIONAL_TYPE_LABELS] || m.type}</div>
+                          <label className="block text-xs font-semibold text-slate-600 mb-1">Requested Seats</label>
+                          <input
+                            type="number"
+                            value={seatRequestSeats}
+                            onChange={(e) => setSeatRequestSeats(e.target.value)}
+                            min={(firmDetails?.max_seats || 10) + 1}
+                            max={200}
+                            className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
+                            placeholder={`More than ${firmDetails?.max_seats || 10}`}
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-semibold text-slate-600 mb-1">Reason (optional)</label>
+                          <input
+                            value={seatRequestReason}
+                            onChange={(e) => setSeatRequestReason(e.target.value)}
+                            className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm"
+                            placeholder="Growing team, new office..."
+                          />
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        {m.verified && <span className="text-[0.56rem] bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded font-semibold">Verified</span>}
-                        <span className={`text-[0.56rem] px-1.5 py-0.5 rounded font-semibold ${m.status === "active" ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>{m.status}</span>
-                      </div>
+                      <button
+                        disabled={seatRequestStatus === "sending" || !seatRequestSeats}
+                        onClick={async () => {
+                          setSeatRequestStatus("sending");
+                          const res = await fetch("/api/advisor-auth/firm/seat-request", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ requestedSeats: parseInt(seatRequestSeats), reason: seatRequestReason }),
+                          });
+                          if (res.ok) {
+                            setSeatRequestStatus("sent");
+                          } else {
+                            const d = await res.json();
+                            alert(d.error || "Failed to submit request");
+                            setSeatRequestStatus("error");
+                          }
+                        }}
+                        className="px-4 py-2 bg-violet-600 text-white font-semibold rounded-lg text-sm hover:bg-violet-700 disabled:opacity-50 transition-colors"
+                      >
+                        {seatRequestStatus === "sending" ? "Sending..." : "Request More Seats"}
+                      </button>
+                      <p className="text-[0.6rem] text-slate-400">Our team will review your request and update your seat limit within 1 business day. There&apos;s no charge for seat upgrades.</p>
                     </div>
-                  ))}
+                  )}
                 </div>
-              )}
-            </div>
-
-            {/* Pending invitations */}
-            {firmInvites.length > 0 && (
-              <div className="bg-white border border-slate-200 rounded-xl p-5">
-                <h3 className="text-sm font-bold text-slate-900 mb-3">Pending Invitations</h3>
-                <div className="divide-y divide-slate-100">
-                  {firmInvites.map((inv) => (
-                    <div key={inv.id} className="py-3 flex items-center justify-between">
-                      <div>
-                        <div className="text-sm font-medium text-slate-900">{inv.name || inv.email}</div>
-                        {inv.name && <div className="text-[0.62rem] text-slate-500">{inv.email}</div>}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className={`text-[0.56rem] px-1.5 py-0.5 rounded font-semibold ${inv.status === "pending" ? "bg-amber-50 text-amber-700" : inv.status === "accepted" ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-500"}`}>{inv.status}</span>
-                        <span className="text-[0.56rem] text-slate-400">Expires {new Date(inv.expires_at).toLocaleDateString()}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              </>
             )}
           </div>
         )}

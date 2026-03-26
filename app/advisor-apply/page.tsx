@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, Suspense } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import Icon from "@/components/Icon";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 
@@ -41,7 +42,22 @@ function resizeImage(file: File): Promise<Blob> {
   });
 }
 
-export default function AdvisorApplyPage() {
+type InviteContext = {
+  email: string;
+  name: string | null;
+  firmName: string | null;
+  firmId: number;
+  role: string;
+};
+
+function AdvisorApplyInner() {
+  const searchParams = useSearchParams();
+  const inviteToken = searchParams.get("invite");
+
+  const [inviteContext, setInviteContext] = useState<InviteContext | null>(null);
+  const [inviteError, setInviteError] = useState("");
+  const [inviteLoading, setInviteLoading] = useState(!!inviteToken);
+
   const [accountType, setAccountType] = useState<"individual" | "firm">("individual");
   const [form, setForm] = useState({
     name: "", firm_name: "", email: "", phone: "", type: "financial_planner",
@@ -59,6 +75,31 @@ export default function AdvisorApplyPage() {
   const [photoError, setPhotoError] = useState("");
   const [photoUploading, setPhotoUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Load invite context if token present
+  useEffect(() => {
+    if (!inviteToken) return;
+    setInviteLoading(true);
+    fetch(`/api/advisor-apply/invite?token=${inviteToken}`)
+      .then(async (res) => {
+        if (!res.ok) {
+          const d = await res.json();
+          setInviteError(d.error || "Invalid invitation");
+          return;
+        }
+        const data: InviteContext = await res.json();
+        setInviteContext(data);
+        // Pre-fill email and name from invitation
+        setForm(f => ({
+          ...f,
+          email: data.email || f.email,
+          name: data.name || f.name,
+        }));
+        setAccountType("firm");
+      })
+      .catch(() => setInviteError("Failed to load invitation. Please try again."))
+      .finally(() => setInviteLoading(false));
+  }, [inviteToken]);
 
   const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -120,13 +161,17 @@ export default function AdvisorApplyPage() {
       setErrorMsg("Name, email, and advisor type are required.");
       return;
     }
-    if (accountType === "firm" && !form.firm_name) {
+    if (accountType === "firm" && !inviteToken && !form.firm_name) {
       setErrorMsg("Firm name is required for firm applications.");
       return;
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(form.email)) {
       setErrorMsg("Please enter a valid email address.");
+      return;
+    }
+    if (inviteContext && form.email.toLowerCase() !== inviteContext.email.toLowerCase()) {
+      setErrorMsg(`This invitation was sent to ${inviteContext.email}. Please use that email address.`);
       return;
     }
     if (!photoFile) {
@@ -136,7 +181,6 @@ export default function AdvisorApplyPage() {
     setStatus("submitting");
     setErrorMsg("");
     try {
-      // Upload photo first
       const photoUrl = await uploadPhoto();
       if (!photoUrl) {
         setErrorMsg("Photo upload failed. Please try again.");
@@ -144,10 +188,19 @@ export default function AdvisorApplyPage() {
         return;
       }
 
+      const payload: Record<string, unknown> = {
+        ...form,
+        account_type: accountType,
+        photo_url: photoUrl,
+      };
+      if (inviteToken) {
+        payload.invite_token = inviteToken;
+      }
+
       const res = await fetch("/api/advisor-apply", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, account_type: accountType, photo_url: photoUrl }),
+        body: JSON.stringify(payload),
       });
       if (res.ok) {
         setStatus("success");
@@ -162,6 +215,32 @@ export default function AdvisorApplyPage() {
     }
   };
 
+  // Loading state while looking up invite
+  if (inviteLoading) {
+    return (
+      <div className="py-20 text-center">
+        <div className="w-8 h-8 border-2 border-slate-300 border-t-violet-600 rounded-full animate-spin mx-auto mb-3" />
+        <p className="text-sm text-slate-500">Loading invitation...</p>
+      </div>
+    );
+  }
+
+  // Invalid invite token
+  if (inviteToken && inviteError) {
+    return (
+      <div className="py-12 md:py-20">
+        <div className="container-custom max-w-lg text-center">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Icon name="x" size={32} className="text-red-600" />
+          </div>
+          <h1 className="text-2xl font-extrabold text-slate-900 mb-2">Invitation Problem</h1>
+          <p className="text-slate-500 mb-6">{inviteError}</p>
+          <Link href="/advisor-apply" className="text-sm text-violet-600 hover:text-violet-700 font-semibold">Apply without an invitation →</Link>
+        </div>
+      </div>
+    );
+  }
+
   if (status === "success") {
     return (
       <div className="py-12 md:py-20">
@@ -170,12 +249,19 @@ export default function AdvisorApplyPage() {
             <Icon name="check" size={32} className="text-emerald-600" />
           </div>
           <h1 className="text-2xl font-extrabold text-slate-900 mb-2">Application Submitted!</h1>
-          <p className="text-slate-500 mb-6">We&apos;ll review your credentials and get back to you within 48 hours. Check your email for confirmation.</p>
+          <p className="text-slate-500 mb-6">
+            {inviteContext
+              ? `Your application to join ${inviteContext.firmName} has been submitted. We'll review your credentials and get back to you within 48 hours.`
+              : "We'll review your credentials and get back to you within 48 hours. Check your email for confirmation."
+            }
+          </p>
           <Link href="/advisors" className="text-sm text-amber-600 hover:text-amber-700 font-semibold">&larr; Back to Advisor Directory</Link>
         </div>
       </div>
     );
   }
+
+  const isInviteFlow = !!inviteContext;
 
   return (
     <div className="py-5 md:py-12">
@@ -188,13 +274,31 @@ export default function AdvisorApplyPage() {
           <span className="text-slate-700">Apply</span>
         </nav>
 
+        {/* Invite banner */}
+        {isInviteFlow && (
+          <div className="bg-violet-50 border border-violet-200 rounded-xl p-4 mb-5 flex items-center gap-3">
+            <div className="w-10 h-10 bg-violet-100 rounded-full flex items-center justify-center shrink-0">
+              <Icon name="users" size={18} className="text-violet-600" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-violet-900">You&apos;ve been invited to join {inviteContext.firmName}</p>
+              <p className="text-xs text-violet-600 mt-0.5">Complete your profile below to accept the invitation and join the team.</p>
+            </div>
+          </div>
+        )}
+
         {/* Hero */}
         <div className="bg-gradient-to-br from-violet-600 to-violet-800 rounded-2xl p-5 md:p-8 mb-6 md:mb-8 text-white relative overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(255,255,255,0.1),transparent_60%)]" />
           <div className="relative">
-            <h1 className="text-xl md:text-3xl font-extrabold mb-2">Get Listed on Invest.com.au</h1>
+            <h1 className="text-xl md:text-3xl font-extrabold mb-2">
+              {isInviteFlow ? `Join ${inviteContext.firmName}` : "Get Listed on Invest.com.au"}
+            </h1>
             <p className="text-sm md:text-base text-violet-200 mb-4 leading-relaxed max-w-lg">
-              Join our advisor directory and connect with Australian investors looking for professional advice.
+              {isInviteFlow
+                ? `Complete your profile to join the ${inviteContext.firmName} team on Invest.com.au.`
+                : "Join our advisor directory and connect with Australian investors looking for professional advice."
+              }
             </p>
             <div className="grid grid-cols-3 gap-2 md:gap-3">
               {[
@@ -214,26 +318,28 @@ export default function AdvisorApplyPage() {
 
         <div className="bg-white border border-slate-200 rounded-xl p-5 md:p-6">
           <div className="space-y-4">
-            {/* Account Type Selector */}
-            <div>
-              <label className="block text-xs font-semibold text-slate-600 mb-2">I&apos;m applying as *</label>
-              <div className="grid grid-cols-2 gap-3">
-                <button type="button" onClick={() => setAccountType("individual")} className={`p-3 rounded-lg border-2 text-left transition-all ${accountType === "individual" ? "border-slate-900 bg-slate-50" : "border-slate-200 hover:border-slate-300"}`}>
-                  <div className="flex items-center gap-2 mb-1">
-                    <Icon name="user" size={16} className={accountType === "individual" ? "text-slate-900" : "text-slate-400"} />
-                    <span className="text-sm font-bold text-slate-900">Individual Advisor</span>
-                  </div>
-                  <p className="text-[0.62rem] text-slate-500">Solo practitioner or authorised rep</p>
-                </button>
-                <button type="button" onClick={() => setAccountType("firm")} className={`p-3 rounded-lg border-2 text-left transition-all ${accountType === "firm" ? "border-slate-900 bg-slate-50" : "border-slate-200 hover:border-slate-300"}`}>
-                  <div className="flex items-center gap-2 mb-1">
-                    <Icon name="building" size={16} className={accountType === "firm" ? "text-slate-900" : "text-slate-400"} />
-                    <span className="text-sm font-bold text-slate-900">Firm / Brokerage</span>
-                  </div>
-                  <p className="text-[0.62rem] text-slate-500">Register your firm & invite team members</p>
-                </button>
+            {/* Account Type Selector — hidden in invite flow */}
+            {!isInviteFlow && (
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-2">I&apos;m applying as *</label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button type="button" onClick={() => setAccountType("individual")} className={`p-3 rounded-lg border-2 text-left transition-all ${accountType === "individual" ? "border-slate-900 bg-slate-50" : "border-slate-200 hover:border-slate-300"}`}>
+                    <div className="flex items-center gap-2 mb-1">
+                      <Icon name="user" size={16} className={accountType === "individual" ? "text-slate-900" : "text-slate-400"} />
+                      <span className="text-sm font-bold text-slate-900">Individual Advisor</span>
+                    </div>
+                    <p className="text-[0.62rem] text-slate-500">Solo practitioner or authorised rep</p>
+                  </button>
+                  <button type="button" onClick={() => setAccountType("firm")} className={`p-3 rounded-lg border-2 text-left transition-all ${accountType === "firm" ? "border-slate-900 bg-slate-50" : "border-slate-200 hover:border-slate-300"}`}>
+                    <div className="flex items-center gap-2 mb-1">
+                      <Icon name="building" size={16} className={accountType === "firm" ? "text-slate-900" : "text-slate-400"} />
+                      <span className="text-sm font-bold text-slate-900">Firm / Brokerage</span>
+                    </div>
+                    <p className="text-[0.62rem] text-slate-500">Register your firm & invite team members</p>
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Photo Upload */}
             <div>
@@ -305,14 +411,22 @@ export default function AdvisorApplyPage() {
                 <label className="block text-xs font-semibold text-slate-600 mb-1">{accountType === "firm" ? "Your Full Name *" : "Full Name *"}</label>
                 <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="Sarah Chen" />
               </div>
-              <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">{accountType === "firm" ? "Firm Name *" : "Firm Name"}</label>
-                <input value={form.firm_name} onChange={(e) => setForm({ ...form, firm_name: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="Chen Advisory" />
-              </div>
+              {!isInviteFlow && (
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">{accountType === "firm" ? "Firm Name *" : "Firm Name"}</label>
+                  <input value={form.firm_name} onChange={(e) => setForm({ ...form, firm_name: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="Chen Advisory" />
+                </div>
+              )}
+              {isInviteFlow && (
+                <div>
+                  <label className="block text-xs font-semibold text-slate-600 mb-1">Firm</label>
+                  <input value={inviteContext.firmName || ""} disabled className="w-full px-3 py-2 border border-slate-100 bg-slate-50 rounded-lg text-sm text-slate-500 cursor-not-allowed" />
+                </div>
+              )}
             </div>
 
-            {/* Firm-specific fields */}
-            {accountType === "firm" && (
+            {/* Firm-specific fields — only for new firm applications, not invite flow */}
+            {accountType === "firm" && !isInviteFlow && (
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-slate-600 mb-1">ABN</label>
@@ -328,7 +442,15 @@ export default function AdvisorApplyPage() {
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-semibold text-slate-600 mb-1">Email *</label>
-                <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="sarah@example.com" />
+                <input
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  disabled={isInviteFlow}
+                  className={`w-full px-3 py-2 border border-slate-200 rounded-lg text-sm ${isInviteFlow ? "bg-slate-50 text-slate-500 cursor-not-allowed" : ""}`}
+                  placeholder="sarah@example.com"
+                />
+                {isInviteFlow && <p className="text-[0.56rem] text-slate-400 mt-0.5">Email is fixed by your invitation.</p>}
               </div>
               <div>
                 <label className="block text-xs font-semibold text-slate-600 mb-1">Phone</label>
@@ -379,7 +501,7 @@ export default function AdvisorApplyPage() {
               <textarea value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} rows={3} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="Tell investors about your experience and approach..." />
             </div>
 
-            {accountType !== "firm" ? (
+            {accountType !== "firm" || isInviteFlow ? (
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-slate-600 mb-1">Website</label>
@@ -404,7 +526,7 @@ export default function AdvisorApplyPage() {
               disabled={status === "submitting" || !form.termsAccepted}
               className="w-full py-3 bg-slate-900 text-white font-bold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 transition-colors"
             >
-              {status === "submitting" ? (photoUploading ? "Uploading photo..." : "Submitting...") : "Submit Application"}
+              {status === "submitting" ? (photoUploading ? "Uploading photo..." : "Submitting...") : isInviteFlow ? "Accept Invitation & Apply" : "Submit Application"}
             </button>
           </div>
 
@@ -436,5 +558,17 @@ export default function AdvisorApplyPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function AdvisorApplyPage() {
+  return (
+    <Suspense fallback={
+      <div className="py-20 text-center">
+        <div className="w-8 h-8 border-2 border-slate-300 border-t-violet-600 rounded-full animate-spin mx-auto mb-3" />
+      </div>
+    }>
+      <AdvisorApplyInner />
+    </Suspense>
   );
 }
