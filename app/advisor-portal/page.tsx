@@ -97,6 +97,8 @@ export default function AdvisorPortalPage() {
   const [weeklyEnquiries, setWeeklyEnquiries] = useState<WeeklyEnquiry[]>([]);
   const [profileCompleteness, setProfileCompleteness] = useState<ProfileCompleteness | null>(null);
   const [loading, setLoading] = useState(true);
+  const [leadSearch, setLeadSearch] = useState("");
+  const [leadStatusFilter, setLeadStatusFilter] = useState<"all" | "new" | "contacted" | "converted" | "lost">("all");
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [loginMode, setLoginMode] = useState<"magic" | "password" | "signup">("magic");
@@ -816,9 +818,39 @@ export default function AdvisorPortalPage() {
         )}
 
         {/* ─── LEADS ─── */}
-        {view === "leads" && (
+        {view === "leads" && (() => {
+          const filteredLeads = leads.filter((l) => {
+            const matchesStatus = leadStatusFilter === "all" || l.status === leadStatusFilter;
+            const q = leadSearch.toLowerCase();
+            const matchesSearch = !q || l.user_name.toLowerCase().includes(q) || l.user_email.toLowerCase().includes(q) || (l.user_phone || "").includes(q);
+            return matchesStatus && matchesSearch;
+          });
+          const exportCsv = () => {
+            const rows = [
+              ["Name", "Email", "Phone", "Status", "Message", "Source", "Quality", "Billed ($)", "Date"],
+              ...filteredLeads.map((l) => [
+                l.user_name, l.user_email, l.user_phone || "", l.status,
+                (l.message || "").replace(/"/g, '""'),
+                l.source_page || "",
+                l.quality_score != null ? String(l.quality_score) : "",
+                l.bill_amount_cents ? (l.bill_amount_cents / 100).toFixed(2) : "0",
+                new Date(l.created_at).toLocaleDateString("en-AU"),
+              ])
+            ];
+            const csv = rows.map((r) => r.map((c) => `"${c}"`).join(",")).join("\n");
+            const blob = new Blob([csv], { type: "text/csv" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a"); a.href = url; a.download = "leads.csv"; a.click();
+            URL.revokeObjectURL(url);
+          };
+          return (
           <>
-            <h1 className="text-xl font-bold text-slate-900 mb-1">Enquiries</h1>
+            <div className="flex items-center justify-between mb-1">
+              <h1 className="text-xl font-bold text-slate-900">Enquiries</h1>
+              <button onClick={exportCsv} className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-700 px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
+                <Icon name="download" size={13} /> Export CSV
+              </button>
+            </div>
             <p className="text-sm text-slate-500 mb-4">{stats?.totalLeads || 0} total · {leads.filter(l => l.status === "new").length} new</p>
 
             {/* Lead pricing & credit balance */}
@@ -885,15 +917,50 @@ export default function AdvisorPortalPage() {
               </div>
             </div>
 
+            {/* Search & Filter Bar */}
+            <div className="flex gap-2 mb-4 flex-wrap">
+              <div className="relative flex-1 min-w-[180px]">
+                <Icon name="search" size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input
+                  type="text"
+                  value={leadSearch}
+                  onChange={(e) => setLeadSearch(e.target.value)}
+                  placeholder="Search by name, email or phone..."
+                  className="w-full pl-8 pr-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900"
+                />
+              </div>
+              <div className="flex gap-1 flex-wrap">
+                {(["all", "new", "contacted", "converted", "lost"] as const).map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => setLeadStatusFilter(s)}
+                    className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg border transition-colors capitalize ${
+                      leadStatusFilter === s
+                        ? "bg-slate-900 text-white border-slate-900"
+                        : "bg-white text-slate-600 border-slate-200 hover:border-slate-300"
+                    }`}
+                  >
+                    {s === "all" ? `All (${leads.length})` : `${s} (${leads.filter(l => l.status === s).length})`}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {leads.length === 0 ? (
               <div className="bg-white border border-slate-200 rounded-xl p-8 text-center">
                 <Icon name="inbox" size={40} className="text-slate-300 mx-auto mb-3" />
                 <h3 className="text-lg font-bold text-slate-900 mb-1">No enquiries yet</h3>
                 <p className="text-sm text-slate-500">When investors submit a consultation request through your profile, they&apos;ll appear here.</p>
               </div>
+            ) : filteredLeads.length === 0 ? (
+              <div className="bg-white border border-slate-200 rounded-xl p-8 text-center">
+                <Icon name="search" size={32} className="text-slate-300 mx-auto mb-3" />
+                <p className="text-sm text-slate-500">No leads match your filters.</p>
+                <button onClick={() => { setLeadSearch(""); setLeadStatusFilter("all"); }} className="mt-2 text-xs text-violet-600 hover:underline">Clear filters</button>
+              </div>
             ) : (
               <div className="space-y-3">
-                {leads.map((lead) => (
+                {filteredLeads.map((lead) => (
                   <div key={lead.id} className={`bg-white border rounded-xl p-4 ${lead.status === "new" ? "border-amber-200 bg-amber-50/30" : "border-slate-200"}`}>
                     <div className="flex items-start justify-between mb-2">
                       <div>
@@ -918,6 +985,11 @@ export default function AdvisorPortalPage() {
                       <div className="bg-slate-50 rounded-lg p-3 text-xs text-slate-600 mb-3 leading-relaxed">{lead.message}</div>
                     )}
                     <div className="flex items-center gap-2 flex-wrap">
+                      {lead.source_page && (
+                        <span className="text-[0.56rem] font-semibold px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-500">
+                          via {lead.source_page.replace(/^\//, "").replace(/-/g, " ") || "profile"}
+                        </span>
+                      )}
                       {lead.quality_score != null && (
                         <span className={`text-[0.56rem] font-semibold px-1.5 py-0.5 rounded-full ${
                           lead.quality_score >= 60 ? "bg-emerald-100 text-emerald-700" :
@@ -1001,7 +1073,8 @@ export default function AdvisorPortalPage() {
               </div>
             )}
           </>
-        )}
+          );
+        })()}
 
         {/* ─── PROFILE ─── */}
         {view === "profile" && advisor && (

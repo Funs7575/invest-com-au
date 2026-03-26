@@ -441,13 +441,18 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                 {shortlistCount} advisor{shortlistCount !== 1 ? "s" : ""} saved
                 {shortlistCount === 1 && <span className="text-violet-200 font-normal"> — save 1 more to compare</span>}
               </span>
-              {shortlistCount >= 2 ? (
-                <Link href="/advisors/compare" className="px-3 py-1.5 bg-white text-violet-700 text-xs font-bold rounded-lg hover:bg-violet-50 transition-colors">
-                  Compare {shortlistCount} →
+              <div className="flex items-center gap-2">
+                <Link href="/shortlist/advisors" className="px-3 py-1.5 text-violet-200 text-xs font-semibold hover:text-white transition-colors">
+                  View saved
                 </Link>
-              ) : (
-                <span className="text-xs text-violet-200">{shortlistMax - shortlistCount} more to compare</span>
-              )}
+                {shortlistCount >= 2 ? (
+                  <Link href="/advisors/compare" className="px-3 py-1.5 bg-white text-violet-700 text-xs font-bold rounded-lg hover:bg-violet-50 transition-colors">
+                    Compare {shortlistCount} →
+                  </Link>
+                ) : (
+                  <span className="text-xs text-violet-200">{shortlistMax - shortlistCount} more to compare</span>
+                )}
+              </div>
             </div>
           </div>
         )}

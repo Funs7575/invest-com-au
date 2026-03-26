@@ -367,9 +367,9 @@ export default function AdvisorProfileClient({
                   >
                     <Icon name={inShortlist(pro.slug) ? "bookmark-check" : "bookmark"} size={15} />
                   </button>
-                  {shortlistCount > 1 && (
-                    <Link href="/advisors/compare" className="text-xs font-semibold text-violet-600 hover:text-violet-700 underline underline-offset-2">
-                      Compare {shortlistCount}
+                  {shortlistCount > 0 && (
+                    <Link href="/shortlist/advisors" className="text-xs font-semibold text-violet-600 hover:text-violet-700 underline underline-offset-2">
+                      {shortlistCount > 1 ? `Compare ${shortlistCount}` : "View saved"}
                     </Link>
                   )}
                 </div>
