@@ -17,7 +17,7 @@ import AdvisorResultsScreen from "./_components/AdvisorResultsScreen";
 /* ─── Types ─── */
 type QuestionId = "goal" | "mode" | "experience" | "complexity" | "amount" | "priority" | "advisor_type" | "property_sub";
 type QuizTrack = "diy" | "advisor";
-type Phase = "questions" | "email-gate" | "analyzing" | "diy-results" | "advisor-results";
+type Phase = "questions" | "email-gate" | "analyzing" | "advisor-analyzing" | "diy-results" | "advisor-results";
 
 interface UnifiedAnswers {
   goal?: string;
@@ -43,19 +43,19 @@ interface QuizWeight {
 }
 
 /* ─── Unified question definitions ─── */
-const UNIFIED_QUESTIONS: Record<QuestionId, { text: string; options: { key: string; label: string; sub?: string }[] }> = {
+const UNIFIED_QUESTIONS: Record<QuestionId, { text: string; options: { key: string; label: string; sub?: string; emoji?: string }[] }> = {
   goal: {
     text: "What are you trying to do?",
     options: [
-      { key: "grow", label: "Start investing / Long-term growth", sub: "ETFs, shares, or building wealth over time" },
-      { key: "income", label: "Earn income / dividends", sub: "Regular income from investments" },
-      { key: "crypto", label: "Buy crypto", sub: "Bitcoin, Ethereum, altcoins" },
-      { key: "trade", label: "Active trading", sub: "Frequent trades, CFDs, or short-term strategies" },
-      { key: "automate", label: "Hands-off / automated investing", sub: "Set and forget, robo-advisors" },
-      { key: "super", label: "Retirement / Super / SMSF", sub: "Optimise my superannuation" },
-      { key: "property", label: "Property investing", sub: "Physical property, REITs, or through super" },
-      { key: "home", label: "Buy a home or get a loan", sub: "First home, refinance, or investment loan" },
-      { key: "help", label: "Get expert help", sub: "I'd like professional guidance" },
+      { key: "grow",     label: "Start investing / Long-term growth",  sub: "ETFs, shares, or building wealth over time",       emoji: "📈" },
+      { key: "income",   label: "Earn income / dividends",             sub: "Regular income from investments",                  emoji: "💰" },
+      { key: "crypto",   label: "Buy crypto",                          sub: "Bitcoin, Ethereum, altcoins",                      emoji: "₿" },
+      { key: "trade",    label: "Active trading",                      sub: "Frequent trades, CFDs, or short-term strategies",  emoji: "⚡" },
+      { key: "automate", label: "Hands-off / automated investing",     sub: "Set and forget, robo-advisors",                    emoji: "🤖" },
+      { key: "super",    label: "Retirement / Super / SMSF",           sub: "Optimise my superannuation",                       emoji: "🏦" },
+      { key: "property", label: "Property investing",                  sub: "Physical property, REITs, or through super",       emoji: "🏠" },
+      { key: "home",     label: "Buy a home or get a loan",            sub: "First home, refinance, or investment loan",        emoji: "🔑" },
+      { key: "help",     label: "Get expert help",                     sub: "I'd like professional guidance",                   emoji: "🤝" },
     ],
   },
   mode: {
@@ -392,9 +392,13 @@ export default function QuizPage() {
         // Last question answered
         clearProgress();
         if (track === "advisor") {
-          // Advisor track — go directly to advisor results
+          // Advisor track — brief analyzing moment then advisor results
           setHistory(newHistory);
-          setPhase("advisor-results");
+          setPhase("advisor-analyzing");
+          setTimeout(() => {
+            if (!mountedRef.current) return;
+            setPhase("advisor-results");
+          }, 2200);
         } else {
           // DIY track — show email gate first
           setHistory(newHistory);
@@ -551,7 +555,11 @@ export default function QuizPage() {
   /* ─── Render ─── */
 
   if (phase === "analyzing") {
-    return <QuizAnalyzingScreen />;
+    return <QuizAnalyzingScreen track="diy" />;
+  }
+
+  if (phase === "advisor-analyzing") {
+    return <QuizAnalyzingScreen track="advisor" />;
   }
 
   if (phase === "diy-results") {
@@ -606,7 +614,7 @@ export default function QuizPage() {
   return (
     <QuizQuestionScreen
       step={questionIndex}
-      questions={[{ question_text: current.text, options: current.options }]}
+      questions={[{ question_text: current.text, options: current.options as { key: string; label: string; sub?: string; emoji?: string }[] }]}
       selectedKey={selectedKey}
       animating={animating}
       fetchError={fetchError}

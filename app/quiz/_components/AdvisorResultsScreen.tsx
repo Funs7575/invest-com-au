@@ -283,6 +283,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
                 userFirstName={name.split(" ")[0]}
                 currentMatch={currentMatch}
                 allMatches={allMatches}
+                matchIndex={matchIndex}
                 onRematch={handleRematch}
                 rematching={rematching}
                 noMoreMatches={noMoreMatches}
@@ -290,7 +291,6 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
                 submitError={submitError}
                 onConfirm={handleConfirm}
                 confirming={confirming}
-                confirmedAdvisorId={confirmedAdvisorId}
               />
 
               {/* Platform cross-sell below matched screen */}

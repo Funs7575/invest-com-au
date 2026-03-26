@@ -918,3 +918,70 @@ html.dark *:focus-visible {
 .btn-secondary {
   @apply bg-white border border-slate-200 text-slate-700 font-medium rounded-lg hover:bg-slate-50 transition-colors;
 }
+
+/* ── Advisor flow step transitions ──────────────────────── */
+@keyframes advisorStepIn {
+  from { opacity: 0; transform: translateX(48px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.js-ready .advisor-step-enter {
+  animation: advisorStepIn 0.38s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* ── Field valid indicator pop ──────────────────────────── */
+@keyframes fieldCheckIn {
+  0%   { transform: scale(0) rotate(-20deg); opacity: 0; }
+  60%  { transform: scale(1.25) rotate(4deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+.field-check-in {
+  animation: fieldCheckIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* ── Full-screen confirmation celebration ───────────────── */
+@keyframes confirmScaleIn {
+  0%   { opacity: 0; transform: scale(0.85) translateY(20px); }
+  60%  { opacity: 1; transform: scale(1.03) translateY(-2px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+.confirm-scale-in {
+  animation: confirmScaleIn 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* ── Tagline cycling in analyzing screen ────────────────── */
+@keyframes taglineFadeInOut {
+  0%   { opacity: 0; transform: translateY(8px); }
+  12%  { opacity: 1; transform: translateY(0); }
+  78%  { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-8px); }
+}
+.tagline-cycle {
+  animation: taglineFadeInOut 2.4s ease-in-out forwards;
+}
+
+/* ── Stepper connector fill ─────────────────────────────── */
+@keyframes stepConnectorFill {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+.step-connector-fill {
+  animation: stepConnectorFill 0.4s ease-out 0.1s forwards;
+}
+
+/* ── Pulse ring for advisor match card ──────────────────── */
+@keyframes matchRingPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+  50%       { box-shadow: 0 0 0 12px rgba(245, 158, 11, 0.15); }
+}
+.match-ring-pulse {
+  animation: matchRingPulse 2s ease-in-out 0.5s 3;
+}
+
+/* ── What-happens-next stagger ──────────────────────────── */
+.js-ready .next-step-item {
+  opacity: 0;
+  animation: staggerFadeIn 0.4s ease-out forwards;
+}
+.next-step-item-1 { animation-delay: 0.05s; }
+.next-step-item-2 { animation-delay: 0.15s; }
+.next-step-item-3 { animation-delay: 0.25s; }
