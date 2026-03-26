@@ -8,6 +8,7 @@ import type { Professional, ProfessionalType, AdvisorFirm } from "@/lib/types";
 import { PROFESSIONAL_TYPE_LABELS, AU_STATES } from "@/lib/types";
 import Icon from "@/components/Icon";
 import { trackEvent } from "@/lib/tracking";
+import { useAdvisorShortlist } from "@/lib/hooks/useAdvisorShortlist";
 
 const TYPE_FILTERS: { key: ProfessionalType | "all"; label: string; icon: string }[] = [
   { key: "all", label: "All Types", icon: "users" },
@@ -216,6 +217,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
   // API-fetched nearby results
   const [nearbyResults, setNearbyResults] = useState<Professional[] | null>(null);
   const [nearbyLoading, setNearbyLoading] = useState(false);
+  const { toggle: toggleShortlist, has: inShortlist, count: shortlistCount, max: shortlistMax } = useAdvisorShortlist();
 
   const isLocationActive = userLat !== null && userLng !== null;
 
@@ -430,6 +432,25 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
             <span className="flex items-center gap-1.5"><Icon name="clock" size={14} className="text-amber-400" />Free consultation</span>
           </div>
         </div>
+
+        {/* Compare bar */}
+        {shortlistCount > 0 && (
+          <div className="sticky top-16 z-30 mb-3">
+            <div className="bg-violet-600 text-white rounded-xl px-4 py-2.5 flex items-center justify-between shadow-lg shadow-violet-200">
+              <span className="text-sm font-semibold">
+                {shortlistCount} advisor{shortlistCount !== 1 ? "s" : ""} saved
+                {shortlistCount === 1 && <span className="text-violet-200 font-normal"> — save 1 more to compare</span>}
+              </span>
+              {shortlistCount >= 2 ? (
+                <Link href="/advisors/compare" className="px-3 py-1.5 bg-white text-violet-700 text-xs font-bold rounded-lg hover:bg-violet-50 transition-colors">
+                  Compare {shortlistCount} →
+                </Link>
+              ) : (
+                <span className="text-xs text-violet-200">{shortlistMax - shortlistCount} more to compare</span>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Search + Filter bar */}
         <div className="flex gap-2 mb-3 md:mb-4">
@@ -812,7 +833,17 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                       </div>
                     )}
                   </div>
-                  <div className="shrink-0 self-center"><Icon name="chevron-right" size={18} className="text-slate-300" /></div>
+                  <div className="shrink-0 self-center flex flex-col items-center gap-1.5">
+                    <button
+                      onClick={(e) => { e.preventDefault(); toggleShortlist(pro.slug); }}
+                      disabled={!inShortlist(pro.slug) && shortlistCount >= shortlistMax}
+                      title={inShortlist(pro.slug) ? "Remove from compare" : shortlistCount >= shortlistMax ? "Compare list full" : "Save to compare"}
+                      className={`p-1.5 rounded-lg transition-colors ${inShortlist(pro.slug) ? "text-violet-600 bg-violet-50 hover:bg-violet-100" : shortlistCount >= shortlistMax ? "text-slate-200 cursor-not-allowed" : "text-slate-300 hover:text-violet-500 hover:bg-violet-50"}`}
+                    >
+                      <Icon name={inShortlist(pro.slug) ? "bookmark-check" : "bookmark"} size={16} />
+                    </button>
+                    <Icon name="chevron-right" size={18} className="text-slate-300" />
+                  </div>
                 </div>
               </Link>
             ))}

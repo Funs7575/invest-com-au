@@ -13,6 +13,7 @@ interface LocationConfig {
 }
 
 const LOCATIONS: LocationConfig[] = [
+  // ── Capital cities ────────────────────────────────────────────────────────
   { slug: "sydney", city: "Sydney", state: "New South Wales", stateCode: "NSW", description: "Find verified financial advisors in Sydney. Compare fees, specialties, and read client reviews." },
   { slug: "melbourne", city: "Melbourne", state: "Victoria", stateCode: "VIC", description: "Melbourne financial advisors compared. SMSF specialists, financial planners, and tax agents." },
   { slug: "brisbane", city: "Brisbane", state: "Queensland", stateCode: "QLD", description: "Brisbane financial advisors and planners. Independent comparison with verified credentials." },
@@ -21,17 +22,89 @@ const LOCATIONS: LocationConfig[] = [
   { slug: "canberra", city: "Canberra", state: "Australian Capital Territory", stateCode: "ACT", description: "Canberra financial advisors compared. Government and public sector super specialists." },
   { slug: "hobart", city: "Hobart", state: "Tasmania", stateCode: "TAS", description: "Hobart financial advisors and planners. Compare fees and specialties." },
   { slug: "darwin", city: "Darwin", state: "Northern Territory", stateCode: "NT", description: "Darwin financial advisors. Independent comparison and client reviews." },
+  // ── Regional cities ───────────────────────────────────────────────────────
   { slug: "gold-coast", city: "Gold Coast", state: "Queensland", stateCode: "QLD", description: "Gold Coast financial advisors compared. Retirement planning, SMSF, and property specialists." },
-  // Specialty + location combos
+  { slug: "newcastle", city: "Newcastle", state: "New South Wales", stateCode: "NSW", description: "Newcastle financial advisors and planners. Independent comparison with verified credentials." },
+  { slug: "geelong", city: "Geelong", state: "Victoria", stateCode: "VIC", description: "Geelong financial advisors compared. SMSF, financial planning, and property specialists." },
+  { slug: "sunshine-coast", city: "Sunshine Coast", state: "Queensland", stateCode: "QLD", description: "Sunshine Coast financial advisors. Find verified planners, SMSF accountants, and mortgage brokers." },
+  { slug: "wollongong", city: "Wollongong", state: "New South Wales", stateCode: "NSW", description: "Wollongong financial advisors and planners. Local expertise and verified AFSL credentials." },
+  { slug: "ballarat", city: "Ballarat", state: "Victoria", stateCode: "VIC", description: "Ballarat financial advisors. Compare local planners and SMSF specialists." },
+  { slug: "bendigo", city: "Bendigo", state: "Victoria", stateCode: "VIC", description: "Bendigo financial advisors. Independent comparison for regional Victorian investors." },
+  { slug: "townsville", city: "Townsville", state: "Queensland", stateCode: "QLD", description: "Townsville financial advisors. Find verified planners for North Queensland investors." },
+  { slug: "cairns", city: "Cairns", state: "Queensland", stateCode: "QLD", description: "Cairns financial advisors. Compare local and regional Far North Queensland advisors." },
+  { slug: "toowoomba", city: "Toowoomba", state: "Queensland", stateCode: "QLD", description: "Toowoomba financial advisors. Independent directory for Darling Downs investors." },
+  { slug: "albury-wodonga", city: "Albury-Wodonga", state: "New South Wales", stateCode: "NSW", description: "Albury-Wodonga financial advisors. Border region specialists with NSW and VIC expertise." },
+  { slug: "launceston", city: "Launceston", state: "Tasmania", stateCode: "TAS", description: "Launceston financial advisors. Find verified Tasmanian planners and SMSF specialists." },
+  // ── SMSF specialists by city ──────────────────────────────────────────────
   { slug: "sydney-smsf", city: "Sydney", state: "New South Wales", stateCode: "NSW", description: "SMSF accountants and specialists in Sydney. Compare fees and qualifications." },
   { slug: "melbourne-smsf", city: "Melbourne", state: "Victoria", stateCode: "VIC", description: "Melbourne SMSF specialists compared. Audit, setup, and ongoing management." },
+  { slug: "brisbane-smsf", city: "Brisbane", state: "Queensland", stateCode: "QLD", description: "Brisbane SMSF accountants compared. Setup, compliance, and annual audit specialists." },
+  { slug: "perth-smsf", city: "Perth", state: "Western Australia", stateCode: "WA", description: "Perth SMSF specialists. Compare fees, qualifications, and client reviews." },
+  { slug: "adelaide-smsf", city: "Adelaide", state: "South Australia", stateCode: "SA", description: "Adelaide SMSF accountants. Independent comparison for South Australian self-managed funds." },
+  { slug: "gold-coast-smsf", city: "Gold Coast", state: "Queensland", stateCode: "QLD", description: "Gold Coast SMSF specialists. Compare SMSF accountants and advisors on the Gold Coast." },
+  // ── Financial planners by city ────────────────────────────────────────────
   { slug: "sydney-financial-planner", city: "Sydney", state: "New South Wales", stateCode: "NSW", description: "Fee-for-service financial planners in Sydney. Independent, verified advisors." },
   { slug: "melbourne-financial-planner", city: "Melbourne", state: "Victoria", stateCode: "VIC", description: "Melbourne financial planners compared. Fee-only and fee-for-service options." },
   { slug: "brisbane-financial-planner", city: "Brisbane", state: "Queensland", stateCode: "QLD", description: "Brisbane financial planners. Independent comparison with fee transparency." },
+  { slug: "perth-financial-planner", city: "Perth", state: "Western Australia", stateCode: "WA", description: "Perth financial planners. Find fee-for-service advisors for retirement and wealth planning." },
+  { slug: "adelaide-financial-planner", city: "Adelaide", state: "South Australia", stateCode: "SA", description: "Adelaide financial planners. Verified AFSL holders for retirement, wealth, and super planning." },
+  { slug: "canberra-financial-planner", city: "Canberra", state: "Australian Capital Territory", stateCode: "ACT", description: "Canberra financial planners. Public sector super, government employee specialists." },
+  { slug: "gold-coast-financial-planner", city: "Gold Coast", state: "Queensland", stateCode: "QLD", description: "Gold Coast financial planners. Retirement, SMSF, and estate planning specialists." },
+  // ── Mortgage brokers by city ──────────────────────────────────────────────
+  { slug: "sydney-mortgage-broker", city: "Sydney", state: "New South Wales", stateCode: "NSW", description: "Compare Sydney mortgage brokers. Investment property loans, refinancing, and first home buyers." },
+  { slug: "melbourne-mortgage-broker", city: "Melbourne", state: "Victoria", stateCode: "VIC", description: "Melbourne mortgage brokers compared. Investment loans, refinancing, and home loan structuring." },
+  { slug: "brisbane-mortgage-broker", city: "Brisbane", state: "Queensland", stateCode: "QLD", description: "Brisbane mortgage brokers. Compare 30+ lenders for investment and owner-occupied loans." },
+  { slug: "perth-mortgage-broker", city: "Perth", state: "Western Australia", stateCode: "WA", description: "Perth mortgage brokers compared. Investment property, first home buyer, and refinancing specialists." },
+  { slug: "gold-coast-mortgage-broker", city: "Gold Coast", state: "Queensland", stateCode: "QLD", description: "Gold Coast mortgage brokers. Investment loan specialists for Queensland property." },
+  // ── Buyers agents by city ─────────────────────────────────────────────────
+  { slug: "sydney-buyers-agent", city: "Sydney", state: "New South Wales", stateCode: "NSW", description: "Sydney buyers agents compared. Off-market access, investment property specialists, and auction bidding." },
+  { slug: "melbourne-buyers-agent", city: "Melbourne", state: "Victoria", stateCode: "VIC", description: "Melbourne buyers agents. Compare fees, off-market networks, and investment track records." },
+  { slug: "brisbane-buyers-agent", city: "Brisbane", state: "Queensland", stateCode: "QLD", description: "Brisbane buyers agents. Investment property specialists for Queensland and interstate buyers." },
+  { slug: "perth-buyers-agent", city: "Perth", state: "Western Australia", stateCode: "WA", description: "Perth buyers agents compared. Off-market access and investment property specialists." },
+  // ── Tax agents by city ────────────────────────────────────────────────────
+  { slug: "sydney-tax-agent", city: "Sydney", state: "New South Wales", stateCode: "NSW", description: "Sydney tax agents for investors. CGT specialists, crypto tax, and investment property deductions." },
+  { slug: "melbourne-tax-agent", city: "Melbourne", state: "Victoria", stateCode: "VIC", description: "Melbourne tax agents for investors. Capital gains tax, SMSF, and investment property specialists." },
+  { slug: "brisbane-tax-agent", city: "Brisbane", state: "Queensland", stateCode: "QLD", description: "Brisbane tax agents. Investment tax specialists for Queensland property and share investors." },
+  // ── Property advisors by city ─────────────────────────────────────────────
+  { slug: "sydney-property-advisor", city: "Sydney", state: "New South Wales", stateCode: "NSW", description: "Sydney property investment advisors. Fee-for-service property strategy and portfolio analysis." },
+  { slug: "melbourne-property-advisor", city: "Melbourne", state: "Victoria", stateCode: "VIC", description: "Melbourne property investment advisors. Compare fee-for-service specialists." },
+  { slug: "brisbane-property-advisor", city: "Brisbane", state: "Queensland", stateCode: "QLD", description: "Brisbane property advisors. Queensland investment property strategy and analysis." },
+  // ── Inner-suburb SEO pages ────────────────────────────────────────────────
+  { slug: "north-sydney", city: "North Sydney", state: "New South Wales", stateCode: "NSW", description: "North Sydney financial advisors. Lower North Shore specialists for wealth and investment planning." },
+  { slug: "parramatta", city: "Parramatta", state: "New South Wales", stateCode: "NSW", description: "Parramatta financial advisors. Western Sydney specialists for investment and retirement planning." },
+  { slug: "bondi", city: "Bondi", state: "New South Wales", stateCode: "NSW", description: "Bondi and Eastern Suburbs financial advisors. Compare Sydney east-side planners and SMSF specialists." },
+  { slug: "st-kilda", city: "St Kilda", state: "Victoria", stateCode: "VIC", description: "St Kilda and inner Melbourne financial advisors. Compare fee-for-service planners." },
+  { slug: "south-yarra", city: "South Yarra", state: "Victoria", stateCode: "VIC", description: "South Yarra financial advisors. Inner Melbourne wealth management and investment specialists." },
+  { slug: "fortitude-valley", city: "Fortitude Valley", state: "Queensland", stateCode: "QLD", description: "Brisbane inner-city financial advisors. Find planners and SMSF specialists near Fortitude Valley." },
 ];
+
+const SLUG_TYPE_MAP: Record<string, string> = {
+  "smsf": "smsf_accountant",
+  "financial-planner": "financial_planner",
+  "mortgage-broker": "mortgage_broker",
+  "buyers-agent": "buyers_agent",
+  "tax-agent": "tax_agent",
+  "property-advisor": "property_advisor",
+};
+
+const SLUG_TYPE_LABEL: Record<string, string> = {
+  "smsf": "SMSF Specialist",
+  "financial-planner": "Financial Planner",
+  "mortgage-broker": "Mortgage Broker",
+  "buyers-agent": "Buyers Agent",
+  "tax-agent": "Tax Agent",
+  "property-advisor": "Property Advisor",
+};
 
 function getLocationConfig(slug: string): LocationConfig | undefined {
   return LOCATIONS.find(l => l.slug === slug);
+}
+
+function getSpecialtyFromSlug(slug: string): { type: string | null; label: string } {
+  for (const [key, dbType] of Object.entries(SLUG_TYPE_MAP)) {
+    if (slug.endsWith(`-${key}`)) return { type: dbType, label: SLUG_TYPE_LABEL[key] };
+  }
+  return { type: null, label: "Financial Advisor" };
 }
 
 export async function generateStaticParams() {
@@ -43,16 +116,14 @@ export async function generateMetadata({ params }: { params: Promise<{ location:
   const loc = getLocationConfig(location);
   if (!loc) return { title: "Financial Advisor" };
 
-  const isSmsf = location.includes("smsf");
-  const isPlanner = location.includes("financial-planner");
-  const type = isSmsf ? "SMSF Specialist" : isPlanner ? "Financial Planner" : "Financial Advisor";
+  const { label: type } = getSpecialtyFromSlug(location);
 
   return {
-    title: `Best ${type} ${loc.city} (${CURRENT_YEAR}) — Find & Compare`,
+    title: `Best ${type}s in ${loc.city} (${CURRENT_YEAR}) — Find & Compare`,
     description: loc.description,
     alternates: { canonical: `${SITE_URL}/find-advisor/${location}` },
     openGraph: {
-      title: `Best ${type} in ${loc.city}`,
+      title: `Best ${type}s in ${loc.city}`,
       description: loc.description,
       url: `${SITE_URL}/find-advisor/${location}`,
     },
@@ -64,16 +135,12 @@ export default async function LocationAdvisorPage({ params }: { params: Promise<
   const loc = getLocationConfig(location);
   if (!loc) notFound();
 
-  const isSmsf = location.includes("smsf");
-  const isPlanner = location.includes("financial-planner");
+  const { type: specialtyType, label: type } = getSpecialtyFromSlug(location);
 
   const supabase = await createClient();
   let query = supabase.from("professionals").select("*").eq("status", "active").eq("location_state", loc.stateCode);
-  if (isSmsf) query = query.eq("type", "smsf_accountant");
-  if (isPlanner) query = query.eq("type", "financial_planner");
+  if (specialtyType) query = query.eq("type", specialtyType);
   const { data: advisors } = await query.order("rating", { ascending: false });
-
-  const type = isSmsf ? "SMSF Specialist" : isPlanner ? "Financial Planner" : "Financial Advisor";
   const allAdvisors = advisors || [];
 
   // JSON-LD

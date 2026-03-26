@@ -12,6 +12,7 @@ import { getStoredUtm } from "@/components/UtmCapture";
 import { trackEvent } from "@/lib/tracking";
 import { getVerificationConfig, getVerificationLinks } from "@/lib/advisor-verification";
 import { getQualificationData } from "@/lib/qualification-store";
+import { useAdvisorShortlist } from "@/lib/hooks/useAdvisorShortlist";
 
 const TYPE_TO_PLATFORMS: Record<string, { label: string; href: string }[]> = {
   smsf_accountant: [
@@ -133,6 +134,7 @@ export default function AdvisorProfileClient({
   const [reviewFormOpen, setReviewFormOpen] = useState(false);
   const [reviewState, setReviewState] = useState<"idle" | "success">("idle");
   const [bioExpanded, setBioExpanded] = useState(false);
+  const { toggle: toggleShortlist, has: inShortlist, count: shortlistCount, max: shortlistMax } = useAdvisorShortlist();
 
   useEffect(() => {
     try {
@@ -357,6 +359,19 @@ export default function AdvisorProfileClient({
                   >
                     <Icon name="share-2" size={15} />
                   </button>
+                  <button
+                    onClick={() => toggleShortlist(pro.slug)}
+                    disabled={!inShortlist(pro.slug) && shortlistCount >= shortlistMax}
+                    title={inShortlist(pro.slug) ? "Remove from compare list" : shortlistCount >= shortlistMax ? `Compare list full (${shortlistMax} max)` : "Save to compare list"}
+                    className={`px-4 py-3 border text-sm rounded-xl transition-all ${inShortlist(pro.slug) ? "bg-violet-50 border-violet-300 text-violet-700 hover:bg-violet-100" : shortlistCount >= shortlistMax ? "bg-white border-slate-100 text-slate-300 cursor-not-allowed" : "bg-white border-slate-200 text-slate-400 hover:border-violet-300 hover:text-violet-600 hover:bg-violet-50"}`}
+                  >
+                    <Icon name={inShortlist(pro.slug) ? "bookmark-check" : "bookmark"} size={15} />
+                  </button>
+                  {shortlistCount > 1 && (
+                    <Link href="/advisors/compare" className="text-xs font-semibold text-violet-600 hover:text-violet-700 underline underline-offset-2">
+                      Compare {shortlistCount}
+                    </Link>
+                  )}
                 </div>
               </div>
 

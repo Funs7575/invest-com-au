@@ -45,6 +45,7 @@ type Lead = {
   message?: string; source_page?: string; status: string; advisor_notes?: string;
   contacted_at?: string; converted_at?: string; created_at: string;
   quality_score?: number; bill_amount_cents: number; billed: boolean;
+  review_requested_at?: string | null;
 };
 
 type BillingRecord = {
@@ -938,6 +939,26 @@ export default function AdvisorPortalPage() {
                       )}
                       {lead.status !== "lost" && lead.status !== "converted" && (
                         <button onClick={() => updateLeadStatus(lead.id, "lost")} className="text-xs font-semibold text-red-500 hover:text-red-700 px-2 py-1 border border-red-200 rounded-lg hover:bg-red-50">Mark Lost</button>
+                      )}
+                      {lead.status === "converted" && (
+                        lead.review_requested_at
+                          ? <span className="text-[0.56rem] text-slate-400 px-1.5 py-0.5">Review requested {new Date(lead.review_requested_at).toLocaleDateString("en-AU", { day: "numeric", month: "short" })}</span>
+                          : <button
+                              onClick={async () => {
+                                const res = await fetch("/api/advisor-auth/request-review", {
+                                  method: "POST",
+                                  headers: { "Content-Type": "application/json" },
+                                  body: JSON.stringify({ leadId: lead.id }),
+                                });
+                                if (res.ok) {
+                                  setLeads((prev) => prev.map((l) => l.id === lead.id ? { ...l, review_requested_at: new Date().toISOString() } : l));
+                                } else {
+                                  const d = await res.json();
+                                  alert(d.error || "Failed to send review request.");
+                                }
+                              }}
+                              className="text-xs font-semibold text-violet-600 hover:text-violet-800 px-2 py-1 border border-violet-200 rounded-lg hover:bg-violet-50"
+                            >Request Review</button>
                       )}
                       {(() => {
                         const daysSince = Math.floor((Date.now() - new Date(lead.created_at).getTime()) / (1000 * 60 * 60 * 24));
