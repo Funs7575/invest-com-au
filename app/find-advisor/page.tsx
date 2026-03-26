@@ -1443,25 +1443,76 @@ function MatchConfirmation({ userEmail, userFirstName, currentMatch, allMatches,
           <Icon name="clock" size={14} className="text-amber-500" />
           What happens next, {userFirstName}:
         </h3>
-        <ol className="space-y-3">
-          {(currentMatch
-            ? [
-                `${currentMatch.name} has been notified of your enquiry`,
-                `They'll reach out to you at ${userEmail} within 24 hours`,
-                "You'll book a free initial consultation \u2014 no obligation",
-              ]
-            : [
-                "We'll find the best-matched advisor for your situation",
-                `They'll reach out to you at ${userEmail} within 24 hours`,
-                "You'll book a free initial consultation \u2014 no obligation",
-              ]
-          ).map((step, i) => (
-            <li key={i} className="flex items-start gap-3">
-              <span className="w-5 h-5 rounded-full bg-amber-500 text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">{i + 1}</span>
-              <span className="text-sm text-slate-700 leading-relaxed">{step}</span>
-            </li>
-          ))}
-        </ol>
+        {isCurrentConfirmed && currentMatch ? (
+          <div className="space-y-3">
+            {[
+              {
+                icon: "mail",
+                title: "Advisor notified",
+                desc: `${currentMatch.name} has received your enquiry and your contact details.`,
+                timing: "Right now",
+                done: true,
+              },
+              {
+                icon: "phone",
+                title: "Initial contact",
+                desc: `Expect a call or email at ${userEmail} to introduce themselves and discuss your needs.`,
+                timing: "Within 24 hours",
+                done: false,
+              },
+              {
+                icon: "calendar",
+                title: "Free consultation",
+                desc: "Schedule a no-obligation initial meeting to explore how they can help you.",
+                timing: "Within 1 week",
+                done: false,
+              },
+              {
+                icon: "check-circle",
+                title: "Your choice",
+                desc: "Decide if they're the right fit — no pressure, no fees for matching.",
+                timing: "Whenever you're ready",
+                done: false,
+              },
+            ].map((step, i) => (
+              <div key={i} className="flex items-start gap-3">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${step.done ? "bg-emerald-100" : "bg-amber-50 border border-amber-200"}`}>
+                  <Icon name={step.icon} size={14} className={step.done ? "text-emerald-600" : "text-amber-500"} />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-semibold text-slate-800">{step.title}</p>
+                    <span className={`text-[0.58rem] font-semibold px-1.5 py-0.5 rounded-full ${step.done ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-500"}`}>{step.timing}</span>
+                  </div>
+                  <p className="text-xs text-slate-500 mt-0.5">{step.desc}</p>
+                </div>
+              </div>
+            ))}
+            <div className="pt-3 border-t border-slate-100 text-xs text-slate-500">
+              <strong className="text-slate-700">In the meantime:</strong> Review {currentMatch.name}&apos;s full profile, credentials, and client reviews to make sure they&apos;re the right fit.
+            </div>
+          </div>
+        ) : (
+          <ol className="space-y-3">
+            {(currentMatch
+              ? [
+                  `${currentMatch.name} has been notified of your enquiry`,
+                  `They'll reach out to you at ${userEmail} within 24 hours`,
+                  "You'll book a free initial consultation \u2014 no obligation",
+                ]
+              : [
+                  "We'll find the best-matched advisor for your situation",
+                  `They'll reach out to you at ${userEmail} within 24 hours`,
+                  "You'll book a free initial consultation \u2014 no obligation",
+                ]
+            ).map((step, i) => (
+              <li key={i} className="flex items-start gap-3">
+                <span className="w-5 h-5 rounded-full bg-amber-500 text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">{i + 1}</span>
+                <span className="text-sm text-slate-700 leading-relaxed">{step}</span>
+              </li>
+            ))}
+          </ol>
+        )}
       </Card>
 
       {/* Trust signals */}

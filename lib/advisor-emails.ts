@@ -140,3 +140,28 @@ export async function sendLeadConfirmationToUser(
 export async function sendAdminNotification(subject: string, body: string): Promise<boolean> {
   return send(ADMIN_EMAIL, subject, emailWrapper("Admin Notification", `<p style="font-size:14px;color:#64748b">${body}</p>`));
 }
+
+export async function sendReviewRequest(
+  userEmail: string,
+  userName: string,
+  advisorName: string,
+  advisorSlug: string,
+): Promise<boolean> {
+  const firstName = userName.trim().split(" ")[0];
+  const reviewUrl = `https://invest.com.au/advisor/${advisorSlug}#reviews`;
+  return send(
+    userEmail,
+    `How was your experience with ${advisorName}? Leave a review`,
+    emailWrapper(
+      "How Did It Go?",
+      `<p style="font-size:15px">Hi ${firstName},</p>
+      <p style="font-size:14px;color:#64748b">You recently worked with <strong>${advisorName}</strong> through Invest.com.au. We'd love to know how it went.</p>
+      <p style="font-size:14px;color:#64748b">Your honest review helps other Australians find the right financial professional — and it only takes 2 minutes.</p>
+      <div style="text-align:center;margin:24px 0">
+        <a href="${reviewUrl}" style="display:inline-block;padding:12px 32px;background:#f59e0b;color:white;text-decoration:none;border-radius:8px;font-size:14px;font-weight:600">Leave a Review →</a>
+      </div>
+      <p style="font-size:13px;color:#64748b">Your review is anonymous unless you choose to include your name. It will be moderated before publishing.</p>
+      <p style="font-size:12px;color:#94a3b8;margin-top:20px">You received this because you made an enquiry through Invest.com.au. <a href="https://invest.com.au/unsubscribe?email=${encodeURIComponent(userEmail)}" style="color:#94a3b8">Unsubscribe</a></p>`,
+    ),
+  );
+}

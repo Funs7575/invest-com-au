@@ -45,6 +45,7 @@ type Lead = {
   message?: string; source_page?: string; status: string; advisor_notes?: string;
   contacted_at?: string; converted_at?: string; created_at: string;
   quality_score?: number; bill_amount_cents: number; billed: boolean;
+  review_requested_at?: string | null;
 };
 
 type BillingRecord = {
@@ -69,7 +70,7 @@ type WeeklyEnquiry = { weekLabel: string; count: number };
 type ProfileCompleteness = { score: number; missingFields: string[] };
 
 export default function AdvisorPortalPage() {
-  const [view, setView] = useState<"login" | "dashboard" | "leads" | "analytics" | "profile" | "billing" | "articles" | "team">("login");
+  const [view, setView] = useState<"login" | "dashboard" | "leads" | "analytics" | "profile" | "billing" | "articles" | "team" | "settings">("login");
   const [advisor, setAdvisor] = useState<Advisor | null>(null);
   const [leads, setLeads] = useState<Lead[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
@@ -96,6 +97,8 @@ export default function AdvisorPortalPage() {
   const [weeklyEnquiries, setWeeklyEnquiries] = useState<WeeklyEnquiry[]>([]);
   const [profileCompleteness, setProfileCompleteness] = useState<ProfileCompleteness | null>(null);
   const [loading, setLoading] = useState(true);
+  const [leadSearch, setLeadSearch] = useState("");
+  const [leadStatusFilter, setLeadStatusFilter] = useState<"all" | "new" | "contacted" | "converted" | "lost">("all");
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [loginMode, setLoginMode] = useState<"magic" | "password" | "signup">("magic");
@@ -104,6 +107,27 @@ export default function AdvisorPortalPage() {
   const [tokenFromUrl, setTokenFromUrl] = useState<string | null>(null);
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileSaved, setProfileSaved] = useState(false);
+
+  // Dispute modal
+  const [disputeModal, setDisputeModal] = useState<{ leadId: number; leadName: string; daysLeft: number } | null>(null);
+  const [disputeReason, setDisputeReason] = useState("");
+  const [disputeDetails, setDisputeDetails] = useState("");
+  const [disputeSubmitting, setDisputeSubmitting] = useState(false);
+  const [disputeError, setDisputeError] = useState("");
+  const [disputeDone, setDisputeDone] = useState(false);
+
+  // Billing / topup history
+  const [topupHistory, setTopupHistory] = useState<{ id: number; amount_cents: number; status: string; created_at: string }[]>([]);
+
+  // Notification preferences
+  type NotifPrefs = { new_lead: boolean; weekly_summary: boolean; billing_alerts: boolean; review_new: boolean };
+  const [notifPrefs, setNotifPrefs] = useState<NotifPrefs>({ new_lead: true, weekly_summary: true, billing_alerts: true, review_new: false });
+  const [savingNotifs, setSavingNotifs] = useState(false);
+  const [notifSaved, setNotifSaved] = useState(false);
+  const [notifPrefsLoaded, setNotifPrefsLoaded] = useState(false);
+
+  // Onboarding banner
+  const [dismissedOnboarding, setDismissedOnboarding] = useState(false);
 
   // Check for magic link token in URL
   useEffect(() => {
@@ -315,6 +339,66 @@ export default function AdvisorPortalPage() {
     setSavingProfile(false);
   };
 
+  const loadTopupHistory = async () => {
+    try {
+      const res = await fetch("/api/advisor-auth/topup");
+      if (res.ok) {
+        const data = await res.json();
+        setTopupHistory(data.topups || []);
+      }
+    } catch { /* ignore */ }
+  };
+
+  const loadNotifPrefs = async () => {
+    if (notifPrefsLoaded) return;
+    try {
+      const res = await fetch("/api/advisor-auth/notifications");
+      if (res.ok) {
+        const data = await res.json();
+        setNotifPrefs(data.prefs || { new_lead: true, weekly_summary: true, billing_alerts: true, review_new: false });
+        setNotifPrefsLoaded(true);
+      }
+    } catch { /* ignore */ }
+  };
+
+  const saveNotifPrefs = async () => {
+    setSavingNotifs(true);
+    try {
+      const res = await fetch("/api/advisor-auth/notifications", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prefs: notifPrefs }),
+      });
+      if (res.ok) {
+        setNotifSaved(true);
+        setTimeout(() => setNotifSaved(false), 3000);
+      }
+    } catch { /* ignore */ }
+    setSavingNotifs(false);
+  };
+
+  const submitDispute = async () => {
+    if (!disputeModal || !disputeReason) return;
+    setDisputeSubmitting(true);
+    setDisputeError("");
+    try {
+      const res = await fetch("/api/advisor-auth/disputes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ leadId: disputeModal.leadId, reason: disputeReason, details: disputeDetails || null }),
+      });
+      if (res.ok) {
+        setDisputeDone(true);
+      } else {
+        const d = await res.json();
+        setDisputeError(d.error || "Failed to submit dispute.");
+      }
+    } catch {
+      setDisputeError("Network error. Please try again.");
+    }
+    setDisputeSubmitting(false);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50 flex items-center justify-center">
@@ -443,6 +527,7 @@ export default function AdvisorPortalPage() {
     { key: "profile", label: "Profile", icon: "user" },
     { key: "billing", label: "Billing", icon: "credit-card" },
     ...(isFirmAdmin ? [{ key: "team", label: "Team", icon: "users" }] : []),
+    { key: "settings", label: "Settings", icon: "settings" },
   ];
 
   return (
@@ -467,7 +552,7 @@ export default function AdvisorPortalPage() {
             <button
               key={item.key}
               type="button"
-              onClick={() => { setView(item.key as typeof view); if (item.key === "team") { loadFirmData(); } }}
+              onClick={() => { setView(item.key as typeof view); if (item.key === "team") { loadFirmData(); } if (item.key === "billing") { loadTopupHistory(); } if (item.key === "settings") { loadNotifPrefs(); } }}
               className={`flex items-center gap-1.5 px-3 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-inset ${
                 view === item.key
                   ? "border-slate-900 text-slate-900"
@@ -598,8 +683,44 @@ export default function AdvisorPortalPage() {
               );
             })()}
 
-            {/* ── Profile Completeness ── */}
-            {profileCompleteness && profileCompleteness.score < 100 && (
+            {/* ── Onboarding Checklist (first-run, dismissable) ── */}
+            {profileCompleteness && profileCompleteness.score < 80 && !dismissedOnboarding && (
+              <div className="bg-gradient-to-br from-violet-50 to-white border border-violet-200 rounded-xl p-5 mb-6">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <h3 className="text-sm font-bold text-violet-900">Get your profile ready</h3>
+                    <p className="text-xs text-violet-600 mt-0.5">Complete these steps to start receiving leads</p>
+                  </div>
+                  <button onClick={() => setDismissedOnboarding(true)} className="text-violet-400 hover:text-violet-600 text-xs" title="Dismiss">✕</button>
+                </div>
+                <div className="space-y-2 mb-4">
+                  {[
+                    { label: "Add a profile photo", done: !!advisor?.photo_url, action: () => setView("profile") },
+                    { label: "Write a bio", done: !!advisor?.bio && advisor.bio.length > 30, action: () => setView("profile") },
+                    { label: "Add your specialties", done: (advisor?.specialties?.length || 0) > 0, action: () => setView("profile") },
+                    { label: "Set your fee structure", done: !!advisor?.fee_structure, action: () => setView("profile") },
+                    { label: "Add a booking link", done: !!advisor?.booking_link, action: () => setView("profile") },
+                  ].map((step, i) => (
+                    <div key={i} className={`flex items-center gap-3 p-2.5 rounded-lg ${step.done ? "opacity-50" : "cursor-pointer hover:bg-violet-50"}`} onClick={step.done ? undefined : step.action}>
+                      <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${step.done ? "bg-emerald-500" : "bg-white border-2 border-violet-300"}`}>
+                        {step.done && <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>}
+                      </div>
+                      <span className={`text-xs font-medium ${step.done ? "line-through text-slate-400" : "text-slate-700"}`}>{step.label}</span>
+                      {!step.done && <svg className="w-3.5 h-3.5 text-violet-400 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>}
+                    </div>
+                  ))}
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 h-2 bg-violet-100 rounded-full overflow-hidden">
+                    <div className="h-full bg-violet-500 rounded-full transition-all duration-500" style={{ width: `${profileCompleteness.score}%` }} />
+                  </div>
+                  <span className="text-xs font-bold text-violet-700">{profileCompleteness.score}%</span>
+                </div>
+              </div>
+            )}
+
+            {/* ── Profile Completeness (compact, shown when > 80% or dismissed wizard) ── */}
+            {profileCompleteness && profileCompleteness.score < 100 && (profileCompleteness.score >= 80 || dismissedOnboarding) && (
               <div className="bg-white border border-slate-200 rounded-xl p-4 mb-6">
                 <div className="flex items-center justify-between mb-2">
                   <h3 className="text-sm font-bold text-slate-900">Profile Completeness</h3>
@@ -815,9 +936,39 @@ export default function AdvisorPortalPage() {
         )}
 
         {/* ─── LEADS ─── */}
-        {view === "leads" && (
+        {view === "leads" && (() => {
+          const filteredLeads = leads.filter((l) => {
+            const matchesStatus = leadStatusFilter === "all" || l.status === leadStatusFilter;
+            const q = leadSearch.toLowerCase();
+            const matchesSearch = !q || l.user_name.toLowerCase().includes(q) || l.user_email.toLowerCase().includes(q) || (l.user_phone || "").includes(q);
+            return matchesStatus && matchesSearch;
+          });
+          const exportCsv = () => {
+            const rows = [
+              ["Name", "Email", "Phone", "Status", "Message", "Source", "Quality", "Billed ($)", "Date"],
+              ...filteredLeads.map((l) => [
+                l.user_name, l.user_email, l.user_phone || "", l.status,
+                (l.message || "").replace(/"/g, '""'),
+                l.source_page || "",
+                l.quality_score != null ? String(l.quality_score) : "",
+                l.bill_amount_cents ? (l.bill_amount_cents / 100).toFixed(2) : "0",
+                new Date(l.created_at).toLocaleDateString("en-AU"),
+              ])
+            ];
+            const csv = rows.map((r) => r.map((c) => `"${c}"`).join(",")).join("\n");
+            const blob = new Blob([csv], { type: "text/csv" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a"); a.href = url; a.download = "leads.csv"; a.click();
+            URL.revokeObjectURL(url);
+          };
+          return (
           <>
-            <h1 className="text-xl font-bold text-slate-900 mb-1">Enquiries</h1>
+            <div className="flex items-center justify-between mb-1">
+              <h1 className="text-xl font-bold text-slate-900">Enquiries</h1>
+              <button onClick={exportCsv} className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-700 px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
+                <Icon name="download" size={13} /> Export CSV
+              </button>
+            </div>
             <p className="text-sm text-slate-500 mb-4">{stats?.totalLeads || 0} total · {leads.filter(l => l.status === "new").length} new</p>
 
             {/* Lead pricing & credit balance */}
@@ -884,15 +1035,50 @@ export default function AdvisorPortalPage() {
               </div>
             </div>
 
+            {/* Search & Filter Bar */}
+            <div className="flex gap-2 mb-4 flex-wrap">
+              <div className="relative flex-1 min-w-[180px]">
+                <Icon name="search" size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                <input
+                  type="text"
+                  value={leadSearch}
+                  onChange={(e) => setLeadSearch(e.target.value)}
+                  placeholder="Search by name, email or phone..."
+                  className="w-full pl-8 pr-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900"
+                />
+              </div>
+              <div className="flex gap-1 flex-wrap">
+                {(["all", "new", "contacted", "converted", "lost"] as const).map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => setLeadStatusFilter(s)}
+                    className={`px-2.5 py-1.5 text-xs font-semibold rounded-lg border transition-colors capitalize ${
+                      leadStatusFilter === s
+                        ? "bg-slate-900 text-white border-slate-900"
+                        : "bg-white text-slate-600 border-slate-200 hover:border-slate-300"
+                    }`}
+                  >
+                    {s === "all" ? `All (${leads.length})` : `${s} (${leads.filter(l => l.status === s).length})`}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {leads.length === 0 ? (
               <div className="bg-white border border-slate-200 rounded-xl p-8 text-center">
                 <Icon name="inbox" size={40} className="text-slate-300 mx-auto mb-3" />
                 <h3 className="text-lg font-bold text-slate-900 mb-1">No enquiries yet</h3>
                 <p className="text-sm text-slate-500">When investors submit a consultation request through your profile, they&apos;ll appear here.</p>
               </div>
+            ) : filteredLeads.length === 0 ? (
+              <div className="bg-white border border-slate-200 rounded-xl p-8 text-center">
+                <Icon name="search" size={32} className="text-slate-300 mx-auto mb-3" />
+                <p className="text-sm text-slate-500">No leads match your filters.</p>
+                <button onClick={() => { setLeadSearch(""); setLeadStatusFilter("all"); }} className="mt-2 text-xs text-violet-600 hover:underline">Clear filters</button>
+              </div>
             ) : (
               <div className="space-y-3">
-                {leads.map((lead) => (
+                {filteredLeads.map((lead) => (
                   <div key={lead.id} className={`bg-white border rounded-xl p-4 ${lead.status === "new" ? "border-amber-200 bg-amber-50/30" : "border-slate-200"}`}>
                     <div className="flex items-start justify-between mb-2">
                       <div>
@@ -917,6 +1103,11 @@ export default function AdvisorPortalPage() {
                       <div className="bg-slate-50 rounded-lg p-3 text-xs text-slate-600 mb-3 leading-relaxed">{lead.message}</div>
                     )}
                     <div className="flex items-center gap-2 flex-wrap">
+                      {lead.source_page && (
+                        <span className="text-[0.56rem] font-semibold px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-500">
+                          via {lead.source_page.replace(/^\//, "").replace(/-/g, " ") || "profile"}
+                        </span>
+                      )}
                       {lead.quality_score != null && (
                         <span className={`text-[0.56rem] font-semibold px-1.5 py-0.5 rounded-full ${
                           lead.quality_score >= 60 ? "bg-emerald-100 text-emerald-700" :
@@ -939,25 +1130,39 @@ export default function AdvisorPortalPage() {
                       {lead.status !== "lost" && lead.status !== "converted" && (
                         <button onClick={() => updateLeadStatus(lead.id, "lost")} className="text-xs font-semibold text-red-500 hover:text-red-700 px-2 py-1 border border-red-200 rounded-lg hover:bg-red-50">Mark Lost</button>
                       )}
+                      {lead.status === "converted" && (
+                        lead.review_requested_at
+                          ? <span className="text-[0.56rem] text-slate-400 px-1.5 py-0.5">Review requested {new Date(lead.review_requested_at).toLocaleDateString("en-AU", { day: "numeric", month: "short" })}</span>
+                          : <button
+                              onClick={async () => {
+                                const res = await fetch("/api/advisor-auth/request-review", {
+                                  method: "POST",
+                                  headers: { "Content-Type": "application/json" },
+                                  body: JSON.stringify({ leadId: lead.id }),
+                                });
+                                if (res.ok) {
+                                  setLeads((prev) => prev.map((l) => l.id === lead.id ? { ...l, review_requested_at: new Date().toISOString() } : l));
+                                } else {
+                                  const d = await res.json();
+                                  alert(d.error || "Failed to send review request.");
+                                }
+                              }}
+                              className="text-xs font-semibold text-violet-600 hover:text-violet-800 px-2 py-1 border border-violet-200 rounded-lg hover:bg-violet-50"
+                            >Request Review</button>
+                      )}
                       {(() => {
                         const daysSince = Math.floor((Date.now() - new Date(lead.created_at).getTime()) / (1000 * 60 * 60 * 24));
                         const canDispute = daysSince <= 14 && lead.billed;
                         const daysLeft = 14 - daysSince;
                         return (
                           <button
-                            onClick={async () => {
-                              const reason = prompt("Dispute reason:\n1. spam\n2. wrong_number\n3. fake_details\n4. not_genuine\n5. duplicate\n6. other\n\nEnter reason:");
-                              if (!reason) return;
-                              const validReasons = ["spam", "wrong_number", "fake_details", "not_genuine", "duplicate", "other"];
-                              const r = validReasons.includes(reason) ? reason : "other";
-                              const details = r === "other" ? prompt("Please describe the issue:") : null;
-                              const res = await fetch("/api/advisor-auth/disputes", {
-                                method: "POST",
-                                headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify({ leadId: lead.id, reason: r, details }),
-                              });
-                              if (res.ok) alert("Dispute submitted. We'll review within 10 business days.");
-                              else { const d = await res.json(); alert(d.error || "Failed to submit dispute."); }
+                            onClick={() => {
+                              if (!canDispute) return;
+                              setDisputeModal({ leadId: lead.id, leadName: lead.user_name, daysLeft });
+                              setDisputeReason("");
+                              setDisputeDetails("");
+                              setDisputeError("");
+                              setDisputeDone(false);
                             }}
                             disabled={!canDispute}
                             className={`text-xs font-semibold px-2 py-1 border rounded-lg ${canDispute ? "text-slate-400 hover:text-slate-600 border-slate-200 hover:bg-slate-50" : "text-slate-300 border-slate-100 cursor-not-allowed"}`}
@@ -980,7 +1185,8 @@ export default function AdvisorPortalPage() {
               </div>
             )}
           </>
-        )}
+          );
+        })()}
 
         {/* ─── PROFILE ─── */}
         {view === "profile" && advisor && (
@@ -1307,9 +1513,10 @@ export default function AdvisorPortalPage() {
               </div>
             </div>
 
-            {/* Billing records */}
+            {/* Lead billing records */}
+            <h2 className="text-base font-bold text-slate-900 mb-3">Lead Charges</h2>
             {billing.length > 0 ? (
-              <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+              <div className="bg-white border border-slate-200 rounded-xl overflow-hidden mb-8">
                 <div className="grid grid-cols-4 bg-slate-50 text-xs font-semibold text-slate-600 px-4 py-2 border-b border-slate-200">
                   <span>Date</span>
                   <span>Description</span>
@@ -1332,8 +1539,37 @@ export default function AdvisorPortalPage() {
                 ))}
               </div>
             ) : (
-              <div className="bg-white border border-slate-200 rounded-xl p-6 text-center">
-                <p className="text-sm text-slate-500">No billing records yet.</p>
+              <div className="bg-white border border-slate-200 rounded-xl p-6 text-center mb-8">
+                <p className="text-sm text-slate-500">No lead charges yet.</p>
+              </div>
+            )}
+
+            {/* Credit topup history */}
+            <h2 className="text-base font-bold text-slate-900 mb-3">Top-up History</h2>
+            {topupHistory.length > 0 ? (
+              <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+                <div className="grid grid-cols-3 bg-slate-50 text-xs font-semibold text-slate-600 px-4 py-2 border-b border-slate-200">
+                  <span>Date</span>
+                  <span className="text-right">Amount</span>
+                  <span className="text-right">Status</span>
+                </div>
+                {topupHistory.map((t) => (
+                  <div key={t.id} className="grid grid-cols-3 px-4 py-2.5 text-xs border-b border-slate-100 last:border-b-0">
+                    <span className="text-slate-500">{new Date(t.created_at).toLocaleDateString("en-AU", { day: "numeric", month: "short", year: "numeric" })}</span>
+                    <span className="text-right font-semibold text-slate-900">${(t.amount_cents / 100).toFixed(0)}</span>
+                    <span className="text-right">
+                      <span className={`px-1.5 py-0.5 rounded-full text-[0.56rem] font-bold ${
+                        t.status === "completed" ? "bg-emerald-100 text-emerald-700" :
+                        t.status === "failed" ? "bg-red-100 text-red-700" :
+                        "bg-amber-100 text-amber-700"
+                      }`}>{t.status}</span>
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-white border border-slate-200 rounded-xl p-5 text-center">
+                <p className="text-sm text-slate-500">No top-ups yet. Purchase credits above to get started.</p>
               </div>
             )}
           </>
@@ -1464,6 +1700,72 @@ export default function AdvisorPortalPage() {
         )}
 
         {view === "articles" && <AdvisorArticlesSection advisorId={advisor?.id} />}
+
+        {/* ─── SETTINGS ─── */}
+        {view === "settings" && (
+          <div className="max-w-xl">
+            <h1 className="text-xl font-bold text-slate-900 mb-1">Settings</h1>
+            <p className="text-sm text-slate-500 mb-6">Manage your notification preferences.</p>
+
+            <div className="bg-white border border-slate-200 rounded-xl p-5 mb-5">
+              <h2 className="text-sm font-bold text-slate-900 mb-1">Email Notifications</h2>
+              <p className="text-xs text-slate-500 mb-4">Control which emails you receive from Invest.com.au</p>
+              <div className="space-y-4">
+                {([
+                  { key: "new_lead", label: "New lead received", desc: "Instant alert when someone enquires about your services" },
+                  { key: "billing_alerts", label: "Billing alerts", desc: "Low credit balance warnings and payment confirmations" },
+                  { key: "weekly_summary", label: "Weekly performance summary", desc: "Views, enquiries, and conversion stats every Monday" },
+                  { key: "review_new", label: "New review submitted", desc: "Notification when a client submits a review" },
+                ] as { key: keyof NotifPrefs; label: string; desc: string }[]).map(({ key, label, desc }) => (
+                  <div key={key} className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-slate-800">{label}</p>
+                      <p className="text-xs text-slate-500 mt-0.5">{desc}</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setNotifPrefs(p => ({ ...p, [key]: !p[key] }))}
+                      className={`relative inline-flex h-5 w-9 shrink-0 rounded-full border-2 border-transparent transition-colors focus:outline-none ${notifPrefs[key] ? "bg-violet-600" : "bg-slate-200"}`}
+                      role="switch"
+                      aria-checked={notifPrefs[key]}
+                    >
+                      <span className={`pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow transform transition-transform ${notifPrefs[key] ? "translate-x-4" : "translate-x-0"}`} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <div className="flex items-center gap-3 mt-5 pt-4 border-t border-slate-100">
+                <button
+                  onClick={saveNotifPrefs}
+                  disabled={savingNotifs}
+                  className="px-5 py-2.5 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 transition-colors"
+                >
+                  {savingNotifs ? "Saving..." : "Save Preferences"}
+                </button>
+                {notifSaved && <span className="text-sm text-emerald-600 font-medium">Saved!</span>}
+              </div>
+            </div>
+
+            <div className="bg-white border border-slate-200 rounded-xl p-5">
+              <h2 className="text-sm font-bold text-slate-900 mb-3">Account</h2>
+              <div className="space-y-3">
+                <div>
+                  <p className="text-xs font-semibold text-slate-600">Email</p>
+                  <p className="text-sm text-slate-800 mt-0.5">{advisor?.email}</p>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-slate-600">Profile Status</p>
+                  <p className={`text-sm font-semibold mt-0.5 ${advisor?.status === "active" ? "text-emerald-600" : "text-amber-600"}`}>{advisor?.status}</p>
+                </div>
+                <div className="pt-2 border-t border-slate-100">
+                  <Link href={`/advisor/${advisor?.slug}`} target="_blank" className="text-sm text-violet-600 hover:text-violet-800 font-medium">
+                    View Public Profile ↗
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* ─── TEAM (firm admins only) ─── */}
         {view === "team" && isFirmAdmin && (
@@ -1924,6 +2226,88 @@ export default function AdvisorPortalPage() {
           </div>
         )}
       </div>
+
+      {/* ─── DISPUTE MODAL ─── */}
+      {disputeModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
+            {disputeDone ? (
+              <div className="text-center py-4">
+                <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <svg className="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
+                </div>
+                <h2 className="text-lg font-bold text-slate-900 mb-1">Dispute Submitted</h2>
+                <p className="text-sm text-slate-500 mb-4">Our team will review this within 10 business days and notify you by email.</p>
+                <button onClick={() => { setDisputeModal(null); loadData(); }} className="px-5 py-2.5 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800">Done</button>
+              </div>
+            ) : (
+              <>
+                <div className="flex items-start justify-between mb-4">
+                  <div>
+                    <h2 className="text-base font-bold text-slate-900">Dispute Lead</h2>
+                    <p className="text-xs text-slate-500 mt-0.5">Lead from <strong>{disputeModal.leadName}</strong> · {disputeModal.daysLeft} day{disputeModal.daysLeft !== 1 ? "s" : ""} left to dispute</p>
+                  </div>
+                  <button onClick={() => setDisputeModal(null)} className="text-slate-400 hover:text-slate-600 text-lg leading-none">✕</button>
+                </div>
+
+                <div className="mb-4">
+                  <p className="text-xs font-semibold text-slate-600 mb-2">Reason for dispute</p>
+                  <div className="space-y-2">
+                    {[
+                      { value: "spam", label: "Spam or bot submission" },
+                      { value: "wrong_number", label: "Wrong or disconnected number" },
+                      { value: "fake_details", label: "Fake contact details" },
+                      { value: "not_genuine", label: "Not a genuine enquiry" },
+                      { value: "duplicate", label: "Duplicate lead" },
+                      { value: "other", label: "Other reason" },
+                    ].map((opt) => (
+                      <label key={opt.value} className={`flex items-center gap-3 p-2.5 rounded-lg border cursor-pointer transition-colors ${disputeReason === opt.value ? "border-violet-400 bg-violet-50" : "border-slate-200 hover:bg-slate-50"}`}>
+                        <input
+                          type="radio"
+                          name="dispute-reason"
+                          value={opt.value}
+                          checked={disputeReason === opt.value}
+                          onChange={() => setDisputeReason(opt.value)}
+                          className="text-violet-600"
+                        />
+                        <span className="text-sm text-slate-700">{opt.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-xs font-semibold text-slate-600 mb-1.5">Additional details <span className="text-slate-400 font-normal">(optional{disputeReason === "other" ? ", required" : ""})</span></label>
+                  <textarea
+                    value={disputeDetails}
+                    onChange={(e) => setDisputeDetails(e.target.value)}
+                    rows={3}
+                    placeholder="Describe the issue in detail..."
+                    className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 resize-none"
+                  />
+                </div>
+
+                {disputeError && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-700 mb-4">{disputeError}</div>
+                )}
+
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={submitDispute}
+                    disabled={disputeSubmitting || !disputeReason || (disputeReason === "other" && !disputeDetails.trim())}
+                    className="flex-1 py-2.5 bg-slate-900 text-white font-semibold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 transition-colors"
+                  >
+                    {disputeSubmitting ? "Submitting..." : "Submit Dispute"}
+                  </button>
+                  <button onClick={() => setDisputeModal(null)} className="px-4 py-2.5 border border-slate-200 text-slate-600 font-medium rounded-lg text-sm hover:bg-slate-50 transition-colors">
+                    Cancel
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

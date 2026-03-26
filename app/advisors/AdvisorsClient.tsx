@@ -8,6 +8,7 @@ import type { Professional, ProfessionalType, AdvisorFirm } from "@/lib/types";
 import { PROFESSIONAL_TYPE_LABELS, AU_STATES } from "@/lib/types";
 import Icon from "@/components/Icon";
 import { trackEvent } from "@/lib/tracking";
+import { useAdvisorShortlist } from "@/lib/hooks/useAdvisorShortlist";
 
 const TYPE_FILTERS: { key: ProfessionalType | "all"; label: string; icon: string }[] = [
   { key: "all", label: "All Types", icon: "users" },
@@ -211,11 +212,46 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
   const [locationSearch, setLocationSearch] = useState<PostcodeResult | null>(null);
   const [userLat, setUserLat] = useState<number | null>(null);
   const [userLng, setUserLng] = useState<number | null>(null);
+
+  // Advisor alert / saved search
+  const [alertEmail, setAlertEmail] = useState("");
+  const [alertStatus, setAlertStatus] = useState<"idle" | "submitting" | "done" | "error">("idle");
+  const [alertError, setAlertError] = useState("");
+
+  const saveAlert = async () => {
+    if (!alertEmail.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(alertEmail)) {
+      setAlertError("Please enter a valid email address.");
+      return;
+    }
+    setAlertStatus("submitting");
+    setAlertError("");
+    const primaryType = typeFilters.size === 1 ? Array.from(typeFilters)[0] : typeFilters.size === 0 ? "any" : "multiple";
+    const locationState = stateFilter !== "all" ? stateFilter : undefined;
+    const locationSuburb = locationSearch?.locality;
+    try {
+      const res = await fetch("/api/advisor-alerts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: alertEmail.trim(), advisor_type: primaryType, location_state: locationState, location_suburb: locationSuburb }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setAlertStatus("done");
+      } else {
+        setAlertError(data.error || "Failed to save alert.");
+        setAlertStatus("error");
+      }
+    } catch {
+      setAlertError("Network error. Please try again.");
+      setAlertStatus("error");
+    }
+  };
   const [radius, setRadius] = useState(25);
 
   // API-fetched nearby results
   const [nearbyResults, setNearbyResults] = useState<Professional[] | null>(null);
   const [nearbyLoading, setNearbyLoading] = useState(false);
+  const { toggle: toggleShortlist, has: inShortlist, count: shortlistCount, max: shortlistMax } = useAdvisorShortlist();
 
   const isLocationActive = userLat !== null && userLng !== null;
 
@@ -430,6 +466,30 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
             <span className="flex items-center gap-1.5"><Icon name="clock" size={14} className="text-amber-400" />Free consultation</span>
           </div>
         </div>
+
+        {/* Compare bar */}
+        {shortlistCount > 0 && (
+          <div className="sticky top-16 z-30 mb-3">
+            <div className="bg-violet-600 text-white rounded-xl px-4 py-2.5 flex items-center justify-between shadow-lg shadow-violet-200">
+              <span className="text-sm font-semibold">
+                {shortlistCount} advisor{shortlistCount !== 1 ? "s" : ""} saved
+                {shortlistCount === 1 && <span className="text-violet-200 font-normal"> — save 1 more to compare</span>}
+              </span>
+              <div className="flex items-center gap-2">
+                <Link href="/shortlist/advisors" className="px-3 py-1.5 text-violet-200 text-xs font-semibold hover:text-white transition-colors">
+                  View saved
+                </Link>
+                {shortlistCount >= 2 ? (
+                  <Link href="/advisors/compare" className="px-3 py-1.5 bg-white text-violet-700 text-xs font-bold rounded-lg hover:bg-violet-50 transition-colors">
+                    Compare {shortlistCount} →
+                  </Link>
+                ) : (
+                  <span className="text-xs text-violet-200">{shortlistMax - shortlistCount} more to compare</span>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Search + Filter bar */}
         <div className="flex gap-2 mb-3 md:mb-4">
@@ -812,19 +872,68 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                       </div>
                     )}
                   </div>
-                  <div className="shrink-0 self-center"><Icon name="chevron-right" size={18} className="text-slate-300" /></div>
+                  <div className="shrink-0 self-center flex flex-col items-center gap-1.5">
+                    <button
+                      onClick={(e) => { e.preventDefault(); toggleShortlist(pro.slug); }}
+                      disabled={!inShortlist(pro.slug) && shortlistCount >= shortlistMax}
+                      title={inShortlist(pro.slug) ? "Remove from compare" : shortlistCount >= shortlistMax ? "Compare list full" : "Save to compare"}
+                      className={`p-1.5 rounded-lg transition-colors ${inShortlist(pro.slug) ? "text-violet-600 bg-violet-50 hover:bg-violet-100" : shortlistCount >= shortlistMax ? "text-slate-200 cursor-not-allowed" : "text-slate-300 hover:text-violet-500 hover:bg-violet-50"}`}
+                    >
+                      <Icon name={inShortlist(pro.slug) ? "bookmark-check" : "bookmark"} size={16} />
+                    </button>
+                    <Icon name="chevron-right" size={18} className="text-slate-300" />
+                  </div>
                 </div>
               </Link>
             ))}
           </div>
         ) : (
-          <div className="text-center py-12 bg-white rounded-xl border border-slate-200">
-            <Icon name="search" size={32} className="text-slate-300 mx-auto mb-3" />
-            <p className="text-sm font-medium text-slate-600 mb-1">No advisors found</p>
-            <p className="text-xs text-slate-400 mb-3">
-              {isLocationActive ? `No advisors within ${radius}km. Try a larger radius.` : search ? `No results for "${search}".` : "Try adjusting your filters."}
-            </p>
-            <button onClick={clearAll} className="text-xs text-amber-600 font-semibold hover:text-amber-800">Clear all filters</button>
+          <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+            <div className="text-center py-8 px-4 border-b border-slate-100">
+              <Icon name="search" size={32} className="text-slate-300 mx-auto mb-3" />
+              <p className="text-sm font-medium text-slate-600 mb-1">No advisors found</p>
+              <p className="text-xs text-slate-400 mb-3">
+                {isLocationActive ? `No advisors within ${radius}km. Try a larger radius.` : search ? `No results for "${search}".` : "Try adjusting your filters."}
+              </p>
+              <button onClick={clearAll} className="text-xs text-amber-600 font-semibold hover:text-amber-800">Clear all filters</button>
+            </div>
+            {/* Alert capture */}
+            <div className="px-5 py-5 bg-amber-50">
+              <div className="flex items-start gap-3 mb-3">
+                <div className="w-8 h-8 bg-amber-100 rounded-lg flex items-center justify-center shrink-0">
+                  <Icon name="bell" size={16} className="text-amber-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-slate-800">Get notified when one joins</p>
+                  <p className="text-xs text-slate-500 mt-0.5">Enter your email and we&apos;ll alert you when a matching advisor joins Invest.com.au.</p>
+                </div>
+              </div>
+              {alertStatus === "done" ? (
+                <div className="flex items-center gap-2 text-sm text-emerald-700 font-semibold">
+                  <svg className="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
+                  Alert saved! We&apos;ll email you when a match is available.
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <input
+                    type="email"
+                    value={alertEmail}
+                    onChange={(e) => { setAlertEmail(e.target.value); setAlertError(""); }}
+                    placeholder="your@email.com"
+                    className="flex-1 px-3 py-2 border border-amber-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white"
+                    onKeyDown={(e) => e.key === "Enter" && saveAlert()}
+                  />
+                  <button
+                    onClick={saveAlert}
+                    disabled={alertStatus === "submitting"}
+                    className="px-4 py-2 bg-amber-500 text-white text-sm font-semibold rounded-lg hover:bg-amber-600 disabled:opacity-60 transition-colors whitespace-nowrap"
+                  >
+                    {alertStatus === "submitting" ? "Saving..." : "Notify Me"}
+                  </button>
+                </div>
+              )}
+              {alertError && <p className="text-xs text-red-600 mt-1">{alertError}</p>}
+            </div>
           </div>
         )}
 
@@ -908,6 +1017,44 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               </Link>
             ))}
           </div>
+        </div>
+
+        {/* Saved search / alert widget */}
+        <div className="mt-6 md:mt-8 bg-amber-50 border border-amber-200 rounded-xl p-4 md:p-5">
+          <div className="flex items-start gap-3 mb-3">
+            <div className="w-9 h-9 bg-amber-100 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+              <Icon name="bell" size={18} className="text-amber-600" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-slate-800">Can&apos;t find the right advisor?</h3>
+              <p className="text-xs text-slate-500 mt-0.5">Save a search alert and we&apos;ll notify you when a new advisor matching your criteria joins.</p>
+            </div>
+          </div>
+          {alertStatus === "done" ? (
+            <div className="flex items-center gap-2 text-sm text-emerald-700 font-semibold">
+              <svg className="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
+              Alert saved — we&apos;ll email you when a match is available.
+            </div>
+          ) : (
+            <div className="flex gap-2">
+              <input
+                type="email"
+                value={alertEmail}
+                onChange={(e) => { setAlertEmail(e.target.value); setAlertError(""); }}
+                placeholder="your@email.com"
+                className="flex-1 px-3 py-2 border border-amber-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 bg-white"
+                onKeyDown={(e) => e.key === "Enter" && saveAlert()}
+              />
+              <button
+                onClick={saveAlert}
+                disabled={alertStatus === "submitting"}
+                className="px-4 py-2 bg-amber-500 text-white text-sm font-semibold rounded-lg hover:bg-amber-600 disabled:opacity-60 transition-colors whitespace-nowrap"
+              >
+                {alertStatus === "submitting" ? "Saving..." : "Set Alert"}
+              </button>
+            </div>
+          )}
+          {alertError && <p className="text-xs text-red-600 mt-1">{alertError}</p>}
         </div>
 
         <div className="mt-6 md:mt-10 bg-slate-50 border border-slate-200 rounded-xl p-4 md:p-6 text-center">
