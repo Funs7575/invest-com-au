@@ -7,6 +7,7 @@ import {
   DASP_FAQS,
 } from "@/lib/foreign-investment-data";
 import { DASP_WARNING, FOREIGN_INVESTOR_GENERAL_DISCLAIMER } from "@/lib/compliance";
+import ForeignInvestmentNav from "../ForeignInvestmentNav";
 
 export const metadata: Metadata = {
   title: "Superannuation for Foreign Workers in Australia — DASP Guide 2026 — Invest.com.au",
@@ -130,6 +131,8 @@ export default function ForeignSuperPage() {
     <div className="bg-white min-h-screen">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+
+      <ForeignInvestmentNav current="/foreign-investment/super" />
 
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-10 md:py-14">
