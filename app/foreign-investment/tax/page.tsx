@@ -50,12 +50,12 @@ const TAX_FAQS = [
   {
     question: "What is the tax-free threshold for non-residents?",
     answer:
-      "There is no tax-free threshold for non-residents. Residents pay 0% on the first $18,200 of income. Non-residents are taxed from the first dollar at 32.5% (for income up to $120,000). This makes non-residency tax-disadvantageous for lower-income investors.",
+      "There is no tax-free threshold for non-residents. Residents pay 0% on the first $18,200 of income. Non-residents are taxed from the first dollar at 30% (for income up to $135,000 in 2025–26). This makes non-residency tax-disadvantageous for lower-income investors.",
   },
   {
     question: "Do non-residents pay CGT in Australia?",
     answer:
-      "Non-residents generally do NOT pay Australian CGT on gains from selling listed Australian company shares — this is known as the Section 855-10 exemption. However, non-residents DO pay Australian CGT on 'taxable Australian property' — primarily Australian real estate and certain other assets. There is also a 12.5% CGT withholding obligation for the buyer on properties sold by foreign residents for over $750,000.",
+      "Non-residents generally do NOT pay Australian CGT on gains from selling listed Australian company shares — this is known as the Section 855-10 exemption. However, non-residents DO pay Australian CGT on 'taxable Australian property' — primarily Australian real estate and certain other assets. There is also a 15% foreign resident CGT withholding obligation for the buyer on properties sold by foreign residents for over $750,000 (rate increased from 12.5% to 15% from 1 January 2025).",
   },
   {
     question: "What is the Medicare levy for non-residents?",
@@ -122,16 +122,16 @@ const WITHHOLDING_TABLE = [
   },
   {
     incomeType: "Rental income",
-    standardRate: "Non-resident rates (32.5%+ no TFT)",
+    standardRate: "Non-resident rates (30%+ no TFT)",
     withDTA: "DTAs rarely reduce rental income WHT",
     notes: "Australian rental income is taxed at non-resident rates. Australian tax return required.",
     color: "orange",
   },
   {
     incomeType: "CGT — Australian real property",
-    standardRate: "Non-resident rates + 12.5% buyer WHT on sale >$750k",
+    standardRate: "Non-resident rates + 15% buyer WHT on sale >$750k",
     withDTA: "No CGT exemption for real property",
-    notes: "No 50% CGT discount for non-residents. 12.5% WHT deducted from sale price by buyer's conveyancer.",
+    notes: "No 50% CGT discount for non-residents. 15% WHT deducted from sale price by buyer's conveyancer (rate increased from 12.5% effective 1 Jan 2025).",
     color: "red",
   },
   {
@@ -195,9 +195,9 @@ export default function ForeignTaxPage() {
               <br />& Foreign Investors
             </h1>
             <p className="text-sm md:text-base text-slate-300 leading-relaxed">
-              Withholding tax rates by income type, DTA treaty table (30 countries), non-resident
-              vs. resident rate comparison, CGT rules, residency tests, and the key differences
-              that affect every non-resident investor.
+              Withholding tax rates by income type, DTA treaty table (40+ countries, illustrative),
+              non-resident vs. resident rate comparison, CGT rules, residency tests, and the key
+              differences that affect every non-resident investor.
             </p>
           </div>
         </div>
@@ -317,7 +317,7 @@ export default function ForeignTaxPage() {
           <SectionHeading
             eyebrow="Tax treaties"
             title="DTA withholding rates by country"
-            sub="Australia has DTAs with 40+ countries. These treaties reduce withholding tax on dividends, interest, and royalties."
+            sub="Australia has DTAs with 40+ countries. This table shows indicative withholding rates for common treaty countries — it is illustrative, not exhaustive. Treaty application depends on income type, conditions, and individual circumstances."
           />
           <DTASearchTable
             countries={DTA_COUNTRIES}

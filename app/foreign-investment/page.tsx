@@ -17,17 +17,17 @@ import WHTCalculator from "./WHTCalculator";
 import SectionHeading from "@/components/SectionHeading";
 
 export const metadata: Metadata = {
-  title: "Foreign Investment in Australia — Complete Guide 2026 — Invest.com.au",
+  title: "Investing in Australia from Overseas — Complete Guide 2026",
   description:
-    "The complete guide to investing in Australia as a foreigner. Covers shares, crypto, savings, super (DASP), property (FIRB), and tax. Withholding tax rates, DTA treaty table, and per-vertical rules. Updated March 2026.",
+    "The complete guide to investing in Australia for non-residents, visa holders, expats and new migrants. Covers shares, crypto, savings, super (DASP), property (FIRB), and tax. Withholding tax rates, DTA treaty table, and per-vertical rules. Updated March 2026.",
   openGraph: {
-    title: "Foreign Investment in Australia — Complete Guide 2026",
+    title: "Investing in Australia from Overseas — Complete Guide 2026",
     description:
-      "Shares, crypto, savings, super (DASP), property (FIRB), and tax — everything a foreign investor needs to know about investing in Australia.",
+      "Rules for non-residents, visa holders, expats and new migrants across shares, property, savings, super and tax.",
     url: `${SITE_URL}/foreign-investment`,
     images: [
       {
-        url: `/api/og?title=${encodeURIComponent("Investing in Australia as a Foreigner")}&sub=${encodeURIComponent("Shares · Crypto · Super (DASP) · Property (FIRB) · Tax · 2026")}`,
+        url: `/api/og?title=${encodeURIComponent("Investing in Australia from Overseas")}&sub=${encodeURIComponent("Non-Residents · Visa Holders · Expats · Shares · Property · Tax · 2026")}`,
         width: 1200,
         height: 630,
       },
@@ -48,7 +48,7 @@ const HUB_FAQS = [
   {
     question: "Do non-residents pay tax in Australia?",
     answer:
-      "Non-residents pay Australian tax only on income sourced in Australia. Unlike residents, there is no tax-free threshold — tax applies from the first dollar at 32.5% (up to $120,000). Withholding tax is deducted automatically on dividends and interest. Non-residents generally do NOT owe Australian CGT on most listed shares, but DO owe CGT on Australian real property.",
+      "Non-residents pay Australian tax only on income sourced in Australia. Unlike residents, there is no tax-free threshold — tax applies from the first dollar at 30% (up to $135,000) for the 2025–26 year. Withholding tax is deducted automatically on dividends and interest. Non-residents generally do NOT owe Australian CGT on most listed shares, but DO owe CGT on Australian real property.",
   },
   {
     question: "What is the withholding tax rate for foreign investors?",
@@ -63,7 +63,7 @@ const HUB_FAQS = [
   {
     question: "Do I need FIRB approval to buy property in Australia?",
     answer:
-      "Yes, if you are a non-resident or temporary visa holder. Non-residents can only buy new dwellings, off-the-plan properties, or vacant land for development. Temporary residents may also buy one established home as a primary residence. Stamp duty surcharges of 7–8% (depending on state) apply on top of standard stamp duty. FIRB application fees start at $14,100 for properties up to $1 million.",
+      "Yes, if you are a non-resident or temporary visa holder. Non-residents can only buy new dwellings, off-the-plan properties, or vacant land for development. From 1 April 2025 to 31 March 2027, the Australian Government has also banned foreign persons — including temporary residents — from purchasing established (existing) dwellings. Exceptions may apply in limited cases. Stamp duty surcharges of 7–8% (depending on state) apply on top of standard stamp duty. FIRB application fees start at $14,100 for properties up to $1 million.",
   },
   {
     question: "Which Australian share brokers accept non-residents?",
@@ -78,7 +78,7 @@ const HUB_FAQS = [
   {
     question: "Can temporary visa holders in Australia invest normally?",
     answer:
-      "Yes. Temporary visa holders physically living and working in Australia are treated as Australian tax residents and can invest like residents — open any brokerage, crypto exchange, or savings account. The key difference is at the end: when you leave, you can claim DASP (your super back), you may be taxed differently, and any property you bought as a primary residence must be sold on departure.",
+      "It depends on your tax residency status, which is determined by the ATO's residency tests — not automatically assumed for all visa holders. Most temporary workers who live and work in Australia will pass the 'resides' test and be treated as Australian tax residents, allowing them to open brokerage, crypto, and savings accounts as residents. However, working holiday makers (subclass 417 and 462) are generally not Australian tax residents for tax purposes. Always confirm your residency status before assuming resident treatment applies.",
   },
 ];
 
@@ -135,27 +135,45 @@ export default function ForeignInvestmentHubPage() {
               </div>
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-[1.1] mb-3 tracking-tight">
                 Investing in Australia{" "}
-                <span className="text-amber-400">as a Foreigner</span>
+                <span className="text-amber-400">from Overseas</span>
               </h1>
-              <p className="text-sm md:text-base text-slate-300 leading-relaxed mb-6">
-                Whether you&apos;re a non-resident investing from overseas, a temporary visa holder,
-                a new permanent resident, or an Australian expat — this hub covers every asset class:
-                shares, crypto, savings, super, property, and tax.
+              <p className="text-sm md:text-base text-slate-300 leading-relaxed mb-5">
+                Rules for non-residents, visa holders, expats and new migrants across
+                shares, property, savings, super and tax.
               </p>
-              <div className="flex flex-col sm:flex-row gap-3">
+              <p className="text-xs text-slate-400 mb-5">Where do you want to start?</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-5">
+                <Link
+                  href="/foreign-investment/shares"
+                  className="px-4 py-2.5 bg-white/10 hover:bg-amber-500/20 border border-white/20 hover:border-amber-500/40 text-slate-200 hover:text-white font-semibold rounded-xl text-xs text-left transition-colors"
+                >
+                  I want to buy Australian shares &rarr;
+                </Link>
+                <Link
+                  href="/foreign-investment/property"
+                  className="px-4 py-2.5 bg-white/10 hover:bg-amber-500/20 border border-white/20 hover:border-amber-500/40 text-slate-200 hover:text-white font-semibold rounded-xl text-xs text-left transition-colors"
+                >
+                  I want to buy property &rarr;
+                </Link>
+                <Link
+                  href="/foreign-investment/super"
+                  className="px-4 py-2.5 bg-white/10 hover:bg-amber-500/20 border border-white/20 hover:border-amber-500/40 text-slate-200 hover:text-white font-semibold rounded-xl text-xs text-left transition-colors"
+                >
+                  I&apos;m leaving Australia — super &amp; tax help &rarr;
+                </Link>
                 <Link
                   href="#find-your-situation"
-                  className="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-white font-bold rounded-xl text-sm text-center transition-colors shadow-lg shadow-amber-500/20"
+                  className="px-4 py-2.5 bg-white/10 hover:bg-amber-500/20 border border-white/20 hover:border-amber-500/40 text-slate-200 hover:text-white font-semibold rounded-xl text-xs text-left transition-colors"
                 >
-                  Find My Situation &rarr;
-                </Link>
-                <Link
-                  href="/advisors/tax-agents"
-                  className="px-6 py-3 border border-slate-600 hover:border-slate-400 text-slate-300 hover:text-white font-semibold rounded-xl text-sm text-center transition-colors"
-                >
-                  Find a Tax Agent
+                  I&apos;m an expat or new migrant &rarr;
                 </Link>
               </div>
+              <Link
+                href="#find-your-situation"
+                className="inline-block px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-white font-bold rounded-xl text-xs text-center transition-colors shadow-lg shadow-amber-500/20"
+              >
+                See all situations &rarr;
+              </Link>
             </div>
 
             {/* Key stats */}
@@ -257,7 +275,7 @@ export default function ForeignInvestmentHubPage() {
           <SectionHeading
             eyebrow="Tax treaties"
             title="Double Tax Agreement (DTA) withholding rates"
-            sub="Australian withholding tax rates for residents of treaty countries. Without a DTA, dividends are taxed at 30%, royalties at 30%."
+            sub="Indicative Australian withholding tax rates for residents of common treaty countries. Without a DTA, dividends are taxed at 30%, royalties at 30%. This table is illustrative — treaty application depends on income type and individual conditions."
           />
           <DTASearchTable
             countries={DTA_COUNTRIES}
