@@ -112,7 +112,7 @@ export default function Footer() {
                 <li><Link href="/compare?category=crypto" className="hover:text-white transition-colors inline-block py-0.5">Crypto Exchanges</Link></li>
                 <li><Link href="/compare/super" className="hover:text-white transition-colors inline-block py-0.5">Super Funds</Link></li>
                 <li><Link href="/best/robo-advisors" className="hover:text-white transition-colors inline-block py-0.5">Robo-Advisors</Link></li>
-                <li><Link href="/compare?filter=savings" className="hover:text-white transition-colors inline-block py-0.5">Savings Accounts</Link></li>
+                <li><Link href="/compare?category=savings" className="hover:text-white transition-colors inline-block py-0.5">Savings Accounts</Link></li>
                 <li><Link href="/versus" className="hover:text-white transition-colors inline-block py-0.5">Head-to-Head</Link></li>
                 <li><Link href="/deals" className="hover:text-white transition-colors inline-block py-0.5">Deals</Link></li>
               </ul>

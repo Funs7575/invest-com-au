@@ -14,6 +14,7 @@ import PersonaSelector from "./PersonaSelector";
 import DTASearchTable from "./DTASearchTable";
 import ForeignInvestmentNav from "./ForeignInvestmentNav";
 import WHTCalculator from "./WHTCalculator";
+import SectionHeading from "@/components/SectionHeading";
 
 export const metadata: Metadata = {
   title: "Foreign Investment in Australia — Complete Guide 2026 — Invest.com.au",
@@ -80,16 +81,6 @@ const HUB_FAQS = [
       "Yes. Temporary visa holders physically living and working in Australia are treated as Australian tax residents and can invest like residents — open any brokerage, crypto exchange, or savings account. The key difference is at the end: when you leave, you can claim DASP (your super back), you may be taxed differently, and any property you bought as a primary residence must be sold on departure.",
   },
 ];
-
-function SectionHeading({ eyebrow, title, sub }: { eyebrow: string; title: string; sub?: string }) {
-  return (
-    <div className="mb-6 md:mb-8">
-      <p className="text-xs font-bold uppercase tracking-wider text-amber-600 mb-1">{eyebrow}</p>
-      <h2 className="text-xl md:text-2xl font-extrabold text-slate-900">{title}</h2>
-      {sub && <p className="text-sm text-slate-500 mt-1 leading-relaxed">{sub}</p>}
-    </div>
-  );
-}
 
 const participationColors: Record<string, string> = {
   yes: "bg-green-100 text-green-800",

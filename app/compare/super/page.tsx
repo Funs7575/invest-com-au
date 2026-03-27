@@ -1,5 +1,6 @@
 import { UPDATED_LABEL } from "@/lib/seo";
 import SuperCompareClient from "./SuperCompareClient";
+import CompareNav from "../CompareNav";
 
 export const metadata = {
   title: "Compare Super Funds — Fees & Performance (2026)",
@@ -79,6 +80,7 @@ export default function SuperComparePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
       />
+      <CompareNav current="/compare/super" />
       <SuperCompareClient />
     </>
   );

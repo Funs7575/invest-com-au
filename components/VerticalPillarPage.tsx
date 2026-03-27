@@ -25,168 +25,16 @@ import {
   AFCA_REFERENCE,
 } from "@/lib/compliance";
 import { isSponsored } from "@/lib/sponsorship";
-import BrokerCard from "@/components/BrokerCard";
 import BrokerLogo from "@/components/BrokerLogo";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
-import ScrollReveal from "@/components/ScrollReveal";
 import OnThisPage from "@/components/OnThisPage";
 import SponsorBadge from "@/components/SponsorBadge";
-import JargonTooltip from "@/components/JargonTooltip";
 import Icon from "@/components/Icon";
 import { CATEGORY_COLORS } from "@/lib/internal-links";
 import PillarExitIntent from "@/components/PillarExitIntent";
 import PersonalizedRecommendations from "@/components/PersonalizedRecommendations";
-
-/* ─── Column config per vertical type ─── */
-
-type ColumnDef = {
-  label: string;
-  jargon?: boolean;
-  render: (b: Broker) => React.ReactNode;
-  align?: "left" | "center";
-};
-
-function getColumns(slug: string): ColumnDef[] {
-  if (slug === "crypto") {
-    return [
-      { label: "Trading Fee", render: (b) => b.asx_fee || "Varies" },
-      { label: "Deposit", render: (b) => b.min_deposit || "Free" },
-      {
-        label: "AUSTRAC",
-        align: "center",
-        render: () => (
-          <span className="text-emerald-600 font-semibold">&#10003;</span>
-        ),
-      },
-      {
-        label: "Rating",
-        align: "center",
-        render: (b) => (
-          <>
-            <span className="text-amber">{renderStars(b.rating || 0)}</span>
-            <span className="text-sm text-slate-500 ml-1">{b.rating}</span>
-          </>
-        ),
-      },
-    ];
-  }
-
-  if (slug === "savings") {
-    return [
-      { label: "Interest Rate", render: (b) => b.asx_fee || "Varies" },
-      { label: "Min Deposit", render: (b) => b.min_deposit || "$0" },
-      {
-        label: "Gov. Guaranteed",
-        align: "center",
-        render: () => (
-          <span className="text-emerald-600 font-semibold">&#10003;</span>
-        ),
-      },
-      {
-        label: "Rating",
-        align: "center",
-        render: (b) => (
-          <>
-            <span className="text-amber">{renderStars(b.rating || 0)}</span>
-            <span className="text-sm text-slate-500 ml-1">{b.rating}</span>
-          </>
-        ),
-      },
-    ];
-  }
-
-  if (slug === "super") {
-    return [
-      { label: "Admin Fee", render: (b) => b.asx_fee || "Varies" },
-      {
-        label: "APRA Regulated",
-        align: "center",
-        render: () => (
-          <span className="text-emerald-600 font-semibold">&#10003;</span>
-        ),
-      },
-      {
-        label: "Insurance",
-        align: "center",
-        render: () => (
-          <span className="text-emerald-600 font-semibold">&#10003;</span>
-        ),
-      },
-      {
-        label: "Rating",
-        align: "center",
-        render: (b) => (
-          <>
-            <span className="text-amber">{renderStars(b.rating || 0)}</span>
-            <span className="text-sm text-slate-500 ml-1">{b.rating}</span>
-          </>
-        ),
-      },
-    ];
-  }
-
-  if (slug === "cfd") {
-    return [
-      { label: "Spread (EUR/USD)", render: (b) => b.asx_fee || "Varies" },
-      { label: "US Fee", render: (b) => b.us_fee || "N/A" },
-      {
-        label: "ASIC",
-        align: "center",
-        render: () => (
-          <span className="text-emerald-600 font-semibold">&#10003;</span>
-        ),
-      },
-      {
-        label: "Rating",
-        align: "center",
-        render: (b) => (
-          <>
-            <span className="text-amber">{renderStars(b.rating || 0)}</span>
-            <span className="text-sm text-slate-500 ml-1">{b.rating}</span>
-          </>
-        ),
-      },
-    ];
-  }
-
-  // Default: share-trading
-  return [
-    { label: "ASX Fee", jargon: true, render: (b) => b.asx_fee || "N/A" },
-    { label: "US Fee", jargon: true, render: (b) => b.us_fee || "N/A" },
-    {
-      label: "FX Rate",
-      jargon: true,
-      render: (b) => (b.fx_rate != null ? `${b.fx_rate}%` : "N/A"),
-    },
-    {
-      label: "CHESS",
-      jargon: true,
-      align: "center",
-      render: (b) => (
-        <span
-          className={
-            b.chess_sponsored
-              ? "text-emerald-600 font-semibold"
-              : "text-red-500"
-          }
-        >
-          {b.chess_sponsored ? "✓" : "✗"}
-        </span>
-      ),
-    },
-    {
-      label: "Rating",
-      align: "center",
-      render: (b) => (
-        <>
-          <span className="text-amber">{renderStars(b.rating || 0)}</span>
-          <span className="text-sm text-slate-500 ml-1">{b.rating}</span>
-        </>
-      ),
-    },
-  ];
-}
+import VerticalBrokerTable from "@/components/VerticalBrokerTable";
 
 /* ─── Lead magnet segment mapping ─── */
 
@@ -229,7 +77,6 @@ export default function VerticalPillarPage({
 }: VerticalPillarPageProps) {
   const hasSponsored = brokers.some(isSponsored);
   const topPick = brokers[0] || null;
-  const columns = getColumns(config.slug);
   const dealBrokers = brokers.filter((b) => b.deal && b.deal_text).slice(0, 3);
   const hasDeals = dealBrokers.length > 0;
 
@@ -606,113 +453,11 @@ export default function VerticalPillarPage({
           >
             All Platforms ({brokers.length})
           </h2>
-
-          {/* Desktop table */}
-          <div className="hidden md:block overflow-x-auto mb-8">
-            <ScrollReveal
-              animation="table-row-stagger"
-              as="table"
-              className="w-full border border-slate-200 rounded-lg"
-            >
-              <thead className="bg-slate-50">
-                <tr>
-                  <th className="px-4 py-3 text-left font-semibold text-sm">
-                    #
-                  </th>
-                  <th className="px-4 py-3 text-left font-semibold text-sm">
-                    Platform
-                  </th>
-                  {columns.map((col, i) => (
-                    <th
-                      key={i}
-                      className={`px-4 py-3 font-semibold text-sm ${
-                        col.align === "center" ? "text-center" : "text-left"
-                      }`}
-                    >
-                      {col.jargon ? (
-                        <JargonTooltip term={col.label} />
-                      ) : (
-                        col.label
-                      )}
-                    </th>
-                  ))}
-                  <th className="px-4 py-3"></th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200">
-                {brokers.map((broker, i) => (
-                  <tr
-                    key={broker.id}
-                    className={`hover:bg-slate-50 ${
-                      i === 0 ? `${config.color.bg}/40` : ""
-                    }`}
-                  >
-                    <td className="px-4 py-3 text-sm font-semibold text-slate-400">
-                      {i + 1}
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
-                        <BrokerLogo broker={broker} size="sm" />
-                        <div>
-                          <div className="flex items-center gap-1.5 flex-wrap">
-                            <Link
-                              href={`/broker/${broker.slug}`}
-                              className="font-semibold text-brand hover:text-slate-900 transition-colors"
-                            >
-                              {broker.name}
-                            </Link>
-                            {isSponsored(broker) && (
-                              <SponsorBadge broker={broker} />
-                            )}
-                          </div>
-                          {i === 0 && (
-                            <div
-                              className={`text-[0.69rem] font-extrabold ${config.color.text} uppercase tracking-wide`}
-                            >
-                              Top Pick
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </td>
-                    {columns.map((col, ci) => (
-                      <td
-                        key={ci}
-                        className={`px-4 py-3 text-sm ${
-                          col.align === "center" ? "text-center" : ""
-                        }`}
-                      >
-                        {col.render(broker)}
-                      </td>
-                    ))}
-                    <td className="px-4 py-3 text-center">
-                      <a
-                        href={getAffiliateLink(broker)}
-                        target="_blank"
-                        rel={AFFILIATE_REL}
-                        className={`inline-block px-4 py-2 ${config.color.accent} text-white text-sm font-semibold rounded-lg hover:opacity-90 transition-colors`}
-                      >
-                        {getBenefitCta(broker, "compare")}
-                      </a>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </ScrollReveal>
-          </div>
-
-          {/* Mobile cards */}
-          <div className="md:hidden space-y-2 mb-6">
-            {brokers.map((broker, i) => (
-              <BrokerCard
-                key={broker.id}
-                broker={broker}
-                badge={i === 0 ? "Top Pick" : undefined}
-                context="compare"
-              />
-            ))}
-          </div>
-          <CompactDisclaimerLine />
+          <VerticalBrokerTable
+            brokers={brokers}
+            slug={config.slug}
+            color={config.color}
+          />
 
           {/* ─── Quick Tools ─── */}
           <div id="tools" className="mb-6 md:mb-10 scroll-mt-20">

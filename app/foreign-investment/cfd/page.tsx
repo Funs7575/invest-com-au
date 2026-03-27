@@ -7,6 +7,7 @@ import {
   FOREIGN_INVESTOR_GENERAL_DISCLAIMER,
 } from "@/lib/compliance";
 import ForeignInvestmentNav from "../ForeignInvestmentNav";
+import SectionHeading from "@/components/SectionHeading";
 
 export const metadata: Metadata = {
   title: "CFD & Forex Trading for Non-Residents in Australia — 2026 Guide — Invest.com.au",
@@ -84,16 +85,6 @@ const CFD_FAQS = [
     answer: "Almost certainly yes. Most countries tax their residents on worldwide income, including profits from CFD trading via Australian or offshore brokers. Even if Australia doesn't withhold tax automatically, your home country will likely require you to report and pay tax on CFD profits. Get advice from a tax professional in your home country.",
   },
 ];
-
-function SectionHeading({ eyebrow, title, sub }: { eyebrow: string; title: string; sub?: string }) {
-  return (
-    <div className="mb-6 md:mb-8">
-      <p className="text-xs font-bold uppercase tracking-wider text-amber-600 mb-1">{eyebrow}</p>
-      <h2 className="text-xl md:text-2xl font-extrabold text-slate-900">{title}</h2>
-      {sub && <p className="text-sm text-slate-500 mt-1 leading-relaxed">{sub}</p>}
-    </div>
-  );
-}
 
 const ASIC_LEVERAGE_LIMITS = [
   { market: "Major forex pairs", limit: "30:1", examples: "EUR/USD, GBP/USD, USD/JPY", color: "green" },

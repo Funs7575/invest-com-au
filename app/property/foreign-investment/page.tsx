@@ -12,6 +12,7 @@ import { FIRB_DISCLAIMER, FOREIGN_BUYER_STAMP_DUTY_WARNING } from "@/lib/complia
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import CostCalculator from "./CostCalculator";
 import FaqAccordion from "./FaqAccordion";
+import SectionHeading from "@/components/SectionHeading";
 
 export const metadata: Metadata = {
   title: "Foreign Investment in Australian Property — FIRB Guide 2026 — Invest.com.au",
@@ -39,16 +40,6 @@ export const revalidate = 86400; // revalidate daily
 function formatCurrency(n: number) {
   if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(n % 1_000_000 === 0 ? 0 : 1)}M`;
   return `$${n.toLocaleString("en-AU")}`;
-}
-
-function SectionHeading({ eyebrow, title, sub }: { eyebrow: string; title: string; sub?: string }) {
-  return (
-    <div className="mb-6 md:mb-8">
-      <p className="text-xs font-bold uppercase tracking-wider text-amber-600 mb-1">{eyebrow}</p>
-      <h2 className="text-xl md:text-2xl font-extrabold text-slate-900">{title}</h2>
-      {sub && <p className="text-sm text-slate-500 mt-1 leading-relaxed">{sub}</p>}
-    </div>
-  );
 }
 
 export default function ForeignInvestmentPage() {
