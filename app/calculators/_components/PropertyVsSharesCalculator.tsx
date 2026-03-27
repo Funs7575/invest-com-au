@@ -55,7 +55,6 @@ export default function PropertyVsSharesCalculator({ searchParams }: Props) {
 
     let propCurrentValue = propVal;
     let totalNetRental = 0;
-    let totalPropertyCosts = 0;
     const propSnapshots: { year: number; equity: number; propValue: number }[] = [];
     propSnapshots.push({ year: 0, equity: dep, propValue: propVal });
 
@@ -63,13 +62,11 @@ export default function PropertyVsSharesCalculator({ searchParams }: Props) {
     for (let y = 1; y <= T; y++) {
       propCurrentValue *= (1 + pg);
       const grossRental = propCurrentValue * ry;
-      const annualCosts = propCurrentValue * hc + annualMortgage;
       const interestPortion = outstandingLoan * mortgageRate;
       const principalPortion = Math.max(0, annualMortgage - interestPortion);
       outstandingLoan = Math.max(0, outstandingLoan - principalPortion);
       const netRental = grossRental - (propCurrentValue * hc) - interestPortion;
       totalNetRental += netRental;
-      totalPropertyCosts += annualCosts;
       const equity = propCurrentValue - outstandingLoan;
       propSnapshots.push({ year: y, equity, propValue: propCurrentValue });
     }
@@ -170,7 +167,7 @@ export default function PropertyVsSharesCalculator({ searchParams }: Props) {
               {/* Equity chart */}
               <div className="space-y-1.5">
                 <p className="text-[0.69rem] font-bold uppercase tracking-wider text-slate-400 mb-2">Equity / Portfolio Over Time</p>
-                {result.propSnapshots.filter((_, i) => i % Math.max(1, Math.floor(result.propSnapshots.length / 6)) === 0 || i === result.propSnapshots.length - 1).map((s, idx) => {
+                {result.propSnapshots.filter((_, i) => i % Math.max(1, Math.floor(result.propSnapshots.length / 6)) === 0 || i === result.propSnapshots.length - 1).map((s) => {
                   const sharesSnap = result.sharesSnapshots.find(ss => ss.year === s.year);
                   return (
                     <div key={s.year} className="space-y-0.5">

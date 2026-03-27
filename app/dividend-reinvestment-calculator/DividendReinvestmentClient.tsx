@@ -16,14 +16,12 @@ export default function DividendReinvestmentClient() {
   const [divYield, setDivYield] = useState(4);
   const [growth, setGrowth] = useState(6);
   const [years, setYears] = useState(20);
-  const [reinvest, setReinvest] = useState(true);
-
   const result = useMemo(() => {
     const dy = divYield / 100;
     const gr = growth / 100;
 
     let currentSharesDrp = shares;
-    let currentSharesCash = shares;
+    const currentSharesCash = shares;
     let currentPrice = price;
     let totalDividendsReceived = 0;
     let totalDividendsCash = 0;

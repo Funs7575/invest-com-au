@@ -84,7 +84,7 @@ export default function DividendReinvestmentCalculator({ searchParams }: Props) 
   return (
     <CalcSection
       id="dividend-reinvestment"
-      iconName="refresh-cw"
+      iconName="rotate-ccw"
       title="Dividend Reinvestment Calculator"
       desc="See how reinvesting dividends (DRP) accelerates portfolio growth through compounding."
     >

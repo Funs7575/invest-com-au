@@ -43,7 +43,7 @@ const CALCS: { id: CalcId; icon: string; title: string; subtitle: string; badge?
   { id: "switch-calc" as CalcId, icon: "arrow-right-left", title: "Switching Calculator", subtitle: "How much could you save?" },
   { id: "savings-calc" as CalcId, icon: "piggy-bank", title: "Savings Calculator", subtitle: "Are you earning enough?" },
   { id: "compound-interest" as CalcId, icon: "trending-up", title: "Compound Interest", subtitle: "Project your investment growth" },
-  { id: "dividend-reinvestment" as CalcId, icon: "refresh-cw", title: "Dividend Reinvestment", subtitle: "DRP vs cash dividends" },
+  { id: "dividend-reinvestment" as CalcId, icon: "rotate-ccw", title: "Dividend Reinvestment", subtitle: "DRP vs cash dividends" },
   { id: "fire" as CalcId, icon: "flame", title: "FIRE Calculator", subtitle: "Financial independence number" },
   { id: "property-vs-shares" as CalcId, icon: "scale", title: "Property vs Shares", subtitle: "Compare investment returns" },
 ];
