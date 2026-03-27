@@ -141,6 +141,21 @@ export default memo(function BrokerCard({
           )}
         </div>
 
+        {/* Non-resident eligibility badge */}
+        {broker.accepts_non_residents === true && (
+          <div className="flex items-center gap-1 mb-1.5">
+            <span className="text-[0.6rem] px-1.5 py-0.5 bg-blue-50 rounded font-bold text-blue-700">🌏 Accepts non-residents</span>
+            {broker.foreign_investor_notes && (
+              <span className="text-[0.55rem] text-slate-400 truncate">{broker.foreign_investor_notes}</span>
+            )}
+          </div>
+        )}
+        {broker.accepts_non_residents === false && broker.accepts_temporary_residents === true && (
+          <div className="flex items-center gap-1 mb-1.5">
+            <span className="text-[0.6rem] px-1.5 py-0.5 bg-amber-50 rounded font-bold text-amber-700">Temp visa only</span>
+          </div>
+        )}
+
         {/* Row 3: Deal (if active and not expired) */}
         {broker.deal && broker.deal_text && (!broker.deal_expiry || new Date(broker.deal_expiry).getTime() > Date.now()) && (
           <div className="flex items-center gap-1.5 px-2 py-1 bg-amber-50 border border-amber-200/80 rounded-lg">

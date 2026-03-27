@@ -93,6 +93,15 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { professional_id, user_name, user_email, user_phone, message, source_page } = body;
 
+    // Detect international visitor via Vercel IP country header
+    const visitorCountry = request.headers.get("x-vercel-ip-country") || body.visitor_country || null;
+    const isInternationalLead = Boolean(
+      body.is_international ||
+      (visitorCountry && !["AU", "NZ"].includes(visitorCountry)) ||
+      body.investor_country ||
+      body.visa_status
+    );
+
     // Honeypot: bots fill hidden fields that real users never see
     if (body.website || body.fax || body.company_url) {
       // Silent reject — return fake success so bots don't retry
@@ -209,8 +218,9 @@ export async function POST(request: NextRequest) {
     // Clamp 0-100
     score = Math.min(100, Math.max(0, score));
 
-    // Determine lead tier based on qualification data
-    const leadTier = hasQualificationData ? "qualified" : "standard";
+    // Determine lead tier based on qualification data and international status
+    // International leads are worth significantly more (foreign investors have higher transaction values)
+    const leadTier = isInternationalLead ? "international" : hasQualificationData ? "qualified" : "standard";
 
     // ── Auto-Billing (prepaid credit model) ──
     // First 2 leads are free (trial), then deduct from credit balance
@@ -241,9 +251,13 @@ export async function POST(request: NextRequest) {
     }
 
     const isFree = freeUsed < (categoryFreeLeads || freeTrialCount);
-    // Use qualified price when lead has qualification data
+    // Pricing tiers: international = 3x, qualified = 2x, standard = 1x
     const basePriceCents = advisor?.lead_price_cents || categoryPrice;
-    const priceCents = isFree ? 0 : (leadTier === "qualified" ? (categoryQualifiedPrice || basePriceCents * 2) : basePriceCents);
+    const priceCents = isFree ? 0 : (
+      leadTier === "international" ? basePriceCents * 3 :
+      leadTier === "qualified" ? (categoryQualifiedPrice || basePriceCents * 2) :
+      basePriceCents
+    );
     const balance = advisor?.credit_balance_cents || 0;
     const hasSufficientCredit = balance >= priceCents;
 
@@ -321,7 +335,9 @@ export async function POST(request: NextRequest) {
         if (RESEND_API_KEY) {
           // Build qualification data rows for the email
           const qualDataRows = hasQualificationData ? buildQualificationEmailRows(qualificationData) : "";
-          const tierBadge = leadTier === "qualified"
+          const tierBadge = leadTier === "international"
+            ? `<span style="display: inline-block; padding: 3px 10px; background: #dbeafe; color: #1e40af; border-radius: 20px; font-size: 11px; font-weight: 700; margin-left: 8px;">🌏 International Lead</span>`
+            : leadTier === "qualified"
             ? `<span style="display: inline-block; padding: 3px 10px; background: #dbeafe; color: #1e40af; border-radius: 20px; font-size: 11px; font-weight: 700; margin-left: 8px;">Qualified Lead</span>`
             : "";
 

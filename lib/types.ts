@@ -112,6 +112,11 @@ export interface Broker {
   reviewed_at?: string;
   created_at: string;
   updated_at: string;
+  // International / non-resident eligibility
+  accepts_non_residents?: boolean | null;
+  accepts_temporary_residents?: boolean | null;
+  requires_australian_address?: boolean | null;
+  foreign_investor_notes?: string | null;
 }
 
 export interface Article {
@@ -1021,6 +1026,12 @@ export interface Professional {
   auto_paused_at?: string;
   auto_pause_reason?: string;
   pause_warning_sent_at?: string;
+  // International client fields
+  accepts_international_clients?: boolean;
+  international_tax_specialist?: boolean;
+  firb_specialist?: boolean;
+  migration_agent?: boolean;
+  migration_agent_marn?: string;
 }
 
 export interface ProfessionalLead {

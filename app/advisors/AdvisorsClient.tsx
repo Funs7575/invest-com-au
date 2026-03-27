@@ -203,6 +203,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
   const [firmFilter, setFirmFilter] = useState<string>("all");
   const [minRating, setMinRating] = useState<number>(0);
   const [verifiedOnly, setVerifiedOnly] = useState(false);
+  const [internationalOnly, setInternationalOnly] = useState(false);
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState<SortKey>("rating");
   const [page, setPage] = useState(1);
@@ -384,6 +385,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
       if (firmFilter !== "all" && p.firm_name !== firmFilter) return false;
       if (minRating > 0 && (p.rating || 0) < minRating) return false;
       if (specialtyFilters.length > 0 && !specialtyFilters.every(sf => p.specialties.includes(sf))) return false;
+      if (internationalOnly && !p.accepts_international_clients && !p.firb_specialist && !p.international_tax_specialist) return false;
       if (search) {
         const q = search.toLowerCase();
         return p.name.toLowerCase().includes(q) || p.firm_name?.toLowerCase().includes(q) || p.specialties.some(s => s.toLowerCase().includes(q)) || p.location_display?.toLowerCase().includes(q) || p.location_suburb?.toLowerCase().includes(q);
@@ -411,7 +413,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
   const totalPages = Math.ceil(filtered.length / RESULTS_PER_PAGE);
   const paginatedResults = filtered.slice((page - 1) * RESULTS_PER_PAGE, page * RESULTS_PER_PAGE);
 
-  const activeFilterCount = [typeFilters.size > 0, stateFilter !== "all", specialtyFilters.length > 0, feeFilter !== "all", firmFilter !== "all", minRating > 0, verifiedOnly, isLocationActive].filter(Boolean).length;
+  const activeFilterCount = [typeFilters.size > 0, stateFilter !== "all", specialtyFilters.length > 0, feeFilter !== "all", firmFilter !== "all", minRating > 0, verifiedOnly, internationalOnly, isLocationActive].filter(Boolean).length;
 
   const contextParts: string[] = [];
   if (typeFilters.size > 0) {
@@ -441,7 +443,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
   const clearAll = () => {
     setTypeFilters(new Set()); setStateFilter("all"); setSpecialtyFilters([]); setFeeFilter("all");
     setFirmFilter("all"); setMinRating(0);
-    setVerifiedOnly(false); setSearch(""); setSortBy("rating");
+    setVerifiedOnly(false); setInternationalOnly(false); setSearch(""); setSortBy("rating");
     setLocationSearch(null); setUserLat(null); setUserLng(null); setRadius(25);
   };
 
@@ -593,6 +595,25 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               </div>
             </div>
 
+            {/* International clients filter */}
+            <div className="border border-blue-200 bg-blue-50 rounded-xl px-4 py-3 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2">
+                <span className="text-base leading-none">🌏</span>
+                <div>
+                  <p className="text-xs font-bold text-blue-900">International clients</p>
+                  <p className="text-[0.65rem] text-blue-700">Show only advisors who accept overseas or expat clients (FIRB, cross-border tax, non-resident loans)</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setInternationalOnly(!internationalOnly)}
+                className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full transition-colors duration-200 focus:outline-none ${internationalOnly ? "bg-blue-600" : "bg-slate-300"}`}
+                role="switch"
+                aria-checked={internationalOnly}
+              >
+                <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform duration-200 mt-0.5 ${internationalOnly ? "translate-x-4 ml-0.5" : "translate-x-0.5"}`} />
+              </button>
+            </div>
+
             {/* Specialties */}
             <div>
               <label className="text-xs font-bold text-slate-700 mb-2 block">Specialties {specialtyFilters.length > 0 && <span className="text-amber-600">({specialtyFilters.length} selected)</span>}</label>
@@ -662,6 +683,12 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-100 text-slate-700 text-[0.65rem] font-semibold rounded-full">
                 Verified
                 <button onClick={() => setVerifiedOnly(false)} className="hover:text-slate-900"><Icon name="x" size={12} /></button>
+              </span>
+            )}
+            {internationalOnly && (
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-100 text-blue-700 text-[0.65rem] font-semibold rounded-full">
+                🌏 International clients
+                <button onClick={() => setInternationalOnly(false)} className="hover:text-blue-900"><Icon name="x" size={12} /></button>
               </span>
             )}
             <button onClick={clearAll} className="text-[0.62rem] text-slate-400 hover:text-slate-600 font-medium ml-1">Clear all</button>
@@ -797,6 +824,16 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                         <span className="shrink-0 text-[0.56rem] md:text-[0.62rem] font-bold px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 flex items-center gap-0.5">
                           <Icon name="zap" size={10} className="text-emerald-500" />
                           Fast
+                        </span>
+                      )}
+                      {pro.accepts_international_clients && (
+                        <span className="shrink-0 text-[0.56rem] md:text-[0.62rem] font-bold px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700">
+                          🌏 Intl
+                        </span>
+                      )}
+                      {pro.firb_specialist && (
+                        <span className="shrink-0 text-[0.56rem] md:text-[0.62rem] font-bold px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700">
+                          FIRB
                         </span>
                       )}
                     </div>

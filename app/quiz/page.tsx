@@ -15,11 +15,12 @@ import QuizEmailGate from "./_components/QuizEmailGate";
 import AdvisorResultsScreen from "./_components/AdvisorResultsScreen";
 
 /* ─── Types ─── */
-type QuestionId = "goal" | "mode" | "experience" | "complexity" | "amount" | "priority" | "advisor_type" | "property_sub";
-type QuizTrack = "diy" | "advisor";
+type QuestionId = "location" | "goal" | "mode" | "experience" | "complexity" | "amount" | "priority" | "advisor_type" | "property_sub" | "investor_country" | "visa_status" | "investor_goal_intl";
+type QuizTrack = "diy" | "advisor" | "international";
 type Phase = "questions" | "email-gate" | "analyzing" | "advisor-analyzing" | "diy-results" | "advisor-results";
 
 interface UnifiedAnswers {
+  location?: string;
   goal?: string;
   mode?: string;
   experience?: string;
@@ -28,6 +29,9 @@ interface UnifiedAnswers {
   priority?: string;
   advisor_type?: string;
   property_sub?: string;
+  investor_country?: string;
+  visa_status?: string;
+  investor_goal_intl?: string;
 }
 
 interface QuizWeight {
@@ -44,6 +48,47 @@ interface QuizWeight {
 
 /* ─── Unified question definitions ─── */
 const UNIFIED_QUESTIONS: Record<QuestionId, { text: string; options: { key: string; label: string; sub?: string; emoji?: string }[] }> = {
+  location: {
+    text: "Where are you based?",
+    options: [
+      { key: "australia",     label: "I live in Australia",              sub: "Australian resident or citizen",              emoji: "🇦🇺" },
+      { key: "international", label: "I'm outside Australia",            sub: "I'm based overseas and investing in Australia", emoji: "🌏" },
+      { key: "expat",         label: "Australian expat living abroad",   sub: "I'm an Aussie living overseas",               emoji: "✈️" },
+    ],
+  },
+  investor_country: {
+    text: "Which country are you based in?",
+    options: [
+      { key: "singapore",    label: "Singapore",     emoji: "🇸🇬" },
+      { key: "hong_kong",    label: "Hong Kong",     emoji: "🇭🇰" },
+      { key: "china",        label: "China",         emoji: "🇨🇳" },
+      { key: "india",        label: "India",         emoji: "🇮🇳" },
+      { key: "uae",          label: "UAE / Middle East", emoji: "🇦🇪" },
+      { key: "uk",           label: "United Kingdom", emoji: "🇬🇧" },
+      { key: "usa",          label: "United States", emoji: "🇺🇸" },
+      { key: "malaysia",     label: "Malaysia",      emoji: "🇲🇾" },
+      { key: "new_zealand",  label: "New Zealand",   emoji: "🇳🇿" },
+      { key: "other",        label: "Other country", emoji: "🌍" },
+    ],
+  },
+  visa_status: {
+    text: "What is your relationship with Australia?",
+    options: [
+      { key: "non_resident",    label: "Non-resident / no Australian ties", sub: "Never lived in Australia, no visa",                emoji: "🌐" },
+      { key: "temp_visa",       label: "Temporary visa holder",             sub: "457, 482, student, working holiday visa",         emoji: "📋" },
+      { key: "new_pr",          label: "New permanent resident",            sub: "Recently got PR, not yet a citizen",              emoji: "🏡" },
+      { key: "au_expat",        label: "Australian expat",                  sub: "Australian citizen or PR living abroad",          emoji: "✈️" },
+    ],
+  },
+  investor_goal_intl: {
+    text: "What are you looking to do in Australia?",
+    options: [
+      { key: "property",  label: "Buy property",            sub: "Residential or investment property",          emoji: "🏠" },
+      { key: "shares",    label: "Invest in ASX shares",    sub: "Stocks, ETFs, or managed funds",              emoji: "📈" },
+      { key: "savings",   label: "Park money in AUD",       sub: "High-interest savings or term deposits",      emoji: "💰" },
+      { key: "business",  label: "Set up a business",       sub: "Company registration, structuring",           emoji: "🏢" },
+    ],
+  },
   goal: {
     text: "What are you trying to do?",
     options: [
@@ -122,7 +167,12 @@ const UNIFIED_QUESTIONS: Record<QuestionId, { text: string; options: { key: stri
 };
 
 /* ─── Navigation logic ─── */
+function isInternational(a: UnifiedAnswers): boolean {
+  return a.location === "international" || a.location === "expat";
+}
+
 function resolveTrack(a: UnifiedAnswers): QuizTrack {
+  if (isInternational(a)) return "international";
   if (a.goal === "help" || a.goal === "home") return "advisor";
   if (a.mode === "help") return "advisor";
   if (a.property_sub === "physical") return "advisor";
@@ -131,7 +181,26 @@ function resolveTrack(a: UnifiedAnswers): QuizTrack {
 
 function getNextId(id: QuestionId, a: UnifiedAnswers): QuestionId | null {
   const track = resolveTrack(a);
+
+  // International track
+  if (track === "international") {
+    switch (id) {
+      case "location":      return "investor_country";
+      case "investor_country": return "visa_status";
+      case "visa_status":   return "investor_goal_intl";
+      case "investor_goal_intl": return "amount";
+      case "amount":        return "advisor_type";
+      case "advisor_type":  return null;
+      // These shouldn't be hit but handle defensively
+      case "goal": case "mode": case "experience": case "complexity":
+      case "priority": case "property_sub": return null;
+    }
+  }
+
+  // Domestic track
   switch (id) {
+    case "location":
+      return "goal";
     case "goal":
       return (a.goal === "help" || a.goal === "home") ? "complexity" : "mode";
     case "mode":
@@ -146,17 +215,31 @@ function getNextId(id: QuestionId, a: UnifiedAnswers): QuestionId | null {
       return a.goal === "property" ? "property_sub" : null;
     case "property_sub":
       return null;
+    // International-only questions that shouldn't appear on domestic track
+    case "investor_country":
+    case "visa_status":
+    case "investor_goal_intl":
+      return null;
   }
 }
 
 function getTotalSteps(a: UnifiedAnswers): number {
+  if (isInternational(a)) return 5; // location + country + visa + goal + amount + advisor_type
   const skipMode = a.goal === "help" || a.goal === "home";
   const hasPropertySub = a.goal === "property";
-  return (skipMode ? 4 : 5) + (hasPropertySub ? 1 : 0);
+  return 1 + (skipMode ? 4 : 5) + (hasPropertySub ? 1 : 0); // +1 for location
 }
 
 function inferAdvisorType(a: UnifiedAnswers): string {
   if (a.advisor_type && a.advisor_type !== "not-sure") return a.advisor_type;
+  // International track
+  if (isInternational(a)) {
+    if (a.investor_goal_intl === "property") return "buyers-agent";
+    if (a.investor_goal_intl === "shares") return "tax-agent";
+    if (a.investor_goal_intl === "savings" || a.investor_goal_intl === "business") return "financial-planner";
+    return "tax-agent";
+  }
+  // Domestic track
   if (a.property_sub === "physical") return "buyers-agent";
   if (a.goal === "home") return "mortgage-broker";
   if (a.goal === "property") return "buyers-agent";
@@ -259,7 +342,7 @@ function clearProgress() {
 
 export default function QuizPage() {
   const [phase, setPhase] = useState<Phase>("questions");
-  const [currentId, setCurrentId] = useState<QuestionId>("goal");
+  const [currentId, setCurrentId] = useState<QuestionId>("location");
   const [answers, setAnswers] = useState<UnifiedAnswers>({});
   const [history, setHistory] = useState<QuestionId[]>([]);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
@@ -496,7 +579,7 @@ export default function QuizPage() {
   const handleRestart = () => {
     clearProgress();
     setPhase("questions");
-    setCurrentId("goal");
+    setCurrentId("location");
     setAnswers({});
     setHistory([]);
     setShowScoring(false);
@@ -592,6 +675,10 @@ export default function QuizPage() {
         quizAnswers={answers as Record<string, string>}
         platformResults={results}
         onRestart={handleRestart}
+        isInternational={isInternational(answers)}
+        investorCountry={answers.investor_country}
+        visaStatus={answers.visa_status}
+        investorGoalIntl={answers.investor_goal_intl}
       />
     );
   }

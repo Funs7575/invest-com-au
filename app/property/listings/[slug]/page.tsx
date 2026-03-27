@@ -7,6 +7,7 @@ import { OFF_THE_PLAN_WARNING, PROPERTY_DISCLAIMER_SHORT, PROPERTY_INDICATIVE_PR
 import Icon from "@/components/Icon";
 import PropertyEnquiryForm from "./PropertyEnquiryForm";
 import { getListingImages } from "@/lib/property-images";
+import FirbCostCalculatorInline from "@/components/FirbCostCalculatorInline";
 
 export const revalidate = 3600;
 
@@ -280,6 +281,14 @@ export default async function PropertyListingPage({ params }: { params: Promise<
                   </div>
                 </div>
               </div>
+            )}
+
+            {/* FIRB Cost Calculator — shown for FIRB-eligible or foreign-buyer-eligible properties */}
+            {(listing.firb_approved || listing.foreign_buyer_eligible || listing.off_the_plan || listing.new_development) && (
+              <FirbCostCalculatorInline
+                defaultPrice={Math.round(listing.price_from_cents / 100)}
+                defaultState={listing.state || "NSW"}
+              />
             )}
 
             {/* Description */}
