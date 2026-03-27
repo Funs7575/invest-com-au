@@ -87,7 +87,11 @@ export default function PersonaSelector({ personas }: Props) {
                 <p className="text-xs font-bold text-amber-800 mb-1">Recommended advisor type</p>
                 <p className="text-sm text-slate-700 mb-3">{active.advisorType}</p>
                 <Link
-                  href="/advisors/tax-agents"
+                  href={
+                    active.id === "new-pr"
+                      ? "/advisors/financial-planners"
+                      : "/advisors/tax-agents"
+                  }
                   className="inline-block text-xs font-bold text-amber-700 hover:text-amber-900 underline underline-offset-2"
                 >
                   Find a verified advisor &rarr;

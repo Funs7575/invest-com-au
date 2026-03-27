@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import { BROKER_NON_RESIDENT_NOTE, FOREIGN_INVESTOR_GENERAL_DISCLAIMER, CRYPTO_REGULATORY_NOTE } from "@/lib/compliance";
 import type { Broker } from "@/lib/types";
+import ForeignInvestmentNav from "../ForeignInvestmentNav";
 
 export const metadata: Metadata = {
   title: "Crypto for Non-Residents in Australia — AUSTRAC, KYC & Tax — 2026 Guide",
@@ -124,6 +125,8 @@ export default async function ForeignCryptoPage() {
     <div className="bg-white min-h-screen">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+
+      <ForeignInvestmentNav current="/foreign-investment/crypto" />
 
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-10 md:py-14">

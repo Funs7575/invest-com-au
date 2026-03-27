@@ -6,10 +6,14 @@ import {
   VERTICAL_FOREIGN_RULES,
   TOP_5_RULES_FOR_FOREIGN_INVESTORS,
   DTA_COUNTRIES,
+  DEFAULT_WHT,
   type ForeignInvestorPersona,
 } from "@/lib/foreign-investment-data";
 import { FOREIGN_INVESTOR_GENERAL_DISCLAIMER, DTA_DISCLAIMER } from "@/lib/compliance";
 import PersonaSelector from "./PersonaSelector";
+import DTASearchTable from "./DTASearchTable";
+import ForeignInvestmentNav from "./ForeignInvestmentNav";
+import WHTCalculator from "./WHTCalculator";
 
 export const metadata: Metadata = {
   title: "Foreign Investment in Australia — Complete Guide 2026 — Invest.com.au",
@@ -120,6 +124,8 @@ export default function ForeignInvestmentHubPage() {
     <div className="bg-white min-h-screen">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+
+      <ForeignInvestmentNav current="/foreign-investment" />
 
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-10 md:py-16">
@@ -247,6 +253,13 @@ export default function ForeignInvestmentHubPage() {
         </div>
       </section>
 
+      {/* ── Withholding Tax Calculator ───────────────────────────────── */}
+      <section className="py-12 md:py-16">
+        <div className="container-custom max-w-3xl">
+          <WHTCalculator countries={DTA_COUNTRIES} defaultRates={DEFAULT_WHT} />
+        </div>
+      </section>
+
       {/* ── DTA Quick-Reference Table ───────────────────────────────── */}
       <section className="py-12 md:py-16 bg-slate-50">
         <div className="container-custom">
@@ -255,63 +268,11 @@ export default function ForeignInvestmentHubPage() {
             title="Double Tax Agreement (DTA) withholding rates"
             sub="Australian withholding tax rates for residents of treaty countries. Without a DTA, dividends are taxed at 30%, royalties at 30%."
           />
-          <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-slate-200 bg-slate-50">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Country</th>
-                  <th className="text-center px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">DTA</th>
-                  <th className="text-center px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Dividends</th>
-                  <th className="text-center px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Interest</th>
-                  <th className="text-center px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Royalties</th>
-                </tr>
-              </thead>
-              <tbody>
-                {DTA_COUNTRIES.map((c, i) => (
-                  <tr
-                    key={c.countryCode}
-                    className={`border-b border-slate-100 last:border-0 ${i % 2 === 1 ? "bg-slate-50/40" : ""}`}
-                  >
-                    <td className="px-4 py-3 font-medium text-slate-900 text-xs">{c.country}</td>
-                    <td className="px-4 py-3 text-center">
-                      {c.hasDTA ? (
-                        <span className="inline-block w-5 h-5 bg-green-100 text-green-700 rounded-full text-xs font-bold flex items-center justify-center">✓</span>
-                      ) : (
-                        <span className="inline-block w-5 h-5 bg-red-50 text-red-400 rounded-full text-xs font-bold flex items-center justify-center">✗</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <span className={`text-xs font-bold ${c.dividendWHT <= 15 ? "text-green-700" : c.dividendWHT <= 20 ? "text-amber-700" : "text-red-700"}`}>
-                        {c.dividendWHT}%
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <span className={`text-xs font-bold ${c.interestWHT <= 10 ? "text-green-700" : "text-amber-700"}`}>
-                        {c.interestWHT}%
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <span className={`text-xs font-bold ${c.royaltiesWHT <= 10 ? "text-green-700" : c.royaltiesWHT <= 15 ? "text-amber-700" : "text-red-700"}`}>
-                        {c.royaltiesWHT}%
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-              <tfoot>
-                <tr className="bg-slate-100 border-t border-slate-200">
-                  <td className="px-4 py-3 font-bold text-xs text-slate-600">No DTA (default)</td>
-                  <td className="px-4 py-3 text-center">
-                    <span className="inline-block w-5 h-5 bg-red-50 text-red-400 rounded-full text-xs font-bold flex items-center justify-center">✗</span>
-                  </td>
-                  <td className="px-4 py-3 text-center text-xs font-bold text-red-700">30%</td>
-                  <td className="px-4 py-3 text-center text-xs font-bold text-amber-700">10%</td>
-                  <td className="px-4 py-3 text-center text-xs font-bold text-red-700">30%</td>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
-          <p className="mt-3 text-xs text-slate-400 leading-relaxed">{DTA_DISCLAIMER}</p>
+          <DTASearchTable
+            countries={DTA_COUNTRIES}
+            defaultRates={DEFAULT_WHT}
+            dtaDisclaimer={DTA_DISCLAIMER}
+          />
           <div className="mt-4">
             <Link href="/foreign-investment/tax" className="text-sm font-bold text-amber-600 hover:text-amber-700">
               See the full tax guide for non-residents &rarr;

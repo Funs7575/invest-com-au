@@ -14,6 +14,8 @@ import {
   NON_RESIDENT_TAX_NOTE,
   FOREIGN_INVESTOR_GENERAL_DISCLAIMER,
 } from "@/lib/compliance";
+import DTASearchTable from "../DTASearchTable";
+import ForeignInvestmentNav from "../ForeignInvestmentNav";
 
 export const metadata: Metadata = {
   title: "Australian Tax for Non-Residents & Foreign Investors — 2026 Guide — Invest.com.au",
@@ -179,6 +181,8 @@ export default function ForeignTaxPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
+      <ForeignInvestmentNav current="/foreign-investment/tax" />
+
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-10 md:py-14">
         <div className="container-custom">
@@ -324,55 +328,11 @@ export default function ForeignTaxPage() {
             title="DTA withholding rates by country"
             sub="Australia has DTAs with 40+ countries. These treaties reduce withholding tax on dividends, interest, and royalties."
           />
-          <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-slate-200 bg-slate-50">
-                  <th className="text-left px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Country</th>
-                  <th className="text-center px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">DTA</th>
-                  <th className="text-center px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Dividends</th>
-                  <th className="text-center px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Interest</th>
-                  <th className="text-center px-4 py-3 text-xs font-bold text-slate-600 uppercase tracking-wide">Royalties</th>
-                </tr>
-              </thead>
-              <tbody>
-                {DTA_COUNTRIES.map((c, i) => (
-                  <tr key={c.countryCode} className={`border-b border-slate-100 last:border-0 ${i % 2 === 1 ? "bg-slate-50/40" : ""}`}>
-                    <td className="px-4 py-3 font-medium text-slate-900 text-xs">
-                      {c.country}
-                      {c.notes && <span className="text-slate-400 font-normal ml-1">*</span>}
-                    </td>
-                    <td className="px-4 py-3 text-center text-xs">
-                      {c.hasDTA ? <span className="text-green-600 font-bold">Yes</span> : <span className="text-red-400">No</span>}
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <span className={`text-xs font-bold ${c.dividendWHT <= 15 ? "text-green-700" : c.dividendWHT <= 20 ? "text-amber-700" : "text-red-700"}`}>
-                        {c.dividendWHT}%
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <span className={`text-xs font-bold ${c.interestWHT <= 10 ? "text-green-700" : "text-amber-700"}`}>
-                        {c.interestWHT}%
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <span className={`text-xs font-bold ${c.royaltiesWHT <= 10 ? "text-green-700" : c.royaltiesWHT <= 15 ? "text-amber-700" : "text-red-700"}`}>
-                        {c.royaltiesWHT}%
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-                <tr className="bg-slate-100 border-t border-slate-300">
-                  <td className="px-4 py-3 font-bold text-xs text-slate-600">No DTA (default rates)</td>
-                  <td className="px-4 py-3 text-center text-xs text-red-400 font-bold">None</td>
-                  <td className="px-4 py-3 text-center text-xs font-bold text-red-700">{DEFAULT_WHT.dividendUnfranked}%</td>
-                  <td className="px-4 py-3 text-center text-xs font-bold text-amber-700">{DEFAULT_WHT.interest}%</td>
-                  <td className="px-4 py-3 text-center text-xs font-bold text-red-700">{DEFAULT_WHT.royalties}%</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <p className="mt-3 text-xs text-slate-400 leading-relaxed">{DTA_DISCLAIMER}</p>
+          <DTASearchTable
+            countries={DTA_COUNTRIES}
+            defaultRates={DEFAULT_WHT}
+            dtaDisclaimer={DTA_DISCLAIMER}
+          />
         </div>
       </section>
 

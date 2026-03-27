@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import { BROKER_NON_RESIDENT_NOTE, FOREIGN_INVESTOR_GENERAL_DISCLAIMER, WITHHOLDING_TAX_NOTE } from "@/lib/compliance";
+import ForeignInvestmentNav from "../ForeignInvestmentNav";
 
 export const metadata: Metadata = {
   title: "Savings Accounts for Non-Residents in Australia — 2026 Guide — Invest.com.au",
@@ -103,6 +104,8 @@ export default function ForeignSavingsPage() {
     <div className="bg-white min-h-screen">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+
+      <ForeignInvestmentNav current="/foreign-investment/savings" />
 
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-10 md:py-14">
