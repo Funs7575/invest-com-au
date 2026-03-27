@@ -19,12 +19,16 @@ import InlinePortfolioCalc from "./_components/InlinePortfolioCalc";
 import InlineSwitchingCalc from "./_components/InlineSwitchingCalc";
 import InlineSavingsCalc from "./_components/InlineSavingsCalc";
 import TotalCostCalculator from "./_components/TotalCostCalculator";
+import CompoundInterestCalculator from "./_components/CompoundInterestCalculator";
+import DividendReinvestmentCalculator from "./_components/DividendReinvestmentCalculator";
+import FireCalculator from "./_components/FireCalculator";
+import PropertyVsSharesCalculator from "./_components/PropertyVsSharesCalculator";
 
 /* ──────────────────────────────────────────────
    Types & constants
    ────────────────────────────────────────────── */
 interface Props { brokers: Broker[] }
-type CalcId = "trade-cost" | "fx" | "switching" | "cgt" | "franking" | "chess" | "fee-impact" | "portfolio" | "switch-calc" | "savings-calc" | "tco";
+type CalcId = "trade-cost" | "fx" | "switching" | "cgt" | "franking" | "chess" | "fee-impact" | "portfolio" | "switch-calc" | "savings-calc" | "tco" | "compound-interest" | "dividend-reinvestment" | "fire" | "property-vs-shares";
 
 const CALCS: { id: CalcId; icon: string; title: string; subtitle: string; badge?: string; href?: string }[] = [
   { id: "tco", icon: "receipt", title: "Yearly TCO", subtitle: "Total annual cost across all your trades", badge: "NEW" },
@@ -38,10 +42,23 @@ const CALCS: { id: CalcId; icon: string; title: string; subtitle: string; badge?
   { id: "portfolio" as CalcId, icon: "briefcase", title: "Portfolio Fees", subtitle: "Exact cost at every broker" },
   { id: "switch-calc" as CalcId, icon: "arrow-right-left", title: "Switching Calculator", subtitle: "How much could you save?" },
   { id: "savings-calc" as CalcId, icon: "piggy-bank", title: "Savings Calculator", subtitle: "Are you earning enough?" },
+  { id: "compound-interest" as CalcId, icon: "trending-up", title: "Compound Interest", subtitle: "Project your investment growth" },
+  { id: "dividend-reinvestment" as CalcId, icon: "rotate-ccw", title: "Dividend Reinvestment", subtitle: "DRP vs cash dividends" },
+  { id: "fire" as CalcId, icon: "flame", title: "FIRE Calculator", subtitle: "Financial independence number" },
+  { id: "property-vs-shares" as CalcId, icon: "scale", title: "Property vs Shares", subtitle: "Compare investment returns" },
 ];
 
 // Inline-only calcs (no href) for swipe navigation
 const INLINE_CALC_IDS: CalcId[] = CALCS.map(c => c.id);
+
+// Calcs that have a dedicated standalone page
+const STANDALONE_URLS: Partial<Record<CalcId, string>> = {
+  "tco": "/tco-calculator",
+  "compound-interest": "/compound-interest-calculator",
+  "dividend-reinvestment": "/dividend-reinvestment-calculator",
+  "fire": "/fire-calculator",
+  "property-vs-shares": "/property-vs-shares-calculator",
+};
 
 /* ──────────────────────────────────────────────
    Root component
@@ -228,6 +245,23 @@ export default function CalculatorsClient({ brokers }: Props) {
           {activeCalc === "portfolio" && <InlinePortfolioCalc brokers={nonCryptoBrokers} />}
           {activeCalc === "switch-calc" && <InlineSwitchingCalc brokers={nonCryptoBrokers} />}
           {activeCalc === "savings-calc" && <InlineSavingsCalc brokers={brokers} />}
+          {activeCalc === "compound-interest" && <CompoundInterestCalculator searchParams={searchParams} />}
+          {activeCalc === "dividend-reinvestment" && <DividendReinvestmentCalculator searchParams={searchParams} />}
+          {activeCalc === "fire" && <FireCalculator searchParams={searchParams} />}
+          {activeCalc === "property-vs-shares" && <PropertyVsSharesCalculator searchParams={searchParams} />}
+
+          {/* Standalone page CTA */}
+          {STANDALONE_URLS[activeCalc] && (
+            <div className="mt-3 flex justify-end">
+              <Link
+                href={STANDALONE_URLS[activeCalc]!}
+                className="text-xs font-semibold text-violet-600 hover:text-violet-700 flex items-center gap-1 transition-colors"
+              >
+                Open full calculator
+                <Icon name="external-link" size={12} />
+              </Link>
+            </div>
+          )}
 
           {/* Prev / Next navigation */}
           {currentInlineIdx >= 0 && (

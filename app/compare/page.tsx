@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
 import CompareClient from "./CompareClient";
+import CompareNav from "./CompareNav";
 import { absoluteUrl, UPDATED_LABEL } from "@/lib/seo";
 
 export const metadata = {
@@ -136,6 +137,7 @@ export default async function ComparePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
       />
+      <CompareNav current="/compare" />
       <Suspense fallback={<ComparePageSkeleton />}>
         <CompareClient brokers={activeBrokers} />
       </Suspense>
