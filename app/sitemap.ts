@@ -11,7 +11,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Static pages with tiered priorities
   const highPriority = new Set(["/compare", "/quiz", "/reviews", "/deals", "/share-trading", "/crypto", "/savings", "/super", "/cfd", "/versus", "/how-to"]);
-  const medPriority = new Set(["/calculators", "/articles", "/scenarios", "/switch", "/stories", "/benchmark", "/health-scores", "/alerts", "/whats-new", "/costs", "/fee-impact"]);
+  const medPriority = new Set(["/calculators", "/articles", "/scenarios", "/switch", "/stories", "/benchmark", "/health-scores", "/alerts", "/whats-new", "/costs", "/fee-impact", "/compound-interest-calculator", "/dividend-reinvestment-calculator", "/fire-calculator", "/property-vs-shares-calculator", "/super-contributions-calculator", "/tco-calculator"]);
   // Everything else (about, how-we-earn, privacy, methodology, terms, etc.) → 0.4
 
   const staticPages = [
@@ -52,6 +52,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Calculators
     "/mortgage-calculator", "/retirement-calculator", "/smsf-calculator",
     "/debt-calculator", "/property-yield-calculator", "/fee-impact",
+    "/compound-interest-calculator", "/dividend-reinvestment-calculator",
+    "/fire-calculator", "/property-vs-shares-calculator",
+    "/super-contributions-calculator", "/tco-calculator",
   ].map((path) => ({
     url: `${baseUrl}${path}`,
     lastModified: new Date(),

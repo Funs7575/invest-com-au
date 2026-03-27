@@ -51,6 +51,15 @@ const CALCS: { id: CalcId; icon: string; title: string; subtitle: string; badge?
 // Inline-only calcs (no href) for swipe navigation
 const INLINE_CALC_IDS: CalcId[] = CALCS.map(c => c.id);
 
+// Calcs that have a dedicated standalone page
+const STANDALONE_URLS: Partial<Record<CalcId, string>> = {
+  "tco": "/tco-calculator",
+  "compound-interest": "/compound-interest-calculator",
+  "dividend-reinvestment": "/dividend-reinvestment-calculator",
+  "fire": "/fire-calculator",
+  "property-vs-shares": "/property-vs-shares-calculator",
+};
+
 /* ──────────────────────────────────────────────
    Root component
    ────────────────────────────────────────────── */
@@ -240,6 +249,19 @@ export default function CalculatorsClient({ brokers }: Props) {
           {activeCalc === "dividend-reinvestment" && <DividendReinvestmentCalculator searchParams={searchParams} />}
           {activeCalc === "fire" && <FireCalculator searchParams={searchParams} />}
           {activeCalc === "property-vs-shares" && <PropertyVsSharesCalculator searchParams={searchParams} />}
+
+          {/* Standalone page CTA */}
+          {STANDALONE_URLS[activeCalc] && (
+            <div className="mt-3 flex justify-end">
+              <Link
+                href={STANDALONE_URLS[activeCalc]!}
+                className="text-xs font-semibold text-violet-600 hover:text-violet-700 flex items-center gap-1 transition-colors"
+              >
+                Open full calculator
+                <Icon name="external-link" size={12} />
+              </Link>
+            </div>
+          )}
 
           {/* Prev / Next navigation */}
           {currentInlineIdx >= 0 && (

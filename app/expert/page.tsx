@@ -7,17 +7,27 @@ import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 
 export const revalidate = 1800;
 
-export const metadata: Metadata = {
-  title: `Expert Insights from Verified Advisors (${CURRENT_YEAR})`,
-  description: "Read expert articles from verified Australian financial advisors, SMSF accountants, and tax agents. Practical investing insights you can act on.",
-  robots: { index: true, follow: true },
-  alternates: { canonical: "/expert" },
-  openGraph: {
-    title: `Expert Insights — Verified Financial Professionals (${CURRENT_YEAR})`,
-    description: "Read expert articles from verified Australian financial advisors, SMSF accountants, and tax agents.",
-    images: [{ url: "/api/og?title=Expert+Insights&subtitle=Advice+from+Verified+Professionals&type=default", width: 1200, height: 630 }],
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const supabase = await createClient();
+  const { count } = await supabase
+    .from("advisor_articles")
+    .select("*", { count: "exact", head: true })
+    .eq("status", "published");
+
+  const hasContent = (count ?? 0) > 0;
+
+  return {
+    title: `Expert Insights from Verified Advisors (${CURRENT_YEAR})`,
+    description: "Read expert articles from verified Australian financial advisors, SMSF accountants, and tax agents. Practical investing insights you can act on.",
+    robots: { index: hasContent, follow: true },
+    alternates: { canonical: "/expert" },
+    openGraph: {
+      title: `Expert Insights — Verified Financial Professionals (${CURRENT_YEAR})`,
+      description: "Read expert articles from verified Australian financial advisors, SMSF accountants, and tax agents.",
+      images: [{ url: "/api/og?title=Expert+Insights&subtitle=Advice+from+Verified+Professionals&type=default", width: 1200, height: 630 }],
+    },
+  };
+}
 
 export default async function ExpertInsightsPage() {
   const supabase = await createClient();
