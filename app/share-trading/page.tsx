@@ -6,6 +6,7 @@ import { absoluteUrl } from "@/lib/seo";
 import { boostFeaturedPartner } from "@/lib/sponsorship";
 import VerticalPillarPage from "@/components/VerticalPillarPage";
 import ForeignInvestorCallout from "@/components/ForeignInvestorCallout";
+import NonResidentFilterBanner from "@/components/NonResidentFilterBanner";
 
 const vertical = getVerticalBySlug("share-trading")!;
 
@@ -79,12 +80,19 @@ export default async function ShareTradingPage() {
     .order("views", { ascending: false })
     .limit(3);
 
+  const nonResidentCount = sorted.filter(b => b.accepts_non_residents === true).length;
+
   return (
     <>
       <ForeignInvestorCallout
         href="/foreign-investment/shares"
         verticalName="Australian shares"
         keyRule="30% WHT on unfranked dividends (reduced by DTA) · CGT exempt for non-residents on most listed shares · limited broker access without Australian address"
+      />
+      <NonResidentFilterBanner
+        total={sorted.length}
+        nonResidentCount={nonResidentCount}
+        vertical="shares"
       />
       <VerticalPillarPage
         config={vertical}

@@ -82,9 +82,13 @@ interface Props {
   quizAnswers: Record<string, string>;
   platformResults: PlatformResult[];
   onRestart: () => void;
+  isInternational?: boolean;
+  investorCountry?: string;
+  visaStatus?: string;
+  investorGoalIntl?: string;
 }
 
-export default function AdvisorResultsScreen({ advisorType, quizAnswers, platformResults, onRestart }: Props) {
+export default function AdvisorResultsScreen({ advisorType, quizAnswers, platformResults, onRestart, isInternational = false, investorCountry, visaStatus, investorGoalIntl }: Props) {
   // Step state
   const [step, setStep] = useState<FlowStep>("contact");
 
@@ -123,13 +127,18 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
       return;
     }
     setContactError("");
-    trackEvent("advisor_contact_step_complete", { advisor_type: advisorType }, "/quiz");
-    setStep("location");
+    trackEvent("advisor_contact_step_complete", { advisor_type: advisorType, is_international: isInternational }, "/quiz");
+    // International users skip the location step — they don't have an AU state yet
+    if (isInternational) {
+      setStep("location"); // location step handles international mode inline
+    } else {
+      setStep("location");
+    }
   };
 
   /* ─── Step 2 → Step 3 ─── */
   const handleLocationNext = async () => {
-    if (!stateValue) {
+    if (!isInternational && !stateValue) {
       setLocationError("Please select your state or enter your postcode.");
       return;
     }
@@ -148,11 +157,15 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
           email: email.trim(),
           advisor_type: advisorType,
           quiz_answers: quizAnswers,
-          state: stateValue,
+          state: stateValue || (isInternational ? "intl" : null),
           postcode: postcodeValue || null,
           suburb: suburbValue || null,
           budget: budgetValue || null,
           consent: true,
+          is_international: isInternational,
+          investor_country: investorCountry || null,
+          visa_status: visaStatus || null,
+          investor_goal_intl: investorGoalIntl || null,
         }),
       });
       trackEvent("advisor_lead_submit", { advisor_type: advisorType, state: stateValue }, "/quiz");
@@ -164,55 +177,72 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
     try {
       const supabase = createClient();
       const dbType = TYPE_DB_MAP[advisorType];
-      let query = supabase
-        .from("professionals")
-        .select("id, slug, name, firm_name, type, photo_url, rating, review_count, location_display, location_state, specialties, fee_description, verified")
-        .eq("status", "active")
-        .eq("verified", true);
 
-      if (dbType) query = query.eq("type", dbType);
-      if (stateValue) query = query.eq("location_state", stateValue);
+      const mapAdvisor = (p: Record<string, unknown>): MatchedAdvisor => ({
+        id: p.id as number,
+        slug: p.slug as string,
+        name: p.name as string,
+        firm_name: (p.firm_name as string) ?? null,
+        type: p.type as string,
+        photo_url: (p.photo_url as string) ?? null,
+        rating: (p.rating as number) ?? 0,
+        review_count: (p.review_count as number) ?? 0,
+        location_display: (p.location_display as string) ?? null,
+        specialties: (p.specialties as string[]) ?? [],
+        fee_description: (p.fee_description as string) ?? null,
+        verified: (p.verified as boolean) ?? false,
+      });
 
-      const { data } = await query.order("rating", { ascending: false }).order("review_count", { ascending: false }).limit(5);
+      let matched: MatchedAdvisor[] = [];
 
-      const matched: MatchedAdvisor[] = (data || []).map((p) => ({
-        id: p.id,
-        slug: p.slug,
-        name: p.name,
-        firm_name: p.firm_name ?? null,
-        type: p.type,
-        photo_url: p.photo_url ?? null,
-        rating: p.rating ?? 0,
-        review_count: p.review_count ?? 0,
-        location_display: p.location_display ?? null,
-        specialties: p.specialties ?? [],
-        fee_description: p.fee_description ?? null,
-        verified: p.verified ?? false,
-      }));
+      if (isInternational) {
+        // For international investors: first try advisors with international flags
+        let intlQuery = supabase
+          .from("professionals")
+          .select("id, slug, name, firm_name, type, photo_url, rating, review_count, location_display, location_state, specialties, fee_description, verified, accepts_international_clients, international_tax_specialist, firb_specialist, languages")
+          .eq("status", "active")
+          .eq("verified", true)
+          .eq("accepts_international_clients", true);
+        if (dbType) intlQuery = intlQuery.eq("type", dbType);
+        const { data: intlData } = await intlQuery.order("rating", { ascending: false }).order("review_count", { ascending: false }).limit(5);
+        matched = (intlData || []).map(mapAdvisor);
 
-      // Fallback: try without state filter if empty
-      if (matched.length === 0 && stateValue) {
-        let fallbackQuery = supabase
+        // Fallback: search by international specialty keywords
+        if (matched.length < 3) {
+          const { data: specData } = await supabase
+            .from("professionals")
+            .select("id, slug, name, firm_name, type, photo_url, rating, review_count, location_display, location_state, specialties, fee_description, verified")
+            .eq("status", "active")
+            .eq("verified", true)
+            .contains("specialties", ["International Clients"])
+            .order("rating", { ascending: false })
+            .limit(5);
+          const specMapped = (specData || []).map(mapAdvisor);
+          const existingIds = new Set(matched.map(m => m.id));
+          matched.push(...specMapped.filter(m => !existingIds.has(m.id)));
+        }
+      } else {
+        let query = supabase
           .from("professionals")
           .select("id, slug, name, firm_name, type, photo_url, rating, review_count, location_display, location_state, specialties, fee_description, verified")
           .eq("status", "active")
           .eq("verified", true);
-        if (dbType) fallbackQuery = fallbackQuery.eq("type", dbType);
-        const { data: fallbackData } = await fallbackQuery.order("rating", { ascending: false }).limit(5);
-        matched.push(...(fallbackData || []).map((p) => ({
-          id: p.id,
-          slug: p.slug,
-          name: p.name,
-          firm_name: p.firm_name ?? null,
-          type: p.type,
-          photo_url: p.photo_url ?? null,
-          rating: p.rating ?? 0,
-          review_count: p.review_count ?? 0,
-          location_display: p.location_display ?? null,
-          specialties: p.specialties ?? [],
-          fee_description: p.fee_description ?? null,
-          verified: p.verified ?? false,
-        })));
+        if (dbType) query = query.eq("type", dbType);
+        if (stateValue) query = query.eq("location_state", stateValue);
+        const { data } = await query.order("rating", { ascending: false }).order("review_count", { ascending: false }).limit(5);
+        matched = (data || []).map(mapAdvisor);
+
+        // Fallback: try without state filter if empty
+        if (matched.length === 0 && stateValue) {
+          let fallbackQuery = supabase
+            .from("professionals")
+            .select("id, slug, name, firm_name, type, photo_url, rating, review_count, location_display, location_state, specialties, fee_description, verified")
+            .eq("status", "active")
+            .eq("verified", true);
+          if (dbType) fallbackQuery = fallbackQuery.eq("type", dbType);
+          const { data: fallbackData } = await fallbackQuery.order("rating", { ascending: false }).limit(5);
+          matched.push(...(fallbackData || []).map(mapAdvisor));
+        }
       }
 
       setAllMatches(matched);
@@ -342,10 +372,32 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
     );
   }
 
+  const COUNTRY_LABELS: Record<string, string> = {
+    singapore: "Singapore", hong_kong: "Hong Kong", china: "China", india: "India",
+    uae: "UAE / Middle East", uk: "United Kingdom", usa: "United States",
+    malaysia: "Malaysia", new_zealand: "New Zealand", other: "your country",
+  };
+  const countryLabel = investorCountry ? (COUNTRY_LABELS[investorCountry] || "your country") : "overseas";
+
   /* ─── STEP: contact (default) ─── */
   return (
     <div className="pt-5 pb-8 md:py-12">
       <div className="container-custom max-w-2xl mx-auto">
+        {/* International context banner */}
+        {isInternational && (
+          <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 mb-5 flex items-start gap-3">
+            <span className="text-xl leading-none mt-0.5">🌏</span>
+            <div>
+              <p className="text-sm font-semibold text-blue-900">
+                Matching you with international-specialist advisors
+              </p>
+              <p className="text-xs text-blue-700 mt-0.5">
+                We&apos;ll connect you with Australian advisors who specifically work with clients from {countryLabel} — including FIRB-accredited buyers agents, cross-border tax accountants, and non-resident mortgage brokers.
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Header */}
         <div className="text-center mb-5 md:mb-6 reveal-screen-in">
           <div className="w-14 h-14 md:w-16 md:h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -355,7 +407,9 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
             You need a verified {advisorLabel}
           </h1>
           <p className="text-sm text-slate-500">
-            Based on your answers, professional advice is the right move.
+            {isInternational
+              ? `We'll match you with an Australian ${advisorLabel} who specialises in international clients.`
+              : "Based on your answers, professional advice is the right move."}
           </p>
         </div>
 

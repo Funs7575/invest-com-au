@@ -267,6 +267,21 @@ export default function AdvisorProfileClient({
                       Verified
                     </span>
                   )}
+                  {pro.accepts_international_clients && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-xs font-bold shrink-0">
+                      🌏 International Clients
+                    </span>
+                  )}
+                  {pro.firb_specialist && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-xs font-bold shrink-0">
+                      FIRB Specialist
+                    </span>
+                  )}
+                  {pro.international_tax_specialist && (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-100 text-indigo-700 text-xs font-bold shrink-0">
+                      Cross-Border Tax
+                    </span>
+                  )}
                   {pro.accepting_new_clients === false && (
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-100 text-red-600 text-xs font-bold shrink-0">
                       Not accepting clients
@@ -316,6 +331,12 @@ export default function AdvisorProfileClient({
                     <span className="flex items-center gap-1.5 text-sky-600 font-semibold">
                       <Icon name="clock" size={14} />
                       Responds within 24 hrs
+                    </span>
+                  )}
+                  {pro.languages && pro.languages.length > 0 && pro.languages.some(l => l.toLowerCase() !== "english") && (
+                    <span className="flex items-center gap-1.5 text-indigo-600 font-semibold">
+                      <Icon name="globe" size={14} />
+                      Speaks: {pro.languages.join(", ")}
                     </span>
                   )}
                 </div>

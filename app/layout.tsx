@@ -6,6 +6,7 @@ import LayoutShell from "@/components/LayoutShell";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import UtmCapture from "@/components/UtmCapture";
+import InternationalBannerServer from "@/components/InternationalBannerServer";
 
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import WebVitals from "@/components/WebVitals";
@@ -111,6 +112,7 @@ export default function RootLayout({
         <Suspense fallback={null}><UtmCapture /></Suspense>
 
         <ThemeProvider>
+          <InternationalBannerServer />
           <LayoutShell>{children}</LayoutShell>
         </ThemeProvider>
         <Suspense fallback={null}><WebVitals /></Suspense>
