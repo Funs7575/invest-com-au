@@ -16,6 +16,7 @@ import {
 } from "@/lib/compliance";
 import DTASearchTable from "../DTASearchTable";
 import ForeignInvestmentNav from "../ForeignInvestmentNav";
+import SectionHeading from "@/components/SectionHeading";
 
 export const metadata: Metadata = {
   title: "Australian Tax for Non-Residents & Foreign Investors — 2026 Guide — Invest.com.au",
@@ -39,16 +40,6 @@ export const metadata: Metadata = {
 };
 
 export const revalidate = 86400;
-
-function SectionHeading({ eyebrow, title, sub }: { eyebrow: string; title: string; sub?: string }) {
-  return (
-    <div className="mb-6 md:mb-8">
-      <p className="text-xs font-bold uppercase tracking-wider text-amber-600 mb-1">{eyebrow}</p>
-      <h2 className="text-xl md:text-2xl font-extrabold text-slate-900">{title}</h2>
-      {sub && <p className="text-sm text-slate-500 mt-1 leading-relaxed">{sub}</p>}
-    </div>
-  );
-}
 
 const TAX_FAQS = [
   {

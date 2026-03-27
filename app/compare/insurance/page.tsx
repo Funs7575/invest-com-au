@@ -1,5 +1,6 @@
 import { UPDATED_LABEL } from "@/lib/seo";
 import InsuranceCompareClient from "./InsuranceCompareClient";
+import CompareNav from "../CompareNav";
 
 export const metadata = {
   title: "Compare Insurance in Australia — Life, Income, Home (2026)",
@@ -79,6 +80,7 @@ export default function InsuranceComparePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
       />
+      <CompareNav current="/compare/insurance" />
       <InsuranceCompareClient />
     </>
   );

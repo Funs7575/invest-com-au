@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import { BROKER_NON_RESIDENT_NOTE, FOREIGN_INVESTOR_GENERAL_DISCLAIMER, WITHHOLDING_TAX_NOTE } from "@/lib/compliance";
 import ForeignInvestmentNav from "../ForeignInvestmentNav";
+import SectionHeading from "@/components/SectionHeading";
 
 export const metadata: Metadata = {
   title: "Savings Accounts for Non-Residents in Australia — 2026 Guide — Invest.com.au",
@@ -72,16 +73,6 @@ const SAVINGS_FAQS = [
     answer: "Possibly. Most countries tax their residents on worldwide income — including foreign interest income. Australia will not double-tax you (the 10% WHT is the final Australian tax), but you may owe tax in your home country on the gross interest. A foreign tax credit for the 10% Australian WHT may be available under a DTA.",
   },
 ];
-
-function SectionHeading({ eyebrow, title, sub }: { eyebrow: string; title: string; sub?: string }) {
-  return (
-    <div className="mb-6 md:mb-8">
-      <p className="text-xs font-bold uppercase tracking-wider text-amber-600 mb-1">{eyebrow}</p>
-      <h2 className="text-xl md:text-2xl font-extrabold text-slate-900">{title}</h2>
-      {sub && <p className="text-sm text-slate-500 mt-1 leading-relaxed">{sub}</p>}
-    </div>
-  );
-}
 
 export default function ForeignSavingsPage() {
   const breadcrumb = breadcrumbJsonLd([

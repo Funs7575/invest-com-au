@@ -8,6 +8,8 @@ import {
 } from "@/lib/foreign-investment-data";
 import { DASP_WARNING, FOREIGN_INVESTOR_GENERAL_DISCLAIMER } from "@/lib/compliance";
 import ForeignInvestmentNav from "../ForeignInvestmentNav";
+import SectionHeading from "@/components/SectionHeading";
+import DASPCalculator from "../DASPCalculator";
 
 export const metadata: Metadata = {
   title: "Superannuation for Foreign Workers in Australia — DASP Guide 2026 — Invest.com.au",
@@ -31,16 +33,6 @@ export const metadata: Metadata = {
 };
 
 export const revalidate = 86400;
-
-function SectionHeading({ eyebrow, title, sub }: { eyebrow: string; title: string; sub?: string }) {
-  return (
-    <div className="mb-6 md:mb-8">
-      <p className="text-xs font-bold uppercase tracking-wider text-amber-600 mb-1">{eyebrow}</p>
-      <h2 className="text-xl md:text-2xl font-extrabold text-slate-900">{title}</h2>
-      {sub && <p className="text-sm text-slate-500 mt-1 leading-relaxed">{sub}</p>}
-    </div>
-  );
-}
 
 const SUPER_SECTIONS = [
   {
@@ -272,8 +264,15 @@ export default function ForeignSuperPage() {
         </div>
       </section>
 
-      {/* ── Detailed Sections ────────────────────────────────────────── */}
+      {/* ── DASP Calculator ──────────────────────────────────────────── */}
       <section className="py-12 md:py-16">
+        <div className="container-custom max-w-3xl">
+          <DASPCalculator />
+        </div>
+      </section>
+
+      {/* ── Detailed Sections ────────────────────────────────────────── */}
+      <section className="py-12 md:py-16 bg-slate-50">
         <div className="container-custom max-w-3xl">
           <SectionHeading
             eyebrow="Complete guide"

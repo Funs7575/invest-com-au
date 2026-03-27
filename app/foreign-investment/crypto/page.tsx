@@ -5,6 +5,7 @@ import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import { BROKER_NON_RESIDENT_NOTE, FOREIGN_INVESTOR_GENERAL_DISCLAIMER, CRYPTO_REGULATORY_NOTE } from "@/lib/compliance";
 import type { Broker } from "@/lib/types";
 import ForeignInvestmentNav from "../ForeignInvestmentNav";
+import SectionHeading from "@/components/SectionHeading";
 
 export const metadata: Metadata = {
   title: "Crypto for Non-Residents in Australia — AUSTRAC, KYC & Tax — 2026 Guide",
@@ -88,16 +89,6 @@ async function getBrokers(): Promise<Broker[]> {
   } catch {
     return [];
   }
-}
-
-function SectionHeading({ eyebrow, title, sub }: { eyebrow: string; title: string; sub?: string }) {
-  return (
-    <div className="mb-6 md:mb-8">
-      <p className="text-xs font-bold uppercase tracking-wider text-amber-600 mb-1">{eyebrow}</p>
-      <h2 className="text-xl md:text-2xl font-extrabold text-slate-900">{title}</h2>
-      {sub && <p className="text-sm text-slate-500 mt-1 leading-relaxed">{sub}</p>}
-    </div>
-  );
 }
 
 export default async function ForeignCryptoPage() {

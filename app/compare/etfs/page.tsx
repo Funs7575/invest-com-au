@@ -1,5 +1,6 @@
 import { UPDATED_LABEL } from "@/lib/seo";
 import ETFCompareClient from "./ETFCompareClient";
+import CompareNav from "../CompareNav";
 
 export const metadata = {
   title: "Compare Australian ETFs — Fees, Returns & Holdings (2026)",
@@ -32,6 +33,7 @@ export default function ETFComparePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
+      <CompareNav current="/compare/etfs" />
       <ETFCompareClient />
     </>
   );
