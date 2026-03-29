@@ -2,15 +2,19 @@ import Link from "next/link";
 
 const NAV_ITEMS = [
   { label: "Hub", href: "/foreign-investment", short: "Hub" },
+  { label: "Guides", href: "/foreign-investment/guides", short: "Guides" },
   { label: "Shares", href: "/foreign-investment/shares", short: "Shares" },
-  { label: "Crypto", href: "/foreign-investment/crypto", short: "Crypto" },
-  { label: "Savings", href: "/foreign-investment/savings", short: "Savings" },
-  { label: "Super & DASP", href: "/foreign-investment/super", short: "Super" },
-  { label: "CFD & Forex", href: "/foreign-investment/cfd", short: "CFD" },
   { label: "Property", href: "/foreign-investment/property", short: "Property" },
   { label: "Tax Guide", href: "/foreign-investment/tax", short: "Tax" },
+  { label: "Super & DASP", href: "/foreign-investment/super", short: "Super" },
+  { label: "Send Money", href: "/foreign-investment/send-money-australia", short: "Send $" },
+  { label: "Non-Res Brokers", href: "/compare/non-residents", short: "Brokers" },
   { label: "By Country", href: "/foreign-investment/from/us", short: "Country" },
-  { label: "Best Platforms", href: "/best/foreign-investors", short: "Platforms" },
+  { label: "Singapore", href: "/foreign-investment/singapore", short: "SG" },
+  { label: "Hong Kong", href: "/foreign-investment/hong-kong", short: "HK" },
+  { label: "UK", href: "/foreign-investment/united-kingdom", short: "UK" },
+  { label: "UAE", href: "/foreign-investment/united-arab-emirates", short: "UAE" },
+  { label: "China", href: "/foreign-investment/china", short: "CN" },
 ];
 
 interface Props {
