@@ -472,5 +472,43 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/property/foreign-investment`, priority: 0.8 },
   ].map((p) => ({ ...p, lastModified: new Date(), changeFrequency: "weekly" as const }));
 
-  return [...staticPages, ...bestPages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorCityPages, ...advisorLocationPages, ...investingCityPages, ...glossaryPages, ...firmPages, ...propertyListingPages, ...propertyHubPages];
+  // New hubs: ETF, Insurance, Tax, Fee Tracker, Advisor Specialists
+  const newHubPages = [
+    // ETF Hub
+    { url: `${baseUrl}/etfs`, priority: 0.9 },
+    { url: `${baseUrl}/etfs/asx-200`, priority: 0.85 },
+    { url: `${baseUrl}/etfs/us-exposure`, priority: 0.85 },
+    { url: `${baseUrl}/etfs/dividends`, priority: 0.85 },
+    // ETF vs pages
+    { url: `${baseUrl}/etfs/vs/vas-vs-a200`, priority: 0.8 },
+    { url: `${baseUrl}/etfs/vs/vas-vs-stw`, priority: 0.75 },
+    { url: `${baseUrl}/etfs/vs/ioz-vs-vas`, priority: 0.75 },
+    { url: `${baseUrl}/etfs/vs/ivv-vs-vts`, priority: 0.75 },
+    { url: `${baseUrl}/etfs/vs/ndq-vs-ivv`, priority: 0.8 },
+    { url: `${baseUrl}/etfs/vs/vgs-vs-ivv`, priority: 0.75 },
+    { url: `${baseUrl}/etfs/vs/vhy-vs-hvst`, priority: 0.75 },
+    { url: `${baseUrl}/etfs/vs/vhy-vs-vas`, priority: 0.75 },
+    // Insurance Hub
+    { url: `${baseUrl}/insurance`, priority: 0.9 },
+    { url: `${baseUrl}/insurance/life`, priority: 0.85 },
+    { url: `${baseUrl}/insurance/income-protection`, priority: 0.85 },
+    { url: `${baseUrl}/insurance/health`, priority: 0.85 },
+    { url: `${baseUrl}/insurance/home-contents`, priority: 0.8 },
+    // Tax Strategy Hub
+    { url: `${baseUrl}/tax`, priority: 0.9 },
+    { url: `${baseUrl}/tax/capital-gains`, priority: 0.85 },
+    { url: `${baseUrl}/tax/franking-credits`, priority: 0.85 },
+    { url: `${baseUrl}/tax/negative-gearing`, priority: 0.85 },
+    { url: `${baseUrl}/tax/crypto`, priority: 0.85 },
+    // Fee Tracker
+    { url: `${baseUrl}/fee-tracker`, priority: 0.85 },
+    // Super sub-pages
+    { url: `${baseUrl}/super/smsf`, priority: 0.85 },
+    // Advisor Specialists
+    { url: `${baseUrl}/advisors/international-tax-specialists`, priority: 0.85 },
+    { url: `${baseUrl}/advisors/firb-specialists`, priority: 0.8 },
+    { url: `${baseUrl}/advisors/migration-agents`, priority: 0.8 },
+  ].map((p) => ({ ...p, lastModified: new Date(), changeFrequency: "weekly" as const }));
+
+  return [...staticPages, ...bestPages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorCityPages, ...advisorLocationPages, ...investingCityPages, ...glossaryPages, ...firmPages, ...propertyListingPages, ...propertyHubPages, ...newHubPages];
 }
