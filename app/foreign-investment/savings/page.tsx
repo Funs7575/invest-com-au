@@ -1,7 +1,9 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import { BROKER_NON_RESIDENT_NOTE, FOREIGN_INVESTOR_GENERAL_DISCLAIMER, WITHHOLDING_TAX_NOTE } from "@/lib/compliance";
+import type { Broker } from "@/lib/types";
 import ForeignInvestmentNav from "../ForeignInvestmentNav";
 import SectionHeading from "@/components/SectionHeading";
 
@@ -74,7 +76,27 @@ const SAVINGS_FAQS = [
   },
 ];
 
-export default function ForeignSavingsPage() {
+async function getSavingsAccounts(): Promise<Broker[]> {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("brokers")
+      .select("id, name, slug, color, logo_url, cta_text, affiliate_url, rating, accepts_non_residents, accepts_temporary_residents, requires_australian_address, foreign_investor_notes, min_deposit, platform_type, status")
+      .eq("platform_type", "savings_account")
+      .eq("status", "active")
+      .order("rating", { ascending: false });
+    return (data ?? []) as unknown as Broker[];
+  } catch {
+    return [];
+  }
+}
+
+export default async function ForeignSavingsPage() {
+  const accounts = await getSavingsAccounts();
+  const acceptNonResidents = accounts.filter((b) => b.accepts_non_residents === true);
+  const acceptTempOnly = accounts.filter((b) => b.accepts_non_residents === false && b.accepts_temporary_residents === true);
+  const unknown = accounts.filter((b) => b.accepts_non_residents == null);
+
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: SITE_URL },
     { name: "Foreign Investment", url: `${SITE_URL}/foreign-investment` },
@@ -148,6 +170,107 @@ export default function ForeignSavingsPage() {
           </div>
         </div>
       </section>
+
+      {/* ── Account Eligibility ──────────────────────────────────────── */}
+      {accounts.length > 0 && (
+        <section className="py-12 md:py-16">
+          <div className="container-custom">
+            <SectionHeading
+              eyebrow="Account eligibility"
+              title="Which savings accounts accept non-residents?"
+              sub="Eligibility based on each institution's published T&Cs. Verify directly before applying — policies change frequently."
+            />
+
+            {acceptNonResidents.length > 0 && (
+              <div className="mb-6">
+                <h3 className="text-sm font-bold text-green-800 mb-3 flex items-center gap-2">
+                  <span className="w-2 h-2 bg-green-500 rounded-full" />
+                  Accepts non-residents (overseas address accepted)
+                </h3>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {acceptNonResidents.map((b) => (
+                    <div key={b.id} className="bg-white rounded-xl border-2 border-green-200 p-4">
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold shrink-0" style={{ backgroundColor: b.color || "#334155" }}>
+                          {b.name.charAt(0)}
+                        </div>
+                        <span className="font-bold text-sm text-slate-900">{b.name}</span>
+                        <span className="ml-auto text-xs bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded-full">Open</span>
+                      </div>
+                      {b.foreign_investor_notes && (
+                        <p className="text-xs text-slate-500 leading-relaxed">{b.foreign_investor_notes}</p>
+                      )}
+                      {b.affiliate_url && (
+                        <Link href={b.affiliate_url} target="_blank" rel="noopener noreferrer" className="mt-3 block text-center text-xs font-bold text-white bg-amber-500 hover:bg-amber-600 rounded-lg py-2 transition-colors">
+                          Visit {b.name}
+                        </Link>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {acceptTempOnly.length > 0 && (
+              <div className="mb-6">
+                <h3 className="text-sm font-bold text-amber-800 mb-3 flex items-center gap-2">
+                  <span className="w-2 h-2 bg-amber-500 rounded-full" />
+                  Temporary visa holders in Australia only (Australian address required)
+                </h3>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {acceptTempOnly.map((b) => (
+                    <div key={b.id} className="bg-white rounded-xl border border-amber-200 p-4">
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold shrink-0" style={{ backgroundColor: b.color || "#334155" }}>
+                          {b.name.charAt(0)}
+                        </div>
+                        <span className="font-bold text-sm text-slate-900">{b.name}</span>
+                      </div>
+                      {b.foreign_investor_notes && (
+                        <p className="text-xs text-slate-500 leading-relaxed">{b.foreign_investor_notes}</p>
+                      )}
+                      {b.affiliate_url && (
+                        <Link href={b.affiliate_url} target="_blank" rel="noopener noreferrer" className="mt-3 block text-center text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg py-2 transition-colors">
+                          Visit {b.name}
+                        </Link>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {unknown.length > 0 && (
+              <div>
+                <h3 className="text-sm font-bold text-slate-500 mb-3 flex items-center gap-2">
+                  <span className="w-2 h-2 bg-slate-400 rounded-full" />
+                  Eligibility not confirmed — verify directly
+                </h3>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {unknown.slice(0, 6).map((b) => (
+                    <div key={b.id} className="bg-white rounded-xl border border-slate-200 p-4 opacity-70">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold shrink-0" style={{ backgroundColor: b.color || "#334155" }}>
+                          {b.name.charAt(0)}
+                        </div>
+                        <span className="font-bold text-sm text-slate-900">{b.name}</span>
+                      </div>
+                      <p className="text-xs text-slate-400 mt-2">Eligibility not confirmed. Contact directly.</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <p className="mt-4 text-xs text-slate-400 leading-relaxed">{BROKER_NON_RESIDENT_NOTE}</p>
+            <div className="mt-4">
+              <Link href="/best/savings" className="text-sm font-bold text-amber-600 hover:text-amber-700">
+                Compare all savings accounts &rarr;
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── Content Sections ─────────────────────────────────────────── */}
       <section className="py-12 md:py-16">

@@ -1,14 +1,17 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import {
   FOREIGN_INVESTOR_PERSONAS,
   VERTICAL_FOREIGN_RULES,
   TOP_5_RULES_FOR_FOREIGN_INVESTORS,
+  DTA_COUNTRIES,
   type ForeignInvestorPersona,
 } from "@/lib/foreign-investment-data";
 import { getDtaCountries, getDefaultWHT } from "@/lib/fi-data-server";
 import { FOREIGN_INVESTOR_GENERAL_DISCLAIMER, DTA_DISCLAIMER } from "@/lib/compliance";
+import type { Broker } from "@/lib/types";
 import PersonaSelector from "./PersonaSelector";
 import DTASearchTable from "./DTASearchTable";
 import ForeignInvestmentNav from "./ForeignInvestmentNav";
@@ -94,10 +97,27 @@ const participationLabels: Record<string, string> = {
   complex: "Complex rules",
 };
 
+async function getNonResidentBrokers(): Promise<Broker[]> {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("brokers")
+      .select("id, name, slug, color, logo_url, cta_text, affiliate_url, rating, accepts_non_residents, foreign_investor_notes, platform_type, status")
+      .eq("accepts_non_residents", true)
+      .eq("status", "active")
+      .order("rating", { ascending: false })
+      .limit(8);
+    return (data ?? []) as unknown as Broker[];
+  } catch {
+    return [];
+  }
+}
+
 export default async function ForeignInvestmentHubPage() {
-  const [dtaCountries, defaultWHT] = await Promise.all([
+  const [dtaCountries, defaultWHT, nonResidentBrokers] = await Promise.all([
     getDtaCountries(),
     getDefaultWHT(),
+    getNonResidentBrokers(),
   ]);
 
   const breadcrumb = breadcrumbJsonLd([
@@ -229,6 +249,56 @@ export default async function ForeignInvestmentHubPage() {
         </div>
       </section>
 
+      {/* ── Platform Recommendations ────────────────────────────────── */}
+      {nonResidentBrokers.length > 0 && (
+        <section className="py-12 md:py-16 bg-white">
+          <div className="container-custom">
+            <SectionHeading
+              eyebrow="Platforms for non-residents"
+              title="Which platforms accept foreign investors?"
+              sub="These platforms have confirmed they accept non-residents or international clients. Always verify current eligibility before applying."
+            />
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+              {nonResidentBrokers.map((b) => (
+                <div key={b.id} className="bg-white rounded-xl border border-slate-200 hover:border-amber-300 hover:shadow-md transition-all p-4 flex flex-col">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-9 h-9 rounded-lg flex items-center justify-center text-white text-sm font-bold shrink-0" style={{ backgroundColor: b.color || "#334155" }}>
+                      {b.name.charAt(0)}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-bold text-sm text-slate-900 truncate">{b.name}</p>
+                      <p className="text-[0.65rem] text-slate-400 capitalize">{b.platform_type?.replace(/_/g, " ")}</p>
+                    </div>
+                  </div>
+                  {b.foreign_investor_notes && (
+                    <p className="text-xs text-slate-500 leading-relaxed mb-3 flex-1">{b.foreign_investor_notes}</p>
+                  )}
+                  <div className="mt-auto flex gap-2">
+                    {b.affiliate_url && (
+                      <Link href={b.affiliate_url} target="_blank" rel="noopener noreferrer" className="flex-1 text-center text-xs font-bold text-white bg-amber-500 hover:bg-amber-600 rounded-lg py-2 transition-colors">
+                        Visit
+                      </Link>
+                    )}
+                    <Link href={`/broker/${b.slug}`} className="flex-1 text-center text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg py-2 transition-colors">
+                      Review
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Link href="/best/foreign-investors" className="text-sm font-bold text-amber-600 hover:text-amber-700">
+                Best platforms for non-residents &rarr;
+              </Link>
+              <span className="text-slate-300">·</span>
+              <Link href="/best/expat-investors" className="text-sm font-bold text-amber-600 hover:text-amber-700">
+                Best platforms for expats &rarr;
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ── Vertical Cards ──────────────────────────────────────────── */}
       <section className="py-12 md:py-16">
         <div className="container-custom">
@@ -290,6 +360,41 @@ export default async function ForeignInvestmentHubPage() {
             <Link href="/foreign-investment/tax" className="text-sm font-bold text-amber-600 hover:text-amber-700">
               See the full tax guide for non-residents &rarr;
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── By Country ──────────────────────────────────────────────── */}
+      <section className="py-12 md:py-16">
+        <div className="container-custom">
+          <SectionHeading
+            eyebrow="By country"
+            title="Country-specific investment guides"
+            sub="See the exact withholding tax rates, DTA status, and platform recommendations for your specific country."
+          />
+          <div className="flex flex-wrap gap-2 mb-4">
+            {DTA_COUNTRIES.slice(0, 20).map((c) => (
+              <Link
+                key={c.countryCode}
+                href={`/foreign-investment/from/${c.countryCode.toLowerCase()}`}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 hover:border-amber-300 hover:bg-amber-50 text-xs font-semibold text-slate-700 hover:text-amber-700 rounded-lg transition-colors"
+              >
+                <span>{c.country}</span>
+                {c.hasDTA && <span className="text-[0.6rem] bg-green-100 text-green-700 font-bold px-1.5 py-0.5 rounded">DTA</span>}
+              </Link>
+            ))}
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {DTA_COUNTRIES.slice(20).map((c) => (
+              <Link
+                key={c.countryCode}
+                href={`/foreign-investment/from/${c.countryCode.toLowerCase()}`}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 hover:border-amber-300 hover:bg-amber-50 text-xs font-semibold text-slate-700 hover:text-amber-700 rounded-lg transition-colors"
+              >
+                <span>{c.country}</span>
+                {c.hasDTA && <span className="text-[0.6rem] bg-green-100 text-green-700 font-bold px-1.5 py-0.5 rounded">DTA</span>}
+              </Link>
+            ))}
           </div>
         </div>
       </section>

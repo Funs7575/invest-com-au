@@ -1,11 +1,14 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import {
   CFD_WARNING,
   NEGATIVE_BALANCE_PROTECTION,
   FOREIGN_INVESTOR_GENERAL_DISCLAIMER,
+  BROKER_NON_RESIDENT_NOTE,
 } from "@/lib/compliance";
+import type { Broker } from "@/lib/types";
 import ForeignInvestmentNav from "../ForeignInvestmentNav";
 import SectionHeading from "@/components/SectionHeading";
 
@@ -94,7 +97,24 @@ const ASIC_LEVERAGE_LIMITS = [
   { market: "Cryptocurrency CFDs", limit: "2:1", examples: "BTC/USD, ETH/USD", color: "red" },
 ];
 
-export default function ForeignCFDPage() {
+async function getCFDBrokers(): Promise<Broker[]> {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("brokers")
+      .select("id, name, slug, color, logo_url, cta_text, affiliate_url, rating, accepts_non_residents, accepts_temporary_residents, foreign_investor_notes, regulated_by, platform_type, status")
+      .eq("platform_type", "cfd_forex")
+      .eq("status", "active")
+      .order("rating", { ascending: false });
+    return (data ?? []) as unknown as Broker[];
+  } catch {
+    return [];
+  }
+}
+
+export default async function ForeignCFDPage() {
+  const brokers = await getCFDBrokers();
+  const acceptingBrokers = brokers.filter((b) => b.accepts_non_residents !== false);
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: SITE_URL },
     { name: "Foreign Investment", url: `${SITE_URL}/foreign-investment` },
@@ -214,6 +234,48 @@ export default function ForeignCFDPage() {
           </p>
         </div>
       </section>
+
+      {/* ── CFD Broker Eligibility ───────────────────────────────────── */}
+      {brokers.length > 0 && (
+        <section className="py-12 md:py-16 bg-slate-50">
+          <div className="container-custom">
+            <SectionHeading
+              eyebrow="Broker eligibility"
+              title="ASIC-regulated CFD brokers open to non-residents"
+              sub="Most ASIC-regulated CFD providers accept non-residents with a valid passport and overseas address. Verify current policy directly."
+            />
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {acceptingBrokers.slice(0, 9).map((b) => (
+                <div key={b.id} className="bg-white rounded-xl border border-green-200 p-4">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold shrink-0" style={{ backgroundColor: b.color || "#334155" }}>
+                      {b.name.charAt(0)}
+                    </div>
+                    <span className="font-bold text-sm text-slate-900">{b.name}</span>
+                    {b.regulated_by && (
+                      <span className="ml-auto text-xs bg-blue-100 text-blue-700 font-bold px-2 py-0.5 rounded-full">{b.regulated_by}</span>
+                    )}
+                  </div>
+                  {b.foreign_investor_notes && (
+                    <p className="text-xs text-slate-500 leading-relaxed">{b.foreign_investor_notes}</p>
+                  )}
+                  {b.affiliate_url && (
+                    <Link href={b.affiliate_url} target="_blank" rel="noopener noreferrer" className="mt-3 block text-center text-xs font-bold text-white bg-amber-500 hover:bg-amber-600 rounded-lg py-2 transition-colors">
+                      Visit {b.name}
+                    </Link>
+                  )}
+                </div>
+              ))}
+            </div>
+            <p className="mt-4 text-xs text-slate-400 leading-relaxed">{BROKER_NON_RESIDENT_NOTE}</p>
+            <div className="mt-4">
+              <Link href="/best/foreign-investors" className="text-sm font-bold text-amber-600 hover:text-amber-700">
+                Best platforms for all foreign investors &rarr;
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── Content Sections ─────────────────────────────────────────── */}
       <section className="py-12 md:py-16 bg-slate-50">
