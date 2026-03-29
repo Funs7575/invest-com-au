@@ -57,6 +57,13 @@ async function seed() {
     deal: b.dealOfMonth || false,
     deal_text: b.dealText,
     status: 'active',
+    // platform classification (used by foreign investment vertical pages)
+    platform_type: b.platformType || (b.isCrypto ? 'crypto_exchange' : b.isCfd ? 'cfd_forex' : 'share_broker'),
+    // foreign investor eligibility flags
+    accepts_non_residents: b.acceptsNonResidents ?? null,
+    accepts_temporary_residents: b.acceptsTemporaryResidents ?? null,
+    requires_australian_address: b.requiresAustralianAddress ?? null,
+    foreign_investor_notes: b.foreignInvestorNotes || null,
   }))
 
   const { error: brokersError } = await supabase.from('brokers').insert(brokers)

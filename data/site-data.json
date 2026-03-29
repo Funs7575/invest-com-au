@@ -493,6 +493,304 @@
       "rating": 4,
       "layer": "wealth",
       "isCrypto": true
+    },
+    {
+      "name": "nabtrade",
+      "slug": "nabtrade",
+      "color": "#D41D1D",
+      "icon": "NAB",
+      "ctaText": "Open nabtrade Account",
+      "tagline": "NAB's full-service broker. Competitive fees, CHESS sponsored.",
+      "asxFee": "$14.95",
+      "asxFeeValue": 14.95,
+      "usFee": "$19.95 USD",
+      "usFeeValue": 19.95,
+      "fxRate": 0.6,
+      "chessSponsored": true,
+      "inactivityFee": "None",
+      "paymentMethods": [
+        "Bank Transfer",
+        "BPAY",
+        "Direct Debit"
+      ],
+      "smsfSupport": true,
+      "minDeposit": "$0",
+      "platforms": [
+        "Web",
+        "Mobile App"
+      ],
+      "pros": [
+        "CHESS sponsored — direct share ownership",
+        "Backed by NAB — established and trusted",
+        "SMSF support available",
+        "Access to Australian and international markets"
+      ],
+      "cons": [
+        "Higher fees than discount brokers",
+        "Requires Australian address to open account",
+        "Interface less polished than fintechs",
+        "No fractional shares"
+      ],
+      "affiliateUrl": "https://www.nabtrade.com.au",
+      "rating": 3.6,
+      "layer": "cash",
+      "platformType": "share_broker",
+      "acceptsNonResidents": false,
+      "acceptsTemporaryResidents": true,
+      "requiresAustralianAddress": true,
+      "foreignInvestorNotes": "CHESS-sponsored. Requires Australian address and TFN or non-resident declaration. Temporary residents in Australia can apply."
+    },
+    {
+      "name": "Binance AU",
+      "slug": "binance-au",
+      "color": "#F0B90B",
+      "icon": "BNB",
+      "ctaText": "Trade on Binance AU",
+      "tagline": "Global liquidity, AUSTRAC-registered. 350+ coins for Australian traders.",
+      "asxFee": "N/A",
+      "asxFeeValue": 999,
+      "usFee": "N/A",
+      "usFeeValue": 999,
+      "fxRate": 0,
+      "chessSponsored": false,
+      "inactivityFee": "None",
+      "paymentMethods": [
+        "Bank Transfer",
+        "PayID",
+        "OSKO"
+      ],
+      "smsfSupport": false,
+      "minDeposit": "$15",
+      "platforms": [
+        "Web",
+        "Mobile App",
+        "Desktop"
+      ],
+      "pros": [
+        "350+ cryptocurrencies available",
+        "Deep liquidity — world's largest exchange",
+        "Low 0.1% spot trading fee",
+        "AUSTRAC-registered for Australian compliance"
+      ],
+      "cons": [
+        "Complex interface for beginners",
+        "Regulatory scrutiny in multiple jurisdictions",
+        "Not suitable for share trading",
+        "AUD liquidity shallower than dedicated AU exchanges"
+      ],
+      "affiliateUrl": "https://www.binance.com/en-AU",
+      "rating": 3.8,
+      "layer": "wealth",
+      "isCrypto": true,
+      "platformType": "crypto_exchange",
+      "acceptsNonResidents": true,
+      "acceptsTemporaryResidents": true,
+      "requiresAustralianAddress": false,
+      "foreignInvestorNotes": "AUSTRAC-registered. Global platform accepting users from most countries. Strict KYC compliance including source of funds for large deposits. No Australian address required."
+    },
+    {
+      "name": "Independent Reserve",
+      "slug": "independent-reserve",
+      "color": "#1A3A5C",
+      "icon": "IR",
+      "ctaText": "Open Independent Reserve Account",
+      "tagline": "Australia's most regulated crypto exchange. Trusted by institutions.",
+      "asxFee": "N/A",
+      "asxFeeValue": 999,
+      "usFee": "N/A",
+      "usFeeValue": 999,
+      "fxRate": 0,
+      "chessSponsored": false,
+      "inactivityFee": "None",
+      "paymentMethods": [
+        "Bank Transfer",
+        "OSKO",
+        "PayID",
+        "BPAY"
+      ],
+      "smsfSupport": false,
+      "minDeposit": "$50",
+      "platforms": [
+        "Web",
+        "Mobile App",
+        "OTC Desk"
+      ],
+      "pros": [
+        "Australia's most regulated exchange — bank-grade AML/KYC",
+        "AUSTRAC-registered with strong compliance track record",
+        "OTC desk for large trades ($20k+)",
+        "Institutional and SMSF accounts supported",
+        "Accepts non-resident users globally"
+      ],
+      "cons": [
+        "Smaller selection of coins than Binance or Swyftx",
+        "Fees higher than offshore exchanges",
+        "Interface less consumer-focused",
+        "Lower liquidity for altcoins"
+      ],
+      "affiliateUrl": "https://www.independentreserve.com",
+      "rating": 4.1,
+      "layer": "wealth",
+      "isCrypto": true,
+      "platformType": "crypto_exchange",
+      "acceptsNonResidents": true,
+      "acceptsTemporaryResidents": true,
+      "requiresAustralianAddress": false,
+      "foreignInvestorNotes": "AUSTRAC-registered. Independent Reserve is one of Australia's most regulated crypto exchanges — bank-grade AML/KYC. Accepts non-residents. Institutional and professional accounts available."
+    },
+    {
+      "name": "BTC Markets",
+      "slug": "btc-markets",
+      "color": "#2C3E8C",
+      "icon": "BTC",
+      "ctaText": "Start Trading BTC Markets",
+      "tagline": "Australia's longest-running crypto exchange. Transparent fees, AUSTRAC registered.",
+      "asxFee": "N/A",
+      "asxFeeValue": 999,
+      "usFee": "N/A",
+      "usFeeValue": 999,
+      "fxRate": 0,
+      "chessSponsored": false,
+      "inactivityFee": "None",
+      "paymentMethods": [
+        "Bank Transfer",
+        "OSKO",
+        "PayID",
+        "BPAY"
+      ],
+      "smsfSupport": false,
+      "minDeposit": "$20",
+      "platforms": [
+        "Web",
+        "Mobile App",
+        "API"
+      ],
+      "pros": [
+        "Australia's longest-running exchange (est. 2013)",
+        "AUSTRAC-registered with strong regulatory record",
+        "Transparent fee schedule (0.05–0.50% tiered)",
+        "REST and WebSocket API for algorithmic traders",
+        "Accepts non-resident users"
+      ],
+      "cons": [
+        "Smaller coin selection compared to Swyftx or Binance",
+        "Interface dated compared to newer platforms",
+        "Lower liquidity for smaller altcoins",
+        "No advanced order types on mobile app"
+      ],
+      "affiliateUrl": "https://www.btcmarkets.net",
+      "rating": 3.9,
+      "layer": "wealth",
+      "isCrypto": true,
+      "platformType": "crypto_exchange",
+      "acceptsNonResidents": true,
+      "acceptsTemporaryResidents": true,
+      "requiresAustralianAddress": false,
+      "foreignInvestorNotes": "AUSTRAC-registered. Australia's longest-running crypto exchange. Accepts non-residents. Standard KYC: passport + overseas address."
+    },
+    {
+      "name": "Pepperstone",
+      "slug": "pepperstone",
+      "color": "#00A651",
+      "icon": "PP",
+      "ctaText": "Trade with Pepperstone",
+      "tagline": "Award-winning CFD & Forex broker. Razor spreads, ASIC regulated.",
+      "asxFee": "N/A",
+      "asxFeeValue": 999,
+      "usFee": "N/A",
+      "usFeeValue": 999,
+      "fxRate": 0,
+      "chessSponsored": false,
+      "inactivityFee": "None",
+      "paymentMethods": [
+        "Bank Transfer",
+        "Credit Card",
+        "Debit Card"
+      ],
+      "smsfSupport": false,
+      "minDeposit": "$0",
+      "platforms": [
+        "MT4",
+        "MT5",
+        "cTrader",
+        "TradingView",
+        "Mobile App"
+      ],
+      "pros": [
+        "Razor-thin spreads — from 0.0 pips on Razor account",
+        "ASIC-regulated with strong global footprint",
+        "Multiple platforms: MT4, MT5, cTrader, TradingView",
+        "Accepts non-residents from most countries",
+        "Award-winning execution and customer service"
+      ],
+      "cons": [
+        "CFD/Forex only — no share trading or crypto",
+        "Leverage limits apply (ASIC retail caps)",
+        "CFDs are complex instruments — risk of loss",
+        "No Australian share (ASX) trading"
+      ],
+      "affiliateUrl": "https://pepperstone.com/en-au/",
+      "rating": 4.4,
+      "layer": "jackpot",
+      "isCfd": true,
+      "platformType": "cfd_forex",
+      "acceptsNonResidents": true,
+      "acceptsTemporaryResidents": true,
+      "requiresAustralianAddress": false,
+      "foreignInvestorNotes": "ASIC-regulated. Global broker accepting clients from most jurisdictions. Standard KYC requirements. No Australian address required. Low spreads, award-winning execution."
+    },
+    {
+      "name": "IC Markets",
+      "slug": "ic-markets",
+      "color": "#003087",
+      "icon": "ICM",
+      "ctaText": "Trade with IC Markets",
+      "tagline": "True ECN broker. Raw spreads from 0.0 pips. ASIC regulated.",
+      "asxFee": "N/A",
+      "asxFeeValue": 999,
+      "usFee": "N/A",
+      "usFeeValue": 999,
+      "fxRate": 0,
+      "chessSponsored": false,
+      "inactivityFee": "None",
+      "paymentMethods": [
+        "Bank Transfer",
+        "Credit Card",
+        "Debit Card",
+        "PayPal",
+        "Skrill",
+        "Neteller"
+      ],
+      "smsfSupport": false,
+      "minDeposit": "$200",
+      "platforms": [
+        "MT4",
+        "MT5",
+        "cTrader",
+        "Mobile App"
+      ],
+      "pros": [
+        "True ECN execution — raw spreads from 0.0 pips",
+        "ASIC-regulated",
+        "Accepts non-residents globally",
+        "Deep liquidity — one of the world's largest FX brokers by volume",
+        "Multiple payment options including e-wallets"
+      ],
+      "cons": [
+        "CFD/Forex only — no ASX share trading",
+        "Minimum $200 deposit on ECN accounts",
+        "CFDs carry high risk of loss",
+        "Less suited to beginner retail traders"
+      ],
+      "affiliateUrl": "https://www.icmarkets.com/au/",
+      "rating": 4.2,
+      "layer": "jackpot",
+      "isCfd": true,
+      "platformType": "cfd_forex",
+      "acceptsNonResidents": true,
+      "acceptsTemporaryResidents": true,
+      "requiresAustralianAddress": false,
+      "foreignInvestorNotes": "ASIC-regulated. Accepts non-residents globally. Raw spreads available on ECN accounts. No Australian address required. Standard passport + address KYC."
     }
   ],
   "articles": [
