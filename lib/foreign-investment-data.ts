@@ -49,10 +49,10 @@ export const FOREIGN_INVESTOR_PERSONAS: ForeignInvestorPersona[] = [
     description: "You're working or studying in Australia on a temporary visa.",
     icon: "id-card",
     keyConcerns: [
-      "Employer super contributions — and the DASP trap when you leave (65% tax)",
-      "You are an Australian tax resident — pay tax like a resident",
-      "Can buy ONE established home as primary residence (must sell when leaving)",
-      "Open brokerage, crypto, and savings accounts normally (with TFN)",
+      "Employer super contributions — and the DASP trap when you leave (35% or 65% WHM tax)",
+      "Tax residency depends on the ATO's residency tests — not automatically assumed for all visa holders",
+      "Property: established dwelling purchases are banned for foreign persons 1 Apr 2025 – 31 Mar 2027 (exceptions may apply)",
+      "Open brokerage, crypto, and savings accounts normally if you pass the residency tests (with TFN)",
       "Super guarantee of 11.5% applies to your wages",
       "Claim DASP via ATO portal when your visa ends and you depart",
     ],
@@ -156,6 +156,18 @@ export const DTA_COUNTRIES: DTACountry[] = [
   { country: "Taiwan", countryCode: "TW", hasDTA: false, dividendWHT: 30, interestWHT: 10, royaltiesWHT: 30, notes: "No formal DTA. Full withholding rates apply." },
   { country: "Russia", countryCode: "RU", hasDTA: true, dividendWHT: 15, interestWHT: 10, royaltiesWHT: 10, dtaEffectiveYear: 2000 },
   { country: "Chile", countryCode: "CL", hasDTA: true, dividendWHT: 15, interestWHT: 15, royaltiesWHT: 10, dtaEffectiveYear: 2013 },
+  { country: "Norway", countryCode: "NO", hasDTA: true, dividendWHT: 15, interestWHT: 10, royaltiesWHT: 5, dtaEffectiveYear: 2006 },
+  { country: "Denmark", countryCode: "DK", hasDTA: true, dividendWHT: 15, interestWHT: 10, royaltiesWHT: 10, dtaEffectiveYear: 1981 },
+  { country: "Sweden", countryCode: "SE", hasDTA: true, dividendWHT: 15, interestWHT: 10, royaltiesWHT: 10, dtaEffectiveYear: 1981 },
+  { country: "Finland", countryCode: "FI", hasDTA: true, dividendWHT: 15, interestWHT: 10, royaltiesWHT: 5, dtaEffectiveYear: 2007 },
+  { country: "Austria", countryCode: "AT", hasDTA: true, dividendWHT: 15, interestWHT: 10, royaltiesWHT: 10, dtaEffectiveYear: 1988 },
+  { country: "Belgium", countryCode: "BE", hasDTA: true, dividendWHT: 15, interestWHT: 10, royaltiesWHT: 10, dtaEffectiveYear: 1986 },
+  { country: "Czech Republic", countryCode: "CZ", hasDTA: true, dividendWHT: 15, interestWHT: 10, royaltiesWHT: 10, dtaEffectiveYear: 1995 },
+  { country: "Hungary", countryCode: "HU", hasDTA: true, dividendWHT: 15, interestWHT: 10, royaltiesWHT: 10, dtaEffectiveYear: 1992 },
+  { country: "Poland", countryCode: "PL", hasDTA: true, dividendWHT: 15, interestWHT: 10, royaltiesWHT: 10, dtaEffectiveYear: 1992 },
+  { country: "Romania", countryCode: "RO", hasDTA: true, dividendWHT: 15, interestWHT: 10, royaltiesWHT: 10, dtaEffectiveYear: 2001 },
+  { country: "Turkey", countryCode: "TR", hasDTA: true, dividendWHT: 15, interestWHT: 10, royaltiesWHT: 10, dtaEffectiveYear: 2011 },
+  { country: "Papua New Guinea", countryCode: "PG", hasDTA: true, dividendWHT: 15, interestWHT: 10, royaltiesWHT: 10, dtaEffectiveYear: 1990 },
 ];
 
 /** Standard Australian withholding rates with no DTA */
@@ -178,21 +190,23 @@ export interface TaxBracket {
 /**
  * Australian tax rates for non-residents (2025–26 income year).
  * Non-residents: no tax-free threshold, no Medicare levy, taxed from $0.
- * Source: ATO.gov.au/Rates/Individual-income-tax-rates
+ * Source: ATO.gov.au/Rates/Individual-income-tax-rates (2025–26 rates)
  */
 export const NON_RESIDENT_TAX_BRACKETS: TaxBracket[] = [
-  { from: 0, to: 120_000, rate: 32.5, description: "$0 – $120,000" },
-  { from: 120_001, to: 180_000, rate: 37, description: "$120,001 – $180,000" },
-  { from: 180_001, to: null, rate: 45, description: "Over $180,000" },
+  { from: 0, to: 135_000, rate: 30, description: "$0 – $135,000" },
+  { from: 135_001, to: 190_000, rate: 37, description: "$135,001 – $190,000" },
+  { from: 190_001, to: null, rate: 45, description: "Over $190,000" },
 ];
 
 /**
  * Australian resident tax rates for comparison (2025–26 income year).
+ * Updated for the Stage 3 tax cuts effective 1 July 2024.
+ * Source: ATO.gov.au/Rates/Individual-income-tax-rates
  */
 export const RESIDENT_TAX_BRACKETS: TaxBracket[] = [
   { from: 0, to: 18_200, rate: 0, description: "Tax-free threshold" },
-  { from: 18_201, to: 45_000, rate: 19, description: "$18,201 – $45,000" },
-  { from: 45_001, to: 135_000, rate: 32.5, description: "$45,001 – $135,000" },
+  { from: 18_201, to: 45_000, rate: 16, description: "$18,201 – $45,000" },
+  { from: 45_001, to: 135_000, rate: 30, description: "$45,001 – $135,000" },
   { from: 135_001, to: 190_000, rate: 37, description: "$135,001 – $190,000" },
   { from: 190_001, to: null, rate: 45, description: "Over $190,000" },
 ];
@@ -220,7 +234,7 @@ export const DASP_WITHHOLDING_RATES: DASPRate[] = [
   },
   {
     componentType: "Untaxed element",
-    withholdingRate: 65,
+    withholdingRate: 45,
     notes: "Applies to some public sector / defined benefit funds where contributions weren't taxed on the way in.",
   },
   {
@@ -365,7 +379,7 @@ export const VERTICAL_FOREIGN_RULES: VerticalForeignRule[] = [
     participationNote: "Mandatory for temp visa workers in employment. Complex rules for non-residents and expats.",
     topRules: [
       "Employer super guarantee (11.5% in 2025-26) applies to all employees — including temp visa holders",
-      "DASP: claim super on departure — 35% WHT on taxed element, 65% for Working Holiday Makers",
+      "DASP: claim super on departure — 35% WHT on taxed element, 45% on untaxed element, 65% for Working Holiday Makers",
       "NZ citizens: Trans-Tasman scheme allows transfer to KiwiSaver instead of DASP",
       "Non-residents cannot contribute to Australian super unless working in Australia",
       "Super is preserved — cannot access until preservation age (60) OR visa condition met",
@@ -402,12 +416,12 @@ export const VERTICAL_FOREIGN_RULES: VerticalForeignRule[] = [
     topRules: [
       "FIRB approval required before signing contracts",
       "Non-residents: new dwellings and off-the-plan only (cannot buy existing homes)",
-      "Temp residents can buy ONE established home as primary residence — must sell on departure",
+      "Temporary residents: ban on purchasing established dwellings from 1 Apr 2025 to 31 Mar 2027 — unless a specific exception applies",
       "Stamp duty surcharge: 7–8% depending on state (on top of standard duty)",
       "CGT on Australian property for non-residents — there is NO exemption (unlike shares)",
       "FIRB application fee: $14,100 for properties up to $1M (non-refundable)",
     ],
-    biggestGotcha: "CGT on Australian property for non-residents: unlike shares, there is NO CGT exemption. Non-residents pay full CGT rates on Australian real property. There is also a 12.5% CGT withholding at settlement for properties over $750k sold by foreign residents.",
+    biggestGotcha: "CGT on Australian property for non-residents: unlike shares, there is NO CGT exemption. Non-residents pay full CGT rates on Australian real property. There is also a 15% foreign resident CGT withholding at settlement for properties over $750k (rate increased from 12.5% to 15% from 1 January 2025).",
     href: "/foreign-investment/property",
   },
 ];
@@ -418,7 +432,7 @@ export const TOP_5_RULES_FOR_FOREIGN_INVESTORS = [
   {
     number: "01",
     rule: "No tax-free threshold",
-    detail: "Non-residents are taxed from the first dollar of Australian income at 32.5%. No $18,200 tax-free threshold applies.",
+    detail: "Non-residents are taxed from the first dollar of Australian income at 30% (2025–26). No $18,200 tax-free threshold applies.",
   },
   {
     number: "02",
@@ -433,7 +447,7 @@ export const TOP_5_RULES_FOR_FOREIGN_INVESTORS = [
   {
     number: "04",
     rule: "CGT: Shares exempt, property is not",
-    detail: "Non-residents are generally exempt from Australian CGT on listed shares. But Australian real property has NO exemption — full rates apply, plus 12.5% withheld at settlement.",
+    detail: "Non-residents are generally exempt from Australian CGT on listed shares. But Australian real property has NO exemption — full rates apply, plus 15% withheld at settlement (rate from 1 Jan 2025).",
   },
   {
     number: "05",

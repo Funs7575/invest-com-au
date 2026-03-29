@@ -9,6 +9,8 @@ const NAV_ITEMS = [
   { label: "CFD & Forex", href: "/foreign-investment/cfd", short: "CFD" },
   { label: "Property", href: "/foreign-investment/property", short: "Property" },
   { label: "Tax Guide", href: "/foreign-investment/tax", short: "Tax" },
+  { label: "By Country", href: "/foreign-investment/from/us", short: "Country" },
+  { label: "Best Platforms", href: "/best/foreign-investors", short: "Platforms" },
 ];
 
 interface Props {

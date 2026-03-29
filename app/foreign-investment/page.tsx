@@ -1,15 +1,17 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import {
   FOREIGN_INVESTOR_PERSONAS,
   VERTICAL_FOREIGN_RULES,
   TOP_5_RULES_FOR_FOREIGN_INVESTORS,
   DTA_COUNTRIES,
-  DEFAULT_WHT,
   type ForeignInvestorPersona,
 } from "@/lib/foreign-investment-data";
+import { getDtaCountries, getDefaultWHT } from "@/lib/fi-data-server";
 import { FOREIGN_INVESTOR_GENERAL_DISCLAIMER, DTA_DISCLAIMER } from "@/lib/compliance";
+import type { Broker } from "@/lib/types";
 import PersonaSelector from "./PersonaSelector";
 import DTASearchTable from "./DTASearchTable";
 import ForeignInvestmentNav from "./ForeignInvestmentNav";
@@ -17,17 +19,17 @@ import WHTCalculator from "./WHTCalculator";
 import SectionHeading from "@/components/SectionHeading";
 
 export const metadata: Metadata = {
-  title: "Foreign Investment in Australia — Complete Guide 2026 — Invest.com.au",
+  title: "Investing in Australia from Overseas — Complete Guide 2026",
   description:
-    "The complete guide to investing in Australia as a foreigner. Covers shares, crypto, savings, super (DASP), property (FIRB), and tax. Withholding tax rates, DTA treaty table, and per-vertical rules. Updated March 2026.",
+    "The complete guide to investing in Australia for non-residents, visa holders, expats and new migrants. Covers shares, crypto, savings, super (DASP), property (FIRB), and tax. Withholding tax rates, DTA treaty table, and per-vertical rules. Updated March 2026.",
   openGraph: {
-    title: "Foreign Investment in Australia — Complete Guide 2026",
+    title: "Investing in Australia from Overseas — Complete Guide 2026",
     description:
-      "Shares, crypto, savings, super (DASP), property (FIRB), and tax — everything a foreign investor needs to know about investing in Australia.",
+      "Rules for non-residents, visa holders, expats and new migrants across shares, property, savings, super and tax.",
     url: `${SITE_URL}/foreign-investment`,
     images: [
       {
-        url: `/api/og?title=${encodeURIComponent("Investing in Australia as a Foreigner")}&sub=${encodeURIComponent("Shares · Crypto · Super (DASP) · Property (FIRB) · Tax · 2026")}`,
+        url: `/api/og?title=${encodeURIComponent("Investing in Australia from Overseas")}&sub=${encodeURIComponent("Non-Residents · Visa Holders · Expats · Shares · Property · Tax · 2026")}`,
         width: 1200,
         height: 630,
       },
@@ -48,7 +50,7 @@ const HUB_FAQS = [
   {
     question: "Do non-residents pay tax in Australia?",
     answer:
-      "Non-residents pay Australian tax only on income sourced in Australia. Unlike residents, there is no tax-free threshold — tax applies from the first dollar at 32.5% (up to $120,000). Withholding tax is deducted automatically on dividends and interest. Non-residents generally do NOT owe Australian CGT on most listed shares, but DO owe CGT on Australian real property.",
+      "Non-residents pay Australian tax only on income sourced in Australia. Unlike residents, there is no tax-free threshold — tax applies from the first dollar at 30% (up to $135,000) for the 2025–26 year. Withholding tax is deducted automatically on dividends and interest. Non-residents generally do NOT owe Australian CGT on most listed shares, but DO owe CGT on Australian real property.",
   },
   {
     question: "What is the withholding tax rate for foreign investors?",
@@ -63,7 +65,7 @@ const HUB_FAQS = [
   {
     question: "Do I need FIRB approval to buy property in Australia?",
     answer:
-      "Yes, if you are a non-resident or temporary visa holder. Non-residents can only buy new dwellings, off-the-plan properties, or vacant land for development. Temporary residents may also buy one established home as a primary residence. Stamp duty surcharges of 7–8% (depending on state) apply on top of standard stamp duty. FIRB application fees start at $14,100 for properties up to $1 million.",
+      "Yes, if you are a non-resident or temporary visa holder. Non-residents can only buy new dwellings, off-the-plan properties, or vacant land for development. From 1 April 2025 to 31 March 2027, the Australian Government has also banned foreign persons — including temporary residents — from purchasing established (existing) dwellings. Exceptions may apply in limited cases. Stamp duty surcharges of 7–8% (depending on state) apply on top of standard stamp duty. FIRB application fees start at $14,100 for properties up to $1 million.",
   },
   {
     question: "Which Australian share brokers accept non-residents?",
@@ -78,7 +80,7 @@ const HUB_FAQS = [
   {
     question: "Can temporary visa holders in Australia invest normally?",
     answer:
-      "Yes. Temporary visa holders physically living and working in Australia are treated as Australian tax residents and can invest like residents — open any brokerage, crypto exchange, or savings account. The key difference is at the end: when you leave, you can claim DASP (your super back), you may be taxed differently, and any property you bought as a primary residence must be sold on departure.",
+      "It depends on your tax residency status, which is determined by the ATO's residency tests — not automatically assumed for all visa holders. Most temporary workers who live and work in Australia will pass the 'resides' test and be treated as Australian tax residents, allowing them to open brokerage, crypto, and savings accounts as residents. However, working holiday makers (subclass 417 and 462) are generally not Australian tax residents for tax purposes. Always confirm your residency status before assuming resident treatment applies.",
   },
 ];
 
@@ -95,7 +97,29 @@ const participationLabels: Record<string, string> = {
   complex: "Complex rules",
 };
 
-export default function ForeignInvestmentHubPage() {
+async function getNonResidentBrokers(): Promise<Broker[]> {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("brokers")
+      .select("id, name, slug, color, logo_url, cta_text, affiliate_url, rating, accepts_non_residents, foreign_investor_notes, platform_type, status")
+      .eq("accepts_non_residents", true)
+      .eq("status", "active")
+      .order("rating", { ascending: false })
+      .limit(8);
+    return (data ?? []) as unknown as Broker[];
+  } catch {
+    return [];
+  }
+}
+
+export default async function ForeignInvestmentHubPage() {
+  const [dtaCountries, defaultWHT, nonResidentBrokers] = await Promise.all([
+    getDtaCountries(),
+    getDefaultWHT(),
+    getNonResidentBrokers(),
+  ]);
+
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: SITE_URL },
     { name: "Foreign Investment Hub" },
@@ -135,27 +159,45 @@ export default function ForeignInvestmentHubPage() {
               </div>
               <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-[1.1] mb-3 tracking-tight">
                 Investing in Australia{" "}
-                <span className="text-amber-400">as a Foreigner</span>
+                <span className="text-amber-400">from Overseas</span>
               </h1>
-              <p className="text-sm md:text-base text-slate-300 leading-relaxed mb-6">
-                Whether you&apos;re a non-resident investing from overseas, a temporary visa holder,
-                a new permanent resident, or an Australian expat — this hub covers every asset class:
-                shares, crypto, savings, super, property, and tax.
+              <p className="text-sm md:text-base text-slate-300 leading-relaxed mb-5">
+                Rules for non-residents, visa holders, expats and new migrants across
+                shares, property, savings, super and tax.
               </p>
-              <div className="flex flex-col sm:flex-row gap-3">
+              <p className="text-xs text-slate-400 mb-5">Where do you want to start?</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-5">
+                <Link
+                  href="/foreign-investment/shares"
+                  className="px-4 py-2.5 bg-white/10 hover:bg-amber-500/20 border border-white/20 hover:border-amber-500/40 text-slate-200 hover:text-white font-semibold rounded-xl text-xs text-left transition-colors"
+                >
+                  I want to buy Australian shares &rarr;
+                </Link>
+                <Link
+                  href="/foreign-investment/property"
+                  className="px-4 py-2.5 bg-white/10 hover:bg-amber-500/20 border border-white/20 hover:border-amber-500/40 text-slate-200 hover:text-white font-semibold rounded-xl text-xs text-left transition-colors"
+                >
+                  I want to buy property &rarr;
+                </Link>
+                <Link
+                  href="/foreign-investment/super"
+                  className="px-4 py-2.5 bg-white/10 hover:bg-amber-500/20 border border-white/20 hover:border-amber-500/40 text-slate-200 hover:text-white font-semibold rounded-xl text-xs text-left transition-colors"
+                >
+                  I&apos;m leaving Australia — super &amp; tax help &rarr;
+                </Link>
                 <Link
                   href="#find-your-situation"
-                  className="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-white font-bold rounded-xl text-sm text-center transition-colors shadow-lg shadow-amber-500/20"
+                  className="px-4 py-2.5 bg-white/10 hover:bg-amber-500/20 border border-white/20 hover:border-amber-500/40 text-slate-200 hover:text-white font-semibold rounded-xl text-xs text-left transition-colors"
                 >
-                  Find My Situation &rarr;
-                </Link>
-                <Link
-                  href="/advisors/tax-agents"
-                  className="px-6 py-3 border border-slate-600 hover:border-slate-400 text-slate-300 hover:text-white font-semibold rounded-xl text-sm text-center transition-colors"
-                >
-                  Find a Tax Agent
+                  I&apos;m an expat or new migrant &rarr;
                 </Link>
               </div>
+              <Link
+                href="#find-your-situation"
+                className="inline-block px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-white font-bold rounded-xl text-xs text-center transition-colors shadow-lg shadow-amber-500/20"
+              >
+                See all situations &rarr;
+              </Link>
             </div>
 
             {/* Key stats */}
@@ -207,6 +249,56 @@ export default function ForeignInvestmentHubPage() {
         </div>
       </section>
 
+      {/* ── Platform Recommendations ────────────────────────────────── */}
+      {nonResidentBrokers.length > 0 && (
+        <section className="py-12 md:py-16 bg-white">
+          <div className="container-custom">
+            <SectionHeading
+              eyebrow="Platforms for non-residents"
+              title="Which platforms accept foreign investors?"
+              sub="These platforms have confirmed they accept non-residents or international clients. Always verify current eligibility before applying."
+            />
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+              {nonResidentBrokers.map((b) => (
+                <div key={b.id} className="bg-white rounded-xl border border-slate-200 hover:border-amber-300 hover:shadow-md transition-all p-4 flex flex-col">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className="w-9 h-9 rounded-lg flex items-center justify-center text-white text-sm font-bold shrink-0" style={{ backgroundColor: b.color || "#334155" }}>
+                      {b.name.charAt(0)}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="font-bold text-sm text-slate-900 truncate">{b.name}</p>
+                      <p className="text-[0.65rem] text-slate-400 capitalize">{b.platform_type?.replace(/_/g, " ")}</p>
+                    </div>
+                  </div>
+                  {b.foreign_investor_notes && (
+                    <p className="text-xs text-slate-500 leading-relaxed mb-3 flex-1">{b.foreign_investor_notes}</p>
+                  )}
+                  <div className="mt-auto flex gap-2">
+                    {b.affiliate_url && (
+                      <Link href={b.affiliate_url} target="_blank" rel="noopener noreferrer" className="flex-1 text-center text-xs font-bold text-white bg-amber-500 hover:bg-amber-600 rounded-lg py-2 transition-colors">
+                        Visit
+                      </Link>
+                    )}
+                    <Link href={`/broker/${b.slug}`} className="flex-1 text-center text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg py-2 transition-colors">
+                      Review
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Link href="/best/foreign-investors" className="text-sm font-bold text-amber-600 hover:text-amber-700">
+                Best platforms for non-residents &rarr;
+              </Link>
+              <span className="text-slate-300">·</span>
+              <Link href="/best/expat-investors" className="text-sm font-bold text-amber-600 hover:text-amber-700">
+                Best platforms for expats &rarr;
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ── Vertical Cards ──────────────────────────────────────────── */}
       <section className="py-12 md:py-16">
         <div className="container-custom">
@@ -247,7 +339,7 @@ export default function ForeignInvestmentHubPage() {
       {/* ── Withholding Tax Calculator ───────────────────────────────── */}
       <section className="py-12 md:py-16">
         <div className="container-custom max-w-3xl">
-          <WHTCalculator countries={DTA_COUNTRIES} defaultRates={DEFAULT_WHT} />
+          <WHTCalculator countries={dtaCountries} defaultRates={defaultWHT} />
         </div>
       </section>
 
@@ -257,17 +349,52 @@ export default function ForeignInvestmentHubPage() {
           <SectionHeading
             eyebrow="Tax treaties"
             title="Double Tax Agreement (DTA) withholding rates"
-            sub="Australian withholding tax rates for residents of treaty countries. Without a DTA, dividends are taxed at 30%, royalties at 30%."
+            sub="Indicative Australian withholding tax rates for residents of common treaty countries. Without a DTA, dividends are taxed at 30%, royalties at 30%. This table is illustrative — treaty application depends on income type and individual conditions."
           />
           <DTASearchTable
-            countries={DTA_COUNTRIES}
-            defaultRates={DEFAULT_WHT}
+            countries={dtaCountries}
+            defaultRates={defaultWHT}
             dtaDisclaimer={DTA_DISCLAIMER}
           />
           <div className="mt-4">
             <Link href="/foreign-investment/tax" className="text-sm font-bold text-amber-600 hover:text-amber-700">
               See the full tax guide for non-residents &rarr;
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── By Country ──────────────────────────────────────────────── */}
+      <section className="py-12 md:py-16">
+        <div className="container-custom">
+          <SectionHeading
+            eyebrow="By country"
+            title="Country-specific investment guides"
+            sub="See the exact withholding tax rates, DTA status, and platform recommendations for your specific country."
+          />
+          <div className="flex flex-wrap gap-2 mb-4">
+            {DTA_COUNTRIES.slice(0, 20).map((c) => (
+              <Link
+                key={c.countryCode}
+                href={`/foreign-investment/from/${c.countryCode.toLowerCase()}`}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 hover:border-amber-300 hover:bg-amber-50 text-xs font-semibold text-slate-700 hover:text-amber-700 rounded-lg transition-colors"
+              >
+                <span>{c.country}</span>
+                {c.hasDTA && <span className="text-[0.6rem] bg-green-100 text-green-700 font-bold px-1.5 py-0.5 rounded">DTA</span>}
+              </Link>
+            ))}
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {DTA_COUNTRIES.slice(20).map((c) => (
+              <Link
+                key={c.countryCode}
+                href={`/foreign-investment/from/${c.countryCode.toLowerCase()}`}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 hover:border-amber-300 hover:bg-amber-50 text-xs font-semibold text-slate-700 hover:text-amber-700 rounded-lg transition-colors"
+              >
+                <span>{c.country}</span>
+                {c.hasDTA && <span className="text-[0.6rem] bg-green-100 text-green-700 font-bold px-1.5 py-0.5 rounded">DTA</span>}
+              </Link>
+            ))}
           </div>
         </div>
       </section>

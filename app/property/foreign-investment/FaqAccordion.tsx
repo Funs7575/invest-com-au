@@ -1,13 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { FIRB_FAQS } from "@/lib/firb-data";
 
-export default function FaqAccordion() {
+interface FaqItem {
+  question: string;
+  answer: string;
+}
+
+export default function FaqAccordion({ faqs }: { faqs: FaqItem[] }) {
   const [open, setOpen] = useState<number | null>(null);
   return (
     <div className="divide-y divide-slate-100 border border-slate-200 rounded-2xl overflow-hidden">
-      {FIRB_FAQS.map((faq, i) => (
+      {faqs.map((faq, i) => (
         <div key={i}>
           <button
             onClick={() => setOpen(open === i ? null : i)}

@@ -1935,6 +1935,110 @@ const categories: BestBrokerCategory[] = [
     ],
   },
   {
+    slug: "foreign-investors",
+    title: `Best Brokers for Foreign Investors in Australia (${yr})`,
+    h1: "Best Australian Brokers for Foreign Investors & Non-Residents",
+    metaDescription: `Best Australian brokers that accept non-residents and foreign investors. Confirmed eligibility, fees, and non-resident notes. ${upd}.`,
+    intro: `Most Australian retail brokers require an Australian residential address — leaving non-residents with very limited options. We've filtered platforms to show only those confirmed to accept non-residents or international clients. Whether you're investing from overseas or are a temporary resident, these are the platforms you can actually open an account with.`,
+    filter: (b) => b.accepts_non_residents === true,
+    sort: (a, b) => (b.rating ?? 0) - (a.rating ?? 0),
+    criteria: [
+      "Confirmed non-resident eligibility (accepts international address)",
+      "ASIC-regulated or holds an Australian financial licence",
+      "Account currently open to new non-resident clients",
+      "Non-resident account opening documented or verified",
+    ],
+    sections: [
+      {
+        heading: "Why Most Australian Brokers Don't Accept Non-Residents",
+        body: "Australian retail brokers face strict KYC/AML obligations under the AML/CTF Act and ASIC's client identification requirements. Verifying overseas addresses, foreign passports, and source-of-funds for non-residents adds compliance cost and complexity. Most domestic-focused brokers simply exclude non-residents to manage this risk. The result: international investors have a much narrower choice of platforms compared to Australian residents.",
+      },
+      {
+        heading: "What Non-Residents Need to Open an Account",
+        body: "Brokers that accept non-residents will require: a valid passport (the primary ID), proof of overseas residential address (utility bill or bank statement dated within 3 months), declaration of non-resident tax status (important for correct withholding tax treatment), and often source-of-funds documentation for larger initial deposits. Some brokers also require a W-8BEN form if you plan to trade US shares via their platform.",
+      },
+      {
+        heading: "Non-Resident Tax Considerations When Choosing a Broker",
+        body: "Ensure the broker you choose can record your non-resident status correctly. If not declared, the broker must withhold at the highest marginal Australian rate on dividends — 47% rather than the standard 30% (or lower DTA rate). Interactive Brokers, as the largest international platform, handles non-resident tax treatment automatically. Domestic platforms vary — some have robust non-resident onboarding; others may handle it poorly.",
+      },
+    ],
+    relatedLinks: [
+      { label: "Foreign Investment Hub", href: "/foreign-investment" },
+      { label: "Shares for Non-Residents", href: "/foreign-investment/shares" },
+      { label: "Best for Expats", href: "/best/expat-investors" },
+      { label: "Compare All Platforms", href: "/compare" },
+    ],
+    faqs: [
+      {
+        question: "Which Australian brokers accept non-residents without an Australian address?",
+        answer:
+          "Very few domestic brokers accept true non-residents. Interactive Brokers is the standout — it operates in 200+ countries and doesn't require an Australian address. Most domestic brokers (CommSec, Stake, Moomoo, nabtrade) require an Australian residential address.",
+      },
+      {
+        question: "Do non-residents pay more in fees with Australian brokers?",
+        answer:
+          "Generally no — fee schedules are the same for residents and non-residents. However, non-residents pay withholding tax on dividends (30% unfranked, reduced by DTA) and interest (10%), which residents don't. This tax drag effectively increases the cost of holding income-generating investments.",
+      },
+      {
+        question: "Can I keep my Australian brokerage account if I move overseas?",
+        answer:
+          "It depends on the broker. Many domestic brokers will freeze or close your account if you update your address to overseas. Brokers that explicitly accept non-residents (like Interactive Brokers) allow you to hold an account regardless of where you live. If you're planning to move overseas, check your broker's policy before you go.",
+      },
+    ],
+  },
+  {
+    slug: "expat-investors",
+    title: `Best Brokers for Australian Expats (${yr})`,
+    h1: "Best Australian Brokers for Expats Living Abroad",
+    metaDescription: `Best Australian brokers for expats and non-resident citizens. Which platforms let you keep or open accounts while living overseas. ${upd}.`,
+    intro: `Australian expats face a specific challenge: the broker that worked fine while living in Australia may freeze your account the moment you update your address overseas. We've identified the brokers that accept Australian non-resident investors — either keeping existing accounts open or accepting new applications from abroad.`,
+    filter: (b) => b.accepts_non_residents === true,
+    sort: (a, b) => (b.rating ?? 0) - (a.rating ?? 0),
+    criteria: [
+      "Accepts non-resident Australian investors (overseas address)",
+      "Account retention policy confirmed for expats",
+      "ASIC-regulated or internationally licensed",
+      "Not crypto-exclusive",
+    ],
+    sections: [
+      {
+        heading: "The Biggest Expat Risk: Your Broker Closing Your Account",
+        body: "Many domestic Australian brokers (CommSec, nabtrade, Selfwealth, Stake) require an Australian residential address. When you update your address overseas, they may give you 30-90 days notice to close your account and transfer or sell your holdings. If you hold large capital gains positions, a forced sale is a significant tax event. Before moving overseas, check your broker's non-resident policy and consider transferring to a platform that explicitly supports non-residents.",
+      },
+      {
+        heading: "Tax Status for Australian Expats — Critical to Understand",
+        body: "Becoming a non-resident for Australian tax purposes has major implications. You lose the 50% CGT discount on shares (for assets held less than 12 months before departure). You lose the main residence CGT exemption (if you later sell your Australian home). The tax-free threshold no longer applies to your Australian income. However, you generally become exempt from Australian CGT on most listed shares — a structural advantage for long-term holders. Check the ATO's residency tests before assuming you're a non-resident.",
+      },
+      {
+        heading: "Keeping Your Australian Investments as an Expat",
+        body: "There is generally no prohibition on Australian citizens or PR holders keeping their existing Australian share portfolio while living overseas. The practical issues are: broker policy (above), ongoing tax reporting in Australia for Australian-sourced income, and potentially complex CGT calculations when you return. For expats committed to long-term investing in Australian markets, Interactive Brokers is the most robust solution — full functionality regardless of where you live.",
+      },
+    ],
+    relatedLinks: [
+      { label: "Tax Guide for Expats", href: "/foreign-investment/tax" },
+      { label: "Shares for Non-Residents", href: "/foreign-investment/shares" },
+      { label: "Best for Foreign Investors", href: "/best/foreign-investors" },
+      { label: "Find a Tax Agent", href: "/advisors/tax-agents" },
+    ],
+    faqs: [
+      {
+        question: "Can I keep my CommSec or nabtrade account as an expat?",
+        answer:
+          "Most Australian banks' brokers (CommSec, nabtrade) require an Australian residential address and may close your account when you move overseas. Contact them before you leave to check their policy. You may be given a period to transfer your holdings to an ASIC-regulated broker that accepts non-residents.",
+      },
+      {
+        question: "Do I lose my CGT discount when I become a non-resident?",
+        answer:
+          "For assets you hold at the point of becoming a non-resident, a deemed disposal event may occur — or you can defer the CGT but lose the discount when you eventually sell. For assets acquired after becoming a non-resident, the 50% CGT discount is not available. However, non-residents are generally exempt from Australian CGT entirely on disposals of listed Australian shares (Section 855-10 ITAA 1997) — this exemption replaces (and is often better than) the discount.",
+      },
+      {
+        question: "What is the best broker for Australian expats?",
+        answer:
+          "Interactive Brokers is widely regarded as the best option for Australian expats — it accepts clients in 200+ countries, has no Australian address requirement, handles non-resident tax treatment correctly, and provides access to both ASX and global markets. Some specialised international brokers also work well for expats trading ASX.",
+      },
+    ],
+  },
+  {
     slug: "online-savings-account",
     title: `Best Online Savings Account Australia (${yr})`,
     h1: "Best Online Savings Account in Australia",

@@ -83,11 +83,11 @@ export const FIRB_THRESHOLDS: FirbThreshold[] = [
       "FTA country investors have the same $1.195M threshold but must still seek FIRB approval. Same new-dwellings-only restriction applies.",
   },
   {
-    category: "Temporary Residents — Established Home (Primary Residence)",
-    description: "Temporary visa holders buying a home to live in while in Australia",
-    residentialThreshold: "$1,195,000",
+    category: "Temporary Residents — Established Home",
+    description: "Temporary visa holders seeking to purchase an existing dwelling",
+    residentialThreshold: null,
     notes:
-      "Temporary residents may buy ONE established home to live in as their primary residence. Must sell when they leave Australia.",
+      "The Australian Government has banned foreign persons (including temporary residents) from purchasing established dwellings from 1 April 2025 to 31 March 2027. This is a temporary measure. Exceptions may apply in limited circumstances — seek legal advice before proceeding.",
   },
   {
     category: "Foreign-Owned Companies / Trusts",
@@ -120,7 +120,7 @@ export const WHO_NEEDS_FIRB = [
     group: "Temporary visa holders (e.g. 457, 482, student visa)",
     needsFirb: true,
     notes:
-      "May buy ONE established home to live in. Can also buy new dwellings or off-the-plan. Must apply for FIRB approval.",
+      "Can buy new dwellings or off-the-plan properties with FIRB approval. Purchases of established (existing) dwellings are banned from 1 April 2025 to 31 March 2027 — unless a specific exception applies.",
   },
   {
     group: "Non-residents (foreign persons with no Australian visa)",
@@ -161,10 +161,10 @@ export const ELIGIBLE_PROPERTY_TYPES = [
   },
   {
     type: "Established (Existing) Homes — Temporary Residents",
-    eligible: true,
+    eligible: false,
     description:
-      "Temporary visa holders may purchase ONE established home to use as their primary residence. Must sell when leaving Australia.",
-    examples: ["Existing house or apartment while on a work visa"],
+      "Purchases of established dwellings by temporary residents are banned from 1 April 2025 to 31 March 2027. This is a temporary government measure. Limited exceptions may apply — seek legal advice.",
+    examples: [],
   },
   {
     type: "Established (Existing) Homes — Non-Residents",
@@ -330,7 +330,7 @@ export const FIRB_FAQS: FirbFaqItem[] = [
   {
     question: "Can a foreign investor buy any property in Australia?",
     answer:
-      "No. Foreign non-residents are generally restricted to new dwellings, off-the-plan properties, and vacant land for residential development. Temporary visa holders may also buy one established home to use as their primary residence while in Australia.",
+      "No. Foreign non-residents are restricted to new dwellings, off-the-plan properties, and vacant land for residential development. From 1 April 2025 to 31 March 2027, the Australian Government has also banned foreign persons — including temporary residents — from purchasing established (existing) dwellings. This is a temporary measure and limited exceptions may apply. Always seek legal advice before making any offer.",
   },
   {
     question: "How long does FIRB approval take?",
@@ -365,7 +365,7 @@ export const FIRB_FAQS: FirbFaqItem[] = [
   {
     question: "Can I rent out a property I buy with FIRB approval?",
     answer:
-      "Yes, if you've received FIRB approval to purchase a new dwelling as an investment, you can rent it out. However, if your approval was for a temporary resident purchasing an established home to live in, you typically cannot rent it out — you must sell when you leave Australia.",
+      "Yes, if you've received FIRB approval to purchase a new dwelling as an investment, you can rent it out. Note that from 1 April 2025 to 31 March 2027, temporary residents are prohibited from purchasing established homes, so this scenario applies only to new dwellings purchased before that ban took effect.",
   },
 ];
 
