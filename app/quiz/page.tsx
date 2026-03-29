@@ -148,12 +148,12 @@ const UNIFIED_QUESTIONS: Record<QuestionId, { text: string; options: { key: stri
   advisor_type: {
     text: "What type of expert are you looking for?",
     options: [
-      { key: "mortgage-broker", label: "Mortgage broker", sub: "Home loans, refinancing, investment loans" },
-      { key: "buyers-agent", label: "Buyer's agent", sub: "Find and negotiate property purchases" },
-      { key: "financial-planner", label: "Financial planner", sub: "Investment strategy, tax, retirement planning" },
-      { key: "smsf-accountant", label: "SMSF accountant", sub: "Set up and manage a self-managed super fund" },
-      { key: "tax-agent", label: "Tax agent", sub: "Tax returns, crypto CGT, deductions" },
-      { key: "not-sure", label: "I'm not sure what I need", sub: "Help me figure out the right expert" },
+      { key: "mortgage-broker",   label: "Mortgage broker",           sub: "Home loans, refinancing, investment loans",     emoji: "🏠" },
+      { key: "buyers-agent",      label: "Buyer's agent",             sub: "Find and negotiate property purchases",         emoji: "🔍" },
+      { key: "financial-planner", label: "Financial planner",         sub: "Investment strategy, tax, retirement planning", emoji: "📊" },
+      { key: "smsf-accountant",   label: "SMSF accountant",           sub: "Set up and manage a self-managed super fund",   emoji: "🏦" },
+      { key: "tax-agent",         label: "Tax agent",                 sub: "Tax returns, crypto CGT, deductions",           emoji: "📋" },
+      { key: "not-sure",          label: "I'm not sure what I need",  sub: "Help me figure out the right expert",           emoji: "🤔" },
     ],
   },
   property_sub: {
@@ -224,7 +224,7 @@ function getNextId(id: QuestionId, a: UnifiedAnswers): QuestionId | null {
 }
 
 function getTotalSteps(a: UnifiedAnswers): number {
-  if (isInternational(a)) return 5; // location + country + visa + goal + amount + advisor_type
+  if (isInternational(a)) return 6; // location + country + visa + goal + amount + advisor_type
   const skipMode = a.goal === "help" || a.goal === "home";
   const hasPropertySub = a.goal === "property";
   return 1 + (skipMode ? 4 : 5) + (hasPropertySub ? 1 : 0); // +1 for location
@@ -247,6 +247,56 @@ function inferAdvisorType(a: UnifiedAnswers): string {
   if (a.goal === "crypto") return "tax-agent";
   if (a.amount === "large" || a.amount === "whale") return "financial-planner";
   return a.advisor_type || "financial-planner";
+}
+
+// Reorders options to put the inferred/recommended type first with a "Recommended" label
+function sortByInferred(
+  options: { key: string; label: string; sub?: string; emoji?: string }[],
+  inferred: string
+): { key: string; label: string; sub?: string; emoji?: string }[] {
+  if (!inferred || inferred === "not-sure") return options;
+  const idx = options.findIndex(o => o.key === inferred);
+  if (idx <= 0) return options;
+  const reordered = [...options];
+  const [item] = reordered.splice(idx, 1);
+  reordered.unshift({
+    ...item,
+    sub: item.sub ? `${item.sub} · Recommended for you` : "Recommended for you",
+  });
+  return reordered;
+}
+
+// Returns a context-aware advisor_type question based on prior answers
+function getDynamicAdvisorTypeQuestion(a: UnifiedAnswers): { text: string; options: { key: string; label: string; sub?: string; emoji?: string }[] } {
+  const allOptions = UNIFIED_QUESTIONS.advisor_type.options;
+  const inferred = inferAdvisorType(a);
+  const baseText = UNIFIED_QUESTIONS.advisor_type.text;
+
+  // International track: filter to options relevant for their investment goal
+  if (isInternational(a)) {
+    let relevantKeys: string[];
+    const goal = a.investor_goal_intl;
+    if (goal === "property") {
+      relevantKeys = ["buyers-agent", "mortgage-broker", "financial-planner", "not-sure"];
+    } else if (goal === "shares") {
+      relevantKeys = ["financial-planner", "tax-agent", "not-sure"];
+    } else if (goal === "savings" || goal === "business") {
+      relevantKeys = ["financial-planner", "not-sure"];
+    } else {
+      relevantKeys = allOptions.map(o => o.key);
+    }
+    const filtered = allOptions.filter(o => relevantKeys.includes(o.key));
+    return { text: baseText, options: sortByInferred(filtered, inferred) };
+  }
+
+  // Home goal: mortgage broker is the only logical answer
+  if (a.goal === "home") {
+    const opts = allOptions.filter(o => o.key === "mortgage-broker" || o.key === "not-sure");
+    return { text: baseText, options: opts };
+  }
+
+  // All other domestic cases: reorder to put inferred type first
+  return { text: baseText, options: sortByInferred(allOptions, inferred) };
 }
 
 // Convert unified answers to a flat string array for the platform scoring engine
@@ -694,7 +744,9 @@ export default function QuizPage() {
   }
 
   // Questions phase
-  const current = UNIFIED_QUESTIONS[currentId];
+  const current = currentId === "advisor_type"
+    ? getDynamicAdvisorTypeQuestion(answers)
+    : UNIFIED_QUESTIONS[currentId];
   const questionIndex = history.length; // 0-based
   const totalSteps = getTotalSteps(answers);
 
