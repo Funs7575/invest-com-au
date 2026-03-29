@@ -113,6 +113,8 @@ export default function Footer() {
                 <li><Link href="/compare/super" className="hover:text-white transition-colors inline-block py-0.5">Super Funds</Link></li>
                 <li><Link href="/best/robo-advisors" className="hover:text-white transition-colors inline-block py-0.5">Robo-Advisors</Link></li>
                 <li><Link href="/compare?category=savings" className="hover:text-white transition-colors inline-block py-0.5">Savings Accounts</Link></li>
+                <li><Link href="/etfs" className="hover:text-white transition-colors inline-block py-0.5">ETF Hub</Link></li>
+                <li><Link href="/fee-tracker" className="hover:text-white transition-colors inline-block py-0.5">Fee Tracker</Link></li>
                 <li><Link href="/versus" className="hover:text-white transition-colors inline-block py-0.5">Head-to-Head</Link></li>
                 <li><Link href="/deals" className="hover:text-white transition-colors inline-block py-0.5">Deals</Link></li>
               </ul>
@@ -150,6 +152,8 @@ export default function Footer() {
               <h4 className="text-white font-semibold mb-2 md:mb-3 text-xs md:text-sm">Learn</h4>
               <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm mb-4 md:mb-5">
                 <li><Link href="/articles" className="hover:text-white transition-colors inline-block py-0.5">Articles &amp; Guides</Link></li>
+                <li><Link href="/tax" className="hover:text-white transition-colors inline-block py-0.5">Tax Strategy Hub</Link></li>
+                <li><Link href="/insurance" className="hover:text-white transition-colors inline-block py-0.5">Insurance Hub</Link></li>
                 <li><Link href="/calculators" className="hover:text-white transition-colors inline-block py-0.5">Calculators</Link></li>
                 <li><Link href="/glossary" className="hover:text-white transition-colors inline-block py-0.5">Glossary</Link></li>
                 <li><Link href="/quiz" className="hover:text-white transition-colors inline-block py-0.5">Platform Quiz</Link></li>

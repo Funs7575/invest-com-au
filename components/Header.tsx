@@ -27,12 +27,16 @@ const foreignDropdown = [
   { label: "Super & DASP", href: "/foreign-investment/super", desc: "Claim your super when leaving (35–65%)" },
   { label: "Tax Guide (DTA & WHT)", href: "/foreign-investment/tax", desc: "DTA treaties, CGT rules & residency" },
   { label: "Property (FIRB Guide)", href: "/property/foreign-investment", desc: "FIRB approval, stamp duty surcharges" },
-  { label: "Find an Advisor", href: "/advisors/tax-agents", desc: "International tax specialists" },
+  { label: "International Tax Specialists", href: "/advisors/international-tax-specialists", desc: "Expat & cross-border tax advisors" },
+  { label: "FIRB Specialists", href: "/advisors/firb-specialists", desc: "FIRB approval applications" },
+  { label: "Migration Agents", href: "/advisors/migration-agents", desc: "Investor & skilled visa specialists" },
 ];
 
 const wealthDropdown = [
   { label: "Financial Planners", href: "/advisors/financial-planners", desc: "Wealth strategy & retirement" },
   { label: "SMSF Accountants", href: "/advisors/smsf-accountants", desc: "Self-managed super specialists" },
+  { label: "Insurance Hub", href: "/insurance", desc: "Life, income protection, health & home" },
+  { label: "Tax Strategy Hub", href: "/tax", desc: "CGT, franking credits & tax strategies" },
   { label: "Insurance Brokers", href: "/advisors/insurance-brokers", desc: "Life, income protection & business" },
   { label: "Tax Agents", href: "/advisors/tax-agents", desc: "Tax planning & lodgement" },
   { label: "Estate Planners", href: "/advisors/estate-planners", desc: "Wills, trusts & succession" },
@@ -42,6 +46,8 @@ const wealthDropdown = [
 const platformsDropdown = [
   { label: "Compare Platforms", href: "/compare", desc: "Side-by-side comparison tool" },
   { label: `Best Platforms ${CURRENT_YEAR}`, href: "/best", desc: "Top picks by category" },
+  { label: "ETF Hub", href: "/etfs", desc: "Compare ASX & global ETFs by type" },
+  { label: "Fee Tracker", href: "/fee-tracker", desc: "Every broker fee change, tracked" },
   { label: "Broker vs Broker", href: "/versus", desc: "Head-to-head matchups" },
   { label: "Deals & Offers", href: "/deals", desc: "Current promotions" },
   { label: "Platform Reviews", href: "/reviews", desc: "User ratings & reviews" },
@@ -94,9 +100,10 @@ const mobileNavSections = [
     items: [
       { name: "Financial Planners", href: "/advisors/financial-planners" },
       { name: "SMSF Accountants", href: "/advisors/smsf-accountants" },
+      { name: "Insurance Hub", href: "/insurance" },
+      { name: "Tax Strategy Hub", href: "/tax" },
       { name: "Insurance Brokers", href: "/advisors/insurance-brokers" },
       { name: "Tax Agents", href: "/advisors/tax-agents" },
-      { name: "Estate Planners", href: "/advisors/estate-planners" },
     ],
   },
   {
@@ -104,8 +111,9 @@ const mobileNavSections = [
     items: [
       { name: "Compare", href: "/compare" },
       { name: "Best Platforms", href: "/best" },
+      { name: "ETF Hub", href: "/etfs" },
+      { name: "Fee Tracker", href: "/fee-tracker" },
       { name: "Deals & Offers", href: "/deals" },
-      { name: "Reviews", href: "/reviews" },
       { name: "Broker vs Broker", href: "/versus" },
     ],
   },

@@ -2038,6 +2038,327 @@ const categories: BestBrokerCategory[] = [
       },
     ],
   },
+  // ─── PERSONA CATEGORIES ────────────────────────────────────────────────────
+  {
+    slug: "retirees",
+    title: `Best Investment Platforms for Retirees Australia (${yr})`,
+    h1: "Best Investment Platforms for Retirees in Australia",
+    metaDescription: `Compare the best investment platforms for Australian retirees: low fees, pension-mode accounts, dividend focus, and ease-of-use. ${upd}.`,
+    intro: `In retirement, simplicity, income generation, and capital preservation matter most. We've selected platforms that suit retirees — those with low or no inactivity fees, quality dividend stocks and ETFs, intuitive interfaces, and local phone support.`,
+    filter: (b) =>
+      !b.is_crypto &&
+      b.platform_type !== "cfd_forex" &&
+      (b.asx_fee_value ?? 99) <= 20 &&
+      (!b.inactivity_fee || b.inactivity_fee === "None" || b.inactivity_fee === "$0" || b.inactivity_fee === "No"),
+    sort: (a, b) => (a.asx_fee_value ?? 99) - (b.asx_fee_value ?? 99),
+    criteria: [
+      "No inactivity fees",
+      "Low brokerage on blue-chip ASX trades",
+      "Dividend reinvestment support",
+      "Phone or live-chat support",
+      "CHESS-sponsored or equivalent safeguards",
+    ],
+    sections: [
+      {
+        heading: "Why Retirees Need a Different Type of Broker",
+        body: "Active traders benefit from advanced charting and speed. Retirees typically need the opposite: low fees for infrequent trades, reliable income reporting for tax purposes, clear dividend statements, and straightforward account management. Inactivity fees can quietly erode a retirement portfolio when trading frequency is low.",
+      },
+      {
+        heading: "Income vs. Growth Investing in Retirement",
+        body: "Many retirees focus on dividend-paying blue-chip shares, LICs, and income ETFs (e.g. VHY, HVST) rather than growth stocks. A good platform for retirees makes it easy to set up dividend reinvestment plans (DRPs), view upcoming ex-dividend dates, and generate annual income reports.",
+      },
+      {
+        heading: "SMSF and Account-Based Pension Considerations",
+        body: "If you manage investments through an SMSF or Account-Based Pension, some platforms offer dedicated SMSF accounts with annual audit reports and separate trustee logins. Check whether the platform supports corporate trustee structures and provides the data exports your SMSF auditor needs.",
+      },
+    ],
+    relatedLinks: [
+      { label: "Best for Dividends", href: "/best/dividends" },
+      { label: "Best SMSF Platforms", href: "/best/smsf" },
+      { label: "Best Super Funds", href: "/best/super-funds" },
+      { label: "Retirement Calculator", href: "/retirement-calculator" },
+    ],
+    faqs: [
+      {
+        question: "What is the best broker for retirees in Australia?",
+        answer:
+          "Platforms with no inactivity fees, low brokerage, and strong dividend reporting are best for retirees. CommSec, Nabtrade, and Bell Direct are popular among older investors due to their local support and established reputations. For lower-fee options, Pearler is specifically designed for long-term investors and has a clean, simple interface.",
+      },
+      {
+        question: "Do I pay brokerage inside a pension account?",
+        answer:
+          "Yes — brokerage is charged at the platform level regardless of whether you're in accumulation, pension phase, or a standalone account. The tax treatment of the trades differs (zero tax in pension phase), but brokerage costs are the same.",
+      },
+      {
+        question: "Can I access the pensioner discount through an investment platform?",
+        answer:
+          "Investment platforms are separate from Centrelink's Age Pension system. However, some brokers offer senior discount brokerage or low-balance waivers — check with the platform directly.",
+      },
+    ],
+  },
+  {
+    slug: "temporary-residents",
+    title: `Best Brokers for Temporary Residents Australia (${yr})`,
+    h1: "Best Brokers for Temporary Residents in Australia",
+    metaDescription: `Brokers that accept Australian temporary residents on 482, 500, 189, and WHV visas. Invest in ASX shares without an Australian citizenship. ${upd}.`,
+    intro: `On a 482 work visa, student visa, or working holiday visa? You can still invest in ASX shares — but not every broker accepts temporary residents. We list the platforms that accept temporary visa holders and explain the tax rules that apply.`,
+    filter: (b) => b.accepts_temporary_residents === true,
+    sort: (a, b) => (a.asx_fee_value ?? 99) - (b.asx_fee_value ?? 99),
+    criteria: [
+      "Accepts temporary visa holders",
+      "No Australian citizenship required",
+      "Online account opening",
+      "Withholding tax correctly applied",
+    ],
+    sections: [
+      {
+        heading: "Can Temporary Residents Invest in Australian Shares?",
+        body: "Yes. There is no legal restriction on temporary residents buying ASX-listed shares. The challenge is finding a broker willing to verify and onboard a temporary resident — some require an Australian residential address, tax file number (TFN), or bank account, which temporary residents may or may not have.",
+      },
+      {
+        heading: "Tax Rules for Temporary Residents",
+        body: "Temporary residents are taxed as Australian residents on Australian-source income (including dividends and capital gains on ASX shares) during their stay. When you leave Australia, CGT applies to your Australian assets at that point. The ATO has specific rules — it is worth consulting a tax agent who understands temporary resident tax status.",
+      },
+      {
+        heading: "What Happens to Your Shares When You Leave?",
+        body: "When you depart Australia permanently, you may be treated as a non-resident for tax purposes. Some brokers allow you to maintain your account as a non-resident; others will close it. Interactive Brokers and Stake are the most flexible for this transition.",
+      },
+    ],
+    relatedLinks: [
+      { label: "Best for Foreign Investors", href: "/best/foreign-investors" },
+      { label: "Expat Investors", href: "/best/expat-investors" },
+      { label: "Foreign Investment Hub", href: "/foreign-investment" },
+      { label: "Super & DASP", href: "/foreign-investment/super" },
+    ],
+    faqs: [
+      {
+        question: "Do I need a TFN to invest in Australia on a visa?",
+        answer:
+          "You don't legally need a TFN to invest, but without one your broker is required to withhold tax at the top marginal rate (47%) from dividends. Eligible temporary residents can apply for a TFN from the ATO — it is worth doing before you start investing.",
+      },
+      {
+        question: "Can I invest on a Working Holiday Visa (subclass 417 or 462)?",
+        answer:
+          "Yes, Working Holiday makers can invest in ASX shares. You are taxed as a non-resident for the Working Holiday income but your investment income may be taxed differently. Interactive Brokers and Stake are commonly used by WHV holders.",
+      },
+      {
+        question: "What happens to my super when I leave Australia?",
+        answer:
+          "You can claim your superannuation balance as a Departing Australia Superannuation Payment (DASP) once your visa expires and you leave the country. DASP is taxed at 35% for regular super and 45% for taxed-source balances of working holiday makers.",
+      },
+    ],
+  },
+  {
+    slug: "high-net-worth",
+    title: `Best Brokers for High Net Worth Investors Australia (${yr})`,
+    h1: "Best Brokers for High Net Worth Investors in Australia",
+    metaDescription: `Premium investment platforms for Australian HNW investors: global access, premium service, competitive institutional-grade pricing, and portfolio tools. ${upd}.`,
+    intro: `High net worth investors have different needs: lower per-trade costs at scale, access to international markets, margin lending, bonds, OTC products, and dedicated relationship management. We compare platforms that serve HNW investors with the depth they require.`,
+    filter: (b) =>
+      !b.is_crypto &&
+      (b.us_fee_value != null ||
+        (b.chess_sponsored === true && (b.asx_fee_value ?? 99) < 20)),
+    sort: (a, b) => (a.asx_fee_value ?? 99) - (b.asx_fee_value ?? 99),
+    criteria: [
+      "Access to international markets",
+      "Competitive pricing at scale",
+      "Margin lending or leverage options",
+      "Dedicated account management",
+      "Research and analytics tools",
+    ],
+    sections: [
+      {
+        heading: "What Separates HNW Platforms from Retail Brokers",
+        body: "At higher portfolio sizes, per-trade fees matter less than percentage-based custody or platform fees. A $500K portfolio paying 0.2% p.a. in custody fees costs $1,000/year — far more than brokerage. For large portfolios, look at platforms with flat monthly fees or tiered custody charges that cap out at large balances.",
+      },
+      {
+        heading: "Access to International Markets",
+        body: "HNW investors typically want global diversification beyond ASX. Interactive Brokers gives access to 135+ markets worldwide, with the ability to hold multi-currency positions, trade US options, and access bonds and fixed income. This breadth is unmatched by domestic-only platforms.",
+      },
+      {
+        heading: "Private Client and Relationship Manager Services",
+        body: "Some Australian brokers offer dedicated private client services — Macquarie Private Bank, Morgan Stanley Wealth Management, and Bell Potter all have dedicated HNW divisions. These come with personal relationship managers, structured product access, and estate planning support.",
+      },
+    ],
+    relatedLinks: [
+      { label: "Best for Large Portfolios", href: "/best/large-portfolio" },
+      { label: "Best for International Shares", href: "/best/international-shares" },
+      { label: "Best for Options Trading", href: "/best/options-trading" },
+      { label: "Fee Impact Calculator", href: "/fee-impact" },
+    ],
+    faqs: [
+      {
+        question: "Which broker is best for large portfolios in Australia?",
+        answer:
+          "Interactive Brokers is often the best choice for large portfolios due to its low fees, broad market access, and sophisticated tools. For purely ASX portfolios with CHESS sponsorship, CMC Markets and Saxo Bank offer competitive rates for high-volume traders. Private banking services through Macquarie or UBS are suitable for $1M+ portfolios requiring advisory services.",
+      },
+      {
+        question: "Do Australian brokers charge custody fees on large portfolios?",
+        answer:
+          "Yes — many brokers charge a percentage-based custody or platform fee that can significantly erode returns on large portfolios. Always check whether fees are capped, and compare the total annual cost at your portfolio size rather than just the per-trade fee.",
+      },
+    ],
+  },
+  {
+    slug: "property-investors",
+    title: `Best Brokers for Property Investors Australia (${yr})`,
+    h1: "Best Investment Platforms for Australian Property Investors",
+    metaDescription: `Investment platforms ideal for property investors wanting share market exposure: REITs, LPTs, gearing strategies, and negative gearing complement. ${upd}.`,
+    intro: `Property investors increasingly use the share market to complement bricks-and-mortar — whether through REITs (A-REITs), property ETFs, or geared equity strategies that mirror negative gearing principles. We compare the best platforms for property-focused investors.`,
+    filter: (b) =>
+      !b.is_crypto &&
+      b.platform_type !== "cfd_forex" &&
+      b.chess_sponsored === true,
+    sort: (a, b) => (a.asx_fee_value ?? 99) - (b.asx_fee_value ?? 99),
+    criteria: [
+      "Access to ASX-listed REITs and property ETFs",
+      "Margin lending or equity leverage",
+      "CHESS-sponsored holdings",
+      "Tax reporting for property + share portfolios",
+      "Dividend reinvestment for income",
+    ],
+    sections: [
+      {
+        heading: "Why Property Investors Are Turning to REITs",
+        body: "A-REITs (Australian Real Estate Investment Trusts) give property exposure without the entry costs, stamp duty, or illiquidity of direct property. Top A-REITs include Goodman Group (GMG), Scentre Group (SCG), and Dexus (DXS). Alternatively, ETFs like VAP (Vanguard Australian Property Securities) provide diversified exposure to 30+ A-REITs.",
+      },
+      {
+        heading: "Negative Gearing in the Share Market",
+        body: "Negative gearing isn't unique to property — you can negatively gear shares too. If you borrow to invest in shares and the interest costs exceed your dividend income, the loss may be deductible against other income. This strategy requires margin lending facilities and a clear understanding of the risks, including margin calls.",
+      },
+      {
+        heading: "Tax Reporting for Mixed Property + Share Portfolios",
+        body: "Managing tax across both property and shares requires careful record-keeping. Ensure your broker provides detailed annual tax reports including capital gains summaries, dividend statements, and DRP records that your accountant can reconcile with your property income and expenses.",
+      },
+    ],
+    relatedLinks: [
+      { label: "Best for Dividends", href: "/best/dividends" },
+      { label: "Negative Gearing Guide", href: "/tax/negative-gearing" },
+      { label: "Property Investment Hub", href: "/property" },
+      { label: "ETF Hub", href: "/etfs" },
+    ],
+    faqs: [
+      {
+        question: "What are the best REITs to buy on ASX?",
+        answer:
+          "The largest ASX-listed REITs include Goodman Group (GMG), Scentre Group (SCG), Dexus (DXS), Charter Hall (CHC), and Mirvac (MGR). For diversified REIT exposure, the Vanguard Australian Property Securities ETF (VAP) and the SPDR S&P/ASX 200 Listed Property ETF (SLF) are popular low-cost options.",
+      },
+      {
+        question: "Can I negatively gear ASX shares like property?",
+        answer:
+          "Yes. You can claim interest on borrowings used to purchase income-producing shares as a tax deduction. However, share margin loans carry margin call risk — if your portfolio value falls, the broker may force you to sell holdings to reduce the loan balance. Negative gearing shares is generally considered riskier than property gearing.",
+      },
+    ],
+  },
+  {
+    slug: "options-trading",
+    title: `Best Options Trading Platforms Australia (${yr})`,
+    h1: "Best Options Trading Platforms in Australia",
+    metaDescription: `Compare the best ASX exchange-traded options (ETOs) and US options platforms available to Australians. Find brokers with low options commissions. ${upd}.`,
+    intro: `Options trading in Australia includes ASX Exchange-Traded Options (ETOs) on Australian shares and US options through international platforms. We compare the best options-enabled brokers for Australian investors — from simple covered calls to complex multi-leg strategies.`,
+    filter: (b) => !b.is_crypto && b.us_fee_value != null,
+    sort: (a, b) => (a.asx_fee_value ?? 99) - (b.asx_fee_value ?? 99),
+    criteria: [
+      "ASX ETO or US options access",
+      "Multi-leg strategy support",
+      "Options analytics and Greeks",
+      "Competitive options commission structure",
+      "Risk management tools",
+    ],
+    sections: [
+      {
+        heading: "ASX Exchange-Traded Options (ETOs) vs US Options",
+        body: "ASX ETOs are standardised options on Australian shares and indices, settled through the ASX Clear house. US options — available via Interactive Brokers, tastytrade (via IBKR), and Saxo — offer far greater liquidity, tighter spreads, and more liquid contracts. Many sophisticated Australian options traders use US markets due to the depth of the options chain.",
+      },
+      {
+        heading: "Understanding Options Pricing for Australians",
+        body: "Options commissions in Australia differ from the US model. ASX brokers typically charge per-contract plus an ASX Clear settlement fee. Interactive Brokers charges a fixed per-contract fee for US options, making it cost-effective for larger trades. Always calculate total per-contract cost including exchange and clearing fees.",
+      },
+      {
+        heading: "Risk Management in Options Trading",
+        body: "Options can result in losses that exceed your initial outlay (when selling uncovered options). ASIC requires that retail investors acknowledge understanding of these risks before accessing leveraged derivatives products. Strategies like covered calls (selling calls on shares you own) or cash-secured puts carry defined risk, while naked puts/calls carry unlimited risk.",
+      },
+    ],
+    relatedLinks: [
+      { label: "Best for High Net Worth", href: "/best/high-net-worth" },
+      { label: "Best CFD Platforms", href: "/best/cfd-forex" },
+      { label: "Options Tax Guide", href: "/tax/capital-gains" },
+    ],
+    faqs: [
+      {
+        question: "Can Australians trade US options?",
+        answer:
+          "Yes. Australians can trade US options (equity and ETF options on CBOE, NYSE Arca, etc.) through Interactive Brokers, Saxo Bank, and a handful of other international platforms. The tax treatment of US options gains/losses for Australian residents follows standard CGT rules.",
+      },
+      {
+        question: "What is an ASX Exchange-Traded Option (ETO)?",
+        answer:
+          "An ASX ETO is a contract giving the right (but not obligation) to buy (call) or sell (put) 100 shares of an ASX-listed company at a specified price before expiry. ETOs are available on the top ~60 ASX shares and some indices. They are settled through ASX Clear, providing central counterparty clearing.",
+      },
+      {
+        question: "Do I need a separate account for options trading in Australia?",
+        answer:
+          "Most brokers that offer ASX ETOs require a separate options trading account application with an additional risk disclosure form. Interactive Brokers integrates equity and options in one account — you simply apply for options permissions through your account settings.",
+      },
+    ],
+  },
+  {
+    slug: "large-portfolio",
+    title: `Best Brokers for Large Portfolios Australia (${yr})`,
+    h1: "Best Brokers for Large Portfolios in Australia",
+    metaDescription: `Investment platforms with lowest total cost of ownership for large portfolios $250K+. Compare custody fees, brokerage caps, and CHESS sponsorship. ${upd}.`,
+    intro: `As your portfolio grows, per-trade fees matter less but platform and custody fees matter more. A 0.2% annual platform fee on a $1M portfolio costs $2,000/year. We compare the best platforms for large investors — those with competitive total cost of ownership and no percentage-based custody fees.`,
+    filter: (b) =>
+      !b.is_crypto &&
+      b.platform_type !== "cfd_forex" &&
+      (b.chess_sponsored === true || b.us_fee_value != null),
+    sort: (a, b) => (a.asx_fee_value ?? 99) - (b.asx_fee_value ?? 99),
+    criteria: [
+      "No or capped custody/platform fees",
+      "Flat-fee brokerage structure",
+      "CHESS-sponsored direct holdings",
+      "Portfolio reporting and performance analytics",
+      "Tax-lot tracking and CGT reports",
+    ],
+    sections: [
+      {
+        heading: "The Hidden Cost of Percentage-Based Platform Fees",
+        body: "Many investment platforms charge a percentage of assets under management as a 'platform fee' — often 0.10–0.25% p.a. On a $500K portfolio this is $500–$1,250/year. On a $2M portfolio it could be $2,000–$5,000/year. Flat-fee or brokerage-only platforms like Selfwealth, CMC, or Interactive Brokers become dramatically cheaper at scale.",
+      },
+      {
+        heading: "CHESS Sponsorship for Large Portfolios",
+        body: "For large portfolios, CHESS sponsorship is strongly recommended. CHESS means your shares are registered in your name directly on ASX's settlement system — you hold an HIN (Holder Identification Number). This protects you if your broker becomes insolvent. Broker-sponsored (custodian) models, used by some discount platforms, hold shares on your behalf, adding counterparty risk.",
+      },
+      {
+        heading: "Portfolio Reporting Requirements",
+        body: "Large portfolios require comprehensive reporting — CGT cost-base tracking, dividend summaries, corporate action records, and performance attribution. Platforms like CMC Invest, Nabtrade, and Interactive Brokers offer detailed portfolio reporting. For SMSF portfolios, check that your broker provides data exports compatible with your accountant's software (BGL, Class).",
+      },
+    ],
+    relatedLinks: [
+      { label: "Best for High Net Worth", href: "/best/high-net-worth" },
+      { label: "Fee Impact Calculator", href: "/fee-impact" },
+      { label: "Best SMSF Platforms", href: "/best/smsf" },
+      { label: "Best for Dividends", href: "/best/dividends" },
+    ],
+    faqs: [
+      {
+        question: "At what portfolio size does broker choice really matter?",
+        answer:
+          "Above $100,000, platform and custody fees can exceed brokerage in annual cost. Above $250,000, you should prioritise zero or capped custody fees over low per-trade brokerage. Above $500,000, it is worth looking at institutional-grade platforms or private client services.",
+      },
+      {
+        question: "Is Interactive Brokers safe for large Australian portfolios?",
+        answer:
+          "Interactive Brokers is one of the most regulated and financially robust brokers globally. It is regulated by ASIC in Australia and holds client assets separately from company assets. For accounts above $500,000 it may be worth spreading across two brokers to reduce single-counterparty risk.",
+      },
+      {
+        question: "Should I use CHESS-sponsored or custodian model for a large portfolio?",
+        answer:
+          "CHESS-sponsored is preferable for large portfolios. Your shares are held directly in your name and you can transfer to another broker at any time without selling. If your broker collapses, your shares are safe. Custodian models are generally fine for smaller amounts but add unnecessary risk at scale.",
+      },
+    ],
+  },
+  // ─── SAVINGS CATEGORIES ────────────────────────────────────────────────────
   {
     slug: "online-savings-account",
     title: `Best Online Savings Account Australia (${yr})`,
