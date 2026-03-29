@@ -456,16 +456,24 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
           <span className="text-slate-700">{activeTypeLabel || "Find an Advisor"}</span>
         </nav>
 
-        <div className="bg-gradient-to-br from-amber-50 to-slate-50 border border-amber-100 rounded-2xl p-4 md:p-8 mb-4 md:mb-6">
-          <h1 className="text-xl md:text-4xl font-extrabold mb-1.5 md:mb-3 text-slate-900">{dynamicTitle}</h1>
-          <p className="text-xs md:text-base text-slate-500 mb-3 md:mb-5">
-            <span className="md:hidden">{dynamicDescription.slice(0, 60)}...</span>
+        <div className="relative overflow-hidden bg-gradient-to-br from-amber-50 via-white to-slate-50/80 border border-slate-200 rounded-2xl p-4 md:p-8 mb-4 md:mb-6 shadow-sm">
+          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-amber-300 via-amber-500 to-amber-300" />
+          <h1 className="text-xl md:text-4xl font-extrabold mb-1.5 md:mb-3 text-slate-900 tracking-tight">{dynamicTitle}</h1>
+          <p className="text-xs md:text-base text-slate-500 mb-4 md:mb-6 max-w-2xl leading-relaxed">
+            <span className="md:hidden">{dynamicDescription.slice(0, 70)}…</span>
             <span className="hidden md:inline">{dynamicDescription}</span>
           </p>
-          <div className="flex items-center gap-3 md:gap-6 text-[0.62rem] md:text-xs text-slate-500">
-            <span className="flex items-center gap-1.5"><span className="w-2 h-2 bg-amber-500 rounded-full" /><span className="font-semibold text-slate-700">{professionals.length}</span> advisors</span>
-            <span className="flex items-center gap-1.5"><Icon name="shield" size={14} className="text-amber-400" />ASIC verified</span>
-            <span className="flex items-center gap-1.5"><Icon name="clock" size={14} className="text-amber-400" />Free consultation</span>
+          <div className="flex items-center gap-2 md:gap-3 flex-wrap">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm text-[0.65rem] md:text-xs font-semibold text-slate-700">
+              <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+              <span className="font-bold text-slate-900">{professionals.length}</span> advisors listed
+            </div>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm text-[0.65rem] md:text-xs font-semibold text-slate-600">
+              <Icon name="shield" size={13} className="text-amber-500" />ASIC verified
+            </div>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-200 rounded-full shadow-sm text-[0.65rem] md:text-xs font-semibold text-slate-600">
+              <Icon name="clock" size={13} className="text-amber-500" />Free consultation
+            </div>
           </div>
         </div>
 
@@ -777,152 +785,217 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
 
         {/* Results */}
         {nearbyLoading ? (
-          <div className="space-y-2.5 md:space-y-3">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="bg-white border border-slate-200 rounded-xl p-5 animate-pulse">
+          <div className="space-y-3">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="bg-white border border-slate-100 rounded-2xl p-4 md:p-5 animate-pulse shadow-sm">
                 <div className="flex gap-4">
-                  <div className="w-16 h-16 rounded-xl bg-slate-100" />
-                  <div className="flex-1 space-y-2">
-                    <div className="h-4 w-40 bg-slate-100 rounded" />
-                    <div className="h-3 w-28 bg-slate-50 rounded" />
-                    <div className="h-3 w-64 bg-slate-50 rounded" />
+                  <div className="w-[60px] h-[60px] md:w-[80px] md:h-[80px] rounded-2xl bg-slate-100 shrink-0" />
+                  <div className="flex-1 space-y-2.5 py-1">
+                    <div className="flex items-center gap-2">
+                      <div className="h-4 w-36 bg-slate-100 rounded-full" />
+                      <div className="h-4 w-16 bg-slate-50 rounded-full" />
+                    </div>
+                    <div className="h-3 w-24 bg-slate-50 rounded-full" />
+                    <div className="flex gap-1.5">
+                      <div className="h-5 w-20 bg-slate-50 rounded-full" />
+                      <div className="h-5 w-28 bg-slate-50 rounded-full" />
+                    </div>
+                    <div className="flex gap-1">
+                      <div className="h-4 w-16 bg-slate-50 rounded-full" />
+                      <div className="h-4 w-20 bg-slate-50 rounded-full" />
+                      <div className="h-4 w-14 bg-slate-50 rounded-full" />
+                    </div>
                   </div>
                 </div>
               </div>
             ))}
           </div>
         ) : paginatedResults.length > 0 ? (
-          <div className="space-y-2.5 md:space-y-3">
-            {paginatedResults.map(pro => (
-              <Link key={pro.id} href={`/advisor/${pro.slug}`} className={`block bg-white border rounded-xl p-3.5 md:p-5 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 ${pro.featured_until && new Date(pro.featured_until) > new Date() ? "border-amber-300 ring-1 ring-amber-100 hover:border-amber-400" : "border-slate-200 hover:border-amber-200"}`}>
-                <div className="flex gap-3 md:gap-4">
-                  {pro.photo_url ? (
-                    <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl overflow-hidden shrink-0 ring-2 ring-amber-100">
-                      <Image src={pro.photo_url} alt={pro.name} width={64} height={64} className="w-full h-full object-cover" />
-                    </div>
-                  ) : (
-                    <div className="w-12 h-12 md:w-16 md:h-16 rounded-xl bg-gradient-to-br from-amber-100 to-slate-100 flex items-center justify-center text-sm md:text-lg font-bold text-amber-600 shrink-0">
-                      {pro.name.split(" ").map(n => n[0]).join("")}
-                    </div>
+          <div className="space-y-3">
+            {paginatedResults.map(pro => {
+              const isFeatured = !!(pro.featured_until && new Date(pro.featured_until) > new Date());
+              return (
+                <Link key={pro.id} href={`/advisor/${pro.slug}`} className={`group block bg-white rounded-2xl transition-all duration-200 overflow-hidden ${
+                  isFeatured
+                    ? "shadow-md shadow-amber-50 hover:shadow-xl hover:shadow-amber-100/50 hover:-translate-y-0.5 ring-1 ring-amber-200/80 border border-amber-200"
+                    : "shadow-sm border border-slate-100 hover:shadow-md hover:shadow-slate-100 hover:-translate-y-0.5 hover:border-slate-200"
+                }`}>
+                  {isFeatured && (
+                    <div className="h-0.5 bg-gradient-to-r from-amber-300 via-amber-500 to-amber-300" />
                   )}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <span className="font-bold text-sm md:text-base text-slate-900 truncate">{pro.name}</span>
+                  <div className="p-4 md:p-5 flex gap-4">
+                    {/* Photo */}
+                    <div className="relative shrink-0">
+                      {pro.photo_url ? (
+                        <div className="w-[60px] h-[60px] md:w-[80px] md:h-[80px] rounded-2xl overflow-hidden ring-2 ring-slate-100 shadow-sm">
+                          <Image src={pro.photo_url} alt={pro.name} width={80} height={80} className="w-full h-full object-cover" unoptimized />
+                        </div>
+                      ) : (
+                        <div className="w-[60px] h-[60px] md:w-[80px] md:h-[80px] rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white font-bold text-xl md:text-2xl shadow-md shadow-amber-200/60 select-none">
+                          {pro.name.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase()}
+                        </div>
+                      )}
                       {pro.verified && (
-                        <span className="shrink-0 text-[0.56rem] md:text-[0.62rem] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 flex items-center gap-0.5">
-                          <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
-                          Verified
-                        </span>
-                      )}
-                      {pro.featured_until && new Date(pro.featured_until) > new Date() && (
-                        <span className="shrink-0 text-[0.56rem] md:text-[0.62rem] font-bold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 flex items-center gap-0.5">
-                          <Icon name="star" size={10} className="text-amber-500" />
-                          Featured
-                        </span>
-                      )}
-                      {pro.avg_response_minutes != null && pro.avg_response_minutes <= 120 && (
-                        <span className="shrink-0 text-[0.56rem] md:text-[0.62rem] font-bold px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 flex items-center gap-0.5">
-                          <Icon name="zap" size={10} className="text-emerald-500" />
-                          Fast
-                        </span>
-                      )}
-                      {pro.accepts_international_clients && (
-                        <span className="shrink-0 text-[0.56rem] md:text-[0.62rem] font-bold px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700">
-                          🌏 Intl
-                        </span>
-                      )}
-                      {pro.firb_specialist && (
-                        <span className="shrink-0 text-[0.56rem] md:text-[0.62rem] font-bold px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700">
-                          FIRB
-                        </span>
+                        <div className="absolute -bottom-1 -right-1 w-[18px] h-[18px] bg-amber-500 rounded-full border-2 border-white flex items-center justify-center shadow-sm">
+                          <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                          </svg>
+                        </div>
                       )}
                     </div>
-                    {pro.firm_name && (
-                      <div className="text-[0.65rem] md:text-xs text-slate-500 truncate flex items-center gap-1.5">
-                        <Icon name="building" size={11} className="text-slate-400 shrink-0" />
-                        {pro.firm_name}
+
+                    {/* Content */}
+                    <div className="flex-1 min-w-0">
+                      {/* Name + badges row */}
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="font-bold text-[15px] md:text-base text-slate-900 leading-tight">{pro.name}</span>
+                            {pro.verified && (
+                              <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-0.5">
+                                <svg className="w-2 h-2" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                                Verified
+                              </span>
+                            )}
+                            {isFeatured && (
+                              <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-amber-500 text-white flex items-center gap-0.5 shadow-sm">
+                                <Icon name="star" size={9} />
+                                Featured
+                              </span>
+                            )}
+                            {pro.avg_response_minutes != null && pro.avg_response_minutes <= 120 && (
+                              <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-0.5">
+                                <Icon name="zap" size={9} className="text-emerald-500" />
+                                Fast reply
+                              </span>
+                            )}
+                            {pro.accepts_international_clients && (
+                              <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">🌏 Intl</span>
+                            )}
+                            {pro.firb_specialist && (
+                              <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-100">FIRB</span>
+                            )}
+                          </div>
+                          {pro.firm_name && (
+                            <p className="text-[0.68rem] md:text-xs text-slate-500 mt-0.5 flex items-center gap-1">
+                              <Icon name="building" size={10} className="text-slate-400 shrink-0" />
+                              <span className="truncate">{pro.firm_name}</span>
+                            </p>
+                          )}
+                        </div>
+                        <button
+                          onClick={(e) => { e.preventDefault(); toggleShortlist(pro.slug); }}
+                          disabled={!inShortlist(pro.slug) && shortlistCount >= shortlistMax}
+                          title={inShortlist(pro.slug) ? "Remove from compare" : shortlistCount >= shortlistMax ? "Compare list full" : "Save to compare"}
+                          className={`shrink-0 p-1.5 rounded-lg transition-colors ${inShortlist(pro.slug) ? "text-violet-600 bg-violet-50 hover:bg-violet-100" : shortlistCount >= shortlistMax ? "text-slate-200 cursor-not-allowed" : "text-slate-300 hover:text-violet-500 hover:bg-violet-50"}`}
+                        >
+                          <Icon name={inShortlist(pro.slug) ? "bookmark-check" : "bookmark"} size={15} />
+                        </button>
                       </div>
-                    )}
-                    <div className="flex items-center gap-2 mt-1 flex-wrap">
-                      <span className="text-[0.62rem] md:text-xs text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full font-medium">{PROFESSIONAL_TYPE_LABELS[pro.type]}</span>
-                      {pro.account_type === "firm_member" ? (
-                        <span className="text-[0.56rem] md:text-[0.62rem] font-semibold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
-                          <Icon name="users" size={10} className="text-blue-400" />Firm
-                        </span>
-                      ) : !pro.firm_name ? (
-                        <span className="text-[0.56rem] md:text-[0.62rem] font-semibold text-slate-500 bg-slate-50 px-1.5 py-0.5 rounded-full">Independent</span>
-                      ) : null}
-                      {pro.location_display && (
-                        <span className="text-[0.62rem] md:text-xs text-slate-400 flex items-center gap-0.5">
-                          <Icon name="map-pin" size={11} className="text-slate-300" />{pro.location_display}
-                        </span>
+
+                      {/* Type + Location row */}
+                      <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                        <span className="shrink-0 text-[0.65rem] text-amber-700 bg-amber-50 border border-amber-100 px-2 py-0.5 rounded-full font-semibold">{PROFESSIONAL_TYPE_LABELS[pro.type]}</span>
+                        {pro.account_type === "firm_member" ? (
+                          <span className="shrink-0 text-[0.6rem] font-semibold text-blue-600 bg-blue-50 border border-blue-100 px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
+                            <Icon name="users" size={9} className="text-blue-400" />Firm
+                          </span>
+                        ) : !pro.firm_name ? (
+                          <span className="shrink-0 text-[0.6rem] font-semibold text-slate-500 bg-slate-50 border border-slate-200 px-1.5 py-0.5 rounded-full">Independent</span>
+                        ) : null}
+                        {pro.location_display && (
+                          <span className="text-[0.65rem] text-slate-500 flex items-center gap-0.5">
+                            <Icon name="map-pin" size={10} className="text-slate-400" />{pro.location_display}
+                          </span>
+                        )}
+                        {pro.distance_km !== undefined && pro.distance_km !== null && (
+                          <span className="shrink-0 text-[0.65rem] font-semibold text-blue-600 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-full">
+                            {pro.distance_km < 1 ? "<1 km" : `${pro.distance_km} km`}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Rating */}
+                      {pro.rating > 0 && pro.review_count > 0 && (
+                        <div className="flex items-center gap-1.5 mt-1.5">
+                          <div className="flex items-center gap-0.5">
+                            {[1, 2, 3, 4, 5].map(star => (
+                              <svg key={star} className={`w-3 h-3 md:w-3.5 md:h-3.5 ${star <= Math.round(pro.rating) ? "text-amber-400" : "text-slate-200"}`} fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                              </svg>
+                            ))}
+                          </div>
+                          <span className="text-[0.68rem] md:text-xs font-semibold text-slate-700">{pro.rating}</span>
+                          <span className="text-[0.62rem] text-slate-400">({pro.review_count} review{pro.review_count !== 1 ? "s" : ""})</span>
+                        </div>
                       )}
-                      {/* Distance badge */}
-                      {pro.distance_km !== undefined && pro.distance_km !== null && (
-                        <span className="text-[0.62rem] md:text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
-                          {pro.distance_km < 1 ? "<1 km" : `${pro.distance_km} km`}
-                        </span>
+
+                      {/* Fee description */}
+                      {pro.fee_description && (
+                        <p className="text-[0.65rem] md:text-xs text-slate-500 mt-1.5 line-clamp-1 leading-relaxed">{pro.fee_description}</p>
                       )}
-                      {/* Fee info */}
-                      {pro.fee_description && <span className="text-[0.62rem] md:text-xs font-semibold text-slate-600">{pro.fee_description}</span>}
+
+                      {/* Structured fees */}
+                      {(pro.hourly_rate_cents || pro.flat_fee_cents || pro.aum_percentage || pro.initial_consultation_free) && (
+                        <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                          {pro.hourly_rate_cents && (
+                            <span className="text-[0.6rem] text-slate-600 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-full font-medium">
+                              {formatCents(pro.hourly_rate_cents)}/hr
+                            </span>
+                          )}
+                          {pro.flat_fee_cents && (
+                            <span className="text-[0.6rem] text-slate-600 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-full font-medium">
+                              {formatCents(pro.flat_fee_cents)} flat
+                            </span>
+                          )}
+                          {pro.aum_percentage && (
+                            <span className="text-[0.6rem] text-slate-600 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-full font-medium">
+                              {pro.aum_percentage}% AUM
+                            </span>
+                          )}
+                          {pro.initial_consultation_free && (
+                            <span className="text-[0.6rem] text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full font-semibold">
+                              Free consult
+                            </span>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Specialties */}
+                      {pro.specialties.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mt-2">
+                          {pro.specialties.slice(0, 4).map(s => (
+                            <span key={s} className={`text-[0.6rem] font-medium px-2 py-0.5 rounded-full border ${
+                              specialtyFilters.includes(s)
+                                ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                : "bg-slate-50 text-slate-500 border-slate-200"
+                            }`}>{s}</span>
+                          ))}
+                          {pro.specialties.length > 4 && (
+                            <span className="text-[0.6rem] text-slate-400 self-center">+{pro.specialties.length - 4} more</span>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Offer */}
+                      {pro.offer_active && pro.offer_text && (
+                        <div className="mt-2 bg-gradient-to-r from-amber-50 to-amber-50/0 border border-amber-200 rounded-lg px-2.5 py-1.5 flex items-center gap-1.5">
+                          <Icon name="tag" size={11} className="text-amber-500 shrink-0" />
+                          <span className="text-[0.6rem] md:text-[0.65rem] font-bold text-amber-700 truncate">{pro.offer_text}</span>
+                        </div>
+                      )}
                     </div>
-                    {/* Structured fees */}
-                    {(pro.hourly_rate_cents || pro.flat_fee_cents || pro.aum_percentage) && (
-                      <div className="flex items-center gap-2 mt-1 flex-wrap">
-                        {pro.hourly_rate_cents && (
-                          <span className="text-[0.56rem] md:text-[0.62rem] text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full font-medium">
-                            {formatCents(pro.hourly_rate_cents)}/hr
-                          </span>
-                        )}
-                        {pro.flat_fee_cents && (
-                          <span className="text-[0.56rem] md:text-[0.62rem] text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full font-medium">
-                            {formatCents(pro.flat_fee_cents)} flat
-                          </span>
-                        )}
-                        {pro.aum_percentage && (
-                          <span className="text-[0.56rem] md:text-[0.62rem] text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full font-medium">
-                            {pro.aum_percentage}% AUM
-                          </span>
-                        )}
-                        {pro.initial_consultation_free && (
-                          <span className="text-[0.56rem] md:text-[0.62rem] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full font-medium">
-                            Free initial consult
-                          </span>
-                        )}
+
+                    {/* Right arrow */}
+                    <div className="shrink-0 self-center hidden md:flex ml-1">
+                      <div className="w-8 h-8 rounded-full border border-slate-200 bg-slate-50 flex items-center justify-center group-hover:bg-amber-50 group-hover:border-amber-200 transition-all">
+                        <Icon name="chevron-right" size={14} className="text-slate-400 group-hover:text-amber-500 transition-colors" />
                       </div>
-                    )}
-                    <div className="flex items-center gap-3 mt-1.5">
-                      {pro.rating > 0 && pro.review_count > 0 && <span className="text-[0.62rem] md:text-xs"><span className="text-amber-500">{renderStars(pro.rating)}</span><span className="text-slate-400 ml-1">{pro.rating} ({pro.review_count})</span></span>}
                     </div>
-                    {pro.specialties.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mt-2">
-                        {pro.specialties.slice(0, 4).map(s => (
-                          <span key={s} className={`text-[0.56rem] md:text-[0.62rem] font-medium px-2 py-0.5 rounded-full ${specialtyFilters.includes(s) ? "bg-emerald-50 text-emerald-600 border border-emerald-200" : "bg-slate-50 text-slate-500"}`}>{s}</span>
-                        ))}
-                        {pro.specialties.length > 4 && <span className="text-[0.56rem] md:text-[0.62rem] text-slate-400">+{pro.specialties.length - 4}</span>}
-                      </div>
-                    )}
-                    {pro.offer_active && pro.offer_text && (
-                      <div className="mt-2 bg-amber-50 border border-amber-100 rounded-lg px-2.5 py-1.5 flex items-center gap-1.5">
-                        <Icon name="tag" size={11} className="text-amber-500 shrink-0" />
-                        <span className="text-[0.58rem] md:text-[0.62rem] font-bold text-amber-700 truncate">{pro.offer_text}</span>
-                      </div>
-                    )}
                   </div>
-                  <div className="shrink-0 self-center flex flex-col items-center gap-1.5">
-                    <button
-                      onClick={(e) => { e.preventDefault(); toggleShortlist(pro.slug); }}
-                      disabled={!inShortlist(pro.slug) && shortlistCount >= shortlistMax}
-                      title={inShortlist(pro.slug) ? "Remove from compare" : shortlistCount >= shortlistMax ? "Compare list full" : "Save to compare"}
-                      className={`p-1.5 rounded-lg transition-colors ${inShortlist(pro.slug) ? "text-violet-600 bg-violet-50 hover:bg-violet-100" : shortlistCount >= shortlistMax ? "text-slate-200 cursor-not-allowed" : "text-slate-300 hover:text-violet-500 hover:bg-violet-50"}`}
-                    >
-                      <Icon name={inShortlist(pro.slug) ? "bookmark-check" : "bookmark"} size={16} />
-                    </button>
-                    <Icon name="chevron-right" size={18} className="text-slate-300" />
-                  </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              );
+            })}
           </div>
         ) : (
           <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
@@ -992,25 +1065,42 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
 
         {/* Editorial content */}
         {editorial && (
-          <section className="mt-8 md:mt-12 space-y-6">
-            <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-6">
-              <h2 className="text-lg md:text-xl font-extrabold text-slate-900 mb-3">How to Choose the Right {pageTitle?.replace(' in Australia', '') || 'Professional'}</h2>
-              <ul className="space-y-2.5">
+          <section className="mt-8 md:mt-12 space-y-4">
+            <div className="bg-white border border-slate-100 rounded-2xl p-5 md:p-7 shadow-sm">
+              <div className="flex items-center gap-2.5 mb-4">
+                <div className="w-8 h-8 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center shrink-0">
+                  <Icon name="check-circle" size={16} className="text-emerald-600" />
+                </div>
+                <h2 className="text-base md:text-lg font-extrabold text-slate-900">How to Choose the Right {pageTitle?.replace(' in Australia', '') || 'Professional'}</h2>
+              </div>
+              <ul className="space-y-3">
                 {editorial.howToChoose.map((tip, i) => (
-                  <li key={i} className="flex items-start gap-2.5 text-sm text-slate-600">
-                    <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 text-xs font-bold mt-0.5">{i + 1}</span>
+                  <li key={i} className="flex items-start gap-3 text-sm text-slate-600 leading-relaxed">
+                    <span className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center shrink-0 text-xs font-bold mt-0.5 shadow-sm shadow-emerald-200">{i + 1}</span>
                     <span>{tip}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="bg-gradient-to-br from-amber-50 to-white border border-amber-200/60 rounded-xl p-4 md:p-6">
-              <h2 className="text-lg md:text-xl font-extrabold text-slate-900 mb-2">Cost Guide</h2>
-              <p className="text-sm text-slate-600 leading-relaxed">{editorial.costGuide}</p>
-            </div>
-            <div className="bg-gradient-to-br from-amber-50 to-white border border-amber-200/60 rounded-xl p-4 md:p-6">
-              <h2 className="text-lg md:text-xl font-extrabold text-slate-900 mb-2">Industry Insight</h2>
-              <p className="text-sm text-slate-600 leading-relaxed">{editorial.industryInsight}</p>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="bg-gradient-to-br from-amber-50/80 via-white to-white border border-amber-100 rounded-2xl p-5 md:p-6 shadow-sm">
+                <div className="flex items-center gap-2.5 mb-3">
+                  <div className="w-8 h-8 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
+                    <Icon name="dollar-sign" size={15} className="text-amber-700" />
+                  </div>
+                  <h2 className="text-base md:text-lg font-extrabold text-slate-900">Cost Guide</h2>
+                </div>
+                <p className="text-sm text-slate-600 leading-relaxed">{editorial.costGuide}</p>
+              </div>
+              <div className="bg-gradient-to-br from-blue-50/60 via-white to-white border border-blue-100 rounded-2xl p-5 md:p-6 shadow-sm">
+                <div className="flex items-center gap-2.5 mb-3">
+                  <div className="w-8 h-8 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
+                    <Icon name="trending-up" size={15} className="text-blue-700" />
+                  </div>
+                  <h2 className="text-base md:text-lg font-extrabold text-slate-900">Industry Insight</h2>
+                </div>
+                <p className="text-sm text-slate-600 leading-relaxed">{editorial.industryInsight}</p>
+              </div>
             </div>
           </section>
         )}
@@ -1018,12 +1108,17 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
         {/* FAQs */}
         {faqs.length > 0 && (
           <div className="mt-8 md:mt-12">
-            <h2 className="text-base md:text-xl font-bold text-slate-900 mb-3 md:mb-4">Frequently Asked Questions</h2>
-            <div className="space-y-2 md:space-y-3">
+            <h2 className="text-base md:text-xl font-extrabold text-slate-900 mb-3 md:mb-4">Frequently Asked Questions</h2>
+            <div className="bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden divide-y divide-slate-100">
               {faqs.map((faq, i) => (
-                <details key={i} className="bg-white border border-slate-200 rounded-lg group">
-                  <summary className="px-3.5 py-3 md:px-4 md:py-3.5 font-semibold text-xs md:text-sm text-slate-800 cursor-pointer hover:bg-slate-50 transition-colors list-none flex items-center justify-between">{faq.q}<span className="text-slate-400 group-open:rotate-180 transition-transform ml-2 shrink-0">{"\u25BE"}</span></summary>
-                  <p className="px-3.5 pb-3 md:px-4 md:pb-3.5 text-xs md:text-sm text-slate-600 leading-relaxed">{faq.a}</p>
+                <details key={i} className="group">
+                  <summary className="px-4 py-3.5 md:px-5 md:py-4 font-semibold text-xs md:text-sm text-slate-800 cursor-pointer hover:bg-slate-50/80 transition-colors list-none flex items-center justify-between gap-3">
+                    <span>{faq.q}</span>
+                    <span className="shrink-0 w-5 h-5 rounded-full border border-slate-200 bg-slate-50 flex items-center justify-center text-slate-400 group-open:bg-amber-50 group-open:border-amber-200 group-open:text-amber-600 transition-all">
+                      <svg className="w-2.5 h-2.5 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" /></svg>
+                    </span>
+                  </summary>
+                  <p className="px-4 pb-4 md:px-5 md:pb-5 text-xs md:text-sm text-slate-600 leading-relaxed border-t border-slate-50 pt-2 bg-slate-50/40">{faq.a}</p>
                 </details>
               ))}
             </div>
@@ -1032,8 +1127,8 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
 
         {/* Advisor guides */}
         <div className="mt-6 md:mt-8">
-          <h2 className="text-sm md:text-base font-bold text-slate-900 mb-2 md:mb-3">Advisor Guides</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3">
+          <h2 className="text-sm md:text-base font-extrabold text-slate-900 mb-2 md:mb-3">Advisor Guides</h2>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-2.5">
             {[
               { title: "SMSF Accountant", href: "/advisor-guides/how-to-choose-smsf-accountant", icon: "building" },
               { title: "Financial Planner", href: "/advisor-guides/how-to-choose-financial-planner", icon: "trending-up" },
@@ -1048,23 +1143,25 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
               { title: "Crypto Advisor", href: "/advisor-guides/how-to-choose-crypto-advisor", icon: "bitcoin" },
               { title: "Debt Counsellor", href: "/advisor-guides/how-to-choose-debt-counsellor", icon: "credit-card" },
             ].map(g => (
-              <Link key={g.href} href={g.href} className="flex items-center gap-2.5 p-3 bg-white border border-slate-200 rounded-lg hover:shadow-md hover:border-slate-300 transition-all">
-                <Icon name={g.icon} size={16} className="text-slate-400 shrink-0" />
-                <span className="text-xs md:text-sm font-semibold text-slate-700">How to Choose: {g.title}</span>
+              <Link key={g.href} href={g.href} className="group flex items-center gap-2.5 p-3 bg-white border border-slate-100 rounded-xl shadow-sm hover:shadow-md hover:border-amber-100 hover:bg-amber-50/30 transition-all">
+                <div className="w-7 h-7 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0 group-hover:bg-amber-100 group-hover:border-amber-200 transition-all">
+                  <Icon name={g.icon} size={14} className="text-slate-500 group-hover:text-amber-600 transition-colors" />
+                </div>
+                <span className="text-xs font-semibold text-slate-600 group-hover:text-slate-800 leading-tight">How to Choose: {g.title}</span>
               </Link>
             ))}
           </div>
         </div>
 
         {/* Saved search / alert widget */}
-        <div className="mt-6 md:mt-8 bg-amber-50 border border-amber-200 rounded-xl p-4 md:p-5">
-          <div className="flex items-start gap-3 mb-3">
-            <div className="w-9 h-9 bg-amber-100 rounded-lg flex items-center justify-center shrink-0 mt-0.5">
+        <div className="mt-6 md:mt-8 bg-gradient-to-br from-amber-50/80 via-white to-white border border-amber-100 rounded-2xl p-4 md:p-6 shadow-sm">
+          <div className="flex items-start gap-3 mb-3.5">
+            <div className="w-10 h-10 bg-amber-100 border border-amber-200 rounded-xl flex items-center justify-center shrink-0 shadow-sm shadow-amber-100">
               <Icon name="bell" size={18} className="text-amber-600" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-slate-800">Can&apos;t find the right advisor?</h3>
-              <p className="text-xs text-slate-500 mt-0.5">Save a search alert and we&apos;ll notify you when a new advisor matching your criteria joins.</p>
+              <h3 className="text-sm font-extrabold text-slate-800">Can&apos;t find the right advisor?</h3>
+              <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">Save a search alert and we&apos;ll notify you when a new advisor matching your criteria joins.</p>
             </div>
           </div>
           {alertStatus === "done" ? (
@@ -1094,11 +1191,23 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
           {alertError && <p className="text-xs text-red-600 mt-1">{alertError}</p>}
         </div>
 
-        <div className="mt-6 md:mt-10 bg-slate-50 border border-slate-200 rounded-xl p-4 md:p-6 text-center">
-          <h3 className="text-base md:text-lg font-bold text-slate-900 mb-1 md:mb-2">Are you a financial professional?</h3>
-          <p className="text-xs md:text-sm text-slate-500 mb-3 md:mb-4">List your practice for free. Only pay when you receive an enquiry.</p>
-          <Link href="/advisor-apply" className="inline-block px-5 py-2.5 md:px-6 md:py-3 bg-slate-900 text-white text-sm font-semibold rounded-lg hover:bg-slate-800 transition-colors">Get Listed Free {"\u2192"}</Link>
-          <Link href="/advisor-portal" className="ml-3 inline-block px-5 py-2.5 md:px-6 md:py-3 border-2 border-slate-300 text-slate-700 text-sm font-semibold rounded-lg hover:bg-slate-50 transition-colors">Advisor Login {"\u2192"}</Link>
+        <div className="mt-6 md:mt-10 relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl p-5 md:p-8 text-center shadow-xl shadow-slate-900/10">
+          <div className="absolute inset-0 opacity-5" style={{backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px)', backgroundSize: '32px 32px'}} />
+          <div className="relative">
+            <p className="text-[0.65rem] font-bold uppercase tracking-widest text-amber-400 mb-2">For Professionals</p>
+            <h3 className="text-base md:text-xl font-extrabold text-white mb-1.5 md:mb-2">Are you a financial professional?</h3>
+            <p className="text-xs md:text-sm text-slate-400 mb-4 md:mb-5">List your practice for free. Only pay when you receive an enquiry.</p>
+            <div className="flex items-center justify-center gap-3 flex-wrap">
+              <Link href="/advisor-apply" className="inline-flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 bg-amber-500 text-white text-sm font-bold rounded-xl hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/25">
+                Get Listed Free
+                <Icon name="arrow-right" size={15} />
+              </Link>
+              <Link href="/advisor-portal" className="inline-flex items-center gap-2 px-5 py-2.5 md:px-6 md:py-3 border border-slate-600 text-slate-300 text-sm font-semibold rounded-xl hover:bg-slate-700/50 hover:border-slate-500 transition-colors">
+                Advisor Login
+                <Icon name="arrow-right" size={15} />
+              </Link>
+            </div>
+          </div>
         </div>
 
         <div className="mt-4 md:mt-6 text-[0.58rem] md:text-xs text-slate-400 text-center leading-relaxed">
