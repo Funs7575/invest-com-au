@@ -299,6 +299,45 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ═══════ 1D. INTERNATIONAL INVESTOR BANNER ═══════ */}
+      <section className="bg-gradient-to-r from-slate-900 to-slate-800 border-b border-slate-700 py-4 md:py-6">
+        <div className="container-custom">
+          <div className="flex items-center justify-between gap-4 flex-wrap">
+            <div className="flex items-start gap-3 min-w-0">
+              <div className="shrink-0 w-8 h-8 bg-amber-500/20 border border-amber-500/30 rounded-full flex items-center justify-center text-sm mt-0.5">
+                🌏
+              </div>
+              <div className="min-w-0">
+                <p className="text-white font-bold text-sm leading-snug">
+                  Investing in Australia from overseas?
+                </p>
+                <p className="text-slate-400 text-xs mt-0.5 leading-snug">
+                  FIRB property rules · withholding tax rates · ASX brokers for non-residents · the 2025–2027 established dwelling ban
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 flex-wrap shrink-0">
+              <Link href="/foreign-investment" className="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold rounded-lg text-xs transition-colors whitespace-nowrap">
+                Foreign Investor Hub &rarr;
+              </Link>
+              <div className="hidden sm:flex items-center gap-1.5">
+                {[
+                  { flag: "🇸🇬", href: "/foreign-investment/singapore", label: "SG" },
+                  { flag: "🇭🇰", href: "/foreign-investment/hong-kong", label: "HK" },
+                  { flag: "🇬🇧", href: "/foreign-investment/united-kingdom", label: "UK" },
+                  { flag: "🇦🇪", href: "/foreign-investment/united-arab-emirates", label: "UAE" },
+                  { flag: "🇨🇳", href: "/foreign-investment/china", label: "CN" },
+                ].map((c) => (
+                  <Link key={c.href} href={c.href} title={c.label} className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-sm transition-colors" aria-label={`Investing from ${c.label}`}>
+                    {c.flag}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ═══════ 1E. MONEY ROW — top affiliate promos ═══════ */}
       {dealBrokers.length > 0 && (
         <section className="bg-white border-b border-slate-200 py-3 overflow-x-auto">

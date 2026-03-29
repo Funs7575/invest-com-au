@@ -59,6 +59,26 @@ export default function ForeignInvestmentPage() {
         }}
       />
 
+      {/* ── ESTABLISHED DWELLING BAN ALERT — prominent ──────────────────── */}
+      <div className="bg-red-600 text-white">
+        <div className="container-custom py-3">
+          <div className="flex items-start sm:items-center gap-3 flex-wrap justify-between">
+            <div className="flex items-start gap-2.5">
+              <svg className="w-5 h-5 shrink-0 mt-0.5 sm:mt-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              </svg>
+              <p className="text-sm font-semibold leading-snug">
+                <strong>Established Dwelling Ban — Active:</strong> Foreign persons cannot purchase existing homes in Australia from 1 April 2025 to 31 March 2027.
+                New dwellings and off-the-plan properties are still available.
+              </p>
+            </div>
+            <Link href="/foreign-investment/guides/property-ban-2025" className="shrink-0 text-xs font-bold text-white underline whitespace-nowrap hover:no-underline bg-red-700 hover:bg-red-800 px-3 py-1.5 rounded-lg transition-colors">
+              Full ban details &rarr;
+            </Link>
+          </div>
+        </div>
+      </div>
+
       {/* ── Hub cross-link banner ──────────────────── */}
       <div className="bg-amber-50 border-b border-amber-200 py-3">
         <div className="container-custom flex flex-col sm:flex-row items-start sm:items-center gap-2 justify-between">
