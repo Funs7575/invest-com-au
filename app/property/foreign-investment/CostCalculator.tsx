@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { STATE_SURCHARGES, estimateForeignBuyerCosts } from "@/lib/firb-data";
+import { type StateStampDutySurcharge, estimateForeignBuyerCosts } from "@/lib/firb-data";
 import { FOREIGN_BUYER_STAMP_DUTY_WARNING } from "@/lib/compliance";
 
 function formatCurrency(n: number) {
@@ -9,7 +9,7 @@ function formatCurrency(n: number) {
   return `$${n.toLocaleString("en-AU")}`;
 }
 
-export default function CostCalculator() {
+export default function CostCalculator({ surcharges }: { surcharges: StateStampDutySurcharge[] }) {
   const [price, setPrice] = useState(800_000);
   const [state, setState] = useState("NSW");
 
@@ -82,7 +82,7 @@ export default function CostCalculator() {
         </div>
         <div className="flex justify-between text-sm">
           <span className="text-slate-600">
-            Foreign purchaser surcharge ({STATE_SURCHARGES.find((s) => s.stateCode === state)?.surchargePercent ?? 0}%)
+            Foreign purchaser surcharge ({surcharges.find((s) => s.stateCode === state)?.surchargePercent ?? 0}%)
           </span>
           <span className="font-bold text-amber-600">{formatCurrency(costs.foreignSurcharge)}</span>
         </div>

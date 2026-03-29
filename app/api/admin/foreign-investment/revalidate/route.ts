@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Not an admin email" }, { status: 403 });
   }
 
-  FI_CACHE_TAGS.forEach((tag) => revalidateTag(tag));
+  FI_CACHE_TAGS.forEach((tag) => revalidateTag(tag, {}));
 
   return NextResponse.json({ ok: true, busted: FI_CACHE_TAGS });
 }

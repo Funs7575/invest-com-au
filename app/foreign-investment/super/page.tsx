@@ -1,11 +1,8 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
-import {
-  DASP_WITHHOLDING_RATES,
-  DASP_KEY_FACTS,
-  DASP_FAQS,
-} from "@/lib/foreign-investment-data";
+import { DASP_KEY_FACTS, DASP_FAQS } from "@/lib/foreign-investment-data";
+import { getDaspRates } from "@/lib/fi-data-server";
 import { DASP_WARNING, FOREIGN_INVESTOR_GENERAL_DISCLAIMER } from "@/lib/compliance";
 import ForeignInvestmentNav from "../ForeignInvestmentNav";
 import SectionHeading from "@/components/SectionHeading";
@@ -102,7 +99,8 @@ Get advice from a tax professional in your home country who understands cross-bo
   },
 ];
 
-export default function ForeignSuperPage() {
+export default async function ForeignSuperPage() {
+  const daspRates = await getDaspRates();
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: SITE_URL },
     { name: "Foreign Investment", url: `${SITE_URL}/foreign-investment` },
@@ -201,7 +199,7 @@ export default function ForeignSuperPage() {
                 </tr>
               </thead>
               <tbody>
-                {DASP_WITHHOLDING_RATES.map((r, i) => (
+                {daspRates.map((r, i) => (
                   <tr key={i} className={`border-b border-slate-100 last:border-0 ${i % 2 === 1 ? "bg-slate-50/40" : ""}`}>
                     <td className="px-5 py-4 font-medium text-slate-900 text-xs">{r.componentType}</td>
                     <td className="px-5 py-4 text-center">

@@ -69,8 +69,8 @@ export async function POST(req: NextRequest) {
   });
 
   // ── Bust cache ─────────────────────────────────────────────
-  revalidateTag("fi-data");
-  revalidateTag("fi-data-categories");
+  revalidateTag("fi-data", {});
+  revalidateTag("fi-data-categories", {});
 
   return NextResponse.json({ ok: true, categoryKey, verifiedBy: adminEmail });
 }

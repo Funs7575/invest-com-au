@@ -7,6 +7,7 @@ import {
   STATE_SURCHARGES,
   FIRB_FEES,
   FIRB_PROCESS_STEPS,
+  FIRB_FAQS,
 } from "@/lib/firb-data";
 import { FIRB_DISCLAIMER, FOREIGN_BUYER_STAMP_DUTY_WARNING } from "@/lib/compliance";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
@@ -271,7 +272,7 @@ export default function ForeignInvestmentPage() {
           <p className="text-[0.65rem] text-slate-400 leading-relaxed mb-6">{FOREIGN_BUYER_STAMP_DUTY_WARNING}</p>
 
           {/* Interactive cost calculator — client component */}
-          <CostCalculator />
+          <CostCalculator surcharges={STATE_SURCHARGES} />
         </section>
 
         {/* ── FIRB Application Process ─────────────── */}
@@ -371,7 +372,7 @@ export default function ForeignInvestmentPage() {
         {/* ── FAQ — client component ───────────────── */}
         <section>
           <SectionHeading eyebrow="FAQ" title="Frequently asked questions" />
-          <FaqAccordion />
+          <FaqAccordion faqs={FIRB_FAQS} />
         </section>
 
         {/* ── CTAs ─────────────────────────────────── */}

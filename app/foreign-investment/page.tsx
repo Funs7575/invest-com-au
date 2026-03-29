@@ -5,10 +5,9 @@ import {
   FOREIGN_INVESTOR_PERSONAS,
   VERTICAL_FOREIGN_RULES,
   TOP_5_RULES_FOR_FOREIGN_INVESTORS,
-  DTA_COUNTRIES,
-  DEFAULT_WHT,
   type ForeignInvestorPersona,
 } from "@/lib/foreign-investment-data";
+import { getDtaCountries, getDefaultWHT } from "@/lib/fi-data-server";
 import { FOREIGN_INVESTOR_GENERAL_DISCLAIMER, DTA_DISCLAIMER } from "@/lib/compliance";
 import PersonaSelector from "./PersonaSelector";
 import DTASearchTable from "./DTASearchTable";
@@ -95,7 +94,12 @@ const participationLabels: Record<string, string> = {
   complex: "Complex rules",
 };
 
-export default function ForeignInvestmentHubPage() {
+export default async function ForeignInvestmentHubPage() {
+  const [dtaCountries, defaultWHT] = await Promise.all([
+    getDtaCountries(),
+    getDefaultWHT(),
+  ]);
+
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: SITE_URL },
     { name: "Foreign Investment Hub" },
@@ -265,7 +269,7 @@ export default function ForeignInvestmentHubPage() {
       {/* ── Withholding Tax Calculator ───────────────────────────────── */}
       <section className="py-12 md:py-16">
         <div className="container-custom max-w-3xl">
-          <WHTCalculator countries={DTA_COUNTRIES} defaultRates={DEFAULT_WHT} />
+          <WHTCalculator countries={dtaCountries} defaultRates={defaultWHT} />
         </div>
       </section>
 
@@ -278,8 +282,8 @@ export default function ForeignInvestmentHubPage() {
             sub="Indicative Australian withholding tax rates for residents of common treaty countries. Without a DTA, dividends are taxed at 30%, royalties at 30%. This table is illustrative — treaty application depends on income type and individual conditions."
           />
           <DTASearchTable
-            countries={DTA_COUNTRIES}
-            defaultRates={DEFAULT_WHT}
+            countries={dtaCountries}
+            defaultRates={defaultWHT}
             dtaDisclaimer={DTA_DISCLAIMER}
           />
           <div className="mt-4">

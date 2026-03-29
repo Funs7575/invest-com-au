@@ -351,7 +351,7 @@ export const getChangeLog = cached(
 
 // ─── Default WHT (derived from DB withholding rates or static) ────────────────
 
-export async function getDefaultWHT(): Promise<typeof DEFAULT_WHT> {
+export async function getDefaultWHT(): Promise<{ dividendUnfranked: number; dividendFullyFranked: number; interest: number; royalties: number }> {
   const rates = await getWithholdingRates();
   const unfranked = rates.find((r) => r.income_type === "Dividends (unfranked)");
   const interest = rates.find((r) => r.income_type === "Interest (bank deposits, bonds)");

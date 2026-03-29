@@ -131,7 +131,7 @@ export async function POST(req: NextRequest) {
   });
 
   // ── Bust cache ────────────────────────────────────────────
-  revalidateTag("fi-data");
+  revalidateTag("fi-data", {});
 
   return NextResponse.json({ ok: true, results });
 }

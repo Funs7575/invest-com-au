@@ -1,13 +1,14 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
+import { AUSTRALIAN_RESIDENCY_TESTS } from "@/lib/foreign-investment-data";
 import {
-  DTA_COUNTRIES,
-  NON_RESIDENT_TAX_BRACKETS,
-  RESIDENT_TAX_BRACKETS,
-  AUSTRALIAN_RESIDENCY_TESTS,
-  DEFAULT_WHT,
-} from "@/lib/foreign-investment-data";
+  getNonResidentTaxBrackets,
+  getResidentTaxBrackets,
+  getDtaCountries,
+  getDefaultWHT,
+  getWithholdingRates,
+} from "@/lib/fi-data-server";
 import {
   WITHHOLDING_TAX_NOTE,
   DTA_DISCLAIMER,
@@ -84,65 +85,6 @@ const TAX_FAQS = [
   },
 ];
 
-const WITHHOLDING_TABLE = [
-  {
-    incomeType: "Dividends (unfranked)",
-    standardRate: "30%",
-    withDTA: "Typically 15% (varies by country)",
-    notes: "Applied to the unfranked portion of dividends paid to non-residents",
-    color: "red",
-  },
-  {
-    incomeType: "Dividends (fully franked)",
-    standardRate: "0%",
-    withDTA: "0%",
-    notes: "Tax already paid via imputation system. Non-residents receive the dividend gross but cannot claim the franking credit refund.",
-    color: "green",
-  },
-  {
-    incomeType: "Dividends (partially franked)",
-    standardRate: "30% on unfranked portion",
-    withDTA: "Typically 15% on unfranked portion",
-    notes: "WHT applies only to the unfranked component.",
-    color: "amber",
-  },
-  {
-    incomeType: "Interest (bank deposits, bonds)",
-    standardRate: "10%",
-    withDTA: "Typically 10% (rarely reduced below 10%)",
-    notes: "Final withholding tax. No Australian return required for passive interest income only.",
-    color: "amber",
-  },
-  {
-    incomeType: "Royalties",
-    standardRate: "30%",
-    withDTA: "Typically 5–15% (varies significantly)",
-    notes: "Covers intellectual property, patents, copyright, software licences.",
-    color: "red",
-  },
-  {
-    incomeType: "Rental income",
-    standardRate: "Non-resident rates (30%+ no TFT)",
-    withDTA: "DTAs rarely reduce rental income WHT",
-    notes: "Australian rental income is taxed at non-resident rates. Australian tax return required.",
-    color: "orange",
-  },
-  {
-    incomeType: "CGT — Australian real property",
-    standardRate: "Non-resident rates + 15% buyer WHT on sale >$750k",
-    withDTA: "No CGT exemption for real property",
-    notes: "No 50% CGT discount for non-residents. 15% WHT deducted from sale price by buyer's conveyancer (rate increased from 12.5% effective 1 Jan 2025).",
-    color: "red",
-  },
-  {
-    incomeType: "CGT — Listed Australian shares (<10% holding)",
-    standardRate: "0% (exempt)",
-    withDTA: "0%",
-    notes: "Section 855-10 exemption: non-residents generally exempt from CGT on portfolio share investments in listed Australian companies.",
-    color: "green",
-  },
-];
-
 const colorMap: Record<string, string> = {
   red: "text-red-700",
   amber: "text-amber-700",
@@ -150,7 +92,16 @@ const colorMap: Record<string, string> = {
   orange: "text-orange-700",
 };
 
-export default function ForeignTaxPage() {
+export default async function ForeignTaxPage() {
+  const [nonResidentBrackets, residentBrackets, dtaCountries, defaultWHT, withholdingRates] =
+    await Promise.all([
+      getNonResidentTaxBrackets(),
+      getResidentTaxBrackets(),
+      getDtaCountries(),
+      getDefaultWHT(),
+      getWithholdingRates(),
+    ]);
+
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: SITE_URL },
     { name: "Foreign Investment", url: `${SITE_URL}/foreign-investment` },
@@ -222,11 +173,11 @@ export default function ForeignTaxPage() {
                 </tr>
               </thead>
               <tbody>
-                {WITHHOLDING_TABLE.map((row, i) => (
-                  <tr key={i} className={`border-b border-slate-100 last:border-0 ${i % 2 === 1 ? "bg-slate-50/40" : ""}`}>
-                    <td className="px-4 py-3 font-bold text-slate-900 text-xs">{row.incomeType}</td>
-                    <td className={`px-4 py-3 text-xs font-bold ${colorMap[row.color]}`}>{row.standardRate}</td>
-                    <td className="px-4 py-3 text-xs font-semibold text-green-700">{row.withDTA}</td>
+                {withholdingRates.map((row, i) => (
+                  <tr key={row.id} className={`border-b border-slate-100 last:border-0 ${i % 2 === 1 ? "bg-slate-50/40" : ""}`}>
+                    <td className="px-4 py-3 font-bold text-slate-900 text-xs">{row.income_type}</td>
+                    <td className={`px-4 py-3 text-xs font-bold ${colorMap[row.color] ?? "text-slate-700"}`}>{row.standard_rate}</td>
+                    <td className="px-4 py-3 text-xs font-semibold text-green-700">{row.with_dta_typical}</td>
                     <td className="px-4 py-3 text-xs text-slate-500 leading-relaxed hidden md:table-cell max-w-[220px]">{row.notes}</td>
                   </tr>
                 ))}
@@ -254,7 +205,7 @@ export default function ForeignTaxPage() {
               </div>
               <table className="w-full text-sm">
                 <tbody>
-                  {NON_RESIDENT_TAX_BRACKETS.map((b, i) => (
+                  {nonResidentBrackets.map((b, i) => (
                     <tr key={i} className="border-b border-slate-100 last:border-0">
                       <td className="px-5 py-3 text-xs text-slate-700">{b.description}</td>
                       <td className="px-5 py-3 text-xs font-bold text-red-700 text-right">{b.rate}%</td>
@@ -271,7 +222,7 @@ export default function ForeignTaxPage() {
               </div>
               <table className="w-full text-sm">
                 <tbody>
-                  {RESIDENT_TAX_BRACKETS.map((b, i) => (
+                  {residentBrackets.map((b, i) => (
                     <tr key={i} className="border-b border-slate-100 last:border-0">
                       <td className="px-5 py-3 text-xs text-slate-700">{b.description}</td>
                       <td className={`px-5 py-3 text-xs font-bold text-right ${b.rate === 0 ? "text-green-700" : "text-slate-700"}`}>
@@ -320,8 +271,8 @@ export default function ForeignTaxPage() {
             sub="Australia has DTAs with 40+ countries. This table shows indicative withholding rates for common treaty countries — it is illustrative, not exhaustive. Treaty application depends on income type, conditions, and individual circumstances."
           />
           <DTASearchTable
-            countries={DTA_COUNTRIES}
-            defaultRates={DEFAULT_WHT}
+            countries={dtaCountries}
+            defaultRates={defaultWHT}
             dtaDisclaimer={DTA_DISCLAIMER}
           />
         </div>

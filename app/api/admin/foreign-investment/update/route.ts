@@ -108,10 +108,10 @@ export async function POST(req: NextRequest) {
   });
 
   // ── Bust relevant cache tags ───────────────────────────────
-  revalidateTag(TABLE_CACHE_TAGS[table as AllowedTable]);
+  revalidateTag(TABLE_CACHE_TAGS[table as AllowedTable], {});
   // Also bust specific tags so cached functions pick up the new data
-  revalidateTag("fi-data");
-  revalidateTag(`fi-${table.replace("fi_", "").replace("_", "-")}`);
+  revalidateTag("fi-data", {});
+  revalidateTag(`fi-${table.replace("fi_", "").replace("_", "-")}`, {});
 
   return NextResponse.json({ ok: true, table, id });
 }
