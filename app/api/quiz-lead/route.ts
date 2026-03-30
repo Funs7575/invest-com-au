@@ -3,7 +3,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createRateLimiter } from '@/lib/rate-limiter';
 import { isValidEmail, isDisposableEmail } from '@/lib/validate-email';
 import { logger } from '@/lib/logger';
-import { extractUtm, utmForInsert } from '@/lib/utm';
 
 const log = logger('quiz-lead');
 
@@ -218,8 +217,6 @@ export async function POST(request: NextRequest) {
   const { email, name, answers, top_match_slug } = body as {
     email?: string; name?: string; answers?: string[]; top_match_slug?: string;
   };
-  const utm = extractUtm(body as Record<string, unknown>);
-
   // Validate email
   if (!isValidEmail(email as string)) {
     return NextResponse.json({ error: 'Valid email required' }, { status: 400 });
@@ -246,7 +243,7 @@ export async function POST(request: NextRequest) {
   const investmentRange = safeAnswers.find(a => INVESTMENT_MAP[a]) || null;
   const tradingInterest = safeAnswers.find(a => INTEREST_MAP[a]) || null;
 
-  // Insert into quiz_leads
+  // Insert into quiz_leads (quiz_leads schema has no UTM columns — tracked via email_captures)
   const { error: leadError } = await supabase.from('quiz_leads').insert({
     email: sanitizedEmail,
     name: sanitizedName,
@@ -255,7 +252,6 @@ export async function POST(request: NextRequest) {
     experience_level: experienceLevel ? EXPERIENCE_MAP[experienceLevel] : null,
     investment_range: investmentRange ? INVESTMENT_MAP[investmentRange] : null,
     trading_interest: tradingInterest ? INTEREST_MAP[tradingInterest] : null,
-    ...utmForInsert(utm),
   });
 
   if (leadError) {

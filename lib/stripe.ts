@@ -33,6 +33,22 @@ export const PLANS = {
     savings: "Save 18%",
     monthlyEquivalent: "$7.42/month",
   },
+  international_standard: {
+    priceId: process.env.STRIPE_INTL_STANDARD_PRICE_ID || "",
+    price: 12,
+    interval: "month" as const,
+    label: "$12/month",
+    description: "Billed monthly — international",
+  },
+  international_premium: {
+    priceId: process.env.STRIPE_INTL_PREMIUM_PRICE_ID || "",
+    price: 119,
+    interval: "year" as const,
+    label: "$119/year",
+    description: "Billed annually — international",
+    savings: "Save 17%",
+    monthlyEquivalent: "$9.92/month",
+  },
 } as const;
 
 export type PlanKey = keyof typeof PLANS;

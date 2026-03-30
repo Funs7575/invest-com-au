@@ -43,7 +43,7 @@ export async function GET(req: NextRequest) {
 
   if (error) {
     log.error("Failed to fetch advisors for nudge", { error: error.message });
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ success: false, nudged: 0, reason: error.message });
   }
 
   if (!advisors || advisors.length === 0) {

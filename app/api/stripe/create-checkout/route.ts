@@ -21,7 +21,9 @@ export async function POST(request: NextRequest) {
 
     // Parse plan from body
     const body = await request.json();
-    const planKey = body.plan === "yearly" ? "yearly" : "monthly";
+    const validPlans = ["monthly", "yearly", "international_standard", "international_premium"] as const;
+    type ValidPlan = (typeof validPlans)[number];
+    const planKey: ValidPlan = validPlans.includes(body.plan) ? body.plan : "monthly";
     const planConfig = PLANS[planKey];
 
     if (!planConfig.priceId) {
