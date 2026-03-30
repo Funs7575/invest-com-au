@@ -115,17 +115,18 @@ function buildFeeComparisonEmail(brokers: BrokerRow[]): string {
 </html>`;
 }
 
-/** Sync contact to Resend for marketing (fire-and-forget) */
+/** Sync contact to Resend audience for marketing (fire-and-forget) */
 async function syncToResendContacts(
   email: string,
-  source: string,
+  _source: string,
   firstName?: string | null,
 ): Promise<void> {
   const resendApiKey = process.env.RESEND_API_KEY;
-  if (!resendApiKey) return;
+  const audienceId = process.env.RESEND_AUDIENCE_ID;
+  if (!resendApiKey || !audienceId) return;
 
   try {
-    await fetch('https://api.resend.com/contacts', {
+    await fetch(`https://api.resend.com/audiences/${audienceId}/contacts`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${resendApiKey}`,
@@ -135,7 +136,6 @@ async function syncToResendContacts(
         email,
         ...(firstName ? { first_name: firstName } : {}),
         unsubscribed: false,
-        properties: { source, signed_up: new Date().toISOString().split('T')[0] },
       }),
     });
   } catch (err) {
