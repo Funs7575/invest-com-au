@@ -33,27 +33,27 @@ export default function InternationalBanner({ countryCode }: Props) {
   if (!countryCode || DOMESTIC_COUNTRIES.has(countryCode) || dismissed) return null;
 
   return (
-    <div className="bg-gradient-to-r from-indigo-600 to-blue-700 text-white text-sm">
-      <div className="container-custom max-w-7xl flex items-center justify-between gap-3 py-2.5 px-4">
-        <div className="flex items-center gap-2.5 min-w-0">
-          <span className="text-base leading-none shrink-0">🌏</span>
-          <p className="text-xs md:text-sm font-medium text-white/95 truncate">
+    <div className="bg-amber-50 border-b border-amber-200">
+      <div className="container-custom max-w-7xl flex items-center justify-between gap-3 py-2 px-4">
+        <div className="flex items-center gap-2 min-w-0">
+          <span className="text-sm leading-none shrink-0">🌏</span>
+          <p className="text-xs font-medium text-amber-900 truncate">
             <span className="hidden md:inline">Investing in Australia from overseas? </span>
             <Link
               href="/foreign-investment"
-              className="font-bold text-white underline underline-offset-2 hover:text-blue-100"
+              className="font-bold text-amber-700 underline underline-offset-2 hover:text-amber-900"
             >
               See our international investor guide
             </Link>
-            <span className="hidden md:inline text-white/70"> — FIRB rules, broker eligibility, double tax agreements &amp; specialist advisors.</span>
+            <span className="hidden md:inline text-amber-700/70"> — FIRB rules, broker eligibility, double tax agreements &amp; specialist advisors.</span>
           </p>
         </div>
         <button
           onClick={handleDismiss}
           aria-label="Dismiss"
-          className="shrink-0 text-white/70 hover:text-white transition-colors"
+          className="shrink-0 text-amber-600/70 hover:text-amber-800 transition-colors"
         >
-          <Icon name="x" size={16} />
+          <Icon name="x" size={14} />
         </button>
       </div>
     </div>
