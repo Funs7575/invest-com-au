@@ -24,7 +24,14 @@ export const metadata: Metadata = {
 const HREF_OVERRIDES: Record<string, string> = {
   "residential-property": "/property",
   shares: "/compare",
-  savings: "/compare?category=savings",
+  savings: "/compare?filter=savings",
+  "buy-business": "/invest/buy-business",
+  mining: "/invest/mining",
+  farmland: "/invest/farmland",
+  "commercial-property": "/invest/commercial-property",
+  franchise: "/invest/franchise",
+  "renewable-energy": "/invest/renewable-energy",
+  startups: "/invest/startups",
 };
 
 type InvestmentVertical = {
@@ -145,6 +152,102 @@ export default async function InvestHubPage() {
               })}
             </div>
           )}
+        </div>
+      </section>
+
+      {/* Investment Marketplace */}
+      <section className="py-14 bg-white border-t border-slate-100">
+        <div className="container-custom">
+          <div className="mb-8">
+            <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Investment Marketplace</p>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2">
+              Browse Active Investment Listings
+            </h2>
+            <p className="text-slate-500 leading-relaxed max-w-2xl">
+              Actual opportunities you can enquire about and invest in — businesses, farms, commercial properties, mining projects, and more.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {[
+              {
+                title: "Businesses for Sale",
+                desc: "Browse businesses across Australia — hospitality, retail, professional services, and more.",
+                href: "/invest/buy-business/listings",
+                icon: "💼",
+              },
+              {
+                title: "Mining Opportunities",
+                desc: "ASX miners, exploration tenements, joint ventures, and mining ETFs.",
+                href: "/invest/mining/opportunities",
+                icon: "⛏️",
+              },
+              {
+                title: "Farmland & Agriculture",
+                desc: "Grazing stations, cropping farms, horticulture, and water rights across Australia.",
+                href: "/invest/farmland/listings",
+                icon: "🌾",
+              },
+              {
+                title: "Commercial Property",
+                desc: "Office, retail, industrial, hotel, and data centre assets.",
+                href: "/invest/commercial-property/listings",
+                icon: "🏢",
+              },
+              {
+                title: "Franchise Opportunities",
+                desc: "Proven business models for sale — food, retail, services, and franchise resales.",
+                href: "/invest/franchise/listings",
+                icon: "🏪",
+              },
+              {
+                title: "Renewable Energy",
+                desc: "Solar farms, wind projects, battery storage, and green infrastructure.",
+                href: "/invest/renewable-energy/projects",
+                icon: "⚡",
+              },
+              {
+                title: "Investment Funds",
+                desc: "PE, hedge funds, SIV-complying funds, and managed investment schemes.",
+                href: "/invest/funds",
+                icon: "📈",
+              },
+              {
+                title: "Startups & Crowdfunding",
+                desc: "Equity crowdfunding, angel deals, and early-stage investment opportunities.",
+                href: "/invest/startups/opportunities",
+                icon: "🚀",
+              },
+            ].map((card) => (
+              <Link
+                key={card.href}
+                href={card.href}
+                className="group bg-white border border-slate-200 rounded-xl p-5 flex flex-col gap-3 hover:shadow-lg hover:border-amber-200 transition-all duration-200"
+              >
+                <div className="text-2xl">{card.icon}</div>
+                <div>
+                  <h3 className="text-base font-bold text-slate-900 group-hover:text-amber-600 transition-colors">
+                    {card.title}
+                  </h3>
+                  <p className="text-sm text-slate-500 mt-1 leading-relaxed">{card.desc}</p>
+                </div>
+                <div className="mt-auto">
+                  <span className="inline-flex items-center gap-1.5 bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold text-xs px-3 py-1.5 rounded-lg transition-colors">
+                    Browse &rarr;
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          <div className="mt-8 text-center">
+            <Link
+              href="/invest/listings"
+              className="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm px-6 py-3 rounded-xl transition-colors"
+            >
+              View All Investment Listings &rarr;
+            </Link>
+          </div>
         </div>
       </section>
 

@@ -9,14 +9,10 @@ import SectionHeading from "@/components/SectionHeading";
 export const revalidate = 3600;
 
 export async function generateStaticParams() {
-  return [
-    { slug: "mining" },
-    { slug: "buy-business" },
-    { slug: "farmland" },
-    { slug: "commercial-property" },
-    { slug: "renewable-energy" },
-    { slug: "startups" },
-  ];
+  // Slugs that now have dedicated subdirectories are excluded from this catch-all route.
+  // "buy-business", "mining", "farmland", "commercial-property", "renewable-energy", "startups"
+  // all have their own app/invest/[vertical]/ directories handled by other pages.
+  return [];
 }
 
 type InvestmentVertical = {
@@ -65,6 +61,20 @@ export async function generateMetadata({
     },
   };
 }
+
+/* ─────────────────────────────────────────────
+   Listings links per slug
+───────────────────────────────────────────── */
+
+const LISTINGS_LINKS: Record<string, { href: string; label: string }> = {
+  "buy-business": { href: "/invest/buy-business/listings", label: "Browse Businesses for Sale" },
+  mining: { href: "/invest/mining/opportunities", label: "Browse Mining Opportunities" },
+  farmland: { href: "/invest/farmland/listings", label: "Browse Farmland Listings" },
+  "commercial-property": { href: "/invest/commercial-property/listings", label: "Browse Commercial Properties" },
+  franchise: { href: "/invest/franchise/listings", label: "Browse Franchise Opportunities" },
+  "renewable-energy": { href: "/invest/renewable-energy/projects", label: "Browse Energy Projects" },
+  startups: { href: "/invest/startups/opportunities", label: "Browse Startup Opportunities" },
+};
 
 /* ─────────────────────────────────────────────
    Hardcoded content components per slug
@@ -777,6 +787,34 @@ export default async function InvestVerticalPage({
           <VerticalContent slug={slug} />
         </div>
       </section>
+
+      {/* Browse Listings CTA */}
+      {LISTINGS_LINKS[slug] && (
+        <section className="py-10 bg-slate-50 border-t border-slate-100">
+          <div className="container-custom">
+            <div className="max-w-3xl mx-auto bg-white border border-amber-200 rounded-xl p-8 flex flex-col md:flex-row items-start md:items-center gap-6">
+              <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
+                <Icon name="trending-up" size={24} className="text-amber-500" />
+              </div>
+              <div className="flex-1">
+                <h2 className="text-lg font-bold text-slate-900 mb-1">
+                  Ready to Browse Active Listings?
+                </h2>
+                <p className="text-sm text-slate-500">
+                  Explore real {v.name.toLowerCase()} investment opportunities available in Australia — with enquiry details and agent contact information.
+                </p>
+              </div>
+              <Link
+                href={LISTINGS_LINKS[slug].href}
+                className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors shrink-0"
+              >
+                {LISTINGS_LINKS[slug].label}
+                <Icon name="arrow-right" size={15} />
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* International investors callout */}
       <section className="py-10 bg-amber-50">
