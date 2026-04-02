@@ -137,7 +137,7 @@ export default async function ComparePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
       />
-      <CompareNav current="/compare" />
+      <Suspense><CompareNav /></Suspense>
       <Suspense fallback={<ComparePageSkeleton />}>
         <CompareClient brokers={activeBrokers} />
       </Suspense>

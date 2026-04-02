@@ -9,24 +9,25 @@ import { CURRENT_YEAR } from "@/lib/seo";
 
 const platformsMenu = {
   byCategory: [
-    { label: "Share Trading", href: "/compare?category=shares", desc: "ASX & international shares" },
+    { label: "Share Trading", href: "/compare?filter=shares", desc: "ASX & international shares" },
+    { label: "ETFs", href: "/compare/etfs", desc: "Diversified index investing" },
     { label: "Super Funds", href: "/compare/super", desc: "Compare fees & performance" },
     { label: "Savings Accounts", href: "/compare?filter=savings", desc: "High interest & at-call accounts" },
-    { label: "ETFs", href: "/compare/etfs", desc: "Diversified index investing" },
-    { label: "Robo-Advisors", href: "/best/robo-advisors", desc: "Automated portfolio management" },
+    { label: "Robo-Advisors", href: "/compare?filter=robo", desc: "Automated portfolio management" },
     {
       label: "Crypto Exchanges",
-      href: "/compare?category=crypto",
+      href: "/compare?filter=crypto",
       desc: "AUSTRAC-registered platforms",
       riskLabel: "High Risk",
     },
     {
       label: "CFD & Forex",
-      href: "/compare?category=cfd",
+      href: "/compare?filter=cfd",
       desc: "Derivatives & currency trading",
       riskLabel: "High Risk",
     },
-    { label: "Investing from Overseas", href: "/foreign-investment", desc: "Platforms, tax & FIRB rules for international investors" },
+    { label: "Non-Resident Brokers", href: "/compare/non-residents", desc: "Platforms that accept overseas investors" },
+    { label: "Investing from Overseas", href: "/foreign-investment", desc: "Tax, FIRB rules & visa pathways" },
   ],
   tools: [
     { label: `Best Platforms ${CURRENT_YEAR}`, href: "/best" },
@@ -169,10 +170,13 @@ const mobileSections = [
     items: [
       { name: "Find My Match (60s)", href: "/quiz" },
       { name: "Compare All Platforms", href: "/compare" },
-      { name: "Best Platforms", href: "/best" },
-      { name: "Share Trading", href: "/compare?category=shares" },
+      { name: "Share Trading", href: "/compare?filter=shares" },
+      { name: "ETFs", href: "/compare/etfs" },
+      { name: "Crypto Exchanges", href: "/compare?filter=crypto" },
       { name: "Super Funds", href: "/compare/super" },
       { name: "Savings Accounts", href: "/compare?filter=savings" },
+      { name: "CFD & Forex", href: "/compare?filter=cfd" },
+      { name: "Non-Resident Brokers", href: "/compare/non-residents" },
       { name: "Deals & Offers", href: "/deals" },
       { name: "Investing from Overseas", href: "/foreign-investment" },
     ],

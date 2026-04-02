@@ -80,7 +80,7 @@ export default function InsuranceComparePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
       />
-      <CompareNav current="/compare/insurance" />
+      <Suspense><CompareNav /></Suspense>
       <InsuranceCompareClient />
     </>
   );

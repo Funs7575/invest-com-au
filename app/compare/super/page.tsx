@@ -80,7 +80,7 @@ export default function SuperComparePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
       />
-      <CompareNav current="/compare/super" />
+      <Suspense><CompareNav /></Suspense>
       <SuperCompareClient />
     </>
   );

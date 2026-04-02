@@ -33,7 +33,7 @@ export default function ETFComparePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
-      <CompareNav current="/compare/etfs" />
+      <Suspense><CompareNav /></Suspense>
       <ETFCompareClient />
     </>
   );

@@ -142,11 +142,17 @@ const filters = platformTypes; // for URL compat
 const CATEGORY_TO_FILTER: Record<string, PlatformType> = {
   shares: 'shares',
   crypto: 'crypto',
+  robo: 'robo',
   'robo-advisors': 'robo',
   'research-tools': 'research',
+  research: 'research',
   'super-funds': 'super',
-  'property': 'property',
+  super: 'super',
+  property: 'property',
   'cfd-forex': 'cfd',
+  cfd: 'cfd',
+  savings: 'savings',
+  'term-deposits': 'term-deposits',
 };
 
 const feeTooltips: Record<string, string> = {
