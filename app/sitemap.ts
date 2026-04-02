@@ -10,12 +10,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = await createClient();
 
   // Static pages with tiered priorities
-  const highPriority = new Set(["/compare", "/quiz", "/reviews", "/deals", "/share-trading", "/crypto", "/savings", "/super", "/cfd", "/versus", "/how-to"]);
-  const medPriority = new Set(["/calculators", "/articles", "/scenarios", "/switch", "/stories", "/benchmark", "/health-scores", "/alerts", "/whats-new", "/costs", "/fee-impact", "/compound-interest-calculator", "/dividend-reinvestment-calculator", "/fire-calculator", "/property-vs-shares-calculator", "/super-contributions-calculator", "/tco-calculator"]);
+  const highPriority = new Set(["/compare", "/quiz", "/reviews", "/deals", "/share-trading", "/crypto", "/savings", "/super", "/cfd", "/versus", "/how-to", "/invest"]);
+  const medPriority = new Set(["/calculators", "/articles", "/scenarios", "/switch", "/stories", "/benchmark", "/health-scores", "/alerts", "/whats-new", "/costs", "/fee-impact", "/compound-interest-calculator", "/dividend-reinvestment-calculator", "/fire-calculator", "/property-vs-shares-calculator", "/super-contributions-calculator", "/tco-calculator", "/invest/mining", "/invest/buy-business", "/invest/farmland", "/invest/commercial-property", "/invest/renewable-energy", "/invest/startups", "/compare/non-residents", "/compare/money-transfer"]);
   // Everything else (about, how-we-earn, privacy, methodology, terms, etc.) → 0.4
 
   const staticPages = [
     "", "/compare", "/versus", "/reviews", "/calculators",
+    "/invest",
+    "/invest/mining", "/invest/buy-business", "/invest/farmland",
+    "/invest/commercial-property", "/invest/renewable-energy", "/invest/startups",
+    "/foreign-investment/united-states", "/foreign-investment/japan", "/foreign-investment/india",
+    "/foreign-investment/malaysia", "/foreign-investment/new-zealand", "/foreign-investment/south-korea",
+    "/foreign-investment/saudi-arabia",
+    "/compare/non-residents", "/compare/money-transfer",
     "/articles", "/scenarios", "/quiz", "/deals", "/stories", "/about", "/how-we-earn", "/privacy",
     "/methodology", "/how-we-verify", "/terms", "/switch", "/editorial-policy", "/benchmark",
     "/health-scores", "/alerts", "/whats-new", "/costs", "/fee-impact", "/fee-alerts", "/score",

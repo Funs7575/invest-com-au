@@ -89,8 +89,8 @@ export default function Footer() {
       {/* Footer */}
       <footer className="bg-slate-800 text-slate-300">
         <div className="container-custom py-6 md:py-12">
-          {/* 5-column grid — Advisors and Property are now separate columns */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 md:gap-6">
+          {/* 6-column grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 md:gap-6">
 
             {/* Brand */}
             <div className="col-span-2 sm:col-span-3 md:col-span-1">
@@ -101,6 +101,20 @@ export default function Footer() {
                 <span className="hidden md:inline">Australia&apos;s independent investing hub. Compare platforms, find verified advisors — shares, crypto, super, property &amp; more. Always free.</span>
                 <span className="md:hidden text-slate-400">Compare platforms &amp; find verified advisors. Always free.</span>
               </p>
+            </div>
+
+            {/* Invest by Sector */}
+            <div>
+              <h4 className="text-white font-semibold mb-2 md:mb-3 text-xs md:text-sm">Invest by Sector</h4>
+              <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm">
+                <li><Link href="/invest" className="hover:text-white transition-colors inline-block py-0.5">All Verticals</Link></li>
+                <li><Link href="/invest/mining" className="hover:text-white transition-colors inline-block py-0.5">Mining & Resources</Link></li>
+                <li><Link href="/invest/buy-business" className="hover:text-white transition-colors inline-block py-0.5">Buy a Business</Link></li>
+                <li><Link href="/invest/farmland" className="hover:text-white transition-colors inline-block py-0.5">Farmland</Link></li>
+                <li><Link href="/invest/commercial-property" className="hover:text-white transition-colors inline-block py-0.5">Commercial Property</Link></li>
+                <li><Link href="/invest/renewable-energy" className="hover:text-white transition-colors inline-block py-0.5">Renewable Energy</Link></li>
+                <li><Link href="/invest/startups" className="hover:text-white transition-colors inline-block py-0.5">Startups & Tech</Link></li>
+              </ul>
             </div>
 
             {/* Platforms */}
