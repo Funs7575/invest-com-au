@@ -336,6 +336,80 @@ export default async function ForeignInvestmentHubPage() {
         </div>
       </section>
 
+      {/* ── New Investment Verticals (non-financial) ────────────────── */}
+      <section className="py-12 md:py-16 bg-slate-50">
+        <div className="container-custom">
+          <SectionHeading
+            eyebrow="Expand your portfolio"
+            title="Other ways to invest in Australia"
+            sub="Beyond shares and property — explore mining, commercial real estate, farmland, renewable energy, and startups."
+          />
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              { icon: "⛏️", title: "Mining & Resources", desc: "Iron ore, lithium, gold & critical minerals. Australia leads global critical mineral production.", href: "/invest/mining" },
+              { icon: "🏢", title: "Commercial Property", desc: "Office, industrial, hotels & A-REITs. FIRB threshold $268M for developed commercial land.", href: "/invest/commercial-property" },
+              { icon: "🌾", title: "Farmland & Agriculture", desc: "50M+ ha with foreign interests. $15M FIRB threshold. Water rights as a growing asset class.", href: "/invest/farmland" },
+              { icon: "⚡", title: "Renewable Energy", desc: "Solar, wind, hydrogen & battery storage. $100B+ investment needed for 82% renewables by 2030.", href: "/invest/renewable-energy" },
+              { icon: "🏭", title: "Buy a Business", desc: "SME acquisitions, franchise opportunities & investor visa pathways (188A, 188B, SIV).", href: "/invest/buy-business" },
+              { icon: "🚀", title: "Startups & Tech", desc: "Global Talent Visa, ESIC tax concessions, R&D incentives. Sydney & Melbourne top-20 ecosystems.", href: "/invest/startups" },
+            ].map((v) => (
+              <Link
+                key={v.href}
+                href={v.href}
+                className="group bg-white rounded-2xl border border-slate-200 hover:border-amber-300 hover:shadow-lg transition-all p-5 flex flex-col"
+              >
+                <div className="text-2xl mb-2">{v.icon}</div>
+                <h3 className="text-sm font-extrabold text-slate-900 group-hover:text-amber-700 mb-1.5 transition-colors">{v.title}</h3>
+                <p className="text-xs text-slate-500 leading-relaxed flex-1">{v.desc}</p>
+                <div className="mt-3 text-xs font-bold text-amber-600 group-hover:text-amber-700">Full guide →</div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Featured Country Guides ──────────────────────────────────── */}
+      <section className="py-12 md:py-16">
+        <div className="container-custom">
+          <SectionHeading
+            eyebrow="Country guides"
+            title="Investing from your country"
+            sub="Tailored guides covering DTA rates, FIRB rules, visa pathways, and local specialists for the most active investor countries."
+          />
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            {[
+              { code: "US", flag: "🇺🇸", name: "United States", slug: "united-states", note: "FATCA · DTA 1982 · $120B FDI" },
+              { code: "GB", flag: "🇬🇧", name: "United Kingdom", slug: "united-kingdom", note: "DTA 1967 · FTA · $80B FDI" },
+              { code: "SG", flag: "🇸🇬", name: "Singapore", slug: "singapore", note: "DTA 1969 · FTA · $15B FDI" },
+              { code: "JP", flag: "🇯🇵", name: "Japan", slug: "japan", note: "DTA 1969 · FTA · $30B FDI" },
+              { code: "IN", flag: "🇮🇳", name: "India", slug: "india", note: "DTA 1991 · ECTA · $5B FDI" },
+              { code: "HK", flag: "🇭🇰", name: "Hong Kong", slug: "hong-kong", note: "DTA 2019 · $12B FDI" },
+              { code: "AE", flag: "🇦🇪", name: "UAE", slug: "united-arab-emirates", note: "DTA 2022 · $5B FDI" },
+              { code: "CN", flag: "🇨🇳", name: "China", slug: "china", note: "DTA 1990 · ChAFTA · $8B FDI" },
+              { code: "NZ", flag: "🇳🇿", name: "New Zealand", slug: "new-zealand", note: "Special exemptions · $25B FDI" },
+              { code: "MY", flag: "🇲🇾", name: "Malaysia", slug: "malaysia", note: "DTA 1999 · MAFTA · $4B FDI" },
+              { code: "KR", flag: "🇰🇷", name: "South Korea", slug: "south-korea", note: "DTA 1982 · KAFTA · $8B FDI" },
+              { code: "SA", flag: "🇸🇦", name: "Saudi Arabia", slug: "saudi-arabia", note: "No DTA · $2B FDI" },
+            ].map((c) => (
+              <Link
+                key={c.code}
+                href={`/foreign-investment/${c.slug}`}
+                className="group bg-white rounded-xl border border-slate-200 hover:border-amber-300 hover:shadow-md transition-all p-4 flex items-start gap-3"
+              >
+                <span className="text-2xl leading-none shrink-0">{c.flag}</span>
+                <div className="min-w-0">
+                  <p className="font-bold text-sm text-slate-900 group-hover:text-amber-700 transition-colors">{c.name}</p>
+                  <p className="text-[0.65rem] text-slate-400 mt-0.5">{c.note}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+          <Link href="/foreign-investment/send-money-australia" className="inline-flex items-center gap-2 text-sm font-bold text-amber-600 hover:text-amber-700">
+            Send money to Australia — compare transfer rates →
+          </Link>
+        </div>
+      </section>
+
       {/* ── Withholding Tax Calculator ───────────────────────────────── */}
       <section className="py-12 md:py-16">
         <div className="container-custom max-w-3xl">

@@ -72,14 +72,13 @@ export async function upsertContact(
   if (!apiKey) return { ok: false, error: "No API key" };
 
   try {
-    const res = await fetch("https://api.resend.com/contacts", {
+    const res = await fetch(`https://api.resend.com/audiences/${audienceId}/contacts`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        audience_id: audienceId,
         email,
         first_name: firstName || undefined,
         unsubscribed: unsubscribed ?? false,

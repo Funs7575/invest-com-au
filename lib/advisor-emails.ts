@@ -1,25 +1,19 @@
 import { ADMIN_EMAIL } from "@/lib/admin";
-
-const RESEND_API_KEY = () => process.env.RESEND_API_KEY;
+import { sendEmail } from "@/lib/resend";
 
 function emailWrapper(title: string, body: string): string {
   return `<div style="font-family:Arial,sans-serif;max-width:500px;margin:0 auto;color:#334155"><div style="background:#0f172a;padding:20px 24px;border-radius:12px 12px 0 0"><h1 style="color:white;margin:0;font-size:18px">${title}</h1></div><div style="background:#f8fafc;padding:24px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px">${body}</div></div>`;
 }
 
 async function send(to: string, subject: string, html: string): Promise<boolean> {
-  const key = RESEND_API_KEY();
-  if (!key || !to) return false;
-  try {
-    await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${key}` },
-      body: JSON.stringify({ from: "Invest.com.au <hello@invest.com.au>", to, subject, html }),
-    });
-    return true;
-  } catch (err) {
-    console.error("[advisor-emails] send failed:", err);
-    return false;
-  }
+  if (!to) return false;
+  const { ok } = await sendEmail({
+    to,
+    subject,
+    html,
+    from: "Invest.com.au <hello@invest.com.au>",
+  });
+  return ok;
 }
 
 export async function sendApplicationConfirmation(email: string, name: string, accountType: 'individual' | 'firm'): Promise<boolean> {

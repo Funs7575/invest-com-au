@@ -12,16 +12,16 @@ interface Props {
  */
 export default function ForeignInvestorCallout({ href, verticalName, keyRule }: Props) {
   return (
-    <div className="bg-gradient-to-r from-slate-800 to-slate-900 border-y border-slate-700">
-      <div className="container-custom py-4">
+    <div className="bg-amber-50 border-y border-amber-200">
+      <div className="container-custom py-3">
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 justify-between">
-          <div className="flex items-start gap-3">
-            <span className="text-xl shrink-0">🌏</span>
+          <div className="flex items-start gap-2.5">
+            <span className="text-base shrink-0 mt-0.5">🌏</span>
             <div>
-              <p className="text-sm font-bold text-white leading-snug">
+              <p className="text-sm font-bold text-amber-900 leading-snug">
                 Investing in {verticalName} from overseas?
               </p>
-              <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">{keyRule}</p>
+              <p className="text-xs text-amber-700/80 mt-0.5 leading-relaxed">{keyRule}</p>
             </div>
           </div>
           <Link

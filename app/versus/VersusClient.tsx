@@ -233,11 +233,18 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
     ? selected.map(br => br.name).join(" vs ")
     : "Platform vs Platform";
 
-  const gridCols = selected.length <= 2
-    ? "md:grid-cols-2"
+  // Compact score cards — can fit more columns since cards are small
+  const scoreGridCols = selected.length <= 2
+    ? "grid-cols-2"
     : selected.length === 3
-      ? "sm:grid-cols-2 lg:grid-cols-3"
-      : "sm:grid-cols-2 lg:grid-cols-4";
+      ? "grid-cols-3"
+      : "grid-cols-2 sm:grid-cols-4";
+
+  // Pros & Cons cards need enough space to read the bullet lists comfortably.
+  // Cap at 2 columns for 3-4 brokers — 4 columns would make each card ~200px wide.
+  const prosConsGridCols = selected.length <= 2
+    ? "md:grid-cols-2"
+    : "sm:grid-cols-2";
 
   return (
     <div className="pt-5 pb-8 md:py-12">
@@ -266,7 +273,7 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
             <span>Select platforms to compare</span>
             <span className="h-px flex-1 bg-slate-200" />
           </div>
-          <div className="flex flex-col md:flex-row gap-2 md:gap-4 items-stretch md:items-end">
+          <div className={`flex flex-col md:flex-row gap-2 md:gap-3 items-stretch md:items-end ${selectedSlugs.length >= 3 ? "md:overflow-x-auto md:pb-1" : ""}`}>
             {selectedSlugs.map((slug, index) => {
               const broker = brokers.find(br => br.slug === slug);
               return (
@@ -290,7 +297,7 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
                   )}
 
                   {/* Broker slot — mini-card */}
-                  <div className="flex-1 min-w-0">
+                  <div className="flex-1 min-w-[120px] md:min-w-[140px]">
                     <div
                       className={`rounded-lg md:rounded-xl border p-2.5 md:p-3 transition-all ${
                         broker ? 'bg-white border-slate-200 shadow-sm' : 'bg-slate-50/50 border-dashed border-slate-300'
@@ -393,7 +400,7 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
             <p className="text-[0.62rem] md:text-[0.69rem] text-slate-500 mb-3 md:mb-8">{ADVERTISER_DISCLOSURE_SHORT}</p>
 
             {/* ─── Score Cards ─── */}
-            <ScrollReveal animation="scroll-stagger-children" className={`grid grid-cols-2 ${gridCols} gap-2 md:gap-3 mb-3 md:mb-8`}>
+            <ScrollReveal animation="scroll-stagger-children" className={`grid ${scoreGridCols} gap-2 md:gap-3 mb-3 md:mb-8`}>
               {selected.map(br => {
                 const isWinner = br.slug === overallWinner?.slug;
                 return (
@@ -507,7 +514,7 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
             {/* ─── Pros & Cons ─── */}
             <div className="mb-3 md:mb-8">
               <h2 className="text-base md:text-xl font-extrabold mb-2 md:mb-4">Pros & Cons</h2>
-              <ScrollReveal animation="scroll-stagger-children" className={`grid grid-cols-1 ${gridCols} gap-2.5 md:gap-4`}>
+              <ScrollReveal animation="scroll-fade-in" className={`grid grid-cols-1 ${prosConsGridCols} gap-2.5 md:gap-4`}>
                 {selected.map(br => {
                   const isWinner = br.slug === overallWinner?.slug;
                   return (
@@ -531,13 +538,17 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
                           <svg className="w-2.5 h-2.5 md:w-3 md:h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
                           Pros
                         </h4>
-                        <ul className="space-y-1 md:space-y-1.5">
-                          {br.pros?.map((p, i) => (
-                            <li key={i} className="flex items-start gap-1.5 md:gap-2 text-[0.69rem] md:text-xs text-slate-600 leading-relaxed">
-                              <span className="text-emerald-500 shrink-0 mt-0.5">+</span> {p}
-                            </li>
-                          ))}
-                        </ul>
+                        {br.pros?.length ? (
+                          <ul className="space-y-1 md:space-y-1.5">
+                            {br.pros.map((p, i) => (
+                              <li key={i} className="flex items-start gap-1.5 md:gap-2 text-[0.69rem] md:text-xs text-slate-600 leading-relaxed">
+                                <span className="text-emerald-500 shrink-0 mt-0.5">+</span> {p}
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <p className="text-[0.69rem] md:text-xs text-slate-400 italic">Review in progress.</p>
+                        )}
                       </div>
                       {/* Cons */}
                       <div className="px-3 py-2 md:px-5 md:py-3">
@@ -545,13 +556,17 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
                           <svg className="w-2.5 h-2.5 md:w-3 md:h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" /></svg>
                           Cons
                         </h4>
-                        <ul className="space-y-1 md:space-y-1.5">
-                          {br.cons?.map((c, i) => (
-                            <li key={i} className="flex items-start gap-1.5 md:gap-2 text-[0.69rem] md:text-xs text-slate-600 leading-relaxed">
-                              <span className="text-red-400 shrink-0 mt-0.5">-</span> {c}
-                            </li>
-                          ))}
-                        </ul>
+                        {br.cons?.length ? (
+                          <ul className="space-y-1 md:space-y-1.5">
+                            {br.cons.map((c, i) => (
+                              <li key={i} className="flex items-start gap-1.5 md:gap-2 text-[0.69rem] md:text-xs text-slate-600 leading-relaxed">
+                                <span className="text-red-400 shrink-0 mt-0.5">-</span> {c}
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <p className="text-[0.69rem] md:text-xs text-slate-400 italic">Review in progress.</p>
+                        )}
                       </div>
                       {/* CTA */}
                       <div className="px-3 pb-3 pt-0.5 md:px-5 md:pb-4 md:pt-1">

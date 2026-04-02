@@ -9,24 +9,25 @@ import { CURRENT_YEAR } from "@/lib/seo";
 
 const platformsMenu = {
   byCategory: [
-    { label: "Share Trading", href: "/compare?category=shares", desc: "ASX & international shares" },
+    { label: "Share Trading", href: "/compare?filter=shares", desc: "ASX & international shares" },
+    { label: "ETFs", href: "/compare/etfs", desc: "Diversified index investing" },
     { label: "Super Funds", href: "/compare/super", desc: "Compare fees & performance" },
     { label: "Savings Accounts", href: "/compare?filter=savings", desc: "High interest & at-call accounts" },
-    { label: "ETFs", href: "/compare/etfs", desc: "Diversified index investing" },
-    { label: "Robo-Advisors", href: "/best/robo-advisors", desc: "Automated portfolio management" },
+    { label: "Robo-Advisors", href: "/compare?filter=robo", desc: "Automated portfolio management" },
     {
       label: "Crypto Exchanges",
-      href: "/compare?category=crypto",
+      href: "/compare?filter=crypto",
       desc: "AUSTRAC-registered platforms",
       riskLabel: "High Risk",
     },
     {
       label: "CFD & Forex",
-      href: "/compare?category=cfd",
+      href: "/compare?filter=cfd",
       desc: "Derivatives & currency trading",
       riskLabel: "High Risk",
     },
-    { label: "Investing from Overseas", href: "/foreign-investment", desc: "Platforms, tax & FIRB rules for international investors" },
+    { label: "Non-Resident Brokers", href: "/compare/non-residents", desc: "Platforms that accept overseas investors" },
+    { label: "Investing from Overseas", href: "/foreign-investment", desc: "Tax, FIRB rules & visa pathways" },
   ],
   tools: [
     { label: `Best Platforms ${CURRENT_YEAR}`, href: "/best" },
@@ -64,6 +65,27 @@ const advisorsMenu = {
     { label: "Tax Agents", href: "/advisors/tax-agents", desc: "Tax planning & lodgement" },
     { label: "Estate Planners", href: "/advisors/estate-planners", desc: "Wills, trusts & succession" },
     { label: "Wealth Managers", href: "/advisors/wealth-managers", desc: "Portfolio management" },
+  ],
+};
+
+const opportunitiesMenu = {
+  byVertical: [
+    { label: "Businesses for Sale", href: "/invest/buy-business/listings", desc: "Browse businesses across Australia" },
+    { label: "Mining Opportunities", href: "/invest/mining/opportunities", desc: "ASX miners, tenements & ETFs" },
+    { label: "Farmland & Agriculture", href: "/invest/farmland/listings", desc: "Grazing, cropping & water rights" },
+    { label: "Commercial Property", href: "/invest/commercial-property/listings", desc: "Office, retail, industrial & hotel" },
+    { label: "Franchise Opportunities", href: "/invest/franchise/listings", desc: "Proven business models for sale" },
+    { label: "Renewable Energy Projects", href: "/invest/renewable-energy/projects", desc: "Solar, wind & battery storage" },
+    { label: "Investment Funds", href: "/invest/funds", desc: "PE, hedge funds & SIV complying" },
+    { label: "Startups & Crowdfunding", href: "/invest/startups/opportunities", desc: "Equity crowdfunding & angel deals" },
+  ],
+  tools: [
+    { label: "All Opportunities", href: "/invest/listings" },
+    { label: "FIRB-Eligible Only", href: "/invest/listings?firb=true" },
+    { label: "Private Equity", href: "/invest/private-equity" },
+    { label: "Bonds & Fixed Income", href: "/invest/bonds" },
+    { label: "Gold & Precious Metals", href: "/invest/gold" },
+    { label: "IPO Calendar", href: "/invest/ipos" },
   ],
 };
 
@@ -169,12 +191,28 @@ const mobileSections = [
     items: [
       { name: "Find My Match (60s)", href: "/quiz" },
       { name: "Compare All Platforms", href: "/compare" },
-      { name: "Best Platforms", href: "/best" },
-      { name: "Share Trading", href: "/compare?category=shares" },
+      { name: "Share Trading", href: "/compare?filter=shares" },
+      { name: "ETFs", href: "/compare/etfs" },
+      { name: "Crypto Exchanges", href: "/compare?filter=crypto" },
       { name: "Super Funds", href: "/compare/super" },
       { name: "Savings Accounts", href: "/compare?filter=savings" },
+      { name: "CFD & Forex", href: "/compare?filter=cfd" },
+      { name: "Non-Resident Brokers", href: "/compare/non-residents" },
       { name: "Deals & Offers", href: "/deals" },
       { name: "Investing from Overseas", href: "/foreign-investment" },
+    ],
+  },
+  {
+    title: "Investment Opportunities",
+    items: [
+      { name: "All Opportunities", href: "/invest/listings" },
+      { name: "Businesses for Sale", href: "/invest/buy-business/listings" },
+      { name: "Mining Opportunities", href: "/invest/mining/opportunities" },
+      { name: "Farmland & Agriculture", href: "/invest/farmland/listings" },
+      { name: "Commercial Property", href: "/invest/commercial-property/listings" },
+      { name: "Investment Funds (incl. SIV)", href: "/invest/funds" },
+      { name: "Private Equity", href: "/invest/private-equity" },
+      { name: "IPO Calendar", href: "/invest/ipos" },
     ],
   },
   {
@@ -218,6 +256,7 @@ export function Navigation() {
   const isLearnActive = ["/articles", "/article/", "/how-to", "/calculators", "/glossary"].some(
     (p) => pathname === p || pathname.startsWith(p)
   );
+  const isOpportunitiesActive = pathname.startsWith("/invest");
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-200 shadow-sm">
@@ -338,6 +377,57 @@ export function Navigation() {
                         >
                           <div className="text-sm font-semibold text-slate-800">{item.label}</div>
                           <div className="text-xs text-slate-400">{item.desc}</div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </MegaMenuDropdown>
+
+            {/* Opportunities Mega-Menu */}
+            <MegaMenuDropdown label="Opportunities" isActive={isOpportunitiesActive} menuWidth="min-w-[560px]">
+              <div className="p-6">
+                {/* Top CTA */}
+                <Link
+                  href="/invest/listings"
+                  className="flex items-center justify-between p-3.5 bg-gradient-to-r from-amber-50 to-amber-100/60 border border-amber-200 rounded-xl mb-5 hover:border-amber-300 transition-colors group"
+                >
+                  <div>
+                    <p className="font-bold text-slate-900 text-sm">Browse All Opportunities</p>
+                    <p className="text-xs text-slate-500 mt-0.5">Businesses, mining, farmland, renewable energy &amp; more</p>
+                  </div>
+                  <svg className="w-5 h-5 text-amber-600 shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+
+                <div className="grid grid-cols-2 gap-6">
+                  <div>
+                    <p className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider mb-3">By Vertical</p>
+                    <div className="space-y-0.5">
+                      {opportunitiesMenu.byVertical.map((item) => (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className="block px-3 py-2 rounded-lg hover:bg-amber-50 transition-colors"
+                        >
+                          <div className="text-sm font-semibold text-slate-800">{item.label}</div>
+                          <div className="text-xs text-slate-400">{item.desc}</div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider mb-3">Investment Guides</p>
+                    <div className="space-y-0.5">
+                      {opportunitiesMenu.tools.map((item) => (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className="block px-3 py-2 text-sm text-slate-700 hover:bg-amber-50 hover:text-amber-900 rounded-lg transition-colors"
+                        >
+                          {item.label}
                         </Link>
                       ))}
                     </div>

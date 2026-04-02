@@ -160,11 +160,17 @@ body {
   opacity: 0;
   transform: translateY(20px);
   transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  /* Safety fallback: never leave content permanently hidden */
+  animation: scrollFadeInFallback 0s 2.5s forwards;
+}
+@keyframes scrollFadeInFallback {
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .scroll-fade-in.is-visible {
   opacity: 1;
   transform: translateY(0);
+  animation: none;
 }
 
 .scroll-fade-in.delay-100 { transition-delay: 0.1s; }
@@ -550,9 +556,17 @@ body {
 .scroll-stagger-children {
   opacity: 0;
   transition: opacity 0.3s ease-out;
+  /* Safety fallback: if the observer never fires (SSR mismatch, hidden tab,
+     reduced-motion, etc.) force the content visible after 2.5s so it is
+     never permanently blank for the user. */
+  animation: staggerContainerFallback 0s 2.5s forwards;
+}
+@keyframes staggerContainerFallback {
+  to { opacity: 1; }
 }
 .scroll-stagger-children.is-visible {
   opacity: 1;
+  animation: none;
 }
 .scroll-stagger-children.is-visible > * {
   animation: staggerFadeIn 0.4s ease-out forwards;

@@ -35,15 +35,15 @@ export async function GET(req: NextRequest) {
   }
 
   const now = new Date().toISOString();
-  const results: {
+
+  type BrokerRow = { id: number; slug: string; name: string; affiliate_url: string | null; link_status: string | null };
+  async function checkBroker(broker: BrokerRow): Promise<{
     slug: string;
     status: string;
     statusCode: number | null;
     previousStatus: string | null;
     changed: boolean;
-  }[] = [];
-
-  for (const broker of brokers || []) {
+  }> {
     if (!broker.affiliate_url || broker.affiliate_url.trim() === "") {
       await supabase
         .from("brokers")
@@ -54,19 +54,16 @@ export async function GET(req: NextRequest) {
         })
         .eq("id", broker.id);
 
-      results.push({
+      return {
         slug: broker.slug,
         status: "no_url",
         statusCode: null,
         previousStatus: broker.link_status,
         changed: broker.link_status !== "no_url",
-      });
-      continue;
+      };
     }
 
     try {
-      // Use GET with redirect: "manual" to detect redirects without following them
-      // Some affiliate URLs redirect — that's normal. We check the initial response.
       const resp = await fetch(broker.affiliate_url, {
         method: "GET",
         signal: AbortSignal.timeout(8000),
@@ -102,13 +99,13 @@ export async function GET(req: NextRequest) {
         })
         .eq("id", broker.id);
 
-      results.push({
+      return {
         slug: broker.slug,
         status: linkStatus,
         statusCode: resp.status,
         previousStatus: broker.link_status,
         changed,
-      });
+      };
     } catch {
       const linkStatus = "timeout";
       const changed = broker.link_status !== linkStatus;
@@ -122,15 +119,18 @@ export async function GET(req: NextRequest) {
         })
         .eq("id", broker.id);
 
-      results.push({
+      return {
         slug: broker.slug,
         status: linkStatus,
         statusCode: null,
         previousStatus: broker.link_status,
         changed,
-      });
+      };
     }
   }
+
+  // Run all checks in parallel — prevents 504 from sequential N×8s fetches
+  const results = await Promise.all((brokers || []).map(checkBroker));
 
   // ── Send alert for broken/timed-out links ──
   const problemLinks = results.filter(

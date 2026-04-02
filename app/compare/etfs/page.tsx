@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { UPDATED_LABEL } from "@/lib/seo";
 import ETFCompareClient from "./ETFCompareClient";
 import CompareNav from "../CompareNav";
@@ -33,7 +34,7 @@ export default function ETFComparePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
-      <CompareNav current="/compare/etfs" />
+      <Suspense><CompareNav /></Suspense>
       <ETFCompareClient />
     </>
   );

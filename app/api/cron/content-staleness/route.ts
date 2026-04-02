@@ -45,14 +45,15 @@ export async function GET(req: NextRequest) {
     (recentlyChangedBrokers || []).map((b) => b.slug)
   );
 
-  const now = Date.now();
+  const nowTs = Date.now();
+  const auditedAt = new Date(nowTs).toISOString();
   const results: { id: number; slug: string; title: string; score: number; needsUpdate: boolean }[] = [];
 
   for (const article of articles || []) {
     let score = 0;
 
     const updatedAt = new Date(article.updated_at).getTime();
-    const daysSinceUpdate = (now - updatedAt) / (1000 * 60 * 60 * 24);
+    const daysSinceUpdate = (nowTs - updatedAt) / (1000 * 60 * 60 * 24);
 
     if (daysSinceUpdate > 120) {
       score += 50;
@@ -79,16 +80,19 @@ export async function GET(req: NextRequest) {
       score,
       needsUpdate,
     });
+  }
 
-    // Update the article's staleness data
-    await supabase
-      .from("articles")
-      .update({
-        staleness_score: score,
-        needs_update: needsUpdate,
-        last_audited_at: new Date().toISOString(),
-      })
-      .eq("id", article.id);
+  // Batch update all articles in one query instead of N sequential updates
+  if (results.length > 0) {
+    await supabase.from("articles").upsert(
+      results.map((r) => ({
+        id: r.id,
+        staleness_score: r.score,
+        needs_update: r.needsUpdate,
+        last_audited_at: auditedAt,
+      })),
+      { onConflict: "id" }
+    );
   }
 
   const staleCount = results.filter((r) => r.needsUpdate).length;

@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { UPDATED_LABEL } from "@/lib/seo";
 import InsuranceCompareClient from "./InsuranceCompareClient";
 import CompareNav from "../CompareNav";
@@ -80,7 +81,7 @@ export default function InsuranceComparePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
       />
-      <CompareNav current="/compare/insurance" />
+      <Suspense><CompareNav /></Suspense>
       <InsuranceCompareClient />
     </>
   );

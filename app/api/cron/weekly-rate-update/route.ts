@@ -124,7 +124,8 @@ export async function GET(req: Request) {
 
   const RESEND_API_KEY = process.env.RESEND_API_KEY;
   if (!RESEND_API_KEY) {
-    return NextResponse.json({ error: "No RESEND_API_KEY" }, { status: 500 });
+    log.warn("RESEND_API_KEY not set — skipping weekly rate emails");
+    return NextResponse.json({ sent: 0, skipped: 0, checked: 0, reason: "No RESEND_API_KEY" });
   }
 
   const supabase = createAdminClient();

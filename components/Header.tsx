@@ -19,6 +19,19 @@ const propertyDropdown = [
   { label: "Find an Advisor", href: "/find-advisor", desc: "Match with a verified professional" },
 ];
 
+const investDropdown = [
+  { label: "All Investment Verticals", href: "/invest", desc: "Every way to invest in Australia" },
+  { label: "Mining & Resources", href: "/invest/mining", desc: "Iron ore, lithium, gold & critical minerals" },
+  { label: "Buy a Business", href: "/invest/buy-business", desc: "SME acquisitions, franchise & visa pathways" },
+  { label: "Farmland & Agriculture", href: "/invest/farmland", desc: "Livestock, cropping, water rights" },
+  { label: "Commercial Property", href: "/invest/commercial-property", desc: "Office, industrial, hotels & A-REITs" },
+  { label: "Renewable Energy", href: "/invest/renewable-energy", desc: "Solar, wind, hydrogen & battery storage" },
+  { label: "Startups & Tech", href: "/invest/startups", desc: "VC, angel investing & Global Talent Visa" },
+  { label: "Residential Property", href: "/property", desc: "FIRB-approved listings & buyer's agents" },
+  { label: "Shares & ETFs", href: "/compare", desc: "Compare ASX trading platforms" },
+  { label: "Super & SMSF", href: "/compare/super", desc: "Super fund comparisons" },
+];
+
 const foreignDropdown = [
   { label: "Foreign Investment Hub", href: "/foreign-investment", desc: "Start here — all verticals covered" },
   { label: "Shares for Non-Residents", href: "/foreign-investment/shares", desc: "Broker eligibility & withholding tax" },
@@ -27,6 +40,8 @@ const foreignDropdown = [
   { label: "Super & DASP", href: "/foreign-investment/super", desc: "Claim your super when leaving (35–65%)" },
   { label: "Tax Guide (DTA & WHT)", href: "/foreign-investment/tax", desc: "DTA treaties, CGT rules & residency" },
   { label: "Property (FIRB Guide)", href: "/property/foreign-investment", desc: "FIRB approval, stamp duty surcharges" },
+  { label: "Country Guides", href: "/foreign-investment", desc: "US, UK, Singapore, India & more" },
+  { label: "Send Money to Australia", href: "/foreign-investment/send-money-australia", desc: "Compare FX rates & transfer fees" },
   { label: "International Tax Specialists", href: "/advisors/international-tax-specialists", desc: "Expat & cross-border tax advisors" },
   { label: "FIRB Specialists", href: "/advisors/firb-specialists", desc: "FIRB approval applications" },
   { label: "Migration Agents", href: "/advisors/migration-agents", desc: "Investor & skilled visa specialists" },
@@ -64,6 +79,18 @@ const popularLinks = [
 ];
 
 const mobileNavSections = [
+  {
+    title: "Invest by Sector",
+    items: [
+      { name: "All Investment Verticals", href: "/invest" },
+      { name: "Mining & Resources", href: "/invest/mining" },
+      { name: "Buy a Business", href: "/invest/buy-business" },
+      { name: "Farmland & Agriculture", href: "/invest/farmland" },
+      { name: "Commercial Property", href: "/invest/commercial-property" },
+      { name: "Renewable Energy", href: "/invest/renewable-energy" },
+      { name: "Startups & Tech", href: "/invest/startups" },
+    ],
+  },
   {
     title: "Investing from Abroad",
     items: [
@@ -200,6 +227,7 @@ export default function Header() {
     (p) => pathname === p || pathname.startsWith(p + "/")
   );
   const isForeignActive = pathname === "/foreign-investment" || pathname.startsWith("/foreign-investment/");
+  const isInvestActive = pathname === "/invest" || pathname.startsWith("/invest/");
 
   return (
     <header className="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50 shadow-[0_2px_20px_rgb(0,0,0,0.02)] transition-all duration-300">
@@ -214,6 +242,7 @@ export default function Header() {
 
           {/* Desktop Nav */}
           <nav className="hidden lg:flex space-x-1 items-center ml-8" aria-label="Main navigation">
+            <DesktopDropdown label="Invest" items={investDropdown} isActive={isInvestActive} />
             <DesktopDropdown label="Property & Finance" items={propertyDropdown} isActive={isPropertyActive} />
             <DesktopDropdown label="Wealth & SMSF" items={wealthDropdown} isActive={isWealthActive} />
             <div className="h-6 w-px bg-slate-200 mx-2" />

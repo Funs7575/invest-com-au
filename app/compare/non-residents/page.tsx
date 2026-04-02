@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, SITE_URL, UPDATED_LABEL } from "@/lib/seo";
@@ -6,6 +7,7 @@ import { FOREIGN_INVESTOR_GENERAL_DISCLAIMER } from "@/lib/compliance";
 import type { Broker } from "@/lib/types";
 import SectionHeading from "@/components/SectionHeading";
 import { AFFILIATE_REL } from "@/lib/tracking";
+import CompareNav from "../CompareNav";
 
 export const metadata: Metadata = {
   title: `Best ASX Brokers That Accept Non-Residents (2026) — Invest.com.au`,
@@ -125,6 +127,8 @@ export default async function NonResidentBrokersPage() {
           }),
         }}
       />
+
+      <Suspense><CompareNav /></Suspense>
 
       {/* ── Hero ── */}
       <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-10 md:py-14">

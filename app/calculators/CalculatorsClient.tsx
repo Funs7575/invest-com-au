@@ -28,7 +28,7 @@ import PropertyVsSharesCalculator from "./_components/PropertyVsSharesCalculator
    Types & constants
    ────────────────────────────────────────────── */
 interface Props { brokers: Broker[] }
-type CalcId = "trade-cost" | "fx" | "switching" | "cgt" | "franking" | "chess" | "fee-impact" | "portfolio" | "switch-calc" | "savings-calc" | "tco" | "compound-interest" | "dividend-reinvestment" | "fire" | "property-vs-shares";
+type CalcId = "trade-cost" | "fx" | "switching" | "cgt" | "franking" | "chess" | "fee-impact" | "portfolio" | "switch-calc" | "savings-calc" | "tco" | "compound-interest" | "dividend-reinvestment" | "fire" | "property-vs-shares" | "mortgage" | "debt" | "retirement" | "property-yield" | "smsf" | "super-contributions";
 
 const CALCS: { id: CalcId; icon: string; title: string; subtitle: string; badge?: string; href?: string }[] = [
   { id: "tco", icon: "receipt", title: "Yearly TCO", subtitle: "Total annual cost across all your trades", badge: "NEW" },
@@ -46,10 +46,16 @@ const CALCS: { id: CalcId; icon: string; title: string; subtitle: string; badge?
   { id: "dividend-reinvestment" as CalcId, icon: "rotate-ccw", title: "Dividend Reinvestment", subtitle: "DRP vs cash dividends" },
   { id: "fire" as CalcId, icon: "flame", title: "FIRE Calculator", subtitle: "Financial independence number" },
   { id: "property-vs-shares" as CalcId, icon: "scale", title: "Property vs Shares", subtitle: "Compare investment returns" },
+  { id: "mortgage" as CalcId, icon: "home", title: "Mortgage Calculator", subtitle: "Monthly repayments & total interest", href: "/mortgage-calculator" },
+  { id: "debt" as CalcId, icon: "credit-card", title: "Debt Consolidation", subtitle: "Could consolidating save you money?", href: "/debt-calculator" },
+  { id: "retirement" as CalcId, icon: "umbrella", title: "Retirement Calculator", subtitle: "Project your super to retirement", href: "/retirement-calculator" },
+  { id: "property-yield" as CalcId, icon: "percent", title: "Property Yield", subtitle: "Gross & net rental yield", href: "/property-yield-calculator" },
+  { id: "smsf" as CalcId, icon: "landmark", title: "SMSF Calculator", subtitle: "Is self-managed super worth it?", href: "/smsf-calculator" },
+  { id: "super-contributions" as CalcId, icon: "wallet", title: "Super Contributions", subtitle: "Concessional caps & tax savings", href: "/super-contributions-calculator" },
 ];
 
 // Inline-only calcs (no href) for swipe navigation
-const INLINE_CALC_IDS: CalcId[] = CALCS.map(c => c.id);
+const INLINE_CALC_IDS: CalcId[] = CALCS.filter(c => !c.href).map(c => c.id);
 
 // Calcs that have a dedicated standalone page
 const STANDALONE_URLS: Partial<Record<CalcId, string>> = {
@@ -154,7 +160,9 @@ export default function CalculatorsClient({ brokers }: Props) {
                 >
                   <Icon name={c.icon} size={14} className="text-violet-500" />
                   <span className="text-xs font-semibold whitespace-nowrap">{c.title}</span>
-                  <span className="px-1 py-px text-[8px] font-bold rounded-full leading-none bg-violet-200 text-violet-800">NEW</span>
+                  {c.badge && (
+                    <span className="px-1 py-px text-[8px] font-bold rounded-full leading-none bg-violet-200 text-violet-800">{c.badge}</span>
+                  )}
                 </a>
               ) : (
               <button
@@ -193,7 +201,9 @@ export default function CalculatorsClient({ brokers }: Props) {
                 href={c.href}
                 className="relative flex flex-col items-start p-4 rounded-xl border bg-violet-50 border-violet-200 text-left transition-all h-full w-full group hover:bg-violet-100"
               >
-                <span className="absolute top-2 right-2 px-1.5 py-0.5 bg-violet-200 text-violet-800 text-[10px] font-bold rounded-full leading-none">NEW</span>
+                {c.badge && (
+                  <span className="absolute top-2 right-2 px-1.5 py-0.5 bg-violet-200 text-violet-800 text-[10px] font-bold rounded-full leading-none">{c.badge}</span>
+                )}
                 <Icon name={c.icon} size={24} className="mb-2 text-violet-500" />
                 <span className="text-sm font-bold mb-0.5 leading-tight text-violet-900">{c.title}</span>
                 <span className="text-xs text-violet-600 leading-snug">{c.subtitle} →</span>
