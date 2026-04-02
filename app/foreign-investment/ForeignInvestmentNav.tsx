@@ -15,6 +15,13 @@ const NAV_ITEMS = [
   { label: "UK", href: "/foreign-investment/united-kingdom", short: "UK" },
   { label: "UAE", href: "/foreign-investment/united-arab-emirates", short: "UAE" },
   { label: "China", href: "/foreign-investment/china", short: "CN" },
+  { label: "Japan", href: "/foreign-investment/japan", short: "JP" },
+  { label: "India", href: "/foreign-investment/india", short: "IN" },
+  { label: "Malaysia", href: "/foreign-investment/malaysia", short: "MY" },
+  { label: "New Zealand", href: "/foreign-investment/new-zealand", short: "NZ" },
+  { label: "South Korea", href: "/foreign-investment/south-korea", short: "KR" },
+  { label: "USA", href: "/foreign-investment/united-states", short: "US" },
+  { label: "Saudi Arabia", href: "/foreign-investment/saudi-arabia", short: "SA" },
 ];
 
 interface Props {
