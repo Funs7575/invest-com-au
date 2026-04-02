@@ -232,7 +232,7 @@ export default function FundsPageClient({ listings }: Props) {
             Fund managers can list their investment funds on Invest.com.au including SIV-complying status.
           </p>
           <Link
-            href="/for-advisors"
+            href="/invest/list"
             className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-6 py-3 rounded-xl transition-colors"
           >
             List Your Fund

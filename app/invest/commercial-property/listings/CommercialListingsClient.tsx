@@ -156,7 +156,7 @@ export default function CommercialListingsClient({ listings }: Props) {
             Reach qualified investors including family offices, funds, and international buyers.
           </p>
           <Link
-            href="/for-advisors"
+            href="/invest/list"
             className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-6 py-3 rounded-xl transition-colors"
           >
             List Your Property

@@ -129,7 +129,7 @@ export default async function FundDetailPage({
                       {l.price_display ?? (km.min_investment_cents ? formatCents(km.min_investment_cents as number) : "Contact for details")}
                     </p>
                   </div>
-                  {km.target_return_percent && (
+                  {!!km.target_return_percent && (
                     <div className="text-right">
                       <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Target Return</p>
                       <p className="text-xl font-bold text-green-700">{String(km.target_return_percent)}% p.a.</p>

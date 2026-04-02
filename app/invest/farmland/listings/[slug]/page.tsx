@@ -131,7 +131,7 @@ export default async function FarmlandListingDetailPage({
                       {l.price_display ?? (l.asking_price_cents ? formatCents(l.asking_price_cents) : "Price on application")}
                     </p>
                   </div>
-                  {km.hectares && (
+                  {!!km.hectares && (
                     <div className="text-right">
                       <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Property Size</p>
                       <p className="text-xl font-bold text-green-700">{Number(km.hectares).toLocaleString("en-AU")} ha</p>

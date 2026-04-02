@@ -173,7 +173,7 @@ export default function FarmlandListingsClient({ listings }: Props) {
             Reach qualified buyers including international investors. FIRB-eligible properties attract premium interest.
           </p>
           <Link
-            href="/for-advisors"
+            href="/invest/list"
             className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-6 py-3 rounded-xl transition-colors"
           >
             List Your Property

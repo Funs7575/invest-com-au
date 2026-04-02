@@ -203,7 +203,7 @@ export default function BusinessListingsClient({ listings }: Props) {
             List your business on Invest.com.au and reach qualified buyers including international investors.
           </p>
           <Link
-            href="/for-advisors"
+            href="/invest/list"
             className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-6 py-3 rounded-xl transition-colors"
           >
             List Your Business

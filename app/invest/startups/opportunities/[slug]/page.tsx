@@ -105,7 +105,7 @@ export default async function StartupOpportunityDetailPage({
             {isEsic && (
               <span className="bg-rose-600 text-white text-xs font-bold px-2.5 py-0.5 rounded-full">ESIC Eligible</span>
             )}
-            {km.stage && (
+            {!!km.stage && (
               <span className="bg-slate-700 text-slate-200 text-xs font-semibold px-2.5 py-0.5 rounded-full capitalize">
                 {String(km.stage)}
               </span>
@@ -143,7 +143,7 @@ export default async function StartupOpportunityDetailPage({
                         : (l.price_display ?? (l.asking_price_cents ? formatCents(l.asking_price_cents) : "Price on application"))}
                     </p>
                   </div>
-                  {km.pre_money_valuation_cents && (
+                  {!!km.pre_money_valuation_cents && (
                     <div className="text-right">
                       <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Pre-Money Valuation</p>
                       <p className="text-xl font-bold text-slate-700">{formatCents(km.pre_money_valuation_cents as number)}</p>

@@ -274,7 +274,7 @@ export default async function ListingsHubPage() {
               </p>
             </div>
             <Link
-              href="/for-advisors"
+              href="/invest/list"
               className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors shrink-0"
             >
               List an opportunity

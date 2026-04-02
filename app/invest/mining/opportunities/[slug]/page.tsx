@@ -102,12 +102,12 @@ export default async function MiningOpportunityDetailPage({
             {l.firb_eligible && (
               <span className="bg-blue-600 text-white text-xs font-bold px-2.5 py-0.5 rounded-full">FIRB Eligible</span>
             )}
-            {km.commodity && (
+            {!!km.commodity && (
               <span className="bg-amber-700 text-amber-100 text-xs font-semibold px-2.5 py-0.5 rounded-full capitalize">
                 {String(km.commodity)}
               </span>
             )}
-            {km.stage && (
+            {!!km.stage && (
               <span className="bg-slate-700 text-slate-200 text-xs font-semibold px-2.5 py-0.5 rounded-full capitalize">
                 {String(km.stage)}
               </span>

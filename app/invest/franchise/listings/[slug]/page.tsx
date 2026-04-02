@@ -104,7 +104,7 @@ export default async function FranchiseListingDetailPage({
                 {l.industry.replace(/_/g, " ")}
               </span>
             )}
-            {km.brand && (
+            {!!km.brand && (
               <span className="bg-slate-700 text-slate-200 text-xs font-semibold px-2.5 py-0.5 rounded-full">
                 {String(km.brand)}
               </span>
@@ -133,7 +133,7 @@ export default async function FranchiseListingDetailPage({
                       {l.price_display ?? (l.asking_price_cents ? formatCents(l.asking_price_cents) : (km.min_investment_cents ? formatCents(km.min_investment_cents as number) : "Price on application"))}
                     </p>
                   </div>
-                  {km.royalty_percent && (
+                  {!!km.royalty_percent && (
                     <div className="text-right">
                       <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Ongoing Royalty</p>
                       <p className="text-xl font-bold text-slate-700">{String(km.royalty_percent)}%</p>

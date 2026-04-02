@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { UPDATED_LABEL } from "@/lib/seo";
 import SuperCompareClient from "./SuperCompareClient";
 import CompareNav from "../CompareNav";

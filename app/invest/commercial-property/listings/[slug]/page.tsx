@@ -108,7 +108,7 @@ export default async function CommercialListingDetailPage({
                 {l.industry.replace(/_/g, " ")}
               </span>
             )}
-            {km.yield_percent && (
+            {!!km.yield_percent && (
               <span className="bg-green-600 text-white text-xs font-bold px-2.5 py-0.5 rounded-full">
                 {Number(km.yield_percent).toFixed(1)}% Yield
               </span>
@@ -137,7 +137,7 @@ export default async function CommercialListingDetailPage({
                       {l.price_display ?? (l.asking_price_cents ? formatCents(l.asking_price_cents) : "Price on application")}
                     </p>
                   </div>
-                  {km.yield_percent && (
+                  {!!km.yield_percent && (
                     <div className="text-right">
                       <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Net Yield</p>
                       <p className="text-xl font-bold text-green-700">{Number(km.yield_percent).toFixed(1)}% p.a.</p>

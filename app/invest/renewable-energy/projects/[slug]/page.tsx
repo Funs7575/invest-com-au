@@ -103,12 +103,12 @@ export default async function EnergyProjectDetailPage({
             {l.firb_eligible && (
               <span className="bg-blue-600 text-white text-xs font-bold px-2.5 py-0.5 rounded-full">FIRB Eligible</span>
             )}
-            {km.technology && (
+            {!!km.technology && (
               <span className="bg-teal-700 text-teal-100 text-xs font-semibold px-2.5 py-0.5 rounded-full capitalize">
                 {String(km.technology)}
               </span>
             )}
-            {km.stage && (
+            {!!km.stage && (
               <span className="bg-slate-700 text-slate-200 text-xs font-semibold px-2.5 py-0.5 rounded-full capitalize">
                 {String(km.stage)}
               </span>
@@ -137,7 +137,7 @@ export default async function EnergyProjectDetailPage({
                       {l.price_display ?? (l.asking_price_cents ? formatCents(l.asking_price_cents) : "Price on application")}
                     </p>
                   </div>
-                  {km.capacity_mw && (
+                  {!!km.capacity_mw && (
                     <div className="text-right">
                       <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Project Capacity</p>
                       <p className="text-xl font-bold text-teal-700">{String(km.capacity_mw)} MW</p>
