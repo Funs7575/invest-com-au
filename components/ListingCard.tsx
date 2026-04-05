@@ -85,6 +85,30 @@ function getKeyMetric(listing: InvestmentListing): string | null {
       if (raising) return `Raising ${formatCents(raising)}${stage ? ` · ${stage}` : ""}`;
       return null;
     }
+    case "alternatives": {
+      const subCat = listing.sub_category;
+      const estValue = listing.price_display;
+      const parts = [subCat, estValue ? `Est. Value: ${estValue}` : null].filter(Boolean);
+      return parts.length > 0 ? parts.join(" · ") : null;
+    }
+    case "private_credit": {
+      const targetYield = km.target_yield as string | number | undefined;
+      const minimum = km.minimum as string | number | undefined;
+      const parts = [
+        targetYield ? `Target Yield: ${targetYield}` : null,
+        minimum ? `Min: ${minimum}` : null,
+      ].filter(Boolean);
+      return parts.length > 0 ? parts.join(" · ") : null;
+    }
+    case "infrastructure": {
+      const infraType = km.infra_type as string | undefined;
+      const annualRev = listing.annual_revenue_cents;
+      const parts = [
+        infraType ? `Type: ${infraType}` : null,
+        annualRev ? `Revenue: ${formatCents(annualRev)}` : null,
+      ].filter(Boolean);
+      return parts.length > 0 ? parts.join(" · ") : null;
+    }
     default:
       return null;
   }
@@ -108,6 +132,12 @@ function getDetailPath(vertical: string, slug: string): string {
       return `/invest/funds/${slug}`;
     case "startup":
       return `/invest/startups/opportunities/${slug}`;
+    case "alternatives":
+      return `/invest/alternatives/listings/${slug}`;
+    case "private_credit":
+      return `/invest/private-credit/listings/${slug}`;
+    case "infrastructure":
+      return `/invest/infrastructure/listings/${slug}`;
     default:
       return `/invest/listings/${slug}`;
   }
@@ -122,6 +152,23 @@ const VERTICAL_GRADIENTS: Record<string, string> = {
   energy: "from-teal-700 to-teal-900",
   fund: "from-indigo-700 to-indigo-900",
   startup: "from-rose-700 to-rose-900",
+  alternatives: "from-rose-700 to-rose-900",
+  private_credit: "from-indigo-700 to-indigo-900",
+  infrastructure: "from-cyan-700 to-cyan-900",
+};
+
+const VERTICAL_ICONS: Record<string, string> = {
+  business: "briefcase",
+  mining: "pickaxe",
+  farmland: "wheat",
+  commercial_property: "building",
+  franchise: "store",
+  energy: "zap",
+  fund: "bar-chart-2",
+  startup: "rocket",
+  alternatives: "gem",
+  private_credit: "credit-card",
+  infrastructure: "git-branch",
 };
 
 interface ListingCardProps {
@@ -151,7 +198,7 @@ export default function ListingCard({ listing }: ListingCardProps) {
           />
         ) : (
           <div className={`w-full h-full bg-gradient-to-br ${gradient} flex items-center justify-center`}>
-            <Icon name="briefcase" size={32} className="text-white/30" />
+            <Icon name={VERTICAL_ICONS[listing.vertical] ?? "briefcase"} size={32} className="text-white/30" />
           </div>
         )}
         {/* Dark overlay for text legibility */}

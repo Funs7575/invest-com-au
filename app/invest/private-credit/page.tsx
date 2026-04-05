@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
+import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
 
 export const metadata: Metadata = {
   title: `Private Credit & P2P Lending in Australia (${CURRENT_YEAR})`,
@@ -30,6 +31,21 @@ export default function PrivateCreditPage() {
     publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
   };
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      { "@type": "Question", name: "What is private credit?", acceptedAnswer: { "@type": "Answer", text: "Private credit refers to loans and debt instruments issued outside public bond markets, where companies borrow from specialist credit funds rather than banks. Returns come from interest payments, offering investors yields of 6-10% p.a., and the asset class has grown rapidly in Australia as banks retreated from certain lending segments post-Royal Commission." } },
+      { "@type": "Question", name: "How is private credit different from bonds?", acceptedAnswer: { "@type": "Answer", text: "Unlike publicly traded bonds, private credit loans are negotiated directly between the lender and borrower and are not listed on an exchange. Private credit typically offers higher yields (6-10% vs 4-5% for investment-grade bonds), but comes with less liquidity, less price transparency, and often longer lock-up periods." } },
+      { "@type": "Question", name: "What is the minimum investment for private credit in Australia?", acceptedAnswer: { "@type": "Answer", text: "Minimums vary widely. ASX-listed private credit trusts like MXT or MOT can be bought for the price of a single unit (around $2). Unlisted retail funds like La Trobe Financial start at $20,000, while wholesale-only funds from managers like MaxCap or Epsilon require $100,000-$500,000." } },
+      { "@type": "Question", name: "Can an SMSF invest in private credit?", acceptedAnswer: { "@type": "Answer", text: "Yes, SMSFs can invest in private credit through ASX-listed trusts (MXT, MOT, QAL) with no wholesale requirement, or through unlisted funds provided the investment is documented in the fund's investment strategy. Interest income is taxed at 15% in accumulation phase or 0% in pension phase." } },
+      { "@type": "Question", name: "What are the main risks of private credit?", acceptedAnswer: { "@type": "Answer", text: "Key risks include credit default risk (borrowers failing to repay), illiquidity risk (funds may gate redemptions in stressed markets), valuation opacity (private loans are harder to mark-to-market), and manager risk (credit underwriting quality varies dramatically between fund managers). Some funds are also concentrated in a single sector like commercial real estate." } },
+      { "@type": "Question", name: "How do private credit returns compare to term deposits?", acceptedAnswer: { "@type": "Answer", text: "Private credit funds typically yield 6-10% p.a. compared to 4-5% for bank term deposits, representing a premium of 200-500 basis points. However, unlike term deposits which are government-guaranteed up to $250,000 per ADI, private credit carries real risk of capital loss and is not covered by any government guarantee." } },
+      { "@type": "Question", name: "What happens if a private credit fund gates redemptions?", acceptedAnswer: { "@type": "Answer", text: "If a fund gates (restricts) redemptions, investors cannot withdraw their money until the gate is lifted. This happened to several funds during the COVID crash in 2020. ASX-listed private credit trusts avoid this issue as units can always be sold on the exchange, though potentially at a discount to net asset value." } },
+      { "@type": "Question", name: "Is private credit regulated by ASIC?", acceptedAnswer: { "@type": "Answer", text: "Yes, private credit fund managers in Australia must hold an Australian Financial Services Licence (AFSL) issued by ASIC. ASX-listed trusts are also subject to ASX listing rules and continuous disclosure requirements. However, the underlying loans themselves are private and not subject to the same transparency requirements as public bond markets." } },
+    ],
+  };
+
   return (
     <div>
       <script
@@ -39,6 +55,10 @@ export default function PrivateCreditPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webPage) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
       {/* Hero */}
@@ -141,6 +161,13 @@ export default function PrivateCreditPage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Lead Magnet */}
+      <section className="py-14 bg-white">
+        <div className="container-custom max-w-4xl">
+          <ContextualLeadMagnet segment="fee-audit" />
         </div>
       </section>
 
@@ -311,6 +338,47 @@ export default function PrivateCreditPage() {
               <li><strong>Manager risk</strong> — credit underwriting quality varies dramatically between fund managers</li>
               <li><strong>Concentration risk</strong> — some funds concentrated in a single sector (e.g., commercial real estate)</li>
             </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* Related guides */}
+      <section className="py-14 bg-slate-50">
+        <div className="container-custom max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Related Guides</p>
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Explore Related Investment Guides</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { title: "Hybrid Securities", href: "/invest/hybrid-securities", desc: "ASX-listed bank hybrids offering franked yields above term deposits." },
+              { title: "Bonds & Fixed Income", href: "/invest/bonds", desc: "Government and corporate bonds for stable income and capital preservation." },
+              { title: "Managed Funds & Index Funds", href: "/invest/managed-funds", desc: "Compare passive index funds and actively managed strategies in Australia." },
+              { title: "SMSF Investment Guide", href: "/invest/smsf", desc: "What SMSFs actually invest in — property, shares, crypto and more." },
+            ].map((guide) => (
+              <Link key={guide.href} href={guide.href} className="group bg-white border border-slate-200 rounded-xl p-5 hover:border-amber-200 hover:shadow-md transition-all">
+                <h3 className="font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{guide.title}</h3>
+                <p className="text-sm text-slate-500 mt-1">{guide.desc}</p>
+                <span className="inline-flex items-center text-amber-600 text-sm font-semibold mt-2">Read guide →</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="py-14 bg-white">
+        <div className="container-custom max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">FAQ</p>
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Frequently Asked Questions</h2>
+          <div className="space-y-3">
+            {faqSchema.mainEntity.map((faq: { name: string; acceptedAnswer: { text: string } }) => (
+              <details key={faq.name} className="group bg-white border border-slate-200 rounded-xl">
+                <summary className="flex items-center justify-between px-5 py-4 cursor-pointer text-sm font-bold text-slate-900 hover:text-amber-600 transition-colors">
+                  {faq.name}
+                  <svg className="w-4 h-4 text-slate-400 shrink-0 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                </summary>
+                <div className="px-5 pb-4 text-sm text-slate-600 leading-relaxed">{faq.acceptedAnswer.text}</div>
+              </details>
+            ))}
           </div>
         </div>
       </section>

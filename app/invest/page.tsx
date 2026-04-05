@@ -254,6 +254,24 @@ export default async function InvestHubPage() {
                 href: "/invest/startups/opportunities",
                 icon: "🚀",
               },
+              {
+                title: "Alternative Investments",
+                desc: "Fine wine, art, classic cars, luxury watches, and collectibles.",
+                href: "/invest/alternatives/listings",
+                icon: "🎨",
+              },
+              {
+                title: "Private Credit & P2P",
+                desc: "Private debt funds and peer-to-peer lending — yields above term deposits.",
+                href: "/invest/private-credit/listings",
+                icon: "💰",
+              },
+              {
+                title: "Infrastructure",
+                desc: "Toll roads, airports, utilities, ports, and social infrastructure.",
+                href: "/invest/infrastructure/listings",
+                icon: "🏗️",
+              },
             ].map((card) => (
               <Link
                 key={card.href}

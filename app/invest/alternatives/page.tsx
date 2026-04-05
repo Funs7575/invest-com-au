@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
+import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
 
 export const metadata: Metadata = {
   title: `Alternative Investments Australia — Wine, Art, Cars, Watches & Collectibles (${CURRENT_YEAR})`,
@@ -30,6 +31,21 @@ export default function AlternativesPage() {
     publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
   };
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      { "@type": "Question", name: "What are alternative investments?", acceptedAnswer: { "@type": "Answer", text: "Alternative investments are assets outside the traditional categories of shares, bonds, and cash. They include fine wine, art, classic cars, luxury watches, rare coins, collectibles, and other tangible assets. Alternatives typically have low correlation to share markets, providing portfolio diversification, but they are illiquid, subjective in valuation, and produce no income." } },
+      { "@type": "Question", name: "Can an SMSF hold collectibles?", acceptedAnswer: { "@type": "Answer", text: "Yes, SMSFs can hold collectibles including artwork, wine, jewellery, coins, and cars, but strict ATO rules apply under Regulation 13.18AA. Collectibles cannot be used or displayed by a member or related party, must be stored in a secure independent facility (not a member's home), must be insured within 7 days of acquisition, and all transfers must be at arm's length with independent valuations." } },
+      { "@type": "Question", name: "How are collectibles taxed in Australia?", acceptedAnswer: { "@type": "Answer", text: "Collectibles acquired for more than $500 are subject to capital gains tax on disposal. The 50% CGT discount applies if held for 12+ months by individuals or trusts. Collectibles acquired for $500 or less are exempt from CGT, but losses on them cannot be claimed. GST may apply on sales above the GST registration threshold. Wine sales may also attract Wine Equalisation Tax (WET)." } },
+      { "@type": "Question", name: "What is the minimum investment for wine or art?", acceptedAnswer: { "@type": "Answer", text: "Fractional platforms have lowered minimums significantly. Masterworks allows art investment from approximately US$500, and Maverix (Australian platform) offers fractional alternatives at lower entry points. For wine, Vinovest starts at US$1,000. Direct purchase at auction typically requires $5,000-$50,000+ for investment-grade pieces, while fine wine cases start around $1,000-$5,000." } },
+      { "@type": "Question", name: "What is the best alternative investment platform in Australia?", acceptedAnswer: { "@type": "Answer", text: "Maverix is the leading Australian fractional alternative investment platform covering art, wine, and collectibles. For wine specifically, Wine Owners is an Australian platform, while Vinovest and Cult Wines operate globally. For art, Masterworks is the largest global platform. For classic cars and watches, direct purchase through specialist dealers and auction houses remains the primary route." } },
+      { "@type": "Question", name: "Are luxury watches a good investment?", acceptedAnswer: { "@type": "Answer", text: "Certain luxury watches — primarily Rolex (Daytona, vintage Submariner), Patek Philippe (Nautilus, Calatrava), and Audemars Piguet (Royal Oak) — have appreciated significantly. However, the watch market can be volatile, authentication is critical due to counterfeiting, buy-sell spreads are typically 10-15%, and returns are heavily dependent on model, condition, and provenance. Most watches depreciate; only a small subset are investment-grade." } },
+      { "@type": "Question", name: "How do I insure collectibles in Australia?", acceptedAnswer: { "@type": "Answer", text: "Standard home contents insurance typically has sub-limits for valuables like art, wine, and watches (often $5,000-$10,000 per item). For serious collectible holdings, you need specialist insurance from providers like Chubb, AIG Private Client, or Berkley Insurance. Cover should be for agreed value (not market value), with detailed schedules and regular independent valuations. SMSFs must insure collectibles within 7 days of acquisition." } },
+      { "@type": "Question", name: "What is the liquidity risk with alternative investments?", acceptedAnswer: { "@type": "Answer", text: "Alternative assets are highly illiquid — there is no centralised exchange, and selling can take weeks to months depending on the asset, market conditions, and buyer interest. Auction houses charge 15-25% buyer's premiums and seller's commissions. Fractional platforms may have limited secondary markets. You should only invest money you will not need for 5-10+ years and keep alternatives to a small portion (5-10%) of your total portfolio." } },
+    ],
+  };
+
   return (
     <div>
       <script
@@ -39,6 +55,10 @@ export default function AlternativesPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webPage) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
       {/* Hero */}
@@ -146,6 +166,13 @@ export default function AlternativesPage() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Lead Magnet */}
+      <section className="py-14 bg-white">
+        <div className="container-custom max-w-4xl">
+          <ContextualLeadMagnet segment="switching-checklist" />
         </div>
       </section>
 
@@ -266,6 +293,47 @@ export default function AlternativesPage() {
               <li><strong>No income</strong> — alternative assets produce no dividends or interest; returns come solely from price appreciation</li>
               <li><strong>Concentration risk</strong> — a single painting, car, or watch is undiversified; total loss is possible (damage, theft)</li>
             </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="py-14 bg-white">
+        <div className="container-custom max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">FAQ</p>
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Frequently Asked Questions</h2>
+          <div className="space-y-3">
+            {faqSchema.mainEntity.map((faq: { name: string; acceptedAnswer: { text: string } }) => (
+              <details key={faq.name} className="group bg-white border border-slate-200 rounded-xl">
+                <summary className="flex items-center justify-between px-5 py-4 cursor-pointer text-sm font-bold text-slate-900 hover:text-amber-600 transition-colors">
+                  {faq.name}
+                  <svg className="w-4 h-4 text-slate-400 shrink-0 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                </summary>
+                <div className="px-5 pb-4 text-sm text-slate-600 leading-relaxed">{faq.acceptedAnswer.text}</div>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Related guides */}
+      <section className="py-14 bg-white">
+        <div className="container-custom max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Related Guides</p>
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Explore Related Investment Guides</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { title: "Private Equity", href: "/invest/private-equity", desc: "Venture capital, buyouts and PE fund access for Australian investors." },
+              { title: "SMSF Investment Guide", href: "/invest/smsf", desc: "What SMSFs actually invest in — property, shares, crypto and more." },
+              { title: "Infrastructure", href: "/invest/infrastructure", desc: "Toll roads, airports, utilities and ports for stable inflation-linked income." },
+              { title: "Commodities", href: "/invest/commodities", desc: "Invest in gold, silver, oil and more from Australia via ETFs and futures." },
+            ].map((guide) => (
+              <Link key={guide.href} href={guide.href} className="group bg-white border border-slate-200 rounded-xl p-5 hover:border-amber-200 hover:shadow-md transition-all">
+                <h3 className="font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{guide.title}</h3>
+                <p className="text-sm text-slate-500 mt-1">{guide.desc}</p>
+                <span className="inline-flex items-center text-amber-600 text-sm font-semibold mt-2">Read guide →</span>
+              </Link>
+            ))}
           </div>
         </div>
       </section>

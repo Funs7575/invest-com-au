@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
+import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
 
 export const metadata: Metadata = {
   title: `Forex Trading Australia — AUD/USD, Brokers & ASIC Guide (${CURRENT_YEAR})`,
@@ -30,6 +31,21 @@ export default function ForexPage() {
     publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
   };
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      { "@type": "Question", name: "Is forex trading legal in Australia?", acceptedAnswer: { "@type": "Answer", text: "Yes, forex trading is fully legal in Australia. It is regulated by ASIC (Australian Securities and Investments Commission), which requires all forex and CFD brokers operating in Australia to hold an Australian Financial Services Licence (AFSL). Australia is one of the world's largest forex trading hubs, with ASIC considered among the strictest global regulators." } },
+      { "@type": "Question", name: "How does ASIC regulate forex brokers?", acceptedAnswer: { "@type": "Answer", text: "ASIC imposes strict rules including leverage caps (30:1 for major pairs), mandatory negative balance protection for retail clients, margin close-out at 50% equity, client money segregation in Australian ADI trust accounts, a ban on inducements and bonuses, and mandatory loss disclosure showing the percentage of retail clients who lose money." } },
+      { "@type": "Question", name: "What is the best forex broker in Australia?", acceptedAnswer: { "@type": "Answer", text: "IC Markets and Pepperstone are the most popular for low spreads (0.0 pips on raw accounts). CMC Markets offers the widest range of currency pairs (330+). IG Markets provides excellent education and research. Interactive Brokers suits professional traders wanting multi-asset access. All hold ASIC AFSLs and segregate client funds." } },
+      { "@type": "Question", name: "How much money do I need to start forex trading?", acceptedAnswer: { "@type": "Answer", text: "Most Australian forex brokers allow you to start with $200-$500, with some like CMC Markets and IG Markets having no minimum deposit. However, trading with very small amounts under high leverage is extremely risky. Most experienced traders recommend starting with at least $2,000-$5,000 and using conservative position sizing (risking no more than 1-2% per trade)." } },
+      { "@type": "Question", name: "Is forex trading gambling?", acceptedAnswer: { "@type": "Answer", text: "While forex trading involves significant risk and speculation, it differs from gambling in that skilled traders can develop an edge through technical analysis, fundamental analysis, and disciplined risk management. However, ASIC data shows 70-80% of retail forex traders lose money, and for many retail participants who trade without a strategy or risk management, it can function similarly to gambling." } },
+      { "@type": "Question", name: "How is forex income taxed in Australia?", acceptedAnswer: { "@type": "Answer", text: "Most retail forex trading is treated as a revenue activity by the ATO, meaning profits are taxed as ordinary income at your marginal rate and the 50% CGT discount does not apply. Losses can offset other assessable income if you are a bona fide trader. GST does not apply to financial supplies like forex trading. Keep detailed records of every trade for ATO compliance." } },
+      { "@type": "Question", name: "What is the difference between spot forex and forex CFDs?", acceptedAnswer: { "@type": "Answer", text: "Spot forex involves actual currency exchange with T+2 settlement, used primarily by businesses and institutions. Forex CFDs are derivatives that track currency prices without physical delivery — you profit or lose based on price movements. Most retail forex trading in Australia is done via CFDs, which are subject to ASIC leverage caps of 30:1 for major pairs." } },
+      { "@type": "Question", name: "What are the ASIC leverage limits for forex?", acceptedAnswer: { "@type": "Answer", text: "ASIC caps retail forex CFD leverage at 30:1 for major currency pairs (e.g., AUD/USD, EUR/USD) and 20:1 for minor pairs and gold. This means a 3.3% adverse move in a major pair at maximum leverage would wipe out your entire deposit. These caps were introduced in 2021 to protect retail traders and are among the strictest globally alongside ESMA rules." } },
+    ],
+  };
+
   return (
     <div>
       <script
@@ -39,6 +55,10 @@ export default function ForexPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webPage) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
       {/* Hero */}
@@ -157,6 +177,13 @@ export default function ForexPage() {
         </div>
       </section>
 
+      {/* Lead Magnet */}
+      <section className="py-14 bg-white">
+        <div className="container-custom max-w-4xl">
+          <ContextualLeadMagnet segment="beginner-guide" />
+        </div>
+      </section>
+
       {/* Section 3: ASIC Regulation */}
       <section className="py-14 bg-white">
         <div className="container-custom max-w-4xl">
@@ -262,6 +289,47 @@ export default function ForexPage() {
               <li><strong>Psychological risk</strong> — forex trading is psychologically demanding; overtrading and revenge trading are common pitfalls</li>
               <li><strong>Not investing</strong> — forex trading is speculation, not investing. It has no expected positive return unlike equities or property</li>
             </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="py-14 bg-white">
+        <div className="container-custom max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">FAQ</p>
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Frequently Asked Questions</h2>
+          <div className="space-y-3">
+            {faqSchema.mainEntity.map((faq: { name: string; acceptedAnswer: { text: string } }) => (
+              <details key={faq.name} className="group bg-white border border-slate-200 rounded-xl">
+                <summary className="flex items-center justify-between px-5 py-4 cursor-pointer text-sm font-bold text-slate-900 hover:text-amber-600 transition-colors">
+                  {faq.name}
+                  <svg className="w-4 h-4 text-slate-400 shrink-0 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                </summary>
+                <div className="px-5 pb-4 text-sm text-slate-600 leading-relaxed">{faq.acceptedAnswer.text}</div>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Related guides */}
+      <section className="py-14 bg-slate-50">
+        <div className="container-custom max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Related Guides</p>
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Explore Related Investment Guides</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { title: "Options & Derivatives", href: "/invest/options-trading", desc: "ASX-listed options, CFDs, warrants and futures for Australian traders." },
+              { title: "Commodities", href: "/invest/commodities", desc: "Invest in gold, silver, oil and more from Australia via ETFs and futures." },
+              { title: "Managed Funds & Index Funds", href: "/invest/managed-funds", desc: "Compare passive index funds and actively managed strategies in Australia." },
+              { title: "Crypto Staking & DeFi", href: "/invest/crypto-staking", desc: "Earn yield through staking, DeFi protocols and crypto ETFs on the ASX." },
+            ].map((guide) => (
+              <Link key={guide.href} href={guide.href} className="group bg-white border border-slate-200 rounded-xl p-5 hover:border-amber-200 hover:shadow-md transition-all">
+                <h3 className="font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{guide.title}</h3>
+                <p className="text-sm text-slate-500 mt-1">{guide.desc}</p>
+                <span className="inline-flex items-center text-amber-600 text-sm font-semibold mt-2">Read guide →</span>
+              </Link>
+            ))}
           </div>
         </div>
       </section>

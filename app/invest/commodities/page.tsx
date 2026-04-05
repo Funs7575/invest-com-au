@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
+import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
 
 export const metadata: Metadata = {
   title: `How to Invest in Commodities from Australia (${CURRENT_YEAR})`,
@@ -30,6 +31,21 @@ export default function CommoditiesPage() {
     publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
   };
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      { "@type": "Question", name: "How do I invest in gold in Australia?", acceptedAnswer: { "@type": "Answer", text: "The easiest way is through ASX-listed gold ETFs: PMGOLD (Perth Mint backed, 0.15% MER) or GOLD (ETFS Physical Gold, 0.40% MER). You can also buy physical gold from the Perth Mint (GoldPass app from $1), ABC Bullion, or dealers. For leveraged exposure, gold mining stocks like Newmont (NEM) or Northern Star (NST) provide indirect exposure with additional operational risk." } },
+      { "@type": "Question", name: "What is the difference between physical gold and a gold ETF?", acceptedAnswer: { "@type": "Answer", text: "Physical gold gives you direct ownership of bars or coins with no counterparty risk, but requires secure storage and insurance, and has wider buy-sell spreads (3-8%). Gold ETFs like PMGOLD and GOLD are backed by physical gold stored in vaults, trade on the ASX with tight spreads, require no storage, but involve trust in the custodian. For most investors, ETFs are simpler and cheaper." } },
+      { "@type": "Question", name: "Is gold GST-free in Australia?", acceptedAnswer: { "@type": "Answer", text: "Yes, investment-grade precious metals are GST-free in Australia. For gold, this means bars and coins of at least 99.5% purity. For silver, the threshold is 99.9% purity. Perth Mint products and most dealer bullion products meet these standards. Gold ETFs on the ASX are also GST-free as financial products. Non-investment-grade jewellery and collectible coins may attract GST." } },
+      { "@type": "Question", name: "What is the best commodity ETF in Australia?", acceptedAnswer: { "@type": "Answer", text: "For gold specifically, PMGOLD (0.15% MER) is the cheapest. For a broad commodity basket, QCO (Betashares Commodities, 0.69% MER) provides diversified exposure across energy, metals, and agriculture. For oil, OOO (Betashares Crude Oil, 1.29% MER) tracks crude oil but suffers from contango drag over time. ETFS also offers physical silver (ETPMAG), platinum (ETPMPT), and palladium (ETPMPD)." } },
+      { "@type": "Question", name: "How can I invest in oil from Australia?", acceptedAnswer: { "@type": "Answer", text: "The main options are: OOO (Betashares Crude Oil ETF) on the ASX, which uses futures contracts and is subject to contango drag; oil company shares like Woodside Energy (WDS) and Santos (STO); or oil CFDs through brokers like IG Markets or CMC Markets (leveraged, high risk). Direct oil futures are available through Interactive Brokers but require significant capital and experience." } },
+      { "@type": "Question", name: "Are commodities a good investment for SMSFs?", acceptedAnswer: { "@type": "Answer", text: "Gold ETFs (PMGOLD, GOLD) and commodity ETFs are straightforward SMSF investments traded like any ASX share. Physical gold can be held in an SMSF but must be stored independently (not at a member's home) and insured. Capital gains are taxed at 15% in accumulation or 0% in pension phase. Commodities can serve as a portfolio diversifier, but note that most produce no income." } },
+      { "@type": "Question", name: "What is the difference between Perth Mint gold and a gold ETF?", acceptedAnswer: { "@type": "Answer", text: "Perth Mint offers government-backed gold through its GoldPass app (digital gold from $1, physical delivery available) and the PMGOLD ETF on ASX. PMGOLD is the cheapest gold ETF at 0.15% MER. The key difference is that Perth Mint products are backed by the Western Australian Government, while other gold ETFs like GOLD are backed by private custodians storing gold in London vaults." } },
+      { "@type": "Question", name: "How are commodity investments taxed in Australia?", acceptedAnswer: { "@type": "Answer", text: "Commodity ETFs and physical gold/silver are CGT assets — you pay capital gains tax on disposal, with a 50% discount if held for 12+ months. Investment-grade gold and silver are GST-free. Commodity CFDs and futures are generally treated as revenue (ordinary income) with no CGT discount. Resource stock dividends are taxed at your marginal rate with franking credits where applicable." } },
+    ],
+  };
+
   return (
     <div>
       <script
@@ -39,6 +55,10 @@ export default function CommoditiesPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webPage) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
       {/* Hero */}
@@ -158,6 +178,13 @@ export default function CommoditiesPage() {
         </div>
       </section>
 
+      {/* Lead Magnet */}
+      <section className="py-14 bg-white">
+        <div className="container-custom max-w-4xl">
+          <ContextualLeadMagnet segment="switching-checklist" />
+        </div>
+      </section>
+
       {/* Section 3: Gold Deep Dive */}
       <section className="py-14 bg-white">
         <div className="container-custom max-w-4xl">
@@ -267,6 +294,47 @@ export default function CommoditiesPage() {
               <li><strong>Storage and insurance</strong> — physical bullion requires secure storage and insurance</li>
               <li><strong>Geopolitical risk</strong> — supply disruptions, trade wars, and OPEC decisions can cause sudden price shocks</li>
             </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="py-14 bg-white">
+        <div className="container-custom max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">FAQ</p>
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Frequently Asked Questions</h2>
+          <div className="space-y-3">
+            {faqSchema.mainEntity.map((faq: { name: string; acceptedAnswer: { text: string } }) => (
+              <details key={faq.name} className="group bg-white border border-slate-200 rounded-xl">
+                <summary className="flex items-center justify-between px-5 py-4 cursor-pointer text-sm font-bold text-slate-900 hover:text-amber-600 transition-colors">
+                  {faq.name}
+                  <svg className="w-4 h-4 text-slate-400 shrink-0 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                </summary>
+                <div className="px-5 pb-4 text-sm text-slate-600 leading-relaxed">{faq.acceptedAnswer.text}</div>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Related guides */}
+      <section className="py-14 bg-slate-50">
+        <div className="container-custom max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Related Guides</p>
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Explore Related Investment Guides</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { title: "Gold Investment", href: "/invest/gold", desc: "Perth Mint, ASX gold ETFs, physical bullion and gold mining stocks." },
+              { title: "Mining & Resources", href: "/invest/mining", desc: "ASX mining stocks, lithium, iron ore and resource sector investing." },
+              { title: "Infrastructure", href: "/invest/infrastructure", desc: "Toll roads, airports, utilities and ports for stable inflation-linked income." },
+              { title: "Managed Funds & Index Funds", href: "/invest/managed-funds", desc: "Compare passive index funds and actively managed strategies in Australia." },
+            ].map((guide) => (
+              <Link key={guide.href} href={guide.href} className="group bg-white border border-slate-200 rounded-xl p-5 hover:border-amber-200 hover:shadow-md transition-all">
+                <h3 className="font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{guide.title}</h3>
+                <p className="text-sm text-slate-500 mt-1">{guide.desc}</p>
+                <span className="inline-flex items-center text-amber-600 text-sm font-semibold mt-2">Read guide →</span>
+              </Link>
+            ))}
           </div>
         </div>
       </section>

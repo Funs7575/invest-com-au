@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
+import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
 
 export const metadata: Metadata = {
   title: `Best Managed Funds & Index Funds Australia (${CURRENT_YEAR})`,
@@ -30,6 +31,21 @@ export default function ManagedFundsPage() {
     publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
   };
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      { "@type": "Question", name: "What is the difference between an index fund and a managed fund?", acceptedAnswer: { "@type": "Answer", text: "An index fund passively tracks a market index (like the ASX 200 or S&P 500) with minimal human intervention and very low fees (0.04-0.20% MER). An actively managed fund employs fund managers who pick stocks to try to beat the benchmark, charging higher fees (0.50-1.50% MER plus potential performance fees). Over 80% of active managers underperform their index over 10 years after fees." } },
+      { "@type": "Question", name: "What is the best index fund in Australia?", acceptedAnswer: { "@type": "Answer", text: "For Australian share exposure, Betashares A200 (MER 0.04%) and iShares IOZ (MER 0.05%) are the cheapest ASX 200 trackers. For global shares, Vanguard VGS (MER 0.18%) tracks developed world markets. For an all-in-one diversified portfolio, VDHG (Vanguard, growth-tilted) and DHHF (Betashares, 100% equities) are popular single-fund solutions." } },
+      { "@type": "Question", name: "What is the minimum investment for managed funds in Australia?", acceptedAnswer: { "@type": "Answer", text: "ETF versions of index funds can be bought for the price of a single unit — as low as $30 for IOZ or $130 for A200. Unlisted managed funds typically have higher minimums: Vanguard managed funds start at $500, while many active funds require $5,000-$25,000. Some platforms like InvestSMART and Stockspot have minimums as low as $200." } },
+      { "@type": "Question", name: "How are managed fund distributions taxed in Australia?", acceptedAnswer: { "@type": "Answer", text: "Fund distributions are taxed at your marginal rate for income components, with capital gains eligible for the 50% CGT discount if the fund held the underlying assets for 12+ months. Australian equity funds pass through franking credits which reduce your tax bill. Most large funds operate under the AMIT regime, providing clear AMMA tax statements." } },
+      { "@type": "Question", name: "What is the difference between an ETF and a managed fund?", acceptedAnswer: { "@type": "Answer", text: "ETFs trade on the ASX like shares and can be bought or sold throughout the day at market price via any broker. Unlisted managed funds are bought and sold directly with the fund manager at end-of-day NAV price, typically with higher minimums and slower settlement. ETFs generally have lower fees and greater tax efficiency due to their structure." } },
+      { "@type": "Question", name: "Should I choose Vanguard or Betashares?", acceptedAnswer: { "@type": "Answer", text: "Both are excellent low-cost providers. Betashares offers the cheapest Australian share ETF (A200, 0.04% MER) while Vanguard has a broader range including unlisted managed funds and diversified options like VDHG. Betashares DHHF is a popular all-in-one alternative to Vanguard VDHG with a slightly different allocation. The fee difference between them is minimal." } },
+      { "@type": "Question", name: "Can SMSFs invest in index funds?", acceptedAnswer: { "@type": "Answer", text: "Yes, index funds and ETFs are among the most popular SMSF investments. Dividends and distributions are taxed at 15% in accumulation phase or 0% in pension phase. Franking credits from Australian equity ETFs create net tax refunds for SMSFs. Many SMSF platforms like Stake SMSF and CommSec offer low-cost access to ETFs." } },
+      { "@type": "Question", name: "What is MER and why does it matter?", acceptedAnswer: { "@type": "Answer", text: "MER (Management Expense Ratio) is the annual percentage fee charged by a fund, deducted from returns before they reach you. A 1% MER difference compounded over 30 years can reduce your final balance by 25% or more. This is why low-cost index funds (0.04-0.20% MER) consistently outperform most higher-fee active funds over the long term." } },
+    ],
+  };
+
   return (
     <div>
       <script
@@ -39,6 +55,10 @@ export default function ManagedFundsPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webPage) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
       {/* Hero */}
@@ -182,6 +202,13 @@ export default function ManagedFundsPage() {
         </div>
       </section>
 
+      {/* Lead Magnet */}
+      <section className="py-14 bg-white">
+        <div className="container-custom max-w-4xl">
+          <ContextualLeadMagnet segment="fee-audit" />
+        </div>
+      </section>
+
       {/* Section 3: Top Active Fund Managers */}
       <section className="py-14 bg-white">
         <div className="container-custom max-w-4xl">
@@ -247,6 +274,47 @@ export default function ManagedFundsPage() {
               <li><strong>SMSF</strong> — funds taxed at 15% in accumulation, 0% in pension phase; an excellent structure for index fund investing</li>
               <li><strong>Non-residents</strong> — MIT withholding tax of 15% (treaty countries) or 30% (non-treaty) on fund distributions</li>
             </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* Related guides */}
+      <section className="py-14 bg-slate-50">
+        <div className="container-custom max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Related Guides</p>
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Explore Related Investment Guides</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { title: "Dividend Investing", href: "/invest/dividend-investing", desc: "High-yield ASX stocks, franking credits explained, and dividend ETFs." },
+              { title: "A-REITs", href: "/invest/reits", desc: "ASX-listed property trusts for diversified real estate exposure." },
+              { title: "SMSF Investment Guide", href: "/invest/smsf", desc: "What SMSFs actually invest in — property, shares, crypto and more." },
+              { title: "Bonds & Fixed Income", href: "/invest/bonds", desc: "Government and corporate bonds for stable income and capital preservation." },
+            ].map((guide) => (
+              <Link key={guide.href} href={guide.href} className="group bg-white border border-slate-200 rounded-xl p-5 hover:border-amber-200 hover:shadow-md transition-all">
+                <h3 className="font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{guide.title}</h3>
+                <p className="text-sm text-slate-500 mt-1">{guide.desc}</p>
+                <span className="inline-flex items-center text-amber-600 text-sm font-semibold mt-2">Read guide →</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="py-14 bg-white">
+        <div className="container-custom max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">FAQ</p>
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Frequently Asked Questions</h2>
+          <div className="space-y-3">
+            {faqSchema.mainEntity.map((faq: { name: string; acceptedAnswer: { text: string } }) => (
+              <details key={faq.name} className="group bg-white border border-slate-200 rounded-xl">
+                <summary className="flex items-center justify-between px-5 py-4 cursor-pointer text-sm font-bold text-slate-900 hover:text-amber-600 transition-colors">
+                  {faq.name}
+                  <svg className="w-4 h-4 text-slate-400 shrink-0 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                </summary>
+                <div className="px-5 pb-4 text-sm text-slate-600 leading-relaxed">{faq.acceptedAnswer.text}</div>
+              </details>
+            ))}
           </div>
         </div>
       </section>

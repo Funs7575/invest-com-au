@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
+import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
 
 export const metadata: Metadata = {
   title: `Crypto Staking & DeFi Australia — Yields, Platforms & Tax (${CURRENT_YEAR})`,
@@ -30,6 +31,21 @@ export default function CryptoStakingPage() {
     publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
   };
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      { "@type": "Question", name: "What is crypto staking?", acceptedAnswer: { "@type": "Answer", text: "Crypto staking involves locking up cryptocurrency to support a proof-of-stake (PoS) blockchain network in exchange for rewards. By staking, you help validate transactions and secure the network, earning new tokens as a reward — similar to earning interest on a savings account. Popular stakeable assets include Ethereum (3-5% p.a.), Solana (5-7% p.a.), and Polkadot (10-14% p.a.)." } },
+      { "@type": "Question", name: "Is crypto staking taxed in Australia?", acceptedAnswer: { "@type": "Answer", text: "Yes, the ATO treats staking rewards as ordinary income, taxed at your marginal rate at the market value when received. You must declare the AUD value of each staking reward at the time it is received. When you later sell the staked tokens, any gain or loss is a CGT event, with the 50% discount available if held for 12+ months. Use crypto tax tools like Koinly or CryptoTaxCalculator to track everything." } },
+      { "@type": "Question", name: "What is the best staking platform in Australia?", acceptedAnswer: { "@type": "Answer", text: "CoinSpot is the most popular Australian exchange with staking for 25+ tokens and a simple one-click interface. Swyftx is AUSTRAC-registered and offers staking for major tokens including ETH and SOL. For maximum security, Ledger Live allows staking from a hardware wallet with self-custody. For liquid staking specifically, Lido protocol lets you stake ETH while keeping it liquid as stETH." } },
+      { "@type": "Question", name: "What is DeFi?", acceptedAnswer: { "@type": "Answer", text: "Decentralised Finance (DeFi) uses smart contracts on blockchains to provide financial services — lending, borrowing, trading, and yield generation — without intermediaries like banks. Australians can access DeFi through self-custody wallets (MetaMask, Ledger). Popular protocols include Aave (lending/borrowing), Uniswap (decentralised trading), and Curve Finance (stablecoin pools). DeFi carries significant smart contract and hacking risks." } },
+      { "@type": "Question", name: "Are crypto ETFs available on the ASX?", acceptedAnswer: { "@type": "Answer", text: "Yes, several crypto ETFs now trade on the ASX. Monochrome offers IBTC (Bitcoin) and IETH (Ethereum) with 0.50% MER, backed by physical crypto. Global X 21Shares offers EBTC (Bitcoin) and EETH (Ethereum) at 0.59% MER. Betashares CRYP provides exposure to crypto company stocks rather than direct crypto. These ETFs provide regulated, custody-managed access without needing to manage wallets or private keys." } },
+      { "@type": "Question", name: "How is staking different from mining?", acceptedAnswer: { "@type": "Answer", text: "Mining (proof-of-work) requires specialised hardware and massive electricity consumption to solve mathematical puzzles — used by Bitcoin. Staking (proof-of-stake) requires holding and locking tokens to validate transactions — used by Ethereum, Solana, and most modern blockchains. Staking is far more energy-efficient, accessible to retail investors with no special hardware, and provides predictable yield returns." } },
+      { "@type": "Question", name: "Is crypto staking safe?", acceptedAnswer: { "@type": "Answer", text: "Staking carries several risks: slashing risk (validators can lose a portion of staked tokens for network violations), platform risk (centralised exchanges like FTX and Celsius have failed, losing customer funds), smart contract risk (DeFi staking protocols can be hacked), and underlying asset volatility (staking yields are meaningless if the token price drops 50%+). Self-custody through hardware wallets reduces platform risk but not market risk." } },
+      { "@type": "Question", name: "Which cryptocurrencies can you stake?", acceptedAnswer: { "@type": "Answer", text: "Most proof-of-stake blockchains support staking. Major options include Ethereum (ETH, 3-5% p.a.), Solana (SOL, 5-7%), Cardano (ADA, 3-5%), Polkadot (DOT, 10-14%), Cosmos (ATOM, 8-12%), and Avalanche (AVAX, 7-10%). Bitcoin cannot be staked as it uses proof-of-work. Yields vary based on network conditions and are paid in the native token, so returns in AUD depend on price movements." } },
+    ],
+  };
+
   return (
     <div>
       <script
@@ -39,6 +55,10 @@ export default function CryptoStakingPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webPage) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
       {/* Hero */}
@@ -159,6 +179,13 @@ export default function CryptoStakingPage() {
         </div>
       </section>
 
+      {/* Lead Magnet */}
+      <section className="py-14 bg-white">
+        <div className="container-custom max-w-4xl">
+          <ContextualLeadMagnet segment="beginner-guide" />
+        </div>
+      </section>
+
       {/* Section 3: DeFi */}
       <section className="py-14 bg-white">
         <div className="container-custom max-w-4xl">
@@ -276,6 +303,47 @@ export default function CryptoStakingPage() {
               <li><strong>Regulatory risk</strong> — Australian crypto regulation is evolving; DeFi may face future licensing requirements</li>
               <li><strong>Underlying asset volatility</strong> — staking yields are irrelevant if the underlying token drops 50%+</li>
             </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="py-14 bg-white">
+        <div className="container-custom max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">FAQ</p>
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Frequently Asked Questions</h2>
+          <div className="space-y-3">
+            {faqSchema.mainEntity.map((faq: { name: string; acceptedAnswer: { text: string } }) => (
+              <details key={faq.name} className="group bg-white border border-slate-200 rounded-xl">
+                <summary className="flex items-center justify-between px-5 py-4 cursor-pointer text-sm font-bold text-slate-900 hover:text-amber-600 transition-colors">
+                  {faq.name}
+                  <svg className="w-4 h-4 text-slate-400 shrink-0 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                </summary>
+                <div className="px-5 pb-4 text-sm text-slate-600 leading-relaxed">{faq.acceptedAnswer.text}</div>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Related guides */}
+      <section className="py-14 bg-slate-50">
+        <div className="container-custom max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Related Guides</p>
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Explore Related Investment Guides</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { title: "Options & Derivatives", href: "/invest/options-trading", desc: "ASX-listed options, CFDs, warrants and futures for Australian traders." },
+              { title: "Forex Trading", href: "/invest/forex", desc: "AUD/USD pairs, ASIC-regulated brokers, spreads and leverage limits." },
+              { title: "Managed Funds & Index Funds", href: "/invest/managed-funds", desc: "Compare passive index funds and actively managed strategies in Australia." },
+              { title: "Alternative Investments", href: "/invest/alternatives", desc: "Wine, art, classic cars, watches and collectibles as investment assets." },
+            ].map((guide) => (
+              <Link key={guide.href} href={guide.href} className="group bg-white border border-slate-200 rounded-xl p-5 hover:border-amber-200 hover:shadow-md transition-all">
+                <h3 className="font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{guide.title}</h3>
+                <p className="text-sm text-slate-500 mt-1">{guide.desc}</p>
+                <span className="inline-flex items-center text-amber-600 text-sm font-semibold mt-2">Read guide →</span>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
