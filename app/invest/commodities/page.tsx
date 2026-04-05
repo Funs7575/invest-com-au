@@ -1,0 +1,300 @@
+import Link from "next/link";
+import type { Metadata } from "next";
+import { breadcrumbJsonLd, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
+
+export const metadata: Metadata = {
+  title: `How to Invest in Commodities from Australia (${CURRENT_YEAR})`,
+  description:
+    "Invest in commodities from Australia — gold, silver, oil, natural gas, agricultural. ASX commodity ETFs, ETCs, Perth Mint, and commodity futures via ASIC-regulated brokers.",
+  alternates: { canonical: `${SITE_URL}/invest/commodities` },
+  openGraph: {
+    title: `How to Invest in Commodities from Australia (${CURRENT_YEAR})`,
+    description:
+      "Invest in commodities from Australia — gold, silver, oil, natural gas, agricultural. ASX commodity ETFs, ETCs, Perth Mint, and commodity futures via ASIC-regulated brokers.",
+    url: `${SITE_URL}/invest/commodities`,
+  },
+};
+
+export default function CommoditiesPage() {
+  const breadcrumb = breadcrumbJsonLd([
+    { name: "Home", url: `${SITE_URL}/` },
+    { name: "Invest", url: `${SITE_URL}/invest` },
+    { name: "Commodities" },
+  ]);
+
+  const webPage = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: `How to Invest in Commodities from Australia (${CURRENT_YEAR})`,
+    url: `${SITE_URL}/invest/commodities`,
+    publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+  };
+
+  return (
+    <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPage) }}
+      />
+
+      {/* Hero */}
+      <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-14 md:py-20">
+        <div className="container-custom">
+          <nav className="flex items-center gap-1.5 text-xs text-slate-400 mb-6" aria-label="Breadcrumb">
+            <Link href="/" className="hover:text-white transition-colors">Home</Link>
+            <span className="text-slate-600">/</span>
+            <Link href="/invest" className="hover:text-white transition-colors">Invest</Link>
+            <span className="text-slate-600">/</span>
+            <span className="text-slate-300">Commodities</span>
+          </nav>
+
+          <div className="flex flex-wrap items-center gap-2 mb-4">
+            <span className="text-xs font-semibold bg-amber-500 text-slate-900 px-3 py-1 rounded-full">
+              Updated {CURRENT_YEAR}
+            </span>
+            <span className="text-xs font-semibold bg-slate-700 text-slate-200 px-3 py-1 rounded-full">
+              Gold, Silver, Oil &amp; More
+            </span>
+          </div>
+
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-4 max-w-3xl">
+            How to Invest in Commodities from Australia
+          </h1>
+          <p className="text-lg text-slate-300 leading-relaxed max-w-2xl">
+            Australia is a commodities superpower — the world&apos;s largest exporter of iron ore, lithium, and LNG. Here is how to invest in commodities via ASX ETFs, physical bullion, futures, and commodity stocks.
+          </p>
+        </div>
+      </section>
+
+      {/* Key stats */}
+      <section className="py-10 bg-white border-b border-slate-100">
+        <div className="container-custom">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { value: "$450B+", label: "Australia's annual resource exports" },
+              { value: "#1", label: "World's largest iron ore & lithium exporter" },
+              { value: "20+", label: "Commodity ETFs/ETCs on ASX" },
+              { value: "AUD $4,000+", label: "Gold price per ounce (AUD)" },
+            ].map((s) => (
+              <div key={s.label} className="bg-amber-50 border border-amber-100 rounded-xl p-4 text-center">
+                <p className="text-2xl font-extrabold text-amber-600">{s.value}</p>
+                <p className="text-xs text-slate-600 mt-1">{s.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Section 1: Ways to Invest */}
+      <section className="py-14 bg-white">
+        <div className="container-custom max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Section 1</p>
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Ways to Invest in Commodities</h2>
+
+          <div className="space-y-4">
+            {[
+              { method: "ASX-Listed ETFs & ETCs", desc: "The easiest route for most investors. Buy and sell like shares on the ASX. Physical-backed (gold, silver) or synthetic (oil, broad commodity baskets).", access: "Any ASX broker", min: "1 unit (~$20–200)" },
+              { method: "Physical Bullion", desc: "Buy gold or silver bars/coins directly from Perth Mint, ABC Bullion, or dealers. Store at home, in a bank safe deposit, or via allocated/unallocated accounts.", access: "Perth Mint, ABC Bullion, dealers", min: "~$100 for coins; $5,000+ for bars" },
+              { method: "Commodity Futures", desc: "Leveraged contracts to buy/sell commodities at a future date. Used by professional traders. Requires margin and carries significant risk.", access: "Interactive Brokers, CMC, Saxo", min: "$5,000+ margin" },
+              { method: "Commodity CFDs", desc: "Trade price movements of gold, oil, natural gas, and more via CFDs. Leveraged; ASIC cap of 10:1 for commodities.", access: "IG, CMC, Pepperstone, IC Markets", min: "$200+" },
+              { method: "Resource Stocks", desc: "Buy shares in commodity producers (BHP, Rio Tinto, Fortescue, Pilbara Minerals, Newmont). Leveraged exposure to commodity prices plus operational and management risk.", access: "Any ASX broker", min: "~$500" },
+            ].map((m) => (
+              <div key={m.method} className="bg-white border border-slate-200 rounded-xl p-6">
+                <h3 className="text-lg font-bold text-slate-900 mb-2">{m.method}</h3>
+                <p className="text-sm text-slate-600 leading-relaxed mb-3">{m.desc}</p>
+                <div className="flex flex-wrap gap-3">
+                  <span className="text-xs bg-amber-50 text-amber-700 font-semibold px-2 py-0.5 rounded">{m.access}</span>
+                  <span className="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded">Min: {m.min}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Section 2: Commodity ETFs on ASX */}
+      <section className="py-14 bg-slate-50">
+        <div className="container-custom max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Section 2</p>
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Commodity ETFs &amp; ETCs on the ASX</h2>
+
+          <div className="overflow-x-auto rounded-xl border border-slate-200">
+            <table className="w-full text-sm border-collapse">
+              <thead>
+                <tr className="bg-slate-50">
+                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Code</th>
+                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Name</th>
+                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Commodity</th>
+                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Backing</th>
+                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">MER</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { code: "GOLD", name: "ETFS Physical Gold", commodity: "Gold", backing: "Physical (London vault)", mer: "0.40%" },
+                  { code: "PMGOLD", name: "Perth Mint Gold", commodity: "Gold", backing: "Physical (Perth Mint)", mer: "0.15%" },
+                  { code: "ETPMAG", name: "ETFS Physical Silver", commodity: "Silver", backing: "Physical", mer: "0.49%" },
+                  { code: "QAU", name: "Betashares Gold Bullion (AUD Hedged)", commodity: "Gold", backing: "Physical", mer: "0.59%" },
+                  { code: "OOO", name: "Betashares Crude Oil (Currency Hedged)", commodity: "Crude Oil", backing: "Synthetic (futures)", mer: "1.29%" },
+                  { code: "ETPMPT", name: "ETFS Physical Platinum", commodity: "Platinum", backing: "Physical", mer: "0.49%" },
+                  { code: "ETPMPD", name: "ETFS Physical Palladium", commodity: "Palladium", backing: "Physical", mer: "0.49%" },
+                  { code: "QCO", name: "Betashares Commodities (Currency Hedged)", commodity: "Broad basket", backing: "Synthetic", mer: "0.69%" },
+                ].map((r, i) => (
+                  <tr key={r.code} className={i % 2 === 0 ? "bg-white" : "bg-slate-50/50"}>
+                    <td className="py-2.5 px-3 font-bold text-amber-700 border-b border-slate-100">{r.code}</td>
+                    <td className="py-2.5 px-3 text-slate-800 border-b border-slate-100">{r.name}</td>
+                    <td className="py-2.5 px-3 text-slate-500 border-b border-slate-100">{r.commodity}</td>
+                    <td className="py-2.5 px-3 text-slate-500 border-b border-slate-100">{r.backing}</td>
+                    <td className="py-2.5 px-3 text-slate-800 border-b border-slate-100">{r.mer}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 3: Gold Deep Dive */}
+      <section className="py-14 bg-white">
+        <div className="container-custom max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Section 3</p>
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-4">Gold — Australia&apos;s Favourite Commodity</h2>
+
+          <div className="prose prose-slate max-w-none mb-6">
+            <p>
+              Gold is the most popular commodity investment in Australia, serving as an inflation hedge, portfolio diversifier, and safe haven asset. Australia is the world&apos;s second-largest gold producer, and the Perth Mint is a globally trusted refiner.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { route: "Perth Mint GoldPass", desc: "Government-backed digital gold. Buy fractions from $1. Physical delivery available. Stored at Perth Mint." },
+              { route: "PMGOLD ETF", desc: "ASX-listed; backed by Perth Mint gold. Lowest MER at 0.15%. No physical delivery but easy to trade." },
+              { route: "GOLD ETF", desc: "ETFS Physical Gold; backed by gold in London vaults. MER 0.40%. AUD-denominated but unhedged (USD gold price exposure)." },
+              { route: "Physical bars/coins", desc: "Buy from Perth Mint, ABC Bullion, or dealers. Spreads of 3–8% over spot. Storage and insurance costs." },
+            ].map((r) => (
+              <div key={r.route} className="bg-slate-50 border border-slate-200 rounded-xl p-5">
+                <p className="font-bold text-slate-900">{r.route}</p>
+                <p className="text-sm text-slate-500 mt-1">{r.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-6">
+            <Link
+              href="/invest/gold"
+              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors"
+            >
+              Read Full Gold Investment Guide &rarr;
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 4: Resource Stocks */}
+      <section className="py-14 bg-slate-50">
+        <div className="container-custom max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Section 4</p>
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Major ASX Resource Stocks</h2>
+
+          <div className="overflow-x-auto rounded-xl border border-slate-200">
+            <table className="w-full text-sm border-collapse">
+              <thead>
+                <tr className="bg-slate-50">
+                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Code</th>
+                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Company</th>
+                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Commodity Focus</th>
+                  <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border-b border-slate-200">Market Cap</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[
+                  { code: "BHP", name: "BHP Group", focus: "Iron ore, copper, coal, nickel", cap: "$200B+" },
+                  { code: "RIO", name: "Rio Tinto", focus: "Iron ore, aluminium, copper", cap: "$150B+" },
+                  { code: "FMG", name: "Fortescue", focus: "Iron ore, green energy", cap: "$60B+" },
+                  { code: "WDS", name: "Woodside Energy", focus: "LNG, natural gas, oil", cap: "$40B+" },
+                  { code: "NEM", name: "Newmont (ASX listing)", focus: "Gold", cap: "$60B+" },
+                  { code: "STO", name: "Santos", focus: "Natural gas, oil, LNG", cap: "$20B+" },
+                  { code: "PLS", name: "Pilbara Minerals", focus: "Lithium (spodumene)", cap: "$12B+" },
+                  { code: "IGO", name: "IGO Limited", focus: "Lithium, nickel, copper", cap: "$5B+" },
+                ].map((r, i) => (
+                  <tr key={r.code} className={i % 2 === 0 ? "bg-white" : "bg-slate-50/50"}>
+                    <td className="py-2.5 px-3 font-bold text-amber-700 border-b border-slate-100">{r.code}</td>
+                    <td className="py-2.5 px-3 text-slate-800 border-b border-slate-100">{r.name}</td>
+                    <td className="py-2.5 px-3 text-slate-500 border-b border-slate-100">{r.focus}</td>
+                    <td className="py-2.5 px-3 text-slate-800 border-b border-slate-100">{r.cap}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      {/* Section 5: Tax */}
+      <section className="py-14 bg-white">
+        <div className="container-custom max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Section 5</p>
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-4">Tax Treatment</h2>
+
+          <div className="prose prose-slate max-w-none">
+            <ul>
+              <li><strong>Commodity ETFs/ETCs</strong> — treated as CGT assets; 50% discount applies if held 12+ months</li>
+              <li><strong>Physical gold/silver</strong> — CGT asset; GST-free for investment-grade precious metals (at least 99.5% pure gold, 99.9% pure silver)</li>
+              <li><strong>Commodity CFDs/futures</strong> — generally on revenue account (ordinary income); no CGT discount</li>
+              <li><strong>Resource stocks</strong> — capital gains treatment; dividends taxed at marginal rate with franking credits</li>
+              <li><strong>SMSF</strong> — all commodity investments permitted within an SMSF; taxed at 15% (accumulation) or 0% (pension)</li>
+              <li><strong>Perth Mint gold</strong> — CGT asset; no GST on purchase of investment-grade gold</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* Risk */}
+      <section className="py-14 bg-slate-50">
+        <div className="container-custom max-w-4xl">
+          <div className="bg-red-50 border border-red-200 rounded-xl p-5">
+            <h3 className="font-bold text-red-800 mb-2">Key Risks</h3>
+            <ul className="text-sm text-red-700 space-y-1.5">
+              <li><strong>Price volatility</strong> — commodity prices can swing 20–50% in a year; oil dropped below $0 in April 2020</li>
+              <li><strong>No income</strong> — physical commodities and most commodity ETFs produce no income or dividends</li>
+              <li><strong>Contango (futures-based ETFs)</strong> — synthetic/futures-based ETFs like OOO can underperform spot prices due to roll costs</li>
+              <li><strong>Currency risk</strong> — most commodities are priced in USD; AUD/USD movements affect AUD-denominated returns</li>
+              <li><strong>Storage and insurance</strong> — physical bullion requires secure storage and insurance</li>
+              <li><strong>Geopolitical risk</strong> — supply disruptions, trade wars, and OPEC decisions can cause sudden price shocks</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-14 bg-white">
+        <div className="container-custom">
+          <div className="max-w-3xl mx-auto bg-white border border-slate-200 rounded-xl p-8 flex flex-col md:flex-row items-start md:items-center gap-6">
+            <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
+              <svg className="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <h2 className="text-lg font-bold text-slate-900 mb-1">Get Advice on Commodity Allocation</h2>
+              <p className="text-sm text-slate-500">
+                A financial planner can help you determine the right commodity allocation for your portfolio and risk profile.
+              </p>
+            </div>
+            <Link
+              href="/advisors/financial-planners"
+              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors shrink-0"
+            >
+              Find a Financial Planner &rarr;
+            </Link>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
