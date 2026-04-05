@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
 import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
@@ -16,7 +17,26 @@ export const metadata: Metadata = {
   },
 };
 
-export default function CryptoStakingPage() {
+export const revalidate = 3600;
+
+export default async function CryptoStakingPage() {
+  const supabase = await createClient();
+  const { data: brokers } = await supabase
+    .from("brokers")
+    .select("id, name, slug, rating, platform_type, asx_fee, us_fee, min_deposit, affiliate_url, deal, deal_text, icon")
+    .eq("status", "active")
+    .in("platform_type", ["crypto_exchange"])
+    .order("rating", { ascending: false })
+    .limit(5);
+
+  const { data: advisors } = await supabase
+    .from("professionals")
+    .select("slug, name, firm_name, type, location_display, rating, review_count, photo_url, verified")
+    .eq("status", "active")
+    .in("type", ["crypto_advisor", "tax_agent"])
+    .order("rating", { ascending: false })
+    .limit(3);
+
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
     { name: "Invest", url: `${SITE_URL}/invest` },
@@ -87,6 +107,20 @@ export default function CryptoStakingPage() {
           <p className="text-lg text-slate-300 leading-relaxed max-w-2xl">
             Beyond buying and holding crypto — Australians can earn yield through staking, access DeFi protocols, and invest in crypto via ASX-listed ETFs. Here is what you need to know about yields, platforms, regulation, and ATO tax treatment.
           </p>
+          <div className="flex flex-wrap gap-3 mt-6">
+            <Link
+              href="/compare"
+              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors"
+            >
+              Compare Platforms &rarr;
+            </Link>
+            <Link
+              href="/quiz"
+              className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold text-sm px-5 py-2.5 rounded-lg border border-white/20 transition-colors"
+            >
+              Take the Quiz (60s)
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -326,6 +360,106 @@ export default function CryptoStakingPage() {
         </div>
       </section>
 
+
+      {/* Compare Platforms */}
+      {brokers && brokers.length > 0 && (
+        <section className="py-14 bg-slate-50">
+          <div className="container-custom max-w-4xl">
+            <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Compare Platforms</p>
+            <h2 className="text-2xl font-extrabold text-slate-900 mb-2">Best Crypto Staking Platforms</h2>
+            <p className="text-sm text-slate-500 mb-6">Top-rated Australian platforms ranked by fees, features, and user ratings.</p>
+            <div className="space-y-3">
+              {(brokers as { id: number; name: string; slug: string; rating: number | null; asx_fee: string | null; min_deposit: string | null; affiliate_url: string | null; deal: boolean | null; deal_text: string | null; icon: string | null }[]).map((broker, i) => (
+                <div key={broker.id} className={`flex items-center gap-4 bg-white border rounded-xl p-4 ${i === 0 ? "border-amber-300 ring-1 ring-amber-100" : "border-slate-200"}`}>
+                  <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center shrink-0 text-sm font-bold text-slate-400">
+                    {i + 1}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <p className="font-bold text-slate-900">{broker.name}</p>
+                      {i === 0 && <span className="text-[0.6rem] font-bold bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full">TOP RATED</span>}
+                      {broker.deal && <span className="text-[0.6rem] font-bold bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full">DEAL</span>}
+                    </div>
+                    <div className="flex items-center gap-3 mt-1">
+                      {broker.rating && <span className="text-xs text-amber-600 font-semibold">&#9733; {broker.rating.toFixed(1)}</span>}
+                      {broker.asx_fee && <span className="text-xs text-slate-500">ASX: {broker.asx_fee}</span>}
+                      {broker.min_deposit && <span className="text-xs text-slate-500">Min: {broker.min_deposit}</span>}
+                    </div>
+                    {broker.deal_text && <p className="text-xs text-green-700 mt-1">{broker.deal_text}</p>}
+                  </div>
+                  {broker.affiliate_url ? (
+                    <a
+                      href={`/go/${broker.slug}`}
+                      target="_blank"
+                      rel="noopener noreferrer nofollow sponsored"
+                      className="shrink-0 bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold text-sm px-4 py-2 rounded-lg transition-colors"
+                    >
+                      Visit Site &rarr;
+                    </a>
+                  ) : (
+                    <Link
+                      href={`/broker/${broker.slug}`}
+                      className="shrink-0 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-sm px-4 py-2 rounded-lg transition-colors"
+                    >
+                      View Details
+                    </Link>
+                  )}
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 text-center">
+              <Link href="/compare" className="text-sm font-semibold text-amber-600 hover:text-amber-700">
+                Compare all platforms &rarr;
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Find an Advisor */}
+      {advisors && advisors.length > 0 && (
+        <section className="py-14 bg-white">
+          <div className="container-custom max-w-4xl">
+            <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Expert Advisors</p>
+            <h2 className="text-2xl font-extrabold text-slate-900 mb-2">Speak to a Verified Professional</h2>
+            <p className="text-sm text-slate-500 mb-6">ASIC-registered advisors verified by Invest.com.au. Free initial consultation.</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {(advisors as { slug: string; name: string; firm_name: string | null; type: string; location_display: string | null; rating: number | null; review_count: number | null; photo_url: string | null; verified: boolean | null }[]).map((advisor) => (
+                <Link
+                  key={advisor.slug}
+                  href={`/advisor/${advisor.slug}`}
+                  className="flex items-start gap-4 bg-white border border-slate-200 rounded-xl p-4 hover:border-amber-200 hover:shadow-md transition-all group"
+                >
+                  <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center shrink-0 overflow-hidden">
+                    {advisor.photo_url ? (
+                      <img src={advisor.photo_url} alt={advisor.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-lg font-bold text-slate-400">{advisor.name.charAt(0)}</span>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <p className="font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{advisor.name}</p>
+                      {advisor.verified && <span className="text-[0.6rem] font-bold bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full">VERIFIED</span>}
+                    </div>
+                    {advisor.firm_name && <p className="text-xs text-slate-500">{advisor.firm_name}</p>}
+                    <div className="flex items-center gap-2 mt-1">
+                      {advisor.rating && <span className="text-xs text-amber-600 font-semibold">&#9733; {advisor.rating.toFixed(1)}</span>}
+                      {advisor.review_count && advisor.review_count > 0 && <span className="text-xs text-slate-400">({advisor.review_count} reviews)</span>}
+                      {advisor.location_display && <span className="text-xs text-slate-400">{advisor.location_display}</span>}
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+            <div className="mt-4 text-center">
+              <Link href="/find-advisor" className="text-sm font-semibold text-amber-600 hover:text-amber-700">
+                Browse all advisors &rarr;
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
       {/* Related guides */}
       <section className="py-14 bg-slate-50">
         <div className="container-custom max-w-4xl">
