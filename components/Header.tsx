@@ -19,28 +19,43 @@ const propertyDropdown = [
   { label: "Find an Advisor", href: "/find-advisor", desc: "Match with a verified professional" },
 ];
 
-const investDropdown = [
-  { label: "All Investment Verticals", href: "/invest", desc: "Every way to invest in Australia" },
-  { label: "Mining & Resources", href: "/invest/mining", desc: "Iron ore, lithium, gold & critical minerals" },
-  { label: "Buy a Business", href: "/invest/buy-business", desc: "SME acquisitions, franchise & visa pathways" },
-  { label: "Farmland & Agriculture", href: "/invest/farmland", desc: "Livestock, cropping, water rights" },
-  { label: "Commercial Property", href: "/invest/commercial-property", desc: "Office, industrial, hotels & A-REITs" },
-  { label: "Renewable Energy", href: "/invest/renewable-energy", desc: "Solar, wind, hydrogen & battery storage" },
-  { label: "Startups & Tech", href: "/invest/startups", desc: "VC, angel investing & Global Talent Visa" },
-  { label: "Private Credit & P2P", href: "/invest/private-credit", desc: "La Trobe, Qualitas, Metrics & P2P lending" },
-  { label: "A-REITs", href: "/invest/reits", desc: "ASX-listed property trusts by sector" },
-  { label: "Managed & Index Funds", href: "/invest/managed-funds", desc: "Vanguard, Betashares, iShares & more" },
-  { label: "Dividend Investing", href: "/invest/dividend-investing", desc: "High-yield ASX stocks & franking credits" },
-  { label: "Options & Derivatives", href: "/invest/options-trading", desc: "ETOs, CFDs, warrants & futures" },
-  { label: "Forex Trading", href: "/invest/forex", desc: "AUD/USD, brokers & ASIC regulation" },
-  { label: "Commodities", href: "/invest/commodities", desc: "Gold, silver, oil & resource ETFs" },
-  { label: "Alternatives", href: "/invest/alternatives", desc: "Wine, art, cars, watches & collectibles" },
-  { label: "Infrastructure", href: "/invest/infrastructure", desc: "Toll roads, airports, utilities & ports" },
-  { label: "Hybrid Securities", href: "/invest/hybrid-securities", desc: "Bank hybrids, yields & APRA phase-out" },
-  { label: "Crypto Staking & DeFi", href: "/invest/crypto-staking", desc: "Staking yields, DeFi & crypto ETFs" },
-  { label: "SMSF Investment Guide", href: "/invest/smsf", desc: "What SMSFs invest in & how" },
-  { label: "Shares & ETFs", href: "/compare", desc: "Compare ASX trading platforms" },
-  { label: "Super & SMSF", href: "/compare/super", desc: "Super fund comparisons" },
+const investMegaMenu = [
+  {
+    title: "Sectors & Assets",
+    items: [
+      { label: "Mining & Resources", href: "/invest/mining", desc: "Iron ore, lithium, gold & critical minerals" },
+      { label: "Buy a Business", href: "/invest/buy-business", desc: "SME acquisitions & franchise pathways" },
+      { label: "Farmland & Agriculture", href: "/invest/farmland", desc: "Livestock, cropping, water rights" },
+      { label: "Commercial Property", href: "/invest/commercial-property", desc: "Office, industrial, hotels" },
+      { label: "Renewable Energy", href: "/invest/renewable-energy", desc: "Solar, wind, hydrogen & battery" },
+      { label: "Startups & Tech", href: "/invest/startups", desc: "VC, angel investing & crowdfunding" },
+      { label: "Infrastructure", href: "/invest/infrastructure", desc: "Toll roads, airports, utilities" },
+    ],
+  },
+  {
+    title: "Markets & Trading",
+    items: [
+      { label: "Shares & ETFs", href: "/compare", desc: "Compare ASX trading platforms" },
+      { label: "Managed & Index Funds", href: "/invest/managed-funds", desc: "Vanguard, Betashares, iShares" },
+      { label: "Dividend Investing", href: "/invest/dividend-investing", desc: "Franking credits & high-yield ASX" },
+      { label: "A-REITs", href: "/invest/reits", desc: "ASX-listed property trusts" },
+      { label: "Options & Derivatives", href: "/invest/options-trading", desc: "ETOs, CFDs, warrants & futures" },
+      { label: "Forex Trading", href: "/invest/forex", desc: "AUD/USD, ASIC-regulated brokers" },
+      { label: "Commodities", href: "/invest/commodities", desc: "Gold, silver, oil & resource ETFs" },
+    ],
+  },
+  {
+    title: "Income & Alternatives",
+    items: [
+      { label: "Private Credit & P2P", href: "/invest/private-credit", desc: "La Trobe, Qualitas, Metrics" },
+      { label: "Bonds & Fixed Income", href: "/invest/bonds", desc: "Government & corporate bonds" },
+      { label: "Hybrid Securities", href: "/invest/hybrid-securities", desc: "Bank hybrids & APRA phase-out" },
+      { label: "Alternatives", href: "/invest/alternatives", desc: "Wine, art, cars, watches & more" },
+      { label: "Crypto Staking & DeFi", href: "/invest/crypto-staking", desc: "Staking, DeFi & crypto ETFs" },
+      { label: "SMSF Investment Guide", href: "/invest/smsf", desc: "What SMSFs invest in & how" },
+      { label: "Super & SMSF", href: "/compare/super", desc: "Super fund comparisons" },
+    ],
+  },
 ];
 
 const foreignDropdown = [
@@ -178,6 +193,84 @@ const mobileNavSections = [
   },
 ];
 
+function InvestMegaDropdown({ isActive }: { isActive: boolean }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const timeout = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  const enter = () => { clearTimeout(timeout.current); setOpen(true); };
+  const leave = () => { timeout.current = setTimeout(() => setOpen(false), 150); };
+
+  useEffect(() => {
+    return () => clearTimeout(timeout.current);
+  }, []);
+
+  return (
+    <div ref={ref} className="relative" onMouseEnter={enter} onMouseLeave={leave}>
+      <button
+        onClick={() => setOpen(!open)}
+        className={`px-4 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-bold rounded-lg transition-colors flex items-center gap-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-700/40 ${
+          isActive ? "text-slate-900 bg-slate-50" : ""
+        }`}
+      >
+        Invest
+        <Icon name="chevron-down" size={14} className={`text-slate-400 transition-transform ${open ? "rotate-180" : ""}`} />
+      </button>
+      {open && (
+        <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-xl p-5 flex gap-6" style={{ width: "720px" }}>
+            {investMegaMenu.map((col) => (
+              <div key={col.title} className="flex-1 min-w-0">
+                <p className="text-[0.65rem] font-extrabold uppercase tracking-wider text-amber-500 mb-2 px-2">{col.title}</p>
+                <div className="space-y-0.5">
+                  {col.items.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setOpen(false)}
+                      className="block px-2 py-1.5 rounded-lg hover:bg-slate-50 transition-colors group"
+                    >
+                      <div className="text-sm font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{item.label}</div>
+                      <div className="text-[0.68rem] text-slate-400 leading-tight">{item.desc}</div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ))}
+            <div className="border-l border-slate-100 pl-5 flex flex-col justify-between" style={{ minWidth: "140px" }}>
+              <div>
+                <p className="text-[0.65rem] font-extrabold uppercase tracking-wider text-amber-500 mb-2">Quick Links</p>
+                <Link href="/invest" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
+                  All Verticals
+                </Link>
+                <Link href="/invest/listings" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
+                  Marketplace
+                </Link>
+                <Link href="/invest/gold" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
+                  Gold
+                </Link>
+                <Link href="/invest/ipos" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
+                  IPOs
+                </Link>
+                <Link href="/invest/private-equity" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
+                  Private Equity
+                </Link>
+              </div>
+              <Link
+                href="/invest"
+                onClick={() => setOpen(false)}
+                className="mt-3 flex items-center gap-1.5 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-xs px-3 py-2 rounded-lg transition-colors"
+              >
+                Browse All <Icon name="arrow-right" size={12} />
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function DesktopDropdown({
   label,
   items,
@@ -265,7 +358,7 @@ export default function Header() {
 
           {/* Desktop Nav */}
           <nav className="hidden lg:flex space-x-1 items-center ml-8" aria-label="Main navigation">
-            <DesktopDropdown label="Invest" items={investDropdown} isActive={isInvestActive} />
+            <InvestMegaDropdown isActive={isInvestActive} />
             <DesktopDropdown label="Property & Finance" items={propertyDropdown} isActive={isPropertyActive} />
             <DesktopDropdown label="Wealth & SMSF" items={wealthDropdown} isActive={isWealthActive} />
             <div className="h-6 w-px bg-slate-200 mx-2" />
