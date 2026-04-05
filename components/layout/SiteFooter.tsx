@@ -23,7 +23,35 @@ export function SiteFooter() {
     <footer className="bg-slate-900 text-slate-300">
       {/* Main grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-8">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
+          {/* Column 0 — Invest */}
+          <div>
+            <h3 className="text-white font-bold text-sm mb-4">Invest</h3>
+            <ul className="space-y-2.5 text-sm">
+              {[
+                { label: "All Verticals", href: "/invest" },
+                { label: "Private Credit", href: "/invest/private-credit" },
+                { label: "A-REITs", href: "/invest/reits" },
+                { label: "Managed Funds", href: "/invest/managed-funds" },
+                { label: "Dividends", href: "/invest/dividend-investing" },
+                { label: "Alternatives", href: "/invest/alternatives" },
+                { label: "Hybrid Securities", href: "/invest/hybrid-securities" },
+                { label: "Crypto Staking", href: "/invest/crypto-staking" },
+                { label: "SMSF Guide", href: "/invest/smsf" },
+                { label: "Options & Derivatives", href: "/invest/options-trading" },
+                { label: "Forex", href: "/invest/forex" },
+                { label: "Commodities", href: "/invest/commodities" },
+                { label: "Infrastructure", href: "/invest/infrastructure" },
+              ].map((item) => (
+                <li key={item.href}>
+                  <Link href={item.href} className="hover:text-amber-400 transition-colors">
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
           {/* Column 1 — Platforms */}
           <div>
             <h3 className="text-white font-bold text-sm mb-4">Platforms</h3>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
+import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
 
 export const metadata: Metadata = {
   title: `SMSF Investment Guide — What SMSFs Actually Invest In (${CURRENT_YEAR})`,
@@ -30,6 +31,21 @@ export default function SmsfInvestmentPage() {
     publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
   };
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      { "@type": "Question", name: "Can an SMSF invest in property?", acceptedAnswer: { "@type": "Answer", text: "Yes, SMSFs can invest in both residential and commercial property. Direct property is held by approximately 15% of SMSFs. An SMSF can even borrow to buy property using a Limited Recourse Borrowing Arrangement (LRBA), though this requires a bare trust structure and has strict rules. Commercial property can be leased to a member's business, but residential property cannot be used by any member or related party." } },
+      { "@type": "Question", name: "What is a Limited Recourse Borrowing Arrangement (LRBA)?", acceptedAnswer: { "@type": "Answer", text: "An LRBA allows an SMSF to borrow money to purchase a single asset (typically property) through a bare trust. The key feature is that if the SMSF defaults, the lender can only seize the specific property — not other SMSF assets. LRBAs require a 20-30% deposit, carry interest rates 1-2% above standard investment loans, and the property cannot be significantly improved while the loan is outstanding." } },
+      { "@type": "Question", name: "Can an SMSF hold cryptocurrency?", acceptedAnswer: { "@type": "Answer", text: "Yes, SMSFs can legally invest in cryptocurrency. However, crypto must be documented in the SMSF investment strategy with a risk assessment and allocation limits. It must be held in the name of the SMSF trustee (not personal wallets), valued at market value for annual financial statements, and have a complete audit trail. ASX-listed crypto ETFs (IBTC, IETH, EBTC, EETH) are a simpler alternative to direct crypto holdings." } },
+      { "@type": "Question", name: "What are the collectibles rules for SMSFs?", acceptedAnswer: { "@type": "Answer", text: "SMSFs can hold collectibles (artwork, wine, jewellery, coins, cars) under strict ATO Regulation 13.18AA. Collectibles cannot be used or displayed by a member or related party, cannot be stored in a member's private residence, must be stored in a secure independent facility, must be insured within 7 days of acquisition, and all transfers must be at arm's length with independent valuations." } },
+      { "@type": "Question", name: "What is the minimum SMSF balance recommended?", acceptedAnswer: { "@type": "Answer", text: "Most financial advisers recommend a minimum SMSF balance of $200,000-$500,000 to make the structure cost-effective. Annual running costs including audit, accounting, administration, and insurance typically range from $2,000-$5,000+. With a $200,000 balance, these costs represent 1-2.5% of assets — comparable to or higher than an industry super fund. Below this threshold, an industry or retail fund is usually more cost-effective." } },
+      { "@type": "Question", name: "What is the in-house asset rule?", acceptedAnswer: { "@type": "Answer", text: "The in-house asset rule limits SMSF investments in related parties to 5% of total fund assets. In-house assets include loans to members, investments in related trusts or companies, and property leased to related parties. The key exception is commercial property leased to a member's business at market rent, which is exempt from this 5% limit — making it one of the most popular SMSF strategies." } },
+      { "@type": "Question", name: "How does an SMSF compare to an industry super fund?", acceptedAnswer: { "@type": "Answer", text: "SMSFs offer full investment control, ability to hold direct property, access to specific assets like private credit and collectibles, and potential tax optimisation (especially franking credit strategies). Industry funds offer lower costs for smaller balances, professional management, group insurance, and no trustee responsibilities. SMSFs are best suited for engaged investors with $200K+ who want specific investment strategies not available through industry funds." } },
+      { "@type": "Question", name: "What are the annual costs of running an SMSF?", acceptedAnswer: { "@type": "Answer", text: "Typical annual SMSF costs include: accounting and tax return preparation ($1,000-$2,500), independent audit ($500-$1,500), ASIC annual levy ($259), ATO supervisory levy ($259), investment platform/brokerage fees (variable), and optional financial advice. Total costs typically range from $2,000-$5,000+ per year depending on complexity. LRBAs and direct property add further costs for legal structures and compliance." } },
+    ],
+  };
+
   return (
     <div>
       <script
@@ -39,6 +55,10 @@ export default function SmsfInvestmentPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webPage) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
       {/* Hero */}
@@ -168,6 +188,13 @@ export default function SmsfInvestmentPage() {
               </dl>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Lead Magnet */}
+      <section className="py-14 bg-white">
+        <div className="container-custom max-w-4xl">
+          <ContextualLeadMagnet segment="smsf-checklist" />
         </div>
       </section>
 
@@ -344,6 +371,47 @@ export default function SmsfInvestmentPage() {
               <li><strong>Audit and compliance costs</strong> — annual audit, accounting, and admin costs of $2,000–$5,000+ p.a.</li>
               <li><strong>Minimum balance</strong> — generally not cost-effective for SMSF balances below $200,000–$500,000</li>
             </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="py-14 bg-white">
+        <div className="container-custom max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">FAQ</p>
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Frequently Asked Questions</h2>
+          <div className="space-y-3">
+            {faqSchema.mainEntity.map((faq: { name: string; acceptedAnswer: { text: string } }) => (
+              <details key={faq.name} className="group bg-white border border-slate-200 rounded-xl">
+                <summary className="flex items-center justify-between px-5 py-4 cursor-pointer text-sm font-bold text-slate-900 hover:text-amber-600 transition-colors">
+                  {faq.name}
+                  <svg className="w-4 h-4 text-slate-400 shrink-0 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                </summary>
+                <div className="px-5 pb-4 text-sm text-slate-600 leading-relaxed">{faq.acceptedAnswer.text}</div>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Related guides */}
+      <section className="py-14 bg-white">
+        <div className="container-custom max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Related Guides</p>
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Explore Related Investment Guides</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { title: "Dividend Investing", href: "/invest/dividend-investing", desc: "High-yield ASX stocks, franking credits explained, and dividend ETFs." },
+              { title: "Private Credit & P2P Lending", href: "/invest/private-credit", desc: "Private credit funds and P2P platforms offering yields above term deposits." },
+              { title: "A-REITs", href: "/invest/reits", desc: "ASX-listed property trusts for diversified real estate exposure and income." },
+              { title: "Hybrid Securities", href: "/invest/hybrid-securities", desc: "ASX-listed bank hybrids offering franked yields above term deposits." },
+            ].map((guide) => (
+              <Link key={guide.href} href={guide.href} className="group bg-white border border-slate-200 rounded-xl p-5 hover:border-amber-200 hover:shadow-md transition-all">
+                <h3 className="font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{guide.title}</h3>
+                <p className="text-sm text-slate-500 mt-1">{guide.desc}</p>
+                <span className="inline-flex items-center text-amber-600 text-sm font-semibold mt-2">Read guide →</span>
+              </Link>
+            ))}
           </div>
         </div>
       </section>

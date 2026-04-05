@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
+import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
 
 export const metadata: Metadata = {
   title: `Options & Derivatives Trading Australia (${CURRENT_YEAR})`,
@@ -30,6 +31,21 @@ export default function OptionsDerivativesPage() {
     publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
   };
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      { "@type": "Question", name: "How do I trade options in Australia?", acceptedAnswer: { "@type": "Answer", text: "You can trade ASX-listed exchange-traded options (ETOs) through brokers like CommSec, Interactive Brokers, or ANZ Share Investing. For US and global options, Interactive Brokers and Saxo Markets offer access. You will need to apply for a derivatives trading account and may need to demonstrate trading experience or pass a knowledge assessment." } },
+      { "@type": "Question", name: "What are ASIC's leverage limits for derivatives?", acceptedAnswer: { "@type": "Answer", text: "ASIC capped retail CFD leverage in 2021: 30:1 for major forex pairs, 20:1 for minor forex and gold, 10:1 for other commodities, 5:1 for shares, and 2:1 for crypto. These caps apply to retail clients only — wholesale clients can access higher leverage. ASIC also mandated negative balance protection and banned binary options for retail investors." } },
+      { "@type": "Question", name: "What is the difference between ETOs and CFDs?", acceptedAnswer: { "@type": "Answer", text: "Exchange-traded options (ETOs) are standardised contracts listed on the ASX with clearing through ASX Clear, providing counterparty protection. CFDs are over-the-counter derivatives issued by the broker — you are trading against the broker, not on an exchange. ETOs have defined expiry dates and strike prices, while CFDs have no expiry and track the underlying asset price directly." } },
+      { "@type": "Question", name: "Are CFDs legal in Australia?", acceptedAnswer: { "@type": "Answer", text: "Yes, CFDs are legal in Australia but heavily regulated by ASIC since 2021. Providers must hold an AFSL, comply with leverage caps, provide negative balance protection, disclose the percentage of retail clients who lose money, and refrain from offering bonuses or inducements. Binary options, however, are banned for retail clients entirely." } },
+      { "@type": "Question", name: "How much do I need to start trading options?", acceptedAnswer: { "@type": "Answer", text: "For ASX ETOs, you can start with as little as $500-$1,000 as the cost of an option contract is the premium multiplied by 100 shares. CFD accounts can be opened with $200-$500 at most brokers. Interactive Brokers has no minimum deposit. However, trading with very small amounts limits your ability to manage risk effectively — most experienced traders recommend at least $5,000-$10,000." } },
+      { "@type": "Question", name: "How are CFD profits taxed in Australia?", acceptedAnswer: { "@type": "Answer", text: "CFD profits and losses are generally treated as ordinary income (revenue account) rather than capital gains, due to their short-term, leveraged, and speculative nature. This means the 50% CGT discount does not apply. Losses can offset other assessable income if you are classified as a trader. The ATO examines the frequency, volume, and nature of your trading to determine the appropriate treatment." } },
+      { "@type": "Question", name: "What is the best options trading platform in Australia?", acceptedAnswer: { "@type": "Answer", text: "Interactive Brokers is widely considered the best for serious options traders due to low fees (US$0.65/contract for US options), access to global exchanges, and professional-grade tools. For ASX ETOs specifically, CommSec is the most popular. CMC Markets and IG Markets are strong for CFDs. Saxo Markets offers multi-asset derivatives with professional tools." } },
+      { "@type": "Question", name: "Why do most retail traders lose money on derivatives?", acceptedAnswer: { "@type": "Answer", text: "ASIC data shows 70-80% of retail CFD and forex traders lose money. Key reasons include excessive leverage amplifying small adverse moves, overtrading driven by emotion, lack of risk management discipline, underestimating the impact of spreads and overnight funding costs, and competing against institutional traders with superior information and technology." } },
+    ],
+  };
+
   return (
     <div>
       <script
@@ -39,6 +55,10 @@ export default function OptionsDerivativesPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webPage) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
       {/* Hero */}
@@ -181,6 +201,13 @@ export default function OptionsDerivativesPage() {
         </div>
       </section>
 
+      {/* Lead Magnet */}
+      <section className="py-14 bg-white">
+        <div className="container-custom max-w-4xl">
+          <ContextualLeadMagnet segment="beginner-guide" />
+        </div>
+      </section>
+
       {/* Section 3: ASIC Regulation */}
       <section className="py-14 bg-white">
         <div className="container-custom max-w-4xl">
@@ -266,6 +293,47 @@ export default function OptionsDerivativesPage() {
               <li><strong>Counterparty risk</strong> — OTC derivatives (CFDs) expose you to the solvency of the issuer</li>
               <li><strong>Not suitable for most investors</strong> — ASIC considers these products high-risk and has imposed significant restrictions to protect retail investors</li>
             </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="py-14 bg-white">
+        <div className="container-custom max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">FAQ</p>
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Frequently Asked Questions</h2>
+          <div className="space-y-3">
+            {faqSchema.mainEntity.map((faq: { name: string; acceptedAnswer: { text: string } }) => (
+              <details key={faq.name} className="group bg-white border border-slate-200 rounded-xl">
+                <summary className="flex items-center justify-between px-5 py-4 cursor-pointer text-sm font-bold text-slate-900 hover:text-amber-600 transition-colors">
+                  {faq.name}
+                  <svg className="w-4 h-4 text-slate-400 shrink-0 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                </summary>
+                <div className="px-5 pb-4 text-sm text-slate-600 leading-relaxed">{faq.acceptedAnswer.text}</div>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Related guides */}
+      <section className="py-14 bg-slate-50">
+        <div className="container-custom max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Related Guides</p>
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Explore Related Investment Guides</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { title: "Forex Trading", href: "/invest/forex", desc: "AUD/USD pairs, ASIC-regulated brokers, spreads and leverage limits." },
+              { title: "Commodities", href: "/invest/commodities", desc: "Invest in gold, silver, oil and more from Australia via ETFs and futures." },
+              { title: "Managed Funds & Index Funds", href: "/invest/managed-funds", desc: "Compare passive index funds and actively managed strategies in Australia." },
+              { title: "Crypto Staking & DeFi", href: "/invest/crypto-staking", desc: "Earn yield through staking, DeFi protocols and crypto ETFs on the ASX." },
+            ].map((guide) => (
+              <Link key={guide.href} href={guide.href} className="group bg-white border border-slate-200 rounded-xl p-5 hover:border-amber-200 hover:shadow-md transition-all">
+                <h3 className="font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{guide.title}</h3>
+                <p className="text-sm text-slate-500 mt-1">{guide.desc}</p>
+                <span className="inline-flex items-center text-amber-600 text-sm font-semibold mt-2">Read guide →</span>
+              </Link>
+            ))}
           </div>
         </div>
       </section>

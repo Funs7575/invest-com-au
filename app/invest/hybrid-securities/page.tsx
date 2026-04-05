@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
+import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
 
 export const metadata: Metadata = {
   title: `Hybrid Securities Australia — Bank Hybrids, Yields & Risks (${CURRENT_YEAR})`,
@@ -30,6 +31,21 @@ export default function HybridSecuritiesPage() {
     publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
   };
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      { "@type": "Question", name: "What are hybrid securities?", acceptedAnswer: { "@type": "Answer", text: "Hybrid securities sit between debt (bonds) and equity (shares) in a company's capital structure. In Australia, bank hybrids — also called Additional Tier 1 (AT1) capital notes — are the most common type. They pay regular floating-rate distributions (usually quarterly), are typically fully franked, trade on the ASX like shares, and have a defined call date when the issuer expects to redeem them at $100 face value." } },
+      { "@type": "Question", name: "How do bank hybrids work?", acceptedAnswer: { "@type": "Answer", text: "Bank hybrids are issued at $100 face value and pay a floating distribution equal to the Bank Bill Swap Rate (BBSW) plus a fixed margin (typically 2.50-3.50%). Distributions are usually fully franked. The bank typically calls (redeems) the hybrid on a specified date 5-8 years after issue. If not called, they mandatorily convert to ordinary bank shares at a discount to market price." } },
+      { "@type": "Question", name: "Are hybrid securities safe?", acceptedAnswer: { "@type": "Answer", text: "Hybrids are often perceived as safe because they are issued by major banks, but they carry significant risks most investors underestimate. If a bank's CET1 capital ratio falls below 5.125%, hybrids can be written off entirely — meaning you lose 100% of your investment. Distributions are discretionary and can be skipped. During the COVID crash, hybrid prices fell 15-25%. They are not covered by the government deposit guarantee." } },
+      { "@type": "Question", name: "What is the APRA hybrid phase-out?", acceptedAnswer: { "@type": "Answer", text: "APRA announced in late 2024 that AT1 hybrid instruments will be phased out as a form of bank regulatory capital, following the Credit Suisse AT1 write-down. Existing hybrids will be called at their scheduled dates but not replaced with new AT1 issuances. Banks will instead use Tier 2 subordinated bonds, which are not franked. This is a major change for income investors who have relied on franked hybrid distributions." } },
+      { "@type": "Question", name: "How do hybrids compare to term deposits?", acceptedAnswer: { "@type": "Answer", text: "Hybrids typically yield 5-7% gross (plus franking credits) compared to 4-5% for term deposits. However, term deposits are government-guaranteed up to $250,000 per ADI with zero capital risk, while hybrids can lose value on the ASX and can be written off in a bank stress event. For the extra 1-3% yield, you are accepting materially higher risk — hybrids sit just above equity in the loss hierarchy." } },
+      { "@type": "Question", name: "How do I buy hybrid securities on the ASX?", acceptedAnswer: { "@type": "Answer", text: "Hybrids trade on the ASX like ordinary shares and can be bought through any ASX broker (CommSec, Stake, CMC Markets, etc.). They are listed under codes like CBAPK, NABPH, and WBCPM. You can also subscribe to new hybrid issues when they are offered — banks regularly issue new series. The face value is $100 per hybrid, so a $5,000 investment buys approximately 50 hybrids." } },
+      { "@type": "Question", name: "Are hybrids a good SMSF investment?", acceptedAnswer: { "@type": "Answer", text: "Hybrids have been extremely popular with SMSFs due to franked distributions. In pension phase (0% tax), a 6% cash yield with franking effectively delivers approximately 8.6% gross with a full franking credit cash refund from the ATO. However, with the APRA phase-out, SMSF trustees should plan for the eventual loss of this income stream and consider alternatives like Tier 2 bonds, private credit, or dividend shares." } },
+      { "@type": "Question", name: "What happens to hybrids if a bank fails?", acceptedAnswer: { "@type": "Answer", text: "If a bank's Common Equity Tier 1 (CET1) ratio falls below 5.125%, or APRA determines the bank is non-viable, hybrids can be converted to ordinary shares at a discount or written off entirely. In a write-off scenario, you lose 100% of your investment. Unlike deposits (guaranteed to $250K) and senior bonds, hybrid holders absorb losses before ordinary shareholders. The Credit Suisse AT1 write-down in 2023 demonstrated this risk." } },
+    ],
+  };
+
   return (
     <div>
       <script
@@ -39,6 +55,10 @@ export default function HybridSecuritiesPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webPage) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
       {/* Hero */}
@@ -156,6 +176,13 @@ export default function HybridSecuritiesPage() {
         </div>
       </section>
 
+      {/* Lead Magnet */}
+      <section className="py-14 bg-white">
+        <div className="container-custom max-w-4xl">
+          <ContextualLeadMagnet segment="fee-audit" />
+        </div>
+      </section>
+
       {/* Section 3: Hybrids vs Alternatives */}
       <section className="py-14 bg-white">
         <div className="container-custom max-w-4xl">
@@ -236,6 +263,47 @@ export default function HybridSecuritiesPage() {
               <li><strong>Complexity</strong> — hybrid terms run to 80+ pages; many retail investors don&apos;t fully understand the risks</li>
               <li><strong>APRA phase-out</strong> — AT1 hybrids will be phased out; existing securities will be called but not replaced</li>
             </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="py-14 bg-white">
+        <div className="container-custom max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">FAQ</p>
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Frequently Asked Questions</h2>
+          <div className="space-y-3">
+            {faqSchema.mainEntity.map((faq: { name: string; acceptedAnswer: { text: string } }) => (
+              <details key={faq.name} className="group bg-white border border-slate-200 rounded-xl">
+                <summary className="flex items-center justify-between px-5 py-4 cursor-pointer text-sm font-bold text-slate-900 hover:text-amber-600 transition-colors">
+                  {faq.name}
+                  <svg className="w-4 h-4 text-slate-400 shrink-0 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                </summary>
+                <div className="px-5 pb-4 text-sm text-slate-600 leading-relaxed">{faq.acceptedAnswer.text}</div>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Related guides */}
+      <section className="py-14 bg-slate-50">
+        <div className="container-custom max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Related Guides</p>
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Explore Related Investment Guides</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { title: "Private Credit & P2P Lending", href: "/invest/private-credit", desc: "Private credit funds and P2P platforms offering yields above term deposits." },
+              { title: "Bonds & Fixed Income", href: "/invest/bonds", desc: "Government and corporate bonds for stable income and capital preservation." },
+              { title: "Dividend Investing", href: "/invest/dividend-investing", desc: "High-yield ASX stocks, franking credits explained, and dividend ETFs." },
+              { title: "SMSF Investment Guide", href: "/invest/smsf", desc: "What SMSFs actually invest in — property, shares, crypto and more." },
+            ].map((guide) => (
+              <Link key={guide.href} href={guide.href} className="group bg-white border border-slate-200 rounded-xl p-5 hover:border-amber-200 hover:shadow-md transition-all">
+                <h3 className="font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{guide.title}</h3>
+                <p className="text-sm text-slate-500 mt-1">{guide.desc}</p>
+                <span className="inline-flex items-center text-amber-600 text-sm font-semibold mt-2">Read guide →</span>
+              </Link>
+            ))}
           </div>
         </div>
       </section>

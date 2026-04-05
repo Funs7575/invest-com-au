@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
+import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
 
 export const metadata: Metadata = {
   title: `A-REITs — Australian Real Estate Investment Trusts (${CURRENT_YEAR})`,
@@ -30,6 +31,21 @@ export default function ReitsPage() {
     publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
   };
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      { "@type": "Question", name: "What are A-REITs?", acceptedAnswer: { "@type": "Answer", text: "Australian Real Estate Investment Trusts (A-REITs) are ASX-listed entities that own, operate, or finance income-producing real estate such as office towers, shopping centres, and industrial warehouses. They must distribute at least 90% of taxable income to unitholders, making them popular income investments with yields typically between 4-6%." } },
+      { "@type": "Question", name: "How do I buy REITs on the ASX?", acceptedAnswer: { "@type": "Answer", text: "You can buy A-REITs through any ASX broker (CommSec, Stake, CMC Markets, etc.) just like buying ordinary shares. You can purchase individual REITs like Goodman Group (GMG) or Scentre Group (SCG), or buy a REIT ETF like VAP (Vanguard Australian Property Securities) for diversified exposure with a single trade." } },
+      { "@type": "Question", name: "How are REIT distributions taxed in Australia?", acceptedAnswer: { "@type": "Answer", text: "A-REIT distributions typically contain a mix of income, capital gains, and tax-deferred (return of capital) components. The tax-deferred portion reduces your cost base rather than being taxed immediately, with CGT payable when you eventually sell your units. In an SMSF, distributions are taxed at 15% in accumulation or 0% in pension phase." } },
+      { "@type": "Question", name: "What does NTA premium or discount mean for REITs?", acceptedAnswer: { "@type": "Answer", text: "NTA (Net Tangible Assets) represents the underlying value of a REIT's property portfolio per unit. When a REIT trades above its NTA, it is at a premium, which may indicate the market values its management quality or growth prospects. Trading below NTA indicates a discount, which may signal a buying opportunity or concerns about the portfolio's future value." } },
+      { "@type": "Question", name: "What is the best REIT ETF in Australia?", acceptedAnswer: { "@type": "Answer", text: "VAP (Vanguard Australian Property Securities ETF) is the most popular A-REIT ETF with a low MER of 0.23% and exposure to around 30 A-REITs. MVA (VanEck Australian Property ETF) is another option with a slightly higher MER of 0.35%. For global REIT exposure, DJRE (BetaShares Global Real Estate ETF) covers approximately 100 REITs worldwide." } },
+      { "@type": "Question", name: "How do REITs compare to direct property investment?", acceptedAnswer: { "@type": "Answer", text: "REITs offer liquidity (buy/sell instantly on ASX), diversification across multiple properties, professional management, and low minimums (from $500 via ETFs). Direct property offers leverage via mortgage, greater control, and potential tax benefits through negative gearing. REITs avoid the hassles of property management, vacancies, and maintenance but provide no ability to add value through renovation." } },
+      { "@type": "Question", name: "Can SMSFs invest in REITs?", acceptedAnswer: { "@type": "Answer", text: "Yes, A-REITs and REIT ETFs are straightforward investments for SMSFs with no special restrictions. They are treated like any other ASX-listed investment. Distributions are taxed at 15% in accumulation phase or 0% in pension phase, making them tax-efficient income generators for SMSF portfolios." } },
+      { "@type": "Question", name: "How do interest rates affect REIT prices?", acceptedAnswer: { "@type": "Answer", text: "A-REITs are highly sensitive to interest rate movements. Rising rates increase borrowing costs for REITs and make their distribution yields less attractive relative to bonds and term deposits, typically causing REIT prices to fall. Conversely, falling rates tend to boost REIT valuations. Most A-REITs carry gearing of 25-35%, so refinancing costs directly impact profitability." } },
+    ],
+  };
+
   return (
     <div>
       <script
@@ -39,6 +55,10 @@ export default function ReitsPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webPage) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
       {/* Hero */}
@@ -181,6 +201,13 @@ export default function ReitsPage() {
         </div>
       </section>
 
+      {/* Lead Magnet */}
+      <section className="py-14 bg-white">
+        <div className="container-custom max-w-4xl">
+          <ContextualLeadMagnet segment="fee-audit" />
+        </div>
+      </section>
+
       {/* Section 3: REIT ETFs */}
       <section className="py-14 bg-white">
         <div className="container-custom max-w-4xl">
@@ -292,6 +319,47 @@ export default function ReitsPage() {
               <li><strong>Concentration risk</strong> — some REITs have significant exposure to a single tenant or geography</li>
               <li><strong>NTA discount risk</strong> — units can trade at persistent discounts to underlying property values</li>
             </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* Related guides */}
+      <section className="py-14 bg-slate-50">
+        <div className="container-custom max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Related Guides</p>
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Explore Related Investment Guides</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { title: "Commercial Property", href: "/invest/commercial-property", desc: "Invest in Australian commercial property — offices, retail, industrial." },
+              { title: "Infrastructure", href: "/invest/infrastructure", desc: "Toll roads, airports, utilities and ports for stable inflation-linked income." },
+              { title: "Dividend Investing", href: "/invest/dividend-investing", desc: "High-yield ASX stocks, franking credits explained, and dividend ETFs." },
+              { title: "SMSF Investment Guide", href: "/invest/smsf", desc: "What SMSFs actually invest in — property, shares, crypto and more." },
+            ].map((guide) => (
+              <Link key={guide.href} href={guide.href} className="group bg-white border border-slate-200 rounded-xl p-5 hover:border-amber-200 hover:shadow-md transition-all">
+                <h3 className="font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{guide.title}</h3>
+                <p className="text-sm text-slate-500 mt-1">{guide.desc}</p>
+                <span className="inline-flex items-center text-amber-600 text-sm font-semibold mt-2">Read guide →</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="py-14 bg-white">
+        <div className="container-custom max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">FAQ</p>
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Frequently Asked Questions</h2>
+          <div className="space-y-3">
+            {faqSchema.mainEntity.map((faq: { name: string; acceptedAnswer: { text: string } }) => (
+              <details key={faq.name} className="group bg-white border border-slate-200 rounded-xl">
+                <summary className="flex items-center justify-between px-5 py-4 cursor-pointer text-sm font-bold text-slate-900 hover:text-amber-600 transition-colors">
+                  {faq.name}
+                  <svg className="w-4 h-4 text-slate-400 shrink-0 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                </summary>
+                <div className="px-5 pb-4 text-sm text-slate-600 leading-relaxed">{faq.acceptedAnswer.text}</div>
+              </details>
+            ))}
           </div>
         </div>
       </section>

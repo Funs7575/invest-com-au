@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
+import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
 
 export const metadata: Metadata = {
   title: `Dividend Investing Australia — High-Yield ASX Stocks & ETFs (${CURRENT_YEAR})`,
@@ -30,6 +31,21 @@ export default function DividendInvestingPage() {
     publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
   };
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      { "@type": "Question", name: "What are franking credits and how do they work?", acceptedAnswer: { "@type": "Answer", text: "Franking credits represent company tax already paid on profits before dividends are distributed. When you receive a fully franked dividend, you get a credit for the 30% corporate tax paid. If your marginal tax rate is 30% or below, the franking credit covers your entire tax liability — and if your rate is lower (or you are in an SMSF pension phase at 0%), you receive a cash refund from the ATO." } },
+      { "@type": "Question", name: "How do Dividend Reinvestment Plans (DRPs) work?", acceptedAnswer: { "@type": "Answer", text: "DRPs automatically reinvest your dividends into additional shares instead of paying cash. Many ASX companies offer DRPs at a 1-2.5% discount to the market price with no brokerage costs. Note that DRP dividends are still taxable in the year received even though you do not get cash — the ATO treats it as receiving the dividend and immediately buying more shares." } },
+      { "@type": "Question", name: "What is the best dividend ETF in Australia?", acceptedAnswer: { "@type": "Answer", text: "VHY (Vanguard Australian Shares High Yield ETF) is the most popular with a 0.25% MER and approximately 5.5% yield. Betashares DVDY focuses on franked dividends and targets around 7% gross yield. SYI (SPDR S&P/ASX 200 High Dividend Yield) and IHD (iShares Dividend Opportunities) are other solid options. Each has different selection methodologies, so compare their top holdings." } },
+      { "@type": "Question", name: "Are dividends guaranteed?", acceptedAnswer: { "@type": "Answer", text: "No, dividends are never guaranteed. Companies can reduce, suspend, or eliminate dividends at any time based on profitability and board discretion. During COVID-19, many ASX companies cut or deferred dividends, including major banks. Always check payout ratios — a ratio above 80-90% may indicate the dividend is unsustainable." } },
+      { "@type": "Question", name: "How does an SMSF dividend strategy work?", acceptedAnswer: { "@type": "Answer", text: "SMSFs in pension phase pay 0% tax on income, so fully franked dividends generate a full 30% franking credit cash refund from the ATO. This effectively boosts a 4% cash yield to a 5.7% grossed-up yield. Even in accumulation phase (15% tax), the 30% franking credit exceeds the tax owed, creating a net refund. This makes franked dividend stocks the core of most SMSF portfolios." } },
+      { "@type": "Question", name: "Which ASX stocks have the highest dividend yields?", acceptedAnswer: { "@type": "Answer", text: "Among large caps, Fortescue (FMG) often yields 7-10%, the big four banks (CBA, WBC, NAB, ANZ) yield 4-5.5% fully franked, and Telstra yields around 4% fully franked. However, the highest yields are often found in mid-caps and resources stocks where payouts can be volatile. Always check whether high yields are sustainable or reflect a falling share price." } },
+      { "@type": "Question", name: "What is the difference between unfranked and fully franked dividends?", acceptedAnswer: { "@type": "Answer", text: "A fully franked dividend means the company has paid 30% corporate tax on the profits, and you receive a tax credit for that amount. An unfranked dividend carries no tax credit, meaning you pay full tax at your marginal rate. Partially franked dividends fall in between. BHP dividends are often partially franked because some profits are earned offshore where Australian corporate tax was not paid." } },
+      { "@type": "Question", name: "What is a dividend trap and how do I avoid it?", acceptedAnswer: { "@type": "Answer", text: "A dividend trap occurs when a stock appears to have a very high yield, but only because its share price has fallen sharply — often signalling the market expects a dividend cut. To avoid traps, check the payout ratio (above 90% is a warning), earnings trends (declining earnings cannot sustain dividends), and debt levels. Focus on total return (dividends plus capital growth), not yield alone." } },
+    ],
+  };
+
   return (
     <div>
       <script
@@ -39,6 +55,10 @@ export default function DividendInvestingPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webPage) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
       {/* Hero */}
@@ -167,6 +187,13 @@ export default function DividendInvestingPage() {
             </table>
           </div>
           <p className="text-xs text-slate-400 mt-3">Yields are indicative and change with share prices and dividend announcements. Past dividends are not guaranteed.</p>
+        </div>
+      </section>
+
+      {/* Lead Magnet */}
+      <section className="py-14 bg-white">
+        <div className="container-custom max-w-4xl">
+          <ContextualLeadMagnet segment="fee-audit" />
         </div>
       </section>
 
@@ -299,6 +326,47 @@ export default function DividendInvestingPage() {
               <li><strong>Franking policy risk</strong> — government policy on franking credit refunds could change</li>
               <li><strong>Capital loss</strong> — chasing yield can lead to holding declining businesses; total return matters, not just income</li>
             </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* Related guides */}
+      <section className="py-14 bg-slate-50">
+        <div className="container-custom max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Related Guides</p>
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Explore Related Investment Guides</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { title: "Managed Funds & Index Funds", href: "/invest/managed-funds", desc: "Compare passive index funds and actively managed strategies in Australia." },
+              { title: "Hybrid Securities", href: "/invest/hybrid-securities", desc: "ASX-listed bank hybrids offering franked yields above term deposits." },
+              { title: "SMSF Investment Guide", href: "/invest/smsf", desc: "What SMSFs actually invest in — property, shares, crypto and more." },
+              { title: "A-REITs", href: "/invest/reits", desc: "ASX-listed property trusts for diversified real estate exposure and income." },
+            ].map((guide) => (
+              <Link key={guide.href} href={guide.href} className="group bg-white border border-slate-200 rounded-xl p-5 hover:border-amber-200 hover:shadow-md transition-all">
+                <h3 className="font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{guide.title}</h3>
+                <p className="text-sm text-slate-500 mt-1">{guide.desc}</p>
+                <span className="inline-flex items-center text-amber-600 text-sm font-semibold mt-2">Read guide →</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="py-14 bg-white">
+        <div className="container-custom max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">FAQ</p>
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Frequently Asked Questions</h2>
+          <div className="space-y-3">
+            {faqSchema.mainEntity.map((faq: { name: string; acceptedAnswer: { text: string } }) => (
+              <details key={faq.name} className="group bg-white border border-slate-200 rounded-xl">
+                <summary className="flex items-center justify-between px-5 py-4 cursor-pointer text-sm font-bold text-slate-900 hover:text-amber-600 transition-colors">
+                  {faq.name}
+                  <svg className="w-4 h-4 text-slate-400 shrink-0 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                </summary>
+                <div className="px-5 pb-4 text-sm text-slate-600 leading-relaxed">{faq.acceptedAnswer.text}</div>
+              </details>
+            ))}
           </div>
         </div>
       </section>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
+import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
 
 export const metadata: Metadata = {
   title: `Infrastructure Investment Australia — Funds, ASX Stocks & Unlisted (${CURRENT_YEAR})`,
@@ -30,6 +31,21 @@ export default function InfrastructurePage() {
     publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
   };
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      { "@type": "Question", name: "What is infrastructure investment?", acceptedAnswer: { "@type": "Answer", text: "Infrastructure investment involves owning assets that provide essential services — toll roads, airports, ports, electricity networks, gas pipelines, water utilities, and telecommunications towers. These assets generate stable, long-duration cash flows often linked to inflation, making them attractive for income-focused investors and a core allocation in institutional portfolios." } },
+      { "@type": "Question", name: "How do I invest in infrastructure from Australia?", acceptedAnswer: { "@type": "Answer", text: "The easiest route is ASX-listed infrastructure stocks like Transurban (TCL) and APA Group (APA). Infrastructure ETFs like MICH (Magellan, 0.96% MER) and IFRA (VanEck, 0.52% MER) provide diversified global exposure. Unlisted infrastructure funds from managers like IFM Investors and Palisade are accessible through super funds or as wholesale investments." } },
+      { "@type": "Question", name: "Is Transurban a good infrastructure investment?", acceptedAnswer: { "@type": "Answer", text: "Transurban (TCL) is the largest ASX-listed infrastructure stock with a $45B+ market cap, operating toll roads in Melbourne, Sydney, and Brisbane. It offers CPI-linked toll escalation providing inflation protection, and yields approximately 4%. However, it carries significant debt, is sensitive to interest rates, and traffic volumes can be affected by economic cycles and remote work trends." } },
+      { "@type": "Question", name: "What infrastructure ETF options are available on the ASX?", acceptedAnswer: { "@type": "Answer", text: "MICH (Magellan Infrastructure Fund, 0.96% MER) is an actively managed global infrastructure ETF covering toll roads, airports, utilities, and pipelines, hedged to AUD. IFRA (VanEck FTSE Global Infrastructure, 0.52% MER) offers passive global infrastructure exposure at a lower cost. Both provide diversified access to infrastructure assets worldwide that are not available on the ASX." } },
+      { "@type": "Question", name: "Why do super funds invest so heavily in infrastructure?", acceptedAnswer: { "@type": "Answer", text: "Super funds allocate 5-15% to infrastructure because it offers stable, inflation-linked cash flows that match their long-duration liabilities (paying pensions over decades). Infrastructure assets have low correlation to listed equities, providing diversification. IFM Investors, owned by industry super funds, manages $48B+ in infrastructure and has delivered 8-10% long-term returns." } },
+      { "@type": "Question", name: "What returns do toll road investments generate?", acceptedAnswer: { "@type": "Answer", text: "Listed toll road operators like Transurban (TCL) and Atlas Arteria (ALX) typically yield 4-5% in distributions plus capital growth driven by traffic volume increases and toll escalation. Total returns have historically been 7-10% p.a. Toll escalation is often CPI-linked or fixed at 4%+ p.a., providing built-in inflation protection that few other asset classes offer." } },
+      { "@type": "Question", name: "What is the difference between listed and unlisted infrastructure?", acceptedAnswer: { "@type": "Answer", text: "Listed infrastructure (Transurban, APA Group) trades on the ASX with daily liquidity and price transparency, but is subject to share market volatility. Unlisted infrastructure (IFM Investors, Palisade) is valued quarterly with less volatility but limited liquidity and typically requires wholesale investor status ($500K+ minimum). Several major ASX infrastructure assets have recently been taken private." } },
+      { "@type": "Question", name: "How do interest rates affect infrastructure investments?", acceptedAnswer: { "@type": "Answer", text: "Infrastructure stocks are highly interest rate sensitive. Rising rates increase borrowing costs (most infrastructure assets carry significant debt), reduce the present value of long-duration cash flows, and make distribution yields less attractive relative to bonds. Conversely, falling rates tend to boost infrastructure valuations. However, CPI-linked revenues provide some offset during inflationary periods." } },
+    ],
+  };
+
   return (
     <div>
       <script
@@ -39,6 +55,10 @@ export default function InfrastructurePage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webPage) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
       {/* Hero */}
@@ -160,6 +180,13 @@ export default function InfrastructurePage() {
         </div>
       </section>
 
+      {/* Lead Magnet */}
+      <section className="py-14 bg-white">
+        <div className="container-custom max-w-4xl">
+          <ContextualLeadMagnet segment="fee-audit" />
+        </div>
+      </section>
+
       {/* Section 3: Infrastructure Funds & ETFs */}
       <section className="py-14 bg-white">
         <div className="container-custom max-w-4xl">
@@ -223,6 +250,47 @@ export default function InfrastructurePage() {
               <li><strong>Traffic/usage risk</strong> — toll road revenues depend on traffic volumes (impacted by pandemics, remote work, economic downturns)</li>
               <li><strong>Privatisation premium</strong> — institutional demand has pushed infrastructure valuations to significant premiums over comparable equity yields</li>
             </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="py-14 bg-white">
+        <div className="container-custom max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">FAQ</p>
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Frequently Asked Questions</h2>
+          <div className="space-y-3">
+            {faqSchema.mainEntity.map((faq: { name: string; acceptedAnswer: { text: string } }) => (
+              <details key={faq.name} className="group bg-white border border-slate-200 rounded-xl">
+                <summary className="flex items-center justify-between px-5 py-4 cursor-pointer text-sm font-bold text-slate-900 hover:text-amber-600 transition-colors">
+                  {faq.name}
+                  <svg className="w-4 h-4 text-slate-400 shrink-0 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                </summary>
+                <div className="px-5 pb-4 text-sm text-slate-600 leading-relaxed">{faq.acceptedAnswer.text}</div>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Related guides */}
+      <section className="py-14 bg-white">
+        <div className="container-custom max-w-4xl">
+          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Related Guides</p>
+          <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Explore Related Investment Guides</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {[
+              { title: "A-REITs", href: "/invest/reits", desc: "ASX-listed property trusts for diversified real estate exposure and income." },
+              { title: "Private Credit & P2P Lending", href: "/invest/private-credit", desc: "Private credit funds and P2P platforms offering yields above term deposits." },
+              { title: "Bonds & Fixed Income", href: "/invest/bonds", desc: "Government and corporate bonds for stable income and capital preservation." },
+              { title: "SMSF Investment Guide", href: "/invest/smsf", desc: "What SMSFs actually invest in — property, shares, crypto and more." },
+            ].map((guide) => (
+              <Link key={guide.href} href={guide.href} className="group bg-white border border-slate-200 rounded-xl p-5 hover:border-amber-200 hover:shadow-md transition-all">
+                <h3 className="font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{guide.title}</h3>
+                <p className="text-sm text-slate-500 mt-1">{guide.desc}</p>
+                <span className="inline-flex items-center text-amber-600 text-sm font-semibold mt-2">Read guide →</span>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
