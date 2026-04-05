@@ -38,6 +38,18 @@ const HREF_OVERRIDES: Record<string, string> = {
   gold: "/invest/gold",
   ipos: "/invest/ipos",
   funds: "/invest/funds",
+  "private-credit": "/invest/private-credit",
+  reits: "/invest/reits",
+  "managed-funds": "/invest/managed-funds",
+  "dividend-investing": "/invest/dividend-investing",
+  "options-trading": "/invest/options-trading",
+  forex: "/invest/forex",
+  commodities: "/invest/commodities",
+  alternatives: "/invest/alternatives",
+  infrastructure: "/invest/infrastructure",
+  "hybrid-securities": "/invest/hybrid-securities",
+  "crypto-staking": "/invest/crypto-staking",
+  smsf: "/invest/smsf",
 };
 
 type InvestmentVertical = {
