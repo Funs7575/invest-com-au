@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
@@ -32,6 +33,23 @@ const HREF_OVERRIDES: Record<string, string> = {
   franchise: "/invest/franchise",
   "renewable-energy": "/invest/renewable-energy",
   startups: "/invest/startups",
+  "private-equity": "/invest/private-equity",
+  bonds: "/invest/bonds",
+  gold: "/invest/gold",
+  ipos: "/invest/ipos",
+  funds: "/invest/funds",
+  "private-credit": "/invest/private-credit",
+  reits: "/invest/reits",
+  "managed-funds": "/invest/managed-funds",
+  "dividend-investing": "/invest/dividend-investing",
+  "options-trading": "/invest/options-trading",
+  forex: "/invest/forex",
+  commodities: "/invest/commodities",
+  alternatives: "/invest/alternatives",
+  infrastructure: "/invest/infrastructure",
+  "hybrid-securities": "/invest/hybrid-securities",
+  "crypto-staking": "/invest/crypto-staking",
+  smsf: "/invest/smsf",
 };
 
 type InvestmentVertical = {
@@ -40,6 +58,7 @@ type InvestmentVertical = {
   name: string;
   description: string | null;
   icon: string | null;
+  hero_image: string | null;
   fdi_share_percent: number | null;
   sort_order: number | null;
   hero_title: string | null;
@@ -54,7 +73,7 @@ export default async function InvestHubPage() {
   const { data: verticals } = await supabase
     .from("investment_verticals")
     .select(
-      "id, slug, name, description, icon, fdi_share_percent, sort_order, hero_title, hero_subtitle, domestic, international"
+      "id, slug, name, description, icon, hero_image, fdi_share_percent, sort_order, hero_title, hero_subtitle, domestic, international"
     )
     .order("sort_order", { ascending: true });
 
@@ -113,39 +132,56 @@ export default async function InvestHubPage() {
                   <Link
                     key={v.id}
                     href={href}
-                    className="group bg-white border border-slate-200 rounded-xl p-6 flex flex-col gap-4 hover:shadow-lg transition-shadow duration-200"
+                    className="group bg-white border border-slate-200 rounded-xl overflow-hidden flex flex-col hover:shadow-lg transition-shadow duration-200"
                   >
-                    {/* Icon + FDI badge row */}
-                    <div className="flex items-start justify-between">
-                      <div className="w-11 h-11 rounded-lg bg-amber-50 flex items-center justify-center shrink-0">
-                        <Icon
-                          name={v.icon ?? "trending-up"}
-                          size={22}
-                          className="text-amber-500"
+                    {/* Hero image */}
+                    <div className="relative aspect-[16/9] bg-slate-100">
+                      {v.hero_image ? (
+                        <Image
+                          src={v.hero_image}
+                          alt={v.name}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         />
-                      </div>
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center">
+                          <Icon name={v.icon ?? "trending-up"} size={40} className="text-white/30" />
+                        </div>
+                      )}
                       {hasFdi && (
-                        <span className="text-xs font-semibold bg-amber-100 text-amber-700 px-2.5 py-1 rounded-full">
+                        <span className="absolute top-3 right-3 text-xs font-semibold bg-amber-500 text-slate-900 px-2.5 py-1 rounded-full shadow-sm">
                           {v.fdi_share_percent}% FDI
                         </span>
                       )}
                     </div>
 
-                    {/* Name */}
-                    <div>
-                      <h2 className="text-base font-bold text-slate-900 group-hover:text-amber-600 transition-colors">
-                        {v.name}
-                      </h2>
-                      {v.description && (
-                        <p className="text-sm text-slate-500 mt-1 leading-relaxed line-clamp-3">
-                          {v.description}
-                        </p>
-                      )}
-                    </div>
+                    {/* Content */}
+                    <div className="p-5 flex flex-col gap-3 flex-1">
+                      <div className="flex items-start gap-3">
+                        <div className="w-9 h-9 rounded-lg bg-amber-50 flex items-center justify-center shrink-0">
+                          <Icon
+                            name={v.icon ?? "trending-up"}
+                            size={18}
+                            className="text-amber-500"
+                          />
+                        </div>
+                        <div>
+                          <h2 className="text-base font-bold text-slate-900 group-hover:text-amber-600 transition-colors">
+                            {v.name}
+                          </h2>
+                          {v.description && (
+                            <p className="text-sm text-slate-500 mt-1 leading-relaxed line-clamp-2">
+                              {v.description}
+                            </p>
+                          )}
+                        </div>
+                      </div>
 
-                    <div className="mt-auto flex items-center text-amber-600 text-sm font-semibold gap-1">
-                      Explore
-                      <Icon name="arrow-right" size={15} className="group-hover:translate-x-1 transition-transform" />
+                      <div className="mt-auto flex items-center text-amber-600 text-sm font-semibold gap-1">
+                        Explore
+                        <Icon name="arrow-right" size={15} className="group-hover:translate-x-1 transition-transform" />
+                      </div>
                     </div>
                   </Link>
                 );
