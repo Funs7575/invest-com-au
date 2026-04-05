@@ -69,23 +69,38 @@ const advisorsMenu = {
 };
 
 const opportunitiesMenu = {
-  byVertical: [
-    { label: "Businesses for Sale", href: "/invest/buy-business/listings", desc: "Browse businesses across Australia" },
-    { label: "Mining Opportunities", href: "/invest/mining/opportunities", desc: "ASX miners, tenements & ETFs" },
-    { label: "Farmland & Agriculture", href: "/invest/farmland/listings", desc: "Grazing, cropping & water rights" },
-    { label: "Commercial Property", href: "/invest/commercial-property/listings", desc: "Office, retail, industrial & hotel" },
-    { label: "Franchise Opportunities", href: "/invest/franchise/listings", desc: "Proven business models for sale" },
-    { label: "Renewable Energy Projects", href: "/invest/renewable-energy/projects", desc: "Solar, wind & battery storage" },
-    { label: "Investment Funds", href: "/invest/funds", desc: "PE, hedge funds & SIV complying" },
-    { label: "Startups & Crowdfunding", href: "/invest/startups/opportunities", desc: "Equity crowdfunding & angel deals" },
+  sectors: [
+    { label: "Mining & Resources", href: "/invest/mining", desc: "Iron ore, lithium, gold & critical minerals" },
+    { label: "Buy a Business", href: "/invest/buy-business", desc: "SME acquisitions & franchise pathways" },
+    { label: "Farmland & Agriculture", href: "/invest/farmland", desc: "Livestock, cropping, water rights" },
+    { label: "Commercial Property", href: "/invest/commercial-property", desc: "Office, industrial, hotels" },
+    { label: "Renewable Energy", href: "/invest/renewable-energy", desc: "Solar, wind, hydrogen & battery" },
+    { label: "Startups & Tech", href: "/invest/startups", desc: "VC, angel investing & crowdfunding" },
+    { label: "Infrastructure", href: "/invest/infrastructure", desc: "Toll roads, airports, utilities" },
+  ],
+  markets: [
+    { label: "Managed & Index Funds", href: "/invest/managed-funds", desc: "Vanguard, Betashares, iShares" },
+    { label: "Dividend Investing", href: "/invest/dividend-investing", desc: "Franking credits & high-yield ASX" },
+    { label: "A-REITs", href: "/invest/reits", desc: "ASX-listed property trusts" },
+    { label: "Options & Derivatives", href: "/invest/options-trading", desc: "ETOs, CFDs, warrants & futures" },
+    { label: "Forex Trading", href: "/invest/forex", desc: "AUD/USD, ASIC-regulated brokers" },
+    { label: "Commodities", href: "/invest/commodities", desc: "Gold, silver, oil & resource ETFs" },
+  ],
+  income: [
+    { label: "Private Credit & P2P", href: "/invest/private-credit", desc: "La Trobe, Qualitas, Metrics" },
+    { label: "Bonds & Fixed Income", href: "/invest/bonds", desc: "Government & corporate bonds" },
+    { label: "Hybrid Securities", href: "/invest/hybrid-securities", desc: "Bank hybrids & APRA phase-out" },
+    { label: "Alternatives", href: "/invest/alternatives", desc: "Wine, art, cars, watches & more" },
+    { label: "Crypto Staking & DeFi", href: "/invest/crypto-staking", desc: "Staking, DeFi & crypto ETFs" },
+    { label: "SMSF Investment Guide", href: "/invest/smsf", desc: "What SMSFs invest in & how" },
   ],
   tools: [
-    { label: "All Opportunities", href: "/invest/listings" },
-    { label: "FIRB-Eligible Only", href: "/invest/listings?firb=true" },
+    { label: "All Investment Verticals", href: "/invest" },
+    { label: "Marketplace (All Listings)", href: "/invest/listings" },
     { label: "Private Equity", href: "/invest/private-equity" },
-    { label: "Bonds & Fixed Income", href: "/invest/bonds" },
     { label: "Gold & Precious Metals", href: "/invest/gold" },
     { label: "IPO Calendar", href: "/invest/ipos" },
+    { label: "FIRB-Eligible Only", href: "/invest/listings?firb=true" },
   ],
 };
 
@@ -203,16 +218,31 @@ const mobileSections = [
     ],
   },
   {
-    title: "Investment Opportunities",
+    title: "Invest",
     items: [
-      { name: "All Opportunities", href: "/invest/listings" },
-      { name: "Businesses for Sale", href: "/invest/buy-business/listings" },
-      { name: "Mining Opportunities", href: "/invest/mining/opportunities" },
-      { name: "Farmland & Agriculture", href: "/invest/farmland/listings" },
-      { name: "Commercial Property", href: "/invest/commercial-property/listings" },
-      { name: "Investment Funds (incl. SIV)", href: "/invest/funds" },
+      { name: "All Investment Verticals", href: "/invest" },
+      { name: "Mining & Resources", href: "/invest/mining" },
+      { name: "Buy a Business", href: "/invest/buy-business" },
+      { name: "Farmland & Agriculture", href: "/invest/farmland" },
+      { name: "Commercial Property", href: "/invest/commercial-property" },
+      { name: "Renewable Energy", href: "/invest/renewable-energy" },
+      { name: "Startups & Tech", href: "/invest/startups" },
+      { name: "Infrastructure", href: "/invest/infrastructure" },
+      { name: "Private Credit & P2P", href: "/invest/private-credit" },
+      { name: "A-REITs", href: "/invest/reits" },
+      { name: "Managed & Index Funds", href: "/invest/managed-funds" },
+      { name: "Dividend Investing", href: "/invest/dividend-investing" },
+      { name: "Options & Derivatives", href: "/invest/options-trading" },
+      { name: "Forex Trading", href: "/invest/forex" },
+      { name: "Commodities", href: "/invest/commodities" },
+      { name: "Alternatives", href: "/invest/alternatives" },
+      { name: "Hybrid Securities", href: "/invest/hybrid-securities" },
+      { name: "Crypto Staking & DeFi", href: "/invest/crypto-staking" },
+      { name: "SMSF Investment Guide", href: "/invest/smsf" },
+      { name: "Bonds & Fixed Income", href: "/invest/bonds" },
+      { name: "Gold", href: "/invest/gold" },
       { name: "Private Equity", href: "/invest/private-equity" },
-      { name: "IPO Calendar", href: "/invest/ipos" },
+      { name: "IPOs", href: "/invest/ipos" },
     ],
   },
   {
@@ -385,47 +415,81 @@ export function Navigation() {
               </div>
             </MegaMenuDropdown>
 
-            {/* Opportunities Mega-Menu */}
-            <MegaMenuDropdown label="Opportunities" isActive={isOpportunitiesActive} menuWidth="min-w-[560px]">
-              <div className="p-6">
+            {/* Invest Mega-Menu */}
+            <MegaMenuDropdown label="Invest" isActive={isOpportunitiesActive} menuWidth="min-w-[780px]">
+              <div className="p-5">
                 {/* Top CTA */}
                 <Link
-                  href="/invest/listings"
-                  className="flex items-center justify-between p-3.5 bg-gradient-to-r from-amber-50 to-amber-100/60 border border-amber-200 rounded-xl mb-5 hover:border-amber-300 transition-colors group"
+                  href="/invest"
+                  className="flex items-center justify-between p-3 bg-gradient-to-r from-amber-50 to-amber-100/60 border border-amber-200 rounded-xl mb-4 hover:border-amber-300 transition-colors group"
                 >
                   <div>
-                    <p className="font-bold text-slate-900 text-sm">Browse All Opportunities</p>
-                    <p className="text-xs text-slate-500 mt-0.5">Businesses, mining, farmland, renewable energy &amp; more</p>
+                    <p className="font-bold text-slate-900 text-sm">All Investment Verticals</p>
+                    <p className="text-xs text-slate-500 mt-0.5">Every way to invest in Australia — 27 verticals, marketplace &amp; guides</p>
                   </div>
                   <svg className="w-5 h-5 text-amber-600 shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </Link>
 
-                <div className="grid grid-cols-2 gap-6">
+                <div className="grid grid-cols-4 gap-5">
+                  {/* Col 1: Sectors */}
                   <div>
-                    <p className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider mb-3">By Vertical</p>
+                    <p className="text-[0.60rem] font-bold text-amber-500 uppercase tracking-wider mb-2">Sectors &amp; Assets</p>
                     <div className="space-y-0.5">
-                      {opportunitiesMenu.byVertical.map((item) => (
+                      {opportunitiesMenu.sectors.map((item) => (
                         <Link
                           key={item.href}
                           href={item.href}
-                          className="block px-3 py-2 rounded-lg hover:bg-amber-50 transition-colors"
+                          className="block px-2 py-1.5 rounded-lg hover:bg-amber-50 transition-colors"
                         >
-                          <div className="text-sm font-semibold text-slate-800">{item.label}</div>
-                          <div className="text-xs text-slate-400">{item.desc}</div>
+                          <div className="text-[0.8rem] font-semibold text-slate-800">{item.label}</div>
+                          <div className="text-[0.65rem] text-slate-400 leading-tight">{item.desc}</div>
                         </Link>
                       ))}
                     </div>
                   </div>
+                  {/* Col 2: Markets */}
                   <div>
-                    <p className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-wider mb-3">Investment Guides</p>
+                    <p className="text-[0.60rem] font-bold text-amber-500 uppercase tracking-wider mb-2">Markets &amp; Trading</p>
+                    <div className="space-y-0.5">
+                      {opportunitiesMenu.markets.map((item) => (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className="block px-2 py-1.5 rounded-lg hover:bg-amber-50 transition-colors"
+                        >
+                          <div className="text-[0.8rem] font-semibold text-slate-800">{item.label}</div>
+                          <div className="text-[0.65rem] text-slate-400 leading-tight">{item.desc}</div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                  {/* Col 3: Income & Alternatives */}
+                  <div>
+                    <p className="text-[0.60rem] font-bold text-amber-500 uppercase tracking-wider mb-2">Income &amp; Alternatives</p>
+                    <div className="space-y-0.5">
+                      {opportunitiesMenu.income.map((item) => (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className="block px-2 py-1.5 rounded-lg hover:bg-amber-50 transition-colors"
+                        >
+                          <div className="text-[0.8rem] font-semibold text-slate-800">{item.label}</div>
+                          <div className="text-[0.65rem] text-slate-400 leading-tight">{item.desc}</div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                  {/* Col 4: Quick Links */}
+                  <div className="border-l border-slate-100 pl-4">
+                    <p className="text-[0.60rem] font-bold text-amber-500 uppercase tracking-wider mb-2">Quick Links</p>
                     <div className="space-y-0.5">
                       {opportunitiesMenu.tools.map((item) => (
                         <Link
                           key={item.href}
                           href={item.href}
-                          className="block px-3 py-2 text-sm text-slate-700 hover:bg-amber-50 hover:text-amber-900 rounded-lg transition-colors"
+                          className="block px-2 py-1.5 text-[0.8rem] text-slate-700 hover:bg-amber-50 hover:text-amber-900 rounded-lg transition-colors"
                         >
                           {item.label}
                         </Link>
