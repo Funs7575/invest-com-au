@@ -136,7 +136,7 @@ export default function AdvisorLocationStep({
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.069A1 1 0 0121 8.868v6.264a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
           </svg>
           <p className="text-xs text-amber-700 leading-relaxed">
-            Most advisors also offer <strong>video calls</strong> — location helps us prioritise local matches first, but remote consultations are always available.
+            Most advisors also offer <strong>video calls</strong> — location helps filter local professionals first, but remote consultations are always available.
           </p>
         </div>
       </div>
@@ -152,7 +152,7 @@ export default function AdvisorLocationStep({
             onChange={(e) => onBudgetChange(e.target.value)}
           />
           <p className="text-xs text-slate-400 mt-1.5">
-            Optional — helps us match you with advisors experienced at your level
+            Optional — helps filter professionals experienced at your level
           </p>
         </div>
 
@@ -280,7 +280,7 @@ export default function AdvisorLocationStep({
       <div className="flex gap-3 mt-8">
         <Button variant="ghost" onClick={onBack}>&larr; Back</Button>
         <Button variant="primary" onClick={onNext} disabled={!hasValidLocation} className="flex-1">
-          Find my match &rarr;
+          Show results &rarr;
         </Button>
       </div>
     </Card>

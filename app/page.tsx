@@ -17,21 +17,22 @@ import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 import { getMostRecentFeeCheck } from "@/lib/utils";
 import { ORGANIZATION_JSONLD, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import MobileStickyAdvisorCta from "@/components/MobileStickyAdvisorCta";
+import { PRIMARY_CTA_TEXT, PRIMARY_CTA_HREF, SECONDARY_CTA_TEXT, SECONDARY_CTA_HREF, SHOW_MATCH_LANGUAGE, SHOW_EDITORIAL_BADGES, SHOW_RATINGS, PLATFORM_COMPARE_HEADING, PLATFORM_COMPARE_SUBTEXT, FACTUAL_COMPARISON_DISCLAIMER } from "@/lib/compliance-config";
 
 export const metadata = {
-  title: "Compare Investing Platforms & Find Verified Advisors — Invest.com.au",
+  title: "Compare Investing Platforms & Browse Professional Directories — Invest.com.au",
   description:
-    "Stop overpaying fees. Compare Australian investing platforms side-by-side and find verified mortgage brokers, buyer's agents & financial advisors. Independent, free, no obligation.",
+    "Compare Australian investing platforms side-by-side and browse licensed mortgage brokers, buyer's agents & financial advisors. Independent, free, no obligation.",
   openGraph: {
-    title: "Compare Investing Platforms & Find Verified Advisors — Invest.com.au",
-    description: "Stop overpaying fees. Compare Australian investing platforms side-by-side and find verified mortgage brokers, buyer's agents & financial advisors. Independent, free, no obligation.",
+    title: "Compare Investing Platforms & Browse Professional Directories — Invest.com.au",
+    description: "Compare Australian investing platforms side-by-side and browse licensed mortgage brokers, buyer's agents & financial advisors. Independent, free, no obligation.",
     url: "/",
     images: [{ url: "/api/og", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image" as const,
-    title: "Compare Investing Platforms & Find Verified Advisors — Invest.com.au",
-    description: "Stop overpaying fees. Compare Australian investing platforms side-by-side and find verified advisors. Independent, always free.",
+    title: "Compare Investing Platforms & Browse Professional Directories — Invest.com.au",
+    description: "Compare Australian investing platforms side-by-side and browse licensed professional directories. Independent, always free.",
   },
   alternates: { canonical: "/" },
 };
@@ -129,7 +130,7 @@ export default async function HomePage() {
                 name: "How do I choose a mortgage broker in Australia?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: "Look for an ASIC-registered mortgage broker who offers access to multiple lenders, transparent fee disclosure, and specialises in your situation (first home buyer, investor, self-employed). Use our free matching service at invest.com.au/find-advisor.",
+                  text: "Look for an ASIC-registered mortgage broker who offers access to multiple lenders, transparent fee disclosure, and specialises in your situation (first home buyer, investor, self-employed). Browse our professional directory at invest.com.au/advisors.",
                 },
               },
               {
@@ -137,7 +138,7 @@ export default async function HomePage() {
                 name: "How do I choose between Australian investing platforms?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: `Compare platforms based on fees, FX rates, available markets, CHESS sponsorship, and features. Use our free 60-second quiz at ${SITE_URL}/quiz to get a personalised recommendation.`,
+                  text: `Compare platforms based on fees, FX rates, available markets, CHESS sponsorship, and features. Use our free 60-second filter tool at ${SITE_URL}/compare to narrow down platforms by your own criteria.`,
                 },
               },
             ],
@@ -157,21 +158,21 @@ export default async function HomePage() {
             </div>
 
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 leading-[1.1] mb-4 tracking-tight">
-              Invest Smarter.{" "}
-              <span className="text-amber-500">Pay Less in Fees.</span>
+              Compare Australian{" "}
+              <span className="text-amber-500">investment platforms</span>{" "}and directories
             </h1>
 
             <p className="text-base md:text-lg text-slate-600 mb-8 leading-relaxed max-w-2xl mx-auto">
-              Australia&apos;s independent hub to match you with the right platforms, advisors, and property experts in 60 seconds.
+              Browse factual features, fees, and professional directories — independently published, always free.
             </p>
 
             {/* Primary CTA */}
             <div className="mb-6">
               <Link
-                href="/quiz"
+                href={PRIMARY_CTA_HREF}
                 className="inline-flex items-center gap-2.5 px-10 py-4 bg-amber-500 hover:bg-amber-400 text-slate-900 font-extrabold text-lg rounded-xl transition-all shadow-xl shadow-amber-500/25 hover:-translate-y-0.5 active:scale-[0.97]"
               >
-                Start My Free Match
+                {PRIMARY_CTA_TEXT}
                 <Icon name="arrow-right" size={20} />
               </Link>
             </div>
@@ -180,17 +181,17 @@ export default async function HomePage() {
             <div className="flex items-center justify-center flex-wrap gap-x-5 gap-y-1.5 text-sm font-semibold text-slate-600">
               <span className="flex items-center gap-1.5">
                 <Icon name="check-circle" size={15} className="text-amber-500" />
-                {brokerCount}+ Platforms Tested
+                {brokerCount}+ platforms compared
               </span>
               <span className="text-slate-300 hidden sm:block" aria-hidden="true">|</span>
               <span className="flex items-center gap-1.5">
                 <Icon name="shield-check" size={15} className="text-amber-500" />
-                ASIC-Verified Professionals
+                Licensed professionals directory
               </span>
               <span className="text-slate-300 hidden sm:block" aria-hidden="true">|</span>
               <span className="flex items-center gap-1.5">
                 <Icon name="check-circle" size={15} className="text-amber-500" />
-                100% Independent
+                Independent publisher
               </span>
             </div>
           </div>
@@ -199,7 +200,7 @@ export default async function HomePage() {
           {featuredPlatforms.length > 0 && (
             <div className="mt-8 border-t border-slate-100 pt-5">
               <p className="text-center text-[0.65rem] font-semibold uppercase tracking-widest text-slate-400 mb-3">
-                Platforms we&apos;ve independently tested &amp; reviewed
+                Platforms we&apos;ve independently compared
               </p>
               <div className="flex items-center justify-center gap-3 md:gap-5 flex-wrap">
                 {featuredPlatforms.map((b) => (
@@ -263,15 +264,16 @@ export default async function HomePage() {
               <div>
                 <p className="text-xs font-semibold text-amber-600 uppercase tracking-wide mb-1 flex items-center gap-1">
                   <Icon name="shield-check" size={12} className="text-amber-500" />
-                  Ratings not for sale &middot; independently reviewed
+                  Independently published
                 </p>
                 <h2 className="text-xl md:text-3xl font-extrabold text-slate-900">
-                  Top Rated Platforms — {updatedMonth}
+                  {PLATFORM_COMPARE_HEADING} — {updatedMonth}
                 </h2>
                 <p className="text-xs md:text-sm text-slate-600 mt-1 flex items-center gap-1.5">
-                  <span className="hidden md:inline">Ranked by fees, features &amp; user experience &middot;</span>
+                  <span className="hidden md:inline">{PLATFORM_COMPARE_SUBTEXT} &middot;</span>
                   <FeesFreshnessIndicator lastChecked={getMostRecentFeeCheck((brokers as Broker[]) || [])} variant="inline" />
                 </p>
+                {!SHOW_EDITORIAL_BADGES && <p className="text-xs text-slate-400 mt-2">{FACTUAL_COMPARISON_DISCLAIMER}</p>}
               </div>
               <Link href="/compare" className="md:hidden text-xs font-semibold text-slate-600 hover:text-slate-900 shrink-0 inline-flex items-center px-1 min-h-[44px]">
                 View all &rarr;
@@ -289,9 +291,9 @@ export default async function HomePage() {
               </Link>
               <p className="text-xs text-slate-600 mt-3">
                 Not sure which platform suits you?{" "}
-                <Link href="/quiz" className="text-amber-600 font-semibold hover:text-amber-700">Take the 60-second quiz</Link>{" "}
+                <Link href={PRIMARY_CTA_HREF} className="text-amber-600 font-semibold hover:text-amber-700">Use the filter tool</Link>{" "}
                 or{" "}
-                <Link href="/find-advisor" className="text-amber-600 font-semibold hover:text-amber-700">talk to a financial advisor</Link>{" "}
+                <Link href="/advisors" className="text-amber-600 font-semibold hover:text-amber-700">browse professional directories</Link>{" "}
                 — free, no obligation.
               </p>
             </div>
@@ -329,7 +331,7 @@ export default async function HomePage() {
                 <Icon name="users" size={18} className="text-violet-600" />
               </div>
               <div>
-                <p className="text-sm font-bold text-slate-900 leading-snug mb-0.5">Find an Advisor</p>
+                <p className="text-sm font-bold text-slate-900 leading-snug mb-0.5">Browse Advisors</p>
                 <p className="text-xs text-slate-500">Financial Planners, SMSF</p>
               </div>
             </Link>

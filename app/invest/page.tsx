@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import SectionHeading from "@/components/SectionHeading";
+import { PRIMARY_CTA_TEXT, PRIMARY_CTA_HREF } from "@/lib/compliance-config";
 
 export const revalidate = 3600;
 
@@ -111,8 +112,8 @@ export default async function InvestHubPage() {
                 From mining and property to startups, private credit, and alternatives. Every investment opportunity — for local and international investors.
               </p>
               <div className="flex flex-col sm:flex-row items-start gap-2.5 mb-5">
-                <Link href="/quiz" className="w-full sm:w-auto px-6 py-3 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 shadow-md hover:shadow-lg transition-all text-sm text-center">
-                  Start My Free Match &rarr;
+                <Link href={PRIMARY_CTA_HREF} className="w-full sm:w-auto px-6 py-3 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 shadow-md hover:shadow-lg transition-all text-sm text-center">
+                  {PRIMARY_CTA_TEXT} &rarr;
                 </Link>
                 <Link href="/compare" className="w-full sm:w-auto px-6 py-3 border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all text-sm text-center">
                   Compare Platforms
@@ -126,7 +127,7 @@ export default async function InvestHubPage() {
                 <span className="hidden sm:block text-slate-300">·</span>
                 <span className="flex items-center gap-1.5">
                   <Icon name="check-circle" size={12} className="text-emerald-500" />
-                  ASIC-verified professionals
+                  Licensed professionals directory
                 </span>
               </div>
             </div>
@@ -136,7 +137,7 @@ export default async function InvestHubPage() {
               {[
                 { icon: "layers", label: "Marketplace", sub: "Browse businesses, mining, farmland & more for sale", href: "/invest/listings", iconBg: "bg-amber-500", border: "hover:border-amber-200 hover:bg-amber-50/60" },
                 { icon: "bar-chart-2", label: "Compare Platforms", sub: "73+ platforms compared by fees, features & ratings", href: "/compare", iconBg: "bg-slate-800", border: "hover:border-slate-300 hover:bg-slate-50" },
-                { icon: "user-check", label: "Find an Advisor", sub: "Verified financial planners, SMSF accountants & more", href: "/find-advisor", iconBg: "bg-emerald-600", border: "hover:border-emerald-200 hover:bg-emerald-50/60" },
+                { icon: "user-check", label: "Browse Advisors", sub: "Licensed financial planners, SMSF accountants & more", href: "/advisors", iconBg: "bg-emerald-600", border: "hover:border-emerald-200 hover:bg-emerald-50/60" },
                 { icon: "globe", label: "Foreign Investors", sub: "FIRB rules, visa pathways & 12 country guides", href: "/foreign-investment", iconBg: "bg-violet-600", border: "hover:border-violet-200 hover:bg-violet-50/60" },
               ].map((card) => (
                 <Link key={card.href} href={card.href} className={`bg-white border border-slate-200 rounded-2xl p-4 md:p-5 transition-all group ${card.border}`}>
@@ -254,15 +255,15 @@ export default async function InvestHubPage() {
         <div className="container-custom">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div>
-              <h2 className="text-lg font-bold text-slate-900">Not sure where to start?</h2>
-              <p className="text-sm text-slate-600 mt-1">Take our 60-second quiz and we will match you with the right platforms and advisors for your situation.</p>
+              <h2 className="text-lg font-bold text-slate-900">Need help?</h2>
+              <p className="text-sm text-slate-600 mt-1">Browse our directories and comparison tools to find what suits your situation.</p>
             </div>
             <div className="flex gap-3 shrink-0">
-              <Link href="/quiz" className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors">
-                Start Quiz →
+              <Link href={PRIMARY_CTA_HREF} className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors">
+                {PRIMARY_CTA_TEXT} →
               </Link>
-              <Link href="/find-advisor" className="inline-flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-sm px-5 py-2.5 rounded-lg border border-slate-200 transition-colors">
-                Find an Advisor
+              <Link href="/advisors" className="inline-flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-sm px-5 py-2.5 rounded-lg border border-slate-200 transition-colors">
+                Browse Directories
               </Link>
             </div>
           </div>
@@ -362,14 +363,14 @@ export default async function InvestHubPage() {
               <div>
                 <h3 className="text-lg font-bold text-slate-900 mb-2">Need professional guidance?</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Connect with a verified Australian financial adviser who specialises in your investment sector — from mining and property to tax structuring.
+                  Browse our directory of licensed Australian financial advisers across investment sectors — from mining and property to tax structuring.
                 </p>
               </div>
               <Link
-                href="/find-advisor"
+                href="/advisors"
                 className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors w-fit"
               >
-                Find an adviser
+                Browse advisers
                 <Icon name="arrow-right" size={15} />
               </Link>
             </div>
