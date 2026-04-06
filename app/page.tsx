@@ -15,6 +15,7 @@ import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 import { getMostRecentFeeCheck } from "@/lib/utils";
 import { ORGANIZATION_JSONLD, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import MobileStickyAdvisorCta from "@/components/MobileStickyAdvisorCta";
+import HeroIntentButton from "@/components/HeroIntentButton";
 import { PRIMARY_CTA_TEXT, PRIMARY_CTA_HREF, SECONDARY_CTA_TEXT, SECONDARY_CTA_HREF, SHOW_MATCH_LANGUAGE, SHOW_EDITORIAL_BADGES, SHOW_RATINGS, PLATFORM_COMPARE_HEADING, PLATFORM_COMPARE_SUBTEXT, FACTUAL_COMPARISON_DISCLAIMER } from "@/lib/compliance-config";
 
 export const metadata = {
@@ -168,46 +169,20 @@ export default async function HomePage() {
               Compare fees, browse directories, and explore investment options — built for Australians.
             </p>
 
-            {/* Intent router — 3 equal pathways */}
-            <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">What are you looking for?</p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-2xl mx-auto mb-6">
-              <Link
-                href="/compare"
-                className="group flex flex-col items-center gap-2 p-4 bg-white border-2 border-slate-200 rounded-2xl hover:border-amber-400 hover:shadow-lg transition-all"
-              >
-                <div className="w-11 h-11 rounded-xl bg-amber-50 flex items-center justify-center group-hover:bg-amber-100 transition-colors">
-                  <Icon name="bar-chart-2" size={20} className="text-amber-600" />
-                </div>
-                <div className="text-center">
-                  <p className="text-sm font-bold text-slate-900 group-hover:text-amber-600 transition-colors">Compare Platforms</p>
-                  <p className="text-[0.65rem] text-slate-500 mt-0.5">{brokerCount}+ platforms &middot; fees &middot; features</p>
-                </div>
-              </Link>
-              <Link
-                href="/advisors"
-                className="group flex flex-col items-center gap-2 p-4 bg-white border-2 border-slate-200 rounded-2xl hover:border-amber-400 hover:shadow-lg transition-all"
-              >
-                <div className="w-11 h-11 rounded-xl bg-slate-100 flex items-center justify-center group-hover:bg-amber-50 transition-colors">
-                  <Icon name="users" size={20} className="text-slate-600 group-hover:text-amber-600" />
-                </div>
-                <div className="text-center">
-                  <p className="text-sm font-bold text-slate-900 group-hover:text-amber-600 transition-colors">Browse Professionals</p>
-                  <p className="text-[0.65rem] text-slate-500 mt-0.5">Planners &middot; brokers &middot; accountants</p>
-                </div>
-              </Link>
-              <Link
-                href="/invest"
-                className="group flex flex-col items-center gap-2 p-4 bg-white border-2 border-slate-200 rounded-2xl hover:border-amber-400 hover:shadow-lg transition-all"
-              >
-                <div className="w-11 h-11 rounded-xl bg-slate-100 flex items-center justify-center group-hover:bg-amber-50 transition-colors">
-                  <Icon name="layers" size={20} className="text-slate-600 group-hover:text-amber-600" />
-                </div>
-                <div className="text-center">
-                  <p className="text-sm font-bold text-slate-900 group-hover:text-amber-600 transition-colors">Explore Investments</p>
-                  <p className="text-[0.65rem] text-slate-500 mt-0.5">27 categories &middot; marketplace &middot; guides</p>
-                </div>
-              </Link>
+            {/* Single CTA → opens intent picker */}
+            <div className="mb-4">
+              <HeroIntentButton />
             </div>
+
+            {/* Fallback text links */}
+            <p className="text-sm text-slate-500 mb-6">
+              Or jump to:{" "}
+              <Link href="/compare" className="font-semibold text-slate-700 hover:text-amber-600 underline underline-offset-2 decoration-slate-300 hover:decoration-amber-400 transition-colors">platforms</Link>
+              {" · "}
+              <Link href="/advisors" className="font-semibold text-slate-700 hover:text-amber-600 underline underline-offset-2 decoration-slate-300 hover:decoration-amber-400 transition-colors">professionals</Link>
+              {" · "}
+              <Link href="/invest" className="font-semibold text-slate-700 hover:text-amber-600 underline underline-offset-2 decoration-slate-300 hover:decoration-amber-400 transition-colors">investments</Link>
+            </p>
 
             {/* Trust bar */}
             <div className="flex items-center justify-center flex-wrap gap-x-5 gap-y-1.5 text-sm font-semibold text-slate-600">
