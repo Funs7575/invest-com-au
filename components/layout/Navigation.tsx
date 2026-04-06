@@ -8,6 +8,7 @@ import { SHOW_BEST_PICKS, SHOW_MATCH_LANGUAGE, PRIMARY_CTA_TEXT, PRIMARY_CTA_HRE
 import dynamic from "next/dynamic";
 
 const SearchOverlay = dynamic(() => import("@/components/SearchOverlay"), { ssr: false });
+const IntentPicker = dynamic(() => import("@/components/IntentPicker"), { ssr: false });
 
 // ─── Mega-menu data ───────────────────────────────────────────────────────────
 
@@ -281,6 +282,7 @@ const mobileSections = [
 export function Navigation() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [intentOpen, setIntentOpen] = useState(false);
   const pathname = usePathname();
 
   useEffect(() => { setMobileOpen(false); }, [pathname]);
@@ -624,15 +626,15 @@ export function Navigation() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </button>
-            <Link
-              href={PRIMARY_CTA_HREF}
-              className="bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-900 px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm hover:shadow-md active:scale-[0.97] flex items-center gap-2"
+            <button
+              onClick={() => setIntentOpen(true)}
+              className="bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-900 px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm hover:shadow-md active:scale-[0.97] flex items-center gap-2 cursor-pointer"
             >
-              {PRIMARY_CTA_TEXT}
+              What are you looking for?
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
-            </Link>
+            </button>
           </div>
 
           {/* Mobile buttons */}
@@ -646,12 +648,12 @@ export function Navigation() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </button>
-            <Link
-              href={PRIMARY_CTA_HREF}
-              className="bg-amber-500 text-slate-900 px-4 py-2 rounded-lg text-xs font-bold transition-all hover:bg-amber-600 min-h-[44px] flex items-center"
+            <button
+              onClick={() => setIntentOpen(true)}
+              className="bg-amber-500 text-slate-900 px-4 py-2 rounded-lg text-xs font-bold transition-all hover:bg-amber-600 min-h-[44px] flex items-center cursor-pointer"
             >
-              {PRIMARY_CTA_TEXT}
-            </Link>
+              Get Started
+            </button>
             <button
               onClick={() => setMobileOpen((v) => !v)}
               className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-700 rounded-lg hover:bg-slate-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
@@ -727,6 +729,8 @@ export function Navigation() {
 
       {/* Search overlay */}
       <SearchOverlay isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
+      {/* Intent picker */}
+      <IntentPicker isOpen={intentOpen} onClose={() => setIntentOpen(false)} />
     </>
   );
 }
