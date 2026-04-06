@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
 import { createClient } from "@/lib/supabase/server";
 import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
+import { SHOW_RATINGS, SHOW_EDITORIAL_BADGES, SHOW_ADVISOR_RATINGS, SHOW_ADVISOR_VERIFIED_BADGE, getRegisterWording, FACTUAL_COMPARISON_DISCLAIMER, ADVISOR_DIRECTORY_HEADING, ADVISOR_DIRECTORY_SUBTEXT } from "@/lib/compliance-config";
 
 export const metadata: Metadata = {
   title: `Best Managed Funds & Index Funds Australia (${CURRENT_YEAR})`,
@@ -115,10 +116,10 @@ export default async function ManagedFundsPage() {
               Compare Platforms &rarr;
             </Link>
             <Link
-              href="/quiz"
+              href="/compare"
               className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold text-sm px-5 py-2.5 rounded-lg border border-white/20 transition-colors"
             >
-              Take the Quiz (60s)
+              Filter Platforms
             </Link>
           </div>
         </div>
@@ -328,11 +329,11 @@ export default async function ManagedFundsPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <p className="font-bold text-slate-900">{broker.name}</p>
-                      {i === 0 && <span className="text-[0.6rem] font-bold bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full">TOP RATED</span>}
+                      {SHOW_EDITORIAL_BADGES && i === 0 && <span className="text-[0.6rem] font-bold bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded-full">TOP RATED</span>}
                       {broker.deal && <span className="text-[0.6rem] font-bold bg-green-100 text-green-700 px-1.5 py-0.5 rounded-full">DEAL</span>}
                     </div>
                     <div className="flex items-center gap-3 mt-1">
-                      {broker.rating && <span className="text-xs text-amber-600 font-semibold">&#9733; {broker.rating.toFixed(1)}</span>}
+                      {SHOW_RATINGS && broker.rating && <span className="text-xs text-amber-600 font-semibold">&#9733; {broker.rating.toFixed(1)}</span>}
                       {broker.asx_fee && <span className="text-xs text-slate-500">ASX: {broker.asx_fee}</span>}
                       {broker.min_deposit && <span className="text-xs text-slate-500">Min: {broker.min_deposit}</span>}
                     </div>
@@ -363,6 +364,9 @@ export default async function ManagedFundsPage() {
                 Compare all platforms &rarr;
               </Link>
             </div>
+            {!SHOW_EDITORIAL_BADGES && (
+              <p className="text-xs text-slate-400 mt-3">{FACTUAL_COMPARISON_DISCLAIMER}</p>
+            )}
           </div>
         </section>
       )}
@@ -372,8 +376,8 @@ export default async function ManagedFundsPage() {
         <section className="py-14 bg-white">
           <div className="container-custom max-w-4xl">
             <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Expert Advisors</p>
-            <h2 className="text-2xl font-extrabold text-slate-900 mb-2">Speak to a Verified Professional</h2>
-            <p className="text-sm text-slate-500 mb-6">ASIC-registered advisors verified by Invest.com.au. Free initial consultation.</p>
+            <h2 className="text-2xl font-extrabold text-slate-900 mb-2">{ADVISOR_DIRECTORY_HEADING}</h2>
+            <p className="text-sm text-slate-500 mb-6">{ADVISOR_DIRECTORY_SUBTEXT}</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {(advisors as { slug: string; name: string; firm_name: string | null; type: string; location_display: string | null; rating: number | null; review_count: number | null; photo_url: string | null; verified: boolean | null }[]).map((advisor) => (
                 <Link
@@ -391,12 +395,12 @@ export default async function ManagedFundsPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <p className="font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{advisor.name}</p>
-                      {advisor.verified && <span className="text-[0.6rem] font-bold bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full">VERIFIED</span>}
+                      {SHOW_ADVISOR_VERIFIED_BADGE && advisor.verified && <span className="text-[0.6rem] font-bold bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full">VERIFIED</span>}
                     </div>
                     {advisor.firm_name && <p className="text-xs text-slate-500">{advisor.firm_name}</p>}
                     <div className="flex items-center gap-2 mt-1">
-                      {advisor.rating && <span className="text-xs text-amber-600 font-semibold">&#9733; {advisor.rating.toFixed(1)}</span>}
-                      {advisor.review_count && advisor.review_count > 0 && <span className="text-xs text-slate-400">({advisor.review_count} reviews)</span>}
+                      {SHOW_ADVISOR_RATINGS && advisor.rating && <span className="text-xs text-amber-600 font-semibold">&#9733; {advisor.rating.toFixed(1)}</span>}
+                      {SHOW_ADVISOR_RATINGS && advisor.review_count && advisor.review_count > 0 && <span className="text-xs text-slate-400">({advisor.review_count} reviews)</span>}
                       {advisor.location_display && <span className="text-xs text-slate-400">{advisor.location_display}</span>}
                     </div>
                   </div>
@@ -404,7 +408,7 @@ export default async function ManagedFundsPage() {
               ))}
             </div>
             <div className="mt-4 text-center">
-              <Link href="/find-advisor" className="text-sm font-semibold text-amber-600 hover:text-amber-700">
+              <Link href="/advisors" className="text-sm font-semibold text-amber-600 hover:text-amber-700">
                 Browse all advisors &rarr;
               </Link>
             </div>
