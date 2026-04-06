@@ -301,52 +301,26 @@ export default function HomepageComparisonTable({
             return cidMobile ? `${link}${link.includes("?") ? "&" : "?"}cid=${cidMobile}` : link;
           })();
           return (
-          <div key={broker.id} className="py-2.5 first:pt-1">
-            {/* Row 1: Rank + Icon + Name + CTA */}
-            <div className="flex items-center gap-2">
-              <div className="w-5 text-center shrink-0">
-                {SHOW_EDITORIAL_BADGES && isTopRatedMobile ? (
-                  <span className="text-amber-500 text-sm">🏆</span>
-                ) : (
-                  <span className="text-xs font-bold text-slate-400">{i + 1}</span>
-                )}
-              </div>
+          <div key={broker.id} className="py-3 first:pt-1">
+            <div className="flex items-center gap-2.5">
+              <span className="w-5 text-center text-xs font-bold text-slate-400 shrink-0">{i + 1}</span>
               <BrokerLogo broker={broker} size="sm" />
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-1 flex-wrap">
-                  <a href={`/broker/${broker.slug}`} className="font-bold text-sm text-slate-900">
-                    {broker.name}
-                  </a>
-                  <PromoBadge broker={broker} />
-                  {isSponsored(broker) && <SponsorBadge broker={broker} />}
-                  {isCampaignMobile && !isSponsored(broker) && (
-                    <span className="text-[0.56rem] font-bold uppercase text-blue-700 bg-blue-50 px-1 py-px rounded">Sponsored</span>
-                  )}
-                  {SHOW_EDITORIAL_BADGES && !isSponsored(broker) && !isCampaignMobile && editorPicks[broker.slug] && (
-                    <span className="text-[0.56rem] font-bold uppercase text-amber-700 bg-amber-50 px-1 py-px rounded">
-                      {editorPicks[broker.slug]}
-                    </span>
-                  )}
+                <a href={`/broker/${broker.slug}`} className="font-bold text-sm text-slate-900 block truncate">{broker.name}</a>
+                <div className="flex items-center gap-2 mt-0.5 text-[0.7rem] text-slate-500">
+                  <span className="font-semibold text-slate-700">{broker.asx_fee || "N/A"} ASX</span>
+                  {broker.chess_sponsored && <span className="text-emerald-600 font-semibold">CHESS</span>}
+                  {(isSponsored(broker) || isCampaignMobile) && <span className="text-[0.56rem] font-bold uppercase text-blue-700 bg-blue-50 px-1 py-px rounded">Ad</span>}
                 </div>
               </div>
               <a
                 href={mobileLink}
                 target="_blank"
                 rel={AFFILIATE_REL}
-                className="shrink-0 px-3 py-1.5 min-h-[36px] inline-flex items-center bg-amber-500 text-white text-[0.65rem] font-bold rounded-lg active:scale-[0.97] transition-all"
+                className="shrink-0 px-3.5 py-2 min-h-[36px] inline-flex items-center bg-amber-500 text-slate-900 text-xs font-bold rounded-lg active:scale-[0.97] transition-all"
               >
                 Go →
               </a>
-            </div>
-            {/* Row 2: 2 key facts only — keep it scannable */}
-            <div className="flex items-center gap-2 mt-1 ml-[3.25rem] text-[0.7rem]">
-              <span className="text-slate-700 font-semibold">{broker.asx_fee || "N/A"} ASX</span>
-              {broker.chess_sponsored && (
-                <>
-                  <span className="text-slate-300">·</span>
-                  <span className="text-emerald-600 font-semibold">CHESS</span>
-                </>
-              )}
             </div>
           </div>
           );

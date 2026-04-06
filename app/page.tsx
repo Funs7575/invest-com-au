@@ -161,7 +161,7 @@ export default async function HomePage() {
 
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 leading-[1.1] mb-4 tracking-tight">
               Compare platforms, professionals{" "}
-              <span className="text-amber-500">&amp; investment pathways</span>
+              <span className="text-amber-500">&amp; ways to invest</span>
             </h1>
 
             <p className="text-base md:text-lg text-slate-600 mb-8 leading-relaxed max-w-2xl mx-auto">
@@ -347,8 +347,7 @@ export default async function HomePage() {
         <div className="container-custom">
           <div className="max-w-3xl mx-auto text-center mb-8">
             <h2 className="text-xl md:text-2xl font-extrabold text-slate-900">
-              Know exactly what you need?{" "}
-              <span className="text-slate-500 font-semibold">Browse by category.</span>
+              Browse by category
             </h2>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4 max-w-5xl mx-auto">

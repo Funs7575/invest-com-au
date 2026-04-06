@@ -119,8 +119,8 @@ export function SiteFooter() {
         </div>
 
         {/* Compliance Section */}
-        <div className="border-t border-slate-800 pt-8 mb-8 space-y-4">
-          <h4 className="text-white font-semibold text-xs">Important Information</h4>
+        <div className="border-t border-slate-800 pt-5 mb-6 space-y-3">
+          <h4 className="text-slate-400 font-medium text-[0.65rem] uppercase tracking-wider">Important Information</h4>
 
           {/* General Information Disclaimer — always visible */}
           <div className="p-3 bg-slate-800/40 border border-amber-100/10 rounded-xl">
