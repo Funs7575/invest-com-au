@@ -208,7 +208,6 @@ const mobileSections = [
   {
     title: "Compare Platforms",
     items: [
-      { name: SHOW_MATCH_LANGUAGE ? "Find My Match (60s)" : "Platform Filter", href: SHOW_MATCH_LANGUAGE ? "/quiz" : "/compare" },
       { name: "Compare All Platforms", href: "/compare" },
       { name: "Share Trading", href: "/compare?filter=shares" },
       { name: "ETFs", href: "/compare/etfs" },
