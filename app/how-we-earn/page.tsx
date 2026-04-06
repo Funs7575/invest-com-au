@@ -3,11 +3,11 @@ import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 
 export const metadata = {
   title: "How We Earn Money",
-  description: "Full transparency on how Invest.com.au makes money. Affiliate commissions explained, and what it means for our rankings and your experience.",
+  description: "Full transparency on how Invest.com.au makes money. Advertising and referral fees explained, and what it means for our comparison data.",
   alternates: { canonical: "/how-we-earn" },
   openGraph: {
     title: "How We Earn Money — Invest.com.au",
-    description: "Full transparency on how Invest.com.au makes money. Affiliate commissions explained, and what it means for our rankings.",
+    description: "Full transparency on how Invest.com.au makes money. Advertising and referral fees explained, and what it means for our comparison data.",
     images: [{ url: "/api/og?title=How+We+Earn+Money&subtitle=Full+Transparency+on+Affiliate+Revenue&type=default", width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" as const },
@@ -49,17 +49,21 @@ export default function HowWeEarnPage() {
             <h2 className="text-2xl font-extrabold text-brand mb-3">Our Revenue Model</h2>
             <div className="bg-slate-50 border border-slate-200 rounded-xl p-6 leading-relaxed text-slate-700 space-y-4">
               <p>
-                <strong>Platform affiliates:</strong> When you click a &quot;Visit Platform&quot; or &quot;Sign Up&quot; button and open an
-                account with that platform, we may receive a referral commission. This is our primary revenue source.
+                <strong>Platform referrals:</strong> Advertising and referral fees may be received from some listed businesses.
+                When you click a &quot;Visit Platform&quot; or &quot;Sign Up&quot; button and open an account, we may receive a referral commission.
               </p>
               <p>
-                <strong>Advisor enquiries:</strong> Our advisor directory lists verified financial professionals for free.
+                <strong>Advisor enquiries:</strong> Our advisor directory lists licensed financial professionals.
                 When you submit a consultation request through an advisor&apos;s profile, the advisor may pay a fee per enquiry.
                 You are never charged — the advisor pays for the lead.
               </p>
               <p>
-                Both revenue streams allow us to keep the site free, pay for hosting and data,
-                and continue to research and update our reviews and advisor profiles regularly.
+                <strong>Promoted placements:</strong> Some providers pay for increased visibility on our site.
+                Promoted placements are always clearly labelled and displayed separately from factual comparison data.
+              </p>
+              <p>
+                These revenue streams allow us to keep the site free, pay for hosting and data,
+                and continue to collect and verify factual comparison information.
               </p>
             </div>
           </section>
@@ -85,8 +89,8 @@ export default function HowWeEarnPage() {
               <div className="flex items-start gap-4 border border-emerald-200 bg-emerald-50 rounded-xl p-4">
                 <span className="text-emerald-600 font-bold text-xl shrink-0 mt-0.5">&#10003;</span>
                 <div>
-                  <h3 className="font-bold text-slate-900">Independent rankings</h3>
-                  <p className="text-sm text-slate-600 mt-0.5">We don&apos;t rank based on commission rates. Our methodology scores every broker on the same criteria, whether they pay us or not.</p>
+                  <h3 className="font-bold text-slate-900">Factual data you control</h3>
+                  <p className="text-sm text-slate-600 mt-0.5">Comparison tables display factual data that you can sort and filter yourself. We do not rank or recommend any platform as suitable for you.</p>
                 </div>
               </div>
             </div>
@@ -98,7 +102,7 @@ export default function HowWeEarnPage() {
             <div className="space-y-3">
               <div className="flex items-start gap-4 border border-red-200 bg-red-50 rounded-xl p-4">
                 <span className="text-red-500 font-bold text-xl shrink-0 mt-0.5">&#10007;</span>
-                <span className="text-slate-700">We don&apos;t accept payment to rank platforms or advisors higher</span>
+                <span className="text-slate-700">We don&apos;t rank or recommend platforms — directory entries are displayed separately from advertisements</span>
               </div>
               <div className="flex items-start gap-4 border border-red-200 bg-red-50 rounded-xl p-4">
                 <span className="text-red-500 font-bold text-xl shrink-0 mt-0.5">&#10007;</span>
@@ -106,7 +110,7 @@ export default function HowWeEarnPage() {
               </div>
               <div className="flex items-start gap-4 border border-red-200 bg-red-50 rounded-xl p-4">
                 <span className="text-red-500 font-bold text-xl shrink-0 mt-0.5">&#10007;</span>
-                <span className="text-slate-700">We don&apos;t write sponsored reviews disguised as editorial</span>
+                <span className="text-slate-700">We don&apos;t provide financial advice or assess suitability for any user</span>
               </div>
               <div className="flex items-start gap-4 border border-red-200 bg-red-50 rounded-xl p-4">
                 <span className="text-red-500 font-bold text-xl shrink-0 mt-0.5">&#10007;</span>
@@ -120,10 +124,9 @@ export default function HowWeEarnPage() {
             <div className="bg-slate-700/5 border border-slate-700/20 rounded-xl p-6">
               <h3 className="font-extrabold text-lg mb-2">Want to support us?</h3>
               <p className="text-sm text-slate-700 leading-relaxed">
-                If you find our site useful, using our affiliate links is the best way to support us
-                at no extra cost to you. But we&apos;d rather you pick the right broker than click our link.
-                Our goal is to help you make a smart decision — if that means choosing a broker we don&apos;t
-                earn from, that&apos;s a win for us too.
+                If you find our site useful, using our referral links is the best way to support us
+                at no extra cost to you. Our goal is to provide accurate factual data so you can
+                compare platforms on your own terms.
               </p>
             </div>
           </section>

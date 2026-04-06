@@ -39,9 +39,10 @@ export default function FSGPage() {
               <p className="text-sm font-bold text-amber-800 mb-1">We do not issue a Financial Services Guide</p>
               <p className="text-sm text-amber-700 leading-relaxed">
                 {COMPANY_LEGAL_NAME} (ACN {COMPANY_ACN}) does not hold an Australian
-                Financial Services Licence (AFSL) and does not provide personal financial
-                advice. We are an information and comparison service. Under the Corporations
-                Act 2001, we are not required to issue an FSG.
+                Financial Services Licence (AFSL) and does not provide financial product
+                advice. We operate as a factual comparison and directory service under the
+                s766B(6)/(7) factual information carve-outs of the Corporations Act 2001.
+                We are not required to issue an FSG.
               </p>
             </div>
           </div>
@@ -85,10 +86,10 @@ export default function FSGPage() {
               <li>Hold client money or assets</li>
             </ul>
             <p className="mt-2">
-              Our advisor matching tool and quiz match users with professionals based on
-              their general preferences. This is a referral service, not personal
-              financial advice. The matched advisors are independent professionals who
-              hold their own AFSL or operate under an AFSL.
+              Our directory allows users to browse and contact licensed professionals
+              directly. This is a directory and referral service, not financial product
+              advice. Listed advisors are independent professionals who hold their own
+              AFSL or operate under an AFSL.
             </p>
           </section>
 
@@ -126,15 +127,14 @@ export default function FSGPage() {
           <section>
             <h2 className="text-lg font-bold text-slate-900 mb-2">How We Are Remunerated</h2>
             <p>
-              We earn revenue through affiliate commissions from financial platforms,
-              per-enquiry referral fees from listed advisors and property developers,
-              and display advertising. We disclose our commercial relationships on every
-              page of the site and in our{" "}
+              Advertising and referral fees may be received from some listed businesses.
+              Promoted placements are clearly labelled. Directory entries and factual data
+              fields are displayed separately from advertisements. We disclose our
+              commercial relationships on every page of the site and in our{" "}
               <Link href="/how-we-earn" className="underline hover:text-slate-900">
                 How We Earn
               </Link>{" "}
-              page. Commercial arrangements do not influence our independent editorial
-              ratings or reviews.
+              page.
             </p>
           </section>
 

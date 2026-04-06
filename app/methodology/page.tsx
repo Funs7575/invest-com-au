@@ -2,16 +2,16 @@ import Link from "next/link";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 
 export const metadata = {
-  title: "How We Score Platforms — Our Methodology",
+  title: "Data Collection Methodology — What We Collect",
   description:
-    "Our transparent 6-factor weighted scoring system rates every Australian investing platform on fees, platform quality, safety, product range, UX, and extras.",
+    "How Invest.com.au collects, verifies, and presents factual comparison data for Australian investing platforms — fees, features, provider details, and data sources.",
   openGraph: {
-    title: `How We Score Platforms — ${SITE_NAME}`,
+    title: `Data Collection Methodology — ${SITE_NAME}`,
     description:
-      "Our transparent 6-factor weighted scoring system rates every Australian investing platform on fees, platform quality, safety, product range, UX, and extras.",
+      "How Invest.com.au collects, verifies, and presents factual comparison data for Australian investing platforms — fees, features, provider details, and data sources.",
     images: [
       {
-        url: "/api/og?title=How+We+Score+Platforms&subtitle=Our+Transparent+Rating+Methodology&type=default",
+        url: "/api/og?title=Data+Collection+Methodology&subtitle=What+Data+We+Collect&type=default",
         width: 1200,
         height: 630,
       },
@@ -21,12 +21,11 @@ export const metadata = {
   twitter: { card: "summary_large_image" as const },
 };
 
-const CATEGORIES = [
+const DATA_FIELDS = [
   {
     name: "Fees & Costs",
-    weight: "30%",
     description:
-      "ASX brokerage, US brokerage, FX markup, inactivity fees, and hidden charges.",
+      "ASX brokerage, US brokerage, FX markup, inactivity fees, account fees, and any other disclosed charges.",
     details: [
       { label: "Low", range: "$0\u2013$5 per trade" },
       { label: "Medium", range: "$5\u2013$15 per trade" },
@@ -35,37 +34,32 @@ const CATEGORIES = [
   },
   {
     name: "Platform & Features",
-    weight: "20%",
     description:
-      "Charting tools, mobile app quality, order types, research tools, and education.",
+      "Available order types, charting tools, mobile app availability, research tools, and educational resources.",
     details: null,
   },
   {
     name: "Safety & Regulation",
-    weight: "20%",
     description:
-      "CHESS sponsorship, ASIC regulation, client fund segregation, and compensation schemes.",
+      "CHESS sponsorship (shares held in your name on ASX subregister vs custodial model), ASIC regulation status, client fund segregation.",
     details: null,
   },
   {
     name: "Product Range",
-    weight: "15%",
     description:
-      "ASX shares, US shares, ETFs, options, crypto, and SMSF support.",
+      "ASX shares, US/international shares, ETFs, options, crypto, managed funds, and SMSF support availability.",
     details: null,
   },
   {
-    name: "User Experience",
-    weight: "10%",
+    name: "Account Details",
     description:
-      "Account opening speed, funding methods, and customer support quality.",
+      "Minimum deposit requirements, account opening process, supported funding methods, and customer support channels.",
     details: null,
   },
   {
-    name: "Value Extras",
-    weight: "5%",
+    name: "Additional Features",
     description:
-      "Fractional shares, DRP, auto-invest, and sign-up offers.",
+      "Fractional shares, dividend reinvestment plans (DRP), auto-invest options, and current sign-up offers.",
     details: null,
   },
 ];
@@ -97,32 +91,28 @@ export default function MethodologyPage() {
             {/* Hero */}
             <section className="mb-12">
               <h1 className="text-2xl md:text-4xl font-extrabold mb-4">
-                How We Score Brokers
+                What Data We Collect
               </h1>
               <p className="text-lg text-slate-600 leading-relaxed">
-                Every broker on {SITE_NAME} is rated using the same transparent,
-                weighted methodology. Six categories, clear weights, no
-                backroom deals. Here&apos;s exactly how we arrive at every score.
+                {SITE_NAME} is a factual comparison and directory service. We
+                collect and present publicly available data across six
+                categories so you can sort and filter based on your own
+                priorities. We do not rate, rank, or recommend any platform.
               </p>
             </section>
 
-            {/* Scoring Categories */}
+            {/* Data Fields Collected */}
             <section className="mb-12">
               <h2 className="text-2xl font-extrabold text-brand mb-6">
-                The 6 Scoring Categories
+                The 6 Data Categories
               </h2>
               <div className="space-y-4">
-                {CATEGORIES.map((cat) => (
+                {DATA_FIELDS.map((cat) => (
                   <div
                     key={cat.name}
                     className="border border-slate-200 rounded-xl p-5 bg-white"
                   >
                     <div className="flex items-start gap-4">
-                      <div className="shrink-0 w-14 h-14 rounded-lg bg-brand/10 flex items-center justify-center">
-                        <span className="text-brand font-extrabold text-sm">
-                          {cat.weight}
-                        </span>
-                      </div>
                       <div className="flex-1 min-w-0">
                         <h3 className="font-extrabold text-slate-900 text-lg">
                           {cat.name}
@@ -152,39 +142,45 @@ export default function MethodologyPage() {
               </div>
             </section>
 
-            {/* How We Calculate the Final Score */}
+            {/* Key Definitions */}
             <section className="mb-12">
               <h2 className="text-2xl font-extrabold text-brand mb-3">
-                How We Calculate the Final Score
+                Key Definitions
               </h2>
               <div className="bg-slate-50 border border-slate-200 rounded-xl p-6 leading-relaxed text-slate-700 space-y-4">
                 <p>
-                  Each category is scored individually out of 5. The final score
-                  is the <strong>weighted sum</strong> of all six categories,
-                  normalised to a <strong>5-point scale</strong>.
-                </p>
-                <p className="font-mono text-sm bg-white border border-slate-200 rounded-lg p-4 text-slate-800">
-                  Final Score = (Fees &times; 0.30) + (Platform &times; 0.20) +
-                  (Safety &times; 0.20) + (Range &times; 0.15) + (UX &times;
-                  0.10) + (Extras &times; 0.05)
+                  <strong>CHESS-sponsored:</strong> Shares are held in your name
+                  on the ASX CHESS subregister. You receive a unique Holder
+                  Identification Number (HIN) and retain direct legal ownership.
                 </p>
                 <p>
-                  A broker that scores perfectly across the board would receive a
-                  5.0. In practice, most brokers score between 3.0 and 4.5.
+                  <strong>Custodial model:</strong> The broker holds shares on
+                  your behalf under an omnibus account. You do not appear on the
+                  ASX subregister directly.
+                </p>
+                <p>
+                  <strong>Minimum deposit:</strong> The smallest amount a
+                  platform requires to open an account and begin trading.
+                </p>
+                <p>
+                  <strong>Promoted / Sponsored:</strong> A listing where the
+                  provider has paid for increased visibility. Promoted
+                  placements are always clearly labelled and displayed
+                  separately from factual comparison data.
                 </p>
               </div>
             </section>
 
-            {/* Editorial Independence */}
+            {/* How Users Can Sort and Filter */}
             <section className="mb-12">
               <h2 className="text-2xl font-extrabold text-brand mb-3">
-                Editorial Independence
+                How You Can Sort and Filter
               </h2>
               <div className="bg-brand text-white rounded-xl p-6 md:p-8 leading-relaxed space-y-4">
                 <p>
-                  Our scores are editorial. One reviewer scores each broker
-                  using the same rubric. We do not accept payment to change
-                  scores.
+                  Our comparison tables present factual data that you control.
+                  We do not rank or recommend platforms. You decide what matters
+                  most.
                 </p>
                 <ul className="space-y-2 text-slate-100">
                   <li className="flex items-start gap-3">
@@ -192,8 +188,8 @@ export default function MethodologyPage() {
                       &#10003;
                     </span>
                     <span>
-                      Every broker is reviewed with the same criteria, whether
-                      they have a commercial relationship with us or not.
+                      Sort by any column — fees, minimum deposit, product range,
+                      or account type.
                     </span>
                   </li>
                   <li className="flex items-start gap-3">
@@ -201,8 +197,17 @@ export default function MethodologyPage() {
                       &#10003;
                     </span>
                     <span>
-                      We earn money through affiliate links, but commissions
-                      never influence rankings.{" "}
+                      Filter by features such as CHESS sponsorship, crypto
+                      availability, or SMSF support.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <span className="text-amber font-bold shrink-0 mt-0.5">
+                      &#10003;
+                    </span>
+                    <span>
+                      Advertising and referral fees may be received from some
+                      listed businesses.{" "}
                       <Link
                         href="/how-we-earn"
                         className="text-amber hover:underline"
@@ -212,33 +217,34 @@ export default function MethodologyPage() {
                       .
                     </span>
                   </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-amber font-bold shrink-0 mt-0.5">
-                      &#10003;
-                    </span>
-                    <span>
-                      Scores are updated whenever a broker changes its fee
-                      structure or platform offering.
-                    </span>
-                  </li>
                 </ul>
               </div>
             </section>
 
-            {/* How We Verify Fee Data */}
+            {/* Data Sources and Verification */}
             <section className="mb-12">
               <h2 className="text-2xl font-extrabold text-brand mb-3">
-                How We Verify Fee Data
+                Data Sources and Verification
               </h2>
               <div className="bg-slate-50 border border-slate-200 rounded-xl p-6 leading-relaxed text-slate-700 space-y-4">
                 <p>
-                  Fee data is the single biggest input to our scoring model. We
-                  manually verify every fee figure against each broker&apos;s
-                  published pricing page and PDS documents.
+                  We collect factual data from the following sources:
+                </p>
+                <ul className="list-disc pl-5 space-y-1">
+                  <li>Provider websites and published pricing pages</li>
+                  <li>Product Disclosure Statements (PDS) and Target Market Determinations (TMD)</li>
+                  <li>ASIC Professional Registers and AFSL registers</li>
+                  <li>ASX public data (including CHESS participant lists)</li>
+                  <li>ATO and AUSTRAC public registers where relevant</li>
+                </ul>
+                <p>
+                  Fee data is manually verified on a <strong>monthly basis</strong> against
+                  each broker&apos;s published pricing page and PDS documents. When a
+                  provider notifies us of a fee change, we update within 5 business days.
                 </p>
                 <p>
-                  For the full details on our verification process, data
-                  sources, and update cadence, see our dedicated page.
+                  For the full details on our verification process and update cadence,
+                  see our dedicated page.
                 </p>
               </div>
             </section>

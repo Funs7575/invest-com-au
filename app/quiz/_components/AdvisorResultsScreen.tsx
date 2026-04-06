@@ -304,7 +304,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
           {loadingMatches ? (
             <div className="text-center py-16">
               <div className="w-12 h-12 border-4 border-amber-200 border-t-amber-500 rounded-full animate-spin mx-auto mb-4" />
-              <p className="text-sm text-slate-500 font-medium">Finding your best match…</p>
+              <p className="text-sm text-slate-500 font-medium">Filtering professionals…</p>
             </div>
           ) : (
             <>
@@ -389,7 +389,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
             <span className="text-xl leading-none mt-0.5">🌏</span>
             <div>
               <p className="text-sm font-semibold text-blue-900">
-                Matching you with international-specialist advisors
+                Filtering international-specialist professionals
               </p>
               <p className="text-xs text-blue-700 mt-0.5">
                 We&apos;ll connect you with Australian advisors who specifically work with clients from {countryLabel} — including FIRB-accredited buyers agents, cross-border tax accountants, and non-resident mortgage brokers.
@@ -408,8 +408,8 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
           </h1>
           <p className="text-sm text-slate-500">
             {isInternational
-              ? `We'll match you with an Australian ${advisorLabel} who specialises in international clients.`
-              : "Based on your answers, professional advice is the right move."}
+              ? `Browse Australian ${advisorLabel}s who work with international clients.`
+              : "Based on your answers, you may want to explore professional directories."}
           </p>
         </div>
 
@@ -419,10 +419,10 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
             <div className="w-7 h-7 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
               <Icon name="phone" size={14} className="text-amber-600" />
             </div>
-            <h2 className="text-sm font-bold text-slate-800">Get matched with a free call</h2>
+            <h2 className="text-sm font-bold text-slate-800">Request a free consultation call</h2>
           </div>
           <p className="text-xs text-slate-500 mb-4">
-            We&apos;ll match you with a verified {advisorLabel} and arrange a no-obligation initial call.
+            Browse our directory of licensed {advisorLabel}s or request a no-obligation initial call.
           </p>
           <div className="space-y-3">
             <div>
@@ -496,7 +496,7 @@ export default function AdvisorResultsScreen({ advisorType, quizAnswers, platfor
               <div className="w-7 h-7 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
                 <Icon name="users" size={14} className="text-amber-600" />
               </div>
-              <h3 className="text-sm font-bold text-slate-800">Your Recommended Team</h3>
+              <h3 className="text-sm font-bold text-slate-800">Related Professional Directories</h3>
             </div>
             <p className="text-xs text-slate-500 mb-3">
               These professionals complement your primary advisor:

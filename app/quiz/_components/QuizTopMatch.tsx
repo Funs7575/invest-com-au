@@ -51,7 +51,7 @@ export default function QuizTopMatch({ topMatch, answers, getMatchReasons }: Pro
         } as React.CSSProperties}
       >
         <Icon name="trophy" size={12} className="inline -mt-0.5 md:hidden" />
-        <Icon name="trophy" size={14} className="inline -mt-0.5 hidden md:inline" /> #1 on Your Shortlist
+        <Icon name="trophy" size={14} className="inline -mt-0.5 hidden md:inline" /> #1 Based on Your Filters
       </div>
       <div className="flex items-center gap-3 md:gap-4 mb-3 md:mb-4">
         <div
