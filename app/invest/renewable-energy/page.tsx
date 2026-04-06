@@ -61,7 +61,7 @@ export default function RenewableEnergyPage() {
           </p>
 
           <Link
-            href="/invest/renewable-energy/projects"
+            href="/invest/listings?vertical=energy"
             className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-base px-7 py-3.5 rounded-xl transition-colors shadow-lg"
           >
             Browse Energy Projects
@@ -182,7 +182,7 @@ export default function RenewableEnergyPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link
-                href="/invest/renewable-energy/projects"
+                href="/invest/listings?vertical=energy"
                 className="inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-6 py-3 rounded-xl text-sm"
               >
                 Browse Energy Projects

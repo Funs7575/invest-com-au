@@ -91,7 +91,7 @@ export default async function EnergyProjectDetailPage({
           <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-4" aria-label="Breadcrumb">
             <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
             <Icon name="chevron-right" size={12} className="text-slate-300" />
-            <Link href="/invest/renewable-energy/projects" className="hover:text-slate-900 transition-colors">Energy Projects</Link>
+            <Link href="/invest/listings?vertical=energy" className="hover:text-slate-900 transition-colors">Energy Projects</Link>
             <Icon name="chevron-right" size={12} className="text-slate-300" />
             <span className="text-slate-900 font-medium truncate max-w-[160px]">{l.title}</span>
           </nav>
@@ -217,7 +217,7 @@ export default async function EnergyProjectDetailPage({
       <section className="py-10 bg-white border-t border-slate-100">
         <div className="container-custom text-center">
           <Link
-            href="/invest/renewable-energy/projects"
+            href="/invest/listings?vertical=energy"
             className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-6 py-3 rounded-xl transition-colors"
           >
             Browse All Energy Projects
