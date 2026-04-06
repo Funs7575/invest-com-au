@@ -20,19 +20,19 @@ import MobileStickyAdvisorCta from "@/components/MobileStickyAdvisorCta";
 import { PRIMARY_CTA_TEXT, PRIMARY_CTA_HREF, SECONDARY_CTA_TEXT, SECONDARY_CTA_HREF, SHOW_MATCH_LANGUAGE, SHOW_EDITORIAL_BADGES, SHOW_RATINGS, PLATFORM_COMPARE_HEADING, PLATFORM_COMPARE_SUBTEXT, FACTUAL_COMPARISON_DISCLAIMER } from "@/lib/compliance-config";
 
 export const metadata = {
-  title: "Compare Investing Platforms & Browse Professional Directories — Invest.com.au",
+  title: "Compare Platforms, Browse Advisors & Explore Investments — Invest.com.au",
   description:
-    "Compare Australian investing platforms side-by-side and browse licensed mortgage brokers, buyer's agents & financial advisors. Independent, free, no obligation.",
+    "Australia's independent investing hub. Compare 73+ trading platforms, browse licensed professionals, and explore investment opportunities — businesses for sale, mining, farmland, commercial property & more. Always free.",
   openGraph: {
-    title: "Compare Investing Platforms & Browse Professional Directories — Invest.com.au",
-    description: "Compare Australian investing platforms side-by-side and browse licensed mortgage brokers, buyer's agents & financial advisors. Independent, free, no obligation.",
+    title: "Compare Platforms, Browse Advisors & Explore Investments — Invest.com.au",
+    description: "Australia's independent investing hub. Compare trading platforms, browse licensed professionals, and explore investment listings. Always free.",
     url: "/",
     images: [{ url: "/api/og", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image" as const,
-    title: "Compare Investing Platforms & Browse Professional Directories — Invest.com.au",
-    description: "Compare Australian investing platforms side-by-side and browse licensed professional directories. Independent, always free.",
+    title: "Compare Platforms, Browse Advisors & Explore Investments — Invest.com.au",
+    description: "Australia's independent investing hub. Compare platforms, browse directories, and explore investment listings. Always free.",
   },
   alternates: { canonical: "/" },
 };
@@ -44,7 +44,7 @@ export default async function HomePage() {
 
   const BROKER_LISTING_COLUMNS = "id, name, slug, color, icon, logo_url, rating, asx_fee, asx_fee_value, us_fee, us_fee_value, fx_rate, chess_sponsored, smsf_support, is_crypto, platform_type, deal, deal_text, deal_expiry, deal_terms, deal_verified_date, deal_category, editors_pick, tagline, cta_text, affiliate_url, sponsorship_tier, benefit_cta, updated_at, fee_last_checked, status, cpa_value, promoted_placement, affiliate_priority";
 
-  const [{ data: brokers }, { data: articles }, { count: advisorCount }, { data: featuredAdvisors }] = await Promise.all([
+  const [{ data: brokers }, { data: articles }, { count: advisorCount }, { data: featuredAdvisors }, { count: listingCount }] = await Promise.all([
     supabase
       .from("brokers")
       .select(BROKER_LISTING_COLUMNS)
@@ -69,6 +69,10 @@ export default async function HomePage() {
       .order("rating", { ascending: false })
       .order("review_count", { ascending: false })
       .limit(18),
+    supabase
+      .from("investment_listings")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "active"),
   ]);
 
   const dealBrokers = ((brokers as Broker[]) || []).filter((b) => b.deal).slice(0, 3);
@@ -154,26 +158,39 @@ export default async function HomePage() {
             {/* Updated badge */}
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-900 border border-slate-800 rounded-full text-xs font-semibold text-white mb-4">
               <span className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-pulse" />
-              Updated {updatedMonth} &middot; {brokerCount}+ platforms compared
+              Updated {updatedMonth} &middot; {brokerCount}+ platforms &middot; {listingCount || 55}+ investment listings
             </div>
 
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 leading-[1.1] mb-4 tracking-tight">
-              Compare Australian{" "}
-              <span className="text-amber-500">investment platforms</span>{" "}and directories
+              Australia&apos;s independent{" "}
+              <span className="text-amber-500">investing hub</span>
             </h1>
 
             <p className="text-base md:text-lg text-slate-600 mb-8 leading-relaxed max-w-2xl mx-auto">
-              Browse factual features, fees, and professional directories — independently published, always free.
+              Compare {brokerCount}+ platforms. Browse licensed professionals. Explore investment opportunities — businesses, mining, farmland, property &amp; more.
             </p>
 
-            {/* Primary CTA */}
-            <div className="mb-6">
+            {/* Three CTAs */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
               <Link
-                href={PRIMARY_CTA_HREF}
-                className="inline-flex items-center gap-2.5 px-10 py-4 bg-amber-500 hover:bg-amber-400 text-slate-900 font-extrabold text-lg rounded-xl transition-all shadow-xl shadow-amber-500/25 hover:-translate-y-0.5 active:scale-[0.97]"
+                href="/compare"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-900 font-extrabold text-sm rounded-xl transition-all shadow-lg shadow-amber-500/25 hover:-translate-y-0.5"
               >
-                {PRIMARY_CTA_TEXT}
-                <Icon name="arrow-right" size={20} />
+                Compare Platforms
+                <Icon name="arrow-right" size={16} />
+              </Link>
+              <Link
+                href="/advisors"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 border-2 border-slate-200 text-slate-700 font-bold text-sm rounded-xl hover:border-slate-300 hover:bg-slate-50 transition-all"
+              >
+                Browse Directories
+              </Link>
+              <Link
+                href="/invest/listings"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm rounded-xl transition-all"
+              >
+                <Icon name="layers" size={15} />
+                Explore Marketplace
               </Link>
             </div>
 
@@ -187,6 +204,11 @@ export default async function HomePage() {
               <span className="flex items-center gap-1.5">
                 <Icon name="shield-check" size={15} className="text-amber-500" />
                 Licensed professionals directory
+              </span>
+              <span className="text-slate-300 hidden sm:block" aria-hidden="true">|</span>
+              <span className="flex items-center gap-1.5">
+                <Icon name="layers" size={15} className="text-amber-500" />
+                {listingCount || 55}+ investment listings
               </span>
               <span className="text-slate-300 hidden sm:block" aria-hidden="true">|</span>
               <span className="flex items-center gap-1.5">
@@ -293,7 +315,8 @@ export default async function HomePage() {
                 Not sure which platform suits you?{" "}
                 <Link href={PRIMARY_CTA_HREF} className="text-amber-600 font-semibold hover:text-amber-700">Use the filter tool</Link>{" "}
                 or{" "}
-                <Link href="/advisors" className="text-amber-600 font-semibold hover:text-amber-700">browse professional directories</Link>{" "}
+                <Link href="/advisors" className="text-amber-600 font-semibold hover:text-amber-700">browse professional directories</Link>,{" "}
+                or <Link href="/invest/listings" className="text-amber-600 font-semibold hover:text-amber-700">explore investment listings</Link>{" "}
                 — free, no obligation.
               </p>
             </div>
@@ -310,7 +333,7 @@ export default async function HomePage() {
               <span className="text-slate-500 font-semibold">Browse by category.</span>
             </h2>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 max-w-4xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4 max-w-5xl mx-auto">
             <Link
               href="/compare"
               className="group flex flex-col items-start gap-3 p-4 md:p-5 bg-white border-2 border-slate-200 rounded-xl hover:border-amber-400 hover:shadow-md transition-all text-left"
@@ -324,15 +347,27 @@ export default async function HomePage() {
               </div>
             </Link>
             <Link
-              href="/find-advisor"
+              href="/advisors"
               className="group flex flex-col items-start gap-3 p-4 md:p-5 bg-white border-2 border-slate-200 rounded-xl hover:border-amber-400 hover:shadow-md transition-all text-left"
             >
               <div className="w-10 h-10 bg-violet-50 border border-violet-200 rounded-lg flex items-center justify-center group-hover:bg-violet-100 transition-colors">
                 <Icon name="users" size={18} className="text-violet-600" />
               </div>
               <div>
-                <p className="text-sm font-bold text-slate-900 leading-snug mb-0.5">Browse Advisors</p>
-                <p className="text-xs text-slate-500">Financial Planners, SMSF</p>
+                <p className="text-sm font-bold text-slate-900 leading-snug mb-0.5">Browse Directories</p>
+                <p className="text-xs text-slate-500">Planners, Brokers, SMSF</p>
+              </div>
+            </Link>
+            <Link
+              href="/invest/listings"
+              className="group flex flex-col items-start gap-3 p-4 md:p-5 bg-white border-2 border-slate-200 rounded-xl hover:border-amber-400 hover:shadow-md transition-all text-left"
+            >
+              <div className="w-10 h-10 bg-slate-800 border border-slate-700 rounded-lg flex items-center justify-center group-hover:bg-slate-700 transition-colors">
+                <Icon name="layers" size={18} className="text-white" />
+              </div>
+              <div>
+                <p className="text-sm font-bold text-slate-900 leading-snug mb-0.5">Investment Marketplace</p>
+                <p className="text-xs text-slate-500">Businesses, Mining, Farmland</p>
               </div>
             </Link>
             <Link
@@ -343,25 +378,74 @@ export default async function HomePage() {
                 <Icon name="building" size={18} className="text-emerald-600" />
               </div>
               <div>
-                <p className="text-sm font-bold text-slate-900 leading-snug mb-0.5">Property Experts</p>
-                <p className="text-xs text-slate-500">Buyer&apos;s Agents, Brokers</p>
+                <p className="text-sm font-bold text-slate-900 leading-snug mb-0.5">Property</p>
+                <p className="text-xs text-slate-500">Buyer&apos;s Agents, Loans</p>
               </div>
             </Link>
             <Link
-              href="/compare?type=savings"
+              href="/invest"
               className="group flex flex-col items-start gap-3 p-4 md:p-5 bg-white border-2 border-slate-200 rounded-xl hover:border-amber-400 hover:shadow-md transition-all text-left"
             >
               <div className="w-10 h-10 bg-sky-50 border border-sky-200 rounded-lg flex items-center justify-center group-hover:bg-sky-100 transition-colors">
-                <Icon name="piggy-bank" size={18} className="text-sky-600" />
+                <Icon name="compass" size={18} className="text-sky-600" />
               </div>
               <div>
-                <p className="text-sm font-bold text-slate-900 leading-snug mb-0.5">High-Yield Savings</p>
-                <p className="text-xs text-slate-500">Best Rates Today</p>
+                <p className="text-sm font-bold text-slate-900 leading-snug mb-0.5">Investment Guides</p>
+                <p className="text-xs text-slate-500">27 Verticals</p>
               </div>
             </Link>
           </div>
         </div>
       </section>
+
+      {/* ═══════ 3B. INVESTMENT MARKETPLACE ═══════ */}
+      <ScrollFadeIn>
+        <section className="py-10 md:py-14 bg-slate-50 border-b border-slate-100">
+          <div className="container-custom">
+            <div className="flex items-start justify-between gap-2 mb-6">
+              <div>
+                <p className="text-xs font-semibold text-amber-600 uppercase tracking-wide mb-1">Investment Marketplace</p>
+                <h2 className="text-xl md:text-2xl font-extrabold text-slate-900">Browse Investment Opportunities</h2>
+                <p className="text-sm text-slate-600 mt-1">Enquire about real assets — businesses for sale, mining projects, farmland, commercial property &amp; more.</p>
+              </div>
+              <Link href="/invest/listings" className="text-xs md:text-sm font-semibold text-amber-600 hover:text-amber-700 shrink-0 min-h-[44px] inline-flex items-center px-1">
+                View All &rarr;
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+              {[
+                { title: "Businesses", icon: "briefcase", href: "/invest/buy-business/listings", color: "bg-slate-800" },
+                { title: "Mining", icon: "layers", href: "/invest/mining/opportunities", color: "bg-amber-600" },
+                { title: "Farmland", icon: "leaf", href: "/invest/farmland/listings", color: "bg-green-600" },
+                { title: "Commercial Property", icon: "building", href: "/invest/commercial-property/listings", color: "bg-blue-600" },
+                { title: "Alternatives", icon: "gem", href: "/invest/alternatives/listings", color: "bg-rose-600" },
+                { title: "Infrastructure", icon: "git-branch", href: "/invest/infrastructure/listings", color: "bg-cyan-700" },
+              ].map((cat) => (
+                <Link
+                  key={cat.href}
+                  href={cat.href}
+                  className="group bg-white border border-slate-200 rounded-xl p-4 hover:border-amber-200 hover:shadow-md transition-all text-center"
+                >
+                  <div className={`w-10 h-10 ${cat.color} rounded-xl flex items-center justify-center mx-auto mb-3 shadow-sm`}>
+                    <Icon name={cat.icon} size={18} className="text-white" />
+                  </div>
+                  <p className="text-sm font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{cat.title}</p>
+                  <p className="text-xs text-amber-600 font-semibold mt-1">Browse &rarr;</p>
+                </Link>
+              ))}
+            </div>
+            <div className="text-center mt-6">
+              <Link
+                href="/invest/listings"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm rounded-xl transition-all"
+              >
+                <Icon name="layers" size={15} />
+                View All {listingCount || 55}+ Investment Listings &rarr;
+              </Link>
+            </div>
+          </div>
+        </section>
+      </ScrollFadeIn>
 
       {/* ═══════ 4. CURRENT PLATFORM DEALS ═══════ */}
       {(dealBrokers as Broker[])?.length >= 3 && (
