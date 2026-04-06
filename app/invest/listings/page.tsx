@@ -139,14 +139,14 @@ export default async function ListingsHubPage() {
       />
 
       {/* Hero */}
-      <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-14 md:py-20">
-        <div className="container-custom">
-          <nav className="flex items-center gap-1.5 text-xs text-slate-400 mb-6" aria-label="Breadcrumb">
-            <Link href="/" className="hover:text-white transition-colors">Home</Link>
-            <Icon name="chevron-right" size={12} className="text-slate-600" />
-            <Link href="/invest" className="hover:text-white transition-colors">Invest</Link>
-            <Icon name="chevron-right" size={12} className="text-slate-600" />
-            <span className="text-slate-300">Browse Listings</span>
+      <section className="relative bg-white border-b border-slate-100 overflow-hidden">
+        <div className="container-custom py-6 md:py-10 lg:py-12">
+          <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-4" aria-label="Breadcrumb">
+            <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
+            <Icon name="chevron-right" size={12} className="text-slate-300" />
+            <Link href="/invest" className="hover:text-slate-900 transition-colors">Invest</Link>
+            <Icon name="chevron-right" size={12} className="text-slate-300" />
+            <span className="text-slate-900 font-medium">Browse Listings</span>
           </nav>
 
           <div className="flex flex-wrap items-center gap-2 mb-4">
@@ -155,21 +155,20 @@ export default async function ListingsHubPage() {
             </span>
           </div>
 
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-4 max-w-3xl">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 leading-[1.1] mb-3 tracking-tight">
             Browse Australian Investment Opportunities
           </h1>
-          <p className="text-lg text-slate-300 leading-relaxed max-w-2xl mb-8">
+          <p className="text-sm md:text-base text-slate-600 leading-relaxed max-w-2xl mb-6">
             From businesses for sale to mining tenements, farmland, and SIV-complying funds — every investment opportunity in one place.
           </p>
 
           {/* FIRB CTA */}
           <Link
             href="/invest/listings?firb=true"
-            className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors"
+            className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm px-5 py-2.5 rounded-xl shadow-md hover:shadow-lg transition-all"
           >
             <Icon name="globe" size={15} />
-            Browse FIRB-Eligible Listings
-            <Icon name="arrow-right" size={14} />
+            Browse FIRB-Eligible Listings &rarr;
           </Link>
         </div>
       </section>
