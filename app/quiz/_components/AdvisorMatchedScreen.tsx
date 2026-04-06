@@ -82,7 +82,7 @@ export default function AdvisorMatchedScreen({
         <div>
           <p className="font-bold text-slate-800 mb-1">No advisors found in your area</p>
           <p className="text-sm text-slate-500 mb-4">
-            We couldn&apos;t find a verified match right now, but our team can help.
+            No professionals found in your area right now. You can browse the full directory.
           </p>
           <Link
             href="/find-advisor"
@@ -113,7 +113,7 @@ export default function AdvisorMatchedScreen({
         </div>
 
         <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-1.5">
-          We found a match!
+          Professional found
         </h2>
         <p className="text-sm text-slate-500 max-w-sm mx-auto">
           {userFirstName ? `${userFirstName}, review` : "Review"} this advisor and confirm if you&apos;d like to connect — it&apos;s 100% free.
@@ -126,7 +126,7 @@ export default function AdvisorMatchedScreen({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
             <span className="text-xs font-semibold text-amber-700">
-              Showing match {matchIndex + 1} of {allMatches.length}
+              Showing result {matchIndex + 1} of {allMatches.length}
             </span>
           </div>
         )}
@@ -138,7 +138,7 @@ export default function AdvisorMatchedScreen({
         <div className="bg-gradient-to-r from-amber-500 to-amber-400 px-4 py-2.5 flex items-center justify-between">
           <div className="flex items-center gap-2 text-white">
             <Icon name="zap" size={14} className="text-white" />
-            <span className="text-xs font-bold tracking-wide uppercase">Your Matched Advisor</span>
+            <span className="text-xs font-bold tracking-wide uppercase">Directory Result</span>
           </div>
           {currentMatch.verified && (
             <div className="flex items-center gap-1 bg-white/25 backdrop-blur-sm rounded-full px-2.5 py-0.5">

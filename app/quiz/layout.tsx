@@ -2,16 +2,16 @@ import type { Metadata } from "next";
 import { SITE_NAME, absoluteUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Investing Quiz — Find Your Best Platform or Advisor in 60 Seconds",
+  title: "Platform Filter Tool — Narrow Down Platforms & Advisors in 60 Seconds",
   description:
-    "Answer up to 6 quick questions and get personalised recommendations — the right investing platform, the right advisor, or both. Free and independent.",
+    "Answer up to 6 quick questions to filter Australian investment platforms and professional directories by your own criteria. Free and independent.",
   openGraph: {
-    title: "Investing Quiz — Find Your Best Platform or Advisor in 60 Seconds",
+    title: "Platform Filter Tool — Narrow Down Platforms & Advisors in 60 Seconds",
     description:
-      "Answer up to 6 quick questions for a personalised match — platforms, advisors, super, property, crypto and more. Free and independent.",
+      "Answer up to 6 quick questions to filter platforms and directories by your criteria — shares, super, property, crypto and more. Free and independent.",
     images: [
       {
-        url: "/api/og?title=Find+Your+Best+Match&subtitle=Platform+or+advisor+in+60+seconds&type=default",
+        url: "/api/og?title=Filter+Platforms&subtitle=Narrow+your+search+in+60+seconds&type=default",
         width: 1200,
         height: 630,
       },
@@ -19,9 +19,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Investing Quiz — Find Your Best Platform or Advisor in 60 Seconds",
+    title: "Platform Filter Tool — Narrow Down Platforms & Advisors in 60 Seconds",
     description:
-      "Answer up to 6 quick questions for a personalised match — platforms, advisors, super, property, crypto and more.",
+      "Answer up to 6 quick questions to filter platforms and directories by your criteria — shares, super, property, crypto and more.",
   },
   alternates: {
     canonical: "/quiz",
@@ -31,9 +31,9 @@ export const metadata: Metadata = {
 const howToJsonLd = {
   "@context": "https://schema.org",
   "@type": "HowTo",
-  name: "How to Find the Best Investing Platform or Advisor for You",
+  name: "How to Filter Investing Platforms and Advisors by Your Criteria",
   description:
-    "Answer up to 6 quick questions about your investing goals and situation to get a personalised platform or advisor recommendation in under 60 seconds.",
+    "Answer up to 6 quick questions about your investing goals and situation to filter platforms and directories based on your own preferences in under 60 seconds.",
   totalTime: "PT1M",
   tool: {
     "@type": "HowToTool",

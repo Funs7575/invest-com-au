@@ -24,7 +24,7 @@ export default function QuizEmailGate({ onSubmit, onSkip, status }: Props) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <h2 className="text-xl md:text-2xl font-extrabold mb-1">Unlock your personalised report</h2>
+          <h2 className="text-xl md:text-2xl font-extrabold mb-1">Save your filtered results</h2>
           <p className="text-sm text-slate-500">
             Get your shortlist + our free fee comparison guide emailed to you.
           </p>

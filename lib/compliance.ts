@@ -6,25 +6,21 @@
 
 /** Full advertiser disclosure — used in footer, dedicated disclosure sections */
 export const ADVERTISER_DISCLOSURE =
-  "Invest.com.au may receive compensation from partners featured on this site, including " +
-  "affiliate commissions from platforms and per-enquiry fees from listed advisors. " +
-  "This compensation may influence which products we write about and their placement, " +
-  'including whether they appear as "Promoted." However, our editorial ratings and reviews ' +
-  "are determined independently through our research methodology and are never influenced " +
-  "by commercial relationships. Our site does not include all available offers.";
+  "Advertising and referral fees may be received from some listed businesses. " +
+  "Promoted placements are clearly labelled. Directory entries and factual data fields " +
+  "are displayed separately from advertisements.";
 
 /** Short advertiser disclosure — used in header bar, inline near CTAs */
 export const ADVERTISER_DISCLOSURE_SHORT =
-  "We may be paid by partners on this site. This can influence placement but not our independent editorial ratings.";
+  "Advertising and referral fees may be received from some listed businesses. Promoted placements are clearly labelled.";
 
 /** Full general advice warning — used on every page with financial content */
 export const GENERAL_ADVICE_WARNING =
   "The information on Invest.com.au is general in nature and does not take into account " +
-  "your personal financial situation. It is not financial advice. Before making a decision, " +
-  "consider the Product Disclosure Statement (PDS) and Target Market Determination (TMD) " +
-  "for any financial product. Consider whether the information is appropriate to your needs, " +
-  "and where appropriate, seek professional advice from a financial adviser. " +
-  "Past performance is not a reliable indicator of future performance.";
+  "your personal financial situation, objectives, or needs. It is not financial advice. " +
+  "Before making any investment decision, consider the Product Disclosure Statement (PDS) " +
+  "and Target Market Determination (TMD) for any financial product, and seek independent " +
+  "advice from a licensed financial adviser if needed.";
 
 /** PDS/TMD consideration — short version for inline placement near CTAs */
 export const PDS_CONSIDERATION =
@@ -32,7 +28,7 @@ export const PDS_CONSIDERATION =
 
 /** Short risk warning — placed near every outbound CTA button */
 export const RISK_WARNING_CTA =
-  "General advice only \u2014 not a personal recommendation.";
+  "General information only \u2014 not financial advice or a personal recommendation.";
 
 /** Crypto-specific risk warning */
 export const CRYPTO_WARNING =
@@ -41,11 +37,11 @@ export const CRYPTO_WARNING =
 
 /** Sponsored placement disclosure — shown near sponsored broker badges */
 export const SPONSORED_DISCLOSURE =
-  "This broker has a paid placement on this page. Placement does not affect our independent editorial ratings or review methodology.";
+  "This broker has a paid placement on this page. Promoted placements are clearly labelled and displayed separately from factual data.";
 
 /** Short sponsored disclosure for inline use */
 export const SPONSORED_DISCLOSURE_SHORT =
-  "Paid placement. Ratings are independent.";
+  "Paid placement. Displayed separately from factual data.";
 
 /** Company registration details (from ASIC extract 20/02/2026) */
 export const COMPANY_LEGAL_NAME = "Invest.com.au Pty Ltd";
@@ -62,7 +58,7 @@ export const REGULATORY_NOTE =
 /** Course affiliate disclosure — shown on course pages near broker CTAs */
 export const COURSE_AFFILIATE_DISCLOSURE =
   "This course contains links to broker platforms. We may earn a commission if you sign up through these links. " +
-  "This does not affect our educational content or recommendations.";
+  "This does not affect our educational content.";
 
 // ═══════════════════════════════════════════════════════════════════
 // AUSTRALIAN-SPECIFIC COMPLIANCE (ASIC / AFSL / AFCA / RG 234/256)
@@ -140,8 +136,8 @@ export const NEGATIVE_BALANCE_PROTECTION =
  */
 export const RG234_COMPLIANCE_NOTE =
   "This website complies with ASIC Regulatory Guide 234 (Advertising of financial products and " +
-  "advice services). All comparisons are based on publicly available information from product " +
-  "issuers. Ratings reflect our independent editorial methodology and are not endorsed by ASIC. " +
+  "advice services). All comparisons are based on publicly available factual information from " +
+  "product issuers and public registers. No ratings or recommendations are provided. " +
   "Past performance information, where shown, is not a reliable indicator of future performance.";
 
 /**
@@ -156,18 +152,19 @@ export const EDITORIAL_ACCURACY_COMMITMENT =
 
 /**
  * AFSL status disclosure — ASIC requires clarity about licensing status.
- * Invest.com.au operates as an information/comparison service under the
- * general advice exemption (s911A(2)(eb) Corporations Act 2001) and does
- * not hold an AFSL. This must be clearly disclosed.
+ * Invest.com.au operates as a factual information and comparison service
+ * under the s766B(6)/(7) factual information carve-outs (Corporations
+ * Act 2001) and does not hold an AFSL. This must be clearly disclosed.
  */
 export const AFSL_STATUS_DISCLOSURE =
   `${COMPANY_LEGAL_NAME} (ACN ${COMPANY_ACN}, ABN ${COMPANY_ABN}) does not hold an Australian ` +
-  "Financial Services Licence (AFSL). We operate as a financial comparison and information " +
-  "service, providing general information only. We do not provide personal financial advice, " +
-  "deal in financial products, or make financial product recommendations. " +
-  "Our revenue comes from affiliate commissions and advertising fees paid by the platforms " +
-  "and professionals listed on our site. These commercial relationships do not influence " +
-  "our independent editorial ratings or review methodology.";
+  "Financial Services Licence (AFSL) and does not provide financial product advice. " +
+  "We operate as a factual comparison and directory service under the s766B(6)/(7) " +
+  "factual information carve-outs of the Corporations Act 2001. We do not assess " +
+  "suitability, provide personal financial advice, deal in financial products, or " +
+  "recommend one provider as suitable for a particular user. " +
+  "Our revenue comes from advertising and referral fees paid by some listed businesses. " +
+  "Promoted placements are clearly labelled and displayed separately from factual data.";
 
 /**
  * Crypto-specific Australian regulatory context.
@@ -234,7 +231,7 @@ export const BUYER_AGENT_DISCLOSURE =
   "Invest.com.au is not a licensed real estate agent. Buyer's agents listed on this site are " +
   "independent professionals. Verify that your chosen agent holds a valid real estate licence " +
   "in the relevant state or territory. We may receive a referral fee from listed agents. " +
-  "This does not affect our independent ratings.";
+  "Promoted placements are clearly labelled.";
 
 /**
  * Loan comparison disclaimer.

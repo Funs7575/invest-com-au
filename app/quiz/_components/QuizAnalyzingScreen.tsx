@@ -7,17 +7,17 @@ interface Props {
 }
 
 const DIY_MESSAGES = [
-  "Scoring 15+ platforms against your answers…",
-  "Checking fees, CHESS status & broker ratings…",
+  "Filtering 15+ platforms by your criteria…",
+  "Checking fees, CHESS status & broker details…",
   "Applying your investment amount and goals…",
-  "Ranking your personalised shortlist…",
+  "Building your filtered shortlist…",
 ];
 
 const ADVISOR_MESSAGES = [
-  "Identifying the right specialist for your goals…",
-  "Checking verified advisors near you…",
-  "Reviewing specialties that match your situation…",
-  "Preparing your personalised match…",
+  "Filtering directories by your criteria…",
+  "Checking licensed professionals near you…",
+  "Reviewing specialties relevant to your situation…",
+  "Preparing your filtered results…",
 ];
 
 export default function QuizAnalyzingScreen({ track = "diy" }: Props) {
@@ -76,7 +76,7 @@ export default function QuizAnalyzingScreen({ track = "diy" }: Props) {
           </div>
 
           <h2 className="text-lg md:text-2xl font-extrabold mb-2 reveal-text-in text-slate-900">
-            {track === "advisor" ? "Finding your match…" : "Analysing your answers…"}
+            {track === "advisor" ? "Filtering directories…" : "Filtering platforms…"}
           </h2>
 
           {/* Cycling contextual message */}
