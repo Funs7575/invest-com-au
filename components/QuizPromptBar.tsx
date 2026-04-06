@@ -88,10 +88,10 @@ export default function QuizPromptBar() {
               </Link>
             )}
             <Link
-              href="/quiz"
+              href="/compare"
               className="flex-1 text-center py-2.5 bg-amber-500 text-white text-[0.75rem] font-bold rounded-lg hover:bg-amber-600 active:bg-amber-700 active:scale-[0.98] transition-all min-h-[40px] flex items-center justify-center gap-1.5"
             >
-              Find My Match →
+              Compare Platforms →
             </Link>
           </div>
         </div>
@@ -104,16 +104,16 @@ export default function QuizPromptBar() {
             <p className="text-sm text-slate-600">
               Need help?{" "}
               <strong className="text-slate-900">
-                Find your platform or advisor
+                Compare platforms and browse directories
               </strong>{" "}
-              in 60 seconds.
+              — free, no obligation.
             </p>
             <div className="flex items-center gap-2 shrink-0">
               <Link
-                href="/quiz"
+                href="/compare"
                 className="px-5 py-2.5 bg-amber-500 text-white text-sm font-bold rounded-lg hover:bg-amber-600 active:bg-amber-700 active:scale-[0.97] transition-all"
               >
-                Find My Match &rarr;
+                Compare Platforms &rarr;
               </Link>
               <button
                 onClick={handleDesktopDismiss}

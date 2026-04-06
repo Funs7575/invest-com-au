@@ -7,8 +7,6 @@ import type { Article } from "@/lib/types";
 import HomepageComparisonTable from "@/components/HomepageComparisonTable";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
 import LeadMagnet from "@/components/LeadMagnet";
-import DealCard from "@/components/DealCard";
-import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import Icon from "@/components/Icon";
 import BrokerLogo from "@/components/BrokerLogo";
 import { AFFILIATE_REL } from "@/lib/tracking";
@@ -162,37 +160,34 @@ export default async function HomePage() {
             </div>
 
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 leading-[1.1] mb-4 tracking-tight">
-              Australia&apos;s independent{" "}
-              <span className="text-amber-500">investing hub</span>
+              Australia&apos;s comparison and directory hub{" "}
+              <span className="text-amber-500">for investors</span>
             </h1>
 
             <p className="text-base md:text-lg text-slate-600 mb-8 leading-relaxed max-w-2xl mx-auto">
-              Compare {brokerCount}+ platforms. Browse licensed professionals. Explore investment opportunities — businesses, mining, farmland, property &amp; more.
+              Compare platforms, browse professionals, and explore investment options — always free, always independent.
             </p>
 
-            {/* Three CTAs */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
+            {/* Primary CTA */}
+            <div className="mb-5">
               <Link
                 href="/compare"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-900 font-extrabold text-sm rounded-xl transition-all shadow-lg shadow-amber-500/25 hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center gap-2.5 px-10 py-4 bg-amber-500 hover:bg-amber-400 text-slate-900 font-extrabold text-base rounded-xl transition-all shadow-lg shadow-amber-500/25 hover:-translate-y-0.5 w-full sm:w-auto"
               >
                 Compare Platforms
-                <Icon name="arrow-right" size={16} />
-              </Link>
-              <Link
-                href="/advisors"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 border-2 border-slate-200 text-slate-700 font-bold text-sm rounded-xl hover:border-slate-300 hover:bg-slate-50 transition-all"
-              >
-                Browse Directories
-              </Link>
-              <Link
-                href="/invest/listings"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm rounded-xl transition-all"
-              >
-                <Icon name="layers" size={15} />
-                Explore Marketplace
+                <Icon name="arrow-right" size={18} />
               </Link>
             </div>
+
+            {/* Secondary links */}
+            <p className="text-sm text-slate-500 mb-6">
+              Or browse{" "}
+              <Link href="/advisors" className="font-semibold text-slate-700 hover:text-amber-600 underline underline-offset-2 decoration-slate-300 hover:decoration-amber-400 transition-colors">directories</Link>
+              {" · "}
+              <Link href="/invest/listings" className="font-semibold text-slate-700 hover:text-amber-600 underline underline-offset-2 decoration-slate-300 hover:decoration-amber-400 transition-colors">marketplace</Link>
+              {" · "}
+              <Link href="/invest" className="font-semibold text-slate-700 hover:text-amber-600 underline underline-offset-2 decoration-slate-300 hover:decoration-amber-400 transition-colors">investment guides</Link>
+            </p>
 
             {/* Trust bar */}
             <div className="flex items-center justify-center flex-wrap gap-x-5 gap-y-1.5 text-sm font-semibold text-slate-600">
@@ -238,6 +233,28 @@ export default async function HomePage() {
       </section>
 
 
+      {/* ═══════ TRUST STRIP ═══════ */}
+      <section className="bg-slate-900 text-white py-3">
+        <div className="container-custom">
+          <div className="flex items-center justify-center flex-wrap gap-x-6 gap-y-2 text-xs font-medium">
+            <span className="flex items-center gap-1.5">
+              <Icon name="shield-check" size={14} className="text-amber-400" />
+              Independent comparison platform
+            </span>
+            <span className="text-slate-600 hidden sm:block" aria-hidden="true">|</span>
+            <span className="flex items-center gap-1.5">
+              <Icon name="link" size={14} className="text-amber-400" />
+              Public-register-linked directories
+            </span>
+            <span className="text-slate-600 hidden sm:block" aria-hidden="true">|</span>
+            <span className="flex items-center gap-1.5">
+              <Icon name="eye" size={14} className="text-amber-400" />
+              Editorially separate from promotions
+            </span>
+          </div>
+        </div>
+      </section>
+
       {/* ═══════ 1E. MONEY ROW — top affiliate promos ═══════ */}
       {dealBrokers.length > 0 && (
         <section className="bg-white border-b border-slate-200 py-3 overflow-x-auto">
@@ -257,7 +274,7 @@ export default async function HomePage() {
                     className="shrink-0 flex items-center gap-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-amber-400/60 rounded-lg px-3 py-2 transition-all group"
                   >
                     <span className="text-[0.55rem] font-bold uppercase tracking-wider bg-amber-500 text-white px-1.5 py-0.5 rounded-full shrink-0">
-                      Verified Promo
+                      Promotion
                     </span>
                     <BrokerLogo broker={broker} size="xs" />
                     <span className="text-xs font-semibold text-slate-700 group-hover:text-slate-900 whitespace-nowrap max-w-[180px] truncate">
@@ -405,8 +422,8 @@ export default async function HomePage() {
             <div className="flex items-start justify-between gap-2 mb-6">
               <div>
                 <p className="text-xs font-semibold text-amber-600 uppercase tracking-wide mb-1">Investment Marketplace</p>
-                <h2 className="text-xl md:text-2xl font-extrabold text-slate-900">Browse Investment Opportunities</h2>
-                <p className="text-sm text-slate-600 mt-1">Enquire about real assets — businesses for sale, mining projects, farmland, commercial property &amp; more.</p>
+                <h2 className="text-xl md:text-2xl font-extrabold text-slate-900">Explore Investment Categories</h2>
+                <p className="text-sm text-slate-600 mt-1">Enquire about real assets across these categories — businesses, mining, farmland, property and more.</p>
               </div>
               <Link href="/invest/listings" className="text-xs md:text-sm font-semibold text-amber-600 hover:text-amber-700 shrink-0 min-h-[44px] inline-flex items-center px-1">
                 View All &rarr;
@@ -449,71 +466,62 @@ export default async function HomePage() {
         </section>
       </ScrollFadeIn>
 
-      {/* ═══════ 4. CURRENT PLATFORM DEALS ═══════ */}
-      {(dealBrokers as Broker[])?.length >= 3 && (
-        <ScrollFadeIn>
-          <section className="py-6 md:py-10 bg-gradient-to-b from-amber-50/60 to-white border-y border-amber-100">
-            <div className="container-custom">
-              <div className="flex items-start justify-between gap-2 mb-4 md:mb-6">
-                <div>
-                  <h2 className="text-lg md:text-2xl font-bold text-slate-900">Current Platform Deals</h2>
-                  <p className="text-xs md:text-sm text-slate-600 mt-0.5">Verified promotions from Australian trading platforms — {updatedMonth}</p>
-                </div>
-                <Link href="/deals" className="text-xs md:text-sm font-semibold text-amber-600 hover:text-amber-700 shrink-0 min-h-[44px] inline-flex items-center px-1">
-                  View All &rarr;
-                </Link>
+      {/* ═══════ 7. TOOLS & CALCULATORS ═══════ */}
+      <ScrollFadeIn>
+        <section className="py-6 md:py-10 bg-white border-t border-slate-100">
+          <div className="container-custom">
+            <div className="flex items-center justify-between mb-4 md:mb-6">
+              <div>
+                <p className="text-xs text-amber-600 uppercase tracking-widest font-bold mb-1">Free tools</p>
+                <h2 className="text-xl md:text-2xl font-bold text-slate-900">Investing Tools &amp; Calculators</h2>
               </div>
-              <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {(dealBrokers as Broker[]).map((broker) => (
-                  <DealCard key={broker.id} broker={broker} />
-                ))}
-              </div>
-              <div className="md:hidden space-y-2">
-                {(dealBrokers as Broker[]).map((broker) => {
-                  const expiryDate = broker.deal_expiry ? new Date(broker.deal_expiry) : null;
-                  const daysLeft = expiryDate ? Math.max(0, Math.ceil((expiryDate.getTime() - Date.now()) / 86400000)) : null;
-                  const isUrgent = daysLeft !== null && daysLeft <= 7;
-                  const affiliateLink = `/go/${broker.slug}`;
-                  return (
-                    <div key={broker.id} className="border border-slate-200 rounded-xl p-3 bg-white">
-                      <div className="flex items-center gap-2 mb-2">
-                        <BrokerLogo broker={broker} size="sm" />
-                        <div className="flex-1 min-w-0">
-                          <span className="font-bold text-sm text-slate-900 truncate block">{broker.name}</span>
-                          <span className="text-xs text-slate-400">{broker.rating}/5</span>
-                        </div>
-                        <a href={affiliateLink} target="_blank" rel={AFFILIATE_REL} className="shrink-0 px-3 py-1.5 min-h-[44px] flex items-center bg-amber-500 text-white text-xs font-bold rounded-lg active:scale-[0.98] transition-all">
-                          Claim &rarr;
-                        </a>
-                      </div>
-                      <div className="bg-amber-50 rounded-lg px-2.5 py-2 flex items-start gap-1.5">
-                        <Icon name="flame" size={12} className="text-amber-500 shrink-0 mt-0.5" />
-                        <p className="text-xs text-slate-700 font-medium leading-snug line-clamp-2 flex-1">{broker.deal_text}</p>
-                        {isUrgent && daysLeft !== null && (
-                          <span className="shrink-0 text-xs font-bold px-1.5 py-0.5 rounded-full bg-red-100 text-red-600 animate-pulse whitespace-nowrap">
-                            {daysLeft}d left
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-              <div className="mt-3 md:mt-4">
-                <CompactDisclaimerLine />
-              </div>
+              <Link href="/calculators" className="text-xs md:text-sm font-semibold text-slate-500 hover:text-amber-600 transition-colors shrink-0">
+                View All Calculators &rarr;
+              </Link>
             </div>
-          </section>
-        </ScrollFadeIn>
-      )}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
+              {[
+                { href: "/portfolio-calculator", icon: "calculator", color: "from-amber-500 to-amber-400", shadow: "shadow-amber-500/20", title: "Portfolio Calculator", desc: "See exact fees at every platform" },
+                { href: "/switching-calculator", icon: "arrow-right-left", color: "from-slate-700 to-slate-600", shadow: "shadow-slate-500/15", title: "Switching Calculator", desc: "How much are you overpaying?" },
+                { href: "/savings-calculator", icon: "piggy-bank", color: "from-amber-600 to-amber-500", shadow: "shadow-amber-500/20", title: "Savings Calculator", desc: "Are you earning enough?" },
+                { href: "/mortgage-calculator", icon: "home", color: "from-slate-700 to-slate-600", shadow: "shadow-slate-500/15", title: "Borrowing Power", desc: "How much can you borrow?" },
+              ].map((tool) => (
+                <Link key={tool.href} href={tool.href} className="bg-white border border-slate-200 rounded-xl p-3 md:p-5 hover:shadow-md hover:border-slate-300 transition-all group">
+                  <div className={`w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br ${tool.color} rounded-xl flex items-center justify-center mb-2 md:mb-3 shadow-md ${tool.shadow}`}>
+                    <Icon name={tool.icon} size={18} className="text-white" />
+                  </div>
+                  <h3 className="text-xs md:text-sm font-bold text-slate-900 mb-0.5 group-hover:text-slate-700">{tool.title}</h3>
+                  <p className="text-xs text-slate-600">{tool.desc}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      </ScrollFadeIn>
 
-      {/* ═══════ 5. ADVISOR DIRECTORY ═══════ */}
+      {/* ═══════ 8. ADVISOR DIRECTORY ═══════ */}
+      <div className="text-center mb-6 pt-6 bg-slate-50">
+        <p className="text-xs text-slate-500 max-w-lg mx-auto">
+          Browse directory listings and public register details. Always verify provider suitability for your own circumstances.
+        </p>
+      </div>
       <AdvisorDirectory />
 
-      {/* ═══════ 6. ARTICLES & GUIDES ═══════ */}
+      {/* ═══════ 9. EMAIL CAPTURE ═══════ */}
+      <ScrollFadeIn>
+        <section className="py-6 md:py-10 bg-white border-t border-slate-100">
+          <div className="container-custom">
+            <div className="max-w-xl mx-auto">
+              <LeadMagnet />
+            </div>
+          </div>
+        </section>
+      </ScrollFadeIn>
+
+      {/* ═══════ 10. ARTICLES & GUIDES ═══════ */}
       {(articles as Article[])?.length > 0 && (
         <ScrollFadeIn>
-          <section className="py-6 md:py-10 bg-white">
+          <section className="py-6 md:py-10 bg-slate-50 border-t border-slate-200">
             <div className="container-custom">
               <div className="flex items-start justify-between gap-2 mb-4 md:mb-6">
                 <div>
@@ -585,50 +593,6 @@ export default async function HomePage() {
           </section>
         </ScrollFadeIn>
       )}
-
-      {/* ═══════ 8. TOOLS & CALCULATORS ═══════ */}
-      <ScrollFadeIn>
-        <section className="py-6 md:py-10 bg-slate-50 border-t border-slate-100">
-          <div className="container-custom">
-            <div className="flex items-center justify-between mb-4 md:mb-6">
-              <div>
-                <p className="text-xs text-amber-600 uppercase tracking-widest font-bold mb-1">Free tools</p>
-                <h2 className="text-xl md:text-2xl font-bold text-slate-900">Investing Tools &amp; Calculators</h2>
-              </div>
-              <Link href="/calculators" className="text-xs md:text-sm font-semibold text-slate-500 hover:text-amber-600 transition-colors shrink-0">
-                View All Calculators &rarr;
-              </Link>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3">
-              {[
-                { href: "/portfolio-calculator", icon: "calculator", color: "from-amber-500 to-amber-400", shadow: "shadow-amber-500/20", title: "Portfolio Calculator", desc: "See exact fees at every platform" },
-                { href: "/switching-calculator", icon: "arrow-right-left", color: "from-slate-700 to-slate-600", shadow: "shadow-slate-500/15", title: "Switching Calculator", desc: "How much are you overpaying?" },
-                { href: "/savings-calculator", icon: "piggy-bank", color: "from-amber-600 to-amber-500", shadow: "shadow-amber-500/20", title: "Savings Calculator", desc: "Are you earning enough?" },
-                { href: "/mortgage-calculator", icon: "home", color: "from-slate-700 to-slate-600", shadow: "shadow-slate-500/15", title: "Borrowing Power", desc: "How much can you borrow?" },
-              ].map((tool) => (
-                <Link key={tool.href} href={tool.href} className="bg-white border border-slate-200 rounded-xl p-3 md:p-5 hover:shadow-md hover:border-slate-300 transition-all group">
-                  <div className={`w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br ${tool.color} rounded-xl flex items-center justify-center mb-2 md:mb-3 shadow-md ${tool.shadow}`}>
-                    <Icon name={tool.icon} size={18} className="text-white" />
-                  </div>
-                  <h3 className="text-xs md:text-sm font-bold text-slate-900 mb-0.5 group-hover:text-slate-700">{tool.title}</h3>
-                  <p className="text-xs text-slate-600">{tool.desc}</p>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-      </ScrollFadeIn>
-
-      {/* ═══════ 9. EMAIL CAPTURE ═══════ */}
-      <ScrollFadeIn>
-        <section className="py-6 md:py-10 bg-white border-t border-slate-100">
-          <div className="container-custom">
-            <div className="max-w-xl mx-auto">
-              <LeadMagnet />
-            </div>
-          </div>
-        </section>
-      </ScrollFadeIn>
 
       {/* ═══════ MOBILE STICKY CTA (item 68) ═══════ */}
       <MobileStickyAdvisorCta />
