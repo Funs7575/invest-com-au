@@ -46,9 +46,9 @@ export default function PrivateEquityPage() {
         <div className="container-custom">
           <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-6" aria-label="Breadcrumb">
             <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
-            <span className="text-slate-300">/</span>
+            <span className="text-slate-900 font-medium">/</span>
             <Link href="/invest" className="hover:text-slate-900 transition-colors">Invest</Link>
-            <span className="text-slate-300">/</span>
+            <span className="text-slate-900 font-medium">/</span>
             <span className="text-slate-900 font-medium">Private Equity &amp; Hedge Funds</span>
           </nav>
 
