@@ -23,10 +23,13 @@ export function SiteFooter() {
     <footer className="bg-slate-900 text-slate-300">
       {/* Main grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-8">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 md:gap-8 mb-12">
           {/* Column 0 — Invest */}
-          <div>
-            <h3 className="text-white font-bold text-sm mb-4">Invest</h3>
+          <details className="group" open>
+            <summary className="flex items-center justify-between cursor-pointer md:cursor-default list-none">
+              <h3 className="text-white font-bold text-sm">Invest</h3>
+              <svg className="w-4 h-4 text-slate-500 group-open:rotate-180 transition-transform md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+            </summary>
             <ul className="space-y-2.5 text-sm">
               {[
                 { label: "All Verticals", href: "/invest" },
@@ -47,11 +50,14 @@ export function SiteFooter() {
                 </li>
               ))}
             </ul>
-          </div>
+          </details>
 
           {/* Column 1 — Platforms */}
-          <div>
-            <h3 className="text-white font-bold text-sm mb-4">Platforms</h3>
+          <details className="group" open>
+            <summary className="flex items-center justify-between cursor-pointer md:cursor-default list-none">
+              <h3 className="text-white font-bold text-sm">Platforms</h3>
+              <svg className="w-4 h-4 text-slate-500 group-open:rotate-180 transition-transform md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+            </summary>
             <ul className="space-y-2.5 text-sm">
               {[
                 { label: "Compare All", href: "/compare" },
@@ -71,11 +77,14 @@ export function SiteFooter() {
                 </li>
               ))}
             </ul>
-          </div>
+          </details>
 
           {/* Column 2 — Advisors */}
-          <div>
-            <h3 className="text-white font-bold text-sm mb-4">Advisors</h3>
+          <details className="group" open>
+            <summary className="flex items-center justify-between cursor-pointer md:cursor-default list-none">
+              <h3 className="text-white font-bold text-sm">Advisors</h3>
+              <svg className="w-4 h-4 text-slate-500 group-open:rotate-180 transition-transform md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+            </summary>
             <ul className="space-y-2.5 text-sm">
               {[
                 { label: "Find an Advisor", href: "/find-advisor" },
@@ -94,11 +103,14 @@ export function SiteFooter() {
                 </li>
               ))}
             </ul>
-          </div>
+          </details>
 
           {/* Column 3 — Learn */}
-          <div>
-            <h3 className="text-white font-bold text-sm mb-4">Learn</h3>
+          <details className="group" open>
+            <summary className="flex items-center justify-between cursor-pointer md:cursor-default list-none">
+              <h3 className="text-white font-bold text-sm">Learn</h3>
+              <svg className="w-4 h-4 text-slate-500 group-open:rotate-180 transition-transform md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+            </summary>
             <ul className="space-y-2.5 text-sm">
               {[
                 { label: "All Articles", href: "/articles" },
@@ -117,11 +129,14 @@ export function SiteFooter() {
                 </li>
               ))}
             </ul>
-          </div>
+          </details>
 
           {/* Column 4 — Company */}
-          <div>
-            <h3 className="text-white font-bold text-sm mb-4">Company</h3>
+          <details className="group" open>
+            <summary className="flex items-center justify-between cursor-pointer md:cursor-default list-none">
+              <h3 className="text-white font-bold text-sm">Company</h3>
+              <svg className="w-4 h-4 text-slate-500 group-open:rotate-180 transition-transform md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+            </summary>
             <ul className="space-y-2.5 text-sm">
               {[
                 { label: "About Us", href: "/about" },
@@ -140,7 +155,7 @@ export function SiteFooter() {
                 </li>
               ))}
             </ul>
-          </div>
+          </details>
         </div>
 
         {/* Compliance Section */}
