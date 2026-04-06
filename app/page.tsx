@@ -165,28 +165,29 @@ export default async function HomePage() {
             </h1>
 
             <p className="text-base md:text-lg text-slate-600 mb-8 leading-relaxed max-w-2xl mx-auto">
-              Compare fees, browse directories, and explore investment options in one place.
+              Compare platforms, browse professionals, and explore investment pathways built for Australians.
             </p>
 
-            {/* Primary CTA */}
-            <div className="mb-5">
+            {/* CTAs — primary + secondary */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-4">
               <Link
                 href="/compare"
-                className="inline-flex items-center justify-center gap-2.5 px-10 py-4 bg-amber-500 hover:bg-amber-400 text-slate-900 font-extrabold text-base rounded-xl transition-all shadow-lg shadow-amber-500/25 hover:-translate-y-0.5 w-full sm:w-auto"
+                className="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-900 font-extrabold text-sm rounded-xl transition-all shadow-lg shadow-amber-500/25 hover:-translate-y-0.5 w-full sm:w-auto"
               >
                 Compare Platforms
-                <Icon name="arrow-right" size={18} />
+                <Icon name="arrow-right" size={16} />
+              </Link>
+              <Link
+                href="/advisors"
+                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 border-2 border-slate-200 text-slate-700 font-bold text-sm rounded-xl hover:border-slate-300 hover:bg-slate-50 transition-all w-full sm:w-auto"
+              >
+                Browse Professionals
               </Link>
             </div>
 
-            {/* Secondary links */}
+            {/* Tertiary text link */}
             <p className="text-sm text-slate-500 mb-6">
-              Or browse{" "}
-              <Link href="/advisors" className="font-semibold text-slate-700 hover:text-amber-600 underline underline-offset-2 decoration-slate-300 hover:decoration-amber-400 transition-colors">directories</Link>
-              {" · "}
-              <Link href="/invest/listings" className="font-semibold text-slate-700 hover:text-amber-600 underline underline-offset-2 decoration-slate-300 hover:decoration-amber-400 transition-colors">marketplace</Link>
-              {" · "}
-              <Link href="/invest" className="font-semibold text-slate-700 hover:text-amber-600 underline underline-offset-2 decoration-slate-300 hover:decoration-amber-400 transition-colors">investment guides</Link>
+              <Link href="/invest" className="font-semibold text-slate-600 hover:text-amber-600 underline underline-offset-2 decoration-slate-300 hover:decoration-amber-400 transition-colors">Explore investment categories &rarr;</Link>
             </p>
 
             {/* Trust bar */}
@@ -415,7 +416,58 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ═══════ 6. TOOLS & CALCULATORS ═══════ */}
+      {/* ═══════ 6. INVESTMENT MARKETPLACE ═══════ */}
+      <ScrollFadeIn>
+        <section className="py-10 md:py-14 bg-slate-50 border-b border-slate-100">
+          <div className="container-custom">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <p className="text-xs font-semibold text-amber-600 uppercase tracking-wide mb-1">Investment Marketplace</p>
+                <h2 className="text-xl md:text-2xl font-extrabold text-slate-900">Explore Investment Categories</h2>
+                <p className="text-sm text-slate-600 mt-1">Enquire about real assets across these categories.</p>
+              </div>
+              <Link href="/invest/listings" className="text-sm font-semibold text-amber-600 hover:text-amber-700 shrink-0">
+                View all categories →
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+              {[
+                { title: "Businesses for Sale", icon: "briefcase", href: "/invest/buy-business/listings", color: "bg-slate-800" },
+                { title: "Mining & Resources", icon: "layers", href: "/invest/mining/opportunities", color: "bg-amber-600" },
+                { title: "Farmland & Agriculture", icon: "leaf", href: "/invest/farmland/listings", color: "bg-green-600" },
+                { title: "Commercial Property", icon: "building", href: "/invest/commercial-property/listings", color: "bg-blue-600" },
+                { title: "Franchise", icon: "star", href: "/invest/franchise/listings", color: "bg-purple-600" },
+                { title: "Renewable Energy", icon: "zap", href: "/invest/renewable-energy/projects", color: "bg-teal-600" },
+                { title: "Private Credit", icon: "credit-card", href: "/invest/private-credit/listings", color: "bg-indigo-600" },
+                { title: "Alternatives", icon: "gem", href: "/invest/alternatives/listings", color: "bg-rose-600" },
+              ].map((cat) => (
+                <Link
+                  key={cat.href}
+                  href={cat.href}
+                  className="group bg-white border border-slate-200 rounded-xl p-4 hover:border-amber-200 hover:shadow-md transition-all text-center"
+                >
+                  <div className={`w-10 h-10 ${cat.color} rounded-xl flex items-center justify-center mx-auto mb-3 shadow-sm`}>
+                    <Icon name={cat.icon} size={18} className="text-white" />
+                  </div>
+                  <p className="text-sm font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{cat.title}</p>
+                  <p className="text-xs text-amber-600 font-semibold mt-1">Browse &rarr;</p>
+                </Link>
+              ))}
+            </div>
+            <div className="text-center mt-6">
+              <Link
+                href="/invest/listings"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm rounded-xl transition-all"
+              >
+                <Icon name="layers" size={15} />
+                View All {listingCount || 55}+ Investment Listings &rarr;
+              </Link>
+            </div>
+          </div>
+        </section>
+      </ScrollFadeIn>
+
+      {/* ═══════ 7. TOOLS & CALCULATORS ═══════ */}
       <ScrollFadeIn>
         <section className="py-6 md:py-10 bg-white border-t border-slate-100">
           <div className="container-custom">
@@ -455,7 +507,7 @@ export default async function HomePage() {
             <div className="container-custom">
               <div className="flex items-start justify-between gap-2 mb-4 md:mb-6">
                 <div>
-                  <h2 className="text-xl md:text-2xl font-bold text-slate-900">Learn &amp; Get Expert Help</h2>
+                  <h2 className="text-xl md:text-2xl font-bold text-slate-900">Latest Investor Guides</h2>
                   <p className="text-xs md:text-sm text-slate-600 mt-1">Guides, how-tos, and professional advice for smarter investing</p>
                 </div>
                 <Link href="/articles" className="text-xs md:text-sm font-semibold text-slate-600 hover:text-slate-900 shrink-0 min-h-[44px] inline-flex items-center px-1">
@@ -523,57 +575,6 @@ export default async function HomePage() {
           </section>
         </ScrollFadeIn>
       )}
-
-      {/* ═══════ 8. INVESTMENT MARKETPLACE ═══════ */}
-      <ScrollFadeIn>
-        <section className="py-10 md:py-14 bg-slate-50 border-b border-slate-100">
-          <div className="container-custom">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <p className="text-xs font-semibold text-amber-600 uppercase tracking-wide mb-1">Investment Marketplace</p>
-                <h2 className="text-xl md:text-2xl font-extrabold text-slate-900">Explore Investment Categories</h2>
-                <p className="text-sm text-slate-600 mt-1">Enquire about real assets across these categories.</p>
-              </div>
-              <Link href="/invest/listings" className="text-sm font-semibold text-amber-600 hover:text-amber-700 shrink-0">
-                View all categories →
-              </Link>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-              {[
-                { title: "Businesses for Sale", icon: "briefcase", href: "/invest/buy-business/listings", color: "bg-slate-800" },
-                { title: "Mining & Resources", icon: "layers", href: "/invest/mining/opportunities", color: "bg-amber-600" },
-                { title: "Farmland & Agriculture", icon: "leaf", href: "/invest/farmland/listings", color: "bg-green-600" },
-                { title: "Commercial Property", icon: "building", href: "/invest/commercial-property/listings", color: "bg-blue-600" },
-                { title: "Franchise", icon: "star", href: "/invest/franchise/listings", color: "bg-purple-600" },
-                { title: "Renewable Energy", icon: "zap", href: "/invest/renewable-energy/projects", color: "bg-teal-600" },
-                { title: "Private Credit", icon: "credit-card", href: "/invest/private-credit/listings", color: "bg-indigo-600" },
-                { title: "Alternatives", icon: "gem", href: "/invest/alternatives/listings", color: "bg-rose-600" },
-              ].map((cat) => (
-                <Link
-                  key={cat.href}
-                  href={cat.href}
-                  className="group bg-white border border-slate-200 rounded-xl p-4 hover:border-amber-200 hover:shadow-md transition-all text-center"
-                >
-                  <div className={`w-10 h-10 ${cat.color} rounded-xl flex items-center justify-center mx-auto mb-3 shadow-sm`}>
-                    <Icon name={cat.icon} size={18} className="text-white" />
-                  </div>
-                  <p className="text-sm font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{cat.title}</p>
-                  <p className="text-xs text-amber-600 font-semibold mt-1">Browse &rarr;</p>
-                </Link>
-              ))}
-            </div>
-            <div className="text-center mt-6">
-              <Link
-                href="/invest/listings"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm rounded-xl transition-all"
-              >
-                <Icon name="layers" size={15} />
-                View All {listingCount || 55}+ Investment Listings &rarr;
-              </Link>
-            </div>
-          </div>
-        </section>
-      </ScrollFadeIn>
 
       {/* ═══════ 9. ADVISOR DIRECTORY ═══════ */}
       <div className="text-center mb-6 pt-6 bg-slate-50">

@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { CURRENT_YEAR } from "@/lib/seo";
 import {
   GENERAL_ADVICE_WARNING,
   ADVERTISER_DISCLOSURE,
@@ -23,52 +22,21 @@ export function SiteFooter() {
     <footer className="bg-slate-900 text-slate-300">
       {/* Main grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4 md:gap-8 mb-12">
-          {/* Column 0 — Invest */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 mb-12">
+          {/* Column 1 — Compare */}
           <details className="group" open>
             <summary className="flex items-center justify-between cursor-pointer md:cursor-default list-none">
-              <h3 className="text-white font-bold text-sm">Invest</h3>
+              <h3 className="text-white font-bold text-sm">Compare</h3>
               <svg className="w-4 h-4 text-slate-500 group-open:rotate-180 transition-transform md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
             </summary>
             <ul className="space-y-2.5 text-sm">
               {[
-                { label: "All Verticals", href: "/invest" },
-                { label: "Marketplace", href: "/invest/listings" },
-                { label: "Buy a Business", href: "/invest/buy-business" },
-                { label: "Mining", href: "/invest/mining" },
-                { label: "Farmland", href: "/invest/farmland" },
-                { label: "Private Credit", href: "/invest/private-credit" },
-                { label: "Alternatives", href: "/invest/alternatives" },
-                { label: "Managed Funds", href: "/invest/managed-funds" },
-                { label: "SMSF Guide", href: "/invest/smsf" },
-                { label: "View all verticals →", href: "/invest" },
-              ].map((item) => (
-                <li key={item.href + item.label}>
-                  <Link href={item.href} className="hover:text-amber-400 transition-colors">
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </details>
-
-          {/* Column 1 — Platforms */}
-          <details className="group" open>
-            <summary className="flex items-center justify-between cursor-pointer md:cursor-default list-none">
-              <h3 className="text-white font-bold text-sm">Platforms</h3>
-              <svg className="w-4 h-4 text-slate-500 group-open:rotate-180 transition-transform md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-            </summary>
-            <ul className="space-y-2.5 text-sm">
-              {[
-                { label: "Compare All", href: "/compare" },
-                { label: "Share Trading", href: "/compare?category=shares" },
-                { label: "Crypto Exchanges", href: "/compare?category=crypto" },
+                { label: "Compare All Platforms", href: "/compare" },
+                { label: "Share Trading", href: "/compare?filter=shares" },
+                { label: "Crypto", href: "/compare?filter=crypto" },
                 { label: "Super Funds", href: "/compare/super" },
-                { label: "ETFs", href: "/compare/etfs" },
-                { label: "Insurance", href: "/compare/insurance" },
+                { label: "Savings", href: "/compare?filter=savings" },
                 { label: "Current Deals", href: "/deals" },
-                { label: `Best Platforms ${CURRENT_YEAR}`, href: "/best" },
-                { label: "Investing from Overseas", href: "/foreign-investment" },
               ].map((item) => (
                 <li key={item.href}>
                   <Link href={item.href} className="hover:text-amber-400 transition-colors">
@@ -79,22 +47,20 @@ export function SiteFooter() {
             </ul>
           </details>
 
-          {/* Column 2 — Advisors */}
+          {/* Column 2 — Invest */}
           <details className="group" open>
             <summary className="flex items-center justify-between cursor-pointer md:cursor-default list-none">
-              <h3 className="text-white font-bold text-sm">Advisors</h3>
+              <h3 className="text-white font-bold text-sm">Invest</h3>
               <svg className="w-4 h-4 text-slate-500 group-open:rotate-180 transition-transform md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
             </summary>
             <ul className="space-y-2.5 text-sm">
               {[
-                { label: "Find an Advisor", href: "/find-advisor" },
-                { label: "Mortgage Brokers", href: "/advisors/mortgage-brokers" },
-                { label: "Financial Planners", href: "/advisors/financial-planners" },
-                { label: "Buyer's Agents", href: "/advisors/buyers-agents" },
-                { label: "SMSF Accountants", href: "/advisors/smsf-accountants" },
-                { label: "Insurance Brokers", href: "/advisors/insurance-brokers" },
-                { label: "Tax Agents", href: "/advisors/tax-agents" },
-                { label: "List Your Practice", href: "/for-advisors" },
+                { label: "All Verticals", href: "/invest" },
+                { label: "Marketplace", href: "/invest/listings" },
+                { label: "Mining", href: "/invest/mining" },
+                { label: "Buy a Business", href: "/invest/buy-business" },
+                { label: "Alternatives", href: "/invest/alternatives" },
+                { label: "Private Credit", href: "/invest/private-credit" },
               ].map((item) => (
                 <li key={item.href}>
                   <Link href={item.href} className="hover:text-amber-400 transition-colors">
@@ -115,12 +81,9 @@ export function SiteFooter() {
               {[
                 { label: "All Articles", href: "/articles" },
                 { label: "How-To Guides", href: "/how-to" },
-                { label: "All Calculators", href: "/calculators" },
-                { label: "Mortgage Calculator", href: "/mortgage-calculator" },
-                { label: "Retirement Calculator", href: "/retirement-calculator" },
+                { label: "Calculators", href: "/calculators" },
                 { label: "Glossary", href: "/glossary" },
-                { label: "Platform Quiz", href: "/quiz" },
-                { label: "Broker vs Broker", href: "/versus" },
+                { label: "Foreign Investors", href: "/foreign-investment" },
               ].map((item) => (
                 <li key={item.href}>
                   <Link href={item.href} className="hover:text-amber-400 transition-colors">
@@ -141,12 +104,9 @@ export function SiteFooter() {
               {[
                 { label: "About Us", href: "/about" },
                 { label: "Methodology", href: "/methodology" },
-                { label: "Editorial Policy", href: "/editorial-policy" },
                 { label: "How We Earn", href: "/how-we-earn" },
                 { label: "Contact", href: "/contact" },
                 { label: "Complaints & AFCA", href: "/complaints" },
-                { label: "Advisor Portal", href: "/advisor-portal" },
-                { label: "Advertise With Us", href: "/advertise" },
               ].map((item) => (
                 <li key={item.href}>
                   <Link href={item.href} className="hover:text-amber-400 transition-colors">

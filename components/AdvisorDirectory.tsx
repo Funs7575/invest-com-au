@@ -62,30 +62,30 @@ export default function AdvisorDirectory() {
               {/* Headline */}
               <h3 className="text-xl md:text-2xl font-extrabold text-slate-900 mb-2 leading-tight">
                 {isProperty
-                  ? "Access Off-Market Property & Verified Buyer's Agents"
-                  : "Get Matched With a Verified Financial Advisor"}
+                  ? "Browse Property Professionals"
+                  : "Browse Financial Professionals"}
               </h3>
 
               {/* Sub-headline */}
               <p className="text-sm md:text-base text-slate-600 mb-6 leading-relaxed">
                 {isProperty
-                  ? "Stop guessing which agent to call. Our AI matches you with the right buyer's agent or mortgage broker based on your situation — so you enter negotiations with a verified expert in your corner."
-                  : "Answer a few questions and we'll connect you with the right ASIC-verified professional for your goals — whether it's wealth building, SMSF, insurance, or tax strategy."}
+                  ? "Explore buyer's agents, mortgage brokers, and property advisors. Public details and profile information shown where available."
+                  : "Browse licensed financial planners, SMSF accountants, tax agents, and wealth managers. Public register details shown where applicable."}
               </p>
 
               {/* Trust signals row */}
               <div className="flex items-center justify-center flex-wrap gap-x-5 gap-y-2 text-xs text-slate-500 mb-6">
                 <span className="flex items-center gap-1.5">
                   <Icon name="shield-check" size={13} className="text-amber-500" />
-                  ASIC-verified professionals only
+                  Licensed professionals directory
                 </span>
                 <span className="flex items-center gap-1.5">
                   <Icon name="check-circle" size={13} className="text-amber-500" />
-                  Your details go to one advisor — never sold
+                  Contact professionals directly
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <Icon name="clock" size={13} className="text-amber-500" />
-                  60 seconds to match
+                  <Icon name="book-open" size={13} className="text-amber-500" />
+                  Public register details where available
                 </span>
               </div>
 

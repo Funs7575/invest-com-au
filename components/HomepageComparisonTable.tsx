@@ -322,7 +322,7 @@ export default function HomepageComparisonTable({
                   {isCampaignMobile && !isSponsored(broker) && (
                     <span className="text-[0.56rem] font-bold uppercase text-blue-700 bg-blue-50 px-1 py-px rounded">Sponsored</span>
                   )}
-                  {!isSponsored(broker) && !isCampaignMobile && editorPicks[broker.slug] && (
+                  {SHOW_EDITORIAL_BADGES && !isSponsored(broker) && !isCampaignMobile && editorPicks[broker.slug] && (
                     <span className="text-[0.56rem] font-bold uppercase text-amber-700 bg-amber-50 px-1 py-px rounded">
                       {editorPicks[broker.slug]}
                     </span>
@@ -338,22 +338,13 @@ export default function HomepageComparisonTable({
                 Go →
               </a>
             </div>
-            {/* Row 2: Rating + key metrics inline */}
+            {/* Row 2: 2 key facts only — keep it scannable */}
             <div className="flex items-center gap-2 mt-1 ml-[3.25rem] text-[0.7rem]">
-              {SHOW_RATINGS && <><span className="text-amber">{renderStars(broker.rating || 0)}</span>
-              <span className="text-slate-500 font-medium">{broker.rating}</span></>}
-              <span className="text-slate-300">·</span>
-              <span className="text-slate-600"><span className="font-semibold">{broker.asx_fee || "N/A"}</span> ASX</span>
-              {broker.fx_rate != null && (
-                <>
-                  <span className="text-slate-300">·</span>
-                  <span className="text-slate-600">{broker.fx_rate}% FX</span>
-                </>
-              )}
+              <span className="text-slate-700 font-semibold">{broker.asx_fee || "N/A"} ASX</span>
               {broker.chess_sponsored && (
                 <>
                   <span className="text-slate-300">·</span>
-                  <span className="text-emerald-600 font-semibold">CHESS✓</span>
+                  <span className="text-emerald-600 font-semibold">CHESS</span>
                 </>
               )}
             </div>
