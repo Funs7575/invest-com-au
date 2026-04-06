@@ -78,21 +78,21 @@ export default function BusinessListingsClient({ listings }: Props) {
   return (
     <div>
       {/* Hero */}
-      <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-12 md:py-16">
+      <section className="bg-white border-b border-slate-100 py-12 md:py-16">
         <div className="container-custom">
-          <nav className="flex items-center gap-1.5 text-xs text-slate-400 mb-6" aria-label="Breadcrumb">
-            <Link href="/" className="hover:text-white transition-colors">Home</Link>
-            <Icon name="chevron-right" size={12} className="text-slate-600" />
-            <Link href="/invest" className="hover:text-white transition-colors">Invest</Link>
-            <Icon name="chevron-right" size={12} className="text-slate-600" />
-            <Link href="/invest/buy-business" className="hover:text-white transition-colors">Buy a Business</Link>
-            <Icon name="chevron-right" size={12} className="text-slate-600" />
-            <span className="text-slate-300">Listings</span>
+          <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-6" aria-label="Breadcrumb">
+            <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
+            <Icon name="chevron-right" size={12} className="text-slate-300" />
+            <Link href="/invest" className="hover:text-slate-900 transition-colors">Invest</Link>
+            <Icon name="chevron-right" size={12} className="text-slate-300" />
+            <Link href="/invest/buy-business" className="hover:text-slate-900 transition-colors">Buy a Business</Link>
+            <Icon name="chevron-right" size={12} className="text-slate-300" />
+            <span className="text-slate-900 font-medium">Listings</span>
           </nav>
-          <h1 className="text-3xl md:text-4xl font-extrabold mb-3">
+          <h1 className="text-3xl md:text-4xl font-extrabold mb-3 text-slate-900">
             Businesses for Sale in Australia
           </h1>
-          <p className="text-slate-300 text-base max-w-2xl">
+          <p className="text-slate-600 text-base max-w-2xl">
             {listings.length > 0
               ? `${listings.length} active listing${listings.length !== 1 ? "s" : ""} across Australia`
               : "Browse businesses for sale across Australia"}

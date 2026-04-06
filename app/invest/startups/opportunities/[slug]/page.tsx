@@ -88,14 +88,14 @@ export default async function StartupOpportunityDetailPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
 
-      <section className="bg-gradient-to-br from-rose-900 via-slate-900 to-slate-900 text-white py-12">
+      <section className="bg-white border-b border-slate-100 py-12">
         <div className="container-custom">
-          <nav className="flex items-center gap-1.5 text-xs text-slate-400 mb-4" aria-label="Breadcrumb">
-            <Link href="/" className="hover:text-white transition-colors">Home</Link>
-            <Icon name="chevron-right" size={12} className="text-slate-600" />
-            <Link href="/invest/startups/opportunities" className="hover:text-white transition-colors">Startup Opportunities</Link>
-            <Icon name="chevron-right" size={12} className="text-slate-600" />
-            <span className="text-slate-300 truncate max-w-[160px]">{l.title}</span>
+          <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-4" aria-label="Breadcrumb">
+            <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
+            <Icon name="chevron-right" size={12} className="text-slate-300" />
+            <Link href="/invest/startups/opportunities" className="hover:text-slate-900 transition-colors">Startup Opportunities</Link>
+            <Icon name="chevron-right" size={12} className="text-slate-300" />
+            <span className="text-slate-900 font-medium truncate max-w-[160px]">{l.title}</span>
           </nav>
 
           <div className="flex flex-wrap gap-2 mb-3">
@@ -117,9 +117,9 @@ export default async function StartupOpportunityDetailPage({
             )}
           </div>
 
-          <h1 className="text-2xl md:text-3xl font-extrabold mb-2">{l.title}</h1>
+          <h1 className="text-2xl md:text-3xl font-extrabold mb-2 text-slate-900">{l.title}</h1>
           {location && (
-            <div className="flex items-center gap-1.5 text-slate-300 text-sm">
+            <div className="flex items-center gap-1.5 text-slate-600 text-sm">
               <Icon name="map-pin" size={14} />
               {location}
             </div>
