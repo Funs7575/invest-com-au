@@ -71,7 +71,7 @@ export default function StartupsPage() {
       </section>
 
       {/* Stats */}
-      <section className="py-10 bg-rose-50 border-b border-rose-100">
+      <section className="py-10 bg-white border-b border-slate-100">
         <div className="container-custom">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
@@ -80,8 +80,8 @@ export default function StartupsPage() {
               { value: "10 yr", label: "CGT exemption on ESIC shares" },
               { value: "Top 20", label: "Global startup ecosystem" },
             ].map((s) => (
-              <div key={s.label} className="bg-white border border-rose-100 rounded-xl p-4 text-center">
-                <p className="text-2xl font-extrabold text-rose-700">{s.value}</p>
+              <div key={s.label} className="bg-amber-50 border border-amber-100 rounded-xl p-4 text-center">
+                <p className="text-2xl font-extrabold text-amber-600">{s.value}</p>
                 <p className="text-xs text-slate-600 mt-1">{s.label}</p>
               </div>
             ))}
@@ -177,26 +177,28 @@ export default function StartupsPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-14 bg-slate-900 text-white">
-        <div className="container-custom text-center">
-          <h2 className="text-2xl md:text-3xl font-extrabold mb-4">Browse Startup Investment Opportunities</h2>
-          <p className="text-slate-300 text-base mb-8 max-w-xl mx-auto">
-            Australian startups and growth companies raising capital — including ESIC-qualifying companies for tax incentives.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/invest/startups/opportunities"
-              className="inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-8 py-4 rounded-xl transition-colors text-base"
-            >
-              Browse Startup Opportunities
-              <Icon name="arrow-right" size={18} />
-            </Link>
-            <Link
-              href="/find-advisor"
-              className="inline-flex items-center justify-center gap-2 bg-slate-700 hover:bg-slate-600 text-white font-semibold px-8 py-4 rounded-xl transition-colors text-base"
-            >
-              Find a Startup Advisor
-            </Link>
+      <section className="py-14 bg-white border-t border-slate-100">
+        <div className="container-custom">
+          <div className="max-w-3xl mx-auto bg-white border border-slate-200 rounded-xl p-8 text-center">
+            <h2 className="text-2xl font-extrabold text-slate-900 mb-3">Browse Startup Investment Opportunities</h2>
+            <p className="text-slate-500 text-sm mb-6 max-w-xl mx-auto">
+              Australian startups and growth companies raising capital — including ESIC-qualifying companies for tax incentives.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link
+                href="/invest/startups/opportunities"
+                className="inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-6 py-3 rounded-xl text-sm"
+              >
+                Browse Startup Opportunities
+                <Icon name="arrow-right" size={18} />
+              </Link>
+              <Link
+                href="/find-advisor"
+                className="inline-flex items-center justify-center gap-2 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold px-6 py-3 rounded-xl text-sm"
+              >
+                Browse Startup Professionals
+              </Link>
+            </div>
           </div>
         </div>
       </section>

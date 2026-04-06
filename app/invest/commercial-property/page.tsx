@@ -68,7 +68,7 @@ export default function CommercialPropertyPage() {
       </section>
 
       {/* Stats */}
-      <section className="py-10 bg-blue-50 border-b border-blue-100">
+      <section className="py-10 bg-white border-b border-slate-100">
         <div className="container-custom">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
@@ -77,8 +77,8 @@ export default function CommercialPropertyPage() {
               { value: "<3%", label: "Industrial vacancy (record low)" },
               { value: "$268M", label: "FIRB threshold (developed)" },
             ].map((s) => (
-              <div key={s.label} className="bg-white border border-blue-100 rounded-xl p-4 text-center">
-                <p className="text-2xl font-extrabold text-blue-700">{s.value}</p>
+              <div key={s.label} className="bg-amber-50 border border-amber-100 rounded-xl p-4 text-center">
+                <p className="text-2xl font-extrabold text-amber-600">{s.value}</p>
                 <p className="text-xs text-slate-600 mt-1">{s.label}</p>
               </div>
             ))}
@@ -214,26 +214,28 @@ export default function CommercialPropertyPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-14 bg-slate-900 text-white">
-        <div className="container-custom text-center">
-          <h2 className="text-2xl md:text-3xl font-extrabold mb-4">Browse Commercial Properties for Sale</h2>
-          <p className="text-slate-300 text-base mb-8 max-w-xl mx-auto">
-            Office, industrial, retail, and hotel assets with yield data, location details, and direct enquiry.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/invest/commercial-property/listings"
-              className="inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-8 py-4 rounded-xl transition-colors text-base"
-            >
-              Browse Commercial Properties
-              <Icon name="arrow-right" size={18} />
+      <section className="py-14 bg-white border-t border-slate-100">
+        <div className="container-custom">
+          <div className="max-w-3xl mx-auto bg-white border border-slate-200 rounded-xl p-8 text-center">
+            <h2 className="text-2xl font-extrabold text-slate-900 mb-3">Browse Commercial Properties for Sale</h2>
+            <p className="text-slate-500 text-sm mb-6 max-w-xl mx-auto">
+              Office, industrial, retail, and hotel assets with yield data, location details, and direct enquiry.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link
+                href="/invest/commercial-property/listings"
+                className="inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-6 py-3 rounded-xl transition-colors text-sm"
+              >
+                Browse Commercial Properties
+                <Icon name="arrow-right" size={16} />
+              </Link>
+              <Link
+                href="/advisors"
+                className="inline-flex items-center justify-center gap-2 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold px-6 py-3 rounded-xl transition-colors text-sm"
+              >
+                Browse Property Professionals
             </Link>
-            <Link
-              href="/find-advisor"
-              className="inline-flex items-center justify-center gap-2 bg-slate-700 hover:bg-slate-600 text-white font-semibold px-8 py-4 rounded-xl transition-colors text-base"
-            >
-              Find a Property Advisor
-            </Link>
+            </div>
           </div>
         </div>
       </section>
