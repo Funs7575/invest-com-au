@@ -95,6 +95,11 @@ export default async function InvestHubPage() {
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden">
         <div className="container-custom py-6 md:py-10 lg:py-12">
+          <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-4" aria-label="Breadcrumb">
+            <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
+            <span className="text-slate-300">/</span>
+            <span className="text-slate-900 font-medium">Invest</span>
+          </nav>
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-14 items-center">
 
             {/* Left: text */}
@@ -226,9 +231,9 @@ export default async function InvestHubPage() {
                           />
                         </div>
                         <div>
-                          <h2 className="text-base font-bold text-slate-900 group-hover:text-amber-600 transition-colors">
+                          <h3 className="text-base font-bold text-slate-900 group-hover:text-amber-600 transition-colors">
                             {v.name}
-                          </h2>
+                          </h3>
                           {v.description && (
                             <p className="text-sm text-slate-500 mt-1 leading-relaxed line-clamp-2">
                               {v.description}

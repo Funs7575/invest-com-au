@@ -83,9 +83,11 @@ export default function ContextualLeadMagnet({ segment = "fee-audit" }: { segmen
   // Ad-free: hide lead magnets for Pro users
   if (isPro) return null;
 
+  const isValidEmail = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!email || !email.includes("@") || !consent) return;
+    if (!email || !isValidEmail(email) || !consent) return;
 
     setStatus("loading");
     try {
@@ -134,7 +136,7 @@ export default function ContextualLeadMagnet({ segment = "fee-audit" }: { segmen
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full px-4 py-2.5 rounded-lg border border-slate-200 text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-700/40 focus:border-blue-700"
+            className="w-full px-4 py-2.5 rounded-lg border border-slate-200 text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-1 focus:border-amber-500"
           />
           <label className="flex items-start gap-2 cursor-pointer">
             <input
@@ -154,7 +156,7 @@ export default function ContextualLeadMagnet({ segment = "fee-audit" }: { segmen
           <button
             type="submit"
             disabled={status === "loading" || !consent}
-            className="w-full px-4 py-2.5 bg-amber-500 text-white text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-60"
+            className="w-full px-4 py-2.5 bg-amber-500 text-slate-900 text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-60"
           >
             {status === "loading" ? "Sending..." : config.buttonText}
           </button>
