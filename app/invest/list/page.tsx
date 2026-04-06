@@ -55,36 +55,36 @@ export default function ListInvestmentPage() {
       />
 
       {/* Hero */}
-      <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-14 md:py-20">
+      <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="flex items-center gap-1.5 text-xs text-slate-400 mb-6" aria-label="Breadcrumb">
-            <Link href="/" className="hover:text-white transition-colors">Home</Link>
-            <Icon name="chevron-right" size={12} className="text-slate-600" />
-            <Link href="/invest" className="hover:text-white transition-colors">Invest</Link>
-            <Icon name="chevron-right" size={12} className="text-slate-600" />
-            <span className="text-slate-300">List an Opportunity</span>
+          <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-6" aria-label="Breadcrumb">
+            <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
+            <Icon name="chevron-right" size={12} className="text-slate-300" />
+            <Link href="/invest" className="hover:text-slate-900 transition-colors">Invest</Link>
+            <Icon name="chevron-right" size={12} className="text-slate-300" />
+            <span className="text-slate-900 font-medium">List an Opportunity</span>
           </nav>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
-              <div className="inline-flex items-center gap-2 bg-amber-500/20 text-amber-400 text-xs font-bold px-3 py-1.5 rounded-full mb-4">
+              <div className="inline-flex items-center gap-2 bg-amber-50 text-amber-600 text-xs font-bold px-3 py-1.5 rounded-full mb-4">
                 <Icon name="star" size={13} />
                 Investment Marketplace
               </div>
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-4">
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-4 text-slate-900">
                 List Your Investment Opportunity
               </h1>
-              <p className="text-lg text-slate-300 leading-relaxed mb-6">
+              <p className="text-lg text-slate-600 leading-relaxed mb-6">
                 Reach thousands of active investors — including international buyers from 12 countries — looking for businesses, property, mining projects, farmland, franchises, energy assets, funds, and startups.
               </p>
               <div className="flex flex-wrap gap-3">
-                <span className="bg-slate-800 text-slate-300 text-xs font-semibold px-3 py-1.5 rounded-full border border-slate-700">
+                <span className="bg-slate-50 text-slate-600 text-xs font-semibold px-3 py-1.5 rounded-full border border-slate-200">
                   ✅ From $99 / listing
                 </span>
-                <span className="bg-slate-800 text-slate-300 text-xs font-semibold px-3 py-1.5 rounded-full border border-slate-700">
+                <span className="bg-slate-50 text-slate-600 text-xs font-semibold px-3 py-1.5 rounded-full border border-slate-200">
                   ✅ Live within 1–2 days
                 </span>
-                <span className="bg-slate-800 text-slate-300 text-xs font-semibold px-3 py-1.5 rounded-full border border-slate-700">
+                <span className="bg-slate-50 text-slate-600 text-xs font-semibold px-3 py-1.5 rounded-full border border-slate-200">
                   ✅ FIRB-eligible buyers reached
                 </span>
               </div>
@@ -98,9 +98,9 @@ export default function ListInvestmentPage() {
                 { value: "1–2 days", label: "Avg. time to publish" },
                 { value: "$99+", label: "Starting price" },
               ].map((s) => (
-                <div key={s.label} className="bg-slate-800 border border-slate-700 rounded-xl p-5 text-center">
-                  <p className="text-2xl font-extrabold text-amber-400 mb-1">{s.value}</p>
-                  <p className="text-xs text-slate-400">{s.label}</p>
+                <div key={s.label} className="bg-slate-50 border border-slate-200 rounded-xl p-5 text-center">
+                  <p className="text-2xl font-extrabold text-amber-600 mb-1">{s.value}</p>
+                  <p className="text-xs text-slate-500">{s.label}</p>
                 </div>
               ))}
             </div>

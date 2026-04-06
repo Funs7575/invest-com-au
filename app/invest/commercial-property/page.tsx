@@ -34,14 +34,14 @@ export default function CommercialPropertyPage() {
       />
 
       {/* Hero */}
-      <section className="bg-gradient-to-br from-blue-900 via-slate-900 to-slate-900 text-white py-14 md:py-20">
+      <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="flex items-center gap-1.5 text-xs text-slate-400 mb-6" aria-label="Breadcrumb">
-            <Link href="/" className="hover:text-white transition-colors">Home</Link>
-            <Icon name="chevron-right" size={12} className="text-slate-600" />
-            <Link href="/invest" className="hover:text-white transition-colors">Invest</Link>
-            <Icon name="chevron-right" size={12} className="text-slate-600" />
-            <span className="text-slate-300">Commercial Property</span>
+          <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-6" aria-label="Breadcrumb">
+            <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
+            <Icon name="chevron-right" size={12} className="text-slate-300" />
+            <Link href="/invest" className="hover:text-slate-900 transition-colors">Invest</Link>
+            <Icon name="chevron-right" size={12} className="text-slate-300" />
+            <span className="text-slate-900 font-medium">Commercial Property</span>
           </nav>
 
           <div className="flex flex-wrap items-center gap-2 mb-4">
@@ -50,10 +50,10 @@ export default function CommercialPropertyPage() {
             </span>
           </div>
 
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-4 max-w-3xl">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-4 max-w-3xl text-slate-900">
             Commercial Property Investment in Australia
           </h1>
-          <p className="text-lg text-slate-300 leading-relaxed max-w-2xl mb-8">
+          <p className="text-lg text-slate-600 leading-relaxed max-w-2xl mb-8">
             From Sydney CBD office towers to Perth industrial sheds. Commercial property offers higher yields than residential with long lease terms and institutional-quality tenants.
           </p>
 

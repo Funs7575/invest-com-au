@@ -42,32 +42,32 @@ export default function GoldPage() {
       />
 
       {/* Hero */}
-      <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-14 md:py-20">
+      <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="flex items-center gap-1.5 text-xs text-slate-400 mb-6" aria-label="Breadcrumb">
-            <Link href="/" className="hover:text-white transition-colors">Home</Link>
-            <span className="text-slate-600">/</span>
-            <Link href="/invest" className="hover:text-white transition-colors">Invest</Link>
-            <span className="text-slate-600">/</span>
-            <span className="text-slate-300">Gold &amp; Precious Metals</span>
+          <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-6" aria-label="Breadcrumb">
+            <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
+            <span className="text-slate-300">/</span>
+            <Link href="/invest" className="hover:text-slate-900 transition-colors">Invest</Link>
+            <span className="text-slate-300">/</span>
+            <span className="text-slate-900 font-medium">Gold &amp; Precious Metals</span>
           </nav>
 
           <div className="flex flex-wrap items-center gap-2 mb-4">
             <span className="text-xs font-semibold bg-amber-500 text-slate-900 px-3 py-1 rounded-full">
               Updated {CURRENT_YEAR}
             </span>
-            <span className="text-xs font-semibold bg-slate-700 text-slate-200 px-3 py-1 rounded-full">
+            <span className="text-xs font-semibold bg-slate-100 text-slate-600 px-3 py-1 rounded-full">
               World&apos;s 2nd Largest Gold Producer
             </span>
-            <span className="text-xs font-semibold bg-slate-700 text-slate-200 px-3 py-1 rounded-full">
+            <span className="text-xs font-semibold bg-slate-100 text-slate-600 px-3 py-1 rounded-full">
               SMSF-Permitted
             </span>
           </div>
 
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-4 max-w-3xl">
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-4 max-w-3xl text-slate-900">
             How to Invest in Gold in Australia
           </h1>
-          <p className="text-lg text-slate-300 leading-relaxed max-w-2xl">
+          <p className="text-lg text-slate-600 leading-relaxed max-w-2xl">
             Australia produces more gold than almost any other country. Whether you want physical bullion, ETFs, ASX-listed miners, or the government-backed Perth Mint Certificate Programme — here is everything you need to know.
           </p>
         </div>
