@@ -254,21 +254,21 @@ export default async function HomePage() {
 
 
       {/* ═══════ TRUST STRIP ═══════ */}
-      <section className="bg-slate-900 text-white py-3">
+      <section className="bg-slate-50 border-b border-slate-100 py-3">
         <div className="container-custom">
-          <div className="flex items-center justify-center flex-wrap gap-x-6 gap-y-2 text-xs font-medium">
+          <div className="flex items-center justify-center flex-wrap gap-x-6 gap-y-2 text-xs font-medium text-slate-600">
             <span className="flex items-center gap-1.5">
-              <Icon name="bar-chart-2" size={14} className="text-amber-400" />
+              <Icon name="bar-chart-2" size={14} className="text-amber-500" />
               Compare factual platform data
             </span>
-            <span className="text-slate-600 hidden sm:block" aria-hidden="true">|</span>
+            <span className="text-slate-300 hidden sm:block" aria-hidden="true">|</span>
             <span className="flex items-center gap-1.5">
-              <Icon name="users" size={14} className="text-amber-400" />
+              <Icon name="users" size={14} className="text-amber-500" />
               Browse professional directories
             </span>
-            <span className="text-slate-600 hidden sm:block" aria-hidden="true">|</span>
+            <span className="text-slate-300 hidden sm:block" aria-hidden="true">|</span>
             <span className="flex items-center gap-1.5">
-              <Icon name="book-open" size={14} className="text-amber-400" />
+              <Icon name="book-open" size={14} className="text-amber-500" />
               Educational tools for Australian investors
             </span>
           </div>
@@ -412,7 +412,54 @@ export default async function HomePage() {
         </section>
       </ScrollFadeIn>
 
-      {/* ═══════ 7. TOOLS & CALCULATORS ═══════ */}
+      {/* ═══════ 7. PROFESSIONALS SHOWCASE ═══════ */}
+      <ScrollFadeIn>
+        <section className="py-10 md:py-14 bg-white border-t border-slate-100">
+          <div className="container-custom">
+            <div className="flex items-start justify-between gap-2 mb-6">
+              <div>
+                <p className="text-xs font-semibold text-amber-600 uppercase tracking-wide mb-1">Professional Directories</p>
+                <h2 className="text-xl md:text-2xl font-extrabold text-slate-900">Browse Licensed Professionals</h2>
+                <p className="text-sm text-slate-500 mt-1">Find the right type of professional. Public register details shown where applicable.</p>
+              </div>
+              <Link href="/advisors" className="text-sm font-semibold text-amber-600 hover:text-amber-700 shrink-0 hidden sm:block">
+                View all &rarr;
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {[
+                { title: "Financial Planners", desc: "Wealth strategy, retirement, investment advice", icon: "briefcase", href: "/advisors/financial-planners", color: "bg-amber-50 text-amber-600 border-amber-100" },
+                { title: "Mortgage Brokers", desc: "Compare 30+ lenders, investment loans, refinancing", icon: "home", href: "/advisors/mortgage-brokers", color: "bg-blue-50 text-blue-600 border-blue-100" },
+                { title: "SMSF Accountants", desc: "Self-managed super setup, compliance, audit", icon: "calculator", href: "/advisors/smsf-accountants", color: "bg-emerald-50 text-emerald-600 border-emerald-100" },
+                { title: "Tax Agents", desc: "Tax planning, CGT, investment deductions", icon: "file-text", href: "/advisors/tax-agents", color: "bg-violet-50 text-violet-600 border-violet-100" },
+                { title: "Buyer's Agents", desc: "Property negotiation, off-market access", icon: "map-pin", href: "/advisors/buyers-agents", color: "bg-rose-50 text-rose-600 border-rose-100" },
+                { title: "Insurance Brokers", desc: "Life, income protection, business insurance", icon: "shield", href: "/advisors/insurance-brokers", color: "bg-sky-50 text-sky-600 border-sky-100" },
+                { title: "Estate Planners", desc: "Wills, trusts, succession planning", icon: "scroll", href: "/advisors/estate-planners", color: "bg-slate-50 text-slate-600 border-slate-200" },
+                { title: "Wealth Managers", desc: "Portfolio management, HNW advisory", icon: "trending-up", href: "/advisors/wealth-managers", color: "bg-amber-50 text-amber-600 border-amber-100" },
+              ].map((prof) => (
+                <Link
+                  key={prof.href}
+                  href={prof.href}
+                  className="group bg-white border border-slate-200 rounded-xl p-4 hover:border-amber-200 hover:shadow-md transition-all"
+                >
+                  <div className={`w-10 h-10 rounded-xl border ${prof.color} flex items-center justify-center mb-3`}>
+                    <Icon name={prof.icon} size={18} />
+                  </div>
+                  <h3 className="text-sm font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{prof.title}</h3>
+                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">{prof.desc}</p>
+                </Link>
+              ))}
+            </div>
+            <div className="text-center mt-6 sm:hidden">
+              <Link href="/advisors" className="text-sm font-semibold text-amber-600 hover:text-amber-700">
+                View all professionals &rarr;
+              </Link>
+            </div>
+          </div>
+        </section>
+      </ScrollFadeIn>
+
+      {/* ═══════ 8. TOOLS & CALCULATORS ═══════ */}
       <ScrollFadeIn>
         <section className="py-6 md:py-10 bg-white border-t border-slate-100">
           <div className="container-custom">
@@ -521,13 +568,7 @@ export default async function HomePage() {
         </ScrollFadeIn>
       )}
 
-      {/* ═══════ 9. ADVISOR DIRECTORY ═══════ */}
-      <div className="text-center mb-6 pt-6 bg-slate-50">
-        <p className="text-xs text-slate-500 max-w-lg mx-auto">
-          Browse directory listings and public register details. Always verify provider suitability for your own circumstances.
-        </p>
-      </div>
-      <AdvisorDirectory />
+      {/* Advisor directory removed — replaced by professionals showcase above tools */}
 
       {/* ═══════ 10. EMAIL CAPTURE ═══════ */}
       <ScrollFadeIn>
