@@ -249,7 +249,7 @@ export default function PrivateEquityPage() {
               The ATO maintains a register of ESVCLP-registered managers. Investment managers offering SIV-complying PE and VC funds include specialist boutiques managing allocations specifically structured to meet SIV requirements. A migration agent and financial adviser experienced in SIV structuring is essential.
             </p>
             <Link
-              href="/invest/funds"
+              href="/invest/listings?vertical=fund"
               className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors"
             >
               Browse SIV &amp; Investment Funds &rarr;

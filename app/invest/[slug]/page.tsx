@@ -67,13 +67,13 @@ export async function generateMetadata({
 ───────────────────────────────────────────── */
 
 const LISTINGS_LINKS: Record<string, { href: string; label: string }> = {
-  "buy-business": { href: "/invest/buy-business/listings", label: "Browse Businesses for Sale" },
-  mining: { href: "/invest/mining/opportunities", label: "Browse Mining Opportunities" },
-  farmland: { href: "/invest/farmland/listings", label: "Browse Farmland Listings" },
-  "commercial-property": { href: "/invest/commercial-property/listings", label: "Browse Commercial Properties" },
-  franchise: { href: "/invest/franchise/listings", label: "Browse Franchise Opportunities" },
-  "renewable-energy": { href: "/invest/renewable-energy/projects", label: "Browse Energy Projects" },
-  startups: { href: "/invest/startups/opportunities", label: "Browse Startup Opportunities" },
+  "buy-business": { href: "/invest/listings?vertical=business", label: "Browse Businesses for Sale" },
+  mining: { href: "/invest/listings?vertical=mining", label: "Browse Mining Opportunities" },
+  farmland: { href: "/invest/listings?vertical=farmland", label: "Browse Farmland Listings" },
+  "commercial-property": { href: "/invest/listings?vertical=commercial_property", label: "Browse Commercial Properties" },
+  franchise: { href: "/invest/listings?vertical=franchise", label: "Browse Franchise Opportunities" },
+  "renewable-energy": { href: "/invest/listings?vertical=energy", label: "Browse Energy Projects" },
+  startups: { href: "/invest/listings?vertical=startup", label: "Browse Startup Opportunities" },
 };
 
 /* ─────────────────────────────────────────────

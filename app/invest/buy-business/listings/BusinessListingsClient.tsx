@@ -171,7 +171,7 @@ export default function BusinessListingsClient({ listings }: Props) {
               <h3 className="text-lg font-bold text-slate-900 mb-2">No listings found</h3>
               <p className="text-slate-500 text-sm mb-6">Try adjusting your filters, or check back soon as new listings are added regularly.</p>
               <button
-                onClick={() => router.push("/invest/buy-business/listings")}
+                onClick={() => router.push("/invest/listings?vertical=business")}
                 className="bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold text-sm px-6 py-2.5 rounded-lg transition-colors"
               >
                 Clear filters

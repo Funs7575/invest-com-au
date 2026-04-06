@@ -61,7 +61,7 @@ export default function StartupsPage() {
           </p>
 
           <Link
-            href="/invest/startups/opportunities"
+            href="/invest/listings?vertical=startup"
             className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-base px-7 py-3.5 rounded-xl transition-colors shadow-lg"
           >
             Browse Startup Opportunities
@@ -186,7 +186,7 @@ export default function StartupsPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link
-                href="/invest/startups/opportunities"
+                href="/invest/listings?vertical=startup"
                 className="inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-6 py-3 rounded-xl text-sm"
               >
                 Browse Startup Opportunities
