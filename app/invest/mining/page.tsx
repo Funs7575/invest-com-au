@@ -181,26 +181,28 @@ export default function MiningPage() {
       </section>
 
       {/* Browse CTA */}
-      <section className="py-14 bg-slate-900 text-white">
-        <div className="container-custom text-center">
-          <h2 className="text-2xl md:text-3xl font-extrabold mb-4">Browse Mining Investment Opportunities</h2>
-          <p className="text-slate-300 text-base mb-8 max-w-xl mx-auto">
-            Direct project investments, joint ventures, and co-investment opportunities in Australian mining and resources.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/invest/mining/opportunities"
-              className="inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-8 py-4 rounded-xl transition-colors text-base"
-            >
-              Browse Mining Opportunities
-              <Icon name="arrow-right" size={18} />
-            </Link>
-            <Link
-              href="/find-advisor"
-              className="inline-flex items-center justify-center gap-2 bg-slate-700 hover:bg-slate-600 text-white font-semibold px-8 py-4 rounded-xl transition-colors text-base"
-            >
-              Find a Mining Advisor
-            </Link>
+      <section className="py-14 bg-white border-t border-slate-100">
+        <div className="container-custom">
+          <div className="max-w-3xl mx-auto bg-white border border-slate-200 rounded-xl p-8 text-center">
+            <h2 className="text-2xl font-extrabold text-slate-900 mb-3">Browse Mining Investment Opportunities</h2>
+            <p className="text-slate-500 text-sm mb-6 max-w-xl mx-auto">
+              Direct project investments, joint ventures, and co-investment opportunities in Australian mining and resources.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link
+                href="/invest/mining/opportunities"
+                className="inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-6 py-3 rounded-xl text-sm"
+              >
+                Browse Mining Opportunities
+                <Icon name="arrow-right" size={18} />
+              </Link>
+              <Link
+                href="/find-advisor"
+                className="inline-flex items-center justify-center gap-2 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold px-6 py-3 rounded-xl text-sm"
+              >
+                Browse Mining Professionals
+              </Link>
+            </div>
           </div>
         </div>
       </section>
