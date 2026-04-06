@@ -159,19 +159,19 @@ export function SiteFooter() {
         </div>
 
         {/* Compliance Section */}
-        <div className="border-t border-slate-800 pt-8 mb-8 space-y-5">
-          <h4 className="text-white font-bold text-sm">Important Information</h4>
+        <div className="border-t border-slate-800 pt-8 mb-8 space-y-4">
+          <h4 className="text-white font-semibold text-xs">Important Information</h4>
 
           {/* General Information Disclaimer — always visible */}
-          <div className="p-4 bg-slate-800/60 border border-slate-700 rounded-xl">
+          <div className="p-3 bg-slate-800/40 border border-amber-100/10 rounded-xl">
             <div className="flex items-start gap-2.5">
-              <svg className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <svg className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <div>
-                <p className="text-xs font-bold text-amber-400 mb-1.5">General Information Only</p>
-                <p className="text-xs text-slate-400 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
-                <p className="text-xs text-slate-400 leading-relaxed mt-2">
+                <p className="text-[0.7rem] font-bold text-amber-400 mb-1">General Information Only</p>
+                <p className="text-[0.7rem] text-slate-400 leading-relaxed">{GENERAL_ADVICE_WARNING}</p>
+                <p className="text-[0.7rem] text-slate-400 leading-relaxed mt-1.5">
                   Invest.com.au is a factual comparison and directory service. We do not assess suitability.
                   We do not provide personal financial advice. We do not recommend one provider as suitable
                   for a particular user. Users should review provider documents (PDS, TMD, FSG) and seek
@@ -195,7 +195,7 @@ export function SiteFooter() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </summary>
-                <p className="text-xs text-slate-500 leading-relaxed pt-2 pb-1">{item.content}</p>
+                <p className="text-[0.7rem] text-slate-500 leading-relaxed pt-2 pb-1">{item.content}</p>
               </details>
             ))}
           </div>
