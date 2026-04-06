@@ -222,6 +222,7 @@ const mobileSections = [
     title: "Invest",
     items: [
       { name: "All Investment Verticals", href: "/invest" },
+      { name: "Investment Marketplace", href: "/invest/listings" },
       { name: "Mining & Resources", href: "/invest/mining" },
       { name: "Buy a Business", href: "/invest/buy-business" },
       { name: "Farmland & Agriculture", href: "/invest/farmland" },
