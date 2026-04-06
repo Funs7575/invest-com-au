@@ -14,6 +14,7 @@ import { sortWithSponsorship, isSponsored, getPlacementWinners, type PlacementWi
 import { filterByFrequencyCap } from "@/lib/marketplace/frequency-cap";
 import JargonTooltip from "@/components/JargonTooltip";
 import ShortlistButton from "@/components/ShortlistButton";
+import { SHOW_RATINGS, SHOW_EDITORIAL_BADGES } from "@/lib/compliance-config";
 
 // Homepage shows focused categories only — niche tabs live on /compare
 const TAB_OPTIONS = ["All Platforms", "Share Trading", "Super Funds", "Robo-Advisors", "Savings", "Crypto Exchanges"] as const;
@@ -205,7 +206,7 @@ export default function HomepageComparisonTable({
                 }`}
               >
                 <td className="sticky left-0 z-10 bg-inherit pl-5 pr-2 py-2.5 text-xs text-slate-400 font-medium">
-                  {isTopRated ? (
+                  {SHOW_EDITORIAL_BADGES && isTopRated ? (
                     <span className="text-amber-500 text-sm" title="Top Rated">🏆</span>
                   ) : (
                     i + 1
@@ -228,7 +229,7 @@ export default function HomepageComparisonTable({
                           <span className="text-[0.62rem] font-bold px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded-full uppercase tracking-wide">Sponsored</span>
                         )}
                       </div>
-                      {!isSponsored(broker) && !isCampaignWinner && editorPicks[broker.slug] && (
+                      {SHOW_EDITORIAL_BADGES && !isSponsored(broker) && !isCampaignWinner && editorPicks[broker.slug] && (
                         <div className={`text-[0.65rem] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-full ${
                           editorPicks[broker.slug] === "Editor\u2019s Choice"
                             ? "bg-amber-100 text-amber-700 border border-amber-200"
@@ -259,12 +260,14 @@ export default function HomepageComparisonTable({
                     {broker.chess_sponsored ? "\u2713 Yes" : "\u2717 No"}
                   </span>
                 </td>
+                {SHOW_RATINGS && (
                 <td className="px-3 py-2.5 text-center">
                   <div className="flex items-center justify-center gap-1">
                     <span className="text-amber text-xs">{renderStars(broker.rating || 0)}</span>
                     <span className="text-xs font-semibold text-slate-600">{broker.rating}</span>
                   </div>
                 </td>
+                )}
                 <td className="px-3 py-2.5 pr-5 text-center">
                   <div className="flex flex-col items-center gap-0.5">
                     <a
@@ -302,7 +305,7 @@ export default function HomepageComparisonTable({
             {/* Row 1: Rank + Icon + Name + CTA */}
             <div className="flex items-center gap-2">
               <div className="w-5 text-center shrink-0">
-                {isTopRatedMobile ? (
+                {SHOW_EDITORIAL_BADGES && isTopRatedMobile ? (
                   <span className="text-amber-500 text-sm">🏆</span>
                 ) : (
                   <span className="text-xs font-bold text-slate-400">{i + 1}</span>
@@ -337,8 +340,8 @@ export default function HomepageComparisonTable({
             </div>
             {/* Row 2: Rating + key metrics inline */}
             <div className="flex items-center gap-2 mt-1 ml-[3.25rem] text-[0.7rem]">
-              <span className="text-amber">{renderStars(broker.rating || 0)}</span>
-              <span className="text-slate-500 font-medium">{broker.rating}</span>
+              {SHOW_RATINGS && <><span className="text-amber">{renderStars(broker.rating || 0)}</span>
+              <span className="text-slate-500 font-medium">{broker.rating}</span></>}
               <span className="text-slate-300">·</span>
               <span className="text-slate-600"><span className="font-semibold">{broker.asx_fee || "N/A"}</span> ASX</span>
               {broker.fx_rate != null && (

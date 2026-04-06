@@ -28,15 +28,15 @@ export default function MobileStickyAdvisorCta() {
     <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 pb-safe">
       <div className="bg-white border-t border-slate-200 shadow-[0_-4px_20px_rgba(0,0,0,0.10)] px-4 py-3 flex items-center gap-3">
         <div className="flex-1 min-w-0">
-          <p className="text-xs font-bold text-slate-900 leading-tight">Find the right advisor</p>
-          <p className="text-[0.65rem] text-slate-500">Free &middot; no obligation &middot; 60 seconds</p>
+          <p className="text-xs font-bold text-slate-900 leading-tight">Need help?</p>
+          <p className="text-[0.65rem] text-slate-500">Compare platforms &middot; browse directories &middot; explore listings</p>
         </div>
         <Link
-          href="/find-advisor"
+          href="/compare"
           onClick={() => setDismissed(true)}
-          className="shrink-0 px-4 py-2.5 min-h-[44px] flex items-center bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-xl transition-colors"
+          className="shrink-0 px-4 py-2.5 min-h-[44px] flex items-center bg-amber-500 hover:bg-amber-600 text-slate-900 text-xs font-bold rounded-xl transition-colors"
         >
-          Find My Advisor — Free &rarr;
+          Compare Platforms &rarr;
         </Link>
         <button
           onClick={() => setDismissed(true)}

@@ -170,29 +170,26 @@ export default async function HomePage() {
               Compare {brokerCount}+ platforms. Browse licensed professionals. Explore investment opportunities — businesses, mining, farmland, property &amp; more.
             </p>
 
-            {/* Three CTAs */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
+            {/* Primary CTA */}
+            <div className="mb-5">
               <Link
                 href="/compare"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-900 font-extrabold text-sm rounded-xl transition-all shadow-lg shadow-amber-500/25 hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center gap-2.5 px-10 py-4 bg-amber-500 hover:bg-amber-400 text-slate-900 font-extrabold text-base rounded-xl transition-all shadow-lg shadow-amber-500/25 hover:-translate-y-0.5 w-full sm:w-auto"
               >
                 Compare Platforms
-                <Icon name="arrow-right" size={16} />
-              </Link>
-              <Link
-                href="/advisors"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 border-2 border-slate-200 text-slate-700 font-bold text-sm rounded-xl hover:border-slate-300 hover:bg-slate-50 transition-all"
-              >
-                Browse Directories
-              </Link>
-              <Link
-                href="/invest/listings"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm rounded-xl transition-all"
-              >
-                <Icon name="layers" size={15} />
-                Explore Marketplace
+                <Icon name="arrow-right" size={18} />
               </Link>
             </div>
+
+            {/* Secondary links */}
+            <p className="text-sm text-slate-500 mb-6">
+              Or browse{" "}
+              <Link href="/advisors" className="font-semibold text-slate-700 hover:text-amber-600 underline underline-offset-2 decoration-slate-300 hover:decoration-amber-400 transition-colors">directories</Link>
+              {" · "}
+              <Link href="/invest/listings" className="font-semibold text-slate-700 hover:text-amber-600 underline underline-offset-2 decoration-slate-300 hover:decoration-amber-400 transition-colors">marketplace</Link>
+              {" · "}
+              <Link href="/invest" className="font-semibold text-slate-700 hover:text-amber-600 underline underline-offset-2 decoration-slate-300 hover:decoration-amber-400 transition-colors">investment guides</Link>
+            </p>
 
             {/* Trust bar */}
             <div className="flex items-center justify-center flex-wrap gap-x-5 gap-y-1.5 text-sm font-semibold text-slate-600">
@@ -257,7 +254,7 @@ export default async function HomePage() {
                     className="shrink-0 flex items-center gap-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-amber-400/60 rounded-lg px-3 py-2 transition-all group"
                   >
                     <span className="text-[0.55rem] font-bold uppercase tracking-wider bg-amber-500 text-white px-1.5 py-0.5 rounded-full shrink-0">
-                      Verified Promo
+                      Promotion
                     </span>
                     <BrokerLogo broker={broker} size="xs" />
                     <span className="text-xs font-semibold text-slate-700 group-hover:text-slate-900 whitespace-nowrap max-w-[180px] truncate">
