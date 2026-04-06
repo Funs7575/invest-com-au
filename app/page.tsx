@@ -415,58 +415,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ═══════ 3B. INVESTMENT MARKETPLACE ═══════ */}
-      <ScrollFadeIn>
-        <section className="py-10 md:py-14 bg-slate-50 border-b border-slate-100">
-          <div className="container-custom">
-            <div className="flex items-start justify-between gap-2 mb-6">
-              <div>
-                <p className="text-xs font-semibold text-amber-600 uppercase tracking-wide mb-1">Investment Marketplace</p>
-                <h2 className="text-xl md:text-2xl font-extrabold text-slate-900">Explore Investment Categories</h2>
-                <p className="text-sm text-slate-600 mt-1">Enquire about real assets across these categories — businesses, mining, farmland, property and more.</p>
-              </div>
-              <Link href="/invest/listings" className="text-xs md:text-sm font-semibold text-amber-600 hover:text-amber-700 shrink-0 min-h-[44px] inline-flex items-center px-1">
-                View All &rarr;
-              </Link>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-              {[
-                { title: "Businesses for Sale", icon: "briefcase", href: "/invest/buy-business/listings", color: "bg-slate-800" },
-                { title: "Mining & Resources", icon: "layers", href: "/invest/mining/opportunities", color: "bg-amber-600" },
-                { title: "Farmland & Agriculture", icon: "leaf", href: "/invest/farmland/listings", color: "bg-green-600" },
-                { title: "Commercial Property", icon: "building", href: "/invest/commercial-property/listings", color: "bg-blue-600" },
-                { title: "Franchise", icon: "star", href: "/invest/franchise/listings", color: "bg-purple-600" },
-                { title: "Renewable Energy", icon: "zap", href: "/invest/renewable-energy/projects", color: "bg-teal-600" },
-                { title: "Private Credit", icon: "credit-card", href: "/invest/private-credit/listings", color: "bg-indigo-600" },
-                { title: "Alternatives", icon: "gem", href: "/invest/alternatives/listings", color: "bg-rose-600" },
-              ].map((cat) => (
-                <Link
-                  key={cat.href}
-                  href={cat.href}
-                  className="group bg-white border border-slate-200 rounded-xl p-4 hover:border-amber-200 hover:shadow-md transition-all text-center"
-                >
-                  <div className={`w-10 h-10 ${cat.color} rounded-xl flex items-center justify-center mx-auto mb-3 shadow-sm`}>
-                    <Icon name={cat.icon} size={18} className="text-white" />
-                  </div>
-                  <p className="text-sm font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{cat.title}</p>
-                  <p className="text-xs text-amber-600 font-semibold mt-1">Browse &rarr;</p>
-                </Link>
-              ))}
-            </div>
-            <div className="text-center mt-6">
-              <Link
-                href="/invest/listings"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm rounded-xl transition-all"
-              >
-                <Icon name="layers" size={15} />
-                View All {listingCount || 55}+ Investment Listings &rarr;
-              </Link>
-            </div>
-          </div>
-        </section>
-      </ScrollFadeIn>
-
-      {/* ═══════ 7. TOOLS & CALCULATORS ═══════ */}
+      {/* ═══════ 6. TOOLS & CALCULATORS ═══════ */}
       <ScrollFadeIn>
         <section className="py-6 md:py-10 bg-white border-t border-slate-100">
           <div className="container-custom">
@@ -499,26 +448,7 @@ export default async function HomePage() {
         </section>
       </ScrollFadeIn>
 
-      {/* ═══════ 8. ADVISOR DIRECTORY ═══════ */}
-      <div className="text-center mb-6 pt-6 bg-slate-50">
-        <p className="text-xs text-slate-500 max-w-lg mx-auto">
-          Browse directory listings and public register details. Always verify provider suitability for your own circumstances.
-        </p>
-      </div>
-      <AdvisorDirectory />
-
-      {/* ═══════ 9. EMAIL CAPTURE ═══════ */}
-      <ScrollFadeIn>
-        <section className="py-6 md:py-10 bg-white border-t border-slate-100">
-          <div className="container-custom">
-            <div className="max-w-xl mx-auto">
-              <LeadMagnet />
-            </div>
-          </div>
-        </section>
-      </ScrollFadeIn>
-
-      {/* ═══════ 10. ARTICLES & GUIDES ═══════ */}
+      {/* ═══════ 7. ARTICLES & GUIDES ═══════ */}
       {(articles as Article[])?.length > 0 && (
         <ScrollFadeIn>
           <section className="py-6 md:py-10 bg-slate-50 border-t border-slate-200">
@@ -593,6 +523,76 @@ export default async function HomePage() {
           </section>
         </ScrollFadeIn>
       )}
+
+      {/* ═══════ 8. INVESTMENT MARKETPLACE ═══════ */}
+      <ScrollFadeIn>
+        <section className="py-10 md:py-14 bg-slate-50 border-b border-slate-100">
+          <div className="container-custom">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <p className="text-xs font-semibold text-amber-600 uppercase tracking-wide mb-1">Investment Marketplace</p>
+                <h2 className="text-xl md:text-2xl font-extrabold text-slate-900">Explore Investment Categories</h2>
+                <p className="text-sm text-slate-600 mt-1">Enquire about real assets across these categories.</p>
+              </div>
+              <Link href="/invest/listings" className="text-sm font-semibold text-amber-600 hover:text-amber-700 shrink-0">
+                View all categories →
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+              {[
+                { title: "Businesses for Sale", icon: "briefcase", href: "/invest/buy-business/listings", color: "bg-slate-800" },
+                { title: "Mining & Resources", icon: "layers", href: "/invest/mining/opportunities", color: "bg-amber-600" },
+                { title: "Farmland & Agriculture", icon: "leaf", href: "/invest/farmland/listings", color: "bg-green-600" },
+                { title: "Commercial Property", icon: "building", href: "/invest/commercial-property/listings", color: "bg-blue-600" },
+                { title: "Franchise", icon: "star", href: "/invest/franchise/listings", color: "bg-purple-600" },
+                { title: "Renewable Energy", icon: "zap", href: "/invest/renewable-energy/projects", color: "bg-teal-600" },
+                { title: "Private Credit", icon: "credit-card", href: "/invest/private-credit/listings", color: "bg-indigo-600" },
+                { title: "Alternatives", icon: "gem", href: "/invest/alternatives/listings", color: "bg-rose-600" },
+              ].map((cat) => (
+                <Link
+                  key={cat.href}
+                  href={cat.href}
+                  className="group bg-white border border-slate-200 rounded-xl p-4 hover:border-amber-200 hover:shadow-md transition-all text-center"
+                >
+                  <div className={`w-10 h-10 ${cat.color} rounded-xl flex items-center justify-center mx-auto mb-3 shadow-sm`}>
+                    <Icon name={cat.icon} size={18} className="text-white" />
+                  </div>
+                  <p className="text-sm font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{cat.title}</p>
+                  <p className="text-xs text-amber-600 font-semibold mt-1">Browse &rarr;</p>
+                </Link>
+              ))}
+            </div>
+            <div className="text-center mt-6">
+              <Link
+                href="/invest/listings"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm rounded-xl transition-all"
+              >
+                <Icon name="layers" size={15} />
+                View All {listingCount || 55}+ Investment Listings &rarr;
+              </Link>
+            </div>
+          </div>
+        </section>
+      </ScrollFadeIn>
+
+      {/* ═══════ 9. ADVISOR DIRECTORY ═══════ */}
+      <div className="text-center mb-6 pt-6 bg-slate-50">
+        <p className="text-xs text-slate-500 max-w-lg mx-auto">
+          Browse directory listings and public register details. Always verify provider suitability for your own circumstances.
+        </p>
+      </div>
+      <AdvisorDirectory />
+
+      {/* ═══════ 10. EMAIL CAPTURE ═══════ */}
+      <ScrollFadeIn>
+        <section className="py-6 md:py-10 bg-white border-t border-slate-100">
+          <div className="container-custom">
+            <div className="max-w-xl mx-auto">
+              <LeadMagnet />
+            </div>
+          </div>
+        </section>
+      </ScrollFadeIn>
 
       {/* ═══════ MOBILE STICKY CTA (item 68) ═══════ */}
       <MobileStickyAdvisorCta />
