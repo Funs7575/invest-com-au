@@ -155,21 +155,21 @@ export default function DealsClient({ deals, advisors = [] }: { deals: Broker[];
       </nav>
 
       {/* Hero Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 px-5 py-6 md:px-8 md:py-10 mb-5 md:mb-8">
+      <div className="relative overflow-hidden rounded-2xl bg-white border border-slate-200 px-5 py-6 md:px-8 md:py-10 mb-5 md:mb-8">
         {/* Decorative gradient orbs */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4" />
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-500/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/4" />
 
         <div className="relative z-10">
           <div className="flex items-center gap-3 mb-2">
-            <h2 className="text-xl md:text-3xl font-extrabold text-white">
+            <h2 className="text-xl md:text-3xl font-extrabold text-slate-900">
               Exclusive Platform Deals
             </h2>
-            <span className="inline-flex items-center px-2.5 py-1 bg-amber-500/20 text-amber-400 text-xs md:text-sm font-bold rounded-full border border-amber-500/30">
+            <span className="inline-flex items-center px-2.5 py-1 bg-amber-50 text-amber-600 text-xs md:text-sm font-bold rounded-full border border-amber-200">
               {deals.length} Active
             </span>
           </div>
-          <p className="text-sm md:text-base text-slate-400 max-w-xl">
+          <p className="text-sm md:text-base text-slate-600 max-w-xl">
             Limited-time offers and promotions from Australia&apos;s top investing platforms
           </p>
         </div>

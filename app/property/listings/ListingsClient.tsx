@@ -218,39 +218,39 @@ export default function ListingsClient() {
     <div className="bg-white min-h-screen">
 
       {/* ── Header ───────────────────────────────── */}
-      <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 relative overflow-hidden">
+      <section className="relative bg-white border-b border-slate-100 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(245,158,11,0.08),transparent_60%)]" />
         <div className="container-custom py-8 md:py-12 relative">
-          <nav className="text-xs text-slate-400 mb-4 flex items-center gap-1.5">
-            <Link href="/" className="hover:text-slate-200 transition-colors">Home</Link>
+          <nav className="text-xs text-slate-500 mb-4 flex items-center gap-1.5">
+            <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
             <span>/</span>
-            <Link href="/property" className="hover:text-slate-200 transition-colors">Property</Link>
+            <Link href="/property" className="hover:text-slate-900 transition-colors">Property</Link>
             <span>/</span>
-            <span className="text-slate-300">Listings</span>
+            <span className="text-slate-900 font-medium">Listings</span>
           </nav>
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
             <div>
-              <h1 className="text-2xl md:text-4xl font-extrabold text-white mb-2 tracking-tight">
+              <h1 className="text-2xl md:text-4xl font-extrabold text-slate-900 mb-2 tracking-tight">
                 New Developments &amp; Property Listings
               </h1>
-              <p className="text-sm text-slate-400">
+              <p className="text-sm text-slate-600">
                 Off-the-plan apartments, townhouses, and house &amp; land packages across Australia.
               </p>
             </div>
             <div className="flex items-center gap-4 shrink-0">
               <div className="text-center">
-                <div className="text-2xl font-extrabold text-amber-400">50+</div>
-                <div className="text-[0.65rem] text-slate-400">Developments</div>
+                <div className="text-2xl font-extrabold text-amber-600">50+</div>
+                <div className="text-[0.65rem] text-slate-500">Developments</div>
               </div>
-              <div className="h-8 w-px bg-white/10" />
+              <div className="h-8 w-px bg-slate-200" />
               <div className="text-center">
-                <div className="text-2xl font-extrabold text-amber-400">5</div>
-                <div className="text-[0.65rem] text-slate-400">Major cities</div>
+                <div className="text-2xl font-extrabold text-amber-600">5</div>
+                <div className="text-[0.65rem] text-slate-500">Major cities</div>
               </div>
-              <div className="h-8 w-px bg-white/10" />
+              <div className="h-8 w-px bg-slate-200" />
               <div className="text-center">
                 <div className="text-2xl font-extrabold text-emerald-400">Free</div>
-                <div className="text-[0.65rem] text-slate-400">Enquiries</div>
+                <div className="text-[0.65rem] text-slate-500">Enquiries</div>
               </div>
             </div>
           </div>

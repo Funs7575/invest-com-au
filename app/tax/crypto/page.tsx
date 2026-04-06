@@ -203,26 +203,26 @@ export default function CryptoTaxPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
       {/* Hero */}
-      <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-10 md:py-14">
+      <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-400 mb-5 flex items-center gap-1.5 flex-wrap">
-            <Link href="/" className="hover:text-slate-200">Home</Link>
+          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+            <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
-            <Link href="/tax" className="hover:text-slate-200">Tax</Link>
+            <Link href="/tax" className="hover:text-slate-900">Tax</Link>
             <span>/</span>
-            <span className="text-slate-300">Crypto Tax</span>
+            <span className="text-slate-900 font-medium">Crypto Tax</span>
           </nav>
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/20 border border-amber-500/30 rounded-full text-xs font-semibold text-amber-300 mb-4">
-              <span className="w-1.5 h-1.5 bg-amber-400 rounded-full" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-100 border border-slate-200 rounded-full text-xs font-semibold text-slate-600 mb-4">
+              <span className="w-1.5 h-1.5 bg-slate-400 rounded-full" />
               Crypto Tax · {UPDATED_LABEL}
             </div>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-[1.1] mb-3 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-[1.1] mb-3 tracking-tight text-slate-900">
               Crypto Tax Australia{" "}
-              <span className="text-amber-400">({CURRENT_YEAR})</span>
+              <span className="text-amber-600">({CURRENT_YEAR})</span>
               {" "}— ATO Rules for Bitcoin &amp; Digital Assets
             </h1>
-            <p className="text-sm md:text-base text-slate-300 leading-relaxed">
+            <p className="text-sm md:text-base text-slate-600 leading-relaxed">
               Every crypto swap, sale, and spend is a CGT event. The ATO data-matches exchange records.
               We explain every taxable event, the 50% discount, DeFi income rules, and how to stay compliant.
             </p>

@@ -211,26 +211,26 @@ export default function NegativeGearingPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
       {/* Hero */}
-      <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-10 md:py-14">
+      <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-400 mb-5 flex items-center gap-1.5 flex-wrap">
-            <Link href="/" className="hover:text-slate-200">Home</Link>
+          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+            <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
-            <Link href="/tax" className="hover:text-slate-200">Tax</Link>
+            <Link href="/tax" className="hover:text-slate-900">Tax</Link>
             <span>/</span>
-            <span className="text-slate-300">Negative Gearing</span>
+            <span className="text-slate-900 font-medium">Negative Gearing</span>
           </nav>
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/20 border border-amber-500/30 rounded-full text-xs font-semibold text-amber-300 mb-4">
-              <span className="w-1.5 h-1.5 bg-amber-400 rounded-full" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-100 border border-slate-200 rounded-full text-xs font-semibold text-slate-600 mb-4">
+              <span className="w-1.5 h-1.5 bg-slate-400 rounded-full" />
               Negative Gearing · {UPDATED_LABEL}
             </div>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-[1.1] mb-3 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-[1.1] mb-3 tracking-tight text-slate-900">
               Negative Gearing Australia{" "}
-              <span className="text-amber-400">({CURRENT_YEAR})</span>
+              <span className="text-amber-600">({CURRENT_YEAR})</span>
               {" "}— How It Works for Property &amp; Shares
             </h1>
-            <p className="text-sm md:text-base text-slate-300 leading-relaxed">
+            <p className="text-sm md:text-base text-slate-600 leading-relaxed">
               Around 3 million Australians use negative gearing to reduce their tax. We explain exactly how it works,
               what the real after-tax cost is, and when it makes — and doesn't make — financial sense.
             </p>
