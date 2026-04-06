@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CURRENT_YEAR } from "@/lib/seo";
+import { SHOW_BEST_PICKS, SHOW_MATCH_LANGUAGE, PRIMARY_CTA_TEXT, PRIMARY_CTA_HREF } from "@/lib/compliance-config";
 
 // ─── Mega-menu data ───────────────────────────────────────────────────────────
 
@@ -30,11 +31,11 @@ const platformsMenu = {
     { label: "Investing from Overseas", href: "/foreign-investment", desc: "Tax, FIRB rules & visa pathways" },
   ],
   tools: [
-    { label: `Best Platforms ${CURRENT_YEAR}`, href: "/best" },
+    ...(SHOW_BEST_PICKS ? [{ label: `Best Platforms ${CURRENT_YEAR}`, href: "/best" }] : [{ label: "All Platforms", href: "/compare" }]),
     { label: "Compare All Platforms", href: "/compare" },
     { label: "Broker vs Broker", href: "/versus" },
     { label: "Current Deals", href: "/deals" },
-    { label: "Platform Quiz (60s)", href: "/quiz" },
+    { label: SHOW_MATCH_LANGUAGE ? "Platform Quiz (60s)" : "Platform Filter", href: SHOW_MATCH_LANGUAGE ? "/quiz" : "/compare" },
     { label: "Fee Calculator", href: "/calculators" },
   ],
 };
@@ -54,12 +55,12 @@ const propertyMenu = {
 
 const advisorsMenu = {
   property: [
-    { label: "Mortgage Brokers", href: "/advisors/mortgage-brokers", desc: "Compare 30+ lenders — free" },
+    { label: "Mortgage Brokers Directory", href: "/advisors/mortgage-brokers", desc: "Compare 30+ lenders — free" },
     { label: "Buyer's Agents", href: "/advisors/buyers-agents", desc: "Off-market access & negotiation" },
     { label: "Real Estate Agents", href: "/advisors/real-estate-agents", desc: "Selling & listing specialists" },
   ],
   wealth: [
-    { label: "Financial Planners", href: "/advisors/financial-planners", desc: "Wealth strategy & retirement" },
+    { label: "Financial Advisers Directory", href: "/advisors/financial-planners", desc: "Wealth strategy & retirement" },
     { label: "SMSF Accountants", href: "/advisors/smsf-accountants", desc: "Self-managed super specialists" },
     { label: "Insurance Brokers", href: "/advisors/insurance-brokers", desc: "Life & income protection" },
     { label: "Tax Agents", href: "/advisors/tax-agents", desc: "Tax planning & lodgement" },
@@ -204,7 +205,7 @@ const mobileSections = [
   {
     title: "Compare Platforms",
     items: [
-      { name: "Find My Match (60s)", href: "/quiz" },
+      { name: SHOW_MATCH_LANGUAGE ? "Find My Match (60s)" : "Platform Filter", href: SHOW_MATCH_LANGUAGE ? "/quiz" : "/compare" },
       { name: "Compare All Platforms", href: "/compare" },
       { name: "Share Trading", href: "/compare?filter=shares" },
       { name: "ETFs", href: "/compare/etfs" },
@@ -248,9 +249,9 @@ const mobileSections = [
   {
     title: "Property & Advisors",
     items: [
-      { name: "Mortgage Brokers", href: "/advisors/mortgage-brokers" },
+      { name: "Mortgage Brokers Directory", href: "/advisors/mortgage-brokers" },
       { name: "Buyer's Agents", href: "/advisors/buyers-agents" },
-      { name: "Financial Planners", href: "/advisors/financial-planners" },
+      { name: "Financial Advisers Directory", href: "/advisors/financial-planners" },
       { name: "Investment Property", href: "/property" },
       { name: "All Advisors", href: "/advisors" },
     ],
@@ -310,12 +311,12 @@ export function Navigation() {
               <div className="p-6">
                 {/* Unified funnel CTA card */}
                 <Link
-                  href="/quiz"
+                  href={PRIMARY_CTA_HREF}
                   className="flex items-center justify-between p-3.5 bg-gradient-to-r from-amber-50 to-amber-100/60 border border-amber-200 rounded-xl mb-5 hover:border-amber-300 transition-colors group"
                 >
                   <div>
                     <p className="font-bold text-slate-900 text-sm">Not sure where to start?</p>
-                    <p className="text-xs text-slate-500 mt-0.5">Find My Match — 60-second quiz, platform or advisor</p>
+                    <p className="text-xs text-slate-500 mt-0.5">Filter platforms by your preferences — 60 seconds</p>
                   </div>
                   <svg className="w-5 h-5 text-amber-600 shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -505,12 +506,12 @@ export function Navigation() {
               <div className="p-6">
                 {/* Top CTA */}
                 <Link
-                  href="/quiz"
+                  href={PRIMARY_CTA_HREF}
                   className="flex items-center justify-between p-4 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl mb-5 hover:border-amber-300 transition-colors group"
                 >
                   <div>
-                    <p className="font-bold text-slate-900 text-sm">Start My Free Match</p>
-                    <p className="text-xs text-slate-500 mt-0.5">60-second quiz — platform or advisor, free, no obligation</p>
+                    <p className="font-bold text-slate-900 text-sm">{PRIMARY_CTA_TEXT}</p>
+                    <p className="text-xs text-slate-500 mt-0.5">Browse and filter platforms and professional directories</p>
                   </div>
                   <svg className="w-5 h-5 text-amber-500 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -604,10 +605,10 @@ export function Navigation() {
           {/* Desktop CTA — unified funnel entry point */}
           <div className="hidden lg:flex items-center">
             <Link
-              href="/quiz"
+              href={PRIMARY_CTA_HREF}
               className="bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-900 px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm hover:shadow-md active:scale-[0.97] flex items-center gap-2"
             >
-              Start Free Match
+              {PRIMARY_CTA_TEXT}
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
@@ -617,10 +618,10 @@ export function Navigation() {
           {/* Mobile hamburger */}
           <div className="lg:hidden flex items-center gap-2">
             <Link
-              href="/quiz"
+              href={PRIMARY_CTA_HREF}
               className="bg-amber-500 text-slate-900 px-4 py-2 rounded-lg text-xs font-bold transition-all hover:bg-amber-600 min-h-[44px] flex items-center"
             >
-              Start Match
+              {PRIMARY_CTA_TEXT}
             </Link>
             <button
               onClick={() => setMobileOpen((v) => !v)}
@@ -683,11 +684,11 @@ export function Navigation() {
             {/* Single full-width CTA */}
             <div className="border-t border-slate-100 pt-4 mt-2 pb-2">
               <Link
-                href="/quiz"
+                href={PRIMARY_CTA_HREF}
                 onClick={() => setMobileOpen(false)}
                 className="flex items-center justify-center w-full py-3.5 min-h-[52px] bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm rounded-xl transition-colors"
               >
-                Start My Free Match &rarr;
+                {PRIMARY_CTA_TEXT} &rarr;
               </Link>
             </div>
           </nav>

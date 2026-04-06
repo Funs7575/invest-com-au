@@ -261,7 +261,7 @@ function sortByInferred(
   const [item] = reordered.splice(idx, 1);
   reordered.unshift({
     ...item,
-    sub: item.sub ? `${item.sub} · Recommended for you` : "Recommended for you",
+    sub: item.sub ? `${item.sub} · Suggested based on your answers` : "Suggested based on your answers",
   });
   return reordered;
 }
