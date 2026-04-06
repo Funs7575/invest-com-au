@@ -101,7 +101,7 @@ export default async function PropertyHubPage() {
                 Browse new developments, find a verified buyer&apos;s agent, research suburb data, and compare investment loans — all in one place.
               </p>
               <div className="flex flex-col sm:flex-row items-start gap-2.5 mb-5">
-                <Link href="/property/listings" className="w-full sm:w-auto px-6 py-3 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 shadow-md hover:shadow-lg transition-all text-sm text-center">
+                <Link href="/property/listings" className="w-full sm:w-auto px-6 py-3 bg-amber-500 text-slate-900 font-bold rounded-xl hover:bg-amber-600 shadow-md hover:shadow-lg transition-all text-sm text-center">
                   Browse Developments &rarr;
                 </Link>
                 <Link href="/property/buyer-agents" className="w-full sm:w-auto px-6 py-3 border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all text-sm text-center">
@@ -206,7 +206,7 @@ export default async function PropertyHubPage() {
                           {hero.rental_yield_estimate && (
                             <div className="text-xs font-semibold text-emerald-400 mt-0.5">{hero.rental_yield_estimate}% est. yield</div>
                           )}
-                          <div className="mt-2 inline-flex items-center gap-1.5 px-4 py-2 bg-amber-500 hover:bg-amber-400 text-white text-xs font-bold rounded-lg transition-colors">
+                          <div className="mt-2 inline-flex items-center gap-1.5 px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-900 text-xs font-bold rounded-lg transition-colors">
                             View Details &rarr;
                           </div>
                         </div>

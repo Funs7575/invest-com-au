@@ -224,14 +224,14 @@ export default async function CountryInvestmentPage({
       <ForeignInvestmentNav current="" />
 
       {/* ── Hero ──────────────────────────────────────────────────────── */}
-      <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-10 md:py-14">
+      <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-400 mb-5 flex items-center gap-1.5 flex-wrap">
-            <Link href="/" className="hover:text-slate-200">Home</Link>
-            <span>/</span>
-            <Link href="/foreign-investment" className="hover:text-slate-200">Foreign Investment</Link>
-            <span>/</span>
-            <span className="text-slate-300">{profile.country_name}</span>
+          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+            <Link href="/" className="hover:text-slate-900">Home</Link>
+            <span className="text-slate-300">/</span>
+            <Link href="/foreign-investment" className="hover:text-slate-900">Foreign Investment</Link>
+            <span className="text-slate-300">/</span>
+            <span className="text-slate-900 font-medium">{profile.country_name}</span>
           </nav>
 
           <div className="max-w-2xl">
@@ -240,26 +240,26 @@ export default async function CountryInvestmentPage({
               {profile.flag_emoji && (
                 <span className="text-2xl">{profile.flag_emoji}</span>
               )}
-              <span className="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/20 border border-amber-500/30 rounded-full text-xs font-semibold text-amber-300">
+              <span className="inline-flex items-center gap-2 px-3 py-1 bg-slate-100 rounded-full text-xs font-semibold text-slate-600">
                 <span className="w-1.5 h-1.5 bg-amber-400 rounded-full" />
                 {profile.country_name} Investors · Updated {CURRENT_YEAR}
               </span>
               {profile.has_dta && (
-                <span className="px-2.5 py-1 bg-green-500/20 border border-green-500/30 rounded-full text-xs font-bold text-green-300">
+                <span className="px-2.5 py-1 bg-green-50 border border-green-200 rounded-full text-xs font-bold text-green-700">
                   DTA Active {profile.dta_year && `(${profile.dta_year})`}
                 </span>
               )}
               {profile.fta_partner && (
-                <span className="px-2.5 py-1 bg-blue-500/20 border border-blue-500/30 rounded-full text-xs font-bold text-blue-300">
+                <span className="px-2.5 py-1 bg-blue-50 border border-blue-200 rounded-full text-xs font-bold text-blue-700">
                   FTA Partner
                 </span>
               )}
             </div>
 
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-[1.1] mb-3 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-[1.1] mb-3 tracking-tight text-slate-900">
               {profile.hero_title ?? `Invest in Australia from ${profile.country_name}`}
             </h1>
-            <p className="text-sm md:text-base text-slate-300 leading-relaxed">
+            <p className="text-sm md:text-base text-slate-600 leading-relaxed">
               {profile.hero_subtitle}
             </p>
           </div>
