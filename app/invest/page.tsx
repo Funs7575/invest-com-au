@@ -290,17 +290,17 @@ export default async function InvestHubPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {[
-              { title: "Businesses for Sale", desc: "Browse businesses across Australia — hospitality, retail, professional services, and more.", href: "/invest/listings?vertical=business", icon: "briefcase" },
-              { title: "Mining Opportunities", desc: "ASX miners, exploration tenements, joint ventures, and mining ETFs.", href: "/invest/listings?vertical=mining", icon: "layers" },
-              { title: "Farmland & Agriculture", desc: "Grazing stations, cropping farms, horticulture, and water rights across Australia.", href: "/invest/listings?vertical=farmland", icon: "leaf" },
-              { title: "Commercial Property", desc: "Office, retail, industrial, hotel, and data centre assets.", href: "/invest/listings?vertical=commercial_property", icon: "building" },
-              { title: "Franchise Opportunities", desc: "Proven business models for sale — food, retail, services, and franchise resales.", href: "/invest/listings?vertical=franchise", icon: "star" },
-              { title: "Renewable Energy", desc: "Solar farms, wind projects, battery storage, and green infrastructure.", href: "/invest/listings?vertical=energy", icon: "zap" },
-              { title: "Investment Funds", desc: "PE, hedge funds, SIV-complying funds, and managed investment schemes.", href: "/invest/listings?vertical=fund", icon: "trending-up" },
-              { title: "Startups & Crowdfunding", desc: "Equity crowdfunding, angel deals, and early-stage investment opportunities.", href: "/invest/listings?vertical=startup", icon: "rocket" },
-              { title: "Alternative Investments", desc: "Fine wine, art, classic cars, luxury watches, and collectibles.", href: "/invest/listings?vertical=alternatives", icon: "gem" },
-              { title: "Private Credit & P2P", desc: "Private debt funds and peer-to-peer lending — yields above term deposits.", href: "/invest/listings?vertical=private_credit", icon: "credit-card" },
-              { title: "Infrastructure", desc: "Toll roads, airports, utilities, ports, and social infrastructure.", href: "/invest/listings?vertical=infrastructure", icon: "git-branch" },
+              { title: "Businesses for Sale", desc: "Browse businesses across Australia — hospitality, retail, professional services, and more.", href: "/invest/buy-business/listings", icon: "briefcase" },
+              { title: "Mining Opportunities", desc: "ASX miners, exploration tenements, joint ventures, and mining ETFs.", href: "/invest/mining/opportunities", icon: "layers" },
+              { title: "Farmland & Agriculture", desc: "Grazing stations, cropping farms, horticulture, and water rights across Australia.", href: "/invest/farmland/listings", icon: "leaf" },
+              { title: "Commercial Property", desc: "Office, retail, industrial, hotel, and data centre assets.", href: "/invest/commercial-property/listings", icon: "building" },
+              { title: "Franchise Opportunities", desc: "Proven business models for sale — food, retail, services, and franchise resales.", href: "/invest/franchise/listings", icon: "star" },
+              { title: "Renewable Energy", desc: "Solar farms, wind projects, battery storage, and green infrastructure.", href: "/invest/renewable-energy/projects", icon: "zap" },
+              { title: "Investment Funds", desc: "PE, hedge funds, SIV-complying funds, and managed investment schemes.", href: "/invest/funds", icon: "trending-up" },
+              { title: "Startups & Crowdfunding", desc: "Equity crowdfunding, angel deals, and early-stage investment opportunities.", href: "/invest/startups/opportunities", icon: "rocket" },
+              { title: "Alternative Investments", desc: "Fine wine, art, classic cars, luxury watches, and collectibles.", href: "/invest/alternatives/listings", icon: "gem" },
+              { title: "Private Credit & P2P", desc: "Private debt funds and peer-to-peer lending — yields above term deposits.", href: "/invest/private-credit/listings", icon: "credit-card" },
+              { title: "Infrastructure", desc: "Toll roads, airports, utilities, ports, and social infrastructure.", href: "/invest/infrastructure/listings", icon: "git-branch" },
             ].map((card) => (
               <Link
                 key={card.href}

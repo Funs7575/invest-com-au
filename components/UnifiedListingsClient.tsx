@@ -155,11 +155,11 @@ const SECONDARY_FILTERS: Record<string, { key: string; label: string; options: {
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function UnifiedListingsClient({ listings }: { listings: InvestmentListing[] }) {
+export default function UnifiedListingsClient({ listings, defaultVertical }: { listings: InvestmentListing[]; defaultVertical?: string }) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const activeVertical = searchParams.get("vertical") || "all";
+  const activeVertical = searchParams.get("vertical") || defaultVertical || "all";
   const activeState = searchParams.get("state") || "All";
   const activePrice = searchParams.get("price") || "all";
   const activeSort = searchParams.get("sort") || "featured";
@@ -179,9 +179,9 @@ export default function UnifiedListingsClient({ listings }: { listings: Investme
   }
 
   function setVertical(value: string) {
+    // Always route to the unified listings page when changing vertical
     const params = new URLSearchParams();
     if (value !== "all") params.set("vertical", value);
-    // Reset secondary filter when changing vertical
     router.push(`/invest/listings${params.toString() ? `?${params.toString()}` : ""}`, { scroll: false });
   }
 
