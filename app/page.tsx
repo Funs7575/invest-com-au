@@ -160,12 +160,12 @@ export default async function HomePage() {
             </div>
 
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 leading-[1.1] mb-4 tracking-tight">
-              Australia&apos;s comparison and directory hub{" "}
-              <span className="text-amber-500">for investors</span>
+              Compare platforms, professionals{" "}
+              <span className="text-amber-500">&amp; investment pathways</span>
             </h1>
 
             <p className="text-base md:text-lg text-slate-600 mb-8 leading-relaxed max-w-2xl mx-auto">
-              Compare platforms, browse professionals, and explore investment options — always free, always independent.
+              Compare fees, browse directories, and explore investment options in one place.
             </p>
 
             {/* Primary CTA */}
@@ -238,18 +238,18 @@ export default async function HomePage() {
         <div className="container-custom">
           <div className="flex items-center justify-center flex-wrap gap-x-6 gap-y-2 text-xs font-medium">
             <span className="flex items-center gap-1.5">
-              <Icon name="shield-check" size={14} className="text-amber-400" />
-              Independent comparison platform
+              <Icon name="bar-chart-2" size={14} className="text-amber-400" />
+              Compare factual platform data
             </span>
             <span className="text-slate-600 hidden sm:block" aria-hidden="true">|</span>
             <span className="flex items-center gap-1.5">
-              <Icon name="link" size={14} className="text-amber-400" />
-              Public-register-linked directories
+              <Icon name="users" size={14} className="text-amber-400" />
+              Browse professional directories
             </span>
             <span className="text-slate-600 hidden sm:block" aria-hidden="true">|</span>
             <span className="flex items-center gap-1.5">
-              <Icon name="eye" size={14} className="text-amber-400" />
-              Editorially separate from promotions
+              <Icon name="book-open" size={14} className="text-amber-400" />
+              Educational tools for Australian investors
             </span>
           </div>
         </div>
