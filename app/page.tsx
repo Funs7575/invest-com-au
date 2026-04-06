@@ -165,28 +165,29 @@ export default async function HomePage() {
             </h1>
 
             <p className="text-base md:text-lg text-slate-600 mb-8 leading-relaxed max-w-2xl mx-auto">
-              Compare fees, browse directories, and explore investment options in one place.
+              Compare platforms, browse professionals, and explore investment pathways built for Australians.
             </p>
 
-            {/* Primary CTA */}
-            <div className="mb-5">
+            {/* CTAs — primary + secondary */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-4">
               <Link
                 href="/compare"
-                className="inline-flex items-center justify-center gap-2.5 px-10 py-4 bg-amber-500 hover:bg-amber-400 text-slate-900 font-extrabold text-base rounded-xl transition-all shadow-lg shadow-amber-500/25 hover:-translate-y-0.5 w-full sm:w-auto"
+                className="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 bg-amber-500 hover:bg-amber-400 text-slate-900 font-extrabold text-sm rounded-xl transition-all shadow-lg shadow-amber-500/25 hover:-translate-y-0.5 w-full sm:w-auto"
               >
                 Compare Platforms
-                <Icon name="arrow-right" size={18} />
+                <Icon name="arrow-right" size={16} />
+              </Link>
+              <Link
+                href="/advisors"
+                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 border-2 border-slate-200 text-slate-700 font-bold text-sm rounded-xl hover:border-slate-300 hover:bg-slate-50 transition-all w-full sm:w-auto"
+              >
+                Browse Professionals
               </Link>
             </div>
 
-            {/* Secondary links */}
+            {/* Tertiary text link */}
             <p className="text-sm text-slate-500 mb-6">
-              Or browse{" "}
-              <Link href="/advisors" className="font-semibold text-slate-700 hover:text-amber-600 underline underline-offset-2 decoration-slate-300 hover:decoration-amber-400 transition-colors">directories</Link>
-              {" · "}
-              <Link href="/invest/listings" className="font-semibold text-slate-700 hover:text-amber-600 underline underline-offset-2 decoration-slate-300 hover:decoration-amber-400 transition-colors">marketplace</Link>
-              {" · "}
-              <Link href="/invest" className="font-semibold text-slate-700 hover:text-amber-600 underline underline-offset-2 decoration-slate-300 hover:decoration-amber-400 transition-colors">investment guides</Link>
+              <Link href="/invest" className="font-semibold text-slate-600 hover:text-amber-600 underline underline-offset-2 decoration-slate-300 hover:decoration-amber-400 transition-colors">Explore investment categories &rarr;</Link>
             </p>
 
             {/* Trust bar */}
@@ -455,7 +456,7 @@ export default async function HomePage() {
             <div className="container-custom">
               <div className="flex items-start justify-between gap-2 mb-4 md:mb-6">
                 <div>
-                  <h2 className="text-xl md:text-2xl font-bold text-slate-900">Learn &amp; Get Expert Help</h2>
+                  <h2 className="text-xl md:text-2xl font-bold text-slate-900">Latest Investor Guides</h2>
                   <p className="text-xs md:text-sm text-slate-600 mt-1">Guides, how-tos, and professional advice for smarter investing</p>
                 </div>
                 <Link href="/articles" className="text-xs md:text-sm font-semibold text-slate-600 hover:text-slate-900 shrink-0 min-h-[44px] inline-flex items-center px-1">
