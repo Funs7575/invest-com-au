@@ -31,11 +31,11 @@ const platformsMenu = {
     { label: "Investing from Overseas", href: "/foreign-investment", desc: "Tax, FIRB rules & visa pathways" },
   ],
   tools: [
-    ...(SHOW_BEST_PICKS ? [{ label: `Best Platforms ${CURRENT_YEAR}`, href: "/best" }] : [{ label: "All Platforms", href: "/compare" }]),
+    ...(SHOW_BEST_PICKS ? [{ label: `Best Platforms ${CURRENT_YEAR}`, href: "/best" }] : []),
     { label: "Compare All Platforms", href: "/compare" },
     { label: "Broker vs Broker", href: "/versus" },
     { label: "Current Deals", href: "/deals" },
-    { label: SHOW_MATCH_LANGUAGE ? "Platform Quiz (60s)" : "Platform Filter", href: SHOW_MATCH_LANGUAGE ? "/quiz" : "/compare" },
+    ...(SHOW_MATCH_LANGUAGE ? [{ label: "Platform Quiz (60s)", href: "/quiz" }] : []),
     { label: "Fee Calculator", href: "/calculators" },
   ],
 };
@@ -228,6 +228,7 @@ const mobileSections = [
       { name: "Farmland & Agriculture", href: "/invest/farmland" },
       { name: "Commercial Property", href: "/invest/commercial-property" },
       { name: "Renewable Energy", href: "/invest/renewable-energy" },
+      { name: "Franchise", href: "/invest/franchise" },
       { name: "Startups & Tech", href: "/invest/startups" },
       { name: "Infrastructure", href: "/invest/infrastructure" },
       { name: "Private Credit & P2P", href: "/invest/private-credit" },

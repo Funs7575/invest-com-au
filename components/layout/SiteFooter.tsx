@@ -30,6 +30,10 @@ export function SiteFooter() {
             <ul className="space-y-2.5 text-sm">
               {[
                 { label: "All Verticals", href: "/invest" },
+                { label: "Marketplace", href: "/invest/listings" },
+                { label: "Buy a Business", href: "/invest/buy-business" },
+                { label: "Mining", href: "/invest/mining" },
+                { label: "Farmland", href: "/invest/farmland" },
                 { label: "Private Credit", href: "/invest/private-credit" },
                 { label: "A-REITs", href: "/invest/reits" },
                 { label: "Managed Funds", href: "/invest/managed-funds" },

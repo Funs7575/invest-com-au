@@ -412,14 +412,16 @@ export default async function HomePage() {
                 View All &rarr;
               </Link>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
               {[
-                { title: "Businesses", icon: "briefcase", href: "/invest/buy-business/listings", color: "bg-slate-800" },
-                { title: "Mining", icon: "layers", href: "/invest/mining/opportunities", color: "bg-amber-600" },
-                { title: "Farmland", icon: "leaf", href: "/invest/farmland/listings", color: "bg-green-600" },
+                { title: "Businesses for Sale", icon: "briefcase", href: "/invest/buy-business/listings", color: "bg-slate-800" },
+                { title: "Mining & Resources", icon: "layers", href: "/invest/mining/opportunities", color: "bg-amber-600" },
+                { title: "Farmland & Agriculture", icon: "leaf", href: "/invest/farmland/listings", color: "bg-green-600" },
                 { title: "Commercial Property", icon: "building", href: "/invest/commercial-property/listings", color: "bg-blue-600" },
+                { title: "Franchise", icon: "star", href: "/invest/franchise/listings", color: "bg-purple-600" },
+                { title: "Renewable Energy", icon: "zap", href: "/invest/renewable-energy/projects", color: "bg-teal-600" },
+                { title: "Private Credit", icon: "credit-card", href: "/invest/private-credit/listings", color: "bg-indigo-600" },
                 { title: "Alternatives", icon: "gem", href: "/invest/alternatives/listings", color: "bg-rose-600" },
-                { title: "Infrastructure", icon: "git-branch", href: "/invest/infrastructure/listings", color: "bg-cyan-700" },
               ].map((cat) => (
                 <Link
                   key={cat.href}
