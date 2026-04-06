@@ -207,9 +207,9 @@ export default async function ListingsHubPage() {
                     </div>
 
                     <div className="flex-1">
-                      <h2 className="text-sm font-bold text-slate-900 group-hover:text-amber-600 transition-colors mb-1">
+                      <h3 className="text-sm font-bold text-slate-900 group-hover:text-amber-600 transition-colors mb-1">
                         {v.title}
-                      </h2>
+                      </h3>
                       <p className="text-xs text-slate-500 leading-relaxed">
                         {v.description}
                       </p>

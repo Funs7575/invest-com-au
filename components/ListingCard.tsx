@@ -280,7 +280,7 @@ export default function ListingCard({ listing }: ListingCardProps) {
           href={detailPath}
           className="mt-2 inline-flex items-center justify-center gap-1.5 w-full bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold text-sm px-4 py-2 rounded-lg transition-colors"
         >
-          Enquire
+          View Details
           <Icon name="arrow-right" size={14} />
         </Link>
       </div>

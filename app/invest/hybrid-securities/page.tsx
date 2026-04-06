@@ -84,29 +84,29 @@ export default async function HybridSecuritiesPage() {
       />
 
       {/* Hero */}
-      <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-14 md:py-20">
+      <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="flex items-center gap-1.5 text-xs text-slate-400 mb-6" aria-label="Breadcrumb">
-            <Link href="/" className="hover:text-white transition-colors">Home</Link>
-            <span className="text-slate-600">/</span>
-            <Link href="/invest" className="hover:text-white transition-colors">Invest</Link>
-            <span className="text-slate-600">/</span>
-            <span className="text-slate-300">Hybrid Securities</span>
+          <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-6" aria-label="Breadcrumb">
+            <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
+            <span className="text-slate-300">/</span>
+            <Link href="/invest" className="hover:text-slate-900 transition-colors">Invest</Link>
+            <span className="text-slate-300">/</span>
+            <span className="text-slate-900 font-medium">Hybrid Securities</span>
           </nav>
 
           <div className="flex flex-wrap items-center gap-2 mb-4">
             <span className="text-xs font-semibold bg-amber-500 text-slate-900 px-3 py-1 rounded-full">
               Updated {CURRENT_YEAR}
             </span>
-            <span className="text-xs font-semibold bg-slate-700 text-slate-200 px-3 py-1 rounded-full">
+            <span className="text-xs font-semibold bg-slate-100 text-slate-600 px-3 py-1 rounded-full">
               Income &amp; SMSF Popular
             </span>
           </div>
 
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-4 max-w-3xl">
+          <h1 className="text-slate-900 text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-4 max-w-3xl">
             Hybrid Securities in Australia
           </h1>
-          <p className="text-lg text-slate-300 leading-relaxed max-w-2xl">
+          <p className="text-lg text-slate-600 leading-relaxed max-w-2xl">
             ASX-listed hybrid securities from major banks offer yields above term deposits with franking credits. They are hugely popular with SMSF trustees and income-focused investors — but carry risks that many investors don&apos;t fully understand.
           </p>
           <div className="flex flex-wrap gap-3 mt-6">
@@ -118,7 +118,7 @@ export default async function HybridSecuritiesPage() {
             </Link>
             <Link
               href="/compare"
-              className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-semibold text-sm px-5 py-2.5 rounded-lg border border-white/20 transition-colors"
+              className="inline-flex items-center gap-2 border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 font-semibold text-sm px-5 py-2.5 rounded-lg border transition-colors"
             >
               Filter Platforms
             </Link>
