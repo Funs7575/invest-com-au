@@ -58,7 +58,7 @@ export default function FranchisePage() {
           </p>
 
           <Link
-            href="/invest/listings?vertical=franchise"
+            href="/invest/franchise/listings"
             className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-base px-7 py-3.5 rounded-xl transition-colors shadow-lg"
           >
             Browse Franchise Opportunities
@@ -182,7 +182,7 @@ export default function FranchisePage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link
-                href="/invest/listings?vertical=franchise"
+                href="/invest/franchise/listings"
                 className="inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-6 py-3 rounded-xl text-sm"
               >
                 Browse Franchise Listings

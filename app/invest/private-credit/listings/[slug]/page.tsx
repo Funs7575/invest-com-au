@@ -97,7 +97,7 @@ export default async function PrivateCreditListingDetailPage({
             <Icon name="chevron-right" size={12} className="text-slate-300" />
             <Link href="/invest" className="hover:text-slate-900 transition-colors">Invest</Link>
             <Icon name="chevron-right" size={12} className="text-slate-300" />
-            <Link href="/invest/listings?vertical=private_credit" className="hover:text-slate-900 transition-colors">Private Credit</Link>
+            <Link href="/invest/private-credit/listings" className="hover:text-slate-900 transition-colors">Private Credit</Link>
             <Icon name="chevron-right" size={12} className="text-slate-300" />
             <span className="text-slate-900 font-medium truncate max-w-[160px]">{l.title}</span>
           </nav>
@@ -248,7 +248,7 @@ export default async function PrivateCreditListingDetailPage({
         <div className="container-custom text-center">
           <p className="text-slate-500 text-sm mb-4">Looking for more opportunities?</p>
           <Link
-            href="/invest/listings?vertical=private_credit"
+            href="/invest/private-credit/listings"
             className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-6 py-3 rounded-xl transition-colors"
           >
             Browse All Private Credit Funds
