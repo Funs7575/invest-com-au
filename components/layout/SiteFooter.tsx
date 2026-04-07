@@ -196,7 +196,7 @@ export function SiteFooter() {
           </div>
 
           <p className="text-xs text-slate-700 mt-4">
-            73+ platforms · verified advisors · Updated {updatedDate}
+            100+ platforms · licensed professionals · Updated {updatedDate}
           </p>
         </div>
       </div>

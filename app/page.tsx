@@ -21,7 +21,7 @@ import { PRIMARY_CTA_TEXT, PRIMARY_CTA_HREF, SECONDARY_CTA_TEXT, SECONDARY_CTA_H
 export const metadata = {
   title: "Compare Platforms, Browse Advisors & Explore Investments — Invest.com.au",
   description:
-    "Australia's independent investing hub. Compare 73+ trading platforms, browse licensed professionals, and explore investment opportunities — businesses for sale, mining, farmland, commercial property & more. Always free.",
+    "Australia's independent investing hub. Compare 100+ trading platforms, browse licensed professionals, and explore investment opportunities — businesses for sale, mining, farmland, commercial property & more. Always free.",
   openGraph: {
     title: "Compare Platforms, Browse Advisors & Explore Investments — Invest.com.au",
     description: "Australia's independent investing hub. Compare trading platforms, browse licensed professionals, and explore investment listings. Always free.",
@@ -534,8 +534,8 @@ export default async function HomePage() {
                   </Link>
                 ))}
               </div>
-              {/* Mobile articles */}
-              <div className="md:hidden">
+              {/* Mobile articles (aria-hidden to prevent duplicate screen reader content) */}
+              <div className="md:hidden" aria-hidden="true">
                 {(articles as Article[])[0] && (
                   <Link href={`/article/${(articles as Article[])[0].slug}`} className="block mb-3 rounded-xl overflow-hidden border border-slate-200 group">
                     {(articles as Article[])[0].cover_image_url && (

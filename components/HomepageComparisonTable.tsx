@@ -172,12 +172,14 @@ export default function HomepageComparisonTable({
               <th scope="col" className="px-3 py-2 text-left font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400"><JargonTooltip term="US Fee" /></th>
               <th scope="col" className="px-3 py-2 text-left font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400 whitespace-nowrap"><JargonTooltip term="Intl. Fee" /></th>
               <th scope="col" className="px-3 py-2 text-center font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400"><JargonTooltip term="CHESS" /></th>
+              {SHOW_RATINGS && (
               <th scope="col" className="px-3 py-2 text-center font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400">
                 <span className="flex items-center gap-1 justify-center">
                   Rating
                   <Link href="/methodology" className="text-amber-500 hover:text-amber-700 transition-colors font-normal normal-case tracking-normal text-[0.6rem]" title="How we rate platforms">(how we rate)</Link>
                 </span>
               </th>
+              )}
               <th scope="col" className="px-3 py-2 pr-5 text-center font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400 w-[155px]"></th>
             </tr>
           </thead>

@@ -141,7 +141,7 @@ export default async function InvestHubPage() {
             <div className="grid grid-cols-2 gap-3">
               {[
                 { icon: "layers", label: "Marketplace", sub: "Browse businesses, mining, farmland & more for sale", href: "/invest/listings", iconBg: "bg-amber-500", border: "hover:border-amber-200 hover:bg-amber-50/60" },
-                { icon: "bar-chart-2", label: "Compare Platforms", sub: "73+ platforms compared by fees, features & ratings", href: "/compare", iconBg: "bg-slate-800", border: "hover:border-slate-300 hover:bg-slate-50" },
+                { icon: "bar-chart-2", label: "Compare Platforms", sub: "100+ platforms compared by fees &amp; features", href: "/compare", iconBg: "bg-slate-800", border: "hover:border-slate-300 hover:bg-slate-50" },
                 { icon: "user-check", label: "Browse Advisors", sub: "Licensed financial planners, SMSF accountants & more", href: "/advisors", iconBg: "bg-emerald-600", border: "hover:border-emerald-200 hover:bg-emerald-50/60" },
                 { icon: "globe", label: "Foreign Investors", sub: "FIRB rules, visa pathways & 12 country guides", href: "/foreign-investment", iconBg: "bg-violet-600", border: "hover:border-violet-200 hover:bg-violet-50/60" },
               ].map((card) => (
@@ -160,7 +160,7 @@ export default async function InvestHubPage() {
           <div className="mt-8 pt-6 border-t border-slate-100 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             {[
               { value: "27", label: "Investment Verticals" },
-              { value: "73+", label: "Platforms Compared" },
+              { value: "100+", label: "Platforms Compared" },
               { value: "100+", label: "Active Listings" },
               { value: "Free", label: "No Hidden Fees" },
             ].map((s) => (

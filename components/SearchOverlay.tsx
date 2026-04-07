@@ -14,7 +14,7 @@ interface SearchItem {
 
 const SEARCH_INDEX: SearchItem[] = [
   // Platforms
-  { title: "Compare All Platforms", href: "/compare", category: "Platforms", description: "Side-by-side comparison of 73+ platforms" },
+  { title: "Compare All Platforms", href: "/compare", category: "Platforms", description: "Side-by-side comparison of 100+ platforms" },
   { title: "Share Trading", href: "/share-trading", category: "Platforms", description: "ASX & international share brokers" },
   { title: "Crypto Exchanges", href: "/crypto", category: "Platforms", description: "AUSTRAC-registered crypto platforms" },
   { title: "Super Funds", href: "/compare/super", category: "Platforms", description: "Compare fees & performance" },
