@@ -32,10 +32,10 @@ export function SiteFooter() {
             <ul className="space-y-2.5 text-sm">
               {[
                 { label: "Compare All Platforms", href: "/compare" },
-                { label: "Share Trading", href: "/compare?filter=shares" },
-                { label: "Crypto", href: "/compare?filter=crypto" },
+                { label: "Share Trading", href: "/share-trading" },
+                { label: "Crypto", href: "/crypto" },
                 { label: "Super Funds", href: "/compare/super" },
-                { label: "Savings", href: "/compare?filter=savings" },
+                { label: "Savings", href: "/savings" },
                 { label: "Current Deals", href: "/deals" },
               ].map((item) => (
                 <li key={item.href}>

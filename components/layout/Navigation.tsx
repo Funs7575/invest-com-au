@@ -14,20 +14,20 @@ const IntentPicker = dynamic(() => import("@/components/IntentPicker"), { ssr: f
 
 const platformsMenu = {
   byCategory: [
-    { label: "Share Trading", href: "/compare?filter=shares", desc: "ASX & international shares" },
+    { label: "Share Trading", href: "/share-trading", desc: "ASX & international shares" },
     { label: "ETFs", href: "/compare/etfs", desc: "Diversified index investing" },
     { label: "Super Funds", href: "/compare/super", desc: "Compare fees & performance" },
-    { label: "Savings Accounts", href: "/compare?filter=savings", desc: "High interest & at-call accounts" },
+    { label: "Savings Accounts", href: "/savings", desc: "High interest & at-call accounts" },
     { label: "Robo-Advisors", href: "/compare?filter=robo", desc: "Automated portfolio management" },
     {
       label: "Crypto Exchanges",
-      href: "/compare?filter=crypto",
+      href: "/crypto",
       desc: "AUSTRAC-registered platforms",
       riskLabel: "High Risk",
     },
     {
       label: "CFD & Forex",
-      href: "/compare?filter=cfd",
+      href: "/cfd",
       desc: "Derivatives & currency trading",
       riskLabel: "High Risk",
     },
@@ -210,12 +210,12 @@ const mobileSections = [
     title: "Compare Platforms",
     items: [
       { name: "Compare All Platforms", href: "/compare" },
-      { name: "Share Trading", href: "/compare?filter=shares" },
+      { name: "Share Trading", href: "/share-trading" },
       { name: "ETFs", href: "/compare/etfs" },
-      { name: "Crypto Exchanges", href: "/compare?filter=crypto" },
+      { name: "Crypto Exchanges", href: "/crypto" },
       { name: "Super Funds", href: "/compare/super" },
-      { name: "Savings Accounts", href: "/compare?filter=savings" },
-      { name: "CFD & Forex", href: "/compare?filter=cfd" },
+      { name: "Savings Accounts", href: "/savings" },
+      { name: "CFD & Forex", href: "/cfd" },
       { name: "Non-Resident Brokers", href: "/compare/non-residents" },
       { name: "Deals & Offers", href: "/deals" },
       { name: "Investing from Overseas", href: "/foreign-investment" },

@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 const HREF_OVERRIDES: Record<string, string> = {
   "residential-property": "/property",
   shares: "/compare",
-  savings: "/compare?filter=savings",
+  savings: "/savings",
   "buy-business": "/invest/buy-business",
   mining: "/invest/mining",
   farmland: "/invest/farmland",

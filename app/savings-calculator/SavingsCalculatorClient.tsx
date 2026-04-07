@@ -277,7 +277,7 @@ export default function SavingsCalculatorClient({ accounts, inline }: { accounts
                 All savings accounts listed here are with ADI-regulated Australian banks, meaning your deposits are government-guaranteed up to $250,000 per person per institution under the Financial Claims Scheme.
               </p>
               <div className="flex gap-2 mt-4">
-                <Link href="/compare?filter=savings" className="text-xs px-3 py-1.5 bg-slate-100 text-slate-700 font-semibold rounded-lg hover:bg-slate-200">Compare All Savings →</Link>
+                <Link href="/savings" className="text-xs px-3 py-1.5 bg-slate-100 text-slate-700 font-semibold rounded-lg hover:bg-slate-200">Compare All Savings →</Link>
                 <Link href="/best/savings-accounts" className="text-xs px-3 py-1.5 bg-slate-100 text-slate-700 font-semibold rounded-lg hover:bg-slate-200">Best Savings Accounts →</Link>
                 <Link href="/switching-calculator" className="text-xs px-3 py-1.5 bg-slate-100 text-slate-700 font-semibold rounded-lg hover:bg-slate-200">Broker Switching Calc →</Link>
               </div>
