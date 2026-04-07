@@ -87,6 +87,7 @@ export default function LeadMagnet() {
               aria-label="Email address for fee audit PDF"
               aria-invalid={!!emailError}
               aria-describedby={emailError ? "lead-email-error" : undefined}
+              required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onBlur={() => setEmailTouched(true)}

@@ -12,6 +12,7 @@ const BackToTop = dynamic(() => import("@/components/BackToTop"), { ssr: false }
 const QuizPromptBar = dynamic(() => import("@/components/QuizPromptBar"), { ssr: false });
 const ExitIntentPopup = dynamic(() => import("@/components/ExitIntentPopup"), { ssr: false });
 const StickyAdFooter = dynamic(() => import("@/components/StickyAdFooter"), { ssr: false });
+const TrackingPixels = dynamic(() => import("@/components/TrackingPixels"), { ssr: false });
 
 
 export default function LayoutShell({ children }: { children: React.ReactNode }) {
@@ -40,6 +41,7 @@ export default function LayoutShell({ children }: { children: React.ReactNode })
       <QuizPromptBar />
       <ExitIntentPopup />
       <StickyAdFooter />
+      <TrackingPixels />
     </>
   );
 }

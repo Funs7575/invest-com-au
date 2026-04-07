@@ -20,6 +20,85 @@ import { SHOW_RATINGS, SHOW_EDITORIAL_BADGES } from "@/lib/compliance-config";
 const TAB_OPTIONS = ["All Platforms", "Share Trading", "Super Funds", "Robo-Advisors", "Savings", "Crypto Exchanges"] as const;
 type TabOption = (typeof TAB_OPTIONS)[number];
 
+// --- Column config per platform category ---
+type ColumnDef = {
+  header: string;
+  align?: "left" | "center";
+  accessor: (broker: Broker) => React.ReactNode;
+};
+
+const SHARE_TRADING_COLUMNS: ColumnDef[] = [
+  { header: "ASX Fee", accessor: (b) => b.asx_fee || "N/A" },
+  { header: "US Fee", accessor: (b) => b.us_fee || "N/A" },
+  { header: "Intl. Fee", accessor: (b) => (b.fx_rate != null ? `${b.fx_rate}%` : "N/A") },
+  {
+    header: "CHESS",
+    align: "center",
+    accessor: (b) => (
+      <span className={`text-xs font-semibold ${b.chess_sponsored ? "text-emerald-600" : "text-slate-400"}`}>
+        {b.chess_sponsored ? "\u2713 Yes" : "\u2717 No"}
+      </span>
+    ),
+  },
+];
+
+const CRYPTO_COLUMNS: ColumnDef[] = [
+  { header: "Trading Fee", accessor: (b) => b.asx_fee || "N/A" },
+  { header: "US Fee", accessor: (b) => b.us_fee || "N/A" },
+  { header: "FX Rate", accessor: (b) => (b.fx_rate != null ? `${b.fx_rate}%` : "N/A") },
+  {
+    header: "CHESS",
+    align: "center",
+    accessor: (b) => (
+      <span className={`text-xs font-semibold ${b.chess_sponsored ? "text-emerald-600" : "text-slate-400"}`}>
+        {b.chess_sponsored ? "\u2713 Yes" : "\u2717 No"}
+      </span>
+    ),
+  },
+];
+
+const SUPER_FUND_COLUMNS: ColumnDef[] = [
+  { header: "Management Fee", accessor: (b) => b.asx_fee || "N/A" },
+  { header: "Min Deposit", accessor: (b) => b.min_deposit || "N/A" },
+  { header: "Insurance", accessor: (b) => (b.smsf_support ? "Included" : "Optional") },
+];
+
+const SAVINGS_COLUMNS: ColumnDef[] = [
+  { header: "Interest Rate", accessor: (b) => b.asx_fee || "N/A" },
+  { header: "Min Deposit", accessor: (b) => b.min_deposit || "N/A" },
+  { header: "Bonus Conditions", accessor: (b) => b.us_fee || b.tagline || "N/A" },
+];
+
+const ROBO_ADVISOR_COLUMNS: ColumnDef[] = [
+  { header: "Management Fee", accessor: (b) => b.asx_fee || "N/A" },
+  { header: "Min Investment", accessor: (b) => b.min_deposit || "N/A" },
+  { header: "Portfolio Types", accessor: (b) => b.tagline || "N/A" },
+];
+
+const CFD_FOREX_COLUMNS: ColumnDef[] = [
+  { header: "Spread", accessor: (b) => b.asx_fee || "N/A" },
+  { header: "Leverage", accessor: () => "30:1 max" },
+  { header: "Markets", accessor: (b) => b.us_fee || "N/A" },
+];
+
+function getColumnsForTab(tab: TabOption): ColumnDef[] {
+  switch (tab) {
+    case "Share Trading":
+    case "All Platforms":
+      return SHARE_TRADING_COLUMNS;
+    case "Crypto Exchanges":
+      return CRYPTO_COLUMNS;
+    case "Super Funds":
+      return SUPER_FUND_COLUMNS;
+    case "Savings":
+      return SAVINGS_COLUMNS;
+    case "Robo-Advisors":
+      return ROBO_ADVISOR_COLUMNS;
+    default:
+      return SHARE_TRADING_COLUMNS;
+  }
+}
+
 function getCategories(broker: Broker): string[] {
   const pt = broker.platform_type || (broker.is_crypto ? "crypto_exchange" : "share_broker");
   switch (pt) {
@@ -129,6 +208,8 @@ export default function HomepageComparisonTable({
     return picks;
   }, [displayBrokers]);
 
+  const activeColumns = useMemo(() => getColumnsForTab(activeTab), [activeTab]);
+
   return (
     <div>
       {/* Filter Tabs */}
@@ -168,10 +249,11 @@ export default function HomepageComparisonTable({
             <tr className="border-y border-slate-100">
               <th scope="col" className="sticky left-0 z-10 bg-white pl-5 pr-2 py-2 text-left font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400 w-10">#</th>
               <th scope="col" className="sticky left-10 z-10 bg-white px-3 py-2 text-left font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400 w-[28%]">Platform</th>
-              <th scope="col" className="px-3 py-2 text-left font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400"><JargonTooltip term="ASX Fee" /></th>
-              <th scope="col" className="px-3 py-2 text-left font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400"><JargonTooltip term="US Fee" /></th>
-              <th scope="col" className="px-3 py-2 text-left font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400 whitespace-nowrap"><JargonTooltip term="Intl. Fee" /></th>
-              <th scope="col" className="px-3 py-2 text-center font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400"><JargonTooltip term="CHESS" /></th>
+              {activeColumns.map((col, ci) => (
+                <th key={ci} scope="col" className={`px-3 py-2 font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400 whitespace-nowrap ${col.align === "center" ? "text-center" : "text-left"}`}>
+                  <JargonTooltip term={col.header} />
+                </th>
+              ))}
               {SHOW_RATINGS && (
               <th scope="col" className="px-3 py-2 text-center font-semibold text-[0.69rem] uppercase tracking-wider text-slate-400">
                 <span className="flex items-center gap-1 justify-center">
@@ -246,22 +328,11 @@ export default function HomepageComparisonTable({
                     <ShortlistButton slug={broker.slug} name={broker.name} size="sm" />
                   </div>
                 </td>
-                <td className="px-3 py-2.5 text-sm text-slate-700">{broker.asx_fee || "N/A"}</td>
-                <td className="px-3 py-2.5 text-sm text-slate-700">{broker.us_fee || "N/A"}</td>
-                <td className="px-3 py-2.5 text-sm text-slate-700">
-                  {broker.fx_rate != null ? `${broker.fx_rate}%` : "N/A"}
-                </td>
-                <td className="px-3 py-2.5 text-center">
-                  <span
-                    className={`text-xs font-semibold ${
-                      broker.chess_sponsored
-                        ? "text-emerald-600"
-                        : "text-slate-400"
-                    }`}
-                  >
-                    {broker.chess_sponsored ? "\u2713 Yes" : "\u2717 No"}
-                  </span>
-                </td>
+                {activeColumns.map((col, ci) => (
+                  <td key={ci} className={`px-3 py-2.5 text-sm text-slate-700 ${col.align === "center" ? "text-center" : ""}`}>
+                    {col.accessor(broker)}
+                  </td>
+                ))}
                 {SHOW_RATINGS && (
                 <td className="px-3 py-2.5 text-center">
                   <div className="flex items-center justify-center gap-1">
@@ -310,8 +381,9 @@ export default function HomepageComparisonTable({
               <div className="flex-1 min-w-0">
                 <a href={`/broker/${broker.slug}`} className="font-bold text-sm text-slate-900 block truncate">{broker.name}</a>
                 <div className="flex items-center gap-2 mt-0.5 text-[0.7rem] text-slate-500">
-                  <span className="font-semibold text-slate-700">{broker.asx_fee || "N/A"} ASX</span>
-                  {broker.chess_sponsored && <span className="text-emerald-600 font-semibold">CHESS</span>}
+                  <span className="font-semibold text-slate-700">{activeColumns[0].accessor(broker)}</span>
+                  {activeColumns.length > 1 && <span className="text-slate-400">·</span>}
+                  {activeColumns.length > 1 && <span className="font-semibold text-slate-700">{activeColumns[1].accessor(broker)}</span>}
                   {(isSponsored(broker) || isCampaignMobile) && <span className="text-[0.56rem] font-bold uppercase text-blue-700 bg-blue-50 px-1 py-px rounded">Ad</span>}
                 </div>
               </div>
