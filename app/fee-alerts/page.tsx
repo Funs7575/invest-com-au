@@ -104,17 +104,17 @@ export default function FeeAlertsPage() {
           </div>
         )}
 
-        <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl p-5 md:p-10 mb-6 md:mb-10 text-center relative overflow-hidden">
+        <div className="bg-white border border-slate-200 rounded-2xl p-5 md:p-10 mb-6 md:mb-10 text-center relative overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(245,158,11,0.1),transparent_70%)]" />
           <div className="relative">
-            <div className="w-12 h-12 md:w-16 md:h-16 bg-amber-500/20 rounded-2xl flex items-center justify-center mx-auto mb-3 md:mb-4">
-              <Icon name="bell" size={24} className="text-amber-400 md:hidden" />
-              <Icon name="bell" size={32} className="text-amber-400 hidden md:block" />
+            <div className="w-12 h-12 md:w-16 md:h-16 bg-amber-50 rounded-2xl flex items-center justify-center mx-auto mb-3 md:mb-4">
+              <Icon name="bell" size={24} className="text-amber-500 md:hidden" />
+              <Icon name="bell" size={32} className="text-amber-500 hidden md:block" />
             </div>
-            <h1 className="text-xl md:text-4xl font-extrabold text-white mb-2 md:mb-3">
+            <h1 className="text-xl md:text-4xl font-extrabold text-slate-900 mb-2 md:mb-3">
               Fee Change Alerts
             </h1>
-            <p className="text-sm md:text-lg text-slate-300 mb-0 leading-relaxed max-w-lg mx-auto">
+            <p className="text-sm md:text-lg text-slate-600 mb-0 leading-relaxed max-w-lg mx-auto">
               Get notified the moment any Australian broker changes their fees. Never miss a price increase — or a new deal.
             </p>
           </div>

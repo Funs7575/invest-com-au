@@ -92,29 +92,29 @@ export default function ForeignInvestmentPage() {
       </div>
 
       {/* ── Hero ────────────────────────────────────── */}
-      <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-10 md:py-14">
+      <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-400 mb-5 flex items-center gap-1.5 flex-wrap">
-            <Link href="/" className="hover:text-slate-200">Home</Link>
-            <span>/</span>
-            <Link href="/foreign-investment" className="hover:text-slate-200">Foreign Investment</Link>
-            <span>/</span>
-            <Link href="/property" className="hover:text-slate-200">Property</Link>
-            <span>/</span>
-            <span className="text-slate-300">FIRB Guide</span>
+          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+            <Link href="/" className="hover:text-slate-900">Home</Link>
+            <span className="text-slate-300">/</span>
+            <Link href="/foreign-investment" className="hover:text-slate-900">Foreign Investment</Link>
+            <span className="text-slate-300">/</span>
+            <Link href="/property" className="hover:text-slate-900">Property</Link>
+            <span className="text-slate-300">/</span>
+            <span className="text-slate-900 font-medium">FIRB Guide</span>
           </nav>
 
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/20 border border-amber-500/30 rounded-full text-xs font-semibold text-amber-300 mb-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-100 rounded-full text-xs font-semibold text-slate-600 mb-4">
                 <span className="w-1.5 h-1.5 bg-amber-400 rounded-full" />
                 Updated March 2026
               </div>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-[1.1] mb-3 tracking-tight">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-[1.1] mb-3 tracking-tight text-slate-900">
                 Foreign Investment in{" "}
-                <span className="text-amber-400">Australian Property</span>
+                <span className="text-amber-500">Australian Property</span>
               </h1>
-              <p className="text-sm md:text-base text-slate-300 leading-relaxed mb-6">
+              <p className="text-sm md:text-base text-slate-600 leading-relaxed mb-6">
                 Your complete guide to FIRB approval, eligible property types, state stamp duty
                 surcharges, and application fees — everything a foreign investor needs to know
                 before buying Australian property.
@@ -122,13 +122,13 @@ export default function ForeignInvestmentPage() {
               <div className="flex flex-col sm:flex-row gap-3">
                 <Link
                   href="/property/listings?firb=true"
-                  className="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-white font-bold rounded-xl text-sm text-center transition-colors shadow-lg shadow-amber-500/20"
+                  className="px-6 py-3 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold rounded-xl text-sm text-center transition-colors shadow-lg shadow-amber-500/20"
                 >
                   Browse FIRB-Eligible Listings &rarr;
                 </Link>
                 <Link
                   href="/property/buyer-agents"
-                  className="px-6 py-3 border border-slate-600 hover:border-slate-400 text-slate-300 hover:text-white font-semibold rounded-xl text-sm text-center transition-colors"
+                  className="px-6 py-3 border border-slate-200 hover:border-slate-300 text-slate-700 hover:bg-slate-50 font-semibold rounded-xl text-sm text-center transition-colors"
                 >
                   Find a Buyer&apos;s Agent
                 </Link>
@@ -143,10 +143,10 @@ export default function ForeignInvestmentPage() {
                 { label: "Standard processing time", value: "30 days", sub: "for straightforward applications" },
                 { label: "FIRB fee (up to $1M)", value: "$14,100", sub: "non-refundable application fee" },
               ].map((stat) => (
-                <div key={stat.label} className="bg-white/5 border border-white/10 rounded-2xl p-4">
-                  <p className="text-xl font-extrabold text-amber-400 mb-0.5">{stat.value}</p>
-                  <p className="text-[0.7rem] font-semibold text-white leading-snug">{stat.label}</p>
-                  <p className="text-[0.65rem] text-slate-400 mt-0.5">{stat.sub}</p>
+                <div key={stat.label} className="bg-slate-50 border border-slate-200 rounded-2xl p-4">
+                  <p className="text-xl font-extrabold text-amber-600 mb-0.5">{stat.value}</p>
+                  <p className="text-[0.7rem] font-semibold text-slate-900 leading-snug">{stat.label}</p>
+                  <p className="text-[0.65rem] text-slate-500 mt-0.5">{stat.sub}</p>
                 </div>
               ))}
             </div>

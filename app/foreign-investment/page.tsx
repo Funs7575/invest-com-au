@@ -143,58 +143,58 @@ export default async function ForeignInvestmentHubPage() {
       <ForeignInvestmentNav current="/foreign-investment" />
 
       {/* ── Hero ─────────────────────────────────────────────────────── */}
-      <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-10 md:py-16">
+      <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-400 mb-5 flex items-center gap-1.5">
-            <Link href="/" className="hover:text-slate-200">Home</Link>
-            <span>/</span>
-            <span className="text-slate-300">Foreign Investment in Australia</span>
+          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5">
+            <Link href="/" className="hover:text-slate-900">Home</Link>
+            <span className="text-slate-300">/</span>
+            <span className="text-slate-900 font-medium">Foreign Investment in Australia</span>
           </nav>
 
           <div className="grid md:grid-cols-2 gap-10 items-start">
             <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/20 border border-amber-500/30 rounded-full text-xs font-semibold text-amber-300 mb-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-100 rounded-full text-xs font-semibold text-slate-600 mb-4">
                 <span className="w-1.5 h-1.5 bg-amber-400 rounded-full" />
                 Updated March 2026 — All Verticals
               </div>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-[1.1] mb-3 tracking-tight">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-[1.1] mb-3 tracking-tight text-slate-900">
                 Investing in Australia{" "}
-                <span className="text-amber-400">from Overseas</span>
+                <span className="text-amber-500">from Overseas</span>
               </h1>
-              <p className="text-sm md:text-base text-slate-300 leading-relaxed mb-5">
+              <p className="text-sm md:text-base text-slate-600 leading-relaxed mb-5">
                 Rules for non-residents, visa holders, expats and new migrants across
                 shares, property, savings, super and tax.
               </p>
-              <p className="text-xs text-slate-400 mb-5">Where do you want to start?</p>
+              <p className="text-xs text-slate-500 mb-5">Where do you want to start?</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-5">
                 <Link
                   href="/foreign-investment/shares"
-                  className="px-4 py-2.5 bg-white/10 hover:bg-amber-500/20 border border-white/20 hover:border-amber-500/40 text-slate-200 hover:text-white font-semibold rounded-xl text-xs text-left transition-colors"
+                  className="px-4 py-2.5 border border-slate-200 hover:bg-slate-50 hover:border-amber-300 text-slate-700 hover:text-slate-900 font-semibold rounded-xl text-xs text-left transition-colors"
                 >
                   I want to buy Australian shares &rarr;
                 </Link>
                 <Link
                   href="/foreign-investment/property"
-                  className="px-4 py-2.5 bg-white/10 hover:bg-amber-500/20 border border-white/20 hover:border-amber-500/40 text-slate-200 hover:text-white font-semibold rounded-xl text-xs text-left transition-colors"
+                  className="px-4 py-2.5 border border-slate-200 hover:bg-slate-50 hover:border-amber-300 text-slate-700 hover:text-slate-900 font-semibold rounded-xl text-xs text-left transition-colors"
                 >
                   I want to buy property &rarr;
                 </Link>
                 <Link
                   href="/foreign-investment/super"
-                  className="px-4 py-2.5 bg-white/10 hover:bg-amber-500/20 border border-white/20 hover:border-amber-500/40 text-slate-200 hover:text-white font-semibold rounded-xl text-xs text-left transition-colors"
+                  className="px-4 py-2.5 border border-slate-200 hover:bg-slate-50 hover:border-amber-300 text-slate-700 hover:text-slate-900 font-semibold rounded-xl text-xs text-left transition-colors"
                 >
                   I&apos;m leaving Australia — super &amp; tax help &rarr;
                 </Link>
                 <Link
                   href="#find-your-situation"
-                  className="px-4 py-2.5 bg-white/10 hover:bg-amber-500/20 border border-white/20 hover:border-amber-500/40 text-slate-200 hover:text-white font-semibold rounded-xl text-xs text-left transition-colors"
+                  className="px-4 py-2.5 border border-slate-200 hover:bg-slate-50 hover:border-amber-300 text-slate-700 hover:text-slate-900 font-semibold rounded-xl text-xs text-left transition-colors"
                 >
                   I&apos;m an expat or new migrant &rarr;
                 </Link>
               </div>
               <Link
                 href="#find-your-situation"
-                className="inline-block px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-white font-bold rounded-xl text-xs text-center transition-colors shadow-lg shadow-amber-500/20"
+                className="inline-block px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold rounded-xl text-xs text-center transition-colors shadow-lg shadow-amber-500/20"
               >
                 See all situations &rarr;
               </Link>
@@ -208,10 +208,10 @@ export default async function ForeignInvestmentHubPage() {
                 { label: "DASP super tax", value: "35–65%", sub: "when leaving Australia" },
                 { label: "Property FIRB fee", value: "$14,100", sub: "for properties up to $1M" },
               ].map((s) => (
-                <div key={s.label} className="bg-white/5 border border-white/10 rounded-2xl p-4">
-                  <div className="text-xl md:text-2xl font-extrabold text-amber-400">{s.value}</div>
-                  <div className="text-[0.65rem] font-bold text-white mt-0.5">{s.label}</div>
-                  <div className="text-[0.6rem] text-slate-400 mt-0.5">{s.sub}</div>
+                <div key={s.label} className="bg-slate-50 border border-slate-200 rounded-2xl p-4">
+                  <div className="text-xl md:text-2xl font-extrabold text-amber-600">{s.value}</div>
+                  <div className="text-[0.65rem] font-bold text-slate-900 mt-0.5">{s.label}</div>
+                  <div className="text-[0.6rem] text-slate-500 mt-0.5">{s.sub}</div>
                 </div>
               ))}
             </div>

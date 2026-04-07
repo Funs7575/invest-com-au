@@ -93,28 +93,28 @@ export default function FirbApplicationGuidePage() {
       </div>
 
       {/* ── Hero ── */}
-      <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-10 md:py-14">
+      <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-400 mb-5 flex items-center gap-1.5 flex-wrap">
-            <Link href="/" className="hover:text-slate-200">Home</Link>
+          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+            <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
-            <Link href="/foreign-investment" className="hover:text-slate-200">Foreign Investment</Link>
+            <Link href="/foreign-investment" className="hover:text-slate-900">Foreign Investment</Link>
             <span>/</span>
-            <Link href="/foreign-investment/guides" className="hover:text-slate-200">Guides</Link>
+            <Link href="/foreign-investment/guides" className="hover:text-slate-900">Guides</Link>
             <span>/</span>
-            <span className="text-slate-300">FIRB Application Guide</span>
+            <span className="text-slate-900 font-medium">FIRB Application Guide</span>
           </nav>
 
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/20 border border-amber-500/30 rounded-full text-xs font-semibold text-amber-300 mb-4">
-              <span className="w-1.5 h-1.5 bg-amber-400 rounded-full" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-100 border border-slate-200 rounded-full text-xs font-semibold text-slate-600 mb-4">
+              <span className="w-1.5 h-1.5 bg-slate-400 rounded-full" />
               Updated March 2026
             </div>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-[1.1] mb-4 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-[1.1] mb-4 tracking-tight text-slate-900">
               FIRB Application:{" "}
-              <span className="text-amber-400">Complete Step-by-Step Guide</span>
+              <span className="text-amber-600">Complete Step-by-Step Guide</span>
             </h1>
-            <p className="text-sm md:text-base text-slate-300 leading-relaxed mb-6">
+            <p className="text-sm md:text-base text-slate-600 leading-relaxed mb-6">
               Every foreign person buying Australian property must obtain FIRB approval. This guide covers exactly
               what to submit, how much it costs, how long it takes, and what happens after you apply.
             </p>
@@ -124,9 +124,9 @@ export default function FirbApplicationGuidePage() {
                 { label: "Fee (up to $1M)", value: "$14,100" },
                 { label: "Online portal", value: "firb.gov.au" },
               ].map((stat) => (
-                <div key={stat.label} className="bg-white/5 border border-white/10 rounded-xl p-3 text-center">
-                  <p className="text-xl font-extrabold text-amber-400">{stat.value}</p>
-                  <p className="text-xs text-slate-400 mt-0.5">{stat.label}</p>
+                <div key={stat.label} className="bg-slate-50 border border-slate-200 rounded-xl p-3 text-center">
+                  <p className="text-xl font-extrabold text-amber-600">{stat.value}</p>
+                  <p className="text-xs text-slate-500 mt-0.5">{stat.label}</p>
                 </div>
               ))}
             </div>

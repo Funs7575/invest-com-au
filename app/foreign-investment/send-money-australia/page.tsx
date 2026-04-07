@@ -163,33 +163,33 @@ export default function SendMoneyAustraliaPage() {
       <ForeignInvestmentNav current="/foreign-investment/send-money-australia" />
 
       {/* ── Hero ── */}
-      <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-10 md:py-14">
+      <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-400 mb-5 flex items-center gap-1.5 flex-wrap">
-            <Link href="/" className="hover:text-slate-200">Home</Link>
-            <span>/</span>
-            <Link href="/foreign-investment" className="hover:text-slate-200">Foreign Investment</Link>
-            <span>/</span>
-            <span className="text-slate-300">Send Money to Australia</span>
+          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+            <Link href="/" className="hover:text-slate-900">Home</Link>
+            <span className="text-slate-300">/</span>
+            <Link href="/foreign-investment" className="hover:text-slate-900">Foreign Investment</Link>
+            <span className="text-slate-300">/</span>
+            <span className="text-slate-900 font-medium">Send Money to Australia</span>
           </nav>
 
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-500/20 border border-amber-500/30 rounded-full text-xs font-semibold text-amber-300 mb-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-100 rounded-full text-xs font-semibold text-slate-600 mb-4">
               <span className="w-1.5 h-1.5 bg-amber-400 rounded-full" />
               Updated March 2026
             </div>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-[1.1] mb-4 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-[1.1] mb-4 tracking-tight text-slate-900">
               Send Money to Australia:{" "}
-              <span className="text-amber-400">Best Options for Foreign Investors</span>
+              <span className="text-amber-500">Best Options for Foreign Investors</span>
             </h1>
-            <p className="text-sm md:text-base text-slate-300 leading-relaxed mb-6">
+            <p className="text-sm md:text-base text-slate-600 leading-relaxed mb-6">
               Every foreign investor in Australia needs to move money here — whether for property, shares,
               or a bank account. Your choice of transfer method can save or cost you thousands.
               Here&apos;s the honest comparison.
             </p>
 
-            <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4">
-              <p className="text-sm text-amber-200 font-semibold">
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+              <p className="text-sm text-amber-800 font-semibold">
                 Quick recommendation: Use <strong>Wise or OFX</strong> for the currency conversion — save 2–3.5%
                 vs your bank. Then <strong>transfer to your Australian bank account</strong> first before property settlement.
               </p>

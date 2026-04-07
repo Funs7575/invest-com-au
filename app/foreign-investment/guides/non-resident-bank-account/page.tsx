@@ -154,30 +154,30 @@ export default function NonResidentBankAccountPage() {
       />
 
       {/* ── Hero ── */}
-      <section className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white py-10 md:py-14">
+      <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
         <div className="container-custom">
-          <nav className="text-xs text-slate-400 mb-5 flex items-center gap-1.5 flex-wrap">
-            <Link href="/" className="hover:text-slate-200">Home</Link>
+          <nav className="text-xs text-slate-500 mb-5 flex items-center gap-1.5 flex-wrap">
+            <Link href="/" className="hover:text-slate-900">Home</Link>
             <span>/</span>
-            <Link href="/foreign-investment" className="hover:text-slate-200">Foreign Investment</Link>
+            <Link href="/foreign-investment" className="hover:text-slate-900">Foreign Investment</Link>
             <span>/</span>
-            <Link href="/foreign-investment/guides" className="hover:text-slate-200">Guides</Link>
+            <Link href="/foreign-investment/guides" className="hover:text-slate-900">Guides</Link>
             <span>/</span>
-            <span className="text-slate-300">Non-Resident Bank Account</span>
+            <span className="text-slate-900 font-medium">Non-Resident Bank Account</span>
           </nav>
 
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/20 border border-emerald-500/30 rounded-full text-xs font-semibold text-emerald-300 mb-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-100 border border-slate-200 rounded-full text-xs font-semibold text-slate-600 mb-4">
               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
               Yes — it&apos;s possible
             </div>
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-[1.1] mb-4 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold leading-[1.1] mb-4 tracking-tight text-slate-900">
               Can Non-Residents Open an{" "}
-              <span className="text-amber-400">Australian Bank Account?</span>
+              <span className="text-amber-600">Australian Bank Account?</span>
             </h1>
-            <p className="text-sm md:text-base text-slate-300 leading-relaxed mb-6">
+            <p className="text-sm md:text-base text-slate-600 leading-relaxed mb-6">
               Yes — all four major Australian banks accept non-residents, and most can open accounts remotely
               without visiting Australia. This guide covers which banks to use, what documents you need,
               the withholding tax implications, and better alternatives for international transfers.
@@ -186,7 +186,7 @@ export default function NonResidentBankAccountPage() {
               <Link href="/foreign-investment/send-money-australia" className="px-5 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold rounded-xl text-sm transition-colors">
                 Compare FX Transfer Rates &rarr;
               </Link>
-              <Link href="/foreign-investment/tax" className="px-5 py-2.5 border border-slate-600 hover:border-slate-400 text-slate-300 hover:text-white font-semibold rounded-xl text-sm transition-colors">
+              <Link href="/foreign-investment/tax" className="px-5 py-2.5 border border-slate-200 hover:border-slate-300 text-slate-700 hover:text-slate-900 font-semibold rounded-xl text-sm transition-colors">
                 Tax Guide for Non-Residents
               </Link>
             </div>
