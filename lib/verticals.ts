@@ -454,6 +454,169 @@ const VERTICALS: VerticalConfig[] = [
     ],
     disclaimer: CFD_WARNING,
   },
+
+  /* ─── 6. Term Deposits ─── */
+  {
+    slug: "term-deposits",
+    platformTypes: ["term_deposit"] as PlatformType[],
+    expertTags: ["term-deposit", "savings", "interest-rates", "banking"],
+    title: `Best Term Deposit Rates in Australia (${yr}) — Compare Rates`,
+    h1: "Compare Term Deposit Rates in Australia",
+    metaDescription: `Compare term deposit rates from Australia's banks for ${yr}. Fixed rates, flexible terms, government-guaranteed up to $250,000 per ADI.`,
+    heroHeadline: "Compare Term Deposit Rates Across Australian Banks",
+    heroSubtext: `Side-by-side comparison of term deposit rates, terms, and features from major banks and institutions. All government-guaranteed up to $250,000 per ADI. Rates verified ${CURRENT_MONTH_YEAR}.`,
+    color: { bg: "bg-blue-50", border: "border-blue-200", text: "text-blue-700", accent: "bg-blue-600", gradient: "from-blue-50 to-white" },
+    stats: [
+      { label: "Providers Compared", value: "10+" },
+      { label: "Government Guaranteed", value: "$250K" },
+      { label: "Terms Available", value: "1–60 months" },
+      { label: "Rates Verified", value: FEES_VERIFIED_LABEL },
+    ],
+    subcategories: [
+      { label: "Short-Term (1–6 months)", href: "/compare?filter=term-deposits", description: "Higher flexibility, competitive rates" },
+      { label: "Medium-Term (6–12 months)", href: "/compare?filter=term-deposits", description: "Balance of rate and access" },
+      { label: "Long-Term (1–5 years)", href: "/compare?filter=term-deposits", description: "Lock in today's rates" },
+    ],
+    tools: [
+      { label: "Savings Calculator", href: "/savings-calculator", icon: "calculator" },
+      { label: "Compare Savings Accounts", href: "/savings", icon: "piggy-bank" },
+    ],
+    sections: [
+      { heading: "How Term Deposits Work", body: "A term deposit is a fixed-term investment with a bank or financial institution where you deposit money for a set period at an agreed interest rate. At maturity, you receive your principal plus interest. Term deposits are among the safest investments in Australia because deposits up to $250,000 per ADI are protected by the Financial Claims Scheme (government guarantee). They suit investors seeking capital preservation and predictable returns." },
+      { heading: "Choosing the Right Term", body: "Short terms (1–6 months) offer flexibility but typically lower rates. Medium terms (6–12 months) balance rate and access. Long terms (1–5 years) lock in rates but you may miss out if rates rise. Consider the interest rate environment: in rising rate periods, shorter terms let you reinvest at higher rates. In falling rate periods, longer terms lock in today's higher rates. Most banks charge early withdrawal penalties, so only deposit money you won't need during the term." },
+    ],
+    faqs: [
+      { question: "Are term deposits government guaranteed?", answer: "Yes. Under the Financial Claims Scheme, deposits up to $250,000 per account holder per ADI (Authorised Deposit-taking Institution) are guaranteed by the Australian Government. This covers all major banks, credit unions, and building societies." },
+      { question: "What happens when my term deposit matures?", answer: "Most banks will automatically roll over your term deposit into a new term of the same length at the current rate unless you instruct otherwise. You typically have a grace period (usually 1–7 days) after maturity to withdraw or change terms without penalty." },
+      { question: "Can I withdraw early from a term deposit?", answer: "Yes, but most banks charge an early withdrawal penalty, typically a reduction in the interest rate. Some banks may not allow early withdrawal at all on certain products. Always check the terms before committing." },
+      { question: "How is term deposit interest taxed?", answer: "Interest earned on term deposits is assessable income and taxed at your marginal tax rate. You must declare it in your tax return. If you don't provide your TFN to the bank, they will withhold tax at the highest marginal rate." },
+      { question: "What is the best term deposit rate right now?", answer: "Term deposit rates change frequently based on the RBA cash rate and competition between banks. Online banks and smaller institutions often offer higher rates than the big four. Use our comparison table to see current rates sorted by term length." },
+      { question: "Should I choose a term deposit or savings account?", answer: "Term deposits offer a guaranteed fixed rate but lock your money away. Savings accounts offer flexibility but rates can change. If you have money you won't need for a set period and want certainty, a term deposit may suit. If you need access, a high-interest savings account is better." },
+    ],
+    advisorTypes: [{ type: "financial_planner", label: "Financial Planners", href: "/advisors/financial-planners" }],
+  },
+
+  /* ─── 7. Robo-Advisors ─── */
+  {
+    slug: "robo-advisors",
+    platformTypes: ["robo_advisor"] as PlatformType[],
+    expertTags: ["robo-advisor", "automated-investing", "etf", "portfolio"],
+    title: `Best Robo-Advisors in Australia (${yr}) — Compare Fees & Returns`,
+    h1: "Compare Robo-Advisors in Australia",
+    metaDescription: `Compare Australia's best robo-advisors for ${yr} — Stockspot, InvestSMART, Raiz, Spaceship, Six Park. Fees, performance, portfolios, and minimum investment.`,
+    heroHeadline: "Compare Australian Robo-Advisors & Automated Investing",
+    heroSubtext: `Side-by-side comparison of robo-advisor fees, portfolios, performance, and features across ${yr}'s top platforms. Management fees verified monthly.`,
+    color: { bg: "bg-violet-50", border: "border-violet-200", text: "text-violet-700", accent: "bg-violet-600", gradient: "from-violet-50 to-white" },
+    stats: [
+      { label: "Platforms Compared", value: "8+" },
+      { label: "Lowest Fees", value: "0.20%" },
+      { label: "Min Investment", value: "$0" },
+      { label: "Fees Verified", value: FEES_VERIFIED_LABEL },
+    ],
+    subcategories: [
+      { label: "ETF Portfolios", href: "/compare?filter=robo", description: "Diversified ETF-based portfolios" },
+      { label: "Micro-Investing", href: "/compare?filter=robo", description: "Start with spare change" },
+      { label: "Ethical / ESG", href: "/compare?filter=robo", description: "Sustainable investing options" },
+    ],
+    tools: [
+      { label: "Portfolio Calculator", href: "/calculators", icon: "calculator" },
+      { label: "Compare All Platforms", href: "/compare", icon: "bar-chart-2" },
+    ],
+    sections: [
+      { heading: "What Is a Robo-Advisor?", body: "A robo-advisor is an automated investment platform that builds and manages a diversified portfolio for you based on your risk profile. You answer questions about your goals and risk tolerance, and the platform creates a portfolio of ETFs (exchange-traded funds) that it automatically rebalances. Robo-advisors charge lower fees than traditional financial advisors — typically 0.20–0.70% per year compared to 1–2% for active management." },
+      { heading: "Robo-Advisors vs DIY Investing", body: "DIY investing through a share broker gives you full control but requires time, knowledge, and discipline. Robo-advisors handle asset allocation, rebalancing, and tax optimisation automatically. They suit investors who want a hands-off approach without paying for a full financial advisor. Most Australian robo-advisors invest in a mix of Australian and international ETFs, bonds, and sometimes alternatives." },
+    ],
+    faqs: [
+      { question: "What is the best robo-advisor in Australia?", answer: "Stockspot is Australia's largest and longest-running robo-advisor with over $600M under management. InvestSMART offers a unique capped fee of $451/year regardless of balance. Vanguard Personal Investor provides the lowest-cost access to Vanguard funds. The best choice depends on your balance size, fee sensitivity, and portfolio preferences." },
+      { question: "How much do robo-advisors charge?", answer: "Australian robo-advisors typically charge 0.20–0.70% per year in management fees, plus the underlying ETF fees (usually 0.10–0.30%). Some have minimum fees — Stockspot charges $4.50/month for balances under $10,000. InvestSMART caps fees at $451/year regardless of balance." },
+      { question: "Are robo-advisors safe?", answer: "Yes. Australian robo-advisors are regulated by ASIC and must hold an Australian Financial Services Licence. Your investments are held in your name (not the platform's) through a custodian. If the robo-advisor goes bust, your investments are still yours." },
+      { question: "What is the minimum investment for a robo-advisor?", answer: "Minimums vary: Raiz starts at $5 (micro-investing), Spaceship has no minimum, Stockspot requires $2,000, and InvestSMART requires $10,000 for managed accounts. Vanguard Personal Investor has no minimum for ETFs." },
+      { question: "Can I use a robo-advisor in my SMSF?", answer: "Some robo-advisors offer SMSF-compatible accounts. InvestSMART and Stockspot both support SMSF investing. The robo-advisor manages the investment portfolio while you handle the SMSF administration and compliance." },
+      { question: "How are robo-advisor returns taxed?", answer: "Robo-advisor returns are taxed the same as any other investment. Dividends and distributions are assessable income (with franking credits for Australian shares). Capital gains on ETF disposals attract CGT with a 50% discount if held 12+ months. The robo-advisor provides annual tax reports." },
+    ],
+    advisorTypes: [{ type: "financial_planner", label: "Financial Planners", href: "/advisors/financial-planners" }],
+  },
+
+  /* ─── 8. Property Platforms ─── */
+  {
+    slug: "property-platforms",
+    platformTypes: ["property_platform"] as PlatformType[],
+    expertTags: ["property", "reits", "fractional-property", "real-estate"],
+    title: `Property Investment Platforms Australia (${yr}) — Compare Options`,
+    h1: "Compare Property Investment Platforms",
+    metaDescription: `Compare Australian property investment platforms for ${yr} — BrickX, DomaCom, REITs, fractional property. Fees, minimums, and returns.`,
+    heroHeadline: "Compare Property Investment Platforms in Australia",
+    heroSubtext: `Side-by-side comparison of fractional property, REIT platforms, and property crowdfunding. Fees, minimums, and investment structures compared.`,
+    color: { bg: "bg-emerald-50", border: "border-emerald-200", text: "text-emerald-700", accent: "bg-emerald-600", gradient: "from-emerald-50 to-white" },
+    stats: [
+      { label: "Platforms Compared", value: "7+" },
+      { label: "Lowest Minimum", value: "$10" },
+      { label: "Asset Types", value: "4+" },
+      { label: "Data Updated", value: UPDATED_LABEL },
+    ],
+    subcategories: [
+      { label: "Fractional Property", href: "/compare?filter=property", description: "Own a fraction of real property" },
+      { label: "Property Funds", href: "/invest/reits", description: "ASX-listed REITs and unlisted funds" },
+      { label: "Property Crowdfunding", href: "/compare?filter=property", description: "Pool capital with other investors" },
+    ],
+    tools: [
+      { label: "Property Yield Calculator", href: "/property-yield-calculator", icon: "calculator" },
+      { label: "Property Investment Hub", href: "/property", icon: "building" },
+    ],
+    sections: [
+      { heading: "How Property Platforms Work", body: "Property investment platforms allow you to invest in real estate without buying an entire property. Fractional platforms like BrickX let you buy 'bricks' in individual properties. REIT platforms provide exposure to diversified commercial property portfolios. Crowdfunding platforms pool investor capital to fund property developments. Each approach has different risk, return, and liquidity characteristics." },
+      { heading: "Fractional Property vs REITs", body: "Fractional property gives you exposure to specific properties with rental income and capital growth. REITs provide diversified exposure to many properties but trade on the ASX like shares. Fractional property typically has lower liquidity (harder to sell quickly) but lets you choose specific properties. REITs have high liquidity but you can't choose which properties you own." },
+    ],
+    faqs: [
+      { question: "What is fractional property investment?", answer: "Fractional property platforms like BrickX and DomaCom let you buy a small share (fraction) of a real property. You receive a proportional share of rental income and any capital growth when the property is sold. Minimums start from as low as $10–$100 per investment." },
+      { question: "Are property platforms regulated in Australia?", answer: "Yes. Property investment platforms must hold an Australian Financial Services Licence (AFSL) or operate under one. They are regulated by ASIC. However, the underlying properties are not guaranteed — property values can fall and rental income is not guaranteed." },
+      { question: "How much do property platforms charge?", answer: "Fees vary by platform. BrickX charges a 1.75% transaction fee on buy/sell plus ongoing fees. DomaCom charges management fees of 0.88% p.a. REIT ETFs like VAP charge 0.23% p.a. Direct property funds may charge 1–2% management fees plus performance fees." },
+      { question: "Can I invest in property through my SMSF?", answer: "Yes. SMSFs can invest in property platforms, REITs, and direct property. For direct property purchases, the SMSF can use a Limited Recourse Borrowing Arrangement (LRBA). Property platform investments are simpler as they don't require borrowing." },
+    ],
+    advisorTypes: [
+      { type: "financial_planner", label: "Financial Planners", href: "/advisors/financial-planners" },
+      { type: "property_advisor", label: "Property Advisors", href: "/advisors/property-advisors" },
+    ],
+  },
+
+  /* ─── 9. Research Tools ─── */
+  {
+    slug: "research-tools",
+    platformTypes: ["research_tool"] as PlatformType[],
+    expertTags: ["research", "stock-screener", "analysis", "data"],
+    title: `Best Stock Research Tools Australia (${yr}) — Compare Features`,
+    h1: "Compare Stock Research & Analysis Tools",
+    metaDescription: `Compare Australian stock research tools for ${yr} — Morningstar, Simply Wall St, Stock Doctor, TradingView. Features, pricing, and data coverage.`,
+    heroHeadline: "Compare Stock Research & Analysis Tools for Australian Investors",
+    heroSubtext: `Side-by-side comparison of research platforms, stock screeners, and analysis tools. Data coverage, features, and pricing compared.`,
+    color: { bg: "bg-slate-50", border: "border-slate-200", text: "text-slate-700", accent: "bg-slate-700", gradient: "from-slate-50 to-white" },
+    stats: [
+      { label: "Tools Compared", value: "7+" },
+      { label: "Free Options", value: "3+" },
+      { label: "ASX Coverage", value: "Full" },
+      { label: "Data Updated", value: UPDATED_LABEL },
+    ],
+    subcategories: [
+      { label: "Stock Screeners", href: "/compare?filter=research", description: "Filter stocks by criteria" },
+      { label: "Portfolio Trackers", href: "/compare?filter=research", description: "Track your investments" },
+      { label: "Charting Tools", href: "/compare?filter=research", description: "Technical analysis charts" },
+    ],
+    tools: [
+      { label: "Compare All Platforms", href: "/compare", icon: "bar-chart-2" },
+      { label: "Brokerage Calculator", href: "/calculators", icon: "calculator" },
+    ],
+    sections: [
+      { heading: "Why Research Tools Matter", body: "Stock research tools help you make more informed investment decisions by providing data, analysis, and screening capabilities. Whether you're a fundamental investor looking at earnings and valuations, or a technical trader analysing price charts, the right research tool can significantly improve your process. Many tools also provide portfolio tracking and tax reporting features." },
+      { heading: "Free vs Paid Research Tools", body: "Free tools like Market Index and TradingView (basic) provide essential data and charting. Paid tools like Morningstar, Stock Doctor, and Simply Wall St offer deeper analysis, proprietary ratings, and advanced screening. The right choice depends on your trading frequency and analysis needs. Active traders benefit from paid tools; passive index investors may only need free resources." },
+    ],
+    faqs: [
+      { question: "What is the best free stock research tool in Australia?", answer: "Market Index provides free ASX data, stock screeners, and dividend history. TradingView offers excellent free charting. Google Finance and Yahoo Finance provide basic data. For comprehensive free research, combining Market Index (ASX data) with TradingView (charting) covers most needs." },
+      { question: "Is Morningstar worth paying for?", answer: "Morningstar is considered the gold standard for fundamental research. Their premium subscription ($280/year) provides fair value estimates, analyst reports, and portfolio tools. It's worth it for investors who make decisions based on fundamental analysis and valuations. Casual investors may find free tools sufficient." },
+      { question: "What does Simply Wall St do?", answer: "Simply Wall St provides visual stock analysis using infographics — snowflake charts showing value, growth, health, dividends, and management quality. It covers ASX and global markets. Plans start at $10/month. It's particularly good for visual learners who prefer charts over spreadsheets." },
+      { question: "Do I need a research tool if I use a broker?", answer: "Most brokers provide basic research (company profiles, charts, news). However, dedicated research tools offer deeper analysis, better screeners, and independent ratings. If you're actively picking stocks rather than buying index ETFs, a research tool can add significant value to your process." },
+    ],
+    advisorTypes: [{ type: "financial_planner", label: "Financial Planners", href: "/advisors/financial-planners" }],
+  },
 ];
 
 /** Look up a vertical config by its URL slug */

@@ -245,7 +245,7 @@ function computeRoute(answers: Answers): RouteResult {
         "An advisor suits you if you want professional guidance on tax, super, or structuring.",
       ],
       actions: [
-        { label: "Compare platforms", href: goal === "crypto" ? "/compare?filter=crypto" : goal === "super" ? "/compare?filter=super" : goal === "income" ? "/compare?filter=shares" : "/compare", primary: true, icon: "bar-chart" },
+        { label: "Compare platforms", href: goal === "crypto" ? "/crypto" : goal === "super" ? "/compare/super" : goal === "income" ? "/share-trading" : "/compare", primary: true, icon: "bar-chart" },
         { label: "Find an advisor", href: "/find-advisor", icon: "users" },
       ],
       guides: [

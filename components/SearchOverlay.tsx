@@ -15,12 +15,12 @@ interface SearchItem {
 const SEARCH_INDEX: SearchItem[] = [
   // Platforms
   { title: "Compare All Platforms", href: "/compare", category: "Platforms", description: "Side-by-side comparison of 73+ platforms" },
-  { title: "Share Trading", href: "/compare?filter=shares", category: "Platforms", description: "ASX & international share brokers" },
-  { title: "Crypto Exchanges", href: "/compare?filter=crypto", category: "Platforms", description: "AUSTRAC-registered crypto platforms" },
+  { title: "Share Trading", href: "/share-trading", category: "Platforms", description: "ASX & international share brokers" },
+  { title: "Crypto Exchanges", href: "/crypto", category: "Platforms", description: "AUSTRAC-registered crypto platforms" },
   { title: "Super Funds", href: "/compare/super", category: "Platforms", description: "Compare fees & performance" },
-  { title: "Savings Accounts", href: "/compare?filter=savings", category: "Platforms", description: "High interest & at-call accounts" },
+  { title: "Savings Accounts", href: "/savings", category: "Platforms", description: "High interest & at-call accounts" },
   { title: "ETFs", href: "/compare/etfs", category: "Platforms", description: "Exchange-traded funds comparison" },
-  { title: "CFD & Forex", href: "/compare?filter=cfd", category: "Platforms", description: "Derivatives & currency trading" },
+  { title: "CFD & Forex", href: "/cfd", category: "Platforms", description: "Derivatives & currency trading" },
   { title: "Robo-Advisors", href: "/compare?filter=robo", category: "Platforms", description: "Automated portfolio management" },
   { title: "Current Deals & Offers", href: "/deals", category: "Platforms", description: "Live promotions from brokers" },
 

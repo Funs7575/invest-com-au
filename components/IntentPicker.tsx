@@ -9,12 +9,12 @@ const SECTIONS = [
     title: "Compare Platforms",
     desc: "Side-by-side fee and feature comparison",
     items: [
-      { label: "Share Trading", href: "/compare?filter=shares", icon: "trending-up", color: "bg-amber-500" },
-      { label: "Crypto Exchanges", href: "/compare?filter=crypto", icon: "bitcoin", color: "bg-orange-500" },
+      { label: "Share Trading", href: "/share-trading", icon: "trending-up", color: "bg-amber-500" },
+      { label: "Crypto Exchanges", href: "/crypto", icon: "bitcoin", color: "bg-orange-500" },
       { label: "Super Funds", href: "/compare/super", icon: "shield", color: "bg-blue-500" },
-      { label: "Savings Accounts", href: "/compare?filter=savings", icon: "piggy-bank", color: "bg-emerald-500" },
+      { label: "Savings Accounts", href: "/savings", icon: "piggy-bank", color: "bg-emerald-500" },
       { label: "ETFs", href: "/compare/etfs", icon: "layers", color: "bg-violet-500" },
-      { label: "CFD & Forex", href: "/compare?filter=cfd", icon: "repeat", color: "bg-red-500" },
+      { label: "CFD & Forex", href: "/cfd", icon: "repeat", color: "bg-red-500" },
     ],
   },
   {
