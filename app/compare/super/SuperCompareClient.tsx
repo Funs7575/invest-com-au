@@ -402,8 +402,8 @@ export default function SuperCompareClient() {
         {/* ─── Advisor CTA ─── */}
         <AdvisorMatchCTA
           needKey="planning"
-          headline="Not sure which super fund is best?"
-          description="A financial planner can review your super, consolidate accounts, optimise your investment option, and ensure you have the right insurance."
+          headline="Need help comparing super funds?"
+          description="A financial planner can review your super, consolidate accounts, and help you understand your investment options and insurance cover."
         />
       </div>
     </div>
