@@ -18,7 +18,8 @@ const platformsMenu = {
     { label: "ETFs", href: "/compare/etfs", desc: "Diversified index investing" },
     { label: "Super Funds", href: "/compare/super", desc: "Compare fees & performance" },
     { label: "Savings Accounts", href: "/savings", desc: "High interest & at-call accounts" },
-    { label: "Robo-Advisors", href: "/compare?filter=robo", desc: "Automated portfolio management" },
+    { label: "Robo-Advisors", href: "/robo-advisors", desc: "Automated portfolio management" },
+    { label: "Term Deposits", href: "/term-deposits", desc: "Government-guaranteed fixed rates" },
     {
       label: "Crypto Exchanges",
       href: "/crypto",
