@@ -414,6 +414,76 @@ export async function POST(request: NextRequest) {
           }
         }
 
+        // Handle listing payments
+        if (session.metadata?.type === "listing_payment" && session.mode === "payment") {
+          const listingId = parseInt(session.metadata.listing_id || "0");
+          const planId = parseInt(session.metadata.plan_id || "0");
+          const contactEmail = session.metadata.contact_email;
+
+          if (listingId && planId) {
+            const supabase = createAdminClient();
+
+            // Look up plan to get duration from features
+            const { data: plan } = await supabase
+              .from("listing_plans")
+              .select("plan_name, features")
+              .eq("id", planId)
+              .single();
+
+            const durationDays = plan?.features?.listing_duration_days || 30;
+            const expiresAt = new Date(Date.now() + durationDays * 24 * 60 * 60 * 1000).toISOString();
+
+            // Activate the listing
+            const { error: updateError } = await supabase
+              .from("investment_listings")
+              .update({
+                status: "active",
+                expires_at: expiresAt,
+                updated_at: new Date().toISOString(),
+              })
+              .eq("id", listingId);
+
+            if (updateError) {
+              log.error("Listing activation error", { error: updateError.message, listingId });
+            } else {
+              log.info("Listing activated", { listingId, planId, durationDays });
+            }
+
+            // Fetch listing title for the email
+            const { data: listing } = await supabase
+              .from("investment_listings")
+              .select("title, slug")
+              .eq("id", listingId)
+              .single();
+
+            // Send confirmation email to the seller
+            if (contactEmail) {
+              const listingTitle = listing?.title || `Listing #${listingId}`;
+              const planName = plan?.plan_name || "Standard";
+              const amountPaid = ((session.amount_total || 0) / 100).toFixed(2);
+
+              sendTransactionalEmail(
+                contactEmail,
+                `Listing Activated: ${listingTitle}`,
+                emailWrapper("Listing Payment Confirmed", "#0f172a", `
+                  <h2 style="margin: 0 0 12px; font-size: 18px; color: #0f172a;">Your listing is now live!</h2>
+                  <p style="color: #475569; font-size: 14px; line-height: 1.6; margin: 0 0 16px;">
+                    Your <strong>${escapeHtml(planName)}</strong> plan for <strong>${escapeHtml(listingTitle)}</strong> has been activated.
+                  </p>
+                  <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px; margin: 0 0 20px;">
+                    <p style="margin: 0; font-size: 13px; color: #334155;"><strong>Amount paid:</strong> A$${amountPaid}</p>
+                    <p style="margin: 4px 0 0; font-size: 13px; color: #334155;"><strong>Duration:</strong> ${durationDays} days</p>
+                    <p style="margin: 4px 0 0; font-size: 13px; color: #334155;"><strong>Expires:</strong> ${new Date(expiresAt).toLocaleDateString("en-AU", { day: "numeric", month: "long", year: "numeric" })}</p>
+                  </div>
+                  <div style="text-align: center; margin: 20px 0;">
+                    <a href="${getSiteUrl()}/invest/listings/${listing?.slug || listingId}" style="display: inline-block; padding: 12px 28px; background: #0f172a; color: #fff; font-weight: 700; font-size: 14px; border-radius: 8px; text-decoration: none;">View Your Listing</a>
+                  </div>
+                `),
+              ).catch((err) => console.error("[stripe-webhook] Listing confirmation email failed:", err));
+            }
+          }
+        }
+
         // Handle consultation bookings
         if (session.metadata?.type === "consultation" && session.mode === "payment") {
           const userId = session.metadata.supabase_user_id;
