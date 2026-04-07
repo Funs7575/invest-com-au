@@ -14,6 +14,7 @@ export default function ExitIntentCapture() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [dismissed, setDismissed] = useState(false);
+  const [emailError, setEmailError] = useState(false);
 
   const trigger = useCallback(() => {
     if (typeof window === "undefined") return;
@@ -55,7 +56,11 @@ export default function ExitIntentCapture() {
   }, [trigger]);
 
   const handleSubmit = async () => {
-    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return;
+    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setEmailError(true);
+      return;
+    }
+    setEmailError(false);
     const utm = getStoredUtm();
     await fetch("/api/email-capture", {
       method: "POST",

@@ -143,7 +143,7 @@ export default function SearchOverlay({ isOpen, onClose }: { isOpen: boolean; on
       <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={onClose} />
 
       {/* Search panel */}
-      <div className="relative max-w-2xl mx-auto mt-[10vh] mx-4">
+      <div className="relative max-w-2xl mx-4 sm:mx-auto mt-[10vh]">
         <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
           {/* Search input */}
           <div className="flex items-center gap-3 px-5 py-4 border-b border-slate-100">

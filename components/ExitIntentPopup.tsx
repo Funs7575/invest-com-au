@@ -118,7 +118,7 @@ export default function ExitIntentPopup() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !email.includes("@") || !consent) return;
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !consent) return;
     setStatus("loading");
     try {
       const res = await fetch("/api/email-capture", {

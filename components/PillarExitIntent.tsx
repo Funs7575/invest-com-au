@@ -153,7 +153,7 @@ export default function PillarExitIntent({ slug }: { slug: string }) {
 
   const handleLeadSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !email.includes("@")) return;
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return;
     setStatus("loading");
     try {
       const utm = getStoredUtm();

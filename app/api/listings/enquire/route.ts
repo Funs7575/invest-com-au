@@ -64,6 +64,9 @@ export async function POST(request: NextRequest) {
       "foreign_individual",
       "foreign_corporate",
       "visa_applicant",
+      "individual",
+      "corporate",
+      "family_office",
     ];
     if (
       body.investor_type &&
@@ -193,7 +196,7 @@ export async function POST(request: NextRequest) {
       );
       await supabase
         .from("investment_listings")
-        .update({ enquiries: (listing as { enquiries?: number }).enquiries ?? 0 + 1 })
+        .update({ enquiries: ((listing as { enquiries?: number }).enquiries ?? 0) + 1 })
         .eq("id", body.listing_id);
     }
 

@@ -404,6 +404,7 @@ export default function AdvisorSignupPage() {
                   value={form.bio}
                   onChange={(e) => updateField("bio", e.target.value)}
                   rows={4}
+                  maxLength={500}
                   className={inputClass}
                   placeholder="Tell investors about your experience, qualifications, and approach to financial advice..."
                 />

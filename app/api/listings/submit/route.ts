@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
 
     const supabase = await createClient();
 
-    const { error: insertError } = await supabase
+    const { data: inserted, error: insertError } = await supabase
       .from("investment_listings")
       .insert({
         vertical: body.vertical,
@@ -114,13 +114,16 @@ export async function POST(request: NextRequest) {
         industry: body.industry?.trim() ?? null,
         firb_eligible: body.firb_eligible ?? false,
         siv_complying: body.siv_complying ?? false,
+        contact_name: body.contact_name.trim(),
         contact_email: body.contact_email.trim(),
         contact_phone: body.contact_phone?.trim() ?? null,
         listing_type: body.listing_plan === "featured" ? "featured" : body.listing_plan === "premium" ? "premium" : "standard",
         status: "pending",
         views: 0,
         enquiries: 0,
-      });
+      })
+      .select("id")
+      .single();
 
     if (insertError) {
       console.error("[listings/submit] insert error:", insertError);
@@ -130,7 +133,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, listing_id: inserted?.id });
   } catch (err) {
     console.error("[listings/submit] unexpected error:", err);
     return NextResponse.json(

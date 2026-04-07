@@ -23,6 +23,7 @@ export default function BookingWidget({ advisorSlug, advisorName }: { advisorSlu
   const [step, setStep] = useState<"calendar" | "form" | "confirmed">("calendar");
   const [form, setForm] = useState({ name: "", email: "", phone: "", topic: "" });
   const [submitting, setSubmitting] = useState(false);
+  const [bookingError, setBookingError] = useState<string | null>(null);
 
   useEffect(() => {
     fetch(`/api/advisor-booking?advisor=${advisorSlug}`)
@@ -94,7 +95,12 @@ export default function BookingWidget({ advisorSlug, advisorName }: { advisorSlu
 
   const submitBooking = async () => {
     if (!form.name || !form.email || !selectedDate || !selectedTime) return;
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      setBookingError("Please enter a valid email address.");
+      return;
+    }
     setSubmitting(true);
+    setBookingError(null);
     try {
       const res = await fetch("/api/advisor-booking", {
         method: "POST",
@@ -111,9 +117,9 @@ export default function BookingWidget({ advisorSlug, advisorName }: { advisorSlu
         }),
       });
       if (res.ok) setStep("confirmed");
-      else alert("This slot may no longer be available. Please try another time.");
+      else setBookingError("This slot may no longer be available. Please try another time.");
     } catch {
-      alert("Something went wrong. Please try again.");
+      setBookingError("Something went wrong. Please try again.");
     }
     setSubmitting(false);
   };
@@ -276,6 +282,9 @@ export default function BookingWidget({ advisorSlug, advisorName }: { advisorSlu
                 <label className="block text-xs font-semibold text-slate-600 mb-1">What would you like to discuss?</label>
                 <textarea value={form.topic} onChange={(e) => setForm({ ...form, topic: e.target.value })} rows={2} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="e.g. SMSF setup, retirement planning..." />
               </div>
+              {bookingError && (
+                <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{bookingError}</p>
+              )}
               <button
                 onClick={submitBooking}
                 disabled={submitting || !form.name || !form.email}
