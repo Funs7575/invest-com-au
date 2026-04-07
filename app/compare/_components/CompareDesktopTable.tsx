@@ -14,6 +14,93 @@ import type { PlacementWinner } from "@/lib/sponsorship";
 type FilterType = 'all' | 'shares' | 'beginner' | 'chess' | 'free' | 'us' | 'smsf' | 'low-fx' | 'crypto' | 'robo' | 'research' | 'super' | 'property' | 'cfd' | 'savings' | 'term-deposits' | 'has-deal';
 type SortCol = 'name' | 'asx_fee_value' | 'us_fee_value' | 'fx_rate' | 'rating';
 
+/* ─── Vertical-specific column headers & tooltips ─── */
+interface ColumnConfig {
+  col1: { label: string; tooltip: string; sortCol: SortCol };
+  col2: { label: string; tooltip: string; sortCol: SortCol };
+  col3: { label: string; tooltip: string; sortCol: SortCol };
+  feat1: { label: string; tooltip: string };
+  feat2: { label: string };
+}
+
+const DEFAULT_COLUMNS: ColumnConfig = {
+  col1: { label: 'ASX Fee', tooltip: '', sortCol: 'asx_fee_value' },
+  col2: { label: 'US Fee', tooltip: '', sortCol: 'us_fee_value' },
+  col3: { label: 'FX Rate', tooltip: '', sortCol: 'fx_rate' },
+  feat1: { label: 'CHESS', tooltip: '' },
+  feat2: { label: 'SMSF' },
+};
+
+const COLUMN_CONFIG: Partial<Record<FilterType, ColumnConfig>> = {
+  shares: {
+    col1: { label: 'ASX Fee', tooltip: 'Brokerage per trade on ASX', sortCol: 'asx_fee_value' },
+    col2: { label: 'US Fee', tooltip: 'Commission per US stock trade', sortCol: 'us_fee_value' },
+    col3: { label: 'FX Rate', tooltip: 'Currency conversion fee percentage', sortCol: 'fx_rate' },
+    feat1: { label: 'CHESS', tooltip: 'CHESS-sponsored holdings' },
+    feat2: { label: 'SMSF' },
+  },
+  super: {
+    col1: { label: 'Mgmt Fee', tooltip: 'Annual administration / management fee', sortCol: 'asx_fee_value' },
+    col2: { label: 'Type', tooltip: 'Industry, retail, or public-sector fund', sortCol: 'us_fee_value' },
+    col3: { label: 'Insurance', tooltip: 'Default insurance cover included', sortCol: 'fx_rate' },
+    feat1: { label: 'Options', tooltip: 'Number of investment options available' },
+    feat2: { label: 'ESG' },
+  },
+  savings: {
+    col1: { label: 'Rate', tooltip: 'Annual interest rate (with conditions met)', sortCol: 'asx_fee_value' },
+    col2: { label: 'Min Deposit', tooltip: 'Minimum deposit to open', sortCol: 'us_fee_value' },
+    col3: { label: 'Conditions', tooltip: 'Requirements to earn bonus rate', sortCol: 'fx_rate' },
+    feat1: { label: 'ADI', tooltip: 'Government deposit guarantee (up to $250,000)' },
+    feat2: { label: 'Online' },
+  },
+  'term-deposits': {
+    col1: { label: 'Rate', tooltip: 'Term deposit rate (6-month term)', sortCol: 'asx_fee_value' },
+    col2: { label: 'Min Deposit', tooltip: 'Minimum deposit to open', sortCol: 'us_fee_value' },
+    col3: { label: 'Conditions', tooltip: 'Terms and early withdrawal rules', sortCol: 'fx_rate' },
+    feat1: { label: 'ADI', tooltip: 'Government deposit guarantee (up to $250,000)' },
+    feat2: { label: 'Online' },
+  },
+  crypto: {
+    col1: { label: 'Trading Fee', tooltip: 'Fee per crypto trade (maker/taker)', sortCol: 'asx_fee_value' },
+    col2: { label: 'Coins', tooltip: 'Number of cryptocurrencies available', sortCol: 'us_fee_value' },
+    col3: { label: 'FX Rate', tooltip: 'AUD deposit/withdrawal fee', sortCol: 'fx_rate' },
+    feat1: { label: 'Staking', tooltip: 'Staking rewards supported' },
+    feat2: { label: 'Wallet' },
+  },
+  cfd: {
+    col1: { label: 'Spread', tooltip: 'Typical spread on major pairs', sortCol: 'asx_fee_value' },
+    col2: { label: 'Leverage', tooltip: 'Maximum leverage for retail clients', sortCol: 'us_fee_value' },
+    col3: { label: 'Markets', tooltip: 'Number of tradeable instruments', sortCol: 'fx_rate' },
+    feat1: { label: 'Demo', tooltip: 'Free demo account available' },
+    feat2: { label: 'MT4/MT5' },
+  },
+  robo: {
+    col1: { label: 'Mgmt Fee', tooltip: 'Annual management fee percentage', sortCol: 'asx_fee_value' },
+    col2: { label: 'Min Investment', tooltip: 'Minimum initial investment', sortCol: 'us_fee_value' },
+    col3: { label: 'Portfolio Type', tooltip: 'ETF, direct shares, or hybrid', sortCol: 'fx_rate' },
+    feat1: { label: 'ESG', tooltip: 'Ethical/ESG portfolio option available' },
+    feat2: { label: 'Tax-Loss' },
+  },
+  property: {
+    col1: { label: 'Min Investment', tooltip: 'Minimum investment amount', sortCol: 'asx_fee_value' },
+    col2: { label: 'Returns', tooltip: 'Historical or projected annual return', sortCol: 'us_fee_value' },
+    col3: { label: 'Type', tooltip: 'REIT, fractional, or direct property', sortCol: 'fx_rate' },
+    feat1: { label: 'Liquidity', tooltip: 'Ability to sell/redeem investment' },
+    feat2: { label: 'SMSF' },
+  },
+  research: {
+    col1: { label: 'Price', tooltip: 'Monthly subscription cost', sortCol: 'asx_fee_value' },
+    col2: { label: 'Markets', tooltip: 'Number of markets covered', sortCol: 'us_fee_value' },
+    col3: { label: 'Alerts', tooltip: 'Real-time alerts and notifications', sortCol: 'fx_rate' },
+    feat1: { label: 'Screener', tooltip: 'Stock screener included' },
+    feat2: { label: 'API' },
+  },
+};
+
+function getColumnConfig(filter: FilterType): ColumnConfig {
+  return COLUMN_CONFIG[filter] || DEFAULT_COLUMNS;
+}
+
 interface Props {
   sorted: Broker[];
   activeFilter: FilterType;
@@ -47,6 +134,8 @@ export default function CompareDesktopTable({
   InfoTip,
   feeTooltips,
 }: Props) {
+  const cols = getColumnConfig(activeFilter);
+
   return (
     <div key={`${activeFilter}-${searchQuery}`} className="hidden md:block overflow-x-auto tab-content-enter">
       <ScrollReveal key={`table-${activeFilter}-${searchQuery}-${sortCol}-${sortDir}`} animation="table-row-stagger" as="table" className="w-full border border-slate-200 rounded-lg compare-table">
@@ -58,29 +147,29 @@ export default function CompareDesktopTable({
                 Platform{sortArrow('name')}
               </button>
             </th>
-            <th scope="col" className="px-4 py-3 text-left font-semibold text-sm" aria-sort={sortCol === 'asx_fee_value' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
-              <button onClick={() => onSort('asx_fee_value')} className="hover:text-slate-900 transition-colors" aria-label={activeFilter === 'savings' || activeFilter === 'term-deposits' ? "Sort by rate" : "Sort by ASX fee"}>
-                {activeFilter === 'savings' || activeFilter === 'term-deposits' ? 'Rate' : 'ASX Fee'}{sortArrow('asx_fee_value')}
+            <th scope="col" className="px-4 py-3 text-left font-semibold text-sm" aria-sort={sortCol === cols.col1.sortCol ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
+              <button onClick={() => onSort(cols.col1.sortCol)} className="hover:text-slate-900 transition-colors" aria-label={`Sort by ${cols.col1.label}`}>
+                {cols.col1.label}{sortArrow(cols.col1.sortCol)}
               </button>
-              <InfoTip text={activeFilter === 'savings' ? 'Annual interest rate (with conditions met)' : activeFilter === 'term-deposits' ? 'Term deposit rate (6-month term)' : feeTooltips.asx_fee_value} />
+              <InfoTip text={cols.col1.tooltip || feeTooltips.asx_fee_value} />
             </th>
-            <th scope="col" className="px-4 py-3 text-left font-semibold text-sm" aria-sort={sortCol === 'us_fee_value' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
-              <button onClick={() => onSort('us_fee_value')} className="hover:text-slate-900 transition-colors" aria-label="Sort by US fee">
-                {activeFilter === 'savings' || activeFilter === 'term-deposits' ? 'Min Deposit' : 'US Fee'}{sortArrow('us_fee_value')}
+            <th scope="col" className="px-4 py-3 text-left font-semibold text-sm" aria-sort={sortCol === cols.col2.sortCol ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
+              <button onClick={() => onSort(cols.col2.sortCol)} className="hover:text-slate-900 transition-colors" aria-label={`Sort by ${cols.col2.label}`}>
+                {cols.col2.label}{sortArrow(cols.col2.sortCol)}
               </button>
-              <InfoTip text={activeFilter === 'savings' || activeFilter === 'term-deposits' ? 'Minimum deposit to open' : feeTooltips.us_fee_value} />
+              <InfoTip text={cols.col2.tooltip || feeTooltips.us_fee_value} />
             </th>
-            <th scope="col" className="px-4 py-3 text-left font-semibold text-sm" aria-sort={sortCol === 'fx_rate' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
-              <button onClick={() => onSort('fx_rate')} className="hover:text-slate-900 transition-colors" aria-label="Sort by FX rate">
-                {activeFilter === 'savings' || activeFilter === 'term-deposits' ? 'Conditions' : 'FX Rate'}{sortArrow('fx_rate')}
+            <th scope="col" className="px-4 py-3 text-left font-semibold text-sm" aria-sort={sortCol === cols.col3.sortCol ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
+              <button onClick={() => onSort(cols.col3.sortCol)} className="hover:text-slate-900 transition-colors" aria-label={`Sort by ${cols.col3.label}`}>
+                {cols.col3.label}{sortArrow(cols.col3.sortCol)}
               </button>
-              <InfoTip text={activeFilter === 'savings' || activeFilter === 'term-deposits' ? 'Requirements to earn bonus rate' : feeTooltips.fx_rate} />
+              <InfoTip text={cols.col3.tooltip || feeTooltips.fx_rate} />
             </th>
             <th scope="col" className="px-4 py-3 text-center font-semibold text-sm">
-              {activeFilter === 'savings' || activeFilter === 'term-deposits' ? 'ADI' : 'CHESS'}
-              <InfoTip text={activeFilter === 'savings' || activeFilter === 'term-deposits' ? 'Government deposit guarantee (up to $250,000)' : feeTooltips.chess} />
+              {cols.feat1.label}
+              <InfoTip text={cols.feat1.tooltip || feeTooltips.chess} />
             </th>
-            <th scope="col" className="px-4 py-3 text-center font-semibold text-sm">{activeFilter === 'savings' || activeFilter === 'term-deposits' ? 'Online' : 'SMSF'}</th>
+            <th scope="col" className="px-4 py-3 text-center font-semibold text-sm">{cols.feat2.label}</th>
             <th scope="col" className="px-4 py-3 text-center font-semibold text-sm" aria-sort={sortCol === 'rating' ? (sortDir === 1 ? 'ascending' : 'descending') : undefined}>
               <button onClick={() => onSort('rating')} className="hover:text-slate-900 transition-colors" aria-label="Sort by rating">
                 Rating{sortArrow('rating')}

@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import type { InvestmentListing } from "@/components/ListingCard";
-import FarmlandListingsClient from "./FarmlandListingsClient";
+import UnifiedListingsClient from "@/components/UnifiedListingsClient";
 
 export const revalidate = 300;
 
@@ -32,7 +33,6 @@ export default async function FarmlandListingsPage() {
   const { data } = await supabase
     .from("investment_listings")
     .select("*")
-    .eq("vertical", "farmland")
     .eq("status", "active")
     .order("listing_type", { ascending: false })
     .order("created_at", { ascending: false });
@@ -52,7 +52,9 @@ export default async function FarmlandListingsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
-      <FarmlandListingsClient listings={listings} />
+      <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading listings...</div>}>
+        <UnifiedListingsClient listings={listings} defaultVertical="farmland" />
+      </Suspense>
     </>
   );
 }
