@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { sendEmail } from "@/lib/resend";
+import { escapeHtml } from "@/lib/html-escape";
+import { isRateLimited } from "@/lib/rate-limit";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -17,6 +19,12 @@ interface EnquireBody {
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit enquiries
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    if (await isRateLimited(`listing-enquire:${ip}`, 10, 5)) {
+      return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
+    }
+
     let body: Partial<EnquireBody>;
 
     try {
@@ -136,19 +144,19 @@ export async function POST(request: NextRequest) {
               <span style="color: #fff; font-weight: 800; font-size: 16px;">New Enquiry Received</span>
             </div>
             <div style="background: #fff; border: 1px solid #e2e8f0; border-top: none; padding: 24px; border-radius: 0 0 12px 12px;">
-              <h2 style="margin: 0 0 12px; font-size: 18px; color: #0f172a;">New enquiry for ${listingTitle}</h2>
+              <h2 style="margin: 0 0 12px; font-size: 18px; color: #0f172a;">New enquiry for ${escapeHtml(listingTitle)}</h2>
               <p style="color: #475569; font-size: 14px; line-height: 1.6; margin: 0 0 16px;">
                 An investor has expressed interest in your listing.
               </p>
               <div style="background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin: 0 0 20px;">
-                <p style="margin: 0 0 8px; font-size: 13px; color: #334155;"><strong>Name:</strong> ${investorName}</p>
-                <p style="margin: 0 0 8px; font-size: 13px; color: #334155;"><strong>Email:</strong> ${investorEmail}</p>
-                <p style="margin: 0 0 8px; font-size: 13px; color: #334155;"><strong>Phone:</strong> ${investorPhone}</p>
+                <p style="margin: 0 0 8px; font-size: 13px; color: #334155;"><strong>Name:</strong> ${escapeHtml(investorName)}</p>
+                <p style="margin: 0 0 8px; font-size: 13px; color: #334155;"><strong>Email:</strong> ${escapeHtml(investorEmail)}</p>
+                <p style="margin: 0 0 8px; font-size: 13px; color: #334155;"><strong>Phone:</strong> ${escapeHtml(investorPhone)}</p>
                 <p style="margin: 0; font-size: 13px; color: #334155;"><strong>Message:</strong></p>
-                <p style="margin: 4px 0 0; font-size: 13px; color: #475569; white-space: pre-wrap;">${investorMessage}</p>
+                <p style="margin: 4px 0 0; font-size: 13px; color: #475569; white-space: pre-wrap;">${escapeHtml(investorMessage)}</p>
               </div>
               <div style="text-align: center; margin: 20px 0;">
-                <a href="mailto:${investorEmail}" style="display: inline-block; padding: 12px 28px; background: #0f172a; color: #fff; font-weight: 700; font-size: 14px; border-radius: 8px; text-decoration: none;">Reply to ${investorName}</a>
+                <a href="mailto:${encodeURIComponent(investorEmail)}" style="display: inline-block; padding: 12px 28px; background: #0f172a; color: #fff; font-weight: 700; font-size: 14px; border-radius: 8px; text-decoration: none;">Reply to ${escapeHtml(investorName)}</a>
               </div>
               <p style="color: #94a3b8; font-size: 11px; text-align: center; margin: 24px 0 0 0; line-height: 1.5;">
                 Invest.com.au — Independent investing education &amp; comparison<br>

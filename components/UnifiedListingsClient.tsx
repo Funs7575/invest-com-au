@@ -212,7 +212,7 @@ export default function UnifiedListingsClient({ listings, defaultVertical }: { l
   // ─── Filter + Sort ─────────────────────────────────────────────────────────
 
   const filtered = useMemo(() => {
-    let result = listings.filter((l) => {
+    const result = listings.filter((l) => {
       if (activeVertical !== "all" && l.vertical !== activeVertical) return false;
       if (activeState !== "All" && l.location_state !== activeState) return false;
       if (firbOnly && !l.firb_eligible) return false;

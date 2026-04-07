@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendAdminNotification } from "@/lib/advisor-emails";
+import { escapeHtml } from "@/lib/html-escape";
 
 export async function POST(request: NextRequest) {
   try {
@@ -72,7 +73,7 @@ export async function POST(request: NextRequest) {
       `Seat upgrade request: ${firm.name}`,
       `<strong>${advisor.name}</strong> from <strong>${firm.name}</strong> has requested a seat upgrade.<br/>
       Current: ${firm.max_seats} seats → Requested: ${parsedSeats} seats<br/>
-      ${reason ? `Reason: ${reason}` : "No reason provided"}<br/>
+      ${reason ? `Reason: ${escapeHtml(reason)}` : "No reason provided"}<br/>
       <a href="https://invest.com.au/admin/advisors" style="color:#2563eb">Review in Admin →</a>`
     ).catch((err) => console.error("[seat-request] admin notification failed:", err));
 

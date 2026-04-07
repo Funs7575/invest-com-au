@@ -91,7 +91,6 @@ export default function LeadMagnet() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               onBlur={() => setEmailTouched(true)}
-              required
               className={`w-full px-3 md:px-4 py-2.5 rounded-lg border text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-700/40 focus:border-blue-700 ${
                 emailError ? 'border-red-400' : 'border-slate-200'
               }`}

@@ -1,5 +1,6 @@
 import { getStripe } from "@/lib/stripe";
 import { NextRequest, NextResponse } from "next/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 import { getSiteUrl } from "@/lib/url";
 
@@ -28,6 +29,22 @@ type BillingCycle = "monthly" | "annual";
 
 export async function POST(request: NextRequest) {
   try {
+    // Verify advisor session
+    const sessionToken = request.cookies.get("advisor_session")?.value;
+    if (!sessionToken) {
+      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    }
+    const adminDb = createAdminClient();
+    const { data: advisorSession } = await adminDb
+      .from("advisor_sessions")
+      .select("professional_id, expires_at")
+      .eq("session_token", sessionToken)
+      .gt("expires_at", new Date().toISOString())
+      .single();
+    if (!advisorSession) {
+      return NextResponse.json({ error: "Invalid or expired session" }, { status: 401 });
+    }
+
     const body = await request.json();
     const { advisor_id, plan, billing_cycle } = body as {
       advisor_id?: string;
@@ -54,6 +71,11 @@ export async function POST(request: NextRequest) {
         { error: "Invalid billing_cycle. Must be monthly or annual." },
         { status: 400 }
       );
+    }
+
+    // Verify caller owns this advisor_id
+    if (String(advisorSession.professional_id) !== String(advisor_id)) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const planKey = plan as PlanKey;

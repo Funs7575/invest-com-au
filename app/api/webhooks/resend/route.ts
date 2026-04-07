@@ -16,6 +16,16 @@ const log = logger("resend-webhook");
  */
 export async function POST(request: NextRequest) {
   try {
+    // Verify webhook secret if configured (Resend sends it as a query parameter or header)
+    const webhookSecret = process.env.RESEND_WEBHOOK_SECRET;
+    if (webhookSecret) {
+      const authHeader = request.headers.get("svix-signature") || request.nextUrl.searchParams.get("secret");
+      if (!authHeader || authHeader !== webhookSecret) {
+        log.warn("Resend webhook rejected: invalid signature");
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+    }
+
     const body = await request.json();
     const { type, data } = body;
 

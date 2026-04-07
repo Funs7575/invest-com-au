@@ -1,5 +1,7 @@
 import { isRateLimited } from "@/lib/rate-limit";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
+import { ADMIN_EMAILS } from "@/lib/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { adjustWallet } from "@/lib/marketplace/wallet";
 import { logger } from "@/lib/logger";
@@ -44,14 +46,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Check if user is admin
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
-      .maybeSingle();
-
-    if (!profile || profile.role !== "admin") {
+    // Check if user is admin via ADMIN_EMAILS allowlist (not profile role)
+    if (!ADMIN_EMAILS.includes(user.email?.toLowerCase() || "")) {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });
     }
 

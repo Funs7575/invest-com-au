@@ -26,6 +26,22 @@ interface PaymentBody {
  */
 export async function POST(request: NextRequest) {
   try {
+    // Verify advisor session
+    const sessionToken = request.cookies.get("advisor_session")?.value;
+    if (!sessionToken) {
+      return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    }
+    const adminAuth = createAdminClient();
+    const { data: advisorSession } = await adminAuth
+      .from("advisor_sessions")
+      .select("professional_id, expires_at")
+      .eq("session_token", sessionToken)
+      .gt("expires_at", new Date().toISOString())
+      .single();
+    if (!advisorSession) {
+      return NextResponse.json({ error: "Invalid or expired session" }, { status: 401 });
+    }
+
     let body: Partial<PaymentBody>;
 
     try {
@@ -55,6 +71,11 @@ export async function POST(request: NextRequest) {
         },
         { status: 400 },
       );
+    }
+
+    // Verify caller owns this advisor_id
+    if (advisorSession.professional_id !== body.advisor_id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const pack = CREDIT_PACKS[body.credit_pack];

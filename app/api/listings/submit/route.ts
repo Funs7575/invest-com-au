@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { isRateLimited } from "@/lib/rate-limit";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -32,6 +33,12 @@ interface SubmitBody {
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit listing submissions
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    if (await isRateLimited(`listing-submit:${ip}`, 5, 10)) {
+      return NextResponse.json({ error: "Too many submissions. Please try again later." }, { status: 429 });
+    }
+
     let body: Partial<SubmitBody>;
     try {
       body = await request.json();

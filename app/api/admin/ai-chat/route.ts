@@ -1,6 +1,8 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { NextRequest } from "next/server";
+import { createClient } from "@/lib/supabase/server";
+import { ADMIN_EMAILS } from "@/lib/admin";
+import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 export const maxDuration = 120;
@@ -638,6 +640,13 @@ async function executeTool(name: string, input: Record<string, unknown>): Promis
 
 export async function POST(req: NextRequest) {
   try {
+    // Require admin authentication
+    const supabaseAuth = await createClient();
+    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
+    if (authError || !user || !ADMIN_EMAILS.includes(user.email?.toLowerCase() || "")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { messages } = await req.json() as { messages: Anthropic.MessageParam[] };
 
     if (!process.env.ANTHROPIC_API_KEY) {

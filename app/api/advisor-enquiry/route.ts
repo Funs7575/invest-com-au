@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
 import { isValidEmail, isDisposableEmail } from "@/lib/validate-email";
 import { notificationFooter } from "@/lib/email-templates";
+import { escapeHtml } from "@/lib/html-escape";
 import { getSiteUrl } from "@/lib/url";
 import { isValidAuPhone } from "@/lib/validate-phone";
 
@@ -359,14 +360,14 @@ export async function POST(request: NextRequest) {
                   </div>
                   <div style="background: #f8fafc; padding: 24px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px;">
                     <table style="width: 100%; border-collapse: collapse;">
-                      <tr><td style="padding: 8px 0; font-size: 13px; color: #64748b; width: 120px;">Name</td><td style="padding: 8px 0; font-size: 14px; font-weight: 600;">${user_name.trim()}</td></tr>
-                      <tr><td style="padding: 8px 0; font-size: 13px; color: #64748b;">Email</td><td style="padding: 8px 0; font-size: 14px;"><a href="mailto:${user_email.trim()}" style="color: #2563eb;">${user_email.trim()}</a></td></tr>
-                      ${user_phone ? `<tr><td style="padding: 8px 0; font-size: 13px; color: #64748b;">Phone</td><td style="padding: 8px 0; font-size: 14px;"><a href="tel:${user_phone.trim()}" style="color: #2563eb;">${user_phone.trim()}</a></td></tr>` : ""}
-                      ${message ? `<tr><td style="padding: 8px 0; font-size: 13px; color: #64748b; vertical-align: top;">Message</td><td style="padding: 8px 0; font-size: 14px; line-height: 1.5;">${message.trim().replace(/\n/g, "<br>")}</td></tr>` : ""}
+                      <tr><td style="padding: 8px 0; font-size: 13px; color: #64748b; width: 120px;">Name</td><td style="padding: 8px 0; font-size: 14px; font-weight: 600;">${escapeHtml(user_name.trim())}</td></tr>
+                      <tr><td style="padding: 8px 0; font-size: 13px; color: #64748b;">Email</td><td style="padding: 8px 0; font-size: 14px;"><a href="mailto:${encodeURIComponent(user_email.trim())}" style="color: #2563eb;">${escapeHtml(user_email.trim())}</a></td></tr>
+                      ${user_phone ? `<tr><td style="padding: 8px 0; font-size: 13px; color: #64748b;">Phone</td><td style="padding: 8px 0; font-size: 14px;"><a href="tel:${encodeURIComponent(user_phone.trim())}" style="color: #2563eb;">${escapeHtml(user_phone.trim())}</a></td></tr>` : ""}
+                      ${message ? `<tr><td style="padding: 8px 0; font-size: 13px; color: #64748b; vertical-align: top;">Message</td><td style="padding: 8px 0; font-size: 14px; line-height: 1.5;">${escapeHtml(message.trim()).replace(/\n/g, "<br>")}</td></tr>` : ""}
                     </table>
                     ${qualDataRows}
                     <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
-                      <a href="mailto:${user_email.trim()}?subject=Re: Your enquiry on Invest.com.au" style="display: inline-block; padding: 10px 24px; background: #0f172a; color: white; text-decoration: none; border-radius: 8px; font-size: 14px; font-weight: 600;">Reply to ${user_name.trim().split(" ")[0]}</a>
+                      <a href="mailto:${encodeURIComponent(user_email.trim())}?subject=Re: Your enquiry on Invest.com.au" style="display: inline-block; padding: 10px 24px; background: #0f172a; color: white; text-decoration: none; border-radius: 8px; font-size: 14px; font-weight: 600;">Reply to ${escapeHtml(user_name.trim().split(" ")[0])}</a>
                       <a href="${siteUrl}/advisor-portal" style="display: inline-block; margin-left: 8px; padding: 10px 24px; background: #f1f5f9; color: #334155; text-decoration: none; border-radius: 8px; font-size: 14px; font-weight: 600;">View in Dashboard</a>
                     </div>
                     <p style="margin-top: 16px; font-size: 11px; color: #94a3b8;">This lead was generated via your listing on invest.com.au. We recommend responding within 24 hours for the best chance of conversion.</p>
@@ -399,8 +400,8 @@ export async function POST(request: NextRequest) {
             html: `
               <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                 <h2 style="color: #0f172a;">Enquiry Sent!</h2>
-                <p>Hi ${user_name.trim().split(" ")[0]},</p>
-                <p>Your consultation request has been sent to <strong>${pro.name}</strong>${pro.firm_name ? ` at ${pro.firm_name}` : ""}. They typically respond within 24 hours.</p>
+                <p>Hi ${escapeHtml(user_name.trim().split(" ")[0])},</p>
+                <p>Your consultation request has been sent to <strong>${escapeHtml(pro.name)}</strong>${pro.firm_name ? ` at ${escapeHtml(pro.firm_name)}` : ""}. They typically respond within 24 hours.</p>
                 <p style="color: #64748b; font-size: 13px;">This is a no-obligation enquiry. You're under no commitment to proceed.</p>
                 ${notificationFooter(user_email.trim())}
               </div>
