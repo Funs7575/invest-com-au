@@ -1,32 +1,25 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 const NAV_ITEMS = [
-  { label: "All Platforms", short: "All", href: "/compare", filter: null },
-  { label: "Share Trading", short: "Shares", href: "/compare?filter=shares", filter: "shares" },
-  { label: "ETFs", short: "ETFs", href: "/compare/etfs", filter: null, exactPath: "/compare/etfs" },
-  { label: "Crypto", short: "Crypto", href: "/compare?filter=crypto", filter: "crypto" },
-  { label: "Super Funds", short: "Super", href: "/compare/super", filter: null, exactPath: "/compare/super" },
-  { label: "Savings", short: "Savings", href: "/compare?filter=savings", filter: "savings" },
-  { label: "CFD & Forex", short: "CFD", href: "/compare?filter=cfd", filter: "cfd" },
-  { label: "Insurance", short: "Insurance", href: "/compare/insurance", filter: null, exactPath: "/compare/insurance" },
-  { label: "Non-Residents", short: "Non-Residents", href: "/compare/non-residents", filter: null, exactPath: "/compare/non-residents" },
+  { label: "All Platforms", short: "All", href: "/compare" },
+  { label: "Share Trading", short: "Shares", href: "/share-trading" },
+  { label: "ETFs", short: "ETFs", href: "/compare/etfs" },
+  { label: "Crypto", short: "Crypto", href: "/crypto" },
+  { label: "Super Funds", short: "Super", href: "/compare/super" },
+  { label: "Savings", short: "Savings", href: "/savings" },
+  { label: "CFD & Forex", short: "CFD", href: "/cfd" },
+  { label: "Insurance", short: "Insurance", href: "/compare/insurance" },
+  { label: "Non-Residents", short: "Non-Residents", href: "/compare/non-residents" },
 ];
 
 export default function CompareNav() {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const activeFilter = searchParams.get("filter") || searchParams.get("category");
 
   function isActive(item: typeof NAV_ITEMS[number]): boolean {
-    // Exact path match (for dedicated sub-pages)
-    if (item.exactPath) return pathname === item.exactPath;
-    // Filter-based match
-    if (item.filter) return pathname === "/compare" && activeFilter === item.filter;
-    // "All Platforms" — active only when on /compare with no filter
-    return pathname === "/compare" && !activeFilter;
+    return pathname === item.href || pathname.startsWith(item.href + "/");
   }
 
   return (

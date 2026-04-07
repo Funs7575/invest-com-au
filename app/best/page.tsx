@@ -3,22 +3,27 @@ import type { Metadata } from "next";
 import { getAllCategories } from "@/lib/best-broker-categories";
 import { absoluteUrl, breadcrumbJsonLd, REVIEW_AUTHOR, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
+import { SHOW_BEST_PICKS } from "@/lib/compliance-config";
 
-const bestTitle = `Best Investing Platforms (${CURRENT_YEAR})`;
+const bestTitle = SHOW_BEST_PICKS
+  ? `Best Investing Platforms (${CURRENT_YEAR})`
+  : `Platform Comparison Guides (${CURRENT_YEAR})`;
 
 export const metadata: Metadata = {
   title: bestTitle,
   description:
-    "Find the best Australian investing platform for your needs. 20+ category guides covering beginners, low fees, crypto, robo-advisors, ETFs, dividends, and more.",
+    SHOW_BEST_PICKS
+      ? "Find the best Australian investing platform for your needs. 20+ category guides covering beginners, low fees, crypto, robo-advisors, ETFs, dividends, and more."
+      : "Compare Australian investing platforms by category. 20+ guides covering beginners, low fees, crypto, robo-advisors, ETFs, dividends, and more.",
   alternates: { canonical: "/best" },
   openGraph: {
     title: bestTitle,
     description:
-      "Find the best Australian investing platform for your needs. 20+ category guides covering beginners, low fees, crypto, robo-advisors, ETFs, dividends, and more.",
+      "Compare Australian investing platforms by category. 20+ guides covering beginners, low fees, crypto, robo-advisors, ETFs, dividends, and more.",
     url: "/best",
     images: [
       {
-        url: "/api/og?title=Best+Investing+Platforms&subtitle=By+Category+—+Beginners%2C+Crypto%2C+Low+Fees+%26+More&type=best",
+        url: "/api/og?title=Platform+Comparison+Guides&subtitle=By+Category+—+Beginners%2C+Crypto%2C+Low+Fees+%26+More&type=best",
         width: 1200,
         height: 630,
         alt: "Best Investing Platforms in Australia by Category",
