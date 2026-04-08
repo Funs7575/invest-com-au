@@ -29,7 +29,7 @@ export async function generateMetadata({
 
   if (!member) return { title: "Reviewer Not Found" };
 
-  const title = `${member.full_name} — ${formatRole(member.role)} at ${SITE_NAME}`;
+  const title = `${member.full_name} — ${formatRole(member.role)}`;
   const description =
     member.short_bio ||
     `${member.full_name} is a ${formatRole(member.role).toLowerCase()} at ${SITE_NAME}. They review and fact-check financial product content.`;

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     "Expert-led investing courses for Australians. Learn shares, ETFs, tax, SMSF, and more from industry professionals.",
   alternates: { canonical: "/courses" },
   openGraph: {
-    title: `Courses — ${SITE_NAME}`,
+    title: "Courses",
     description: "Expert-led investing courses for Australians.",
     url: "/courses",
   },

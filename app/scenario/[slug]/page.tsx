@@ -37,14 +37,14 @@ export async function generateMetadata({
     title,
     description,
     openGraph: {
-      title: `${title} — ${SITE_NAME}`,
+      title,
       description,
       url: absoluteUrl(`/scenario/${slug}`),
       images: [{ url: ogImageUrl, width: 1200, height: 630, alt: title }],
     },
     twitter: {
       card: "summary_large_image" as const,
-      title: `${title} — ${SITE_NAME}`,
+      title,
       description,
       images: [ogImageUrl],
     },

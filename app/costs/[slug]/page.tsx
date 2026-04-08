@@ -36,7 +36,7 @@ export async function generateMetadata({
   if (!scenario) return { title: "Not Found" };
 
   return {
-    title: `${scenario.title} — ${SITE_NAME}`,
+    title: scenario.title,
     description: scenario.metaDescription,
     openGraph: {
       title: scenario.title,

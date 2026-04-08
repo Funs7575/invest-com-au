@@ -11,7 +11,7 @@ export const metadata = {
     "Quarterly reports on the Australian investing platform landscape: fee changes, new entrants, market trends, and key findings for investors.",
   robots: { index: false },
   openGraph: {
-    title: `Quarterly Industry Reports — ${SITE_NAME}`,
+    title: "Quarterly Industry Reports",
     description: "In-depth quarterly analysis of the Australian investing platform industry.",
     images: [{ url: "/api/og?title=Quarterly+Reports&subtitle=Australian+Platform+Industry+Analysis&type=default", width: 1200, height: 630 }],
   },

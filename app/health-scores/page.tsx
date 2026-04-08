@@ -10,7 +10,7 @@ export const metadata = {
   description:
     "Proprietary safety scores for every Australian investing platform. Regulatory compliance, client money handling, financial stability, platform reliability, and insurance — all in one dashboard.",
   openGraph: {
-    title: `Platform Health & Risk Scores — ${SITE_NAME}`,
+    title: "Platform Health & Risk Scores",
     description:
       "See how safe your platform really is with our proprietary 0-100 health scores across 5 key safety dimensions.",
     images: [

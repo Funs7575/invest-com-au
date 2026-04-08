@@ -58,7 +58,7 @@ export async function generateMetadata({
     description,
     openGraph: {
       type: "article" as const,
-      title: `${title} — ${SITE_NAME}`,
+      title,
       description,
       url: absoluteUrl(`/article/${slug}`),
       publishedTime: article.published_at || undefined,
@@ -66,7 +66,7 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary_large_image" as const,
-      title: `${title} — ${SITE_NAME}`,
+      title,
       description,
       images: [ogImageUrl],
     },

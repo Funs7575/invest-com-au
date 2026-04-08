@@ -9,11 +9,11 @@ import type { Metadata } from "next";
 export const revalidate = 1800; // ISR: revalidate every 30 minutes
 
 export const metadata: Metadata = {
-  title: `Platform Fee & Data Changes — What Changed — ${SITE_NAME}`,
+  title: "Platform Fee & Data Changes — What Changed",
   description:
     "Track every platform fee and data change in real time. See when brokerage, FX rates, or platform features change across Australian investing platforms.",
   openGraph: {
-    title: `Platform Fee & Data Changes — ${SITE_NAME}`,
+    title: "Platform Fee & Data Changes",
     description:
       "Track every platform fee and data change in real time. See when brokerage, FX rates, or platform features change.",
     url: absoluteUrl("/whats-new"),
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image" as const,
-    title: `Platform Fee & Data Changes — ${SITE_NAME}`,
+    title: "Platform Fee & Data Changes",
     description:
       "Track every platform fee and data change in real time. See when brokerage, FX rates, or platform features change.",
     images: [`/api/og?title=${encodeURIComponent("What Changed")}&subtitle=${encodeURIComponent("Platform Fee & Data Changes — Tracked in Real Time")}&type=default`],

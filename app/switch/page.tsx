@@ -10,7 +10,7 @@ export const metadata = {
   description:
     "Generate a personalised switching checklist between Australian platforms. See savings, CHESS transfer steps, CGT implications, and a 'nothing missed' migration plan.",
   openGraph: {
-    title: `Platform Switch Planner — ${SITE_NAME}`,
+    title: "Platform Switch Planner",
     description:
       "Personalised platform migration checklist with CHESS transfer steps, CGT guidance, and savings calculator.",
     images: [
