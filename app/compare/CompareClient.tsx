@@ -23,6 +23,8 @@ import { getSponsorSortPriority, isSponsored, getPlacementWinners, type Placemen
 import CompareDesktopTable from "./_components/CompareDesktopTable";
 import CompareSelectionBar from "./_components/CompareSelectionBar";
 import CompareFooter from "./_components/CompareFooter";
+import type { ABTestConfig } from "@/lib/ab-test";
+import { createClient } from "@/lib/supabase/client";
 
 type PlatformType = 'all' | 'shares' | 'crypto' | 'super' | 'robo' | 'savings' | 'term-deposits' | 'property' | 'cfd' | 'research';
 type FeatureFilter = 'chess' | 'free' | 'smsf' | 'low-fx' | 'us' | 'has-deal';
@@ -246,11 +248,24 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   const [campaignWinners, setCampaignWinners] = useState<PlacementWinner[]>([]);
   const [cpcCampaigns, setCpcCampaigns] = useState<PlacementWinner[]>([]);
 
+  // A/B tests for CTA variations
+  const [activeABTests, setActiveABTests] = useState<ABTestConfig[]>([]);
+
   useEffect(() => {
     // Fetch featured placement winners
     getPlacementWinners("compare-top").then(setCampaignWinners);
     // Fetch CPC campaigns for click attribution
     getPlacementWinners("compare-cpc").then(setCpcCampaigns);
+    // Fetch active A/B tests for this page
+    const supabase = createClient();
+    supabase
+      .from("site_ab_tests")
+      .select("id, name, test_type, variant_a, variant_b, traffic_split, status")
+      .eq("status", "running")
+      .eq("page", "/compare")
+      .then(({ data }) => {
+        if (data) setActiveABTests(data as ABTestConfig[]);
+      });
   }, []);
 
   // Build a map of broker_slug → campaign_id for CPC attribution
@@ -862,6 +877,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           editorPicks={editorPicks}
           campaignWinners={campaignWinners}
           cpcCampaignMap={cpcCampaignMap}
+          activeABTests={activeABTests}
           onSort={handleSort}
           onToggleSelected={toggleSelected}
           sortArrow={sortArrow}

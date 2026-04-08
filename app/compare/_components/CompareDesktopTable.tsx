@@ -10,6 +10,8 @@ import { isSponsored } from "@/lib/sponsorship";
 import ShortlistButton from "@/components/ShortlistButton";
 import BrokerLogo from "@/components/BrokerLogo";
 import type { PlacementWinner } from "@/lib/sponsorship";
+import ABTestCTA from "@/components/ABTestCTA";
+import type { ABTestConfig } from "@/lib/ab-test";
 
 type FilterType = 'all' | 'shares' | 'beginner' | 'chess' | 'free' | 'us' | 'smsf' | 'low-fx' | 'crypto' | 'robo' | 'research' | 'super' | 'property' | 'cfd' | 'savings' | 'term-deposits' | 'has-deal';
 type SortCol = 'name' | 'asx_fee_value' | 'us_fee_value' | 'fx_rate' | 'rating';
@@ -111,6 +113,7 @@ interface Props {
   editorPicks: Record<string, string>;
   campaignWinners: PlacementWinner[];
   cpcCampaignMap: Map<string, number>;
+  activeABTests: ABTestConfig[];
   onSort: (col: SortCol) => void;
   onToggleSelected: (slug: string) => void;
   sortArrow: (col: SortCol) => React.ReactNode;
@@ -128,6 +131,7 @@ export default function CompareDesktopTable({
   editorPicks,
   campaignWinners,
   cpcCampaignMap,
+  activeABTests,
   onSort,
   onToggleSelected,
   sortArrow,
@@ -244,22 +248,16 @@ export default function CompareDesktopTable({
                 <span className="text-sm text-slate-500 ml-1">{broker.rating}</span>
               </td>
               <td className="px-4 py-3 text-center">
-                <a
-                  href={(() => {
+                <ABTestCTA
+                  broker={broker}
+                  activeTests={activeABTests}
+                  page="/compare"
+                  cpcCampaignLink={(() => {
                     const link = getAffiliateLink(broker);
                     const cid = cpcCampaignMap.get(broker.slug);
-                    return cid ? `${link}${link.includes('?') ? '&' : '?'}cid=${cid}` : link;
+                    return cid ? `${link}${link.includes('?') ? '&' : '?'}cid=${cid}` : `/go/${broker.slug}?placement=compare_cta`;
                   })()}
-                  target="_blank"
-                  rel={AFFILIATE_REL}
-                  onClick={() => {
-                    trackClick(broker.slug, broker.name, 'compare-table', '/compare', 'compare');
-                    trackEvent('affiliate_click', { broker_slug: broker.slug, source: 'compare-table' }, '/compare');
-                  }}
-                  className="inline-block px-4 py-2 bg-amber-600 text-white text-sm font-semibold rounded-lg hover:bg-amber-700 transition-all duration-200 group-hover:scale-105 group-hover:shadow-lg"
-                >
-                  {getBenefitCta(broker, 'compare')}
-                </a>
+                />
               </td>
             </tr>
           ))}
