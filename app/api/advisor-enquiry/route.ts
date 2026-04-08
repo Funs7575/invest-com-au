@@ -338,6 +338,10 @@ export async function POST(request: NextRequest) {
           const qualDataRows = hasQualificationData ? buildQualificationEmailRows(qualificationData) : "";
           const tierBadge = leadTier === "international"
             ? `<span style="display: inline-block; padding: 3px 10px; background: #dbeafe; color: #1e40af; border-radius: 20px; font-size: 11px; font-weight: 700; margin-left: 8px;">🌏 International Lead</span>`
+            : score >= 70
+            ? `<span style="display: inline-block; padding: 3px 10px; background: #d1fae5; color: #065f46; border-radius: 20px; font-size: 11px; font-weight: 700; margin-left: 8px;">🔥 HOT LEAD</span>`
+            : score >= 40
+            ? `<span style="display: inline-block; padding: 3px 10px; background: #fef3c7; color: #92400e; border-radius: 20px; font-size: 11px; font-weight: 700; margin-left: 8px;">☀️ WARM LEAD</span>`
             : leadTier === "qualified"
             ? `<span style="display: inline-block; padding: 3px 10px; background: #dbeafe; color: #1e40af; border-radius: 20px; font-size: 11px; font-weight: 700; margin-left: 8px;">Qualified Lead</span>`
             : "";
@@ -351,7 +355,7 @@ export async function POST(request: NextRequest) {
             body: JSON.stringify({
               from: "Invest.com.au <leads@invest.com.au>",
               to: pro.email,
-              subject: `${leadTier === "qualified" ? "⭐ Qualified Lead" : "New Enquiry"} from ${user_name.trim()} — Invest.com.au`,
+              subject: `${score >= 70 ? "🔥 HOT LEAD" : score >= 40 ? "☀️ WARM LEAD" : leadTier === "qualified" ? "⭐ Qualified Lead" : "New Enquiry"} from ${user_name.trim()} — Invest.com.au`,
               html: `
                 <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                   <div style="background: #0f172a; color: white; padding: 20px 24px; border-radius: 12px 12px 0 0;">
@@ -370,7 +374,7 @@ export async function POST(request: NextRequest) {
                       <a href="mailto:${encodeURIComponent(user_email.trim())}?subject=Re: Your enquiry on Invest.com.au" style="display: inline-block; padding: 10px 24px; background: #0f172a; color: white; text-decoration: none; border-radius: 8px; font-size: 14px; font-weight: 600;">Reply to ${escapeHtml(user_name.trim().split(" ")[0])}</a>
                       <a href="${siteUrl}/advisor-portal" style="display: inline-block; margin-left: 8px; padding: 10px 24px; background: #f1f5f9; color: #334155; text-decoration: none; border-radius: 8px; font-size: 14px; font-weight: 600;">View in Dashboard</a>
                     </div>
-                    <p style="margin-top: 16px; font-size: 11px; color: #94a3b8;">This lead was generated via your listing on invest.com.au. We recommend responding within 24 hours for the best chance of conversion.</p>
+                    <p style="margin-top: 16px; font-size: 11px; color: ${score >= 70 ? "#065f46" : "#94a3b8"}; ${score >= 70 ? "font-weight: 700;" : ""}">${score >= 70 ? "⚡ This is a high-quality lead — respond within 1 hour for the best chance of conversion." : score >= 40 ? "This lead was generated via your listing on invest.com.au. We recommend responding within 24 hours for the best chance of conversion." : "This lead was generated via your listing on invest.com.au. Follow up when convenient."}</p>
                   </div>
                 </div>
               `,
