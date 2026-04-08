@@ -166,7 +166,7 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
 
   // AggregateRating JSON-LD for user reviews (star ratings in Google results)
   // Uses SoftwareApplication type to distinguish user ratings from editorial review on FinancialProduct
-  const aggregateRatingLd = reviewStats && reviewStats.review_count > 0 ? {
+  const aggregateRatingLd = reviewStats && reviewStats.review_count > 0 && reviewStats.average_rating != null ? {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     name: `${b.name}`,
