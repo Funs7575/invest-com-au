@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: `${listing.title} — ${listing.suburb}, ${listing.state} — Property Investment`,
     description: listing.description?.slice(0, 160) || `${listing.title} in ${listing.suburb}, ${listing.city}. From ${formatPrice(listing.price_from_cents)}.`,
     openGraph: {
-      title: `${listing.title} — ${listing.suburb} — Invest.com.au`,
+      title: `${listing.title} — ${listing.suburb}`,
       description: listing.description?.slice(0, 160),
       url: `/property/listings/${slug}`,
       images: [

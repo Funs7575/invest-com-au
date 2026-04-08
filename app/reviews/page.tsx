@@ -8,7 +8,7 @@ export const metadata = {
   title: "Platform & Advisor Reviews",
   description: "Real reviews of every major Australian investing platform and financial advisor — share brokers, crypto exchanges, super funds, financial planners & more.",
   openGraph: {
-    title: "Platform & Advisor Reviews — Invest.com.au",
+    title: "Platform & Advisor Reviews",
     description: "Real reviews of every major Australian investing platform and financial advisor — share brokers, crypto exchanges, super funds, financial planners & more.",
     images: [{ url: "/api/og?title=Platform+%26+Advisor+Reviews&subtitle=Honest+reviews+of+every+Australian+investing+platform+and+advisor&type=default", width: 1200, height: 630 }],
   },

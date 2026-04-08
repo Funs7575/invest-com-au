@@ -13,7 +13,7 @@ export const metadata = {
   description:
     "Expert guides on shares, crypto, super funds, robo-advisors, property investing, ETFs, tax, SMSF & strategy. Independent Australian investing research.",
   openGraph: {
-    title: "Investing Guides & Articles — Invest.com.au",
+    title: "Investing Guides & Articles",
     description:
       "Expert guides on shares, crypto, super, robo-advisors, property, ETFs, tax & SMSF. Independent Australian research.",
     images: [

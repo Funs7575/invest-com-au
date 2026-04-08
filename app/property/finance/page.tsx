@@ -6,7 +6,7 @@ import ScrollFadeIn from "@/components/ScrollFadeIn";
 import PropertyDisclaimer from "@/components/PropertyDisclaimer";
 
 export const metadata = {
-  title: "Investment Loan Comparison — Compare Rates from Major Lenders — Invest.com.au",
+  title: "Investment Loan Comparison — Compare Rates from Major Lenders",
   description:
     "Compare investment loan rates from CBA, Westpac, ANZ, NAB, Macquarie, and more. Find the best rate, LVR, and features for your investment property.",
   alternates: { canonical: "/property/finance" },

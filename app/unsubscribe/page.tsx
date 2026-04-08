@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import UnsubscribeClient from "./UnsubscribeClient";
 
 export const metadata: Metadata = {
-  title: "Unsubscribe — Invest.com.au",
+  title: "Unsubscribe",
   description: "Manage your email preferences or unsubscribe from Invest.com.au emails.",
   robots: { index: false, follow: false },
 };

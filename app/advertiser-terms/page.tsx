@@ -7,13 +7,13 @@ import {
 } from "@/lib/compliance";
 
 export const metadata = {
-  title: "Advertiser & Affiliate Partner Terms — Invest.com.au",
+  title: "Advertiser & Affiliate Partner Terms",
   description:
     "Terms governing commercial partnerships, affiliate arrangements, and sponsored content on Invest.com.au. Covers editorial independence, commission attribution, disclosure obligations, and GST.",
   alternates: { canonical: "/advertiser-terms" },
   robots: { index: true, follow: true },
   openGraph: {
-    title: "Advertiser & Affiliate Partner Terms — Invest.com.au",
+    title: "Advertiser & Affiliate Partner Terms",
     description:
       "Terms governing commercial partnerships, affiliate arrangements, and sponsored content on Invest.com.au. Editorial independence maintained.",
     url: "/advertiser-terms",

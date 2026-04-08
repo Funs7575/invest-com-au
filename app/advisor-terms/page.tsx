@@ -8,13 +8,13 @@ import {
 } from "@/lib/compliance";
 
 export const metadata = {
-  title: "Advisor Services Agreement — Invest.com.au",
+  title: "Advisor Services Agreement",
   description:
     "Terms and conditions for financial advisors, accountants, and mortgage brokers listed on the Invest.com.au directory. Covers eligibility, lead handling, billing, auto-renewal, and compliance obligations.",
   alternates: { canonical: "/advisor-terms" },
   robots: { index: true, follow: true },
   openGraph: {
-    title: "Advisor Services Agreement — Invest.com.au",
+    title: "Advisor Services Agreement",
     description:
       "Terms for financial professionals listed on Invest.com.au. Covers eligibility, lead handling, billing, and compliance obligations.",
     url: "/advisor-terms",

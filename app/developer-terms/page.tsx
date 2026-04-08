@@ -7,7 +7,7 @@ import {
 } from "@/lib/compliance";
 
 export const metadata = {
-  title: "Developer & Buyer's Agent Listing Terms — Invest.com.au",
+  title: "Developer & Buyer's Agent Listing Terms",
   description:
     "Terms and conditions for property developers and buyer's agents listed on the Invest.com.au property vertical.",
   alternates: { canonical: "/developer-terms" },

@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import AdvisorCompareClient from "./AdvisorCompareClient";
 
 export const metadata: Metadata = {
-  title: "Compare Financial Advisors — Invest.com.au",
+  title: "Compare Financial Advisors",
   description: "Side-by-side comparison of your saved Australian financial advisors. Compare fees, specialties, reviews, and credentials.",
   robots: { index: false, follow: false },
 };

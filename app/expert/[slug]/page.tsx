@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .eq("slug", slug).eq("status", "published").single();
   if (!a) return { title: "Article Not Found" };
   return {
-    title: a.meta_title || `${a.title} — Expert Insights | Invest.com.au`,
+    title: a.meta_title || `${a.title} — Expert Insights`,
     description: a.meta_description || a.excerpt || `${a.title} by ${a.author_name}`,
     alternates: { canonical: `/expert/${slug}` },
     openGraph: {

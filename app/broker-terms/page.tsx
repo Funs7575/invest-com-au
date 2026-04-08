@@ -7,7 +7,7 @@ import {
 } from "@/lib/compliance";
 
 export const metadata = {
-  title: "Advertising & Listing Terms — Invest.com.au",
+  title: "Advertising & Listing Terms",
   description: "Terms and conditions for brokers and financial product issuers advertising or listed on Invest.com.au.",
   alternates: { canonical: "/broker-terms" },
   robots: { index: true, follow: true },

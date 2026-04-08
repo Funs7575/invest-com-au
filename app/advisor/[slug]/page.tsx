@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title,
     description,
     openGraph: {
-      title: `${pro.name} — Invest.com.au`,
+      title: pro.name,
       description,
       images: [
         {

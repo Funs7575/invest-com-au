@@ -8,7 +8,7 @@ import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compl
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: `Australian Broker Fee Tracker — Every Fee Change, Tracked (${CURRENT_YEAR}) — Invest.com.au`,
+  title: `Australian Broker Fee Tracker — Every Fee Change, Tracked (${CURRENT_YEAR})`,
   description: `The only site that tracks every Australian broker fee change. Brokerage, FX, and platform fee changes across 20+ brokers — verified and recorded with dates. ${UPDATED_LABEL}.`,
   openGraph: {
     title: "Australian Broker Fee Tracker — Every Fee Change, Tracked",

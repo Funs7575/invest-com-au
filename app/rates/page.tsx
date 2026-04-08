@@ -11,7 +11,7 @@ export const metadata = {
   description:
     "Compare the latest savings account and term deposit rates from every Australian provider. Sortable tables updated daily with verified rates.",
   openGraph: {
-    title: `Savings & Term Deposit Rates — ${SITE_NAME}`,
+    title: "Savings & Term Deposit Rates",
     description:
       "Every Australian savings account and term deposit rate, compared side-by-side. Updated daily.",
     images: [

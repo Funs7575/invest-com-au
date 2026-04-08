@@ -153,7 +153,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { country } = await params;
   const countryCode = SLUG_TO_CODE[country];
-  if (!countryCode) return { title: "Country Guide | Invest.com.au" };
+  if (!countryCode) return { title: "Country Guide" };
 
   const profile = await getCountryProfile(countryCode);
   const name = profile?.country_name ?? country;

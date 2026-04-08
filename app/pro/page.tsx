@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description:
     "Unlock fee alerts, advanced comparison tools, monthly market briefs, and an ad-free experience. From $9/month.",
   openGraph: {
-    title: "Investor Pro — Premium Membership | Invest.com.au",
+    title: "Investor Pro — Premium Membership",
     description:
       "Unlock fee alerts, advanced comparison tools, monthly market briefs, and an ad-free experience. From $9/month.",
     images: [

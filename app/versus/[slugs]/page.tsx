@@ -172,7 +172,7 @@ export async function generateMetadata({
     title,
     description,
     openGraph: {
-      title: `${names.join(" vs ")} — Invest.com.au`,
+      title: `${names.join(" vs ")}`,
       description,
       images: [
         {

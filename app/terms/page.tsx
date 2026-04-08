@@ -9,13 +9,13 @@ import {
 } from "@/lib/compliance";
 
 export const metadata = {
-  title: "Terms of Use — Invest.com.au",
+  title: "Terms of Use",
   description:
     "Terms and conditions governing your use of Invest.com.au. Covers subscriptions, billing, 7-day refund policy, user content, affiliate disclosures, and dispute resolution.",
   alternates: { canonical: "/terms" },
   robots: { index: true, follow: true },
   openGraph: {
-    title: "Terms of Use — Invest.com.au",
+    title: "Terms of Use",
     description:
       "Terms and conditions governing your use of Invest.com.au. Covers subscriptions, billing, refund policy, user content, and affiliate disclosures.",
     url: "/terms",

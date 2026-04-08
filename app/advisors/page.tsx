@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   description:
     "Browse verified SMSF accountants, financial planners, property advisors, and tax agents. Free listings, pay only when you get an enquiry.",
   openGraph: {
-    title: `Find a Financial Advisor — Invest.com.au`,
+    title: "Find a Financial Advisor",
     description: "Browse verified Australian financial professionals. SMSF accountants, financial planners, property advisors, and more.",
     images: [{ url: "/api/og?title=Find+an+Advisor&subtitle=Verified+Australian+Financial+Professionals&type=default", width: 1200, height: 630 }],
   },

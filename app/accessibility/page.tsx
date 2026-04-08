@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Accessibility Statement — Invest.com.au",
+  title: "Accessibility Statement",
   description:
     "Invest.com.au is committed to making our website accessible to all users, including those with disabilities, in accordance with WCAG 2.1 and the Disability Discrimination Act 1992.",
   alternates: { canonical: "/accessibility" },

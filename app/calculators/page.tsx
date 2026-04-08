@@ -48,7 +48,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   }
 
   const title = calcTitle
-    ? `${calcTitle}${subtitle} — Invest.com.au`
+    ? `${calcTitle}${subtitle}`
     : "Investing Tools & Calculators";
 
   const description = calcTitle
@@ -59,7 +59,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
     title,
     description,
     openGraph: {
-      title: calcTitle ? `${calcTitle}${subtitle} — Invest.com.au` : "Investing Tools & Calculators — Invest.com.au",
+      title: calcTitle ? `${calcTitle}${subtitle}` : "Investing Tools & Calculators",
       description: calcTitle
         ? `Use the free ${calcTitle} to compare broker fees and make smarter investing decisions.`
         : "Free tools for Australian investors: compare broker fees, estimate tax, calculate FX costs on US shares.",

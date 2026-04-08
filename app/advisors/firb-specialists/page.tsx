@@ -55,7 +55,7 @@ export const metadata: Metadata = {
   title: `FIRB Specialists Australia (${CURRENT_YEAR}) — Foreign Investment Review Board Advisors`,
   description: PAGE_DESCRIPTION,
   openGraph: {
-    title: "FIRB Specialists — Invest.com.au",
+    title: "FIRB Specialists",
     description: PAGE_DESCRIPTION,
   },
   twitter: { card: "summary_large_image" },

@@ -9,7 +9,7 @@ export const metadata = {
   title: "Compare Investing Platforms — Fees & Features",
   description: `Compare fees, features & safety across Australian investing platforms — shares, crypto, super & more. ${UPDATED_LABEL}.`,
   openGraph: {
-    title: "Compare Platforms Side-by-Side — Invest.com.au",
+    title: "Compare Platforms Side-by-Side",
     description: "Side-by-side comparison of fees, features, and safety for Australian platforms — shares, robo-advisors, crypto exchanges & more.",
     images: [{ url: "/api/og?title=Compare+Investing+Platforms&subtitle=Fees,+features+%26+safety+side-by-side&type=default", width: 1200, height: 630 }],
   },

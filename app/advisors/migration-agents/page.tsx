@@ -55,7 +55,7 @@ export const metadata: Metadata = {
   title: `Registered Migration Agents Australia (${CURRENT_YEAR}) — Investor & Skilled Visas`,
   description: PAGE_DESCRIPTION,
   openGraph: {
-    title: "Migration Agents — Invest.com.au",
+    title: "Migration Agents",
     description: PAGE_DESCRIPTION,
   },
   twitter: { card: "summary_large_image" },
