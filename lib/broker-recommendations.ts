@@ -16,7 +16,7 @@ export interface RecommendedBroker {
   asx_fee: string | null;
   rating: number | null;
   affiliate_url: string;
-  affiliateUrl: string;
+  affiliateUrl: string; // tracking URL via /api/drip-click
 }
 
 /**
@@ -30,7 +30,8 @@ export interface RecommendedBroker {
  *  - baseline: sort by rating descending
  */
 export async function getPersonalizedBrokers(
-  ctx: BrokerRecommendationContext
+  ctx: BrokerRecommendationContext,
+  opts?: { email?: string; dripNumber?: number }
 ): Promise<RecommendedBroker[]> {
   const supabase = createAdminClient();
 
@@ -62,15 +63,23 @@ export async function getPersonalizedBrokers(
     }
 
     // Beginners prefer simple, highly-rated platforms
-    if (ctx.experience_level === "beginner" && b.rating && b.rating > 4) {
+    if (
+      ctx.experience_level &&
+      ctx.experience_level.toLowerCase() === "beginner" &&
+      b.rating &&
+      b.rating > 4
+    ) {
       score += 15;
     }
 
     // High investment range → prefer low ASX fees
-    const highRangeKeys = ["large", "xlarge", "whale", "$50k+", "$100k+"];
+    // Handles both raw keys (large, xlarge, whale) and human-readable labels
+    const highRangePatterns = ["large", "xlarge", "whale", "$50,000", "$100,000"];
     if (
       ctx.investment_range &&
-      highRangeKeys.includes(ctx.investment_range) &&
+      highRangePatterns.some((p) =>
+        ctx.investment_range!.toLowerCase().includes(p.toLowerCase())
+      ) &&
       b.asx_fee_value != null
     ) {
       // Lower ASX fee → higher boost (max ~15 points for $0 fee)
@@ -88,8 +97,17 @@ export async function getPersonalizedBrokers(
       a.broker.name.localeCompare(b.broker.name)
   );
 
+  const dripNum = opts?.dripNumber ?? 4;
+
   return scored.slice(0, 3).map(({ broker }) => {
-    const affiliateUrl = `/go/${broker.slug}?utm_source=drip&utm_medium=email&utm_campaign=broker_drip`;
+    // Build tracking URL through /api/drip-click for click attribution
+    const trackingParams = new URLSearchParams({
+      ...(opts?.email ? { email: opts.email } : {}),
+      drip: String(dripNum),
+      broker: broker.slug,
+    });
+    const affiliateUrl = `/api/drip-click?${trackingParams.toString()}`;
+
     return {
       name: broker.name,
       slug: broker.slug,
