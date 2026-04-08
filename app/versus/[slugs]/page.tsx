@@ -254,14 +254,14 @@ export default async function VersusSlugPage({
           "@type": "FinancialProduct",
           name: b.name,
           description: b.tagline || `${b.name} ${PLATFORM_LABELS[b.platform_type as PlatformType] || 'platform'}`,
-          ...(b.rating && (b as Record<string, unknown>).review_count
+          ...(b.rating && (b as unknown as Record<string, unknown>).review_count
             ? {
                 aggregateRating: {
                   "@type": "AggregateRating",
                   ratingValue: b.rating,
                   bestRating: 5,
                   worstRating: 1,
-                  reviewCount: (b as Record<string, unknown>).review_count,
+                  reviewCount: (b as unknown as Record<string, unknown>).review_count,
                 },
               }
             : {}),

@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import { CURRENT_YEAR } from "@/lib/seo";
 import { fallbackAvatarUrl } from "@/lib/admin";
@@ -75,9 +76,11 @@ export default async function ExpertInsightsPage() {
         <h2 className="text-sm md:text-base font-bold text-slate-900 mb-1.5 line-clamp-2 group-hover:text-violet-700">{a.title}</h2>
         {a.excerpt && <p className="text-xs text-slate-500 line-clamp-2 mb-3">{a.excerpt}</p>}
         <div className="flex items-center gap-2.5 pt-2 border-t border-slate-100">
-          <img
+          <Image
             src={pro?.photo_url || fallbackAvatarUrl(a.author_name, 40)}
             alt={a.author_name}
+            width={28}
+            height={28}
             className="w-7 h-7 rounded-full object-cover"
           />
           <div className="flex-1 min-w-0">

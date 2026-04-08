@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR, UPDATED_LABEL } from "@/lib/seo";
 import SectionHeading from "@/components/SectionHeading";
 import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
@@ -222,8 +223,7 @@ export default async function FeeTrackerPage() {
                   {/* Broker logo / initials */}
                   <div className="shrink-0 w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center text-white text-xs font-black overflow-hidden">
                     {broker.logo_url ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={broker.logo_url} alt={broker.name} width={32} height={32} className="w-full h-full object-contain" />
+                      <Image src={broker.logo_url} alt={broker.name} width={32} height={32} className="w-full h-full object-contain" />
                     ) : (
                       broker.name.charAt(0)
                     )}
@@ -293,8 +293,7 @@ export default async function FeeTrackerPage() {
                         <div className="flex items-center gap-3">
                           <div className="w-7 h-7 rounded-lg bg-slate-700 flex items-center justify-center text-white text-xs font-black shrink-0 overflow-hidden">
                             {broker.logo_url ? (
-                              // eslint-disable-next-line @next/next/no-img-element
-                              <img src={broker.logo_url} alt={broker.name} width={28} height={28} className="w-full h-full object-contain" />
+                              <Image src={broker.logo_url} alt={broker.name} width={28} height={28} className="w-full h-full object-contain" />
                             ) : (
                               broker.name.charAt(0)
                             )}

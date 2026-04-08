@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import type { Broker, Professional } from "@/lib/types";
 import DealCard from "@/components/DealCard";
@@ -260,9 +261,11 @@ export default function DealsClient({ deals, advisors = [] }: { deals: Broker[];
           {advisors.filter((a) => a.offer_active && a.offer_text).map((advisor) => (
             <div key={advisor.slug} className="bg-white border border-violet-200/60 rounded-xl p-4 hover:shadow-md transition-shadow">
               <div className="flex items-center gap-3 mb-3">
-                <img
+                <Image
                   src={advisor.photo_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(advisor.name)}&background=7c3aed&color=fff&size=80`}
                   alt={advisor.name}
+                  width={48}
+                  height={48}
                   className="w-12 h-12 rounded-full object-cover"
                 />
                 <div className="flex-1 min-w-0">

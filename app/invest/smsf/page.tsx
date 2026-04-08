@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
@@ -505,7 +506,7 @@ export default async function SmsfInvestmentPage() {
                 >
                   <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center shrink-0 overflow-hidden">
                     {advisor.photo_url ? (
-                      <img src={advisor.photo_url} alt={advisor.name} className="w-full h-full object-cover" />
+                      <Image src={advisor.photo_url} alt={advisor.name} width={48} height={48} className="w-full h-full object-cover" />
                     ) : (
                       <span className="text-lg font-bold text-slate-400">{advisor.name.charAt(0)}</span>
                     )}

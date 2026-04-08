@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import SocialProofCounter from "@/components/SocialProofCounter";
@@ -306,11 +307,12 @@ export default function RateBoardClient({
                             className="flex items-center gap-2.5 group"
                           >
                             {provider.logo_url ? (
-                              <img
+                              <Image
                                 src={provider.logo_url}
                                 alt={provider.name}
+                                width={32}
+                                height={32}
                                 className="w-8 h-8 rounded-md object-contain"
-                                loading="lazy"
                               />
                             ) : (
                               <div
