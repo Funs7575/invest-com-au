@@ -7,7 +7,7 @@ import SectionHeading from "@/components/SectionHeading";
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
-  title: "SMSF Australia: Complete Guide to Self-Managed Super Funds (2026) — Invest.com.au",
+  title: "SMSF Australia: Complete Guide to Self-Managed Super Funds (2026)",
   description:
     "Everything you need to know about SMSFs: setup costs, investment options, compliance, property in super, and whether an SMSF is right for you. Updated 2026.",
   openGraph: {

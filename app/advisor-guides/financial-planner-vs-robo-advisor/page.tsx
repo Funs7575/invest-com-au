@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: `Financial Planner vs Robo-Advisor: Which Is Right for You? (${CURRENT_YEAR})`,
   description: "Honest comparison of human financial planners vs robo-advisors in Australia. Costs, performance, when each makes sense, and when you need both.",
   openGraph: {
-    title: "Financial Planner vs Robo-Advisor — Invest.com.au",
+    title: "Financial Planner vs Robo-Advisor",
     description: "Human financial planner vs robo-advisor: costs, what you get, and when each is the right choice.",
     images: [{ url: "/api/og?title=Financial+Planner+vs+Robo-Advisor&subtitle=Which+is+right+for+you%3F&type=default", width: 1200, height: 630 }],
   },

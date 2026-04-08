@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: `SMSF Accountant vs Financial Planner: Which Do You Need? (${CURRENT_YEAR})`,
   description: "Not sure whether you need an SMSF accountant or a financial planner? We break down the differences in qualifications, costs, and when to use each.",
   openGraph: {
-    title: "SMSF Accountant vs Financial Planner — Invest.com.au",
+    title: "SMSF Accountant vs Financial Planner",
     description: "Clear breakdown of when you need an SMSF accountant vs a financial planner, how much each costs, and when you might need both.",
     images: [{ url: "/api/og?title=SMSF+Accountant+vs+Financial+Planner&subtitle=Which+do+you+need%3F&type=default", width: 1200, height: 630 }],
   },

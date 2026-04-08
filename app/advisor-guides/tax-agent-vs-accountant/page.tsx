@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: `Tax Agent vs Accountant for Investors: Which Do You Need? (${CURRENT_YEAR})`,
   description: "Should you use a specialist tax agent or a general accountant for your investment tax? We compare qualifications, costs, and when each makes sense for Australian investors.",
   openGraph: {
-    title: "Tax Agent vs Accountant for Investors — Invest.com.au",
+    title: "Tax Agent vs Accountant for Investors",
     description: "Investment tax specialist vs general accountant: costs, capabilities, and when each is the right choice for your tax return.",
     images: [{ url: "/api/og?title=Tax+Agent+vs+Accountant&subtitle=For+investors&type=default", width: 1200, height: 630 }],
   },

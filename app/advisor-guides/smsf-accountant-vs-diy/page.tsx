@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: `Do I Need an SMSF Accountant or Can I DIY? (${CURRENT_YEAR})`,
   description: "Honest breakdown of when you need an SMSF accountant vs managing your own super fund. Costs, risks, time commitment, and when DIY makes sense.",
   openGraph: {
-    title: "SMSF Accountant vs DIY — Invest.com.au",
+    title: "SMSF Accountant vs DIY",
     description: "When you need an SMSF accountant vs managing your own super fund. Costs, risks, and time commitment compared.",
     images: [{ url: "/api/og?title=SMSF+Accountant+vs+DIY&subtitle=When+to+hire+vs+manage+yourself&type=default", width: 1200, height: 630 }],
   },
