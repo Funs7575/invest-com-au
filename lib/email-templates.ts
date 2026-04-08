@@ -1404,3 +1404,161 @@ export function notificationFooter(email?: string): string {
     <p style="margin:4px 0 0;"><a href="${unsubUrl}" style="color:#64748b;text-decoration:underline;">Unsubscribe</a> · <a href="${BASE_URL}/privacy" style="color:#64748b;text-decoration:underline;">Privacy</a></p>
   </div>`;
 }
+
+// ─── Investor Drip: Email 4 — Top 3 Broker Matches (sent Day 7) ────────────
+
+export function brokerDripEmail4(
+  firstName: string,
+  brokers: Array<{
+    name: string;
+    slug: string;
+    tagline: string | null;
+    asx_fee: string | null;
+    rating: number | null;
+    affiliateUrl: string;
+  }>
+): string {
+  const safeName = escapeHtml(firstName || "there");
+
+  const ratingStars = (rating: number | null): string => {
+    if (!rating) return "";
+    const full = Math.floor(rating);
+    const half = rating - full >= 0.5 ? 1 : 0;
+    const empty = 5 - full - half;
+    return (
+      '<span style="color:#f59e0b;font-size:14px;letter-spacing:1px;">' +
+      "&#9733;".repeat(full) +
+      (half ? "&#9734;" : "") +
+      '<span style="color:#e2e8f0;">' +
+      "&#9733;".repeat(empty) +
+      "</span></span>" +
+      `<span style="font-size:12px;color:${TEXT_MUTED};margin-left:4px;">${rating}/5</span>`
+    );
+  };
+
+  const brokerCards = brokers
+    .map(
+      (b, i) => `
+      <div style="background:${BG_LIGHT};border:1px solid ${BORDER};border-radius:10px;padding:20px;margin-bottom:${i < brokers.length - 1 ? "12px" : "0"};">
+        <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+          <tr>
+            <td>
+              <p style="margin:0 0 2px;font-size:11px;font-weight:700;color:${TEXT_MUTED};text-transform:uppercase;letter-spacing:0.5px;">#${i + 1} Match</p>
+              <p style="margin:0 0 4px;font-size:17px;font-weight:800;color:${BRAND_DARK};">${escapeHtml(b.name)}</p>
+              ${b.tagline ? `<p style="margin:0 0 8px;font-size:13px;color:#475569;line-height:1.5;">${escapeHtml(b.tagline)}</p>` : ""}
+              <table role="presentation" cellpadding="0" cellspacing="0" style="margin-bottom:12px;">
+                <tr>
+                  <td style="padding-right:16px;">
+                    <span style="font-size:11px;color:${TEXT_MUTED};text-transform:uppercase;">ASX Fee</span><br>
+                    <span style="font-size:14px;font-weight:700;color:${BRAND_DARK};">${b.asx_fee ? escapeHtml(b.asx_fee) : "N/A"}</span>
+                  </td>
+                  <td>
+                    <span style="font-size:11px;color:${TEXT_MUTED};text-transform:uppercase;">Rating</span><br>
+                    ${ratingStars(b.rating)}
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <table role="presentation" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="border-radius:6px;background:${BRAND_EMERALD};">
+                    <a href="${BASE_URL}${b.affiliateUrl}" style="display:inline-block;padding:10px 22px;color:#ffffff;font-size:13px;font-weight:700;text-decoration:none;border-radius:6px;">
+                      Open Account &rarr;
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </div>`
+    )
+    .join("");
+
+  const content = `
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:${BRAND_DARK};">Your Top 3 Broker Matches</h1>
+    <p style="margin:0 0 24px;font-size:15px;color:#475569;line-height:1.7;">
+      Hi ${safeName}, based on your profile, here are your top 3 matches:
+    </p>
+    ${brokerCards}
+    <div style="margin-top:24px;text-align:center;">
+      <a href="${BASE_URL}/compare" style="color:${BRAND_BLUE};font-size:13px;font-weight:600;text-decoration:underline;">Compare all platforms side-by-side &rarr;</a>
+    </div>
+    <p style="margin:24px 0 0;font-size:13px;color:${TEXT_LIGHT};">
+      These recommendations are based on your profile and our independent data. We may earn a commission if you open an account.
+    </p>`;
+
+  return baseTemplate(
+    content,
+    `${safeName}, here are your top 3 broker matches based on your profile.`
+  );
+}
+
+// ─── Investor Drip: Email 5 — Final Recommendation (sent Day 10) ───────────
+
+export function brokerDripEmail5(
+  firstName: string,
+  topBroker: {
+    name: string;
+    slug: string;
+    tagline: string | null;
+    affiliateUrl: string;
+  },
+  hasDeal: boolean,
+  dealText?: string
+): string {
+  const safeName = escapeHtml(firstName || "there");
+  const safeBrokerName = escapeHtml(topBroker.name);
+
+  const dealBadge = hasDeal
+    ? `<div style="margin-bottom:16px;">
+        <span style="display:inline-block;padding:4px 12px;background:#fef3c7;border:1px solid #fde68a;border-radius:100px;font-size:12px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:0.5px;">
+          Active Deal
+        </span>
+        ${dealText ? `<p style="margin:8px 0 0;font-size:14px;color:#92400e;font-weight:600;line-height:1.5;">${escapeHtml(dealText)}</p>` : ""}
+      </div>`
+    : "";
+
+  const content = `
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:${BRAND_DARK};">One Final Recommendation</h1>
+    <p style="margin:0 0 24px;font-size:15px;color:#475569;line-height:1.7;">
+      Hi ${safeName}, we wanted to share one final recommendation based on everything we know about your investing profile.
+    </p>
+
+    <!-- Featured broker card -->
+    <div style="border:2px solid ${BRAND_EMERALD};border-radius:12px;padding:28px 24px;margin-bottom:24px;text-align:center;background:linear-gradient(180deg, #f0fdf4 0%, #ffffff 100%);">
+      ${dealBadge}
+      <p style="margin:0 0 4px;font-size:12px;font-weight:700;color:${BRAND_EMERALD};text-transform:uppercase;letter-spacing:1px;">Our Top Pick For You</p>
+      <h2 style="margin:0 0 8px;font-size:26px;font-weight:800;color:${BRAND_DARK};">${safeBrokerName}</h2>
+      ${topBroker.tagline ? `<p style="margin:0 0 20px;font-size:14px;color:#475569;line-height:1.6;">${escapeHtml(topBroker.tagline)}</p>` : ""}
+
+      <table role="presentation" cellpadding="0" cellspacing="0" align="center">
+        <tr>
+          <td style="border-radius:8px;background:${BRAND_EMERALD};">
+            <a href="${BASE_URL}${topBroker.affiliateUrl}" style="display:inline-block;padding:14px 36px;color:#ffffff;font-size:15px;font-weight:700;text-decoration:none;border-radius:8px;">
+              Get Started with ${safeBrokerName} &rarr;
+            </a>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div style="background:${BG_LIGHT};border-radius:8px;padding:16px 20px;border:1px solid ${BORDER};">
+      <p style="margin:0;font-size:13px;color:#475569;line-height:1.6;">
+        This is the last email in this series. You can always compare all platforms at
+        <a href="${BASE_URL}/compare" style="color:${BRAND_EMERALD};font-weight:600;text-decoration:underline;">invest.com.au/compare</a>.
+      </p>
+    </div>
+
+    <p style="margin:24px 0 0;font-size:13px;color:${TEXT_LIGHT};">
+      We may earn a commission if you open an account through our links. This doesn't affect our recommendations.
+    </p>`;
+
+  return baseTemplate(
+    content,
+    `${safeName}, one final recommendation before we go — our top pick for you.`
+  );
+}
