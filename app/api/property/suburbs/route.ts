@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
 
     let query = supabase
       .from("suburb_data")
-      .select("suburb, state, postcode, median_price_house, median_price_unit, rental_yield_house, rental_yield_unit, vacancy_rate, capital_growth_1yr, capital_growth_3yr, capital_growth_5yr, capital_growth_10yr, population, population_growth, median_age, median_income, distance_to_cbd_km")
+      .select("slug, suburb, state, postcode, median_price_house, median_price_unit, rental_yield_house, rental_yield_unit, vacancy_rate, capital_growth_1yr, capital_growth_3yr, capital_growth_5yr, capital_growth_10yr, population, population_growth, median_age, median_income, distance_to_cbd_km")
       .order("suburb", { ascending: true });
 
     if (q && q.length >= 2) {

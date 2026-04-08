@@ -509,6 +509,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
+  // Dynamic suburb guide pages
+  const { data: suburbSlugs } = await supabase
+    .from("suburb_data")
+    .select("slug")
+    .not("slug", "is", null);
+
+  const suburbGuidePages = (suburbSlugs || []).map((s) => ({
+    url: `${baseUrl}/property/suburbs/${s.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.6,
+  }));
+
   // Property static hub pages
   const propertyHubPages = [
     { url: `${baseUrl}/property`, priority: 0.8 },
@@ -556,5 +569,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/advisors/migration-agents`, priority: 0.8 },
   ].map((p) => ({ ...p, lastModified: new Date(), changeFrequency: "weekly" as const }));
 
-  return [...staticPages, ...bestPages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorCityPages, ...advisorLocationPages, ...investingCityPages, ...glossaryPages, ...firmPages, ...propertyListingPages, ...propertyHubPages, ...newHubPages];
+  // Newsletter archive & edition pages
+  const { data: newsletterEditions } = await supabase
+    .from("newsletter_editions")
+    .select("edition_date, created_at");
+
+  const newsletterArchivePage = {
+    url: `${baseUrl}/newsletter`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.6,
+  };
+
+  const newsletterEditionPages = (newsletterEditions || []).map((e) => ({
+    url: `${baseUrl}/newsletter/${e.edition_date}`,
+    lastModified: e.created_at ? new Date(e.created_at) : new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.5,
+  }));
+
+  return [...staticPages, ...bestPages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorCityPages, ...advisorLocationPages, ...investingCityPages, ...glossaryPages, ...firmPages, ...propertyListingPages, ...suburbGuidePages, ...propertyHubPages, ...newHubPages, newsletterArchivePage, ...newsletterEditionPages];
 }

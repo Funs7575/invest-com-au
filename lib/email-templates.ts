@@ -168,15 +168,31 @@ export function welcomeEmail(name: string): string {
 // ─── Fee Change Alert Email ─────────────────────────────────────────────────
 
 export function feeChangeAlertEmail(
-  changes: { broker: string; oldFee: string; newFee: string }[]
+  changes: { broker: string; slug: string; oldFee: string; newFee: string }[]
 ): string {
   const rows = changes
     .map(
       (c) => `
     <tr>
-      <td style="padding:10px 12px;border-bottom:1px solid #f1f5f9;font-weight:600;color:${BRAND_DARK};font-size:14px;">${escapeHtml(c.broker)}</td>
+      <td style="padding:10px 12px;border-bottom:1px solid #f1f5f9;font-size:14px;">
+        <a href="${BASE_URL}/go/${encodeURIComponent(c.slug)}?utm_source=fee_alert" style="font-weight:600;color:${BRAND_DARK};text-decoration:underline;">${escapeHtml(c.broker)}</a>
+      </td>
       <td style="padding:10px 12px;border-bottom:1px solid #f1f5f9;color:#dc2626;font-size:14px;text-decoration:line-through;">${escapeHtml(c.oldFee)}</td>
       <td style="padding:10px 12px;border-bottom:1px solid #f1f5f9;color:${BRAND_EMERALD};font-weight:600;font-size:14px;">${escapeHtml(c.newFee)}</td>
+    </tr>`
+    )
+    .join("");
+
+  // Build per-broker "Compare alternatives" links
+  const brokerLinks = changes
+    .map(
+      (c) => `
+    <tr>
+      <td style="padding:6px 0;">
+        <a href="${BASE_URL}/compare?highlight=${encodeURIComponent(c.slug)}" style="color:${BRAND_BLUE};font-size:13px;text-decoration:underline;">
+          Compare alternatives to ${escapeHtml(c.broker)}
+        </a>
+      </td>
     </tr>`
     )
     .join("");
@@ -187,7 +203,7 @@ export function feeChangeAlertEmail(
     </div>
     <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:${BRAND_DARK};">Broker Fee Changes Detected</h1>
     <p style="margin:0 0 20px;font-size:14px;color:#475569;line-height:1.6;">
-      The following broker fee changes were detected. As a Pro subscriber, you're the first to know.
+      The following broker fee changes were detected. As a subscriber, you're the first to know.
     </p>
     <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;margin-bottom:24px;">
       <thead>
@@ -201,11 +217,30 @@ export function feeChangeAlertEmail(
         ${rows}
       </tbody>
     </table>
-    <table role="presentation" cellpadding="0" cellspacing="0">
+
+    <!-- Compare alternatives CTA -->
+    <table role="presentation" cellpadding="0" cellspacing="0" style="margin-bottom:20px;">
       <tr>
         <td style="border-radius:8px;background:${BRAND_EMERALD};">
-          <a href="${BASE_URL}/compare" style="display:inline-block;padding:12px 28px;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px;">
-            View Updated Comparison
+          <a href="${BASE_URL}/compare?highlight=${encodeURIComponent(changes[0]?.slug || "")}" style="display:inline-block;padding:12px 28px;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px;">
+            Compare Alternatives
+          </a>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Per-broker comparison links -->
+    ${changes.length > 1 ? `
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:20px;">
+      ${brokerLinks}
+    </table>` : ""}
+
+    <!-- Secondary links -->
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:8px;">
+      <tr>
+        <td style="padding:8px 0;border-top:1px solid ${BORDER};">
+          <a href="${BASE_URL}/fee-tracker" style="color:${BRAND_BLUE};font-size:13px;font-weight:600;text-decoration:underline;">
+            See full fee tracker &rarr;
           </a>
         </td>
       </tr>
@@ -214,6 +249,112 @@ export function feeChangeAlertEmail(
   return baseTemplate(
     content,
     `${changes.length} broker fee change${changes.length === 1 ? "" : "s"} detected — see the details`
+  );
+}
+
+// ─── Fee Digest Email (Weekly) ─────────────────────────────────────────────
+
+export function feeDigestEmail(
+  changes: { broker: string; slug: string; field: string; oldValue: string; newValue: string; changedAt: string }[],
+  weekLabel: string
+): string {
+  const rows = changes
+    .map(
+      (c) => {
+        const dateStr = new Date(c.changedAt).toLocaleDateString("en-AU", { day: "numeric", month: "short" });
+        const fieldLabel = c.field.replace(/_/g, " ").replace(/\b\w/g, (l: string) => l.toUpperCase());
+        return `
+    <tr>
+      <td style="padding:10px 12px;border-bottom:1px solid #f1f5f9;font-size:14px;">
+        <a href="${BASE_URL}/go/${encodeURIComponent(c.slug)}?utm_source=fee_digest" style="font-weight:600;color:${BRAND_DARK};text-decoration:underline;">${escapeHtml(c.broker)}</a>
+      </td>
+      <td style="padding:10px 12px;border-bottom:1px solid #f1f5f9;font-size:13px;color:${TEXT_MUTED};">${escapeHtml(fieldLabel)}</td>
+      <td style="padding:10px 12px;border-bottom:1px solid #f1f5f9;color:#dc2626;font-size:13px;text-decoration:line-through;">${escapeHtml(c.oldValue)}</td>
+      <td style="padding:10px 12px;border-bottom:1px solid #f1f5f9;color:${BRAND_EMERALD};font-weight:600;font-size:13px;">${escapeHtml(c.newValue)}</td>
+      <td style="padding:10px 12px;border-bottom:1px solid #f1f5f9;font-size:12px;color:${TEXT_LIGHT};">${dateStr}</td>
+    </tr>`;
+      }
+    )
+    .join("");
+
+  // Unique broker slugs for comparison links
+  const uniqueSlugs = [...new Set(changes.map((c) => c.slug))];
+  const brokerLinks = uniqueSlugs
+    .map(
+      (slug) => {
+        const brokerName = changes.find((c) => c.slug === slug)?.broker || slug;
+        return `
+    <tr>
+      <td style="padding:4px 0;">
+        <a href="${BASE_URL}/compare?highlight=${encodeURIComponent(slug)}" style="color:${BRAND_BLUE};font-size:13px;text-decoration:underline;">
+          Compare alternatives to ${escapeHtml(brokerName)}
+        </a>
+      </td>
+    </tr>`;
+      }
+    )
+    .join("");
+
+  const content = `
+    <div style="display:inline-block;padding:4px 12px;background:#dbeafe;border-radius:100px;margin-bottom:16px;">
+      <span style="font-size:12px;font-weight:700;color:${BRAND_BLUE};text-transform:uppercase;letter-spacing:0.5px;">Weekly Digest</span>
+    </div>
+    <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:${BRAND_DARK};">Fee Changes This Week</h1>
+    <p style="margin:0 0 20px;font-size:14px;color:#475569;line-height:1.6;">
+      Here's a summary of all broker fee changes detected during the week of ${escapeHtml(weekLabel)}.
+    </p>
+
+    ${changes.length > 0 ? `
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="border-collapse:collapse;margin-bottom:24px;">
+      <thead>
+        <tr style="background:${BG_LIGHT};">
+          <th style="padding:10px 12px;text-align:left;font-size:11px;text-transform:uppercase;color:${TEXT_MUTED};letter-spacing:0.5px;border-bottom:2px solid ${BORDER};">Broker</th>
+          <th style="padding:10px 12px;text-align:left;font-size:11px;text-transform:uppercase;color:${TEXT_MUTED};letter-spacing:0.5px;border-bottom:2px solid ${BORDER};">Fee</th>
+          <th style="padding:10px 12px;text-align:left;font-size:11px;text-transform:uppercase;color:${TEXT_MUTED};letter-spacing:0.5px;border-bottom:2px solid ${BORDER};">Was</th>
+          <th style="padding:10px 12px;text-align:left;font-size:11px;text-transform:uppercase;color:${TEXT_MUTED};letter-spacing:0.5px;border-bottom:2px solid ${BORDER};">Now</th>
+          <th style="padding:10px 12px;text-align:left;font-size:11px;text-transform:uppercase;color:${TEXT_MUTED};letter-spacing:0.5px;border-bottom:2px solid ${BORDER};">Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows}
+      </tbody>
+    </table>
+
+    <!-- Per-broker comparison links -->
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:20px;">
+      ${brokerLinks}
+    </table>
+    ` : `
+    <div style="background:${BG_LIGHT};border-radius:8px;padding:20px;margin-bottom:24px;text-align:center;">
+      <p style="margin:0;font-size:14px;color:#475569;">No broker fee changes were detected this week. We'll keep monitoring.</p>
+    </div>
+    `}
+
+    <!-- Compare alternatives CTA -->
+    <table role="presentation" cellpadding="0" cellspacing="0" style="margin-bottom:20px;">
+      <tr>
+        <td style="border-radius:8px;background:${BRAND_EMERALD};">
+          <a href="${BASE_URL}/compare" style="display:inline-block;padding:12px 28px;color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;border-radius:8px;">
+            Compare All Brokers
+          </a>
+        </td>
+      </tr>
+    </table>
+
+    <!-- Secondary links -->
+    <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="margin-bottom:8px;">
+      <tr>
+        <td style="padding:8px 0;border-top:1px solid ${BORDER};">
+          <a href="${BASE_URL}/fee-tracker" style="color:${BRAND_BLUE};font-size:13px;font-weight:600;text-decoration:underline;">
+            See full fee tracker &rarr;
+          </a>
+        </td>
+      </tr>
+    </table>`;
+
+  return baseTemplate(
+    content,
+    `${changes.length} broker fee change${changes.length === 1 ? "" : "s"} this week — your weekly digest`
   );
 }
 
