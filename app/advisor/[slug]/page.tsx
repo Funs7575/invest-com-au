@@ -8,6 +8,12 @@ import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 
 export const revalidate = 1800;
 
+export async function generateStaticParams() {
+  const supabase = await createClient();
+  const { data } = await supabase.from("professionals").select("slug").eq("status", "active");
+  return (data || []).map((p) => ({ slug: p.slug }));
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const supabase = await createClient();

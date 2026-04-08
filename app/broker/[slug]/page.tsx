@@ -19,6 +19,12 @@ import AskQuestionForm from "@/components/AskQuestionForm";
 
 export const revalidate = 3600; // ISR: revalidate every hour
 
+export async function generateStaticParams() {
+  const supabase = await createClient();
+  const { data } = await supabase.from("brokers").select("slug").eq("status", "active");
+  return (data || []).map((b) => ({ slug: b.slug }));
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const supabase = await createClient();

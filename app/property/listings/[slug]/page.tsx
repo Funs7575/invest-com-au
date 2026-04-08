@@ -61,22 +61,22 @@ export default async function PropertyListingPage({ params }: { params: Promise<
 
   if (!listing) notFound();
 
-  // Get suburb stats
-  const { data: suburbData } = await supabase
-    .from("suburb_data")
-    .select("*")
-    .eq("suburb", listing.suburb)
-    .eq("state", listing.state)
-    .single();
-
-  // Related listings
-  const { data: relatedListings } = await supabase
-    .from("property_listings")
-    .select("id, slug, title, city, suburb, price_from_cents, rental_yield_estimate")
-    .eq("city", listing.city)
-    .neq("id", listing.id)
-    .eq("status", "active")
-    .limit(3);
+  // Fetch suburb stats + related listings in parallel (both depend on listing, not each other)
+  const [{ data: suburbData }, { data: relatedListings }] = await Promise.all([
+    supabase
+      .from("suburb_data")
+      .select("*")
+      .eq("suburb", listing.suburb)
+      .eq("state", listing.state)
+      .single(),
+    supabase
+      .from("property_listings")
+      .select("id, slug, title, city, suburb, price_from_cents, rental_yield_estimate")
+      .eq("city", listing.city)
+      .neq("id", listing.id)
+      .eq("status", "active")
+      .limit(3),
+  ]);
 
   const developer = listing.property_developers as {
     id: number; slug: string; name: string; logo_url: string | null;

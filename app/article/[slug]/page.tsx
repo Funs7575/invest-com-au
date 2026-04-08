@@ -21,6 +21,12 @@ import AdvisorPrompt from "@/components/AdvisorPrompt";
 
 export const revalidate = 3600; // ISR: revalidate every hour
 
+export async function generateStaticParams() {
+  const supabase = await createClient();
+  const { data } = await supabase.from("articles").select("slug").eq("status", "published").limit(200);
+  return (data || []).map((a) => ({ slug: a.slug }));
+}
+
 const CALC_NAMES: Record<string, { name: string; iconName: string }> = {
   "calc-franking": { name: "Franking Credits Calculator", iconName: "coins" },
   "calc-switching": { name: "Switching Cost Simulator", iconName: "arrow-right-left" },

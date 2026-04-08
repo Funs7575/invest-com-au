@@ -17,7 +17,7 @@ export const metadata = {
   alternates: { canonical: "/compare" },
 };
 
-export const revalidate = 3600; // ISR: revalidate every hour
+export const revalidate = 1800; // ISR: revalidate every 30 min (core product page)
 
 function ComparePageSkeleton() {
   return (
