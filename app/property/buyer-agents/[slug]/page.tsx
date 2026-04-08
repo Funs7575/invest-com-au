@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!agent) return { title: "Agent Not Found" };
 
   return {
-    title: `${agent.name} — ${agent.agency_name || "Buyer's Agent"} — Invest.com.au`,
+    title: `${agent.name} — ${agent.agency_name || "Buyer's Agent"}`,
     description: agent.bio?.slice(0, 160) || `${agent.name} is a verified buyer's agent covering ${(agent.states_covered as string[]).join(", ")}.`,
     alternates: { canonical: `/property/buyer-agents/${slug}` },
   };

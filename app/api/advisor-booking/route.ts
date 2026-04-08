@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { isRateLimited } from "@/lib/rate-limit";
+import { escapeHtml } from "@/lib/html-escape";
 import { getSiteUrl } from "@/lib/url";
 
 // GET available slots for an advisor
@@ -135,7 +136,7 @@ export async function POST(request: NextRequest) {
           from: "Invest.com.au <hello@invest.com.au>",
           to: advisor.email,
           subject: `New booking: ${investorName} on ${dateFormatted} at ${bookingTime}`,
-          html: `<p><strong>${investorName}</strong> (${investorEmail}${investorPhone ? `, ${investorPhone}` : ""}) has booked a consultation with you on <strong>${dateFormatted} at ${bookingTime}</strong>.</p>${topic ? `<p>Topic: ${topic}</p>` : ""}<p><a href="${siteUrl}/advisor-portal">View in your dashboard →</a></p>`,
+          html: `<p><strong>${escapeHtml(investorName)}</strong> (${escapeHtml(investorEmail)}${investorPhone ? `, ${escapeHtml(investorPhone)}` : ""}) has booked a consultation with you on <strong>${escapeHtml(dateFormatted)} at ${escapeHtml(bookingTime)}</strong>.</p>${topic ? `<p>Topic: ${escapeHtml(topic)}</p>` : ""}<p><a href="${siteUrl}/advisor-portal">View in your dashboard →</a></p>`,
         }),
       });
       // Confirmation to investor
@@ -146,7 +147,7 @@ export async function POST(request: NextRequest) {
           from: "Invest.com.au <hello@invest.com.au>",
           to: investorEmail,
           subject: `Booking confirmed: ${advisor.name} on ${dateFormatted}`,
-          html: `<p>Your consultation with <strong>${advisor.name}</strong> is confirmed for <strong>${dateFormatted} at ${bookingTime} AEST</strong>.</p><p>${advisor.name} will contact you to confirm the meeting details.</p><p style="font-size: 12px; color: #94a3b8;">This booking was made through <a href="https://invest.com.au">Invest.com.au</a></p>`,
+          html: `<p>Your consultation with <strong>${escapeHtml(advisor.name)}</strong> is confirmed for <strong>${escapeHtml(dateFormatted)} at ${escapeHtml(bookingTime)} AEST</strong>.</p><p>${escapeHtml(advisor.name)} will contact you to confirm the meeting details.</p><p style="font-size: 12px; color: #94a3b8;">This booking was made through <a href="https://invest.com.au">Invest.com.au</a></p>`,
         }),
       });
     }

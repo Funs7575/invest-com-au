@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: "Calculate whether consolidating your debts into a single loan could save you money. Compare interest costs, monthly payments, and payoff timelines.",
   alternates: { canonical: "/debt-calculator" },
   openGraph: {
-    title: `Debt Consolidation Calculator — Could You Save? | ${SITE_NAME}`,
+    title: "Debt Consolidation Calculator — Could You Save?",
     description: "Enter your debts and see if consolidation could reduce your interest costs, lower your monthly payments, and help you become debt-free sooner.",
     images: [{ url: "/api/og?title=Debt+Consolidation+Calculator&subtitle=Could+you+save%3F&type=default", width: 1200, height: 630 }],
   },

@@ -1,8 +1,9 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { isRateLimited } from "@/lib/rate-limit";
+import { timingSafeEqual } from "crypto";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 
 /**
  * POST /api/verify-otp/verify
@@ -46,7 +47,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Code has expired. Please request a new one." }, { status: 400 });
   }
 
-  if (otp.code !== code.trim()) {
+  // Timing-safe OTP comparison to prevent timing attacks
+  const submitted = Buffer.from(code.trim());
+  const stored = Buffer.from(otp.code);
+  if (submitted.length !== stored.length || !timingSafeEqual(submitted, stored)) {
     return NextResponse.json({ error: "Incorrect code. Please try again." }, { status: 400 });
   }
 

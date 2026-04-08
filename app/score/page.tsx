@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     "Take our free 2-minute financial health quiz and get a personalised score out of 100. Discover your strengths, weaknesses, and next steps.",
   alternates: { canonical: "/score" },
   openGraph: {
-    title: `Financial Health Score — Free 2-Minute Assessment | ${SITE_NAME}`,
+    title: "Financial Health Score — Free 2-Minute Assessment",
     description:
       "Rate your financial health across savings, debt, super, insurance, investing, and planning. Get personalised recommendations.",
     images: [

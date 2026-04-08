@@ -55,7 +55,7 @@ export const metadata: Metadata = {
   title: `International Tax Specialists Australia (${CURRENT_YEAR}) — Find & Compare`,
   description: PAGE_DESCRIPTION,
   openGraph: {
-    title: "International Tax Specialists — Invest.com.au",
+    title: "International Tax Specialists",
     description: PAGE_DESCRIPTION,
   },
   twitter: { card: "summary_large_image" },

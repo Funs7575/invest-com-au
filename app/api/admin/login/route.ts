@@ -113,6 +113,6 @@ export async function POST(request: NextRequest) {
 
   return NextResponse.json({
     success: true,
-    session: data.session,
+    user: { email: data.session?.user?.email },
   });
 }

@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     "List your business, mining project, farmland, commercial property, franchise, renewable energy project, investment fund, or startup on Invest.com.au and reach qualified local and international investors.",
   alternates: { canonical: `${SITE_URL}/invest/list` },
   openGraph: {
-    title: `List an Investment Opportunity on Invest.com.au (${CURRENT_YEAR})`,
+    title: `List an Investment Opportunity (${CURRENT_YEAR})`,
     description:
       "Reach qualified Australian and international investors. List businesses, property, mining, farmland, energy projects, franchises, funds, and startups.",
     url: `${SITE_URL}/invest/list`,

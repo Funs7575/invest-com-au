@@ -8,7 +8,7 @@ import ForeignInvestmentNav from "../ForeignInvestmentNav";
 import SectionHeading from "@/components/SectionHeading";
 
 export const metadata: Metadata = {
-  title: "Investing in Australia from Singapore — Tax Rates, Brokers & Property Guide 2026 — Invest.com.au",
+  title: "Investing in Australia from Singapore — Tax Rates, Brokers & Property Guide 2026",
   description:
     "Singapore residents investing in Australia: DTA dividend withholding rate 15%, FIRB property rules, the 2025–2027 established dwelling ban, ASX brokers that accept Singapore residents, and tax obligations. Updated March 2026.",
   openGraph: {

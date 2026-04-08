@@ -7,7 +7,7 @@ import {
 } from "@/lib/compliance";
 
 export const metadata = {
-  title: "Content Licence Agreement — Invest.com.au",
+  title: "Content Licence Agreement",
   description: "Terms governing the submission, licensing, and publication of expert content on Invest.com.au.",
   alternates: { canonical: "/content-license" },
   robots: { index: true, follow: true },

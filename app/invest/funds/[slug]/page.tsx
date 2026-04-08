@@ -23,7 +23,7 @@ export async function generateMetadata({
     .eq("vertical", "fund")
     .single();
 
-  if (!data) return { title: "Investment Fund | Invest.com.au" };
+  if (!data) return { title: "Investment Fund" };
   const sivLabel = data.siv_complying ? " — SIV Complying" : "";
   const title = `${data.title}${sivLabel} Australian Fund (${CURRENT_YEAR})`;
   return {

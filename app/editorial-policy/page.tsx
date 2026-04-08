@@ -3,12 +3,12 @@ import type { Metadata } from "next";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: `Editorial Policy — ${SITE_NAME}`,
+  title: "Editorial Policy",
   description:
     "Our commitment to editorial integrity, content accuracy, and transparent financial product coverage. Learn how we research, verify, and review brokers.",
   alternates: { canonical: "/editorial-policy" },
   openGraph: {
-    title: `Editorial Policy — ${SITE_NAME}`,
+    title: "Editorial Policy",
     description:
       "Our commitment to editorial integrity, content accuracy, and transparent financial product coverage.",
     url: absoluteUrl("/editorial-policy"),

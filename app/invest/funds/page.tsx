@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import type { InvestmentListing } from "@/components/ListingCard";
@@ -44,7 +45,9 @@ export default async function FundsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
-      <FundsPageClient listings={listings} />
+      <Suspense fallback={<div className="min-h-screen" />}>
+        <FundsPageClient listings={listings} />
+      </Suspense>
     </>
   );
 }

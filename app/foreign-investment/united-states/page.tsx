@@ -9,7 +9,7 @@ import SectionHeading from "@/components/SectionHeading";
 import { AFFILIATE_REL } from "@/lib/tracking";
 
 export const metadata: Metadata = {
-  title: "Americans Investing in Australia (2026) — FIRB, Tax & US Person Rules — Invest.com.au",
+  title: "Americans Investing in Australia (2026) — FIRB, Tax & US Person Rules",
   description:
     "US citizens investing in Australia: FBAR/FATCA obligations, PFIC rules for Australian funds, US-AU DTA (15% dividend WHT), AUSFTA thresholds, IBKR for US persons, and super complexity. Updated 2026.",
   openGraph: {

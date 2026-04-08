@@ -8,7 +8,7 @@ import {
 } from "@/lib/compliance";
 
 export const metadata = {
-  title: "Financial Services Guide — Invest.com.au",
+  title: "Financial Services Guide",
   description:
     "Why Invest.com.au does not issue a Financial Services Guide, and what this means for you as a user of our information service.",
   alternates: { canonical: "/fsg" },

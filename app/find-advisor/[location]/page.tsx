@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+
+export const revalidate = 3600; // 1 hour
 import Link from "next/link";
 import { SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 

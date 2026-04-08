@@ -36,7 +36,7 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
   }
 
   const title = hasParams
-    ? `Fee Impact Calculator${subtitle} — Invest.com.au`
+    ? `Fee Impact Calculator${subtitle}`
     : "Personal Fee Impact Calculator — See Your Annual Broker Costs";
 
   const description = hasParams
@@ -48,8 +48,8 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
     description,
     openGraph: {
       title: hasParams
-        ? `Fee Impact Calculator${subtitle} — Invest.com.au`
-        : "Personal Fee Impact Calculator — Invest.com.au",
+        ? `Fee Impact Calculator${subtitle}`
+        : "Personal Fee Impact Calculator",
       description: hasParams
         ? `See your total annual platform fees for${subtitle.replace(" — ", " ")} across every Australian platform.`
         : "Calculate your total annual platform fees and see how much you could save by switching.",

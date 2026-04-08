@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: `Mortgage Broker vs Bank: Which Is Better for Your Home Loan? (${CURRENT_YEAR})`,
   description: "Should you use a mortgage broker or go directly to your bank? We compare rates, service, cost, and when each option makes sense for Australian borrowers.",
   openGraph: {
-    title: "Mortgage Broker vs Bank — Invest.com.au",
+    title: "Mortgage Broker vs Bank",
     description: "Mortgage broker vs bank direct: who gets you the better deal? Independent comparison for Australian borrowers.",
     images: [{ url: "/api/og?title=Mortgage+Broker+vs+Bank&subtitle=Who+gets+you+the+better+deal%3F&type=default", width: 1200, height: 630 }],
   },

@@ -44,10 +44,10 @@ const SHARE_TRADING_COLUMNS: ColumnDef[] = [
 
 const CRYPTO_COLUMNS: ColumnDef[] = [
   { header: "Trading Fee", accessor: (b) => b.asx_fee || "N/A" },
-  { header: "US Fee", accessor: (b) => b.us_fee || "N/A" },
+  { header: "Coins", accessor: (b) => b.us_fee || "N/A" },
   { header: "FX Rate", accessor: (b) => (b.fx_rate != null ? `${b.fx_rate}%` : "N/A") },
   {
-    header: "CHESS",
+    header: "Staking",
     align: "center",
     accessor: (b) => (
       <span className={`text-xs font-semibold ${b.chess_sponsored ? "text-emerald-600" : "text-slate-400"}`}>

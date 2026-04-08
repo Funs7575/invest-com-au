@@ -23,7 +23,7 @@ export async function generateMetadata({
     .eq("vertical", "franchise")
     .single();
 
-  if (!data) return { title: "Franchise Opportunity | Invest.com.au" };
+  if (!data) return { title: "Franchise Opportunity" };
   const brand = (data.key_metrics as Record<string, unknown>)?.brand as string | undefined;
   const title = `${data.title}${brand ? ` — ${brand}` : ""} Franchise Opportunity (${CURRENT_YEAR})`;
   return {

@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
     supabase
       .from("professional_leads")
       .select(
-        "id, user_name, user_email, user_phone, message, source_page, status, quality_score, advisor_notes, contacted_at, converted_at, created_at"
+        "id, user_name, user_email, user_phone, message, source_page, status, quality_score, quality_signals, qualification_data, lead_tier, advisor_notes, contacted_at, converted_at, created_at"
       )
       .eq("professional_id", advisorId)
       .order("created_at", { ascending: false })
@@ -125,6 +125,14 @@ export async function GET(request: NextRequest) {
   // Booking clicks
   const bookingClicks30d = bookings?.length || 0;
 
+  // --- Lead quality summary ---
+  const hotLeadsCount = allLeads.filter((l) => (l.quality_score ?? 0) >= 70).length;
+  const warmLeadsCount = allLeads.filter((l) => {
+    const s = l.quality_score ?? 0;
+    return s >= 40 && s < 70;
+  }).length;
+  const coldLeadsCount = allLeads.filter((l) => (l.quality_score ?? 0) < 40).length;
+
   // --- Weekly enquiries (last 8 weeks) ---
   const weeklyEnquiries: { weekLabel: string; count: number }[] = [];
   for (let w = 7; w >= 0; w--) {
@@ -187,6 +195,9 @@ export async function GET(request: NextRequest) {
       reviewCount: approvedReviews.length,
       avgRating,
       bookingClicks30d,
+      hotLeadsCount,
+      warmLeadsCount,
+      coldLeadsCount,
     },
     viewsByDay: views || [],
     billing: billing || [],

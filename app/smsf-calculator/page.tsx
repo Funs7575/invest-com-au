@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: "Find out if a Self-Managed Super Fund makes financial sense for your situation. Compare projected costs and returns vs your current fund.",
   alternates: { canonical: "/smsf-calculator" },
   openGraph: {
-    title: `SMSF Calculator — Should You Switch to a Self-Managed Super Fund? | ${SITE_NAME}`,
+    title: "SMSF Calculator — Should You Switch to a Self-Managed Super Fund?",
     description: "Enter your super balance and contribution details. See whether an SMSF could save you money or cost you more over time.",
     images: [{ url: "/api/og?title=SMSF+Calculator&subtitle=Is+self-managed+super+right+for+you%3F&type=default", width: 1200, height: 630 }],
   },

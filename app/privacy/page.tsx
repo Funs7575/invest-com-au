@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy — Invest.com.au",
+  title: "Privacy Policy",
   description:
     "How Invest.com.au collects, uses, and protects your personal information under the Australian Privacy Act 1988 and GDPR. Covers cookies, analytics, affiliate tracking, and your data rights.",
   alternates: { canonical: "/privacy" },
   robots: { index: true, follow: true },
   openGraph: {
-    title: "Privacy Policy — Invest.com.au",
+    title: "Privacy Policy",
     description:
       "How Invest.com.au collects, uses, and protects your personal information under the Australian Privacy Act 1988 and GDPR.",
     url: "/privacy",

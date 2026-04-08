@@ -23,7 +23,7 @@ export async function generateMetadata({
     .eq("vertical", "mining")
     .single();
 
-  if (!data) return { title: "Mining Opportunity | Invest.com.au" };
+  if (!data) return { title: "Mining Opportunity" };
   const commodity = (data.key_metrics as Record<string, unknown>)?.commodity as string | undefined;
   const title = `${data.title}${commodity ? ` — ${commodity}` : ""} Mining Investment (${CURRENT_YEAR})`;
   return {

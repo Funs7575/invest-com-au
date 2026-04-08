@@ -4,11 +4,11 @@ import type { Metadata } from "next";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest.com.au";
 
 export const metadata: Metadata = {
-  title: "Advertise With Us | Invest.com.au",
+  title: "Advertise With Us",
   description: "Reach thousands of Australian investors actively researching brokers. Promote your brokerage on Invest.com.au with CPC campaigns, featured placements, and sponsorship packages.",
   alternates: { canonical: `${siteUrl}/advertise` },
   openGraph: {
-    title: "Advertise With Us | Invest.com.au",
+    title: "Advertise With Us",
     description: "Reach Australian investors actively choosing a broker. CPC campaigns, featured placements, and sponsorship packages.",
     url: `${siteUrl}/advertise`,
     siteName: "Invest.com.au",
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Advertise With Us | Invest.com.au",
+    title: "Advertise With Us",
     description: "Reach Australian investors actively choosing a broker. CPC campaigns, featured placements, and sponsorship packages.",
   },
   robots: { index: false, follow: false },

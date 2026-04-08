@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: "Project your superannuation balance at retirement, see how long it will last, and find out if you're on track. Free Australian retirement calculator.",
   alternates: { canonical: "/retirement-calculator" },
   openGraph: {
-    title: `Retirement Calculator — How Much Do You Need? | ${SITE_NAME}`,
+    title: "Retirement Calculator — How Much Do You Need?",
     description: "Project your super balance at retirement, see how long it lasts, and get a personalised gap analysis.",
     images: [{ url: "/api/og?title=Retirement+Calculator&subtitle=How+much+do+you+need%3F&type=default", width: 1200, height: 630 }],
   },

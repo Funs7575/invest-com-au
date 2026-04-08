@@ -9,7 +9,7 @@ export const metadata = {
   description:
     "Book 1-on-1 sessions with qualified investment experts. Get personalised advice on portfolio reviews, tax planning, broker selection, and more.",
   openGraph: {
-    title: `Expert Investment Consultations — ${SITE_NAME}`,
+    title: "Expert Investment Consultations",
     description:
       "Book 1-on-1 sessions with investment experts for personalised advice on your portfolio.",
     images: [

@@ -11,6 +11,13 @@ export async function GET(request: NextRequest) {
   const email = request.nextUrl.searchParams.get("email")?.toLowerCase().trim();
   if (!email) return NextResponse.json({ error: "Email required" }, { status: 400 });
 
+  // Rate limit portfolio lookups to prevent email enumeration
+  const forwarded = request.headers.get("x-forwarded-for");
+  const ip = forwarded ? forwarded.split(",")[0].trim() : "unknown";
+  if (await isRateLimited(`portfolio-get:${ip}`, 15, 5)) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
   const supabase = createAdminClient();
 
   const { data: portfolio } = await supabase

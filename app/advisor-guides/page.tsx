@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: "Choose the right financial professional. Compare SMSF accountants, financial planners, tax agents and mortgage brokers — qualifications, costs and more.",
   alternates: { canonical: "/advisor-guides" },
   openGraph: {
-    title: `Advisor Guides — Invest.com.au`,
+    title: "Advisor Guides",
     description: "How to choose the right financial professional for your needs.",
     images: [{ url: "/api/og?title=Advisor+Guides&subtitle=Choose+the+Right+Professional&type=default", width: 1200, height: 630 }],
   },

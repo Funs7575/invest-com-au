@@ -153,6 +153,30 @@ export default function ListingSubmitForm() {
         const data = await res.json().catch(() => ({}));
         throw new Error(data?.error ?? "Something went wrong. Please try again.");
       }
+      const result = await res.json();
+
+      // For paid plans, redirect to Stripe checkout
+      if (form.plan !== "standard" && result.listing_id) {
+        const planMap: Record<string, number> = { featured: 2, premium: 3 };
+        const planId = planMap[form.plan];
+        if (planId) {
+          const checkoutRes = await fetch("/api/listings/checkout", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              listing_id: result.listing_id,
+              plan_id: planId,
+              contact_email: form.contact_email,
+            }),
+          });
+          const checkoutData = await checkoutRes.json();
+          if (checkoutData.url) {
+            window.location.href = checkoutData.url;
+            return;
+          }
+        }
+      }
+
       setStep("success");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Submission failed. Please try again.");

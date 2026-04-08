@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import Link from "next/link";
 import Icon from "@/components/Icon";
@@ -412,10 +413,13 @@ export default function ListingsClient() {
                   className="block rounded-2xl overflow-hidden border border-slate-200 hover:shadow-xl hover:border-slate-300 transition-all group mb-5 relative"
                 >
                   <div className="aspect-[21/9] md:aspect-[3/1] relative bg-slate-100 overflow-hidden">
-                    <img
+                    <Image
                       src={getListingImages(heroListing.slug, heroListing.images, heroListing.property_type)[0]}
                       alt={heroListing.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 1200px"
+                      priority
+                      className="object-cover group-hover:scale-105 transition-transform duration-700"
                     />
                     <div className="absolute inset-0 bg-gradient-to-r from-slate-900/80 via-slate-900/30 to-transparent" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-transparent to-transparent" />
@@ -485,10 +489,12 @@ export default function ListingsClient() {
                       className="border border-slate-200 bg-white rounded-2xl overflow-hidden hover:shadow-lg hover:border-slate-300 transition-all group flex flex-col"
                     >
                       <div className="aspect-[4/3] relative overflow-hidden bg-slate-100 shrink-0">
-                        <img
+                        <Image
                           src={imgs[0]}
                           alt={listing.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          className="object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 via-transparent to-transparent" />
                         <div className="absolute top-2 left-2 flex gap-1.5">

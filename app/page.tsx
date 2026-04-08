@@ -19,7 +19,7 @@ import HeroIntentButton from "@/components/HeroIntentButton";
 import { PRIMARY_CTA_TEXT, PRIMARY_CTA_HREF, SECONDARY_CTA_TEXT, SECONDARY_CTA_HREF, SHOW_MATCH_LANGUAGE, SHOW_EDITORIAL_BADGES, SHOW_RATINGS, PLATFORM_COMPARE_HEADING, PLATFORM_COMPARE_SUBTEXT, FACTUAL_COMPARISON_DISCLAIMER } from "@/lib/compliance-config";
 
 export const metadata = {
-  title: "Compare Platforms, Browse Advisors & Explore Investments — Invest.com.au",
+  title: { absolute: "Compare Platforms, Browse Advisors & Explore Investments — Invest.com.au" },
   description:
     "Australia's independent investing hub. Compare 100+ trading platforms, browse licensed professionals, and explore investment opportunities — businesses for sale, mining, farmland, commercial property & more. Always free.",
   openGraph: {

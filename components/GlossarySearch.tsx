@@ -25,6 +25,7 @@ export default function GlossarySearch({ entries }: { entries: GlossaryEntry[] }
             value={query}
             onChange={e => setQuery(e.target.value)}
             placeholder="Search terms..."
+            aria-label="Search glossary terms"
             className="w-full pl-9 pr-4 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400"
           />
         </div>
@@ -42,6 +43,7 @@ export default function GlossarySearch({ entries }: { entries: GlossaryEntry[] }
           value={query}
           onChange={e => setQuery(e.target.value)}
           placeholder="Search terms..."
+          aria-label="Search glossary terms"
           className="w-full pl-9 pr-4 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400"
         />
       </div>

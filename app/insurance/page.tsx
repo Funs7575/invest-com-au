@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   title: `Insurance Australia (${CURRENT_YEAR}) — Life, Income Protection, Health & Home Compared`,
   description: `Compare all types of personal insurance in Australia: life insurance, income protection, trauma, TPD, health insurance, and home & contents. Independent guides and comparisons. ${UPDATED_LABEL}.`,
   openGraph: {
-    title: `Insurance Hub — Invest.com.au`,
+    title: "Insurance Hub",
     description: "Independent insurance comparison and guides for Australians. Life, income protection, health, and home.",
     url: `${SITE_URL}/insurance`,
   },

@@ -11,7 +11,7 @@ export const metadata = {
   title: "Investing Scenarios",
   description: "Find the best platform for your specific situation: SMSF, kids, expats, day trading, and more.",
   openGraph: {
-    title: "Investing Scenarios — Invest.com.au",
+    title: "Investing Scenarios",
     description: "Find the best platform for your specific situation: SMSF, kids, expats, day trading, and more.",
     images: [{ url: "/api/og?title=Investing+Scenarios&subtitle=Find+the+best+platform+for+your+situation&type=scenario", width: 1200, height: 630 }],
   },

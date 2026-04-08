@@ -19,6 +19,12 @@ import AskQuestionForm from "@/components/AskQuestionForm";
 
 export const revalidate = 3600; // ISR: revalidate every hour
 
+export async function generateStaticParams() {
+  const supabase = await createClient();
+  const { data } = await supabase.from("brokers").select("slug").eq("status", "active");
+  return (data || []).map((b) => ({ slug: b.slug }));
+}
+
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const supabase = await createClient();
@@ -38,14 +44,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title,
     description,
     openGraph: {
-      title: `${title} — ${SITE_NAME}`,
+      title,
       description,
       url: absoluteUrl(`/broker/${slug}`),
       images: [{ url: ogImageUrl, width: 1200, height: 630, alt: `${broker.name} Review` }],
     },
     twitter: {
       card: "summary_large_image" as const,
-      title: `${title} — ${SITE_NAME}`,
+      title,
       description,
       images: [ogImageUrl],
     },
@@ -160,7 +166,7 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
 
   // AggregateRating JSON-LD for user reviews (star ratings in Google results)
   // Uses SoftwareApplication type to distinguish user ratings from editorial review on FinancialProduct
-  const aggregateRatingLd = reviewStats && reviewStats.review_count > 0 ? {
+  const aggregateRatingLd = reviewStats && reviewStats.review_count > 0 && reviewStats.average_rating != null ? {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     name: `${b.name}`,

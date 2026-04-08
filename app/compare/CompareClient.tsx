@@ -23,6 +23,8 @@ import { getSponsorSortPriority, isSponsored, getPlacementWinners, type Placemen
 import CompareDesktopTable from "./_components/CompareDesktopTable";
 import CompareSelectionBar from "./_components/CompareSelectionBar";
 import CompareFooter from "./_components/CompareFooter";
+import type { ABTestConfig } from "@/lib/ab-test";
+import { createClient } from "@/lib/supabase/client";
 
 type PlatformType = 'all' | 'shares' | 'crypto' | 'super' | 'robo' | 'savings' | 'term-deposits' | 'property' | 'cfd' | 'research';
 type FeatureFilter = 'chess' | 'free' | 'smsf' | 'low-fx' | 'us' | 'has-deal';
@@ -246,11 +248,24 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   const [campaignWinners, setCampaignWinners] = useState<PlacementWinner[]>([]);
   const [cpcCampaigns, setCpcCampaigns] = useState<PlacementWinner[]>([]);
 
+  // A/B tests for CTA variations
+  const [activeABTests, setActiveABTests] = useState<ABTestConfig[]>([]);
+
   useEffect(() => {
     // Fetch featured placement winners
     getPlacementWinners("compare-top").then(setCampaignWinners);
     // Fetch CPC campaigns for click attribution
     getPlacementWinners("compare-cpc").then(setCpcCampaigns);
+    // Fetch active A/B tests for this page
+    const supabase = createClient();
+    supabase
+      .from("site_ab_tests")
+      .select("id, name, test_type, variant_a, variant_b, traffic_split, status")
+      .eq("status", "running")
+      .eq("page", "/compare")
+      .then(({ data }) => {
+        if (data) setActiveABTests(data as ABTestConfig[]);
+      });
   }, []);
 
   // Build a map of broker_slug → campaign_id for CPC attribution
@@ -778,13 +793,13 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             {/* Fee & Rating */}
             <div className="mb-4 grid grid-cols-2 gap-3">
               <div>
-                <p className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-400 mb-2">Max ASX Fee</p>
+                <label className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-400 mb-2 block">Max ASX Fee</label>
                 <select value={maxFee} onChange={e => setMaxFee(Number(e.target.value))} className="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm">
                   {maxFeeOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
               </div>
               <div>
-                <p className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-400 mb-2">Min Rating</p>
+                <label className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-400 mb-2 block">Min Rating</label>
                 <select value={minRating} onChange={e => setMinRating(Number(e.target.value))} className="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm">
                   {minRatingOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
@@ -862,6 +877,7 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
           editorPicks={editorPicks}
           campaignWinners={campaignWinners}
           cpcCampaignMap={cpcCampaignMap}
+          activeABTests={activeABTests}
           onSort={handleSort}
           onToggleSelected={toggleSelected}
           sortArrow={sortArrow}

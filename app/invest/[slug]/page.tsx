@@ -43,7 +43,7 @@ export async function generateMetadata({
     .single();
 
   if (!data) {
-    return { title: "Investment Vertical | Invest.com.au" };
+    return { title: "Investment Vertical" };
   }
 
   const title = data.hero_title

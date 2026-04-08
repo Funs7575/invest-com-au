@@ -23,7 +23,7 @@ export async function generateMetadata({
     .eq("vertical", "energy")
     .single();
 
-  if (!data) return { title: "Energy Project | Invest.com.au" };
+  if (!data) return { title: "Energy Project" };
   const mw = (data.key_metrics as Record<string, unknown>)?.capacity_mw;
   const tech = (data.key_metrics as Record<string, unknown>)?.technology as string | undefined;
   const title = `${data.title}${mw ? ` — ${mw} MW` : ""}${tech ? ` ${tech}` : ""} Project (${CURRENT_YEAR})`;

@@ -3,11 +3,11 @@ import { Suspense } from "react";
 import PortfolioClient from "./PortfolioClient";
 
 export const metadata: Metadata = {
-  title: "Portfolio Fee Monitor — Are You Overpaying? | Invest.com.au",
+  title: "Portfolio Fee Monitor — Are You Overpaying?",
   description:
     "Track your investing platform fees in real-time. Get instant alerts when fees change or a cheaper broker appears. Free portfolio monitoring for Australian investors.",
   openGraph: {
-    title: "Portfolio Fee Monitor — Invest.com.au",
+    title: "Portfolio Fee Monitor",
     description: "Track your broker fees. Get alerts when prices change. Never overpay again.",
   },
   alternates: { canonical: "/portfolio" },

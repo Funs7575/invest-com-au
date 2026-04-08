@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { escapeHtml } from "@/lib/html-escape";
 import { getSiteUrl } from "@/lib/url";
+import { timingSafeEqual } from "crypto";
 
 const MAX_LEADS_PER_REQUEST = 100;
 
@@ -25,8 +27,18 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { api_key, leads } = body;
 
-    // ── Auth: validate partner API key ──
-    if (!api_key || api_key !== process.env.PARTNER_API_KEY) {
+    // ── Auth: validate partner API key (timing-safe) ──
+    const expected = process.env.PARTNER_API_KEY;
+    if (!api_key || !expected || typeof api_key !== "string") {
+      return NextResponse.json({ error: "Invalid API key." }, { status: 401 });
+    }
+    try {
+      const a = Buffer.from(api_key);
+      const b = Buffer.from(expected);
+      if (a.length !== b.length || !timingSafeEqual(a, b)) {
+        return NextResponse.json({ error: "Invalid API key." }, { status: 401 });
+      }
+    } catch {
       return NextResponse.json({ error: "Invalid API key." }, { status: 401 });
     }
 
@@ -204,13 +216,13 @@ export async function POST(request: NextRequest) {
                       </div>
                       <div style="background: #f8fafc; padding: 24px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 12px 12px;">
                         <table style="width: 100%; border-collapse: collapse;">
-                          <tr><td style="padding: 8px 0; font-size: 13px; color: #64748b; width: 100px;">Name</td><td style="padding: 8px 0; font-size: 14px; font-weight: 600;">${lead.name.trim()}</td></tr>
-                          <tr><td style="padding: 8px 0; font-size: 13px; color: #64748b;">Email</td><td style="padding: 8px 0; font-size: 14px;"><a href="mailto:${lead.email.trim()}" style="color: #2563eb;">${lead.email.trim()}</a></td></tr>
-                          ${lead.phone ? `<tr><td style="padding: 8px 0; font-size: 13px; color: #64748b;">Phone</td><td style="padding: 8px 0; font-size: 14px;"><a href="tel:${lead.phone.trim()}" style="color: #2563eb;">${lead.phone.trim()}</a></td></tr>` : ""}
-                          ${lead.message ? `<tr><td style="padding: 8px 0; font-size: 13px; color: #64748b; vertical-align: top;">Message</td><td style="padding: 8px 0; font-size: 14px; line-height: 1.5;">${lead.message.trim()}</td></tr>` : ""}
+                          <tr><td style="padding: 8px 0; font-size: 13px; color: #64748b; width: 100px;">Name</td><td style="padding: 8px 0; font-size: 14px; font-weight: 600;">${escapeHtml(lead.name.trim())}</td></tr>
+                          <tr><td style="padding: 8px 0; font-size: 13px; color: #64748b;">Email</td><td style="padding: 8px 0; font-size: 14px;"><a href="mailto:${encodeURIComponent(lead.email.trim())}" style="color: #2563eb;">${escapeHtml(lead.email.trim())}</a></td></tr>
+                          ${lead.phone ? `<tr><td style="padding: 8px 0; font-size: 13px; color: #64748b;">Phone</td><td style="padding: 8px 0; font-size: 14px;"><a href="tel:${encodeURIComponent(lead.phone.trim())}" style="color: #2563eb;">${escapeHtml(lead.phone.trim())}</a></td></tr>` : ""}
+                          ${lead.message ? `<tr><td style="padding: 8px 0; font-size: 13px; color: #64748b; vertical-align: top;">Message</td><td style="padding: 8px 0; font-size: 14px; line-height: 1.5;">${escapeHtml(lead.message.trim())}</td></tr>` : ""}
                         </table>
                         <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
-                          <a href="mailto:${lead.email.trim()}?subject=Re: Your enquiry on Invest.com.au" style="display: inline-block; padding: 10px 24px; background: #0f172a; color: white; text-decoration: none; border-radius: 8px; font-size: 14px; font-weight: 600;">Reply to ${lead.name.trim().split(" ")[0]}</a>
+                          <a href="mailto:${encodeURIComponent(lead.email.trim())}?subject=Re: Your enquiry on Invest.com.au" style="display: inline-block; padding: 10px 24px; background: #0f172a; color: white; text-decoration: none; border-radius: 8px; font-size: 14px; font-weight: 600;">Reply to ${escapeHtml(lead.name.trim().split(" ")[0])}</a>
                           <a href="${siteUrl}/advisor-portal" style="display: inline-block; margin-left: 8px; padding: 10px 24px; background: #f1f5f9; color: #334155; text-decoration: none; border-radius: 8px; font-size: 14px; font-weight: 600;">View in Dashboard</a>
                         </div>
                         <p style="margin-top: 16px; font-size: 11px; color: #94a3b8;">This lead was delivered via an Invest.com.au partner integration. We recommend responding within 24 hours.</p>

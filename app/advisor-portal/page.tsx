@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import AdvisorPhotoUpload from "@/components/AdvisorPhotoUpload";
+import LeadScoreBadge from "@/components/LeadScoreBadge";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 
 type Advisor = {
@@ -44,7 +45,9 @@ type Lead = {
   id: number; user_name: string; user_email: string; user_phone?: string;
   message?: string; source_page?: string; status: string; advisor_notes?: string;
   contacted_at?: string; converted_at?: string; created_at: string;
-  quality_score?: number; bill_amount_cents: number; billed: boolean;
+  quality_score?: number; quality_signals?: Record<string, number>;
+  qualification_data?: Record<string, unknown>; lead_tier?: string;
+  bill_amount_cents: number; billed: boolean;
   review_requested_at?: string | null;
 };
 
@@ -58,6 +61,7 @@ type Stats = {
   convertedLeads: number; conversionRate: string;
   totalBilledCents: number; pendingBilledCents: number; reviewCount: number;
   avgRating: string | null; bookingClicks30d: number;
+  hotLeadsCount: number; warmLeadsCount: number; coldLeadsCount: number;
   // Analytics
   phoneClicks: number; websiteClicks: number; bookingClicks: number;
   articleViews: number; searchImpressions: number;
@@ -99,6 +103,8 @@ export default function AdvisorPortalPage() {
   const [loading, setLoading] = useState(true);
   const [leadSearch, setLeadSearch] = useState("");
   const [leadStatusFilter, setLeadStatusFilter] = useState<"all" | "new" | "contacted" | "converted" | "lost">("all");
+  const [leadSortByQuality, setLeadSortByQuality] = useState(false);
+  const [hotLeadsOnly, setHotLeadsOnly] = useState(false);
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [loginMode, setLoginMode] = useState<"magic" | "password" | "signup">("magic");
@@ -832,11 +838,7 @@ export default function AdvisorPortalPage() {
                           </td>
                           <td className="px-4 py-2.5 text-center">
                             {lead.quality_score != null ? (
-                              <span className={`inline-block w-6 h-6 leading-6 text-center text-[0.56rem] font-bold rounded-full ${
-                                lead.quality_score >= 80 ? "bg-emerald-100 text-emerald-700" :
-                                lead.quality_score >= 50 ? "bg-amber-100 text-amber-700" :
-                                "bg-slate-100 text-slate-500"
-                              }`}>{lead.quality_score}</span>
+                              <LeadScoreBadge score={lead.quality_score} signals={lead.quality_signals} tier={lead.lead_tier} compact />
                             ) : (
                               <span className="text-slate-300">&mdash;</span>
                             )}
@@ -941,8 +943,12 @@ export default function AdvisorPortalPage() {
             const matchesStatus = leadStatusFilter === "all" || l.status === leadStatusFilter;
             const q = leadSearch.toLowerCase();
             const matchesSearch = !q || l.user_name.toLowerCase().includes(q) || l.user_email.toLowerCase().includes(q) || (l.user_phone || "").includes(q);
-            return matchesStatus && matchesSearch;
+            const matchesHot = !hotLeadsOnly || (l.quality_score ?? 0) >= 70;
+            return matchesStatus && matchesSearch && matchesHot;
           });
+          if (leadSortByQuality) {
+            filteredLeads.sort((a, b) => (b.quality_score ?? 0) - (a.quality_score ?? 0));
+          }
           const exportCsv = () => {
             const rows = [
               ["Name", "Email", "Phone", "Status", "Message", "Source", "Quality", "Billed ($)", "Date"],
@@ -1062,6 +1068,28 @@ export default function AdvisorPortalPage() {
                   </button>
                 ))}
               </div>
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setLeadSortByQuality((v) => !v)}
+                  className={`flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold rounded-lg border transition-colors ${
+                    leadSortByQuality
+                      ? "bg-violet-600 text-white border-violet-600"
+                      : "bg-white text-slate-600 border-slate-200 hover:border-slate-300"
+                  }`}
+                >
+                  <Icon name="filter" size={12} /> Sort by quality
+                </button>
+                <button
+                  onClick={() => setHotLeadsOnly((v) => !v)}
+                  className={`flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold rounded-lg border transition-colors ${
+                    hotLeadsOnly
+                      ? "bg-emerald-600 text-white border-emerald-600"
+                      : "bg-white text-slate-600 border-slate-200 hover:border-slate-300"
+                  }`}
+                >
+                  {hotLeadsOnly ? "\uD83D\uDD25" : ""} Hot leads only{stats ? ` (${stats.hotLeadsCount})` : ""}
+                </button>
+              </div>
             </div>
 
             {leads.length === 0 ? (
@@ -1074,7 +1102,7 @@ export default function AdvisorPortalPage() {
               <div className="bg-white border border-slate-200 rounded-xl p-8 text-center">
                 <Icon name="search" size={32} className="text-slate-300 mx-auto mb-3" />
                 <p className="text-sm text-slate-500">No leads match your filters.</p>
-                <button onClick={() => { setLeadSearch(""); setLeadStatusFilter("all"); }} className="mt-2 text-xs text-violet-600 hover:underline">Clear filters</button>
+                <button onClick={() => { setLeadSearch(""); setLeadStatusFilter("all"); setHotLeadsOnly(false); setLeadSortByQuality(false); }} className="mt-2 text-xs text-violet-600 hover:underline">Clear filters</button>
               </div>
             ) : (
               <div className="space-y-3">
@@ -1109,11 +1137,7 @@ export default function AdvisorPortalPage() {
                         </span>
                       )}
                       {lead.quality_score != null && (
-                        <span className={`text-[0.56rem] font-semibold px-1.5 py-0.5 rounded-full ${
-                          lead.quality_score >= 60 ? "bg-emerald-100 text-emerald-700" :
-                          lead.quality_score >= 30 ? "bg-amber-100 text-amber-700" :
-                          "bg-slate-100 text-slate-500"
-                        }`}>Quality: {lead.quality_score}/100</span>
+                        <LeadScoreBadge score={lead.quality_score} signals={lead.quality_signals} tier={lead.lead_tier} />
                       )}
                       {lead.bill_amount_cents > 0 && (
                         <span className="text-[0.56rem] text-slate-400">${(lead.bill_amount_cents / 100).toFixed(0)} billed</span>

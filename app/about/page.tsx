@@ -12,7 +12,7 @@ export const metadata = {
   description: "Learn about Invest.com.au, Australia's independent investing hub — platforms and advisors. Our mission, editorial independence pledge, and review methodology.",
   alternates: { canonical: "/about" },
   openGraph: {
-    title: "About Us — Invest.com.au",
+    title: "About Us",
     description: "Australia's independent investing hub — platforms and advisors. Our mission, editorial independence pledge, and review methodology.",
     url: "/about",
     images: [

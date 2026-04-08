@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import type { QuarterlyReport } from "@/lib/types";
 import { notFound } from "next/navigation";
+
+export const revalidate = 3600; // 1 hour
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 import ReportDetailClient from "./ReportDetailClient";
 
@@ -10,7 +12,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { data } = await supabase.from("quarterly_reports").select("title, executive_summary").eq("slug", slug).eq("status", "published").single();
   if (!data) return { title: "Report Not Found" };
   return {
-    title: `${data.title} — ${SITE_NAME}`,
+    title: data.title,
     description: data.executive_summary || `Quarterly platform industry report: ${data.title}`,
     alternates: { canonical: `/reports/${slug}` },
   };

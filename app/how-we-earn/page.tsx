@@ -6,7 +6,7 @@ export const metadata = {
   description: "Full transparency on how Invest.com.au makes money. Advertising and referral fees explained, and what it means for our comparison data.",
   alternates: { canonical: "/how-we-earn" },
   openGraph: {
-    title: "How We Earn Money — Invest.com.au",
+    title: "How We Earn Money",
     description: "Full transparency on how Invest.com.au makes money. Advertising and referral fees explained, and what it means for our comparison data.",
     images: [{ url: "/api/og?title=How+We+Earn+Money&subtitle=Full+Transparency+on+Affiliate+Revenue&type=default", width: 1200, height: 630 }],
   },

@@ -505,7 +505,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
         <div className="flex gap-2 mb-3 md:mb-4">
           <div className="relative flex-1">
             <Icon name="search" size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input type="text" placeholder="Search name, firm, specialty, suburb..." value={search} onChange={e => setSearch(e.target.value)} className="w-full pl-9 pr-4 py-2.5 md:py-3 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-400 transition-all" />
+            <input type="text" placeholder="Search name, firm, specialty, suburb..." value={search} onChange={e => setSearch(e.target.value)} aria-label="Search advisors" className="w-full pl-9 pr-4 py-2.5 md:py-3 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-400 transition-all" />
             {search && <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"><Icon name="x" size={16} /></button>}
           </div>
           <button onClick={() => setFiltersOpen(!filtersOpen)} className={`flex items-center gap-1.5 px-3 md:px-4 py-2.5 border rounded-xl text-sm font-semibold transition-all shrink-0 ${filtersOpen || activeFilterCount > 0 ? "bg-amber-50 border-amber-300 text-amber-700" : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
@@ -828,7 +828,7 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                     <div className="relative shrink-0">
                       {pro.photo_url ? (
                         <div className="w-[60px] h-[60px] md:w-[80px] md:h-[80px] rounded-2xl overflow-hidden ring-2 ring-slate-100 shadow-sm">
-                          <Image src={pro.photo_url} alt={pro.name} width={80} height={80} className="w-full h-full object-cover" unoptimized />
+                          <Image src={pro.photo_url} alt={pro.name} width={80} height={80} className="w-full h-full object-cover" />
                         </div>
                       ) : (
                         <div className="w-[60px] h-[60px] md:w-[80px] md:h-[80px] rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white font-bold text-xl md:text-2xl shadow-md shadow-amber-200/60 select-none">

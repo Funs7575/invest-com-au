@@ -16,7 +16,7 @@ import FaqAccordion from "./FaqAccordion";
 import SectionHeading from "@/components/SectionHeading";
 
 export const metadata: Metadata = {
-  title: "Foreign Investment in Australian Property — FIRB Guide 2026 — Invest.com.au",
+  title: "Foreign Investment in Australian Property — FIRB Guide 2026",
   description:
     "Complete guide to buying Australian property as a foreign investor. FIRB approval process, state stamp duty surcharges, application fees, eligible property types, and step-by-step checklist.",
   openGraph: {

@@ -1,5 +1,10 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
+import {
+  getPersonalizedBrokers,
+  type BrokerRecommendationContext,
+} from "@/lib/broker-recommendations";
+import { brokerDripEmail4, brokerDripEmail5 } from "@/lib/email-templates";
 
 export const runtime = "edge";
 export const maxDuration = 60;
@@ -8,13 +13,15 @@ import { getSiteUrl } from "@/lib/url";
 const SITE_URL = getSiteUrl();
 
 /**
- * Investor email drip: 3-email sequence for new email captures and quiz leads.
- * 
+ * Investor email drip: 5-email sequence for new email captures and quiz leads.
+ *
  * Email 1 (Day 0): Welcome — what the site offers, top tools
  * Email 2 (Day 2): Best content — top article + portfolio calculator CTA
  * Email 3 (Day 5): Personal recommendation — quiz CTA or advisor CTA
- * 
- * Runs daily. Processes signups from the last 10 days.
+ * Email 4 (Day 7): Top 3 broker matches — personalized broker recommendations
+ * Email 5 (Day 10): Final recommendation — #1 match with active deal (if any)
+ *
+ * Runs daily. Processes signups from the last 15 days.
  * Tracks sent emails in investor_drip_log to prevent duplicates.
  */
 
@@ -99,15 +106,15 @@ export async function GET(req: NextRequest) {
   const supabase = createAdminClient();
 
   const now = new Date();
-  const tenDaysAgo = new Date(now.getTime() - 10 * 86400000).toISOString();
+  const fifteenDaysAgo = new Date(now.getTime() - 15 * 86400000).toISOString();
   let emailsSent = 0;
   let skipped = 0;
 
   // Get recent email captures (exclude bounced)
   const { data: captures } = await supabase
     .from("email_captures")
-    .select("email, name, source, created_at")
-    .gte("created_at", tenDaysAgo)
+    .select("email, name, source, context, created_at")
+    .gte("created_at", fifteenDaysAgo)
     .neq("status", "bounced")
     .order("created_at", { ascending: true })
     .limit(200);
@@ -115,30 +122,63 @@ export async function GET(req: NextRequest) {
   // Get recent quiz leads (exclude unsubscribed)
   const { data: quizLeads } = await supabase
     .from("quiz_leads")
-    .select("email, name, created_at")
-    .gte("created_at", tenDaysAgo)
+    .select("email, name, created_at, top_match_slug, experience_level, investment_range, trading_interest")
+    .gte("created_at", fifteenDaysAgo)
     .neq("unsubscribed", true)
     .order("created_at", { ascending: true })
     .limit(200);
 
-  // Merge into unique emails with earliest signup date
-  const emailMap = new Map<string, { name: string; signupDate: Date; hasQuiz: boolean }>();
-  
+  // Merge into unique emails with earliest signup date and quiz context
+  interface UserInfo {
+    name: string;
+    signupDate: Date;
+    hasQuiz: boolean;
+    context: BrokerRecommendationContext;
+  }
+  const emailMap = new Map<string, UserInfo>();
+
   for (const c of captures || []) {
     if (!c.email) continue;
     const email = c.email.toLowerCase().trim();
     if (!emailMap.has(email)) {
-      emailMap.set(email, { name: c.name || "", signupDate: new Date(c.created_at), hasQuiz: false });
+      // Extract context from email_captures.context JSONB if available
+      const captureCtx = (c as Record<string, unknown>).context as Record<string, string> | null;
+      emailMap.set(email, {
+        name: c.name || "",
+        signupDate: new Date(c.created_at),
+        hasQuiz: false,
+        context: captureCtx ? {
+          experience_level: captureCtx.experience_level,
+          investment_range: captureCtx.investment_range,
+          trading_interest: captureCtx.trading_interest,
+          top_match_slug: captureCtx.top_match_slug,
+          source: c.source || undefined,
+        } : { source: c.source || undefined },
+      });
     }
   }
   for (const q of quizLeads || []) {
     if (!q.email) continue;
     const email = q.email.toLowerCase().trim();
+    const quizCtx: BrokerRecommendationContext = {
+      experience_level: q.experience_level || undefined,
+      investment_range: q.investment_range || undefined,
+      trading_interest: q.trading_interest || undefined,
+      top_match_slug: q.top_match_slug || undefined,
+      source: "quiz",
+    };
     const existing = emailMap.get(email);
     if (existing) {
       existing.hasQuiz = true;
+      // Quiz data is richer, merge it into context
+      existing.context = { ...existing.context, ...quizCtx };
     } else {
-      emailMap.set(email, { name: q.name || "", signupDate: new Date(q.created_at), hasQuiz: true });
+      emailMap.set(email, {
+        name: q.name || "",
+        signupDate: new Date(q.created_at),
+        hasQuiz: true,
+        context: quizCtx,
+      });
     }
   }
 
@@ -146,18 +186,21 @@ export async function GET(req: NextRequest) {
   const { data: sentDrips } = await supabase
     .from("investor_drip_log")
     .select("email, drip_number")
-    .gte("sent_at", tenDaysAgo);
+    .gte("sent_at", fifteenDaysAgo);
 
   const sentSet = new Set((sentDrips || []).map(d => `${d.email}:${d.drip_number}`));
 
   const dripSchedule = [
-    { number: 1, minDays: 0, subject: "Welcome to Invest.com.au", buildHtml: (name: string) => welcomeEmail(name) },
-    { number: 2, minDays: 2, subject: "Are you overpaying your broker?", buildHtml: (name: string) => bestContentEmail(name) },
-    { number: 3, minDays: 5, subject: "Find your perfect platform", buildHtml: (name: string, hasQuiz: boolean) => personalRecEmail(name, hasQuiz) },
+    { number: 1, minDays: 0, subject: "Welcome to Invest.com.au" },
+    { number: 2, minDays: 2, subject: "Are you overpaying your broker?" },
+    { number: 3, minDays: 5, subject: "Find your perfect platform" },
+    { number: 4, minDays: 7, subject: "Your top 3 broker matches" },
+    { number: 5, minDays: 10, subject: "One final recommendation" },
   ];
 
   for (const [email, info] of emailMap) {
     const daysSinceSignup = Math.floor((now.getTime() - info.signupDate.getTime()) / 86400000);
+    const firstName = (info.name || "").split(" ")[0] || "there";
 
     for (const drip of dripSchedule) {
       if (daysSinceSignup < drip.minDays) continue;
@@ -165,9 +208,58 @@ export async function GET(req: NextRequest) {
 
       // Send the email
       try {
-        const html = drip.number === 3 
-          ? (drip.buildHtml as (n: string, q: boolean) => string)(info.name, info.hasQuiz)
-          : (drip.buildHtml as (n: string) => string)(info.name);
+        let html: string;
+        let brokerRecommendations: unknown = undefined;
+
+        if (drip.number === 1) {
+          html = welcomeEmail(info.name);
+        } else if (drip.number === 2) {
+          html = bestContentEmail(info.name);
+        } else if (drip.number === 3) {
+          html = personalRecEmail(info.name, info.hasQuiz);
+        } else if (drip.number === 4) {
+          // Day 7: Top 3 broker matches using personalized recommendations
+          const brokers = await getPersonalizedBrokers(info.context, {
+            email,
+            dripNumber: 4,
+          });
+          if (brokers.length === 0) continue; // Skip if no brokers available
+          html = brokerDripEmail4(firstName, brokers);
+          brokerRecommendations = brokers.map((b) => ({
+            slug: b.slug,
+            name: b.name,
+            position: brokers.indexOf(b) + 1,
+          }));
+        } else if (drip.number === 5) {
+          // Day 10: Final recommendation — #1 match with any active deal
+          const brokers = await getPersonalizedBrokers(info.context, {
+            email,
+            dripNumber: 5,
+          });
+          if (brokers.length === 0) continue;
+          const topBroker = brokers[0];
+
+          // Check if the top broker has an active deal
+          const { data: dealData } = await supabase
+            .from("brokers")
+            .select("deal, deal_text")
+            .eq("slug", topBroker.slug)
+            .eq("deal", true)
+            .maybeSingle();
+
+          const hasDeal = !!dealData?.deal;
+          const dealText = dealData?.deal_text || undefined;
+
+          html = brokerDripEmail5(firstName, topBroker, hasDeal, dealText);
+          brokerRecommendations = [{
+            slug: topBroker.slug,
+            name: topBroker.name,
+            position: 1,
+            has_deal: hasDeal,
+          }];
+        } else {
+          continue;
+        }
 
         const res = await fetch("https://api.resend.com/emails", {
           method: "POST",
@@ -184,7 +276,9 @@ export async function GET(req: NextRequest) {
           await supabase.from("investor_drip_log").insert({
             email,
             drip_number: drip.number,
+            drip_type: "investor",
             sent_at: now.toISOString(),
+            ...(brokerRecommendations ? { broker_recommendations: brokerRecommendations } : {}),
           });
           emailsSent++;
         }

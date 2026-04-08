@@ -95,10 +95,24 @@ export default async function BestBrokerPage({
   if (!cat) notFound();
 
   const supabase = await createClient();
-  const { data: brokers } = await supabase
-    .from("brokers")
-    .select("*")
-    .eq("status", "active");
+
+  // Build article filter query params upfront
+  const articleFilters = getArticleFiltersForBestPage(slug);
+  const orParts: string[] = [];
+  if (articleFilters.categories.length > 0) {
+    orParts.push(`category.in.(${articleFilters.categories.join(",")})`);
+  }
+  if (articleFilters.tags.length > 0) {
+    orParts.push(`tags.ov.{${articleFilters.tags.join(",")}}`);
+  }
+
+  // Fetch brokers + articles in parallel
+  const [{ data: brokers }, articleResult] = await Promise.all([
+    supabase.from("brokers").select("*").eq("status", "active"),
+    orParts.length > 0
+      ? supabase.from("articles").select("id, title, slug, category, read_time").or(orParts.join(",")).limit(3)
+      : Promise.resolve({ data: null }),
+  ]);
 
   const allBrokers = (brokers as Broker[]) || [];
   const filtered = boostFeaturedPartner(
@@ -107,25 +121,7 @@ export default async function BestBrokerPage({
   );
   const topPick = filtered[0] || null;
   const hasSponsored = filtered.some(isSponsored);
-
-  // ── Fetch related articles for this category ──
-  const articleFilters = getArticleFiltersForBestPage(slug);
-  let relatedArticles: Pick<Article, "id" | "title" | "slug" | "category" | "read_time">[] = [];
-  const orParts: string[] = [];
-  if (articleFilters.categories.length > 0) {
-    orParts.push(`category.in.(${articleFilters.categories.join(",")})`);
-  }
-  if (articleFilters.tags.length > 0) {
-    orParts.push(`tags.ov.{${articleFilters.tags.join(",")}}`);
-  }
-  if (orParts.length > 0) {
-    const { data: articleData } = await supabase
-      .from("articles")
-      .select("id, title, slug, category, read_time")
-      .or(orParts.join(","))
-      .limit(3);
-    relatedArticles = articleData || [];
-  }
+  const relatedArticles: Pick<Article, "id" | "title" | "slug" | "category" | "read_time">[] = articleResult?.data || [];
 
   // ── Fetch Q&A for this best-broker page ──
   const { data: questionsRaw } = await supabase

@@ -23,7 +23,7 @@ export async function generateMetadata({
     .eq("vertical", "private_credit")
     .single();
 
-  if (!data) return { title: "Private Credit Fund | Invest.com.au" };
+  if (!data) return { title: "Private Credit Fund" };
 
   const title = `${data.title} — Private Credit Fund ${data.location_state ? `in ${data.location_state}` : "in Australia"} (${CURRENT_YEAR})`;
   return {

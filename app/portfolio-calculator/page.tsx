@@ -10,7 +10,7 @@ export const metadata = {
   description: "Enter your trading activity and see exactly what you'd pay at every Australian broker. Find out if you're overpaying and how much you could save.",
   alternates: { canonical: "/portfolio-calculator" },
   openGraph: {
-    title: "Portfolio Fee Calculator — Invest.com.au",
+    title: "Portfolio Fee Calculator",
     description: "See exactly what you'd pay at every Australian broker. Find out if you're overpaying.",
     images: [{ url: "/api/og?title=Portfolio+Fee+Calculator&subtitle=How+much+are+you+really+paying%3F&type=default", width: 1200, height: 630 }],
   },

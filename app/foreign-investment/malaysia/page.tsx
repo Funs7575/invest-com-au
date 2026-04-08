@@ -9,7 +9,7 @@ import SectionHeading from "@/components/SectionHeading";
 import { AFFILIATE_REL } from "@/lib/tracking";
 
 export const metadata: Metadata = {
-  title: "Investing in Australia from Malaysia (2026) — Property, Shares & Tax Guide — Invest.com.au",
+  title: "Investing in Australia from Malaysia (2026) — Property, Shares & Tax Guide",
   description:
     "Malaysian investors in Australia: DTA dividend WHT 15%, FIRB property rules, foreign buyer stamp duty surcharges (VIC 8%, NSW 8%), ASX brokers for Malaysian residents. Updated 2026.",
   openGraph: {

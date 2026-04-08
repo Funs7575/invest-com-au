@@ -6,7 +6,7 @@ import { FIRB_DISCLAIMER } from "@/lib/compliance";
 import SectionHeading from "@/components/SectionHeading";
 
 export const metadata: Metadata = {
-  title: "FIRB Application: Complete Step-by-Step Guide (2026) — Invest.com.au",
+  title: "FIRB Application: Complete Step-by-Step Guide (2026)",
   description:
     "How to lodge a FIRB application to buy Australian property as a foreign investor. Documents required, fees, processing times, approval conditions, and what to do if rejected. Updated March 2026.",
   openGraph: {

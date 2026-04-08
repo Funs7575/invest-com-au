@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+
+export const revalidate = 3600; // 1 hour
 import Icon from "@/components/Icon";
 
 export const metadata: Metadata = {
@@ -9,7 +11,7 @@ export const metadata: Metadata = {
     "Get qualified leads from Australian investors. Free profile, 3 free leads, then A$150 prepaid credit at $39/lead.",
   alternates: { canonical: "/for-advisors" },
   openGraph: {
-    title: "List Your Advisory Practice — Invest.com.au",
+    title: "List Your Advisory Practice",
     description: "Reach thousands of Australian investors looking for financial advice. Free profile with 3 free leads.",
     images: [{ url: "/api/og?title=List+Your+Practice&subtitle=Reach+Australian+Investors&type=default", width: 1200, height: 630 }],
   },

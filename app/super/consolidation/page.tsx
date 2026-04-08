@@ -7,7 +7,7 @@ import SectionHeading from "@/components/SectionHeading";
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
-  title: "Consolidate Your Super — How to Find & Merge Multiple Accounts (2026 Guide) — Invest.com.au",
+  title: "Consolidate Your Super — How to Find & Merge Multiple Accounts (2026 Guide)",
   description:
     "Step-by-step guide to consolidating multiple super accounts in Australia. How to find lost super via myGov and the ATO, insurance warnings, choosing the right fund, and tax-free rollovers. Updated March 2026.",
   openGraph: {

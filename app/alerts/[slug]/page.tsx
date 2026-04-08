@@ -13,7 +13,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { data } = await supabase.from("regulatory_alerts").select("title, impact_summary").eq("slug", slug).eq("status", "published").single();
   if (!data) return { title: "Alert Not Found" };
   return {
-    title: `${data.title} — ${SITE_NAME}`,
+    title: data.title,
     description: data.impact_summary || `Regulatory alert: ${data.title}`,
     alternates: { canonical: `/alerts/${slug}` },
   };

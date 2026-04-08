@@ -10,7 +10,7 @@ export const metadata = {
   description:
     "Stay informed on ASIC regulations, ATO tax changes, superannuation rules, and reporting requirements that affect Australian investors and their broker accounts.",
   openGraph: {
-    title: `Regulatory & Tax Alerts — ${SITE_NAME}`,
+    title: "Regulatory & Tax Alerts",
     description: "Curated ASIC, ATO, and Treasury changes that affect Australian investors.",
     images: [{ url: "/api/og?title=Regulatory+Alerts&subtitle=Tax+%26+Rule+Changes+for+Investors&type=default", width: 1200, height: 630 }],
   },

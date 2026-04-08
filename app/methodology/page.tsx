@@ -6,7 +6,7 @@ export const metadata = {
   description:
     "How Invest.com.au collects, verifies, and presents factual comparison data for Australian investing platforms — fees, features, provider details, and data sources.",
   openGraph: {
-    title: `Data Collection Methodology — ${SITE_NAME}`,
+    title: "Data Collection Methodology",
     description:
       "How Invest.com.au collects, verifies, and presents factual comparison data for Australian investing platforms — fees, features, provider details, and data sources.",
     images: [

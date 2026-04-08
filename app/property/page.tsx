@@ -13,7 +13,7 @@ export const metadata = {
   description:
     "Australia's property investment hub. Browse new developments, find a buyer's agent, research suburb data, and compare investment loans. Independent, free, no obligation.",
   openGraph: {
-    title: "Property Investment Australia — Invest.com.au",
+    title: "Property Investment Australia",
     description: "Browse new developments, find buyer's agents, research suburbs, and compare investment loans.",
     url: "/property",
     images: [{ url: "/api/og?title=Property+Investment+Australia", width: 1200, height: 630 }],

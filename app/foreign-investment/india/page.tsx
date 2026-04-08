@@ -9,7 +9,7 @@ import SectionHeading from "@/components/SectionHeading";
 import { AFFILIATE_REL } from "@/lib/tracking";
 
 export const metadata: Metadata = {
-  title: "Investing in Australia from India (2026) — NRI Guide to Tax, Property & Shares — Invest.com.au",
+  title: "Investing in Australia from India (2026) — NRI Guide to Tax, Property & Shares",
   description:
     "NRI guide to investing in Australia: India-Australia DTA dividend WHT 15%, FIRB property rules for non-resident Indians, ASX shares, super DASP, and brokers for Indian residents. Updated 2026.",
   openGraph: {

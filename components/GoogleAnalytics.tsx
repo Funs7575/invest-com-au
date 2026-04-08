@@ -4,7 +4,7 @@ import Script from "next/script";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, Suspense, useState } from "react";
 
-const GA_ID = process.env.NEXT_PUBLIC_GA_ID || "G-RC473QKMTN";
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID || "";
 
 /**
  * Check cookie consent from localStorage.

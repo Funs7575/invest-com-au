@@ -7,7 +7,7 @@ import SectionHeading from "@/components/SectionHeading";
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
-  title: "Leaving Australia? Super Guide — DASP, Tax & NZ KiwiSaver Portability (2026) — Invest.com.au",
+  title: "Leaving Australia? Super Guide — DASP, Tax & NZ KiwiSaver Portability (2026)",
   description:
     "How to claim your Australian super when leaving Australia. DASP (Departing Australia Superannuation Payment) guide: 35% withholding tax, 65% for Working Holiday Makers, step-by-step claim process, and NZ KiwiSaver portability. Updated March 2026.",
   openGraph: {

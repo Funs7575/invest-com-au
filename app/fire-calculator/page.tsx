@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     "Calculate your FIRE number and how many years until financial independence. Uses the 4% safe withdrawal rule to estimate when your investments can sustain your lifestyle indefinitely.",
   alternates: { canonical: "/fire-calculator" },
   openGraph: {
-    title: `FIRE Calculator — Financial Independence, Retire Early | ${SITE_NAME}`,
+    title: "FIRE Calculator — Financial Independence, Retire Early",
     description:
       "Free FIRE calculator for Australians. Find your financial independence number and project how many years until you can retire early.",
     images: [

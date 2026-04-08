@@ -7,7 +7,7 @@ import SectionHeading from "@/components/SectionHeading";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: `Franchise Opportunities Australia (${CURRENT_YEAR}) — Invest.com.au`,
+  title: `Franchise Opportunities Australia (${CURRENT_YEAR})`,
   description:
     "Browse franchise investment opportunities in Australia. Food, fitness, cleaning, automotive, education, and retail franchises. Investment levels, training, and support outlined.",
   alternates: { canonical: `${SITE_URL}/invest/franchise` },

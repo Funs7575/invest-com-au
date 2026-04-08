@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     "A-Z glossary of Australian investing terms in plain English. Shares, ETFs, super, crypto, CFDs, property & more.",
   alternates: { canonical: "/glossary" },
   openGraph: {
-    title: "Investing Glossary — Invest.com.au",
+    title: "Investing Glossary",
     description:
       "Plain-English definitions of Australian investing terms — shares, super, crypto, CFDs, property, robo-advisors & more.",
     url: "/glossary",

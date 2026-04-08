@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
@@ -55,7 +56,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     description,
     alternates: { canonical: `/consultations/${slug}` },
     openGraph: {
-      title: `${title} — ${SITE_NAME}`,
+      title,
       description,
       url: `/consultations/${slug}`,
       images: [
@@ -294,7 +295,9 @@ export default async function ConsultationDetailPage({ params }: PageProps) {
             {/* Right: Booking CTA */}
             <div className="lg:col-span-2">
               <div className="sticky top-8">
-                <ConsultationDetailClient consultation={consultation} />
+                <Suspense fallback={<div className="animate-pulse h-48 bg-slate-100 rounded-xl" />}>
+                  <ConsultationDetailClient consultation={consultation} />
+                </Suspense>
               </div>
             </div>
           </div>

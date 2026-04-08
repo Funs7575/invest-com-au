@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     "Get in touch with the Invest.com.au team. Questions about broker reviews, advertising enquiries, or general feedback.",
   alternates: { canonical: "/contact" },
   openGraph: {
-    title: "Contact Us — Invest.com.au",
+    title: "Contact Us",
     description:
       "Get in touch with the Invest.com.au team. Questions, feedback, or advertising enquiries.",
     url: "/contact",

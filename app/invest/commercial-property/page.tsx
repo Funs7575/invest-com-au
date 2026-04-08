@@ -7,7 +7,7 @@ import SectionHeading from "@/components/SectionHeading";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: `Commercial Property Investment Australia (${CURRENT_YEAR}) — Invest.com.au`,
+  title: `Commercial Property Investment Australia (${CURRENT_YEAR})`,
   description:
     "Guide to commercial property investment in Australia. Office, industrial, retail, and hotel assets. Yields, FIRB rules, A-REITs, and direct investment pathways.",
   alternates: { canonical: `${SITE_URL}/invest/commercial-property` },

@@ -23,7 +23,7 @@ export async function generateMetadata({
     .eq("vertical", "alternatives")
     .single();
 
-  if (!data) return { title: "Alternative Investment | Invest.com.au" };
+  if (!data) return { title: "Alternative Investment" };
 
   const title = `${data.title} — Alternative Investment ${data.location_state ? `in ${data.location_state}` : "in Australia"} (${CURRENT_YEAR})`;
   return {

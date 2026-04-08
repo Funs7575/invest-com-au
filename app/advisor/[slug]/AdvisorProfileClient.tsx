@@ -1264,7 +1264,7 @@ export default function AdvisorProfileClient({
       <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-slate-200 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] z-40">
         <div className="flex items-center gap-3 px-4 py-3">
           {pro.photo_url ? (
-            <Image src={pro.photo_url} alt="" width={40} height={40} className="w-10 h-10 rounded-xl object-cover shrink-0" />
+            <Image src={pro.photo_url} alt={pro.name} width={40} height={40} className="w-10 h-10 rounded-xl object-cover shrink-0" />
           ) : (
             <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center text-sm font-black text-amber-600 shrink-0">
               {initials}
@@ -1290,7 +1290,7 @@ export default function AdvisorProfileClient({
         <div className="container-custom max-w-[1280px] py-3 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             {pro.photo_url && (
-              <Image src={pro.photo_url} alt="" width={38} height={38} className="rounded-xl object-cover shrink-0" />
+              <Image src={pro.photo_url} alt={pro.name} width={38} height={38} className="rounded-xl object-cover shrink-0" />
             )}
             <div>
               <span className="text-sm font-black text-slate-900">{pro.name}</span>

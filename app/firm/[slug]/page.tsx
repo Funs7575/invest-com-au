@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   if (!firm) return {};
 
-  const title = `${firm.name} — Advisory Firm Profile | Invest.com.au`;
+  const title = `${firm.name} — Advisory Firm Profile`;
   const description = firm.bio
     ? firm.bio.slice(0, 155)
     : `${firm.name} is a verified advisory firm${firm.location_display ? ` based in ${firm.location_display}` : ""}${firm.afsl_number ? ` (AFSL ${firm.afsl_number})` : ""}. View team members and request a consultation.`;
@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title,
     description,
     openGraph: {
-      title: `${firm.name} — Invest.com.au`,
+      title: firm.name,
       description,
     },
     twitter: { card: "summary_large_image" },

@@ -8,7 +8,7 @@ import ForeignInvestmentNav from "../ForeignInvestmentNav";
 import SectionHeading from "@/components/SectionHeading";
 
 export const metadata: Metadata = {
-  title: "Investing in Australia from the UK — Tax, Property & Brokers Guide 2026 — Invest.com.au",
+  title: "Investing in Australia from the UK — Tax, Property & Brokers Guide 2026",
   description:
     "UK residents investing in Australia: DTA dividend WHT 15%, FIRB property rules, established dwelling ban 2025–2027, expat super rules, ASX brokers that accept UK residents. Updated March 2026.",
   openGraph: {

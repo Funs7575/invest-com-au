@@ -35,6 +35,8 @@ const ALLOWED_EVENTS = new Set([
   // General page engagement
   'booking_click',
   'page_duration',
+  // Apply page
+  'conversion_intent',
 ]);
 
 export async function POST(request: NextRequest) {

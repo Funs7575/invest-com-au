@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { timingSafeEqual } from "crypto";
 
 /**
  * GET /api/partner/status
@@ -11,8 +12,18 @@ export async function GET(request: NextRequest) {
   try {
     const apiKey = request.nextUrl.searchParams.get("api_key");
 
-    // ── Auth: validate partner API key ──
-    if (!apiKey || apiKey !== process.env.PARTNER_API_KEY) {
+    // ── Auth: validate partner API key (timing-safe) ──
+    const expected = process.env.PARTNER_API_KEY;
+    if (!apiKey || !expected) {
+      return NextResponse.json({ error: "Invalid API key." }, { status: 401 });
+    }
+    try {
+      const a = Buffer.from(apiKey);
+      const b = Buffer.from(expected);
+      if (a.length !== b.length || !timingSafeEqual(a, b)) {
+        return NextResponse.json({ error: "Invalid API key." }, { status: 401 });
+      }
+    } catch {
       return NextResponse.json({ error: "Invalid API key." }, { status: 401 });
     }
 

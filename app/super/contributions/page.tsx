@@ -7,7 +7,7 @@ import SectionHeading from "@/components/SectionHeading";
 export const revalidate = 86400;
 
 export const metadata: Metadata = {
-  title: "Super Contributions Guide — Concessional, Non-Concessional & Catch-Up (2026) — Invest.com.au",
+  title: "Super Contributions Guide — Concessional, Non-Concessional & Catch-Up (2026)",
   description:
     "Complete guide to super contributions in Australia. Concessional cap $30,000, non-concessional cap $120,000, carry-forward rules, salary sacrifice, spouse contributions, and government co-contribution. Updated March 2026.",
   openGraph: {

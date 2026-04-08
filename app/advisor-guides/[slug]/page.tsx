@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `${guide.title} (${CURRENT_YEAR})`,
     description: guide.metaDescription,
-    openGraph: { title: `${guide.title} — Invest.com.au`, description: guide.metaDescription },
+    openGraph: { title: guide.title, description: guide.metaDescription },
     twitter: { card: "summary_large_image" },
     alternates: { canonical: `/advisor-guides/${slug}` },
   };

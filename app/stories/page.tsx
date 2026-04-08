@@ -6,7 +6,7 @@ export const metadata = {
   title: "Platform Switching Stories",
   description: "Real stories from Australians who switched investing platforms. Find out why people moved, what they saved, and whether they're happy.",
   openGraph: {
-    title: "Platform Switching Stories — Invest.com.au",
+    title: "Platform Switching Stories",
     description: "Real stories from Australians who switched investing platforms. Find out why people moved, what they saved, and whether they're happy.",
     images: [{ url: "/api/og?title=Switching+Stories&subtitle=Real+stories+from+Aussies+who+switched+platforms&type=default", width: 1200, height: 630 }],
   },

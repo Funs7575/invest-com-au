@@ -8,7 +8,7 @@ import ForeignInvestmentNav from "../ForeignInvestmentNav";
 import SectionHeading from "@/components/SectionHeading";
 
 export const metadata: Metadata = {
-  title: "Investing in Australia from China — Tax Rates, Property & Brokers 2026 — Invest.com.au",
+  title: "Investing in Australia from China — Tax Rates, Property & Brokers 2026",
   description:
     "Chinese residents investing in Australia: DTA dividend WHT 15%, FIRB property rules, established dwelling ban 2025–2027, capital transfer rules, and ASX broker access. Updated March 2026.",
   openGraph: {

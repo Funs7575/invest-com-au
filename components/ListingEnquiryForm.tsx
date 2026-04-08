@@ -54,9 +54,13 @@ export default function ListingEnquiryForm({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           listing_id: listingId,
-          listing_title: listingTitle,
-          vertical,
-          ...form,
+          user_name: form.name,
+          user_email: form.email,
+          user_phone: form.phone || undefined,
+          investor_country: form.based_in,
+          investor_type: form.investor_type,
+          message: form.message || undefined,
+          source_page: `/invest/${vertical}/listings`,
         }),
       });
 

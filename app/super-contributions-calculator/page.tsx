@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     "Calculate how much you can contribute to super in FY2026. See your concessional cap usage, tax savings from salary sacrifice, and whether carry-forward rules apply.",
   alternates: { canonical: "/super-contributions-calculator" },
   openGraph: {
-    title: `Super Contributions Calculator — Concessional Caps & Tax Savings | ${SITE_NAME}`,
+    title: "Super Contributions Calculator — Concessional Caps & Tax Savings",
     description:
       "Enter your income and employer contributions to see your remaining concessional cap, tax savings, and Division 293 liability for FY2026.",
     images: [

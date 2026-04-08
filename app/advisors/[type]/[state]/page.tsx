@@ -89,7 +89,7 @@ export async function generateMetadata({ params }: { params: Promise<{ type: str
   return {
     title,
     description,
-    openGraph: { title: `${label}s in ${loc.name} — Invest.com.au`, description },
+    openGraph: { title: `${label}s in ${loc.name}`, description },
     twitter: { card: "summary" },
     alternates: { canonical: `/advisors/${typeSlug}/${locSlug}` },
   };

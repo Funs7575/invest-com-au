@@ -9,7 +9,7 @@ import SectionHeading from "@/components/SectionHeading";
 import { AFFILIATE_REL } from "@/lib/tracking";
 
 export const metadata: Metadata = {
-  title: "Investing in Australia from New Zealand (2026) — Trans-Tasman Guide — Invest.com.au",
+  title: "Investing in Australia from New Zealand (2026) — Trans-Tasman Guide",
   description:
     "New Zealand citizens investing in Australia: no FIRB required, special category visa rights, NZ-AU DTA rates, KiwiSaver portability, ASX vs NZX, and CGT differences. Updated 2026.",
   openGraph: {

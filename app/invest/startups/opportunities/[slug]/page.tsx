@@ -23,7 +23,7 @@ export async function generateMetadata({
     .eq("vertical", "startup")
     .single();
 
-  if (!data) return { title: "Startup Investment | Invest.com.au" };
+  if (!data) return { title: "Startup Investment" };
   const stage = (data.key_metrics as Record<string, unknown>)?.stage as string | undefined;
   const raising = (data.key_metrics as Record<string, unknown>)?.raising_cents as number | undefined;
   const raisingStr = raising ? ` — Raising $${Math.round(raising / 100).toLocaleString("en-AU")}` : "";

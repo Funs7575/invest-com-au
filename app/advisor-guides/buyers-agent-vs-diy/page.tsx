@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: `Buyers Agent vs DIY Property Search: Is It Worth the Cost? (${CURRENT_YEAR})`,
   description: "Is a buyers agent worth $15k-$25k? We break down the real costs, savings, and when hiring a buyers agent makes financial sense vs searching yourself.",
   openGraph: {
-    title: "Buyers Agent vs DIY Property Search — Invest.com.au",
+    title: "Buyers Agent vs DIY Property Search",
     description: "Buyers agent fees vs DIY: real cost comparison, negotiation savings, and when each approach makes sense.",
     images: [{ url: "/api/og?title=Buyers+Agent+vs+DIY&subtitle=Is+it+worth+the+cost%3F&type=default", width: 1200, height: 630 }],
   },

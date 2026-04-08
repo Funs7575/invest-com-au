@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
 import { Suspense } from "react";
+
+export const revalidate = 3600; // 1 hour
 import BenchmarkClient from "./BenchmarkClient";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 
@@ -9,7 +11,7 @@ export const metadata = {
   description:
     "See where your platform ranks on every fee dimension: ASX brokerage, US fees, FX rates, platform quality, and more. Visual radar chart with percentile rankings.",
   openGraph: {
-    title: `Fee Benchmarking Dashboard — ${SITE_NAME}`,
+    title: "Fee Benchmarking Dashboard",
     description:
       "Visual radar chart showing your platform's percentile ranking across 6 key dimensions vs every Australian platform.",
     images: [

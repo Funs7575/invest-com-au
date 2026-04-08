@@ -8,7 +8,7 @@ import ForeignInvestmentNav from "../ForeignInvestmentNav";
 import SectionHeading from "@/components/SectionHeading";
 
 export const metadata: Metadata = {
-  title: "Investing in Australia from UAE / Dubai — Tax Rates & Property Guide 2026 — Invest.com.au",
+  title: "Investing in Australia from UAE / Dubai — Tax Rates & Property Guide 2026",
   description:
     "UAE residents (Dubai, Abu Dhabi) investing in Australia: no DTA — 30% dividend withholding applies. FIRB property rules, established dwelling ban 2025–2027, ASX broker access, and tax-efficient structures. Updated March 2026.",
   openGraph: {
