@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     "Compare the long-term returns of leveraged property investment against an equivalent shares portfolio. Model capital growth, rental yield, mortgage costs and dividends side by side.",
   alternates: { canonical: "/property-vs-shares-calculator" },
   openGraph: {
-    title: `Property vs Shares Calculator | ${SITE_NAME}`,
+    title: "Property vs Shares Calculator",
     description:
       "Free property vs shares calculator for Australians. Compare leveraged property returns against shares with dividends over your chosen time horizon.",
     images: [

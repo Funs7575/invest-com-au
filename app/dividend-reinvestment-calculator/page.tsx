@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     "Calculate how reinvesting dividends grows your share portfolio through compounding. Model DRP vs cash dividends, share price growth and your final portfolio value.",
   alternates: { canonical: "/dividend-reinvestment-calculator" },
   openGraph: {
-    title: `Dividend Reinvestment Calculator (DRP) | ${SITE_NAME}`,
+    title: "Dividend Reinvestment Calculator (DRP)",
     description:
       "Free DRP calculator for Australian investors. See how reinvesting dividends accelerates your portfolio growth compared to taking cash.",
     images: [

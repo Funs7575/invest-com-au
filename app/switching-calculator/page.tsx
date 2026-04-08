@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description: "Find out exactly how much you're overpaying with your current broker. Enter your trades and see the annual savings from switching to a cheaper platform.",
   alternates: { canonical: "/switching-calculator" },
   openGraph: {
-    title: `Broker Switching Calculator — Save Up to $2,000/Year | ${SITE_NAME}`,
+    title: "Broker Switching Calculator — Save Up to $2,000/Year",
     description: "Enter your trades, see your exact annual cost at every broker, and find out how much you'd save by switching.",
     images: [{ url: "/api/og?title=Switching+Calculator&subtitle=How+much+are+you+overpaying%3F&type=default", width: 1200, height: 630 }],
   },

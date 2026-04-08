@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     "Calculate your true annual cost at every Australian broker: brokerage fees + FX margins combined. Enter your trading habits to find the cheapest platform for your style.",
   alternates: { canonical: "/tco-calculator" },
   openGraph: {
-    title: `Yearly TCO Calculator — Total Broker Cost | ${SITE_NAME}`,
+    title: "Yearly TCO Calculator — Total Broker Cost",
     description:
       "Free total cost of ownership calculator for Australian investors. Compare brokerage + FX fees across all major platforms for your exact trading pattern.",
     images: [

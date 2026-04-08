@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     "Calculate how your investments grow with compound interest. Enter your initial investment, regular contributions, interest rate and time period to see your final balance and total interest earned.",
   alternates: { canonical: "/compound-interest-calculator" },
   openGraph: {
-    title: `Compound Interest Calculator — Investment Growth | ${SITE_NAME}`,
+    title: "Compound Interest Calculator — Investment Growth",
     description:
       "Free compound interest calculator for Australian investors. See the power of compounding on your lump sum and regular contributions.",
     images: [

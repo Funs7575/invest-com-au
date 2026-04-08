@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!pro) return {};
 
   const typeLabel = PROFESSIONAL_TYPE_LABELS[pro.type as keyof typeof PROFESSIONAL_TYPE_LABELS] || "Financial Professional";
-  const title = pro.meta_title || `${pro.name}${pro.firm_name ? ` — ${pro.firm_name}` : ""} | ${typeLabel}`;
+  const title = pro.meta_title || `${pro.name}${pro.firm_name ? ` — ${pro.firm_name}` : ""} — ${typeLabel}`;
   const description = pro.meta_description || `${pro.name} is a verified ${typeLabel.toLowerCase()}${pro.location_display ? ` in ${pro.location_display}` : ""}. Request a free consultation on invest.com.au.`;
 
   return {

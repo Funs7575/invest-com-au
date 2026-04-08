@@ -21,7 +21,7 @@ const pageDescription =
   "Step-by-step guides: buy shares, ETFs, Bitcoin, set up an SMSF, claim franking credits & more. Plain English for Australian investors.";
 
 export const metadata: Metadata = {
-  title: `${pageTitle} | ${SITE_NAME}`,
+  title: pageTitle,
   description: pageDescription,
   alternates: { canonical: "/how-to" },
   openGraph: {

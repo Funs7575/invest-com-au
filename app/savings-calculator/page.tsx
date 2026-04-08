@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description: "Compare your current savings rate against Australia's best accounts. See exactly how much extra interest you could earn by switching.",
   alternates: { canonical: "/savings-calculator" },
   openGraph: {
-    title: `Savings Rate Calculator — How Much Are You Leaving on the Table? | ${SITE_NAME}`,
+    title: "Savings Rate Calculator — How Much Are You Leaving on the Table?",
     description: "Enter your savings balance and current rate. See how much more you could earn at Australia's top savings accounts.",
     images: [{ url: "/api/og?title=Savings+Calculator&subtitle=Are+you+earning+enough%3F&type=default", width: 1200, height: 630 }],
   },

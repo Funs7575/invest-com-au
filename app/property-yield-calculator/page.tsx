@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: "Calculate gross and net rental yield on Australian investment properties. See annual income, expenses breakdown, and cash flow analysis.",
   alternates: { canonical: "/property-yield-calculator" },
   openGraph: {
-    title: `Property Yield Calculator — Rental Return Analysis | ${SITE_NAME}`,
+    title: "Property Yield Calculator — Rental Return Analysis",
     description: "Enter your property purchase price, weekly rent, and expenses to calculate gross and net rental yield instantly.",
     images: [{ url: "/api/og?title=Property+Yield+Calculator&subtitle=Rental+Return+Analysis&type=default", width: 1200, height: 630 }],
   },

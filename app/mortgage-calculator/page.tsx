@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: "Calculate your mortgage repayments, total interest and compare rate scenarios. See exactly what your home loan will cost over 25 or 30 years.",
   alternates: { canonical: "/mortgage-calculator" },
   openGraph: {
-    title: `Mortgage Repayment Calculator — How Much Will You Pay? | ${SITE_NAME}`,
+    title: "Mortgage Repayment Calculator — How Much Will You Pay?",
     description: "Enter your loan amount and interest rate. See your monthly repayments, total interest, and how different rates change the cost.",
     images: [{ url: "/api/og?title=Mortgage+Calculator&subtitle=How+much+will+you+pay%3F&type=default", width: 1200, height: 630 }],
   },
