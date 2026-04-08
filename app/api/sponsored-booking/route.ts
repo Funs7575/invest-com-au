@@ -2,11 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { sendEmail } from "@/lib/resend";
 import { escapeHtml } from "@/lib/html-escape";
 import { isRateLimited } from "@/lib/rate-limit";
+import { ADMIN_EMAIL } from "@/lib/admin";
 import { logger } from "@/lib/logger";
 
 const log = logger("sponsored-booking");
-
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "hello@invest.com.au";
 
 const VALID_PACKAGES = [
   "sponsored-article",
