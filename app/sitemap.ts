@@ -10,7 +10,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = await createClient();
 
   // Static pages with tiered priorities
-  const highPriority = new Set(["/compare", "/quiz", "/reviews", "/deals", "/share-trading", "/crypto", "/savings", "/super", "/cfd", "/term-deposits", "/robo-advisors", "/versus", "/how-to", "/invest"]);
+  const highPriority = new Set(["/compare", "/quiz", "/reviews", "/deals", "/share-trading", "/crypto", "/savings", "/super", "/cfd", "/term-deposits", "/robo-advisors", "/versus", "/how-to", "/invest", "/foreign-investment", "/etfs", "/insurance", "/tax", "/property"]);
   const medPriority = new Set(["/calculators", "/articles", "/scenarios", "/switch", "/stories", "/benchmark", "/health-scores", "/alerts", "/whats-new", "/costs", "/fee-impact", "/compound-interest-calculator", "/dividend-reinvestment-calculator", "/fire-calculator", "/property-vs-shares-calculator", "/super-contributions-calculator", "/tco-calculator", "/invest/mining", "/invest/buy-business", "/invest/farmland", "/invest/commercial-property", "/invest/renewable-energy", "/invest/startups", "/compare/non-residents", "/compare/money-transfer"]);
   // Everything else (about, how-we-earn, privacy, methodology, terms, etc.) → 0.4
 
@@ -34,7 +34,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/foreign-investment/united-states", "/foreign-investment/japan", "/foreign-investment/india",
     "/foreign-investment/malaysia", "/foreign-investment/new-zealand", "/foreign-investment/south-korea",
     "/foreign-investment/saudi-arabia",
-    "/compare/non-residents", "/compare/money-transfer",
+    "/compare/non-residents",
     "/compare/super", "/compare/etfs", "/compare/insurance",
     "/articles", "/scenarios", "/quiz", "/deals", "/stories", "/about", "/how-we-earn", "/privacy",
     "/methodology", "/how-we-verify", "/terms", "/switch", "/editorial-policy", "/benchmark",
@@ -64,9 +64,35 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/advisor-apply", "/switching-calculator", "/savings-calculator",
     "/share-trading", "/crypto", "/savings", "/super", "/cfd",
     "/how-to",
+    // Foreign investment hub
+    "/foreign-investment",
+    "/foreign-investment/property", "/foreign-investment/tax", "/foreign-investment/super",
+    "/foreign-investment/shares", "/foreign-investment/savings", "/foreign-investment/cfd",
+    "/foreign-investment/send-money-australia",
+    "/foreign-investment/hong-kong", "/foreign-investment/china",
+    "/foreign-investment/singapore", "/foreign-investment/united-kingdom",
+    "/foreign-investment/united-arab-emirates",
+    "/foreign-investment/guides",
+    "/foreign-investment/guides/buy-property-australia-foreigner",
+    "/foreign-investment/guides/stamp-duty-foreign-buyers",
+    "/foreign-investment/guides/property-ban-2025",
+    "/foreign-investment/guides/firb-application-guide",
+    "/foreign-investment/guides/non-resident-bank-account",
+    // Super sub-pages
+    "/super/contributions", "/super/consolidation", "/super/leaving-australia",
+    // ETF sub-pages
+    "/etfs/bonds", "/etfs/international", "/etfs/sectors",
+    // Insurance sub-pages
+    "/insurance/tpd", "/insurance/trauma",
+    // Tax sub-pages (not in newHubPages)
+    // Property sub-pages
+    "/property/finance",
     // Additional public pages
     "/tools", "/rates", "/properties", "/pro", "/jobs",
-    "/advertise", "/advertiser-terms",
+    "/advertise", "/advertiser-terms", "/accessibility",
+    "/fsg", "/legal", "/developer-terms", "/consultations",
+    "/courses", "/reports", "/portfolio", "/portfolio-calculator",
+    "/advisor-signup",
     // More advisor-guides
     "/advisor-guides/how-to-choose-real-estate-agent",
     // Calculators

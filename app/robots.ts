@@ -19,6 +19,8 @@ export default function robots(): MetadataRoute.Robots {
           "/unsubscribe/",
           "/dashboard/",
           "/shortlist?code=*",
+          "/review/",
+          "/invest/my-listings/",
         ],
       },
     ],

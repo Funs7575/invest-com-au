@@ -52,9 +52,7 @@ export const metadata: Metadata = {
     title: `${SITE_NAME} — Compare Platforms & Find Advisors`,
     description: SITE_DESCRIPTION,
   },
-  alternates: {
-    canonical: "/",
-  },
+  alternates: {},
   robots: {
     index: true,
     follow: true,
