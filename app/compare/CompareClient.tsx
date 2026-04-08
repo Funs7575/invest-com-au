@@ -778,13 +778,13 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
             {/* Fee & Rating */}
             <div className="mb-4 grid grid-cols-2 gap-3">
               <div>
-                <p className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-400 mb-2">Max ASX Fee</p>
+                <label className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-400 mb-2 block">Max ASX Fee</label>
                 <select value={maxFee} onChange={e => setMaxFee(Number(e.target.value))} className="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm">
                   {maxFeeOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
               </div>
               <div>
-                <p className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-400 mb-2">Min Rating</p>
+                <label className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-400 mb-2 block">Min Rating</label>
                 <select value={minRating} onChange={e => setMinRating(Number(e.target.value))} className="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm">
                   {minRatingOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>

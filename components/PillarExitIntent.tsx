@@ -236,6 +236,7 @@ export default function PillarExitIntent({ slug }: { slug: string }) {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  aria-label="Email address"
                   className="w-full px-4 py-3 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-slate-700/30 focus:border-slate-700"
                   autoFocus
                 />

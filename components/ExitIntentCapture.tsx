@@ -76,11 +76,19 @@ export default function ExitIntentCapture() {
     setShow(false);
   };
 
+  // Close on Escape key
+  useEffect(() => {
+    if (!show) return;
+    const handleKey = (e: KeyboardEvent) => { if (e.key === "Escape") dismiss(); };
+    document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
+  }, [show, dismiss]);
+
   if (!show || dismissed) return null;
 
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4 animate-in fade-in duration-300" onClick={dismiss}>
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden" onClick={e => e.stopPropagation()}>
+      <div role="dialog" aria-modal="true" aria-label="Fee comparison signup" className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden" onClick={e => e.stopPropagation()}>
         {submitted ? (
           <div className="p-8 text-center">
             <div className="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
@@ -104,6 +112,7 @@ export default function ExitIntentCapture() {
                   onChange={e => setEmail(e.target.value)}
                   onKeyDown={e => e.key === "Enter" && handleSubmit()}
                   placeholder="your@email.com"
+                  aria-label="Email address"
                   className="flex-1 px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400"
                   autoFocus
                 />

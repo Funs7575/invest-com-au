@@ -372,7 +372,7 @@ export default function RetirementCalculatorClient() {
                 <p className="text-sm font-bold text-slate-900 mb-1">Save your retirement projection</p>
                 <p className="text-xs text-slate-500 mb-3">Enter your email and we&apos;ll send you a detailed breakdown</p>
                 <div className="flex gap-2 max-w-xs mx-auto">
-                  <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" className="flex-1 px-3 py-2 text-sm border border-slate-200 rounded-lg" />
+                  <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" aria-label="Email address" className="flex-1 px-3 py-2 text-sm border border-slate-200 rounded-lg" />
                   <button onClick={handleEmailSubmit} className="px-4 py-2 bg-violet-600 text-white text-sm font-bold rounded-lg hover:bg-violet-700">Send</button>
                 </div>
               </div>
