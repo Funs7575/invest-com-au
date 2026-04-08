@@ -21,6 +21,7 @@ export default function robots(): MetadataRoute.Robots {
           "/shortlist?code=*",
           "/review/",
           "/invest/my-listings/",
+          "/go/",
         ],
       },
     ],

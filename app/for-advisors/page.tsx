@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+
+export const revalidate = 3600; // 1 hour
 import Icon from "@/components/Icon";
 
 export const metadata: Metadata = {

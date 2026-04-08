@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
 import { Suspense } from "react";
+
+export const revalidate = 3600; // 1 hour
 import BenchmarkClient from "./BenchmarkClient";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 

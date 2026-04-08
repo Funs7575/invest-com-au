@@ -77,7 +77,7 @@ export default async function ExpertArticlePage({ params }: Props) {
     return md
       .replace(/^### (.+)$/gm, '<h3 class="text-lg font-bold text-slate-900 mt-6 mb-2">$1</h3>')
       .replace(/^## (.+)$/gm, '<h2 class="text-xl font-bold text-slate-900 mt-8 mb-3">$1</h2>')
-      .replace(/^# (.+)$/gm, '<h1 class="text-2xl font-extrabold text-slate-900 mt-8 mb-3">$1</h1>')
+      .replace(/^# (.+)$/gm, '<h2 class="text-2xl font-extrabold text-slate-900 mt-8 mb-3">$1</h2>')
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
       .replace(/\*(.+?)\*/g, '<em>$1</em>')
       .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" class="text-violet-600 hover:text-violet-800 underline">$1</a>')

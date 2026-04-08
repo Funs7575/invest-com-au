@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import type { QuarterlyReport } from "@/lib/types";
 import ReportsClient from "./ReportsClient";
+
+export const revalidate = 3600; // 1 hour
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 
 export const metadata = {
