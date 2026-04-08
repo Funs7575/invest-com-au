@@ -12,7 +12,7 @@ import { SITE_URL } from "@/lib/seo";
  * the redirect can be inverted and /property/foreign-investment can redirect here.
  */
 export const metadata: Metadata = {
-  title: "Foreign Property Investment in Australia — FIRB Guide — Invest.com.au",
+  title: "Foreign Property Investment in Australia — FIRB Guide",
   description:
     "FIRB approval process, eligible property types, state stamp duty surcharges (7–8%), application fees, and everything foreign investors need to know before buying Australian property. Updated March 2026.",
   alternates: { canonical: `${SITE_URL}/property/foreign-investment` },

@@ -20,7 +20,7 @@ import ForeignInvestmentNav from "../ForeignInvestmentNav";
 import SectionHeading from "@/components/SectionHeading";
 
 export const metadata: Metadata = {
-  title: "Australian Tax for Non-Residents & Foreign Investors — 2026 Guide — Invest.com.au",
+  title: "Australian Tax for Non-Residents & Foreign Investors — 2026 Guide",
   description:
     "Complete Australian tax guide for non-residents and foreign investors. Withholding tax rates, Double Tax Agreements (DTA) by country, CGT rules, residency tests, and the key differences vs resident tax rates. Updated March 2026.",
   openGraph: {

@@ -7,7 +7,7 @@ import SectionHeading from "@/components/SectionHeading";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: `Invest in Australian Farmland & Agriculture (${CURRENT_YEAR}) — Invest.com.au`,
+  title: `Invest in Australian Farmland & Agriculture (${CURRENT_YEAR})`,
   description:
     "Guide to farmland investment in Australia. Cropping, grazing, dairy, horticulture, and water rights. FIRB rules for foreign buyers, typical returns, and state-by-state overview.",
   alternates: { canonical: `${SITE_URL}/invest/farmland` },

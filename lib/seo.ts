@@ -29,7 +29,9 @@ export const ORGANIZATION_JSONLD = {
   url: SITE_URL,
   logo: {
     "@type": "ImageObject" as const,
-    url: `${SITE_URL}/icon`,
+    url: `${SITE_URL}/icon-512.png`,
+    width: 512,
+    height: 512,
   },
   foundingDate: "2024",
   description: SITE_DESCRIPTION,

@@ -9,7 +9,7 @@ import SectionHeading from "@/components/SectionHeading";
 import { AFFILIATE_REL } from "@/lib/tracking";
 
 export const metadata: Metadata = {
-  title: "Investing in Australia from South Korea (2026) — FIRB, Tax & Broker Guide — Invest.com.au",
+  title: "Investing in Australia from South Korea (2026) — FIRB, Tax & Broker Guide",
   description:
     "South Korean investors in Australia: KAFTA investment rules, Korea-Australia DTA (15% dividend WHT), lithium and critical minerals, FIRB thresholds, ASX brokers for Korean residents. Updated 2026.",
   openGraph: {

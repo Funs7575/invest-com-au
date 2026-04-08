@@ -8,7 +8,7 @@ import ForeignInvestmentNav from "../ForeignInvestmentNav";
 import SectionHeading from "@/components/SectionHeading";
 
 export const metadata: Metadata = {
-  title: "Savings Accounts for Non-Residents in Australia — 2026 Guide — Invest.com.au",
+  title: "Savings Accounts for Non-Residents in Australia — 2026 Guide",
   description:
     "Can non-residents open Australian savings accounts? 10% withholding tax on interest, $250k government guarantee, which banks accept non-residents, and term deposits for foreign investors. Updated March 2026.",
   openGraph: {

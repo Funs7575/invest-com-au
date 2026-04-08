@@ -23,7 +23,7 @@ export async function generateMetadata({
     .eq("vertical", "infrastructure")
     .single();
 
-  if (!data) return { title: "Infrastructure Investment | Invest.com.au" };
+  if (!data) return { title: "Infrastructure Investment" };
 
   const title = `${data.title} — Infrastructure Investment ${data.location_state ? `in ${data.location_state}` : "in Australia"} (${CURRENT_YEAR})`;
   return {

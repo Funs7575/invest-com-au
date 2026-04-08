@@ -7,7 +7,7 @@ import SectionHeading from "@/components/SectionHeading";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: `Invest in Australian Mining (${CURRENT_YEAR}) — Invest.com.au`,
+  title: `Invest in Australian Mining (${CURRENT_YEAR})`,
   description:
     "Complete guide to mining investment in Australia. Lithium, gold, iron ore, copper, and rare earths. ASX miners, ETFs, direct project investment, and FIRB rules for foreign investors.",
   alternates: { canonical: `${SITE_URL}/invest/mining` },

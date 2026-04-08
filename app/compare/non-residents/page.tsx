@@ -10,11 +10,11 @@ import { AFFILIATE_REL } from "@/lib/tracking";
 import CompareNav from "../CompareNav";
 
 export const metadata: Metadata = {
-  title: `Best ASX Brokers That Accept Non-Residents (2026) — Invest.com.au`,
+  title: "Best ASX Brokers That Accept Non-Residents (2026)",
   description:
     "Compare ASX share brokers that accept non-Australian residents. Most Australian brokers require a local address — these don't. Includes fees, ratings, non-resident notes, and affiliate links. " + UPDATED_LABEL,
   openGraph: {
-    title: "Best ASX Brokers for Non-Residents — Invest.com.au",
+    title: "Best ASX Brokers for Non-Residents",
     description:
       "Which Australian share brokers accept non-residents? Compare fees, ratings, and non-resident eligibility. Most brokers require an Australian address — these don't.",
     url: `${SITE_URL}/compare/non-residents`,

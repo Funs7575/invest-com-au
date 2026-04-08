@@ -8,7 +8,7 @@ import ForeignInvestmentNav from "../ForeignInvestmentNav";
 import SectionHeading from "@/components/SectionHeading";
 
 export const metadata: Metadata = {
-  title: "Investing in Australia from Hong Kong — Tax Rates, Brokers & Property 2026 — Invest.com.au",
+  title: "Investing in Australia from Hong Kong — Tax Rates, Brokers & Property 2026",
   description:
     "Hong Kong residents investing in Australia: DTA dividend WHT 15%, FIRB property rules, established dwelling ban 2025–2027, ASX broker eligibility, and withholding tax rates. Updated March 2026.",
   openGraph: {

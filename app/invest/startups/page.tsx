@@ -7,7 +7,7 @@ import SectionHeading from "@/components/SectionHeading";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: `Invest in Australian Startups & Tech (${CURRENT_YEAR}) — Invest.com.au`,
+  title: `Invest in Australian Startups & Tech (${CURRENT_YEAR})`,
   description:
     "Guide to startup investment in Australia. ESIC tax incentives, angel investing, VC funds, crowdfunding, and the Global Talent Visa. Sydney and Melbourne ecosystems.",
   alternates: { canonical: `${SITE_URL}/invest/startups` },

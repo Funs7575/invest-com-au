@@ -3,11 +3,11 @@ import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Foreign Investment Guides — How to Invest in Australia from Overseas (2026) — Invest.com.au",
+  title: "Foreign Investment Guides — How to Invest in Australia from Overseas (2026)",
   description:
     "Complete guides for foreign investors in Australia. How to buy property, FIRB applications, stamp duty surcharges, bank accounts, broker access, and the 2025–2027 established dwelling ban.",
   openGraph: {
-    title: "Foreign Investment Guides — Invest.com.au",
+    title: "Foreign Investment Guides",
     description:
       "Step-by-step guides for international investors buying property, shares, and other assets in Australia.",
     url: `${SITE_URL}/foreign-investment/guides`,

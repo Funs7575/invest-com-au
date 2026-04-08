@@ -6,7 +6,7 @@ import ForeignInvestmentNav from "../ForeignInvestmentNav";
 import SectionHeading from "@/components/SectionHeading";
 
 export const metadata: Metadata = {
-  title: "Send Money to Australia — Best FX Transfer Options for Foreign Investors (2026) — Invest.com.au",
+  title: "Send Money to Australia — Best FX Transfer Options for Foreign Investors (2026)",
   description:
     "Compare the best ways to send money to Australia as a foreign investor. Wise vs OFX vs WorldFirst vs bank transfer — exchange rates, fees, and which to use for property settlement vs share investing. Updated March 2026.",
   openGraph: {

@@ -23,7 +23,7 @@ export async function generateMetadata({
     .eq("vertical", "commercial_property")
     .single();
 
-  if (!data) return { title: "Commercial Property | Invest.com.au" };
+  if (!data) return { title: "Commercial Property" };
   const yld = (data.key_metrics as Record<string, unknown>)?.yield_percent;
   const location = [data.location_city, data.location_state].filter(Boolean).join(", ");
   const title = `${data.title}${yld ? ` — ${yld}% Yield` : ""}${location ? ` in ${location}` : ""} (${CURRENT_YEAR})`;

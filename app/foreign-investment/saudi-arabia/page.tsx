@@ -9,7 +9,7 @@ import SectionHeading from "@/components/SectionHeading";
 import { AFFILIATE_REL } from "@/lib/tracking";
 
 export const metadata: Metadata = {
-  title: "Saudi Arabian Investors in Australia (2026) — FIRB, Tax & Investment Guide — Invest.com.au",
+  title: "Saudi Arabian Investors in Australia (2026) — FIRB, Tax & Investment Guide",
   description:
     "Saudi investors in Australia: no DTA (standard 30% WHT on unfranked dividends), FIRB rules, agricultural land opportunities, critical minerals, Islamic finance options. Updated 2026.",
   openGraph: {

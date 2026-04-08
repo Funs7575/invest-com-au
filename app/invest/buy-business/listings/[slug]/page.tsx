@@ -23,7 +23,7 @@ export async function generateMetadata({
     .eq("vertical", "business")
     .single();
 
-  if (!data) return { title: "Business for Sale | Invest.com.au" };
+  if (!data) return { title: "Business for Sale" };
 
   const title = `${data.title} — Business for Sale ${data.location_state ? `in ${data.location_state}` : "in Australia"} (${CURRENT_YEAR})`;
   return {

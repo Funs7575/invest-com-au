@@ -6,7 +6,7 @@ import { FIRB_DISCLAIMER, FOREIGN_BUYER_STAMP_DUTY_WARNING } from "@/lib/complia
 import SectionHeading from "@/components/SectionHeading";
 
 export const metadata: Metadata = {
-  title: "Foreign Buyer Stamp Duty by State (2026) — Invest.com.au",
+  title: "Foreign Buyer Stamp Duty by State (2026)",
   description:
     "Foreign buyer stamp duty surcharges for every Australian state and territory in 2026. NSW, VIC, QLD, WA, SA, TAS and ACT rates, land tax surcharges, and cost examples for $500K, $1M and $2M purchases.",
   openGraph: {

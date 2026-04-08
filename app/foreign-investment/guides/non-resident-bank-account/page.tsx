@@ -5,7 +5,7 @@ import { FOREIGN_INVESTOR_GENERAL_DISCLAIMER } from "@/lib/compliance";
 import SectionHeading from "@/components/SectionHeading";
 
 export const metadata: Metadata = {
-  title: "Can Non-Residents Open an Australian Bank Account? (2026 Guide) — Invest.com.au",
+  title: "Can Non-Residents Open an Australian Bank Account? (2026 Guide)",
   description:
     "Yes — non-residents can open Australian bank accounts remotely. Which major banks accept non-residents, what documents you need, how to open online without visiting Australia, and alternatives like Wise and OFX.",
   openGraph: {

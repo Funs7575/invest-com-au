@@ -9,7 +9,7 @@ import SectionHeading from "@/components/SectionHeading";
 import { AFFILIATE_REL } from "@/lib/tracking";
 
 export const metadata: Metadata = {
-  title: "Investing in Australia from Japan (2026) — Tax, FIRB & Broker Guide — Invest.com.au",
+  title: "Investing in Australia from Japan (2026) — Tax, FIRB & Broker Guide",
   description:
     "Japanese investors in Australia: DTA dividend WHT 10-15%, FIRB mining and property rules, agricultural land thresholds, ASX brokers that accept Japanese residents. Updated 2026.",
   openGraph: {

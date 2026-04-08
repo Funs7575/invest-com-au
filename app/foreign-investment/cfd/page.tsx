@@ -13,7 +13,7 @@ import ForeignInvestmentNav from "../ForeignInvestmentNav";
 import SectionHeading from "@/components/SectionHeading";
 
 export const metadata: Metadata = {
-  title: "CFD & Forex Trading for Non-Residents in Australia — 2026 Guide — Invest.com.au",
+  title: "CFD & Forex Trading for Non-Residents in Australia — 2026 Guide",
   description:
     "Can non-residents trade CFDs and forex via ASIC-regulated brokers? Leverage limits, tax treatment of CFD gains, negative balance protection, and which brokers accept non-residents. Updated March 2026.",
   openGraph: {

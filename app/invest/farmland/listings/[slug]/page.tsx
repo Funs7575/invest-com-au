@@ -23,7 +23,7 @@ export async function generateMetadata({
     .eq("vertical", "farmland")
     .single();
 
-  if (!data) return { title: "Farmland Listing | Invest.com.au" };
+  if (!data) return { title: "Farmland Listing" };
   const ha = (data.key_metrics as Record<string, unknown>)?.hectares;
   const title = `${data.title}${ha ? ` — ${ha} ha` : ""} Agricultural Property (${CURRENT_YEAR})`;
   return {
