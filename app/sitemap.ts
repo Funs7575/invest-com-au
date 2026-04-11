@@ -503,10 +503,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // Dynamic suburb guide pages
-  const { data: suburbSlugs } = await supabase
-    .from("suburb_data")
-    .select("slug")
-    .not("slug", "is", null);
+  const { data: suburbSlugs } = supabase
+    ? await supabase.from("suburb_data").select("slug").not("slug", "is", null)
+    : { data: null };
 
   const suburbGuidePages = (suburbSlugs || []).map((s) => ({
     url: `${baseUrl}/property/suburbs/${s.slug}`,
@@ -563,9 +562,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ].map((p) => ({ ...p, lastModified: new Date(), changeFrequency: "weekly" as const }));
 
   // Newsletter archive & edition pages
-  const { data: newsletterEditions } = await supabase
-    .from("newsletter_editions")
-    .select("edition_date, created_at");
+  const { data: newsletterEditions } = supabase
+    ? await supabase.from("newsletter_editions").select("edition_date, created_at")
+    : { data: null };
 
   const newsletterArchivePage = {
     url: `${baseUrl}/newsletter`,
