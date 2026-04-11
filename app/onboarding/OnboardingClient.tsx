@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Icon from "@/components/Icon";
 import { useUser } from "@/lib/hooks/useUser";
@@ -185,7 +185,6 @@ export default function OnboardingClient() {
   const [submitting, setSubmitting] = useState(false);
   const [direction, setDirection] = useState<"forward" | "back">("forward");
   const [animating, setAnimating] = useState(false);
-  const stepRef = useRef<HTMLDivElement>(null);
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -310,7 +309,7 @@ export default function OnboardingClient() {
         <ProgressBar current={step} />
 
         {/* Step content */}
-        <div ref={stepRef} style={getTransitionStyle()}>
+        <div style={getTransitionStyle()}>
           {/* ── Step 1: Interests ── */}
           {step === 1 && (
             <div>
