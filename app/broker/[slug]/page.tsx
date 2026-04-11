@@ -107,7 +107,7 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
       .limit(3),
     supabase
       .from('user_reviews')
-      .select('id, broker_id, broker_slug, display_name, rating, title, body, pros, cons, status, created_at')
+      .select('id, broker_id, broker_slug, display_name, rating, title, body, pros, cons, status, is_verified_client, verified_via, created_at')
       .eq('broker_slug', slug)
       .eq('status', 'approved')
       .order('created_at', { ascending: false })

@@ -8,6 +8,7 @@ import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 import Icon from "@/components/Icon";
 import BookingWidget from "@/components/BookingWidget";
 import AdvisorReviewForm from "@/components/AdvisorReviewForm";
+import VerifiedClientBadge from "@/components/VerifiedClientBadge";
 import { getStoredUtm } from "@/components/UtmCapture";
 import { trackEvent } from "@/lib/tracking";
 import { getVerificationConfig, getVerificationLinks } from "@/lib/advisor-verification";
@@ -849,6 +850,9 @@ export default function AdvisorProfileClient({
                               {r.verified && (
                                 <span className="text-xs font-semibold px-2 py-0.5 bg-blue-50 text-blue-600 rounded-full">Verified</span>
                               )}
+                              <VerifiedClientBadge
+                                isVerified={!!r.is_verified_client}
+                              />
                               {r.used_services && (
                                 <span className="text-xs font-semibold px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded-full">Used Services</span>
                               )}

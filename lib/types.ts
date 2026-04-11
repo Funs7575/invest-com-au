@@ -320,6 +320,9 @@ export interface UserReview {
   verification_token?: string;
   verified_at?: string | null;
   moderation_note?: string | null;
+  is_verified_client?: boolean;
+  verified_via?: string | null;
+  verified_client_at?: string | null;
   created_at: string;
   updated_at?: string;
 }
@@ -558,6 +561,23 @@ export interface RegulatoryAlert {
   published_at?: string;
   created_at: string;
   updated_at: string;
+  affected_broker_slugs?: string[];
+  affected_platform_types?: string[];
+  change_category?: 'fee_structure' | 'licensing' | 'reporting' | 'consumer_protection' | 'product_intervention' | 'tax' | 'super' | 'other';
+  user_action_required?: boolean;
+  compliance_deadline?: string;
+  views_count?: number;
+}
+
+export interface RegulatoryBrokerImpact {
+  id: number;
+  alert_id: number;
+  broker_slug: string;
+  impact_level: 'none' | 'low' | 'medium' | 'high' | 'critical';
+  impact_description: string;
+  estimated_fee_change?: number;
+  broker_response?: string;
+  created_at: string;
 }
 
 // ─── Feature 10: Quarterly Industry Reports ───
@@ -1098,6 +1118,9 @@ export interface ProfessionalReview {
   verified: boolean;
   status: 'pending' | 'approved' | 'rejected';
   moderation_notes?: string;
+  is_verified_client?: boolean;
+  verified_client_at?: string | null;
+  lead_id?: number | null;
   created_at: string;
   updated_at: string;
 }

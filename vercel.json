@@ -107,6 +107,14 @@
     {
       "path": "/api/cron/fee-digest",
       "schedule": "0 9 * * 1"
+    },
+    {
+      "path": "/api/cron/price-drop-alerts",
+      "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/cron/verify-review-clients",
+      "schedule": "0 4 * * *"
     }
   ]
 }
