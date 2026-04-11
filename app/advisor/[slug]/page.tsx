@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { createStaticClient } from "@/lib/supabase/static";
 import type { Professional } from "@/lib/types";
 import type { Metadata } from "next";
 import AdvisorProfileClient from "./AdvisorProfileClient";
@@ -12,7 +13,7 @@ export async function generateStaticParams() {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return [];
   }
-  const supabase = await createClient();
+  const supabase = createStaticClient();
   const { data } = await supabase.from("professionals").select("slug").eq("status", "active");
   return (data || []).map((p) => ({ slug: p.slug }));
 }

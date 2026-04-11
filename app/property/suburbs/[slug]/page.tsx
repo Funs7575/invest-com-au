@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { createStaticClient } from "@/lib/supabase/static";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import { SUBURB_DATA_DISCLAIMER } from "@/lib/compliance";
 import Icon from "@/components/Icon";
@@ -49,7 +50,7 @@ export async function generateStaticParams() {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return [];
   }
-  const supabase = await createClient();
+  const supabase = createStaticClient();
   const { data } = await supabase
     .from("suburb_data")
     .select("slug")
