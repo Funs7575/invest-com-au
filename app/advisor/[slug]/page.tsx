@@ -9,6 +9,9 @@ import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 export const revalidate = 1800;
 
 export async function generateStaticParams() {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return [];
+  }
   const supabase = await createClient();
   const { data } = await supabase.from("professionals").select("slug").eq("status", "active");
   return (data || []).map((p) => ({ slug: p.slug }));

@@ -20,6 +20,9 @@ import AskQuestionForm from "@/components/AskQuestionForm";
 export const revalidate = 3600; // ISR: revalidate every hour
 
 export async function generateStaticParams() {
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return [];
+  }
   const supabase = await createClient();
   const { data } = await supabase.from("brokers").select("slug").eq("status", "active");
   return (data || []).map((b) => ({ slug: b.slug }));
