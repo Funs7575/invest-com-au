@@ -8,6 +8,7 @@ import { SUBURB_DATA_DISCLAIMER } from "@/lib/compliance";
 
 interface SuburbData {
   id: number;
+  slug: string | null;
   suburb: string;
   state: string;
   postcode: string | null;
@@ -162,7 +163,13 @@ export default function SuburbsClient() {
                           onClick={() => setSelected(selected?.id === s.id ? null : s)}
                         >
                           <td className="px-4 py-3">
-                            <span className="font-semibold text-slate-900">{s.suburb}</span>
+                            {s.slug ? (
+                              <Link href={`/property/suburbs/${s.slug}`} className="font-semibold text-slate-900 hover:text-amber-600 transition-colors" onClick={(e) => e.stopPropagation()}>
+                                {s.suburb}
+                              </Link>
+                            ) : (
+                              <span className="font-semibold text-slate-900">{s.suburb}</span>
+                            )}
                             <span className="text-xs text-slate-400 ml-1">{s.state}</span>
                           </td>
                           <td className="text-right px-4 py-3 text-slate-700 hidden md:table-cell">{formatPrice(s.median_price_house)}</td>

@@ -80,8 +80,33 @@ export default function SwitchingCalculatorClient({ brokers, inline }: { brokers
     await fetch("/api/email-capture", { method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: email.trim(), source: "switching_calculator", name: "", context: { current_broker: currentBroker || null, trades_per_year: tradesPerYear, avg_trade_size: avgTradeSize, us_allocation_pct: usAllocation, potential_savings: savings > 0 ? Math.round(savings) : 0 }, ...getStoredUtm() })
     }).catch(() => {});
+    // Send personalized report email
+    await fetch("/api/send-switching-report", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: email.trim(), currentBroker: brokers.find(b => b.slug === currentBroker)?.name || "Unknown", currentBrokerSlug: currentBroker, cheapestBroker: cheapest?.broker.name || "", cheapestBrokerSlug: cheapest?.broker.slug || "", currentCost: Math.round(currentCost), cheapestCost: Math.round(cheapest?.cost || 0), savings: Math.round(savings), tradesPerYear, avgTradeSize, usAllocation })
+    }).catch(() => {});
     setEmailCaptured(true);
   };
+
+  // Cost breakdown for current vs cheapest broker
+  const currentBrokerObj = brokers.find(b => b.slug === currentBroker);
+  const costBreakdown = useMemo(() => {
+    if (!currentBrokerObj || !cheapest) return null;
+    const calc = (broker: Broker) => {
+      const { flat: asxFlat, pct: asxPct } = parseFee(broker.asx_fee);
+      const { flat: usFlat, pct: usPct } = parseFee(broker.us_fee);
+      const fxRate = broker.fx_rate ? broker.fx_rate / 100 : 0.007;
+      const inactivity = broker.inactivity_fee ? parseFloat(broker.inactivity_fee.replace(/[^0-9.]/g, "")) || 0 : 0;
+      const asxTrades = Math.round(tradesPerYear * (1 - usAllocation / 100));
+      const usTrades = Math.round(tradesPerYear * (usAllocation / 100));
+      return {
+        asx: asxTrades * Math.max(asxFlat, asxPct * avgTradeSize),
+        us: usTrades * Math.max(usFlat, usPct * avgTradeSize),
+        fx: usTrades * avgTradeSize * fxRate,
+        inactivity,
+      };
+    };
+    return { current: calc(currentBrokerObj), cheapest: calc(cheapest.broker) };
+  }, [currentBrokerObj, cheapest, tradesPerYear, avgTradeSize, usAllocation]);
 
   return (
     <div className={inline ? "" : "py-5 md:py-12"}>
@@ -151,6 +176,61 @@ export default function SwitchingCalculatorClient({ brokers, inline }: { brokers
                 <p className="text-4xl md:text-5xl font-extrabold text-emerald-700 mb-1">${Math.round(savings).toLocaleString()}<span className="text-lg">/year</span></p>
                 <p className="text-sm text-emerald-600">by switching from {brokers.find(b => b.slug === currentBroker)?.name} to {cheapest?.broker.name}</p>
                 <p className="text-xs text-slate-400 mt-2">Based on {tradesPerYear} trades/year at ${avgTradeSize.toLocaleString()} avg with {usAllocation}% US allocation</p>
+              </div>
+            )}
+
+            {/* Cost Breakdown Report */}
+            {currentBroker && currentBroker !== "_other" && costBreakdown && savings > 0 && (
+              <div className="bg-white border border-slate-200 rounded-xl p-4 md:p-6 print:border-0 print:p-0">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-sm font-bold text-slate-900">Your Switching Report</h2>
+                  <button onClick={() => window.print()} className="text-xs font-semibold text-slate-500 hover:text-slate-700 flex items-center gap-1 print:hidden">
+                    <Icon name="printer" size={14} /> Print Report
+                  </button>
+                </div>
+
+                {/* Side-by-side breakdown */}
+                <div className="grid grid-cols-2 gap-3 mb-4">
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                    <p className="text-[0.6rem] font-bold text-red-500 uppercase tracking-wider mb-1">Current: {currentBrokerObj?.name}</p>
+                    <p className="text-lg font-extrabold text-red-700">${Math.round(currentCost).toLocaleString()}<span className="text-xs font-normal">/yr</span></p>
+                    <div className="mt-2 space-y-1 text-[0.65rem] text-red-600">
+                      <div className="flex justify-between"><span>ASX trades</span><span>${Math.round(costBreakdown.current.asx).toLocaleString()}</span></div>
+                      <div className="flex justify-between"><span>US trades</span><span>${Math.round(costBreakdown.current.us).toLocaleString()}</span></div>
+                      <div className="flex justify-between"><span>FX conversion</span><span>${Math.round(costBreakdown.current.fx).toLocaleString()}</span></div>
+                      {costBreakdown.current.inactivity > 0 && <div className="flex justify-between"><span>Inactivity fee</span><span>${Math.round(costBreakdown.current.inactivity)}</span></div>}
+                    </div>
+                  </div>
+                  <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3">
+                    <p className="text-[0.6rem] font-bold text-emerald-500 uppercase tracking-wider mb-1">Switch to: {cheapest?.broker.name}</p>
+                    <p className="text-lg font-extrabold text-emerald-700">${Math.round(cheapest?.cost || 0).toLocaleString()}<span className="text-xs font-normal">/yr</span></p>
+                    <div className="mt-2 space-y-1 text-[0.65rem] text-emerald-600">
+                      <div className="flex justify-between"><span>ASX trades</span><span>${Math.round(costBreakdown.cheapest.asx).toLocaleString()}</span></div>
+                      <div className="flex justify-between"><span>US trades</span><span>${Math.round(costBreakdown.cheapest.us).toLocaleString()}</span></div>
+                      <div className="flex justify-between"><span>FX conversion</span><span>${Math.round(costBreakdown.cheapest.fx).toLocaleString()}</span></div>
+                      {costBreakdown.cheapest.inactivity > 0 && <div className="flex justify-between"><span>Inactivity fee</span><span>${Math.round(costBreakdown.cheapest.inactivity)}</span></div>}
+                    </div>
+                  </div>
+                </div>
+
+                {/* 5-Year Projection */}
+                <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 mb-3">
+                  <p className="text-xs font-bold text-slate-700 mb-2">Projected Savings Over Time</p>
+                  <div className="grid grid-cols-4 gap-2 text-center">
+                    {[1, 2, 3, 5].map(y => (
+                      <div key={y}>
+                        <p className="text-[0.6rem] text-slate-500">{y} Year{y > 1 ? "s" : ""}</p>
+                        <p className="text-sm font-extrabold text-emerald-700">${(Math.round(savings) * y).toLocaleString()}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Transfer info */}
+                <div className="text-[0.65rem] text-slate-500 space-y-1">
+                  <p><strong className="text-slate-700">How to switch:</strong> {cheapest?.broker.chess_sponsored ? "Both brokers use CHESS sponsorship — your HIN transfers directly. Shares stay in your name. Takes 3-5 business days." : "Check if your new broker supports CHESS transfer or if you'll need to sell and rebuy."}</p>
+                  <p>Read our <a href="/switch" className="text-violet-600 hover:underline">complete switching guide</a> for step-by-step instructions.</p>
+                </div>
               </div>
             )}
 

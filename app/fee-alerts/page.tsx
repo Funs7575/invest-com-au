@@ -15,9 +15,23 @@ type FeeChange = {
   changed_at: string;
 };
 
+type BrokerOption = {
+  slug: string;
+  name: string;
+};
+
+type AlertType = "any" | "increase" | "decrease";
+type Frequency = "instant" | "weekly";
+
 const FIELD_LABELS: Record<string, string> = {
   asx_fee: "ASX Brokerage", asx_fee_value: "ASX Fee ($)", us_fee: "US Brokerage",
   us_fee_value: "US Fee ($)", fx_rate: "FX Rate (%)", inactivity_fee: "Inactivity Fee",
+};
+
+const ALERT_TYPE_LABELS: Record<AlertType, string> = {
+  any: "All changes",
+  increase: "Fee increases only",
+  decrease: "Fee decreases only",
 };
 
 function ChangeDirection({ oldVal, newVal }: { oldVal: string; newVal: string }) {
@@ -32,6 +46,11 @@ function ChangeDirection({ oldVal, newVal }: { oldVal: string; newVal: string })
 export default function FeeAlertsPage() {
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
+  const [selectedBrokers, setSelectedBrokers] = useState<string[]>([]);
+  const [alertType, setAlertType] = useState<AlertType>("any");
+  const [frequency, setFrequency] = useState<Frequency>("instant");
+  const [brokerOptions, setBrokerOptions] = useState<BrokerOption[]>([]);
+  const [showBrokerDropdown, setShowBrokerDropdown] = useState(false);
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [changes, setChanges] = useState<FeeChange[]>([]);
   const [verified, setVerified] = useState(false);
@@ -59,13 +78,30 @@ export default function FeeAlertsPage() {
       .limit(20)
       .then(({ data }) => setChanges((data as FeeChange[]) || []));
 
-    // Load broker names
+    // Load broker names (for change list display)
     supabase.from("brokers").select("slug, name").eq("status", "active").then(({ data }) => {
       const map: Record<string, string> = {};
       (data || []).forEach((b) => { map[b.slug] = b.name; });
       setBrokerNames(map);
     });
+
+    // Load top 20 brokers by rating for the multi-select
+    supabase
+      .from("brokers")
+      .select("slug, name")
+      .eq("status", "active")
+      .order("rating", { ascending: false })
+      .limit(20)
+      .then(({ data }) => {
+        setBrokerOptions((data as BrokerOption[]) || []);
+      });
   }, [searchParams]);
+
+  const toggleBroker = (slug: string) => {
+    setSelectedBrokers((prev) =>
+      prev.includes(slug) ? prev.filter((s) => s !== slug) : [...prev, slug]
+    );
+  };
 
   const subscribe = async () => {
     setStatus("sending");
@@ -73,7 +109,12 @@ export default function FeeAlertsPage() {
       const res = await fetch("/api/fee-alerts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({
+          email,
+          brokerSlugs: selectedBrokers.length > 0 ? selectedBrokers : [],
+          alertType,
+          frequency,
+        }),
       });
       setStatus(res.ok ? "sent" : "error");
     } catch {
@@ -136,7 +177,9 @@ export default function FeeAlertsPage() {
                   <h2 className="text-lg font-bold text-white">Subscribe to Fee Alerts</h2>
                 </div>
                 <p className="text-sm text-slate-400 mb-4">Free. Instant notifications. Unsubscribe anytime.</p>
-                <div className="flex gap-2">
+
+                {/* Email input */}
+                <div className="flex gap-2 mb-4">
                   <input
                     type="email"
                     value={email}
@@ -145,14 +188,100 @@ export default function FeeAlertsPage() {
                     className="flex-1 px-3 py-2.5 bg-white/10 border border-white/20 rounded-lg text-white text-sm placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-400"
                     onKeyDown={(e) => e.key === "Enter" && subscribe()}
                   />
-                  <button
-                    onClick={subscribe}
-                    disabled={status === "sending" || !email}
-                    className="px-5 py-2.5 bg-amber-500 text-white font-semibold rounded-lg text-sm hover:bg-amber-600 disabled:opacity-50 transition-colors shrink-0"
-                  >
-                    {status === "sending" ? "..." : "Subscribe"}
-                  </button>
                 </div>
+
+                {/* Broker multi-select */}
+                <div className="mb-4">
+                  <label className="block text-xs font-semibold text-slate-300 mb-2">
+                    Brokers to watch <span className="text-slate-500 font-normal">(leave empty for all)</span>
+                  </label>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() => setShowBrokerDropdown(!showBrokerDropdown)}
+                      className="w-full px-3 py-2.5 bg-white/10 border border-white/20 rounded-lg text-sm text-left focus:outline-none focus:ring-2 focus:ring-amber-400 flex items-center justify-between"
+                    >
+                      <span className={selectedBrokers.length > 0 ? "text-white" : "text-slate-500"}>
+                        {selectedBrokers.length > 0
+                          ? `${selectedBrokers.length} broker${selectedBrokers.length === 1 ? "" : "s"} selected`
+                          : "All brokers"}
+                      </span>
+                      <Icon name="chevron-down" size={16} className="text-slate-400" />
+                    </button>
+                    {showBrokerDropdown && (
+                      <div className="absolute z-10 top-full left-0 right-0 mt-1 bg-slate-800 border border-slate-600 rounded-lg max-h-48 overflow-y-auto shadow-lg">
+                        {brokerOptions.map((b) => (
+                          <label
+                            key={b.slug}
+                            className="flex items-center gap-2 px-3 py-2 hover:bg-white/5 cursor-pointer"
+                          >
+                            <input
+                              type="checkbox"
+                              checked={selectedBrokers.includes(b.slug)}
+                              onChange={() => toggleBroker(b.slug)}
+                              className="rounded border-slate-500 bg-white/10 text-amber-500 focus:ring-amber-400 focus:ring-offset-0"
+                            />
+                            <span className="text-sm text-slate-200">{b.name}</span>
+                          </label>
+                        ))}
+                        {brokerOptions.length === 0 && (
+                          <p className="px-3 py-2 text-xs text-slate-500">Loading brokers...</p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Frequency toggle */}
+                <div className="mb-4">
+                  <label className="block text-xs font-semibold text-slate-300 mb-2">Frequency</label>
+                  <div className="flex gap-2">
+                    {(["instant", "weekly"] as Frequency[]).map((f) => (
+                      <button
+                        key={f}
+                        type="button"
+                        onClick={() => setFrequency(f)}
+                        className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                          frequency === f
+                            ? "bg-amber-500 text-white"
+                            : "bg-white/10 text-slate-400 hover:bg-white/15"
+                        }`}
+                      >
+                        {f === "instant" ? "Instant" : "Weekly Digest"}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Alert type */}
+                <div className="mb-5">
+                  <label className="block text-xs font-semibold text-slate-300 mb-2">Alert type</label>
+                  <div className="flex gap-2 flex-wrap">
+                    {(Object.entries(ALERT_TYPE_LABELS) as [AlertType, string][]).map(([value, label]) => (
+                      <button
+                        key={value}
+                        type="button"
+                        onClick={() => setAlertType(value)}
+                        className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                          alertType === value
+                            ? "bg-amber-500 text-white"
+                            : "bg-white/10 text-slate-400 hover:bg-white/15"
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Subscribe button */}
+                <button
+                  onClick={subscribe}
+                  disabled={status === "sending" || !email}
+                  className="w-full px-5 py-2.5 bg-amber-500 text-white font-semibold rounded-lg text-sm hover:bg-amber-600 disabled:opacity-50 transition-colors"
+                >
+                  {status === "sending" ? "Subscribing..." : "Subscribe to Alerts"}
+                </button>
                 {status === "error" && <p className="text-xs text-red-400 mt-2">Something went wrong. Please try again.</p>}
               </>
             )}

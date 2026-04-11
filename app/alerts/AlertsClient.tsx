@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import type { RegulatoryAlert } from "@/lib/types";
 
 const ALERT_TYPES = [
@@ -11,6 +12,17 @@ const ALERT_TYPES = [
   { key: "super", label: "Super" },
   { key: "reporting", label: "Reporting" },
 ] as const;
+
+const CHANGE_CATEGORIES: Record<string, string> = {
+  fee_structure: "Fee Structure",
+  licensing: "Licensing",
+  reporting: "Reporting",
+  consumer_protection: "Consumer Protection",
+  product_intervention: "Product Intervention",
+  tax: "Tax",
+  super: "Superannuation",
+  other: "Other",
+};
 
 const SEVERITY_STYLES: Record<string, { bg: string; text: string; border: string }> = {
   info: { bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-200" },
@@ -26,10 +38,15 @@ const TYPE_STYLES: Record<string, string> = {
 };
 
 export default function AlertsClient({ alerts }: { alerts: RegulatoryAlert[] }) {
+  const searchParams = useSearchParams();
+  const categoryFilter = searchParams.get("category");
   const [filter, setFilter] = useState("all");
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
-  const filtered = filter === "all" ? alerts : alerts.filter((a) => a.alert_type === filter);
+  const typeFiltered = filter === "all" ? alerts : alerts.filter((a) => a.alert_type === filter);
+  const filtered = categoryFilter
+    ? typeFiltered.filter((a) => a.change_category === categoryFilter)
+    : typeFiltered;
 
   return (
     <div className="py-5 md:py-12">
@@ -47,6 +64,16 @@ export default function AlertsClient({ alerts }: { alerts: RegulatoryAlert[] }) 
           Stay informed on ASIC regulations, ATO tax changes, superannuation rules, and reporting
           requirements that affect Australian investors.
         </p>
+
+        {/* Category filter banner */}
+        {categoryFilter && (
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-3 mb-6 flex items-center justify-between">
+            <span className="text-sm text-blue-700">
+              Showing <strong>{CHANGE_CATEGORIES[categoryFilter] || categoryFilter}</strong> changes
+            </span>
+            <Link href="/alerts" className="text-xs text-blue-600 hover:underline">Clear filter</Link>
+          </div>
+        )}
 
         {/* Filter tabs */}
         <div className="flex flex-wrap gap-2 mb-8">
@@ -105,6 +132,18 @@ export default function AlertsClient({ alerts }: { alerts: RegulatoryAlert[] }) 
                         {alert.impact_summary && (
                           <p className="text-xs text-slate-600 mt-1 line-clamp-2">{alert.impact_summary}</p>
                         )}
+                        <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                          {alert.user_action_required && (
+                            <span className="text-[0.62rem] px-1.5 py-0.5 rounded bg-red-50 text-red-600 font-semibold border border-red-100">
+                              Action Required
+                            </span>
+                          )}
+                          {alert.affected_broker_slugs && alert.affected_broker_slugs.length > 0 && (
+                            <span className="text-[0.62rem] text-slate-400">
+                              {alert.affected_broker_slugs.length} broker{alert.affected_broker_slugs.length !== 1 ? "s" : ""} affected
+                            </span>
+                          )}
+                        </div>
                       </div>
                       <svg
                         className={`w-4 h-4 text-slate-400 shrink-0 mt-1 transition-transform ${isExpanded ? "rotate-180" : ""}`}

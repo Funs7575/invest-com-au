@@ -1,5 +1,6 @@
 import type { UserReview, BrokerReviewStats } from "@/lib/types";
 import UserReviewForm from "./UserReviewForm";
+import VerifiedClientBadge from "./VerifiedClientBadge";
 
 interface UserReviewsListProps {
   reviews: UserReview[];
@@ -154,9 +155,13 @@ export default function UserReviewsList({ reviews, stats, brokerSlug, brokerName
                 </div>
               )}
 
-              <p className="text-xs text-slate-400">
-                — {review.display_name}
-              </p>
+              <div className="flex items-center gap-2 text-xs text-slate-400">
+                <span>— {review.display_name}</span>
+                <VerifiedClientBadge
+                  isVerified={!!review.is_verified_client}
+                  verifiedVia={review.verified_via ?? undefined}
+                />
+              </div>
             </div>
           ))}
         </div>

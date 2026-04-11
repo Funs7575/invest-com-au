@@ -1,6 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { getAdminEmail } from "@/lib/admin";
+import { feeChangeAlertEmail } from "@/lib/email-templates";
 
 export const maxDuration = 60;
 
@@ -251,24 +252,43 @@ export async function GET(req: NextRequest) {
       }),
     }).catch((err) => console.error("[check-fees] admin alert email failed:", err));
 
-    // Also notify fee alert subscribers
+    // Also notify fee alert subscribers (instant frequency only)
     const { data: subscribers } = await supabase
       .from("fee_alert_subscriptions")
-      .select("email")
+      .select("email, broker_slugs, alert_type, unsubscribe_token")
       .eq("verified", true)
       .eq("frequency", "instant");
 
     if (subscribers && subscribers.length > 0) {
-      const subscriberList = subscribers.map(s => s.email).slice(0, 50); // Cap at 50
-      for (const email of subscriberList) {
+      const changedSlugs = changedBrokers.map((b) => b.slug);
+
+      for (const sub of subscribers.slice(0, 50)) {
+        // Filter changes by subscriber's broker_slugs preference
+        const relevantBrokers = sub.broker_slugs && sub.broker_slugs.length > 0
+          ? changedBrokers.filter((b) => sub.broker_slugs.includes(b.slug))
+          : changedBrokers;
+
+        if (relevantBrokers.length === 0) continue;
+
+        // Build changes for the email template
+        const emailChanges = relevantBrokers.map((b) => ({
+          broker: b.name,
+          slug: b.slug,
+          oldFee: b.detail,
+          newFee: "Updated",
+        }));
+
+        const html = feeChangeAlertEmail(emailChanges)
+          .replace(/\{\{unsubscribe_url\}\}/g, `${process.env.NEXT_PUBLIC_BASE_URL || "https://invest.com.au"}/fee-alerts?unsubscribe=${sub.unsubscribe_token || ""}`);
+
         await fetch("https://api.resend.com/emails", {
           method: "POST",
           headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" },
           body: JSON.stringify({
             from: "Invest.com.au <alerts@invest.com.au>",
-            to: email,
-            subject: `Fee Change: ${changedBrokers.map(b => b.name).join(", ")}`,
-            html: `<div style="font-family:Arial,sans-serif;max-width:500px;margin:0 auto"><h2 style="color:#0f172a;font-size:18px">Broker Fee Change Alert</h2><p style="color:#64748b;font-size:14px">The following broker${changedBrokers.length > 1 ? "s have" : " has"} updated their fee page:</p><ul style="color:#334155;font-size:14px">${changedBrokers.map(b => `<li style="margin-bottom:8px"><strong>${b.name}</strong> — <a href="https://invest.com.au/broker/${b.slug}" style="color:#2563eb">View updated fees</a></li>`).join("")}</ul><p style="color:#94a3b8;font-size:12px;margin-top:20px">You received this because you subscribed to fee alerts on Invest.com.au</p></div>`,
+            to: sub.email,
+            subject: `Fee Change: ${relevantBrokers.map((b) => b.name).join(", ")}`,
+            html,
           }),
         }).catch((err) => console.error("[check-fees] subscriber alert email failed:", err));
       }

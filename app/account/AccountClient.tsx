@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useSubscription } from "@/lib/hooks/useSubscription";
@@ -49,6 +49,8 @@ export default function AccountClient() {
   const [showRefundConfirm, setShowRefundConfirm] = useState(false);
   const [refundSuccess, setRefundSuccess] = useState(false);
 
+  const [savedComparisonsCount, setSavedComparisonsCount] = useState<number | null>(null);
+
   // Whether the subscription is within the 7-day refund window
   const isWithinRefundWindow = subscription?.created_at
     ? (new Date().getTime() - new Date(subscription.created_at).getTime()) /
@@ -76,6 +78,24 @@ export default function AccountClient() {
       router.push("/auth/login?next=/account");
     }
   }, [loading, user, router]);
+
+  // Fetch saved comparisons count
+  const fetchSavedComparisonsCount = useCallback(async () => {
+    try {
+      const res = await fetch("/api/saved-comparisons");
+      if (!res.ok) return;
+      const data = await res.json();
+      setSavedComparisonsCount(Array.isArray(data.comparisons) ? data.comparisons.length : 0);
+    } catch {
+      // Silently fail - count is a nice-to-have
+    }
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      fetchSavedComparisonsCount();
+    }
+  }, [user, fetchSavedComparisonsCount]);
 
   if (loading || !user) {
     return (
@@ -385,6 +405,31 @@ export default function AccountClient() {
             </Link>
           </div>
         )}
+
+        {/* Saved Comparisons */}
+        <div className="bg-white border border-slate-200 rounded-xl p-5 mb-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-base font-bold text-slate-900">Saved Comparisons</h2>
+              <p className="text-xs text-slate-500 mt-0.5">
+                {savedComparisonsCount === null
+                  ? "Loading..."
+                  : savedComparisonsCount === 0
+                    ? "No saved comparisons yet"
+                    : `${savedComparisonsCount} saved comparison${savedComparisonsCount !== 1 ? "s" : ""}`}
+              </p>
+            </div>
+            <Link
+              href="/account/saved"
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-semibold text-slate-700 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors"
+            >
+              {savedComparisonsCount === 0 ? "Get Started" : "View All"}
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </Link>
+          </div>
+        </div>
 
         {/* Email Preferences */}
         <div className="bg-white border border-slate-200 rounded-xl p-5 mb-4">
