@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { createStaticClient } from "@/lib/supabase/static";
 import Link from "next/link";
 import Image from "next/image";
 import type { Article, Broker, TeamMember } from "@/lib/types";
@@ -25,7 +26,7 @@ export async function generateStaticParams() {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return [];
   }
-  const supabase = await createClient();
+  const supabase = createStaticClient();
   const { data } = await supabase.from("articles").select("slug").eq("status", "published").limit(200);
   return (data || []).map((a) => ({ slug: a.slug }));
 }

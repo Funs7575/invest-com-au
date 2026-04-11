@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
+import { createStaticClient } from "@/lib/supabase/static";
 import type { Broker, TeamMember, UserReview, BrokerReviewStats, SwitchStory, BrokerQuestion, BrokerAnswer } from "@/lib/types";
 import { notFound } from "next/navigation";
 import BrokerReviewClient from "./BrokerReviewClient";
@@ -23,7 +24,7 @@ export async function generateStaticParams() {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return [];
   }
-  const supabase = await createClient();
+  const supabase = createStaticClient();
   const { data } = await supabase.from("brokers").select("slug").eq("status", "active");
   return (data || []).map((b) => ({ slug: b.slug }));
 }

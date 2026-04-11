@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { createStaticClient } from "@/lib/supabase/static";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -7,7 +8,10 @@ import { absoluteUrl, breadcrumbJsonLd, SITE_NAME, ORGANIZATION_JSONLD } from "@
 export const revalidate = 86400;
 
 export async function generateStaticParams() {
-  const supabase = await createClient();
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return [];
+  }
+  const supabase = createStaticClient();
   const { data } = await supabase
     .from("newsletter_editions")
     .select("edition_date");
