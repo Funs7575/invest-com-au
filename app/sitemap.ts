@@ -7,7 +7,8 @@ import { getAllGuideSlugs } from "@/lib/how-to-guides";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest.com.au";
-  const supabase = await createClient();
+  const hasSupabase = !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+  const supabase = hasSupabase ? await createClient() : null;
 
   // Static pages with tiered priorities
   const highPriority = new Set(["/compare", "/quiz", "/reviews", "/deals", "/share-trading", "/crypto", "/savings", "/super", "/cfd", "/term-deposits", "/robo-advisors", "/versus", "/how-to", "/invest", "/foreign-investment", "/etfs", "/insurance", "/tax", "/property"]);
@@ -109,10 +110,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // Dynamic broker pages
-  const { data: brokers } = await supabase
-    .from("brokers")
-    .select("slug, updated_at")
-    .eq("status", "active");
+  const { data: brokers } = supabase
+    ? await supabase.from("brokers").select("slug, updated_at").eq("status", "active")
+    : { data: null };
 
   const brokerPages = (brokers || []).map((b) => ({
     url: `${baseUrl}/broker/${b.slug}`,
@@ -122,9 +122,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // Dynamic article pages
-  const { data: articles } = await supabase
-    .from("articles")
-    .select("slug, updated_at");
+  const { data: articles } = supabase
+    ? await supabase.from("articles").select("slug, updated_at")
+    : { data: null };
 
   const articlePages = (articles || []).map((a) => ({
     url: `${baseUrl}/article/${a.slug}`,
@@ -134,9 +134,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // Dynamic scenario pages
-  const { data: scenarios } = await supabase
-    .from("scenarios")
-    .select("slug, updated_at");
+  const { data: scenarios } = supabase
+    ? await supabase.from("scenarios").select("slug, updated_at")
+    : { data: null };
 
   const scenarioPages = (scenarios || []).map((s) => ({
     url: `${baseUrl}/scenario/${s.slug}`,
@@ -157,10 +157,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   // Dynamic team member pages (authors + reviewers)
-  const { data: teamMembers } = await supabase
-    .from("team_members")
-    .select("slug, role, updated_at")
-    .eq("status", "active");
+  const { data: teamMembers } = supabase
+    ? await supabase.from("team_members").select("slug, role, updated_at").eq("status", "active")
+    : { data: null };
 
   const authorPages = (teamMembers || []).map((m) => ({
     url: `${baseUrl}/authors/${m.slug}`,
@@ -179,10 +178,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }));
 
   // Dynamic regulatory alert pages
-  const { data: alerts } = await supabase
-    .from("regulatory_alerts")
-    .select("slug, updated_at")
-    .eq("status", "published");
+  const { data: alerts } = supabase
+    ? await supabase.from("regulatory_alerts").select("slug, updated_at").eq("status", "published")
+    : { data: null };
 
   const alertPages = (alerts || []).map((a) => ({
     url: `${baseUrl}/alerts/${a.slug}`,
@@ -192,10 +190,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // Dynamic quarterly report pages
-  const { data: reports } = await supabase
-    .from("quarterly_reports")
-    .select("slug, updated_at")
-    .eq("status", "published");
+  const { data: reports } = supabase
+    ? await supabase.from("quarterly_reports").select("slug, updated_at").eq("status", "published")
+    : { data: null };
 
   const reportPages = (reports || []).map((r) => ({
     url: `${baseUrl}/reports/${r.slug}`,
@@ -351,10 +348,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // Dynamic advisor profile pages
-  const { data: professionals } = await supabase
-    .from("professionals")
-    .select("slug, updated_at")
-    .eq("status", "active");
+  const { data: professionals } = supabase
+    ? await supabase.from("professionals").select("slug, updated_at").eq("status", "active")
+    : { data: null };
 
   const advisorPages = (professionals || []).map((p) => ({
     url: `${baseUrl}/advisor/${p.slug}`,
@@ -453,10 +449,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // Expert articles (advisor-authored)
-  const { data: expertArticleSlugs } = await supabase
-    .from("advisor_articles")
-    .select("slug, published_at")
-    .eq("status", "published");
+  const { data: expertArticleSlugs } = supabase
+    ? await supabase.from("advisor_articles").select("slug, published_at").eq("status", "published")
+    : { data: null };
 
   const expertArticlePages = (expertArticleSlugs || []).map((a) => ({
     url: `${baseUrl}/expert/${a.slug}`,
@@ -486,10 +481,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // Advisor firm pages
-  const { data: firms } = await supabase
-    .from("advisor_firms")
-    .select("slug")
-    .eq("status", "active");
+  const { data: firms } = supabase
+    ? await supabase.from("advisor_firms").select("slug").eq("status", "active")
+    : { data: null };
   const firmPages = (firms || []).map((f) => ({
     url: `${baseUrl}/firm/${f.slug}`,
     lastModified: new Date(),
@@ -498,10 +492,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // Property listing pages
-  const { data: propertyListings } = await supabase
-    .from("property_listings")
-    .select("slug, updated_at")
-    .in("status", ["active", "coming_soon"]);
+  const { data: propertyListings } = supabase
+    ? await supabase.from("property_listings").select("slug, updated_at").in("status", ["active", "coming_soon"])
+    : { data: null };
   const propertyListingPages = (propertyListings || []).map((l) => ({
     url: `${baseUrl}/property/listings/${l.slug}`,
     lastModified: l.updated_at ? new Date(l.updated_at) : new Date(),
