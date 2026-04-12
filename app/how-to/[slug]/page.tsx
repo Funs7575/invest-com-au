@@ -8,11 +8,11 @@ import { getGuide, getAllGuideSlugs, getAllGuides } from "@/lib/how-to-guides";
 import {
   absoluteUrl,
   breadcrumbJsonLd,
+  howToJsonLd,
   SITE_NAME,
   SITE_URL,
   CURRENT_YEAR,
   CURRENT_MONTH_YEAR,
-  ORGANIZATION_JSONLD,
   REVIEW_AUTHOR,
 } from "@/lib/seo";
 import { ADVERTISER_DISCLOSURE_SHORT, GENERAL_ADVICE_WARNING } from "@/lib/compliance";
@@ -105,33 +105,7 @@ export default async function HowToGuidePage({
     { name: guide.h1 },
   ]);
 
-  const howToJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "HowTo",
-    name: guide.h1,
-    description: guide.intro,
-    totalTime: "PT10M",
-    estimatedCost: {
-      "@type": "MonetaryAmount",
-      currency: "AUD",
-      value: "0",
-    },
-    step: guide.steps.map((step, i) => ({
-      "@type": "HowToStep",
-      position: i + 1,
-      name: step.heading,
-      text: step.body.slice(0, 500),
-      url: absoluteUrl(`/how-to/${guide.slug}#step-${i + 1}`),
-    })),
-    author: {
-      "@type": "Person",
-      name: REVIEW_AUTHOR.name,
-      url: REVIEW_AUTHOR.url,
-    },
-    publisher: ORGANIZATION_JSONLD,
-    datePublished: "2025-01-15",
-    dateModified: new Date().toISOString().split("T")[0],
-  };
+  const howToLd = howToJsonLd(guide);
 
   const faqJsonLd =
     guide.faqs.length >= 2
@@ -157,7 +131,7 @@ export default async function HowToGuidePage({
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(howToJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(howToLd) }}
       />
       {faqJsonLd && (
         <script

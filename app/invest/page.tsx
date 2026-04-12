@@ -6,6 +6,7 @@ import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import SectionHeading from "@/components/SectionHeading";
 import { PRIMARY_CTA_TEXT, PRIMARY_CTA_HREF } from "@/lib/compliance-config";
+import { getAllInvestCategories } from "@/lib/invest-categories";
 
 export const revalidate = 3600;
 
@@ -79,6 +80,18 @@ export default async function InvestHubPage() {
     .order("sort_order", { ascending: true });
 
   const items: InvestmentVertical[] = verticals ?? [];
+
+  const investCategories = getAllInvestCategories();
+
+  // Per-category listing counts (optional; best-effort)
+  const { data: listingCountsRaw } = await supabase
+    .from("investment_listings")
+    .select("vertical")
+    .eq("status", "active");
+  const listingCounts = new Map<string, number>();
+  ((listingCountsRaw as { vertical: string }[] | null) ?? []).forEach((row) => {
+    listingCounts.set(row.vertical, (listingCounts.get(row.vertical) ?? 0) + 1);
+  });
 
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
@@ -332,6 +345,89 @@ export default async function InvestHubPage() {
             >
               View All Investment Listings &rarr;
             </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Browse by Category — SEO internal linking to /listings + sub-categories */}
+      <section className="py-14 bg-slate-50 border-t border-slate-100">
+        <div className="container-custom">
+          <div className="mb-8">
+            <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Marketplace Categories</p>
+            <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2">
+              Browse by Category
+            </h2>
+            <p className="text-slate-500 leading-relaxed max-w-2xl">
+              Explore all {investCategories.length} investment marketplace categories — each with dedicated sub-categories for the opportunities that matter to you.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {investCategories.map((cat) => {
+              const href = `/invest/${cat.slug}/listings`;
+              const topSubs = cat.subcategories.slice(0, 5);
+              const count = cat.dbVerticals.reduce(
+                (sum, v) => sum + (listingCounts.get(v) ?? 0),
+                0
+              );
+              return (
+                <div
+                  key={cat.slug}
+                  className="bg-white border border-slate-200 rounded-xl p-6 hover:shadow-md hover:border-amber-200 transition-all flex flex-col"
+                >
+                  <div className="flex items-start gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center shrink-0">
+                      <Icon name={cat.icon} size={20} className="text-amber-500" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <Link
+                          href={href}
+                          className="text-base font-bold text-slate-900 hover:text-amber-600 transition-colors"
+                        >
+                          {cat.label}
+                        </Link>
+                        {count > 0 && (
+                          <span className="text-[0.65rem] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
+                            {count} listing{count === 1 ? "" : "s"}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-slate-500 mt-1 leading-snug line-clamp-2">
+                        {cat.intro}
+                      </p>
+                    </div>
+                  </div>
+
+                  {topSubs.length > 0 && (
+                    <div className="mt-auto pt-3 border-t border-slate-100">
+                      <p className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-400 mb-2">
+                        Popular
+                      </p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {topSubs.map((sub) => (
+                          <Link
+                            key={sub.slug}
+                            href={`/invest/${cat.slug}/listings/${sub.slug}`}
+                            className="inline-flex items-center text-[0.7rem] font-medium text-slate-700 bg-slate-100 hover:bg-amber-100 hover:text-amber-800 px-2.5 py-1 rounded-full transition-colors"
+                          >
+                            {sub.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <Link
+                    href={href}
+                    className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-amber-600 hover:text-amber-700"
+                  >
+                    View all {cat.label.toLowerCase()} listings
+                    <Icon name="arrow-right" size={13} />
+                  </Link>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>

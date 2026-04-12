@@ -138,6 +138,15 @@ export default async function ComparePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
       />
       <Suspense><CompareNav /></Suspense>
+      {/* Server-rendered H1 for crawlers that don't execute client JS */}
+      <div className="container-custom pt-5 md:pt-10">
+        <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+          Compare Australian Investment Platforms
+        </h1>
+        <p className="mt-2 text-sm md:text-base text-slate-600 max-w-2xl">
+          Side-by-side comparison of fees, features, and safety for {activeBrokers.length}+ Australian share trading, crypto, super and robo-advisor platforms.
+        </p>
+      </div>
       <Suspense fallback={<ComparePageSkeleton />}>
         <CompareClient brokers={activeBrokers} />
       </Suspense>

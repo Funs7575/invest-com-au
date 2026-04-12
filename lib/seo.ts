@@ -291,6 +291,76 @@ export function brokerReviewJsonLd(broker: {
 }
 
 /**
+ * Build a standalone FinancialProduct JSON-LD block for a broker.
+ * Complements brokerReviewJsonLd (which wraps a Review) by providing a
+ * clean product-level entity with brand, provider, category, and
+ * aggregateRating for product rich-results.
+ */
+export function brokerProductJsonLd(broker: {
+  name: string;
+  slug: string;
+  tagline?: string;
+  rating?: number;
+  review_count?: number;
+  platform_type?: string;
+  is_crypto?: boolean;
+  regulated_by?: string;
+  year_founded?: number;
+}) {
+  const category = broker.is_crypto
+    ? "Cryptocurrency Exchange"
+    : broker.platform_type === "robo_advisor"
+      ? "Robo-Advisor"
+      : broker.platform_type === "super_fund"
+        ? "Superannuation Fund"
+        : "Share Trading Platform";
+
+  const url = absoluteUrl(`/broker/${broker.slug}`);
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "FinancialProduct",
+    "@id": `${url}#product`,
+    name: broker.name,
+    description:
+      broker.tagline ||
+      `${broker.name} — Australian ${category.toLowerCase()} compared on fees, features, and safety.`,
+    url,
+    category,
+    brand: {
+      "@type": "Brand",
+      name: broker.name,
+    },
+    provider: {
+      "@type": "Organization",
+      name: broker.name,
+      url,
+      ...(broker.year_founded ? { foundingDate: String(broker.year_founded) } : {}),
+    },
+    ...(broker.regulated_by
+      ? {
+          additionalProperty: {
+            "@type": "PropertyValue",
+            name: "Regulated By",
+            value: broker.regulated_by,
+          },
+        }
+      : {}),
+    ...((broker.review_count ?? 0) > 0
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: Math.max(broker.rating || 1, 1),
+            bestRating: 5,
+            worstRating: 1,
+            reviewCount: broker.review_count,
+          },
+        }
+      : {}),
+  };
+}
+
+/**
  * Build Article JSON-LD wrapper for the review page.
  * Google uses this for authorship and freshness signals.
  */
@@ -368,6 +438,47 @@ export function articleFaqJsonLd(
         text: s.body.slice(0, 500), // Truncate to avoid oversized schema
       },
     })),
+  };
+}
+
+/* ─── HowTo JSON-LD for /how-to/[slug] step-by-step guides ─── */
+
+/**
+ * Build HowTo JSON-LD from a step-by-step guide.
+ * Google uses this to surface step-by-step rich results.
+ */
+export function howToJsonLd(guide: {
+  slug: string;
+  h1: string;
+  intro: string;
+  steps: { heading: string; body: string }[];
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    name: guide.h1,
+    description: guide.intro,
+    totalTime: "PT10M",
+    estimatedCost: {
+      "@type": "MonetaryAmount",
+      currency: "AUD",
+      value: "0",
+    },
+    step: guide.steps.map((step, i) => ({
+      "@type": "HowToStep",
+      position: i + 1,
+      name: step.heading,
+      text: step.body.slice(0, 500),
+      url: absoluteUrl(`/how-to/${guide.slug}#step-${i + 1}`),
+    })),
+    author: {
+      "@type": "Person",
+      name: REVIEW_AUTHOR.name,
+      url: REVIEW_AUTHOR.url,
+    },
+    publisher: ORGANIZATION_JSONLD,
+    datePublished: "2025-01-15",
+    dateModified: new Date().toISOString().split("T")[0],
   };
 }
 

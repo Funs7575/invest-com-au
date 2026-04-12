@@ -8,6 +8,7 @@ import {
   absoluteUrl,
   breadcrumbJsonLd,
   brokerReviewJsonLd,
+  brokerProductJsonLd,
   reviewArticleJsonLd,
   qaPageJsonLd,
   SITE_NAME,
@@ -161,6 +162,17 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
 
   // JSON-LD structured data — FinancialProduct + Review + Article + Breadcrumb
   const financialProductLd = brokerReviewJsonLd(b, brokerReviewer ?? undefined);
+  const productLd = brokerProductJsonLd({
+    name: b.name,
+    slug: b.slug,
+    tagline: b.tagline,
+    rating: b.rating,
+    review_count: reviewStats?.review_count,
+    platform_type: b.platform_type,
+    is_crypto: b.is_crypto,
+    regulated_by: b.regulated_by,
+    year_founded: b.year_founded,
+  });
   const articleLd = reviewArticleJsonLd(b, brokerReviewer ?? undefined);
   const breadcrumbLd = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
@@ -220,6 +232,10 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(financialProductLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productLd) }}
       />
       <script
         type="application/ld+json"
