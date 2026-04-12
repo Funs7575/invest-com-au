@@ -15,6 +15,8 @@ import { CURRENT_YEAR } from "@/lib/seo";
 import type { VersusEditorial } from "@/lib/versus-content";
 import Icon from "@/components/Icon";
 import BrokerLogo from "@/components/BrokerLogo";
+import CommunityVote from "./CommunityVote";
+import WinnerByScenario from "./WinnerByScenario";
 
 const MAX_BROKERS = 4;
 
@@ -624,6 +626,18 @@ export default function VersusClient({ brokers, serverEditorial }: { brokers: Br
                 </div>
               );
             })()}
+
+            {/* ─── Community Vote (2-broker comparisons only) ─── */}
+            {selected.length === 2 && (
+              <div className="mb-3 md:mb-8">
+                <CommunityVote brokerA={selected[0]} brokerB={selected[1]} />
+              </div>
+            )}
+
+            {/* ─── Winner by Scenario (share brokers) ─── */}
+            {selected.length === 2 && (
+              <WinnerByScenario brokerA={selected[0]} brokerB={selected[1]} />
+            )}
 
             {/* ─── Bottom CTA ─── */}
             <ScrollReveal animation="scroll-stagger-children" className="grid grid-cols-2 md:grid-cols-2 gap-2.5 md:gap-4 mb-3 md:mb-4">

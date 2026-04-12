@@ -205,26 +205,24 @@ export default function CompareDesktopTable({
                 />
               </td>
               <td className="px-4 py-3">
-                <div className="flex items-center gap-2.5">
-                  <BrokerLogo broker={broker} size="sm" className="transition-transform duration-200 group-hover:scale-110" />
-                  <div>
-                    <div className="flex items-center gap-1.5">
-                      <a href={`/broker/${broker.slug}`} className="font-semibold text-brand hover:text-slate-900 transition-colors">
-                        {broker.name}
-                      </a>
-                      <PromoBadge broker={broker} />
-                      {campaignWinners.some(w => w.broker_slug === broker.slug) && (
-                        <span className="text-[0.69rem] font-bold px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded-full uppercase tracking-wide">Sponsored</span>
-                      )}
-                      {!campaignWinners.some(w => w.broker_slug === broker.slug) && <SponsorBadge broker={broker} />}
-                      {broker.affiliate_url && !isSponsored(broker) && !campaignWinners.some(w => w.broker_slug === broker.slug) && (
-                        <span title="We may earn a commission if you visit this platform" className="text-[0.62rem] font-semibold px-1.5 py-0.5 bg-slate-100 text-slate-400 rounded-full uppercase tracking-wide">Ad</span>
-                      )}
-                    </div>
+                <div className="flex items-center gap-2.5 flex-wrap">
+                  <BrokerLogo broker={broker} size="sm" className="transition-transform duration-200 group-hover:scale-110 shrink-0" />
+                  <div className="flex items-center gap-1.5 flex-wrap min-w-0">
+                    <a href={`/broker/${broker.slug}`} className="font-semibold text-brand hover:text-slate-900 transition-colors">
+                      {broker.name}
+                    </a>
                     {!isSponsored(broker) && editorPicks[broker.slug] && (
-                      <div className="text-[0.69rem] font-extrabold text-slate-700 uppercase tracking-wide">
+                      <span className="text-[0.62rem] font-bold px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded-full uppercase tracking-wide whitespace-nowrap">
                         {editorPicks[broker.slug]}
-                      </div>
+                      </span>
+                    )}
+                    <PromoBadge broker={broker} />
+                    {campaignWinners.some(w => w.broker_slug === broker.slug) && (
+                      <span className="text-[0.69rem] font-bold px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded-full uppercase tracking-wide">Sponsored</span>
+                    )}
+                    {!campaignWinners.some(w => w.broker_slug === broker.slug) && <SponsorBadge broker={broker} />}
+                    {broker.affiliate_url && !isSponsored(broker) && !campaignWinners.some(w => w.broker_slug === broker.slug) && (
+                      <span title="We may earn a commission if you visit this platform" className="text-[0.62rem] font-semibold px-1.5 py-0.5 bg-slate-100 text-slate-400 rounded-full uppercase tracking-wide">Ad</span>
                     )}
                   </div>
                   <ShortlistButton slug={broker.slug} name={broker.name} size="sm" />

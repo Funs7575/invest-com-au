@@ -81,6 +81,7 @@ export function SiteFooter() {
                 { label: "How-To Guides", href: "/how-to" },
                 { label: "Calculators", href: "/calculators" },
                 { label: "Glossary", href: "/glossary" },
+                { label: "Community Forum", href: "/community" },
                 { label: "Foreign Investors", href: "/foreign-investment" },
               ].map((item) => (
                 <li key={item.href}>

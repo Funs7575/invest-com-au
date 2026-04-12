@@ -33,12 +33,14 @@ export default function AccountClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const checkoutSuccess = searchParams.get("checkout") === "success";
+  const welcomeParam = searchParams.get("welcome") === "1";
 
   const { user, subscription, isPro, loading, refresh } = useSubscription();
   const [portalLoading, setPortalLoading] = useState(false);
   const [portalError, setPortalError] = useState<string | null>(null);
   const [signOutLoading, setSignOutLoading] = useState(false);
   const [showSuccessBanner, setShowSuccessBanner] = useState(checkoutSuccess);
+  const [showWelcomeBanner, setShowWelcomeBanner] = useState(welcomeParam);
 
   const [cancelLoading, setCancelLoading] = useState(false);
   const [cancelError, setCancelError] = useState<string | null>(null);
@@ -50,6 +52,8 @@ export default function AccountClient() {
   const [refundSuccess, setRefundSuccess] = useState(false);
 
   const [savedComparisonsCount, setSavedComparisonsCount] = useState<number | null>(null);
+  const [profileName, setProfileName] = useState<string | null>(null);
+  const [onboardingDone, setOnboardingDone] = useState<boolean>(true);
 
   // Whether the subscription is within the 7-day refund window
   const isWithinRefundWindow = subscription?.created_at
@@ -78,6 +82,27 @@ export default function AccountClient() {
       router.push("/auth/login?next=/account");
     }
   }, [loading, user, router]);
+
+  // Fetch user profile
+  const fetchProfile = useCallback(async () => {
+    try {
+      const res = await fetch("/api/user-profile");
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data.profile) {
+        setProfileName(data.profile.display_name || null);
+        setOnboardingDone(data.profile.onboarding_completed ?? true);
+      } else {
+        setOnboardingDone(false);
+      }
+    } catch {
+      // Silently fail
+    }
+  }, []);
+
+  useEffect(() => {
+    if (user) fetchProfile();
+  }, [user, fetchProfile]);
 
   // Fetch saved comparisons count
   const fetchSavedComparisonsCount = useCallback(async () => {
@@ -225,21 +250,71 @@ export default function AccountClient() {
           </div>
         )}
 
+        {/* Welcome banner after onboarding */}
+        {showWelcomeBanner && (
+          <div className="mb-4 bg-gradient-to-r from-emerald-50 to-green-50 border border-emerald-200 rounded-xl px-4 py-3 flex items-start gap-3">
+            <svg className="w-5 h-5 text-emerald-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-emerald-800">Welcome to Invest.com.au{profileName ? `, ${profileName}` : ""}!</p>
+              <p className="text-xs text-emerald-700 mt-0.5">Your profile is set up. Start comparing brokers, explore our tools, or take the platform quiz to find your best match.</p>
+            </div>
+            <button onClick={() => setShowWelcomeBanner(false)} className="text-emerald-400 hover:text-emerald-600 shrink-0">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+          </div>
+        )}
+
+        {/* Onboarding nudge */}
+        {!onboardingDone && (
+          <div className="mb-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl px-4 py-3 flex items-center gap-3">
+            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center shrink-0">
+              <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-blue-900">Complete your profile</p>
+              <p className="text-xs text-blue-600">Tell us about your investing goals to get personalised recommendations.</p>
+            </div>
+            <Link
+              href="/onboarding"
+              className="shrink-0 px-4 py-2 bg-blue-600 text-white text-xs font-bold rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Get Started
+            </Link>
+          </div>
+        )}
+
         {/* Profile */}
         <div className="bg-white border border-slate-200 rounded-xl p-5 mb-4">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-slate-500">Signed in as</p>
-              <p className="text-sm font-semibold text-slate-900">{user.email}</p>
-            </div>
-            {isPro && (
-              <div className="flex items-center gap-1.5 px-2.5 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-full">
-                <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                </svg>
-                PRO
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 text-sm font-bold">
+                {profileName ? profileName.charAt(0).toUpperCase() : user.email?.charAt(0).toUpperCase()}
               </div>
-            )}
+              <div>
+                {profileName && <p className="text-sm font-semibold text-slate-900">{profileName}</p>}
+                <p className={`text-sm ${profileName ? "text-slate-500" : "font-semibold text-slate-900"}`}>{user.email}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              {isPro && (
+                <div className="flex items-center gap-1.5 px-2.5 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-full">
+                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                  PRO
+                </div>
+              )}
+              <Link
+                href="/account/profile"
+                className="px-3 py-1.5 text-xs font-semibold text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+              >
+                Edit Profile
+              </Link>
+            </div>
           </div>
         </div>
 
@@ -441,6 +516,9 @@ export default function AccountClient() {
         <div className="bg-white border border-slate-200 rounded-xl p-5 mb-4">
           <h2 className="text-base font-bold text-slate-900 mb-3">Quick Links</h2>
           <div className="grid grid-cols-2 gap-2">
+            <Link href="/account/profile" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+              <span>👤</span> Edit Profile
+            </Link>
             <Link href="/shortlist" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
               <span>❤️</span> My Shortlist
             </Link>

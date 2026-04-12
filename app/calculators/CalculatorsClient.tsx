@@ -23,14 +23,25 @@ import CompoundInterestCalculator from "./_components/CompoundInterestCalculator
 import DividendReinvestmentCalculator from "./_components/DividendReinvestmentCalculator";
 import FireCalculator from "./_components/FireCalculator";
 import PropertyVsSharesCalculator from "./_components/PropertyVsSharesCalculator";
+import MortgageQuickView from "./_components/MortgageQuickView";
+import DebtQuickView from "./_components/DebtQuickView";
+import RetirementQuickView from "./_components/RetirementQuickView";
+import PropertyYieldQuickView from "./_components/PropertyYieldQuickView";
+import SMSFQuickView from "./_components/SMSFQuickView";
+import SuperContributionsQuickView from "./_components/SuperContributionsQuickView";
+import PortfolioXRayQuickView from "./_components/PortfolioXRayQuickView";
+import TaxOptimizerQuickView from "./_components/TaxOptimizerQuickView";
+import FeeSimulatorQuickView from "./_components/FeeSimulatorQuickView";
+import QuickAuditQuickView from "./_components/QuickAuditQuickView";
 
 /* ──────────────────────────────────────────────
    Types & constants
    ────────────────────────────────────────────── */
 interface Props { brokers: Broker[] }
-type CalcId = "trade-cost" | "fx" | "switching" | "cgt" | "franking" | "chess" | "fee-impact" | "portfolio" | "switch-calc" | "savings-calc" | "tco" | "compound-interest" | "dividend-reinvestment" | "fire" | "property-vs-shares" | "mortgage" | "debt" | "retirement" | "property-yield" | "smsf" | "super-contributions";
+type CalcId = "trade-cost" | "fx" | "switching" | "cgt" | "franking" | "chess" | "fee-impact" | "portfolio" | "switch-calc" | "savings-calc" | "tco" | "compound-interest" | "dividend-reinvestment" | "fire" | "property-vs-shares" | "mortgage" | "debt" | "retirement" | "property-yield" | "smsf" | "super-contributions" | "portfolio-xray" | "tax-optimizer" | "fee-simulator" | "quick-audit";
 
 const CALCS: { id: CalcId; icon: string; title: string; subtitle: string; badge?: string; href?: string }[] = [
+  { id: "quick-audit" as CalcId, icon: "search", title: "Quick Audit", subtitle: "30-second fee audit & savings check", badge: "NEW" },
   { id: "tco", icon: "receipt", title: "Yearly TCO", subtitle: "Total annual cost across all your trades", badge: "NEW" },
   { id: "trade-cost", icon: "dollar-sign", title: "Trade Cost", subtitle: "What does a trade really cost at each platform?" },
   { id: "fx", icon: "globe", title: "US Share Costs", subtitle: "What do international trades really cost?" },
@@ -46,12 +57,15 @@ const CALCS: { id: CalcId; icon: string; title: string; subtitle: string; badge?
   { id: "dividend-reinvestment" as CalcId, icon: "rotate-ccw", title: "Dividend Reinvestment", subtitle: "DRP vs cash dividends" },
   { id: "fire" as CalcId, icon: "flame", title: "FIRE Calculator", subtitle: "Financial independence number" },
   { id: "property-vs-shares" as CalcId, icon: "scale", title: "Property vs Shares", subtitle: "Compare investment returns" },
-  { id: "mortgage" as CalcId, icon: "home", title: "Mortgage Calculator", subtitle: "Monthly repayments & total interest", href: "/mortgage-calculator" },
-  { id: "debt" as CalcId, icon: "credit-card", title: "Debt Consolidation", subtitle: "Could consolidating save you money?", href: "/debt-calculator" },
-  { id: "retirement" as CalcId, icon: "umbrella", title: "Retirement Calculator", subtitle: "Project your super to retirement", href: "/retirement-calculator" },
-  { id: "property-yield" as CalcId, icon: "percent", title: "Property Yield", subtitle: "Gross & net rental yield", href: "/property-yield-calculator" },
-  { id: "smsf" as CalcId, icon: "landmark", title: "SMSF Calculator", subtitle: "Is self-managed super worth it?", href: "/smsf-calculator" },
-  { id: "super-contributions" as CalcId, icon: "wallet", title: "Super Contributions", subtitle: "Concessional caps & tax savings", href: "/super-contributions-calculator" },
+  { id: "mortgage" as CalcId, icon: "home", title: "Mortgage Calculator", subtitle: "Monthly repayments & total interest" },
+  { id: "debt" as CalcId, icon: "credit-card", title: "Debt Consolidation", subtitle: "Could consolidating save you money?" },
+  { id: "retirement" as CalcId, icon: "umbrella", title: "Retirement Calculator", subtitle: "Project your super to retirement" },
+  { id: "property-yield" as CalcId, icon: "percent", title: "Property Yield", subtitle: "Gross & net rental yield" },
+  { id: "smsf" as CalcId, icon: "landmark", title: "SMSF Calculator", subtitle: "Is self-managed super worth it?" },
+  { id: "super-contributions" as CalcId, icon: "wallet", title: "Super Contributions", subtitle: "Concessional caps & tax savings" },
+  { id: "portfolio-xray" as CalcId, icon: "pie-chart", title: "Portfolio X-Ray", subtitle: "Diversification, risk & fee analysis", badge: "NEW" },
+  { id: "tax-optimizer" as CalcId, icon: "calculator", title: "Tax Optimizer", subtitle: "CGT, harvesting & franking credits", badge: "NEW" },
+  { id: "fee-simulator" as CalcId, icon: "sliders", title: "Fee Simulator", subtitle: "Real-time fees across all brokers", badge: "NEW" },
 ];
 
 // Inline-only calcs (no href) for swipe navigation
@@ -64,6 +78,26 @@ const STANDALONE_URLS: Partial<Record<CalcId, string>> = {
   "dividend-reinvestment": "/dividend-reinvestment-calculator",
   "fire": "/fire-calculator",
   "property-vs-shares": "/property-vs-shares-calculator",
+  "switching": "/switching-calculator",
+  "fee-impact": "/fee-impact",
+  "portfolio": "/portfolio-calculator",
+  "switch-calc": "/switching-calculator",
+  "savings-calc": "/savings-calculator",
+  "trade-cost": "/trade-cost-calculator",
+  "fx": "/us-share-costs-calculator",
+  "cgt": "/cgt-calculator",
+  "franking": "/franking-credits-calculator",
+  "chess": "/chess-lookup",
+  "portfolio-xray": "/portfolio-xray",
+  "tax-optimizer": "/tax-optimizer",
+  "fee-simulator": "/fee-simulator",
+  "quick-audit": "/quick-audit",
+  "mortgage": "/mortgage-calculator",
+  "debt": "/debt-calculator",
+  "retirement": "/retirement-calculator",
+  "property-yield": "/property-yield-calculator",
+  "smsf": "/smsf-calculator",
+  "super-contributions": "/super-contributions-calculator",
 };
 
 /* ──────────────────────────────────────────────
@@ -259,6 +293,16 @@ export default function CalculatorsClient({ brokers }: Props) {
           {activeCalc === "dividend-reinvestment" && <DividendReinvestmentCalculator searchParams={searchParams} />}
           {activeCalc === "fire" && <FireCalculator searchParams={searchParams} />}
           {activeCalc === "property-vs-shares" && <PropertyVsSharesCalculator searchParams={searchParams} />}
+          {activeCalc === "mortgage" && <MortgageQuickView searchParams={searchParams} />}
+          {activeCalc === "debt" && <DebtQuickView searchParams={searchParams} />}
+          {activeCalc === "retirement" && <RetirementQuickView searchParams={searchParams} />}
+          {activeCalc === "property-yield" && <PropertyYieldQuickView searchParams={searchParams} />}
+          {activeCalc === "smsf" && <SMSFQuickView searchParams={searchParams} />}
+          {activeCalc === "super-contributions" && <SuperContributionsQuickView searchParams={searchParams} />}
+          {activeCalc === "portfolio-xray" && <PortfolioXRayQuickView brokers={nonCryptoBrokers} />}
+          {activeCalc === "tax-optimizer" && <TaxOptimizerQuickView searchParams={searchParams} />}
+          {activeCalc === "fee-simulator" && <FeeSimulatorQuickView brokers={nonCryptoBrokers} searchParams={searchParams} />}
+          {activeCalc === "quick-audit" && <QuickAuditQuickView brokers={nonCryptoBrokers} searchParams={searchParams} />}
 
           {/* Standalone page CTA */}
           {STANDALONE_URLS[activeCalc] && (

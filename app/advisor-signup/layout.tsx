@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Join as an Advisor",
-  description: "Register your financial advisory practice on Invest.com.au. Get listed, receive investor leads, and grow your client base.",
+  title: "Advisor Signup",
+  description: "Register as a financial advisor on Invest.com.au. Create your profile, get verified, and connect with Australian investors seeking professional advice.",
+  alternates: { canonical: "/advisor-signup" },
   robots: { index: true, follow: true },
 };
 

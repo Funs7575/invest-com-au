@@ -40,7 +40,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/articles", "/scenarios", "/quiz", "/deals", "/stories", "/about", "/how-we-earn", "/privacy",
     "/methodology", "/how-we-verify", "/terms", "/switch", "/editorial-policy", "/benchmark",
     "/health-scores", "/alerts", "/whats-new", "/costs", "/fee-impact", "/fee-alerts", "/score",
-    "/glossary", "/complaints", "/contact", "/advisors", "/find-advisor",
+    "/glossary", "/complaints", "/contact", "/advisors", "/find-advisor", "/community",
+    "/community/share-trading", "/community/etfs-index-funds", "/community/crypto",
+    "/community/super-retirement", "/community/property", "/community/tax-strategy",
+    "/community/broker-reviews", "/community/beginners", "/community/off-topic",
     "/advisor-terms", "/broker-terms", "/content-license", "/expert", "/for-advisors", "/advisor-guides",
     "/advisor-guides/how-to-choose-smsf-accountant",
     "/advisor-guides/how-to-choose-financial-planner",
@@ -63,6 +66,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     
     "/portfolio-calculator",
     "/advisor-apply", "/switching-calculator", "/savings-calculator",
+    "/quick-audit", "/portfolio-xray", "/tax-optimizer", "/fee-simulator",
+    "/trade-cost-calculator", "/us-share-costs-calculator", "/cgt-calculator",
+    "/franking-credits-calculator", "/chess-lookup",
     "/share-trading", "/crypto", "/savings", "/super", "/cfd",
     "/how-to",
     // Foreign investment hub
