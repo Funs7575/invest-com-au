@@ -4,6 +4,9 @@ import { isRateLimited } from "@/lib/rate-limit";
 import { escapeHtml } from "@/lib/html-escape";
 import { getSiteUrl } from "@/lib/url";
 import { ADMIN_EMAIL } from "@/lib/admin";
+import { logger } from "@/lib/logger";
+
+const log = logger("advisor-review");
 
 const PROFANITY = /\b(fuck|shit|cunt|bitch|asshole|dick|piss|bastard|wanker|slut|whore|nigger|faggot|retard)\b/i;
 const SPAM_URL = /https?:\/\/[^\s]+/i;
@@ -125,7 +128,7 @@ export async function POST(request: NextRequest) {
       });
 
     if (insertError) {
-      console.error("Failed to create review:", insertError);
+      log.error("Failed to create advisor review", { error: insertError.message });
       return NextResponse.json({ error: "Failed to submit review." }, { status: 500 });
     }
 
@@ -141,12 +144,12 @@ export async function POST(request: NextRequest) {
           subject: `New advisor review: ${pro.name} (${rating}/5)${autoFlagged ? " FLAGGED" : ""}`,
           html: `<div style="font-family:Arial,sans-serif;max-width:500px"><h2 style="color:#0f172a;font-size:16px">${autoFlagged ? "Flagged Review" : "New Review"}</h2><p style="color:#64748b;font-size:14px"><strong>${resolvedName}</strong> reviewed <strong>${pro.name}</strong></p><p style="color:#334155;font-size:14px">${"★".repeat(Math.floor(rating))} ${rating}/5</p><p style="color:#64748b;font-size:12px">Communication: ${communication_rating}/5 | Expertise: ${expertise_rating}/5 | Value: ${value_for_money_rating}/5</p><p style="color:#64748b;font-size:12px">Used services: ${used_services ? "Yes" : "No"}</p>${title ? `<p style="color:#334155;font-weight:600">"${escapeHtml(title.trim())}"</p>` : ""}<p style="color:#64748b;font-size:13px">${escapeHtml(reviewBody.trim().slice(0, 200))}${reviewBody.length > 200 ? "..." : ""}</p>${autoFlagged ? `<p style="color:#dc2626;font-size:12px;font-weight:bold">Auto-flags: ${autoFlags.join(", ")}</p>` : ""}<a href="${siteUrl}/admin/advisors" style="display:inline-block;padding:10px 20px;background:#0f172a;color:white;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;margin-top:12px">Review in Admin</a></div>`,
         }),
-      }).catch((err) => console.error("[advisor-review] notification email failed:", err));
+      }).catch((err) => log.error("advisor review notification email failed", { err: err instanceof Error ? err.message : String(err) }));
     }
 
     return NextResponse.json({ success: true, message: autoFlagged ? "Review submitted. It will be reviewed by our team." : "Review submitted for moderation." });
   } catch (error) {
-    console.error("Advisor review error:", error);
+    log.error("advisor review handler error", { error: error instanceof Error ? error.message : String(error) });
     return NextResponse.json({ error: "Internal server error." }, { status: 500 });
   }
 }

@@ -1,9 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import type { Broker } from "@/lib/types";
 import { trackEvent } from "@/lib/tracking";
-import Icon from "@/components/Icon";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 
 interface ScoredResult {
@@ -30,16 +28,16 @@ interface Props {
 
 export default function QuizResultsFooter({
   results,
-  answers,
-  emailGate,
-  gateEmail,
-  gateStatus,
+  answers: _answers,
+  emailGate: _emailGate,
+  gateEmail: _gateEmail,
+  gateStatus: _gateStatus,
   copied,
   topMatch,
-  onGateEmailChange,
-  onGateSubmit,
-  onEmailGateSent,
-  onGateConsentSet,
+  onGateEmailChange: _onGateEmailChange,
+  onGateSubmit: _onGateSubmit,
+  onEmailGateSent: _onEmailGateSent,
+  onGateConsentSet: _onGateConsentSet,
   onShareResult,
   onRestart,
 }: Props) {

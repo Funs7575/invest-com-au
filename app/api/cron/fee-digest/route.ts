@@ -1,6 +1,9 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { feeDigestEmail } from "@/lib/email-templates";
+import { logger } from "@/lib/logger";
+
+const log = logger("cron-fee-digest");
 
 export const maxDuration = 60;
 
@@ -47,7 +50,7 @@ export async function GET(req: NextRequest) {
     .limit(50);
 
   if (changesError) {
-    console.error("[fee-digest] Error fetching changes:", changesError);
+    log.error("Error fetching fee changes", { error: changesError.message });
     return NextResponse.json({ error: changesError.message }, { status: 500 });
   }
 
@@ -66,7 +69,7 @@ export async function GET(req: NextRequest) {
     .eq("frequency", "weekly");
 
   if (subError) {
-    console.error("[fee-digest] Error fetching subscribers:", subError);
+    log.error("Error fetching fee digest subscribers", { error: subError.message });
     return NextResponse.json({ error: subError.message }, { status: 500 });
   }
 
@@ -167,10 +170,10 @@ export async function GET(req: NextRequest) {
         sentCount++;
       } else {
         const errText = await res.text().catch(() => "unknown");
-        console.error(`[fee-digest] Resend error for ${sub.email}: ${errText}`);
+        log.error("Resend error sending fee digest", { email: sub.email, errText });
       }
     } catch (err) {
-      console.error(`[fee-digest] Failed to send to ${sub.email}:`, err);
+      log.error("Failed to send fee digest", { email: sub.email, err: err instanceof Error ? err.message : String(err) });
     }
   }
 

@@ -3,6 +3,9 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
 import { getSiteUrl } from "@/lib/url";
+import { logger } from "@/lib/logger";
+
+const log = logger("advisor-auth-login");
 
 /**
  * POST /api/advisor-auth/login
@@ -49,7 +52,7 @@ export async function POST(request: NextRequest) {
       });
 
       if (otpError) {
-        console.error("Advisor OTP error:", otpError.message);
+        log.error("Advisor OTP error", { error: otpError.message });
         return NextResponse.json({ error: "Failed to send login link. Please try again." }, { status: 500 });
       }
 
@@ -121,7 +124,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ error: "Invalid mode" }, { status: 400 });
   } catch (error) {
-    console.error("Advisor auth error:", error);
+    log.error("Advisor auth handler error", { error: error instanceof Error ? error.message : String(error) });
     return NextResponse.json({ error: "Something went wrong." }, { status: 500 });
   }
 }
