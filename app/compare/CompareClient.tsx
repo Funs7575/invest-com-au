@@ -137,8 +137,6 @@ const minRatingOptions = [
   { value: 3.5, label: '3.5+' },
 ];
 
-// Keep old filter type for URL backwards compatibility
-type FilterType = PlatformType | FeatureFilter | 'beginner' | 'all';
 const filters = platformTypes; // for URL compat
 
 /** Map URL ?category= values to platform type keys */
@@ -220,7 +218,6 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   const [activeFeatures, setActiveFeatures] = useState<Set<FeatureFilter>>(new Set());
   const [maxFee, setMaxFee] = useState(999);
   const [minRating, setMinRating] = useState(0);
-  const [showAdvanced, setShowAdvanced] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
   const [sortCol, setSortCol] = useState<SortCol>('rating');
   const [sortDir, setSortDir] = useState<1 | -1>(-1);

@@ -14,7 +14,7 @@ export default function ExitIntentCapture() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [dismissed, setDismissed] = useState(false);
-  const [emailError, setEmailError] = useState(false);
+  const [, setEmailError] = useState(false);
 
   const trigger = useCallback(() => {
     if (typeof window === "undefined") return;

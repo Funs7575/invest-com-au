@@ -168,10 +168,8 @@ describe("Listing Enquire API — /api/listings/enquire", () => {
   });
 
   it("should return 404 for non-existent listing", async () => {
-    let callCount = 0;
     mockFrom.mockImplementation((table: string) => {
       if (table === "investment_listings") {
-        callCount++;
         // First call is the existence check — return not found
         return enquireListingBuilder(null);
       }

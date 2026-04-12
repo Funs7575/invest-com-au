@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { RegulatoryAlert, RegulatoryBrokerImpact } from "@/lib/types";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import { GENERAL_ADVICE_WARNING } from "@/lib/compliance";
 
 export const revalidate = 3600;

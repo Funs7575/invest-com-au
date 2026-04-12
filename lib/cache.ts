@@ -27,6 +27,7 @@ export const CacheTTL = {
  * Tags are used for on-demand revalidation via `revalidateTag()`.
  * The revalidate option sets the ISR-style time-based refresh.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function cached<T extends (...args: any[]) => Promise<any>>(
   fn: T,
   tags: string[],

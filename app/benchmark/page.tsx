@@ -4,7 +4,7 @@ import { Suspense } from "react";
 
 export const revalidate = 3600; // 1 hour
 import BenchmarkClient from "./BenchmarkClient";
-import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 
 export const metadata = {
   title: "Platform Fee Benchmarking Dashboard — Percentile Rankings",

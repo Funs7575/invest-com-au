@@ -28,7 +28,7 @@ export default function AdminScenariosPage() {
   const { toast } = useToast();
 
   const dirty = creating || editing !== null;
-  const { confirmNavigation } = useUnsavedChanges(dirty);
+  useUnsavedChanges(dirty);
 
   const load = async () => {
     const { data } = await supabase.from("scenarios").select("*").order("created_at", { ascending: false });

@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import Icon from "@/components/Icon";
 
 interface SearchItem {
@@ -95,7 +94,6 @@ const CATEGORY_ICONS: Record<string, string> = {
 export default function SearchOverlay({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
-  const router = useRouter();
 
   const results = query.length >= 2
     ? SEARCH_INDEX.filter(

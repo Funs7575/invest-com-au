@@ -43,7 +43,7 @@ export default function AdminCoursesPage() {
   const { toast: showToast } = useToast();
 
   const dirty = showCreate;
-  const { confirmNavigation } = useUnsavedChanges(dirty);
+  useUnsavedChanges(dirty);
 
   // New course form state
   const [form, setForm] = useState({

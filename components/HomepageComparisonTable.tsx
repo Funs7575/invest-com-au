@@ -10,7 +10,7 @@ import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import PromoBadge from "@/components/PromoBadge";
 import SponsorBadge from "@/components/SponsorBadge";
 import ImpressionTracker from "@/components/ImpressionTracker";
-import { sortWithSponsorship, isSponsored, getPlacementWinners, type PlacementWinner } from "@/lib/sponsorship";
+import { isSponsored, getPlacementWinners, type PlacementWinner } from "@/lib/sponsorship";
 import { filterByFrequencyCap } from "@/lib/marketplace/frequency-cap";
 import JargonTooltip from "@/components/JargonTooltip";
 import ShortlistButton from "@/components/ShortlistButton";
@@ -73,12 +73,6 @@ const ROBO_ADVISOR_COLUMNS: ColumnDef[] = [
   { header: "Management Fee", accessor: (b) => b.asx_fee || "N/A" },
   { header: "Min Investment", accessor: (b) => b.min_deposit || "N/A" },
   { header: "Portfolio Types", accessor: (b) => b.tagline || "N/A" },
-];
-
-const CFD_FOREX_COLUMNS: ColumnDef[] = [
-  { header: "Spread", accessor: (b) => b.asx_fee || "N/A" },
-  { header: "Leverage", accessor: () => "30:1 max" },
-  { header: "Markets", accessor: (b) => b.us_fee || "N/A" },
 ];
 
 function getColumnsForTab(tab: TabOption): ColumnDef[] {
@@ -367,7 +361,6 @@ export default function HomepageComparisonTable({
       <div key={`mobile-${activeTab}`} className="md:hidden divide-y divide-slate-100 px-3 motion-safe:tab-content-enter">
         {displayBrokers.slice(0, 5).map((broker, i) => {
           const isCampaignMobile = campaignWinnerSlugs.has(broker.slug);
-          const isTopRatedMobile = i === 0 && !isSponsored(broker) && !isCampaignMobile;
           const cidMobile = cpcCampaignMap.get(broker.slug);
           const mobileLink = (() => {
             const link = getAffiliateLink(broker);

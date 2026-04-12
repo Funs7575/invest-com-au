@@ -5,10 +5,7 @@ import {
   absoluteUrl,
   breadcrumbJsonLd,
   REVIEW_AUTHOR,
-  SITE_NAME,
-  SITE_URL,
   ORGANIZATION_JSONLD,
-  CURRENT_YEAR,
 } from "@/lib/seo";
 import {
   getAffiliateLink,

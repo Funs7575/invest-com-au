@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import Link from "next/link";
 import Icon from "@/components/Icon";
 import SocialProofCounter from "@/components/SocialProofCounter";
 import AdvisorMatchCTA from "@/components/AdvisorMatchCTA";

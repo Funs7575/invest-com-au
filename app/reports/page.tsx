@@ -3,7 +3,7 @@ import type { QuarterlyReport } from "@/lib/types";
 import ReportsClient from "./ReportsClient";
 
 export const revalidate = 3600; // 1 hour
-import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 
 export const metadata = {
   title: "Quarterly Platform Industry Reports — Australian Market Analysis",

@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Broker, BrokerHealthScore } from "@/lib/types";
 import HealthScoresClient from "./HealthScoresClient";
-import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 
 export const revalidate = 3600;
 

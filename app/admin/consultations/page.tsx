@@ -57,7 +57,7 @@ export default function AdminConsultationsPage() {
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
 
   const dirty = showCreate || editingId !== null;
-  const { confirmNavigation } = useUnsavedChanges(dirty);
+  useUnsavedChanges(dirty);
 
   const emptyForm = {
     title: "",

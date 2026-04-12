@@ -9,9 +9,6 @@ import {
   absoluteUrl,
   breadcrumbJsonLd,
   howToJsonLd,
-  SITE_NAME,
-  SITE_URL,
-  CURRENT_YEAR,
   CURRENT_MONTH_YEAR,
   REVIEW_AUTHOR,
 } from "@/lib/seo";

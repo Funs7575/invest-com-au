@@ -10,9 +10,7 @@ import {
 import {
   absoluteUrl,
   breadcrumbJsonLd,
-  SITE_NAME,
   REVIEW_AUTHOR,
-  REVIEW_METHODOLOGY_URL,
 } from "@/lib/seo";
 import { getAffiliateLink, AFFILIATE_REL } from "@/lib/tracking";
 import AuthorByline from "@/components/AuthorByline";

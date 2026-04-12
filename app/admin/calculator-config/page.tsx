@@ -7,7 +7,7 @@ import { CalculatorConfig } from "@/lib/types";
 
 const CALC_TYPES = ["franking", "switching", "fx", "cgt", "chess"] as const;
 
-const DEFAULT_CONFIGS: Record<string, Record<string, any>> = {
+const DEFAULT_CONFIGS: Record<string, Record<string, unknown>> = {
   franking: { corporate_tax_rate: 30 },
   switching: { transfer_fee: 0 },
   fx: {},
@@ -42,11 +42,11 @@ export default function CalculatorConfigPage() {
     setLoading(false);
   }
 
-  function getConfig(calcType: string): Record<string, any> {
-    return configs[calcType]?.config ?? DEFAULT_CONFIGS[calcType] ?? {};
+  function getConfig(calcType: string): Record<string, unknown> {
+    return (configs[calcType]?.config ?? DEFAULT_CONFIGS[calcType] ?? {}) as Record<string, unknown>;
   }
 
-  function updateConfig(calcType: string, key: string, value: any) {
+  function updateConfig(calcType: string, key: string, value: unknown) {
     setConfigs((prev) => {
       const existing = prev[calcType];
       const currentConfig = existing?.config ?? DEFAULT_CONFIGS[calcType] ?? {};
@@ -63,7 +63,11 @@ export default function CalculatorConfigPage() {
 
   async function saveConfig(calcType: string) {
     setSaving((prev) => ({ ...prev, [calcType]: true }));
-    setMessages((prev) => ({ ...prev, [calcType]: undefined as any }));
+    setMessages((prev) => {
+      const next = { ...prev };
+      delete next[calcType];
+      return next;
+    });
 
     const config = getConfig(calcType);
 
@@ -110,7 +114,7 @@ export default function CalculatorConfigPage() {
             <input
               type="number"
               step="0.01"
-              value={config.corporate_tax_rate ?? ""}
+              value={(config.corporate_tax_rate as number | string | undefined) ?? ""}
               onChange={(e) =>
                 updateConfig(calcType, "corporate_tax_rate", parseFloat(e.target.value) || 0)
               }
@@ -128,7 +132,7 @@ export default function CalculatorConfigPage() {
             <input
               type="number"
               step="0.01"
-              value={config.transfer_fee ?? ""}
+              value={(config.transfer_fee as number | string | undefined) ?? ""}
               onChange={(e) =>
                 updateConfig(calcType, "transfer_fee", parseFloat(e.target.value) || 0)
               }
@@ -192,7 +196,7 @@ export default function CalculatorConfigPage() {
                   </thead>
                   <tbody>
                     {config.tax_brackets.map(
-                      (bracket: Record<string, any>, idx: number) => (
+                      (bracket: Record<string, unknown>, idx: number) => (
                         <tr
                           key={idx}
                           className="border-b border-slate-200"

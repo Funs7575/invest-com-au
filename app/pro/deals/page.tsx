@@ -3,7 +3,7 @@ import type { ProDeal, Broker } from "@/lib/types";
 import ProDealsClient from "./ProDealsClient";
 
 export const revalidate = 1800; // 30 min
-import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 
 export const metadata = {
   title: "Exclusive Pro Deals — Platform Offers for Pro Members",

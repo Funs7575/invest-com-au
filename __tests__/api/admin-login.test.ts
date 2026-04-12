@@ -162,7 +162,7 @@ describe("POST /api/admin/login", () => {
 
     // Verify delete was called on admin_login_attempts (clearRateLimit)
     const deleteCalls = mockFrom.mock.calls.filter(
-      ([table]: any) => table === "admin_login_attempts"
+      (call: unknown[]) => call[0] === "admin_login_attempts"
     );
     // Should have been called for check + upsert + clear (delete)
     expect(deleteCalls.length).toBeGreaterThanOrEqual(2);

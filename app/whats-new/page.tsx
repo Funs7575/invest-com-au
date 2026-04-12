@@ -3,7 +3,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Link from "next/link";
 import AuthorByline from "@/components/AuthorByline";
-import { breadcrumbJsonLd, absoluteUrl, SITE_NAME, REVIEW_AUTHOR } from "@/lib/seo";
+import { breadcrumbJsonLd, absoluteUrl, REVIEW_AUTHOR } from "@/lib/seo";
 import type { Metadata } from "next";
 
 export const revalidate = 1800; // ISR: revalidate every 30 minutes

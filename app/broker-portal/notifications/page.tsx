@@ -46,7 +46,7 @@ export default function NotificationsPage() {
       setLoading(false);
 
       // Mark as read after a short delay so the user can see which were unread
-      const unreadIds = (data || []).filter((n: any) => !n.is_read).map((n: any) => n.id);
+      const unreadIds = ((data || []) as BrokerNotification[]).filter((n) => !n.is_read).map((n) => n.id);
       if (unreadIds.length > 0) {
         setTimeout(async () => {
           await supabase

@@ -135,7 +135,6 @@ export default function LiveActivityTicker({
   // Don't render if no data
   if (feeChanges.length === 0 && popularComparisons.length === 0) return null;
 
-  const items = activeTab === "fees" ? feeChanges : popularComparisons;
   const hasMultipleTabs = feeChanges.length > 0 && popularComparisons.length > 0;
 
   return (

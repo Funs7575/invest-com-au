@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import type { Broker } from "@/lib/types";
 import { trackEvent } from "@/lib/tracking";
@@ -8,7 +7,6 @@ import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE_SHORT, CRYPTO_WARNING, SP
 import { isSponsored } from "@/lib/sponsorship";
 import Icon from "@/components/Icon";
 import CohortInsights from "@/components/CohortInsights";
-import AdvisorPrompt from "@/components/AdvisorPrompt";
 
 import QuizTopMatch from "./QuizTopMatch";
 import QuizComparisonTable from "./QuizComparisonTable";

@@ -41,7 +41,7 @@ vi.mock("next/navigation", () => ({
 // Mock next/image
 vi.mock("next/image", () => ({
   default: (props: Record<string, unknown>) => {
-    const { fill, priority, ...rest } = props;
+    const { fill: _fill, priority: _priority, ...rest } = props;
     return <img {...rest} />;
   },
 }));

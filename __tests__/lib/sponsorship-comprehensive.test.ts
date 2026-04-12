@@ -178,7 +178,7 @@ describe("applyQuizSponsorBoost", () => {
     broker: makeBroker({
       slug,
       name: slug,
-      sponsorship_tier: tier as any,
+      sponsorship_tier: tier as Broker["sponsorship_tier"],
     }),
   });
 

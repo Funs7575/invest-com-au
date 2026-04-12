@@ -41,7 +41,7 @@ export default function AdminCampaignsPage() {
       .order("created_at", { ascending: false });
 
     if (data) {
-      const mapped = data.map((c: any) => ({
+      const mapped = (data as Array<Campaign & { marketplace_placements?: MarketplacePlacement }>).map((c) => ({
         ...c,
         placement: c.marketplace_placements || undefined,
       }));
@@ -53,12 +53,12 @@ export default function AdminCampaignsPage() {
   const updateCampaignStatus = async (
     campaignId: number,
     newStatus: string,
-    extraFields?: Record<string, any>
+    extraFields?: Record<string, unknown>
   ) => {
     setActionLoading(campaignId);
     const supabase = createClient();
 
-    const updates: Record<string, any> = {
+    const updates: Record<string, unknown> = {
       status: newStatus,
       updated_at: new Date().toISOString(),
       ...extraFields,
@@ -171,7 +171,7 @@ export default function AdminCampaignsPage() {
     const { data: { user } } = await supabase.auth.getUser();
 
     for (const id of selected) {
-      const updates: Record<string, any> = {
+      const updates: Record<string, unknown> = {
         status: newStatus,
         updated_at: new Date().toISOString(),
       };

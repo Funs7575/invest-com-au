@@ -6,7 +6,6 @@ import { notFound } from "next/navigation";
 import {
   absoluteUrl,
   breadcrumbJsonLd,
-  SITE_NAME,
   courseJsonLd as buildCourseJsonLd,
   REVIEW_AUTHOR,
 } from "@/lib/seo";

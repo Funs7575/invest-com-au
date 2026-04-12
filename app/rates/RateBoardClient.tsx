@@ -3,7 +3,6 @@
 import { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import Icon from "@/components/Icon";
 import SocialProofCounter from "@/components/SocialProofCounter";
 import AdvisorMatchCTA from "@/components/AdvisorMatchCTA";
 import { trackClick, getAffiliateLink, AFFILIATE_REL } from "@/lib/tracking";

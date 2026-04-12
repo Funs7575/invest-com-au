@@ -60,7 +60,7 @@ export default function ProDealsPage() {
   } | null>(null);
 
   const dirty = creating || editing !== null;
-  const { confirmNavigation } = useUnsavedChanges(dirty);
+  useUnsavedChanges(dirty);
 
   const load = useCallback(async () => {
     setLoading(true);

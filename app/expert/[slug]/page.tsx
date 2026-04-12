@@ -3,8 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
-import Icon from "@/components/Icon";
-import { SITE_URL, absoluteUrl, CURRENT_YEAR } from "@/lib/seo";
+import { SITE_URL, absoluteUrl } from "@/lib/seo";
 
 export const revalidate = 3600;
 

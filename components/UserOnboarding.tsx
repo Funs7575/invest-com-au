@@ -18,13 +18,6 @@ export default function UserOnboarding() {
     setVisible(true);
   }, []);
 
-  const dismiss = () => {
-    if (dontShowAgain) {
-      localStorage.setItem(STORAGE_KEY, "true");
-    }
-    setVisible(false);
-  };
-
   const dismissPermanent = () => {
     localStorage.setItem(STORAGE_KEY, "true");
     setVisible(false);

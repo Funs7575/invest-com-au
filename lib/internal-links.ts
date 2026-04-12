@@ -1,6 +1,6 @@
 import type { Broker } from "./types";
 import { getCategoryBySlug } from "./best-broker-categories";
-import { getClustersForArticle, getClustersForBestPage, type ClusterPage } from "./topic-clusters";
+import { getClustersForArticle, getClustersForBestPage } from "./topic-clusters";
 
 // ── Shared category colors (used by article pages + best-for pages) ──
 

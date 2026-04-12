@@ -168,7 +168,7 @@ function generateInsights(
   creatives: { broker_slug: string; type: string; is_active: boolean; updated_at: string }[],
   placementMap: Map<number, string>,
   dailyStatsByCampaign: Map<number, { impressions: number; clicks: number; spend_cents: number }>,
-  campaignPlacementMap: Map<number, number>,
+  _campaignPlacementMap: Map<number, number>,
 ): ConsultingInsight[] {
   const insights: ConsultingInsight[] = [];
   let idx = 0;
@@ -382,7 +382,7 @@ export default function AdvertiserIntelligencePage() {
       { data: dailyStats },
       { data: allPlacements },
       { data: allCreatives },
-      { data: spendTxns },
+      { data: _spendTxns },
       { data: activityLogs },
     ] = await Promise.all([
       supabase.from("broker_accounts").select("broker_slug, company_name, email, status, last_login_at, package_id"),
@@ -401,7 +401,6 @@ export default function AdvertiserIntelligencePage() {
     const statsArr = dailyStats || [];
     const placementsArr = allPlacements || [];
     const creativesArr = (allCreatives || []) as { broker_slug: string; type: string; is_active: boolean; created_at: string; updated_at: string }[];
-    const txnsArr = spendTxns || [];
     const logsArr = activityLogs || [];
 
     // Build lookup maps

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import BrokerLogo from "@/components/BrokerLogo";
 import { renderStars } from "@/lib/tracking";
 import type { Broker } from "@/lib/types";
 

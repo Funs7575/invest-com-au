@@ -16,8 +16,9 @@ export default class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error) {
     // Report to Sentry if available
-    if (typeof window !== "undefined" && (window as any).Sentry) {
-      (window as any).Sentry.captureException(error);
+    const w = typeof window !== "undefined" ? (window as unknown as { Sentry?: { captureException: (e: unknown) => void } }) : null;
+    if (w?.Sentry) {
+      w.Sentry.captureException(error);
     }
     console.error(`[ErrorBoundary${this.props.section ? ` - ${this.props.section}` : ""}]`, error);
   }

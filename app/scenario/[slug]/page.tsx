@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getAffiliateLink, AFFILIATE_REL } from "@/lib/tracking";
 import AuthorByline from "@/components/AuthorByline";
-import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import { ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import { getScenarioContent } from "@/lib/scenario-content";
 import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";

@@ -282,7 +282,7 @@ export interface QuizQuestion {
 export interface CalculatorConfig {
   id: number;
   calc_type: string;
-  config: Record<string, any>;
+  config: Record<string, unknown>;
   updated_at: string;
 }
 

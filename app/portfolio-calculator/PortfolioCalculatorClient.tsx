@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
-import { createClient } from "@/lib/supabase/client";
 import { trackClick, trackEvent, getAffiliateLink, AFFILIATE_REL } from "@/lib/tracking";
 import { getStoredUtm } from "@/components/UtmCapture";
 import type { Broker } from "@/lib/types";
@@ -18,10 +17,6 @@ type Holding = {
   trades_per_year: number;
   avg_trade_size: number;
 };
-
-function formatCurrency(n: number) {
-  return n >= 1000 ? `$${(n / 1000).toFixed(1)}k` : `$${n.toFixed(0)}`;
-}
 
 export default function PortfolioCalculatorClient({ brokers, inline }: { brokers: Broker[]; inline?: boolean }) {
   const [holdings, setHoldings] = useState<Holding[]>([
@@ -171,7 +166,7 @@ export default function PortfolioCalculatorClient({ brokers, inline }: { brokers
         <div className={inline ? "bg-white border border-slate-200 rounded-xl p-4 md:p-6 mb-4" : "bg-white border border-slate-200 rounded-xl p-4 md:p-6 mb-6"}>
           <h2 className="text-base md:text-lg font-bold text-slate-900 mb-4">Your Trading Activity</h2>
 
-          {holdings.map((h, i) => (
+          {holdings.map((h) => (
             <div key={h.id} className="flex flex-wrap items-end gap-2 md:gap-3 mb-3 pb-3 border-b border-slate-100 last:border-b-0 last:mb-0 last:pb-0">
               <div>
                 <label className="block text-[0.62rem] md:text-xs font-semibold text-slate-600 mb-1">Market</label>

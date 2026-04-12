@@ -8,7 +8,7 @@ import Icon from "./Icon";
  */
 export default function ClusterNav({
   links,
-  currentTitle,
+  currentTitle: _currentTitle,
 }: {
   links: ClusterLink[];
   currentTitle: string;

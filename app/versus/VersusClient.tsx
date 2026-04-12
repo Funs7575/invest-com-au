@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useSearchParams, usePathname } from "next/navigation";
 import Link from "next/link";
-import type { Broker, PlatformType } from "@/lib/types";
+import type { Broker } from "@/lib/types";
 import { PLATFORM_TYPE_LABELS } from "@/lib/types";
 import { trackClick, getAffiliateLink, getBenefitCta, formatPercent, AFFILIATE_REL } from "@/lib/tracking";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
@@ -21,12 +21,6 @@ import WinnerByScenario from "./WinnerByScenario";
 const MAX_BROKERS = 4;
 
 const PLATFORM_LABELS = PLATFORM_TYPE_LABELS;
-
-/** Returns true if all selected platforms are the same type */
-function isSameType(platforms: Broker[]): boolean {
-  if (platforms.length < 2) return true;
-  return platforms.every(p => p.platform_type === platforms[0].platform_type);
-}
 
 /** Returns true if any selected platform is a share broker or CFD */
 function hasShareType(platforms: Broker[]): boolean {

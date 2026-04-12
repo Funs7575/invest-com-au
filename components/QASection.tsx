@@ -122,7 +122,7 @@ function VoteButtons({
   );
 }
 
-export default function QASection({ questions, brokerSlug, brokerName, pageType = "broker", pageSlug }: QASectionProps) {
+export default function QASection({ questions, brokerSlug, brokerName, pageType: _pageType = "broker", pageSlug: _pageSlug }: QASectionProps) {
   const [voteCounts, setVoteCounts] = useState<Record<string, number>>({});
   const [userVotes, setUserVotes] = useState<VoteState>({});
   const [votingInFlight, setVotingInFlight] = useState<Set<string>>(new Set());

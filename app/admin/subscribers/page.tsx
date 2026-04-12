@@ -4,7 +4,6 @@ import { useEffect, useState, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import AdminShell from "@/components/AdminShell";
 import ConfirmDialog from "@/components/ConfirmDialog";
-import { downloadCSV } from "@/lib/csv-export";
 
 type EmailCapture = {
   id: number;

@@ -4,6 +4,11 @@ import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import { BROKER_NON_RESIDENT_NOTE, FOREIGN_INVESTOR_GENERAL_DISCLAIMER, CRYPTO_REGULATORY_NOTE } from "@/lib/compliance";
 import type { Broker } from "@/lib/types";
+
+type ForeignBroker = Broker & {
+  accepts_non_residents?: boolean | null;
+  foreign_investor_notes?: string | null;
+};
 import ForeignInvestmentNav from "../ForeignInvestmentNav";
 import SectionHeading from "@/components/SectionHeading";
 
@@ -110,7 +115,7 @@ export default async function ForeignCryptoPage() {
     })),
   };
 
-  const acceptingExchanges = exchanges.filter((b) => (b as any).accepts_non_residents !== false);
+  const acceptingExchanges = (exchanges as ForeignBroker[]).filter((b) => b.accepts_non_residents !== false);
 
   return (
     <div className="bg-white min-h-screen">
@@ -188,8 +193,8 @@ export default async function ForeignCryptoPage() {
                     <span className="font-bold text-sm text-slate-900">{b.name}</span>
                     <span className="ml-auto text-xs bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded-full">AUSTRAC ✓</span>
                   </div>
-                  {(b as any).foreign_investor_notes && (
-                    <p className="text-xs text-slate-500 leading-relaxed">{(b as any).foreign_investor_notes}</p>
+                  {b.foreign_investor_notes && (
+                    <p className="text-xs text-slate-500 leading-relaxed">{b.foreign_investor_notes}</p>
                   )}
                   {b.affiliate_url && (
                     <Link href={b.affiliate_url} target="_blank" rel="noopener noreferrer" className="mt-3 block text-center text-xs font-bold text-white bg-amber-500 hover:bg-amber-600 rounded-lg py-2 transition-colors">
