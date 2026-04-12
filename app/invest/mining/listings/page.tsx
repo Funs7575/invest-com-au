@@ -20,10 +20,10 @@ export async function generateMetadata(): Promise<Metadata> {
     title: `Mining Investment Opportunities Australia — ${countLabel}Listings (${CURRENT_YEAR})`,
     description:
       "Browse Australian mining investment opportunities. Filter by commodity (lithium, gold, copper, iron ore, rare earths), project stage, and state.",
-    alternates: { canonical: `${SITE_URL}/invest/mining/opportunities` },
+    alternates: { canonical: `${SITE_URL}/invest/mining/listings` },
     openGraph: {
       title: `Mining Investment Opportunities Australia — ${countLabel}Active Listings`,
-      url: `${SITE_URL}/invest/mining/opportunities`,
+      url: `${SITE_URL}/invest/mining/listings`,
     },
   };
 }

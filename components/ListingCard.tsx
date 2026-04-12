@@ -119,7 +119,7 @@ function getDetailPath(vertical: string, slug: string): string {
     case "business":
       return `/invest/buy-business/listings/${slug}`;
     case "mining":
-      return `/invest/mining/opportunities/${slug}`;
+      return `/invest/mining/listings/${slug}`;
     case "farmland":
       return `/invest/farmland/listings/${slug}`;
     case "commercial_property":
@@ -127,11 +127,11 @@ function getDetailPath(vertical: string, slug: string): string {
     case "franchise":
       return `/invest/franchise/listings/${slug}`;
     case "energy":
-      return `/invest/renewable-energy/projects/${slug}`;
+      return `/invest/renewable-energy/listings/${slug}`;
     case "fund":
       return `/invest/funds/${slug}`;
     case "startup":
-      return `/invest/startups/opportunities/${slug}`;
+      return `/invest/startups/listings/${slug}`;
     case "alternatives":
       return `/invest/alternatives/listings/${slug}`;
     case "private_credit":

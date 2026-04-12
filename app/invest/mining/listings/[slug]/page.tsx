@@ -18,21 +18,19 @@ export async function generateMetadata({
   const supabase = await createClient();
   const { data } = await supabase
     .from("investment_listings")
-    .select("title, description, key_metrics")
+    .select("title, description, location_state, key_metrics")
     .eq("slug", slug)
-    .eq("vertical", "startup")
+    .eq("vertical", "mining")
     .single();
 
-  if (!data) return { title: "Startup Investment" };
-  const stage = (data.key_metrics as Record<string, unknown>)?.stage as string | undefined;
-  const raising = (data.key_metrics as Record<string, unknown>)?.raising_cents as number | undefined;
-  const raisingStr = raising ? ` — Raising $${Math.round(raising / 100).toLocaleString("en-AU")}` : "";
-  const title = `${data.title}${raisingStr}${stage ? ` (${stage})` : ""} — Australian Startup (${CURRENT_YEAR})`;
+  if (!data) return { title: "Mining Opportunity" };
+  const commodity = (data.key_metrics as Record<string, unknown>)?.commodity as string | undefined;
+  const title = `${data.title}${commodity ? ` — ${commodity}` : ""} Mining Investment (${CURRENT_YEAR})`;
   return {
     title,
-    description: data.description?.slice(0, 160) ?? `Australian startup raising capital.`,
-    alternates: { canonical: `${SITE_URL}/invest/startups/opportunities/${slug}` },
-    openGraph: { title, url: `${SITE_URL}/invest/startups/opportunities/${slug}` },
+    description: data.description?.slice(0, 160) ?? `Mining investment opportunity in ${data.location_state ?? "Australia"}.`,
+    alternates: { canonical: `${SITE_URL}/invest/mining/listings/${slug}` },
+    openGraph: { title, url: `${SITE_URL}/invest/mining/listings/${slug}` },
   };
 }
 
@@ -42,7 +40,7 @@ function formatCents(cents: number): string {
   return `$${(cents / 100).toLocaleString("en-AU")}`;
 }
 
-export default async function StartupOpportunityDetailPage({
+export default async function MiningOpportunityDetailPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
@@ -54,7 +52,7 @@ export default async function StartupOpportunityDetailPage({
     .from("investment_listings")
     .select("*")
     .eq("slug", slug)
-    .eq("vertical", "startup")
+    .eq("vertical", "mining")
     .single();
 
   if (!listing) notFound();
@@ -63,7 +61,7 @@ export default async function StartupOpportunityDetailPage({
   const { data: related } = await supabase
     .from("investment_listings")
     .select("*")
-    .eq("vertical", "startup")
+    .eq("vertical", "mining")
     .eq("status", "active")
     .neq("slug", slug)
     .limit(3);
@@ -71,13 +69,12 @@ export default async function StartupOpportunityDetailPage({
   const relatedListings = (related ?? []) as InvestmentListing[];
   const km = l.key_metrics ?? {};
   const location = [l.location_city, l.location_state].filter(Boolean).join(", ");
-  const isEsic = km.esic_eligible === true;
 
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
     { name: "Invest", url: `${SITE_URL}/invest` },
-    { name: "Startups", url: `${SITE_URL}/invest/startups` },
-    { name: "Opportunities", url: `${SITE_URL}/invest/startups/opportunities` },
+    { name: "Mining", url: `${SITE_URL}/invest/mining` },
+    { name: "Opportunities", url: `${SITE_URL}/invest/mining/listings` },
     { name: l.title },
   ]);
 
@@ -93,7 +90,7 @@ export default async function StartupOpportunityDetailPage({
           <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-4" aria-label="Breadcrumb">
             <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
             <Icon name="chevron-right" size={12} className="text-slate-300" />
-            <Link href="/invest/startups/opportunities" className="hover:text-slate-900 transition-colors">Startup Opportunities</Link>
+            <Link href="/invest/mining/listings" className="hover:text-slate-900 transition-colors">Mining Opportunities</Link>
             <Icon name="chevron-right" size={12} className="text-slate-300" />
             <span className="text-slate-900 font-medium truncate max-w-[160px]">{l.title}</span>
           </nav>
@@ -102,17 +99,17 @@ export default async function StartupOpportunityDetailPage({
             {l.listing_type === "featured" && (
               <span className="bg-amber-500 text-slate-900 text-xs font-bold px-2.5 py-0.5 rounded-full">Featured</span>
             )}
-            {isEsic && (
-              <span className="bg-rose-600 text-white text-xs font-bold px-2.5 py-0.5 rounded-full">ESIC Eligible</span>
+            {l.firb_eligible && (
+              <span className="bg-blue-600 text-white text-xs font-bold px-2.5 py-0.5 rounded-full">FIRB Eligible</span>
+            )}
+            {!!km.commodity && (
+              <span className="bg-amber-700 text-amber-100 text-xs font-semibold px-2.5 py-0.5 rounded-full capitalize">
+                {String(km.commodity)}
+              </span>
             )}
             {!!km.stage && (
               <span className="bg-slate-700 text-slate-200 text-xs font-semibold px-2.5 py-0.5 rounded-full capitalize">
                 {String(km.stage)}
-              </span>
-            )}
-            {l.industry && (
-              <span className="bg-rose-800 text-rose-100 text-xs font-semibold px-2.5 py-0.5 rounded-full capitalize">
-                {l.industry.replace(/_/g, " ")}
               </span>
             )}
           </div>
@@ -131,39 +128,27 @@ export default async function StartupOpportunityDetailPage({
         <div className="container-custom">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-6">
+              {/* Price */}
               <div className="bg-white border border-slate-200 rounded-xl p-6">
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div>
-                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">
-                      {km.raising_cents ? "Raising" : "Investment Required"}
-                    </p>
+                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Investment Required</p>
                     <p className="text-3xl font-extrabold text-slate-900">
-                      {km.raising_cents
-                        ? formatCents(km.raising_cents as number)
-                        : (l.price_display ?? (l.asking_price_cents ? formatCents(l.asking_price_cents) : "Price on application"))}
+                      {l.price_display ?? (l.asking_price_cents ? formatCents(l.asking_price_cents) : "Price on application")}
                     </p>
                   </div>
-                  {!!km.pre_money_valuation_cents && (
-                    <div className="text-right">
-                      <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1">Pre-Money Valuation</p>
-                      <p className="text-xl font-bold text-slate-700">{formatCents(km.pre_money_valuation_cents as number)}</p>
-                    </div>
-                  )}
                 </div>
               </div>
 
+              {/* Key metrics */}
               {Object.keys(km).length > 0 && (
                 <div className="bg-white border border-slate-200 rounded-xl p-6">
-                  <h2 className="text-base font-bold text-slate-900 mb-4">Company Details</h2>
+                  <h2 className="text-base font-bold text-slate-900 mb-4">Project Details</h2>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {Object.entries(km).map(([key, value]) => (
                       <div key={key} className="bg-slate-50 rounded-lg p-3">
                         <p className="text-xs text-slate-500 capitalize mb-1">{key.replace(/_/g, " ")}</p>
-                        <p className="text-sm font-bold text-slate-900">
-                          {typeof value === "boolean" ? (value ? "Yes" : "No") :
-                           typeof value === "number" && key.includes("cents") ? formatCents(value) :
-                           String(value)}
-                        </p>
+                        <p className="text-sm font-bold text-slate-900 capitalize">{String(value)}</p>
                       </div>
                     ))}
                   </div>
@@ -172,7 +157,7 @@ export default async function StartupOpportunityDetailPage({
 
               {l.description && (
                 <div className="bg-white border border-slate-200 rounded-xl p-6">
-                  <h2 className="text-base font-bold text-slate-900 mb-3">About This Company</h2>
+                  <h2 className="text-base font-bold text-slate-900 mb-3">About This Opportunity</h2>
                   <div className="prose prose-slate prose-sm max-w-none">
                     {l.description.split("\n").map((para, i) => (
                       <p key={i}>{para}</p>
@@ -181,33 +166,25 @@ export default async function StartupOpportunityDetailPage({
                 </div>
               )}
 
-              {isEsic && (
-                <div className="bg-rose-50 border border-rose-200 rounded-xl p-5 flex gap-4">
-                  <Icon name="dollar-sign" size={20} className="text-rose-600 shrink-0 mt-0.5" />
+              {l.firb_eligible && (
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-5 flex gap-4">
+                  <Icon name="globe" size={20} className="text-blue-600 shrink-0 mt-0.5" />
                   <div>
-                    <p className="font-bold text-rose-900 text-sm mb-1">ESIC Eligible — Tax Incentives Apply</p>
-                    <p className="text-sm text-rose-700">
-                      This company qualifies as an Early Stage Innovation Company (ESIC). Eligible investors receive a 20% non-refundable tax offset (up to $200K/year) and a 10-year CGT exemption on qualifying shares. Confirm ESIC status with the company and your accountant.
-                    </p>
+                    <p className="font-bold text-blue-900 text-sm mb-1">FIRB Eligible</p>
+                    <p className="text-sm text-blue-700">Foreign investment may be approved. Mining tenements are a sensitive sector — FIRB notification is required for foreign buyers.</p>
+                    <Link href="/foreign-investment" className="inline-flex items-center gap-1 text-blue-700 font-semibold text-xs mt-2 hover:text-blue-900">
+                      Learn about FIRB for mining <Icon name="arrow-right" size={11} />
+                    </Link>
                   </div>
                 </div>
               )}
-
-              {/* Risk warning */}
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-5">
-                <p className="text-xs text-slate-500 leading-relaxed">
-                  <strong>Risk warning:</strong> Startup and early-stage investment is high risk. Most startups do not succeed. You may lose some or all of your investment. This is not financial advice. Consider seeking advice from a licensed financial adviser before investing.
-                </p>
-              </div>
             </div>
 
             <div className="space-y-5">
               <div className="bg-white border border-slate-200 rounded-xl p-6 sticky top-20">
-                <h2 className="text-base font-bold text-slate-900 mb-1">Express Interest</h2>
-                <p className="text-xs text-slate-500 mb-4">
-                  Send a confidential enquiry to the founding team.
-                </p>
-                <ListingEnquiryForm listingId={l.id} listingTitle={l.title} vertical="startup" />
+                <h2 className="text-base font-bold text-slate-900 mb-1">Enquire About This Opportunity</h2>
+                <p className="text-xs text-slate-500 mb-4">Send a confidential enquiry to the project team.</p>
+                <ListingEnquiryForm listingId={l.id} listingTitle={l.title} vertical="mining" />
               </div>
               <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 flex gap-6">
                 <div className="text-center">
@@ -224,10 +201,10 @@ export default async function StartupOpportunityDetailPage({
 
           {relatedListings.length > 0 && (
             <div className="mt-12">
-              <h2 className="text-xl font-extrabold text-slate-900 mb-6">Other Startup Opportunities</h2>
+              <h2 className="text-xl font-extrabold text-slate-900 mb-6">Other Mining Opportunities</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {relatedListings.map((rel) => (
-                  <ListingCard key={rel.id} listing={rel} vertical="startup" />
+                  <ListingCard key={rel.id} listing={rel} vertical="mining" />
                 ))}
               </div>
             </div>
@@ -238,10 +215,10 @@ export default async function StartupOpportunityDetailPage({
       <section className="py-10 bg-white border-t border-slate-100">
         <div className="container-custom text-center">
           <Link
-            href="/invest/startups/opportunities"
+            href="/invest/mining/listings"
             className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-6 py-3 rounded-xl transition-colors"
           >
-            Browse All Startup Opportunities
+            Browse All Mining Opportunities
             <Icon name="arrow-right" size={16} />
           </Link>
         </div>

@@ -34,7 +34,7 @@ const SECTIONS = [
     desc: "Browse real investment opportunities",
     items: [
       { label: "Businesses for Sale", href: "/invest/buy-business/listings", icon: "briefcase", color: "bg-slate-700" },
-      { label: "Mining & Resources", href: "/invest/mining/opportunities", icon: "layers", color: "bg-amber-600" },
+      { label: "Mining & Resources", href: "/invest/mining/listings", icon: "layers", color: "bg-amber-600" },
       { label: "Farmland", href: "/invest/farmland/listings", icon: "leaf", color: "bg-green-600" },
       { label: "Commercial Property", href: "/invest/commercial-property/listings", icon: "building", color: "bg-blue-600" },
       { label: "Alternatives", href: "/invest/alternatives/listings", icon: "gem", color: "bg-rose-600" },
