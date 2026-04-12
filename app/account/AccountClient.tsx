@@ -33,12 +33,14 @@ export default function AccountClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const checkoutSuccess = searchParams.get("checkout") === "success";
+  const welcomeParam = searchParams.get("welcome") === "1";
 
   const { user, subscription, isPro, loading, refresh } = useSubscription();
   const [portalLoading, setPortalLoading] = useState(false);
   const [portalError, setPortalError] = useState<string | null>(null);
   const [signOutLoading, setSignOutLoading] = useState(false);
   const [showSuccessBanner, setShowSuccessBanner] = useState(checkoutSuccess);
+  const [showWelcomeBanner, setShowWelcomeBanner] = useState(welcomeParam);
 
   const [cancelLoading, setCancelLoading] = useState(false);
   const [cancelError, setCancelError] = useState<string | null>(null);
@@ -245,6 +247,22 @@ export default function AccountClient() {
               </svg>
               <p className="text-sm text-blue-700">Processing your subscription... This usually takes a few seconds.</p>
             </div>
+          </div>
+        )}
+
+        {/* Welcome banner after onboarding */}
+        {showWelcomeBanner && (
+          <div className="mb-4 bg-gradient-to-r from-emerald-50 to-green-50 border border-emerald-200 rounded-xl px-4 py-3 flex items-start gap-3">
+            <svg className="w-5 h-5 text-emerald-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div className="flex-1">
+              <p className="text-sm font-semibold text-emerald-800">Welcome to Invest.com.au{profileName ? `, ${profileName}` : ""}!</p>
+              <p className="text-xs text-emerald-700 mt-0.5">Your profile is set up. Start comparing brokers, explore our tools, or take the platform quiz to find your best match.</p>
+            </div>
+            <button onClick={() => setShowWelcomeBanner(false)} className="text-emerald-400 hover:text-emerald-600 shrink-0">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
           </div>
         )}
 

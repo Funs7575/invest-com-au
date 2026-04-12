@@ -140,7 +140,7 @@ export default function LoginClient() {
       const supabase = createClient();
 
       const { error: authError } = await supabase.auth.resetPasswordForEmail(trimmed, {
-        redirectTo: `${siteUrl}/auth/callback?next=/account`,
+        redirectTo: `${siteUrl}/auth/reset-password`,
       });
 
       if (authError) {
