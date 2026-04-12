@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getAdminEmails } from "@/lib/admin";
+import { logger } from "@/lib/logger";
+
+const log = logger("admin-verify");
 
 /**
  * GET /api/admin/verify
@@ -26,7 +29,8 @@ export async function GET() {
     }
 
     return NextResponse.json({ admin: true, email: user.email });
-  } catch {
+  } catch (err) {
+    log.error("Admin verify failed", { err: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ admin: false }, { status: 500 });
   }
 }

@@ -106,7 +106,8 @@ export async function GET(req: NextRequest) {
         previousStatus: broker.link_status,
         changed,
       };
-    } catch {
+    } catch (err) {
+      log.warn("Affiliate link fetch timeout or error", { err: err instanceof Error ? err.message : String(err), slug: broker.slug });
       const linkStatus = "timeout";
       const changed = broker.link_status !== linkStatus;
 

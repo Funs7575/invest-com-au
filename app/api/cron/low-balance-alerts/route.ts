@@ -1,5 +1,8 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
+
+const log = logger("cron-low-balance");
 
 export const runtime = "edge";
 export const maxDuration = 60;
@@ -166,8 +169,8 @@ export async function GET(req: NextRequest) {
             .eq("type", "low_balance")
             .order("created_at", { ascending: false })
             .limit(1);
-        } catch {
-          // Email failed — notification is still saved
+        } catch (err) {
+          log.warn("Low balance alert email failed", { err: err instanceof Error ? err.message : String(err), brokerSlug: wallet.broker_slug });
         }
       }
     }

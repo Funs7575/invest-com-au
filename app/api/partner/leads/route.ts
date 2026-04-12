@@ -3,6 +3,9 @@ import { createClient } from "@/lib/supabase/server";
 import { escapeHtml } from "@/lib/html-escape";
 import { getSiteUrl } from "@/lib/url";
 import { timingSafeEqual } from "crypto";
+import { logger } from "@/lib/logger";
+
+const log = logger("partner-leads");
 
 const MAX_LEADS_PER_REQUEST = 100;
 
@@ -188,7 +191,8 @@ export async function POST(request: NextRequest) {
           // ── Update advisor stats ──
           try {
             await supabase.rpc("increment_advisor_lead_count", { advisor_id: advisor.id });
-          } catch {
+          } catch (rpcErr) {
+            log.warn("increment_advisor_lead_count RPC failed, falling back", { err: rpcErr instanceof Error ? rpcErr.message : String(rpcErr), advisorId: advisor.id });
             await supabase.from("professionals").update({
               last_lead_at: new Date().toISOString(),
               total_leads: (advisor.total_leads || 0) + 1,
@@ -239,7 +243,7 @@ export async function POST(request: NextRequest) {
 
         leadsCreated++;
       } catch (leadProcessError) {
-        console.error(`Error processing partner lead at index ${i}:`, leadProcessError);
+        log.error("Error processing partner lead", { index: i, err: leadProcessError instanceof Error ? leadProcessError.message : String(leadProcessError) });
         errors.push({ index: i, error: "Unexpected processing error." });
         leadsFailed++;
       }
@@ -252,7 +256,7 @@ export async function POST(request: NextRequest) {
       errors: errors.length > 0 ? errors : undefined,
     });
   } catch (error) {
-    console.error("Partner leads API error:", error);
+    log.error("Partner leads API error", { error: error instanceof Error ? error.message : String(error) });
     return NextResponse.json(
       { error: "Internal server error." },
       { status: 500 },

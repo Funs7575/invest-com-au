@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { ADMIN_EMAILS } from "@/lib/admin";
+import { logger } from "@/lib/logger";
+
+const log = logger("admin-bd-pipeline");
 
 async function requireAdmin() {
   const supabaseAuth = await createClient();
@@ -32,7 +35,8 @@ export async function GET() {
       .select("*")
       .order("updated_at", { ascending: false });
     return NextResponse.json(data || []);
-  } catch (error) {
+  } catch (err) {
+    log.error("Failed to fetch BD pipeline", { err: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Failed to fetch pipeline" }, { status: 500 });
   }
 }

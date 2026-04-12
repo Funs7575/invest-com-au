@@ -224,14 +224,14 @@ export async function POST(request: NextRequest) {
                 customer.email,
                 "Welcome to Invest.com.au Pro 🎉",
                 buildProWelcomeEmail(interval),
-              ).catch((err) => console.error("[stripe-webhook] Pro welcome email failed:", err));
+              ).catch((err) => log.error("Pro welcome email failed", { err: err instanceof Error ? err.message : String(err) }));
 
               // Notify admin of new Pro signup
               sendTransactionalEmail(
                 ADMIN_EMAIL,
                 `New Pro Signup: ${customer.email}`,
                 `<div style="font-family:Arial,sans-serif;max-width:500px"><h2 style="color:#0f172a;font-size:16px">💎 New Pro Member</h2><p style="color:#64748b;font-size:14px"><strong>${customer.email}</strong> just subscribed to Invest.com.au Pro (${interval || "unknown"} plan).</p><p style="color:#64748b;font-size:14px">Customer ID: ${custId}</p><a href="${getSiteUrl()}/admin/pro-subscribers" style="display:inline-block;padding:10px 20px;background:#7c3aed;color:white;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;margin-top:8px">View Pro Members →</a></div>`,
-              ).catch((err) => console.error("[stripe-webhook] Admin Pro signup notification failed:", err));
+              ).catch((err) => log.error("Admin Pro signup notification failed", { err: err instanceof Error ? err.message : String(err) }));
             }
           } catch (err) {
             log.error("Pro welcome email lookup failed", { error: err instanceof Error ? err.message : String(err) });
@@ -320,7 +320,7 @@ export async function POST(request: NextRequest) {
                 customerEmail,
                 `Course Confirmed: ${courseName}`,
                 buildCourseReceiptEmail(courseName, courseSlug, session.amount_total || 0),
-              ).catch((err) => console.error("[stripe-webhook] Course receipt email failed:", err));
+              ).catch((err) => log.error("Course receipt email failed", { err: err instanceof Error ? err.message : String(err) }));
             }
 
             // Insert revenue tracking row if course has a creator
@@ -479,7 +479,7 @@ export async function POST(request: NextRequest) {
                     <a href="${getSiteUrl()}/invest/listings/${listing?.slug || listingId}" style="display: inline-block; padding: 12px 28px; background: #0f172a; color: #fff; font-weight: 700; font-size: 14px; border-radius: 8px; text-decoration: none;">View Your Listing</a>
                   </div>
                 `),
-              ).catch((err) => console.error("[stripe-webhook] Listing confirmation email failed:", err));
+              ).catch((err) => log.error("Listing confirmation email failed", { err: err instanceof Error ? err.message : String(err) }));
             }
           }
         }
@@ -525,7 +525,7 @@ export async function POST(request: NextRequest) {
                   consultCustomerEmail,
                   `Consultation Booked: ${consultTitle}`,
                   buildConsultationConfirmationEmail(consultTitle, consultationSlug, session.amount_total || 0),
-                ).catch((err) => console.error("[stripe-webhook] Consultation confirmation email failed:", err));
+                ).catch((err) => log.error("Consultation confirmation email failed", { err: err instanceof Error ? err.message : String(err) }));
               }
             }
           }
@@ -672,8 +672,8 @@ export async function POST(request: NextRequest) {
                 `,
               }),
             });
-          } catch {
-            // Non-critical
+          } catch (err) {
+            log.error("Dispute alert email failed", { err: err instanceof Error ? err.message : String(err), disputeId: dispute.id });
           }
         }
 

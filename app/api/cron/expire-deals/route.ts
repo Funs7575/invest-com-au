@@ -264,8 +264,8 @@ export async function GET(req: NextRequest) {
               }),
             });
           }
-        } catch {
-          // Email failed — notification is still saved
+        } catch (err) {
+          log.warn("Campaign completion email failed", { err: err instanceof Error ? err.message : String(err), brokerSlug: campaign.broker_slug });
         }
       }
 

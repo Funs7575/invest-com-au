@@ -1,6 +1,9 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { calculateOptimalBids, applyBidAdjustments } from "@/lib/marketplace/auto-bid";
+import { logger } from "@/lib/logger";
+
+const log = logger("cron-marketplace-stats");
 
 export const runtime = "edge";
 export const maxDuration = 60;
@@ -243,8 +246,8 @@ export async function GET(req: NextRequest) {
             }),
           });
           digestsSent++;
-        } catch {
-          // Email failed — non-critical
+        } catch (err) {
+          log.warn("Broker digest email failed", { err: err instanceof Error ? err.message : String(err) });
         }
       }
     }
@@ -544,8 +547,8 @@ export async function GET(req: NextRequest) {
             }),
           });
           reEngagementsSent++;
-        } catch {
-          // Non-critical
+        } catch (err) {
+          log.warn("Re-engagement email failed", { err: err instanceof Error ? err.message : String(err) });
         }
 
         results.push({ action: "re_engagement", detail: `Sent to ${broker.broker_slug}` });

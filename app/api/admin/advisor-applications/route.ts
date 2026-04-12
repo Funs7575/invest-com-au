@@ -5,6 +5,9 @@ import { randomBytes } from "crypto";
 import { sendApplicationApproved, sendApplicationRejected } from "@/lib/advisor-emails";
 import { getSiteUrl } from "@/lib/url";
 import { ADMIN_EMAILS } from "@/lib/admin";
+import { logger } from "@/lib/logger";
+
+const log = logger("admin-advisor-applications");
 
 function createAdminSupabase() {
   return createAdminClient();
@@ -57,7 +60,8 @@ export async function PATCH(request: NextRequest) {
   let body: { applicationId: number; action: "approve" | "reject"; rejectionReason?: string };
   try {
     body = await request.json();
-  } catch {
+  } catch (err) {
+    log.warn("Advisor applications invalid JSON", { err: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 
@@ -83,7 +87,7 @@ export async function PATCH(request: NextRequest) {
       reviewed_at: new Date().toISOString(),
     }).eq("id", applicationId);
 
-    sendApplicationRejected(app.email, app.name, rejectionReason).catch((err) => console.error("[admin] rejection email failed:", err));
+    sendApplicationRejected(app.email, app.name, rejectionReason).catch((err) => log.error("Rejection email failed", { err: err instanceof Error ? err.message : String(err), applicationId }));
     return NextResponse.json({ success: true });
   }
 
@@ -142,7 +146,7 @@ export async function PATCH(request: NextRequest) {
     .single();
 
   if (proError) {
-    console.error("[admin] create professional failed:", proError);
+    log.error("Create professional failed", { error: proError.message, applicationId });
     return NextResponse.json({ error: "Failed to create advisor profile" }, { status: 500 });
   }
 
@@ -194,7 +198,7 @@ export async function PATCH(request: NextRequest) {
   });
 
   const loginUrl = `${siteUrl}/advisor-portal?token=${token}`;
-  sendApplicationApproved(app.email, app.name, loginUrl).catch((err) => console.error("[admin] approval email failed:", err));
+  sendApplicationApproved(app.email, app.name, loginUrl).catch((err) => log.error("Approval email failed", { err: err instanceof Error ? err.message : String(err), applicationId }));
 
   return NextResponse.json({ success: true, professionalId: newPro.id, firmId });
 }

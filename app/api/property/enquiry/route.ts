@@ -5,6 +5,9 @@ import { isValidEmail, isDisposableEmail } from "@/lib/validate-email";
 import { notificationFooter } from "@/lib/email-templates";
 import { escapeHtml } from "@/lib/html-escape";
 import { getSiteUrl } from "@/lib/url";
+import { logger } from "@/lib/logger";
+
+const log = logger("property-enquiry");
 
 export async function POST(request: NextRequest) {
   try {
@@ -192,13 +195,13 @@ export async function POST(request: NextRequest) {
           }),
         });
       }
-    } catch {
-      // Non-critical
+    } catch (err) {
+      log.warn("Property enquiry confirmation email failed", { err: err instanceof Error ? err.message : String(err) });
     }
 
     return NextResponse.json({ success: true, lead_id: lead.id });
   } catch (error) {
-    console.error("Property enquiry error:", error);
+    log.error("Property enquiry handler error", { error: error instanceof Error ? error.message : String(error) });
     return NextResponse.json({ error: "Internal server error." }, { status: 500 });
   }
 }
