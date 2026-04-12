@@ -69,14 +69,11 @@ export default memo(function DealCard({
 
   return (
     <div
-      className={`group relative rounded-xl border bg-white p-3 md:p-5 flex flex-col transition-all duration-300 hover:translate-y-[-2px] hover:shadow-lg ${
+      className={`group relative rounded-xl border bg-white p-3 md:p-5 flex flex-col transition-all duration-300 hover:translate-y-[-2px] hover:shadow-lg bg-clip-padding ${
         isFeaturedCampaign
           ? "border-blue-200 ring-1 ring-blue-100"
           : "border-slate-200 hover:border-transparent"
       }`}
-      style={{
-        backgroundClip: "padding-box",
-      }}
     >
       {/* Gradient border overlay on hover */}
       <div
@@ -253,16 +250,7 @@ export default memo(function DealCard({
           trackClick(broker.slug, broker.name, "deals-hub", "/deals", "compare", undefined, campaignId ? "deals" : undefined);
           trackEvent('deal_claimed', { broker_slug: broker.slug, broker_name: broker.name, deal_text: broker.deal_text || '' }, '/deals');
         }}
-        className="mt-auto block w-full text-center py-2.5 md:py-3 text-white text-xs md:text-sm font-bold rounded-lg transition-all duration-200 active:scale-[0.98] hover:shadow-[0_0_20px_rgba(217,119,6,0.35)]"
-        style={{
-          background: "linear-gradient(135deg, #f59e0b, #d97706)",
-        }}
-        onMouseEnter={(e) => {
-          (e.currentTarget as HTMLElement).style.background = "linear-gradient(135deg, #d97706, #b45309)";
-        }}
-        onMouseLeave={(e) => {
-          (e.currentTarget as HTMLElement).style.background = "linear-gradient(135deg, #f59e0b, #d97706)";
-        }}
+        className="mt-auto block w-full text-center py-2.5 md:py-3 text-white text-xs md:text-sm font-bold rounded-lg transition-all duration-200 active:scale-[0.98] hover:shadow-[0_0_20px_rgba(217,119,6,0.35)] bg-gradient-to-br from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700"
       >
         {broker.deal_text?.toLowerCase().includes("free") ? "Get Free Access \u2192" : getBenefitCta(broker, "compare")}
       </a>

@@ -97,7 +97,8 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
     .map(({ broker: br }) => br);
 
   // Fetch articles, user reviews, switch stories, fee history, related deals (in parallel)
-  const [{ data: brokerArticles }, { data: expertArticlesRaw }, { data: userReviews }, { data: reviewStats }, { data: switchStoriesRaw }, { data: feeHistoryRaw }, { data: questionsRaw }, { data: relatedDealsRaw }] = await Promise.all([
+  // NOTE: Q&A is intentionally excluded from this batch and streamed separately via <Suspense> below.
+  const [{ data: brokerArticles }, { data: expertArticlesRaw }, { data: userReviews }, { data: reviewStats }, { data: switchStoriesRaw }, { data: feeHistoryRaw }, { data: relatedDealsRaw }] = await Promise.all([
     supabase
       .from('articles')
       .select('id, title, slug, category, read_time')
@@ -135,13 +136,6 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
       .eq('broker_slug', slug)
       .order('changed_at', { ascending: false })
       .limit(20),
-    supabase
-      .from('broker_questions')
-      .select('id, question, display_name, created_at, broker_answers(id, answer, answered_by, author_slug, display_name, is_accepted, created_at)')
-      .eq('broker_slug', slug)
-      .eq('status', 'approved')
-      .order('created_at', { ascending: false })
-      .limit(10),
     // Related deals: other platforms with active deals, same platform_type or is_crypto match
     supabase
       .from('brokers')
@@ -197,28 +191,6 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
     },
   } : null;
 
-  // Format Q&A data for QASection component
-  const questions = ((questionsRaw || []) as BrokerQuestion[]).map((q) => ({
-    id: q.id,
-    question: q.question,
-    display_name: q.display_name ?? "",
-    created_at: q.created_at,
-    answers: (q.broker_answers || [])
-      .filter((a: BrokerAnswer) => a.status === undefined || a.status === 'approved')
-      .map((a: BrokerAnswer) => ({
-        id: a.id,
-        answer: a.answer,
-        answered_by: a.answered_by ?? "",
-        author_slug: a.author_slug,
-        display_name: a.display_name,
-        is_accepted: a.is_accepted ?? false,
-        created_at: a.created_at,
-      })),
-  }));
-
-  // Q&A JSON-LD
-  const qaLd = questions.length > 0 ? qaPageJsonLd(questions, `${b.name} Q&A`, absoluteUrl(`/broker/${slug}`)) : null;
-
   // Dates for visible byline (must match structured data)
   const datePublished = b.created_at
     ? new Date(b.created_at).toLocaleDateString("en-AU", { year: "numeric", month: "long", day: "numeric" })
@@ -251,12 +223,6 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
           dangerouslySetInnerHTML={{ __html: JSON.stringify(aggregateRatingLd) }}
         />
       )}
-      {qaLd && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(qaLd) }}
-        />
-      )}
       <Suspense fallback={null}>
         <BrokerReviewClient
           broker={b}
@@ -276,15 +242,11 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
           relatedDeals={relatedDeals}
         />
       </Suspense>
-      {/* Q&A Section */}
+      {/* Q&A Section — streamed independently so main review renders first */}
       <div id="questions" className="container-custom max-w-4xl scroll-mt-20">
-        <QASection
-          questions={questions}
-          brokerSlug={b.slug}
-          brokerName={b.name}
-          pageType="broker"
-          pageSlug={b.slug}
-        />
+        <Suspense fallback={<QASectionSkeleton />}>
+          <BrokerQASection brokerSlug={b.slug} brokerName={b.name} pageUrl={absoluteUrl(`/broker/${slug}`)} />
+        </Suspense>
         <AskQuestionForm
           brokerSlug={b.slug}
           brokerName={b.name}
@@ -292,6 +254,68 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
           pageSlug={b.slug}
         />
       </div>
+    </>
+  );
+}
+
+function QASectionSkeleton() {
+  return (
+    <div className="py-6 animate-pulse">
+      <div className="h-6 w-48 bg-slate-200 rounded mb-4" />
+      <div className="space-y-3">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="h-20 bg-slate-100 rounded-xl" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+async function BrokerQASection({ brokerSlug, brokerName, pageUrl }: { brokerSlug: string; brokerName: string; pageUrl: string }) {
+  const supabase = await createClient();
+  const { data: questionsRaw } = await supabase
+    .from('broker_questions')
+    .select('id, question, display_name, created_at, broker_answers(id, answer, answered_by, author_slug, display_name, is_accepted, created_at)')
+    .eq('broker_slug', brokerSlug)
+    .eq('status', 'approved')
+    .order('created_at', { ascending: false })
+    .limit(10);
+
+  const questions = ((questionsRaw || []) as BrokerQuestion[]).map((q) => ({
+    id: q.id,
+    question: q.question,
+    display_name: q.display_name ?? "",
+    created_at: q.created_at,
+    answers: (q.broker_answers || [])
+      .filter((a: BrokerAnswer) => a.status === undefined || a.status === 'approved')
+      .map((a: BrokerAnswer) => ({
+        id: a.id,
+        answer: a.answer,
+        answered_by: a.answered_by ?? "",
+        author_slug: a.author_slug,
+        display_name: a.display_name,
+        is_accepted: a.is_accepted ?? false,
+        created_at: a.created_at,
+      })),
+  }));
+
+  const qaLd = questions.length > 0 ? qaPageJsonLd(questions, `${brokerName} Q&A`, pageUrl) : null;
+
+  return (
+    <>
+      {qaLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(qaLd) }}
+        />
+      )}
+      <QASection
+        questions={questions}
+        brokerSlug={brokerSlug}
+        brokerName={brokerName}
+        pageType="broker"
+        pageSlug={brokerSlug}
+      />
     </>
   );
 }

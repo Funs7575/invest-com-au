@@ -254,8 +254,7 @@ export default function PageWalkthrough({
       {/* --- overlay with SVG cutout --- */}
       <div className="fixed inset-0 z-[9998]" aria-hidden="true">
         <svg
-          className="absolute inset-0 w-full h-full"
-          style={{ pointerEvents: "none" }}
+          className="absolute inset-0 w-full h-full pointer-events-none"
         >
           <defs>
             <mask id="wt-mask">
@@ -298,9 +297,8 @@ export default function PageWalkthrough({
 
         {/* Click-catcher to allow clicking the overlay (acts as skip/dismiss) */}
         <div
-          className="absolute inset-0"
+          className="absolute inset-0 cursor-default"
           onClick={finish}
-          style={{ cursor: "default" }}
         />
       </div>
 

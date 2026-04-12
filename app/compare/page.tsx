@@ -76,7 +76,7 @@ function ComparePageSkeleton() {
   );
 }
 
-export default async function ComparePage() {
+async function CompareData() {
   const supabase = await createClient();
 
   const { data: brokers } = await supabase
@@ -104,6 +104,18 @@ export default async function ComparePage() {
     })),
   };
 
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <CompareClient brokers={activeBrokers} />
+    </>
+  );
+}
+
+export default function ComparePage() {
   const breadcrumbLd = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -127,10 +139,6 @@ export default async function ComparePage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      <script
-        type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
       <script
@@ -138,17 +146,17 @@ export default async function ComparePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
       />
       <Suspense><CompareNav /></Suspense>
-      {/* Server-rendered H1 for crawlers that don't execute client JS */}
+      {/* Server-rendered H1 for crawlers that don't execute client JS — streams immediately */}
       <div className="container-custom pt-5 md:pt-10">
         <h1 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
           Compare Australian Investment Platforms
         </h1>
         <p className="mt-2 text-sm md:text-base text-slate-600 max-w-2xl">
-          Side-by-side comparison of fees, features, and safety for {activeBrokers.length}+ Australian share trading, crypto, super and robo-advisor platforms.
+          Side-by-side comparison of fees, features, and safety for 100+ Australian share trading, crypto, super and robo-advisor platforms.
         </p>
       </div>
       <Suspense fallback={<ComparePageSkeleton />}>
-        <CompareClient brokers={activeBrokers} />
+        <CompareData />
       </Suspense>
     </>
   );

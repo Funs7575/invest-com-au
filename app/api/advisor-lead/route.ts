@@ -121,8 +121,8 @@ async function syncToResendContacts(email: string, name: string): Promise<void> 
         properties: { source: "advisor-lead", signed_up: new Date().toISOString().split("T")[0] },
       }),
     });
-  } catch {
-    /* fire-and-forget */
+  } catch (err) {
+    log.warn("CRM sync failed", { err: err instanceof Error ? err.message : String(err) });
   }
 }
 
@@ -130,7 +130,8 @@ export async function POST(request: NextRequest) {
   let body: Record<string, unknown>;
   try {
     body = await request.json();
-  } catch {
+  } catch (err) {
+    log.warn("advisor-lead invalid JSON", { err: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 

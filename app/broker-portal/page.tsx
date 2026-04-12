@@ -423,7 +423,7 @@ export default function BrokerDashboard() {
               <div className="mt-3 h-2 bg-slate-200 rounded-full overflow-hidden relative">
                 <div className={`h-full rounded-full ${isProfitable ? "bg-emerald-500" : "bg-red-400"}`}
                   style={{ width: `${Math.min(100, Math.max(5, (thirtyDayConvValue / Math.max(thirtyDaySpend, 1)) * 50))}%` }} />
-                <div className="absolute h-full w-0.5 bg-slate-900" style={{ left: "50%" }} title="Break-even" />
+                <div className="absolute h-full w-0.5 bg-slate-900 left-1/2" title="Break-even" />
               </div>
             )}
             {thirtyDayConversions > 0 && (

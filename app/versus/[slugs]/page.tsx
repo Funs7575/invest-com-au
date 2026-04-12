@@ -188,43 +188,8 @@ export async function generateMetadata({
   };
 }
 
-export default async function VersusSlugPage({
-  params,
-}: {
-  params: Promise<{ slugs: string }>;
-}) {
-  const { slugs } = await params;
-  const brokerSlugs = parseSlugs(slugs);
-
-  if (brokerSlugs.length < 2 || brokerSlugs.length > 4) {
-    notFound();
-  }
-
+async function VersusData({ brokerSlugs, slugs }: { brokerSlugs: string[]; slugs: string }) {
   const supabase = await createClient();
-
-  // Validate all slugs exist
-  const { data: matchedBrokers } = await supabase
-    .from("brokers")
-    .select("slug")
-    .in("slug", brokerSlugs)
-    .eq("status", "active");
-
-  if (!matchedBrokers || matchedBrokers.length < 2) {
-    notFound();
-  }
-
-  // Check if requested slugs are all valid
-  const validSlugs = new Set(matchedBrokers.map((b) => b.slug));
-  const allValid = brokerSlugs.every((s) => validSlugs.has(s));
-
-  if (!allValid) {
-    // If some slugs are invalid, redirect to just the valid ones
-    const validOnly = brokerSlugs.filter((s) => validSlugs.has(s));
-    if (validOnly.length >= 2) {
-      redirect(`/versus/${validOnly.join("-vs-")}`);
-    }
-    notFound();
-  }
 
   // Fetch all brokers for the selector dropdowns
   const { data: allBrokers } = await supabase
@@ -304,10 +269,53 @@ export default async function VersusSlugPage({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
         />
       )}
-      <Suspense fallback={<VersusLoading />}>
-        <VersusClient brokers={(allBrokers as Broker[]) || []} serverEditorial={editorial} />
-      </Suspense>
+      <VersusClient brokers={(allBrokers as Broker[]) || []} serverEditorial={editorial} />
     </>
+  );
+}
+
+export default async function VersusSlugPage({
+  params,
+}: {
+  params: Promise<{ slugs: string }>;
+}) {
+  const { slugs } = await params;
+  const brokerSlugs = parseSlugs(slugs);
+
+  if (brokerSlugs.length < 2 || brokerSlugs.length > 4) {
+    notFound();
+  }
+
+  const supabase = await createClient();
+
+  // Validate all slugs exist (must happen before render for proper notFound/redirect)
+  const { data: matchedBrokers } = await supabase
+    .from("brokers")
+    .select("slug")
+    .in("slug", brokerSlugs)
+    .eq("status", "active");
+
+  if (!matchedBrokers || matchedBrokers.length < 2) {
+    notFound();
+  }
+
+  // Check if requested slugs are all valid
+  const validSlugs = new Set(matchedBrokers.map((b) => b.slug));
+  const allValid = brokerSlugs.every((s) => validSlugs.has(s));
+
+  if (!allValid) {
+    // If some slugs are invalid, redirect to just the valid ones
+    const validOnly = brokerSlugs.filter((s) => validSlugs.has(s));
+    if (validOnly.length >= 2) {
+      redirect(`/versus/${validOnly.join("-vs-")}`);
+    }
+    notFound();
+  }
+
+  return (
+    <Suspense fallback={<VersusLoading />}>
+      <VersusData brokerSlugs={brokerSlugs} slugs={slugs} />
+    </Suspense>
   );
 }
 

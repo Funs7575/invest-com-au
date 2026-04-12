@@ -1,6 +1,9 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { isRateLimited } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
+
+const log = logger("unsubscribe");
 
 /**
  * POST /api/unsubscribe
@@ -20,7 +23,8 @@ export async function POST(request: NextRequest) {
   let body: Record<string, unknown>;
   try {
     body = await request.json();
-  } catch {
+  } catch (err) {
+    log.warn("unsubscribe invalid JSON", { err: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
@@ -90,8 +94,8 @@ export async function POST(request: NextRequest) {
           unsubscribed: true,
         }),
       });
-    } catch {
-      // Non-critical — still unsubscribed in our DB
+    } catch (err) {
+      log.warn("Resend Contacts unsubscribe sync failed", { err: err instanceof Error ? err.message : String(err) });
     }
   }
 
