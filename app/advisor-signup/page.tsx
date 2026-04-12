@@ -1,12 +1,22 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 import { trackEvent } from "@/lib/tracking";
 
 const STATES = ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT"];
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PHONE_RE = /^[+\-()\d\s]{8,}$/;
+
+function ValidCheck() {
+  return (
+    <svg className="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+    </svg>
+  );
+}
 
 const SPECIALTY_OPTIONS = [
   "SMSF Setup & Administration",
@@ -86,6 +96,69 @@ export default function AdvisorSignupPage() {
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const trackedStartRef = useRef(false);
+
+  // Inline field validation (step 1 + pitch)
+  type FieldKey = "name" | "email" | "phone" | "location_state" | "location_suburb" | "pitch_message";
+  const [touched, setTouched] = useState<Record<FieldKey, boolean>>({
+    name: false,
+    email: false,
+    phone: false,
+    location_state: false,
+    location_suburb: false,
+    pitch_message: false,
+  });
+  const [fieldErrors, setFieldErrors] = useState<Record<FieldKey, string>>({
+    name: "",
+    email: "",
+    phone: "",
+    location_state: "",
+    location_suburb: "",
+    pitch_message: "",
+  });
+
+  const validateName = useCallback((v: string) => {
+    if (!v.trim()) return "Full name is required";
+    if (v.trim().length < 2) return "Name must be at least 2 characters";
+    return "";
+  }, []);
+  const validateEmailField = useCallback((v: string) => {
+    if (!v.trim()) return "Email is required";
+    if (!EMAIL_RE.test(v.trim())) return "Please enter a valid email";
+    return "";
+  }, []);
+  const validatePhone = useCallback((v: string) => {
+    if (!v.trim()) return "Phone is required";
+    if (!PHONE_RE.test(v.trim())) return "Please enter a valid phone number";
+    return "";
+  }, []);
+  const validateState = useCallback((v: string) => {
+    if (!v) return "Please select a state";
+    return "";
+  }, []);
+  const validateSuburb = useCallback((v: string) => {
+    if (!v.trim()) return "Suburb is required";
+    return "";
+  }, []);
+  const validatePitch = useCallback((v: string) => {
+    if (!v.trim()) return "";
+    if (v.trim().length < 20) return "Pitch should be at least 20 characters";
+    return "";
+  }, []);
+
+  const touchField = (key: FieldKey) => setTouched((prev) => ({ ...prev, [key]: true }));
+  const setFieldError = (key: FieldKey, err: string) => setFieldErrors((prev) => ({ ...prev, [key]: err }));
+
+  const step1Valid =
+    !validateName(form.name) &&
+    !validateEmailField(form.email) &&
+    !validatePhone(form.phone) &&
+    !!form.type;
+
+  const step2Valid =
+    !validateState(form.location_state) &&
+    !validateSuburb(form.location_suburb);
+
+  const step3Valid = !validatePitch(form.pitch_message);
 
   // Track signup started (once per page load)
   useEffect(() => {
@@ -250,17 +323,37 @@ export default function AdvisorSignupPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className={labelClass}>Full Name *</label>
-                  <input
-                    value={form.name}
-                    onChange={(e) => updateField("name", e.target.value)}
-                    className={inputClass}
-                    placeholder="Sarah Chen"
-                  />
+                  <label htmlFor="as-name" className={labelClass}>Full Name *</label>
+                  <div className="relative">
+                    <input
+                      id="as-name"
+                      value={form.name}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        updateField("name", v);
+                        if (touched.name) setFieldError("name", validateName(v));
+                      }}
+                      onBlur={() => {
+                        touchField("name");
+                        setFieldError("name", validateName(form.name));
+                      }}
+                      aria-invalid={!!fieldErrors.name && touched.name}
+                      aria-describedby={fieldErrors.name && touched.name ? "as-name-error" : undefined}
+                      className={`${inputClass} pr-9 ${fieldErrors.name && touched.name ? "border-red-500 focus:ring-red-500" : ""}`}
+                      placeholder="Sarah Chen"
+                    />
+                    {touched.name && !fieldErrors.name && form.name && (
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2"><ValidCheck /></span>
+                    )}
+                  </div>
+                  {fieldErrors.name && touched.name && (
+                    <p id="as-name-error" className="text-xs text-red-500 mt-1">{fieldErrors.name}</p>
+                  )}
                 </div>
                 <div>
-                  <label className={labelClass}>Firm Name</label>
+                  <label htmlFor="as-firm-name" className={labelClass}>Firm Name</label>
                   <input
+                    id="as-firm-name"
                     value={form.firm_name}
                     onChange={(e) => updateField("firm_name", e.target.value)}
                     className={inputClass}
@@ -271,23 +364,61 @@ export default function AdvisorSignupPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className={labelClass}>Email *</label>
-                  <input
-                    type="email"
-                    value={form.email}
-                    onChange={(e) => updateField("email", e.target.value)}
-                    className={inputClass}
-                    placeholder="sarah@example.com"
-                  />
+                  <label htmlFor="as-email" className={labelClass}>Email *</label>
+                  <div className="relative">
+                    <input
+                      id="as-email"
+                      type="email"
+                      value={form.email}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        updateField("email", v);
+                        if (touched.email) setFieldError("email", validateEmailField(v));
+                      }}
+                      onBlur={() => {
+                        touchField("email");
+                        setFieldError("email", validateEmailField(form.email));
+                      }}
+                      aria-invalid={!!fieldErrors.email && touched.email}
+                      aria-describedby={fieldErrors.email && touched.email ? "as-email-error" : undefined}
+                      className={`${inputClass} pr-9 ${fieldErrors.email && touched.email ? "border-red-500 focus:ring-red-500" : ""}`}
+                      placeholder="sarah@example.com"
+                    />
+                    {touched.email && !fieldErrors.email && form.email && (
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2"><ValidCheck /></span>
+                    )}
+                  </div>
+                  {fieldErrors.email && touched.email && (
+                    <p id="as-email-error" className="text-xs text-red-500 mt-1">{fieldErrors.email}</p>
+                  )}
                 </div>
                 <div>
-                  <label className={labelClass}>Phone *</label>
-                  <input
-                    value={form.phone}
-                    onChange={(e) => updateField("phone", e.target.value)}
-                    className={inputClass}
-                    placeholder="04XX XXX XXX"
-                  />
+                  <label htmlFor="as-phone" className={labelClass}>Phone *</label>
+                  <div className="relative">
+                    <input
+                      id="as-phone"
+                      value={form.phone}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        updateField("phone", v);
+                        if (touched.phone) setFieldError("phone", validatePhone(v));
+                      }}
+                      onBlur={() => {
+                        touchField("phone");
+                        setFieldError("phone", validatePhone(form.phone));
+                      }}
+                      aria-invalid={!!fieldErrors.phone && touched.phone}
+                      aria-describedby={fieldErrors.phone && touched.phone ? "as-phone-error" : undefined}
+                      className={`${inputClass} pr-9 ${fieldErrors.phone && touched.phone ? "border-red-500 focus:ring-red-500" : ""}`}
+                      placeholder="04XX XXX XXX"
+                    />
+                    {touched.phone && !fieldErrors.phone && form.phone && (
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2"><ValidCheck /></span>
+                    )}
+                  </div>
+                  {fieldErrors.phone && touched.phone && (
+                    <p id="as-phone-error" className="text-xs text-red-500 mt-1">{fieldErrors.phone}</p>
+                  )}
                 </div>
               </div>
 
@@ -375,26 +506,59 @@ export default function AdvisorSignupPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className={labelClass}>State *</label>
+                  <label htmlFor="as-state" className={labelClass}>State *</label>
                   <select
+                    id="as-state"
                     value={form.location_state}
-                    onChange={(e) => updateField("location_state", e.target.value)}
-                    className={inputClass}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      updateField("location_state", v);
+                      if (touched.location_state) setFieldError("location_state", validateState(v));
+                    }}
+                    onBlur={() => {
+                      touchField("location_state");
+                      setFieldError("location_state", validateState(form.location_state));
+                    }}
+                    aria-invalid={!!fieldErrors.location_state && touched.location_state}
+                    aria-describedby={fieldErrors.location_state && touched.location_state ? "as-state-error" : undefined}
+                    className={`${inputClass} ${fieldErrors.location_state && touched.location_state ? "border-red-500 focus:ring-red-500" : ""}`}
                   >
                     <option value="">Select...</option>
                     {STATES.map((s) => (
                       <option key={s} value={s}>{s}</option>
                     ))}
                   </select>
+                  {fieldErrors.location_state && touched.location_state && (
+                    <p id="as-state-error" className="text-xs text-red-500 mt-1">{fieldErrors.location_state}</p>
+                  )}
                 </div>
                 <div>
-                  <label className={labelClass}>Suburb *</label>
-                  <input
-                    value={form.location_suburb}
-                    onChange={(e) => updateField("location_suburb", e.target.value)}
-                    className={inputClass}
-                    placeholder="Sydney CBD"
-                  />
+                  <label htmlFor="as-suburb" className={labelClass}>Suburb *</label>
+                  <div className="relative">
+                    <input
+                      id="as-suburb"
+                      value={form.location_suburb}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        updateField("location_suburb", v);
+                        if (touched.location_suburb) setFieldError("location_suburb", validateSuburb(v));
+                      }}
+                      onBlur={() => {
+                        touchField("location_suburb");
+                        setFieldError("location_suburb", validateSuburb(form.location_suburb));
+                      }}
+                      aria-invalid={!!fieldErrors.location_suburb && touched.location_suburb}
+                      aria-describedby={fieldErrors.location_suburb && touched.location_suburb ? "as-suburb-error" : undefined}
+                      className={`${inputClass} pr-9 ${fieldErrors.location_suburb && touched.location_suburb ? "border-red-500 focus:ring-red-500" : ""}`}
+                      placeholder="Sydney CBD"
+                    />
+                    {touched.location_suburb && !fieldErrors.location_suburb && form.location_suburb && (
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2"><ValidCheck /></span>
+                    )}
+                  </div>
+                  {fieldErrors.location_suburb && touched.location_suburb && (
+                    <p id="as-suburb-error" className="text-xs text-red-500 mt-1">{fieldErrors.location_suburb}</p>
+                  )}
                 </div>
               </div>
 
@@ -482,16 +646,31 @@ export default function AdvisorSignupPage() {
               </div>
 
               <div>
-                <label className={labelClass}>Pitch Message</label>
+                <label htmlFor="as-pitch" className={labelClass}>Pitch Message</label>
                 <textarea
+                  id="as-pitch"
                   value={form.pitch_message}
-                  onChange={(e) => updateField("pitch_message", e.target.value)}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    updateField("pitch_message", v);
+                    if (touched.pitch_message) setFieldError("pitch_message", validatePitch(v));
+                  }}
+                  onBlur={() => {
+                    touchField("pitch_message");
+                    setFieldError("pitch_message", validatePitch(form.pitch_message));
+                  }}
                   rows={3}
-                  className={inputClass}
+                  aria-invalid={!!fieldErrors.pitch_message && touched.pitch_message}
+                  aria-describedby={fieldErrors.pitch_message && touched.pitch_message ? "as-pitch-error" : undefined}
+                  className={`${inputClass} ${fieldErrors.pitch_message && touched.pitch_message ? "border-red-500 focus:ring-red-500" : ""}`}
                   placeholder="Why should investors choose you? What makes your practice stand out?"
                   maxLength={2000}
                 />
-                <p className="text-[0.65rem] text-slate-400 mt-0.5">{form.pitch_message.length}/2,000 characters — visible to our team during review</p>
+                {fieldErrors.pitch_message && touched.pitch_message ? (
+                  <p id="as-pitch-error" className="text-xs text-red-500 mt-1">{fieldErrors.pitch_message}</p>
+                ) : (
+                  <p className="text-[0.65rem] text-slate-400 mt-0.5">{form.pitch_message.length}/2,000 characters — visible to our team during review</p>
+                )}
               </div>
 
               <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mt-2">
@@ -536,15 +715,16 @@ export default function AdvisorSignupPage() {
             {step < 3 ? (
               <button
                 onClick={nextStep}
-                className="flex-1 sm:flex-none px-6 py-3 min-h-[44px] bg-violet-600 text-white font-bold rounded-lg text-sm hover:bg-violet-700 transition-colors"
+                disabled={(step === 1 && !step1Valid) || (step === 2 && !step2Valid)}
+                className="flex-1 sm:flex-none px-6 py-3 min-h-[44px] bg-violet-600 text-white font-bold rounded-lg text-sm hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Continue
               </button>
             ) : (
               <button
                 onClick={submit}
-                disabled={status === "submitting" || !form.termsAccepted}
-                className="flex-1 sm:flex-none px-8 py-3 min-h-[44px] bg-slate-900 text-white font-bold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 transition-colors"
+                disabled={status === "submitting" || !form.termsAccepted || !step1Valid || !step2Valid || !step3Valid}
+                className="flex-1 sm:flex-none px-8 py-3 min-h-[44px] bg-slate-900 text-white font-bold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {status === "submitting" ? "Creating Account..." : "Create My Account"}
               </button>

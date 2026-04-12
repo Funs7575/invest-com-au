@@ -1,12 +1,23 @@
 "use client";
 
-import { useState, useRef, useEffect, Suspense } from "react";
+import { useState, useRef, useEffect, Suspense, useCallback } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import Icon from "@/components/Icon";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 
 const STATES = ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT"];
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// Accepts AU mobile/landline formats (loose): digits, spaces, +, -, parens; min 8 digits
+const PHONE_RE = /^[+\-()\d\s]{8,}$/;
+
+function FieldCheck() {
+  return (
+    <svg className="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+    </svg>
+  );
+}
 const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const TARGET_SIZE = 400;
@@ -75,6 +86,56 @@ function AdvisorApplyInner() {
   const [photoError, setPhotoError] = useState("");
   const [photoUploading, setPhotoUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Inline field validation
+  const [touched, setTouched] = useState<{ name: boolean; email: boolean; phone: boolean; firm_name: boolean }>({
+    name: false,
+    email: false,
+    phone: false,
+    firm_name: false,
+  });
+  const [fieldErrors, setFieldErrors] = useState<{ name: string; email: string; phone: string; firm_name: string }>({
+    name: "",
+    email: "",
+    phone: "",
+    firm_name: "",
+  });
+
+  const validateName = useCallback((v: string) => {
+    if (!v.trim()) return "Full name is required";
+    if (v.trim().length < 2) return "Name must be at least 2 characters";
+    return "";
+  }, []);
+  const validateEmailField = useCallback((v: string) => {
+    if (!v.trim()) return "Email is required";
+    if (!EMAIL_RE.test(v.trim())) return "Please enter a valid email";
+    return "";
+  }, []);
+  const validatePhone = useCallback((v: string) => {
+    if (!v.trim()) return "";
+    if (!PHONE_RE.test(v.trim())) return "Please enter a valid phone number";
+    return "";
+  }, []);
+  const validateFirmName = useCallback(
+    (v: string, required: boolean) => {
+      if (!required) return "";
+      if (!v.trim()) return "Firm name is required";
+      if (v.trim().length < 2) return "Firm name must be at least 2 characters";
+      return "";
+    },
+    []
+  );
+
+  const firmRequired = accountType === "firm" && !inviteToken;
+
+  const isFormValid =
+    !validateName(form.name) &&
+    !validateEmailField(form.email) &&
+    !validatePhone(form.phone) &&
+    !validateFirmName(form.firm_name, firmRequired) &&
+    !!form.type &&
+    !!photoFile &&
+    form.termsAccepted;
 
   // Load invite context if token present
   useEffect(() => {
@@ -408,13 +469,65 @@ function AdvisorApplyInner() {
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">{accountType === "firm" ? "Your Full Name *" : "Full Name *"}</label>
-                <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="Sarah Chen" />
+                <label htmlFor="aa-name" className="block text-xs font-semibold text-slate-600 mb-1">{accountType === "firm" ? "Your Full Name *" : "Full Name *"}</label>
+                <div className="relative">
+                  <input
+                    id="aa-name"
+                    value={form.name}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      setForm({ ...form, name: v });
+                      if (touched.name) setFieldErrors((prev) => ({ ...prev, name: validateName(v) }));
+                    }}
+                    onBlur={() => {
+                      setTouched((prev) => ({ ...prev, name: true }));
+                      setFieldErrors((prev) => ({ ...prev, name: validateName(form.name) }));
+                    }}
+                    aria-invalid={!!fieldErrors.name && touched.name}
+                    aria-describedby={fieldErrors.name && touched.name ? "aa-name-error" : undefined}
+                    className={`w-full px-3 py-2 pr-8 border rounded-lg text-sm ${
+                      fieldErrors.name && touched.name ? "border-red-500" : "border-slate-200"
+                    }`}
+                    placeholder="Sarah Chen"
+                  />
+                  {touched.name && !fieldErrors.name && form.name && (
+                    <span className="absolute right-2 top-1/2 -translate-y-1/2"><FieldCheck /></span>
+                  )}
+                </div>
+                {fieldErrors.name && touched.name && (
+                  <p id="aa-name-error" className="text-xs text-red-500 mt-1">{fieldErrors.name}</p>
+                )}
               </div>
               {!isInviteFlow && (
                 <div>
-                  <label className="block text-xs font-semibold text-slate-600 mb-1">{accountType === "firm" ? "Firm Name *" : "Firm Name"}</label>
-                  <input value={form.firm_name} onChange={(e) => setForm({ ...form, firm_name: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="Chen Advisory" />
+                  <label htmlFor="aa-firm-name" className="block text-xs font-semibold text-slate-600 mb-1">{accountType === "firm" ? "Firm Name *" : "Firm Name"}</label>
+                  <div className="relative">
+                    <input
+                      id="aa-firm-name"
+                      value={form.firm_name}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        setForm({ ...form, firm_name: v });
+                        if (touched.firm_name) setFieldErrors((prev) => ({ ...prev, firm_name: validateFirmName(v, firmRequired) }));
+                      }}
+                      onBlur={() => {
+                        setTouched((prev) => ({ ...prev, firm_name: true }));
+                        setFieldErrors((prev) => ({ ...prev, firm_name: validateFirmName(form.firm_name, firmRequired) }));
+                      }}
+                      aria-invalid={!!fieldErrors.firm_name && touched.firm_name}
+                      aria-describedby={fieldErrors.firm_name && touched.firm_name ? "aa-firm-name-error" : undefined}
+                      className={`w-full px-3 py-2 pr-8 border rounded-lg text-sm ${
+                        fieldErrors.firm_name && touched.firm_name ? "border-red-500" : "border-slate-200"
+                      }`}
+                      placeholder="Chen Advisory"
+                    />
+                    {touched.firm_name && !fieldErrors.firm_name && form.firm_name && (
+                      <span className="absolute right-2 top-1/2 -translate-y-1/2"><FieldCheck /></span>
+                    )}
+                  </div>
+                  {fieldErrors.firm_name && touched.firm_name && (
+                    <p id="aa-firm-name-error" className="text-xs text-red-500 mt-1">{fieldErrors.firm_name}</p>
+                  )}
                 </div>
               )}
               {isInviteFlow && (
@@ -441,20 +554,67 @@ function AdvisorApplyInner() {
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Email *</label>
-                <input
-                  type="email"
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  disabled={isInviteFlow}
-                  className={`w-full px-3 py-2 border border-slate-200 rounded-lg text-sm ${isInviteFlow ? "bg-slate-50 text-slate-500 cursor-not-allowed" : ""}`}
-                  placeholder="sarah@example.com"
-                />
+                <label htmlFor="aa-email" className="block text-xs font-semibold text-slate-600 mb-1">Email *</label>
+                <div className="relative">
+                  <input
+                    id="aa-email"
+                    type="email"
+                    value={form.email}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      setForm({ ...form, email: v });
+                      if (touched.email) setFieldErrors((prev) => ({ ...prev, email: validateEmailField(v) }));
+                    }}
+                    onBlur={() => {
+                      setTouched((prev) => ({ ...prev, email: true }));
+                      setFieldErrors((prev) => ({ ...prev, email: validateEmailField(form.email) }));
+                    }}
+                    disabled={isInviteFlow}
+                    aria-invalid={!!fieldErrors.email && touched.email}
+                    aria-describedby={fieldErrors.email && touched.email ? "aa-email-error" : undefined}
+                    className={`w-full px-3 py-2 pr-8 border rounded-lg text-sm ${
+                      fieldErrors.email && touched.email ? "border-red-500" : "border-slate-200"
+                    } ${isInviteFlow ? "bg-slate-50 text-slate-500 cursor-not-allowed" : ""}`}
+                    placeholder="sarah@example.com"
+                  />
+                  {!isInviteFlow && touched.email && !fieldErrors.email && form.email && (
+                    <span className="absolute right-2 top-1/2 -translate-y-1/2"><FieldCheck /></span>
+                  )}
+                </div>
+                {fieldErrors.email && touched.email && (
+                  <p id="aa-email-error" className="text-xs text-red-500 mt-1">{fieldErrors.email}</p>
+                )}
                 {isInviteFlow && <p className="text-[0.56rem] text-slate-400 mt-0.5">Email is fixed by your invitation.</p>}
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Phone</label>
-                <input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm" placeholder="04XX XXX XXX" />
+                <label htmlFor="aa-phone" className="block text-xs font-semibold text-slate-600 mb-1">Phone</label>
+                <div className="relative">
+                  <input
+                    id="aa-phone"
+                    value={form.phone}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      setForm({ ...form, phone: v });
+                      if (touched.phone) setFieldErrors((prev) => ({ ...prev, phone: validatePhone(v) }));
+                    }}
+                    onBlur={() => {
+                      setTouched((prev) => ({ ...prev, phone: true }));
+                      setFieldErrors((prev) => ({ ...prev, phone: validatePhone(form.phone) }));
+                    }}
+                    aria-invalid={!!fieldErrors.phone && touched.phone}
+                    aria-describedby={fieldErrors.phone && touched.phone ? "aa-phone-error" : undefined}
+                    className={`w-full px-3 py-2 pr-8 border rounded-lg text-sm ${
+                      fieldErrors.phone && touched.phone ? "border-red-500" : "border-slate-200"
+                    }`}
+                    placeholder="04XX XXX XXX"
+                  />
+                  {touched.phone && !fieldErrors.phone && form.phone && (
+                    <span className="absolute right-2 top-1/2 -translate-y-1/2"><FieldCheck /></span>
+                  )}
+                </div>
+                {fieldErrors.phone && touched.phone && (
+                  <p id="aa-phone-error" className="text-xs text-red-500 mt-1">{fieldErrors.phone}</p>
+                )}
               </div>
             </div>
 
@@ -523,8 +683,8 @@ function AdvisorApplyInner() {
 
             <button
               onClick={submit}
-              disabled={status === "submitting" || !form.termsAccepted}
-              className="w-full py-3 bg-slate-900 text-white font-bold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 transition-colors"
+              disabled={status === "submitting" || !isFormValid}
+              className="w-full py-3 bg-slate-900 text-white font-bold rounded-lg text-sm hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {status === "submitting" ? (photoUploading ? "Uploading photo..." : "Submitting...") : isInviteFlow ? "Accept Invitation & Apply" : "Submit Application"}
             </button>
