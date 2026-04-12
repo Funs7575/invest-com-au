@@ -67,6 +67,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/portfolio-calculator",
     "/advisor-apply", "/switching-calculator", "/savings-calculator",
     "/quick-audit", "/portfolio-xray", "/tax-optimizer", "/fee-simulator",
+    "/trade-cost-calculator", "/us-share-costs-calculator", "/cgt-calculator",
+    "/franking-credits-calculator", "/chess-lookup",
     "/share-trading", "/crypto", "/savings", "/super", "/cfd",
     "/how-to",
     // Foreign investment hub
