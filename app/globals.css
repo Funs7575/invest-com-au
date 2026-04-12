@@ -597,9 +597,9 @@ body {
 .scroll-check-stagger.is-visible > *:nth-child(5) { animation-delay: 0.5s; }
 .scroll-check-stagger.is-visible > *:nth-child(6) { animation-delay: 0.6s; }
 
-/* ── Compare table: ensure first row clears sticky header ── */
-.compare-table tbody tr:first-child > td {
-  padding-top: 1rem;
+/* ── Compare table: collapse borders to prevent gaps between thead/tbody ── */
+.compare-table {
+  border-collapse: collapse;
 }
 
 /* ── Table row stagger ─────────────────────────────── */
