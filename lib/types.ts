@@ -1194,3 +1194,67 @@ export interface FirmInvitation {
   expires_at: string;
   created_at: string;
 }
+
+// ═══════════════════════════════════════════════
+// Investment Marketplace Types
+// ═══════════════════════════════════════════════
+
+export type InvestListingVertical =
+  | 'business'
+  | 'commercial_property'
+  | 'energy'
+  | 'farmland'
+  | 'franchise'
+  | 'fund'
+  | 'mining'
+  | 'startup';
+
+export interface InvestmentListing {
+  id: number;
+  vertical: InvestListingVertical;
+  title: string;
+  slug: string;
+  description?: string;
+  location_state?: string;
+  location_city?: string;
+  asking_price_cents?: number;
+  price_display?: string;
+  annual_revenue_cents?: number;
+  annual_profit_cents?: number;
+  industry?: string;
+  sub_category?: string;
+  key_metrics?: Record<string, string | number | boolean>;
+  images?: string[];
+  listing_type?: string;
+  firb_eligible?: boolean;
+  siv_complying?: boolean;
+  listed_by_professional_id?: number;
+  external_url?: string;
+  contact_email?: string;
+  contact_phone?: string;
+  status?: string;
+  expires_at?: string;
+  views?: number;
+  enquiries?: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface InvestmentVertical {
+  id: number;
+  slug: string;
+  name: string;
+  description?: string;
+  icon?: string;
+  hero_title?: string;
+  hero_subtitle?: string;
+  meta_title?: string;
+  meta_description?: string;
+  domestic?: boolean;
+  international?: boolean;
+  fdi_share_percent?: number;
+  sort_order?: number;
+  active?: boolean;
+  hero_image?: string;
+  created_at: string;
+}

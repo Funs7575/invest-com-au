@@ -4,6 +4,7 @@ import { getAllCategorySlugs } from "@/lib/best-broker-categories";
 import { getAllCostScenarioSlugs } from "@/lib/cost-scenarios";
 import { getAllCitySlugs } from "@/lib/cities";
 import { getAllGuideSlugs } from "@/lib/how-to-guides";
+import { getAllInvestCategorySlugs, getAllSubcategorySlugs } from "@/lib/invest-categories";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest.com.au";
@@ -508,6 +509,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
+  // ── Investment Marketplace pages ──
+  const investStaticPages = [
+    { url: `${baseUrl}/invest`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.9 },
+    { url: `${baseUrl}/invest/listings`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.9 },
+    { url: `${baseUrl}/invest/alternatives`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.8 },
+    { url: `${baseUrl}/invest/alternatives/platforms`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.7 },
+    { url: `${baseUrl}/invest/alternatives/guides`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.7 },
+  ];
+
+  // Category listing pages: /invest/{category}/listings
+  const investCategoryPages = getAllInvestCategorySlugs().map((slug) => ({
+    url: `${baseUrl}/invest/${slug}/listings`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.8,
+  }));
+
+  // Sub-category listing pages: /invest/{category}/listings/{subcategory}
+  const investSubcategoryPages = getAllSubcategorySlugs().map(({ category, subcategory }) => ({
+    url: `${baseUrl}/invest/${category}/listings/${subcategory}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
+
   // Dynamic suburb guide pages
   const { data: suburbSlugs } = supabase
     ? await supabase.from("suburb_data").select("slug").not("slug", "is", null)
@@ -586,5 +612,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.5,
   }));
 
-  return [...staticPages, ...bestPages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorCityPages, ...advisorLocationPages, ...investingCityPages, ...glossaryPages, ...firmPages, ...propertyListingPages, ...suburbGuidePages, ...propertyHubPages, ...newHubPages, newsletterArchivePage, ...newsletterEditionPages];
+  // Individual investment listing detail pages
+  const { data: investListings } = supabase
+    ? await supabase.from("investment_listings").select("slug, updated_at").eq("status", "active")
+    : { data: null };
+
+  const investListingPages = (investListings || []).map((l) => ({
+    url: `${baseUrl}/invest/listing/${l.slug}`,
+    lastModified: l.updated_at ? new Date(l.updated_at) : new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.6,
+  }));
+
+  return [...staticPages, ...bestPages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorCityPages, ...advisorLocationPages, ...investingCityPages, ...glossaryPages, ...firmPages, ...propertyListingPages, ...suburbGuidePages, ...propertyHubPages, ...newHubPages, newsletterArchivePage, ...newsletterEditionPages, ...investStaticPages, ...investCategoryPages, ...investSubcategoryPages, ...investListingPages];
 }

@@ -132,6 +132,28 @@ const nextConfig: NextConfig = {
         destination: "/article/how-to-invest-australia",
         permanent: false,
       },
+      // ── Investment marketplace URL standardisation ──
+      // Redirect /opportunities and /projects to /listings for consistency
+      {
+        source: "/invest/:category/opportunities",
+        destination: "/invest/:category/listings",
+        permanent: true,
+      },
+      {
+        source: "/invest/:category/opportunities/:subcategory",
+        destination: "/invest/:category/listings/:subcategory",
+        permanent: true,
+      },
+      {
+        source: "/invest/:category/projects",
+        destination: "/invest/:category/listings",
+        permanent: true,
+      },
+      {
+        source: "/invest/:category/projects/:subcategory",
+        destination: "/invest/:category/listings/:subcategory",
+        permanent: true,
+      },
     ];
   },
 };
