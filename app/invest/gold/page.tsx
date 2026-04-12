@@ -2,6 +2,8 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: `How to Invest in Gold in Australia (${CURRENT_YEAR}) — Physical, ETFs & ASX Miners`,
   description:

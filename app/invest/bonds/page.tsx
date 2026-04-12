@@ -2,6 +2,8 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: `Investing in Australian Bonds & Fixed Income (${CURRENT_YEAR})`,
   description:

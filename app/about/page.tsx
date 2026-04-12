@@ -7,6 +7,8 @@ import {
   COMPANY_ABN,
 } from "@/lib/compliance";
 
+export const revalidate = 86400;
+
 export const metadata = {
   title: "About Us",
   description: "Learn about Invest.com.au, Australia's independent investing hub — platforms and advisors. Our mission, editorial independence pledge, and review methodology.",

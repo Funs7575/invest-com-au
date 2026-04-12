@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 
+export const revalidate = 86400;
+
 export const metadata = {
   title: "How We Earn Money",
   description: "Full transparency on how Invest.com.au makes money. Advertising and referral fees explained, and what it means for our comparison data.",

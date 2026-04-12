@@ -4,6 +4,8 @@ import { GLOSSARY_ENTRIES } from "@/lib/glossary";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import GlossarySearch from "@/components/GlossarySearch";
 
+export const revalidate = 86400;
+
 export const metadata: Metadata = {
   title: "Investing Glossary — Plain-English Definitions",
   description:

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect, useRef } from "react";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 /* Inline SVG icons to avoid lucide-react dependency */
@@ -497,8 +498,15 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
               title={b.name}
             >
               {logoSrc ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={logoSrc} alt="" width={size} height={size} className="w-full h-full object-contain" loading="lazy" />
+                <Image
+                  src={logoSrc}
+                  alt={b.name}
+                  fill
+                  sizes={`${size}px`}
+                  className="object-contain"
+                  loading="lazy"
+                  unoptimized
+                />
               ) : (
                 <span
                   className="w-full h-full flex items-center justify-center text-[0.45rem] font-bold"

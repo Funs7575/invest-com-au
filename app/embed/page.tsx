@@ -4,6 +4,8 @@ import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR, SITE_NAME } from "@/lib/se
 import Icon from "@/components/Icon";
 import EmbedBuilder from "./EmbedBuilder";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: `Embed Broker Comparison Widget — ${SITE_NAME}`,
   description: `Add a free, self-contained broker comparison widget to your website. Multiple styles, dark/light themes, and always up-to-date data from ${SITE_NAME}.`,

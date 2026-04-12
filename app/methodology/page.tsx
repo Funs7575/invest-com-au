@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 
+export const revalidate = 86400;
+
 export const metadata = {
   title: "Data Collection Methodology — What We Collect",
   description:

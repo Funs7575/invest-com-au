@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { absoluteUrl, SITE_NAME } from "@/lib/seo";
 import PackagesClient from "./PackagesClient";
 
+export const revalidate = 86400;
+
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest.com.au";
 
 export const metadata: Metadata = {

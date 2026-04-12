@@ -4,6 +4,8 @@ import { getAllCostScenarios } from "@/lib/cost-scenarios";
 import { absoluteUrl, breadcrumbJsonLd, REVIEW_AUTHOR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: "Platform Cost Calculator — Real Fee Comparisons by Scenario",
   description:

@@ -6,6 +6,8 @@ import {
   COMPANY_ABN,
 } from "@/lib/compliance";
 
+export const revalidate = 86400;
+
 export const metadata = {
   title: "Content Licence Agreement",
   description: "Terms governing the submission, licensing, and publication of expert content on Invest.com.au.",

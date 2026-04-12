@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import SponsoredClient from "./SponsoredClient";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: "Sponsored Content — Reach Your Ideal Clients",
   description:

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 
+export const revalidate = 86400;
+
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest.com.au";
 
 export const metadata: Metadata = {

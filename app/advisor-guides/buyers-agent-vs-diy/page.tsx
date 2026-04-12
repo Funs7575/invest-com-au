@@ -4,6 +4,8 @@ import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: `Buyers Agent vs DIY Property Search: Is It Worth the Cost? (${CURRENT_YEAR})`,
   description: "Is a buyers agent worth $15k-$25k? We break down the real costs, savings, and when hiring a buyers agent makes financial sense vs searching yourself.",

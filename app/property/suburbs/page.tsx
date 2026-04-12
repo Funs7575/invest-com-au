@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import SuburbsClient from "./SuburbsClient";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: "Suburb Research — Property Investment Data — invest.com.au",
   description:

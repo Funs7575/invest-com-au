@@ -5,6 +5,8 @@ import Icon from "@/components/Icon";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
 import PropertyDisclaimer from "@/components/PropertyDisclaimer";
 
+export const revalidate = 3600;
+
 export const metadata = {
   title: "Investment Loan Comparison — Compare Rates from Major Lenders",
   description:

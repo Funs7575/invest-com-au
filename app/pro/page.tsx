@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import ProPageClient from "./ProPageClient";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: "Investor Pro — Premium Membership",
   description:

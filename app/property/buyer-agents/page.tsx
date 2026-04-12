@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import BuyerAgentsClient from "./BuyerAgentsClient";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: "Verified Buyer's Agents Australia — invest.com.au",
   description:

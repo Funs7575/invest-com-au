@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import PortfolioClient from "./PortfolioClient";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: "Portfolio Fee Monitor — Are You Overpaying?",
   description:
