@@ -28,7 +28,7 @@ import PropertyVsSharesCalculator from "./_components/PropertyVsSharesCalculator
    Types & constants
    ────────────────────────────────────────────── */
 interface Props { brokers: Broker[] }
-type CalcId = "trade-cost" | "fx" | "switching" | "cgt" | "franking" | "chess" | "fee-impact" | "portfolio" | "switch-calc" | "savings-calc" | "tco" | "compound-interest" | "dividend-reinvestment" | "fire" | "property-vs-shares" | "mortgage" | "debt" | "retirement" | "property-yield" | "smsf" | "super-contributions";
+type CalcId = "trade-cost" | "fx" | "switching" | "cgt" | "franking" | "chess" | "fee-impact" | "portfolio" | "switch-calc" | "savings-calc" | "tco" | "compound-interest" | "dividend-reinvestment" | "fire" | "property-vs-shares" | "mortgage" | "debt" | "retirement" | "property-yield" | "smsf" | "super-contributions" | "portfolio-xray" | "tax-optimizer" | "fee-simulator";
 
 const CALCS: { id: CalcId; icon: string; title: string; subtitle: string; badge?: string; href?: string }[] = [
   { id: "tco", icon: "receipt", title: "Yearly TCO", subtitle: "Total annual cost across all your trades", badge: "NEW" },
@@ -52,6 +52,9 @@ const CALCS: { id: CalcId; icon: string; title: string; subtitle: string; badge?
   { id: "property-yield" as CalcId, icon: "percent", title: "Property Yield", subtitle: "Gross & net rental yield", href: "/property-yield-calculator" },
   { id: "smsf" as CalcId, icon: "landmark", title: "SMSF Calculator", subtitle: "Is self-managed super worth it?", href: "/smsf-calculator" },
   { id: "super-contributions" as CalcId, icon: "wallet", title: "Super Contributions", subtitle: "Concessional caps & tax savings", href: "/super-contributions-calculator" },
+  { id: "portfolio-xray" as CalcId, icon: "pie-chart", title: "Portfolio X-Ray", subtitle: "Diversification, risk & fee analysis", href: "/portfolio-xray", badge: "NEW" },
+  { id: "tax-optimizer" as CalcId, icon: "calculator", title: "Tax Optimizer", subtitle: "CGT, harvesting & franking credits", href: "/tax-optimizer", badge: "NEW" },
+  { id: "fee-simulator" as CalcId, icon: "sliders", title: "Fee Simulator", subtitle: "Real-time fees across all brokers", href: "/fee-simulator", badge: "NEW" },
 ];
 
 // Inline-only calcs (no href) for swipe navigation
