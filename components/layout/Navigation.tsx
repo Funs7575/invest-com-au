@@ -130,6 +130,7 @@ const learnMenu = {
     { label: "Glossary", href: "/glossary" },
     { label: "All Articles", href: "/articles" },
     { label: "How-To Guides", href: "/how-to" },
+    { label: "Community Forum", href: "/community" },
   ],
 };
 
