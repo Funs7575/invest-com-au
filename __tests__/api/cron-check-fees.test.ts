@@ -264,7 +264,8 @@ describe("GET /api/cron/check-fees", () => {
         return Promise.resolve(new Response("New fee page content here", { status: 200 }));
       }
       if (url.includes("resend.com")) {
-        fetchCalls.push({ url, body: typeof args[1]?.body === "string" ? args[1].body : undefined });
+        const reqBody = args[1]?.body;
+        fetchCalls.push({ url, body: typeof reqBody === "string" ? reqBody : undefined });
         return Promise.resolve(new Response(JSON.stringify({ id: "mock-email" }), { status: 200 }));
       }
       return (originalFetch as FetchFn)(...args);

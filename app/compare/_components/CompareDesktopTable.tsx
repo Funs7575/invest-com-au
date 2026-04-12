@@ -1,8 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import type { Broker } from "@/lib/types";
-import { trackClick, trackEvent, getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
+import { getAffiliateLink, renderStars } from "@/lib/tracking";
 import ScrollReveal from "@/components/ScrollReveal";
 import PromoBadge from "@/components/PromoBadge";
 import SponsorBadge from "@/components/SponsorBadge";

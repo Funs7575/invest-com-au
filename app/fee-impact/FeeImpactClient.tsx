@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import Link from "next/link";
 import type { Broker } from "@/lib/types";
-import { formatCurrency } from "@/lib/utils";
 import { trackEvent } from "@/lib/tracking";
 import { useSubscription } from "@/lib/hooks/useSubscription";
 import { useSearchParams } from "next/navigation";

@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { createStaticClient } from "@/lib/supabase/static";
-import type { Broker, TeamMember, UserReview, BrokerReviewStats, SwitchStory, BrokerQuestion, BrokerAnswer } from "@/lib/types";
+import type { Broker, UserReview, BrokerReviewStats, SwitchStory, BrokerQuestion, BrokerAnswer } from "@/lib/types";
 import { notFound } from "next/navigation";
 import BrokerReviewClient from "./BrokerReviewClient";
 import {
@@ -11,7 +11,6 @@ import {
   brokerProductJsonLd,
   reviewArticleJsonLd,
   qaPageJsonLd,
-  SITE_NAME,
   REVIEW_AUTHOR,
   CURRENT_YEAR,
 } from "@/lib/seo";

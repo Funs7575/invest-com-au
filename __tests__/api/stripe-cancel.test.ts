@@ -88,8 +88,8 @@ describe("POST /api/stripe/cancel-subscription", () => {
   it("returns 401 when not authenticated", async () => {
     mockAuth.getUser.mockResolvedValue({ data: { user: null } });
 
-    const req = makeRequest();
-    const res = await (POST as any)(req);
+    makeRequest();
+    const res = await POST();
     expect(res.status).toBe(401);
     const json = await res.json();
     expect(json.error).toBe("Not authenticated");
@@ -102,8 +102,8 @@ describe("POST /api/stripe/cancel-subscription", () => {
       return createChainableBuilder(null); // no subscription found
     });
 
-    const req = makeRequest();
-    const res = await (POST as any)(req);
+    makeRequest();
+    const res = await POST();
     expect(res.status).toBe(404);
     const json = await res.json();
     expect(json.error).toBe("No active subscription found");
@@ -120,8 +120,8 @@ describe("POST /api/stripe/cancel-subscription", () => {
       });
     });
 
-    const req = makeRequest();
-    const res = await (POST as any)(req);
+    makeRequest();
+    const res = await POST();
     expect(res.status).toBe(400);
     const json = await res.json();
     expect(json.error).toBe("Subscription is already set to cancel");
@@ -140,8 +140,8 @@ describe("POST /api/stripe/cancel-subscription", () => {
 
     mockSubscriptionsUpdate.mockResolvedValue({ id: "sub_active_456" });
 
-    const req = makeRequest();
-    const res = await (POST as any)(req);
+    makeRequest();
+    const res = await POST();
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json.success).toBe(true);
@@ -170,8 +170,8 @@ describe("POST /api/stripe/cancel-subscription", () => {
 
     mockSubscriptionsUpdate.mockResolvedValue({ id: subscriptionId });
 
-    const req = makeRequest();
-    const res = await (POST as any)(req);
+    makeRequest();
+    const res = await POST();
     expect(res.status).toBe(200);
 
     // Verify the first argument (subscription ID) is correct

@@ -494,7 +494,7 @@ function ProgrammaticContainer({
   placement: string;
 }) {
   const adRef = useRef<HTMLDivElement>(null);
-  const [adLoaded, setAdLoaded] = useState(false);
+  const [, setAdLoaded] = useState(false);
 
   useEffect(() => {
     // If AdSense is available, push an ad

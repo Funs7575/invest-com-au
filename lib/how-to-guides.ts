@@ -1,4 +1,4 @@
-import type { Broker, PlatformType } from "./types";
+import type { Broker } from "./types";
 
 export interface HowToGuide {
   slug: string;
@@ -1970,7 +1970,7 @@ If you receive fully franked Australian dividends, the gross-up amount (dividend
 Consider consulting an Australian tax agent if you have rental income, business income, or capital gains on Australian property — these may require an Australian return.`,
       },
     ],
-    relatedBrokerFilter: (b: Broker) => b.platform_type === "share_broker" && (b as any).accepts_non_residents === true,
+    relatedBrokerFilter: (b: Broker) => b.platform_type === "share_broker" && (b as Broker & { accepts_non_residents?: boolean }).accepts_non_residents === true,
     relatedBestPages: [
       { label: "Foreign Investment Hub", href: "/foreign-investment" },
       { label: "Tax Guide for Non-Residents", href: "/foreign-investment/tax" },

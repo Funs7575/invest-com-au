@@ -1,5 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterAll } from "vitest";
+import type { NextRequest } from "next/server";
 import { createChainableBuilder, makeCronRequest } from "@/__tests__/helpers";
+
+type SupabaseResult = { data: unknown; error: unknown };
+type FetchFn = typeof fetch;
 
 // ─── Mocks ───────────────────────────────────────────────────────────
 
@@ -39,23 +43,19 @@ function setupMocks(
   articles: Record<string, unknown>[],
   changedBrokerSlugs: string[] = []
 ) {
-  // We need to track which "brokers" call is which — first is articles, second is brokers
-  let brokersSelectCount = 0;
-
   mockFrom.mockImplementation((table: string) => {
     const builder = createChainableBuilder(table, supabaseCalls);
 
     if (table === "articles") {
       // The select().eq() chain resolves via .then
-      builder.then = vi.fn((cb: (v: any) => void) => {
+      builder.then = vi.fn((cb: (v: SupabaseResult) => void) => {
         cb({ data: articles, error: null });
         return Promise.resolve();
       });
     }
 
     if (table === "brokers") {
-      brokersSelectCount++;
-      builder.then = vi.fn((cb: (v: any) => void) => {
+      builder.then = vi.fn((cb: (v: SupabaseResult) => void) => {
         cb({
           data: changedBrokerSlugs.map((slug) => ({ slug })),
           error: null,
@@ -98,7 +98,7 @@ describe("GET /api/cron/content-staleness", () => {
     const req = new Request("http://localhost/api/cron/content-staleness", {
       method: "GET",
     });
-    const res = await GET(req as any);
+    const res = await GET(req as unknown as NextRequest);
     expect(res.status).toBe(401);
     const json = await res.json();
     expect(json.error).toBe("Unauthorized");
@@ -109,7 +109,7 @@ describe("GET /api/cron/content-staleness", () => {
       method: "GET",
       headers: { Authorization: "Bearer wrong" },
     });
-    const res = await GET(req as any);
+    const res = await GET(req as unknown as NextRequest);
     expect(res.status).toBe(401);
   });
 
@@ -128,7 +128,7 @@ describe("GET /api/cron/content-staleness", () => {
     setupMocks([article]);
 
     const req = makeCronRequest("/api/cron/content-staleness");
-    const res = await GET(req as any);
+    const res = await GET(req as unknown as NextRequest);
     expect(res.status).toBe(200);
     const json = await res.json();
 
@@ -154,7 +154,7 @@ describe("GET /api/cron/content-staleness", () => {
     setupMocks([article]);
 
     const req = makeCronRequest("/api/cron/content-staleness");
-    const res = await GET(req as any);
+    const res = await GET(req as unknown as NextRequest);
     expect(res.status).toBe(200);
     const json = await res.json();
 
@@ -180,7 +180,7 @@ describe("GET /api/cron/content-staleness", () => {
     setupMocks([article], ["stake"]);
 
     const req = makeCronRequest("/api/cron/content-staleness");
-    const res = await GET(req as any);
+    const res = await GET(req as unknown as NextRequest);
     expect(res.status).toBe(200);
     const json = await res.json();
 
@@ -204,7 +204,7 @@ describe("GET /api/cron/content-staleness", () => {
     setupMocks([article]);
 
     const req = makeCronRequest("/api/cron/content-staleness");
-    const res = await GET(req as any);
+    const res = await GET(req as unknown as NextRequest);
     expect(res.status).toBe(200);
     const json = await res.json();
 
@@ -226,17 +226,17 @@ describe("GET /api/cron/content-staleness", () => {
 
     const emailCalls: { url: string; body?: string }[] = [];
     const originalFetch = globalThis.fetch;
-    (globalThis.fetch as any) = vi.fn((...args: any[]) => {
+    (globalThis.fetch as unknown as FetchFn) = vi.fn((...args: Parameters<FetchFn>) => {
       const url = typeof args[0] === "string" ? args[0] : "";
       if (url.includes("resend.com")) {
-        emailCalls.push({ url, body: args[1]?.body });
+        emailCalls.push({ url, body: typeof args[1]?.body === "string" ? args[1].body : undefined });
         return Promise.resolve(new Response(JSON.stringify({ id: "mock-email" }), { status: 200 }));
       }
-      return (originalFetch as any)(...args);
+      return (originalFetch as FetchFn)(...args);
     });
 
     const req = makeCronRequest("/api/cron/content-staleness");
-    const res = await GET(req as any);
+    const res = await GET(req as unknown as NextRequest);
     expect(res.status).toBe(200);
 
     expect(emailCalls).toHaveLength(1);
@@ -262,17 +262,17 @@ describe("GET /api/cron/content-staleness", () => {
 
     const emailCalls: string[] = [];
     const originalFetch = globalThis.fetch;
-    (globalThis.fetch as any) = vi.fn((...args: any[]) => {
+    (globalThis.fetch as unknown as FetchFn) = vi.fn((...args: Parameters<FetchFn>) => {
       const url = typeof args[0] === "string" ? args[0] : "";
       if (url.includes("resend.com")) {
         emailCalls.push(url);
         return Promise.resolve(new Response(JSON.stringify({ id: "mock-email" }), { status: 200 }));
       }
-      return (originalFetch as any)(...args);
+      return (originalFetch as FetchFn)(...args);
     });
 
     const req = makeCronRequest("/api/cron/content-staleness");
-    const res = await GET(req as any);
+    const res = await GET(req as unknown as NextRequest);
     expect(res.status).toBe(200);
     const json = await res.json();
 

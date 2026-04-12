@@ -7,8 +7,6 @@
  * to all its cluster pages. Cross-cluster links connect overlapping topics.
  */
 
-import { absoluteUrl } from "./seo";
-
 /* ─── Types ─── */
 
 export interface ClusterPage {

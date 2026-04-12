@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Icon from "@/components/Icon";
 import SocialProofCounter from "@/components/SocialProofCounter";
 import { trackEvent, trackClick, getAffiliateLink, AFFILIATE_REL, trackPageDuration } from "@/lib/tracking";
 import { getStoredUtm } from "@/components/UtmCapture";

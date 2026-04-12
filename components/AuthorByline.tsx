@@ -46,7 +46,7 @@ function formatDateAU(dateStr: string): string {
 
 export default function AuthorByline({
   name = "Market Research Team",
-  title = "Invest.com.au",
+  title: _title = "Invest.com.au",
   linkedinUrl,
   twitterUrl,
   verifiedDate,

@@ -13,14 +13,11 @@ import {
   breadcrumbJsonLd,
   qaPageJsonLd,
   REVIEW_AUTHOR,
-  SITE_NAME,
-  SITE_URL,
   ORGANIZATION_JSONLD,
 } from "@/lib/seo";
 import QASection from "@/components/QASection";
 import AskQuestionForm from "@/components/AskQuestionForm";
 import { getAffiliateLink, getBenefitCta, renderStars, AFFILIATE_REL } from "@/lib/tracking";
-import { trackClick } from "@/lib/tracking";
 import BrokerCard from "@/components/BrokerCard";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
 import AdvisorPrompt from "@/components/AdvisorPrompt";

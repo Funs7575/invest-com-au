@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { fireEvent } from "@testing-library/react";
-import { render, screen, waitFor } from "./setup";
+import { render, screen } from "./setup";
 import CalculatorsClient from "@/app/calculators/CalculatorsClient";
 import type { Broker } from "@/lib/types";
 

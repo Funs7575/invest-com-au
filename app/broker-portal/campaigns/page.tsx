@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import CountUp from "@/components/CountUp";
@@ -32,7 +31,6 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 export default function CampaignsPage() {
-  const router = useRouter();
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [filter, setFilter] = useState("all");
   const [loading, setLoading] = useState(true);
@@ -168,7 +166,6 @@ export default function CampaignsPage() {
 
   const handleBulkAction = async (action: "pause" | "resume" | "cancel") => {
     if (selected.size === 0) return;
-    const label = action === "pause" ? "Pause" : action === "resume" ? "Resume" : "Cancel";
     if (action === "cancel" && !confirm(`Cancel ${selected.size} campaign(s)? This cannot be undone.`)) return;
     setBulkLoading(true);
     const supabase = createClient();
@@ -352,8 +349,10 @@ export default function CampaignsPage() {
       ) : (
         <div className="space-y-3 portal-stagger">
           {filtered.map((c) => {
-            const p = (c as any).marketplace_placements;
-            const placementName = Array.isArray(p) ? p[0]?.name : p?.name || "—";
+            type Placement = { name?: string; inventory_type?: string };
+            const p = (c as { marketplace_placements?: Placement | Placement[] }).marketplace_placements;
+            const pObj: Placement | undefined = Array.isArray(p) ? p[0] : p;
+            const placementName = pObj?.name || "—";
             const budgetPct = c.total_budget_cents
               ? Math.min(100, Math.round((c.total_spent_cents / c.total_budget_cents) * 100))
               : 0;
@@ -373,7 +372,7 @@ export default function CampaignsPage() {
                     <div>
                       <h3 className="font-bold text-slate-900">{c.name}</h3>
                       <div className="flex items-center gap-1.5 mt-0.5">
-                        <Icon name={p?.inventory_type === "featured" ? "megaphone" : "target"} size={11} className="text-slate-400" />
+                        <Icon name={pObj?.inventory_type === "featured" ? "megaphone" : "target"} size={11} className="text-slate-400" />
                         {(() => {
                           const vis = getPlacementTypeVisual(placementName);
                           return (

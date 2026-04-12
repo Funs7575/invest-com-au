@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
 import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
-import { SHOW_RATINGS, SHOW_EDITORIAL_BADGES, SHOW_ADVISOR_RATINGS, SHOW_ADVISOR_VERIFIED_BADGE, getRegisterWording, FACTUAL_COMPARISON_DISCLAIMER, ADVISOR_DIRECTORY_HEADING, ADVISOR_DIRECTORY_SUBTEXT } from "@/lib/compliance-config";
+import { SHOW_ADVISOR_RATINGS, SHOW_ADVISOR_VERIFIED_BADGE, ADVISOR_DIRECTORY_HEADING, ADVISOR_DIRECTORY_SUBTEXT } from "@/lib/compliance-config";
 
 export const metadata: Metadata = {
   title: `Alternative Investments Australia — Wine, Art, Cars, Watches & Collectibles (${CURRENT_YEAR})`,

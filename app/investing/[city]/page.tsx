@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
-import { getCityBySlug, getAllCitySlugs, CITIES } from "@/lib/cities";
+import { getCityBySlug, getAllCitySlugs } from "@/lib/cities";
 import {
   absoluteUrl,
   breadcrumbJsonLd,
@@ -24,7 +24,6 @@ import { boostFeaturedPartner, isSponsored } from "@/lib/sponsorship";
 import BrokerLogo from "@/components/BrokerLogo";
 import BrokerCard from "@/components/BrokerCard";
 import CompactDisclaimerLine from "@/components/CompactDisclaimerLine";
-import AdvisorPrompt from "@/components/AdvisorPrompt";
 import ScrollReveal from "@/components/ScrollReveal";
 import SponsorBadge from "@/components/SponsorBadge";
 import Icon from "@/components/Icon";
@@ -89,7 +88,6 @@ export default async function CityInvestingPage({
     0
   );
 
-  const hasSponsored = sorted.some(isSponsored);
   const relatedCities = city.relatedCities
     .map((s) => getCityBySlug(s))
     .filter(Boolean);

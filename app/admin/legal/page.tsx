@@ -72,7 +72,7 @@ export default function LegalDashboardPage() {
   const handleSave = async () => {
     if (!editing) return;
     setSaving(true);
-    const { id, created_at, updated_at, ...payload } = editing;
+    const { id, created_at: _created_at, updated_at: _updated_at, ...payload } = editing;
     if (id) {
       await supabase.from("legal_documents").update({ ...payload, updated_at: new Date().toISOString() }).eq("id", id);
     } else {

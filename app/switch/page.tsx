@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Broker, BrokerTransferGuide } from "@/lib/types";
 import SwitchClient from "./SwitchClient";
-import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 
 export const revalidate = 3600;
 

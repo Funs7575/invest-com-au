@@ -1,4 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterAll } from "vitest";
+import type { NextRequest } from "next/server";
+
+type SupabaseCountResult = { data: unknown; error: unknown; count: number };
 
 // ─── Mocks ───────────────────────────────────────────────────────────
 
@@ -32,7 +35,7 @@ const mockFrom = vi.fn((table: string) => {
   builder.lt = vi.fn(() => builder);
 
   // Awaiting the builder resolves with { count }
-  builder.then = vi.fn((cb: (v: any) => void) => {
+  builder.then = vi.fn((cb: (v: SupabaseCountResult) => void) => {
     cb({ data: null, error: null, count: tableCounts[table] ?? 0 });
     return Promise.resolve();
   });
@@ -72,7 +75,7 @@ describe("GET /api/cron/cleanup", () => {
   // ── Success case ──
 
   it("returns 200 with cleanup counts for all tables", async () => {
-    const res = await GET(new Request("http://localhost/api/cron/cleanup", { headers: { authorization: "Bearer test-cron-secret" } }) as any);
+    const res = await GET(new Request("http://localhost/api/cron/cleanup", { headers: { authorization: "Bearer test-cron-secret" } }) as unknown as NextRequest);
     expect(res.status).toBe(200);
 
     const json = await res.json();
@@ -84,7 +87,7 @@ describe("GET /api/cron/cleanup", () => {
   });
 
   it("calls delete on all four tables", async () => {
-    await GET(new Request("http://localhost/api/cron/cleanup", { headers: { authorization: "Bearer test-cron-secret" } }) as any);
+    await GET(new Request("http://localhost/api/cron/cleanup", { headers: { authorization: "Bearer test-cron-secret" } }) as unknown as NextRequest);
 
     const calledTables = mockFrom.mock.calls.map((call) => call[0]);
     expect(calledTables).toContain("rate_limits");
@@ -94,7 +97,7 @@ describe("GET /api/cron/cleanup", () => {
   });
 
   it("passes count: 'exact' to delete calls", async () => {
-    await GET(new Request("http://localhost/api/cron/cleanup", { headers: { authorization: "Bearer test-cron-secret" } }) as any);
+    await GET(new Request("http://localhost/api/cron/cleanup", { headers: { authorization: "Bearer test-cron-secret" } }) as unknown as NextRequest);
 
     // Each table's delete should have been called with { count: "exact" }
     for (const call of mockFrom.mock.results) {
@@ -120,7 +123,7 @@ describe("GET /api/cron/cleanup", () => {
         return builder;
       });
 
-      builder.then = vi.fn((cb: (v: any) => void) => {
+      builder.then = vi.fn((cb: (v: SupabaseCountResult) => void) => {
         cb({ data: null, error: null, count: tableCounts[table] ?? 0 });
         return Promise.resolve();
       });
@@ -128,7 +131,7 @@ describe("GET /api/cron/cleanup", () => {
       return builder;
     });
 
-    const res = await GET(new Request("http://localhost/api/cron/cleanup", { headers: { authorization: "Bearer test-cron-secret" } }) as any);
+    const res = await GET(new Request("http://localhost/api/cron/cleanup", { headers: { authorization: "Bearer test-cron-secret" } }) as unknown as NextRequest);
     expect(res.status).toBe(200);
 
     const json = await res.json();
@@ -147,14 +150,14 @@ describe("GET /api/cron/cleanup", () => {
       builder.lt = vi.fn(() => {
         throw new Error("Database offline");
       });
-      builder.then = vi.fn((cb: (v: any) => void) => {
+      builder.then = vi.fn((cb: (v: SupabaseCountResult) => void) => {
         cb({ data: null, error: null, count: 0 });
         return Promise.resolve();
       });
       return builder;
     });
 
-    const res = await GET(new Request("http://localhost/api/cron/cleanup", { headers: { authorization: "Bearer test-cron-secret" } }) as any);
+    const res = await GET(new Request("http://localhost/api/cron/cleanup", { headers: { authorization: "Bearer test-cron-secret" } }) as unknown as NextRequest);
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json.ok).toBe(true);

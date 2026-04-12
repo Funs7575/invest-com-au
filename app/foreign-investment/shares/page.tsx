@@ -7,6 +7,12 @@ import type { Broker } from "@/lib/types";
 import ForeignInvestmentNav from "../ForeignInvestmentNav";
 import SectionHeading from "@/components/SectionHeading";
 
+type ForeignBroker = Broker & {
+  accepts_non_residents?: boolean | null;
+  accepts_temporary_residents?: boolean | null;
+  foreign_investor_notes?: string | null;
+};
+
 export const metadata: Metadata = {
   title: "Investing in Australian Shares as a Non-Resident — 2026 Guide",
   description:
@@ -115,9 +121,10 @@ export default async function ForeignSharesPage() {
   };
 
   // Separate brokers by eligibility
-  const acceptNonResidents = brokers.filter((b) => (b as any).accepts_non_residents === true);
-  const acceptTempOnly = brokers.filter((b) => (b as any).accepts_non_residents === false && (b as any).accepts_temporary_residents === true);
-  const unknown = brokers.filter((b) => (b as any).accepts_non_residents === null);
+  const typedBrokers = brokers as ForeignBroker[];
+  const acceptNonResidents = typedBrokers.filter((b) => b.accepts_non_residents === true);
+  const acceptTempOnly = typedBrokers.filter((b) => b.accepts_non_residents === false && b.accepts_temporary_residents === true);
+  const unknown = typedBrokers.filter((b) => b.accepts_non_residents === null);
 
   return (
     <div className="bg-white min-h-screen">
@@ -202,8 +209,8 @@ export default async function ForeignSharesPage() {
                       </div>
                       <span className="font-bold text-sm text-slate-900">{b.name}</span>
                     </div>
-                    {(b as any).foreign_investor_notes && (
-                      <p className="text-xs text-slate-500 leading-relaxed">{(b as any).foreign_investor_notes}</p>
+                    {b.foreign_investor_notes && (
+                      <p className="text-xs text-slate-500 leading-relaxed">{b.foreign_investor_notes}</p>
                     )}
                     {b.affiliate_url && (
                       <Link href={b.affiliate_url} target="_blank" rel="noopener noreferrer" className="mt-3 block text-center text-xs font-bold text-white bg-amber-500 hover:bg-amber-600 rounded-lg py-2 transition-colors">
@@ -231,8 +238,8 @@ export default async function ForeignSharesPage() {
                       </div>
                       <span className="font-bold text-sm text-slate-900">{b.name}</span>
                     </div>
-                    {(b as any).foreign_investor_notes && (
-                      <p className="text-xs text-slate-500 leading-relaxed">{(b as any).foreign_investor_notes}</p>
+                    {b.foreign_investor_notes && (
+                      <p className="text-xs text-slate-500 leading-relaxed">{b.foreign_investor_notes}</p>
                     )}
                     {b.affiliate_url && (
                       <Link href={b.affiliate_url} target="_blank" rel="noopener noreferrer" className="mt-3 block text-center text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg py-2 transition-colors">

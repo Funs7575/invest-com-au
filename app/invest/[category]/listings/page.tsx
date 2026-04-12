@@ -12,8 +12,6 @@ import {
 import {
   absoluteUrl,
   breadcrumbJsonLd,
-  CURRENT_YEAR,
-  SITE_NAME,
 } from "@/lib/seo";
 import {
   ADVERTISER_DISCLOSURE_SHORT,

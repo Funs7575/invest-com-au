@@ -2,7 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
 import { Suspense } from "react";
 import RateBoardClient from "./RateBoardClient";
-import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 
 export const revalidate = 3600;
 

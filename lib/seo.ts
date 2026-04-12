@@ -583,7 +583,7 @@ export function courseJsonLd(
 export function qaPageJsonLd(
   questions: { question: string; answers: { answer: string; is_accepted: boolean; display_name?: string }[] }[],
   pageName: string,
-  pageUrl: string,
+  _pageUrl: string,
 ) {
   return {
     "@context": "https://schema.org",

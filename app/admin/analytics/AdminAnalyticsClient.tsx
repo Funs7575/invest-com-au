@@ -4,7 +4,6 @@ import { useEffect, useState, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import AdminShell from "@/components/AdminShell";
-import { TIER_PRICING } from "@/lib/sponsorship";
 import type { Broker } from "@/lib/types";
 
 import { SkeletonCard } from "./_components/AnalyticsSkeletons";
@@ -86,7 +85,7 @@ export default function AdminAnalyticsClient() {
   const [pageStats, setPageStats] = useState<PageStat[]>([]);
   const [totalClicks, setTotalClicks] = useState(0);
   const [clicksToday, setClicksToday] = useState(0);
-  const [clicksThisMonth, setClicksThisMonth] = useState(0);
+  const [, setClicksThisMonth] = useState(0);
   const [emailCaptures, setEmailCaptures] = useState(0);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(0);

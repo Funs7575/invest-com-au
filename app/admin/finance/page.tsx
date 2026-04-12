@@ -115,7 +115,7 @@ export default function FinanceDashboardPage() {
   const handleSave = async () => {
     if (!editing?.description || !editing.amount_cents) return;
     setSaving(true);
-    const { id, created_at, ...payload } = editing as Transaction;
+    const { id, created_at: _created_at, ...payload } = editing as Transaction;
     if (id) {
       await supabase.from("finance_transactions").update(payload).eq("id", id);
     } else {
@@ -145,7 +145,6 @@ export default function FinanceDashboardPage() {
   const thisMonth = new Date().toISOString().slice(0, 7);
   const thisMonthTxns = txns.filter(t => t.date.startsWith(thisMonth));
   const thisMonthIncome = thisMonthTxns.filter(t => t.type === "income").reduce((s, t) => s + t.amount_cents, 0);
-  const thisMonthExpenses = thisMonthTxns.filter(t => t.type === "expense").reduce((s, t) => s + t.amount_cents, 0);
   const monthlyRecurringExpenses = txns.filter(t => t.type === "expense" && t.recurring && t.recurring_interval === "monthly").reduce((s, t) => s + t.amount_cents, 0);
 
   const incomeByCategory = useMemo(() => {

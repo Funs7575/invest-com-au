@@ -49,10 +49,6 @@ const SORT_OPTIONS: { key: SortKey; label: string }[] = [
 
 const RESULTS_PER_PAGE = 12;
 
-function renderStars(rating: number) {
-  return "\u2605".repeat(Math.floor(rating)) + (rating % 1 >= 0.5 ? "\u00BD" : "");
-}
-
 function formatCents(cents: number): string {
   return `$${(cents / 100).toLocaleString("en-AU", { maximumFractionDigits: 0 })}`;
 }

@@ -37,14 +37,6 @@ vi.mock("@/lib/url", () => ({
 import { POST } from "@/app/api/advisor-auth/login/route";
 import { isRateLimited } from "@/lib/rate-limit";
 
-const ADVISOR = {
-  id: "adv-001",
-  name: "Jane Smith",
-  email: "jane@advisor.com.au",
-  status: "active",
-  auth_user_id: null,
-};
-
 describe("POST /api/advisor-auth/login", () => {
   beforeEach(() => {
     vi.clearAllMocks();

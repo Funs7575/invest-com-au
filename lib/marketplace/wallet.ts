@@ -244,7 +244,7 @@ export async function adjustWallet(
 
   if (newBalance < 0) throw new Error("Adjustment would result in negative balance");
 
-  const updates: Record<string, any> = {
+  const updates: Record<string, unknown> = {
     balance_cents: newBalance,
     updated_at: new Date().toISOString(),
   };

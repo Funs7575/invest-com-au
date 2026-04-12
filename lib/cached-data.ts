@@ -1,4 +1,3 @@
-import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@supabase/supabase-js";
 import { cached, CacheTTL } from "./cache";
 import type {

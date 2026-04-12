@@ -139,7 +139,6 @@ export default function BrokerDashboard() {
         // Trend: compare last 7d vs previous 7d
         const mid = Math.floor(sorted.length / 2);
         const prevHalf = sorted.slice(0, mid);
-        const currHalf = sorted.slice(mid);
         setPrevClicks(prevHalf.reduce((s, [, v]) => s + v.clicks, 0));
         setPrevSpend(prevHalf.reduce((s, [, v]) => s + v.spend, 0));
         setPrevConversions(prevHalf.reduce((s, [, v]) => s + v.conversions, 0));
@@ -517,7 +516,7 @@ export default function BrokerDashboard() {
           <div className="divide-y divide-slate-100 portal-stagger">
             {campaigns.map((c) => {
               const placement = Array.isArray(c.placement) ? c.placement[0] : c.placement;
-              const placementName = (placement as any)?.name || (c as any).marketplace_placements?.name || "—";
+              const placementName = (placement as { name?: string } | null | undefined)?.name || (c as { marketplace_placements?: { name?: string } }).marketplace_placements?.name || "—";
               const budgetPct = c.total_budget_cents
                 ? Math.min(100, Math.round((c.total_spent_cents / c.total_budget_cents) * 100))
                 : 0;

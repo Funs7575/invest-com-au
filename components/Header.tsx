@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useUser } from "@/lib/hooks/useUser";
 import { CURRENT_YEAR } from "@/lib/seo";
-import ThemeToggle from "@/components/ThemeToggle";
 import Icon from "@/components/Icon";
 
 const propertyDropdown = [
@@ -326,7 +325,7 @@ function DesktopDropdown({
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
-  const { user, loading } = useUser();
+  useUser();
 
   // Close mobile menu on route change
   useEffect(() => {

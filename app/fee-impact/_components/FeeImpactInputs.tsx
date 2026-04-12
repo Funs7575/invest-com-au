@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import type { Broker } from "@/lib/types";
 
 interface Props {
@@ -31,7 +30,7 @@ export default function FeeImpactInputs({
   avgTradeSize,
   portfolioValue,
   currentBrokerSlug,
-  isPro,
+  isPro: _isPro,
   user,
   saving,
   saveStatus,

@@ -22,7 +22,6 @@ export interface VerticalConfig {
 }
 
 const yr = CURRENT_YEAR;
-const upd = UPDATED_LABEL;
 
 const VERTICALS: VerticalConfig[] = [
   /* ─── 1. Share Trading ─── */

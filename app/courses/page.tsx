@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import type { Metadata } from "next";
-import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
+import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import { getPublishedCourses } from "@/lib/course";
 import type { Course } from "@/lib/types";
 import CoursesGate from "./CoursesGate";

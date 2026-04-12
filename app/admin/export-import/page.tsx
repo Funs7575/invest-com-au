@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import AdminShell from "@/components/AdminShell";
 import { createClient } from "@/lib/supabase/client";
 import { logger } from "@/lib/logger";
@@ -16,8 +16,6 @@ const EXPORT_TABLES = [
   "calculator_config",
   "site_settings",
 ] as const;
-
-type TableName = (typeof EXPORT_TABLES)[number];
 
 interface ImportPreview {
   [table: string]: number;
@@ -35,8 +33,8 @@ export default function ExportImportPage() {
   const [exporting, setExporting] = useState(false);
   const [exportMessage, setExportMessage] = useState<string | null>(null);
 
-  const [importFile, setImportFile] = useState<File | null>(null);
-  const [importData, setImportData] = useState<Record<string, any[]> | null>(null);
+  const [, setImportFile] = useState<File | null>(null);
+  const [importData, setImportData] = useState<Record<string, unknown[]> | null>(null);
   const [importPreview, setImportPreview] = useState<ImportPreview | null>(null);
   const [importing, setImporting] = useState(false);
   const [importStatuses, setImportStatuses] = useState<ImportStatus[]>([]);
@@ -47,7 +45,7 @@ export default function ExportImportPage() {
     setExportMessage(null);
 
     try {
-      const backup: Record<string, any[]> = {};
+      const backup: Record<string, unknown[]> = {};
 
       for (const table of EXPORT_TABLES) {
         const { data, error } = await supabase.from(table).select("*");

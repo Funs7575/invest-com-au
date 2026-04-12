@@ -41,7 +41,7 @@ export default function AnalyticsPage() {
   const [conversions, setConversions] = useState<ConversionRow[]>([]);
   const [platformBenchmarks, setPlatformBenchmarks] = useState<PlatformBenchmarks | null>(null);
   const [percentiles, setPercentiles] = useState<PercentileData[]>([]);
-  const [brokerSlug, setBrokerSlug] = useState("");
+  const [, setBrokerSlug] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -182,8 +182,6 @@ export default function AnalyticsPage() {
     return (
       <svg viewBox={`0 0 ${chartWidth} ${chartHeight + 25}`} className="w-full max-w-[700px]">
         {data.map((d, i) => {
-          const total = d.opened + d.funded + d.first_trade;
-          const totalH = (total / max) * chartHeight;
           const x = 30 + i * (barW + 2);
           const ftH = (d.first_trade / max) * chartHeight;
           const fuH = (d.funded / max) * chartHeight;

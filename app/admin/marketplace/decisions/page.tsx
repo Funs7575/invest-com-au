@@ -6,13 +6,25 @@ import { createClient } from "@/lib/supabase/client";
 
 type DateRange = "7d" | "30d" | "90d";
 
+interface DecisionCandidate {
+  broker_slug?: string;
+  slug?: string;
+  [key: string]: unknown;
+}
+
+interface DecisionWinner {
+  broker_slug?: string;
+  slug?: string;
+  [key: string]: unknown;
+}
+
 interface AllocationDecision {
   id: number;
   created_at: string;
   placement_slug: string;
-  candidates: any[];
-  winners: any[];
-  rejection_log: any[];
+  candidates: DecisionCandidate[];
+  winners: DecisionWinner[];
+  rejection_log: unknown[];
   fallback_used: boolean;
   duration_ms: number;
 }
@@ -76,9 +88,10 @@ export default function AllocationDecisionsPage() {
 
     if (kpiData) {
       setKpiTotal(kpiCount || 0);
-      setKpiWithWinners(kpiData.filter((d: any) => d.winners && d.winners.length > 0).length);
-      setKpiFallback(kpiData.filter((d: any) => d.fallback_used).length);
-      const durations = kpiData.map((d: any) => d.duration_ms || 0).filter((d: number) => d > 0);
+      const rows = kpiData as Array<{ winners: unknown[]; fallback_used: boolean; duration_ms: number }>;
+      setKpiWithWinners(rows.filter((d) => d.winners && d.winners.length > 0).length);
+      setKpiFallback(rows.filter((d) => d.fallback_used).length);
+      const durations = rows.map((d) => d.duration_ms || 0).filter((d: number) => d > 0);
       setKpiAvgDuration(
         durations.length > 0
           ? Math.round(durations.reduce((s: number, v: number) => s + v, 0) / durations.length)
@@ -109,7 +122,7 @@ export default function AllocationDecisionsPage() {
       .order("placement_slug");
 
     if (placementData) {
-      const unique = Array.from(new Set(placementData.map((p: any) => p.placement_slug))).filter(Boolean) as string[];
+      const unique = Array.from(new Set((placementData as Array<{ placement_slug: string }>).map((p) => p.placement_slug))).filter(Boolean) as string[];
       setPlacements(unique);
     }
 
@@ -128,9 +141,9 @@ export default function AllocationDecisionsPage() {
     });
   };
 
-  const getWinnerSlugs = (winners: any[]): string => {
+  const getWinnerSlugs = (winners: DecisionWinner[]): string => {
     if (!winners || winners.length === 0) return "\u2014";
-    return winners.map((w: any) => (typeof w === "string" ? w : w.broker_slug || w.slug || "unknown")).join(", ");
+    return winners.map((w) => (typeof w === "string" ? w : w.broker_slug || w.slug || "unknown")).join(", ");
   };
 
   const SkeletonCard = () => (

@@ -21,7 +21,7 @@ interface Props {
 }
 
 export default function GettingStartedChecklist({
-  brokerSlug,
+  brokerSlug: _brokerSlug,
   hasAcceptedTerms,
   walletBalanceCents,
   campaignCount,

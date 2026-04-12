@@ -7,8 +7,6 @@ import { createClient } from "@/lib/supabase/server";
 import {
   absoluteUrl,
   breadcrumbJsonLd,
-  SITE_NAME,
-  REVIEW_AUTHOR,
 } from "@/lib/seo";
 import {
   GENERAL_ADVICE_WARNING,

@@ -45,7 +45,7 @@ export default function SponsoredBrokerWidget({
 }) {
   const [winner, setWinner] = useState<PlacementWinner | null>(null);
   const [broker, setBroker] = useState<Broker | null>(null);
-  const [loaded, setLoaded] = useState(false);
+  const [, setLoaded] = useState(false);
 
   useEffect(() => {
     getPlacementWinners("articles-sidebar").then((winners) => {

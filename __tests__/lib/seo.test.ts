@@ -4,7 +4,6 @@ import {
   SITE_NAME,
   SITE_DESCRIPTION,
   CURRENT_YEAR,
-  CURRENT_MONTH_YEAR,
   absoluteUrl,
   breadcrumbJsonLd,
   websiteJsonLd,
@@ -210,18 +209,18 @@ describe("brokerReviewJsonLd", () => {
   });
 
   it("includes aggregateRating when review_count > 0", () => {
-    const jsonLd = brokerReviewJsonLd(broker) as any;
+    const jsonLd = brokerReviewJsonLd(broker) as Record<string, unknown>;
     expect(jsonLd.aggregateRating).toBeDefined();
-    expect(jsonLd.aggregateRating.reviewCount).toBe(10);
+    expect((jsonLd.aggregateRating as Record<string, unknown>).reviewCount).toBe(10);
   });
 
   it("omits aggregateRating when review_count is 0", () => {
-    const jsonLd = brokerReviewJsonLd({ ...broker, review_count: 0 }) as any;
+    const jsonLd = brokerReviewJsonLd({ ...broker, review_count: 0 }) as Record<string, unknown>;
     expect(jsonLd.aggregateRating).toBeUndefined();
   });
 
   it("includes feesAndCommissionsSpecification", () => {
-    const jsonLd = brokerReviewJsonLd(broker) as any;
+    const jsonLd = brokerReviewJsonLd(broker) as Record<string, unknown>;
     expect(jsonLd.feesAndCommissionsSpecification).toContain("$5");
   });
 
@@ -246,7 +245,7 @@ describe("brokerReviewJsonLd", () => {
   });
 
   it("includes foundingDate when year_founded is set", () => {
-    const jsonLd = brokerReviewJsonLd(broker) as any;
+    const jsonLd = brokerReviewJsonLd(broker) as Record<string, unknown>;
     expect(jsonLd.foundingDate).toBe("2010");
   });
 });

@@ -122,7 +122,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: `Articles must be at least 300 words. Current: ${wordCount}` }, { status: 400 });
     }
     // Server-side compliance checks
-    const lower = content.toLowerCase();
     if (/(guaranteed returns|will earn|promise.*return|guaranteed.*profit)/i.test(content)) {
       return NextResponse.json({ error: "Article contains performance guarantees. Please remove any language that promises or guarantees specific returns." }, { status: 400 });
     }
@@ -246,7 +245,6 @@ export async function PUT(request: NextRequest) {
   if (action === "submit") {
     // Fetch current content for compliance checks if not provided in update
     const checkContent = updates.content || (await supabase.from("advisor_articles").select("content, title").eq("id", id).single()).data?.content || "";
-    const checkTitle = updates.title || artTitle || "";
     const submitWc = calcWordCount(checkContent);
     if (submitWc < 300) return NextResponse.json({ error: `Articles must be at least 300 words. Current: ${submitWc}` }, { status: 400 });
     if (/(guaranteed returns|will earn|promise.*return|guaranteed.*profit)/i.test(checkContent)) return NextResponse.json({ error: "Article contains performance guarantees." }, { status: 400 });

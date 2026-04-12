@@ -129,8 +129,6 @@ export default function DataHealthPage() {
 
     // Articles completeness
     const artNoCover = articles.filter(a => !a.cover_image_url);
-    const artNoExcerpt = articles.filter(a => !a.excerpt);
-    const artNoAuthor = articles.filter(a => !a.author_name);
     const artNoReviewer = articles.filter(a => !a.reviewer_id);
     results.push({
       id: "comp-art-cover",
@@ -155,7 +153,6 @@ export default function DataHealthPage() {
 
     const now = new Date();
     const d30 = new Date(now.getTime() - 30 * 86400000);
-    const d60 = new Date(now.getTime() - 60 * 86400000);
     const d90 = new Date(now.getTime() - 90 * 86400000);
 
     // Fee freshness

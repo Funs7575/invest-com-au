@@ -10,8 +10,6 @@ type BookingSlot = {
   slot_duration_minutes: number;
 };
 
-const DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
 export default function BookingWidget({ advisorSlug, advisorName }: { advisorSlug: string; advisorName: string }) {
   const [schedule, setSchedule] = useState<BookingSlot[]>([]);
   const [bookingEnabled, setBookingEnabled] = useState(false);

@@ -27,7 +27,6 @@ vi.mock("@/lib/advisor-billing", () => ({
 // ── Import route AFTER mocks ──────────────────────────────────────────────────
 import { POST } from "@/app/api/advisor-enquiry/route";
 import { isRateLimited } from "@/lib/rate-limit";
-import { createLeadInvoice } from "@/lib/advisor-billing";
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
@@ -202,7 +201,7 @@ describe("POST /api/advisor-enquiry", () => {
 
     // Verify the professional_leads update was called with quality_score
     const updateCalls = mockFrom.mock.calls.filter(
-      ([t]: any) => t === "professional_leads"
+      (call: unknown[]) => call[0] === "professional_leads"
     );
     // At least 2 calls: insert + update
     expect(updateCalls.length).toBeGreaterThanOrEqual(2);
@@ -222,7 +221,7 @@ describe("POST /api/advisor-enquiry", () => {
 
     // Score: phone(20) + message(15) + source_page(10) + pages_visited>3(15) + quiz(20) + calculator(15) = 95
     const updateCalls = mockFrom.mock.calls.filter(
-      ([t]: any) => t === "professional_leads"
+      (call: unknown[]) => call[0] === "professional_leads"
     );
     expect(updateCalls.length).toBeGreaterThanOrEqual(2);
   });
@@ -236,14 +235,14 @@ describe("POST /api/advisor-enquiry", () => {
 
     // Should increment free_leads_used on the professionals table
     const proCalls = mockFrom.mock.calls.filter(
-      ([t]: any) => t === "professionals"
+      (call: unknown[]) => call[0] === "professionals"
     );
     // At least 2 calls: initial lookup + free_leads_used update
     expect(proCalls.length).toBeGreaterThanOrEqual(2);
 
     // Should NOT create a billing record
     const billingCalls = mockFrom.mock.calls.filter(
-      ([t]: any) => t === "advisor_billing"
+      (call: unknown[]) => call[0] === "advisor_billing"
     );
     expect(billingCalls).toHaveLength(0);
   });
@@ -257,7 +256,7 @@ describe("POST /api/advisor-enquiry", () => {
 
     // Should create a billing record with status "paid" (deducted from credit)
     const billingCalls = mockFrom.mock.calls.filter(
-      ([t]: any) => t === "advisor_billing"
+      (call: unknown[]) => call[0] === "advisor_billing"
     );
     expect(billingCalls.length).toBeGreaterThanOrEqual(1);
   });
@@ -276,16 +275,16 @@ describe("POST /api/advisor-enquiry", () => {
     const req = enquiryRequest(VALID_BODY);
     await POST(req);
 
-    const fetchCalls = (globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls;
+    const fetchCalls = (globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls as unknown[][];
     const resendCalls = fetchCalls.filter(
-      ([url]: any) => typeof url === "string" && url.includes("resend.com")
+      (call) => typeof call[0] === "string" && (call[0] as string).includes("resend.com")
     );
 
     // Should send two emails: one to advisor, one to user
     expect(resendCalls.length).toBeGreaterThanOrEqual(2);
 
     const emailBodies = resendCalls.map(
-      ([, opts]: any) => JSON.parse(opts.body)
+      (call) => JSON.parse((call[1] as { body: string }).body)
     );
     const advisorEmail = emailBodies.find(
       (b: { to: string }) => b.to === "john@advisor.com.au"
@@ -307,7 +306,7 @@ describe("POST /api/advisor-enquiry", () => {
     await POST(req);
 
     const analyticsCalls = mockFrom.mock.calls.filter(
-      ([t]: any) => t === "analytics_events"
+      (call: unknown[]) => call[0] === "analytics_events"
     );
     expect(analyticsCalls.length).toBeGreaterThanOrEqual(1);
   });

@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import type { Broker } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
 import { trackClick, trackEvent, getAffiliateLink, getBenefitCta, AFFILIATE_REL } from "@/lib/tracking";
