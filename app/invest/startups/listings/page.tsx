@@ -12,23 +12,23 @@ export async function generateMetadata(): Promise<Metadata> {
   const { count } = await supabase
     .from("investment_listings")
     .select("id", { count: "exact", head: true })
-    .eq("vertical", "energy")
+    .eq("vertical", "startup")
     .eq("status", "active");
 
   const countLabel = count && count > 0 ? `${count} ` : "";
   return {
-    title: `Renewable Energy Projects Australia — ${countLabel}Investment Opportunities (${CURRENT_YEAR})`,
+    title: `Startup Investment Opportunities Australia — ${countLabel}Listings (${CURRENT_YEAR})`,
     description:
-      "Browse Australian renewable energy projects seeking investment. Filter by technology (solar, wind, battery, hydrogen), project stage, and state.",
-    alternates: { canonical: `${SITE_URL}/invest/renewable-energy/projects` },
+      "Browse Australian startups raising capital. Filter by sector, stage, and ESIC eligibility. Angel, seed, and Series A opportunities.",
+    alternates: { canonical: `${SITE_URL}/invest/startups/listings` },
     openGraph: {
-      title: `Renewable Energy Projects Australia — ${countLabel}Investment Opportunities`,
-      url: `${SITE_URL}/invest/renewable-energy/projects`,
+      title: `Startup Investment Opportunities Australia — ${countLabel}Listings`,
+      url: `${SITE_URL}/invest/startups/listings`,
     },
   };
 }
 
-export default async function EnergyProjectsPage() {
+export default async function StartupOpportunitiesPage() {
   const supabase = await createClient();
   const { data } = await supabase
     .from("investment_listings")
@@ -42,8 +42,8 @@ export default async function EnergyProjectsPage() {
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
     { name: "Invest", url: `${SITE_URL}/invest` },
-    { name: "Renewable Energy", url: `${SITE_URL}/invest/renewable-energy` },
-    { name: "Projects" },
+    { name: "Startups", url: `${SITE_URL}/invest/startups` },
+    { name: "Opportunities" },
   ]);
 
   return (
@@ -53,7 +53,7 @@ export default async function EnergyProjectsPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
       <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading listings...</div>}>
-        <UnifiedListingsClient listings={listings} defaultVertical="energy" />
+        <UnifiedListingsClient listings={listings} defaultVertical="startup" />
       </Suspense>
     </>
   );

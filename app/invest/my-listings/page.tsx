@@ -56,14 +56,14 @@ function verticalToPath(vertical: string, slug: string): string {
     fund: `/invest/funds/${slug}`,
     franchise: `/invest/franchise/listings/${slug}`,
     business: `/invest/business/listings/${slug}`,
-    mining: `/invest/mining/opportunities/${slug}`,
+    mining: `/invest/mining/listings/${slug}`,
     farmland: `/invest/farmland/listings/${slug}`,
     infrastructure: `/invest/infrastructure/listings/${slug}`,
     private_credit: `/invest/private-credit/listings/${slug}`,
-    renewable_energy: `/invest/renewable-energy/projects/${slug}`,
+    renewable_energy: `/invest/renewable-energy/listings/${slug}`,
     commercial_property: `/invest/commercial-property/listings/${slug}`,
     alternatives: `/invest/alternatives/listings/${slug}`,
-    startups: `/invest/startups/opportunities/${slug}`,
+    startups: `/invest/startups/listings/${slug}`,
   };
   return pathMap[vertical] || `/invest/${vertical}/${slug}`;
 }

@@ -30,8 +30,8 @@ export async function generateMetadata({
   return {
     title,
     description: data.description?.slice(0, 160) ?? `Renewable energy project in ${data.location_state ?? "Australia"}.`,
-    alternates: { canonical: `${SITE_URL}/invest/renewable-energy/projects/${slug}` },
-    openGraph: { title, url: `${SITE_URL}/invest/renewable-energy/projects/${slug}` },
+    alternates: { canonical: `${SITE_URL}/invest/renewable-energy/listings/${slug}` },
+    openGraph: { title, url: `${SITE_URL}/invest/renewable-energy/listings/${slug}` },
   };
 }
 
@@ -75,7 +75,7 @@ export default async function EnergyProjectDetailPage({
     { name: "Home", url: `${SITE_URL}/` },
     { name: "Invest", url: `${SITE_URL}/invest` },
     { name: "Renewable Energy", url: `${SITE_URL}/invest/renewable-energy` },
-    { name: "Projects", url: `${SITE_URL}/invest/renewable-energy/projects` },
+    { name: "Projects", url: `${SITE_URL}/invest/renewable-energy/listings` },
     { name: l.title },
   ]);
 
@@ -91,7 +91,7 @@ export default async function EnergyProjectDetailPage({
           <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-4" aria-label="Breadcrumb">
             <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
             <Icon name="chevron-right" size={12} className="text-slate-300" />
-            <Link href="/invest/renewable-energy/projects" className="hover:text-slate-900 transition-colors">Energy Projects</Link>
+            <Link href="/invest/renewable-energy/listings" className="hover:text-slate-900 transition-colors">Energy Projects</Link>
             <Icon name="chevron-right" size={12} className="text-slate-300" />
             <span className="text-slate-900 font-medium truncate max-w-[160px]">{l.title}</span>
           </nav>
@@ -217,7 +217,7 @@ export default async function EnergyProjectDetailPage({
       <section className="py-10 bg-white border-t border-slate-100">
         <div className="container-custom text-center">
           <Link
-            href="/invest/renewable-energy/projects"
+            href="/invest/renewable-energy/listings"
             className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-6 py-3 rounded-xl transition-colors"
           >
             Browse All Energy Projects
