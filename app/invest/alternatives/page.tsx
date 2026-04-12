@@ -1,441 +1,426 @@
 import Link from "next/link";
-import Image from "next/image";
-import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
-import { breadcrumbJsonLd, SITE_URL, SITE_NAME, CURRENT_YEAR } from "@/lib/seo";
-import ContextualLeadMagnet from "@/components/ContextualLeadMagnet";
-import { SHOW_ADVISOR_RATINGS, SHOW_ADVISOR_VERIFIED_BADGE, ADVISOR_DIRECTORY_HEADING, ADVISOR_DIRECTORY_SUBTEXT } from "@/lib/compliance-config";
-
-export const metadata: Metadata = {
-  title: `Alternative Investments Australia — Wine, Art, Cars, Watches & Collectibles (${CURRENT_YEAR})`,
-  description:
-    "Explore alternative investments in Australia — fine wine, art, classic cars, luxury watches, rare coins, and collectibles. Platforms, returns, risks and tax treatment.",
-  alternates: { canonical: `${SITE_URL}/invest/alternatives` },
-  openGraph: {
-    title: `Alternative Investments Australia — Wine, Art, Cars, Watches & Collectibles (${CURRENT_YEAR})`,
-    description:
-      "Explore alternative investments in Australia — fine wine, art, classic cars, luxury watches, rare coins, and collectibles. Platforms, returns, risks and tax treatment.",
-    url: `${SITE_URL}/invest/alternatives`,
-  },
-};
+import {
+  absoluteUrl,
+  breadcrumbJsonLd,
+  CURRENT_YEAR,
+  CURRENT_MONTH_YEAR,
+  REVIEW_AUTHOR,
+  SITE_NAME,
+  ORGANIZATION_JSONLD,
+} from "@/lib/seo";
+import {
+  ADVERTISER_DISCLOSURE_SHORT,
+  GENERAL_ADVICE_WARNING,
+  PDS_CONSIDERATION,
+  FSG_NOTE,
+  AFCA_REFERENCE,
+} from "@/lib/compliance";
+import ScrollReveal from "@/components/ScrollReveal";
 
 export const revalidate = 3600;
 
-export default async function AlternativesPage() {
-  const supabase = await createClient();
-  const { data: advisors } = await supabase
-    .from("professionals")
-    .select("slug, name, firm_name, type, location_display, rating, review_count, photo_url, verified")
-    .eq("status", "active")
-    .in("type", ["wealth_manager"])
-    .order("verified", { ascending: false })
-    .order("rating", { ascending: false })
-    .limit(4);
+const PAGE_TITLE = `Alternative Investments in Australia — Wine, Art, Cars, Watches (${CURRENT_YEAR})`;
+const PAGE_DESCRIPTION =
+  "Explore alternative investments in Australia including wine, art, classic cars, watches, coins and whisky. Compare platforms, browse listings, and read investment guides.";
+const CANONICAL = "/invest/alternatives";
 
-  const breadcrumb = breadcrumbJsonLd([
-    { name: "Home", url: `${SITE_URL}/` },
-    { name: "Invest", url: `${SITE_URL}/invest` },
-    { name: "Alternative Investments" },
+export const metadata: Metadata = {
+  title: PAGE_TITLE,
+  description: PAGE_DESCRIPTION,
+  alternates: { canonical: CANONICAL },
+  openGraph: {
+    title: PAGE_TITLE,
+    description: PAGE_DESCRIPTION,
+    url: absoluteUrl(CANONICAL),
+  },
+  twitter: { card: "summary_large_image" as const },
+};
+
+/* ── Sub-category quick links ── */
+const SUB_CATEGORIES = [
+  { name: "Wine", slug: "wine", emoji: "🍷" },
+  { name: "Art", slug: "art", emoji: "🎨" },
+  { name: "Cars", slug: "cars", emoji: "🏎️" },
+  { name: "Watches", slug: "watches", emoji: "⌚" },
+  { name: "Coins", slug: "coins", emoji: "🪙" },
+  { name: "Whisky", slug: "whisky", emoji: "🥃" },
+];
+
+/* ── Featured platforms ── */
+const FEATURED_PLATFORMS = [
+  {
+    name: "Vinovest",
+    category: "Wine Investment",
+    description:
+      "AI-powered wine investment platform that buys, stores, and insures fine wine on your behalf. Portfolios are professionally managed with options for self-directed investing.",
+    offers: "Managed wine portfolios, authenticated storage, secondary market access",
+  },
+  {
+    name: "Masterworks",
+    category: "Art Investment",
+    description:
+      "Fractional art investment platform that securitises blue-chip contemporary artwork. Investors buy shares in individual paintings by artists like Banksy, Basquiat, and Warhol.",
+    offers: "Fractional shares in blue-chip art, secondary market trading, SEC-qualified offerings",
+  },
+  {
+    name: "Maverix",
+    category: "Fractional Alternatives",
+    description:
+      "Australian-based fractional investment platform offering access to a mix of alternative asset classes including wine, whisky, and luxury goods.",
+    offers: "Low minimums ($50), Australian-regulated, mixed alternative assets",
+  },
+  {
+    name: "Cult Wines",
+    category: "Wine Storage & Trading",
+    description:
+      "Global fine wine investment and storage specialist with over 20 years of history. Offers portfolio management, professional storage, and active trading of fine wines.",
+    offers: "Professional wine storage, portfolio management, global trading network",
+  },
+  {
+    name: "Rally",
+    category: "Collectibles",
+    description:
+      "Fractional investment platform for collectibles including classic cars, rare books, sports memorabilia, and vintage watches. Assets are professionally vaulted and insured.",
+    offers: "Fractional collectible shares, curated asset selection, secondary market",
+  },
+];
+
+/* ── Key stats ── */
+const KEY_STATS = [
+  { value: "13.6% p.a.", label: "Wine Returns (20yr)", source: "Liv-ex Fine Wine 1000" },
+  { value: "14.1% p.a.", label: "Art Returns", source: "Artprice Global Index" },
+  { value: "$2.5B+", label: "Australian Collectibles Market", source: "IBISWorld" },
+];
+
+/* ── FAQs ── */
+const FAQS = [
+  {
+    question: "What are alternative investments?",
+    answer:
+      "Alternative investments are asset classes outside traditional stocks, bonds, and cash. They include tangible assets like wine, art, classic cars, watches, coins, and whisky. These assets often have low correlation with share markets, providing portfolio diversification benefits.",
+  },
+  {
+    question: "Can Australians invest in alternative assets?",
+    answer:
+      "Yes. Australians can invest in alternatives through specialist platforms like Vinovest (wine), Masterworks (art via US account), and Maverix (fractional alternatives based in Australia). Some platforms require overseas account setup, while others operate directly in Australia.",
+  },
+  {
+    question: "Are alternative investments regulated in Australia?",
+    answer:
+      "Most alternative investment platforms are not regulated by ASIC as financial products. Wine, art, and collectibles are generally not considered financial products under the Corporations Act 2001. However, some fractional or tokenised offerings may fall under ASIC regulation depending on their structure.",
+  },
+  {
+    question: "What are the tax implications of alternative investments in Australia?",
+    answer:
+      "Alternative investments are generally subject to Capital Gains Tax (CGT) when sold for a profit. Personal use assets acquired for under $10,000 may be exempt. Assets held for over 12 months qualify for the 50% CGT discount. SMSF trustees should note strict rules around holding collectibles in super.",
+  },
+  {
+    question: "How much should I allocate to alternative investments?",
+    answer:
+      "Most financial advisers suggest limiting alternative investments to 5-15% of your total portfolio. Alternatives are typically less liquid than shares and may have higher transaction costs. Start small, diversify across asset classes, and only invest money you will not need in the short term.",
+  },
+];
+
+/* ── Navigation cards ── */
+const NAV_CARDS = [
+  {
+    title: "Browse Listings",
+    description: "Explore alternative investment opportunities across wine, art, cars, watches, coins, and whisky.",
+    href: "/invest/alternatives/listings",
+    accent: "rose",
+  },
+  {
+    title: "Compare Platforms",
+    description: "Side-by-side comparison of the best alternative investment platforms available to Australians.",
+    href: "/invest/alternatives/platforms",
+    accent: "indigo",
+  },
+  {
+    title: "Investment Guides",
+    description: "Learn how to invest in alternatives with our in-depth guides covering tax, SMSF rules, and strategy.",
+    href: "/invest/alternatives/guides",
+    accent: "emerald",
+  },
+];
+
+export default function AlternativesHubPage() {
+  /* ── JSON-LD ── */
+  const breadcrumbs = breadcrumbJsonLd([
+    { name: "Home", url: absoluteUrl("/") },
+    { name: "Invest", url: absoluteUrl("/invest") },
+    { name: "Alternatives" },
   ]);
 
-  const webPage = {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    name: `Alternative Investments Australia (${CURRENT_YEAR})`,
-    url: `${SITE_URL}/invest/alternatives`,
-    publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
-  };
-
-  const faqSchema = {
+  const faqJsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: [
-      { "@type": "Question", name: "What are alternative investments?", acceptedAnswer: { "@type": "Answer", text: "Alternative investments are assets outside the traditional categories of shares, bonds, and cash. They include fine wine, art, classic cars, luxury watches, rare coins, collectibles, and other tangible assets. Alternatives typically have low correlation to share markets, providing portfolio diversification, but they are illiquid, subjective in valuation, and produce no income." } },
-      { "@type": "Question", name: "Can an SMSF hold collectibles?", acceptedAnswer: { "@type": "Answer", text: "Yes, SMSFs can hold collectibles including artwork, wine, jewellery, coins, and cars, but strict ATO rules apply under Regulation 13.18AA. Collectibles cannot be used or displayed by a member or related party, must be stored in a secure independent facility (not a member's home), must be insured within 7 days of acquisition, and all transfers must be at arm's length with independent valuations." } },
-      { "@type": "Question", name: "How are collectibles taxed in Australia?", acceptedAnswer: { "@type": "Answer", text: "Collectibles acquired for more than $500 are subject to capital gains tax on disposal. The 50% CGT discount applies if held for 12+ months by individuals or trusts. Collectibles acquired for $500 or less are exempt from CGT, but losses on them cannot be claimed. GST may apply on sales above the GST registration threshold. Wine sales may also attract Wine Equalisation Tax (WET)." } },
-      { "@type": "Question", name: "What is the minimum investment for wine or art?", acceptedAnswer: { "@type": "Answer", text: "Fractional platforms have lowered minimums significantly. Masterworks allows art investment from approximately US$500, and Maverix (Australian platform) offers fractional alternatives at lower entry points. For wine, Vinovest starts at US$1,000. Direct purchase at auction typically requires $5,000-$50,000+ for investment-grade pieces, while fine wine cases start around $1,000-$5,000." } },
-      { "@type": "Question", name: "What is the best alternative investment platform in Australia?", acceptedAnswer: { "@type": "Answer", text: "Maverix is the leading Australian fractional alternative investment platform covering art, wine, and collectibles. For wine specifically, Wine Owners is an Australian platform, while Vinovest and Cult Wines operate globally. For art, Masterworks is the largest global platform. For classic cars and watches, direct purchase through specialist dealers and auction houses remains the primary route." } },
-      { "@type": "Question", name: "Are luxury watches a good investment?", acceptedAnswer: { "@type": "Answer", text: "Certain luxury watches — primarily Rolex (Daytona, vintage Submariner), Patek Philippe (Nautilus, Calatrava), and Audemars Piguet (Royal Oak) — have appreciated significantly. However, the watch market can be volatile, authentication is critical due to counterfeiting, buy-sell spreads are typically 10-15%, and returns are heavily dependent on model, condition, and provenance. Most watches depreciate; only a small subset are investment-grade." } },
-      { "@type": "Question", name: "How do I insure collectibles in Australia?", acceptedAnswer: { "@type": "Answer", text: "Standard home contents insurance typically has sub-limits for valuables like art, wine, and watches (often $5,000-$10,000 per item). For serious collectible holdings, you need specialist insurance from providers like Chubb, AIG Private Client, or Berkley Insurance. Cover should be for agreed value (not market value), with detailed schedules and regular independent valuations. SMSFs must insure collectibles within 7 days of acquisition." } },
-      { "@type": "Question", name: "What is the liquidity risk with alternative investments?", acceptedAnswer: { "@type": "Answer", text: "Alternative assets are highly illiquid — there is no centralised exchange, and selling can take weeks to months depending on the asset, market conditions, and buyer interest. Auction houses charge 15-25% buyer's premiums and seller's commissions. Fractional platforms may have limited secondary markets. You should only invest money you will not need for 5-10+ years and keep alternatives to a small portion (5-10%) of your total portfolio." } },
-    ],
+    mainEntity: FAQS.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer,
+      },
+    })),
   };
 
   return (
-    <div>
+    <>
+      {/* JSON-LD */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(webPage) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
 
-      {/* Hero */}
-      <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
-        <div className="container-custom">
-          <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-6" aria-label="Breadcrumb">
-            <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
-            <span className="text-slate-300">/</span>
-            <Link href="/invest" className="hover:text-slate-900 transition-colors">Invest</Link>
-            <span className="text-slate-300">/</span>
-            <span className="text-slate-900 font-medium">Alternative Investments</span>
+      <div className="py-5 md:py-12">
+        <div className="container-custom max-w-4xl">
+          {/* Breadcrumb */}
+          <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
+            <Link href="/" className="hover:text-slate-900">
+              Home
+            </Link>
+            <span className="mx-2">/</span>
+            <Link href="/invest" className="hover:text-slate-900">
+              Invest
+            </Link>
+            <span className="mx-2">/</span>
+            <span className="text-slate-700">Alternatives</span>
           </nav>
 
-          <div className="flex flex-wrap items-center gap-2 mb-4">
-            <span className="text-xs font-semibold bg-amber-500 text-slate-900 px-3 py-1 rounded-full">
-              Updated {CURRENT_YEAR}
-            </span>
-            <span className="text-xs font-semibold bg-slate-100 text-slate-600 px-3 py-1 rounded-full">
-              Wine &middot; Art &middot; Cars &middot; Watches &middot; Collectibles
-            </span>
+          {/* Hero */}
+          <div className="bg-gradient-to-br from-rose-50 to-white border border-rose-200/50 rounded-2xl p-4 md:p-6 mb-3 md:mb-4">
+            <h1 className="text-xl md:text-4xl font-extrabold mb-2 md:mb-3 text-slate-900">
+              Alternative Investments in Australia
+            </h1>
+            <p className="text-xs md:text-base text-slate-600 mb-2">
+              Diversify beyond shares and property with wine, art, classic cars, watches, rare coins,
+              and whisky. Explore platforms, browse listings, and learn how Australians are accessing
+              alternative asset classes in {CURRENT_YEAR}.
+            </p>
+            <p className="text-[0.56rem] md:text-xs text-slate-400">
+              {ADVERTISER_DISCLOSURE_SHORT}
+            </p>
           </div>
 
-          <h1 className="text-slate-900 text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight mb-4 max-w-3xl">
-            Alternative Investments in Australia
-          </h1>
-          <p className="text-lg text-slate-600 leading-relaxed max-w-2xl">
-            Beyond shares, property, and super — alternative investments like fine wine, art, classic cars, and luxury watches are growing rapidly as an asset class. Here is how Australians are accessing them.
+          {/* General Advice Warning — collapsed on mobile, visible on desktop */}
+          <div className="hidden md:block bg-slate-50 border border-slate-200 rounded-lg p-3 mb-3 text-[0.69rem] text-slate-500 leading-relaxed">
+            <strong className="text-slate-600">General Advice Warning:</strong>{" "}
+            {GENERAL_ADVICE_WARNING}
+          </div>
+          <div className="md:hidden mb-3">
+            <details className="bg-slate-50 border border-slate-200 rounded-lg">
+              <summary className="px-3 py-2 text-[0.62rem] text-slate-500 font-medium cursor-pointer flex items-center gap-1">
+                <svg className="w-3 h-3 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                General advice only — not a personal recommendation.
+              </summary>
+              <p className="px-3 pb-2.5 text-[0.62rem] text-slate-500 leading-relaxed">
+                {GENERAL_ADVICE_WARNING}
+              </p>
+            </details>
+          </div>
+
+          {/* PDS / FSG / AFCA */}
+          <p className="text-[0.58rem] text-slate-400 leading-relaxed mb-3">
+            {PDS_CONSIDERATION} {FSG_NOTE} {AFCA_REFERENCE}
           </p>
-          <div className="flex flex-wrap gap-3 mt-6">
-            <Link
-              href="/advisors"
-              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors"
-            >
-              Browse Directories &rarr;
-            </Link>
-            <Link
-              href="/compare"
-              className="inline-flex items-center gap-2 border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 font-semibold text-sm px-5 py-2.5 rounded-lg border transition-colors"
-            >
-              Filter Platforms
-            </Link>
-          </div>
-        </div>
-      </section>
 
-      {/* Key stats */}
-      <section className="py-10 bg-white border-b border-slate-100">
-        <div className="container-custom">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { value: "$2.4T", label: "Global alternative investments AUM" },
-              { value: "10–15%", label: "Fine wine annual returns (Liv-ex 1000)" },
-              { value: "8–12%", label: "Classic car index returns (long-term)" },
-              { value: "Low", label: "Correlation to equities" },
-            ].map((s) => (
-              <div key={s.label} className="bg-amber-50 border border-amber-100 rounded-xl p-4 text-center">
-                <p className="text-2xl font-extrabold text-amber-600">{s.value}</p>
-                <p className="text-xs text-slate-600 mt-1">{s.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Section 1: Wine */}
-      <section className="py-14 bg-white">
-        <div className="container-custom max-w-4xl">
-          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Section 1</p>
-          <h2 className="text-2xl font-extrabold text-slate-900 mb-4">Fine Wine Investment</h2>
-
-          <div className="prose prose-slate max-w-none mb-6">
-            <p>
-              Fine wine has delivered competitive returns over the past two decades, with the Liv-ex Fine Wine 1000 index averaging 8–12% p.a. Australian wines (Penfolds Grange, Henschke Hill of Grace) are increasingly collectible alongside Burgundy, Bordeaux, and Champagne.
-            </p>
+          {/* Author byline */}
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 mb-4 pb-4 border-b border-slate-100">
+            <span className="flex items-center gap-1.5">
+              <svg className="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+              Reviewed by{" "}
+              <Link href="/reviewers/editorial-team" className="font-semibold text-slate-700 hover:text-slate-900 transition-colors">
+                {REVIEW_AUTHOR.name}
+              </Link>
+              <span className="text-slate-400">{REVIEW_AUTHOR.jobTitle}</span>
+            </span>
+            <span className="flex items-center gap-1.5">
+              <svg className="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+              Updated {CURRENT_MONTH_YEAR}
+            </span>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[
-              { platform: "Vinovest", desc: "AI-driven wine investment platform. Buy, store, and sell fine wine. Storage in bonded warehouses. Minimum US$1,000.", returns: "Target 10–15% p.a." },
-              { platform: "Cult Wines", desc: "London-based wine investment management. Curated portfolios of investment-grade wine. Minimum £10,000.", returns: "Historical 10.8% p.a." },
-              { platform: "Wine Owners", desc: "Australian wine investment platform. Marketplace for buying and selling fine wine. Portfolio management tools.", returns: "Market-dependent" },
-              { platform: "Self-managed", desc: "Buy directly from wineries or auction houses (Langton's, Sotheby's). Requires storage facility and insurance. Most control but most effort.", returns: "Varies widely" },
-            ].map((p) => (
-              <div key={p.platform} className="bg-slate-50 border border-slate-200 rounded-xl p-5">
-                <p className="font-bold text-slate-900">{p.platform}</p>
-                <p className="text-sm text-slate-500 mt-1">{p.desc}</p>
-                <span className="inline-block text-xs bg-amber-50 text-amber-700 font-semibold px-2 py-0.5 rounded mt-2">{p.returns}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Section 2: Art */}
-      <section className="py-14 bg-slate-50">
-        <div className="container-custom max-w-4xl">
-          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Section 2</p>
-          <h2 className="text-2xl font-extrabold text-slate-900 mb-4">Art Investment</h2>
-
-          <div className="prose prose-slate max-w-none mb-6">
-            <p>
-              The global art market exceeds US$65 billion annually. Fractional art investing platforms now let retail investors buy shares in blue-chip artworks by artists like Banksy, Basquiat, and Picasso — without needing millions.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[
-              { platform: "Masterworks", desc: "US-based fractional art platform. Buy shares in blue-chip paintings. SEC-regulated offerings. Minimum ~US$500.", type: "Fractional ownership" },
-              { platform: "Maverix (AU)", desc: "Australian fractional alternative investment platform covering art, wine, and collectibles. Lower minimums for Australian investors.", type: "Fractional ownership" },
-              { platform: "Auction Houses", desc: "Sotheby's, Christie's, Bonhams (all with Australian offices), and local houses like Deutscher and Hackett. Direct purchase for serious collectors.", type: "Direct purchase" },
-              { platform: "Commercial Galleries", desc: "Buy directly from established galleries. Focus on Australian artists (Sidney Nolan, Brett Whiteley, Emily Kame Kngwarreye) for local market appreciation.", type: "Direct purchase" },
-            ].map((p) => (
-              <div key={p.platform} className="bg-white border border-slate-200 rounded-xl p-5">
-                <div className="flex items-start justify-between gap-2">
-                  <p className="font-bold text-slate-900">{p.platform}</p>
-                  <span className="text-xs bg-amber-50 text-amber-700 font-semibold px-2 py-0.5 rounded shrink-0">{p.type}</span>
-                </div>
-                <p className="text-sm text-slate-500 mt-2">{p.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Lead Magnet */}
-      <section className="py-14 bg-white">
-        <div className="container-custom max-w-4xl">
-          <ContextualLeadMagnet segment="fee-audit" />
-        </div>
-      </section>
-
-      {/* Section 3: Classic Cars */}
-      <section className="py-14 bg-white">
-        <div className="container-custom max-w-4xl">
-          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Section 3</p>
-          <h2 className="text-2xl font-extrabold text-slate-900 mb-4">Classic Cars &amp; Australian Muscle</h2>
-
-          <div className="prose prose-slate max-w-none mb-6">
-            <p>
-              Classic cars have been one of the strongest-performing collectible asset classes. The Knight Frank Luxury Investment Index shows classic cars returning 8–12% p.a. long-term. Australian muscle cars — Ford Falcon GT-HO Phase III, Holden Torana A9X — are among the most valuable classic cars in the world.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {[
-              { car: "Ford Falcon GT-HO Phase III", era: "1971", value: "$1.5M+", note: "Most valuable Australian car" },
-              { car: "Holden Torana A9X", era: "1977", value: "$500K–$1M", note: "Bathurst legend" },
-              { car: "Ford GT40 (AU delivered)", era: "1960s", value: "$5M+", note: "Le Mans heritage" },
-              { car: "Porsche 911 (air-cooled)", era: "1964–1998", value: "$200K–$1M+", note: "Global collector favourite" },
-              { car: "Ferrari Dino / 308 / 355", era: "1970s–90s", value: "$200K–$800K", note: "Appreciating rapidly" },
-              { car: "Toyota Land Cruiser 40-series", era: "1960–84", value: "$80K–$300K", note: "Booming in recent years" },
-            ].map((c) => (
-              <div key={c.car} className="bg-amber-50 border border-amber-100 rounded-xl p-4">
-                <p className="font-bold text-slate-900 text-sm">{c.car}</p>
-                <p className="text-xs text-slate-500 mt-0.5">{c.era}</p>
-                <p className="text-lg font-extrabold text-amber-600 mt-2">{c.value}</p>
-                <p className="text-xs text-slate-500">{c.note}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Section 4: Watches */}
-      <section className="py-14 bg-slate-50">
-        <div className="container-custom max-w-4xl">
-          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Section 4</p>
-          <h2 className="text-2xl font-extrabold text-slate-900 mb-4">Luxury Watches as Assets</h2>
-
-          <div className="prose prose-slate max-w-none mb-6">
-            <p>
-              Luxury watches — particularly Rolex, Patek Philippe, and Audemars Piguet — have emerged as a legitimate alternative asset class. The secondary watch market is estimated at US$20B+ annually. Key investment-grade watches include Rolex Daytona, Submariner (vintage), Patek Philippe Nautilus, and AP Royal Oak.
-            </p>
-          </div>
-
-          <div className="bg-white border border-slate-200 rounded-xl p-6">
-            <h3 className="font-bold text-slate-900 mb-3">Key Considerations</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {[
-                { point: "Authentication", desc: "Buy from authorised dealers or trusted second-hand platforms (Chrono24, Watchfinder). Fakes are prevalent." },
-                { point: "Condition & papers", desc: "Box, papers, and service history significantly affect value. Unpolished original condition commands premiums." },
-                { point: "Insurance", desc: "Specialist watch insurance is essential. Home contents policies often have jewellery/watch sub-limits." },
-                { point: "Liquidity", desc: "Selling can take time unless using an established dealer/platform. Expect 10–15% spread on buy/sell." },
-              ].map((p) => (
-                <div key={p.point} className="bg-slate-50 rounded-lg p-3">
-                  <p className="text-sm font-bold text-slate-900">{p.point}</p>
-                  <p className="text-xs text-slate-500 mt-0.5">{p.desc}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Section 5: Other Collectibles */}
-      <section className="py-14 bg-white">
-        <div className="container-custom max-w-4xl">
-          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Section 5</p>
-          <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Other Collectibles</h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {[
-              { type: "Rare Coins", desc: "Pre-decimal Australian coins, gold sovereigns, and error coins. Sold through dealers and auctions (Downies, Noble Numismatics). Market is well-established with strong provenance standards.", returns: "5–10% long-term" },
-              { type: "Sports Memorabilia", desc: "Cricket bats signed by Bradman, AFL guernseys, Olympic medals. Growing market in Australia, particularly for cricket and AFL heritage items.", returns: "Varies widely" },
-              { type: "Rare Whisky", desc: "Australian single malt whisky (Sullivans Cove, Starward) is gaining international recognition. Rare Scotch (Macallan, Yamazaki) has returned 20%+ p.a. over the past decade.", returns: "10–20% (rare bottles)" },
-            ].map((c) => (
-              <div key={c.type} className="bg-slate-50 border border-slate-200 rounded-xl p-5">
-                <h3 className="font-bold text-slate-900">{c.type}</h3>
-                <p className="text-sm text-slate-500 mt-1">{c.desc}</p>
-                <span className="inline-block text-xs bg-amber-50 text-amber-700 font-semibold px-2 py-0.5 rounded mt-2">{c.returns}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Section 6: Tax */}
-      <section className="py-14 bg-slate-50">
-        <div className="container-custom max-w-4xl">
-          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Section 6</p>
-          <h2 className="text-2xl font-extrabold text-slate-900 mb-4">Tax Treatment of Collectibles</h2>
-
-          <div className="prose prose-slate max-w-none">
-            <ul>
-              <li><strong>CGT applies</strong> — collectibles acquired for more than $500 are subject to capital gains tax on disposal</li>
-              <li><strong>50% CGT discount</strong> — applies if held for 12+ months (individuals and trusts)</li>
-              <li><strong>Personal use exemption</strong> — collectibles acquired for $500 or less are exempt from CGT (but losses cannot be claimed)</li>
-              <li><strong>SMSF restrictions</strong> — collectibles (art, wine, cars, jewellery, coins) can be held in an SMSF but must be stored independently, insured, and cannot be used by members or related parties. Strict ATO rules apply.</li>
-              <li><strong>GST</strong> — GST applies to the sale of collectibles (unless sold as a private sale below the GST registration threshold)</li>
-              <li><strong>Wine equalisation tax (WET)</strong> — applies to wine sales; may affect wine investment returns</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* Risk */}
-      <section className="py-14 bg-white">
-        <div className="container-custom max-w-4xl">
-          <div className="bg-red-50 border border-red-200 rounded-xl p-5">
-            <h3 className="font-bold text-red-800 mb-2">Key Risks</h3>
-            <ul className="text-sm text-red-700 space-y-1.5">
-              <li><strong>Illiquidity</strong> — alternative assets can take weeks to months to sell; no centralised exchange</li>
-              <li><strong>Valuation subjectivity</strong> — prices depend on taste, trends, and market sentiment, not fundamentals</li>
-              <li><strong>Authentication &amp; fraud</strong> — counterfeiting is a significant risk across all collectible categories</li>
-              <li><strong>Storage &amp; insurance</strong> — ongoing costs for physical storage, climate control, and insurance</li>
-              <li><strong>No income</strong> — alternative assets produce no dividends or interest; returns come solely from price appreciation</li>
-              <li><strong>Concentration risk</strong> — a single painting, car, or watch is undiversified; total loss is possible (damage, theft)</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section className="py-14 bg-white">
-        <div className="container-custom max-w-4xl">
-          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">FAQ</p>
-          <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Frequently Asked Questions</h2>
-          <div className="space-y-3">
-            {faqSchema.mainEntity.map((faq: { name: string; acceptedAnswer: { text: string } }) => (
-              <details key={faq.name} className="group bg-white border border-slate-200 rounded-xl">
-                <summary className="flex items-center justify-between px-5 py-4 cursor-pointer text-sm font-bold text-slate-900 hover:text-amber-600 transition-colors">
-                  {faq.name}
-                  <svg className="w-4 h-4 text-slate-400 shrink-0 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-                </summary>
-                <div className="px-5 pb-4 text-sm text-slate-600 leading-relaxed">{faq.acceptedAnswer.text}</div>
-              </details>
-            ))}
-          </div>
-        </div>
-      </section>
-
-
-      {/* Find an Advisor */}
-      {advisors && advisors.length > 0 && (
-        <section className="py-14 bg-white">
-          <div className="container-custom max-w-4xl">
-            <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Expert Advisors</p>
-            <h2 className="text-2xl font-extrabold text-slate-900 mb-2">{ADVISOR_DIRECTORY_HEADING}</h2>
-            <p className="text-sm text-slate-500 mb-6">{ADVISOR_DIRECTORY_SUBTEXT}</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {(advisors as { slug: string; name: string; firm_name: string | null; type: string; location_display: string | null; rating: number | null; review_count: number | null; photo_url: string | null; verified: boolean | null }[]).map((advisor) => (
+          {/* ── 3-column navigation grid ── */}
+          <ScrollReveal animation="scroll-fade-in" className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 md:mb-10">
+            {NAV_CARDS.map((card) => {
+              const accentClasses: Record<string, { border: string; bg: string; text: string; hover: string }> = {
+                rose: { border: "border-rose-200", bg: "bg-rose-50", text: "text-rose-700", hover: "hover:border-rose-400" },
+                indigo: { border: "border-indigo-200", bg: "bg-indigo-50", text: "text-indigo-700", hover: "hover:border-indigo-400" },
+                emerald: { border: "border-emerald-200", bg: "bg-emerald-50", text: "text-emerald-700", hover: "hover:border-emerald-400" },
+              };
+              const a = accentClasses[card.accent] || accentClasses.rose;
+              return (
                 <Link
-                  key={advisor.slug}
-                  href={`/advisor/${advisor.slug}`}
-                  className="flex items-start gap-4 bg-white border border-slate-200 rounded-xl p-4 hover:border-amber-200 hover:shadow-md transition-all group"
+                  key={card.href}
+                  href={card.href}
+                  className={`block p-5 border ${a.border} ${a.hover} rounded-xl ${a.bg} transition-all hover:shadow-lg hover:scale-[1.02]`}
                 >
-                  <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center shrink-0 overflow-hidden">
-                    {advisor.photo_url ? (
-                      <Image src={advisor.photo_url} alt={advisor.name} width={48} height={48} className="w-full h-full object-cover" />
-                    ) : (
-                      <span className="text-lg font-bold text-slate-400">{advisor.name.charAt(0)}</span>
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <p className="font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{advisor.name}</p>
-                      {SHOW_ADVISOR_VERIFIED_BADGE && advisor.verified && <span className="text-[0.6rem] font-bold bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full">VERIFIED</span>}
-                    </div>
-                    {advisor.firm_name && <p className="text-xs text-slate-500">{advisor.firm_name}</p>}
-                    <div className="flex items-center gap-2 mt-1">
-                      {SHOW_ADVISOR_RATINGS && advisor.rating && <span className="text-xs text-amber-600 font-semibold">&#9733; {advisor.rating.toFixed(1)}</span>}
-                      {SHOW_ADVISOR_RATINGS && advisor.review_count && advisor.review_count > 0 && <span className="text-xs text-slate-400">({advisor.review_count} reviews)</span>}
-                      {advisor.location_display && <span className="text-xs text-slate-400">{advisor.location_display}</span>}
-                    </div>
-                  </div>
+                  <h2 className={`text-lg font-bold mb-1.5 ${a.text}`}>{card.title}</h2>
+                  <p className="text-sm text-slate-600">{card.description}</p>
+                </Link>
+              );
+            })}
+          </ScrollReveal>
+
+          {/* ── Sub-category quick links ── */}
+          <div className="mb-8 md:mb-10">
+            <h2 className="text-lg md:text-xl font-bold mb-3">Browse by Category</h2>
+            <div className="flex flex-wrap gap-2">
+              {SUB_CATEGORIES.map((cat) => (
+                <Link
+                  key={cat.slug}
+                  href={`/invest/alternatives/listings/${cat.slug}`}
+                  className="px-4 py-2 bg-white border border-slate-200 rounded-full text-sm text-slate-700 hover:border-rose-400 hover:text-rose-700 transition-colors font-medium"
+                >
+                  {cat.emoji} {cat.name}
                 </Link>
               ))}
             </div>
-            <div className="mt-4 text-center">
-              <Link href="/advisors" className="text-sm font-semibold text-amber-600 hover:text-amber-700">
-                Browse all advisors &rarr;
-              </Link>
-            </div>
           </div>
-        </section>
-      )}
-      {/* Related guides */}
-      <section className="py-14 bg-white">
-        <div className="container-custom max-w-4xl">
-          <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Related Guides</p>
-          <h2 className="text-2xl font-extrabold text-slate-900 mb-6">Explore Related Investment Guides</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[
-              { title: "Private Equity", href: "/invest/private-equity", desc: "Venture capital, buyouts and PE fund access for Australian investors." },
-              { title: "SMSF Investment Guide", href: "/invest/smsf", desc: "What SMSFs actually invest in — property, shares, crypto and more." },
-              { title: "Infrastructure", href: "/invest/infrastructure", desc: "Toll roads, airports, utilities and ports for stable inflation-linked income." },
-              { title: "Commodities", href: "/invest/commodities", desc: "Invest in gold, silver, oil and more from Australia via ETFs and futures." },
-            ].map((guide) => (
-              <Link key={guide.href} href={guide.href} className="group bg-white border border-slate-200 rounded-xl p-5 hover:border-amber-200 hover:shadow-md transition-all">
-                <h3 className="font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{guide.title}</h3>
-                <p className="text-sm text-slate-500 mt-1">{guide.desc}</p>
-                <span className="inline-flex items-center text-amber-600 text-sm font-semibold mt-2">Read guide →</span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
 
-      {/* CTA */}
-      <section className="py-14 bg-slate-50">
-        <div className="container-custom">
-          <div className="max-w-3xl mx-auto bg-white border border-slate-200 rounded-xl p-8 flex flex-col md:flex-row items-start md:items-center gap-6">
-            <div className="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
-              <svg className="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-            </div>
-            <div className="flex-1">
-              <h2 className="text-lg font-bold text-slate-900 mb-1">Speak to a Wealth Manager</h2>
-              <p className="text-sm text-slate-500">
-                Alternative investments should complement — not replace — a diversified portfolio. A wealth manager can help you determine the right allocation.
+          {/* ── Editorial overview ── */}
+          <ScrollReveal animation="scroll-fade-in">
+            <div className="prose prose-slate max-w-none mb-8 md:mb-10">
+              <h2 className="text-xl font-bold mb-3">What Are Alternative Investments?</h2>
+              <p className="text-slate-600 leading-relaxed mb-4">
+                Alternative investments encompass any asset class outside the traditional trio of
+                shares, bonds, and cash. In Australia, the most popular alternative asset classes
+                include fine wine, contemporary and Indigenous art, classic cars, luxury watches,
+                rare coins, and premium whisky. These tangible assets have attracted growing
+                interest from Australian investors seeking to diversify portfolios and access
+                returns that are less correlated with the ASX.
+              </p>
+              <p className="text-slate-600 leading-relaxed mb-4">
+                The global alternative investment market has experienced significant growth over
+                the past decade, driven by fractional ownership platforms that lower entry barriers
+                from hundreds of thousands of dollars to as little as $50. For Australian
+                investors, this democratisation means access to asset classes previously reserved
+                for ultra-high-net-worth individuals and institutional funds. Platforms like
+                Vinovest and Masterworks have made it possible to invest in fine wine and
+                blue-chip art from a standard brokerage account.
+              </p>
+              <p className="text-slate-600 leading-relaxed mb-4">
+                The Australian collectibles and alternative asset market is estimated at over
+                $2.5 billion and growing. Fine wine has delivered annualised returns of 13.6%
+                over the past 20 years according to the Liv-ex Fine Wine 1000 index, while
+                the Artprice Global Index shows contemporary art returning approximately
+                14.1% per annum. Classic cars, rare watches, and premium whisky have also
+                shown strong long-term appreciation, though with varying levels of liquidity
+                and storage requirements.
+              </p>
+              <p className="text-slate-600 leading-relaxed">
+                Before investing in alternatives, Australians should understand the unique
+                risks including illiquidity, storage and insurance costs, authenticity
+                verification, and specific tax treatment under CGT rules. SMSF trustees
+                face additional ATO requirements when holding collectibles in super. Our
+                platform comparison, listings, and guides below will help you navigate
+                the Australian alternative investment landscape with confidence.
               </p>
             </div>
-            <Link
-              href="/advisors/wealth-managers"
-              className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors shrink-0"
-            >
-              Find a Wealth Manager &rarr;
-            </Link>
+          </ScrollReveal>
+
+          {/* ── Key stats ── */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 md:mb-10">
+            {KEY_STATS.map((stat) => (
+              <div
+                key={stat.label}
+                className="bg-white border border-slate-200 rounded-xl p-5 text-center hover:shadow-md transition-shadow"
+              >
+                <div className="text-2xl md:text-3xl font-extrabold text-rose-600 mb-1">
+                  {stat.value}
+                </div>
+                <div className="text-sm font-semibold text-slate-800 mb-0.5">{stat.label}</div>
+                <div className="text-xs text-slate-400">{stat.source}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* ── Featured platforms ── */}
+          <div className="mb-8 md:mb-10">
+            <h2 className="text-xl font-bold mb-4">Featured Platforms</h2>
+            <ScrollReveal animation="scroll-fade-in">
+              <div className="space-y-4">
+                {FEATURED_PLATFORMS.map((platform) => (
+                  <div
+                    key={platform.name}
+                    className="bg-white border border-slate-200 rounded-xl p-4 md:p-5 hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-start gap-3">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1">
+                          <h3 className="text-lg font-bold text-slate-900">{platform.name}</h3>
+                          <span className="text-xs font-medium px-2 py-0.5 bg-rose-100 text-rose-700 rounded-full">
+                            {platform.category}
+                          </span>
+                        </div>
+                        <p className="text-sm text-slate-600 leading-relaxed mb-2">
+                          {platform.description}
+                        </p>
+                        <p className="text-xs text-slate-500">
+                          <strong className="text-slate-700">Offers:</strong> {platform.offers}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </ScrollReveal>
+            <p className="text-xs text-slate-500 mt-3">
+              <Link
+                href="/invest/alternatives/platforms"
+                className="text-rose-600 hover:text-rose-800 font-semibold underline"
+              >
+                View full platform comparison →
+              </Link>
+            </p>
+          </div>
+
+          {/* ── FAQ section ── */}
+          <div id="faq" className="mb-10 scroll-mt-20">
+            <h2 className="text-xl font-bold mb-4">Frequently Asked Questions</h2>
+            <div className="space-y-4">
+              {FAQS.map((faq, i) => (
+                <details key={i} className="border border-slate-200 rounded-lg">
+                  <summary className="px-4 py-3 font-semibold text-sm cursor-pointer hover:bg-slate-50 transition-colors">
+                    {faq.question}
+                  </summary>
+                  <p className="px-4 pb-4 text-sm text-slate-600 leading-relaxed">
+                    {faq.answer}
+                  </p>
+                </details>
+              ))}
+            </div>
+          </div>
+
+          {/* ── Cross-links to related invest categories ── */}
+          <div className="bg-slate-50 rounded-xl p-4 md:p-5 mb-6 md:mb-8">
+            <h3 className="text-lg font-bold mb-3">Explore More Investment Categories</h3>
+            <div className="flex flex-wrap gap-2">
+              {[
+                { label: "Mining & Resources", href: "/invest/mining" },
+                { label: "Farmland & Agriculture", href: "/invest/farmland" },
+                { label: "Startups & Venture", href: "/invest/startups" },
+                { label: "Browse All Listings", href: "/invest/alternatives/listings" },
+                { label: "Compare Platforms", href: "/invest/alternatives/platforms" },
+                { label: "Investment Guides", href: "/invest/alternatives/guides" },
+              ].map((link, i) => (
+                <Link
+                  key={i}
+                  href={link.href}
+                  className="px-3 py-1.5 bg-white border border-slate-200 rounded-full text-sm text-slate-700 hover:border-slate-700 hover:text-slate-900 transition-colors"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
-      </section>
-    </div>
+      </div>
+    </>
   );
 }

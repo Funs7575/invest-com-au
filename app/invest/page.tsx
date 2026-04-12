@@ -1,483 +1,254 @@
 import Link from "next/link";
-import Image from "next/image";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
-import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
-import Icon from "@/components/Icon";
-import SectionHeading from "@/components/SectionHeading";
-import { PRIMARY_CTA_TEXT, PRIMARY_CTA_HREF } from "@/lib/compliance-config";
-import { getAllInvestCategories } from "@/lib/invest-categories";
+import {
+  absoluteUrl,
+  breadcrumbJsonLd,
+  CURRENT_YEAR,
+  SITE_NAME,
+} from "@/lib/seo";
+import {
+  getAllInvestCategories,
+} from "@/lib/invest-categories";
+import type { InvestCategory } from "@/lib/invest-categories";
+import {
+  ADVERTISER_DISCLOSURE_SHORT,
+  GENERAL_ADVICE_WARNING,
+} from "@/lib/compliance";
+import ScrollReveal from "@/components/ScrollReveal";
 
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Invest in Australia — Every Opportunity in One Place (2026)",
+  title: `Invest in Australia — Investment Marketplace (${CURRENT_YEAR})`,
   description:
-    "From mining and property to startups and farmland. Explore all the ways to invest in Australia — for local and international investors.",
-  alternates: { canonical: `${SITE_URL}/invest` },
+    `Browse Australia's investment marketplace. Businesses for sale, farmland, mining, commercial property, startups, franchises, renewable energy & more. Compare listings across ${getAllInvestCategories().length} categories.`,
+  alternates: { canonical: "/invest" },
   openGraph: {
-    title: "Invest in Australia — Every Opportunity in One Place (2026)",
+    title: `Invest in Australia — Investment Marketplace (${CURRENT_YEAR})`,
     description:
-      "From mining and property to startups and farmland. Explore all the ways to invest in Australia — for local and international investors.",
-    url: `${SITE_URL}/invest`,
+      "Browse Australia's investment marketplace. Businesses, farmland, mining, commercial property, startups & more.",
+    url: absoluteUrl("/invest"),
   },
 };
 
-/** Verticals that already have dedicated pages outside /invest/[slug] */
-const HREF_OVERRIDES: Record<string, string> = {
-  "residential-property": "/property",
-  shares: "/compare",
-  savings: "/savings",
-  "buy-business": "/invest/buy-business",
-  mining: "/invest/mining",
-  farmland: "/invest/farmland",
-  "commercial-property": "/invest/commercial-property",
-  franchise: "/invest/franchise",
-  "renewable-energy": "/invest/renewable-energy",
-  startups: "/invest/startups",
-  "private-equity": "/invest/private-equity",
-  bonds: "/invest/bonds",
-  gold: "/invest/gold",
-  ipos: "/invest/ipos",
-  funds: "/invest/funds",
-  "private-credit": "/invest/private-credit",
-  reits: "/invest/reits",
-  "managed-funds": "/invest/managed-funds",
-  "dividend-investing": "/invest/dividend-investing",
-  "options-trading": "/invest/options-trading",
-  forex: "/invest/forex",
-  commodities: "/invest/commodities",
-  alternatives: "/invest/alternatives",
-  infrastructure: "/invest/infrastructure",
-  "hybrid-securities": "/invest/hybrid-securities",
-  "crypto-staking": "/invest/crypto-staking",
-  smsf: "/invest/smsf",
+// ── Icon map (Lucide-style SVG paths) ──
+const CATEGORY_ICONS: Record<string, React.ReactNode> = {
+  "buy-business": (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+  ),
+  mining: (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
+  ),
+  farmland: (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+  ),
+  "commercial-property": (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" /></svg>
+  ),
+  franchise: (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+  ),
+  "renewable-energy": (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+  ),
+  startups: (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+  ),
+  alternatives: (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg>
+  ),
+  "private-credit": (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+  ),
+  infrastructure: (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
+  ),
+  funds: (
+    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+  ),
 };
 
-type InvestmentVertical = {
-  id: string;
-  slug: string;
-  name: string;
-  description: string | null;
-  icon: string | null;
-  hero_image: string | null;
-  fdi_share_percent: number | null;
-  sort_order: number | null;
-  hero_title: string | null;
-  hero_subtitle: string | null;
-  domestic: boolean | null;
-  international: boolean | null;
+// ── Color accent classes per category slug ──
+const ACCENT_COLORS: Record<string, { card: string; badge: string; hover: string }> = {
+  "buy-business": { card: "border-blue-200 hover:border-blue-400", badge: "bg-blue-100 text-blue-700", hover: "group-hover:text-blue-700" },
+  mining: { card: "border-amber-200 hover:border-amber-400", badge: "bg-amber-100 text-amber-700", hover: "group-hover:text-amber-700" },
+  farmland: { card: "border-green-200 hover:border-green-400", badge: "bg-green-100 text-green-700", hover: "group-hover:text-green-700" },
+  "commercial-property": { card: "border-slate-200 hover:border-slate-400", badge: "bg-slate-100 text-slate-700", hover: "group-hover:text-slate-700" },
+  franchise: { card: "border-purple-200 hover:border-purple-400", badge: "bg-purple-100 text-purple-700", hover: "group-hover:text-purple-700" },
+  "renewable-energy": { card: "border-emerald-200 hover:border-emerald-400", badge: "bg-emerald-100 text-emerald-700", hover: "group-hover:text-emerald-700" },
+  startups: { card: "border-indigo-200 hover:border-indigo-400", badge: "bg-indigo-100 text-indigo-700", hover: "group-hover:text-indigo-700" },
+  alternatives: { card: "border-rose-200 hover:border-rose-400", badge: "bg-rose-100 text-rose-700", hover: "group-hover:text-rose-700" },
+  "private-credit": { card: "border-teal-200 hover:border-teal-400", badge: "bg-teal-100 text-teal-700", hover: "group-hover:text-teal-700" },
+  infrastructure: { card: "border-cyan-200 hover:border-cyan-400", badge: "bg-cyan-100 text-cyan-700", hover: "group-hover:text-cyan-700" },
+  funds: { card: "border-violet-200 hover:border-violet-400", badge: "bg-violet-100 text-violet-700", hover: "group-hover:text-violet-700" },
+};
+
+const DEFAULT_ACCENT = { card: "border-slate-200 hover:border-slate-400", badge: "bg-slate-100 text-slate-700", hover: "group-hover:text-slate-700" };
+
+// ── Category card descriptions ──
+const CATEGORY_DESCRIPTIONS: Record<string, string> = {
+  "buy-business": "Cafes, agencies, e-commerce, professional practices & more.",
+  mining: "Gold, lithium, copper, rare earths & coal exploration opportunities.",
+  farmland: "Cropping, dairy, viticulture & horticulture land across Australia.",
+  "commercial-property": "Office, industrial, retail, medical & childcare properties.",
+  franchise: "Food, fitness, automotive & service franchise opportunities.",
+  "renewable-energy": "Solar, wind, battery storage & hydrogen projects.",
+  startups: "Fintech, healthtech, proptech & cleantech equity deals.",
+  alternatives: "Wine, art, classic cars, watches, coins & whisky investments.",
+  "private-credit": "Private lending, mezzanine debt & structured credit.",
+  infrastructure: "Toll roads, airports, utilities & public-private partnerships.",
+  funds: "Hedge funds, private credit funds, REITs & SIV-complying funds.",
 };
 
 export default async function InvestHubPage() {
+  const categories = getAllInvestCategories();
   const supabase = await createClient();
 
-  const { data: verticals } = await supabase
-    .from("investment_verticals")
-    .select(
-      "id, slug, name, description, icon, hero_image, fdi_share_percent, sort_order, hero_title, hero_subtitle, domestic, international"
-    )
-    .order("sort_order", { ascending: true });
-
-  const items: InvestmentVertical[] = verticals ?? [];
-
-  const investCategories = getAllInvestCategories();
-
-  // Per-category listing counts (optional; best-effort)
-  const { data: listingCountsRaw } = await supabase
+  // Fetch listing counts per vertical
+  const { data: countRows } = await supabase
     .from("investment_listings")
     .select("vertical")
     .eq("status", "active");
-  const listingCounts = new Map<string, number>();
-  ((listingCountsRaw as { vertical: string }[] | null) ?? []).forEach((row) => {
-    listingCounts.set(row.vertical, (listingCounts.get(row.vertical) ?? 0) + 1);
-  });
 
-  const breadcrumb = breadcrumbJsonLd([
-    { name: "Home", url: `${SITE_URL}/` },
+  // Count per vertical
+  const verticalCounts: Record<string, number> = {};
+  if (countRows) {
+    for (const row of countRows) {
+      const v = row.vertical as string;
+      verticalCounts[v] = (verticalCounts[v] || 0) + 1;
+    }
+  }
+
+  // Map DB verticals to category listing counts
+  function getCategoryCount(cat: InvestCategory): number {
+    return cat.dbVerticals.reduce((sum, v) => sum + (verticalCounts[v] || 0), 0);
+  }
+
+  const totalListings = countRows?.length || 0;
+
+  const breadcrumbs = breadcrumbJsonLd([
+    { name: "Home", url: absoluteUrl("/") },
     { name: "Invest" },
   ]);
 
   return (
-    <div>
+    <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
       />
 
-      {/* Hero */}
-      <section className="relative bg-white border-b border-slate-100 overflow-hidden">
-        <div className="container-custom py-6 md:py-10 lg:py-12">
-          <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-4" aria-label="Breadcrumb">
-            <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
-            <span className="text-slate-300">/</span>
-            <span className="text-slate-900 font-medium">Invest</span>
+      <div className="py-5 md:py-12">
+        <div className="container-custom max-w-4xl">
+          {/* Breadcrumb */}
+          <nav className="text-xs md:text-sm text-slate-500 mb-3 md:mb-6">
+            <Link href="/" className="hover:text-slate-900">
+              Home
+            </Link>
+            <span className="mx-2">/</span>
+            <span className="text-slate-700">Invest</span>
           </nav>
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-14 items-center">
 
-            {/* Left: text */}
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-900 border border-slate-800 rounded-full text-xs font-semibold text-white mb-4">
-                <span className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-pulse" />
-                27 verticals · Marketplace · Advisors
-              </div>
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 leading-[1.1] mb-3 tracking-tight">
-                Australia&apos;s #1{" "}
-                <span className="text-amber-500">investment</span>{" "}
-                guide.
-              </h1>
-              <p className="text-sm md:text-base text-slate-600 mb-5 leading-relaxed">
-                From mining and property to startups, private credit, and alternatives. Every investment opportunity — for local and international investors.
+          {/* Hero */}
+          <div className="bg-gradient-to-br from-slate-50 to-white border border-slate-200/50 rounded-2xl p-4 md:p-8 mb-4 md:mb-6">
+            <h1 className="text-xl md:text-4xl font-extrabold mb-2 md:mb-3 text-slate-900">
+              Investment Marketplace
+            </h1>
+            <p className="text-xs md:text-base text-slate-600 mb-3 leading-relaxed">
+              Browse verified investment opportunities across Australia. From businesses for sale
+              and farmland to mining exploration, commercial property, startups, and alternative
+              assets — find and compare listings in one place.
+            </p>
+            <p className="text-[0.56rem] md:text-xs text-slate-400">
+              {ADVERTISER_DISCLOSURE_SHORT}
+            </p>
+          </div>
+
+          {/* General Advice Warning */}
+          <div className="hidden md:block bg-slate-50 border border-slate-200 rounded-lg p-3 mb-4 text-[0.69rem] text-slate-500 leading-relaxed">
+            <strong className="text-slate-600">General Advice Warning:</strong>{" "}
+            {GENERAL_ADVICE_WARNING}
+          </div>
+          <div className="md:hidden mb-4">
+            <details className="bg-slate-50 border border-slate-200 rounded-lg">
+              <summary className="px-3 py-2 text-[0.62rem] text-slate-500 font-medium cursor-pointer flex items-center gap-1">
+                <svg className="w-3 h-3 text-amber-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                General advice only — not a personal recommendation.
+              </summary>
+              <p className="px-3 pb-2.5 text-[0.62rem] text-slate-500 leading-relaxed">
+                {GENERAL_ADVICE_WARNING}
               </p>
-              <div className="flex flex-col sm:flex-row items-start gap-2.5 mb-5">
-                <Link href={PRIMARY_CTA_HREF} className="w-full sm:w-auto px-6 py-3 bg-amber-500 text-white font-bold rounded-xl hover:bg-amber-600 shadow-md hover:shadow-lg transition-all text-sm text-center">
-                  {PRIMARY_CTA_TEXT} &rarr;
-                </Link>
-                <Link href="/compare" className="w-full sm:w-auto px-6 py-3 border border-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all text-sm text-center">
-                  Compare Platforms
-                </Link>
-              </div>
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-xs text-slate-500">
-                <span className="flex items-center gap-1.5">
-                  <Icon name="shield-check" size={12} className="text-emerald-500" />
-                  100% independent — no commissions
-                </span>
-                <span className="hidden sm:block text-slate-300">·</span>
-                <span className="flex items-center gap-1.5">
-                  <Icon name="check-circle" size={12} className="text-emerald-500" />
-                  Licensed professionals directory
-                </span>
-              </div>
-            </div>
-
-            {/* Right: category cards */}
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                { icon: "layers", label: "Marketplace", sub: "Browse businesses, mining, farmland & more for sale", href: "/invest/listings", iconBg: "bg-amber-500", border: "hover:border-amber-200 hover:bg-amber-50/60" },
-                { icon: "bar-chart-2", label: "Compare Platforms", sub: "100+ platforms compared by fees &amp; features", href: "/compare", iconBg: "bg-slate-800", border: "hover:border-slate-300 hover:bg-slate-50" },
-                { icon: "user-check", label: "Browse Advisors", sub: "Licensed financial planners, SMSF accountants & more", href: "/advisors", iconBg: "bg-emerald-600", border: "hover:border-emerald-200 hover:bg-emerald-50/60" },
-                { icon: "globe", label: "Foreign Investors", sub: "FIRB rules, visa pathways & 12 country guides", href: "/foreign-investment", iconBg: "bg-violet-600", border: "hover:border-violet-200 hover:bg-violet-50/60" },
-              ].map((card) => (
-                <Link key={card.href} href={card.href} className={`bg-white border border-slate-200 rounded-2xl p-4 md:p-5 transition-all group ${card.border}`}>
-                  <div className={`w-9 h-9 ${card.iconBg} rounded-xl flex items-center justify-center mb-3 shadow-sm`}>
-                    <Icon name={card.icon} size={18} className="text-white" />
-                  </div>
-                  <p className="text-sm font-bold text-slate-900 group-hover:text-slate-700 leading-snug mb-1">{card.label}</p>
-                  <p className="text-xs text-slate-500 leading-snug">{card.sub}</p>
-                </Link>
-              ))}
-            </div>
+            </details>
           </div>
 
-          {/* Stats bar */}
-          <div className="mt-8 pt-6 border-t border-slate-100 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-            {[
-              { value: "27", label: "Investment Verticals" },
-              { value: "100+", label: "Platforms Compared" },
-              { value: "100+", label: "Active Listings" },
-              { value: "Free", label: "No Hidden Fees" },
-            ].map((s) => (
-              <div key={s.label}>
-                <p className="text-xl md:text-2xl font-extrabold text-slate-900">{s.value}</p>
-                <p className="text-xs text-slate-500 mt-0.5">{s.label}</p>
-              </div>
-            ))}
+          {/* Browse All CTA */}
+          <div className="flex justify-center mb-6 md:mb-8">
+            <Link
+              href="/invest/listings"
+              className="px-6 py-3 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-800 transition-colors text-sm md:text-base"
+            >
+              Browse All Listings ({totalListings})
+            </Link>
           </div>
-        </div>
-      </section>
 
-      {/* Verticals Grid */}
-      <section className="py-14 bg-slate-50">
-        <div className="container-custom">
-          <SectionHeading
-            eyebrow="All verticals"
-            title="Choose Your Investment Sector"
-            sub="Explore every major asset class available to investors in Australia."
-          />
-
-          {items.length === 0 ? (
-            <p className="text-slate-500 text-sm">No investment verticals found.</p>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {items.map((v) => {
-                const href =
-                  HREF_OVERRIDES[v.slug] ?? `/invest/${v.slug}`;
-                const hasFdi =
-                  v.fdi_share_percent !== null && v.fdi_share_percent > 0;
+          {/* Category Grid */}
+          <h2 className="text-lg md:text-2xl font-bold mb-3 md:mb-4">
+            Browse by Category
+          </h2>
+          <ScrollReveal animation="scroll-fade-in">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mb-8 md:mb-12">
+              {categories.map((cat) => {
+                const accent = ACCENT_COLORS[cat.slug] || DEFAULT_ACCENT;
+                const count = getCategoryCount(cat);
+                const description = CATEGORY_DESCRIPTIONS[cat.slug] || cat.intro.slice(0, 80);
+                const icon = CATEGORY_ICONS[cat.slug];
 
                 return (
                   <Link
-                    key={v.id}
-                    href={href}
-                    className="group bg-white border border-slate-200 rounded-xl overflow-hidden flex flex-col hover:shadow-lg transition-shadow duration-200"
+                    key={cat.slug}
+                    href={`/invest/${cat.slug}/listings`}
+                    className={`group relative block rounded-xl border bg-white p-3 md:p-4 transition-all duration-200 hover:shadow-lg hover:scale-[1.01] ${accent.card}`}
                   >
-                    {/* Hero image */}
-                    <div className="relative aspect-[16/9] bg-slate-100">
-                      {v.hero_image ? (
-                        <Image
-                          src={v.hero_image}
-                          alt={v.name}
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-300"
-                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-slate-700 to-slate-900 flex items-center justify-center">
-                          <Icon name={v.icon ?? "trending-up"} size={40} className="text-white/30" />
-                        </div>
-                      )}
-                      {hasFdi && (
-                        <span className="absolute top-3 right-3 text-xs font-semibold bg-amber-500 text-slate-900 px-2.5 py-1 rounded-full shadow-sm">
-                          {v.fdi_share_percent}% FDI
+                    <div className="flex items-start gap-2 mb-2">
+                      <span className={`shrink-0 p-1.5 rounded-lg ${accent.badge}`}>
+                        {icon}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <h3 className={`font-bold text-sm md:text-base text-slate-900 transition-colors ${accent.hover}`}>
+                          {cat.label}
+                        </h3>
+                        <span className="text-[0.62rem] md:text-xs font-semibold text-slate-400">
+                          {count} {count === 1 ? "listing" : "listings"}
                         </span>
-                      )}
-                    </div>
-
-                    {/* Content */}
-                    <div className="p-5 flex flex-col gap-3 flex-1">
-                      <div className="flex items-start gap-3">
-                        <div className="w-9 h-9 rounded-lg bg-amber-50 flex items-center justify-center shrink-0">
-                          <Icon
-                            name={v.icon ?? "trending-up"}
-                            size={18}
-                            className="text-amber-500"
-                          />
-                        </div>
-                        <div>
-                          <h3 className="text-base font-bold text-slate-900 group-hover:text-amber-600 transition-colors">
-                            {v.name}
-                          </h3>
-                          {v.description && (
-                            <p className="text-sm text-slate-500 mt-1 leading-relaxed line-clamp-2">
-                              {v.description}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="mt-auto flex items-center text-amber-600 text-sm font-semibold gap-1">
-                        Explore
-                        <Icon name="arrow-right" size={15} className="group-hover:translate-x-1 transition-transform" />
                       </div>
                     </div>
+                    <p className="text-[0.62rem] md:text-xs text-slate-500 leading-relaxed line-clamp-2">
+                      {description}
+                    </p>
                   </Link>
                 );
               })}
             </div>
-          )}
-        </div>
-      </section>
+          </ScrollReveal>
 
-      {/* Advisor Match CTA */}
-      <section className="py-10 bg-amber-50 border-y border-amber-100">
-        <div className="container-custom">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div>
-              <h2 className="text-lg font-bold text-slate-900">Need help?</h2>
-              <p className="text-sm text-slate-600 mt-1">Browse our directories and comparison tools to find what suits your situation.</p>
-            </div>
-            <div className="flex gap-3 shrink-0">
-              <Link href={PRIMARY_CTA_HREF} className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors">
-                {PRIMARY_CTA_TEXT} →
-              </Link>
-              <Link href="/advisors" className="inline-flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-sm px-5 py-2.5 rounded-lg border border-slate-200 transition-colors">
-                Browse Directories
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Investment Marketplace */}
-      <section className="py-14 bg-white border-t border-slate-100">
-        <div className="container-custom">
-          <div className="mb-8">
-            <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Investment Marketplace</p>
-            <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2">
-              Browse Active Investment Listings
-            </h2>
-            <p className="text-slate-500 leading-relaxed max-w-2xl">
-              Actual opportunities you can enquire about and invest in — businesses, farms, commercial properties, mining projects, and more.
+          {/* Bottom CTA */}
+          <div className="bg-slate-50 rounded-xl p-4 md:p-6 text-center">
+            <h3 className="text-base md:text-lg font-bold text-slate-900 mb-2">
+              Looking for something specific?
+            </h3>
+            <p className="text-xs md:text-sm text-slate-600 mb-3">
+              Browse the full marketplace or use category filters to narrow your search.
             </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {[
-              { title: "Businesses for Sale", desc: "Browse businesses across Australia — hospitality, retail, professional services, and more.", href: "/invest/buy-business/listings", icon: "briefcase" },
-              { title: "Mining Opportunities", desc: "ASX miners, exploration tenements, joint ventures, and mining ETFs.", href: "/invest/mining/opportunities", icon: "layers" },
-              { title: "Farmland & Agriculture", desc: "Grazing stations, cropping farms, horticulture, and water rights across Australia.", href: "/invest/farmland/listings", icon: "leaf" },
-              { title: "Commercial Property", desc: "Office, retail, industrial, hotel, and data centre assets.", href: "/invest/commercial-property/listings", icon: "building" },
-              { title: "Franchise Opportunities", desc: "Proven business models for sale — food, retail, services, and franchise resales.", href: "/invest/franchise/listings", icon: "star" },
-              { title: "Renewable Energy", desc: "Solar farms, wind projects, battery storage, and green infrastructure.", href: "/invest/renewable-energy/projects", icon: "zap" },
-              { title: "Investment Funds", desc: "PE, hedge funds, SIV-complying funds, and managed investment schemes.", href: "/invest/funds", icon: "trending-up" },
-              { title: "Startups & Crowdfunding", desc: "Equity crowdfunding, angel deals, and early-stage investment opportunities.", href: "/invest/startups/opportunities", icon: "rocket" },
-              { title: "Alternative Investments", desc: "Fine wine, art, classic cars, luxury watches, and collectibles.", href: "/invest/alternatives/listings", icon: "gem" },
-              { title: "Private Credit & P2P", desc: "Private debt funds and peer-to-peer lending — yields above term deposits.", href: "/invest/private-credit/listings", icon: "credit-card" },
-              { title: "Infrastructure", desc: "Toll roads, airports, utilities, ports, and social infrastructure.", href: "/invest/infrastructure/listings", icon: "git-branch" },
-            ].map((card) => (
-              <Link
-                key={card.href}
-                href={card.href}
-                className="group bg-white border border-slate-200 rounded-xl p-5 flex flex-col gap-3 hover:shadow-lg hover:border-amber-200 transition-all duration-200"
-              >
-                <div className="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center">
-                  <Icon name={card.icon} size={20} className="text-amber-500" />
-                </div>
-                <div>
-                  <h3 className="text-base font-bold text-slate-900 group-hover:text-amber-600 transition-colors">
-                    {card.title}
-                  </h3>
-                  <p className="text-sm text-slate-500 mt-1 leading-relaxed">{card.desc}</p>
-                </div>
-                <div className="mt-auto">
-                  <span className="inline-flex items-center gap-1.5 bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold text-xs px-3 py-1.5 rounded-lg transition-colors">
-                    Browse →
-                  </span>
-                </div>
-              </Link>
-            ))}
-          </div>
-
-          <div className="mt-8 text-center">
             <Link
               href="/invest/listings"
-              className="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm px-6 py-3 rounded-xl transition-colors"
+              className="inline-block px-6 py-3 bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-800 transition-colors text-sm"
             >
-              View All Investment Listings &rarr;
+              Browse All Listings
             </Link>
           </div>
         </div>
-      </section>
-
-      {/* Browse by Category — SEO internal linking to /listings + sub-categories */}
-      <section className="py-14 bg-slate-50 border-t border-slate-100">
-        <div className="container-custom">
-          <div className="mb-8">
-            <p className="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Marketplace Categories</p>
-            <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2">
-              Browse by Category
-            </h2>
-            <p className="text-slate-500 leading-relaxed max-w-2xl">
-              Explore all {investCategories.length} investment marketplace categories — each with dedicated sub-categories for the opportunities that matter to you.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {investCategories.map((cat) => {
-              const href = `/invest/${cat.slug}/listings`;
-              const topSubs = cat.subcategories.slice(0, 5);
-              const count = cat.dbVerticals.reduce(
-                (sum, v) => sum + (listingCounts.get(v) ?? 0),
-                0
-              );
-              return (
-                <div
-                  key={cat.slug}
-                  className="bg-white border border-slate-200 rounded-xl p-6 hover:shadow-md hover:border-amber-200 transition-all flex flex-col"
-                >
-                  <div className="flex items-start gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center shrink-0">
-                      <Icon name={cat.icon} size={20} className="text-amber-500" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-2">
-                        <Link
-                          href={href}
-                          className="text-base font-bold text-slate-900 hover:text-amber-600 transition-colors"
-                        >
-                          {cat.label}
-                        </Link>
-                        {count > 0 && (
-                          <span className="text-[0.65rem] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
-                            {count} listing{count === 1 ? "" : "s"}
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-xs text-slate-500 mt-1 leading-snug line-clamp-2">
-                        {cat.intro}
-                      </p>
-                    </div>
-                  </div>
-
-                  {topSubs.length > 0 && (
-                    <div className="mt-auto pt-3 border-t border-slate-100">
-                      <p className="text-[0.65rem] font-semibold uppercase tracking-wider text-slate-400 mb-2">
-                        Popular
-                      </p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {topSubs.map((sub) => (
-                          <Link
-                            key={sub.slug}
-                            href={`/invest/${cat.slug}/listings/${sub.slug}`}
-                            className="inline-flex items-center text-[0.7rem] font-medium text-slate-700 bg-slate-100 hover:bg-amber-100 hover:text-amber-800 px-2.5 py-1 rounded-full transition-colors"
-                          >
-                            {sub.label}
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  <Link
-                    href={href}
-                    className="mt-4 inline-flex items-center gap-1 text-xs font-semibold text-amber-600 hover:text-amber-700"
-                  >
-                    View all {cat.label.toLowerCase()} listings
-                    <Icon name="arrow-right" size={13} />
-                  </Link>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Callout cards */}
-      <section className="py-14 bg-white">
-        <div className="container-custom">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* International callout */}
-            <div className="bg-slate-900 rounded-xl p-8 text-white flex flex-col gap-4">
-              <div className="w-11 h-11 rounded-lg bg-slate-700 flex items-center justify-center">
-                <Icon name="globe" size={22} className="text-amber-400" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold mb-2">Investing from overseas?</h3>
-                <p className="text-slate-300 text-sm leading-relaxed">
-                  FIRB rules, withholding tax, visa considerations, and sector-specific restrictions for non-resident and foreign investors.
-                </p>
-              </div>
-              <Link
-                href="/foreign-investment"
-                className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors w-fit"
-              >
-                Read the complete guide
-                <Icon name="arrow-right" size={15} />
-              </Link>
-            </div>
-
-            {/* Advisor callout */}
-            <div className="bg-amber-50 border border-amber-200 rounded-xl p-8 flex flex-col gap-4">
-              <div className="w-11 h-11 rounded-lg bg-amber-100 flex items-center justify-center">
-                <Icon name="user-check" size={22} className="text-amber-600" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-slate-900 mb-2">Need professional guidance?</h3>
-                <p className="text-slate-600 text-sm leading-relaxed">
-                  Browse our directory of licensed Australian financial advisers across investment sectors — from mining and property to tax structuring.
-                </p>
-              </div>
-              <Link
-                href="/advisors"
-                className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors w-fit"
-              >
-                Browse advisers
-                <Icon name="arrow-right" size={15} />
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
+      </div>
+    </>
   );
 }
