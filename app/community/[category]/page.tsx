@@ -256,22 +256,52 @@ export default async function CategoryPage({
       {/* Thread List */}
       <div className="container-custom max-w-4xl pb-16">
         {threads.length === 0 ? (
-          <div className="bg-white border border-slate-200 rounded-xl p-12 text-center">
+          <div className="bg-white border border-slate-200 rounded-xl p-8 md:p-12 text-center">
             <Icon
               name="message-circle"
               size={40}
               className="text-slate-300 mx-auto mb-3"
             />
-            <p className="text-slate-500 mb-4">
-              No threads yet. Be the first to start a discussion!
+            <h2 className="text-lg font-bold text-slate-900 mb-1">
+              No threads yet
+            </h2>
+            <p className="text-sm text-slate-500 mb-5">
+              Be the first to start a discussion in {category.name}.
             </p>
             <Link
               href={`/community/new?category=${slug}`}
-              className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm"
+              className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-5 py-2.5 rounded-xl transition-colors text-sm mb-8"
             >
               <Icon name="plus" size={16} />
-              New Thread
+              Start the First Thread
             </Link>
+
+            {/* Popular topics */}
+            <div className="border-t border-slate-100 pt-6 max-w-md mx-auto">
+              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-3">
+                Popular topics in this category
+              </p>
+              <div className="space-y-2 text-left">
+                {[
+                  `Which platform is best for ${category.name.toLowerCase()}?`,
+                  `Beginner tips for ${category.name.toLowerCase()}`,
+                  `Common mistakes to avoid in ${category.name.toLowerCase()}`,
+                  `Best resources to learn about ${category.name.toLowerCase()}`,
+                  `Tax & reporting questions for ${category.name.toLowerCase()}`,
+                ].map((topic) => (
+                  <Link
+                    key={topic}
+                    href={`/community/new?category=${slug}&title=${encodeURIComponent(topic)}`}
+                    className="flex items-start gap-2 px-3 py-2.5 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors group"
+                  >
+                    <Icon name="message-circle" size={14} className="text-slate-400 group-hover:text-emerald-600 shrink-0 mt-0.5" />
+                    <span className="text-xs font-medium text-slate-600 group-hover:text-slate-900">
+                      {topic}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
           </div>
         ) : (
           <div className="space-y-2">

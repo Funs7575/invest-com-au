@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (authError) {
-      console.error("Auth user creation failed:", authError.message);
+      log.error("Auth user creation failed", { error: authError.message });
       // If user already exists in auth, proceed with professional insert
       if (!authError.message.includes("already been registered")) {
         return NextResponse.json(
@@ -148,7 +148,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (insertError) {
-      console.error("Professional insert failed:", insertError.message);
+      log.error("Professional insert failed", { error: insertError.message });
       return NextResponse.json(
         { error: "Failed to create advisor profile. Please try again." },
         { status: 500 }
@@ -217,7 +217,7 @@ export async function POST(request: NextRequest) {
       slug: professional.slug,
     });
   } catch (err) {
-    console.error("Advisor signup error:", err);
+    log.error("Advisor signup handler error", { err: err instanceof Error ? err.message : String(err) });
     return NextResponse.json(
       { error: "An unexpected error occurred. Please try again." },
       { status: 500 }

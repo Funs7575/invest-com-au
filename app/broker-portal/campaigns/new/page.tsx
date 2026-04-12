@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
@@ -109,8 +110,16 @@ function MockupShell({ title, url, children }: { title: string; url: string; chi
 function BrokerIcon({ name, logoUrl, size = "w-5 h-5", textSize = "text-[0.45rem]", highlighted = false }: { name: string; logoUrl?: string; size?: string; textSize?: string; highlighted?: boolean }) {
   if (logoUrl) {
     return (
-      /* eslint-disable-next-line @next/next/no-img-element */
-      <img src={logoUrl} alt={name} className={`${size} rounded object-contain`} />
+      <div className={`${size} relative rounded overflow-hidden`}>
+        <Image
+          src={logoUrl}
+          alt={name}
+          fill
+          sizes="40px"
+          className="object-contain"
+          unoptimized
+        />
+      </div>
     );
   }
   return (

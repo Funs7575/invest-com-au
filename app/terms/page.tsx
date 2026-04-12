@@ -8,6 +8,8 @@ import {
   COMPANY_ABN,
 } from "@/lib/compliance";
 
+export const revalidate = 86400;
+
 export const metadata = {
   title: "Terms of Use",
   description:

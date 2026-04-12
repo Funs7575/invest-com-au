@@ -2,6 +2,9 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { getAdminEmail } from "@/lib/admin";
 import { feeChangeAlertEmail } from "@/lib/email-templates";
+import { logger } from "@/lib/logger";
+
+const log = logger("cron-check-fees");
 
 export const maxDuration = 60;
 
@@ -226,7 +229,8 @@ export async function GET(req: NextRequest) {
       }
 
       results.push({ slug: broker.slug, status: "ok", changed, fees_extracted: extractedFees });
-    } catch {
+    } catch (err) {
+      log.warn("Broker fee fetch failed", { err: err instanceof Error ? err.message : String(err), slug: broker.slug });
       await supabase
         .from("brokers")
         .update({ fee_last_checked: new Date().toISOString() })
@@ -250,7 +254,7 @@ export async function GET(req: NextRequest) {
         subject: `Fee Alert: ${changedBrokers.length} broker${changedBrokers.length > 1 ? "s" : ""} changed fees`,
         html: `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto"><div style="background:#0f172a;color:white;padding:16px 20px;border-radius:12px 12px 0 0"><h2 style="margin:0;font-size:16px">Fee Page Changes Detected</h2><p style="margin:4px 0 0;opacity:.7;font-size:12px">${changedBrokers.length} broker${changedBrokers.length > 1 ? "s" : ""} · ${new Date().toLocaleDateString("en-AU")}</p></div><div style="padding:16px 20px;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px"><table style="width:100%;border-collapse:collapse">${changeList}</table><p style="margin-top:16px;font-size:12px;color:#94a3b8">Review these changes in <a href="https://invest.com.au/admin" style="color:#2563eb">the admin panel</a>. Fee values may need manual updating.</p></div></div>`,
       }),
-    }).catch((err) => console.error("[check-fees] admin alert email failed:", err));
+    }).catch((err) => log.error("Admin fee alert email failed", { err: err instanceof Error ? err.message : String(err) }));
 
     // Also notify fee alert subscribers (instant frequency only)
     const { data: subscribers } = await supabase
@@ -290,7 +294,7 @@ export async function GET(req: NextRequest) {
             subject: `Fee Change: ${relevantBrokers.map((b) => b.name).join(", ")}`,
             html,
           }),
-        }).catch((err) => console.error("[check-fees] subscriber alert email failed:", err));
+        }).catch((err) => log.warn("Subscriber fee alert email failed", { err: err instanceof Error ? err.message : String(err), email: sub.email }));
       }
     }
   }

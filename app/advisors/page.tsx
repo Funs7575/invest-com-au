@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/advisors" },
 };
 
-export default async function AdvisorsPage() {
+async function AdvisorsData() {
   const supabase = await createClient();
 
   const [proResult, firmResult] = await Promise.all([
@@ -46,6 +46,10 @@ export default async function AdvisorsPage() {
     if (p.firm_id) firmMemberCounts[p.firm_id] = (firmMemberCounts[p.firm_id] || 0) + 1;
   });
 
+  return <AdvisorsClient professionals={professionals} firms={firms} firmMemberCounts={firmMemberCounts} />;
+}
+
+export default function AdvisorsPage() {
   const breadcrumbLd = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
     { name: "Find an Advisor" },
@@ -55,7 +59,7 @@ export default async function AdvisorsPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <Suspense fallback={<AdvisorsLoading />}>
-        <AdvisorsClient professionals={professionals} firms={firms} firmMemberCounts={firmMemberCounts} />
+        <AdvisorsData />
       </Suspense>
     </>
   );

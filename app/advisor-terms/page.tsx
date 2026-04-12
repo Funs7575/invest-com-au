@@ -7,6 +7,8 @@ import {
   GENERAL_ADVICE_WARNING,
 } from "@/lib/compliance";
 
+export const revalidate = 86400;
+
 export const metadata = {
   title: "Advisor Services Agreement",
   description:

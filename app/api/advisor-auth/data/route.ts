@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { logger } from "@/lib/logger";
+
+const log = logger("advisor-auth-data");
 
 async function getAdvisorId(request: NextRequest): Promise<number | null> {
   const supabase = await createClient();
@@ -196,7 +199,9 @@ export async function PATCH(request: NextRequest) {
         const avg = Math.round(allResponded.reduce((sum: number, l: { response_time_minutes: number }) => sum + l.response_time_minutes, 0) / allResponded.length);
         await supabase.from("professionals").update({ avg_response_minutes: avg }).eq("id", lead.professional_id);
       }
-    } catch { /* non-critical */ }
+    } catch (err) {
+      log.warn("avg response time update failed", { err: err instanceof Error ? err.message : String(err), professionalId: lead.professional_id });
+    }
   }
 
   return NextResponse.json({ success: true });

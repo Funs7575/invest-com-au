@@ -199,8 +199,8 @@ export async function POST(request: NextRequest) {
         },
       });
     }
-  } catch {
-    // Webhook enqueue is non-critical — don't fail the postback
+  } catch (err) {
+    log.warn("Webhook enqueue failed", { err: err instanceof Error ? err.message : String(err) });
   }
 
   // Update campaign_daily_stats conversions count if we have a campaign

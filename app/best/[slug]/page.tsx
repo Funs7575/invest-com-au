@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import type { Broker, BrokerQuestion, BrokerAnswer } from "@/lib/types";
@@ -123,34 +124,6 @@ export default async function BestBrokerPage({
   const hasSponsored = filtered.some(isSponsored);
   const relatedArticles: Pick<Article, "id" | "title" | "slug" | "category" | "read_time">[] = articleResult?.data || [];
 
-  // ── Fetch Q&A for this best-broker page ──
-  const { data: questionsRaw } = await supabase
-    .from("broker_questions")
-    .select("id, question, display_name, created_at, broker_answers(id, answer, answered_by, author_slug, display_name, is_accepted, created_at)")
-    .eq("page_type", "best")
-    .eq("page_slug", slug)
-    .eq("status", "approved")
-    .order("created_at", { ascending: false })
-    .limit(10);
-
-  const questions = ((questionsRaw || []) as BrokerQuestion[]).map((q) => ({
-    id: q.id,
-    question: q.question,
-    display_name: q.display_name ?? "",
-    created_at: q.created_at,
-    answers: (q.broker_answers || [])
-      .filter((a: BrokerAnswer) => a.status === undefined || a.status === "approved")
-      .map((a: BrokerAnswer) => ({
-        id: a.id,
-        answer: a.answer,
-        answered_by: a.answered_by ?? "",
-        author_slug: a.author_slug,
-        display_name: a.display_name,
-        is_accepted: a.is_accepted ?? false,
-        created_at: a.created_at,
-      })),
-  }));
-
   // ── JSON-LD: Article + ItemList + FAQ + Breadcrumb ──
   const articleJsonLd = {
     "@context": "https://schema.org",
@@ -214,8 +187,6 @@ export default async function BestBrokerPage({
     { name: cat.h1 },
   ]);
 
-  const qaLd = questions.length > 0 ? qaPageJsonLd(questions, `${cat.h1} Q&A`, absoluteUrl(`/best/${slug}`)) : null;
-
   const allCategories = getAllCategorySlugs()
     .map(getCategoryBySlug)
     .filter((c) => c && c.slug !== slug) as NonNullable<
@@ -243,13 +214,6 @@ export default async function BestBrokerPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
       />
-      {qaLd && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(qaLd) }}
-        />
-      )}
-
       <div className="py-5 md:py-12">
         <OnThisPage items={[
           ...(topPick ? [{ id: "top-pick", label: "Top Pick" }] : []),
@@ -612,15 +576,16 @@ export default async function BestBrokerPage({
             </div>
           </div>
 
-          {/* Community Q&A */}
+          {/* Community Q&A — streamed independently */}
           <div id="questions" className="scroll-mt-20" />
-          <QASection
-            questions={questions}
-            brokerSlug={slug}
-            brokerName={cat.h1.replace("Best ", "").replace(" in Australia", "")}
-            pageType="best"
-            pageSlug={slug}
-          />
+          <Suspense fallback={<BestQASkeleton />}>
+            <BestQASection
+              slug={slug}
+              brokerName={cat.h1.replace("Best ", "").replace(" in Australia", "")}
+              pageUrl={absoluteUrl(`/best/${slug}`)}
+              pageTitle={cat.h1}
+            />
+          </Suspense>
           <AskQuestionForm
             brokerSlug={slug}
             brokerName={cat.h1.replace("Best ", "").replace(" in Australia", "")}
@@ -674,6 +639,69 @@ export default async function BestBrokerPage({
           )}
         </div>
       </div>
+    </>
+  );
+}
+
+function BestQASkeleton() {
+  return (
+    <div className="py-6 animate-pulse">
+      <div className="h-6 w-48 bg-slate-200 rounded mb-4" />
+      <div className="space-y-3">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="h-20 bg-slate-100 rounded-xl" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+async function BestQASection({ slug, brokerName, pageUrl, pageTitle }: { slug: string; brokerName: string; pageUrl: string; pageTitle: string }) {
+  const supabase = await createClient();
+  const { data: questionsRaw } = await supabase
+    .from("broker_questions")
+    .select("id, question, display_name, created_at, broker_answers(id, answer, answered_by, author_slug, display_name, is_accepted, created_at)")
+    .eq("page_type", "best")
+    .eq("page_slug", slug)
+    .eq("status", "approved")
+    .order("created_at", { ascending: false })
+    .limit(10);
+
+  const questions = ((questionsRaw || []) as BrokerQuestion[]).map((q) => ({
+    id: q.id,
+    question: q.question,
+    display_name: q.display_name ?? "",
+    created_at: q.created_at,
+    answers: (q.broker_answers || [])
+      .filter((a: BrokerAnswer) => a.status === undefined || a.status === "approved")
+      .map((a: BrokerAnswer) => ({
+        id: a.id,
+        answer: a.answer,
+        answered_by: a.answered_by ?? "",
+        author_slug: a.author_slug,
+        display_name: a.display_name,
+        is_accepted: a.is_accepted ?? false,
+        created_at: a.created_at,
+      })),
+  }));
+
+  const qaLd = questions.length > 0 ? qaPageJsonLd(questions, `${pageTitle} Q&A`, pageUrl) : null;
+
+  return (
+    <>
+      {qaLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(qaLd) }}
+        />
+      )}
+      <QASection
+        questions={questions}
+        brokerSlug={slug}
+        brokerName={brokerName}
+        pageType="best"
+        pageSlug={slug}
+      />
     </>
   );
 }

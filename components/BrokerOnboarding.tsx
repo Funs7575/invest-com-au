@@ -1,10 +1,21 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Icon from "@/components/Icon";
 
 const STORAGE_KEY = "broker_onboarding_complete";
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const URL_RE = /^https?:\/\/[^\s.]+\.[^\s]+$/i;
+
+function CheckIcon() {
+  return (
+    <svg className="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+    </svg>
+  );
+}
 
 interface BrokerOnboardingProps {
   /** ISO date string of when the broker account was created */
@@ -22,6 +33,52 @@ export default function BrokerOnboarding({ accountCreatedAt }: BrokerOnboardingP
   const router = useRouter();
   const [visible, setVisible] = useState(false);
   const [step, setStep] = useState(0);
+
+  // Step 1 profile form state + inline validation
+  const [companyName, setCompanyName] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
+  const [website, setWebsite] = useState("");
+  const [description, setDescription] = useState("");
+
+  const [touched, setTouched] = useState({
+    companyName: false,
+    contactEmail: false,
+    website: false,
+    description: false,
+  });
+  const [errors, setErrors] = useState({
+    companyName: "",
+    contactEmail: "",
+    website: "",
+    description: "",
+  });
+
+  const validateCompanyName = useCallback((v: string) => {
+    if (!v.trim()) return "Company name is required";
+    if (v.trim().length < 2) return "Must be at least 2 characters";
+    return "";
+  }, []);
+  const validateContactEmail = useCallback((v: string) => {
+    if (!v.trim()) return "Contact email is required";
+    if (!EMAIL_RE.test(v.trim())) return "Please enter a valid email";
+    return "";
+  }, []);
+  const validateWebsite = useCallback((v: string) => {
+    if (!v.trim()) return "";
+    if (!URL_RE.test(v.trim())) return "Please enter a valid URL (https://...)";
+    return "";
+  }, []);
+  const validateDescription = useCallback((v: string) => {
+    if (!v.trim()) return "";
+    if (v.trim().length < 20) return "Description should be at least 20 characters";
+    return "";
+  }, []);
+
+  const profileFormValid =
+    !validateCompanyName(companyName) &&
+    !validateContactEmail(contactEmail) &&
+    !validateWebsite(website) &&
+    !validateDescription(description);
 
   useEffect(() => {
     // Don't show if already completed
@@ -113,25 +170,127 @@ export default function BrokerOnboarding({ accountCreatedAt }: BrokerOnboardingP
 
               <div className="space-y-3">
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">Company Name</label>
-                  <input type="text" placeholder="e.g. Interactive Brokers AU"
-                    className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400" />
+                  <label htmlFor="bo-company-name" className="block text-xs font-medium text-slate-600 mb-1">Company Name *</label>
+                  <div className="relative">
+                    <input
+                      id="bo-company-name"
+                      type="text"
+                      value={companyName}
+                      onChange={(e) => {
+                        setCompanyName(e.target.value);
+                        if (touched.companyName) setErrors((prev) => ({ ...prev, companyName: validateCompanyName(e.target.value) }));
+                      }}
+                      onBlur={() => {
+                        setTouched((prev) => ({ ...prev, companyName: true }));
+                        setErrors((prev) => ({ ...prev, companyName: validateCompanyName(companyName) }));
+                      }}
+                      placeholder="e.g. Interactive Brokers AU"
+                      aria-invalid={!!errors.companyName && touched.companyName}
+                      aria-describedby={errors.companyName && touched.companyName ? "bo-company-name-error" : undefined}
+                      className={`w-full px-4 py-2.5 pr-9 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400 ${
+                        errors.companyName && touched.companyName
+                          ? "border-red-500"
+                          : "border-slate-200"
+                      }`}
+                    />
+                    {touched.companyName && !errors.companyName && companyName && (
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2"><CheckIcon /></span>
+                    )}
+                  </div>
+                  {errors.companyName && touched.companyName && (
+                    <p id="bo-company-name-error" className="text-xs text-red-500 mt-1">{errors.companyName}</p>
+                  )}
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">Contact Email</label>
-                  <input type="email" placeholder="partnerships@broker.com.au"
-                    className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400" />
+                  <label htmlFor="bo-contact-email" className="block text-xs font-medium text-slate-600 mb-1">Contact Email *</label>
+                  <div className="relative">
+                    <input
+                      id="bo-contact-email"
+                      type="email"
+                      value={contactEmail}
+                      onChange={(e) => {
+                        setContactEmail(e.target.value);
+                        if (touched.contactEmail) setErrors((prev) => ({ ...prev, contactEmail: validateContactEmail(e.target.value) }));
+                      }}
+                      onBlur={() => {
+                        setTouched((prev) => ({ ...prev, contactEmail: true }));
+                        setErrors((prev) => ({ ...prev, contactEmail: validateContactEmail(contactEmail) }));
+                      }}
+                      placeholder="partnerships@broker.com.au"
+                      aria-invalid={!!errors.contactEmail && touched.contactEmail}
+                      aria-describedby={errors.contactEmail && touched.contactEmail ? "bo-contact-email-error" : undefined}
+                      className={`w-full px-4 py-2.5 pr-9 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400 ${
+                        errors.contactEmail && touched.contactEmail
+                          ? "border-red-500"
+                          : "border-slate-200"
+                      }`}
+                    />
+                    {touched.contactEmail && !errors.contactEmail && contactEmail && (
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2"><CheckIcon /></span>
+                    )}
+                  </div>
+                  {errors.contactEmail && touched.contactEmail && (
+                    <p id="bo-contact-email-error" className="text-xs text-red-500 mt-1">{errors.contactEmail}</p>
+                  )}
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">Website</label>
-                  <input type="url" placeholder="https://broker.com.au"
-                    className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400" />
+                  <label htmlFor="bo-website" className="block text-xs font-medium text-slate-600 mb-1">Website</label>
+                  <div className="relative">
+                    <input
+                      id="bo-website"
+                      type="url"
+                      value={website}
+                      onChange={(e) => {
+                        setWebsite(e.target.value);
+                        if (touched.website) setErrors((prev) => ({ ...prev, website: validateWebsite(e.target.value) }));
+                      }}
+                      onBlur={() => {
+                        setTouched((prev) => ({ ...prev, website: true }));
+                        setErrors((prev) => ({ ...prev, website: validateWebsite(website) }));
+                      }}
+                      placeholder="https://broker.com.au"
+                      aria-invalid={!!errors.website && touched.website}
+                      aria-describedby={errors.website && touched.website ? "bo-website-error" : undefined}
+                      className={`w-full px-4 py-2.5 pr-9 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400 ${
+                        errors.website && touched.website
+                          ? "border-red-500"
+                          : "border-slate-200"
+                      }`}
+                    />
+                    {touched.website && !errors.website && website && (
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2"><CheckIcon /></span>
+                    )}
+                  </div>
+                  {errors.website && touched.website && (
+                    <p id="bo-website-error" className="text-xs text-red-500 mt-1">{errors.website}</p>
+                  )}
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">Brief Description</label>
-                  <textarea placeholder="Tell investors why they should choose your platform..."
-                    className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400 resize-none"
-                    rows={2} />
+                  <label htmlFor="bo-description" className="block text-xs font-medium text-slate-600 mb-1">Brief Description</label>
+                  <textarea
+                    id="bo-description"
+                    value={description}
+                    onChange={(e) => {
+                      setDescription(e.target.value);
+                      if (touched.description) setErrors((prev) => ({ ...prev, description: validateDescription(e.target.value) }));
+                    }}
+                    onBlur={() => {
+                      setTouched((prev) => ({ ...prev, description: true }));
+                      setErrors((prev) => ({ ...prev, description: validateDescription(description) }));
+                    }}
+                    placeholder="Tell investors why they should choose your platform..."
+                    aria-invalid={!!errors.description && touched.description}
+                    aria-describedby={errors.description && touched.description ? "bo-description-error" : undefined}
+                    className={`w-full px-4 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-400/30 focus:border-slate-400 resize-none ${
+                      errors.description && touched.description
+                        ? "border-red-500"
+                        : "border-slate-200"
+                    }`}
+                    rows={2}
+                  />
+                  {errors.description && touched.description && (
+                    <p id="bo-description-error" className="text-xs text-red-500 mt-1">{errors.description}</p>
+                  )}
                 </div>
                 <button onClick={() => navigateAndClose("/broker-portal/creatives")}
                   className="text-xs text-amber-600 hover:text-amber-700 font-medium">
@@ -273,8 +432,10 @@ export default function BrokerOnboarding({ accountCreatedAt }: BrokerOnboardingP
               Back
             </button>
             {step < 4 ? (
-              <button onClick={next}
-                className="px-6 py-2.5 bg-slate-900 text-white font-bold text-sm rounded-xl hover:bg-slate-800 transition-colors">
+              <button
+                onClick={next}
+                disabled={step === 1 && !profileFormValid}
+                className="px-6 py-2.5 bg-slate-900 text-white font-bold text-sm rounded-xl hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                 Continue
               </button>
             ) : (

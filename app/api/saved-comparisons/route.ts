@@ -18,7 +18,7 @@ export async function GET() {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+      return NextResponse.json({ error: "Session expired. Please sign in again." }, { status: 401 });
     }
 
     const { data: comparisons, error } = await supabase
@@ -29,13 +29,19 @@ export async function GET() {
 
     if (error) {
       log.error("Failed to fetch comparisons", { error: error.message, userId: user.id });
-      return NextResponse.json({ error: "Failed to load comparisons" }, { status: 500 });
+      return NextResponse.json(
+        { error: "Something went wrong on our end. Try again in a moment." },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({ comparisons: comparisons ?? [] });
   } catch (err) {
     log.error("Saved comparisons GET error", { error: err instanceof Error ? err.message : String(err) });
-    return NextResponse.json({ error: "Failed to load comparisons" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Connection issue. Please try again." },
+      { status: 503 }
+    );
   }
 }
 
@@ -47,7 +53,7 @@ export async function POST(request: NextRequest) {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+      return NextResponse.json({ error: "Session expired. Please sign in again." }, { status: 401 });
     }
 
     // Rate limit: 20 per hour per user
@@ -67,7 +73,10 @@ export async function POST(request: NextRequest) {
 
     if (countError) {
       log.error("Failed to count comparisons", { error: countError.message, userId: user.id });
-      return NextResponse.json({ error: "Failed to save comparison" }, { status: 500 });
+      return NextResponse.json(
+        { error: "Something went wrong on our end. Try again in a moment." },
+        { status: 500 }
+      );
     }
 
     if ((count ?? 0) >= MAX_COMPARISONS) {
@@ -77,7 +86,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
+    let body;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json(
+        { error: "Some fields are invalid. Check and try again." },
+        { status: 400 }
+      );
+    }
 
     // Validate inputs
     const name = typeof body.name === "string"
@@ -85,7 +102,10 @@ export async function POST(request: NextRequest) {
       : "My Comparison";
 
     if (!name) {
-      return NextResponse.json({ error: "Name is required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Some fields are invalid. Check and try again." },
+        { status: 400 }
+      );
     }
 
     const brokerSlugs = Array.isArray(body.broker_slugs)
@@ -95,7 +115,10 @@ export async function POST(request: NextRequest) {
       : [];
 
     if (brokerSlugs.length === 0) {
-      return NextResponse.json({ error: "At least one broker is required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Some fields are invalid. Check and try again." },
+        { status: 400 }
+      );
     }
 
     const quizResults = body.quiz_results && typeof body.quiz_results === "object"
@@ -120,12 +143,18 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       log.error("Failed to save comparison", { error: error.message, userId: user.id });
-      return NextResponse.json({ error: "Failed to save comparison" }, { status: 500 });
+      return NextResponse.json(
+        { error: "Something went wrong on our end. Try again in a moment." },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({ comparison }, { status: 201 });
   } catch (err) {
     log.error("Saved comparisons POST error", { error: err instanceof Error ? err.message : String(err) });
-    return NextResponse.json({ error: "Failed to save comparison" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Connection issue. Please try again." },
+      { status: 503 }
+    );
   }
 }

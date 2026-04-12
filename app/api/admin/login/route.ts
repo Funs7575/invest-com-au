@@ -3,6 +3,9 @@ import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "crypto";
 import { ADMIN_EMAILS } from "@/lib/admin";
+import { logger } from "@/lib/logger";
+
+const log = logger("admin-login");
 
 const WINDOW_MS = 60_000;
 const MAX_ATTEMPTS = 5;
@@ -63,7 +66,8 @@ export async function POST(request: NextRequest) {
   let body: { email?: string; password?: string };
   try {
     body = await request.json();
-  } catch {
+  } catch (err) {
+    log.warn("Admin login invalid JSON", { err: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 

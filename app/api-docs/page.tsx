@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 
+export const revalidate = 86400;
+
 export const metadata = {
   title: "API Documentation | Invest.com.au",
   description:

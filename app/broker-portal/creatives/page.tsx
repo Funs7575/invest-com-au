@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import Icon from "@/components/Icon";
@@ -241,8 +242,16 @@ export default function CreativesPage() {
                   c.is_active ? "border-slate-200" : "border-slate-100 opacity-60"
                 }`}>
                   <div className="aspect-video bg-slate-50 flex items-center justify-center p-3 relative">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={c.url} alt={c.label || c.type} className="max-w-full max-h-full object-contain" />
+                    <div className="relative w-full h-full">
+                      <Image
+                        src={c.url}
+                        alt={c.label || c.type}
+                        fill
+                        sizes="(max-width: 768px) 50vw, 25vw"
+                        className="object-contain"
+                        unoptimized
+                      />
+                    </div>
                     {!c.is_active && (
                       <div className="absolute inset-0 bg-white/60 flex items-center justify-center">
                         <span className="text-xs font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded">Disabled</span>

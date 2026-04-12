@@ -6,6 +6,9 @@ import { notificationFooter } from "@/lib/email-templates";
 import { escapeHtml } from "@/lib/html-escape";
 import { getSiteUrl } from "@/lib/url";
 import { isValidAuPhone } from "@/lib/validate-phone";
+import { logger } from "@/lib/logger";
+
+const log = logger("advisor-enquiry");
 
 // Format qualification data as HTML table rows for the advisor notification email
 function buildQualificationEmailRows(qd: { source: string; data: Record<string, unknown> }): string {
@@ -413,8 +416,8 @@ export async function POST(request: NextRequest) {
           }),
         });
       }
-    } catch {
-      // Don't fail if confirmation email fails
+    } catch (err) {
+      log.warn("Advisor enquiry confirmation email failed", { err: err instanceof Error ? err.message : String(err) });
     }
 
     // Track the event (legacy + funnel event)
@@ -441,21 +444,24 @@ export async function POST(request: NextRequest) {
           },
         },
       ]);
-    } catch {
-      // Non-critical
+    } catch (err) {
+      log.warn("Advisor enquiry analytics event failed", { err: err instanceof Error ? err.message : String(err) });
     }
 
     // ── Update advisor aggregate stats ──
     try {
       await supabase.rpc("increment_advisor_lead_count", { advisor_id: professional_id });
-    } catch {
+    } catch (rpcErr) {
+      log.warn("increment_advisor_lead_count RPC failed, falling back", { err: rpcErr instanceof Error ? rpcErr.message : String(rpcErr) });
       // Fall back to manual update if RPC doesn't exist
       try {
         await supabase.from("professionals").update({
           last_lead_at: new Date().toISOString(),
           total_leads: (advisor?.total_leads || 0) + 1,
         }).eq("id", professional_id);
-      } catch { /* non-critical */ }
+      } catch (err) {
+        log.warn("Manual advisor lead count update failed", { err: err instanceof Error ? err.message : String(err), professional_id });
+      }
     }
 
     // ── Low Credit Warning Email ──
@@ -492,14 +498,16 @@ export async function POST(request: NextRequest) {
               });
               await supabase.from("professionals").update({ low_credit_alert_sent_at: new Date().toISOString() }).eq("id", professional_id);
             }
-          } catch { /* non-critical */ }
+          } catch (err) {
+            log.warn("Advisor low credit warning email failed", { err: err instanceof Error ? err.message : String(err), professional_id });
+          }
         }
       }
     }
 
     return NextResponse.json({ success: true, lead_id: lead.id });
   } catch (error) {
-    console.error("Advisor enquiry error:", error);
+    log.error("Advisor enquiry handler error", { error: error instanceof Error ? error.message : String(error) });
     return NextResponse.json({ error: "Internal server error." }, { status: 500 });
   }
 }

@@ -10,7 +10,8 @@
     "type-check": "tsc --noEmit",
     "lint:fix": "eslint . --fix",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "db:types": "echo 'Run: npx supabase gen types typescript --project-id YOUR_PROJECT_ID > lib/database.types.ts'"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.80.0",

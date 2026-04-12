@@ -17,6 +17,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidateTag } from "next/cache";
 import { getAdminEmails } from "@/lib/admin";
+import { logger } from "@/lib/logger";
+
+const log = logger("admin-fi-seed");
 import {
   NON_RESIDENT_TAX_BRACKETS,
   RESIDENT_TAX_BRACKETS,
@@ -34,7 +37,8 @@ export async function POST(req: NextRequest) {
   let body: { adminEmail: string; resetFirst?: boolean };
   try {
     body = await req.json();
-  } catch {
+  } catch (err) {
+    log.warn("FI seed invalid JSON", { err: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 

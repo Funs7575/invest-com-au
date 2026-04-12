@@ -4,6 +4,8 @@ import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import ListingSubmitForm from "./ListingSubmitForm";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: `List an Investment Opportunity — Reach Qualified Investors (${CURRENT_YEAR})`,
   description:

@@ -9,6 +9,8 @@ import {
   REGULATORY_NOTE,
 } from "@/lib/compliance";
 
+export const revalidate = 86400;
+
 export const metadata = {
   title: "Complaints & Dispute Resolution",
   description:

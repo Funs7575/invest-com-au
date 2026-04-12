@@ -2,20 +2,30 @@ import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!user) {
+      return NextResponse.json(
+        { error: "Session expired. Please sign in again." },
+        { status: 401 }
+      );
+    }
+
+    const { data: profile } = await supabase
+      .from("user_profiles")
+      .select("*")
+      .eq("id", user.id)
+      .single();
+
+    return NextResponse.json({ profile: profile || null });
+  } catch {
+    return NextResponse.json(
+      { error: "Something went wrong on our end. Try again in a moment." },
+      { status: 500 }
+    );
   }
-
-  const { data: profile } = await supabase
-    .from("user_profiles")
-    .select("*")
-    .eq("id", user.id)
-    .single();
-
-  return NextResponse.json({ profile: profile || null });
 }
 
 export async function PUT(req: NextRequest) {
@@ -23,10 +33,21 @@ export async function PUT(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json(
+      { error: "Session expired. Please sign in again." },
+      { status: 401 }
+    );
   }
 
-  const body = await req.json();
+  let body: Record<string, unknown>;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json(
+      { error: "Some fields are invalid. Check and try again." },
+      { status: 400 }
+    );
+  }
 
   // Validate fields
   const allowed: Record<string, unknown> = {};
@@ -60,18 +81,35 @@ export async function PUT(req: NextRequest) {
     allowed.onboarding_completed = body.onboarding_completed;
   }
 
+  if (Object.keys(allowed).length === 0) {
+    return NextResponse.json(
+      { error: "Some fields are invalid. Check and try again." },
+      { status: 400 }
+    );
+  }
+
   allowed.updated_at = new Date().toISOString();
 
   // Upsert profile
-  const { data: profile, error } = await supabase
-    .from("user_profiles")
-    .upsert({ id: user.id, email: user.email, ...allowed }, { onConflict: "id" })
-    .select()
-    .single();
+  try {
+    const { data: profile, error } = await supabase
+      .from("user_profiles")
+      .upsert({ id: user.id, email: user.email, ...allowed }, { onConflict: "id" })
+      .select()
+      .single();
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) {
+      return NextResponse.json(
+        { error: "Something went wrong on our end. Try again in a moment." },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ profile });
+  } catch {
+    return NextResponse.json(
+      { error: "Connection issue. Please try again." },
+      { status: 503 }
+    );
   }
-
-  return NextResponse.json({ profile });
 }

@@ -4,6 +4,8 @@ import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: `SMSF Accountant vs Financial Planner: Which Do You Need? (${CURRENT_YEAR})`,
   description: "Not sure whether you need an SMSF accountant or a financial planner? We break down the differences in qualifications, costs, and when to use each.",

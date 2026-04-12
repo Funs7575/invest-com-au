@@ -35,74 +35,74 @@ export default async function FeeImpactExportPage({
   }).sort((a, b) => a.total - b.total);
 
   return (
-    <div style={{ maxWidth: 800, margin: "0 auto", padding: "40px 24px", fontFamily: "system-ui, -apple-system, sans-serif", color: "#0f172a" }}>
-      <div style={{ borderBottom: "3px solid #15803d", paddingBottom: 16, marginBottom: 24 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+    <div className="max-w-[800px] mx-auto px-6 py-10 font-sans text-slate-900">
+      <div className="border-b-[3px] border-green-700 pb-4 mb-6">
+        <div className="flex justify-between items-center">
           <div>
-            <h1 style={{ fontSize: 24, fontWeight: 800, margin: 0 }}>Personal Fee Impact Report</h1>
-            <p style={{ fontSize: 12, color: "#64748b", margin: "4px 0 0" }}>Generated {now} by invest.com.au</p>
+            <h1 className="text-2xl font-extrabold m-0">Personal Fee Impact Report</h1>
+            <p className="text-xs text-slate-500 mt-1 mb-0">Generated {now} by invest.com.au</p>
           </div>
-          <div style={{ fontSize: 14, fontWeight: 700, color: "#15803d" }}>invest.com.au</div>
+          <div className="text-sm font-bold text-green-700">invest.com.au</div>
         </div>
       </div>
 
       {/* Parameters */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12, marginBottom: 24 }}>
+      <div className="grid grid-cols-3 gap-3 mb-6">
         {[
           { label: "ASX Trades/Month", value: asxTrades.toString() },
           { label: "US Trades/Month", value: usTrades.toString() },
           { label: "Portfolio Size", value: `$${portfolioSize.toLocaleString()}` },
         ].map((p) => (
-          <div key={p.label} style={{ background: "#f8fafc", borderRadius: 8, padding: 12, textAlign: "center" }}>
-            <p style={{ fontSize: 10, color: "#64748b", margin: "0 0 4px" }}>{p.label}</p>
-            <p style={{ fontSize: 18, fontWeight: 700, margin: 0 }}>{p.value}</p>
+          <div key={p.label} className="bg-slate-50 rounded-lg p-3 text-center">
+            <p className="text-[10px] text-slate-500 mt-0 mb-1">{p.label}</p>
+            <p className="text-lg font-bold m-0">{p.value}</p>
           </div>
         ))}
       </div>
 
       {/* Results Table */}
-      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
+      <table className="w-full border-collapse text-xs">
         <thead>
-          <tr style={{ background: "#f8fafc", borderBottom: "2px solid #e2e8f0" }}>
-            <th style={{ textAlign: "left", padding: "8px 10px", fontWeight: 600, color: "#475569" }}>#</th>
-            <th style={{ textAlign: "left", padding: "8px 10px", fontWeight: 600, color: "#475569" }}>Broker</th>
-            <th style={{ textAlign: "right", padding: "8px 10px", fontWeight: 600, color: "#475569" }}>ASX/yr</th>
-            <th style={{ textAlign: "right", padding: "8px 10px", fontWeight: 600, color: "#475569" }}>US/yr</th>
-            <th style={{ textAlign: "right", padding: "8px 10px", fontWeight: 600, color: "#475569" }}>FX Cost</th>
-            <th style={{ textAlign: "right", padding: "8px 10px", fontWeight: 700, color: "#475569" }}>Total/yr</th>
+          <tr className="bg-slate-50 border-b-2 border-slate-200">
+            <th className="text-left px-2.5 py-2 font-semibold text-slate-600">#</th>
+            <th className="text-left px-2.5 py-2 font-semibold text-slate-600">Broker</th>
+            <th className="text-right px-2.5 py-2 font-semibold text-slate-600">ASX/yr</th>
+            <th className="text-right px-2.5 py-2 font-semibold text-slate-600">US/yr</th>
+            <th className="text-right px-2.5 py-2 font-semibold text-slate-600">FX Cost</th>
+            <th className="text-right px-2.5 py-2 font-bold text-slate-600">Total/yr</th>
           </tr>
         </thead>
         <tbody>
-          {results.map((r, i) => (
-            <tr
-              key={r.broker.slug}
-              style={{
-                borderBottom: "1px solid #e2e8f0",
-                background: r.broker.slug === highlightSlug ? "#f0fdf4" : i % 2 === 0 ? "#fff" : "#f8fafc",
-              }}
-            >
-              <td style={{ padding: "6px 10px", color: "#94a3b8" }}>{i + 1}</td>
-              <td style={{ padding: "6px 10px", fontWeight: i === 0 ? 700 : 500 }}>
-                {r.broker.name} {i === 0 && "⭐"}
-              </td>
-              <td style={{ textAlign: "right", padding: "6px 10px" }}>${r.asxAnnual.toFixed(0)}</td>
-              <td style={{ textAlign: "right", padding: "6px 10px" }}>${r.usAnnual.toFixed(0)}</td>
-              <td style={{ textAlign: "right", padding: "6px 10px" }}>${r.fxCost.toFixed(0)}</td>
-              <td style={{ textAlign: "right", padding: "6px 10px", fontWeight: 700 }}>${r.total.toFixed(0)}</td>
-            </tr>
-          ))}
+          {results.map((r, i) => {
+            const rowBg = r.broker.slug === highlightSlug ? "bg-green-50" : i % 2 === 0 ? "bg-white" : "bg-slate-50";
+            return (
+              <tr
+                key={r.broker.slug}
+                className={`border-b border-slate-200 ${rowBg}`}
+              >
+                <td className="px-2.5 py-1.5 text-slate-400">{i + 1}</td>
+                <td className={`px-2.5 py-1.5 ${i === 0 ? "font-bold" : "font-medium"}`}>
+                  {r.broker.name} {i === 0 && "⭐"}
+                </td>
+                <td className="text-right px-2.5 py-1.5">${r.asxAnnual.toFixed(0)}</td>
+                <td className="text-right px-2.5 py-1.5">${r.usAnnual.toFixed(0)}</td>
+                <td className="text-right px-2.5 py-1.5">${r.fxCost.toFixed(0)}</td>
+                <td className="text-right px-2.5 py-1.5 font-bold">${r.total.toFixed(0)}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
 
       {/* Savings highlight */}
       {results.length >= 2 && (
-        <div style={{ marginTop: 16, padding: 12, background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 8, fontSize: 12 }}>
+        <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg text-xs">
           <strong>Potential savings:</strong> Switching from the most expensive to the cheapest broker could save you{" "}
           <strong>${(results[results.length - 1].total - results[0].total).toFixed(0)}/year</strong>.
         </div>
       )}
 
-      <div style={{ marginTop: 32, padding: 12, background: "#f8fafc", borderRadius: 8, fontSize: 10, color: "#64748b", lineHeight: 1.5 }}>
+      <div className="mt-8 p-3 bg-slate-50 rounded-lg text-[10px] text-slate-500 leading-relaxed">
         <strong>Disclaimer:</strong> {GENERAL_ADVICE_WARNING} {ADVERTISER_DISCLOSURE_SHORT}
       </div>
 

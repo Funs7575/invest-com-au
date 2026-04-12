@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import PricingClient from "./PricingClient";
 
+export const revalidate = 86400;
+
 export const metadata: Metadata = {
   title: "Advisor Plans & Pricing",
   description:

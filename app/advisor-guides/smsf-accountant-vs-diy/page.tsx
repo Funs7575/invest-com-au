@@ -4,6 +4,8 @@ import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: `Do I Need an SMSF Accountant or Can I DIY? (${CURRENT_YEAR})`,
   description: "Honest breakdown of when you need an SMSF accountant vs managing your own super fund. Costs, risks, time commitment, and when DIY makes sense.",

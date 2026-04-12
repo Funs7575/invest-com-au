@@ -12,6 +12,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidateTag } from "next/cache";
 import { getAdminEmails } from "@/lib/admin";
+import { logger } from "@/lib/logger";
+
+const log = logger("admin-fi-verify");
 
 export async function POST(req: NextRequest) {
   // ── Auth ──────────────────────────────────────────────────
@@ -24,7 +27,8 @@ export async function POST(req: NextRequest) {
   let body: { categoryKey: string; adminEmail: string; note?: string };
   try {
     body = await req.json();
-  } catch {
+  } catch (err) {
+    log.warn("FI verify invalid JSON", { err: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 

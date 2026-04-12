@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { COMPANY_LEGAL_NAME, COMPANY_ACN, COMPANY_ABN } from "@/lib/compliance";
 
+export const revalidate = 86400;
+
 export const metadata: Metadata = {
   title: "Legal – invest.com.au",
   description: "Terms of use, privacy policy, financial services guide, and all other legal documents for invest.com.au.",

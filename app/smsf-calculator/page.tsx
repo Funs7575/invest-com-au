@@ -13,6 +13,7 @@ export const metadata: Metadata = {
     description: "Enter your super balance and contribution details. See whether an SMSF could save you money or cost you more over time.",
     images: [{ url: "/api/og?title=SMSF+Calculator&subtitle=Is+self-managed+super+right+for+you%3F&type=default", width: 1200, height: 630 }],
   },
+  twitter: { card: "summary_large_image" as const },
 };
 
 export default function SMSFCalculatorPage() {

@@ -13,6 +13,7 @@ export const metadata: Metadata = {
     description: "Enter your debts and see if consolidation could reduce your interest costs, lower your monthly payments, and help you become debt-free sooner.",
     images: [{ url: "/api/og?title=Debt+Consolidation+Calculator&subtitle=Could+you+save%3F&type=default", width: 1200, height: 630 }],
   },
+  twitter: { card: "summary_large_image" as const },
 };
 
 export default function DebtCalculatorPage() {

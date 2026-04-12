@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 
+export const revalidate = 86400;
+
 export const metadata = {
   title: "How We Verify Fees — Our Data Process",
   description: `Learn how ${SITE_NAME} verifies platform fees. We cross-check pricing pages, PDSs, and T&Cs quarterly to ensure accuracy across every platform review.`,

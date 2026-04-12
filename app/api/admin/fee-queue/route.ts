@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { ADMIN_EMAILS } from "@/lib/admin";
+import { logger } from "@/lib/logger";
+
+const log = logger("admin-fee-queue");
 
 async function requireAdmin() {
   const supabaseAuth = await createClient();
@@ -33,7 +36,8 @@ export async function GET() {
       .order("created_at", { ascending: false })
       .limit(100);
     return NextResponse.json(data || []);
-  } catch (error) {
+  } catch (err) {
+    log.error("Failed to fetch fee queue", { err: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Failed to fetch fee queue" }, { status: 500 });
   }
 }
@@ -86,7 +90,7 @@ export async function POST(request: NextRequest) {
       new_value: item.new_value,
       change_type: "fee_scraper_approved",
     });
-    if (logError) console.error("insert failed:", logError.message);
+    if (logError) log.error("broker_data_changes insert failed", { error: logError.message, brokerId: item.broker_id });
 
     await supabase.from("fee_update_queue").update({
       status: "approved",

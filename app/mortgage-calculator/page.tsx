@@ -13,6 +13,7 @@ export const metadata: Metadata = {
     description: "Enter your loan amount and interest rate. See your monthly repayments, total interest, and how different rates change the cost.",
     images: [{ url: "/api/og?title=Mortgage+Calculator&subtitle=How+much+will+you+pay%3F&type=default", width: 1200, height: 630 }],
   },
+  twitter: { card: "summary_large_image" as const },
 };
 
 export default function MortgageCalculatorPage() {

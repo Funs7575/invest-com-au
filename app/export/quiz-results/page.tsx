@@ -14,7 +14,7 @@ export default async function QuizResultsExportPage({
   const topSlugs = (params.top || "").split(",").filter(Boolean);
 
   if (topSlugs.length === 0) {
-    return <div style={{ padding: 40, textAlign: "center", color: "#64748b" }}>No results to display.</div>;
+    return <div className="p-10 text-center text-slate-500">No results to display.</div>;
   }
 
   const supabase = await createClient();
@@ -37,19 +37,19 @@ export default async function QuizResultsExportPage({
   };
 
   return (
-    <div style={{ maxWidth: 700, margin: "0 auto", padding: "40px 24px", fontFamily: "system-ui, -apple-system, sans-serif", color: "#0f172a" }}>
-      <div style={{ borderBottom: "3px solid #15803d", paddingBottom: 16, marginBottom: 24 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 800, margin: 0 }}>Your Platform Quiz Results</h1>
-        <p style={{ fontSize: 12, color: "#64748b", margin: "4px 0 0" }}>Generated {now} by invest.com.au</p>
+    <div className="max-w-[700px] mx-auto px-6 py-10 font-sans text-slate-900">
+      <div className="border-b-[3px] border-green-700 pb-4 mb-6">
+        <h1 className="text-2xl font-extrabold m-0">Your Platform Quiz Results</h1>
+        <p className="text-xs text-slate-500 mt-1 mb-0">Generated {now} by invest.com.au</p>
       </div>
 
       {/* Your Answers */}
       {answers.length > 0 && (
-        <div style={{ marginBottom: 24 }}>
-          <h2 style={{ fontSize: 14, fontWeight: 700, marginBottom: 8 }}>Your Answers</h2>
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        <div className="mb-6">
+          <h2 className="text-sm font-bold mb-2">Your Answers</h2>
+          <div className="flex gap-2 flex-wrap">
             {answers.map((a, i) => (
-              <span key={i} style={{ fontSize: 11, background: "#f1f5f9", padding: "4px 10px", borderRadius: 12, color: "#475569" }}>
+              <span key={i} className="text-[11px] bg-slate-100 px-2.5 py-1 rounded-full text-slate-600">
                 {answerLabels[a] || a}
               </span>
             ))}
@@ -61,25 +61,27 @@ export default async function QuizResultsExportPage({
       {brokers.map((b, i) => (
         <div
           key={b.slug}
+          className="rounded-xl p-4 mb-3 border-l-4"
           style={{
             border: i === 0 ? `2px solid ${b.color}` : "1px solid #e2e8f0",
-            borderRadius: 12,
-            padding: 16,
-            marginBottom: 12,
-            borderLeft: `4px solid ${b.color}`,
+            borderLeftColor: b.color,
+            borderLeftWidth: 4,
           }}
         >
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+          <div className="flex justify-between items-center mb-2">
             <div>
-              <span style={{ fontSize: 10, fontWeight: 700, color: i === 0 ? b.color : "#64748b" }}>
+              <span
+                className="text-[10px] font-bold"
+                style={{ color: i === 0 ? b.color : "#64748b" }}
+              >
                 #{i + 1} {i === 0 ? "TOP MATCH" : "ALSO RECOMMENDED"}
               </span>
-              <h3 style={{ fontSize: 18, fontWeight: 800, margin: "4px 0 0" }}>{b.name}</h3>
+              <h3 className="text-lg font-extrabold mt-1 mb-0">{b.name}</h3>
             </div>
-            <div style={{ fontSize: 13, fontWeight: 700 }}>{b.rating}/5</div>
+            <div className="text-[13px] font-bold">{b.rating}/5</div>
           </div>
-          <p style={{ fontSize: 12, color: "#475569", margin: "0 0 8px" }}>{b.tagline}</p>
-          <div style={{ display: "flex", gap: 16, fontSize: 11, color: "#64748b" }}>
+          <p className="text-xs text-slate-600 mt-0 mb-2">{b.tagline}</p>
+          <div className="flex gap-4 text-[11px] text-slate-500">
             <span>ASX: {b.asx_fee || "N/A"}</span>
             <span>CHESS: {b.chess_sponsored ? "Yes" : "No"}</span>
             <span>SMSF: {b.smsf_support ? "Yes" : "No"}</span>
@@ -87,11 +89,11 @@ export default async function QuizResultsExportPage({
         </div>
       ))}
 
-      <div style={{ marginTop: 24, padding: 12, background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 8, fontSize: 12 }}>
+      <div className="mt-6 p-3 bg-green-50 border border-green-200 rounded-lg text-xs">
         <strong>Next steps:</strong> Open an account with your top match, or compare all brokers at invest.com.au/compare
       </div>
 
-      <div style={{ marginTop: 24, padding: 12, background: "#f8fafc", borderRadius: 8, fontSize: 10, color: "#64748b", lineHeight: 1.5 }}>
+      <div className="mt-6 p-3 bg-slate-50 rounded-lg text-[10px] text-slate-500 leading-relaxed">
         <strong>Disclaimer:</strong> {GENERAL_ADVICE_WARNING} {ADVERTISER_DISCLOSURE_SHORT}
       </div>
 

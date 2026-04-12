@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { SITE_URL } from "@/lib/seo";
 
+export const revalidate = 3600;
+
 /**
  * /foreign-investment/property — Canonical property page for the foreign investment hub.
  *

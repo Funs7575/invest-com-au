@@ -1,6 +1,5 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
 import type { Article } from "@/lib/types";
@@ -10,13 +9,11 @@ import LeadMagnet from "@/components/LeadMagnet";
 import Icon from "@/components/Icon";
 import BrokerLogo from "@/components/BrokerLogo";
 import { AFFILIATE_REL } from "@/lib/tracking";
-import AdvisorDirectory from "@/components/AdvisorDirectory";
 import { FeesFreshnessIndicator } from "@/components/FeesFreshnessIndicator";
 import { getMostRecentFeeCheck } from "@/lib/utils";
-import { ORGANIZATION_JSONLD, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
+import { ORGANIZATION_JSONLD, SITE_URL } from "@/lib/seo";
 import MobileStickyAdvisorCta from "@/components/MobileStickyAdvisorCta";
-import HeroIntentButton from "@/components/HeroIntentButton";
-import { PRIMARY_CTA_TEXT, PRIMARY_CTA_HREF, SECONDARY_CTA_TEXT, SECONDARY_CTA_HREF, SHOW_MATCH_LANGUAGE, SHOW_EDITORIAL_BADGES, SHOW_RATINGS, PLATFORM_COMPARE_HEADING, PLATFORM_COMPARE_SUBTEXT, FACTUAL_COMPARISON_DISCLAIMER } from "@/lib/compliance-config";
+import { PRIMARY_CTA_HREF, SHOW_EDITORIAL_BADGES, PLATFORM_COMPARE_HEADING, PLATFORM_COMPARE_SUBTEXT, FACTUAL_COMPARISON_DISCLAIMER } from "@/lib/compliance-config";
 
 export const metadata = {
   title: { absolute: "Compare Platforms, Browse Advisors & Explore Investments — Invest.com.au" },
@@ -43,7 +40,7 @@ export default async function HomePage() {
 
   const BROKER_LISTING_COLUMNS = "id, name, slug, color, icon, logo_url, rating, asx_fee, asx_fee_value, us_fee, us_fee_value, fx_rate, chess_sponsored, smsf_support, is_crypto, platform_type, deal, deal_text, deal_expiry, deal_terms, deal_verified_date, deal_category, editors_pick, tagline, cta_text, affiliate_url, sponsorship_tier, benefit_cta, updated_at, fee_last_checked, status, cpa_value, promoted_placement, affiliate_priority";
 
-  const [{ data: brokers }, { data: articles }, { count: advisorCount }, { data: featuredAdvisors }, { count: listingCount }] = await Promise.all([
+  const [{ data: brokers }, { data: articles }, , , { count: listingCount }] = await Promise.all([
     supabase
       .from("brokers")
       .select(BROKER_LISTING_COLUMNS)

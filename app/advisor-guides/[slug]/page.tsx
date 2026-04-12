@@ -7,6 +7,8 @@ import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 import Icon from "@/components/Icon";
 
+export const revalidate = 3600;
+
 export function generateStaticParams() {
   return getAllAdvisorGuideSlugs().map((slug) => ({ slug }));
 }

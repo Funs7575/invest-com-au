@@ -15,7 +15,7 @@ export async function GET() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "Session expired. Please sign in again." }, { status: 401 });
   }
 
   const { data, error } = await supabase
@@ -25,7 +25,10 @@ export async function GET() {
     .maybeSingle();
 
   if (error) {
-    return NextResponse.json({ error: "Failed to fetch preferences" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Something went wrong on our end. Try again in a moment." },
+      { status: 500 }
+    );
   }
 
   // Return defaults if no row exists yet
@@ -52,14 +55,17 @@ export async function POST(req: NextRequest) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "Session expired. Please sign in again." }, { status: 401 });
   }
 
   let body: Record<string, unknown>;
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Some fields are invalid. Check and try again." },
+      { status: 400 }
+    );
   }
 
   // Only allow known preference keys
@@ -73,7 +79,10 @@ export async function POST(req: NextRequest) {
   }
 
   if (Object.keys(updates).length === 0) {
-    return NextResponse.json({ error: "No valid preferences provided" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Some fields are invalid. Check and try again." },
+      { status: 400 }
+    );
   }
 
   // Upsert: insert if not exists, update if exists
@@ -92,7 +101,10 @@ export async function POST(req: NextRequest) {
 
   if (error) {
     log.error("Notification preferences upsert error", { error: error.message });
-    return NextResponse.json({ error: "Failed to update preferences" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Something went wrong on our end. Try again in a moment." },
+      { status: 500 }
+    );
   }
 
   return NextResponse.json({ preferences: data });

@@ -6,6 +6,8 @@ import {
   COMPANY_ABN,
 } from "@/lib/compliance";
 
+export const revalidate = 86400;
+
 export const metadata = {
   title: "Advertiser & Affiliate Partner Terms",
   description:

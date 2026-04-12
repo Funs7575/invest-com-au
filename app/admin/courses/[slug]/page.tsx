@@ -5,6 +5,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import AdminShell from "@/components/AdminShell";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 interface CourseData {
   id: number;
@@ -51,6 +52,7 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
   const [saving, setSaving] = useState(false);
   const [showAddLesson, setShowAddLesson] = useState(false);
   const [editingLessonId, setEditingLessonId] = useState<number | null>(null);
+  const [deleteLessonId, setDeleteLessonId] = useState<number | null>(null);
   const { toast: showToast } = useToast();
 
   // Course edit form
@@ -190,15 +192,19 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
     }
   };
 
-  const handleDeleteLesson = async (lessonId: number) => {
-    if (!confirm("Delete this lesson? This cannot be undone.")) return;
+  const handleDeleteLesson = (lessonId: number) => {
+    setDeleteLessonId(lessonId);
+  };
 
+  const confirmDeleteLesson = async () => {
+    if (deleteLessonId == null) return;
     const supabase = createClient();
     const { error } = await supabase
       .from("course_lessons")
       .delete()
-      .eq("id", lessonId);
+      .eq("id", deleteLessonId);
 
+    setDeleteLessonId(null);
     if (error) {
       showToast(`Error: ${error.message}`, "error");
     } else {
@@ -734,6 +740,16 @@ export default function AdminCourseDetailPage({ params }: { params: Promise<{ sl
           </tbody>
         </table>
       </div>
+
+      <ConfirmDialog
+        open={deleteLessonId != null}
+        title="Delete lesson?"
+        message="This lesson will be permanently removed from the course. Students who have accessed it will lose their progress. This action cannot be undone."
+        confirmLabel="Delete"
+        variant="danger"
+        onConfirm={confirmDeleteLesson}
+        onCancel={() => setDeleteLessonId(null)}
+      />
     </AdminShell>
   );
 }

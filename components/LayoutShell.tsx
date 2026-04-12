@@ -3,8 +3,20 @@
 import { usePathname } from "next/navigation";
 import dynamic from "next/dynamic";
 import { TopBar } from "@/components/layout/TopBar";
-import { Navigation } from "@/components/layout/Navigation";
 import { SiteFooter } from "@/components/layout/SiteFooter";
+
+// Navigation is large (738 lines incl. mega-menu data) — code-split into
+// its own chunk so it doesn't block the main page bundle. Keeps SSR so
+// users see the nav immediately on first paint.
+const Navigation = dynamic(
+  () => import("@/components/layout/Navigation").then((m) => ({ default: m.Navigation })),
+  {
+    ssr: true,
+    loading: () => (
+      <div className="h-16 md:h-20 bg-white border-b border-slate-100" aria-hidden="true" />
+    ),
+  }
+);
 
 // Lazy-load below-fold and event-driven components
 const CookieBanner = dynamic(() => import("@/components/CookieBanner"), { ssr: false });

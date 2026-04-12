@@ -13,6 +13,7 @@ export const metadata: Metadata = {
     description: "Enter your property purchase price, weekly rent, and expenses to calculate gross and net rental yield instantly.",
     images: [{ url: "/api/og?title=Property+Yield+Calculator&subtitle=Rental+Return+Analysis&type=default", width: 1200, height: 630 }],
   },
+  twitter: { card: "summary_large_image" as const },
 };
 
 export default async function PropertyYieldCalculatorPage() {

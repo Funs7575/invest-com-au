@@ -123,7 +123,9 @@ export async function GET(req: NextRequest) {
                   `,
                 }),
               });
-            } catch { /* non-critical */ }
+            } catch (err) {
+              log.warn("Advisor SLA warning email failed", { err: err instanceof Error ? err.message : String(err), advisorId: advisor.id });
+            }
           }
 
           await supabase.from("professionals").update({
@@ -179,7 +181,9 @@ export async function GET(req: NextRequest) {
                   `,
                 }),
               });
-            } catch { /* non-critical */ }
+            } catch (err) {
+              log.warn("Advisor auto-pause email failed", { err: err instanceof Error ? err.message : String(err), advisorId: advisor.id });
+            }
           }
 
           await supabase.from("advisor_verification_log").insert({

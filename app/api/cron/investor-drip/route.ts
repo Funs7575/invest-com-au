@@ -5,6 +5,9 @@ import {
   type BrokerRecommendationContext,
 } from "@/lib/broker-recommendations";
 import { brokerDripEmail4, brokerDripEmail5 } from "@/lib/email-templates";
+import { logger } from "@/lib/logger";
+
+const log = logger("cron-investor-drip");
 
 export const runtime = "edge";
 export const maxDuration = 60;
@@ -282,8 +285,8 @@ export async function GET(req: NextRequest) {
           });
           emailsSent++;
         }
-      } catch {
-        // Continue to next email
+      } catch (err) {
+        log.warn("Investor drip email failed", { err: err instanceof Error ? err.message : String(err), email, dripNumber: drip.number });
       }
 
       // Only send one drip per user per run

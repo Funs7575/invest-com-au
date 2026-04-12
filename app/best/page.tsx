@@ -5,6 +5,8 @@ import { absoluteUrl, breadcrumbJsonLd, REVIEW_AUTHOR, CURRENT_YEAR } from "@/li
 import Icon from "@/components/Icon";
 import { SHOW_BEST_PICKS } from "@/lib/compliance-config";
 
+export const revalidate = 3600;
+
 const bestTitle = SHOW_BEST_PICKS
   ? `Best Investing Platforms (${CURRENT_YEAR})`
   : `Platform Comparison Guides (${CURRENT_YEAR})`;

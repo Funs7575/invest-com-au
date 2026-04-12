@@ -381,7 +381,7 @@ export default function PropertyYieldCalculatorClient() {
                 <p className="text-xs text-slate-500 mb-3">Enter your email and we&rsquo;ll send you a copy of this breakdown</p>
                 <div className="flex gap-2 max-w-xs mx-auto">
                   <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="your@email.com" aria-label="Email address" className="flex-1 px-3 py-2 text-sm border border-slate-200 rounded-lg" />
-                  <button onClick={handleEmailSubmit} className="px-4 py-2 bg-emerald-600 text-white text-sm font-bold rounded-lg hover:bg-emerald-700">Send</button>
+                  <button onClick={handleEmailSubmit} className="px-4 py-2 bg-emerald-600 text-white text-sm font-bold rounded-lg hover:bg-emerald-700">Email Me My Results</button>
                 </div>
               </div>
             )}

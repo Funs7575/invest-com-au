@@ -2,6 +2,8 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import ListingsClient from "./ListingsClient";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: "New Developments & Property Listings — invest.com.au",
   description:

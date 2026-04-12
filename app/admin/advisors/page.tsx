@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
+import ConfirmDialog from "@/components/ConfirmDialog";
 import type { Professional, ProfessionalLead } from "@/lib/types";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 
@@ -23,6 +25,7 @@ export default function AdminAdvisorsPage() {
   const [editing, setEditing] = useState<Partial<Professional> | null>(null);
   const [saving, setSaving] = useState(false);
   const [specialtyInput, setSpecialtyInput] = useState("");
+  const [deleteId, setDeleteId] = useState<number | null>(null);
   const [expandedAppId, setExpandedAppId] = useState<number | null>(null);
   const [appStatusFilter, setAppStatusFilter] = useState<"all" | "pending" | "approved" | "rejected">("all");
   const [appTypeFilter, setAppTypeFilter] = useState<string>("all");
@@ -81,9 +84,14 @@ export default function AdminAdvisorsPage() {
     loadData();
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm("Delete this advisor? This cannot be undone.")) return;
-    await supabase.from("professionals").delete().eq("id", id);
+  const handleDelete = (id: number) => {
+    setDeleteId(id);
+  };
+
+  const confirmDelete = async () => {
+    if (deleteId == null) return;
+    await supabase.from("professionals").delete().eq("id", deleteId);
+    setDeleteId(null);
     loadData();
   };
 
@@ -217,7 +225,7 @@ export default function AdminAdvisorsPage() {
                   <label className="block text-xs font-semibold text-slate-600 mb-1">Photo</label>
                   <div className="flex items-center gap-3">
                     {editing.photo_url && (
-                      <img src={editing.photo_url} alt="Preview" className="w-12 h-12 rounded-full object-cover border border-slate-200" />
+                      <Image src={editing.photo_url} alt="Preview" width={48} height={48} className="w-12 h-12 rounded-full object-cover border border-slate-200" />
                     )}
                     <div className="flex-1">
                       <input
@@ -706,7 +714,7 @@ export default function AdminAdvisorsPage() {
                     <div className="p-4">
                       <div className="flex items-start justify-between">
                         <div className="flex items-center gap-2 flex-wrap">
-                          {!!app.photo_url && <img src={String(app.photo_url)} alt="" className="w-8 h-8 rounded-full object-cover border border-slate-200" />}
+                          {!!app.photo_url && <Image src={String(app.photo_url)} alt={String(app.name || "")} width={32} height={32} className="w-8 h-8 rounded-full object-cover border border-slate-200" />}
                           <span className="text-sm font-bold text-slate-900">{String(app.name)}</span>
                           {!!app.firm_name && <span className="text-xs text-slate-500">— {String(app.firm_name)}</span>}
                           <span className={`text-[0.56rem] font-bold px-1.5 py-0.5 rounded-full ${
@@ -1033,6 +1041,16 @@ export default function AdminAdvisorsPage() {
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        open={deleteId != null}
+        title="Delete advisor?"
+        message="This advisor profile will be permanently removed, along with any associated data. This action cannot be undone."
+        confirmLabel="Delete"
+        variant="danger"
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteId(null)}
+      />
     </div>
   );
 }

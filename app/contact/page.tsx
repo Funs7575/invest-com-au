@@ -2,6 +2,8 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 
+export const revalidate = 86400;
+
 export const metadata: Metadata = {
   title: "Contact Us",
   description:

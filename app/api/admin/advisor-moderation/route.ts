@@ -2,6 +2,9 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { ADMIN_EMAILS } from "@/lib/admin";
+import { logger } from "@/lib/logger";
+
+const log = logger("admin-advisor-moderation");
 
 /**
  * PATCH /api/admin/advisor-moderation
@@ -74,7 +77,8 @@ export async function PATCH(req: NextRequest) {
       success: true,
       message: `${ids.length} advisor(s) ${action === "approve" ? "approved" : "rejected"}`,
     });
-  } catch {
+  } catch (err) {
+    log.error("Advisor moderation failed", { err: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 }

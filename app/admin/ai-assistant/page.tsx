@@ -269,8 +269,7 @@ export default function AiAssistantPage() {
               onKeyDown={handleKeyDown}
               placeholder="Ask anything… (Enter to send, Shift+Enter for new line)"
               rows={1}
-              className="flex-1 resize-none px-4 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 bg-white placeholder-slate-400"
-              style={{ minHeight: "42px", maxHeight: "120px" }}
+              className="flex-1 resize-none px-4 py-2.5 text-sm border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400 bg-white placeholder-slate-400 min-h-[42px] max-h-[120px]"
               disabled={loading}
             />
             <button

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import AdminShell from "@/components/AdminShell";
 import ConfirmDialog from "@/components/ConfirmDialog";
@@ -264,7 +265,15 @@ export default function AdminArticlesPage() {
               <label className="block text-xs font-medium text-slate-500 mb-1">Cover Image URL</label>
               <input name="cover_image_url" defaultValue={formArticle.cover_image_url || ""} placeholder="https://images.unsplash.com/..." className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30" />
               {formArticle.cover_image_url && (
-                <img src={formArticle.cover_image_url} alt="Cover preview" className="mt-2 rounded-lg h-24 object-cover" />
+                <div className="mt-2 relative h-24 w-40 rounded-lg overflow-hidden">
+                  <Image
+                    src={formArticle.cover_image_url}
+                    alt="Cover preview"
+                    fill
+                    sizes="160px"
+                    className="object-cover"
+                  />
+                </div>
               )}
             </div>
           </div>

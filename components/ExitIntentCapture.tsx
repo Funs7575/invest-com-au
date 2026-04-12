@@ -96,7 +96,7 @@ export default function ExitIntentCapture() {
             </div>
             <h2 className="text-lg font-bold text-slate-900 mb-2">You're in!</h2>
             <p className="text-sm text-slate-500">We'll send you the fee comparison and keep you posted when rates change.</p>
-            <button onClick={dismiss} className="mt-4 px-4 py-2 text-sm text-slate-600 hover:text-slate-900">Close</button>
+            <button onClick={dismiss} className="mt-4 px-4 py-2 text-sm text-slate-600 hover:text-slate-900">No thanks, take me back</button>
           </div>
         ) : (
           <>

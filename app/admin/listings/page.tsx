@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import AdminShell from "@/components/AdminShell";
 import Icon from "@/components/Icon";
+import ConfirmDialog from "@/components/ConfirmDialog";
 import { createClient } from "@/lib/supabase/client";
 
 interface Listing {
@@ -58,6 +59,7 @@ export default function AdminListingsPage() {
   const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<StatusFilter>("all");
+  const [deleteId, setDeleteId] = useState<number | null>(null);
 
   const supabase = createClient();
 
@@ -95,10 +97,15 @@ export default function AdminListingsPage() {
     );
   };
 
-  const deleteListing = async (id: number) => {
-    if (!confirm("Are you sure you want to delete this listing? This cannot be undone.")) return;
-    await supabase.from("investment_listings").delete().eq("id", id);
-    setListings((prev) => prev.filter((l) => l.id !== id));
+  const deleteListing = (id: number) => {
+    setDeleteId(id);
+  };
+
+  const confirmDeleteListing = async () => {
+    if (deleteId == null) return;
+    await supabase.from("investment_listings").delete().eq("id", deleteId);
+    setListings((prev) => prev.filter((l) => l.id !== deleteId));
+    setDeleteId(null);
   };
 
   const pendingCount = listings.filter((l) => l.status === "pending").length;
@@ -360,6 +367,16 @@ export default function AdminListingsPage() {
           </div>
         )}
       </div>
+
+      <ConfirmDialog
+        open={deleteId != null}
+        title="Delete listing?"
+        message="This investment listing will be permanently removed. This action cannot be undone."
+        confirmLabel="Delete"
+        variant="danger"
+        onConfirm={confirmDeleteListing}
+        onCancel={() => setDeleteId(null)}
+      />
     </AdminShell>
   );
 }

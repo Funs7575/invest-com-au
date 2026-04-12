@@ -4,6 +4,8 @@ import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: `Mortgage Broker vs Bank: Which Is Better for Your Home Loan? (${CURRENT_YEAR})`,
   description: "Should you use a mortgage broker or go directly to your bank? We compare rates, service, cost, and when each option makes sense for Australian borrowers.",

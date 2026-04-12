@@ -4,6 +4,8 @@ import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: `Tax Agent vs Accountant for Investors: Which Do You Need? (${CURRENT_YEAR})`,
   description: "Should you use a specialist tax agent or a general accountant for your investment tax? We compare qualifications, costs, and when each makes sense for Australian investors.",

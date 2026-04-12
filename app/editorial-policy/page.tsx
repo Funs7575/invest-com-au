@@ -2,6 +2,8 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 
+export const revalidate = 86400;
+
 export const metadata: Metadata = {
   title: "Editorial Policy",
   description:

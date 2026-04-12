@@ -1,5 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterAll } from "vitest";
+import type { NextRequest } from "next/server";
 import { createChainableBuilder, makeCronRequest, makeBroker } from "@/__tests__/helpers";
+
+type SupabaseResult = { data: unknown; error: unknown };
+type FetchFn = typeof fetch;
 
 // ─── Mocks ───────────────────────────────────────────────────────────
 
@@ -46,7 +50,7 @@ describe("GET /api/cron/check-fees", () => {
     const req = new Request("http://localhost/api/cron/check-fees", {
       method: "GET",
     });
-    const res = await GET(req as any);
+    const res = await GET(req as unknown as NextRequest);
     expect(res.status).toBe(401);
     const json = await res.json();
     expect(json.error).toBe("Unauthorized");
@@ -57,7 +61,7 @@ describe("GET /api/cron/check-fees", () => {
       method: "GET",
       headers: { Authorization: "Bearer wrong-secret" },
     });
-    const res = await GET(req as any);
+    const res = await GET(req as unknown as NextRequest);
     expect(res.status).toBe(401);
   });
 
@@ -67,7 +71,7 @@ describe("GET /api/cron/check-fees", () => {
     mockFrom.mockImplementation((table: string) => {
       const builder = createChainableBuilder(table, supabaseCalls);
       if (table === "brokers") {
-        builder.then = vi.fn((cb: (v: any) => void) => {
+        builder.then = vi.fn((cb: (v: SupabaseResult) => void) => {
           cb({ data: [], error: null });
           return Promise.resolve();
         });
@@ -76,7 +80,7 @@ describe("GET /api/cron/check-fees", () => {
     });
 
     const req = makeCronRequest("/api/cron/check-fees");
-    const res = await GET(req as any);
+    const res = await GET(req as unknown as NextRequest);
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json.checked).toBe(0);
@@ -92,7 +96,7 @@ describe("GET /api/cron/check-fees", () => {
       const builder = createChainableBuilder(table, supabaseCalls);
       if (table === "brokers") {
         // First call is the select query — resolve with broker list
-        builder.then = vi.fn((cb: (v: any) => void) => {
+        builder.then = vi.fn((cb: (v: SupabaseResult) => void) => {
           cb({ data: [broker], error: null });
           return Promise.resolve();
         });
@@ -101,7 +105,7 @@ describe("GET /api/cron/check-fees", () => {
     });
 
     const req = makeCronRequest("/api/cron/check-fees");
-    const res = await GET(req as any);
+    const res = await GET(req as unknown as NextRequest);
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json.results).toHaveLength(1);
@@ -124,19 +128,19 @@ describe("GET /api/cron/check-fees", () => {
     mockFrom.mockImplementation((table: string) => {
       const builder = createChainableBuilder(table, supabaseCalls);
       if (table === "brokers") {
-        builder.then = vi.fn((cb: (v: any) => void) => {
+        builder.then = vi.fn((cb: (v: SupabaseResult) => void) => {
           cb({ data: [broker], error: null });
           return Promise.resolve();
         });
       }
       if (table === "fee_alert_subscriptions") {
-        builder.then = vi.fn((cb: (v: any) => void) => {
+        builder.then = vi.fn((cb: (v: SupabaseResult) => void) => {
           cb({ data: [], error: null });
           return Promise.resolve();
         });
       }
       if (table === "fee_auto_rules") {
-        builder.then = vi.fn((cb: (v: any) => void) => {
+        builder.then = vi.fn((cb: (v: SupabaseResult) => void) => {
           cb({ data: [], error: null });
           return Promise.resolve();
         });
@@ -146,7 +150,7 @@ describe("GET /api/cron/check-fees", () => {
 
     // Mock fetch to return a fee page with content
     const originalFetch = globalThis.fetch;
-    (globalThis.fetch as any) = vi.fn((...args: any[]) => {
+    (globalThis.fetch as unknown as FetchFn) = vi.fn((...args: Parameters<FetchFn>) => {
       const url = typeof args[0] === "string" ? args[0] : "";
       if (url === "https://example.com/fees") {
         return Promise.resolve(
@@ -156,11 +160,11 @@ describe("GET /api/cron/check-fees", () => {
       if (url.includes("resend.com")) {
         return Promise.resolve(new Response(JSON.stringify({ id: "mock-email" }), { status: 200 }));
       }
-      return (originalFetch as any)(...args);
+      return (originalFetch as FetchFn)(...args);
     });
 
     const req = makeCronRequest("/api/cron/check-fees");
-    const res = await GET(req as any);
+    const res = await GET(req as unknown as NextRequest);
     expect(res.status).toBe(200);
     const json = await res.json();
 
@@ -187,7 +191,7 @@ describe("GET /api/cron/check-fees", () => {
     mockFrom.mockImplementation((table: string) => {
       const builder = createChainableBuilder(table, supabaseCalls);
       if (table === "brokers") {
-        builder.then = vi.fn((cb: (v: any) => void) => {
+        builder.then = vi.fn((cb: (v: SupabaseResult) => void) => {
           cb({ data: [broker], error: null });
           return Promise.resolve();
         });
@@ -196,7 +200,7 @@ describe("GET /api/cron/check-fees", () => {
     });
 
     const originalFetch = globalThis.fetch;
-    (globalThis.fetch as any) = vi.fn((...args: any[]) => {
+    (globalThis.fetch as unknown as FetchFn) = vi.fn((...args: Parameters<FetchFn>) => {
       const url = typeof args[0] === "string" ? args[0] : "";
       if (url === "https://example.com/pricing") {
         return Promise.resolve(
@@ -209,11 +213,11 @@ describe("GET /api/cron/check-fees", () => {
       if (url.includes("resend.com")) {
         return Promise.resolve(new Response(JSON.stringify({ id: "mock-email" }), { status: 200 }));
       }
-      return (originalFetch as any)(...args);
+      return (originalFetch as FetchFn)(...args);
     });
 
     const req = makeCronRequest("/api/cron/check-fees");
-    const res = await GET(req as any);
+    const res = await GET(req as unknown as NextRequest);
     expect(res.status).toBe(200);
     const json = await res.json();
 
@@ -238,13 +242,13 @@ describe("GET /api/cron/check-fees", () => {
     mockFrom.mockImplementation((table: string) => {
       const builder = createChainableBuilder(table, supabaseCalls);
       if (table === "brokers") {
-        builder.then = vi.fn((cb: (v: any) => void) => {
+        builder.then = vi.fn((cb: (v: SupabaseResult) => void) => {
           cb({ data: [broker], error: null });
           return Promise.resolve();
         });
       }
       if (table === "fee_alert_subscriptions") {
-        builder.then = vi.fn((cb: (v: any) => void) => {
+        builder.then = vi.fn((cb: (v: SupabaseResult) => void) => {
           cb({ data: [], error: null });
           return Promise.resolve();
         });
@@ -254,20 +258,20 @@ describe("GET /api/cron/check-fees", () => {
 
     const fetchCalls: { url: string; body?: string }[] = [];
     const originalFetch = globalThis.fetch;
-    (globalThis.fetch as any) = vi.fn((...args: any[]) => {
+    (globalThis.fetch as unknown as FetchFn) = vi.fn((...args: Parameters<FetchFn>) => {
       const url = typeof args[0] === "string" ? args[0] : "";
       if (url === "https://example.com/fees") {
         return Promise.resolve(new Response("New fee page content here", { status: 200 }));
       }
       if (url.includes("resend.com")) {
-        fetchCalls.push({ url, body: args[1]?.body });
+        fetchCalls.push({ url, body: typeof args[1]?.body === "string" ? args[1].body : undefined });
         return Promise.resolve(new Response(JSON.stringify({ id: "mock-email" }), { status: 200 }));
       }
-      return (originalFetch as any)(...args);
+      return (originalFetch as FetchFn)(...args);
     });
 
     const req = makeCronRequest("/api/cron/check-fees");
-    const res = await GET(req as any);
+    const res = await GET(req as unknown as NextRequest);
     expect(res.status).toBe(200);
 
     // Should have sent at least 1 email to resend
@@ -291,7 +295,7 @@ describe("GET /api/cron/check-fees", () => {
     mockFrom.mockImplementation((table: string) => {
       const builder = createChainableBuilder(table, supabaseCalls);
       if (table === "brokers") {
-        builder.then = vi.fn((cb: (v: any) => void) => {
+        builder.then = vi.fn((cb: (v: SupabaseResult) => void) => {
           cb({ data: [broker], error: null });
           return Promise.resolve();
         });
@@ -300,7 +304,7 @@ describe("GET /api/cron/check-fees", () => {
     });
 
     const originalFetch = globalThis.fetch;
-    (globalThis.fetch as any) = vi.fn((...args: any[]) => {
+    (globalThis.fetch as unknown as FetchFn) = vi.fn((...args: Parameters<FetchFn>) => {
       const url = typeof args[0] === "string" ? args[0] : "";
       if (url === "https://example.com/broken") {
         return Promise.reject(new Error("Network error"));
@@ -308,11 +312,11 @@ describe("GET /api/cron/check-fees", () => {
       if (url.includes("resend.com")) {
         return Promise.resolve(new Response(JSON.stringify({ id: "mock-email" }), { status: 200 }));
       }
-      return (originalFetch as any)(...args);
+      return (originalFetch as FetchFn)(...args);
     });
 
     const req = makeCronRequest("/api/cron/check-fees");
-    const res = await GET(req as any);
+    const res = await GET(req as unknown as NextRequest);
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json.results[0].status).toBe("fetch_error");

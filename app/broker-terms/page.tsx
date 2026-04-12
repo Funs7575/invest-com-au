@@ -6,6 +6,8 @@ import {
   COMPANY_ABN,
 } from "@/lib/compliance";
 
+export const revalidate = 86400;
+
 export const metadata = {
   title: "Advertising & Listing Terms",
   description: "Terms and conditions for brokers and financial product issuers advertising or listed on Invest.com.au.",
