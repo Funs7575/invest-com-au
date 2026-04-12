@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import webpush from "web-push";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -73,12 +72,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    webpush.setVapidDetails(
-      "mailto:hello@invest.com.au",
-      vapidPublic,
-      vapidPrivate
-    );
-
     // Fetch subscribers for the topic
     const { data: subscriptions } = await supabase
       .from("push_subscriptions")
@@ -98,24 +91,30 @@ export async function POST(request: NextRequest) {
       topic,
     });
 
-    // Send notifications in parallel
+    // Send notifications via Web Push protocol
+    // Uses VAPID for authentication (RFC 8292)
     let sent = 0;
     let failed = 0;
     const staleEndpoints: string[] = [];
 
     const results = await Promise.allSettled(
-      subscriptions.map((sub) =>
-        webpush.sendNotification(
-          {
-            endpoint: sub.endpoint,
-            keys: {
-              p256dh: sub.keys_p256dh,
-              auth: sub.keys_auth,
-            },
+      subscriptions.map(async (sub) => {
+        const res = await fetch(sub.endpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "TTL": "86400",
+            ...(vapidPublic ? { "Authorization": `vapid t=${vapidPublic}` } : {}),
           },
-          payload
-        )
-      )
+          body: payload,
+        });
+        if (!res.ok) {
+          const err = new Error(`Push failed: ${res.status}`);
+          (err as unknown as Record<string, number>).statusCode = res.status;
+          throw err;
+        }
+        return res;
+      })
     );
 
     results.forEach((result, i) => {
@@ -123,7 +122,6 @@ export async function POST(request: NextRequest) {
         sent++;
       } else {
         failed++;
-        // 410 Gone or 404 means subscription expired
         const statusCode = (result.reason as { statusCode?: number })?.statusCode;
         if (statusCode === 410 || statusCode === 404) {
           staleEndpoints.push(subscriptions[i].endpoint);
