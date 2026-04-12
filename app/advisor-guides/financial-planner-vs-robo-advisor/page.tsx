@@ -4,6 +4,8 @@ import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = {
   title: `Financial Planner vs Robo-Advisor: Which Is Right for You? (${CURRENT_YEAR})`,
   description: "Honest comparison of human financial planners vs robo-advisors in Australia. Costs, performance, when each makes sense, and when you need both.",

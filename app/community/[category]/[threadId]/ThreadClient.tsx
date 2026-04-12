@@ -3,6 +3,7 @@
 import { useState, useCallback, useRef } from "react";
 import { useUser } from "@/lib/hooks/useUser";
 import Icon from "@/components/Icon";
+import ConfirmDialog from "@/components/ConfirmDialog";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -382,6 +383,8 @@ export default function ThreadClient({
   const [editBody, setEditBody] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [deletePostId, setDeletePostId] = useState<string | null>(null);
+  const [showRemoveThread, setShowRemoveThread] = useState(false);
   const replyRef = useRef<HTMLTextAreaElement>(null);
 
   const userId = user?.id ?? null;
@@ -488,8 +491,14 @@ export default function ThreadClient({
 
   /* ─── Delete ─── */
 
-  const handleDelete = async (postId: string) => {
-    if (!confirm("Are you sure you want to delete this post?")) return;
+  const handleDelete = (postId: string) => {
+    setDeletePostId(postId);
+  };
+
+  const confirmDeletePost = async () => {
+    const postId = deletePostId;
+    setDeletePostId(null);
+    if (!postId) return;
     setError(null);
 
     try {
@@ -576,11 +585,7 @@ export default function ThreadClient({
               {thread.is_locked ? "Unlock" : "Lock"}
             </button>
             <button
-              onClick={() => {
-                if (confirm("Remove this thread? It will be hidden from the forum.")) {
-                  handleModAction("remove", true);
-                }
-              }}
+              onClick={() => setShowRemoveThread(true)}
               className="text-xs flex items-center gap-1 px-3 py-1.5 rounded-lg border border-red-200 text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors"
             >
               <Icon name="trash-2" size={14} />
@@ -596,6 +601,32 @@ export default function ThreadClient({
           ? "No replies yet"
           : `${posts.length} ${posts.length === 1 ? "Reply" : "Replies"}`}
       </h2>
+
+      {/* Empty state CTA: Be the first to reply */}
+      {posts.length === 0 && !thread.is_locked && (
+        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-6 mb-6 text-center">
+          <div className="w-12 h-12 rounded-full bg-white border border-emerald-200 flex items-center justify-center mx-auto mb-3">
+            <Icon name="message-circle" size={22} className="text-emerald-600" />
+          </div>
+          <p className="text-sm font-semibold text-slate-900 mb-1">
+            Be the first to reply!
+          </p>
+          <p className="text-xs text-slate-600 mb-4">
+            Kick off the discussion and help {thread.author_name} out.
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              replyRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+              setTimeout(() => replyRef.current?.focus(), 350);
+            }}
+            className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2 rounded-xl transition-colors text-sm"
+          >
+            <Icon name="edit-3" size={14} />
+            Write a reply
+          </button>
+        </div>
+      )}
 
       {/* Error */}
       {error && (
@@ -736,6 +767,29 @@ export default function ThreadClient({
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        open={deletePostId != null}
+        title="Delete this post?"
+        message="Your post will be permanently removed from the discussion. This action cannot be undone."
+        confirmLabel="Delete"
+        variant="danger"
+        onConfirm={confirmDeletePost}
+        onCancel={() => setDeletePostId(null)}
+      />
+
+      <ConfirmDialog
+        open={showRemoveThread}
+        title="Remove this thread?"
+        message="The thread will be hidden from the forum. You can restore it later from moderation tools."
+        confirmLabel="Remove thread"
+        variant="danger"
+        onConfirm={() => {
+          setShowRemoveThread(false);
+          handleModAction("remove", true);
+        }}
+        onCancel={() => setShowRemoveThread(false)}
+      />
     </div>
   );
 }

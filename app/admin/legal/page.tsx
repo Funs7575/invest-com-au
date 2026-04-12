@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import AdminShell from "@/components/AdminShell";
 import Icon from "@/components/Icon";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 interface LegalDoc {
   id: number;
@@ -46,6 +47,7 @@ export default function LegalDashboardPage() {
   const [filter, setFilter] = useState("all");
   const [editing, setEditing] = useState<LegalDoc | null>(null);
   const [saving, setSaving] = useState(false);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
   const supabase = createClient();
 
   const loadDocs = useCallback(async () => {
@@ -81,9 +83,14 @@ export default function LegalDashboardPage() {
     loadDocs();
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm("Delete this legal document? This cannot be undone.")) return;
-    await supabase.from("legal_documents").delete().eq("id", id);
+  const handleDelete = (id: number) => {
+    setDeleteId(id);
+  };
+
+  const confirmDelete = async () => {
+    if (deleteId == null) return;
+    await supabase.from("legal_documents").delete().eq("id", deleteId);
+    setDeleteId(null);
     loadDocs();
   };
 
@@ -260,6 +267,16 @@ export default function LegalDashboardPage() {
           )}
         </div>
       )}
+
+      <ConfirmDialog
+        open={deleteId != null}
+        title="Delete legal document?"
+        message="This legal document will be permanently removed. This action cannot be undone."
+        confirmLabel="Delete"
+        variant="danger"
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteId(null)}
+      />
     </AdminShell>
   );
 }

@@ -7,6 +7,7 @@ import { useShortlist } from "@/lib/hooks/useShortlist";
 import { createClient } from "@/lib/supabase/client";
 import { trackClick, getAffiliateLink, renderStars, AFFILIATE_REL } from "@/lib/tracking";
 import Icon from "@/components/Icon";
+import { useToast } from "@/components/Toast";
 import type { Broker } from "@/lib/types";
 import BrokerLogo from "@/components/BrokerLogo";
 
@@ -30,6 +31,7 @@ function setStoredNotes(notes: Record<string, string>) {
 
 export default function ShortlistClient() {
   const { slugs, count, toggle, clear } = useShortlist();
+  const { toast } = useToast();
   const [brokers, setBrokers] = useState<Broker[]>([]);
   const [loading, setLoading] = useState(true);
   const [notes, setNotes] = useState<Record<string, string>>({});
@@ -129,6 +131,7 @@ export default function ShortlistClient() {
 
   const saveNote = (slug: string) => {
     const updated = { ...notes };
+    const hadNote = !!notes[slug];
     if (noteValue.trim()) {
       updated[slug] = noteValue.trim();
     } else {
@@ -138,6 +141,11 @@ export default function ShortlistClient() {
     setStoredNotes(updated);
     setEditingNote(null);
     setNoteValue("");
+    if (noteValue.trim()) {
+      toast(hadNote ? "Note updated" : "Note saved", "success");
+    } else if (hadNote) {
+      toast("Note removed", "success");
+    }
   };
 
   // ─── Share handler ───
@@ -156,6 +164,7 @@ export default function ShortlistClient() {
       if (data.url) {
         const fullUrl = `${window.location.origin}${data.url}`;
         setShareUrl(fullUrl);
+        toast("Share link created", "success");
 
         // Try native share API first
         if (navigator.share) {
@@ -169,9 +178,11 @@ export default function ShortlistClient() {
             // User cancelled or not supported — that's fine, URL is still shown
           }
         }
+      } else {
+        toast("Couldn't create share link", "error");
       }
     } catch {
-      // Silently fail
+      toast("Couldn't create share link", "error");
     }
 
     setSharing(false);
@@ -182,8 +193,11 @@ export default function ShortlistClient() {
     try {
       await navigator.clipboard.writeText(shareUrl);
       setCopied(true);
+      toast("Link copied", "success");
       setTimeout(() => setCopied(false), 2500);
-    } catch {}
+    } catch {
+      toast("Couldn't copy link", "error");
+    }
   };
 
   // ─── Import shared to own shortlist ───
@@ -323,15 +337,56 @@ export default function ShortlistClient() {
           <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
         </svg>
         <h2 className="text-base md:text-lg font-bold text-slate-900 mb-1.5">No platforms saved yet</h2>
-        <p className="text-xs md:text-sm text-slate-500 mb-4 md:mb-6">
+        <p className="text-xs md:text-sm text-slate-500 mb-4">
           Tap the heart icon on any platform to save it here.
         </p>
-        <Link
-          href="/compare"
-          className="inline-block px-5 py-2.5 md:px-6 md:py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-colors text-sm"
-        >
-          Browse Platforms &rarr;
-        </Link>
+
+        {/* Social proof */}
+        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 mb-5">
+          <Icon name="users" size={12} className="text-emerald-600" />
+          <span className="text-[0.7rem] md:text-xs font-semibold text-emerald-700">
+            Used by 500+ Australians to compare brokers
+          </span>
+        </div>
+
+        <div className="mb-5">
+          <Link
+            href="/compare"
+            className="inline-block px-5 py-2.5 md:px-6 md:py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-colors text-sm"
+          >
+            Browse Platforms &rarr;
+          </Link>
+        </div>
+
+        {/* Popular broker chips */}
+        <div className="border-t border-slate-100 pt-4">
+          <p className="text-[0.65rem] md:text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2.5">
+            Popular with Aussies
+          </p>
+          <div className="flex flex-wrap justify-center gap-2">
+            <Link
+              href="/broker/commsec"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors"
+            >
+              <Icon name="star" size={11} className="text-amber-500" />
+              CommSec
+            </Link>
+            <Link
+              href="/broker/stake"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors"
+            >
+              <Icon name="star" size={11} className="text-amber-500" />
+              Stake
+            </Link>
+            <Link
+              href="/broker/selfwealth"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-50 hover:bg-slate-100 text-xs font-medium text-slate-600 transition-colors"
+            >
+              <Icon name="star" size={11} className="text-amber-500" />
+              SelfWealth
+            </Link>
+          </div>
+        </div>
       </div>
     );
   }

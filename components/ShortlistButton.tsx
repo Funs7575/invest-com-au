@@ -2,6 +2,7 @@
 
 import { memo } from "react";
 import { useShortlist } from "@/lib/hooks/useShortlist";
+import { useToast } from "@/components/Toast";
 import { trackEvent } from "@/lib/tracking";
 
 export default memo(function ShortlistButton({
@@ -14,6 +15,7 @@ export default memo(function ShortlistButton({
   size?: "sm" | "md";
 }) {
   const { toggle, has } = useShortlist();
+  const { toast } = useToast();
   const saved = has(slug);
   const sizeClasses = size === "md" ? "w-9 h-9" : "w-7 h-7";
   const iconSize = size === "md" ? "w-4 h-4" : "w-3.5 h-3.5";
@@ -26,6 +28,9 @@ export default memo(function ShortlistButton({
         toggle(slug);
         if (!saved) {
           trackEvent("shortlist_add", { broker: slug });
+          toast(`Added ${name} to shortlist`, "success");
+        } else {
+          toast(`Removed ${name} from shortlist`, "success");
         }
       }}
       className={`${sizeClasses} flex items-center justify-center rounded-full transition-all duration-200 shrink-0 ${

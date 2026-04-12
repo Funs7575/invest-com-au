@@ -4,6 +4,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import AdminShell from "@/components/AdminShell";
 import Icon from "@/components/Icon";
+import ConfirmDialog from "@/components/ConfirmDialog";
 
 interface Transaction {
   id: number; date: string; type: "income" | "expense"; category: string;
@@ -57,6 +58,7 @@ export default function FinanceDashboardPage() {
   const [saving, setSaving] = useState(false);
   const [tab, setTab] = useState<"overview" | "transactions" | "recurring">("overview");
   const [amountInput, setAmountInput] = useState("");
+  const [deleteId, setDeleteId] = useState<number | null>(null);
 
   const supabase = createClient();
 
@@ -125,9 +127,14 @@ export default function FinanceDashboardPage() {
     loadData();
   };
 
-  const handleDelete = async (id: number) => {
-    if (!confirm("Delete this transaction?")) return;
-    await supabase.from("finance_transactions").delete().eq("id", id);
+  const handleDelete = (id: number) => {
+    setDeleteId(id);
+  };
+
+  const confirmDelete = async () => {
+    if (deleteId == null) return;
+    await supabase.from("finance_transactions").delete().eq("id", deleteId);
+    setDeleteId(null);
     loadData();
   };
 
@@ -408,6 +415,16 @@ export default function FinanceDashboardPage() {
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        open={deleteId != null}
+        title="Delete transaction?"
+        message="This transaction will be permanently removed from the finance ledger. This action cannot be undone."
+        confirmLabel="Delete"
+        variant="danger"
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteId(null)}
+      />
     </AdminShell>
   );
 }
