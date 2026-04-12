@@ -28,9 +28,10 @@ import PropertyVsSharesCalculator from "./_components/PropertyVsSharesCalculator
    Types & constants
    ────────────────────────────────────────────── */
 interface Props { brokers: Broker[] }
-type CalcId = "trade-cost" | "fx" | "switching" | "cgt" | "franking" | "chess" | "fee-impact" | "portfolio" | "switch-calc" | "savings-calc" | "tco" | "compound-interest" | "dividend-reinvestment" | "fire" | "property-vs-shares" | "mortgage" | "debt" | "retirement" | "property-yield" | "smsf" | "super-contributions" | "portfolio-xray" | "tax-optimizer" | "fee-simulator";
+type CalcId = "trade-cost" | "fx" | "switching" | "cgt" | "franking" | "chess" | "fee-impact" | "portfolio" | "switch-calc" | "savings-calc" | "tco" | "compound-interest" | "dividend-reinvestment" | "fire" | "property-vs-shares" | "mortgage" | "debt" | "retirement" | "property-yield" | "smsf" | "super-contributions" | "portfolio-xray" | "tax-optimizer" | "fee-simulator" | "quick-audit";
 
 const CALCS: { id: CalcId; icon: string; title: string; subtitle: string; badge?: string; href?: string }[] = [
+  { id: "quick-audit" as CalcId, icon: "search", title: "Quick Audit", subtitle: "30-second fee audit & savings check", href: "/quick-audit", badge: "NEW" },
   { id: "tco", icon: "receipt", title: "Yearly TCO", subtitle: "Total annual cost across all your trades", badge: "NEW" },
   { id: "trade-cost", icon: "dollar-sign", title: "Trade Cost", subtitle: "What does a trade really cost at each platform?" },
   { id: "fx", icon: "globe", title: "US Share Costs", subtitle: "What do international trades really cost?" },
