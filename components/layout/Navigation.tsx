@@ -7,6 +7,7 @@ import { CURRENT_YEAR } from "@/lib/seo";
 import { SHOW_BEST_PICKS, SHOW_MATCH_LANGUAGE, PRIMARY_CTA_TEXT, PRIMARY_CTA_HREF } from "@/lib/compliance-config";
 import dynamic from "next/dynamic";
 import AccountButton from "@/components/layout/AccountButton";
+import { useUser } from "@/lib/hooks/useUser";
 
 const SearchOverlay = dynamic(() => import("@/components/SearchOverlay"), { ssr: false });
 const IntentPicker = dynamic(() => import("@/components/IntentPicker"), { ssr: false });
@@ -326,20 +327,29 @@ const mobileSections = [
       { name: "Write a Review", href: "/reviews/write" },
     ],
   },
-  {
-    title: "My Account",
-    items: [
-      { name: "Sign In", href: "/auth/login" },
-      { name: "Sign Up", href: "/auth/signup" },
-      { name: "My Account", href: "/account" },
-      { name: "Saved Comparisons", href: "/account/saved" },
-      { name: "My Shortlist", href: "/shortlist" },
-      { name: "Edit Profile", href: "/account/profile" },
-      { name: "Refer a Friend", href: "/account/referrals" },
-      { name: "Fee Alerts", href: "/fee-alerts" },
-    ],
-  },
 ];
+
+// Separate sections for logged-out vs logged-in users
+const mobileAccountSectionLoggedOut = {
+  title: "Account",
+  items: [
+    { name: "Sign In", href: "/auth/login" },
+    { name: "Create Account", href: "/auth/signup" },
+    { name: "Fee Alerts", href: "/fee-alerts" },
+  ],
+};
+
+const mobileAccountSectionLoggedIn = {
+  title: "My Account",
+  items: [
+    { name: "My Account", href: "/account" },
+    { name: "Saved Comparisons", href: "/account/saved" },
+    { name: "My Shortlist", href: "/shortlist" },
+    { name: "Edit Profile", href: "/account/profile" },
+    { name: "Refer a Friend", href: "/account/referrals" },
+    { name: "Fee Alerts", href: "/fee-alerts" },
+  ],
+};
 
 // ─── Main Navigation ──────────────────────────────────────────────────────────
 
@@ -348,6 +358,13 @@ export function Navigation() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [intentOpen, setIntentOpen] = useState(false);
   const pathname = usePathname();
+  const { user } = useUser();
+
+  // Build mobile menu sections — swap the account section based on login state
+  const currentMobileSections = [
+    ...mobileSections,
+    user ? mobileAccountSectionLoggedIn : mobileAccountSectionLoggedOut,
+  ];
 
   useEffect(() => { setMobileOpen(false); }, [pathname]);
 
@@ -854,7 +871,7 @@ export function Navigation() {
           aria-label="Mobile navigation"
         >
           <nav className="max-w-7xl mx-auto px-4 sm:px-6 py-4 space-y-0.5">
-            {mobileSections.map((section, si) => (
+            {currentMobileSections.map((section, si) => (
               <div key={section.title} className={si > 0 ? "border-t border-slate-100 pt-3 mt-1" : ""}>
                 <p className="px-3 pb-1 text-[0.6rem] font-extrabold uppercase tracking-widest text-slate-500">
                   {section.title}

@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/lib/hooks/useUser";
+import { createClient } from "@/lib/supabase/client";
 
 /**
  * Top-right account button for the main navigation.
@@ -18,7 +19,31 @@ export default function AccountButton() {
   const { user, loading } = useUser();
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [profileName, setProfileName] = useState<string | null>(null);
   const ref = useRef<HTMLDivElement>(null);
+
+  // Fetch display name from user_profiles for personalization
+  // (user_metadata isn't kept in sync — display_name lives in our profile table)
+  useEffect(() => {
+    if (!user) {
+      setProfileName(null);
+      return;
+    }
+    let cancelled = false;
+    fetch("/api/user-profile")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!cancelled && data?.profile?.display_name) {
+          setProfileName(data.profile.display_name);
+        }
+      })
+      .catch(() => {
+        // Silently fall back to email username
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [user]);
 
   // Close on outside click + Escape
   useEffect(() => {
@@ -40,6 +65,12 @@ export default function AccountButton() {
   const handleSignOut = useCallback(async () => {
     setOpen(false);
     try {
+      // 1. Client-side signOut fires SIGNED_OUT event so useUser updates
+      //    immediately without needing to remount the component
+      const supabase = createClient();
+      await supabase.auth.signOut();
+      // 2. Server-side signOut clears HttpOnly session cookies so
+      //    server-rendered pages also see the user as logged out
       await fetch("/api/auth/signout", { method: "POST" });
       router.push("/");
       router.refresh();
@@ -78,8 +109,8 @@ export default function AccountButton() {
   }
 
   // ─── Logged in ──────────────────────────────────────────────────
-  const initial = (user.email ?? "?").charAt(0).toUpperCase();
-  const displayName = user.user_metadata?.display_name || user.email?.split("@")[0] || "Account";
+  const displayName = profileName || user.user_metadata?.display_name || user.email?.split("@")[0] || "Account";
+  const initial = displayName.charAt(0).toUpperCase();
 
   return (
     <div ref={ref} className="hidden lg:flex relative">
