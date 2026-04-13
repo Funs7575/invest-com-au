@@ -6,6 +6,7 @@ import type { Metadata } from "next";
 import AdvisorProfileClient from "./AdvisorProfileClient";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const revalidate = 1800;
 
@@ -204,6 +205,9 @@ export default async function AdvisorProfilePage({ params }: { params: Promise<{
         }) }} />
       )}
       <AdvisorProfileClient professional={pro as Professional} similar={similar} reviews={reviews} teamMembers={teamMembers} firm={firm} expertArticles={expertArticles} />
+      <div className="container-custom pb-8">
+        <ComplianceFooter />
+      </div>
     </>
   );
 }

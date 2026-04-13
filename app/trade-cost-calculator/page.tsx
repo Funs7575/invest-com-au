@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 import TradeCostClient from "./TradeCostClient";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const revalidate = 3600;
 
@@ -124,6 +125,8 @@ export default async function TradeCostCalculatorPage() {
       <Suspense fallback={<Loading />}>
         <TradeCostClient brokers={(brokers as Broker[]) || []} />
       </Suspense>
+      <div className="container-custom pb-8"><ComplianceFooter variant="calculator" /></div>
+
     </>
   );
 }

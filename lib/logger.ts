@@ -66,16 +66,55 @@ function emit(
     }
   }
 
-  // Sentry integration for errors
-  if (level === "error") {
-    try {
+  // Sentry integration.
+  //
+  // - For errors: prefer captureException with the actual Error object
+  //   (preserves stack trace + frame source mapping). Fall back to
+  //   captureMessage if the meta only contains a string error.
+  // - For warns and infos: leave a breadcrumb so they show up as
+  //   context on the next captured exception.
+  // - Always tag with the logger context so issues can be grouped by
+  //   the route / module that produced them.
+  try {
+    if (level === "error") {
+      const errMeta = meta?.error;
+      const errObj = meta?.err;
+      const candidate =
+        errObj instanceof Error
+          ? errObj
+          : errMeta instanceof Error
+            ? errMeta
+            : null;
+
+      if (candidate) {
+        Sentry.captureException(candidate, {
+          tags: { ctx },
+          extra: { msg, ...meta },
+        });
+      } else {
+        Sentry.captureMessage(`[${ctx}] ${msg}`, {
+          level: "error",
+          tags: { ctx },
+          extra: meta,
+        });
+      }
+    } else if (level === "warn") {
       Sentry.captureMessage(`[${ctx}] ${msg}`, {
-        level: "error",
+        level: "warning",
+        tags: { ctx },
         extra: meta,
       });
-    } catch {
-      // Sentry not initialized or unavailable — silently ignore
+    } else {
+      // info / debug → breadcrumb only, attached to the next event
+      Sentry.addBreadcrumb({
+        category: ctx,
+        level: level === "info" ? "info" : "debug",
+        message: msg,
+        data: meta,
+      });
     }
+  } catch {
+    // Sentry not initialized or unavailable — silently ignore
   }
 }
 

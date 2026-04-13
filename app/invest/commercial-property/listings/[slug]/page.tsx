@@ -32,7 +32,18 @@ export async function generateMetadata({
     title,
     description: data.description?.slice(0, 160) ?? `Commercial property for sale. ${location}`,
     alternates: { canonical: `${SITE_URL}/invest/commercial-property/listings/${slug}` },
-    openGraph: { title, url: `${SITE_URL}/invest/commercial-property/listings/${slug}` },
+    openGraph: {
+      title,
+      description: data.description?.slice(0, 160),
+      url: `${SITE_URL}/invest/commercial-property/listings/${slug}`,
+      images: [{
+        url: `/api/og?title=${encodeURIComponent(data.title)}&type=invest`,
+        width: 1200,
+        height: 630,
+        alt: data.title,
+      }],
+    },
+    twitter: { card: "summary_large_image" as const },
   };
 }
 

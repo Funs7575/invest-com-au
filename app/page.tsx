@@ -14,6 +14,7 @@ import { getMostRecentFeeCheck } from "@/lib/utils";
 import { ORGANIZATION_JSONLD, SITE_URL } from "@/lib/seo";
 import MobileStickyAdvisorCta from "@/components/MobileStickyAdvisorCta";
 import { PRIMARY_CTA_HREF, SHOW_EDITORIAL_BADGES, PLATFORM_COMPARE_HEADING, PLATFORM_COMPARE_SUBTEXT, FACTUAL_COMPARISON_DISCLAIMER } from "@/lib/compliance-config";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const metadata = {
   title: { absolute: "Compare Platforms, Browse Advisors & Explore Investments — Invest.com.au" },
@@ -580,6 +581,10 @@ export default async function HomePage() {
 
       {/* ═══════ MOBILE STICKY CTA (item 68) ═══════ */}
       <MobileStickyAdvisorCta />
+
+      <div className="container-custom pb-8">
+        <ComplianceFooter />
+      </div>
     </div>
   );
 }

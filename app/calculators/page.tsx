@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import CalculatorsClient from "./CalculatorsClient";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
 import LeadMagnet from "@/components/LeadMagnet";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const revalidate = 1800;
 
@@ -100,6 +101,7 @@ export default async function CalculatorsPage() {
         <div className="mt-6">
           <LeadMagnet />
         </div>
+        <ComplianceFooter variant="calculator" />
       </div>
     </>
   );
