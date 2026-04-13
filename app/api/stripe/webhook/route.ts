@@ -207,6 +207,36 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
+  // ── Idempotency ──────────────────────────────────────────────────
+  // Stripe retries events after transient failures, so the same event.id
+  // can arrive multiple times. Claim the event_id atomically before doing
+  // any work — if the insert fails on the PK, another invocation is
+  // already processing it (or already did). Ack 200 and exit.
+  //
+  // Duplicate handling without this check produces: double welcome emails,
+  // double wallet credits, duplicated audit-log rows, and double refund
+  // reversals. All of those are revenue / trust disasters.
+  {
+    const idempotencyClient = createAdminClient();
+    const { error: dedupeError } = await idempotencyClient
+      .from("stripe_webhook_events")
+      .insert({ event_id: event.id, event_type: event.type });
+
+    if (dedupeError) {
+      // PostgREST returns 23505 for unique_violation — treat as duplicate.
+      // Any other error (table missing, network) we log and continue —
+      // better to risk a rare duplicate than drop a real event.
+      if (dedupeError.code === "23505") {
+        log.info("Duplicate webhook event ignored", { eventId: event.id, type: event.type });
+        return NextResponse.json({ received: true, duplicate: true });
+      }
+      log.warn("Idempotency check failed, processing anyway", {
+        eventId: event.id,
+        error: dedupeError.message,
+      });
+    }
+  }
+
   try {
     switch (event.type) {
       case "customer.subscription.created": {

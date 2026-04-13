@@ -35,7 +35,7 @@ export default function AccountClient() {
   const checkoutSuccess = searchParams.get("checkout") === "success";
   const welcomeParam = searchParams.get("welcome") === "1";
 
-  const { user, subscription, isPro, loading, refresh } = useSubscription();
+  const { user, subscription, isPro, loading, refresh, optimisticUpdate } = useSubscription();
   const [portalLoading, setPortalLoading] = useState(false);
   const [portalError, setPortalError] = useState<string | null>(null);
   const [signOutLoading, setSignOutLoading] = useState(false);
@@ -166,9 +166,12 @@ export default function AccountClient() {
       }
       setShowCancelConfirm(false);
       setCancelLoading(false);
-      // Poll for webhook to sync
-      setTimeout(() => refresh(), 1500);
-      setTimeout(() => refresh(), 4000);
+      // Optimistically flip the badge to "Cancelling" immediately — the
+      // cancel API already wrote cancel_at_period_end to Supabase, so this
+      // just avoids the 1.5s poll delay on the user's screen.
+      optimisticUpdate({ cancel_at_period_end: true });
+      // Backup refresh in case something else changed server-side
+      setTimeout(() => refresh(), 2000);
     } catch {
       setCancelError("Something went wrong. Please try again.");
       setCancelLoading(false);

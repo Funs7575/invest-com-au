@@ -50,6 +50,13 @@ export function useSubscription() {
       });
   }, [user, userLoading]);
 
+  // Apply an optimistic change locally without refetching. Used by the
+  // account page so the UI reflects "Cancelling" immediately after the
+  // cancel API succeeds, instead of waiting 1.5–4s for the refresh poll.
+  const optimisticUpdate = (patch: Partial<Subscription>) => {
+    setSubscription((prev) => (prev ? { ...prev, ...patch } : prev));
+  };
+
   // Refresh subscription data (useful after checkout)
   const refresh = async () => {
     if (!user) return;
@@ -67,5 +74,5 @@ export function useSubscription() {
     setSubscription(data);
   };
 
-  return { user, subscription, isPro, loading: loading || userLoading, refresh };
+  return { user, subscription, isPro, loading: loading || userLoading, refresh, optimisticUpdate };
 }

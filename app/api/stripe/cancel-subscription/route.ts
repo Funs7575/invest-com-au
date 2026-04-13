@@ -50,10 +50,19 @@ export async function POST() {
       { idempotencyKey: `cancel_${sub.stripe_subscription_id}_${Date.now()}` }
     );
 
-    // Webhook (customer.subscription.updated) will sync cancel_at_period_end
-    // to Supabase via upsertSubscription() automatically.
+    // Immediately reflect the cancellation in Supabase so the account page
+    // updates without waiting for the webhook round-trip. The webhook
+    // (customer.subscription.updated) will fire shortly after and upsert
+    // the same value — upserts are idempotent, so this is safe.
+    await admin
+      .from("subscriptions")
+      .update({
+        cancel_at_period_end: true,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("stripe_subscription_id", sub.stripe_subscription_id);
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, cancel_at_period_end: true });
   } catch (err) {
     log.error("Cancel subscription error", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json(
