@@ -18,6 +18,10 @@ export function useCourseAccess(courseSlug: string = "investing-101") {
       return;
     }
 
+    // Cancellation flag — stops stale setState from overwriting state
+    // with the previous user's access after a rapid user switch.
+    let cancelled = false;
+
     const supabase = createClient();
     (async () => {
       try {
@@ -28,13 +32,20 @@ export function useCourseAccess(courseSlug: string = "investing-101") {
           .eq("course_slug", courseSlug)
           .limit(1)
           .maybeSingle();
+        if (cancelled) return;
         setHasCourse(!!data);
       } catch {
+        if (cancelled) return;
         setHasCourse(false);
       } finally {
+        if (cancelled) return;
         setLoading(false);
       }
     })();
+
+    return () => {
+      cancelled = true;
+    };
   }, [user, userLoading, courseSlug]);
 
   return { user, hasCourse, loading: loading || userLoading };

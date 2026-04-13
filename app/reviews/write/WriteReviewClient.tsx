@@ -62,8 +62,18 @@ export default function WriteReviewClient() {
   }, [user, userLoading, router, fetchIncentiveData]);
 
   const handleSubmit = async () => {
+    // Guard against double-submit from rapid clicks / Enter presses
+    if (submitting) return;
+
     setSubmitting(true);
     setSubmitError(null);
+
+    // 20-second timeout via AbortController — prevents the submit button
+    // from sitting in "Submitting..." forever if the server hangs or the
+    // user is on flaky mobile data. The fetch aborts cleanly and we show
+    // a retry-able error instead of an infinite spinner.
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 20000);
 
     try {
       const res = await fetch("/api/review-incentive", {
@@ -77,6 +87,7 @@ export default function WriteReviewClient() {
           pros: pros.filter((p) => p.trim().length > 0),
           cons: cons.filter((c) => c.trim().length > 0),
         }),
+        signal: controller.signal,
       });
 
       const data = await res.json();
@@ -88,9 +99,14 @@ export default function WriteReviewClient() {
       }
 
       setSuccess(true);
-    } catch {
-      setSubmitError("Something went wrong. Please try again.");
+    } catch (err) {
+      if (err instanceof Error && err.name === "AbortError") {
+        setSubmitError("Submission timed out. Please check your connection and try again.");
+      } else {
+        setSubmitError("Something went wrong. Please try again.");
+      }
     } finally {
+      clearTimeout(timeoutId);
       setSubmitting(false);
     }
   };

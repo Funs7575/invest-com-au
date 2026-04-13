@@ -9,10 +9,26 @@ interface Props {
   status: "idle" | "loading" | "error";
 }
 
+// RFC-5322-lite: good enough to catch typos like "foo@bar" without
+// rejecting valid addresses. The old check (`includes('@') && includes('.')`)
+// accepted "a.@" and "@.b" which then silently bounced on the server.
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export default function QuizEmailGate({ onSubmit, onSkip, status }: Props) {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
-  const canSubmit = email.includes("@") && email.includes(".");
+  const [touched, setTouched] = useState(false);
+  const isValidEmail = EMAIL_REGEX.test(email.trim());
+  const isLoading = status === "loading";
+  // Block submission while a previous submit is still in flight — prevents
+  // double-submits from rapid Enter presses or impatient clicks.
+  const canSubmit = isValidEmail && !isLoading;
+
+  const handleSubmit = () => {
+    setTouched(true);
+    if (!canSubmit) return;
+    onSubmit(email.trim(), name.trim());
+  };
 
   return (
     <div className="pt-5 pb-8 md:py-12">
@@ -55,11 +71,19 @@ export default function QuizEmailGate({ onSubmit, onSkip, status }: Props) {
                 placeholder="you@email.com"
                 autoComplete="email"
                 aria-label="Email address for quiz results"
+                aria-invalid={touched && !isValidEmail}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                onKeyDown={(e) => { if (e.key === "Enter" && canSubmit) onSubmit(email, name); }}
-                className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500"
+                onBlur={() => setTouched(true)}
+                onKeyDown={(e) => { if (e.key === "Enter") handleSubmit(); }}
+                disabled={isLoading}
+                className={`w-full px-3 py-2.5 rounded-lg border text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/30 disabled:opacity-60 ${touched && !isValidEmail ? "border-red-400 focus:border-red-400" : "border-slate-200 focus:border-amber-500"}`}
               />
+              {touched && !isValidEmail && email.length > 0 && (
+                <p className="text-[0.65rem] text-red-500 mt-1">
+                  Please enter a valid email address.
+                </p>
+              )}
             </div>
           </div>
 
@@ -68,11 +92,11 @@ export default function QuizEmailGate({ onSubmit, onSkip, status }: Props) {
           )}
 
           <button
-            onClick={() => canSubmit && onSubmit(email, name)}
-            disabled={!canSubmit || status === "loading"}
-            className="w-full py-3 bg-amber-500 text-white text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-50"
+            onClick={handleSubmit}
+            disabled={!canSubmit}
+            className="w-full py-3 bg-amber-500 text-white text-sm font-bold rounded-lg hover:bg-amber-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {status === "loading" ? "Sending..." : "Show My Results →"}
+            {isLoading ? "Sending..." : "Show My Results →"}
           </button>
 
           <p className="text-[0.6rem] text-slate-400 mt-2 text-center">

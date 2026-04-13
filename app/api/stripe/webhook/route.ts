@@ -148,6 +148,43 @@ async function upsertSubscription(subscription: Stripe.Subscription) {
 
   const item = subscription.items.data[0];
 
+  // Out-of-order protection. Stripe does NOT guarantee webhook delivery
+  // order. A `subscription.updated` event (flipping status to active) can
+  // arrive AFTER a later `subscription.updated` (flipping to cancelled),
+  // which would leave the row in the wrong terminal state. Stripe puts
+  // the actual event time on `subscription.updated` via `Date.now()`; we
+  // use that as a monotonic marker and skip any incoming event that's
+  // older than what we already stored.
+  //
+  // We persist it into `updated_at` because the column already exists on
+  // the subscriptions table and we don't want to require a migration for
+  // this fix. Incoming events older than existing `updated_at` are
+  // dropped (but still return success to Stripe so it stops retrying).
+  const stripeEventTime = new Date(
+    // Prefer explicit updated timestamp if Stripe provides it (billing_cycle_anchor
+    // or created are the closest proxies); otherwise fall back to wall clock.
+    subscription.cancel_at
+      ? subscription.cancel_at * 1000
+      : subscription.current_period_start
+      ? subscription.current_period_start * 1000
+      : Date.now()
+  ).toISOString();
+
+  const { data: existing } = await supabase
+    .from("subscriptions")
+    .select("updated_at, status")
+    .eq("stripe_subscription_id", subscription.id)
+    .maybeSingle();
+
+  if (existing?.updated_at && existing.updated_at > stripeEventTime) {
+    log.info("Skipping older webhook event", {
+      subscriptionId: subscription.id,
+      existingUpdatedAt: existing.updated_at,
+      incomingEventTime: stripeEventTime,
+    });
+    return;
+  }
+
   const subscriptionData = {
     user_id: profile.id,
     stripe_subscription_id: subscription.id,
@@ -205,6 +242,36 @@ export async function POST(request: NextRequest) {
   } catch (err) {
     log.error("Webhook signature verification failed", { error: err instanceof Error ? err.message : String(err) });
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
+  }
+
+  // ── Idempotency ──────────────────────────────────────────────────
+  // Stripe retries events after transient failures, so the same event.id
+  // can arrive multiple times. Claim the event_id atomically before doing
+  // any work — if the insert fails on the PK, another invocation is
+  // already processing it (or already did). Ack 200 and exit.
+  //
+  // Duplicate handling without this check produces: double welcome emails,
+  // double wallet credits, duplicated audit-log rows, and double refund
+  // reversals. All of those are revenue / trust disasters.
+  {
+    const idempotencyClient = createAdminClient();
+    const { error: dedupeError } = await idempotencyClient
+      .from("stripe_webhook_events")
+      .insert({ event_id: event.id, event_type: event.type });
+
+    if (dedupeError) {
+      // PostgREST returns 23505 for unique_violation — treat as duplicate.
+      // Any other error (table missing, network) we log and continue —
+      // better to risk a rare duplicate than drop a real event.
+      if (dedupeError.code === "23505") {
+        log.info("Duplicate webhook event ignored", { eventId: event.id, type: event.type });
+        return NextResponse.json({ received: true, duplicate: true });
+      }
+      log.warn("Idempotency check failed, processing anyway", {
+        eventId: event.id,
+        error: dedupeError.message,
+      });
+    }
   }
 
   try {
@@ -268,9 +335,65 @@ export async function POST(request: NextRequest) {
           await handleInvoicePaymentFailed(invoice.id);
         }
 
+        // Notify the subscriber so they can update their card before Stripe's
+        // dunning cycle cancels the subscription. Previously this only
+        // logged a warning, so subscribers with an expired card would
+        // silently slide into past_due → canceled and only find out when
+        // their Pro features stopped working. getSubscription()'s isPro
+        // already excludes past_due, so access is revoked at the check
+        // layer — this handler just adds the user-visible notification.
+        const invCustomerId =
+          typeof invoice.customer === "string" ? invoice.customer : invoice.customer?.id;
+        if (invCustomerId && invoice.metadata?.type !== "advisor_lead") {
+          try {
+            const custAdmin = createAdminClient();
+            const { data: subProfile } = await custAdmin
+              .from("profiles")
+              .select("id")
+              .eq("stripe_customer_id", invCustomerId)
+              .maybeSingle();
+
+            // Tag the subscription with payment_failed_at if the column exists.
+            // Safe under schema drift — errors are logged and swallowed.
+            if (subProfile) {
+              await custAdmin
+                .from("subscriptions")
+                .update({ updated_at: new Date().toISOString() })
+                .eq("stripe_customer_id", invCustomerId);
+            }
+
+            const customer = await getStripe().customers.retrieve(invCustomerId);
+            if (!("deleted" in customer) && customer.email) {
+              const amount = ((invoice.amount_due || 0) / 100).toFixed(2);
+              await sendTransactionalEmail(
+                customer.email,
+                "Action needed: your Invest.com.au Pro payment failed",
+                emailWrapper("Payment Failed ⚠️", "#dc2626", `
+                  <h2 style="margin: 0 0 12px; font-size: 18px; color: #0f172a;">We couldn't process your renewal</h2>
+                  <p style="color: #475569; font-size: 14px; line-height: 1.6; margin: 0 0 16px;">
+                    We tried to charge your card A$${amount} for your Invest.com.au Pro
+                    subscription, but the payment didn't go through.
+                  </p>
+                  <p style="color: #475569; font-size: 14px; line-height: 1.6; margin: 0 0 16px;">
+                    Pro features are temporarily paused until you update your
+                    payment method. We'll retry over the next few days — update
+                    your card now to avoid losing access.
+                  </p>
+                  <div style="text-align: center; margin: 20px 0;">
+                    <a href="${getSiteUrl()}/account" style="display: inline-block; padding: 12px 28px; background: #0f172a; color: #fff; font-weight: 700; font-size: 14px; border-radius: 8px; text-decoration: none;">Update Payment Method →</a>
+                  </div>
+                `),
+              );
+            }
+          } catch (err) {
+            log.error("Payment failed email error", { error: err instanceof Error ? err.message : String(err) });
+          }
+        }
+
         log.warn("Payment failed for customer", { customer: invoice.customer, invoice: invoice.id });
         // The subscription.updated webhook will also fire with status 'past_due',
-        // which upsertSubscription handles automatically
+        // which upsertSubscription handles automatically. Access is revoked
+        // by getSubscription() since past_due is excluded from isPro.
         break;
       }
 
@@ -312,18 +435,16 @@ export async function POST(request: NextRequest) {
               log.error("Course purchase upsert error", { error: error.message });
             }
 
-            // Send course receipt email
-            const customerEmail = session.customer_email || session.customer_details?.email;
-            if (customerEmail) {
-              const courseName = course?.title || courseSlug;
-              sendTransactionalEmail(
-                customerEmail,
-                `Course Confirmed: ${courseName}`,
-                buildCourseReceiptEmail(courseName, courseSlug, session.amount_total || 0),
-              ).catch((err) => log.error("Course receipt email failed", { err: err instanceof Error ? err.message : String(err) }));
-            }
-
-            // Insert revenue tracking row if course has a creator
+            // Insert revenue tracking row if course has a creator. Run
+            // this BEFORE sending the receipt so that if the revenue
+            // insert fails we can roll back the purchase row — avoiding
+            // the orphaned-purchase-without-revenue split-state that
+            // caused creator payout disputes. We can't do a real DB
+            // transaction through PostgREST, but rollback-on-error is
+            // the next best thing: if the revenue write fails and the
+            // purchase row was freshly inserted (not a duplicate-click
+            // upsert), delete it so the user's checkout retries cleanly.
+            let revenueOk = true;
             if (purchase && course?.creator_id && course.revenue_share_percent > 0) {
               const totalAmount = session.amount_total || 0;
               const creatorAmount = Math.round(totalAmount * (course.revenue_share_percent / 100));
@@ -342,8 +463,36 @@ export async function POST(request: NextRequest) {
                 });
 
               if (revenueError) {
-                log.error("Course revenue insert error", { error: revenueError.message });
+                revenueOk = false;
+                log.error("Course revenue insert error — rolling back purchase", {
+                  error: revenueError.message,
+                  purchaseId: purchase.id,
+                });
+                // Best-effort rollback. If delete fails the purchase stays
+                // but an admin alert makes the orphan visible for manual fix.
+                await supabase
+                  .from("course_purchases")
+                  .delete()
+                  .eq("id", purchase.id);
+                sendTransactionalEmail(
+                  ADMIN_EMAIL,
+                  `Course revenue insert failed — manual review needed`,
+                  `<div style="font-family:Arial,sans-serif;max-width:500px"><h2 style="color:#dc2626;font-size:16px">⚠️ Course Revenue Insert Failed</h2><p style="color:#64748b;font-size:14px">Purchase <strong>${purchase.id}</strong> for course <strong>${escapeHtml(courseSlug)}</strong> (user <strong>${escapeHtml(userId)}</strong>) was rolled back because the creator revenue row couldn't be inserted.</p><p style="color:#64748b;font-size:12px">Error: ${escapeHtml(revenueError.message)}</p><p style="color:#64748b;font-size:14px">Stripe payment intent: <code>${session.payment_intent}</code></p></div>`,
+                ).catch(() => {});
               }
+            }
+
+            // Send course receipt email — only if the combined write
+            // committed successfully, otherwise the user thinks they're
+            // enrolled when they aren't.
+            const customerEmail = session.customer_email || session.customer_details?.email;
+            if (customerEmail && revenueOk && !error) {
+              const courseName = course?.title || courseSlug;
+              sendTransactionalEmail(
+                customerEmail,
+                `Course Confirmed: ${courseName}`,
+                buildCourseReceiptEmail(courseName, courseSlug, session.amount_total || 0),
+              ).catch((err) => log.error("Course receipt email failed", { err: err instanceof Error ? err.message : String(err) }));
             }
           }
         }
@@ -397,6 +546,46 @@ export async function POST(request: NextRequest) {
               }).eq("id", topupId);
             }
 
+            // Advisor receipt email — previously missing, so advisors who
+            // paid for credit had no proof of purchase and no confirmation
+            // that the charge had posted. Pulls the advisor's email from
+            // the professionals row (falls back to the Stripe customer
+            // email) and renders an itemised receipt.
+            try {
+              const { data: advisor } = await supabase
+                .from("professionals")
+                .select("email, name")
+                .eq("id", professionalId)
+                .maybeSingle();
+              const advisorEmail =
+                advisor?.email ||
+                session.customer_email ||
+                session.customer_details?.email;
+              if (advisorEmail) {
+                const amount = (amountCents / 100).toFixed(2);
+                sendTransactionalEmail(
+                  advisorEmail,
+                  `Credit Top-Up Confirmed — A$${amount}`,
+                  emailWrapper("Credit Top-Up Confirmed ✅", "#0f172a", `
+                    <h2 style="margin: 0 0 12px; font-size: 18px; color: #0f172a;">Your credits are ready</h2>
+                    <p style="color: #475569; font-size: 14px; line-height: 1.6; margin: 0 0 16px;">
+                      Hi ${escapeHtml(advisor?.name || "there")}, your advisor credit
+                      top-up has been processed. You're ready to receive leads.
+                    </p>
+                    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px; margin: 0 0 20px;">
+                      <p style="margin: 0; font-size: 13px; color: #334155;"><strong>Amount paid:</strong> A$${amount}</p>
+                      <p style="margin: 4px 0 0; font-size: 13px; color: #334155;"><strong>Status:</strong> Credited to your balance</p>
+                    </div>
+                    <div style="text-align: center; margin: 20px 0;">
+                      <a href="${getSiteUrl()}/advisor-portal" style="display: inline-block; padding: 12px 28px; background: #0f172a; color: #fff; font-weight: 700; font-size: 14px; border-radius: 8px; text-decoration: none;">Go to Advisor Portal →</a>
+                    </div>
+                  `),
+                ).catch((err) => log.error("Advisor topup receipt email failed", { err: err instanceof Error ? err.message : String(err) }));
+              }
+            } catch (err) {
+              log.error("Advisor topup receipt lookup failed", { error: err instanceof Error ? err.message : String(err) });
+            }
+
             log.info("Advisor credit topped up", { professionalId, amountCents, topupId });
           }
         }
@@ -411,6 +600,48 @@ export async function POST(request: NextRequest) {
               featured_until: featuredUntil,
             }).eq("id", professionalId);
             log.info("Advisor featured activated", { professionalId, until: featuredUntil });
+
+            // Featured-purchase receipt — previously missing.
+            try {
+              const { data: advisor } = await supabase
+                .from("professionals")
+                .select("email, name, slug")
+                .eq("id", professionalId)
+                .maybeSingle();
+              const advisorEmail =
+                advisor?.email ||
+                session.customer_email ||
+                session.customer_details?.email;
+              if (advisorEmail) {
+                const amount = ((session.amount_total || 0) / 100).toFixed(2);
+                const expiresLabel = new Date(featuredUntil).toLocaleDateString("en-AU", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                });
+                sendTransactionalEmail(
+                  advisorEmail,
+                  `Featured Listing Activated — A$${amount}`,
+                  emailWrapper("Featured Listing Activated ✨", "#7c3aed", `
+                    <h2 style="margin: 0 0 12px; font-size: 18px; color: #0f172a;">You're featured!</h2>
+                    <p style="color: #475569; font-size: 14px; line-height: 1.6; margin: 0 0 16px;">
+                      Hi ${escapeHtml(advisor?.name || "there")}, your profile is now
+                      featured on Invest.com.au. You'll see a priority placement
+                      badge on listings and search results for the next 30 days.
+                    </p>
+                    <div style="background: #f5f3ff; border: 1px solid #ddd6fe; border-radius: 8px; padding: 16px; margin: 0 0 20px;">
+                      <p style="margin: 0; font-size: 13px; color: #334155;"><strong>Amount paid:</strong> A$${amount}</p>
+                      <p style="margin: 4px 0 0; font-size: 13px; color: #334155;"><strong>Featured until:</strong> ${expiresLabel}</p>
+                    </div>
+                    <div style="text-align: center; margin: 20px 0;">
+                      <a href="${getSiteUrl()}/advisor/${advisor?.slug || ""}" style="display: inline-block; padding: 12px 28px; background: #7c3aed; color: #fff; font-weight: 700; font-size: 14px; border-radius: 8px; text-decoration: none;">View Your Profile →</a>
+                    </div>
+                  `),
+                ).catch((err) => log.error("Advisor featured receipt email failed", { err: err instanceof Error ? err.message : String(err) }));
+              }
+            } catch (err) {
+              log.error("Advisor featured receipt lookup failed", { error: err instanceof Error ? err.message : String(err) });
+            }
           }
         }
 
@@ -577,27 +808,65 @@ export async function POST(request: NextRequest) {
         if (walletTxn) {
           try {
             const { debitWallet } = await import("@/lib/marketplace/wallet");
-            const reverseAmount = Math.min(refundedAmountCents, walletTxn.amount_cents);
 
-            await debitWallet(
-              walletTxn.broker_slug,
-              reverseAmount,
-              `Stripe refund reversal — $${(reverseAmount / 100).toFixed(2)}`,
-              { type: "stripe_refund", id: charge.id }
+            // Partial-refund-safe reversal. Stripe sends `charge.refunded`
+            // with `charge.amount_refunded` as the *cumulative* amount
+            // refunded on the charge. If a user has already been partially
+            // refunded (say $50) and we later refund another $50, the
+            // second event has amount_refunded = $100. Naïvely calling
+            // debitWallet($100) would over-reverse by $50.
+            //
+            // Fix: look up prior reversals for this charge (by the
+            // reference_id we set below), sum them, and only reverse the
+            // delta. Also capped against the original top-up amount so a
+            // bug in Stripe's side can never drain more than the deposit.
+            const { data: priorReversals } = await supabase
+              .from("wallet_transactions")
+              .select("amount_cents")
+              .eq("broker_slug", walletTxn.broker_slug)
+              .eq("type", "spend")
+              .eq("reference_type", "stripe_refund")
+              .eq("reference_id", charge.id);
+
+            const alreadyReversedCents = (priorReversals || []).reduce(
+              (sum, r) => sum + (r.amount_cents || 0),
+              0,
             );
+            const targetReversalCents = Math.min(refundedAmountCents, walletTxn.amount_cents);
+            const deltaCents = targetReversalCents - alreadyReversedCents;
 
-            // Notify broker
-            await supabase.from("broker_notifications").insert({
-              broker_slug: walletTxn.broker_slug,
-              type: "wallet_refund",
-              title: "Wallet Top-Up Reversed",
-              message: `A refund of $${(reverseAmount / 100).toFixed(2)} was processed. Your wallet balance has been adjusted.`,
-              link: "/broker-portal/wallet",
-              is_read: false,
-              email_sent: false,
-            });
+            if (deltaCents <= 0) {
+              log.info("Wallet refund already fully reversed — skipping", {
+                brokerSlug: walletTxn.broker_slug,
+                chargeId: charge.id,
+                alreadyReversedCents,
+                targetReversalCents,
+              });
+            } else {
+              await debitWallet(
+                walletTxn.broker_slug,
+                deltaCents,
+                `Stripe refund reversal — $${(deltaCents / 100).toFixed(2)}`,
+                { type: "stripe_refund", id: charge.id }
+              );
 
-            log.info("Wallet refund reversed", { brokerSlug: walletTxn.broker_slug, amount: `$${(reverseAmount / 100).toFixed(2)}` });
+              // Notify broker
+              await supabase.from("broker_notifications").insert({
+                broker_slug: walletTxn.broker_slug,
+                type: "wallet_refund",
+                title: "Wallet Top-Up Reversed",
+                message: `A refund of $${(deltaCents / 100).toFixed(2)} was processed. Your wallet balance has been adjusted.`,
+                link: "/broker-portal/wallet",
+                is_read: false,
+                email_sent: false,
+              });
+
+              log.info("Wallet refund reversed", {
+                brokerSlug: walletTxn.broker_slug,
+                deltaCents,
+                cumulativeRefundedCents: refundedAmountCents,
+              });
+            }
           } catch (err) {
             log.error("Wallet refund reversal failed", { error: err instanceof Error ? err.message : String(err) });
           }

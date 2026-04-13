@@ -2,6 +2,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { isValidEmail } from "@/lib/validate-email";
 import { logger } from "@/lib/logger";
+import { isRateLimited } from "@/lib/rate-limit";
 
 const log = logger("quick-audit");
 
@@ -12,6 +13,13 @@ const log = logger("quick-audit");
  * Stores in email_captures table with source "quick_audit".
  */
 export async function POST(request: NextRequest) {
+  // Per-IP rate limit — blocks automated scrapers pumping the endpoint
+  // to bloat email_captures or cause DB pressure.
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  if (await isRateLimited(`quick_audit_ip:${ip}`, 10, 60)) {
+    return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
+  }
+
   let body: Record<string, unknown>;
   try {
     body = await request.json();
@@ -31,9 +39,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Valid email required" }, { status: 400 });
   }
 
-  const supabase = createAdminClient();
-
   const sanitizedEmail = (email as string).trim().toLowerCase().slice(0, 254);
+
+  // Per-email rate limit — stops an attacker rotating IPs to spam a
+  // single target address through the funnel.
+  if (await isRateLimited(`quick_audit_email:${sanitizedEmail}`, 1, 60 * 24)) {
+    return NextResponse.json(
+      { error: "This email already submitted recently. Please check your inbox." },
+      { status: 429 }
+    );
+  }
+
+  const supabase = createAdminClient();
 
   // Check for existing email — prevent duplicates
   const { data: existing } = await supabase

@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import { getVariant, type ABTestConfig, type ABVariant } from "@/lib/ab-test";
 import { trackClick, trackEvent, getBenefitCta, AFFILIATE_REL } from "@/lib/tracking";
+import { useUser } from "@/lib/hooks/useUser";
 
 interface BrokerInfo {
   name: string;
@@ -26,6 +27,7 @@ interface Props {
 export default function ABTestCTA({ broker, activeTests, page, cpcCampaignLink }: Props) {
   const [variants, setVariants] = useState<Record<number, ABVariant>>({});
   const impressionsFired = useRef<Set<number>>(new Set());
+  const { user } = useUser();
 
   // Determine which test applies to this page (first match)
   const matchingTest = activeTests.find(
@@ -65,7 +67,9 @@ export default function ABTestCTA({ broker, activeTests, page, cpcCampaignLink }
         target="_blank"
         rel={AFFILIATE_REL}
         onClick={() => {
-          trackClick(broker.slug, broker.name, "compare-table", page, "compare");
+          trackClick(broker.slug, broker.name, "compare-table", page, "compare", undefined, undefined, {
+            userId: user?.id,
+          });
           trackEvent("affiliate_click", { broker_slug: broker.slug, source: "compare-table" }, page);
         }}
         className="inline-block px-4 py-2 bg-amber-600 text-white text-sm font-semibold rounded-lg hover:bg-amber-700 transition-all duration-200 group-hover:scale-105 group-hover:shadow-lg"
@@ -112,9 +116,15 @@ export default function ABTestCTA({ broker, activeTests, page, cpcCampaignLink }
             event_type: "click",
             broker_slug: broker.slug,
           }),
+          keepalive: true,
         }).catch(() => {});
-        // Standard tracking
-        trackClick(broker.slug, broker.name, "compare-table", page, "compare");
+        // Standard tracking — now includes user_id and A/B variant for
+        // proper cross-reference between click analytics and experiment results
+        trackClick(broker.slug, broker.name, "compare-table", page, "compare", undefined, undefined, {
+          userId: user?.id,
+          abTestId: String(matchingTest.id),
+          abVariant: variant,
+        });
         trackEvent("affiliate_click", { broker_slug: broker.slug, source: "compare-table", ab_test: matchingTest.name, ab_variant: variant }, page);
       }}
       className={`inline-block px-4 py-2 ${bgClass} text-white text-sm font-semibold rounded-lg transition-all duration-200 group-hover:scale-105 group-hover:shadow-lg`}

@@ -14,7 +14,8 @@ export default function ExitIntentCapture() {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [dismissed, setDismissed] = useState(false);
-  const [, setEmailError] = useState(false);
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const trigger = useCallback(() => {
     if (typeof window === "undefined") return;
@@ -56,19 +57,38 @@ export default function ExitIntentCapture() {
   }, [trigger]);
 
   const handleSubmit = async () => {
-    if (!email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setEmailError(true);
+    // Guard against double-submit while the in-flight request is running
+    if (submitting) return;
+
+    const trimmed = email.trim();
+    if (!trimmed || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+      setEmailError("Please enter a valid email address.");
       return;
     }
-    setEmailError(false);
+    setEmailError(null);
+    setSubmitting(true);
     const utm = getStoredUtm();
-    await fetch("/api/email-capture", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: email.trim(), source: "exit-intent", ...utm }),
-    }).catch(() => {});
-    setSubmitted(true);
-    sessionStorage.setItem("email_captured", "1");
+    try {
+      const res = await fetch("/api/email-capture", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: trimmed, source: "exit-intent", ...utm }),
+      });
+      if (!res.ok) {
+        // Surface server-side validation / rate-limit errors instead of
+        // silently pretending success, which burned users when the old
+        // swallow-all catch hid duplicate-email errors.
+        setEmailError("Something went wrong. Please try again.");
+        setSubmitting(false);
+        return;
+      }
+      setSubmitted(true);
+      sessionStorage.setItem("email_captured", "1");
+    } catch {
+      setEmailError("Network error. Please check your connection and try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const dismiss = () => {
@@ -109,17 +129,29 @@ export default function ExitIntentCapture() {
                 <input
                   type="email"
                   value={email}
-                  onChange={e => setEmail(e.target.value)}
+                  onChange={e => { setEmail(e.target.value); if (emailError) setEmailError(null); }}
                   onKeyDown={e => e.key === "Enter" && handleSubmit()}
                   placeholder="your@email.com"
                   aria-label="Email address"
-                  className="flex-1 px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400"
+                  aria-invalid={!!emailError}
+                  aria-describedby={emailError ? "exit-intent-error" : undefined}
+                  disabled={submitting}
+                  className={`flex-1 px-3 py-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-400 disabled:opacity-60 ${emailError ? "border-red-400" : "border-slate-200"}`}
                   autoFocus
                 />
-                <button onClick={handleSubmit} className="px-5 py-2.5 bg-emerald-600 text-white text-sm font-bold rounded-lg hover:bg-emerald-700 transition-all shrink-0">
-                  Send It
+                <button
+                  onClick={handleSubmit}
+                  disabled={submitting}
+                  className="px-5 py-2.5 bg-emerald-600 text-white text-sm font-bold rounded-lg hover:bg-emerald-700 transition-all shrink-0 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {submitting ? "Sending..." : "Send It"}
                 </button>
               </div>
+              {emailError && (
+                <p id="exit-intent-error" role="alert" className="text-xs text-red-600 mt-2">
+                  {emailError}
+                </p>
+              )}
               <p className="text-[0.56rem] text-slate-400 mt-2 text-center">Free. No spam. Unsubscribe anytime.</p>
               <button onClick={dismiss} className="w-full mt-3 text-xs text-slate-400 hover:text-slate-600 text-center">No thanks, I'll pay more in fees</button>
             </div>

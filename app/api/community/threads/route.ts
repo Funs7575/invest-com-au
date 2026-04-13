@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { isRateLimited } from "@/lib/rate-limit";
 
 const log = logger("community:threads");
 
@@ -93,6 +94,16 @@ export async function POST(req: NextRequest) {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) {
       return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    }
+
+    // Rate limit — 5 new threads per hour per user. Thread creation is
+    // costlier than post replies (each spawns a moderation surface and a
+    // category bump), so the cap is tighter than for posts.
+    if (await isRateLimited(`community_thread:${user.id}`, 5, 60)) {
+      return NextResponse.json(
+        { error: "You've created too many threads recently. Please wait before starting another." },
+        { status: 429 }
+      );
     }
 
     const body = await req.json();

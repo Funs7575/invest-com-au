@@ -78,6 +78,19 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Per-email rate limit — separate from per-IP so an attacker can't
+    // simply rotate IPs to bombard a target address with "API key
+    // created" notification emails. Combined with the IP limit this
+    // means: worst case an unrelated user receives 1 notification per
+    // day regardless of how many attackers try to provision keys in
+    // their name.
+    if (await isRateLimited(`api_key_email:${email}`, 1, 60 * 24)) {
+      return NextResponse.json(
+        { error: "Too many requests for this email address. Please try again tomorrow." },
+        { status: 429, headers: API_CORS_HEADERS },
+      );
+    }
+
     if (!name || name.length < 2 || name.length > 100) {
       return NextResponse.json(
         { error: "A name for the API key is required (2-100 characters)" },

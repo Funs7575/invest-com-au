@@ -127,6 +127,25 @@ export default async function InfrastructurePage() {
         </div>
       </section>
 
+      {/* Browse Listings CTA */}
+      <section className="bg-white pt-8">
+        <div className="container-custom">
+          <Link
+            href="/invest/infrastructure/listings"
+            className="group flex items-center justify-between gap-4 p-5 bg-gradient-to-r from-emerald-50 to-emerald-100/40 border border-emerald-200 rounded-2xl mb-8 hover:border-emerald-300 hover:shadow-md transition-all"
+          >
+            <div>
+              <p className="text-xs font-extrabold uppercase tracking-wider text-emerald-700 mb-1">Browse Listings</p>
+              <p className="text-lg font-extrabold text-slate-900">View all infrastructure opportunities &rarr;</p>
+              <p className="text-sm text-slate-600 mt-0.5">Toll roads, airports, utilities, sub-categories &amp; more</p>
+            </div>
+            <svg className="w-8 h-8 text-emerald-600 shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
+        </div>
+      </section>
+
       {/* Key stats */}
       <section className="py-10 bg-white border-b border-slate-100">
         <div className="container-custom">

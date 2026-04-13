@@ -7,29 +7,74 @@ const log = logger("tracking");
 /** Standard rel attribute for all outbound affiliate links */
 export const AFFILIATE_REL = "noopener noreferrer nofollow sponsored";
 
-export function trackClick(brokerSlug: string, brokerName: string, source: string, page: string, layer?: string, scenario?: string, placement?: string) {
-  const sessionId = getSessionId();
-  const payload = JSON.stringify({ broker_slug: brokerSlug, broker_name: brokerName, source, page, layer, session_id: sessionId, scenario, placement_type: placement });
+interface TrackClickOptions {
+  userId?: string | null;
+  abTestId?: string;
+  abVariant?: string;
+}
 
-  // Try fetch first, fallback to sendBeacon for ad-blocker resilience
-  fetch('/api/track-click', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+/**
+ * Track an outbound affiliate click.
+ *
+ * Uses sendBeacon() as the primary method so the request survives page
+ * navigation (critical — users often tab away immediately after clicking
+ * a "Visit Site" button, and fetch() requests get cancelled on unload).
+ * Falls back to fetch({ keepalive: true }) if sendBeacon is unavailable.
+ *
+ * This is the highest-revenue-impact function on the site. Every lost
+ * click here is lost affiliate revenue.
+ */
+export function trackClick(
+  brokerSlug: string,
+  brokerName: string,
+  source: string,
+  page: string,
+  layer?: string,
+  scenario?: string,
+  placement?: string,
+  options?: TrackClickOptions,
+) {
+  const sessionId = getSessionId();
+  const payload = JSON.stringify({
+    broker_slug: brokerSlug,
+    broker_name: brokerName,
+    source,
+    page,
+    layer,
+    session_id: sessionId,
+    scenario,
+    placement_type: placement,
+    user_id: options?.userId || null,
+    ab_test_id: options?.abTestId || null,
+    ab_variant: options?.abVariant || null,
+  });
+
+  // Primary: sendBeacon — survives page navigation, perfect for outbound CTAs
+  if (typeof navigator !== "undefined" && typeof navigator.sendBeacon === "function") {
+    try {
+      const blob = new Blob([payload], { type: "application/json" });
+      const sent = navigator.sendBeacon("/api/track-click", blob);
+      if (sent) return;
+    } catch {
+      // Fall through to fetch fallback
+    }
+  }
+
+  // Fallback: fetch with keepalive — also survives navigation on most browsers
+  fetch("/api/track-click", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: payload,
+    keepalive: true,
   })
     .then((res) => res.json())
     .then((data) => {
-      if (data?.click_id && typeof window !== 'undefined') {
+      if (data?.click_id && typeof window !== "undefined") {
         (window as unknown as Record<string, string>).__inv_last_click_id = data.click_id;
       }
     })
     .catch(() => {
-      // Fetch failed (ad blocker, network error) — try sendBeacon as last resort
-      if (typeof navigator !== 'undefined' && navigator.sendBeacon) {
-        try {
-          navigator.sendBeacon('/api/track-click', new Blob([payload], { type: 'application/json' }));
-        } catch { /* silently fail */ }
-      }
+      // Silently fail — beacon already tried
     });
 }
 

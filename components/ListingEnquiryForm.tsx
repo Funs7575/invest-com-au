@@ -45,8 +45,15 @@ export default function ListingEnquiryForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Prevent double-submits while the previous request is in flight.
+    if (loading) return;
     setLoading(true);
     setError(null);
+
+    // 20s timeout so a hung server doesn't leave the user's enquiry
+    // trapped behind an infinite spinner.
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 20000);
 
     try {
       const res = await fetch("/api/listings/enquire", {
@@ -62,6 +69,7 @@ export default function ListingEnquiryForm({
           message: form.message || undefined,
           source_page: `/invest/${vertical}/listings`,
         }),
+        signal: controller.signal,
       });
 
       if (!res.ok) {
@@ -71,8 +79,13 @@ export default function ListingEnquiryForm({
 
       setSuccess(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong.");
+      if (err instanceof Error && err.name === "AbortError") {
+        setError("Submission timed out. Please check your connection and try again.");
+      } else {
+        setError(err instanceof Error ? err.message : "Something went wrong.");
+      }
     } finally {
+      clearTimeout(timeoutId);
       setLoading(false);
     }
   };

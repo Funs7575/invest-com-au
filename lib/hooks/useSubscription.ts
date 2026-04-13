@@ -33,6 +33,12 @@ export function useSubscription() {
       return;
     }
 
+    // Cancellation flag — stops stale setState calls if the user logs
+    // out (or rapidly switches users) before the async Supabase query
+    // resolves. Without this, a pending query could overwrite the state
+    // of a fresh user mount with the previous user's subscription data.
+    let cancelled = false;
+
     const supabase = createClient();
     supabase
       .from("subscriptions")
@@ -45,10 +51,22 @@ export function useSubscription() {
       .limit(1)
       .maybeSingle()
       .then(({ data }) => {
+        if (cancelled) return;
         setSubscription(data);
         setLoading(false);
       });
+
+    return () => {
+      cancelled = true;
+    };
   }, [user, userLoading]);
+
+  // Apply an optimistic change locally without refetching. Used by the
+  // account page so the UI reflects "Cancelling" immediately after the
+  // cancel API succeeds, instead of waiting 1.5–4s for the refresh poll.
+  const optimisticUpdate = (patch: Partial<Subscription>) => {
+    setSubscription((prev) => (prev ? { ...prev, ...patch } : prev));
+  };
 
   // Refresh subscription data (useful after checkout)
   const refresh = async () => {
@@ -67,5 +85,5 @@ export function useSubscription() {
     setSubscription(data);
   };
 
-  return { user, subscription, isPro, loading: loading || userLoading, refresh };
+  return { user, subscription, isPro, loading: loading || userLoading, refresh, optimisticUpdate };
 }
