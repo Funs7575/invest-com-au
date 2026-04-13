@@ -33,6 +33,12 @@ export function useSubscription() {
       return;
     }
 
+    // Cancellation flag — stops stale setState calls if the user logs
+    // out (or rapidly switches users) before the async Supabase query
+    // resolves. Without this, a pending query could overwrite the state
+    // of a fresh user mount with the previous user's subscription data.
+    let cancelled = false;
+
     const supabase = createClient();
     supabase
       .from("subscriptions")
@@ -45,9 +51,14 @@ export function useSubscription() {
       .limit(1)
       .maybeSingle()
       .then(({ data }) => {
+        if (cancelled) return;
         setSubscription(data);
         setLoading(false);
       });
+
+    return () => {
+      cancelled = true;
+    };
   }, [user, userLoading]);
 
   // Apply an optimistic change locally without refetching. Used by the
