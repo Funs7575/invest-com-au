@@ -5,6 +5,18 @@ import type { NextRequest } from 'next/server'
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
+  // ── Request ID stamping ────────────────────────────────────────
+  // Every request gets a stable x-request-id so Sentry events, Vercel
+  // logs, Supabase logs and client-side error reports can be
+  // correlated back to a single user request. Honours upstream
+  // x-request-id or x-vercel-id if the CDN already attached one,
+  // otherwise generates a fresh UUID. The id is echoed on the
+  // response so browser DevTools / support can quote it.
+  const requestId =
+    request.headers.get('x-request-id') ||
+    request.headers.get('x-vercel-id') ||
+    crypto.randomUUID()
+
   // ── Cron route protection ──────────────────────────────────────
   // Vercel cron jobs send a Bearer token — reject unauthorized callers.
   if (pathname.startsWith('/api/cron/')) {
@@ -12,10 +24,20 @@ export async function proxy(request: NextRequest) {
     if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-    return NextResponse.next()
+    const cronResponse = NextResponse.next()
+    cronResponse.headers.set('x-request-id', requestId)
+    return cronResponse
   }
 
-  const response = NextResponse.next({ request })
+  // Mutate request headers so downstream route handlers can read
+  // x-request-id via request.headers.get('x-request-id').
+  const forwardedHeaders = new Headers(request.headers)
+  forwardedHeaders.set('x-request-id', requestId)
+
+  const response = NextResponse.next({
+    request: { headers: forwardedHeaders },
+  })
+  response.headers.set('x-request-id', requestId)
 
   // ── Security headers ─────────────────────────────────────────
   response.headers.set('X-Frame-Options', 'SAMEORIGIN')
