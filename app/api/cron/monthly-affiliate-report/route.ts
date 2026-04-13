@@ -4,6 +4,7 @@ import { sendEmail } from "@/lib/resend";
 import { escapeHtml } from "@/lib/html-escape";
 import { logger } from "@/lib/logger";
 import { ADMIN_EMAIL } from "@/lib/admin";
+import { requireCronAuth } from "@/lib/cron-auth";
 
 const log = logger("monthly-affiliate-report");
 
@@ -13,10 +14,8 @@ const log = logger("monthly-affiliate-report");
  * Aggregates clicks, signups, and revenue by broker for the previous month.
  */
 export async function GET(request: NextRequest) {
-  const authHeader = request.headers.get("authorization");
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const unauth = requireCronAuth(request);
+  if (unauth) return unauth;
 
   try {
     const supabase = createAdminClient();
