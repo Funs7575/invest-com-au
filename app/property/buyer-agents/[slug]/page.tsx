@@ -5,6 +5,7 @@ import { BUYER_AGENT_DISCLOSURE } from "@/lib/compliance";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import BuyerAgentContactForm from "./BuyerAgentContactForm";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const revalidate = 3600;
 
@@ -196,6 +197,8 @@ export default async function BuyerAgentProfilePage({ params }: { params: Promis
           </div>
         </div>
       </div>
+      <div className="container-custom pb-8"><ComplianceFooter variant="property" /></div>
+
     </div>
   );
 }

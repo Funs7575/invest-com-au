@@ -3,9 +3,13 @@ import {
   ADVERTISER_DISCLOSURE_SHORT,
   CFD_WARNING,
   CRYPTO_WARNING,
+  PROPERTY_GENERAL_DISCLAIMER,
+  FIRB_DISCLAIMER,
+  FOREIGN_BUYER_STAMP_DUTY_WARNING,
+  PROPERTY_INDICATIVE_PRICES,
 } from "@/lib/compliance";
 
-type Variant = "default" | "cfd" | "crypto" | "calculator";
+type Variant = "default" | "cfd" | "crypto" | "calculator" | "property" | "firb";
 
 interface Props {
   /**
@@ -56,7 +60,11 @@ export default function ComplianceFooter({
         ? CRYPTO_WARNING
         : variant === "calculator"
           ? "Calculations are indicative estimates only based on the figures you provide. Actual returns, fees and tax outcomes may differ. We do not guarantee accuracy."
-          : null;
+          : variant === "property"
+            ? `${PROPERTY_GENERAL_DISCLAIMER} ${PROPERTY_INDICATIVE_PRICES}`
+            : variant === "firb"
+              ? `${FIRB_DISCLAIMER} ${FOREIGN_BUYER_STAMP_DUTY_WARNING}`
+              : null;
 
   if (compact) {
     return (
@@ -84,7 +92,11 @@ export default function ComplianceFooter({
               ? "CFD Risk Warning:"
               : variant === "crypto"
                 ? "Cryptocurrency Risk Warning:"
-                : "Calculator Disclaimer:"}
+                : variant === "property"
+                  ? "Property Disclaimer:"
+                  : variant === "firb"
+                    ? "Foreign Investment (FIRB) Notice:"
+                    : "Calculator Disclaimer:"}
           </strong>{" "}
           {extraWarning}
         </div>

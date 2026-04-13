@@ -4,6 +4,7 @@ import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import { FIRB_FEES, FIRB_PROCESS_STEPS, FIRB_FAQS, WHO_NEEDS_FIRB } from "@/lib/firb-data";
 import { FIRB_DISCLAIMER } from "@/lib/compliance";
 import SectionHeading from "@/components/SectionHeading";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const metadata: Metadata = {
   title: "FIRB Application: Complete Step-by-Step Guide (2026)",
@@ -312,6 +313,8 @@ export default function FirbApplicationGuidePage() {
           <p className="text-xs text-slate-500 leading-relaxed">{FIRB_DISCLAIMER}</p>
         </div>
       </div>
+      <div className="container-custom pb-8"><ComplianceFooter variant="firb" /></div>
+
     </div>
   );
 }
