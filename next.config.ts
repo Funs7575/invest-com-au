@@ -213,14 +213,30 @@ const nextConfig: NextConfig = {
   },
 };
 
-// withSentryConfig wraps the Next.js config for error tracking.
+// withSentryConfig wraps the Next.js config for error tracking + source
+// map upload. The upload step requires SENTRY_ORG, SENTRY_PROJECT AND
+// SENTRY_AUTH_TOKEN to be set in the build environment. If any is
+// missing, Sentry's CLI fails the build during the upload phase —
+// silently on local builds (silent: true) but loudly on Vercel where
+// CI=true flips the silent flag off.
+//
+// Until Sentry is fully configured in Vercel, make the wrap
+// conditional: skip it entirely when SENTRY_AUTH_TOKEN isn't set, so
+// the build ships as a plain Next.js app with no error tracking
+// instead of failing. Once the env vars are added in Vercel, the
+// wrap auto-re-engages on the next deploy with zero code changes.
+//
 // Using `as any` because Sentry v9 peer-deps target Next.js ≤15 types,
 // but the runtime integration works fine with Next.js 16.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default withSentryConfig(nextConfig as any, {
-  org: process.env.SENTRY_ORG,
-  project: process.env.SENTRY_PROJECT,
-  silent: !process.env.CI,
-  widenClientFileUpload: true,
-  tunnelRoute: "/monitoring",
-}) as typeof nextConfig;
+const config: NextConfig = process.env.SENTRY_AUTH_TOKEN
+  ? (withSentryConfig(nextConfig as any, {
+      org: process.env.SENTRY_ORG,
+      project: process.env.SENTRY_PROJECT,
+      silent: !process.env.CI,
+      widenClientFileUpload: true,
+      tunnelRoute: "/monitoring",
+    }) as NextConfig)
+  : nextConfig;
+
+export default config;

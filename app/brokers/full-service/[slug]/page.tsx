@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { createClient } from "@/lib/supabase/server";
+import { createStaticClient } from "@/lib/supabase/static";
 import type { Professional } from "@/lib/types";
 import {
   absoluteUrl,
@@ -17,10 +17,15 @@ import FullServiceBrokerEnquiryForm from "@/components/full-service-brokers/Full
 export const revalidate = 3600;
 
 export async function generateStaticParams() {
+  // Use the static client (anon key, no cookies). generateStaticParams
+  // runs at BUILD TIME with no request context, so the SSR createClient
+  // — which reads cookies() — throws "cookies was called outside a
+  // request scope" and fails the Vercel build. This was the cause of
+  // four failed production deploys.
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return [];
   }
-  const supabase = await createClient();
+  const supabase = createStaticClient();
   const { data } = await supabase
     .from("professionals")
     .select("slug")
@@ -35,7 +40,10 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const supabase = await createClient();
+  // Static client — generateMetadata runs at build time for every slug
+  // returned by generateStaticParams above. No request context, no
+  // cookies. Same reason as the comment in generateStaticParams.
+  const supabase = createStaticClient();
   const { data } = await supabase
     .from("professionals")
     .select("name, bio, photo_url")
@@ -90,7 +98,12 @@ export default async function FullServiceBrokerDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const supabase = await createClient();
+  // Static client — this page is SSG (via generateStaticParams), so
+  // the body also runs at build time for each slug. Using the SSR
+  // createClient() here would fail build with "cookies was called
+  // outside a request scope". The firm data is public read-only so
+  // the anon key is the right level of access anyway.
+  const supabase = createStaticClient();
 
   const { data: firm } = await supabase
     .from("professionals")
