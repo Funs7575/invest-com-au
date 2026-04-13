@@ -2,9 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
+import { isRateLimited } from "@/lib/rate-limit";
 import { createHash } from "crypto";
 
 const log = logger("referrals");
+
+const REFERRAL_CODE_REGEX = /^[A-Za-z0-9]{4,16}$/;
 
 /**
  * Generate a deterministic 8-char alphanumeric referral code from user ID.
@@ -130,6 +133,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  // Rate limit — 10 referral-redemption attempts per hour per user.
+  // Stops brute-force enumeration of valid codes and prevents abuse of
+  // the reward side-effects on repeat POSTs.
+  if (await isRateLimited(`referral_redeem:${user.id}`, 10, 60)) {
+    return NextResponse.json(
+      { error: "Too many attempts. Please try again later." },
+      { status: 429 }
+    );
+  }
+
   let body: Record<string, unknown>;
   try {
     body = await req.json();
@@ -138,7 +151,10 @@ export async function POST(req: NextRequest) {
   }
 
   const referralCode = typeof body.referral_code === "string" ? body.referral_code.trim() : "";
-  if (!referralCode || referralCode.length < 4 || referralCode.length > 16) {
+  // Tight format check — alphanumeric 4-16 chars, matching generator output.
+  // Previously any 4-16 char string passed validation, letting callers inject
+  // arbitrary characters (escape sequences, wildcards) into downstream queries.
+  if (!REFERRAL_CODE_REGEX.test(referralCode)) {
     return NextResponse.json({ error: "Invalid referral code" }, { status: 400 });
   }
 

@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { isRateLimited } from "@/lib/rate-limit";
 
 const log = logger("sync-shortlist");
 
@@ -46,6 +47,18 @@ export async function POST(request: NextRequest) {
 
     if (!user) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
+
+    // Rate limit — 60 writes per minute per user. The client fires a
+    // write on every toggle, so a human rage-clicking can legitimately
+    // hit this a few times per second, but a bot or runaway loop will
+    // exceed a per-second budget. 60/min preserves interactive UX while
+    // preventing DB thrash.
+    if (await isRateLimited(`sync_shortlist:${user.id}`, 60, 1)) {
+      return NextResponse.json(
+        { error: "Too many updates. Please try again in a moment." },
+        { status: 429 }
+      );
     }
 
     const body = await request.json();

@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { isRateLimited } from "@/lib/rate-limit";
 
 const log = logger("community:posts");
 
@@ -12,6 +13,15 @@ export async function POST(req: NextRequest) {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) {
       return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    }
+
+    // Rate limit — 20 posts per hour per user. Prevents a compromised
+    // account or impatient bot from flooding threads.
+    if (await isRateLimited(`community_post:${user.id}`, 20, 60)) {
+      return NextResponse.json(
+        { error: "You're posting too quickly. Please slow down and try again shortly." },
+        { status: 429 }
+      );
     }
 
     const body = await req.json();
