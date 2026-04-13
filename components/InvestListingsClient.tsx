@@ -1,10 +1,10 @@
 "use client";
 
 import { useCallback, useMemo } from "react";
-import Link from "next/link";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import type { InvestmentListing, InvestListingVertical } from "@/lib/types";
-import { listingUrl, VERTICAL_TO_CATEGORY, FUND_SUB_TO_CATEGORY, categoryForListing } from "@/lib/listing-url";
+import type { InvestmentListing } from "@/lib/types";
+import { categoryForListing } from "@/lib/listing-url";
+import InvestListingCard from "@/components/InvestListingCard";
 
 // ─── Props ───────────────────────────────────────────────────────────
 export interface InvestListingsClientProps {
@@ -54,12 +54,6 @@ const SORT_OPTIONS: { value: SortKey; label: string }[] = [
   { value: "price-asc", label: "Price Low-High" },
   { value: "price-desc", label: "Price High-Low" },
 ];
-
-// ─── Helpers ─────────────────────────────────────────────────────────
-function formatLocation(state?: string, city?: string): string | null {
-  if (city && state) return `${city}, ${state}`;
-  return state || city || null;
-}
 
 // ─── Component ───────────────────────────────────────────────────────
 export default function InvestListingsClient({
@@ -272,69 +266,10 @@ export default function InvestListingsClient({
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filtered.map((listing) => {
-              const location = formatLocation(listing.location_state, listing.location_city);
-              return (
-                <Link
-                  key={listing.id}
-                  href={listingUrl(listing)}
-                  className="group relative block rounded-xl border border-slate-200 bg-white transition-all duration-200 hover:shadow-lg hover:scale-[1.01]"
-                >
-                  <div className="p-4">
-                    {/* Title + Price */}
-                    <div className="flex items-start justify-between gap-2 mb-2">
-                      <h3 className="font-bold text-sm text-slate-900 group-hover:text-slate-700 transition-colors line-clamp-2 min-w-0 flex-1">
-                        {listing.title}
-                      </h3>
-                      {listing.price_display && (
-                        <span className="shrink-0 text-sm font-bold text-slate-900">
-                          {listing.price_display}
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Location */}
-                    {location && (
-                      <p className="text-[0.65rem] font-semibold text-slate-500 mb-2 truncate">
-                        {location}
-                      </p>
-                    )}
-
-                    {/* Industry / Sub-category + Badges */}
-                    <div className="flex flex-wrap items-center gap-1 mb-3">
-                      {listing.industry && (
-                        <span className="text-[0.6rem] px-1.5 py-0.5 bg-slate-50 rounded font-semibold text-slate-700">
-                          {listing.industry}
-                        </span>
-                      )}
-                      {listing.sub_category && (
-                        <span className="text-[0.6rem] px-1.5 py-0.5 bg-slate-50 rounded font-semibold text-slate-700 capitalize">
-                          {listing.sub_category.replace(/_/g, " ")}
-                        </span>
-                      )}
-                      {listing.firb_eligible && (
-                        <span className="text-[0.6rem] px-1.5 py-0.5 bg-emerald-50 rounded font-bold text-emerald-700">
-                          FIRB
-                        </span>
-                      )}
-                      {listing.siv_complying && (
-                        <span className="text-[0.6rem] px-1.5 py-0.5 bg-blue-50 rounded font-bold text-blue-700">
-                          SIV
-                        </span>
-                      )}
-                    </div>
-
-                    {/* CTA */}
-                    <div className="flex items-center justify-end">
-                      <span className="px-3 py-1.5 text-[0.69rem] font-bold rounded-lg bg-slate-900 text-white group-hover:bg-slate-800 transition-colors">
-                        View Details
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-              );
-            })}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {filtered.map((listing) => (
+              <InvestListingCard key={listing.id} listing={listing} />
+            ))}
           </div>
         )}
       </div>
