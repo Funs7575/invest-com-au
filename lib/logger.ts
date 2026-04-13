@@ -160,3 +160,49 @@ export function logger(context: string): Logger {
     error: (msg: string, meta?: LogMeta) => emit("error", context, msg, meta),
   };
 }
+
+/**
+ * Attach the current user to the active Sentry scope so every event
+ * captured for the duration of the request is tagged with user id and
+ * email. Call this at the top of any server route that has an
+ * authenticated user.
+ *
+ * Safe to call with null — clears the user from scope in that case.
+ *
+ * Example:
+ *
+ *     const { data: { user } } = await supabase.auth.getUser();
+ *     setLoggerUser(user);
+ *
+ * Production debugging payoff: searching Sentry by user_id becomes
+ * possible, and you can see every breadcrumb + error for a single
+ * user's journey. Without this, every error in production is
+ * anonymous.
+ */
+export function setLoggerUser(user: { id: string; email?: string | null } | null): void {
+  try {
+    if (user) {
+      Sentry.setUser({ id: user.id, email: user.email || undefined });
+    } else {
+      Sentry.setUser(null);
+    }
+  } catch {
+    // Sentry not initialised — no-op.
+  }
+}
+
+/**
+ * Attach a request id to the active Sentry scope so every event for
+ * this request shows the same trace id. Paired with the middleware
+ * that stamps x-request-id on every request, this lets you grep
+ * Sentry + Vercel logs + Supabase logs for a single token.
+ */
+export function setLoggerRequestId(requestId: string | null): void {
+  try {
+    if (requestId) {
+      Sentry.setTag("request_id", requestId);
+    }
+  } catch {
+    // Sentry not initialised — no-op.
+  }
+}

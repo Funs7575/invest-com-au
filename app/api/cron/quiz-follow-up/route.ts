@@ -6,6 +6,7 @@ import {
   quizFollowUp3Email,
 } from "@/lib/email-templates";
 import { logger } from "@/lib/logger";
+import { requireCronAuth } from "@/lib/cron-auth";
 
 const log = logger("quiz-followup");
 
@@ -25,10 +26,8 @@ export const maxDuration = 60;
  * Only one email per lead per cron run to avoid flooding.
  */
 export async function GET(req: NextRequest) {
-  const authHeader = req.headers.get("authorization");
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const unauth = requireCronAuth(req);
+  if (unauth) return unauth;
 
   const supabase = createAdminClient();
 

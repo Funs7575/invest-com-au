@@ -1,6 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { weeklyDigestEmail } from "@/lib/email-templates";
 import { NextRequest, NextResponse } from "next/server";
+import { requireCronAuth } from "@/lib/cron-auth";
 
 export const runtime = "edge";
 export const maxDuration = 120;
@@ -19,10 +20,8 @@ export const maxDuration = 120;
  * De-duplicates via newsletter_sends table.
  */
 export async function GET(req: NextRequest) {
-  const authHeader = req.headers.get("authorization");
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const unauth = requireCronAuth(req);
+  if (unauth) return unauth;
 
   const resendApiKey = process.env.RESEND_API_KEY;
   if (!resendApiKey) {

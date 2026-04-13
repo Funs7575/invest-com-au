@@ -95,7 +95,11 @@ describe("QuizPromptBar", () => {
     render(<QuizPromptBar />);
     act(() => { window.dispatchEvent(new Event("scroll")); });
 
-    expect(screen.queryByText(/Find My Match/)).toBeInTheDocument();
+    // The CTA wording evolved from "Find My Match" to "Compare Platforms"
+    // after the IA overhaul — the prompt now funnels users to /compare
+    // which is the top-of-funnel surface for the unified DIY + advisor
+    // journey. The test now asserts on the current copy.
+    expect(screen.queryByText(/Compare Platforms/)).toBeInTheDocument();
   });
 
   it("hides both bars on /quiz page", () => {
@@ -201,14 +205,15 @@ describe("QuizPromptBar", () => {
     expect(screen.queryByLabelText(/My shortlist/)).not.toBeInTheDocument();
   });
 
-  it("renders quiz link pointing to /quiz", () => {
+  it("renders compare link pointing to /compare", () => {
     scrollY = 500;
     mockUsePathname.mockReturnValue("/article/test");
 
     render(<QuizPromptBar />);
     act(() => { window.dispatchEvent(new Event("scroll")); });
 
-    const quizLink = screen.getByText(/Find My Match/);
-    expect(quizLink.closest("a")).toHaveAttribute("href", "/quiz");
+    // CTA was updated post-IA-overhaul to funnel users to /compare.
+    const compareLink = screen.getByText(/Compare Platforms/);
+    expect(compareLink.closest("a")).toHaveAttribute("href", "/compare");
   });
 });

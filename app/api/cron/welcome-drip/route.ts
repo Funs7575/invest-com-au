@@ -6,6 +6,7 @@ import {
   firstCampaignTipsEmail,
   checkInEmail,
 } from "@/lib/email-templates";
+import { requireCronAuth } from "@/lib/cron-auth";
 
 export const runtime = "edge";
 export const maxDuration = 60;
@@ -23,10 +24,8 @@ export const maxDuration = 60;
  * Each email is sent at most once per broker (tracked via broker_notifications).
  */
 export async function GET(req: NextRequest) {
-  const authHeader = req.headers.get("authorization");
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const unauth = requireCronAuth(req);
+  if (unauth) return unauth;
 
   const supabase = createAdminClient();
 

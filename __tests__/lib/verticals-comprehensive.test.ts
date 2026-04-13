@@ -6,12 +6,15 @@ import {
   type VerticalConfig,
 } from "@/lib/verticals";
 
+// The original five verticals. More have been added since (term-deposits,
+// robo-advisors, property-platforms, research-tools) — assertions below
+// only require these five are present, not that the list is exactly five.
 const ALL_SLUGS = ["share-trading", "crypto", "savings", "super", "cfd"];
 
 describe("getAllVerticalSlugs", () => {
-  it("returns exactly 5 vertical slugs", () => {
+  it("returns at least 5 vertical slugs", () => {
     const slugs = getAllVerticalSlugs();
-    expect(slugs).toHaveLength(5);
+    expect(slugs.length).toBeGreaterThanOrEqual(5);
   });
 
   it("includes all expected slugs", () => {
@@ -162,8 +165,8 @@ describe("vertical tools have valid hrefs", () => {
 });
 
 describe("VERTICALS array", () => {
-  it("exports exactly 5 verticals", () => {
-    expect(VERTICALS).toHaveLength(5);
+  it("exports at least 5 verticals", () => {
+    expect(VERTICALS.length).toBeGreaterThanOrEqual(5);
   });
 
   it("has unique slugs", () => {
