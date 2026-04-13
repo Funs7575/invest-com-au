@@ -593,7 +593,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${baseUrl}/advisors/international-tax-specialists`, priority: 0.85 },
     { url: `${baseUrl}/advisors/firb-specialists`, priority: 0.8 },
     { url: `${baseUrl}/advisors/migration-agents`, priority: 0.8 },
+    // Full-service stockbrokers vertical
+    { url: `${baseUrl}/brokers/full-service`, priority: 0.85 },
   ].map((p) => ({ ...p, lastModified: new Date(), changeFrequency: "weekly" as const }));
+
+  // Full-service stockbroker firm detail pages
+  const { data: stockbrokerFirms } = supabase
+    ? await supabase
+        .from("professionals")
+        .select("slug, updated_at")
+        .in("type", ["stockbroker_firm", "private_wealth_manager"])
+        .eq("status", "active")
+    : { data: null };
+  const stockbrokerFirmPages = (stockbrokerFirms || []).map((f) => ({
+    url: `${baseUrl}/brokers/full-service/${f.slug}`,
+    lastModified: f.updated_at ? new Date(f.updated_at) : new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
 
   // Newsletter archive & edition pages
   const { data: newsletterEditions } = supabase
@@ -626,5 +643,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  return [...staticPages, ...bestPages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorCityPages, ...advisorLocationPages, ...investingCityPages, ...glossaryPages, ...firmPages, ...propertyListingPages, ...suburbGuidePages, ...propertyHubPages, ...newHubPages, newsletterArchivePage, ...newsletterEditionPages, ...investStaticPages, ...investCategoryPages, ...investSubcategoryPages, ...investListingPages];
+  return [...staticPages, ...bestPages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorCityPages, ...advisorLocationPages, ...investingCityPages, ...glossaryPages, ...firmPages, ...propertyListingPages, ...suburbGuidePages, ...propertyHubPages, ...newHubPages, newsletterArchivePage, ...newsletterEditionPages, ...investStaticPages, ...investCategoryPages, ...investSubcategoryPages, ...investListingPages, ...stockbrokerFirmPages];
 }

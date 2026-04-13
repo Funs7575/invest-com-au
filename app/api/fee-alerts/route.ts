@@ -3,6 +3,9 @@ import { createClient } from "@/lib/supabase/server";
 import { randomBytes } from "crypto";
 import { isRateLimited } from "@/lib/rate-limit";
 import { getSiteUrl } from "@/lib/url";
+import { logger } from "@/lib/logger";
+
+const log = logger("fee-alerts");
 
 export async function POST(request: NextRequest) {
   try {
@@ -61,7 +64,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Fee alert error:", error);
+    log.error("Fee alert error:", error);
     return NextResponse.json({ error: "Failed" }, { status: 500 });
   }
 }

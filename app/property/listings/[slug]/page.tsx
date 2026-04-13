@@ -8,6 +8,7 @@ import Icon from "@/components/Icon";
 import PropertyEnquiryForm from "./PropertyEnquiryForm";
 import { getListingImages } from "@/lib/property-images";
 import FirbCostCalculatorInline from "@/components/FirbCostCalculatorInline";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const revalidate = 3600;
 
@@ -437,6 +438,8 @@ export default async function PropertyListingPage({ params }: { params: Promise<
           </div>
         </div>
       </div>
+      <div className="container-custom pb-8"><ComplianceFooter variant="property" /></div>
+
     </div>
   );
 }

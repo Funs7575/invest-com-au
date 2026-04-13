@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { logger } from "@/lib/logger";
+
+const log = logger("advisor-photo");
 
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
@@ -95,7 +98,7 @@ export async function POST(request: NextRequest) {
       });
 
     if (uploadError) {
-      console.error("Storage upload error:", uploadError);
+      log.error("Storage upload error:", uploadError);
       return NextResponse.json({ error: "Upload failed" }, { status: 500 });
     }
 
@@ -114,13 +117,13 @@ export async function POST(request: NextRequest) {
       .eq("id", advisor.id);
 
     if (updateError) {
-      console.error("Profile update error:", updateError);
+      log.error("Profile update error:", updateError);
       return NextResponse.json({ error: "Failed to update profile" }, { status: 500 });
     }
 
     return NextResponse.json({ publicUrl });
   } catch (error) {
-    console.error("Photo upload error:", error);
+    log.error("Photo upload error:", error);
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });
   }
 }

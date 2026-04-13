@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { logger } from "@/lib/logger";
+
+const log = logger("listings:my-listings");
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -27,7 +30,7 @@ export async function GET(request: NextRequest) {
       .order("created_at", { ascending: false });
 
     if (listingsError) {
-      console.error("[my-listings] listings fetch error:", listingsError);
+      log.error("[my-listings] listings fetch error:", listingsError);
       return NextResponse.json(
         { error: "Failed to fetch listings." },
         { status: 500 }
@@ -49,7 +52,7 @@ export async function GET(request: NextRequest) {
       .order("created_at", { ascending: false });
 
     if (enquiriesError) {
-      console.error("[my-listings] enquiries fetch error:", enquiriesError);
+      log.error("[my-listings] enquiries fetch error:", enquiriesError);
       // Return listings without enquiries rather than failing entirely
       return NextResponse.json({ listings, enquiries: {} });
     }
@@ -68,7 +71,7 @@ export async function GET(request: NextRequest) {
       enquiries: enquiriesByListing,
     });
   } catch (err) {
-    console.error("[my-listings] unexpected error:", err);
+    log.error("[my-listings] unexpected error:", err);
     return NextResponse.json(
       { error: "An unexpected error occurred." },
       { status: 500 }

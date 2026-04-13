@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
             .single();
 
           if (insertError || !newLead) {
-            console.error(`Failed to create partner lead for advisor ${advisor.id}:`, insertError);
+            log.error(`Failed to create partner lead for advisor ${advisor.id}:`, insertError);
             continue;
           }
 
@@ -236,7 +236,7 @@ export async function POST(request: NextRequest) {
                 }),
               });
             } catch (emailError) {
-              console.error("Failed to send partner lead notification:", emailError);
+              log.error("Failed to send partner lead notification:", emailError);
             }
           }
         }

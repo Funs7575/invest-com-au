@@ -3,6 +3,9 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendAdminNotification } from "@/lib/advisor-emails";
 import { escapeHtml } from "@/lib/html-escape";
+import { logger } from "@/lib/logger";
+
+const log = logger("advisor-auth:firm:seat-request");
 
 export async function POST(request: NextRequest) {
   try {
@@ -75,11 +78,11 @@ export async function POST(request: NextRequest) {
       Current: ${firm.max_seats} seats → Requested: ${parsedSeats} seats<br/>
       ${reason ? `Reason: ${escapeHtml(reason)}` : "No reason provided"}<br/>
       <a href="https://invest.com.au/admin/advisors" style="color:#2563eb">Review in Admin →</a>`
-    ).catch((err) => console.error("[seat-request] admin notification failed:", err));
+    ).catch((err) => log.error("[seat-request] admin notification failed:", err));
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("[seat-request] error:", error);
+    log.error("[seat-request] error:", error);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }

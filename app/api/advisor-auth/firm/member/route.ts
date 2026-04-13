@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { logger } from "@/lib/logger";
+
+const log = logger("advisor-auth:firm:member");
 
 async function getFirmAdmin(request: NextRequest) {
   const sessionToken = request.cookies.get("advisor_session")?.value;
@@ -83,7 +86,7 @@ export async function PATCH(request: NextRequest) {
     .eq("id", memberId);
 
   if (error) {
-    console.error("[firm/member] role update failed:", error);
+    log.error("[firm/member] role update failed:", error);
     return NextResponse.json({ error: "Failed to update role" }, { status: 500 });
   }
 
@@ -122,7 +125,7 @@ export async function DELETE(request: NextRequest) {
     .eq("id", memberId);
 
   if (error) {
-    console.error("[firm/member] remove failed:", error);
+    log.error("[firm/member] remove failed:", error);
     return NextResponse.json({ error: "Failed to remove member" }, { status: 500 });
   }
 

@@ -4,6 +4,7 @@ import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import { STATE_SURCHARGES } from "@/lib/firb-data";
 import { FIRB_DISCLAIMER } from "@/lib/compliance";
 import SectionHeading from "@/components/SectionHeading";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const metadata: Metadata = {
   title: "Australia's Foreign Buyer Property Ban 2025–2027: What You Can (and Can't) Buy",
@@ -382,6 +383,8 @@ export default function PropertyBan2025Page() {
           <p className="text-xs text-slate-500 leading-relaxed">{FIRB_DISCLAIMER}</p>
         </div>
       </div>
+      <div className="container-custom pb-8"><ComplianceFooter variant="firb" /></div>
+
     </div>
   );
 }

@@ -944,7 +944,7 @@ export interface BrokerActivityLog {
 // Advisor Directory Types
 // ═══════════════════════════════════════════════
 
-export type ProfessionalType = 'smsf_accountant' | 'financial_planner' | 'property_advisor' | 'tax_agent' | 'mortgage_broker' | 'estate_planner' | 'insurance_broker' | 'buyers_agent' | 'real_estate_agent' | 'wealth_manager' | 'aged_care_advisor' | 'crypto_advisor' | 'debt_counsellor';
+export type ProfessionalType = 'smsf_accountant' | 'financial_planner' | 'property_advisor' | 'tax_agent' | 'mortgage_broker' | 'estate_planner' | 'insurance_broker' | 'buyers_agent' | 'real_estate_agent' | 'wealth_manager' | 'aged_care_advisor' | 'crypto_advisor' | 'debt_counsellor' | 'stockbroker_firm' | 'private_wealth_manager';
 
 export interface Professional {
   id: number;
@@ -1052,6 +1052,18 @@ export interface Professional {
   firb_specialist?: boolean;
   migration_agent?: boolean;
   migration_agent_marn?: string;
+  // ── Stockbroker firm fields ────────────────────────────────────────
+  // Populated only for type='stockbroker_firm' or 'private_wealth_manager'.
+  // NULL for all other ProfessionalType values. See
+  // supabase/migrations/20260413_stockbroker_firms.sql for column docs.
+  firm_type?: string;
+  minimum_investment_cents?: number;
+  fee_model?: 'percent_aum' | 'commission' | 'flat_retainer' | 'hybrid';
+  service_tiers?: { name: string; min_investment_cents?: number; description?: string }[];
+  research_offering?: string;
+  year_founded?: number;
+  office_states?: string[];
+  aum_aud_billions?: number;
 }
 
 export interface ProfessionalLead {
@@ -1083,6 +1095,8 @@ export const PROFESSIONAL_TYPE_LABELS: Record<ProfessionalType, string> = {
   aged_care_advisor: "Aged Care Advisor",
   crypto_advisor: "Crypto Advisor",
   debt_counsellor: "Debt Counsellor",
+  stockbroker_firm: "Full-Service Stockbroker",
+  private_wealth_manager: "Private Wealth Manager",
 };
 
 export const PROFESSIONAL_TYPE_ICONS: Record<ProfessionalType, string> = {
@@ -1099,6 +1113,8 @@ export const PROFESSIONAL_TYPE_ICONS: Record<ProfessionalType, string> = {
   aged_care_advisor: "heart",
   crypto_advisor: "bitcoin",
   debt_counsellor: "credit-card",
+  stockbroker_firm: "trending-up",
+  private_wealth_manager: "briefcase",
 };
 
 export const AU_STATES = ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT"] as const;

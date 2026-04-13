@@ -6,6 +6,9 @@ import { isRateLimited } from "@/lib/rate-limit";
 import { notificationFooter } from "@/lib/email-templates";
 import { getSiteUrl } from "@/lib/url";
 import { getAdminEmail, getAdminEmails } from "@/lib/admin";
+import { logger } from "@/lib/logger";
+
+const log = logger("advisor-articles");
 
 const SITE_URL = getSiteUrl();
 
@@ -31,12 +34,12 @@ function slugify(text: string): string {
 
 async function logMod(supabase: Awaited<ReturnType<typeof createClient>>, articleId: number, action: string, by: string, notes?: string, oldStatus?: string, newStatus?: string) {
   const { error } = await supabase.from("advisor_article_moderation_log").insert({ article_id: articleId, action, performed_by: by, notes, old_status: oldStatus, new_status: newStatus });
-  if (error) console.error("moderation log insert failed:", error.message);
+  if (error) log.error("moderation log insert failed:", error.message);
 }
 
 async function sendEmail(to: string, subject: string, html: string) {
   if (!process.env.RESEND_API_KEY || !to) return;
-  await fetch("https://api.resend.com/emails", { method: "POST", headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" }, body: JSON.stringify({ from: "Invest.com.au <articles@invest.com.au>", to, subject, html }) }).catch((err) => console.error("[advisor-articles] email failed:", err));
+  await fetch("https://api.resend.com/emails", { method: "POST", headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" }, body: JSON.stringify({ from: "Invest.com.au <articles@invest.com.au>", to, subject, html }) }).catch((err) => log.error("[advisor-articles] email failed:", err));
 }
 
 function wrap(title: string, body: string, cta?: string, url?: string, email?: string) {

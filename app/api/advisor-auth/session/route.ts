@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { logger } from "@/lib/logger";
+
+const log = logger("advisor-auth:session");
 
 /**
  * GET /api/advisor-auth/session
@@ -64,7 +67,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   } catch (error) {
-    console.error("Session check error:", error);
+    log.error("Session check error:", error);
     return NextResponse.json({ error: "Failed" }, { status: 500 });
   }
 }

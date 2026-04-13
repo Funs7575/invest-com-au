@@ -4,6 +4,7 @@ import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import { FIRB_FEES, STATE_SURCHARGES, FIRB_PROCESS_STEPS } from "@/lib/firb-data";
 import { FIRB_DISCLAIMER } from "@/lib/compliance";
 import SectionHeading from "@/components/SectionHeading";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const metadata: Metadata = {
   title: "How to Buy Property in Australia as a Foreigner (2026 Guide)",
@@ -429,6 +430,8 @@ export default function BuyPropertyAustralieForeignerPage() {
           <p className="text-xs text-slate-500 leading-relaxed">{FIRB_DISCLAIMER}</p>
         </div>
       </div>
+      <div className="container-custom pb-8"><ComplianceFooter variant="firb" /></div>
+
     </div>
   );
 }

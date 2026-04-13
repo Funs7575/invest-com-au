@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
+
+const log = logger("advisor-apply:photo");
 
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
@@ -51,7 +54,7 @@ export async function POST(request: NextRequest) {
       });
 
     if (uploadError) {
-      console.error("Application photo upload error:", uploadError);
+      log.error("Application photo upload error:", uploadError);
       return NextResponse.json({ error: "Upload failed" }, { status: 500 });
     }
 
@@ -61,7 +64,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ publicUrl: urlData.publicUrl });
   } catch (error) {
-    console.error("Application photo upload error:", error);
+    log.error("Application photo upload error:", error);
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });
   }
 }

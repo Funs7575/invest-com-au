@@ -4,6 +4,7 @@ import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import { STATE_SURCHARGES } from "@/lib/firb-data";
 import { FIRB_DISCLAIMER, FOREIGN_BUYER_STAMP_DUTY_WARNING } from "@/lib/compliance";
 import SectionHeading from "@/components/SectionHeading";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const metadata: Metadata = {
   title: "Foreign Buyer Stamp Duty by State (2026)",
@@ -335,6 +336,8 @@ export default function StampDutyForeignBuyersPage() {
           <p className="text-xs text-slate-500 leading-relaxed">{FOREIGN_BUYER_STAMP_DUTY_WARNING}</p>
         </div>
       </div>
+      <div className="container-custom pb-8"><ComplianceFooter variant="firb" /></div>
+
     </div>
   );
 }

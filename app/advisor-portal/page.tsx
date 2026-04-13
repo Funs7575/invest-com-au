@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import Icon from "@/components/Icon";
 import AdvisorPhotoUpload from "@/components/AdvisorPhotoUpload";
 import LeadScoreBadge from "@/components/LeadScoreBadge";
@@ -1851,7 +1852,7 @@ export default function AdvisorPortalPage() {
                         <div key={m.id} className="py-3 flex items-center justify-between gap-3">
                           <div className="flex items-center gap-3 min-w-0">
                             {m.photo_url ? (
-                              <img src={m.photo_url} alt="" className="w-9 h-9 rounded-full object-cover shrink-0" />
+                              <Image src={m.photo_url} alt="" width={36} height={36} className="w-9 h-9 rounded-full object-cover shrink-0" sizes="36px" />
                             ) : (
                               <div className="w-9 h-9 bg-violet-100 rounded-full flex items-center justify-center text-xs font-bold text-violet-600 shrink-0">{m.name?.[0]}</div>
                             )}
@@ -2045,7 +2046,7 @@ export default function AdvisorPortalPage() {
                                 <td className="px-4 py-2.5">
                                   <div className="flex items-center gap-2">
                                     {m.photo_url ? (
-                                      <img src={m.photo_url} alt="" className="w-6 h-6 rounded-full object-cover shrink-0" />
+                                      <Image src={m.photo_url} alt="" width={24} height={24} className="w-6 h-6 rounded-full object-cover shrink-0" sizes="24px" />
                                     ) : (
                                       <div className="w-6 h-6 bg-violet-100 rounded-full flex items-center justify-center text-[0.56rem] font-bold text-violet-600 shrink-0">{m.name?.[0]}</div>
                                     )}

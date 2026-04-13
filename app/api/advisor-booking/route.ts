@@ -3,6 +3,9 @@ import { createClient } from "@/lib/supabase/server";
 import { isRateLimited } from "@/lib/rate-limit";
 import { escapeHtml } from "@/lib/html-escape";
 import { getSiteUrl } from "@/lib/url";
+import { logger } from "@/lib/logger";
+
+const log = logger("advisor-booking");
 
 // GET available slots for an advisor
 export async function GET(request: NextRequest) {
@@ -154,7 +157,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, bookingId: booking?.id });
   } catch (error) {
-    console.error("Booking error:", error);
+    log.error("Booking error:", error);
     return NextResponse.json({ error: "Failed" }, { status: 500 });
   }
 }
