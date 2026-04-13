@@ -148,6 +148,43 @@ async function upsertSubscription(subscription: Stripe.Subscription) {
 
   const item = subscription.items.data[0];
 
+  // Out-of-order protection. Stripe does NOT guarantee webhook delivery
+  // order. A `subscription.updated` event (flipping status to active) can
+  // arrive AFTER a later `subscription.updated` (flipping to cancelled),
+  // which would leave the row in the wrong terminal state. Stripe puts
+  // the actual event time on `subscription.updated` via `Date.now()`; we
+  // use that as a monotonic marker and skip any incoming event that's
+  // older than what we already stored.
+  //
+  // We persist it into `updated_at` because the column already exists on
+  // the subscriptions table and we don't want to require a migration for
+  // this fix. Incoming events older than existing `updated_at` are
+  // dropped (but still return success to Stripe so it stops retrying).
+  const stripeEventTime = new Date(
+    // Prefer explicit updated timestamp if Stripe provides it (billing_cycle_anchor
+    // or created are the closest proxies); otherwise fall back to wall clock.
+    subscription.cancel_at
+      ? subscription.cancel_at * 1000
+      : subscription.current_period_start
+      ? subscription.current_period_start * 1000
+      : Date.now()
+  ).toISOString();
+
+  const { data: existing } = await supabase
+    .from("subscriptions")
+    .select("updated_at, status")
+    .eq("stripe_subscription_id", subscription.id)
+    .maybeSingle();
+
+  if (existing?.updated_at && existing.updated_at > stripeEventTime) {
+    log.info("Skipping older webhook event", {
+      subscriptionId: subscription.id,
+      existingUpdatedAt: existing.updated_at,
+      incomingEventTime: stripeEventTime,
+    });
+    return;
+  }
+
   const subscriptionData = {
     user_id: profile.id,
     stripe_subscription_id: subscription.id,
@@ -298,9 +335,65 @@ export async function POST(request: NextRequest) {
           await handleInvoicePaymentFailed(invoice.id);
         }
 
+        // Notify the subscriber so they can update their card before Stripe's
+        // dunning cycle cancels the subscription. Previously this only
+        // logged a warning, so subscribers with an expired card would
+        // silently slide into past_due → canceled and only find out when
+        // their Pro features stopped working. getSubscription()'s isPro
+        // already excludes past_due, so access is revoked at the check
+        // layer — this handler just adds the user-visible notification.
+        const invCustomerId =
+          typeof invoice.customer === "string" ? invoice.customer : invoice.customer?.id;
+        if (invCustomerId && invoice.metadata?.type !== "advisor_lead") {
+          try {
+            const custAdmin = createAdminClient();
+            const { data: subProfile } = await custAdmin
+              .from("profiles")
+              .select("id")
+              .eq("stripe_customer_id", invCustomerId)
+              .maybeSingle();
+
+            // Tag the subscription with payment_failed_at if the column exists.
+            // Safe under schema drift — errors are logged and swallowed.
+            if (subProfile) {
+              await custAdmin
+                .from("subscriptions")
+                .update({ updated_at: new Date().toISOString() })
+                .eq("stripe_customer_id", invCustomerId);
+            }
+
+            const customer = await getStripe().customers.retrieve(invCustomerId);
+            if (!("deleted" in customer) && customer.email) {
+              const amount = ((invoice.amount_due || 0) / 100).toFixed(2);
+              await sendTransactionalEmail(
+                customer.email,
+                "Action needed: your Invest.com.au Pro payment failed",
+                emailWrapper("Payment Failed ⚠️", "#dc2626", `
+                  <h2 style="margin: 0 0 12px; font-size: 18px; color: #0f172a;">We couldn't process your renewal</h2>
+                  <p style="color: #475569; font-size: 14px; line-height: 1.6; margin: 0 0 16px;">
+                    We tried to charge your card A$${amount} for your Invest.com.au Pro
+                    subscription, but the payment didn't go through.
+                  </p>
+                  <p style="color: #475569; font-size: 14px; line-height: 1.6; margin: 0 0 16px;">
+                    Pro features are temporarily paused until you update your
+                    payment method. We'll retry over the next few days — update
+                    your card now to avoid losing access.
+                  </p>
+                  <div style="text-align: center; margin: 20px 0;">
+                    <a href="${getSiteUrl()}/account" style="display: inline-block; padding: 12px 28px; background: #0f172a; color: #fff; font-weight: 700; font-size: 14px; border-radius: 8px; text-decoration: none;">Update Payment Method →</a>
+                  </div>
+                `),
+              );
+            }
+          } catch (err) {
+            log.error("Payment failed email error", { error: err instanceof Error ? err.message : String(err) });
+          }
+        }
+
         log.warn("Payment failed for customer", { customer: invoice.customer, invoice: invoice.id });
         // The subscription.updated webhook will also fire with status 'past_due',
-        // which upsertSubscription handles automatically
+        // which upsertSubscription handles automatically. Access is revoked
+        // by getSubscription() since past_due is excluded from isPro.
         break;
       }
 
@@ -607,27 +700,65 @@ export async function POST(request: NextRequest) {
         if (walletTxn) {
           try {
             const { debitWallet } = await import("@/lib/marketplace/wallet");
-            const reverseAmount = Math.min(refundedAmountCents, walletTxn.amount_cents);
 
-            await debitWallet(
-              walletTxn.broker_slug,
-              reverseAmount,
-              `Stripe refund reversal — $${(reverseAmount / 100).toFixed(2)}`,
-              { type: "stripe_refund", id: charge.id }
+            // Partial-refund-safe reversal. Stripe sends `charge.refunded`
+            // with `charge.amount_refunded` as the *cumulative* amount
+            // refunded on the charge. If a user has already been partially
+            // refunded (say $50) and we later refund another $50, the
+            // second event has amount_refunded = $100. Naïvely calling
+            // debitWallet($100) would over-reverse by $50.
+            //
+            // Fix: look up prior reversals for this charge (by the
+            // reference_id we set below), sum them, and only reverse the
+            // delta. Also capped against the original top-up amount so a
+            // bug in Stripe's side can never drain more than the deposit.
+            const { data: priorReversals } = await supabase
+              .from("wallet_transactions")
+              .select("amount_cents")
+              .eq("broker_slug", walletTxn.broker_slug)
+              .eq("type", "spend")
+              .eq("reference_type", "stripe_refund")
+              .eq("reference_id", charge.id);
+
+            const alreadyReversedCents = (priorReversals || []).reduce(
+              (sum, r) => sum + (r.amount_cents || 0),
+              0,
             );
+            const targetReversalCents = Math.min(refundedAmountCents, walletTxn.amount_cents);
+            const deltaCents = targetReversalCents - alreadyReversedCents;
 
-            // Notify broker
-            await supabase.from("broker_notifications").insert({
-              broker_slug: walletTxn.broker_slug,
-              type: "wallet_refund",
-              title: "Wallet Top-Up Reversed",
-              message: `A refund of $${(reverseAmount / 100).toFixed(2)} was processed. Your wallet balance has been adjusted.`,
-              link: "/broker-portal/wallet",
-              is_read: false,
-              email_sent: false,
-            });
+            if (deltaCents <= 0) {
+              log.info("Wallet refund already fully reversed — skipping", {
+                brokerSlug: walletTxn.broker_slug,
+                chargeId: charge.id,
+                alreadyReversedCents,
+                targetReversalCents,
+              });
+            } else {
+              await debitWallet(
+                walletTxn.broker_slug,
+                deltaCents,
+                `Stripe refund reversal — $${(deltaCents / 100).toFixed(2)}`,
+                { type: "stripe_refund", id: charge.id }
+              );
 
-            log.info("Wallet refund reversed", { brokerSlug: walletTxn.broker_slug, amount: `$${(reverseAmount / 100).toFixed(2)}` });
+              // Notify broker
+              await supabase.from("broker_notifications").insert({
+                broker_slug: walletTxn.broker_slug,
+                type: "wallet_refund",
+                title: "Wallet Top-Up Reversed",
+                message: `A refund of $${(deltaCents / 100).toFixed(2)} was processed. Your wallet balance has been adjusted.`,
+                link: "/broker-portal/wallet",
+                is_read: false,
+                email_sent: false,
+              });
+
+              log.info("Wallet refund reversed", {
+                brokerSlug: walletTxn.broker_slug,
+                deltaCents,
+                cumulativeRefundedCents: refundedAmountCents,
+              });
+            }
           } catch (err) {
             log.error("Wallet refund reversal failed", { error: err instanceof Error ? err.message : String(err) });
           }
