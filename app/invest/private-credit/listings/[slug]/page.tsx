@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
+import ListingImageGallery from "@/components/ListingImageGallery";
 import ListingCard, { type InvestmentListing } from "@/components/ListingCard";
 import ListingEnquiryForm from "@/components/ListingEnquiryForm";
 
@@ -135,6 +136,7 @@ export default async function PrivateCreditListingDetailPage({
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Left: details */}
             <div className="lg:col-span-2 space-y-6">
+              <ListingImageGallery images={l.images} alt={l.title} />
               {/* Price card */}
               <div className="bg-white border border-slate-200 rounded-xl p-6">
                 <div className="flex flex-wrap items-center justify-between gap-4">

@@ -4,6 +4,7 @@ import { useCallback, useMemo } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import type { InvestmentListing, InvestListingVertical } from "@/lib/types";
+import { listingUrl, VERTICAL_TO_CATEGORY, FUND_SUB_TO_CATEGORY, categoryForListing } from "@/lib/listing-url";
 
 // ─── Props ───────────────────────────────────────────────────────────
 export interface InvestListingsClientProps {
@@ -13,33 +14,9 @@ export interface InvestListingsClientProps {
   initialSubcategory?: string;
 }
 
-// ─── Vertical → category slug mapping ────────────────────────────────
-const VERTICAL_TO_CATEGORY: Record<InvestListingVertical, string> = {
-  business: "buy-business",
-  commercial_property: "commercial-property",
-  energy: "renewable-energy",
-  farmland: "farmland",
-  franchise: "franchise",
-  fund: "funds",
-  mining: "mining",
-  startup: "startups",
-};
-
-/** Fund sub-categories that belong to non-"funds" categories */
-const FUND_SUB_TO_CATEGORY: Record<string, string> = {
-  art: "alternatives",
-  wine: "alternatives",
-  private_credit: "private-credit",
-  infrastructure: "infrastructure",
-};
-
-function categoryForListing(listing: InvestmentListing): string {
-  if (listing.vertical === "fund" && listing.sub_category) {
-    const override = FUND_SUB_TO_CATEGORY[listing.sub_category];
-    if (override) return override;
-  }
-  return VERTICAL_TO_CATEGORY[listing.vertical] ?? "funds";
-}
+// VERTICAL_TO_CATEGORY, FUND_SUB_TO_CATEGORY, and categoryForListing
+// are imported from @/lib/listing-url so all link generation uses the
+// same canonical category mapping.
 
 // ─── Category colors (pill styling) ─────────────────────────────────
 const CATEGORY_COLORS: Record<string, { bg: string; text: string; ring: string }> = {
@@ -301,7 +278,7 @@ export default function InvestListingsClient({
               return (
                 <Link
                   key={listing.id}
-                  href={`/invest/listing/${listing.slug}`}
+                  href={listingUrl(listing)}
                   className="group relative block rounded-xl border border-slate-200 bg-white transition-all duration-200 hover:shadow-lg hover:scale-[1.01]"
                 >
                   <div className="p-4">
