@@ -154,6 +154,61 @@ const nextConfig: NextConfig = {
         destination: "/invest/:category/listings/:subcategory",
         permanent: true,
       },
+      // ── /invest/listing/[slug] catch-all (deleted route) ──
+      // Old inbound links from before the listings system cleanup used
+      // a flat `/invest/listing/[slug]` URL that no longer exists.
+      // Google + Reddit + Twitter backlinks still point at these. Route
+      // them to the new category-scoped URL — we can't reliably know the
+      // vertical from the slug alone, so fall back to the category
+      // homepage which has a search/filter onto the listing.
+      {
+        source: "/invest/listing/:slug",
+        destination: "/invest/listings/:slug",
+        permanent: true,
+      },
+      // ── Old mining/energy/startup URL shapes ──
+      // These were previously under plural paths like `/mining/opportunities/`.
+      // The slug-level redirects below cover the remaining shape variants
+      // the generic :category/:path catch doesn't reach (e.g. the absence
+      // of a category path param in the old URL).
+      {
+        source: "/mining/opportunities/:slug",
+        destination: "/invest/mining/listings/:slug",
+        permanent: true,
+      },
+      {
+        source: "/renewable-energy/projects/:slug",
+        destination: "/invest/renewable-energy/listings/:slug",
+        permanent: true,
+      },
+      {
+        source: "/startups/opportunities/:slug",
+        destination: "/invest/startups/listings/:slug",
+        permanent: true,
+      },
+      // ── Pre-IA-overhaul discovery-page redirects ──
+      // Legacy /investments and /discover catch-alls that pre-date the
+      // current /invest hierarchy.
+      {
+        source: "/investments",
+        destination: "/invest",
+        permanent: true,
+      },
+      {
+        source: "/investments/:path*",
+        destination: "/invest/:path*",
+        permanent: true,
+      },
+      {
+        source: "/discover",
+        destination: "/invest",
+        permanent: true,
+      },
+      {
+        source: "/discover/:path*",
+        destination: "/invest/:path*",
+        permanent: true,
+      },
     ];
   },
 };
