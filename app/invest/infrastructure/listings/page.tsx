@@ -3,8 +3,9 @@ import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import type { InvestmentListing } from "@/lib/types";
-import { getAllInvestCategories } from "@/lib/invest-categories";
+import { getAllInvestCategories, getInvestCategoryBySlug } from "@/lib/invest-categories";
 import InvestListingsClient from "@/components/InvestListingsClient";
+import SubCategoryNav from "@/components/SubCategoryNav";
 
 export const revalidate = 300;
 
@@ -42,6 +43,7 @@ export default async function InfrastructureListingsPage() {
 
   const listings: InvestmentListing[] = (data ?? []) as InvestmentListing[];
   const categoryTabs = getAllInvestCategories().map((c) => ({ slug: c.slug, label: c.label }));
+  const category = getInvestCategoryBySlug("infrastructure");
 
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
@@ -56,6 +58,11 @@ export default async function InfrastructureListingsPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+      {category && (
+        <div className="container-custom pt-6">
+          <SubCategoryNav category={category} />
+        </div>
+      )}
       <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading listings...</div>}>
         <InvestListingsClient listings={listings} categories={categoryTabs} initialCategory="infrastructure" />
       </Suspense>

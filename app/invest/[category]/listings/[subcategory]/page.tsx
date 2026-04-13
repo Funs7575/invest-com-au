@@ -20,6 +20,7 @@ import {
 import InvestListingCard from "@/components/InvestListingCard";
 import { listingUrl } from "@/lib/listing-url";
 import ScrollReveal from "@/components/ScrollReveal";
+import SubCategoryNav from "@/components/SubCategoryNav";
 
 export const revalidate = 3600;
 
@@ -187,6 +188,9 @@ export default async function InvestSubcategoryListingsPage({
               </p>
             </details>
           </div>
+
+          {/* Shared sub-category nav (consistent with /listings page) */}
+          <SubCategoryNav category={cat} activeSubcategory={subcategory} />
 
           {/* Sub-category sibling navigation */}
           <div className="flex flex-wrap gap-1.5 mb-4 md:mb-6">
