@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
 import { CURRENT_YEAR, SITE_NAME } from "@/lib/seo";
 import SavingsCalculatorClient from "./SavingsCalculatorClient";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const revalidate = 3600;
 
@@ -40,6 +41,8 @@ export default async function SavingsCalculatorPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <SavingsCalculatorClient accounts={accounts || []} />
+      <div className="container-custom pb-8"><ComplianceFooter variant="calculator" /></div>
+
     </>
   );
 }

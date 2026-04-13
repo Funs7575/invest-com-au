@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { CURRENT_YEAR, SITE_NAME } from "@/lib/seo";
 import MortgageCalculatorClient from "./MortgageCalculatorClient";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const revalidate = 3600;
 
@@ -32,6 +33,8 @@ export default function MortgageCalculatorPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <MortgageCalculatorClient />
+      <div className="container-custom pb-8"><ComplianceFooter variant="calculator" /></div>
+
     </>
   );
 }

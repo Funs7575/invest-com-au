@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { absoluteUrl, breadcrumbJsonLd, SITE_NAME } from "@/lib/seo";
 import FrankingClient from "./FrankingClient";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const revalidate = 3600;
 
@@ -112,6 +113,8 @@ export default function FrankingCreditsCalculatorPage() {
       <Suspense fallback={<Loading />}>
         <FrankingClient />
       </Suspense>
+      <div className="container-custom pb-8"><ComplianceFooter variant="calculator" /></div>
+
     </>
   );
 }

@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { UPDATED_LABEL } from "@/lib/seo";
 import ETFCompareClient from "./ETFCompareClient";
 import CompareNav from "../CompareNav";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const metadata = {
   title: "Compare Australian ETFs — Fees, Returns & Holdings (2026)",
@@ -36,6 +37,9 @@ export default function ETFComparePage() {
       />
       <Suspense><CompareNav /></Suspense>
       <ETFCompareClient />
+      <div className="container-custom pb-8">
+        <ComplianceFooter />
+      </div>
     </>
   );
 }

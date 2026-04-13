@@ -17,6 +17,7 @@ import {
 import { scoreBrokerSimilarity } from "@/lib/internal-links";
 import QASection from "@/components/QASection";
 import AskQuestionForm from "@/components/AskQuestionForm";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const revalidate = 3600; // ISR: revalidate every hour
 
@@ -315,6 +316,9 @@ async function BrokerQASection({ brokerSlug, brokerName, pageUrl }: { brokerSlug
         pageType="broker"
         pageSlug={brokerSlug}
       />
+      <div className="container-custom pb-8">
+        <ComplianceFooter />
+      </div>
     </>
   );
 }

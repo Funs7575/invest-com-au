@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { UPDATED_LABEL } from "@/lib/seo";
 import SuperCompareClient from "./SuperCompareClient";
 import CompareNav from "../CompareNav";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const metadata = {
   title: "Compare Super Funds — Fees & Performance (2026)",
@@ -83,6 +84,9 @@ export default function SuperComparePage() {
       />
       <Suspense><CompareNav /></Suspense>
       <SuperCompareClient />
+      <div className="container-custom pb-8">
+        <ComplianceFooter />
+      </div>
     </>
   );
 }

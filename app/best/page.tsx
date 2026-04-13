@@ -4,6 +4,7 @@ import { getAllCategories } from "@/lib/best-broker-categories";
 import { absoluteUrl, breadcrumbJsonLd, REVIEW_AUTHOR, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import { SHOW_BEST_PICKS } from "@/lib/compliance-config";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const revalidate = 3600;
 
@@ -172,6 +173,7 @@ export default function BestBrokersHub() {
               </Link>
             </p>
           </div>
+          <ComplianceFooter />
         </div>
       </div>
     </>

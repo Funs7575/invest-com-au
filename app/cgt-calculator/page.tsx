@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR, SITE_NAME } from "@/lib/seo";
 import CgtClient from "./CgtClient";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const revalidate = 3600;
 
@@ -112,6 +113,8 @@ export default function CgtCalculatorPage() {
       <Suspense fallback={<Loading />}>
         <CgtClient />
       </Suspense>
+      <div className="container-custom pb-8"><ComplianceFooter variant="calculator" /></div>
+
     </>
   );
 }

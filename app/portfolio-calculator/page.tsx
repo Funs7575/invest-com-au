@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { Broker } from "@/lib/types";
 import PortfolioCalculatorClient from "./PortfolioCalculatorClient";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const revalidate = 3600; // ISR: revalidate every hour
 
@@ -43,6 +44,8 @@ export default async function PortfolioCalculatorPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
       <PortfolioCalculatorClient brokers={(brokers as Broker[]) || []} />
+      <div className="container-custom pb-8"><ComplianceFooter variant="calculator" /></div>
+
     </>
   );
 }
