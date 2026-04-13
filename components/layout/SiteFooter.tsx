@@ -20,101 +20,79 @@ export function SiteFooter() {
     <footer className="bg-slate-900 text-slate-300">
       {/* Main grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-8">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 mb-12">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-8 mb-12">
           {/* Column 1 — Compare */}
-          <details className="group" open>
-            <summary className="flex items-center justify-between cursor-pointer md:cursor-default list-none">
-              <h3 className="text-white font-bold text-sm">Compare</h3>
-              <svg className="w-4 h-4 text-slate-500 group-open:rotate-180 transition-transform md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-            </summary>
-            <ul className="space-y-1 text-sm">
-              {[
-                { label: "Compare All Platforms", href: "/compare" },
-                { label: "Share Trading", href: "/share-trading" },
-                { label: "Crypto", href: "/crypto" },
-                { label: "Super Funds", href: "/compare/super" },
-                { label: "Savings", href: "/savings" },
-                { label: "Current Deals", href: "/deals" },
-              ].map((item) => (
-                <li key={item.href}>
-                  <Link href={item.href} className="hover:text-amber-400 transition-colors py-1.5 block min-h-[44px] flex items-center">
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </details>
+          <FooterColumn title="Compare" items={[
+            { label: "Compare All Platforms", href: "/compare" },
+            { label: "Share Trading", href: "/share-trading" },
+            { label: "ETFs", href: "/compare/etfs" },
+            { label: "Crypto", href: "/crypto" },
+            { label: "Super Funds", href: "/compare/super" },
+            { label: "Savings Accounts", href: "/savings" },
+            { label: "Current Deals", href: "/deals" },
+            { label: "Broker vs Broker", href: "/versus" },
+          ]} />
 
-          {/* Column 2 — Invest */}
-          <details className="group" open>
-            <summary className="flex items-center justify-between cursor-pointer md:cursor-default list-none">
-              <h3 className="text-white font-bold text-sm">Invest</h3>
-              <svg className="w-4 h-4 text-slate-500 group-open:rotate-180 transition-transform md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-            </summary>
-            <ul className="space-y-1 text-sm">
-              {[
-                { label: "All Verticals", href: "/invest" },
-                { label: "Marketplace", href: "/invest/listings" },
-                { label: "Mining", href: "/invest/mining" },
-                { label: "Buy a Business", href: "/invest/buy-business" },
-                { label: "Alternatives", href: "/invest/alternatives" },
-                { label: "Private Credit", href: "/invest/private-credit" },
-              ].map((item) => (
-                <li key={item.href}>
-                  <Link href={item.href} className="hover:text-amber-400 transition-colors py-1.5 block min-h-[44px] flex items-center">
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </details>
+          {/* Column 2 — Tools */}
+          <FooterColumn title="Tools" items={[
+            { label: "All Calculators (25)", href: "/calculators" },
+            { label: "Quick Audit", href: "/quick-audit" },
+            { label: "Portfolio X-Ray", href: "/portfolio-xray" },
+            { label: "Tax Optimizer", href: "/tax-optimizer" },
+            { label: "Fee Simulator", href: "/fee-simulator" },
+            { label: "Switching Calculator", href: "/switching-calculator" },
+            { label: "Mortgage Calculator", href: "/mortgage-calculator" },
+            { label: "Fee Alerts", href: "/fee-alerts" },
+          ]} />
 
-          {/* Column 3 — Learn */}
-          <details className="group" open>
-            <summary className="flex items-center justify-between cursor-pointer md:cursor-default list-none">
-              <h3 className="text-white font-bold text-sm">Learn</h3>
-              <svg className="w-4 h-4 text-slate-500 group-open:rotate-180 transition-transform md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-            </summary>
-            <ul className="space-y-1 text-sm">
-              {[
-                { label: "All Articles", href: "/articles" },
-                { label: "How-To Guides", href: "/how-to" },
-                { label: "Calculators", href: "/calculators" },
-                { label: "Glossary", href: "/glossary" },
-                { label: "Community Forum", href: "/community" },
-                { label: "Foreign Investors", href: "/foreign-investment" },
-              ].map((item) => (
-                <li key={item.href}>
-                  <Link href={item.href} className="hover:text-amber-400 transition-colors py-1.5 block min-h-[44px] flex items-center">
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </details>
+          {/* Column 3 — Invest */}
+          <FooterColumn title="Invest" items={[
+            { label: "All Verticals", href: "/invest" },
+            { label: "Investment Marketplace", href: "/invest/listings" },
+            { label: "Mining", href: "/invest/mining" },
+            { label: "Farmland", href: "/invest/farmland" },
+            { label: "Buy a Business", href: "/invest/buy-business" },
+            { label: "Commercial Property", href: "/invest/commercial-property" },
+            { label: "Alternatives", href: "/invest/alternatives" },
+            { label: "Private Credit", href: "/invest/private-credit" },
+          ]} />
 
-          {/* Column 4 — Company */}
-          <details className="group" open>
-            <summary className="flex items-center justify-between cursor-pointer md:cursor-default list-none">
-              <h3 className="text-white font-bold text-sm">Company</h3>
-              <svg className="w-4 h-4 text-slate-500 group-open:rotate-180 transition-transform md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-            </summary>
-            <ul className="space-y-1 text-sm">
-              {[
-                { label: "About Us", href: "/about" },
-                { label: "Methodology", href: "/methodology" },
-                { label: "How We Earn", href: "/how-we-earn" },
-                { label: "Contact", href: "/contact" },
-                { label: "Complaints & AFCA", href: "/complaints" },
-              ].map((item) => (
-                <li key={item.href}>
-                  <Link href={item.href} className="hover:text-amber-400 transition-colors py-1.5 block min-h-[44px] flex items-center">
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </details>
+          {/* Column 4 — Property & Advisors */}
+          <FooterColumn title="Property & Advisors" items={[
+            { label: "Investment Property", href: "/property" },
+            { label: "Suburb Research", href: "/property/suburbs" },
+            { label: "Buyer's Agents", href: "/property/buyer-agents" },
+            { label: "Mortgage Brokers", href: "/advisors/mortgage-brokers" },
+            { label: "Financial Advisers", href: "/advisors/financial-planners" },
+            { label: "SMSF Accountants", href: "/advisors/smsf-accountants" },
+            { label: "Tax Agents", href: "/advisors/tax-agents" },
+            { label: "All Advisors", href: "/advisors" },
+          ]} />
+
+          {/* Column 5 — Learn & Community */}
+          <FooterColumn title="Learn & Community" items={[
+            { label: "All Articles", href: "/articles" },
+            { label: "How-To Guides", href: "/how-to" },
+            { label: "Glossary", href: "/glossary" },
+            { label: "Community Forum", href: "/community" },
+            { label: "Annual Report", href: "/reports/annual" },
+            { label: "Write a Review", href: "/reviews/write" },
+            { label: "Foreign Investors", href: "/foreign-investment" },
+            { label: "Quiz", href: "/quiz" },
+          ]} />
+
+          {/* Column 6 — Company & Account */}
+          <FooterColumn title="Company" items={[
+            { label: "About Us", href: "/about" },
+            { label: "Methodology", href: "/methodology" },
+            { label: "How We Earn", href: "/how-we-earn" },
+            { label: "Contact", href: "/contact" },
+            { label: "Complaints & AFCA", href: "/complaints" },
+            { label: "Sign In", href: "/auth/login" },
+            { label: "Create Account", href: "/auth/signup" },
+            { label: "Advertise", href: "/advertise/packages" },
+            { label: "Developer API", href: "/api-docs" },
+          ]} />
         </div>
 
         {/* Compliance Section */}
@@ -210,5 +188,26 @@ export function SiteFooter() {
         </div>
       </div>
     </footer>
+  );
+}
+
+// ─── Helper: Footer column with collapsible mobile behavior ──────────────
+function FooterColumn({ title, items }: { title: string; items: { label: string; href: string }[] }) {
+  return (
+    <details className="group" open>
+      <summary className="flex items-center justify-between cursor-pointer md:cursor-default list-none mb-2">
+        <h3 className="text-white font-bold text-sm">{title}</h3>
+        <svg className="w-4 h-4 text-slate-500 group-open:rotate-180 transition-transform md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+      </summary>
+      <ul className="space-y-0.5 text-sm">
+        {items.map((item) => (
+          <li key={item.href}>
+            <Link href={item.href} className="hover:text-amber-400 transition-colors py-1.5 block min-h-[36px] flex items-center">
+              {item.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </details>
   );
 }
