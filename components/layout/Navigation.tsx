@@ -69,6 +69,7 @@ const advisorsMenu = {
   wealth: [
     { label: "Financial Advisers Directory", href: "/advisors/financial-planners", desc: "Wealth strategy & retirement" },
     { label: "SMSF Accountants", href: "/advisors/smsf-accountants", desc: "Self-managed super specialists" },
+    { label: "Full-Service Stockbrokers", href: "/brokers/full-service", desc: "Morgans, Ord Minnett, Shaw & more" },
     { label: "Insurance Brokers", href: "/advisors/insurance-brokers", desc: "Life & income protection" },
     { label: "Tax Agents", href: "/advisors/tax-agents", desc: "Tax planning & lodgement" },
     { label: "Estate Planners", href: "/advisors/estate-planners", desc: "Wills, trusts & succession" },

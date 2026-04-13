@@ -491,6 +491,43 @@ export const VERIFICATION_CONFIGS: Record<ProfessionalType, VerificationConfig> 
     cpd: "State-based CPD requirements. NSW mandates annual CPD training. QLD requires 2 sessions/year from June 2025. VIC requires ongoing training for licence renewal.",
     disclosure: "Real estate agents are licensed under state-based property legislation, not federal ASIC regulation. Licensing requirements differ between states. Always verify an agent's licence with your state's Fair Trading or Office of Fair Trading before engaging their services.",
   },
+  stockbroker_firm: {
+    type: "stockbroker_firm",
+    label: "Full-Service Stockbroker",
+    primaryLicence: AFSL,
+    additionalLicences: [],
+    qualifications: [
+      "Firm holds an AFSL covering dealing in securities and providing financial product advice",
+      "Authorised representatives must satisfy ASIC RG 146 / education standards under Corporations Act s921B",
+      "Many firms are also Market Participants of the ASX and/or Cboe Australia",
+    ],
+    associations: [
+      { name: "Stockbrokers and Investment Advisers Association", acronym: "SIAA", url: "https://www.stockbrokers.org.au" },
+      { name: "ASX Market Participant", acronym: "ASX", url: "https://www.asx.com.au" },
+    ],
+    insurance: "Professional Indemnity Insurance — mandatory under AFSL conditions",
+    edr: "Must be a member of AFCA (Australian Financial Complaints Authority)",
+    cpd: "Authorised representatives subject to ongoing CPD obligations under ASIC standards",
+    disclosure: "Full-service stockbroking firms operate under an AFSL and are typically Market Participants of the ASX. They can provide personal financial product advice and execute trades on your behalf. Always verify the firm's AFSL on the ASIC Financial Services Register and ask for a Financial Services Guide (FSG) before engaging.",
+  },
+  private_wealth_manager: {
+    type: "private_wealth_manager",
+    label: "Private Wealth Manager",
+    primaryLicence: AFSL,
+    additionalLicences: [],
+    qualifications: [
+      "Firm holds an AFSL covering managed discretionary account services and/or financial product advice",
+      "Senior advisers typically hold CFP, CFA, or equivalent post-graduate qualifications",
+    ],
+    associations: [
+      { name: "Stockbrokers and Investment Advisers Association", acronym: "SIAA", url: "https://www.stockbrokers.org.au" },
+      { name: "CFA Society Australia", acronym: "CFA", url: "https://www.cfasociety.org/australia" },
+    ],
+    insurance: "Professional Indemnity Insurance — mandatory under AFSL conditions",
+    edr: "Must be a member of AFCA",
+    cpd: "Subject to ongoing CPD obligations under ASIC standards and any internal qualifications",
+    disclosure: "Private wealth managers operate under an AFSL and may provide discretionary portfolio management. Verify the firm's AFSL and request a Financial Services Guide (FSG) before engaging.",
+  },
 };
 
 // ═══════════════════════════════════════════════════════════════════
