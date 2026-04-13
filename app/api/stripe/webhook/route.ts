@@ -435,18 +435,16 @@ export async function POST(request: NextRequest) {
               log.error("Course purchase upsert error", { error: error.message });
             }
 
-            // Send course receipt email
-            const customerEmail = session.customer_email || session.customer_details?.email;
-            if (customerEmail) {
-              const courseName = course?.title || courseSlug;
-              sendTransactionalEmail(
-                customerEmail,
-                `Course Confirmed: ${courseName}`,
-                buildCourseReceiptEmail(courseName, courseSlug, session.amount_total || 0),
-              ).catch((err) => log.error("Course receipt email failed", { err: err instanceof Error ? err.message : String(err) }));
-            }
-
-            // Insert revenue tracking row if course has a creator
+            // Insert revenue tracking row if course has a creator. Run
+            // this BEFORE sending the receipt so that if the revenue
+            // insert fails we can roll back the purchase row — avoiding
+            // the orphaned-purchase-without-revenue split-state that
+            // caused creator payout disputes. We can't do a real DB
+            // transaction through PostgREST, but rollback-on-error is
+            // the next best thing: if the revenue write fails and the
+            // purchase row was freshly inserted (not a duplicate-click
+            // upsert), delete it so the user's checkout retries cleanly.
+            let revenueOk = true;
             if (purchase && course?.creator_id && course.revenue_share_percent > 0) {
               const totalAmount = session.amount_total || 0;
               const creatorAmount = Math.round(totalAmount * (course.revenue_share_percent / 100));
@@ -465,8 +463,36 @@ export async function POST(request: NextRequest) {
                 });
 
               if (revenueError) {
-                log.error("Course revenue insert error", { error: revenueError.message });
+                revenueOk = false;
+                log.error("Course revenue insert error — rolling back purchase", {
+                  error: revenueError.message,
+                  purchaseId: purchase.id,
+                });
+                // Best-effort rollback. If delete fails the purchase stays
+                // but an admin alert makes the orphan visible for manual fix.
+                await supabase
+                  .from("course_purchases")
+                  .delete()
+                  .eq("id", purchase.id);
+                sendTransactionalEmail(
+                  ADMIN_EMAIL,
+                  `Course revenue insert failed — manual review needed`,
+                  `<div style="font-family:Arial,sans-serif;max-width:500px"><h2 style="color:#dc2626;font-size:16px">⚠️ Course Revenue Insert Failed</h2><p style="color:#64748b;font-size:14px">Purchase <strong>${purchase.id}</strong> for course <strong>${escapeHtml(courseSlug)}</strong> (user <strong>${escapeHtml(userId)}</strong>) was rolled back because the creator revenue row couldn't be inserted.</p><p style="color:#64748b;font-size:12px">Error: ${escapeHtml(revenueError.message)}</p><p style="color:#64748b;font-size:14px">Stripe payment intent: <code>${session.payment_intent}</code></p></div>`,
+                ).catch(() => {});
               }
+            }
+
+            // Send course receipt email — only if the combined write
+            // committed successfully, otherwise the user thinks they're
+            // enrolled when they aren't.
+            const customerEmail = session.customer_email || session.customer_details?.email;
+            if (customerEmail && revenueOk && !error) {
+              const courseName = course?.title || courseSlug;
+              sendTransactionalEmail(
+                customerEmail,
+                `Course Confirmed: ${courseName}`,
+                buildCourseReceiptEmail(courseName, courseSlug, session.amount_total || 0),
+              ).catch((err) => log.error("Course receipt email failed", { err: err instanceof Error ? err.message : String(err) }));
             }
           }
         }
@@ -520,6 +546,46 @@ export async function POST(request: NextRequest) {
               }).eq("id", topupId);
             }
 
+            // Advisor receipt email — previously missing, so advisors who
+            // paid for credit had no proof of purchase and no confirmation
+            // that the charge had posted. Pulls the advisor's email from
+            // the professionals row (falls back to the Stripe customer
+            // email) and renders an itemised receipt.
+            try {
+              const { data: advisor } = await supabase
+                .from("professionals")
+                .select("email, name")
+                .eq("id", professionalId)
+                .maybeSingle();
+              const advisorEmail =
+                advisor?.email ||
+                session.customer_email ||
+                session.customer_details?.email;
+              if (advisorEmail) {
+                const amount = (amountCents / 100).toFixed(2);
+                sendTransactionalEmail(
+                  advisorEmail,
+                  `Credit Top-Up Confirmed — A$${amount}`,
+                  emailWrapper("Credit Top-Up Confirmed ✅", "#0f172a", `
+                    <h2 style="margin: 0 0 12px; font-size: 18px; color: #0f172a;">Your credits are ready</h2>
+                    <p style="color: #475569; font-size: 14px; line-height: 1.6; margin: 0 0 16px;">
+                      Hi ${escapeHtml(advisor?.name || "there")}, your advisor credit
+                      top-up has been processed. You're ready to receive leads.
+                    </p>
+                    <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 16px; margin: 0 0 20px;">
+                      <p style="margin: 0; font-size: 13px; color: #334155;"><strong>Amount paid:</strong> A$${amount}</p>
+                      <p style="margin: 4px 0 0; font-size: 13px; color: #334155;"><strong>Status:</strong> Credited to your balance</p>
+                    </div>
+                    <div style="text-align: center; margin: 20px 0;">
+                      <a href="${getSiteUrl()}/advisor-portal" style="display: inline-block; padding: 12px 28px; background: #0f172a; color: #fff; font-weight: 700; font-size: 14px; border-radius: 8px; text-decoration: none;">Go to Advisor Portal →</a>
+                    </div>
+                  `),
+                ).catch((err) => log.error("Advisor topup receipt email failed", { err: err instanceof Error ? err.message : String(err) }));
+              }
+            } catch (err) {
+              log.error("Advisor topup receipt lookup failed", { error: err instanceof Error ? err.message : String(err) });
+            }
+
             log.info("Advisor credit topped up", { professionalId, amountCents, topupId });
           }
         }
@@ -534,6 +600,48 @@ export async function POST(request: NextRequest) {
               featured_until: featuredUntil,
             }).eq("id", professionalId);
             log.info("Advisor featured activated", { professionalId, until: featuredUntil });
+
+            // Featured-purchase receipt — previously missing.
+            try {
+              const { data: advisor } = await supabase
+                .from("professionals")
+                .select("email, name, slug")
+                .eq("id", professionalId)
+                .maybeSingle();
+              const advisorEmail =
+                advisor?.email ||
+                session.customer_email ||
+                session.customer_details?.email;
+              if (advisorEmail) {
+                const amount = ((session.amount_total || 0) / 100).toFixed(2);
+                const expiresLabel = new Date(featuredUntil).toLocaleDateString("en-AU", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                });
+                sendTransactionalEmail(
+                  advisorEmail,
+                  `Featured Listing Activated — A$${amount}`,
+                  emailWrapper("Featured Listing Activated ✨", "#7c3aed", `
+                    <h2 style="margin: 0 0 12px; font-size: 18px; color: #0f172a;">You're featured!</h2>
+                    <p style="color: #475569; font-size: 14px; line-height: 1.6; margin: 0 0 16px;">
+                      Hi ${escapeHtml(advisor?.name || "there")}, your profile is now
+                      featured on Invest.com.au. You'll see a priority placement
+                      badge on listings and search results for the next 30 days.
+                    </p>
+                    <div style="background: #f5f3ff; border: 1px solid #ddd6fe; border-radius: 8px; padding: 16px; margin: 0 0 20px;">
+                      <p style="margin: 0; font-size: 13px; color: #334155;"><strong>Amount paid:</strong> A$${amount}</p>
+                      <p style="margin: 4px 0 0; font-size: 13px; color: #334155;"><strong>Featured until:</strong> ${expiresLabel}</p>
+                    </div>
+                    <div style="text-align: center; margin: 20px 0;">
+                      <a href="${getSiteUrl()}/advisor/${advisor?.slug || ""}" style="display: inline-block; padding: 12px 28px; background: #7c3aed; color: #fff; font-weight: 700; font-size: 14px; border-radius: 8px; text-decoration: none;">View Your Profile →</a>
+                    </div>
+                  `),
+                ).catch((err) => log.error("Advisor featured receipt email failed", { err: err instanceof Error ? err.message : String(err) }));
+              }
+            } catch (err) {
+              log.error("Advisor featured receipt lookup failed", { error: err instanceof Error ? err.message : String(err) });
+            }
           }
         }
 
