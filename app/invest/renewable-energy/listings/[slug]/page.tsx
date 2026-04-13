@@ -32,7 +32,18 @@ export async function generateMetadata({
     title,
     description: data.description?.slice(0, 160) ?? `Renewable energy project in ${data.location_state ?? "Australia"}.`,
     alternates: { canonical: `${SITE_URL}/invest/renewable-energy/listings/${slug}` },
-    openGraph: { title, url: `${SITE_URL}/invest/renewable-energy/listings/${slug}` },
+    openGraph: {
+      title,
+      description: data.description?.slice(0, 160),
+      url: `${SITE_URL}/invest/renewable-energy/listings/${slug}`,
+      images: [{
+        url: `/api/og?title=${encodeURIComponent(data.title)}&type=invest`,
+        width: 1200,
+        height: 630,
+        alt: data.title,
+      }],
+    },
+    twitter: { card: "summary_large_image" as const },
   };
 }
 
