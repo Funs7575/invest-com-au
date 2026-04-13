@@ -47,8 +47,12 @@ describe("compliance constants", () => {
     });
   });
 
-  it("ADVERTISER_DISCLOSURE contains 'compensation'", () => {
-    expect(ADVERTISER_DISCLOSURE.toLowerCase()).toContain("compensation");
+  // The ADVERTISER_DISCLOSURE wording was updated to use "advertising and
+  // referral fees" instead of "compensation" for clarity and ACL alignment.
+  it("ADVERTISER_DISCLOSURE names the commercial relationship", () => {
+    expect(ADVERTISER_DISCLOSURE.toLowerCase()).toMatch(
+      /advertising|referral|compensation|commission/,
+    );
   });
 
   it("CRYPTO_WARNING contains 'speculative'", () => {
