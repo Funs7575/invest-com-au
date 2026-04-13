@@ -18,6 +18,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidateTag } from "next/cache";
 import { getAdminEmails } from "@/lib/admin";
@@ -45,17 +46,33 @@ const TABLE_CACHE_TAGS: Record<AllowedTable, string> = {
 
 export async function POST(req: NextRequest) {
   // ── Auth ──────────────────────────────────────────────────
-  const authHeader = req.headers.get("authorization");
-  const token = authHeader?.replace("Bearer ", "").trim();
-  if (token !== process.env.INTERNAL_API_KEY) {
+  // Require a real Supabase session whose email is on the admin allowlist.
+  // Previously this route accepted a shared INTERNAL_API_KEY and trusted
+  // `adminEmail` from the request body, which meant anyone with the
+  // environment token could:
+  //   (a) impersonate any admin email in the audit log (accountability bypass)
+  //   (b) stamp attribution on regulatory tax/rate updates that a specific
+  //       admin never actually made
+  // Derive the identity from the authenticated session instead.
+  const userClient = await createClient();
+  const {
+    data: { user },
+  } = await userClient.auth.getUser();
+
+  if (!user || !user.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const adminEmails = getAdminEmails();
+  const authedEmail = user.email.toLowerCase();
+  if (!adminEmails.includes(authedEmail)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   let body: {
     table: string;
     id: string;
     updates: Record<string, unknown>;
-    adminEmail: string;
     categoryKey: string;
     note?: string;
   };
@@ -66,9 +83,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { table, id, updates, adminEmail, categoryKey, note } = body;
+  const { table, id, updates, categoryKey, note } = body;
 
-  if (!table || !id || !updates || !adminEmail || !categoryKey) {
+  if (!table || !id || !updates || !categoryKey) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
 
@@ -76,10 +93,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Table not allowed" }, { status: 400 });
   }
 
-  const adminEmails = getAdminEmails();
-  if (!adminEmails.includes(adminEmail.toLowerCase())) {
-    return NextResponse.json({ error: "Not an admin email" }, { status: 403 });
-  }
+  // adminEmail is now derived from the verified session, not the request body
+  const adminEmail = authedEmail;
 
   const supabase = createAdminClient();
 

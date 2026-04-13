@@ -9,6 +9,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidateTag } from "next/cache";
 import { getAdminEmails } from "@/lib/admin";
@@ -18,13 +19,25 @@ const log = logger("admin-fi-verify");
 
 export async function POST(req: NextRequest) {
   // ── Auth ──────────────────────────────────────────────────
-  const authHeader = req.headers.get("authorization");
-  const token = authHeader?.replace("Bearer ", "").trim();
-  if (token !== process.env.INTERNAL_API_KEY) {
+  // See notes in /admin/foreign-investment/update — require a verified
+  // Supabase session and derive `adminEmail` from that, never from the
+  // request body. This prevents audit-log impersonation.
+  const userClient = await createClient();
+  const {
+    data: { user },
+  } = await userClient.auth.getUser();
+
+  if (!user || !user.email) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let body: { categoryKey: string; adminEmail: string; note?: string };
+  const adminEmails = getAdminEmails();
+  const authedEmail = user.email.toLowerCase();
+  if (!adminEmails.includes(authedEmail)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  let body: { categoryKey: string; note?: string };
   try {
     body = await req.json();
   } catch (err) {
@@ -32,20 +45,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { categoryKey, adminEmail, note } = body;
+  const { categoryKey, note } = body;
 
-  if (!categoryKey || !adminEmail) {
+  if (!categoryKey) {
     return NextResponse.json(
-      { error: "categoryKey and adminEmail are required" },
+      { error: "categoryKey is required" },
       { status: 400 }
     );
   }
 
-  // Confirm the caller is a known admin
-  const adminEmails = getAdminEmails();
-  if (!adminEmails.includes(adminEmail.toLowerCase())) {
-    return NextResponse.json({ error: "Not an admin email" }, { status: 403 });
-  }
+  const adminEmail = authedEmail;
 
   const supabase = createAdminClient();
 

@@ -24,7 +24,7 @@ export async function POST(
     }
 
     const body = await req.json();
-    const { answer, answered_by, author_slug, display_name } = body;
+    const { answer, display_name } = body;
 
     // Validation
     if (!answer || answer.trim().length < 10) {
@@ -35,6 +35,49 @@ export async function POST(
     }
 
     const supabase = await createClient();
+
+    // Authentication — required to answer. Previously this route accepted
+    // `answered_by` and `author_slug` directly from the request body, so an
+    // unauthenticated attacker could impersonate a broker or advisor by
+    // submitting {answered_by: "broker", author_slug: "cmc"}. We now derive
+    // the role strictly from the authenticated user's role row.
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.json({ error: "Sign in required to answer questions" }, { status: 401 });
+    }
+
+    // Resolve role from the authoritative role tables. User may be:
+    //  - a broker (row in broker_accounts)
+    //  - an advisor (row in professionals linked by auth_user_id)
+    //  - otherwise: a regular community user
+    let answeredBy: "broker" | "advisor" | "community" = "community";
+    let authorSlug: string | null = null;
+
+    const { data: brokerAccount } = await supabase
+      .from("broker_accounts")
+      .select("broker_slug, status")
+      .eq("auth_user_id", user.id)
+      .eq("status", "active")
+      .maybeSingle();
+
+    if (brokerAccount) {
+      answeredBy = "broker";
+      authorSlug = brokerAccount.broker_slug;
+    } else {
+      const { data: advisor } = await supabase
+        .from("professionals")
+        .select("slug, status")
+        .eq("auth_user_id", user.id)
+        .eq("status", "active")
+        .maybeSingle();
+      if (advisor) {
+        answeredBy = "advisor";
+        authorSlug = advisor.slug;
+      }
+    }
 
     // Verify question exists
     const { data: question } = await supabase
@@ -50,9 +93,9 @@ export async function POST(
     const { error } = await supabase.from("broker_answers").insert({
       question_id: questionId,
       answer: answer.trim(),
-      answered_by: answered_by || "community",
-      author_slug: author_slug || null,
-      display_name: display_name?.trim() || null,
+      answered_by: answeredBy,
+      author_slug: authorSlug,
+      display_name: typeof display_name === "string" ? display_name.trim().slice(0, 80) || null : null,
       status: "pending",
       is_accepted: false,
     });

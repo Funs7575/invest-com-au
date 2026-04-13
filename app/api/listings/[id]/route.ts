@@ -1,10 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
+import { isRateLimited } from "@/lib/rate-limit";
+import { timingSafeEqual } from "crypto";
 
 const log = logger("listings-crud");
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/**
+ * Constant-time email comparison. Prevents timing-channel enumeration where
+ * an attacker can distinguish "wrong email for this listing" from "no such
+ * listing" by measuring response latency.
+ */
+function emailsMatch(a: string | null | undefined, b: string): boolean {
+  if (!a) return false;
+  const aBuf = Buffer.from(a.toLowerCase());
+  const bBuf = Buffer.from(b.toLowerCase());
+  if (aBuf.length !== bBuf.length) return false;
+  return timingSafeEqual(aBuf, bBuf);
+}
 
 const UPDATABLE_FIELDS = [
   "title",
@@ -85,6 +100,17 @@ export async function PUT(
   { params }: Params,
 ) {
   try {
+    // Rate limit the ownership-verification surface. Without this, the
+    // contact_email-based ownership check is brute-forceable: an attacker
+    // with a known listing ID can try candidate emails until one succeeds.
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    if (await isRateLimited(`listing-edit:${ip}`, 5, 60)) {
+      return NextResponse.json(
+        { error: "Too many attempts. Please try again later." },
+        { status: 429 },
+      );
+    }
+
     const { id } = await params;
     const listingId = Number(id);
 
@@ -127,18 +153,16 @@ export async function PUT(
       .eq("id", listingId)
       .single();
 
-    if (fetchError || !listing) {
+    // Merge the "not found" and "wrong email" failure cases behind a single
+    // generic 404 with an identical latency profile. Previously the route
+    // returned distinct 404 and 403 responses which leaked whether a given
+    // email matched a given listing — an enumeration oracle.
+    const ownershipOk = listing && emailsMatch(listing.contact_email, contactEmail);
+    if (fetchError || !ownershipOk) {
+      log.warn("Listing edit denied", { listingId, ip });
       return NextResponse.json(
-        { error: "Listing not found." },
+        { error: "Listing not found or not accessible with those credentials." },
         { status: 404 },
-      );
-    }
-
-    // Ownership check
-    if (listing.contact_email?.toLowerCase() !== contactEmail) {
-      return NextResponse.json(
-        { error: "You are not authorised to update this listing." },
-        { status: 403 },
       );
     }
 
@@ -194,6 +218,15 @@ export async function DELETE(
   { params }: Params,
 ) {
   try {
+    // Same rate limit + unified-error defense as PUT. See notes there.
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    if (await isRateLimited(`listing-edit:${ip}`, 5, 60)) {
+      return NextResponse.json(
+        { error: "Too many attempts. Please try again later." },
+        { status: 429 },
+      );
+    }
+
     const { id } = await params;
     const listingId = Number(id);
 
@@ -234,17 +267,12 @@ export async function DELETE(
       .eq("id", listingId)
       .single();
 
-    if (fetchError || !listing) {
+    const ownershipOk = listing && emailsMatch(listing.contact_email, contactEmail);
+    if (fetchError || !ownershipOk) {
+      log.warn("Listing delete denied", { listingId, ip });
       return NextResponse.json(
-        { error: "Listing not found." },
+        { error: "Listing not found or not accessible with those credentials." },
         { status: 404 },
-      );
-    }
-
-    if (listing.contact_email?.toLowerCase() !== contactEmail) {
-      return NextResponse.json(
-        { error: "You are not authorised to delete this listing." },
-        { status: 403 },
       );
     }
 
