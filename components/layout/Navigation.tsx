@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { CURRENT_YEAR } from "@/lib/seo";
 import { SHOW_BEST_PICKS, SHOW_MATCH_LANGUAGE, PRIMARY_CTA_TEXT, PRIMARY_CTA_HREF } from "@/lib/compliance-config";
 import dynamic from "next/dynamic";
+import AccountButton from "@/components/layout/AccountButton";
 
 const SearchOverlay = dynamic(() => import("@/components/SearchOverlay"), { ssr: false });
 const IntentPicker = dynamic(() => import("@/components/IntentPicker"), { ssr: false });
@@ -123,14 +124,41 @@ const learnMenu = {
     { label: "Property Investing", href: "/articles?category=property" },
     { label: "Crypto & Digital Assets", href: "/articles?category=crypto" },
   ],
-  tools: [
-    { label: "All Calculators", href: "/calculators" },
-    { label: "Mortgage Calculator", href: "/mortgage-calculator" },
-    { label: "Retirement Calculator", href: "/retirement-calculator" },
-    { label: "Glossary", href: "/glossary" },
+  resources: [
     { label: "All Articles", href: "/articles" },
     { label: "How-To Guides", href: "/how-to" },
+    { label: "Glossary", href: "/glossary" },
     { label: "Community Forum", href: "/community" },
+    { label: "Annual Report", href: "/reports/annual" },
+    { label: "Write a Review", href: "/reviews/write" },
+  ],
+};
+
+// ─── Tools & Calculators mega-menu (NEW) ─────────────────────────────────────
+const toolsMenu = {
+  feeTools: [
+    { label: "Quick Audit", href: "/quick-audit", desc: "30-second fee snapshot", badge: "NEW" },
+    { label: "Switching Calculator", href: "/switching-calculator", desc: "How much could you save?" },
+    { label: "Fee Simulator", href: "/fee-simulator", desc: "Real-time across all brokers", badge: "NEW" },
+    { label: "Trade Cost Calculator", href: "/trade-cost-calculator", desc: "What does a trade really cost?" },
+    { label: "US Share Costs", href: "/us-share-costs-calculator", desc: "Brokerage + FX hidden fees" },
+    { label: "All Calculators (25)", href: "/calculators", desc: "Browse the full collection" },
+  ],
+  portfolioTax: [
+    { label: "Portfolio X-Ray", href: "/portfolio-xray", desc: "Diversification + concentration", badge: "NEW" },
+    { label: "Tax Optimizer", href: "/tax-optimizer", desc: "CGT, harvesting & franking", badge: "NEW" },
+    { label: "CGT Calculator", href: "/cgt-calculator", desc: "Capital gains tax estimate" },
+    { label: "Franking Credits", href: "/franking-credits-calculator", desc: "Dividend tax + grossing-up" },
+    { label: "Compound Interest", href: "/compound-interest-calculator", desc: "Project investment growth" },
+    { label: "FIRE Calculator", href: "/fire-calculator", desc: "Financial independence number" },
+  ],
+  property: [
+    { label: "Mortgage Calculator", href: "/mortgage-calculator", desc: "Repayments & interest" },
+    { label: "Property Yield", href: "/property-yield-calculator", desc: "Gross & net rental yield" },
+    { label: "Property vs Shares", href: "/property-vs-shares-calculator", desc: "Compare returns" },
+    { label: "Retirement Calculator", href: "/retirement-calculator", desc: "Project your super" },
+    { label: "SMSF Calculator", href: "/smsf-calculator", desc: "Is SMSF worth it?" },
+    { label: "CHESS Lookup", href: "/chess-lookup", desc: "Is your broker safe?" },
   ],
 };
 
@@ -224,6 +252,25 @@ const mobileSections = [
     ],
   },
   {
+    title: "Tools & Calculators",
+    items: [
+      { name: "Quick Audit (30s)", href: "/quick-audit" },
+      { name: "Switching Calculator", href: "/switching-calculator" },
+      { name: "Fee Simulator", href: "/fee-simulator" },
+      { name: "Portfolio X-Ray", href: "/portfolio-xray" },
+      { name: "Tax Optimizer", href: "/tax-optimizer" },
+      { name: "Trade Cost Calculator", href: "/trade-cost-calculator" },
+      { name: "US Share Costs", href: "/us-share-costs-calculator" },
+      { name: "CGT Calculator", href: "/cgt-calculator" },
+      { name: "Franking Credits", href: "/franking-credits-calculator" },
+      { name: "Mortgage Calculator", href: "/mortgage-calculator" },
+      { name: "Retirement Calculator", href: "/retirement-calculator" },
+      { name: "All Calculators (25)", href: "/calculators" },
+      { name: "CHESS Lookup", href: "/chess-lookup" },
+      { name: "Fee Alerts", href: "/fee-alerts" },
+    ],
+  },
+  {
     title: "Invest — Sectors",
     items: [
       { name: "All Investment Verticals", href: "/invest" },
@@ -269,12 +316,27 @@ const mobileSections = [
     ],
   },
   {
-    title: "Learn",
+    title: "Learn & Community",
     items: [
       { name: "Articles & Guides", href: "/articles" },
-      { name: "Calculators", href: "/calculators" },
-      { name: "Glossary", href: "/glossary" },
       { name: "How-To Guides", href: "/how-to" },
+      { name: "Glossary", href: "/glossary" },
+      { name: "Community Forum", href: "/community" },
+      { name: "Annual Report", href: "/reports/annual" },
+      { name: "Write a Review", href: "/reviews/write" },
+    ],
+  },
+  {
+    title: "My Account",
+    items: [
+      { name: "Sign In", href: "/auth/login" },
+      { name: "Sign Up", href: "/auth/signup" },
+      { name: "My Account", href: "/account" },
+      { name: "Saved Comparisons", href: "/account/saved" },
+      { name: "My Shortlist", href: "/shortlist" },
+      { name: "Edit Profile", href: "/account/profile" },
+      { name: "Refer a Friend", href: "/account/referrals" },
+      { name: "Fee Alerts", href: "/fee-alerts" },
     ],
   },
 ];
@@ -298,9 +360,34 @@ export function Navigation() {
   const isAdvisorsActive = ["/advisors", "/find-advisor", "/advisor/"].some(
     (p) => pathname === p || pathname.startsWith(p)
   );
-  const isLearnActive = ["/articles", "/article/", "/how-to", "/calculators", "/glossary"].some(
+  const isLearnActive = ["/articles", "/article/", "/how-to", "/glossary", "/community", "/reports", "/reviews/write"].some(
     (p) => pathname === p || pathname.startsWith(p)
   );
+  const isToolsActive = [
+    "/calculators",
+    "/quick-audit",
+    "/portfolio-xray",
+    "/tax-optimizer",
+    "/fee-simulator",
+    "/switching-calculator",
+    "/trade-cost-calculator",
+    "/us-share-costs-calculator",
+    "/cgt-calculator",
+    "/franking-credits-calculator",
+    "/chess-lookup",
+    "/mortgage-calculator",
+    "/retirement-calculator",
+    "/property-yield-calculator",
+    "/property-vs-shares-calculator",
+    "/smsf-calculator",
+    "/compound-interest-calculator",
+    "/fire-calculator",
+    "/dividend-reinvestment-calculator",
+    "/tco-calculator",
+    "/savings-calculator",
+    "/super-contributions-calculator",
+    "/debt-calculator",
+  ].some((p) => pathname === p || pathname.startsWith(p));
   const isOpportunitiesActive = pathname.startsWith("/invest");
 
   return (
@@ -568,6 +655,87 @@ export function Navigation() {
               </div>
             </MegaMenuDropdown>
 
+            {/* Tools & Calculators Mega-Menu (NEW) */}
+            <MegaMenuDropdown label="Tools" isActive={isToolsActive} menuWidth="min-w-[720px]">
+              <div className="p-6">
+                {/* Top CTA */}
+                <Link
+                  href="/quick-audit"
+                  className="flex items-center justify-between p-3.5 bg-gradient-to-r from-emerald-50 to-emerald-100/60 border border-emerald-200 rounded-xl mb-5 hover:border-emerald-300 transition-colors group"
+                >
+                  <div>
+                    <p className="font-bold text-slate-900 text-sm">How much are you paying in fees?</p>
+                    <p className="text-xs text-slate-500 mt-0.5">30-second audit — instant savings calculator</p>
+                  </div>
+                  <svg className="w-5 h-5 text-emerald-600 shrink-0 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+
+                <div className="grid grid-cols-3 gap-5">
+                  <div>
+                    <p className="text-[0.65rem] font-bold text-slate-500 uppercase tracking-wider mb-3">Fee Tools</p>
+                    <div className="space-y-0.5">
+                      {toolsMenu.feeTools.map((item) => (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className="block px-2 py-2 rounded-lg hover:bg-emerald-50 transition-colors group/item"
+                        >
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-sm font-semibold text-slate-800 group-hover/item:text-emerald-900">{item.label}</span>
+                            {item.badge && (
+                              <span className="text-[0.55rem] font-extrabold px-1 py-0.5 bg-amber-100 text-amber-700 rounded uppercase tracking-wide">
+                                {item.badge}
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-[0.65rem] text-slate-500">{item.desc}</div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-[0.65rem] font-bold text-slate-500 uppercase tracking-wider mb-3">Portfolio & Tax</p>
+                    <div className="space-y-0.5">
+                      {toolsMenu.portfolioTax.map((item) => (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className="block px-2 py-2 rounded-lg hover:bg-emerald-50 transition-colors group/item"
+                        >
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-sm font-semibold text-slate-800 group-hover/item:text-emerald-900">{item.label}</span>
+                            {item.badge && (
+                              <span className="text-[0.55rem] font-extrabold px-1 py-0.5 bg-amber-100 text-amber-700 rounded uppercase tracking-wide">
+                                {item.badge}
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-[0.65rem] text-slate-500">{item.desc}</div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-[0.65rem] font-bold text-slate-500 uppercase tracking-wider mb-3">Property & Retirement</p>
+                    <div className="space-y-0.5">
+                      {toolsMenu.property.map((item) => (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className="block px-2 py-2 rounded-lg hover:bg-emerald-50 transition-colors group/item"
+                        >
+                          <div className="text-sm font-semibold text-slate-800 group-hover/item:text-emerald-900">{item.label}</div>
+                          <div className="text-[0.65rem] text-slate-500">{item.desc}</div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </MegaMenuDropdown>
+
             {/* Learn Mega-Menu */}
             <MegaMenuDropdown label="Learn" isActive={isLearnActive} menuWidth="min-w-[540px]">
               <div className="grid grid-cols-3 gap-0 p-6">
@@ -600,9 +768,9 @@ export function Navigation() {
                   </div>
                 </div>
                 <div>
-                  <p className="text-[0.65rem] font-bold text-slate-500 uppercase tracking-wider mb-3">Tools & Resources</p>
+                  <p className="text-[0.65rem] font-bold text-slate-500 uppercase tracking-wider mb-3">Resources</p>
                   <div className="space-y-1">
-                    {learnMenu.tools.map((item) => (
+                    {learnMenu.resources.map((item) => (
                       <Link
                         key={item.href}
                         href={item.href}
@@ -628,11 +796,12 @@ export function Navigation() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </button>
+            <AccountButton />
             <button
               onClick={() => setIntentOpen(true)}
-              className="bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-900 px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm hover:shadow-md active:scale-[0.97] flex items-center gap-2 cursor-pointer"
+              className="bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-slate-900 px-4 py-2.5 rounded-xl font-bold text-sm transition-all shadow-sm hover:shadow-md active:scale-[0.97] flex items-center gap-2 cursor-pointer"
             >
-              What are you looking for?
+              Get Started
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
