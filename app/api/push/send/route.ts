@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { logger } from "@/lib/logger";
+
+const log = logger("push:send");
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -153,7 +156,7 @@ export async function POST(request: NextRequest) {
       stale_removed: staleEndpoints.length,
     });
   } catch (err) {
-    console.error("Push send error:", err);
+    log.error("Push send error:", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

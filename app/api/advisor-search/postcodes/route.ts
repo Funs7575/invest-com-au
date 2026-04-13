@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { logger } from "@/lib/logger";
+
+const log = logger("advisor-search:postcodes");
 
 export const revalidate = 300;
 
@@ -33,7 +36,7 @@ export async function GET(request: NextRequest) {
       .limit(10);
 
     if (error) {
-      console.error("Postcode search error:", error);
+      log.error("Postcode search error:", error);
       return NextResponse.json(
         { error: "Search failed." },
         { status: 500 }
@@ -42,7 +45,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ postcodes: data ?? [] });
   } catch (err) {
-    console.error("Postcode search error:", err);
+    log.error("Postcode search error:", err);
     return NextResponse.json(
       { error: "An unexpected error occurred." },
       { status: 500 }

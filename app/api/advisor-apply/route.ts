@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { isRateLimited } from "@/lib/rate-limit";
 import { sendApplicationConfirmation, sendAdminNotification } from "@/lib/advisor-emails";
+import { logger } from "@/lib/logger";
+
+const log = logger("advisor-apply");
 
 export async function POST(request: NextRequest) {
   try {
@@ -86,7 +89,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (error) {
-      console.error("Application error:", error);
+      log.error("Application error:", error);
       return NextResponse.json({ error: "Failed to submit application." }, { status: 500 });
     }
 
@@ -98,11 +101,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Send confirmation email and admin notification
-    sendApplicationConfirmation(email.toLowerCase().trim(), name.trim(), inviteData ? 'firm' : (account_type || 'individual')).catch((err) => console.error("[advisor-apply] confirmation email failed:", err));
+    sendApplicationConfirmation(email.toLowerCase().trim(), name.trim(), inviteData ? 'firm' : (account_type || 'individual')).catch((err) => log.error("[advisor-apply] confirmation email failed:", err));
     sendAdminNotification(
       `New advisor application: ${name.trim()}`,
       `<strong>${name.trim()}</strong> (${account_type === 'firm' ? 'Firm' : 'Individual'}) applied as ${type}.<br/>Email: ${email}<br/>Firm: ${firm_name || 'N/A'}<br/><a href="https://invest.com.au/admin/advisors" style="color:#2563eb">Review in Admin →</a>`
-    ).catch((err) => console.error("[advisor-apply] admin notification failed:", err));
+    ).catch((err) => log.error("[advisor-apply] admin notification failed:", err));
 
     // Record agreement acceptance
     try {
@@ -116,11 +119,11 @@ export async function POST(request: NextRequest) {
         ip_address: ip,
         user_agent: request.headers.get("user-agent") || null,
       });
-    } catch (err) { console.error("[advisor-apply] agreement recording failed:", err); }
+    } catch (err) { log.error("[advisor-apply] agreement recording failed:", err); }
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Advisor apply error:", error);
+    log.error("Advisor apply error:", error);
     return NextResponse.json({ error: "Internal server error." }, { status: 500 });
   }
 }

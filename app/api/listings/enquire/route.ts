@@ -3,6 +3,9 @@ import { createClient } from "@/lib/supabase/server";
 import { sendEmail } from "@/lib/resend";
 import { escapeHtml } from "@/lib/html-escape";
 import { isRateLimited } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
+
+const log = logger("listings:enquire");
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -119,7 +122,7 @@ export async function POST(request: NextRequest) {
       });
 
     if (insertError) {
-      console.error("[listings/enquire] insert error:", insertError);
+      log.error("[listings/enquire] insert error:", insertError);
       return NextResponse.json(
         { error: "Failed to submit enquiry. Please try again." },
         { status: 500 }
@@ -174,12 +177,12 @@ export async function POST(request: NextRequest) {
           html: emailHtml,
           from: "Invest.com.au <hello@invest.com.au>",
         }).catch((err) =>
-          console.error("[listings/enquire] email notification failed:", err)
+          log.error("[listings/enquire] email notification failed:", err)
         );
       }
     } catch (emailErr) {
       // Best-effort — don't fail the request if email sending errors
-      console.error("[listings/enquire] email notification error:", emailErr);
+      log.error("[listings/enquire] email notification error:", emailErr);
     }
 
     // Increment enquiries count on the listing (best-effort — don't fail the request if this errors)
@@ -190,7 +193,7 @@ export async function POST(request: NextRequest) {
 
     if (updateError) {
       // Fallback: manual increment if RPC doesn't exist yet
-      console.warn(
+      log.warn(
         "[listings/enquire] RPC increment_listing_enquiries not available, using fallback:",
         updateError.message
       );
@@ -202,7 +205,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true }, { status: 201 });
   } catch (err) {
-    console.error("[listings/enquire] unexpected error:", err);
+    log.error("[listings/enquire] unexpected error:", err);
     return NextResponse.json(
       { error: "An unexpected error occurred." },
       { status: 500 }

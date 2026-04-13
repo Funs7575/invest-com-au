@@ -2,6 +2,9 @@ import { isRateLimited } from "@/lib/rate-limit";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getSiteUrl } from "@/lib/url";
+import { logger } from "@/lib/logger";
+
+const log = logger("lead-outcome");
 
 const VALID_OUTCOMES = ["contacted", "converted", "lost", "no_response"] as const;
 type Outcome = (typeof VALID_OUTCOMES)[number];
@@ -77,7 +80,7 @@ export async function POST(request: NextRequest) {
       .eq("id", lead_id);
 
     if (updateError) {
-      console.error("Failed to update lead outcome:", updateError);
+      log.error("Failed to update lead outcome:", updateError);
       return NextResponse.json(
         { error: "Failed to update lead outcome." },
         { status: 500 },
@@ -86,7 +89,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, lead_id, outcome });
   } catch (error) {
-    console.error("Lead outcome error:", error);
+    log.error("Lead outcome error:", error);
     return NextResponse.json(
       { error: "Internal server error." },
       { status: 500 },
@@ -166,7 +169,7 @@ export async function GET(request: NextRequest) {
       .eq("id", leadId);
 
     if (updateError) {
-      console.error("Failed to update lead outcome via GET:", updateError);
+      log.error("Failed to update lead outcome via GET:", updateError);
       return new NextResponse(
         renderHtml("Update Failed", "Something went wrong updating this lead. Please try again or update from your dashboard."),
         { status: 500, headers: { "Content-Type": "text/html; charset=utf-8" } },
@@ -197,7 +200,7 @@ export async function GET(request: NextRequest) {
       headers: { "Content-Type": "text/html; charset=utf-8" },
     });
   } catch (error) {
-    console.error("Lead outcome GET error:", error);
+    log.error("Lead outcome GET error:", error);
     return new NextResponse(
       renderHtml("Error", "An unexpected error occurred. Please try again."),
       { status: 500, headers: { "Content-Type": "text/html; charset=utf-8" } },

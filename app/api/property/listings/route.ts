@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { logger } from "@/lib/logger";
+
+const log = logger("property:listings");
 
 export async function GET(request: NextRequest) {
   try {
@@ -63,7 +66,7 @@ export async function GET(request: NextRequest) {
     const { data, count, error } = await query;
 
     if (error) {
-      console.error("Listings query error:", error);
+      log.error("Listings query error:", error);
       return NextResponse.json({ error: "Failed to fetch listings" }, { status: 500 });
     }
 
@@ -75,7 +78,7 @@ export async function GET(request: NextRequest) {
       total_pages: Math.ceil((count || 0) / perPage),
     });
   } catch (error) {
-    console.error("Listings API error:", error);
+    log.error("Listings API error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

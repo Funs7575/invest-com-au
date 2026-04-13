@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { logger } from "@/lib/logger";
+
+const log = logger("push:subscribe");
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -67,7 +70,7 @@ export async function POST(request: NextRequest) {
       );
 
     if (error) {
-      console.error("Push subscribe error:", error.message);
+      log.error("Push subscribe error:", error.message);
       return NextResponse.json(
         { error: "Failed to save subscription" },
         { status: 500 }

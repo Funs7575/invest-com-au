@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { lookupTicker, isFrankedDividend, estimatedFrankingRate } from "@/lib/ticker-sectors";
+import { logger } from "@/lib/logger";
+
+const log = logger("tax-optimizer");
 
 export const runtime = "edge";
 
@@ -233,7 +236,7 @@ export async function POST(request: NextRequest) {
       top_moves: moves.slice(0, 3),
     });
   } catch (err) {
-    console.error("Tax optimizer error:", err);
+    log.error("Tax optimizer error:", err);
     return NextResponse.json({ error: "Failed to analyse tax position" }, { status: 500 });
   }
 }

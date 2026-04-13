@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { logger } from "@/lib/logger";
+
+const log = logger("property:suburbs");
 
 export async function GET(request: NextRequest) {
   try {
@@ -20,13 +23,13 @@ export async function GET(request: NextRequest) {
     const { data, error } = await query.limit(50);
 
     if (error) {
-      console.error("Suburb search error:", error);
+      log.error("Suburb search error:", error);
       return NextResponse.json({ error: "Failed to search suburbs" }, { status: 500 });
     }
 
     return NextResponse.json(data || []);
   } catch (error) {
-    console.error("Suburbs API error:", error);
+    log.error("Suburbs API error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createHash } from "crypto";
+import { logger } from "@/lib/logger";
+
+const log = logger("versus:vote");
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -126,7 +129,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (error) {
-      console.error("Vote insert error:", error.message);
+      log.error("Vote insert error:", error.message);
       return NextResponse.json(
         { error: "Failed to record vote" },
         { status: 500 }

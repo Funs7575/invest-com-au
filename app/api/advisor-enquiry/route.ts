@@ -183,7 +183,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (leadError) {
-      console.error("Failed to create lead:", leadError);
+      log.error("Failed to create lead:", leadError);
       return NextResponse.json({ error: "Failed to submit enquiry." }, { status: 500 });
     }
 
@@ -386,7 +386,7 @@ export async function POST(request: NextRequest) {
         }
       } catch (emailError) {
         // Don't fail the request if email fails — lead is still saved
-        console.error("Failed to send advisor notification:", emailError);
+        log.error("Failed to send advisor notification:", emailError);
       }
     }
 

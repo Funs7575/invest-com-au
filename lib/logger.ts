@@ -2,11 +2,19 @@ import * as Sentry from "@sentry/nextjs";
 
 type LogLevel = "debug" | "info" | "warn" | "error";
 
+/**
+ * Second-arg type for logger calls. Accepts `unknown` so call sites
+ * can pass raw Error objects, Supabase PostgrestError / StorageError,
+ * strings, or free-form metadata records without casting. Internally
+ * we normalise to a Record<string, unknown> before emitting.
+ */
+export type LogMeta = Record<string, unknown> | Error | string | unknown;
+
 export interface Logger {
-  debug(msg: string, meta?: Record<string, unknown>): void;
-  info(msg: string, meta?: Record<string, unknown>): void;
-  warn(msg: string, meta?: Record<string, unknown>): void;
-  error(msg: string, meta?: Record<string, unknown>): void;
+  debug(msg: string, meta?: LogMeta): void;
+  info(msg: string, meta?: LogMeta): void;
+  warn(msg: string, meta?: LogMeta): void;
+  error(msg: string, meta?: LogMeta): void;
 }
 
 const LOG_LEVELS: Record<LogLevel, number> = {
@@ -29,13 +37,39 @@ const DEV_ICONS: Record<LogLevel, string> = {
   error: "\x1b[31m[ERR]\x1b[0m",    // red
 };
 
+/**
+ * Normalise the free-form second arg into a Record we can JSON.stringify.
+ * - Error → { name, message, stack }
+ * - string → { detail: string }
+ * - record → passed through unchanged
+ * - anything else → { value: <inspected> }
+ */
+function normaliseMeta(meta: LogMeta): Record<string, unknown> | undefined {
+  if (meta === undefined || meta === null) return undefined;
+  if (meta instanceof Error) {
+    return {
+      name: meta.name,
+      message: meta.message,
+      stack: meta.stack,
+    };
+  }
+  if (typeof meta === "string") {
+    return { detail: meta };
+  }
+  if (typeof meta === "object") {
+    return meta as Record<string, unknown>;
+  }
+  return { value: String(meta) };
+}
+
 function emit(
   level: LogLevel,
   ctx: string,
   msg: string,
-  meta?: Record<string, unknown>,
+  rawMeta?: LogMeta,
 ) {
   if (LOG_LEVELS[level] < LOG_LEVELS[MIN_LEVEL]) return;
+  const meta = normaliseMeta(rawMeta);
 
   // Pick console method so Vercel runtime log filtering works
   const fn =
@@ -120,9 +154,9 @@ function emit(
 
 export function logger(context: string): Logger {
   return {
-    debug: (msg, meta?) => emit("debug", context, msg, meta),
-    info:  (msg, meta?) => emit("info", context, msg, meta),
-    warn:  (msg, meta?) => emit("warn", context, msg, meta),
-    error: (msg, meta?) => emit("error", context, msg, meta),
+    debug: (msg: string, meta?: LogMeta) => emit("debug", context, msg, meta),
+    info:  (msg: string, meta?: LogMeta) => emit("info", context, msg, meta),
+    warn:  (msg: string, meta?: LogMeta) => emit("warn", context, msg, meta),
+    error: (msg: string, meta?: LogMeta) => emit("error", context, msg, meta),
   };
 }

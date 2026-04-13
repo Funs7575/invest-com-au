@@ -255,7 +255,7 @@ export async function POST(request: NextRequest) {
   }
 
   // Sync to Resend Contacts for marketing (fire-and-forget)
-  syncToResendContacts(sanitizedEmail, sanitizedSource, sanitizedName).catch((err) => console.error("[email-capture] resend sync failed:", err));
+  syncToResendContacts(sanitizedEmail, sanitizedSource, sanitizedName).catch((err) => log.error("[email-capture] resend sync failed:", err));
 
   return NextResponse.json({ success: true, emailSent });
 }

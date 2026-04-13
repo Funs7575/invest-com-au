@@ -3,6 +3,9 @@ import { createClient } from "@/lib/supabase/server";
 import { randomBytes } from "crypto";
 import { sendFirmInvitation } from "@/lib/advisor-emails";
 import { getSiteUrl } from "@/lib/url";
+import { logger } from "@/lib/logger";
+
+const log = logger("advisor-auth:firm:invite");
 
 export async function POST(request: NextRequest) {
   try {
@@ -95,7 +98,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (error) {
-      console.error("[firm-invite] insert failed:", error);
+      log.error("[firm-invite] insert failed:", error);
       return NextResponse.json({ error: "Failed to create invitation" }, { status: 500 });
     }
 
@@ -103,12 +106,12 @@ export async function POST(request: NextRequest) {
     const siteUrl = getSiteUrl(request.headers.get("host"));
     const acceptUrl = `${siteUrl}/advisor-apply?invite=${token}`;
     sendFirmInvitation(email, inviteeName, firm.name, advisor.name, acceptUrl).catch((err) =>
-      console.error("[firm-invite] email failed:", err)
+      log.error("[firm-invite] email failed:", err)
     );
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("[firm-invite] error:", error);
+    log.error("[firm-invite] error:", error);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }
@@ -153,7 +156,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ invitations: invitations || [], members: members || [] });
   } catch (error) {
-    console.error("[firm-invite] get error:", error);
+    log.error("[firm-invite] get error:", error);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }
@@ -237,12 +240,12 @@ export async function PATCH(request: NextRequest) {
     const siteUrl = getSiteUrl(request.headers.get("host"));
     const acceptUrl = `${siteUrl}/advisor-apply?invite=${newToken}`;
     sendFirmInvitation(invite.email, invite.name || undefined, firm.name, advisor.name, acceptUrl).catch((err) =>
-      console.error("[firm-invite] resend email failed:", err)
+      log.error("[firm-invite] resend email failed:", err)
     );
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("[firm-invite] patch error:", error);
+    log.error("[firm-invite] patch error:", error);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }
