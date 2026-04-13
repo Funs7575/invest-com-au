@@ -26,6 +26,9 @@ export default function SavedComparisonsClient() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
   const [renameLoading, setRenameLoading] = useState(false);
+  // Per-row rename error so the failed rename can be retried in place
+  // without losing the user's typed value or hijacking the page-level banner.
+  const [renameError, setRenameError] = useState<string | null>(null);
 
   // Delete confirmation state
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -59,6 +62,7 @@ export default function SavedComparisonsClient() {
     if (!trimmed) return;
 
     setRenameLoading(true);
+    setRenameError(null);
     try {
       const res = await fetch(`/api/saved-comparisons/${id}`, {
         method: "PATCH",
@@ -66,15 +70,30 @@ export default function SavedComparisonsClient() {
         body: JSON.stringify({ name: trimmed }),
       });
 
-      if (!res.ok) throw new Error("Failed to rename");
+      if (!res.ok) {
+        // Try to surface the server-side message (validation, conflict, etc)
+        // so users see "That name is already taken" instead of a generic
+        // failure and retry-loop with the same name.
+        let msg = "Failed to rename comparison.";
+        try {
+          const err = await res.json();
+          if (err?.error && typeof err.error === "string") msg = err.error;
+        } catch {
+          // ignore parse errors; keep default message
+        }
+        setRenameError(msg);
+        return;
+      }
 
       const data = await res.json();
       setComparisons((prev) =>
         prev.map((c) => (c.id === id ? data.comparison : c))
       );
       setEditingId(null);
+      setRenameError(null);
     } catch {
-      setError("Failed to rename comparison.");
+      // Network error — keep edit form open so user can retry their input
+      setRenameError("Network error. Please check your connection and try again.");
     } finally {
       setRenameLoading(false);
     }
@@ -101,6 +120,7 @@ export default function SavedComparisonsClient() {
   const startRename = (comparison: SavedComparison) => {
     setEditingId(comparison.id);
     setEditName(comparison.name);
+    setRenameError(null);
     setDeletingId(null);
   };
 
@@ -181,35 +201,41 @@ export default function SavedComparisonsClient() {
               <div className="flex items-start justify-between gap-3 mb-2">
                 {editingId === comparison.id ? (
                   <form
-                    className="flex items-center gap-2 flex-1"
+                    className="flex flex-col gap-1 flex-1"
                     onSubmit={(e) => {
                       e.preventDefault();
                       handleRename(comparison.id);
                     }}
                   >
-                    <input
-                      type="text"
-                      value={editName}
-                      onChange={(e) => setEditName(e.target.value)}
-                      className="flex-1 px-2 py-1 text-sm font-semibold text-slate-900 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      autoFocus
-                      maxLength={100}
-                      disabled={renameLoading}
-                    />
-                    <button
-                      type="submit"
-                      disabled={renameLoading || !editName.trim()}
-                      className="text-xs font-semibold text-emerald-600 hover:text-emerald-700 disabled:opacity-50"
-                    >
-                      {renameLoading ? "Saving..." : "Save"}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setEditingId(null)}
-                      className="text-xs text-slate-400 hover:text-slate-600"
-                    >
-                      Cancel
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={editName}
+                        onChange={(e) => { setEditName(e.target.value); if (renameError) setRenameError(null); }}
+                        className={`flex-1 px-2 py-1 text-sm font-semibold text-slate-900 border rounded-lg focus:outline-none focus:ring-2 ${renameError ? "border-red-400 focus:ring-red-500" : "border-slate-300 focus:ring-blue-500"}`}
+                        autoFocus
+                        maxLength={100}
+                        disabled={renameLoading}
+                        aria-invalid={!!renameError}
+                      />
+                      <button
+                        type="submit"
+                        disabled={renameLoading || !editName.trim()}
+                        className="text-xs font-semibold text-emerald-600 hover:text-emerald-700 disabled:opacity-50"
+                      >
+                        {renameLoading ? "Saving..." : "Save"}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => { setEditingId(null); setRenameError(null); }}
+                        className="text-xs text-slate-400 hover:text-slate-600"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                    {renameError && (
+                      <p role="alert" className="text-xs text-red-600">{renameError}</p>
+                    )}
                   </form>
                 ) : (
                   <h3 className="text-sm font-semibold text-slate-900 truncate">
