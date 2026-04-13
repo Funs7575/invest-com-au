@@ -900,6 +900,76 @@ export function Navigation() {
               </div>
             ))}
 
+            {/* Account section — previously desktop-only, now mirrored for
+                mobile so logged-in users can reach /account, /shortlist etc
+                and logged-out users can reach sign-in/sign-up from any page. */}
+            <div className="border-t border-slate-100 pt-3 mt-1">
+              <p className="px-3 pb-1 text-[0.6rem] font-extrabold uppercase tracking-widest text-slate-500">
+                Account
+              </p>
+              {user ? (
+                <>
+                  <Link
+                    href="/account"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center justify-between px-3 py-3 min-h-[48px] rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                  >
+                    My Account
+                    <svg className="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                  <Link
+                    href="/shortlist"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center justify-between px-3 py-3 min-h-[48px] rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                  >
+                    My Shortlist
+                    <svg className="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                  <Link
+                    href="/account/saved"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center justify-between px-3 py-3 min-h-[48px] rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                  >
+                    Saved Comparisons
+                    <svg className="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                  <Link
+                    href="/fee-alerts"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center justify-between px-3 py-3 min-h-[48px] rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                  >
+                    Fee Alerts
+                    <svg className="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                </>
+              ) : (
+                <div className="flex gap-2 px-3 py-2">
+                  <Link
+                    href="/auth/login"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex-1 flex items-center justify-center py-3 min-h-[48px] rounded-xl text-sm font-semibold text-slate-700 border border-slate-200 hover:bg-slate-50 transition-colors"
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    href="/auth/signup"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex-1 flex items-center justify-center py-3 min-h-[48px] rounded-xl text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 transition-colors"
+                  >
+                    Sign Up
+                  </Link>
+                </div>
+              )}
+            </div>
+
             {/* Single full-width CTA */}
             <div className="border-t border-slate-100 pt-4 mt-2 pb-2">
               <Link

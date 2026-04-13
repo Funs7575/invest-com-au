@@ -213,19 +213,32 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
   })();
   const urlQuery = searchParams.get("q") || "";
 
+  // Sort state is URL-persisted so shared/bookmarked compare pages recreate
+  // exactly what the recipient expected to see (critical for "look at this
+  // broker ranking" affiliate share-outs).
+  const validSortCols: SortCol[] = ['name', 'asx_fee_value', 'us_fee_value', 'fx_rate', 'rating'];
+  const urlSortCol = searchParams.get("sort");
+  const initialSortCol: SortCol = (urlSortCol && (validSortCols as string[]).includes(urlSortCol))
+    ? (urlSortCol as SortCol)
+    : 'rating';
+  const urlSortDir = searchParams.get("dir");
+  const initialSortDir: 1 | -1 = urlSortDir === 'asc' ? 1 : -1;
+
   const [searchQuery, setSearchQuery] = useState(urlQuery);
   const [activeFilter, setActiveFilter] = useState<PlatformType>(initialFilter);
   const [activeFeatures, setActiveFeatures] = useState<Set<FeatureFilter>>(new Set());
   const [maxFee, setMaxFee] = useState(999);
   const [minRating, setMinRating] = useState(0);
   const resultsRef = useRef<HTMLDivElement>(null);
-  const [sortCol, setSortCol] = useState<SortCol>('rating');
-  const [sortDir, setSortDir] = useState<1 | -1>(-1);
+  const [sortCol, setSortCol] = useState<SortCol>(initialSortCol);
+  const [sortDir, setSortDir] = useState<1 | -1>(initialSortDir);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [showMobileCompare, setShowMobileCompare] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
 
-  // Sync URL when filter changes (for sharing/bookmarking)
+  // Sync URL when filter, search or sort changes (for sharing/bookmarking).
+  // Using replaceState (not push) so the back button doesn't get polluted
+  // with every keystroke.
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const url = new URL(window.location.href);
@@ -239,8 +252,18 @@ export default function CompareClient({ brokers }: { brokers: Broker[] }) {
     } else {
       url.searchParams.delete('q');
     }
+    if (sortCol === 'rating') {
+      url.searchParams.delete('sort');
+    } else {
+      url.searchParams.set('sort', sortCol);
+    }
+    if (sortDir === -1) {
+      url.searchParams.delete('dir');
+    } else {
+      url.searchParams.set('dir', 'asc');
+    }
     window.history.replaceState({}, '', url.toString());
-  }, [activeFilter, searchQuery]);
+  }, [activeFilter, searchQuery, sortCol, sortDir]);
 
   // Marketplace campaign allocation
   const [campaignWinners, setCampaignWinners] = useState<PlacementWinner[]>([]);
