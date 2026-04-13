@@ -4,6 +4,9 @@ import type { Professional, AdvisorFirm } from "@/lib/types";
 import type { Metadata } from "next";
 import AdvisorsClient from "./AdvisorsClient";
 import { absoluteUrl, breadcrumbJsonLd, CURRENT_YEAR } from "@/lib/seo";
+import { logger } from "@/lib/logger";
+
+const log = logger("advisors-page");
 
 export const revalidate = 1800;
 
@@ -37,6 +40,19 @@ async function AdvisorsData() {
       .eq("status", "active")
       .order("name", { ascending: true }),
   ]);
+
+  // Surface Supabase errors to the error boundary so users see a retry
+  // prompt instead of a silently-empty advisor list. Previously the
+  // `|| []` fallback swallowed all failures — a flaky DB or network
+  // error rendered "No advisors available" and misled users into
+  // thinking the platform had none.
+  if (proResult.error || firmResult.error) {
+    log.error("Failed to load advisors page data", {
+      proError: proResult.error?.message,
+      firmError: firmResult.error?.message,
+    });
+    throw new Error("Failed to load advisors. Please try again.");
+  }
 
   // Count team members per firm
   const professionals = (proResult.data as Professional[]) || [];

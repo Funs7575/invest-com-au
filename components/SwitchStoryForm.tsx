@@ -45,19 +45,34 @@ export default function SwitchStoryForm({
 
   // Fetch broker list for dropdowns
   useEffect(() => {
+    let cancelled = false;
     const supabase = createClient();
     supabase
       .from("brokers")
       .select("slug, name")
       .eq("status", "active")
       .order("name")
-      .then(({ data }) => {
+      .then(({ data, error }) => {
+        if (cancelled) return;
+        if (error) {
+          // Without the broker list the form is unusable (both dropdowns
+          // are empty). Surface an explicit error so the user knows to
+          // retry instead of staring at a blank form.
+          console.error("[SwitchStoryForm] broker list load failed", error.message);
+          setErrorMsg("Couldn't load broker list. Please refresh and try again.");
+          return;
+        }
         if (data) setBrokers(data);
       });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    // Guard against double-submit while the previous fetch is in flight.
+    if (status === "loading") return;
     setErrorMsg("");
 
     if (!sourceBroker) {
@@ -86,6 +101,10 @@ export default function SwitchStoryForm({
     }
 
     setStatus("loading");
+    // 20s timeout so a hung server doesn't trap users in an infinite
+    // "Submitting..." state. Matches the pattern used in WriteReviewClient.
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 20000);
     try {
       const res = await fetch("/api/switch-story", {
         method: "POST",
@@ -103,6 +122,7 @@ export default function SwitchStoryForm({
           estimated_savings: estimatedSavings.trim() || null,
           time_with_source: timeWithSource.trim() || null,
         }),
+        signal: controller.signal,
       });
 
       if (res.ok) {
@@ -113,9 +133,15 @@ export default function SwitchStoryForm({
         setErrorMsg(data.error || "Something went wrong. Please try again.");
         setStatus("error");
       }
-    } catch {
-      setErrorMsg("Network error. Please try again.");
+    } catch (err) {
+      if (err instanceof Error && err.name === "AbortError") {
+        setErrorMsg("Submission timed out. Please check your connection and try again.");
+      } else {
+        setErrorMsg("Network error. Please try again.");
+      }
       setStatus("error");
+    } finally {
+      clearTimeout(timeoutId);
     }
   }
 

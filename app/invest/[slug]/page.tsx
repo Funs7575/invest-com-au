@@ -36,11 +36,20 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const supabase = await createClient();
-  const { data } = await supabase
+  // Destructure and check error: a silent failure here degrades SEO
+  // (generic "Investment Vertical" title) without any signal in logs.
+  // PGRST116 ("no rows found") is distinct from a real error — fall back
+  // to a stub title in that case so we don't throw from metadata.
+  const { data, error } = await supabase
     .from("investment_verticals")
     .select("hero_title, description, name")
     .eq("slug", slug)
-    .single();
+    .maybeSingle();
+
+  if (error) {
+    console.error("[invest/[slug]] metadata query failed", error.message);
+    return { title: "Investment Vertical" };
+  }
 
   if (!data) {
     return { title: "Investment Vertical" };
