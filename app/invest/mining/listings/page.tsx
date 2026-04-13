@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
-import type { InvestmentListing } from "@/components/ListingCard";
-import UnifiedListingsClient from "@/components/UnifiedListingsClient";
+import type { InvestmentListing } from "@/lib/types";
+import { getAllInvestCategories } from "@/lib/invest-categories";
+import InvestListingsClient from "@/components/InvestListingsClient";
 
 export const revalidate = 300;
 
@@ -38,6 +39,7 @@ export default async function MiningOpportunitiesPage() {
     .order("created_at", { ascending: false });
 
   const listings: InvestmentListing[] = (data ?? []) as InvestmentListing[];
+  const categoryTabs = getAllInvestCategories().map((c) => ({ slug: c.slug, label: c.label }));
 
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
@@ -53,7 +55,7 @@ export default async function MiningOpportunitiesPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
       <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading listings...</div>}>
-        <UnifiedListingsClient listings={listings} defaultVertical="mining" />
+        <InvestListingsClient listings={listings} categories={categoryTabs} initialCategory="mining" />
       </Suspense>
     </>
   );
