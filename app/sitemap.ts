@@ -5,6 +5,8 @@ import { getAllCostScenarioSlugs } from "@/lib/cost-scenarios";
 import { getAllCitySlugs } from "@/lib/cities";
 import { getAllGuideSlugs } from "@/lib/how-to-guides";
 import { getAllInvestCategorySlugs, getAllSubcategorySlugs } from "@/lib/invest-categories";
+import { listingUrl } from "@/lib/listing-url";
+import type { InvestListingVertical } from "@/lib/types";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest.com.au";
@@ -614,11 +616,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Individual investment listing detail pages
   const { data: investListings } = supabase
-    ? await supabase.from("investment_listings").select("slug, updated_at").eq("status", "active")
+    ? await supabase.from("investment_listings").select("slug, vertical, sub_category, updated_at").eq("status", "active")
     : { data: null };
 
   const investListingPages = (investListings || []).map((l) => ({
-    url: `${baseUrl}/invest/listing/${l.slug}`,
+    url: `${baseUrl}${listingUrl(l as { vertical: InvestListingVertical; sub_category?: string; slug: string })}`,
     lastModified: l.updated_at ? new Date(l.updated_at) : new Date(),
     changeFrequency: "weekly" as const,
     priority: 0.6,

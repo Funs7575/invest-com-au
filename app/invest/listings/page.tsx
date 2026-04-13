@@ -14,6 +14,7 @@ import {
 import { getAllInvestCategories } from "@/lib/invest-categories";
 import type { InvestmentListing } from "@/lib/types";
 import InvestListingsClient from "@/components/InvestListingsClient";
+import { listingUrl } from "@/lib/listing-url";
 
 export const revalidate = 3600;
 
@@ -61,7 +62,7 @@ export default async function InvestListingsPage() {
       "@type": "ListItem",
       position: i + 1,
       name: l.title,
-      url: absoluteUrl(`/invest/listing/${l.slug}`),
+      url: absoluteUrl(listingUrl(l)),
     })),
   };
 

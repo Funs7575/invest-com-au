@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { InvestmentListing } from "@/lib/types";
+import { listingUrl } from "@/lib/listing-url";
 
 function formatLocation(state?: string, city?: string): string | null {
   if (city && state) return `${city}, ${state}`;
@@ -25,7 +26,7 @@ export default function InvestListingCard({
 
   return (
     <Link
-      href={`/invest/listing/${listing.slug}`}
+      href={listingUrl(listing)}
       className="group relative block rounded-xl border border-slate-200 bg-white transition-all duration-200 hover:shadow-lg hover:scale-[1.01]"
     >
       {/* Badge */}

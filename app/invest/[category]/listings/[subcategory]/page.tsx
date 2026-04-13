@@ -18,6 +18,7 @@ import {
   GENERAL_ADVICE_WARNING,
 } from "@/lib/compliance";
 import InvestListingCard from "@/components/InvestListingCard";
+import { listingUrl } from "@/lib/listing-url";
 import ScrollReveal from "@/components/ScrollReveal";
 
 export const revalidate = 3600;
@@ -102,7 +103,7 @@ export default async function InvestSubcategoryListingsPage({
       "@type": "ListItem",
       position: i + 1,
       name: l.title,
-      url: absoluteUrl(`/invest/listing/${l.slug}`),
+      url: absoluteUrl(listingUrl(l)),
     })),
   };
 
