@@ -5,6 +5,34 @@
       "schedule": "0 * * * *"
     },
     {
+      "path": "/api/cron/enforce-lead-sla",
+      "schedule": "30 9 * * *"
+    },
+    {
+      "path": "/api/cron/advisor-profile-gate-drip",
+      "schedule": "0 10 * * *"
+    },
+    {
+      "path": "/api/cron/advisor-dunning",
+      "schedule": "0 11 * * *"
+    },
+    {
+      "path": "/api/cron/afsl-expiry-monitor",
+      "schedule": "0 3 * * 1"
+    },
+    {
+      "path": "/api/cron/email-bounce-sweep",
+      "schedule": "0 4 * * *"
+    },
+    {
+      "path": "/api/cron/monthly-advisor-reports",
+      "schedule": "0 9 1 * *"
+    },
+    {
+      "path": "/api/cron/lead-quality-weights",
+      "schedule": "0 2 * * *"
+    },
+    {
       "path": "/api/cron/investor-drip",
       "schedule": "0 9 * * *"
     },
