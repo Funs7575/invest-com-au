@@ -191,6 +191,14 @@
     {
       "path": "/api/cron/abandoned-form-drip",
       "schedule": "0 12 * * *"
+    },
+    {
+      "path": "/api/cron/slo-monitor",
+      "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/cron/gdpr-retention-purge",
+      "schedule": "0 2 * * *"
     }
   ]
 }
