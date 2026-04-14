@@ -65,6 +65,33 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  dependency-scan:
+    name: Dependency vulnerabilities
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      - name: npm audit (high + critical only)
+        run: |
+          # Fails the job if there are any HIGH or CRITICAL
+          # vulnerabilities. Moderate + low are surfaced for
+          # review but do not block the merge.
+          npm audit --audit-level=high --production
+
+      - name: Dependency review
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: high
+          # allow-licenses: keeps the copyleft-safety check in
+          # one place so the review fails if someone adds a GPL
+          # dep to what's otherwise MIT/Apache/BSD.
+          allow-licenses: MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC, CC0-1.0, CC-BY-4.0, 0BSD, Unlicense, BlueOak-1.0.0
+
   e2e:
     name: End-to-end (Playwright)
     runs-on: ubuntu-latest

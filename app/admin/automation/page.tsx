@@ -43,6 +43,12 @@ export default async function AdminAutomationPage() {
           <Link href="/admin/automation/attribution" className="px-3 py-1.5 rounded-full bg-white border border-slate-200 hover:bg-slate-50 font-semibold text-slate-700">
             📊 Attribution
           </Link>
+          <Link href="/admin/automation/forms" className="px-3 py-1.5 rounded-full bg-white border border-slate-200 hover:bg-slate-50 font-semibold text-slate-700">
+            📝 Form funnels
+          </Link>
+          <Link href="/admin/automation/db-health" className="px-3 py-1.5 rounded-full bg-white border border-slate-200 hover:bg-slate-50 font-semibold text-slate-700">
+            🗄 DB health
+          </Link>
         </nav>
 
         {/* ── Top summary bar ── */}
