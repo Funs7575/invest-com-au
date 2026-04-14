@@ -8,6 +8,7 @@ import GoogleAnalytics from "@/components/GoogleAnalytics";
 import UtmCapture from "@/components/UtmCapture";
 import InternationalBannerServer from "@/components/InternationalBannerServer";
 import RouteChangeFocus from "@/components/RouteChangeFocus";
+import ServiceWorkerRegistrar from "@/components/ServiceWorkerRegistrar";
 
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import WebVitals from "@/components/WebVitals";
@@ -117,6 +118,7 @@ export default function RootLayout({
         <GoogleAnalytics />
         <Suspense fallback={null}><UtmCapture /></Suspense>
         <Suspense fallback={null}><RouteChangeFocus /></Suspense>
+        <Suspense fallback={null}><ServiceWorkerRegistrar /></Suspense>
 
         <ThemeProvider>
           <InternationalBannerServer />
