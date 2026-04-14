@@ -1,6 +1,10 @@
 {
   "crons": [
     {
+      "path": "/api/cron/auto-resolve-disputes",
+      "schedule": "0 * * * *"
+    },
+    {
       "path": "/api/cron/investor-drip",
       "schedule": "0 9 * * *"
     },

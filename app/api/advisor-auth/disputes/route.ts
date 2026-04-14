@@ -1,12 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { ADMIN_EMAIL } from "@/lib/admin";
-import { escapeHtml } from "@/lib/html-escape";
 import { isRateLimited } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
+import {
+  autoResolveDispute,
+  notifyAdminEscalated,
+} from "@/lib/advisor-lead-dispute-resolver";
+import type { DisputeReason } from "@/lib/advisor-lead-disputes";
 
 const log = logger("advisor-auth:disputes");
+
+/**
+ * Valid standardised reason_code values. The enum matches the DB
+ * CHECK constraint added in 20260413_advisor_lead_dispute_auto_resolve.
+ * Clients are encouraged to send a reason_code in addition to the
+ * free-text reason so the classifier has a reliable dispatch key.
+ */
+const VALID_REASON_CODES: DisputeReason[] = [
+  "spam_or_fake",
+  "wrong_specialty",
+  "out_of_area",
+  "unreachable",
+  "duplicate",
+  "under_minimum",
+  "other",
+];
 
 async function getAdvisorId(request: NextRequest): Promise<number | null> {
   const supabase = await createClient();
@@ -46,8 +65,29 @@ export async function POST(request: NextRequest) {
   const advisorId = await getAdvisorId(request);
   if (!advisorId) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
 
-  const { leadId, reason, details } = await request.json();
+  const body = await request.json();
+  const { leadId, reason, details, reason_code: rawReasonCode } = body as {
+    leadId?: number;
+    reason?: string;
+    details?: string;
+    reason_code?: string;
+  };
   if (!leadId || !reason) return NextResponse.json({ error: "Lead ID and reason required" }, { status: 400 });
+
+  // Validate the optional standardised reason_code. Unknown values
+  // are rejected at the API boundary so the classifier always sees a
+  // clean enum (or null, in which case the resolver parses from the
+  // free-text reason).
+  const reasonCode: DisputeReason | null =
+    rawReasonCode && VALID_REASON_CODES.includes(rawReasonCode as DisputeReason)
+      ? (rawReasonCode as DisputeReason)
+      : null;
+  if (rawReasonCode && !reasonCode) {
+    return NextResponse.json(
+      { error: `Invalid reason_code. Must be one of: ${VALID_REASON_CODES.join(", ")}` },
+      { status: 400 },
+    );
+  }
 
   const supabase = await createClient();
 
@@ -93,37 +133,70 @@ export async function POST(request: NextRequest) {
     .eq("lead_id", leadId)
     .single();
 
-  const { error } = await supabase.from("lead_disputes").insert({
-    lead_id: leadId,
-    professional_id: advisorId,
-    reason,
-    details: details || null,
-    billing_id: billingRecord?.id || null,
-  });
+  const { data: insertedDispute, error } = await supabase
+    .from("lead_disputes")
+    .insert({
+      lead_id: leadId,
+      professional_id: advisorId,
+      reason,
+      reason_code: reasonCode,
+      details: details || null,
+      billing_id: billingRecord?.id || null,
+    })
+    .select("id")
+    .single();
 
-  if (error) return NextResponse.json({ error: "Failed to create dispute" }, { status: 500 });
-
-  // Notify admin of new dispute
-  if (process.env.RESEND_API_KEY) {
-    const { data: advisor } = await supabase.from("professionals").select("name").eq("id", advisorId).single();
-    const { data: leadData } = await supabase.from("professional_leads").select("user_name, user_email").eq("id", leadId).single();
-    const advisorName = advisor?.name || "An advisor";
-    const leadName = leadData?.user_name || "Unknown";
-    const { getSiteUrl } = await import("@/lib/url"); const siteUrl = getSiteUrl();
-
-    await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        from: "Invest.com.au <system@invest.com.au>",
-        to: ADMIN_EMAIL,
-        subject: `Lead Dispute: ${advisorName} disputed lead from ${leadName}`,
-        html: `<div style="font-family:Arial,sans-serif;max-width:500px"><h2 style="color:#0f172a;font-size:16px">⚠️ New Lead Dispute</h2><p style="color:#64748b;font-size:14px"><strong>${advisorName}</strong> has disputed a lead.</p><table style="width:100%;font-size:13px;margin:12px 0"><tr><td style="padding:4px 0;color:#64748b">Lead</td><td style="padding:4px 0;font-weight:600">${leadName} (${leadData?.user_email || "no email"})</td></tr><tr><td style="padding:4px 0;color:#64748b">Reason</td><td style="padding:4px 0;font-weight:600">${escapeHtml(reason)}</td></tr>${details ? `<tr><td style="padding:4px 0;color:#64748b;vertical-align:top">Details</td><td style="padding:4px 0">${escapeHtml(details)}</td></tr>` : ""}</table><a href="${siteUrl}/admin/advisors" style="display:inline-block;padding:10px 20px;background:#0f172a;color:white;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;margin-top:8px">Review Dispute →</a></div>`,
-      }),
-    }).catch((err) => log.error("[disputes] notification email failed:", err));
+  if (error || !insertedDispute) {
+    return NextResponse.json({ error: "Failed to create dispute" }, { status: 500 });
   }
 
-  return NextResponse.json({ success: true });
+  // ── Inline auto-resolution ────────────────────────────────────
+  // Run the classifier against the dispute we just created. High-
+  // confidence verdicts get applied immediately (refund or reject)
+  // so the advisor sees instant resolution. Low/medium-confidence
+  // verdicts escalate to human review — stamped with the classifier
+  // context so the admin has a head-start.
+  //
+  // autoResolveDispute is idempotent, so the backfill cron
+  // /api/cron/auto-resolve-disputes can re-run on any row we leave
+  // in `pending` state without causing double refunds.
+  const result = await autoResolveDispute(insertedDispute.id);
+
+  // Escalated disputes still need the admin email — just with extra
+  // classifier signals so the admin can see what rules ran and why
+  // the classifier punted.
+  if (result.verdict === "escalate") {
+    const { data: advisor } = await supabase
+      .from("professionals")
+      .select("name")
+      .eq("id", advisorId)
+      .single();
+    const { data: leadData } = await supabase
+      .from("professional_leads")
+      .select("user_name")
+      .eq("id", leadId)
+      .single();
+    notifyAdminEscalated(
+      insertedDispute.id,
+      advisor?.name || "An advisor",
+      leadData?.user_name || "Unknown",
+      reason,
+      details || null,
+      result.reasons,
+    ).catch((err) =>
+      log.error("[disputes] admin escalation email failed", {
+        err: err instanceof Error ? err.message : String(err),
+      }),
+    );
+  }
+
+  return NextResponse.json({
+    success: true,
+    dispute_id: insertedDispute.id,
+    auto_resolved: result.verdict !== "escalate",
+    verdict: result.verdict,
+    refunded_cents: result.refundedCents,
+  });
 }
 
 // Get disputes for authenticated advisor
