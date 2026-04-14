@@ -40,6 +40,9 @@ export default async function AdminAutomationPage() {
           <Link href="/admin/automation/dry-run" className="px-3 py-1.5 rounded-full bg-white border border-slate-200 hover:bg-slate-50 font-semibold text-slate-700">
             🧪 Dry-run tester
           </Link>
+          <Link href="/admin/automation/attribution" className="px-3 py-1.5 rounded-full bg-white border border-slate-200 hover:bg-slate-50 font-semibold text-slate-700">
+            📊 Attribution
+          </Link>
         </nav>
 
         {/* ── Top summary bar ── */}
