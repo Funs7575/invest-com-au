@@ -86,20 +86,9 @@ const nextConfig: NextConfig = {
             key: "Strict-Transport-Security",
             value: "max-age=63072000; includeSubDomains; preload",
           },
-          {
-            key: "Content-Security-Policy",
-            value:
-              "default-src 'self'; " +
-              "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com https://www.googletagmanager.com https://www.google-analytics.com https://cal.com; " +
-              "style-src 'self' 'unsafe-inline'; " +
-              "img-src 'self' data: https: https://www.googletagmanager.com; " +
-              "font-src 'self'; " +
-              "connect-src 'self' https://*.supabase.co https://va.vercel-scripts.com https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://*.analytics.google.com https://api.stripe.com https://cal.com https://app.cal.com https://*.sentry.io https://*.ingest.sentry.io; " +
-              "frame-src https://js.stripe.com https://hooks.stripe.com https://www.youtube-nocookie.com https://player.vimeo.com https://cal.com; " +
-              "frame-ancestors 'none'; " +
-              "base-uri 'self'; " +
-              "form-action 'self'",
-          },
+          // NOTE: Content-Security-Policy is set by proxy.ts per request
+          // so it can carry a fresh nonce for inline scripts. Static
+          // CSP is not used any more — the proxy value wins regardless.
         ],
       },
     ];

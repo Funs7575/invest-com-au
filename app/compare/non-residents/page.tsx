@@ -6,6 +6,7 @@ import { breadcrumbJsonLd, SITE_URL, UPDATED_LABEL } from "@/lib/seo";
 import { FOREIGN_INVESTOR_GENERAL_DISCLAIMER } from "@/lib/compliance";
 import type { Broker } from "@/lib/types";
 import SectionHeading from "@/components/SectionHeading";
+import ComplianceFooter from "@/components/ComplianceFooter";
 import { AFFILIATE_REL } from "@/lib/tracking";
 import CompareNav from "../CompareNav";
 
@@ -395,6 +396,8 @@ export default async function NonResidentBrokersPage() {
         <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
           <p className="text-xs text-slate-500 leading-relaxed">{FOREIGN_INVESTOR_GENERAL_DISCLAIMER}</p>
         </div>
+
+        <ComplianceFooter />
       </div>
     </div>
   );

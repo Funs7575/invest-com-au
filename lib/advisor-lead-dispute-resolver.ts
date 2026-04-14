@@ -13,6 +13,7 @@ import { logger } from "@/lib/logger";
 import { ADMIN_EMAIL } from "@/lib/admin";
 import { escapeHtml } from "@/lib/html-escape";
 import { getSiteUrl } from "@/lib/url";
+import { recordFinancialAudit } from "@/lib/financial-audit";
 import {
   classifyDispute,
   type AutoResolveResult,
@@ -248,6 +249,21 @@ async function applyRefund(
         reasons: [...result.reasons, "credit_refund_failed_" + creditErr.message],
       });
     }
+
+    // Financial audit trail — AFSL s912D record-keeping requirement.
+    // Fire-and-forget; a failure here never blocks the refund.
+    await recordFinancialAudit({
+      actorType: "system",
+      actorId: "advisor-lead-dispute-resolver",
+      action: "refund",
+      resourceType: "advisor_credit_balance",
+      resourceId: advisorId,
+      amountCents: billAmountCents,
+      oldValue: { credit_balance_cents: currentBalance },
+      newValue: { credit_balance_cents: currentBalance + billAmountCents },
+      reason: `Auto-resolved dispute #${disputeId}: ${result.reasons.join(", ")}`,
+      context: { disputeId, leadId, verdict: result.verdict, confidence: result.confidence },
+    });
   }
 
   // Mark the lead no longer billed so it's clearly refunded in the

@@ -244,36 +244,81 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
-  // ── Idempotency ──────────────────────────────────────────────────
+  // ── Idempotency (crash-robust) ────────────────────────────────────
   // Stripe retries events after transient failures, so the same event.id
-  // can arrive multiple times. Claim the event_id atomically before doing
-  // any work — if the insert fails on the PK, another invocation is
-  // already processing it (or already did). Ack 200 and exit.
+  // can arrive multiple times. Claim with a processing → done state
+  // machine so that a crashed handler's event can be re-taken after a
+  // 5 minute timeout. Previous version was PK-only, which meant a
+  // handler crash left a permanent "duplicate" row and the event was
+  // never retried.
   //
   // Duplicate handling without this check produces: double welcome emails,
   // double wallet credits, duplicated audit-log rows, and double refund
   // reversals. All of those are revenue / trust disasters.
+  const idempotencyClient = createAdminClient();
+  const FIVE_MINS_AGO = new Date(Date.now() - 5 * 60 * 1000).toISOString();
   {
-    const idempotencyClient = createAdminClient();
     const { error: dedupeError } = await idempotencyClient
       .from("stripe_webhook_events")
-      .insert({ event_id: event.id, event_type: event.type });
+      .insert({
+        event_id: event.id,
+        event_type: event.type,
+        status: "processing",
+        started_at: new Date().toISOString(),
+      });
 
     if (dedupeError) {
-      // PostgREST returns 23505 for unique_violation — treat as duplicate.
-      // Any other error (table missing, network) we log and continue —
-      // better to risk a rare duplicate than drop a real event.
       if (dedupeError.code === "23505") {
-        log.info("Duplicate webhook event ignored", { eventId: event.id, type: event.type });
-        return NextResponse.json({ received: true, duplicate: true });
+        // Row already exists. If it's 'done', we're finished. If it's
+        // 'processing' and younger than 5 min, another worker owns
+        // it. If 'processing' and older, we re-take it (previous
+        // worker crashed).
+        const { data: existing } = await idempotencyClient
+          .from("stripe_webhook_events")
+          .select("status, started_at")
+          .eq("event_id", event.id)
+          .maybeSingle();
+
+        if (existing?.status === "done") {
+          log.info("Duplicate webhook event ignored (already done)", {
+            eventId: event.id,
+            type: event.type,
+          });
+          return NextResponse.json({ received: true, duplicate: true });
+        }
+        if (
+          existing?.status === "processing" &&
+          existing.started_at &&
+          existing.started_at > FIVE_MINS_AGO
+        ) {
+          log.info("Duplicate webhook event ignored (in-flight)", {
+            eventId: event.id,
+            type: event.type,
+          });
+          return NextResponse.json({ received: true, inflight: true });
+        }
+        // Stale processing row — re-take it.
+        await idempotencyClient
+          .from("stripe_webhook_events")
+          .update({ status: "processing", started_at: new Date().toISOString() })
+          .eq("event_id", event.id);
+        log.warn("Retaking stale stripe webhook event", {
+          eventId: event.id,
+          type: event.type,
+        });
+      } else {
+        log.warn("Idempotency claim failed, processing anyway", {
+          eventId: event.id,
+          error: dedupeError.message,
+        });
       }
-      log.warn("Idempotency check failed, processing anyway", {
-        eventId: event.id,
-        error: dedupeError.message,
-      });
     }
   }
 
+  // Mark the row complete once the handler finishes successfully. On
+  // exception we mark it 'error' so a retry can come along. Use a
+  // finally-style wrapper that runs even if the handler throws.
+  let finalStatus: "done" | "error" = "done";
   try {
     switch (event.type) {
       case "customer.subscription.created": {
@@ -969,10 +1014,33 @@ export async function POST(request: NextRequest) {
     }
   } catch (err) {
     log.error("Webhook handler error", { error: err instanceof Error ? err.message : String(err) });
+    finalStatus = "error";
+    // Mark the event row as 'error' so a Stripe retry can re-take it
+    // by the stale-processing fallback path above.
+    try {
+      await idempotencyClient
+        .from("stripe_webhook_events")
+        .update({ status: "error", completed_at: new Date().toISOString() })
+        .eq("event_id", event.id);
+    } catch {
+      // swallow — this is a best-effort status update
+    }
     return NextResponse.json(
       { error: "Webhook handler failed" },
       { status: 500 }
     );
+  }
+
+  // Mark done so this event will never be re-processed by a retry.
+  if (finalStatus === "done") {
+    try {
+      await idempotencyClient
+        .from("stripe_webhook_events")
+        .update({ status: "done", completed_at: new Date().toISOString() })
+        .eq("event_id", event.id);
+    } catch {
+      // swallow — the event was processed; the status stamp is best-effort
+    }
   }
 
   return NextResponse.json({ received: true });

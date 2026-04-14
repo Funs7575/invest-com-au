@@ -6,6 +6,7 @@ import { absoluteUrl } from "@/lib/seo";
 import { boostFeaturedPartner } from "@/lib/sponsorship";
 import VerticalPillarPage from "@/components/VerticalPillarPage";
 import ForeignInvestorCallout from "@/components/ForeignInvestorCallout";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 const vertical = getVerticalBySlug("super")!;
 
@@ -93,6 +94,9 @@ export default async function SuperPage() {
         advisors={advisors || []}
         expertArticles={expertArticles || []}
       />
+      <div className="max-w-6xl mx-auto px-4 pb-8">
+        <ComplianceFooter />
+      </div>
     </>
   );
 }
