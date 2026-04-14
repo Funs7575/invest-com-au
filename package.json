@@ -17,15 +17,15 @@
     "db:types": "echo 'Run: npx supabase gen types typescript --project-id YOUR_PROJECT_ID > lib/database.types.ts'"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.80.0",
+    "@anthropic-ai/sdk": "^0.88.0",
     "@sentry/nextjs": "9.47.1",
-    "@supabase/ssr": "^0.6.1",
-    "@supabase/supabase-js": "^2.49.1",
+    "@supabase/ssr": "^0.10.2",
+    "@supabase/supabase-js": "^2.103.0",
     "@tailwindcss/typography": "^0.5.16",
     "@vercel/speed-insights": "^1.1.0",
-    "next": "16.1.6",
-    "react": "19.0.0",
-    "react-dom": "19.0.0",
+    "next": "16.2.3",
+    "react": "19.2.5",
+    "react-dom": "19.2.5",
     "stripe": "^17.7.0"
   },
   "devDependencies": {
