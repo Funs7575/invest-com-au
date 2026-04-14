@@ -4,6 +4,7 @@ import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { withCronRunLog } from "@/lib/cron-run-log";
 import { autoResolveDispute } from "@/lib/advisor-lead-dispute-resolver";
+import { isFeatureDisabled } from "@/lib/admin/classifier-config";
 
 const log = logger("cron:auto-resolve-disputes");
 
@@ -36,6 +37,15 @@ export async function GET(req: NextRequest) {
         escalated: 0,
         failed: 0,
       };
+
+      // Kill switch short-circuit — flip this from the admin dashboard
+      // to freeze auto-resolution without a redeploy.
+      if (await isFeatureDisabled("lead_disputes")) {
+        return {
+          response: NextResponse.json({ ok: true, skipped: "kill_switch_on", ...stats }),
+          stats: { ...stats, skipped: "kill_switch_on" as const },
+        };
+      }
 
       const supabase = createAdminClient();
       const { data: pending, error } = await supabase

@@ -151,6 +151,14 @@
     {
       "path": "/api/cron/verify-review-clients",
       "schedule": "0 4 * * *"
+    },
+    {
+      "path": "/api/cron/property-suburb-refresh",
+      "schedule": "0 3 1 * *"
+    },
+    {
+      "path": "/api/cron/automation-verdict-rollup",
+      "schedule": "15 * * * *"
     }
   ]
 }
