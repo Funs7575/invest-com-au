@@ -14,7 +14,7 @@ export default class ErrorBoundary extends Component<Props, State> {
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error) {
+  override componentDidCatch(error: Error) {
     // Report to Sentry if available
     const w = typeof window !== "undefined" ? (window as unknown as { Sentry?: { captureException: (e: unknown) => void } }) : null;
     if (w?.Sentry) {
@@ -23,7 +23,7 @@ export default class ErrorBoundary extends Component<Props, State> {
     console.error(`[ErrorBoundary${this.props.section ? ` - ${this.props.section}` : ""}]`, error);
   }
 
-  render() {
+  override render() {
     if (this.state.hasError) {
       return this.props.fallback || (
         <div className="py-12 text-center">

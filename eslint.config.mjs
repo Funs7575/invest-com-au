@@ -32,6 +32,19 @@ const eslintConfig = [
       "@typescript-eslint/no-explicit-any": "warn",
       // Allow Function type (warn only)
       "@typescript-eslint/no-unsafe-function-type": "warn",
+      // Wave 12 — promote a few safety rules to errors. These are
+      // cheap to satisfy in new code and keep the codebase from
+      // regressing on obvious footguns. The rules we DON'T promote
+      // (no-unused-vars, no-explicit-any) still fire as warnings
+      // until the backlog gets tidied up incrementally.
+      "@typescript-eslint/no-misused-promises": [
+        "error",
+        { checksVoidReturn: false },
+      ],
+      "no-debugger": "error",
+      "no-var": "error",
+      "prefer-const": "error",
+      "eqeqeq": ["error", "smart"],
     },
   },
 ];

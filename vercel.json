@@ -231,6 +231,10 @@
     {
       "path": "/api/cron/cron-freshness",
       "schedule": "20 * * * *"
+    },
+    {
+      "path": "/api/cron/tmd-audit",
+      "schedule": "0 6 * * *"
     }
   ]
 }

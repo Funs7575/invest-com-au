@@ -5,6 +5,7 @@ import type { Broker, UserReview, BrokerReviewStats, SwitchStory, BrokerQuestion
 import { notFound } from "next/navigation";
 import { getBrokerBySlug } from "@/lib/request-cache";
 import BrokerReviewClient from "./BrokerReviewClient";
+import TmdBadge from "@/components/TmdBadge";
 import {
   absoluteUrl,
   breadcrumbJsonLd,
@@ -246,6 +247,21 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
           pageType="broker"
           pageSlug={b.slug}
         />
+      </div>
+      {/* DDO compliance — render the current TMD link prominently
+          next to the product footer. DDO (Corporations Act s994A–C)
+          requires a TMD link on every product page. The component
+          returns null silently if no TMD is on file — the admin
+          TMD page + nightly audit flag missing ones. */}
+      <div className="container-custom max-w-4xl border-t border-slate-200 mt-8 pt-6 pb-10">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-xs text-slate-500 max-w-xl">
+            Before acting on any information on this page, consider whether
+            the product is right for you and read the issuer&rsquo;s Target
+            Market Determination.
+          </p>
+          <TmdBadge productType="broker" productRef={b.slug} />
+        </div>
       </div>
     </>
   );

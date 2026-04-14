@@ -31,6 +31,8 @@ vi.mock("@/lib/supabase/admin", () => ({
         op: "select" | "insert" | "update";
         slugFilter?: string;
         statusFilter?: string;
+        idFilter?: number;
+        updatePayload?: Partial<Row>;
         payload?: Partial<Row>;
         reactionPayload?: {
           article_slug?: string;
@@ -49,6 +51,11 @@ vi.mock("@/lib/supabase/admin", () => ({
       const api: Record<string, unknown> = {};
 
       api.select = () => api;
+      api.update = (payload: Partial<Row>) => {
+        state.op = "update";
+        state.updatePayload = payload;
+        return api;
+      };
       api.insert = (payload: Record<string, unknown>) => {
         if (state.isArticleComments) {
           const newRow: Row = {
@@ -101,9 +108,10 @@ vi.mock("@/lib/supabase/admin", () => ({
         }
         return Promise.resolve({ error: null });
       };
-      api.eq = (col: string, val: string) => {
-        if (col === "article_slug") state.slugFilter = val;
-        if (col === "status") state.statusFilter = val;
+      api.eq = (col: string, val: string | number) => {
+        if (col === "article_slug") state.slugFilter = String(val);
+        if (col === "status") state.statusFilter = String(val);
+        if (col === "id") state.idFilter = Number(val);
         return api;
       };
       api.order = () => api;
@@ -113,8 +121,13 @@ vi.mock("@/lib/supabase/admin", () => ({
           const matched = commentRows.filter(
             (r) =>
               (!state.slugFilter || r.article_slug === state.slugFilter) &&
-              (!state.statusFilter || r.status === state.statusFilter),
+              (!state.statusFilter || r.status === state.statusFilter) &&
+              (!state.idFilter || r.id === state.idFilter),
           );
+          if (state.op === "update" && state.updatePayload) {
+            matched.forEach((r) => Object.assign(r, state.updatePayload));
+            return resolve({ error: null });
+          }
           return resolve({ data: matched, error: null });
         }
         if (state.isReactions) {
@@ -143,6 +156,8 @@ vi.mock("@/lib/logger", () => ({
 import {
   submitComment,
   listPublishedComments,
+  listPendingComments,
+  setCommentStatus,
   reactToArticle,
   getReactionCounts,
   hashIp,
@@ -302,5 +317,51 @@ describe("helpers", () => {
     expect(isValidReaction("helpful")).toBe(true);
     expect(isValidReaction("nope")).toBe(false);
     expect(isValidReaction(null)).toBe(false);
+  });
+});
+
+describe("listPendingComments + setCommentStatus", () => {
+  it("only returns rows with status=pending", async () => {
+    // Inject a pending row directly (legal-risk phrase triggers escalate)
+    await submitComment({
+      articleSlug: "broker-x",
+      authorId: null,
+      authorName: "Carol",
+      authorEmail: "c@example.com",
+      body: "This platform scammed me out of thousands — I want a refund immediately.",
+    });
+    // Inject a clean published row
+    await submitComment({
+      articleSlug: "broker-x",
+      authorId: "u1",
+      authorName: "Dan",
+      authorEmail: "d@example.com",
+      body: "Really useful write-up, the ETF section was exactly what I needed.",
+    });
+    const pending = await listPendingComments();
+    expect(pending.length).toBeGreaterThanOrEqual(1);
+    for (const p of pending) {
+      expect(p.status).toBe("pending");
+    }
+  });
+
+  it("flips a pending comment to published", async () => {
+    await submitComment({
+      articleSlug: "broker-y",
+      authorId: null,
+      authorName: "Eve",
+      authorEmail: "e@example.com",
+      body: "These people are fraudsters who scammed me and defrauded my friend.",
+    });
+    const pending = await listPendingComments();
+    const row = pending.find((r) => r.article_slug === "broker-y");
+    expect(row).toBeDefined();
+    const ok = await setCommentStatus({
+      id: row!.id,
+      status: "published",
+      moderatorEmail: "mod@invest.com.au",
+    });
+    expect(ok).toBe(true);
+    expect(commentRows.find((r) => r.id === row!.id)?.status).toBe("published");
   });
 });

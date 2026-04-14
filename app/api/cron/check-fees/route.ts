@@ -4,6 +4,7 @@ import { getAdminEmail } from "@/lib/admin";
 import { feeChangeAlertEmail } from "@/lib/email-templates";
 import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { buildEmailToUserIdMap, notifyUser } from "@/lib/notifications";
 
 const log = logger("cron-check-fees");
 
@@ -263,6 +264,10 @@ export async function GET(req: NextRequest) {
       .eq("frequency", "instant");
 
     if (subscribers && subscribers.length > 0) {
+      // Pre-load the email→user_id map so each inbox drop is O(1).
+      // Signed-in subscribers get an inbox notification; email-only
+      // subscribers just receive the outbound email.
+      const emailToUserId = await buildEmailToUserIdMap();
       const changedSlugs = changedBrokers.map((b) => b.slug);
 
       for (const sub of subscribers.slice(0, 50)) {
@@ -272,6 +277,26 @@ export async function GET(req: NextRequest) {
           : changedBrokers;
 
         if (relevantBrokers.length === 0) continue;
+
+        // Drop an inbox notification for signed-in subscribers. The
+        // email_delivery_key keys off today's date + the broker
+        // slugs so repeat runs within the same day dedup cleanly.
+        const userId = emailToUserId.get(sub.email.toLowerCase());
+        if (userId) {
+          const today = new Date().toISOString().slice(0, 10);
+          const slugKey = relevantBrokers.map((b) => b.slug).sort().join("+");
+          await notifyUser({
+            userId,
+            type: "fee_change",
+            title:
+              relevantBrokers.length === 1
+                ? `${relevantBrokers[0].name} changed their fees`
+                : `${relevantBrokers.length} brokers changed their fees`,
+            body: relevantBrokers.map((b) => `${b.name}: ${b.detail}`).join("\n"),
+            linkUrl: `/broker/${relevantBrokers[0].slug}`,
+            emailDeliveryKey: `fee_change:${today}:${slugKey}`,
+          });
+        }
 
         // Build changes for the email template
         const emailChanges = relevantBrokers.map((b) => ({

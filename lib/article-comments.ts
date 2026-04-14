@@ -44,6 +44,46 @@ export function isValidReaction(v: unknown): v is ReactionKind {
   return typeof v === "string" && (VALID_REACTIONS as string[]).includes(v);
 }
 
+export async function listPendingComments(
+  limit = 100,
+): Promise<ArticleCommentRow[]> {
+  try {
+    const supabase = createAdminClient();
+    const { data } = await supabase
+      .from("article_comments")
+      .select(
+        "id, article_slug, author_id, author_name, author_email, parent_id, body, status, helpful_count, created_at",
+      )
+      .eq("status", "pending")
+      .order("created_at", { ascending: true })
+      .limit(limit);
+    return (data as ArticleCommentRow[] | null) || [];
+  } catch {
+    return [];
+  }
+}
+
+export async function setCommentStatus(input: {
+  id: number;
+  status: "published" | "rejected" | "removed";
+  moderatorEmail: string;
+}): Promise<boolean> {
+  try {
+    const supabase = createAdminClient();
+    const { error } = await supabase
+      .from("article_comments")
+      .update({
+        status: input.status,
+        auto_moderated_verdict: `admin:${input.moderatorEmail}`,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", input.id);
+    return !error;
+  } catch {
+    return false;
+  }
+}
+
 export async function listPublishedComments(
   articleSlug: string,
 ): Promise<ArticleCommentRow[]> {

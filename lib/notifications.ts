@@ -134,3 +134,67 @@ export async function markAllRead(userId: string): Promise<void> {
     });
   }
 }
+
+/**
+ * Load every registered user's email → user_id mapping into a Map.
+ *
+ * Crons that want to fire inbox notifications for a subscriber list
+ * (keyed by email) should call this once at the top of their handler
+ * and reuse the returned Map for O(1) lookups. Listing users is
+ * expensive (paginated) so we don't want to do it per subscriber.
+ *
+ * Supabase's admin.listUsers() returns at most 1000 per page. We
+ * fetch pages until the cursor runs dry or we hit a generous cap
+ * (10 pages = 10k users) so runaway auth tables can't freeze a cron.
+ */
+export async function buildEmailToUserIdMap(): Promise<Map<string, string>> {
+  const map = new Map<string, string>();
+  try {
+    const supabase = createAdminClient();
+    const PER_PAGE = 1000;
+    const MAX_PAGES = 10;
+    for (let page = 1; page <= MAX_PAGES; page += 1) {
+      const { data, error } = await supabase.auth.admin.listUsers({
+        page,
+        perPage: PER_PAGE,
+      });
+      if (error || !data?.users || data.users.length === 0) break;
+      for (const u of data.users) {
+        if (u.email) map.set(u.email.toLowerCase(), u.id);
+      }
+      if (data.users.length < PER_PAGE) break;
+    }
+  } catch (err) {
+    log.warn("buildEmailToUserIdMap threw", {
+      err: err instanceof Error ? err.message : String(err),
+    });
+  }
+  return map;
+}
+
+/**
+ * Single-shot lookup + notify by email. Convenient for routes that
+ * only need to notify one user; internally builds the map, so do
+ * NOT call this in a loop — use `buildEmailToUserIdMap()` first and
+ * then call `notifyUser()` directly.
+ *
+ * Returns:
+ *   { notified: true, userId }  — row landed in user_notifications
+ *   { notified: false, reason } — no matching user, or dedup'd
+ */
+export async function notifyUserByEmail(
+  email: string,
+  input: Omit<NotificationInput, "userId">,
+): Promise<{ notified: boolean; userId?: string; reason?: string }> {
+  if (!email || typeof email !== "string") {
+    return { notified: false, reason: "missing_email" };
+  }
+  const normalized = email.trim().toLowerCase();
+  const map = await buildEmailToUserIdMap();
+  const userId = map.get(normalized);
+  if (!userId) return { notified: false, reason: "no_matching_user" };
+  const ok = await notifyUser({ ...input, userId });
+  return ok
+    ? { notified: true, userId }
+    : { notified: false, reason: "dedup_or_insert_failed", userId };
+}

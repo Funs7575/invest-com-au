@@ -11,11 +11,30 @@ interface Row {
   read_at: string | null;
 }
 
+interface FakeAuthUser {
+  id: string;
+  email: string;
+}
+
 let rows: Row[] = [];
 let nextId = 1;
+let authUsers: FakeAuthUser[] = [];
 
 vi.mock("@/lib/supabase/admin", () => ({
   createAdminClient: () => {
+    const adminAuth = {
+      listUsers: async ({
+        page,
+        perPage,
+      }: {
+        page: number;
+        perPage: number;
+      }) => {
+        const start = (page - 1) * perPage;
+        const slice = authUsers.slice(start, start + perPage);
+        return { data: { users: slice }, error: null };
+      },
+    };
     const builder = (table: string) => {
       const state: {
         userId?: string;
@@ -84,7 +103,7 @@ vi.mock("@/lib/supabase/admin", () => ({
       };
       return api;
     };
-    return { from: builder };
+    return { from: builder, auth: { admin: adminAuth } };
   },
 }));
 
@@ -102,11 +121,14 @@ import {
   getUnreadCount,
   markRead,
   markAllRead,
+  buildEmailToUserIdMap,
+  notifyUserByEmail,
 } from "@/lib/notifications";
 
 beforeEach(() => {
   rows = [];
   nextId = 1;
+  authUsers = [];
 });
 
 describe("notifyUser", () => {
@@ -199,5 +221,66 @@ describe("markRead + markAllRead", () => {
     expect(await getUnreadCount("u1")).toBe(0);
     // u2 unaffected
     expect(await getUnreadCount("u2")).toBe(1);
+  });
+});
+
+describe("buildEmailToUserIdMap", () => {
+  it("returns an empty map when there are no auth users", async () => {
+    const map = await buildEmailToUserIdMap();
+    expect(map.size).toBe(0);
+  });
+
+  it("maps every email to its user id, case-insensitive", async () => {
+    authUsers = [
+      { id: "u1", email: "Alice@Example.com" },
+      { id: "u2", email: "bob@example.com" },
+    ];
+    const map = await buildEmailToUserIdMap();
+    expect(map.size).toBe(2);
+    expect(map.get("alice@example.com")).toBe("u1");
+    expect(map.get("bob@example.com")).toBe("u2");
+  });
+});
+
+describe("notifyUserByEmail", () => {
+  it("returns notified:false when the email is unknown", async () => {
+    authUsers = [{ id: "u1", email: "alice@example.com" }];
+    const result = await notifyUserByEmail("nobody@example.com", {
+      type: "system",
+      title: "Hi",
+    });
+    expect(result.notified).toBe(false);
+    expect(result.reason).toBe("no_matching_user");
+    expect(rows).toHaveLength(0);
+  });
+
+  it("drops a notification when the email matches a user", async () => {
+    authUsers = [{ id: "u1", email: "alice@example.com" }];
+    const result = await notifyUserByEmail("ALICE@example.com", {
+      type: "fee_change",
+      title: "Your broker changed fees",
+      emailDeliveryKey: "fee_change:2026-04-14:stake",
+    });
+    expect(result.notified).toBe(true);
+    expect(result.userId).toBe("u1");
+    expect(rows).toHaveLength(1);
+    expect(rows[0].user_id).toBe("u1");
+  });
+
+  it("dedups on repeat call with the same email_delivery_key", async () => {
+    authUsers = [{ id: "u1", email: "alice@example.com" }];
+    const first = await notifyUserByEmail("alice@example.com", {
+      type: "fee_change",
+      title: "First",
+      emailDeliveryKey: "fee:dup",
+    });
+    const second = await notifyUserByEmail("alice@example.com", {
+      type: "fee_change",
+      title: "Second",
+      emailDeliveryKey: "fee:dup",
+    });
+    expect(first.notified).toBe(true);
+    expect(second.notified).toBe(false);
+    expect(rows).toHaveLength(1);
   });
 });
