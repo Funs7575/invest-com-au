@@ -6,6 +6,7 @@ import { lookupAfsl } from "@/lib/advisor-application-resolver";
 import { escapeHtml } from "@/lib/html-escape";
 import { getSiteUrl } from "@/lib/url";
 import { ADMIN_EMAIL } from "@/lib/admin";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron:afsl-expiry-monitor");
 
@@ -28,7 +29,7 @@ export const maxDuration = 60;
  * Runs weekly because the register doesn't change daily and we
  * don't want to hammer it. Vercel cron schedule: '0 3 * * 1' (Mon 3am).
  */
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest) {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -131,3 +132,5 @@ function sendEmail(to: string | null, subject: string, html: string): void {
     }),
   }).catch(() => {});
 }
+
+export const GET = wrapCronHandler("afsl-expiry-monitor", handler);

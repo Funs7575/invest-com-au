@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron:lead-quality-weights");
 
@@ -41,7 +42,7 @@ export const maxDuration = 120;
  * Weight formula: signal_weight = hit_rate / baseline_hit_rate * 30
  * — clamped to the 0–100 range used by the live scorer.
  */
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest) {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -159,3 +160,5 @@ export async function GET(req: NextRequest) {
     weights: weightRows,
   });
 }
+
+export const GET = wrapCronHandler("lead-quality-weights", handler);

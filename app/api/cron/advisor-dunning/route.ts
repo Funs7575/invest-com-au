@@ -5,6 +5,7 @@ import { requireCronAuth } from "@/lib/cron-auth";
 import { getStripe } from "@/lib/stripe";
 import { escapeHtml } from "@/lib/html-escape";
 import { getSiteUrl } from "@/lib/url";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron:advisor-dunning");
 
@@ -30,7 +31,7 @@ export const maxDuration = 60;
  *
  * Safe to run daily — each step only fires once per row.
  */
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest) {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -227,3 +228,5 @@ function sendEmail(to: string | null, subject: string, html: string): void {
     }),
   }).catch(() => {});
 }
+
+export const GET = wrapCronHandler("advisor-dunning", handler);

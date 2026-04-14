@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron:email-bounce-sweep");
 
@@ -27,7 +28,7 @@ export const maxDuration = 60;
  * scrubs drips for whatever is ALREADY in email_suppression_list,
  * so manual adds to the suppression table still take effect.
  */
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest) {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -141,3 +142,5 @@ export async function GET(req: NextRequest) {
   log.info("Email bounce sweep completed", stats);
   return NextResponse.json({ ok: true, ...stats });
 }
+
+export const GET = wrapCronHandler("email-bounce-sweep", handler);
