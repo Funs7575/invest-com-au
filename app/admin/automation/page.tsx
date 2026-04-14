@@ -49,6 +49,9 @@ export default async function AdminAutomationPage() {
           <Link href="/admin/automation/db-health" className="px-3 py-1.5 rounded-full bg-white border border-slate-200 hover:bg-slate-50 font-semibold text-slate-700">
             🗄 DB health
           </Link>
+          <Link href="/admin/automation/retention" className="px-3 py-1.5 rounded-full bg-white border border-slate-200 hover:bg-slate-50 font-semibold text-slate-700">
+            📈 Retention
+          </Link>
         </nav>
 
         {/* ── Top summary bar ── */}
