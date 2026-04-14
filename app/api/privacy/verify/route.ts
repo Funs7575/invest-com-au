@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
 
   const { data: req, error: fetchErr } = await admin
     .from("privacy_data_requests")
-    .select("id, request_type, email, verified_at, completed_at, created_at")
+    .select("id, request_type, email, verified_at, completed_at, created_at, rows_affected")
     .eq("verification_token", token)
     .maybeSingle();
 
@@ -79,6 +79,84 @@ export async function GET(request: NextRequest) {
           "Content-Type": "application/json",
           "Content-Disposition": `attachment; filename="invest-com-au-data-${(req.email as string).replace(/[^a-z0-9]/gi, "_")}.json"`,
         },
+      });
+    }
+
+    if (req.request_type === "correct") {
+      // Read the pending correction out of rows_affected, apply
+      // to allow-listed tables, stamp completed_at. Only three
+      // whitelisted fields are ever touched.
+      const pending = (req.rows_affected as
+        | { pending_correction?: { field: string; new_value: string } }
+        | null
+      )?.pending_correction;
+      if (!pending || !pending.field) {
+        return NextResponse.json(
+          { error: "Malformed correction request — no pending correction found" },
+          { status: 400 },
+        );
+      }
+      const ALLOWED = new Set(["name", "phone", "preference_cadence"]);
+      if (!ALLOWED.has(pending.field)) {
+        return NextResponse.json({ error: "Field not allowed" }, { status: 400 });
+      }
+
+      const affected: Record<string, number> = {};
+      if (pending.field === "name") {
+        const { count } = await admin
+          .from("email_captures")
+          .update({ name: pending.new_value }, { count: "exact" })
+          .eq("email", req.email as string);
+        affected.email_captures = count || 0;
+        const { count: ncount } = await admin
+          .from("newsletter_subscribers")
+          .update({ name: pending.new_value }, { count: "exact" })
+          .eq("email", req.email as string);
+        affected.newsletter_subscribers = ncount || 0;
+      } else if (pending.field === "preference_cadence") {
+        const validPref = ["weekly", "monthly", "quarterly"].includes(
+          pending.new_value,
+        )
+          ? pending.new_value
+          : null;
+        if (!validPref) {
+          return NextResponse.json(
+            { error: "Invalid cadence — must be weekly | monthly | quarterly" },
+            { status: 400 },
+          );
+        }
+        const { count } = await admin
+          .from("newsletter_subscribers")
+          .update({ preference: validPref }, { count: "exact" })
+          .eq("email", req.email as string);
+        affected.newsletter_subscribers = count || 0;
+      } else if (pending.field === "phone") {
+        const { count } = await admin
+          .from("professional_leads")
+          .update({ user_phone: pending.new_value }, { count: "exact" })
+          .eq("user_email", req.email as string);
+        affected.professional_leads = count || 0;
+      }
+
+      await admin
+        .from("privacy_data_requests")
+        .update({
+          completed_at: new Date().toISOString(),
+          rows_affected: { correction_applied: pending, affected },
+        })
+        .eq("id", req.id);
+
+      log.info("Privacy correction fulfilled", {
+        email: req.email,
+        field: pending.field,
+        affected,
+      });
+
+      return NextResponse.json({
+        ok: true,
+        message: "Your data has been updated.",
+        field: pending.field,
+        affected,
       });
     }
 

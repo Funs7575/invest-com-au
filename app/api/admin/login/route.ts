@@ -4,6 +4,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { createHash } from "crypto";
 import { ADMIN_EMAILS } from "@/lib/admin";
 import { logger } from "@/lib/logger";
+import {
+  checkEmailLockout,
+  recordLoginFailure,
+  clearLoginFailures,
+} from "@/lib/login-lockout";
+import {
+  isAdminMfaEnrolled,
+  verifyAdminMfaCode,
+  verifyAdminRecoveryCode,
+} from "@/lib/admin-mfa";
+import { isFlagEnabled } from "@/lib/feature-flags";
 
 const log = logger("admin-login");
 
@@ -63,7 +74,12 @@ async function clearRateLimit(ipHash: string): Promise<void> {
 
 export async function POST(request: NextRequest) {
   // Parse body
-  let body: { email?: string; password?: string };
+  let body: {
+    email?: string;
+    password?: string;
+    mfa_code?: string;
+    recovery_code?: string;
+  };
   try {
     body = await request.json();
   } catch (err) {
@@ -71,12 +87,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 
-  const { email, password } = body;
+  const { email, password, mfa_code, recovery_code } = body;
   if (!email || !password) {
     return NextResponse.json({ error: "Email and password required" }, { status: 400 });
   }
 
-  // Rate limit by IP
+  // ── Rate limit by IP (existing legacy tier) ──
   const forwarded = request.headers.get("x-forwarded-for");
   const ip = forwarded ? forwarded.split(",")[0].trim() : "unknown";
   const ipHash = hashIP(ip);
@@ -89,7 +105,19 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Authenticate via Supabase (server-side)
+  // ── Email-tier lockout ──
+  // Protects against attackers rotating IPs against a single admin.
+  const emailLockout = await checkEmailLockout(email);
+  if (emailLockout.locked) {
+    return NextResponse.json(
+      {
+        error: `This account is temporarily locked. Try again in ${Math.ceil(emailLockout.retryAfterSeconds / 60)} minutes.`,
+      },
+      { status: 429 }
+    );
+  }
+
+  // ── Authenticate via Supabase (server-side) ──
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL || "",
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ""
@@ -98,6 +126,8 @@ export async function POST(request: NextRequest) {
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
+    // Failed password — increment the email counter.
+    await recordLoginFailure(email, ip);
     return NextResponse.json(
       { error: error.message, attemptsRemaining: remaining },
       { status: 401 }
@@ -106,14 +136,65 @@ export async function POST(request: NextRequest) {
 
   // Verify this user is an admin
   if (!data.user?.email || !ADMIN_EMAILS.includes(data.user.email.toLowerCase())) {
+    // Still record the failure so "found an admin password but
+    // not an allowlisted email" counts toward lockout too.
+    await recordLoginFailure(email, ip);
     return NextResponse.json(
       { error: "Access denied. This account is not an administrator." },
       { status: 403 }
     );
   }
 
-  // Success — reset rate limit for this IP
+  // ── MFA gate ──
+  // If the admin has MFA enrolled, password alone is not enough.
+  // A feature flag lets us enforce MFA for all admins once enough
+  // of them have enrolled.
+  const adminEmail = data.user.email.toLowerCase();
+  const enrolled = await isAdminMfaEnrolled(adminEmail);
+  const mfaRequired = await isFlagEnabled("admin_mfa_required", { segment: "admin" });
+
+  if (enrolled || mfaRequired) {
+    if (!mfa_code && !recovery_code) {
+      // Step-up: ask the client to collect a code
+      if (!enrolled) {
+        // Required but not enrolled — tell the user to enrol via
+        // the admin console rather than blocking them forever.
+        return NextResponse.json(
+          {
+            error: "MFA is required for admin login. Please enrol via /admin/settings/mfa.",
+            code: "mfa_required_not_enrolled",
+          },
+          { status: 403 },
+        );
+      }
+      return NextResponse.json(
+        {
+          error: "MFA code required",
+          code: "mfa_required",
+        },
+        { status: 401 },
+      );
+    }
+
+    const result = recovery_code
+      ? await verifyAdminRecoveryCode(adminEmail, recovery_code)
+      : await verifyAdminMfaCode(adminEmail, mfa_code || "");
+
+    if (result !== "ok") {
+      await recordLoginFailure(email, ip);
+      const msg =
+        result === "bad_code"
+          ? "Invalid MFA code"
+          : result === "disabled"
+            ? "MFA is disabled for this account"
+            : "MFA not enrolled";
+      return NextResponse.json({ error: msg, code: result }, { status: 401 });
+    }
+  }
+
+  // Success — reset both rate limiters
   await clearRateLimit(ipHash);
+  await clearLoginFailures(email);
 
   return NextResponse.json({
     success: true,

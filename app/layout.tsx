@@ -9,6 +9,9 @@ import UtmCapture from "@/components/UtmCapture";
 import InternationalBannerServer from "@/components/InternationalBannerServer";
 import RouteChangeFocus from "@/components/RouteChangeFocus";
 import ServiceWorkerRegistrar from "@/components/ServiceWorkerRegistrar";
+import ChatWidget from "@/components/ChatWidget";
+import PushNotificationOptIn from "@/components/PushNotificationOptIn";
+import { isFlagEnabled } from "@/lib/feature-flags";
 
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import WebVitals from "@/components/WebVitals";
@@ -75,11 +78,15 @@ export const viewport: Viewport = {
   themeColor: "#ffffff",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // Feature-flag gate for the chat widget — admins can ramp it
+  // from 0% → 100% via /admin/automation/flags.
+  const chatEnabled = await isFlagEnabled("chatbot_widget");
+  const pushEnabled = await isFlagEnabled("push_notifications");
   return (
     <html lang="en-AU" suppressHydrationWarning>
       {/* Inline script adds .js-ready immediately so CSS animations only run when JS is available.
@@ -123,6 +130,8 @@ export default function RootLayout({
         <ThemeProvider>
           <InternationalBannerServer />
           <LayoutShell>{children}</LayoutShell>
+          {chatEnabled && <ChatWidget />}
+          {pushEnabled && <Suspense fallback={null}><PushNotificationOptIn /></Suspense>}
         </ThemeProvider>
         <Suspense fallback={null}><WebVitals /></Suspense>
         <SpeedInsights />

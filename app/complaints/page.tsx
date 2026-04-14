@@ -223,6 +223,18 @@ export default function ComplaintsPage() {
               <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 md:p-5">
                 <div className="space-y-3 text-sm text-slate-700">
                   <div>
+                    <p className="font-bold text-slate-800 mb-1">Submit online</p>
+                    <Link
+                      href="/complaints/submit"
+                      className="inline-block px-4 py-2 rounded bg-slate-900 text-white font-semibold text-xs hover:bg-slate-800"
+                    >
+                      Lodge a complaint →
+                    </Link>
+                    <p className="text-[0.65rem] text-slate-500 mt-1">
+                      Gets a reference number + email confirmation. 30-day SLA.
+                    </p>
+                  </div>
+                  <div>
                     <p className="font-bold text-slate-800 mb-1">Email</p>
                     <a
                       href="mailto:complaints@invest.com.au"
