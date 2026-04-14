@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createStaticClient } from "@/lib/supabase/static";
 import type { Broker, UserReview, BrokerReviewStats, SwitchStory, BrokerQuestion, BrokerAnswer } from "@/lib/types";
 import { notFound } from "next/navigation";
+import { getBrokerBySlug } from "@/lib/request-cache";
 import BrokerReviewClient from "./BrokerReviewClient";
 import {
   absoluteUrl,
@@ -32,12 +33,9 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const supabase = await createClient();
-  const { data: broker } = await supabase
-    .from('brokers')
-    .select('name, tagline, rating')
-    .eq('slug', slug)
-    .single();
+  // Shared cache() hit with the page body — single DB round-trip
+  // per render instead of two.
+  const broker = await getBrokerBySlug(slug);
 
   if (!broker) return { title: 'Broker Not Found' };
 
@@ -70,12 +68,7 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
   const { slug } = await params;
   const supabase = await createClient();
 
-  const { data: broker } = await supabase
-    .from('brokers')
-    .select('*, reviewer:team_members!reviewer_id(*)')
-    .eq('slug', slug)
-    .eq('status', 'active')
-    .single();
+  const broker = await getBrokerBySlug(slug);
 
   if (!broker) notFound();
 

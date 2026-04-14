@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { createStaticClient } from "@/lib/supabase/static";
+import { getArticleBySlug } from "@/lib/request-cache";
 import Link from "next/link";
 import Image from "next/image";
 import type { Article, Broker } from "@/lib/types";
@@ -47,12 +48,9 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const supabase = await createClient();
-  const { data: article } = await supabase
-    .from("articles")
-    .select("title, excerpt, category, published_at")
-    .eq("slug", slug)
-    .single();
+  // Shared cache() hit with the page body — single DB round-trip
+  // per render instead of two.
+  const article = await getArticleBySlug(slug);
 
   if (!article) return { title: "Article Not Found" };
 
@@ -94,13 +92,10 @@ export default async function ArticlePage({
   const { slug } = await params;
   const supabase = await createClient();
 
-  const { data: article } = await supabase
-    .from("articles")
-    .select("*, author:team_members!author_id(*), reviewer:team_members!reviewer_id(*)")
-    .eq("slug", slug)
-    .single();
+  const article = await getArticleBySlug(slug);
 
   if (!article) notFound();
+  if ((article as Article).status !== "published") notFound();
 
   const a = article as Article;
   const articleAuthor = a.author ?? null;
