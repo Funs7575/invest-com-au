@@ -26,6 +26,22 @@ export default async function AdminAutomationPage() {
   return (
     <AdminShell title="Automation" subtitle="Classifier health + pending queues + manual controls">
       <div className="p-4 md:p-6 max-w-7xl">
+        {/* ── Global nav strip ── */}
+        <nav className="flex flex-wrap gap-2 mb-5 text-xs">
+          <Link href="/admin/automation/config" className="px-3 py-1.5 rounded-full bg-white border border-slate-200 hover:bg-slate-50 font-semibold text-slate-700">
+            ⚙ Thresholds
+          </Link>
+          <Link href="/admin/automation/kill-switch" className="px-3 py-1.5 rounded-full bg-white border border-slate-200 hover:bg-slate-50 font-semibold text-slate-700">
+            ⏸ Kill switches
+          </Link>
+          <Link href="/admin/automation/audit-log" className="px-3 py-1.5 rounded-full bg-white border border-slate-200 hover:bg-slate-50 font-semibold text-slate-700">
+            📜 Audit log
+          </Link>
+          <Link href="/admin/automation/dry-run" className="px-3 py-1.5 rounded-full bg-white border border-slate-200 hover:bg-slate-50 font-semibold text-slate-700">
+            🧪 Dry-run tester
+          </Link>
+        </nav>
+
         {/* ── Top summary bar ── */}
         <div className="grid grid-cols-4 gap-3 mb-6">
           <SummaryCard label="Healthy" value={healthCounts.green} dotClass="bg-emerald-500" />
