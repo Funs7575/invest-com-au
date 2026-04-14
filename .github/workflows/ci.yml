@@ -127,8 +127,9 @@ jobs:
         run: npm run build
 
       - name: Run Playwright
-        run: npx playwright test
-        continue-on-error: true
+        run: npx playwright test --retries=2 --reporter=blob,github
+        # Real failures block the merge — flaky tests should be
+        # fixed or quarantined, not hidden behind continue-on-error.
 
       - name: Upload report
         if: always()
