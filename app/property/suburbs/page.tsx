@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import SuburbsClient from "./SuburbsClient";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const revalidate = 3600;
 
@@ -16,5 +17,12 @@ export const metadata: Metadata = {
 };
 
 export default function SuburbResearchPage() {
-  return <SuburbsClient />;
+  return (
+    <>
+      <SuburbsClient />
+      <div className="max-w-6xl mx-auto px-4 pb-8">
+        <ComplianceFooter variant="property" />
+      </div>
+    </>
+  );
 }

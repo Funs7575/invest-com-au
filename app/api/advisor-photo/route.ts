@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
+import { isAllowed } from "@/lib/rate-limit-db";
+import { moderatePhoto } from "@/lib/photo-moderation";
 
 const log = logger("advisor-photo");
 
@@ -36,6 +38,12 @@ export async function POST(request: NextRequest) {
     const advisor = await getAdvisorFromSession(request);
     if (!advisor) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
+
+    // Rate limit: 10 uploads/hour per advisor — prevents abuse of
+    // Supabase storage + photo-moderation credits.
+    if (!(await isAllowed("advisor_photo", `a:${advisor.id}`, { max: 10, refillPerSec: 10 / 3600 }))) {
+      return NextResponse.json({ error: "Too many uploads — try again later" }, { status: 429 });
     }
 
     const formData = await request.formData();
@@ -109,6 +117,26 @@ export async function POST(request: NextRequest) {
 
     const publicUrl = urlData.publicUrl;
 
+    // ── Photo moderation check ──────────────────────────────────
+    // If a moderation provider is configured, run the freshly-uploaded
+    // image through it. A 'rejected' verdict means we delete the file
+    // immediately and return 400 so the advisor can try a different
+    // photo. 'flagged' / 'unknown' pass through (admin can review in
+    // the audit log). No-provider installs skip this check entirely.
+    const moderation = await moderatePhoto(publicUrl, "advisor_photo", advisor.id);
+    if (moderation.verdict === "rejected") {
+      await adminSupabase.storage.from("advisor-photos").remove([storagePath]);
+      log.warn("Rejected uploaded advisor photo as explicit", {
+        advisorId: advisor.id,
+        provider: moderation.provider,
+        confidence: moderation.confidence,
+      });
+      return NextResponse.json(
+        { error: "Photo rejected by content moderation. Please use a different image." },
+        { status: 400 },
+      );
+    }
+
     // Update professionals row with the new photo_url
     const supabase = await createClient();
     const { error: updateError } = await supabase
@@ -121,7 +149,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Failed to update profile" }, { status: 500 });
     }
 
-    return NextResponse.json({ publicUrl });
+    return NextResponse.json({ publicUrl, moderation: moderation.verdict });
   } catch (error) {
     log.error("Photo upload error:", error);
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });

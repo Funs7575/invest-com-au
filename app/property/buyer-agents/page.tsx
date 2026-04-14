@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import BuyerAgentsClient from "./BuyerAgentsClient";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const revalidate = 3600;
 
@@ -16,5 +17,12 @@ export const metadata: Metadata = {
 };
 
 export default function BuyerAgentsPage() {
-  return <BuyerAgentsClient />;
+  return (
+    <>
+      <BuyerAgentsClient />
+      <div className="max-w-6xl mx-auto px-4 pb-8">
+        <ComplianceFooter variant="property" />
+      </div>
+    </>
+  );
 }

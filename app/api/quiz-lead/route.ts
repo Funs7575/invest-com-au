@@ -1,12 +1,10 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from 'next/server';
-import { createRateLimiter } from '@/lib/rate-limiter';
+import { isAllowed, ipKey } from '@/lib/rate-limit-db';
 import { isValidEmail, isDisposableEmail } from '@/lib/validate-email';
 import { logger } from '@/lib/logger';
 
 const log = logger('quiz-lead');
-
-const isRateLimited = createRateLimiter(300_000, 5); // 5 leads per 5 min per IP
 
 // Map quiz answer keys to human-readable labels
 const EXPERIENCE_MAP: Record<string, string> = {
@@ -226,9 +224,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Please use a real email address.' }, { status: 400 });
   }
 
-  const forwarded = request.headers.get('x-forwarded-for');
-  const ip = forwarded ? forwarded.split(',')[0].trim() : 'unknown';
-  if (isRateLimited(ip)) {
+  // DB-backed limiter: 5 leads / 5 min burst, steady 1 per minute thereafter
+  if (!(await isAllowed('quiz_lead', ipKey(request), { max: 5, refillPerSec: 1 / 60 }))) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
   }
 

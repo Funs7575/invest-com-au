@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
+import {
+  extractSvixHeaders,
+  verifyResendSignature,
+} from "@/lib/resend-webhook-verify";
 
 const log = logger("resend-webhook");
+
+export const runtime = "nodejs";
 
 /**
  * POST /api/webhooks/resend
@@ -13,20 +19,38 @@ const log = logger("resend-webhook");
  * https://invest.com.au/api/webhooks/resend
  *
  * Events to subscribe: email.bounced, email.complained, email.delivery_delayed
+ *
+ * Security: verifies the Svix HMAC-SHA256 signature Resend attaches.
+ * RESEND_WEBHOOK_SECRET is REQUIRED — without it the endpoint rejects
+ * every request. This closes the prior plaintext-compare vulnerability
+ * where an attacker could forge bounce events and mass-unsubscribe
+ * real users.
  */
 export async function POST(request: NextRequest) {
-  try {
-    // Verify webhook secret if configured (Resend sends it as a query parameter or header)
-    const webhookSecret = process.env.RESEND_WEBHOOK_SECRET;
-    if (webhookSecret) {
-      const authHeader = request.headers.get("svix-signature") || request.nextUrl.searchParams.get("secret");
-      if (!authHeader || authHeader !== webhookSecret) {
-        log.warn("Resend webhook rejected: invalid signature");
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-      }
-    }
+  const webhookSecret = process.env.RESEND_WEBHOOK_SECRET;
+  if (!webhookSecret) {
+    log.error("RESEND_WEBHOOK_SECRET not configured — rejecting webhook");
+    return NextResponse.json({ error: "Webhook not configured" }, { status: 500 });
+  }
 
-    const body = await request.json();
+  // Read the raw body ONCE; we need the exact bytes Svix signed.
+  const rawBody = await request.text();
+  const svixHeaders = extractSvixHeaders(request.headers);
+
+  if (!verifyResendSignature(webhookSecret, rawBody, svixHeaders)) {
+    log.warn("Resend webhook rejected: invalid signature", {
+      svixId: svixHeaders.svixId,
+    });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    let body: { type?: string; data?: Record<string, unknown> };
+    try {
+      body = JSON.parse(rawBody);
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
+    }
     const { type, data } = body;
 
     if (!type || !data) {
@@ -35,10 +59,20 @@ export async function POST(request: NextRequest) {
 
     const supabase = createAdminClient();
 
-    const email = data.to?.[0] || data.email_id;
+    // Narrow unknown data to the fields we actually read
+    const d = data as {
+      to?: string[];
+      email_id?: string;
+      bounce?: { message?: string };
+      complaint?: { type?: string };
+    };
+    const email = d.to?.[0] || d.email_id;
 
     if (type === "email.bounced" || type === "email.complained") {
-      log.info(`Email ${type}`, { email, reason: data.bounce?.message || data.complaint?.type });
+      log.info(`Email ${type}`, {
+        email,
+        reason: d.bounce?.message || d.complaint?.type,
+      });
 
       // Mark email as bounced in email_captures
       if (email) {
