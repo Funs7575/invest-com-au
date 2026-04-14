@@ -11,6 +11,7 @@ import RouteChangeFocus from "@/components/RouteChangeFocus";
 import ServiceWorkerRegistrar from "@/components/ServiceWorkerRegistrar";
 import ChatWidget from "@/components/ChatWidget";
 import PushNotificationOptIn from "@/components/PushNotificationOptIn";
+import ClaimAnonymousOnAuth from "@/components/ClaimAnonymousOnAuth";
 import { isFlagEnabled } from "@/lib/feature-flags";
 
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -126,6 +127,7 @@ export default async function RootLayout({
         <Suspense fallback={null}><UtmCapture /></Suspense>
         <Suspense fallback={null}><RouteChangeFocus /></Suspense>
         <Suspense fallback={null}><ServiceWorkerRegistrar /></Suspense>
+        <Suspense fallback={null}><ClaimAnonymousOnAuth /></Suspense>
 
         <ThemeProvider>
           <InternationalBannerServer />

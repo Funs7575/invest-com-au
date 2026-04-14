@@ -215,6 +215,22 @@
     {
       "path": "/api/cron/subscription-dunning",
       "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/cron/month-end-close",
+      "schedule": "0 3 2 * *"
+    },
+    {
+      "path": "/api/cron/revenue-reconciliation",
+      "schedule": "0 4 * * *"
+    },
+    {
+      "path": "/api/cron/complaints-sla",
+      "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/cron/cron-freshness",
+      "schedule": "20 * * * *"
     }
   ]
 }

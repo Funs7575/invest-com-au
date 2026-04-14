@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { isAllowed, ipKey } from '@/lib/rate-limit-db';
 import { isValidEmail, isDisposableEmail } from '@/lib/validate-email';
 import { logger } from '@/lib/logger';
+import { recordQuizSubmission } from '@/lib/quiz-history';
+import { createClient } from '@/lib/supabase/server';
 
 const log = logger('quiz-lead');
 
@@ -212,8 +214,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
 
-  const { email, name, answers, top_match_slug } = body as {
-    email?: string; name?: string; answers?: string[]; top_match_slug?: string;
+  const { email, name, answers, top_match_slug, session_id } = body as {
+    email?: string; name?: string; answers?: string[]; top_match_slug?: string; session_id?: string;
   };
   // Validate email
   if (!isValidEmail(email as string)) {
@@ -279,6 +281,32 @@ export async function POST(request: NextRequest) {
       investmentRange ? INVESTMENT_MAP[investmentRange] : null,
       tradingInterest ? INTEREST_MAP[tradingInterest] : null,
     ).catch((err) => log.error("[quiz-lead] results email failed:", err));
+  }
+
+  // Persist into user_quiz_history so the user (once signed in)
+  // can see their quiz history + resume from another device.
+  // If there's an authenticated session, stamp with user_id;
+  // otherwise stamp only with the anonymous session_id so the
+  // row can be claimed on signup via claimSessionQuizzes().
+  try {
+    const authSupabase = await createClient();
+    const { data: { user } } = await authSupabase.auth.getUser();
+    const safeSessionId =
+      typeof session_id === 'string' ? session_id.slice(0, 100) : null;
+    if (user?.id || safeSessionId) {
+      await recordQuizSubmission({
+        userId: user?.id ?? null,
+        sessionId: safeSessionId,
+        answers: { raw: safeAnswers, email: sanitizedEmail },
+        inferredVertical: tradingInterest,
+        topMatchSlug: safeTopMatch,
+        completed: true,
+      });
+    }
+  } catch (err) {
+    log.warn('quiz-history record failed (non-blocking)', {
+      error: err instanceof Error ? err.message : String(err),
+    });
   }
 
   // Sync to Resend Contacts with quiz-specific properties
