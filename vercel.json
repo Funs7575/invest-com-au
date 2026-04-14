@@ -199,6 +199,10 @@
     {
       "path": "/api/cron/gdpr-retention-purge",
       "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/cron/job-queue-worker",
+      "schedule": "*/5 * * * *"
     }
   ]
 }
