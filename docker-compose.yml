@@ -1,0 +1,50 @@
+# Local development docker-compose.
+#
+# Spins up a lightweight Postgres + minimal tooling so a new dev
+# can start in ~30 seconds without a Supabase account. Production
+# uses the hosted Supabase instance, so this file is LOCAL ONLY.
+#
+# To run:
+#     docker compose up -d
+#     cp .env.local.example .env.local
+#     npm install
+#     npm run dev
+#
+# Notes:
+# - Uses Postgres 17 to match our hosted version exactly.
+# - No GoTrue/auth here — local dev uses createAdminClient() with
+#   the service role key override; real auth flows need `supabase
+#   start` via the Supabase CLI.
+# - The volume is named so `docker compose down -v` wipes it.
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: invest-com-au-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: invest_local
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "54322:5432"
+    volumes:
+      - invest_com_au_pgdata:/var/lib/postgresql/data
+      - ./supabase/migrations:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d invest_local"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  mailhog:
+    # Captures outbound email locally so the Resend integration can
+    # "fire and forget" without a real key.
+    image: mailhog/mailhog:latest
+    container_name: invest-com-au-mailhog
+    ports:
+      - "8025:8025" # web UI at http://localhost:8025
+      - "1025:1025" # SMTP
+
+volumes:
+  invest_com_au_pgdata:
