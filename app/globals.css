@@ -911,6 +911,66 @@ html.dark *:focus-visible {
   outline-color: var(--color-blue-500) !important;
 }
 
+/* Extended dark palette — cover the gaps that shipped as
+   "skeleton only". Each rule targets a Tailwind class we observed
+   rendering in dark mode during a visual pass. */
+
+html.dark .bg-slate-900 { background-color: #020617 !important; }
+html.dark .bg-slate-800 { background-color: #0f172a !important; }
+html.dark .text-slate-400 { color: #94a3b8 !important; }
+html.dark .text-slate-300 { color: #cbd5e1 !important; }
+html.dark .text-slate-200 { color: #e2e8f0 !important; }
+html.dark .text-white { color: #f8fafc !important; }
+html.dark .border-slate-300 { border-color: #475569 !important; }
+html.dark .ring-slate-200 { --tw-ring-color: #475569 !important; }
+
+/* Soft tints (amber/emerald/red/blue/violet) need to be darker so
+   body text reads. Keep the tint but lower the lightness. */
+html.dark .bg-amber-50  { background-color: rgba(251, 191, 36, 0.10) !important; }
+html.dark .bg-amber-100 { background-color: rgba(251, 191, 36, 0.16) !important; }
+html.dark .bg-amber-200 { background-color: rgba(251, 191, 36, 0.22) !important; }
+html.dark .text-amber-700, html.dark .text-amber-800, html.dark .text-amber-900 { color: #fde68a !important; }
+html.dark .border-amber-200 { border-color: rgba(251, 191, 36, 0.35) !important; }
+html.dark .border-amber-300 { border-color: rgba(251, 191, 36, 0.50) !important; }
+html.dark .border-amber-400 { border-color: rgba(251, 191, 36, 0.70) !important; }
+
+html.dark .bg-emerald-50  { background-color: rgba(16, 185, 129, 0.10) !important; }
+html.dark .bg-emerald-100 { background-color: rgba(16, 185, 129, 0.18) !important; }
+html.dark .text-emerald-700, html.dark .text-emerald-800, html.dark .text-emerald-900 { color: #a7f3d0 !important; }
+html.dark .border-emerald-200 { border-color: rgba(16, 185, 129, 0.35) !important; }
+
+html.dark .bg-red-50 { background-color: rgba(239, 68, 68, 0.10) !important; }
+html.dark .bg-red-100 { background-color: rgba(239, 68, 68, 0.18) !important; }
+html.dark .text-red-700, html.dark .text-red-800, html.dark .text-red-900 { color: #fecaca !important; }
+html.dark .border-red-200, html.dark .border-red-300 { border-color: rgba(239, 68, 68, 0.45) !important; }
+
+html.dark .bg-blue-50  { background-color: rgba(59, 130, 246, 0.10) !important; }
+html.dark .bg-blue-100 { background-color: rgba(59, 130, 246, 0.18) !important; }
+html.dark .text-blue-700, html.dark .text-blue-800, html.dark .text-blue-900 { color: #bfdbfe !important; }
+html.dark .border-blue-200 { border-color: rgba(59, 130, 246, 0.35) !important; }
+
+html.dark .bg-violet-50  { background-color: rgba(139, 92, 246, 0.10) !important; }
+html.dark .bg-violet-100 { background-color: rgba(139, 92, 246, 0.18) !important; }
+html.dark .text-violet-700, html.dark .text-violet-800, html.dark .text-violet-900 { color: #ddd6fe !important; }
+
+/* Shadow opacity is based on pure black which looks too heavy on
+   a dark background — soften. */
+html.dark .shadow-sm { box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.4) !important; }
+html.dark .shadow    { box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.5), 0 1px 2px -1px rgba(0, 0, 0, 0.5) !important; }
+html.dark .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -2px rgba(0, 0, 0, 0.5) !important; }
+html.dark .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.6), 0 4px 6px -4px rgba(0, 0, 0, 0.6) !important; }
+
+/* Dividers, hover backgrounds, and admin tables */
+html.dark .divide-slate-100 > :not(:last-child),
+html.dark .divide-slate-100\/40 > :not(:last-child) { border-color: #1e293b !important; }
+html.dark .hover\:bg-slate-50:hover { background-color: #1e293b !important; }
+html.dark .hover\:bg-slate-100:hover { background-color: #334155 !important; }
+html.dark .hover\:bg-slate-50\/40:hover { background-color: rgba(30, 41, 59, 0.5) !important; }
+
+/* Form steppers + progress bars */
+html.dark .bg-slate-200 { background-color: #1e293b !important; }
+html.dark .bg-slate-300 { background-color: #334155 !important; }
+
 /* ── Unified card styles for admin & portal ──────────── */
 .card-base {
   @apply bg-white rounded-xl border border-slate-200 shadow-sm;
