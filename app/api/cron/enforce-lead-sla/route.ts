@@ -5,6 +5,7 @@ import { requireCronAuth } from "@/lib/cron-auth";
 import { ADMIN_EMAIL } from "@/lib/admin";
 import { escapeHtml } from "@/lib/html-escape";
 import { getSiteUrl } from "@/lib/url";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron:enforce-lead-sla");
 
@@ -31,7 +32,7 @@ export const maxDuration = 60;
  * Idempotent: uses pause_warning_sent_at to prevent spamming warnings
  * and auto_paused_at to prevent re-pausing already-paused advisors.
  */
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest) {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -225,3 +226,5 @@ function sendEmail(to: string | null, subject: string, html: string): void {
     }),
   }).catch(() => {});
 }
+
+export const GET = wrapCronHandler("enforce-lead-sla", handler);

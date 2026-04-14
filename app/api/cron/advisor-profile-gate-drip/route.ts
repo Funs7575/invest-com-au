@@ -4,6 +4,7 @@ import { logger } from "@/lib/logger";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { escapeHtml } from "@/lib/html-escape";
 import { getSiteUrl } from "@/lib/url";
+import { wrapCronHandler } from "@/lib/cron-run-log";
 
 const log = logger("cron:advisor-profile-gate-drip");
 
@@ -29,7 +30,7 @@ export const maxDuration = 60;
  *
  * Idempotent via the `profile_gate_step` column (added in the migration).
  */
-export async function GET(req: NextRequest) {
+async function handler(req: NextRequest) {
   const unauth = requireCronAuth(req);
   if (unauth) return unauth;
 
@@ -217,3 +218,5 @@ function sendEmail(to: string | null, subject: string, html: string): void {
     }),
   }).catch(() => {});
 }
+
+export const GET = wrapCronHandler("advisor-profile-gate-drip", handler);
