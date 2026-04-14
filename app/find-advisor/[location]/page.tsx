@@ -1,6 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import {
+  rankAdvisors,
+  getLatestQualityWeights,
+} from "@/lib/advisor-ranker";
 
 export const revalidate = 3600; // 1 hour
 import Link from "next/link";
@@ -142,8 +146,13 @@ export default async function LocationAdvisorPage({ params }: { params: Promise<
   const supabase = await createClient();
   let query = supabase.from("professionals").select("*").eq("status", "active").eq("location_state", loc.stateCode);
   if (specialtyType) query = query.eq("type", specialtyType);
-  const { data: advisors } = await query.order("rating", { ascending: false });
-  const allAdvisors = advisors || [];
+  const { data: advisors } = await query;
+
+  // Rank via the learned lead_quality_weights blend rather than
+  // sorting by raw rating. The ranker falls back to curated defaults
+  // if the weights table is empty, so this is safe on a fresh DB.
+  const weights = await getLatestQualityWeights(supabase);
+  const allAdvisors = rankAdvisors(advisors || [], weights);
 
   // JSON-LD
   const jsonLd = {
