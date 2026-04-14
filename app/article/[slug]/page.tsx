@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { createStaticClient } from "@/lib/supabase/static";
 import { getArticleBySlug } from "@/lib/request-cache";
+import LastUpdatedBadge from "@/components/LastUpdatedBadge";
 import Link from "next/link";
 import Image from "next/image";
 import type { Article, Broker } from "@/lib/types";
@@ -275,6 +276,11 @@ export default async function ArticlePage({
                   })}
                 </span>
               )}
+              <LastUpdatedBadge
+                updatedAt={a.updated_at as string | null | undefined}
+                lastReviewedAt={(a as unknown as { last_reviewed_at?: string | null }).last_reviewed_at}
+                lastReviewedBy={(a as unknown as { last_reviewed_by?: string | null }).last_reviewed_by}
+              />
               {isEnhanced && (
                 <span className="text-[0.69rem] md:text-xs font-semibold bg-slate-700/20 text-slate-700 px-2 md:px-2.5 py-0.5 rounded-full">
                   Updated {CURRENT_MONTH_YEAR}

@@ -189,7 +189,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
 
-  const { email, source, name, context } = body as { email?: string; source?: string; name?: string; context?: Record<string, unknown> };
+  const { email, source, name, context, session_id } = body as {
+    email?: string;
+    source?: string;
+    name?: string;
+    context?: Record<string, unknown>;
+    session_id?: string;
+  };
   const utm = extractUtm(body as Record<string, unknown>);
 
   // Validate email properly
@@ -230,6 +236,7 @@ export async function POST(request: NextRequest) {
     source: sanitizedSource,
     ...(sanitizedName ? { name: sanitizedName } : {}),
     ...(context && typeof context === 'object' && Object.keys(context).length > 0 ? { context } : {}),
+    ...(typeof session_id === 'string' ? { session_id: session_id.slice(0, 100) } : {}),
     ...utmForInsert(utm),
   });
 

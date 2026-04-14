@@ -179,6 +179,18 @@
     {
       "path": "/api/cron/referral-payouts",
       "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/embeddings-refresh",
+      "schedule": "30 * * * *"
+    },
+    {
+      "path": "/api/cron/review-sentiment-refresh",
+      "schedule": "0 5 * * *"
+    },
+    {
+      "path": "/api/cron/abandoned-form-drip",
+      "schedule": "0 12 * * *"
     }
   ]
 }
