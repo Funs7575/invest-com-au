@@ -239,6 +239,14 @@
     {
       "path": "/api/cron/broker-snapshot",
       "schedule": "5 * * * *"
+    },
+    {
+      "path": "/api/cron/web-vitals-rollup",
+      "schedule": "0 15 * * *"
+    },
+    {
+      "path": "/api/cron/attribution-rollup",
+      "schedule": "0 16 * * *"
     }
   ]
 }
