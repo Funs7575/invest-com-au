@@ -1008,7 +1008,12 @@ export interface Professional {
   faqs?: { q: string; a: string }[];
   testimonials?: { quote: string; author: string; date?: string }[];
   intro_video_url?: string;
+  intro_video_poster_url?: string;
   accepting_new_clients?: boolean;
+  /** Wave 17 canonical toggle — prefer this over accepting_new_clients. */
+  accepts_new_clients?: boolean;
+  /** Wave 17 EMA of reply speed, updated by advisor-quality cron. */
+  response_time_hours?: number;
   profile_score?: number;
   meta_title?: string;
   meta_description?: string;

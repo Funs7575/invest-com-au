@@ -7,6 +7,7 @@ import type { Professional, ProfessionalReview, AdvisorFirm } from "@/lib/types"
 import { PROFESSIONAL_TYPE_LABELS } from "@/lib/types";
 import Icon from "@/components/Icon";
 import BookingWidget from "@/components/BookingWidget";
+import AdvisorAppointmentsWidget from "@/components/AdvisorAppointmentsWidget";
 import AdvisorReviewForm from "@/components/AdvisorReviewForm";
 import VerifiedClientBadge from "@/components/VerifiedClientBadge";
 import { getStoredUtm } from "@/components/UtmCapture";
@@ -788,7 +789,21 @@ export default function AdvisorProfileClient({
               </SectionCard>
             ) : null}
 
-            {/* Booking Widget */}
+            {/* Wave 17 first-party concrete-slot booking.
+                Renders nothing if the advisor has no open slots in
+                advisor_booking_appointments, at which point the
+                legacy weekly-recurring BookingWidget below handles
+                the conversion surface. */}
+            <AdvisorAppointmentsWidget
+              professionalId={pro.id}
+              professionalName={pro.name}
+              acceptsNewClients={
+                pro.accepts_new_clients ?? pro.accepting_new_clients ?? true
+              }
+              responseTimeHours={pro.response_time_hours ?? null}
+            />
+
+            {/* Booking Widget — legacy weekly-recurring schedule */}
             <div>
               <BookingWidget advisorSlug={pro.slug} advisorName={pro.name} />
             </div>

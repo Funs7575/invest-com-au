@@ -7,6 +7,7 @@ import { useUser } from "@/lib/hooks/useUser";
 import { CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import NotificationBell from "@/components/NotificationBell";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const propertyDropdown = [
   { label: "Investment Property", href: "/property", desc: "New developments, suburb data & more" },
@@ -369,7 +370,7 @@ export default function Header() {
 
           {/* Desktop CTA + Theme */}
           <div className="hidden lg:flex items-center gap-3">
-            {/* ThemeToggle disabled — dark mode not yet styled */}
+            <ThemeToggle />
             <NotificationBell />
             <Link
               href="/quiz"
@@ -382,7 +383,7 @@ export default function Header() {
 
           {/* Mobile: Theme + Hamburger */}
           <div className="lg:hidden flex items-center gap-1.5">
-            {/* ThemeToggle disabled — dark mode not yet styled */}
+            <ThemeToggle />
             <button
               onClick={() => setMenuOpen(!menuOpen)}
               className="p-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-slate-700 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-700/40 rounded-lg transition-colors"
