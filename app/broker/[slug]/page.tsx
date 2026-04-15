@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { getBrokerBySlug } from "@/lib/request-cache";
 import BrokerReviewClient from "./BrokerReviewClient";
 import TmdBadge from "@/components/TmdBadge";
+import BrokerHistoryChart from "@/components/broker/BrokerHistoryChart";
 import {
   absoluteUrl,
   breadcrumbJsonLd,
@@ -248,6 +249,15 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
           pageSlug={b.slug}
         />
       </div>
+      {/* Wave 15 — Fee history chart. Renders nothing if there are
+          fewer than 2 snapshots, so a freshly-added broker doesn't
+          show an empty frame. */}
+      <div className="container-custom max-w-4xl mt-10">
+        <Suspense fallback={null}>
+          <BrokerHistoryChart slug={b.slug} metric="asx_fee_value" daysBack={30} />
+        </Suspense>
+      </div>
+
       {/* DDO compliance — render the current TMD link prominently
           next to the product footer. DDO (Corporations Act s994A–C)
           requires a TMD link on every product page. The component
