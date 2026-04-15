@@ -12,7 +12,8 @@ import ServiceWorkerRegistrar from "@/components/ServiceWorkerRegistrar";
 import ChatWidget from "@/components/ChatWidget";
 import PushNotificationOptIn from "@/components/PushNotificationOptIn";
 import ClaimAnonymousOnAuth from "@/components/ClaimAnonymousOnAuth";
-import { isFlagEnabled } from "@/lib/feature-flags";
+import NewsletterExitIntentModal from "@/components/NewsletterExitIntentModal";
+import { isFlagEnabled, loadFlag } from "@/lib/feature-flags";
 
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import WebVitals from "@/components/WebVitals";
@@ -88,6 +89,15 @@ export default async function RootLayout({
   // from 0% → 100% via /admin/automation/flags.
   const chatEnabled = await isFlagEnabled("chatbot_widget");
   const pushEnabled = await isFlagEnabled("push_notifications");
+  // Exit-intent newsletter modal — default-on with a feature flag
+  // escape hatch. If no `newsletter_exit_intent` row exists, the
+  // modal ships live; admins can disable or segment via
+  // /admin/automation/flags by inserting a row with enabled=false.
+  const newsletterExitIntentFlag = await loadFlag("newsletter_exit_intent");
+  const newsletterExitIntentEnabled = newsletterExitIntentFlag
+    ? newsletterExitIntentFlag.enabled &&
+      newsletterExitIntentFlag.rollout_pct > 0
+    : true;
   return (
     <html lang="en-AU" suppressHydrationWarning>
       {/* Inline script adds .js-ready immediately so CSS animations only run when JS is available.
@@ -134,6 +144,11 @@ export default async function RootLayout({
           <LayoutShell>{children}</LayoutShell>
           {chatEnabled && <ChatWidget />}
           {pushEnabled && <Suspense fallback={null}><PushNotificationOptIn /></Suspense>}
+          {newsletterExitIntentEnabled && (
+            <Suspense fallback={null}>
+              <NewsletterExitIntentModal />
+            </Suspense>
+          )}
         </ThemeProvider>
         <Suspense fallback={null}><WebVitals /></Suspense>
         <SpeedInsights />
