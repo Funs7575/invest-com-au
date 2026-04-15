@@ -85,7 +85,7 @@ vi.mock("@/lib/supabase/admin", () => ({
         if (table !== "user_notifications") {
           return resolve({ data: [], error: null, count: 0 });
         }
-        let matched = rows.filter(
+        const matched = rows.filter(
           (r) =>
             (!state.userId || r.user_id === state.userId) &&
             (!state.keyFilter || r.email_delivery_key === state.keyFilter) &&

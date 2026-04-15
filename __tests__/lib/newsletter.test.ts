@@ -79,7 +79,7 @@ vi.mock("@/lib/supabase/admin", () => ({
         if (table !== "newsletter_subscriptions") {
           return Promise.resolve({ data: [], error: null, count: 0 });
         }
-        let matched = rows.filter((r) => {
+        const matched = rows.filter((r) => {
           for (const [k, v] of Object.entries(state.filters)) {
             if ((r as unknown as Record<string, unknown>)[k] !== v) return false;
           }
