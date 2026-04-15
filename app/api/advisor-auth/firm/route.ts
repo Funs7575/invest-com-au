@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { logger } from "@/lib/logger";
+
+const log = logger("advisor-auth:firm");
 
 async function getAdvisorFromSession(request: NextRequest) {
   const sessionToken = request.cookies.get("advisor_session")?.value;
@@ -92,7 +95,7 @@ export async function PATCH(request: NextRequest) {
     .single();
 
   if (error) {
-    console.error("[firm] update failed:", error);
+    log.error("[firm] update failed:", error);
     return NextResponse.json({ error: "Failed to update firm" }, { status: 500 });
   }
 

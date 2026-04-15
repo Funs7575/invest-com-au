@@ -36,8 +36,16 @@ export default function AdminAdvisorsPage() {
 
   const loadData = useCallback(async () => {
     setLoading(true);
+    // Hard cap on advisors. The professionals table has wide rows
+    // (long bio, jsonb specialties, photo URLs) and unbounded fetches
+    // will blow up as the directory grows. 500 is well above current
+    // size and forces a search-driven flow if it's exceeded.
     const [advisorRes, leadRes, reviewRes, appRes, disputeRes] = await Promise.all([
-      supabase.from("professionals").select("*").order("created_at", { ascending: false }),
+      supabase
+        .from("professionals")
+        .select("id, name, slug, firm_name, firm_id, type, specialties, location_state, location_suburb, location_display, afsl_number, email, phone, website, fee_structure, fee_description, verified, status, rating, photo_url, profile_quality_gate, created_at")
+        .order("created_at", { ascending: false })
+        .limit(500),
       supabase.from("professional_leads").select("*, professionals(name, firm_name, type)").order("created_at", { ascending: false }).limit(100),
       supabase.from("professional_reviews").select("*, professionals(name)").order("created_at", { ascending: false }).limit(50),
       supabase.from("advisor_applications").select("*").order("created_at", { ascending: false }).limit(200),

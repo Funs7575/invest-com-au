@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 
 const log = logger("fee-profile");
 
@@ -33,6 +34,9 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    if (!(await isAllowed("fee_profile", ipKey(request), { max: 20, refillPerSec: 20 / 3600 }))) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+    }
     const supabase = await createClient();
     const {
       data: { user },

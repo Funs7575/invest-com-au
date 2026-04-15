@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { logger } from "@/lib/logger";
+import { isAllowed, ipKey } from "@/lib/rate-limit-db";
+
+const log = logger("push:subscribe");
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -25,6 +29,9 @@ interface SubscribeBody {
  */
 export async function POST(request: NextRequest) {
   try {
+    if (!(await isAllowed("push_subscribe", ipKey(request), { max: 5, refillPerSec: 5 / 3600 }))) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+    }
     const body = (await request.json()) as SubscribeBody;
 
     // Validate subscription shape
@@ -67,7 +74,7 @@ export async function POST(request: NextRequest) {
       );
 
     if (error) {
-      console.error("Push subscribe error:", error.message);
+      log.error("Push subscribe error:", error.message);
       return NextResponse.json(
         { error: "Failed to save subscription" },
         { status: 500 }

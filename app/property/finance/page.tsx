@@ -4,6 +4,7 @@ import { LOAN_COMPARISON_DISCLAIMER, NCCP_CREDIT_NOTE } from "@/lib/compliance";
 import Icon from "@/components/Icon";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
 import PropertyDisclaimer from "@/components/PropertyDisclaimer";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const revalidate = 3600;
 
@@ -158,6 +159,8 @@ export default function PropertyFinancePage() {
           </div>
         </section>
       </ScrollFadeIn>
+      <div className="container-custom pb-8"><ComplianceFooter variant="property" /></div>
+
     </div>
   );
 }

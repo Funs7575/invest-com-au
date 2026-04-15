@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (leadError) {
-      console.error("Failed to create property lead:", leadError);
+      log.error("Failed to create property lead:", leadError);
       return NextResponse.json({ error: "Failed to submit enquiry." }, { status: 500 });
     }
 
@@ -161,7 +161,7 @@ export async function POST(request: NextRequest) {
           });
         }
       } catch (emailError) {
-        console.error("Failed to send developer notification:", emailError);
+        log.error("Failed to send developer notification:", emailError);
       }
     }
 

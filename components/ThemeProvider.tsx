@@ -37,12 +37,19 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>("light");
   const [mounted, setMounted] = useState(false);
 
-  // Initialise — force light mode (dark mode styles not yet implemented)
+  // Initialise — read stored preference, otherwise follow system.
   useEffect(() => {
-    setThemeState("light");
-    localStorage.setItem("theme", "light");
-    setResolvedTheme("light");
-    applyTheme("light");
+    let stored: Theme = "system";
+    try {
+      const raw = localStorage.getItem("theme");
+      if (raw === "light" || raw === "dark" || raw === "system") stored = raw;
+    } catch {
+      // Private mode / blocked storage → stay on system default
+    }
+    setThemeState(stored);
+    const resolved = resolveTheme(stored);
+    setResolvedTheme(resolved);
+    applyTheme(resolved);
     setMounted(true);
   }, []);
 

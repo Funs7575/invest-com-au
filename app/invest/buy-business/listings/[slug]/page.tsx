@@ -31,7 +31,18 @@ export async function generateMetadata({
     title,
     description: data.description?.slice(0, 160) ?? `Business for sale. ${data.price_display ?? ""}`,
     alternates: { canonical: `${SITE_URL}/invest/buy-business/listings/${slug}` },
-    openGraph: { title, url: `${SITE_URL}/invest/buy-business/listings/${slug}` },
+    openGraph: {
+      title,
+      description: data.description?.slice(0, 160),
+      url: `${SITE_URL}/invest/buy-business/listings/${slug}`,
+      images: [{
+        url: `/api/og?title=${encodeURIComponent(data.title)}&type=invest`,
+        width: 1200,
+        height: 630,
+        alt: data.title,
+      }],
+    },
+    twitter: { card: "summary_large_image" as const },
   };
 }
 

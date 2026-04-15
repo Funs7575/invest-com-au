@@ -2,6 +2,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { sendEmail } from "@/lib/resend";
 import { logger } from "@/lib/logger";
+import { requireCronAuth } from "@/lib/cron-auth";
+import { buildEmailToUserIdMap, notifyUser } from "@/lib/notifications";
 
 export const maxDuration = 60;
 
@@ -23,10 +25,8 @@ const FIELD_LABELS: Record<string, string> = {
  * that were auto-approved and sending targeted "price drop" emails.
  */
 export async function GET(req: NextRequest) {
-  const authHeader = req.headers.get("authorization");
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const unauth = requireCronAuth(req);
+  if (unauth) return unauth;
 
   const supabase = createAdminClient();
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest.com.au";
@@ -65,7 +65,11 @@ export async function GET(req: NextRequest) {
     .eq("verified", true)
     .in("alert_type", ["decrease", "any"]);
 
+  // Pre-load email→user_id so inbox notifications are O(1) per loop.
+  const emailToUserId = await buildEmailToUserIdMap();
+
   let sent = 0;
+  let inboxed = 0;
 
   for (const sub of (subscribers || []).slice(0, 100)) {
     // Filter decreases relevant to this subscriber's broker selection
@@ -157,6 +161,32 @@ export async function GET(req: NextRequest) {
         html,
       });
 
+      // Drop an in-app notification for signed-in subscribers. Keyed
+      // by today's date + broker slugs so repeat runs for the same
+      // drop dedup cleanly instead of spamming the inbox.
+      const userId = emailToUserId.get(sub.email.toLowerCase());
+      if (userId) {
+        const today = new Date().toISOString().slice(0, 10);
+        const slugKey = relevant.map((d) => d.broker_slug).sort().join("+");
+        const ok = await notifyUser({
+          userId,
+          type: "fee_change",
+          title:
+            relevant.length === 1
+              ? `${relevant[0].broker_name || relevant[0].broker_slug} cut their fees`
+              : `${relevant.length} brokers cut their fees`,
+          body: relevant
+            .map(
+              (d) =>
+                `${d.broker_name || d.broker_slug}: ${d.old_value || "?"} → ${d.new_value || "?"}`,
+            )
+            .join("\n"),
+          linkUrl: `/broker/${relevant[0].broker_slug}`,
+          emailDeliveryKey: `price_drop:${today}:${slugKey}`,
+        });
+        if (ok) inboxed += 1;
+      }
+
       // Log the notifications
       for (const d of relevant) {
         const oldNum = parseFloat((d.old_value || "").replace(/[^0-9.]/g, ""));
@@ -193,10 +223,16 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  log.info("Price drop alerts sent", { decreases: decreases.length, subscribers: (subscribers || []).length, sent });
+  log.info("Price drop alerts sent", {
+    decreases: decreases.length,
+    subscribers: (subscribers || []).length,
+    sent,
+    inboxed,
+  });
 
   return NextResponse.json({
     decreases: decreases.length,
+    inboxed,
     subscribers: (subscribers || []).length,
     sent,
     timestamp: new Date().toISOString(),

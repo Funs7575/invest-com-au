@@ -10,6 +10,7 @@ import {
 } from "@/lib/seo";
 import BrokerLogo from "@/components/BrokerLogo";
 import Icon from "@/components/Icon";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const revalidate = 86400; // ISR: daily
 
@@ -634,6 +635,8 @@ export default async function BrokerSafetyPage({
             for official guidance.
           </p>
         </div>
+
+        <ComplianceFooter />
       </div>
     </div>
   );

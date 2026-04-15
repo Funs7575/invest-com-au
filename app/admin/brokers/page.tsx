@@ -28,8 +28,22 @@ export default function AdminBrokersPage() {
   const { toast } = useToast();
 
   const load = async () => {
-    const { data } = await supabase.from("brokers").select("*").order("rating", { ascending: false });
-    if (data) setBrokers(data);
+    // Explicit column list instead of select("*") — the brokers table has
+    // wide rows (description, faq_json, full_review_md, several jsonb
+    // columns) that aren't rendered in the admin grid. Cuts payload size
+    // and Supabase serialisation cost.
+    //
+    // Hard cap of 500 rows. The current dataset is well under this; if it
+    // ever exceeds it the cap forces an admin to filter via search instead
+    // of accidentally pulling thousands of rows on every page load.
+    const { data } = await supabase
+      .from("brokers")
+      .select(
+        "id, name, slug, color, icon, logo_url, rating, asx_fee, asx_fee_value, us_fee, us_fee_value, fx_rate, chess_sponsored, smsf_support, is_crypto, platform_type, deal, deal_text, deal_expiry, editors_pick, tagline, cta_text, affiliate_url, sponsorship_tier, benefit_cta, updated_at, fee_last_checked, status, promoted_placement, cpa_value, affiliate_priority, fee_changelog",
+      )
+      .order("rating", { ascending: false })
+      .limit(500);
+    if (data) setBrokers(data as Broker[]);
   };
 
   useEffect(() => { load(); }, []);

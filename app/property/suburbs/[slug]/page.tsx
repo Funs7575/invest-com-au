@@ -6,6 +6,7 @@ import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import { SUBURB_DATA_DISCLAIMER } from "@/lib/compliance";
 import Icon from "@/components/Icon";
 import PropertyDisclaimer from "@/components/PropertyDisclaimer";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const revalidate = 86400; // 24 hours
 
@@ -412,6 +413,8 @@ export default async function SuburbDetailPage({ params }: { params: Promise<{ s
           </div>
         </section>
       </div>
+      <div className="container-custom pb-8"><ComplianceFooter variant="property" /></div>
+
     </div>
   );
 }

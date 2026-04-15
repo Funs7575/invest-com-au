@@ -13,6 +13,7 @@ export const runtime = "edge";
 export const maxDuration = 60;
 
 import { getSiteUrl } from "@/lib/url";
+import { requireCronAuth } from "@/lib/cron-auth";
 const SITE_URL = getSiteUrl();
 
 /**
@@ -97,10 +98,8 @@ function personalRecEmail(name: string, hasQuizResult: boolean): string {
 }
 
 export async function GET(req: NextRequest) {
-  const authHeader = req.headers.get("authorization");
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const unauth = requireCronAuth(req);
+  if (unauth) return unauth;
 
   if (!process.env.RESEND_API_KEY) {
     return NextResponse.json({ error: "No RESEND_API_KEY" }, { status: 500 });

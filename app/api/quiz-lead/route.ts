@@ -1,12 +1,12 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from 'next/server';
-import { createRateLimiter } from '@/lib/rate-limiter';
+import { isAllowed, ipKey } from '@/lib/rate-limit-db';
 import { isValidEmail, isDisposableEmail } from '@/lib/validate-email';
 import { logger } from '@/lib/logger';
+import { recordQuizSubmission } from '@/lib/quiz-history';
+import { createClient } from '@/lib/supabase/server';
 
 const log = logger('quiz-lead');
-
-const isRateLimited = createRateLimiter(300_000, 5); // 5 leads per 5 min per IP
 
 // Map quiz answer keys to human-readable labels
 const EXPERIENCE_MAP: Record<string, string> = {
@@ -214,8 +214,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
 
-  const { email, name, answers, top_match_slug } = body as {
-    email?: string; name?: string; answers?: string[]; top_match_slug?: string;
+  const { email, name, answers, top_match_slug, session_id } = body as {
+    email?: string; name?: string; answers?: string[]; top_match_slug?: string; session_id?: string;
   };
   // Validate email
   if (!isValidEmail(email as string)) {
@@ -226,9 +226,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Please use a real email address.' }, { status: 400 });
   }
 
-  const forwarded = request.headers.get('x-forwarded-for');
-  const ip = forwarded ? forwarded.split(',')[0].trim() : 'unknown';
-  if (isRateLimited(ip)) {
+  // DB-backed limiter: 5 leads / 5 min burst, steady 1 per minute thereafter
+  if (!(await isAllowed('quiz_lead', ipKey(request), { max: 5, refillPerSec: 1 / 60 }))) {
     return NextResponse.json({ error: 'Too many requests' }, { status: 429 });
   }
 
@@ -281,7 +280,33 @@ export async function POST(request: NextRequest) {
       experienceLevel ? EXPERIENCE_MAP[experienceLevel] : null,
       investmentRange ? INVESTMENT_MAP[investmentRange] : null,
       tradingInterest ? INTEREST_MAP[tradingInterest] : null,
-    ).catch((err) => console.error("[quiz-lead] results email failed:", err));
+    ).catch((err) => log.error("[quiz-lead] results email failed:", err));
+  }
+
+  // Persist into user_quiz_history so the user (once signed in)
+  // can see their quiz history + resume from another device.
+  // If there's an authenticated session, stamp with user_id;
+  // otherwise stamp only with the anonymous session_id so the
+  // row can be claimed on signup via claimSessionQuizzes().
+  try {
+    const authSupabase = await createClient();
+    const { data: { user } } = await authSupabase.auth.getUser();
+    const safeSessionId =
+      typeof session_id === 'string' ? session_id.slice(0, 100) : null;
+    if (user?.id || safeSessionId) {
+      await recordQuizSubmission({
+        userId: user?.id ?? null,
+        sessionId: safeSessionId,
+        answers: { raw: safeAnswers, email: sanitizedEmail },
+        inferredVertical: tradingInterest,
+        topMatchSlug: safeTopMatch,
+        completed: true,
+      });
+    }
+  } catch (err) {
+    log.warn('quiz-history record failed (non-blocking)', {
+      error: err instanceof Error ? err.message : String(err),
+    });
   }
 
   // Sync to Resend Contacts with quiz-specific properties
@@ -292,7 +317,7 @@ export async function POST(request: NextRequest) {
     ...(experienceLevel ? { experience: EXPERIENCE_MAP[experienceLevel] } : {}),
     ...(investmentRange ? { investment_range: INVESTMENT_MAP[investmentRange] } : {}),
     ...(tradingInterest ? { trading_interest: INTEREST_MAP[tradingInterest] } : {}),
-  }).catch((err) => console.error("[quiz-lead] resend sync failed:", err));
+  }).catch((err) => log.error("[quiz-lead] resend sync failed:", err));
 
   return NextResponse.json({ success: true });
 }

@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { logger } from "@/lib/logger";
+
+const log = logger("report-download");
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -48,7 +51,7 @@ export async function POST(request: NextRequest) {
       );
 
     if (error) {
-      console.error("Email capture error:", error.message);
+      log.error("Email capture error:", error.message);
       // Don't expose internal errors — still return success to the user
       // so they get a good UX even if storage fails
     }

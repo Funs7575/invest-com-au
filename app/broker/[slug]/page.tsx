@@ -3,7 +3,10 @@ import { createClient } from "@/lib/supabase/server";
 import { createStaticClient } from "@/lib/supabase/static";
 import type { Broker, UserReview, BrokerReviewStats, SwitchStory, BrokerQuestion, BrokerAnswer } from "@/lib/types";
 import { notFound } from "next/navigation";
+import { getBrokerBySlug } from "@/lib/request-cache";
 import BrokerReviewClient from "./BrokerReviewClient";
+import TmdBadge from "@/components/TmdBadge";
+import BrokerHistoryChart from "@/components/broker/BrokerHistoryChart";
 import {
   absoluteUrl,
   breadcrumbJsonLd,
@@ -17,6 +20,7 @@ import {
 import { scoreBrokerSimilarity } from "@/lib/internal-links";
 import QASection from "@/components/QASection";
 import AskQuestionForm from "@/components/AskQuestionForm";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const revalidate = 3600; // ISR: revalidate every hour
 
@@ -31,12 +35,9 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const supabase = await createClient();
-  const { data: broker } = await supabase
-    .from('brokers')
-    .select('name, tagline, rating')
-    .eq('slug', slug)
-    .single();
+  // Shared cache() hit with the page body — single DB round-trip
+  // per render instead of two.
+  const broker = await getBrokerBySlug(slug);
 
   if (!broker) return { title: 'Broker Not Found' };
 
@@ -69,12 +70,7 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
   const { slug } = await params;
   const supabase = await createClient();
 
-  const { data: broker } = await supabase
-    .from('brokers')
-    .select('*, reviewer:team_members!reviewer_id(*)')
-    .eq('slug', slug)
-    .eq('status', 'active')
-    .single();
+  const broker = await getBrokerBySlug(slug);
 
   if (!broker) notFound();
 
@@ -253,6 +249,30 @@ export default async function BrokerPage({ params }: { params: Promise<{ slug: s
           pageSlug={b.slug}
         />
       </div>
+      {/* Wave 15 — Fee history chart. Renders nothing if there are
+          fewer than 2 snapshots, so a freshly-added broker doesn't
+          show an empty frame. */}
+      <div className="container-custom max-w-4xl mt-10">
+        <Suspense fallback={null}>
+          <BrokerHistoryChart slug={b.slug} metric="asx_fee_value" daysBack={30} />
+        </Suspense>
+      </div>
+
+      {/* DDO compliance — render the current TMD link prominently
+          next to the product footer. DDO (Corporations Act s994A–C)
+          requires a TMD link on every product page. The component
+          returns null silently if no TMD is on file — the admin
+          TMD page + nightly audit flag missing ones. */}
+      <div className="container-custom max-w-4xl border-t border-slate-200 mt-8 pt-6 pb-10">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-xs text-slate-500 max-w-xl">
+            Before acting on any information on this page, consider whether
+            the product is right for you and read the issuer&rsquo;s Target
+            Market Determination.
+          </p>
+          <TmdBadge productType="broker" productRef={b.slug} />
+        </div>
+      </div>
     </>
   );
 }
@@ -315,6 +335,9 @@ async function BrokerQASection({ brokerSlug, brokerName, pageUrl }: { brokerSlug
         pageType="broker"
         pageSlug={brokerSlug}
       />
+      <div className="container-custom pb-8">
+        <ComplianceFooter />
+      </div>
     </>
   );
 }

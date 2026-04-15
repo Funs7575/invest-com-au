@@ -1,6 +1,38 @@
 {
   "crons": [
     {
+      "path": "/api/cron/auto-resolve-disputes",
+      "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/cron/enforce-lead-sla",
+      "schedule": "30 9 * * *"
+    },
+    {
+      "path": "/api/cron/advisor-profile-gate-drip",
+      "schedule": "0 10 * * *"
+    },
+    {
+      "path": "/api/cron/advisor-dunning",
+      "schedule": "0 11 * * *"
+    },
+    {
+      "path": "/api/cron/afsl-expiry-monitor",
+      "schedule": "0 3 * * 1"
+    },
+    {
+      "path": "/api/cron/email-bounce-sweep",
+      "schedule": "0 4 * * *"
+    },
+    {
+      "path": "/api/cron/monthly-advisor-reports",
+      "schedule": "0 9 1 * *"
+    },
+    {
+      "path": "/api/cron/lead-quality-weights",
+      "schedule": "0 2 * * *"
+    },
+    {
       "path": "/api/cron/investor-drip",
       "schedule": "0 9 * * *"
     },
@@ -119,6 +151,102 @@
     {
       "path": "/api/cron/verify-review-clients",
       "schedule": "0 4 * * *"
+    },
+    {
+      "path": "/api/cron/property-suburb-refresh",
+      "schedule": "0 3 1 * *"
+    },
+    {
+      "path": "/api/cron/automation-verdict-rollup",
+      "schedule": "15 * * * *"
+    },
+    {
+      "path": "/api/cron/ab-auto-promote",
+      "schedule": "0 4 * * *"
+    },
+    {
+      "path": "/api/cron/abandoned-quiz-drip",
+      "schedule": "0 10 * * *"
+    },
+    {
+      "path": "/api/cron/advisor-dormant-nudge",
+      "schedule": "0 11 * * 1"
+    },
+    {
+      "path": "/api/cron/winback-drip",
+      "schedule": "0 10 1 * *"
+    },
+    {
+      "path": "/api/cron/referral-payouts",
+      "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/embeddings-refresh",
+      "schedule": "30 * * * *"
+    },
+    {
+      "path": "/api/cron/review-sentiment-refresh",
+      "schedule": "0 5 * * *"
+    },
+    {
+      "path": "/api/cron/abandoned-form-drip",
+      "schedule": "0 12 * * *"
+    },
+    {
+      "path": "/api/cron/slo-monitor",
+      "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/cron/gdpr-retention-purge",
+      "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/cron/job-queue-worker",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/warehouse-rollup",
+      "schedule": "30 1 * * *"
+    },
+    {
+      "path": "/api/cron/data-integrity-audit",
+      "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/subscription-dunning",
+      "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/cron/month-end-close",
+      "schedule": "0 3 2 * *"
+    },
+    {
+      "path": "/api/cron/revenue-reconciliation",
+      "schedule": "0 4 * * *"
+    },
+    {
+      "path": "/api/cron/complaints-sla",
+      "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/cron/cron-freshness",
+      "schedule": "20 * * * *"
+    },
+    {
+      "path": "/api/cron/tmd-audit",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/broker-snapshot",
+      "schedule": "5 * * * *"
+    },
+    {
+      "path": "/api/cron/web-vitals-rollup",
+      "schedule": "0 15 * * *"
+    },
+    {
+      "path": "/api/cron/attribution-rollup",
+      "schedule": "0 16 * * *"
     }
   ]
 }

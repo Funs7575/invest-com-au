@@ -115,9 +115,17 @@ describe("POST /api/admin/login", () => {
     expect(json.error).toContain("not an administrator");
   });
 
-  it("returns 200 with session for valid admin login", async () => {
+  it("returns 200 with user email for valid admin login", async () => {
     setupRateLimitMock();
-    const mockSession = { access_token: "admin-token", refresh_token: "rt" };
+    // The route intentionally does NOT echo the session in the response
+    // body — sessions are set via HttpOnly cookies by Supabase SSR so
+    // the client never needs the raw tokens. The response is the
+    // {success, user: {email}} shape the client actually reads.
+    const mockSession = {
+      access_token: "admin-token",
+      refresh_token: "rt",
+      user: { email: "admin@invest.com.au" },
+    };
     mockAuth.signInWithPassword.mockResolvedValue({
       data: {
         user: { email: "admin@invest.com.au" },
@@ -131,7 +139,7 @@ describe("POST /api/admin/login", () => {
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json.success).toBe(true);
-    expect(json.session).toEqual(mockSession);
+    expect(json.user?.email).toBe("admin@invest.com.au");
   });
 
   it("returns 429 when rate limited", async () => {

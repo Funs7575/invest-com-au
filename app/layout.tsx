@@ -7,6 +7,12 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import UtmCapture from "@/components/UtmCapture";
 import InternationalBannerServer from "@/components/InternationalBannerServer";
+import RouteChangeFocus from "@/components/RouteChangeFocus";
+import ServiceWorkerRegistrar from "@/components/ServiceWorkerRegistrar";
+import ChatWidget from "@/components/ChatWidget";
+import PushNotificationOptIn from "@/components/PushNotificationOptIn";
+import ClaimAnonymousOnAuth from "@/components/ClaimAnonymousOnAuth";
+import { isFlagEnabled } from "@/lib/feature-flags";
 
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import WebVitals from "@/components/WebVitals";
@@ -73,11 +79,15 @@ export const viewport: Viewport = {
   themeColor: "#ffffff",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // Feature-flag gate for the chat widget — admins can ramp it
+  // from 0% → 100% via /admin/automation/flags.
+  const chatEnabled = await isFlagEnabled("chatbot_widget");
+  const pushEnabled = await isFlagEnabled("push_notifications");
   return (
     <html lang="en-AU" suppressHydrationWarning>
       {/* Inline script adds .js-ready immediately so CSS animations only run when JS is available.
@@ -89,8 +99,15 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
         <link rel="alternate" type="application/rss+xml" title="Invest.com.au Articles" href="/feed.xml" />
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js-ready')" }} />
-        {/* Force light mode — dark mode styles not yet implemented */}
-        <script dangerouslySetInnerHTML={{ __html: "(function(){try{document.documentElement.classList.remove('dark');localStorage.setItem('theme','light')}catch(e){}})()" }} />
+        {/* Flash-of-wrong-theme guard — reads the stored preference
+            (or system MQ) BEFORE React hydrates so the page loads
+            in the correct palette without a flash. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){try{var t=localStorage.getItem('theme');if(!t||t==='system'){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.classList.toggle('dark',t==='dark');}catch(e){}})()",
+          }}
+        />
         {/* WebSite structured data for Google Sitelinks Search Box */}
         <script
           type="application/ld+json"
@@ -108,10 +125,15 @@ export default function RootLayout({
         </noscript>
         <GoogleAnalytics />
         <Suspense fallback={null}><UtmCapture /></Suspense>
+        <Suspense fallback={null}><RouteChangeFocus /></Suspense>
+        <Suspense fallback={null}><ServiceWorkerRegistrar /></Suspense>
+        <Suspense fallback={null}><ClaimAnonymousOnAuth /></Suspense>
 
         <ThemeProvider>
           <InternationalBannerServer />
           <LayoutShell>{children}</LayoutShell>
+          {chatEnabled && <ChatWidget />}
+          {pushEnabled && <Suspense fallback={null}><PushNotificationOptIn /></Suspense>}
         </ThemeProvider>
         <Suspense fallback={null}><WebVitals /></Suspense>
         <SpeedInsights />

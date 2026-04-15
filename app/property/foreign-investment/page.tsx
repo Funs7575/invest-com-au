@@ -14,6 +14,7 @@ import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import CostCalculator from "./CostCalculator";
 import FaqAccordion from "./FaqAccordion";
 import SectionHeading from "@/components/SectionHeading";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const metadata: Metadata = {
   title: "Foreign Investment in Australian Property — FIRB Guide 2026",
@@ -464,6 +465,8 @@ export default function ForeignInvestmentPage() {
         </section>
 
       </div>
+      <div className="container-custom pb-8"><ComplianceFooter variant="firb" /></div>
+
     </div>
   );
 }

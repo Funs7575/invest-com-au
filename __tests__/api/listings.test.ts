@@ -25,8 +25,21 @@ import { POST as enquirePOST } from "@/app/api/listings/enquire/route";
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 function submitBuilder() {
+  // The submit route does .insert(...).select("id").single() so we need a
+  // chainable insert that still lets .select().single() resolve correctly.
+  // Previously this mock returned a Promise from insert() which terminated
+  // the chain and caused a 500 because .select is not a function on the
+  // resolved value.
   const builder = createChainableBuilder("investment_listings");
-  builder.insert = vi.fn(() => Promise.resolve({ data: null, error: null }));
+  const originalInsert = builder.insert;
+  builder.insert = vi.fn((...args) => {
+    // Keep the chain alive; single() resolves with a synthetic id.
+    originalInsert?.(...args);
+    return builder;
+  });
+  builder.single = vi.fn(() =>
+    Promise.resolve({ data: { id: 1 }, error: null }),
+  );
   return builder;
 }
 

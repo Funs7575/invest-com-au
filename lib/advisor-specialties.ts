@@ -261,6 +261,28 @@ export const SPECIALTIES_BY_TYPE: Record<ProfessionalType, string[]> = {
     "Credit Repair",
     "Budget Coaching",
   ],
+  stockbroker_firm: [
+    "Australian Equities",
+    "International Equities",
+    "Fixed Income & Bonds",
+    "IPOs & Capital Raisings",
+    "Managed Portfolios",
+    "Discretionary Management",
+    "Corporate Advisory",
+    "Ethical / ESG Investing",
+    "SMSF Stockbroking",
+    "Margin Lending",
+  ],
+  private_wealth_manager: [
+    "Multi-Asset Portfolios",
+    "Discretionary Management",
+    "Tax-Aware Investing",
+    "Family Office Services",
+    "Estate & Succession",
+    "Philanthropic Advisory",
+    "International Diversification",
+    "Alternative Investments",
+  ],
 };
 
 // ═══════════════════════════════════════════════

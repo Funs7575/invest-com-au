@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { CURRENT_YEAR, SITE_NAME } from "@/lib/seo";
 import SuperContributionsClient from "./SuperContributionsClient";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const revalidate = 86400;
 
@@ -96,6 +97,8 @@ export default function SuperContributionsCalculatorPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
       <SuperContributionsClient />
+      <div className="container-custom pb-8"><ComplianceFooter variant="calculator" /></div>
+
     </>
   );
 }

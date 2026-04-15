@@ -186,6 +186,20 @@ export async function debitWallet(
 
 /**
  * Refund a previous debit to a broker's wallet.
+ *
+ * Mirrors the debitWallet pattern: insert the transaction record first,
+ * then update the balance with an optimistic lock on the previous
+ * balance. Concurrent refunds (e.g. two webhook retries hitting at the
+ * same time, or a manual admin refund racing a webhook refund) are
+ * serialised — the loser sees the lock fail and rolls back its txn
+ * record before throwing, so the running balance never drifts.
+ *
+ * Previously this function did a naked `.eq("id", wallet.id)` update
+ * with no concurrency control, so two parallel refunds could both
+ * compute newBalance from the same stale snapshot and the second
+ * write would clobber the first — the wallet would gain +X instead
+ * of +2X. That's a direct money-loss bug for the platform and a
+ * trust-loss bug for brokers reconciling their balance.
  */
 export async function refundWallet(
   brokerSlug: string,
@@ -199,17 +213,7 @@ export async function refundWallet(
   const wallet = await getOrCreateWallet(brokerSlug);
   const newBalance = wallet.balance_cents + amountCents;
 
-  const { error: updateErr } = await supabase
-    .from("broker_wallets")
-    .update({
-      balance_cents: newBalance,
-      lifetime_spent_cents: Math.max(0, wallet.lifetime_spent_cents - amountCents),
-      updated_at: new Date().toISOString(),
-    })
-    .eq("id", wallet.id);
-
-  if (updateErr) throw new Error(`Wallet refund failed: ${updateErr.message}`);
-
+  // Insert transaction FIRST. If this fails, the balance is untouched.
   const { data: txn, error: txnErr } = await supabase
     .from("wallet_transactions")
     .insert({
@@ -226,6 +230,31 @@ export async function refundWallet(
     .single();
 
   if (txnErr) throw new Error(`Transaction insert failed: ${txnErr.message}`);
+
+  // Optimistic lock on previous balance. Returns 0 rows on contention.
+  const { data: updated, error: updateErr } = await supabase
+    .from("broker_wallets")
+    .update({
+      balance_cents: newBalance,
+      lifetime_spent_cents: Math.max(0, wallet.lifetime_spent_cents - amountCents),
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", wallet.id)
+    .eq("balance_cents", wallet.balance_cents)
+    .select("*")
+    .maybeSingle();
+
+  if (updateErr || !updated) {
+    // Lock contended — roll back the txn we just wrote and bubble up.
+    // The caller (typically the Stripe webhook refund handler) is then
+    // expected to retry. The webhook idempotency table prevents the
+    // outer event from being processed twice.
+    await supabase.from("wallet_transactions").delete().eq("id", txn.id);
+    throw new Error(
+      "Wallet refund failed: balance changed concurrently. Retry.",
+    );
+  }
+
   return txn as WalletTransaction;
 }
 

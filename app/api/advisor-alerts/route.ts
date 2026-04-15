@@ -6,6 +6,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isRateLimited } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
+
+const log = logger("advisor-alerts");
 
 export async function POST(request: NextRequest) {
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
@@ -48,7 +51,7 @@ export async function POST(request: NextRequest) {
 
   if (error) {
     // If the table doesn't exist, return a soft success so UX doesn't break
-    console.error("[advisor-alerts] DB error:", error.message);
+    log.error("[advisor-alerts] DB error:", error.message);
     if (error.code === "42P01") {
       return NextResponse.json({ success: true, warning: "Alert registered (table pending)" });
     }
@@ -82,7 +85,7 @@ export async function POST(request: NextRequest) {
           </p>
         </div>`,
       }),
-    }).catch((err) => console.error("[advisor-alerts] confirmation email failed:", err));
+    }).catch((err) => log.error("[advisor-alerts] confirmation email failed:", err));
   }
 
   return NextResponse.json({ success: true });

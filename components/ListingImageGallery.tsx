@@ -38,6 +38,7 @@ export default function ListingImageGallery({ images, alt }: ListingImageGallery
                 src={img}
                 alt={`${alt} — image ${i + 2}`}
                 fill
+                loading="lazy"
                 className="object-cover"
                 sizes="(max-width: 1024px) 25vw, 16vw"
               />

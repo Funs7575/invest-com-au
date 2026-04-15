@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { logger } from "@/lib/logger";
+
+const log = logger("listings");
 
 export const revalidate = 60;
 
@@ -95,7 +98,7 @@ export async function GET(request: NextRequest) {
     const { data, error, count } = await query;
 
     if (error) {
-      console.error("[listings] query error:", error);
+      log.error("[listings] query error:", error);
       return NextResponse.json(
         { error: "Failed to fetch listings." },
         { status: 500 }
@@ -125,7 +128,7 @@ export async function GET(request: NextRequest) {
       total: count ?? sorted.length,
     });
   } catch (err) {
-    console.error("[listings] unexpected error:", err);
+    log.error("[listings] unexpected error:", err);
     return NextResponse.json(
       { error: "An unexpected error occurred." },
       { status: 500 }

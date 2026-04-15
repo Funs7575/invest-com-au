@@ -1,5 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { createStaticClient } from "@/lib/supabase/static";
+import { getArticleBySlug } from "@/lib/request-cache";
+import LastUpdatedBadge from "@/components/LastUpdatedBadge";
 import Link from "next/link";
 import Image from "next/image";
 import type { Article, Broker } from "@/lib/types";
@@ -16,6 +18,7 @@ import { absoluteUrl, breadcrumbJsonLd, articleAuthorJsonLd, articleFaqJsonLd, C
 import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import { CATEGORY_COLORS, getBestPagesForArticle, getClusterLinksForArticle } from "@/lib/internal-links";
 import ClusterNav from "@/components/ClusterNav";
+import ArticleComments from "@/components/ArticleComments";
 import Icon from "@/components/Icon";
 import AdSlot from "@/components/AdSlot";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
@@ -47,12 +50,9 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const supabase = await createClient();
-  const { data: article } = await supabase
-    .from("articles")
-    .select("title, excerpt, category, published_at")
-    .eq("slug", slug)
-    .single();
+  // Shared cache() hit with the page body — single DB round-trip
+  // per render instead of two.
+  const article = await getArticleBySlug(slug);
 
   if (!article) return { title: "Article Not Found" };
 
@@ -94,13 +94,10 @@ export default async function ArticlePage({
   const { slug } = await params;
   const supabase = await createClient();
 
-  const { data: article } = await supabase
-    .from("articles")
-    .select("*, author:team_members!author_id(*), reviewer:team_members!reviewer_id(*)")
-    .eq("slug", slug)
-    .single();
+  const article = await getArticleBySlug(slug);
 
   if (!article) notFound();
+  if ((article as Article).status !== "published") notFound();
 
   const a = article as Article;
   const articleAuthor = a.author ?? null;
@@ -280,6 +277,11 @@ export default async function ArticlePage({
                   })}
                 </span>
               )}
+              <LastUpdatedBadge
+                updatedAt={a.updated_at as string | null | undefined}
+                lastReviewedAt={(a as unknown as { last_reviewed_at?: string | null }).last_reviewed_at}
+                lastReviewedBy={(a as unknown as { last_reviewed_by?: string | null }).last_reviewed_by}
+              />
               {isEnhanced && (
                 <span className="text-[0.69rem] md:text-xs font-semibold bg-slate-700/20 text-slate-700 px-2 md:px-2.5 py-0.5 rounded-full">
                   Updated {CURRENT_MONTH_YEAR}
@@ -583,6 +585,9 @@ export default async function ArticlePage({
                   />
                 </div>
               )}
+
+              {/* Comments + reactions */}
+              <ArticleComments slug={slug} />
 
               {/* Related Articles */}
               {relatedArticles.length > 0 && (

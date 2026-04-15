@@ -51,6 +51,7 @@ function createChainableBuilder(resolveData: unknown = null) {
     "gte",
     "lte",
     "in",
+    "is",
   ];
 
   for (const method of chainMethods) {

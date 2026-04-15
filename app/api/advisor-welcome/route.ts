@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { isRateLimited } from "@/lib/rate-limit";
 import { createClient } from "@/lib/supabase/server";
 import { getAdminEmails } from "@/lib/admin";
+import { logger } from "@/lib/logger";
+
+const log = logger("advisor-welcome");
 
 export async function POST(request: NextRequest) {
   try {
@@ -118,7 +121,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Welcome email error:", error);
+    log.error("Welcome email error:", error);
     return NextResponse.json({ error: "Failed to send email" }, { status: 500 });
   }
 }

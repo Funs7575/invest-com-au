@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { isAllowed } from "@/lib/rate-limit-db";
 
 const log = logger("community:vote");
 
@@ -12,6 +13,11 @@ export async function POST(req: NextRequest) {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) {
       return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    }
+
+    // Per-user rate limit: 30 votes / min sustained, 60 burst
+    if (!(await isAllowed("community_vote", `u:${user.id}`, { max: 60, refillPerSec: 0.5 }))) {
+      return NextResponse.json({ error: "Slow down — voting too fast" }, { status: 429 });
     }
 
     const body = await req.json();

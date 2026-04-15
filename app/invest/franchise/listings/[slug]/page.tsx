@@ -31,7 +31,18 @@ export async function generateMetadata({
     title,
     description: data.description?.slice(0, 160) ?? `Franchise opportunity${data.location_state ? ` in ${data.location_state}` : " in Australia"}.`,
     alternates: { canonical: `${SITE_URL}/invest/franchise/listings/${slug}` },
-    openGraph: { title, url: `${SITE_URL}/invest/franchise/listings/${slug}` },
+    openGraph: {
+      title,
+      description: data.description?.slice(0, 160),
+      url: `${SITE_URL}/invest/franchise/listings/${slug}`,
+      images: [{
+        url: `/api/og?title=${encodeURIComponent(data.title)}&type=invest`,
+        width: 1200,
+        height: 630,
+        alt: data.title,
+      }],
+    },
+    twitter: { card: "summary_large_image" as const },
   };
 }
 

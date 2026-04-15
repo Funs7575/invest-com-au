@@ -9,9 +9,9 @@ const log = logger("admin-moderation");
 
 /* ── Types ── */
 
-type ContentType = "review" | "story" | "question";
+type ContentType = "review" | "story" | "question" | "comment" | "kyc";
 type SortOption = "newest" | "oldest" | "type";
-type TabFilter = "all" | "review" | "story" | "question";
+type TabFilter = "all" | "review" | "story" | "question" | "comment" | "kyc";
 
 interface ModerationItem {
   id: number;
@@ -33,6 +33,8 @@ const typeBadge: Record<ContentType, { bg: string; label: string }> = {
   review:   { bg: "bg-blue-100 text-blue-700",   label: "Review" },
   story:    { bg: "bg-purple-100 text-purple-700", label: "Story" },
   question: { bg: "bg-amber-100 text-amber-700",  label: "Question" },
+  comment:  { bg: "bg-teal-100 text-teal-700",   label: "Comment" },
+  kyc:      { bg: "bg-rose-100 text-rose-700",   label: "KYC doc" },
 };
 
 const statusColors: Record<string, string> = {
@@ -77,7 +79,7 @@ export default function ModerationQueuePage() {
 
   const load = useCallback(async () => {
     setLoading(true);
-    const [reviewsRes, storiesRes, questionsRes] = await Promise.all([
+    const [reviewsRes, storiesRes, questionsRes, commentsRes, kycRes] = await Promise.all([
       supabase
         .from("user_reviews")
         .select("*")
@@ -96,6 +98,15 @@ export default function ModerationQueuePage() {
         .eq("status", "pending")
         .order("created_at", { ascending: false })
         .limit(500),
+      // Wave 12: article comments + KYC docs flagged by the
+      // text/kyc classifiers land in the same queue so one
+      // compliance reviewer handles everything in one tab.
+      fetch("/api/admin/article-comments", { cache: "no-store" })
+        .then((r) => (r.ok ? r.json() : { items: [] }))
+        .catch(() => ({ items: [] })),
+      fetch("/api/admin/advisor-kyc", { cache: "no-store" })
+        .then((r) => (r.ok ? r.json() : { items: [] }))
+        .catch(() => ({ items: [] })),
     ]);
 
     const merged: ModerationItem[] = [];
@@ -175,9 +186,54 @@ export default function ModerationQueuePage() {
       }
     }
 
+    // Article comments (flagged by classifyText as escalate)
+    const commentsData = (commentsRes as { items?: Array<Record<string, unknown>> }).items || [];
+    for (const c of commentsData) {
+      merged.push({
+        id: c.id as number,
+        type: "comment",
+        submittedBy: String(c.author_name),
+        email: String(c.author_email),
+        dateSubmitted: String(c.created_at),
+        contentPreview: truncate(String(c.body)),
+        fullContent: String(c.body),
+        brokerName: String(c.article_slug),
+        status: "pending",
+        meta: {
+          article_slug: c.article_slug,
+          parent_id: c.parent_id,
+        },
+      });
+    }
+
+    // KYC document uploads pending review
+    const kycData = (kycRes as { items?: Array<Record<string, unknown>> }).items || [];
+    for (const k of kycData) {
+      merged.push({
+        id: k.id as number,
+        type: "kyc",
+        submittedBy: `advisor #${k.professional_id}`,
+        email: "",
+        dateSubmitted: String(k.uploaded_at),
+        contentPreview: `${k.document_type} — ${k.original_filename || "(unnamed)"} (${
+          k.file_size_bytes ? Math.round(Number(k.file_size_bytes) / 1024) : "?"
+        } KB, ${k.mime_type})`,
+        fullContent: String(k.storage_path),
+        brokerName: String(k.document_type),
+        status: "pending",
+        meta: {
+          professional_id: k.professional_id,
+          storage_path: k.storage_path,
+          mime_type: k.mime_type,
+          file_size_bytes: k.file_size_bytes,
+          expires_at: k.expires_at,
+        },
+      });
+    }
+
     setItems(merged);
     setLoading(false);
-  }, []);
+  }, [supabase]);
 
   useEffect(() => { load(); }, [load]);
 
@@ -187,7 +243,9 @@ export default function ModerationQueuePage() {
     const reviews = items.filter((i) => i.type === "review").length;
     const stories = items.filter((i) => i.type === "story").length;
     const questions = items.filter((i) => i.type === "question").length;
-    return { total: items.length, reviews, stories, questions };
+    const comments = items.filter((i) => i.type === "comment").length;
+    const kyc = items.filter((i) => i.type === "kyc").length;
+    return { total: items.length, reviews, stories, questions, comments, kyc };
   }, [items]);
 
   /* ── Filtering, search, sort ── */
@@ -246,6 +304,36 @@ export default function ModerationQueuePage() {
           body: JSON.stringify({ type: "question", id: item.id, action }),
         });
         ok = res.ok;
+      } else if (item.type === "comment") {
+        // Map the reviewer's approve/reject verb to the comment
+        // status flow: publish vs reject.
+        const res = await fetch("/api/admin/article-comments", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id: item.id,
+            action: action === "approve" ? "publish" : "reject",
+          }),
+        });
+        ok = res.ok;
+      } else if (item.type === "kyc") {
+        // KYC uploads go through the verify/reject admin API. A
+        // reject without a reason is invalid, so pull the note
+        // field if the reviewer filled it in.
+        const res = await fetch("/api/admin/advisor-kyc", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(
+            action === "approve"
+              ? { id: item.id, action: "verify", notes: moderationNote || null }
+              : {
+                  id: item.id,
+                  action: "reject",
+                  reason: moderationNote || "Document did not meet requirements",
+                },
+          ),
+        });
+        ok = res.ok;
       }
       if (ok) {
         setItems((prev) => prev.filter((i) => itemKey(i) !== key));
@@ -292,6 +380,8 @@ export default function ModerationQueuePage() {
     { key: "review", label: "Reviews", count: stats.reviews },
     { key: "story", label: "Switch Stories", count: stats.stories },
     { key: "question", label: "Questions", count: stats.questions },
+    { key: "comment", label: "Comments", count: stats.comments },
+    { key: "kyc", label: "KYC docs", count: stats.kyc },
   ];
 
   return (

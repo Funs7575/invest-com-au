@@ -7,6 +7,7 @@ import Icon from "@/components/Icon";
 import ScrollFadeIn from "@/components/ScrollFadeIn";
 import PropertyDisclaimer from "@/components/PropertyDisclaimer";
 import { getListingImages } from "@/lib/property-images";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const metadata = {
   title: "Property Investment Australia — New Developments, Buyer's Agents & Suburb Data",
@@ -536,6 +537,8 @@ export default async function PropertyHubPage() {
           </div>
         </div>
       </section>
+      <div className="container-custom pb-8"><ComplianceFooter variant="property" /></div>
+
     </div>
   );
 }

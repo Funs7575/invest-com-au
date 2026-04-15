@@ -6,6 +6,7 @@ import { PLATFORM_TYPE_LABELS_LOWER } from "@/lib/types";
 import type { Metadata } from "next";
 import VersusClient from "../VersusClient";
 import { SITE_URL, CURRENT_YEAR, absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
+import ComplianceFooter from "@/components/ComplianceFooter";
 import { getVersusEditorial } from "@/lib/cached-versus";
 import type { VersusEditorial } from "@/lib/versus-content";
 
@@ -270,6 +271,9 @@ async function VersusData({ brokerSlugs, slugs }: { brokerSlugs: string[]; slugs
         />
       )}
       <VersusClient brokers={(allBrokers as Broker[]) || []} serverEditorial={editorial} />
+      <div className="container-custom pb-8">
+        <ComplianceFooter />
+      </div>
     </>
   );
 }

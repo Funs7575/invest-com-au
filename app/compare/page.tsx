@@ -4,6 +4,7 @@ import type { Broker } from "@/lib/types";
 import CompareClient from "./CompareClient";
 import CompareNav from "./CompareNav";
 import { absoluteUrl, UPDATED_LABEL } from "@/lib/seo";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const metadata = {
   title: "Compare Investing Platforms — Fees & Features",
@@ -158,6 +159,9 @@ export default function ComparePage() {
       <Suspense fallback={<ComparePageSkeleton />}>
         <CompareData />
       </Suspense>
+      <div className="container-custom pb-8">
+        <ComplianceFooter />
+      </div>
     </>
   );
 }

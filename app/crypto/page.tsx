@@ -6,6 +6,7 @@ import { absoluteUrl } from "@/lib/seo";
 import { boostFeaturedPartner } from "@/lib/sponsorship";
 import VerticalPillarPage from "@/components/VerticalPillarPage";
 import ForeignInvestorCallout from "@/components/ForeignInvestorCallout";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 const vertical = getVerticalBySlug("crypto")!;
 
@@ -93,6 +94,9 @@ export default async function CryptoPage() {
         advisors={advisors || []}
         expertArticles={expertArticles || []}
       />
+      <div className="container-custom pb-8">
+        <ComplianceFooter variant="crypto" />
+      </div>
     </>
   );
 }

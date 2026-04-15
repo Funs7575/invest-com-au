@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import Icon from "@/components/Icon";
 import AdvisorPhotoUpload from "@/components/AdvisorPhotoUpload";
 import LeadScoreBadge from "@/components/LeadScoreBadge";
@@ -1770,6 +1771,20 @@ export default function AdvisorPortalPage() {
               </div>
             </div>
 
+            <div className="bg-white border border-slate-200 rounded-xl p-5 mb-5">
+              <h2 className="text-sm font-bold text-slate-900 mb-1">Compliance documents</h2>
+              <p className="text-xs text-slate-500 mb-3">
+                Upload AFSL, ABN, proof of ID and insurance certificates. Files
+                are reviewed by compliance within 1 business day.
+              </p>
+              <Link
+                href="/advisor-portal/kyc"
+                className="inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-lg px-4 py-2 text-sm transition-colors"
+              >
+                Manage KYC documents →
+              </Link>
+            </div>
+
             <div className="bg-white border border-slate-200 rounded-xl p-5">
               <h2 className="text-sm font-bold text-slate-900 mb-3">Account</h2>
               <div className="space-y-3">
@@ -1851,7 +1866,7 @@ export default function AdvisorPortalPage() {
                         <div key={m.id} className="py-3 flex items-center justify-between gap-3">
                           <div className="flex items-center gap-3 min-w-0">
                             {m.photo_url ? (
-                              <img src={m.photo_url} alt="" className="w-9 h-9 rounded-full object-cover shrink-0" />
+                              <Image src={m.photo_url} alt="" width={36} height={36} className="w-9 h-9 rounded-full object-cover shrink-0" sizes="36px" />
                             ) : (
                               <div className="w-9 h-9 bg-violet-100 rounded-full flex items-center justify-center text-xs font-bold text-violet-600 shrink-0">{m.name?.[0]}</div>
                             )}
@@ -2045,7 +2060,7 @@ export default function AdvisorPortalPage() {
                                 <td className="px-4 py-2.5">
                                   <div className="flex items-center gap-2">
                                     {m.photo_url ? (
-                                      <img src={m.photo_url} alt="" className="w-6 h-6 rounded-full object-cover shrink-0" />
+                                      <Image src={m.photo_url} alt="" width={24} height={24} className="w-6 h-6 rounded-full object-cover shrink-0" sizes="24px" />
                                     ) : (
                                       <div className="w-6 h-6 bg-violet-100 rounded-full flex items-center justify-center text-[0.56rem] font-bold text-violet-600 shrink-0">{m.name?.[0]}</div>
                                     )}

@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { UPDATED_LABEL } from "@/lib/seo";
 import InsuranceCompareClient from "./InsuranceCompareClient";
 import CompareNav from "../CompareNav";
+import ComplianceFooter from "@/components/ComplianceFooter";
 
 export const metadata = {
   title: "Compare Insurance in Australia — Life, Income, Home (2026)",
@@ -83,6 +84,9 @@ export default function InsuranceComparePage() {
       />
       <Suspense><CompareNav /></Suspense>
       <InsuranceCompareClient />
+      <div className="container-custom pb-8">
+        <ComplianceFooter />
+      </div>
     </>
   );
 }

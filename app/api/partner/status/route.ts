@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { timingSafeEqual } from "crypto";
+import { logger } from "@/lib/logger";
+
+const log = logger("partner:status");
 
 /**
  * GET /api/partner/status
@@ -36,7 +39,7 @@ export async function GET(request: NextRequest) {
       .eq("source_page", "partner_api");
 
     if (countError) {
-      console.error("Failed to count partner leads:", countError);
+      log.error("Failed to count partner leads:", countError);
       return NextResponse.json(
         { error: "Failed to retrieve status." },
         { status: 500 },
@@ -65,7 +68,7 @@ export async function GET(request: NextRequest) {
       leads_delivered_total: leadsDelivered || 0,
     });
   } catch (error) {
-    console.error("Partner status API error:", error);
+    log.error("Partner status API error:", error);
     return NextResponse.json(
       { error: "Internal server error." },
       { status: 500 },

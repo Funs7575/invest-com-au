@@ -3,6 +3,9 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import crypto from "crypto";
 import { isRateLimited } from "@/lib/rate-limit";
 import { ADMIN_EMAIL } from "@/lib/admin";
+import { logger } from "@/lib/logger";
+
+const log = logger("marketplace:register");
 
 /** Escape HTML special chars to prevent XSS in email templates */
 function escapeHtml(str: string): string {
@@ -146,7 +149,7 @@ export async function POST(req: NextRequest) {
             <p><a href="${process.env.NEXT_PUBLIC_BASE_URL || "https://invest.com.au"}/admin/marketplace/brokers">Review in Admin →</a></p>
           `,
         }),
-      }).catch((err) => console.error("[marketplace-register] Registration notification email failed:", err));
+      }).catch((err) => log.error("[marketplace-register] Registration notification email failed:", err));
     }
 
     // Record agreement acceptance for audit trail
@@ -162,7 +165,7 @@ export async function POST(req: NextRequest) {
         metadata: { company_name: company_name.trim(), broker_slug: slug },
       });
     } catch (err) {
-      console.error("[marketplace-register] Agreement recording failed:", err);
+      log.error("[marketplace-register] Agreement recording failed:", err);
     }
 
     return NextResponse.json({ success: true }, { status: 201 });

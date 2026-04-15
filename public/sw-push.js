@@ -9,10 +9,10 @@
 self.addEventListener("push", function (event) {
   if (!event.data) return;
 
-  var data;
+  let data;
   try {
     data = event.data.json();
-  } catch (e) {
+  } catch {
     // If JSON parsing fails, use text
     data = {
       title: "invest.com.au",
@@ -21,8 +21,8 @@ self.addEventListener("push", function (event) {
     };
   }
 
-  var title = data.title || "invest.com.au";
-  var options = {
+  const title = data.title || "invest.com.au";
+  const options = {
     body: data.body || "",
     icon: data.icon || "/icon-192.png",
     badge: "/icon-192.png",
@@ -42,7 +42,7 @@ self.addEventListener("push", function (event) {
 self.addEventListener("notificationclick", function (event) {
   event.notification.close();
 
-  var url = event.notification.data && event.notification.data.url
+  let url = event.notification.data && event.notification.data.url
     ? event.notification.data.url
     : "/";
 
@@ -56,8 +56,8 @@ self.addEventListener("notificationclick", function (event) {
     self.clients
       .matchAll({ type: "window", includeUncontrolled: true })
       .then(function (clientList) {
-        for (var i = 0; i < clientList.length; i++) {
-          var client = clientList[i];
+        for (let i = 0; i < clientList.length; i++) {
+          const client = clientList[i];
           if (client.url === url && "focus" in client) {
             return client.focus();
           }

@@ -1,7 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { lookupTicker, isFrankedDividend, estimatedFrankingRate } from "@/lib/ticker-sectors";
+import { logger } from "@/lib/logger";
+import { isAllowed, ipKey } from "@/lib/rate-limit-db";
 
-export const runtime = "edge";
+const log = logger("tax-optimizer");
+
+// Moved off edge runtime so we can hit the Supabase rate-limit table
+// via the admin client. Compute is fast enough that node/serverless
+// is fine here.
+export const runtime = "nodejs";
 
 /** Australian marginal tax rates for 2025-26 */
 const TAX_BRACKETS: { label: string; min: number; max: number; rate: number }[] = [
@@ -52,6 +59,9 @@ interface CGTDiscountAlert {
 
 export async function POST(request: NextRequest) {
   try {
+    if (!(await isAllowed("tax_optimizer", ipKey(request), { max: 20, refillPerSec: 20 / 3600 }))) {
+      return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+    }
     const body = await request.json();
     const { income_bracket, holdings } = body as {
       income_bracket: string;
@@ -233,7 +243,7 @@ export async function POST(request: NextRequest) {
       top_moves: moves.slice(0, 3),
     });
   } catch (err) {
-    console.error("Tax optimizer error:", err);
+    log.error("Tax optimizer error:", err);
     return NextResponse.json({ error: "Failed to analyse tax position" }, { status: 500 });
   }
 }

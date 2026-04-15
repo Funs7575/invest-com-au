@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { isRateLimited } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
+
+const log = logger("listings:submit");
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -126,7 +129,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (insertError) {
-      console.error("[listings/submit] insert error:", insertError);
+      log.error("[listings/submit] insert error:", insertError);
       return NextResponse.json(
         { error: "Failed to save your listing. Please try again." },
         { status: 500 }
@@ -135,7 +138,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, listing_id: inserted?.id });
   } catch (err) {
-    console.error("[listings/submit] unexpected error:", err);
+    log.error("[listings/submit] unexpected error:", err);
     return NextResponse.json(
       { error: "An unexpected error occurred." },
       { status: 500 }

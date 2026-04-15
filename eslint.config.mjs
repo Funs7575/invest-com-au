@@ -32,6 +32,24 @@ const eslintConfig = [
       "@typescript-eslint/no-explicit-any": "warn",
       // Allow Function type (warn only)
       "@typescript-eslint/no-unsafe-function-type": "warn",
+      // Wave 12 — promote a few safety rules to errors. These are
+      // cheap to satisfy in new code and keep the codebase from
+      // regressing on obvious footguns. The rules we DON'T promote
+      // (no-unused-vars, no-explicit-any) still fire as warnings
+      // until the backlog gets tidied up incrementally.
+      //
+      // Wave 18 follow-up: @typescript-eslint/no-misused-promises
+      // was originally in this list but it's a *typed* lint rule
+      // that needs parserOptions.project wired up to a tsconfig.
+      // The newer typescript-eslint shipped by eslint-config-next
+      // 16.2.3 errors hard on typed rules without that config. We
+      // could enable typed linting globally but it's a meaningful
+      // perf hit and a separate refactor. Dropping the rule for
+      // now; everything else here is lexical (no type info needed).
+      "no-debugger": "error",
+      "no-var": "error",
+      "prefer-const": "error",
+      "eqeqeq": ["error", "smart"],
     },
   },
 ];

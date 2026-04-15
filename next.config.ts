@@ -86,20 +86,9 @@ const nextConfig: NextConfig = {
             key: "Strict-Transport-Security",
             value: "max-age=63072000; includeSubDomains; preload",
           },
-          {
-            key: "Content-Security-Policy",
-            value:
-              "default-src 'self'; " +
-              "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com https://www.googletagmanager.com https://www.google-analytics.com https://cal.com; " +
-              "style-src 'self' 'unsafe-inline'; " +
-              "img-src 'self' data: https: https://www.googletagmanager.com; " +
-              "font-src 'self'; " +
-              "connect-src 'self' https://*.supabase.co https://va.vercel-scripts.com https://www.google-analytics.com https://analytics.google.com https://*.google-analytics.com https://*.analytics.google.com https://api.stripe.com https://cal.com https://app.cal.com https://*.sentry.io https://*.ingest.sentry.io; " +
-              "frame-src https://js.stripe.com https://hooks.stripe.com https://www.youtube-nocookie.com https://player.vimeo.com https://cal.com; " +
-              "frame-ancestors 'none'; " +
-              "base-uri 'self'; " +
-              "form-action 'self'",
-          },
+          // NOTE: Content-Security-Policy is set by proxy.ts per request
+          // so it can carry a fresh nonce for inline scripts. Static
+          // CSP is not used any more — the proxy value wins regardless.
         ],
       },
     ];
@@ -154,18 +143,89 @@ const nextConfig: NextConfig = {
         destination: "/invest/:category/listings/:subcategory",
         permanent: true,
       },
+      // ── /invest/listing/[slug] catch-all (deleted route) ──
+      // Old inbound links from before the listings system cleanup used
+      // a flat `/invest/listing/[slug]` URL that no longer exists.
+      // Google + Reddit + Twitter backlinks still point at these. Route
+      // them to the new category-scoped URL — we can't reliably know the
+      // vertical from the slug alone, so fall back to the category
+      // homepage which has a search/filter onto the listing.
+      {
+        source: "/invest/listing/:slug",
+        destination: "/invest/listings/:slug",
+        permanent: true,
+      },
+      // ── Old mining/energy/startup URL shapes ──
+      // These were previously under plural paths like `/mining/opportunities/`.
+      // The slug-level redirects below cover the remaining shape variants
+      // the generic :category/:path catch doesn't reach (e.g. the absence
+      // of a category path param in the old URL).
+      {
+        source: "/mining/opportunities/:slug",
+        destination: "/invest/mining/listings/:slug",
+        permanent: true,
+      },
+      {
+        source: "/renewable-energy/projects/:slug",
+        destination: "/invest/renewable-energy/listings/:slug",
+        permanent: true,
+      },
+      {
+        source: "/startups/opportunities/:slug",
+        destination: "/invest/startups/listings/:slug",
+        permanent: true,
+      },
+      // ── Pre-IA-overhaul discovery-page redirects ──
+      // Legacy /investments and /discover catch-alls that pre-date the
+      // current /invest hierarchy.
+      {
+        source: "/investments",
+        destination: "/invest",
+        permanent: true,
+      },
+      {
+        source: "/investments/:path*",
+        destination: "/invest/:path*",
+        permanent: true,
+      },
+      {
+        source: "/discover",
+        destination: "/invest",
+        permanent: true,
+      },
+      {
+        source: "/discover/:path*",
+        destination: "/invest/:path*",
+        permanent: true,
+      },
     ];
   },
 };
 
-// withSentryConfig wraps the Next.js config for error tracking.
+// withSentryConfig wraps the Next.js config for error tracking + source
+// map upload. The upload step requires SENTRY_ORG, SENTRY_PROJECT AND
+// SENTRY_AUTH_TOKEN to be set in the build environment. If any is
+// missing, Sentry's CLI fails the build during the upload phase —
+// silently on local builds (silent: true) but loudly on Vercel where
+// CI=true flips the silent flag off.
+//
+// Until Sentry is fully configured in Vercel, make the wrap
+// conditional: skip it entirely when SENTRY_AUTH_TOKEN isn't set, so
+// the build ships as a plain Next.js app with no error tracking
+// instead of failing. Once the env vars are added in Vercel, the
+// wrap auto-re-engages on the next deploy with zero code changes.
+//
 // Using `as any` because Sentry v9 peer-deps target Next.js ≤15 types,
 // but the runtime integration works fine with Next.js 16.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export default withSentryConfig(nextConfig as any, {
-  org: process.env.SENTRY_ORG,
-  project: process.env.SENTRY_PROJECT,
-  silent: !process.env.CI,
-  widenClientFileUpload: true,
-  tunnelRoute: "/monitoring",
-}) as typeof nextConfig;
+const config: NextConfig = process.env.SENTRY_AUTH_TOKEN
+  ? (withSentryConfig(nextConfig as any, {
+      org: process.env.SENTRY_ORG,
+      project: process.env.SENTRY_PROJECT,
+      silent: !process.env.CI,
+      widenClientFileUpload: true,
+      tunnelRoute: "/monitoring",
+    }) as NextConfig)
+  : nextConfig;
+
+export default config;

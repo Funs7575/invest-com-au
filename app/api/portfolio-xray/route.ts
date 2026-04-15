@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { lookupTicker, TICKER_MAP } from "@/lib/ticker-sectors";
+import { logger } from "@/lib/logger";
+
+const log = logger("portfolio-xray");
 
 export const runtime = "edge";
 
@@ -302,7 +305,7 @@ export async function POST(request: NextRequest) {
       recommendations,
     });
   } catch (err) {
-    console.error("Portfolio X-Ray error:", err);
+    log.error("Portfolio X-Ray error:", err);
     return NextResponse.json({ error: "Failed to analyse portfolio" }, { status: 500 });
   }
 }

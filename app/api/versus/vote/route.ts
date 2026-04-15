@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createHash } from "crypto";
+import { logger } from "@/lib/logger";
+import { isAllowed, ipKey } from "@/lib/rate-limit-db";
+
+const log = logger("versus:vote");
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -66,6 +70,12 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    // IP rate limit: 20 votes / min sustained, 40 burst — prevents
+    // a scripted single-IP from stuffing the ballot box for any pair.
+    if (!(await isAllowed("versus_vote", ipKey(request), { max: 40, refillPerSec: 20 / 60 }))) {
+      return NextResponse.json({ error: "Too many votes — slow down" }, { status: 429 });
+    }
+
     const body = await request.json();
     const { broker_a_slug, broker_b_slug, chosen_slug } = body as {
       broker_a_slug: string;
@@ -126,7 +136,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (error) {
-      console.error("Vote insert error:", error.message);
+      log.error("Vote insert error:", error.message);
       return NextResponse.json(
         { error: "Failed to record vote" },
         { status: 500 }

@@ -2,6 +2,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { notificationFooter } from "@/lib/email-templates";
+import { requireCronAuth } from "@/lib/cron-auth";
 
 const log = logger("cron-advisor-onboarding");
 
@@ -16,10 +17,8 @@ export const maxDuration = 30;
  *   Step 2 → 3: Day 5 — Write your first article ($299)
  */
 export async function GET(req: Request) {
-  const authHeader = req.headers.get("authorization");
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const unauth = requireCronAuth(req);
+  if (unauth) return unauth;
 
   const supabase = createAdminClient();
   const RESEND_API_KEY = process.env.RESEND_API_KEY;
