@@ -534,6 +534,15 @@ export default function AccountClient() {
             <Link href="/quiz" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
               <span>🎯</span> Platform Quiz
             </Link>
+            <Link href="/account/notifications" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+              <span>🔔</span> Notifications
+            </Link>
+            <Link href="/account/bookmarks" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+              <span>🔖</span> Reading List
+            </Link>
+            <Link href="/account/quizzes" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+              <span>📝</span> Quiz History
+            </Link>
           </div>
         </div>
 

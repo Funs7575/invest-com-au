@@ -96,3 +96,38 @@ describe("routeQuizToVertical — fallbacks", () => {
     expect(r.reasons.length).toBeGreaterThan(0);
   });
 });
+
+describe("routeQuizToVertical — resources branch", () => {
+  it("resources + oil-gas sector → /invest/oil-gas", () => {
+    const r = routeQuizToVertical({
+      goal: "resources",
+      approach: "diy",
+      resourceSector: "oil-gas",
+    });
+    expect(r.vertical).toBe("resources");
+    expect(r.nextPath).toBe("/invest/oil-gas");
+    expect(r.confidence).toBeGreaterThan(0.9);
+  });
+
+  it("resources + lithium sector → /invest/lithium", () => {
+    const r = routeQuizToVertical({
+      goal: "resources",
+      resourceSector: "lithium",
+    });
+    expect(r.nextPath).toBe("/invest/lithium");
+  });
+
+  it("resources with no specific sector → /invest/commodities fallback", () => {
+    const r = routeQuizToVertical({ goal: "resources" });
+    expect(r.vertical).toBe("resources");
+    expect(r.nextPath).toBe("/invest/commodities");
+  });
+
+  it("ignores unknown resource sectors and falls back", () => {
+    const r = routeQuizToVertical({
+      goal: "resources",
+      resourceSector: "unobtanium",
+    });
+    expect(r.nextPath).toBe("/invest/commodities");
+  });
+});

@@ -18,6 +18,7 @@ import { absoluteUrl, breadcrumbJsonLd, articleAuthorJsonLd, articleFaqJsonLd, C
 import { GENERAL_ADVICE_WARNING, ADVERTISER_DISCLOSURE_SHORT } from "@/lib/compliance";
 import { CATEGORY_COLORS, getBestPagesForArticle, getClusterLinksForArticle } from "@/lib/internal-links";
 import ClusterNav from "@/components/ClusterNav";
+import ArticleComments from "@/components/ArticleComments";
 import Icon from "@/components/Icon";
 import AdSlot from "@/components/AdSlot";
 import AdvisorPrompt from "@/components/AdvisorPrompt";
@@ -584,6 +585,9 @@ export default async function ArticlePage({
                   />
                 </div>
               )}
+
+              {/* Comments + reactions */}
+              <ArticleComments slug={slug} />
 
               {/* Related Articles */}
               {relatedArticles.length > 0 && (

@@ -6,6 +6,7 @@ import { wrapCronHandler } from "@/lib/cron-run-log";
 import { isFeatureDisabled } from "@/lib/admin/classifier-config";
 import { getSiteUrl } from "@/lib/url";
 import { escapeHtml } from "@/lib/html-escape";
+import { buildEmailToUserIdMap, notifyUser } from "@/lib/notifications";
 
 const log = logger("cron:abandoned-quiz-drip");
 
@@ -44,7 +45,13 @@ async function handler(req: NextRequest) {
     sent_step_3: 0,
     skipped: 0,
     failed: 0,
+    inboxed: 0,
   };
+
+  // Pre-load email→user_id once so per-lead inbox drops are O(1).
+  // Most quiz leads are email-only — a minority will have since
+  // signed up, and only those land in the in-app inbox.
+  const emailToUserId = await buildEmailToUserIdMap();
 
   // Look at quiz leads from the last 21 days that haven't been
   // fully dripped and have no follow-through event yet.
@@ -88,6 +95,27 @@ async function handler(req: NextRequest) {
       }
 
       await sendStepEmail(lead.email as string, lead.name as string | null, nextStep);
+
+      // Drop a matching in-app notification when the user has signed up
+      // post-quiz. The same email_delivery_key the cron already uses
+      // (drip step + lead id) keeps dedup tight across replay + retries.
+      const userId = emailToUserId.get((lead.email as string).toLowerCase());
+      if (userId) {
+        const titleByStep: Record<number, string> = {
+          1: "Your top broker match is waiting",
+          2: "Still researching? Here's what to do next",
+          3: "Last check-in on your quiz result",
+        };
+        const ok = await notifyUser({
+          userId,
+          type: "system",
+          title: titleByStep[nextStep] || "Update on your quiz",
+          body: "We've lined up your top match + a side-by-side compare. It takes 30 seconds to review.",
+          linkUrl: "/quiz",
+          emailDeliveryKey: `abandoned_quiz:${lead.id}:${nextStep}`,
+        });
+        if (ok) stats.inboxed += 1;
+      }
 
       await supabase
         .from("quiz_leads")

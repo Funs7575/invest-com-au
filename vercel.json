@@ -215,6 +215,38 @@
     {
       "path": "/api/cron/subscription-dunning",
       "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/cron/month-end-close",
+      "schedule": "0 3 2 * *"
+    },
+    {
+      "path": "/api/cron/revenue-reconciliation",
+      "schedule": "0 4 * * *"
+    },
+    {
+      "path": "/api/cron/complaints-sla",
+      "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/cron/cron-freshness",
+      "schedule": "20 * * * *"
+    },
+    {
+      "path": "/api/cron/tmd-audit",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/broker-snapshot",
+      "schedule": "5 * * * *"
+    },
+    {
+      "path": "/api/cron/web-vitals-rollup",
+      "schedule": "0 15 * * *"
+    },
+    {
+      "path": "/api/cron/attribution-rollup",
+      "schedule": "0 16 * * *"
     }
   ]
 }

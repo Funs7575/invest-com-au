@@ -17,6 +17,7 @@
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { logger } from "@/lib/logger";
+import { isPeriodClosedAt } from "@/lib/financial-periods";
 
 const log = logger("financial-audit");
 
@@ -39,6 +40,19 @@ export interface FinancialAuditEntry {
 
 export async function recordFinancialAudit(entry: FinancialAuditEntry): Promise<void> {
   try {
+    // Period lock guard: refuse writes dated inside a closed month.
+    // AFSL s912D requires the books to be immutable once a period
+    // is closed. Without this, a rogue cron or admin could silently
+    // backdate an adjustment into a sealed month.
+    if (await isPeriodClosedAt(new Date())) {
+      log.warn("financial_audit_log blocked — period is closed", {
+        resourceType: entry.resourceType,
+        resourceId: entry.resourceId,
+        action: entry.action,
+      });
+      return;
+    }
+
     const supabase = createAdminClient();
     const { error } = await supabase.from("financial_audit_log").insert({
       actor_type: entry.actorType,

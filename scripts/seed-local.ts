@@ -168,6 +168,145 @@ async function seed() {
   }
   console.log(`  ✓ ${advisors.length} advisors`);
 
+  // ── Wave 10/11 compliance tables ──────────────────────────
+  //
+  // Seeding these makes the admin surfaces render a real
+  // dataset locally instead of an empty state, so reviewers
+  // can actually click through the moderation queue, TMD
+  // dashboard and financial-periods page during dev.
+
+  // TMDs — one per broker so the DDO audit cron comes back clean
+  const brokerSlugs = ["stake", "cmc-markets", "selfwealth", "interactive-brokers", "pearler"];
+  for (const slug of brokerSlugs) {
+    const { error } = await supabase.from("tmds").upsert(
+      {
+        product_type: "broker",
+        product_ref: slug,
+        product_name: slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
+        tmd_url: `https://example.com/tmds/${slug}-v1.pdf`,
+        tmd_version: "v1",
+        reviewed_at: new Date().toISOString(),
+        valid_from: new Date().toISOString(),
+        valid_until: null,
+      },
+      { onConflict: "product_type,product_ref,tmd_version" },
+    );
+    if (error) console.error("tmds upsert failed", slug, error.message);
+  }
+  console.log(`  ✓ ${brokerSlugs.length} TMDs`);
+
+  // Complaints register — one in-SLA + one overdue so the
+  // admin complaints page shows both states.
+  const now = new Date();
+  const complaints = [
+    {
+      reference_id: "CMPL-0001",
+      complainant_email: "sample.complainant@example.com",
+      complainant_name: "Sample Complainant",
+      subject: "Delayed fee credit",
+      body: "The sign-up credit wasn't applied to my account.",
+      category: "lead_billing",
+      severity: "standard",
+      status: "submitted",
+      submitted_at: now.toISOString(),
+      sla_due_at: new Date(now.getTime() + 30 * 86_400_000).toISOString(),
+    },
+    {
+      reference_id: "CMPL-0002",
+      complainant_email: "sample2@example.com",
+      complainant_name: "Sample Two",
+      subject: "Advisor response time",
+      body: "Haven't heard back from my matched advisor in 10 days.",
+      category: "advisor_conduct",
+      severity: "high",
+      status: "under_review",
+      submitted_at: new Date(now.getTime() - 28 * 86_400_000).toISOString(),
+      sla_due_at: new Date(now.getTime() + 2 * 86_400_000).toISOString(),
+    },
+  ];
+  for (const c of complaints) {
+    const { error } = await supabase
+      .from("complaints_register")
+      .upsert(c, { onConflict: "reference_id" });
+    if (error) console.error("complaints_register upsert failed", c.reference_id, error.message);
+  }
+  console.log(`  ✓ ${complaints.length} complaints`);
+
+  // Financial periods — seed the previous + current month so the
+  // admin page renders a meaningful table.
+  const thisMonthStart = new Date(now.getUTCFullYear(), now.getUTCMonth(), 1);
+  const thisMonthEnd = new Date(now.getUTCFullYear(), now.getUTCMonth() + 1, 0);
+  const lastMonthStart = new Date(now.getUTCFullYear(), now.getUTCMonth() - 1, 1);
+  const lastMonthEnd = new Date(now.getUTCFullYear(), now.getUTCMonth(), 0);
+  const toDate = (d: Date) => d.toISOString().slice(0, 10);
+  const periods = [
+    {
+      period_start: toDate(lastMonthStart),
+      period_end: toDate(lastMonthEnd),
+      status: "closed",
+      closed_at: now.toISOString(),
+      closed_by: "seed:local",
+      audit_row_count: 0,
+      total_credits_cents: 0,
+      total_refunds_cents: 0,
+      notes: "Seeded by scripts/seed-local.ts",
+    },
+    {
+      period_start: toDate(thisMonthStart),
+      period_end: toDate(thisMonthEnd),
+      status: "open",
+      notes: "Current month — managed by month-end-close cron",
+    },
+  ];
+  for (const p of periods) {
+    const { error } = await supabase
+      .from("financial_periods")
+      .upsert(p, { onConflict: "period_start,period_end" });
+    if (error) console.error("financial_periods upsert failed", p.period_start, error.message);
+  }
+  console.log(`  ✓ ${periods.length} financial periods`);
+
+  // ── Wave 11 user-account demo rows ──────────────────────
+  // These all key off auth.users ids, which we don't create
+  // from the seed (auth.admin.createUser would leak real
+  // email to Inbucket). Instead, seed a single system
+  // notification tied to the admin user if they exist.
+  try {
+    const { data: userList } = await supabase.auth.admin.listUsers({ page: 1, perPage: 10 });
+    const adminUser = (userList?.users || []).find((u) => u.email === "admin@invest.com.au");
+    if (adminUser) {
+      await supabase.from("user_notifications").upsert(
+        [
+          {
+            user_id: adminUser.id,
+            type: "system",
+            title: "Welcome to Invest.com.au",
+            body: "This seed notification was dropped by scripts/seed-local.ts.",
+            link_url: "/account",
+            email_delivery_key: "seed:welcome",
+          },
+          {
+            user_id: adminUser.id,
+            type: "fee_change",
+            title: "Stake cut their US brokerage fee",
+            body: "Stake dropped US brokerage from US$3 to US$2. Worth a look.",
+            link_url: "/broker/stake",
+            email_delivery_key: "seed:fee_change:stake",
+          },
+        ],
+        { onConflict: "user_id,email_delivery_key" as never },
+      );
+      console.log("  ✓ 2 seeded notifications for admin user");
+    } else {
+      console.log("  · skipped user_notifications (no admin user in auth.users)");
+    }
+  } catch (err) {
+    console.log(
+      "  · skipped user_notifications (auth.admin unavailable):",
+      err instanceof Error ? err.message : String(err),
+    );
+  }
+
   console.log("Done.");
 }
 

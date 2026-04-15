@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useUser } from "@/lib/hooks/useUser";
 import { CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
+import NotificationBell from "@/components/NotificationBell";
 
 const propertyDropdown = [
   { label: "Investment Property", href: "/property", desc: "New developments, suburb data & more" },
@@ -369,6 +370,7 @@ export default function Header() {
           {/* Desktop CTA + Theme */}
           <div className="hidden lg:flex items-center gap-3">
             {/* ThemeToggle disabled — dark mode not yet styled */}
+            <NotificationBell />
             <Link
               href="/quiz"
               className="bg-amber-500 hover:bg-amber-600 text-white px-5 py-2.5 rounded-lg font-bold transition-all shadow-sm hover:shadow-md flex items-center gap-2 text-sm"

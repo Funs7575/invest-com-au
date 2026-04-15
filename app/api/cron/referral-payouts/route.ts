@@ -5,6 +5,7 @@ import { requireCronAuth } from "@/lib/cron-auth";
 import { wrapCronHandler } from "@/lib/cron-run-log";
 import { isFeatureDisabled } from "@/lib/admin/classifier-config";
 import { recordFinancialAudit } from "@/lib/financial-audit";
+import { buildEmailToUserIdMap, notifyUser } from "@/lib/notifications";
 
 const log = logger("cron:referral-payouts");
 
@@ -33,7 +34,11 @@ async function handler(req: NextRequest) {
   }
 
   const supabase = createAdminClient();
-  const stats = { scanned: 0, paid: 0, rejected: 0, manual: 0, failed: 0 };
+  const stats = { scanned: 0, paid: 0, rejected: 0, manual: 0, failed: 0, inboxed: 0 };
+
+  // Pre-load email→user_id so crediting an advisor can fire an
+  // inbox notification without an extra lookup per row.
+  const emailToUserId = await buildEmailToUserIdMap();
 
   const { data: rewards, error } = await supabase
     .from("referral_rewards")
@@ -120,6 +125,24 @@ async function handler(req: NextRequest) {
         reason: `Referral reward: ${r.trigger_event} by ${r.referred_email}`,
         context: { referral_code: r.referral_code, referred_email: r.referred_email },
       });
+
+      // Tell the referrer they got paid. email_delivery_key is the
+      // reward row id so retries can't double-notify.
+      const userId = emailToUserId.get(
+        (r.referrer_email as string).toLowerCase(),
+      );
+      if (userId) {
+        const dollars = ((r.reward_cents as number) / 100).toFixed(2);
+        const ok = await notifyUser({
+          userId,
+          type: "referral",
+          title: `You earned $${dollars} in referral credit`,
+          body: `Your referral of ${r.referred_email} just triggered ${r.trigger_event}. The credit has been added to your advisor balance.`,
+          linkUrl: "/advisor-portal",
+          emailDeliveryKey: `referral_reward:${r.id}`,
+        });
+        if (ok) stats.inboxed += 1;
+      }
 
       stats.paid++;
     } catch (err) {
