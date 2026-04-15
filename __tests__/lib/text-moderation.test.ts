@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import { detectForwardLookingStatements } from "@/lib/text-moderation";
 import { classifyText, type ModerationContext } from "@/lib/text-moderation";
 
 function ctx(
@@ -149,5 +150,73 @@ describe("classifyText — advisor articles higher bar", () => {
       ctx(longText, { surface: "advisor_article", title: "Retirement Tax Planning Guide" }),
     );
     expect(r.verdict).toBe("auto_publish");
+  });
+});
+
+describe("detectForwardLookingStatements", () => {
+  it("flags explicit price targets", () => {
+    const hits = detectForwardLookingStatements(
+      "Woodside will hit $40 by Q3 2026 based on LNG demand.",
+    );
+    expect(hits).toContain("forward_looking_price_target");
+  });
+
+  it("flags guaranteed-return language", () => {
+    const hits = detectForwardLookingStatements(
+      "This strategy is risk-free and offers guaranteed returns of 12% annually.",
+    );
+    expect(hits.length).toBeGreaterThan(0);
+    expect(hits.some((h) => h.includes("guaranteed") || h.includes("return"))).toBe(true);
+  });
+
+  it("flags multiplier language like 'double your money'", () => {
+    const hits = detectForwardLookingStatements(
+      "Buy now and you'll triple your money within 18 months.",
+    );
+    expect(hits).toContain("multiplier_return_prediction");
+  });
+
+  it("flags 'next Tesla' hype framing", () => {
+    const hits = detectForwardLookingStatements(
+      "This ASX small-cap is the next Tesla — get in before the crowd.",
+    );
+    expect(hits).toContain("hype_comparison");
+  });
+
+  it("does NOT flag past-tense factual statements", () => {
+    const hits = detectForwardLookingStatements(
+      "Santos rose 12% last quarter following the Barossa approval.",
+    );
+    expect(hits).toHaveLength(0);
+  });
+
+  it("does NOT flag neutral educational copy", () => {
+    const hits = detectForwardLookingStatements(
+      "ETFs give you diversified exposure to Australian oil and gas majors including Woodside and Santos. Consider the tax treatment and your personal circumstances before investing.",
+    );
+    expect(hits).toHaveLength(0);
+  });
+});
+
+describe("classifyText — forward-looking escalation", () => {
+  it("escalates a comment with a price target", () => {
+    const r = classifyText(
+      ctx(
+        "I've been watching WDS for months and I'm convinced Woodside will hit $40 by next year. Jumping in today.",
+        { surface: "broker_review" },
+      ),
+    );
+    expect(r.verdict).toBe("escalate");
+    expect(r.reasons.some((x) => x.includes("forward_looking"))).toBe(true);
+  });
+
+  it("escalates a comment promising guaranteed returns", () => {
+    const r = classifyText(
+      ctx(
+        "This broker offers a risk-free trading strategy with guaranteed returns every single month.",
+        { surface: "broker_review" },
+      ),
+    );
+    expect(r.verdict).toBe("escalate");
   });
 });

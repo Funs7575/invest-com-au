@@ -102,6 +102,61 @@ const LEGAL_ESCALATE_PATTERNS: Array<{ pattern: RegExp; reason: string }> = [
   { pattern: /\b(rip[\s-]off|ripoff|swindle|con\s+artist)\b/i, reason: "accusation_language" },
 ];
 
+// ─── Forward-looking statement patterns — always escalate ──────────
+// ASIC RG 170 + Corporations Act s769C: "forecast" language on a
+// financial product triggers disclosure obligations we don't carry.
+// User-generated and editorial content that makes forward-looking
+// price or return claims is unpublishable without human review by
+// a licensed reviewer. Matching these escalates.
+//
+// We accept two classes of violation:
+//   1. Price/target predictions: "WDS will hit $40"
+//   2. Guaranteed return language: "you will make X%"
+//
+// Past-tense observations ("WDS rose 10% last quarter") don't match.
+export const FORWARD_LOOKING_PATTERNS: Array<{ pattern: RegExp; reason: string }> = [
+  // Price targets with a dollar sign
+  {
+    pattern: /\b(will|going to|expected to|set to|poised to|heading to)\s+(hit|reach|break|touch|top|exceed|climb to)\s*\$?\s*\d+/i,
+    reason: "forward_looking_price_target",
+  },
+  // Percentage return predictions tied to a future verb
+  {
+    pattern: /\b(will|going to|expected to|guaranteed to)\s+(return|yield|make|earn|generate|deliver)\s+\d+\s*%/i,
+    reason: "forward_looking_return_prediction",
+  },
+  // Guaranteed / risk-free language — explicit rule violation under
+  // ASIC MoneySmart guidance.
+  {
+    pattern: /\b(guaranteed|risk[- ]free|sure[- ]thing|can't lose|certain profit)\b/i,
+    reason: "guaranteed_returns_language",
+  },
+  // "Next [ticker]" hype framing is a classic ramp signal.
+  {
+    pattern: /\b(next|new)\s+(bitcoin|tesla|nvidia|amazon|microsoft|google|bhp|cba)\b/i,
+    reason: "hype_comparison",
+  },
+  // Price doubling / tripling predictions
+  {
+    pattern: /\b(double|triple|quadruple|10x|100x)\s+(your|their|its|the)\s+(money|investment|capital|stake)\b/i,
+    reason: "multiplier_return_prediction",
+  },
+];
+
+/**
+ * Detect forward-looking statements. Exported separately from the
+ * main classifier so editorial + UGC surfaces can run the check
+ * independently — e.g. the news-brief publish API runs this to
+ * add a `compliance_flag` before persisting to the DB.
+ */
+export function detectForwardLookingStatements(text: string): string[] {
+  const hits: string[] = [];
+  for (const { pattern, reason } of FORWARD_LOOKING_PATTERNS) {
+    if (pattern.test(text)) hits.push(reason);
+  }
+  return hits;
+}
+
 // ─── Soft quality / spam signals (weighted) ─────────────────────────
 interface SoftSignal {
   check: (ctx: ModerationContext) => boolean;
@@ -223,6 +278,21 @@ export function classifyText(ctx: ModerationContext): ModerationResult {
       confidence: "high",
       riskScore: Math.min(100, riskScore),
       reasons: ["legal_risk_requires_human_review", ...legalSignals],
+    };
+  }
+
+  // ── Forward-looking statement escalation ────────────────
+  // Separate from legal-risk because these are ASIC disclosure
+  // violations, not defamation risk. Same effect though — the
+  // content must never auto-publish without a human sign-off.
+  const forwardLookingSignals = detectForwardLookingStatements(text);
+  if (forwardLookingSignals.length > 0) {
+    riskScore += 25 * forwardLookingSignals.length;
+    return {
+      verdict: "escalate",
+      confidence: "high",
+      riskScore: Math.min(100, riskScore),
+      reasons: ["forward_looking_requires_licensed_review", ...forwardLookingSignals],
     };
   }
 

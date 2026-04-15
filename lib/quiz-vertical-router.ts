@@ -27,16 +27,18 @@ export type QuizVertical =
   | "property"
   | "super"
   | "crypto"
-  | "robo";
+  | "robo"
+  | "resources";
 
 export interface QuizAnswers {
-  goal?: string;          // Q1: crypto | trade | income | grow | property | property-reit | property-super | super | automate
+  goal?: string;          // Q1: crypto | trade | income | grow | property | property-reit | property-super | super | automate | resources
   approach?: string;      // Q2: diy | advisor | unsure
   experience?: string;    // beginner | intermediate | pro
   situation?: string;     // simple | moderate | complex
   priority?: string;      // fees | safety | tools | simple | ...
   amount?: string;
   propertySubType?: string; // if goal=property: physical | reit | super
+  resourceSector?: string;  // if goal=resources: oil-gas | lithium | uranium | gold | rare-earths
 }
 
 export interface RoutingDecision {
@@ -149,6 +151,32 @@ export function routeQuizToVertical(answers: QuizAnswers): RoutingDecision {
       confidence: 0.9,
       reasons,
       nextPath: "/compare?tab=crypto",
+    };
+  }
+
+  // Resource / commodity sector track — sends the user to the
+  // specific /invest/<sector> hub if they picked one, else the
+  // general commodities page. Advisor-track resource investors
+  // get routed to /find-advisor with a `focus` param so the
+  // matcher can prefer SMSF / resource-specialist advisors.
+  if (goal === "resources") {
+    reasons.push("goal=resources");
+    const sector = (answers.resourceSector || "").toLowerCase();
+    const validSectors = ["oil-gas", "lithium", "uranium", "gold", "rare-earths"];
+    if (sector && validSectors.includes(sector)) {
+      reasons.push(`resourceSector=${sector}`);
+      return {
+        vertical: "resources",
+        confidence: 0.95,
+        reasons,
+        nextPath: `/invest/${sector}`,
+      };
+    }
+    return {
+      vertical: "resources",
+      confidence: 0.8,
+      reasons,
+      nextPath: "/invest/commodities",
     };
   }
 
