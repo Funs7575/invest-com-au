@@ -167,7 +167,13 @@ function makeBuilder(table: string) {
   const api: Record<string, unknown> = {};
 
   api.select = (cols?: string, opts?: { count?: string; head?: boolean }) => {
-    state.op = "select";
+    // In supabase-js, .update(...).select("*") chains a "return
+    // the updated rows" hint onto the existing update op — it
+    // does NOT switch the operation to a read. Only set op="select"
+    // when we're not already in a write mode.
+    if (state.op === "select") {
+      state.op = "select";
+    }
     state.selectCols = cols;
     state.selectOpts = opts;
     return api;
