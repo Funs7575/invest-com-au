@@ -8,6 +8,9 @@ import { getAllInvestCategorySlugs, getAllSubcategorySlugs } from "@/lib/invest-
 import { listingUrl } from "@/lib/listing-url";
 import type { InvestListingVertical } from "@/lib/types";
 
+// Regenerate sitemap at most once per day — avoids per-request DB queries
+export const revalidate = 86400;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://invest.com.au";
   const hasSupabase = !!(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);

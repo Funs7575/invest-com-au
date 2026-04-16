@@ -19,5 +19,21 @@ export default defineConfig({
     environmentMatchGlobs: [
       ["__tests__/components/**", "jsdom"],
     ],
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "text-summary", "lcov"],
+      include: ["lib/**/*.ts", "lib/**/*.tsx", "app/api/**/*.ts"],
+      exclude: [
+        "lib/database.types.ts",
+        "lib/types.ts",
+        "**/*.d.ts",
+      ],
+      thresholds: {
+        lines: 60,
+        functions: 55,
+        branches: 50,
+        statements: 60,
+      },
+    },
   },
 });
