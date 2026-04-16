@@ -338,11 +338,18 @@ export async function POST(request: NextRequest) {
                 buildProWelcomeEmail(interval),
               ).catch((err) => log.error("Pro welcome email failed", { err: err instanceof Error ? err.message : String(err) }));
 
-              // Notify admin of new Pro signup
+              // Notify admin of new Pro signup. Escape customer fields
+              // even though Stripe validates email format — header
+              // injection via "\n" or "\r" in the subject line is the
+              // riskiest path. Stripping non-printable chars defends
+              // even if upstream validation regresses.
+              const safeEmail = escapeHtml(customer.email).replace(/[\r\n]/g, "");
+              const safeCustId = escapeHtml(custId).replace(/[\r\n]/g, "");
+              const safeInterval = escapeHtml(interval || "unknown");
               sendTransactionalEmail(
                 ADMIN_EMAIL,
-                `New Pro Signup: ${customer.email}`,
-                `<div style="font-family:Arial,sans-serif;max-width:500px"><h2 style="color:#0f172a;font-size:16px">💎 New Pro Member</h2><p style="color:#64748b;font-size:14px"><strong>${customer.email}</strong> just subscribed to Invest.com.au Pro (${interval || "unknown"} plan).</p><p style="color:#64748b;font-size:14px">Customer ID: ${custId}</p><a href="${getSiteUrl()}/admin/pro-subscribers" style="display:inline-block;padding:10px 20px;background:#7c3aed;color:white;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;margin-top:8px">View Pro Members →</a></div>`,
+                `New Pro Signup: ${safeEmail}`,
+                `<div style="font-family:Arial,sans-serif;max-width:500px"><h2 style="color:#0f172a;font-size:16px">💎 New Pro Member</h2><p style="color:#64748b;font-size:14px"><strong>${safeEmail}</strong> just subscribed to Invest.com.au Pro (${safeInterval} plan).</p><p style="color:#64748b;font-size:14px">Customer ID: ${safeCustId}</p><a href="${getSiteUrl()}/admin/pro-subscribers" style="display:inline-block;padding:10px 20px;background:#7c3aed;color:white;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;margin-top:8px">View Pro Members →</a></div>`,
               ).catch((err) => log.error("Admin Pro signup notification failed", { err: err instanceof Error ? err.message : String(err) }));
             }
           } catch (err) {

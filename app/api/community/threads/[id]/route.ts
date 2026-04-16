@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { ADMIN_EMAILS } from "@/lib/admin";
+import { isRateLimited } from "@/lib/rate-limit";
 
 const log = logger("community:thread");
 
@@ -105,6 +106,15 @@ export async function PATCH(
       return NextResponse.json({ error: "Authentication required" }, { status: 401 });
     }
 
+    // 30 edits per minute per user — generous for legit re-edits,
+    // tight enough to block edit-spam attacks that DOS the audit log.
+    if (await isRateLimited(`community_thread_edit:${user.id}`, 30, 60)) {
+      return NextResponse.json(
+        { error: "You're editing too quickly. Please slow down." },
+        { status: 429 },
+      );
+    }
+
     const admin = createAdminClient();
 
     // Fetch thread to check ownership
@@ -179,6 +189,15 @@ export async function DELETE(
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) {
       return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    }
+
+    // 10 deletions per minute per user — prevents bulk-deletion attacks
+    // used to cover tracks of malicious activity or DOS the audit log.
+    if (await isRateLimited(`community_thread_delete:${user.id}`, 10, 60)) {
+      return NextResponse.json(
+        { error: "You're deleting too quickly. Please slow down." },
+        { status: 429 },
+      );
     }
 
     const admin = createAdminClient();

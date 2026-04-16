@@ -17,85 +17,118 @@
 -- Forum tables were created without RLS in 20260426. Without RLS,
 -- any authenticated user with the anon key can read/write any forum
 -- content directly via the Supabase REST API.
+--
+-- author_id columns hold auth.uid() UUIDs directly (forum_threads,
+-- forum_posts, forum_votes), not numeric profile FKs — so policies
+-- compare author_id = auth.uid() rather than going through a
+-- forum_user_profiles join.
+--
+-- All policies use DROP POLICY IF EXISTS first so the migration is
+-- idempotent. CREATE POLICY does not support IF NOT EXISTS, and a
+-- second apply otherwise fails with "policy already exists".
 
 ALTER TABLE public.forum_categories      ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.forum_threads         ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.forum_posts           ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.forum_user_profiles   ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.forum_votes           ENABLE ROW LEVEL SECURITY;
 
--- forum_categories: read-only for everyone, write only for service_role
+-- forum_categories: read-only for everyone (active categories), service_role writes
+DROP POLICY IF EXISTS "forum_categories_public_read" ON public.forum_categories;
 CREATE POLICY "forum_categories_public_read"
   ON public.forum_categories FOR SELECT
   USING (status = 'active');
 
--- forum_threads: anyone can read active threads; only authenticated users can create;
--- only the author or service_role can update/delete (soft-delete via status='deleted')
+-- forum_threads: anyone can read non-removed threads; authenticated users
+-- can create their own; the author can update/delete their own
+DROP POLICY IF EXISTS "forum_threads_public_read" ON public.forum_threads;
 CREATE POLICY "forum_threads_public_read"
   ON public.forum_threads FOR SELECT
-  USING (status = 'active');
+  USING (is_removed = false);
 
+DROP POLICY IF EXISTS "forum_threads_authenticated_insert" ON public.forum_threads;
 CREATE POLICY "forum_threads_authenticated_insert"
   ON public.forum_threads FOR INSERT
-  WITH CHECK (
-    auth.uid() IS NOT NULL
-    AND author_id IS NOT NULL
-    AND EXISTS (
-      SELECT 1 FROM public.forum_user_profiles
-      WHERE id = author_id AND user_id = auth.uid() AND status = 'active'
-    )
-  );
+  WITH CHECK (auth.uid() IS NOT NULL AND author_id = auth.uid());
 
+DROP POLICY IF EXISTS "forum_threads_author_update" ON public.forum_threads;
 CREATE POLICY "forum_threads_author_update"
   ON public.forum_threads FOR UPDATE
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.forum_user_profiles
-      WHERE id = author_id AND user_id = auth.uid()
-    )
-  );
+  USING (author_id = auth.uid())
+  WITH CHECK (author_id = auth.uid());
 
--- forum_posts: same access pattern
+DROP POLICY IF EXISTS "forum_threads_author_delete" ON public.forum_threads;
+CREATE POLICY "forum_threads_author_delete"
+  ON public.forum_threads FOR DELETE
+  USING (author_id = auth.uid());
+
+-- forum_posts: same access pattern as threads
+DROP POLICY IF EXISTS "forum_posts_public_read" ON public.forum_posts;
 CREATE POLICY "forum_posts_public_read"
   ON public.forum_posts FOR SELECT
-  USING (status = 'active');
+  USING (is_removed = false);
 
+DROP POLICY IF EXISTS "forum_posts_authenticated_insert" ON public.forum_posts;
 CREATE POLICY "forum_posts_authenticated_insert"
   ON public.forum_posts FOR INSERT
-  WITH CHECK (
-    auth.uid() IS NOT NULL
-    AND author_id IS NOT NULL
-    AND EXISTS (
-      SELECT 1 FROM public.forum_user_profiles
-      WHERE id = author_id AND user_id = auth.uid() AND status = 'active'
-    )
-  );
+  WITH CHECK (auth.uid() IS NOT NULL AND author_id = auth.uid());
 
+DROP POLICY IF EXISTS "forum_posts_author_update" ON public.forum_posts;
 CREATE POLICY "forum_posts_author_update"
   ON public.forum_posts FOR UPDATE
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.forum_user_profiles
-      WHERE id = author_id AND user_id = auth.uid()
-    )
-  );
+  USING (author_id = auth.uid())
+  WITH CHECK (author_id = auth.uid());
 
--- forum_user_profiles: users can read all profiles (display_name, reputation are public),
--- but can only update their own profile
+DROP POLICY IF EXISTS "forum_posts_author_delete" ON public.forum_posts;
+CREATE POLICY "forum_posts_author_delete"
+  ON public.forum_posts FOR DELETE
+  USING (author_id = auth.uid());
+
+-- forum_user_profiles: display_name + reputation are public; only the
+-- profile's owner can insert/update their own row
+DROP POLICY IF EXISTS "forum_user_profiles_public_read" ON public.forum_user_profiles;
 CREATE POLICY "forum_user_profiles_public_read"
   ON public.forum_user_profiles FOR SELECT
   USING (status = 'active');
 
+DROP POLICY IF EXISTS "forum_user_profiles_self_insert" ON public.forum_user_profiles;
 CREATE POLICY "forum_user_profiles_self_insert"
   ON public.forum_user_profiles FOR INSERT
   WITH CHECK (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "forum_user_profiles_self_update" ON public.forum_user_profiles;
 CREATE POLICY "forum_user_profiles_self_update"
   ON public.forum_user_profiles FOR UPDATE
-  USING (user_id = auth.uid());
+  USING (user_id = auth.uid())
+  WITH CHECK (user_id = auth.uid());
+
+-- forum_votes: votes are public-readable for aggregation; users can only
+-- create / change / delete their own votes
+DROP POLICY IF EXISTS "forum_votes_public_read" ON public.forum_votes;
+CREATE POLICY "forum_votes_public_read"
+  ON public.forum_votes FOR SELECT
+  USING (true);
+
+DROP POLICY IF EXISTS "forum_votes_self_insert" ON public.forum_votes;
+CREATE POLICY "forum_votes_self_insert"
+  ON public.forum_votes FOR INSERT
+  WITH CHECK (auth.uid() IS NOT NULL AND voter_user_id = auth.uid());
+
+DROP POLICY IF EXISTS "forum_votes_self_update" ON public.forum_votes;
+CREATE POLICY "forum_votes_self_update"
+  ON public.forum_votes FOR UPDATE
+  USING (voter_user_id = auth.uid())
+  WITH CHECK (voter_user_id = auth.uid());
+
+DROP POLICY IF EXISTS "forum_votes_self_delete" ON public.forum_votes;
+CREATE POLICY "forum_votes_self_delete"
+  ON public.forum_votes FOR DELETE
+  USING (voter_user_id = auth.uid());
 
 -- newsletter_editions: public read (for /newsletter archive), service_role write
 ALTER TABLE public.newsletter_editions ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "newsletter_editions_public_read" ON public.newsletter_editions;
 CREATE POLICY "newsletter_editions_public_read"
   ON public.newsletter_editions FOR SELECT
   USING (status = 'sent');
@@ -129,10 +162,12 @@ CREATE INDEX IF NOT EXISTS idx_data_export_requests_status ON public.data_export
 
 ALTER TABLE public.data_export_requests ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "data_export_requests_self_read" ON public.data_export_requests;
 CREATE POLICY "data_export_requests_self_read"
   ON public.data_export_requests FOR SELECT
   USING (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "data_export_requests_self_insert" ON public.data_export_requests;
 CREATE POLICY "data_export_requests_self_insert"
   ON public.data_export_requests FOR INSERT
   WITH CHECK (user_id = auth.uid());
@@ -157,14 +192,17 @@ CREATE INDEX IF NOT EXISTS idx_account_deletion_requests_purge ON public.account
 
 ALTER TABLE public.account_deletion_requests ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "account_deletion_requests_self_read" ON public.account_deletion_requests;
 CREATE POLICY "account_deletion_requests_self_read"
   ON public.account_deletion_requests FOR SELECT
   USING (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "account_deletion_requests_self_insert" ON public.account_deletion_requests;
 CREATE POLICY "account_deletion_requests_self_insert"
   ON public.account_deletion_requests FOR INSERT
   WITH CHECK (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "account_deletion_requests_self_cancel" ON public.account_deletion_requests;
 CREATE POLICY "account_deletion_requests_self_cancel"
   ON public.account_deletion_requests FOR UPDATE
   USING (user_id = auth.uid() AND status = 'scheduled')
@@ -192,10 +230,10 @@ CREATE INDEX IF NOT EXISTS idx_health_pings_service_recent ON public.health_ping
 -- Auto-purge old pings (keep last 7 days)
 ALTER TABLE public.health_pings ENABLE ROW LEVEL SECURITY;
 
--- Read-only for admin via service_role; no public access
-CREATE POLICY "health_pings_admin_read"
-  ON public.health_pings FOR SELECT
-  USING (false);  -- service_role bypasses RLS, so admin queries work; public is blocked
+-- No public access. Admin reads via service-role client which bypasses
+-- RLS entirely. We do not even need a SELECT policy — RLS denies by
+-- default. The previous USING (false) read like a real policy and was
+-- confusing; better to leave it off.
 
 
 -- ────────────────────────────────────────────────────────────
@@ -205,11 +243,8 @@ CREATE POLICY "health_pings_admin_read"
 -- on FK columns cause sequential scans on parent updates/deletes
 -- and slow JOIN performance.
 
--- forum_threads.author_id (FK to forum_user_profiles)
-CREATE INDEX IF NOT EXISTS idx_forum_threads_author ON public.forum_threads (author_id);
-
--- forum_posts.author_id, forum_posts.parent_id
-CREATE INDEX IF NOT EXISTS idx_forum_posts_author ON public.forum_posts (author_id);
+-- (forum_threads.author_id and forum_posts.author_id indexes are created
+-- alongside their tables in 20260426 — no duplication needed here.)
 CREATE INDEX IF NOT EXISTS idx_forum_posts_parent ON public.forum_posts (parent_id) WHERE parent_id IS NOT NULL;
 
 -- newsletter_editions.status (frequent filter)
@@ -283,10 +318,12 @@ CREATE INDEX IF NOT EXISTS idx_tos_acceptances_user ON public.tos_acceptances (u
 
 ALTER TABLE public.tos_acceptances ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "tos_acceptances_self_read" ON public.tos_acceptances;
 CREATE POLICY "tos_acceptances_self_read"
   ON public.tos_acceptances FOR SELECT
   USING (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "tos_acceptances_self_insert" ON public.tos_acceptances;
 CREATE POLICY "tos_acceptances_self_insert"
   ON public.tos_acceptances FOR INSERT
   WITH CHECK (user_id = auth.uid());

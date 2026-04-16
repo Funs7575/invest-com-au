@@ -178,29 +178,32 @@ export async function POST(req: NextRequest) {
       })
       .eq("id", category.id);
 
-    // Upsert forum_user_profile with incremented thread_count
-    const { data: existingProfile } = await admin
+    // Race-safe profile creation, then increment. See identical block
+    // in app/api/community/posts/route.ts for rationale.
+    await admin
       .from("forum_user_profiles")
-      .select("thread_count")
-      .eq("user_id", user.id)
-      .single();
-
-    if (existingProfile) {
-      await admin
-        .from("forum_user_profiles")
-        .update({ thread_count: (existingProfile.thread_count ?? 0) + 1 })
-        .eq("user_id", user.id);
-    } else {
-      await admin
-        .from("forum_user_profiles")
-        .insert({
+      .upsert(
+        {
           user_id: user.id,
           display_name: displayName,
           reputation: 0,
-          thread_count: 1,
+          thread_count: 0,
           post_count: 0,
           is_moderator: false,
-        });
+        },
+        { onConflict: "user_id", ignoreDuplicates: true },
+      );
+
+    const { data: profile } = await admin
+      .from("forum_user_profiles")
+      .select("thread_count")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (profile) {
+      await admin
+        .from("forum_user_profiles")
+        .update({ thread_count: (profile.thread_count ?? 0) + 1 })
+        .eq("user_id", user.id);
     }
 
     return NextResponse.json({ thread }, { status: 201 });

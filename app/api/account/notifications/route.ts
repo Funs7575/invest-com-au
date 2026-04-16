@@ -53,8 +53,14 @@ export async function GET(request: NextRequest) {
       .order("created_at", { ascending: false })
       .limit(50);
     if (error) {
+      // Log full error server-side, return generic message to client.
+      // Surfacing error.message would leak schema details (column names,
+      // RLS policy hints) that aid enumeration attacks.
       log.warn("notifications fetch failed", { error: error.message });
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json(
+        { error: "Failed to load notifications" },
+        { status: 500 },
+      );
     }
     const unread = await getUnreadCount(guard.user.id);
     return NextResponse.json({ unread, items: data || [] });

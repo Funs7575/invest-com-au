@@ -32,7 +32,7 @@ interface ForumCategory {
   description: string;
   icon: string;
   color: string;
-  display_order: number;
+  sort_order: number;
   thread_count: number;
   post_count: number;
 }
@@ -43,10 +43,10 @@ export default async function CommunityPage() {
   const { data: categories } = await supabase
     .from("forum_categories")
     .select(
-      "id, slug, name, description, icon, color, display_order, thread_count, post_count"
+      "id, slug, name, description, icon, color, sort_order, thread_count, post_count"
     )
     .eq("status", "active")
-    .order("display_order", { ascending: true });
+    .order("sort_order", { ascending: true });
 
   const cats: ForumCategory[] = categories ?? [];
 

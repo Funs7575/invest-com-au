@@ -32,79 +32,108 @@ CREATE INDEX IF NOT EXISTS idx_newsletter_editions_status ON public.newsletter_e
 -- 2. MISSING TABLES: forum_categories, forum_threads, forum_posts,
 --    forum_user_profiles, forum_reactions
 -- ────────────────────────────────────────────────────────────
+-- Schema must match the columns the existing community API
+-- already queries (app/api/community/{categories,threads,posts,vote,
+-- moderate}/route.ts). Cross-checked against every .select / .insert
+-- / .update call in those files before finalising.
 CREATE TABLE IF NOT EXISTS public.forum_categories (
-  id            BIGSERIAL PRIMARY KEY,
-  slug          TEXT NOT NULL UNIQUE,
-  name          TEXT NOT NULL,
-  description   TEXT,
-  icon          TEXT DEFAULT 'message-circle',
-  color         TEXT DEFAULT '#64748b',
-  display_order INTEGER DEFAULT 0,
-  status        TEXT NOT NULL DEFAULT 'active',  -- active | archived
-  thread_count  INTEGER DEFAULT 0,
-  post_count    INTEGER DEFAULT 0,
-  last_post_at  TIMESTAMPTZ,
-  created_at    TIMESTAMPTZ DEFAULT NOW(),
-  updated_at    TIMESTAMPTZ DEFAULT NOW()
+  id              BIGSERIAL PRIMARY KEY,
+  slug            TEXT NOT NULL UNIQUE,
+  name            TEXT NOT NULL,
+  description     TEXT,
+  icon            TEXT DEFAULT 'message-circle',
+  color           TEXT DEFAULT '#64748b',
+  sort_order      INTEGER DEFAULT 0,
+  status          TEXT NOT NULL DEFAULT 'active',  -- active | archived
+  thread_count    INTEGER DEFAULT 0,
+  post_count      INTEGER DEFAULT 0,
+  last_thread_id  BIGINT,
+  last_post_at    TIMESTAMPTZ,
+  created_at      TIMESTAMPTZ DEFAULT NOW(),
+  updated_at      TIMESTAMPTZ DEFAULT NOW()
 );
 
 CREATE TABLE IF NOT EXISTS public.forum_user_profiles (
-  id            BIGSERIAL PRIMARY KEY,
-  user_id       UUID NOT NULL UNIQUE,
-  display_name  TEXT NOT NULL,
-  avatar_url    TEXT,
-  bio           TEXT,
-  reputation    INTEGER DEFAULT 0,
-  post_count    INTEGER DEFAULT 0,
-  thread_count  INTEGER DEFAULT 0,
-  joined_at     TIMESTAMPTZ DEFAULT NOW(),
-  last_active   TIMESTAMPTZ DEFAULT NOW(),
-  status        TEXT NOT NULL DEFAULT 'active',  -- active | banned | suspended
-  created_at    TIMESTAMPTZ DEFAULT NOW(),
-  updated_at    TIMESTAMPTZ DEFAULT NOW()
+  id              BIGSERIAL PRIMARY KEY,
+  user_id         UUID NOT NULL UNIQUE,
+  display_name    TEXT NOT NULL,
+  avatar_url      TEXT,
+  bio             TEXT,
+  reputation      INTEGER DEFAULT 0,
+  post_count      INTEGER DEFAULT 0,
+  thread_count    INTEGER DEFAULT 0,
+  is_moderator    BOOLEAN NOT NULL DEFAULT false,
+  joined_at       TIMESTAMPTZ DEFAULT NOW(),
+  last_active     TIMESTAMPTZ DEFAULT NOW(),
+  status          TEXT NOT NULL DEFAULT 'active',  -- active | banned | suspended
+  created_at      TIMESTAMPTZ DEFAULT NOW(),
+  updated_at      TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- forum_threads.author_id is the auth.users UUID, not a numeric profile FK.
+-- Existing API writes user.id directly to author_id (see app/api/community/threads/route.ts).
 CREATE TABLE IF NOT EXISTS public.forum_threads (
-  id            BIGSERIAL PRIMARY KEY,
-  category_id   BIGINT NOT NULL REFERENCES public.forum_categories(id) ON DELETE CASCADE,
-  author_id     BIGINT REFERENCES public.forum_user_profiles(id),
-  title         TEXT NOT NULL,
-  slug          TEXT NOT NULL,
-  body          TEXT NOT NULL,
-  pinned        BOOLEAN DEFAULT false,
-  locked        BOOLEAN DEFAULT false,
-  view_count    INTEGER DEFAULT 0,
-  reply_count   INTEGER DEFAULT 0,
-  last_reply_at TIMESTAMPTZ,
-  status        TEXT NOT NULL DEFAULT 'active',  -- active | deleted | hidden
-  created_at    TIMESTAMPTZ DEFAULT NOW(),
-  updated_at    TIMESTAMPTZ DEFAULT NOW(),
+  id              BIGSERIAL PRIMARY KEY,
+  category_id     BIGINT NOT NULL REFERENCES public.forum_categories(id) ON DELETE CASCADE,
+  author_id       UUID NOT NULL,
+  author_name     TEXT,
+  title           TEXT NOT NULL,
+  slug            TEXT NOT NULL,
+  body            TEXT NOT NULL,
+  is_pinned       BOOLEAN NOT NULL DEFAULT false,
+  is_locked       BOOLEAN NOT NULL DEFAULT false,
+  is_removed      BOOLEAN NOT NULL DEFAULT false,
+  view_count      INTEGER NOT NULL DEFAULT 0,
+  reply_count     INTEGER NOT NULL DEFAULT 0,
+  vote_score      INTEGER NOT NULL DEFAULT 0,
+  last_reply_at   TIMESTAMPTZ,
+  created_at      TIMESTAMPTZ DEFAULT NOW(),
+  updated_at      TIMESTAMPTZ DEFAULT NOW(),
   UNIQUE (category_id, slug)
 );
 
-CREATE INDEX IF NOT EXISTS idx_forum_threads_category ON public.forum_threads (category_id, pinned DESC, last_reply_at DESC NULLS LAST);
-CREATE INDEX IF NOT EXISTS idx_forum_threads_status ON public.forum_threads (status);
+CREATE INDEX IF NOT EXISTS idx_forum_threads_category ON public.forum_threads (category_id, is_pinned DESC, last_reply_at DESC NULLS LAST);
+CREATE INDEX IF NOT EXISTS idx_forum_threads_active ON public.forum_threads (created_at DESC) WHERE is_removed = false;
+CREATE INDEX IF NOT EXISTS idx_forum_threads_author ON public.forum_threads (author_id);
 
 CREATE TABLE IF NOT EXISTS public.forum_posts (
-  id            BIGSERIAL PRIMARY KEY,
-  thread_id     BIGINT NOT NULL REFERENCES public.forum_threads(id) ON DELETE CASCADE,
-  author_id     BIGINT REFERENCES public.forum_user_profiles(id),
-  body          TEXT NOT NULL,
-  parent_id     BIGINT REFERENCES public.forum_posts(id),
-  upvotes       INTEGER DEFAULT 0,
-  downvotes     INTEGER DEFAULT 0,
-  is_answer     BOOLEAN DEFAULT false,
-  status        TEXT NOT NULL DEFAULT 'active',  -- active | deleted | hidden
-  created_at    TIMESTAMPTZ DEFAULT NOW(),
-  updated_at    TIMESTAMPTZ DEFAULT NOW()
+  id              BIGSERIAL PRIMARY KEY,
+  thread_id       BIGINT NOT NULL REFERENCES public.forum_threads(id) ON DELETE CASCADE,
+  author_id       UUID NOT NULL,
+  author_name     TEXT,
+  body            TEXT NOT NULL,
+  parent_id       BIGINT REFERENCES public.forum_posts(id),
+  vote_score      INTEGER NOT NULL DEFAULT 0,
+  is_answer       BOOLEAN NOT NULL DEFAULT false,
+  is_removed      BOOLEAN NOT NULL DEFAULT false,
+  created_at      TIMESTAMPTZ DEFAULT NOW(),
+  updated_at      TIMESTAMPTZ DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS idx_forum_posts_thread ON public.forum_posts (thread_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_forum_posts_active ON public.forum_posts (thread_id, created_at) WHERE is_removed = false;
+CREATE INDEX IF NOT EXISTS idx_forum_posts_author ON public.forum_posts (author_id);
+
+-- Vote tracking — referenced by /api/community/vote. One row per
+-- (target_type, target_id, voter_user_id). Vote of +1 / -1; aggregate
+-- score is denormalised onto the target row's vote_score column.
+CREATE TABLE IF NOT EXISTS public.forum_votes (
+  id              BIGSERIAL PRIMARY KEY,
+  target_type     TEXT NOT NULL,  -- 'thread' | 'post'
+  target_id       BIGINT NOT NULL,
+  voter_user_id   UUID NOT NULL,
+  vote            SMALLINT NOT NULL,  -- +1 or -1
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE (target_type, target_id, voter_user_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_forum_votes_target ON public.forum_votes (target_type, target_id);
+CREATE INDEX IF NOT EXISTS idx_forum_votes_voter ON public.forum_votes (voter_user_id);
 
 -- ────────────────────────────────────────────────────────────
 -- 3. SEED: forum_categories (8 categories)
 -- ────────────────────────────────────────────────────────────
-INSERT INTO public.forum_categories (slug, name, description, icon, color, display_order, status) VALUES
+INSERT INTO public.forum_categories (slug, name, description, icon, color, sort_order, status) VALUES
   ('share-trading',      'Share Trading',       'ASX and international share trading discussion. Broker reviews, stock analysis, and trading strategies.',  'trending-up',   '#f59e0b', 10, 'active'),
   ('etfs-index-funds',   'ETFs & Index Funds',  'Exchange-traded funds, index investing, DCA strategies, and portfolio construction.',                      'bar-chart-2',   '#3b82f6', 20, 'active'),
   ('property-investing', 'Property Investing',  'Residential, commercial, and REIT investment. Mortgage strategies, negative gearing, and property tax.',   'home',          '#10b981', 30, 'active'),
