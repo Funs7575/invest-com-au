@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { isRateLimited } from "@/lib/rate-limit";
-import logger from "@/lib/logger";
+import { logger } from "@/lib/logger";
 
 const log = logger("account-export");
 

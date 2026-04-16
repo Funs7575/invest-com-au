@@ -18,7 +18,7 @@
 
 import { createClient } from "@supabase/supabase-js";
 import { cached, CacheTTL } from "@/lib/cache";
-import logger from "@/lib/logger";
+import { logger } from "@/lib/logger";
 
 const log = logger("fi-data");
 import {

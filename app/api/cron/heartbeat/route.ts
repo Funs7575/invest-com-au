@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireCronAuth } from "@/lib/cron-auth";
 import { wrapCronHandler } from "@/lib/cron-run-log";
 import { createAdminClient } from "@/lib/supabase/admin";
-import logger from "@/lib/logger";
+import { logger } from "@/lib/logger";
 
 const log = logger("cron-heartbeat");
 
