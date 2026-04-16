@@ -2,9 +2,11 @@ import { createClient } from "@/lib/supabase/server";
 import type { SwitchStory } from "@/lib/types";
 import StoriesClient from "./StoriesClient";
 
+// noindex: backing table (switch_stories) has 0 rows — remove this once content is seeded
 export const metadata = {
   title: "Platform Switching Stories",
   description: "Real stories from Australians who switched investing platforms. Find out why people moved, what they saved, and whether they're happy.",
+  robots: { index: false, follow: true },
   openGraph: {
     title: "Platform Switching Stories",
     description: "Real stories from Australians who switched investing platforms. Find out why people moved, what they saved, and whether they're happy.",

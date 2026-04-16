@@ -3,10 +3,12 @@ import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 
+// noindex: backing table (forum_categories) doesn't exist — remove this once content is seeded
 export const metadata = {
   title: "Community Forum",
   description:
     "Join thousands of Australian investors discussing share trading, ETFs, crypto, super, property, tax strategy, and broker reviews. Ask questions and share insights.",
+  robots: { index: false, follow: true },
   openGraph: {
     title: "Community Forum",
     description:

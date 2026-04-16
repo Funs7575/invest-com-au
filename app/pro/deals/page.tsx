@@ -5,10 +5,12 @@ import ProDealsClient from "./ProDealsClient";
 export const revalidate = 1800; // 30 min
 import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 
+// noindex: backing table (pro_deals) has 0 rows — remove this once content is seeded
 export const metadata = {
   title: "Exclusive Pro Deals — Platform Offers for Pro Members",
   description:
     "Exclusive platform deals and offers only available to Investor Pro members. Special sign-up bonuses, reduced fees, and premium perks.",
+  robots: { index: false, follow: true },
   alternates: { canonical: "/pro/deals" },
 };
 
