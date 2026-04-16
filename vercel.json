@@ -1,6 +1,10 @@
 {
   "crons": [
     {
+      "path": "/api/cron/heartbeat",
+      "schedule": "*/5 * * * *"
+    },
+    {
       "path": "/api/cron/auto-resolve-disputes",
       "schedule": "0 * * * *"
     },
