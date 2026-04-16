@@ -54,7 +54,7 @@ export default function MiningPage() {
             Invest in Australian Mining
           </h1>
           <p className="text-lg text-slate-600 leading-relaxed max-w-2xl mb-8">
-            Australia is the world's largest exporter of iron ore and lithium. Explore how to access direct project investments, ASX-listed miners, and ETFs.
+            Australia is the world&apos;s largest exporter of iron ore and lithium — and the centre of a critical minerals investment boom backed by bilateral government frameworks worth over $8.5 billion.
           </p>
 
           <Link
@@ -86,15 +86,38 @@ export default function MiningPage() {
         </div>
       </section>
 
+      {/* Critical Minerals Boom Banner */}
+      <section className="py-6 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white">
+        <div className="container-custom">
+          <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-8">
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-extrabold uppercase tracking-wider bg-white/20 px-3 py-1 rounded-full">
+                {CURRENT_YEAR} Critical Minerals Boom
+              </span>
+            </div>
+            <p className="text-sm text-emerald-100 leading-relaxed flex-1">
+              The US-Australia bilateral framework has mobilised $8.5B+ in critical minerals investment. The EU-Australia FTA eliminates 99% of tariffs on mineral exports. Australia&apos;s Critical Minerals Strategic Reserve launches H2 {CURRENT_YEAR}.
+            </p>
+            <Link
+              href="/article/australias-critical-minerals-boom-how-to-invest"
+              className="inline-flex items-center gap-2 bg-white text-emerald-700 font-bold text-sm px-5 py-2.5 rounded-lg hover:bg-emerald-50 transition-colors whitespace-nowrap"
+            >
+              Read the Deep Dive
+              <Icon name="arrow-right" size={16} />
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Stats */}
       <section className="py-10 bg-amber-50 border-b border-amber-100">
         <div className="container-custom">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
-              { value: "33%", label: "of Australia's FDI" },
-              { value: "#1", label: "Iron Ore Exporter" },
-              { value: "Top 5", label: "Lithium Producer" },
-              { value: "$130B+", label: "Annual Exports" },
+              { value: "$8.5B+", label: "Government-Backed Pipeline" },
+              { value: "#1", label: "Lithium & Iron Ore Exporter" },
+              { value: "130+", label: "Critical Mineral Projects" },
+              { value: "45%", label: "of Global Rare Earth Exploration" },
             ].map((s) => (
               <div key={s.label} className="bg-white border border-amber-100 rounded-xl p-4 text-center">
                 <p className="text-2xl font-extrabold text-amber-600">{s.value}</p>
@@ -115,22 +138,24 @@ export default function MiningPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-12">
             {[
-              { icon: "trending-up", commodity: "Iron Ore", detail: "World's largest exporter. Pilbara, WA. BHP, Rio Tinto, Fortescue. $130B+ in annual exports. Key demand driver: Chinese steel production." },
-              { icon: "zap", commodity: "Lithium", detail: "World's largest producer. WA's Pilbara and Goldfields regions. Battery metals boom driven by EV transition. Pilbara Minerals, Liontown, Albemarle." },
-              { icon: "star", commodity: "Gold", detail: "Top 5 global producer. WA Goldfields, NSW, QLD, VIC. Safe haven asset. Newmont, Northern Star, Evolution, De Grey Mining." },
-              { icon: "globe", commodity: "Rare Earths", detail: "Critical to wind turbines, EV motors, defence electronics. Mt Weld (Lynas), Arafura Rare Earths. Growing strategic importance." },
-              { icon: "briefcase", commodity: "Copper", detail: "Olympic Dam (BHP) is world's 4th largest Cu deposit. Demand driven by electrification. QLD copper projects expanding." },
-              { icon: "leaf", commodity: "LNG & Coal", detail: "Queensland and WA LNG exporters. Thermal and coking coal. Santos, Woodside, Whitehaven, Yancoal. Transition risk to consider." },
+              { icon: "zap", commodity: "Lithium", detail: "World's largest producer. EV battery demand projected to grow 500-700% by 2030. Pilbara Minerals, Liontown, Albemarle. US-Australia framework prioritises lithium processing.", href: "/invest/mining/listings?sub=lithium" },
+              { icon: "globe", commodity: "Rare Earths", detail: "China controls 90% of processing — Australia is the #1 alternative. 89 active exploration projects. Lynas, Arafura. Pentagon funding WA gallium refinery.", href: "/invest/mining/listings?sub=rare-earths" },
+              { icon: "star", commodity: "Gold", detail: "Top 5 global producer. WA Goldfields, NSW, QLD, VIC. Safe haven asset at record highs. Newmont, Northern Star, Evolution, De Grey Mining.", href: "/invest/mining/listings?sub=gold" },
+              { icon: "briefcase", commodity: "Copper", detail: "Olympic Dam (BHP) is world's 4th largest Cu deposit. EVs use 3-4x more copper than ICE vehicles. Electrification megatrend.", href: "/invest/mining/listings?sub=copper" },
+              { icon: "trending-up", commodity: "Nickel", detail: "Battery-grade nickel demand rising 300-400% by 2030. WA Yilgarn and Goldfields regions. Critical for EV battery cathodes.", href: "/invest/mining/listings?sub=nickel" },
+              { icon: "trending-up", commodity: "Iron Ore", detail: "World's largest exporter. Pilbara, WA. BHP, Rio Tinto, Fortescue. $130B+ in annual exports. Key demand driver: steel production.", href: "/invest/mining/listings" },
+              { icon: "zap", commodity: "Cobalt & Vanadium", detail: "Essential for batteries and energy storage. Australian projects benefit from critical minerals policy support and ethical sourcing premium.", href: "/invest/mining/listings" },
+              { icon: "leaf", commodity: "Uranium", detail: "Nuclear renaissance driving demand. SA hosts world-class deposits. Olympic Dam, Beverley, Four Mile. ISR technology reduces environmental impact.", href: "/invest/mining/listings" },
             ].map((item) => (
-              <div key={item.commodity} className="bg-slate-50 border border-slate-200 rounded-xl p-5 flex gap-4">
+              <Link key={item.commodity} href={item.href} className="bg-slate-50 border border-slate-200 rounded-xl p-5 flex gap-4 hover:border-amber-300 hover:shadow-sm transition-all group">
                 <div className="w-10 h-10 rounded-lg bg-amber-100 flex items-center justify-center shrink-0 mt-0.5">
                   <Icon name={item.icon} size={20} className="text-amber-600" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900 mb-1">{item.commodity}</h3>
+                  <h3 className="font-bold text-slate-900 mb-1 group-hover:text-amber-700 transition-colors">{item.commodity}</h3>
                   <p className="text-sm text-slate-600 leading-relaxed">{item.detail}</p>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
 
@@ -164,7 +189,12 @@ export default function MiningPage() {
 
             <h3>FIRB for Mining Investment</h3>
             <p>
-              Mining is a "sensitive sector." Foreign acquisitions of exploration licences, mining tenements, or stakes in mining companies have lower FIRB thresholds than general commercial investment. The $268M general threshold applies to ASX shares for most countries, but direct tenement acquisitions have specific rules. FIRB can impose conditions including local employment requirements.
+              Mining is a &quot;sensitive sector.&quot; Foreign acquisitions of exploration licences, mining tenements, or stakes in mining companies have lower FIRB thresholds than general commercial investment. Investors from &quot;like-minded&quot; allied nations (US, UK, Japan, Korea, EU) receive streamlined processing under the {CURRENT_YEAR} bilateral framework, while non-allied investors face heightened national security review. FIRB can impose conditions including local employment requirements and processing commitments.
+            </p>
+
+            <h3>Government-Backed Investment Programs ({CURRENT_YEAR})</h3>
+            <p>
+              Multiple government programs now support mining investment: the US-Australia Critical Minerals Framework ($8.5B pipeline), Export Finance Australia&apos;s expanded mandate for strategic minerals, the $1.2B Critical Minerals Strategic Reserve, and $3.4B in long-term Resourcing Australia&apos;s Prosperity funding. The EU-Australia FTA eliminates 99% of tariffs on mineral exports.
             </p>
           </div>
 

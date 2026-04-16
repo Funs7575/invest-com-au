@@ -163,6 +163,45 @@ export default async function JapanInvestingPage() {
           </div>
         </section>
 
+        {/* ── Critical Minerals Opportunity ── */}
+        <section>
+          <div className="bg-gradient-to-r from-emerald-50 to-emerald-100/40 border border-emerald-200 rounded-2xl p-6">
+            <SectionHeading
+              eyebrow="2026 Opportunity"
+              title="Critical minerals: Japan's strategic partnership with Australia"
+              sub="The Tokyo Minerals Ministerial (March 2026) confirmed both governments have mobilised $1B+ each in critical minerals financing."
+            />
+            <div className="grid sm:grid-cols-2 gap-4 mb-5">
+              <div className="bg-white border border-emerald-100 rounded-xl p-4">
+                <h4 className="font-bold text-emerald-800 text-sm mb-2">Japanese Corporate Activity</h4>
+                <ul className="space-y-1.5 text-xs text-emerald-700">
+                  <li>• Mitsui, Mitsubishi, Sumitomo — expanding critical minerals JVs</li>
+                  <li>• Toyota Tsusho — rare earths processing partnerships</li>
+                  <li>• JOGMEC — government-backed exploration financing in Australia</li>
+                  <li>• Panasonic Energy — lithium hydroxide offtake agreements</li>
+                </ul>
+              </div>
+              <div className="bg-white border border-emerald-100 rounded-xl p-4">
+                <h4 className="font-bold text-emerald-800 text-sm mb-2">Key Commodities for Japan</h4>
+                <ul className="space-y-1.5 text-xs text-emerald-700">
+                  <li>• Lithium — EV battery supply chain security</li>
+                  <li>• Rare earths — reducing China dependency</li>
+                  <li>• Hydrogen — green hydrogen exports from WA/QLD</li>
+                  <li>• LNG — continued energy security partnership</li>
+                </ul>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Link href="/invest/mining/listings" className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm px-5 py-2.5 rounded-lg transition-colors">
+                Browse Mining Opportunities
+              </Link>
+              <Link href="/article/australias-critical-minerals-boom-how-to-invest" className="inline-flex items-center gap-2 border border-emerald-300 hover:bg-emerald-50 text-emerald-700 font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors">
+                Read the Full Guide
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* ── DTA Rates ── */}
         <section>
           <SectionHeading

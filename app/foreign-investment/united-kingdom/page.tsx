@@ -227,6 +227,28 @@ export default async function UKInvestingPage() {
           </div>
         </section>
 
+        {/* ── Critical Minerals ── */}
+        <section>
+          <div className="bg-gradient-to-r from-emerald-50 to-emerald-100/40 border border-emerald-200 rounded-2xl p-6">
+            <p className="text-xs font-extrabold uppercase tracking-wider text-emerald-700 mb-3">2026 Opportunity</p>
+            <h3 className="text-lg font-bold text-slate-900 mb-3">EU-Australia FTA Opens Mining Investment</h3>
+            <p className="text-sm text-emerald-800 leading-relaxed mb-4">
+              The EU-Australia Free Trade Agreement finalised in March 2026 eliminates 99% of tariffs on mineral
+              exports and is projected to create 87% growth in investment flows. While the UK is no longer in the
+              EU, the UK-Australia FTA provides similar trade advantages. Australian critical minerals — lithium,
+              rare earths, cobalt, nickel — are increasingly strategic for UK defence and clean energy manufacturing.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <Link href="/invest/mining/listings" className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm px-5 py-2.5 rounded-lg transition-colors">
+                Browse Mining Opportunities
+              </Link>
+              <Link href="/article/australias-critical-minerals-boom-how-to-invest" className="inline-flex items-center gap-2 border border-emerald-300 hover:bg-emerald-50 text-emerald-700 font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors">
+                Read the Full Guide
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* ── Brokers ── */}
         {brokers.length > 0 && (
           <section>
