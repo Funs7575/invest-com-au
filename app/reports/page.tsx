@@ -9,7 +9,8 @@ export const metadata = {
   title: "Quarterly Platform Industry Reports — Australian Market Analysis",
   description:
     "Quarterly reports on the Australian investing platform landscape: fee changes, new entrants, market trends, and key findings for investors.",
-  robots: { index: false },
+  // noindex: backing table (quarterly_reports) has 0 rows — remove this once content is seeded
+  robots: { index: false, follow: true },
   openGraph: {
     title: "Quarterly Industry Reports",
     description: "In-depth quarterly analysis of the Australian investing platform industry.",

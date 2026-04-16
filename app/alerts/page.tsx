@@ -5,10 +5,12 @@ import { absoluteUrl, breadcrumbJsonLd } from "@/lib/seo";
 
 export const revalidate = 3600;
 
+// noindex: backing table (regulatory_alerts) has 0 rows — remove this once content is seeded
 export const metadata = {
   title: "Regulatory & Tax Change Alerts — Australian Investing Updates",
   description:
     "Stay informed on ASIC regulations, ATO tax changes, superannuation rules, and reporting requirements that affect Australian investors and their broker accounts.",
+  robots: { index: false, follow: true },
   openGraph: {
     title: "Regulatory & Tax Alerts",
     description: "Curated ASIC, ATO, and Treasury changes that affect Australian investors.",

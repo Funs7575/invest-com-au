@@ -22,7 +22,8 @@ export const metadata = {
   },
   twitter: { card: "summary_large_image" as const },
   alternates: { canonical: "/consultations" },
-  robots: { index: false, follow: false },
+  // noindex: backing table (consultations) has 0 rows — remove this once content is seeded
+  robots: { index: false, follow: true },
 };
 
 export const revalidate = 3600;
