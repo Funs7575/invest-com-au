@@ -1,256 +1,47 @@
 {
   "crons": [
-    {
-      "path": "/api/cron/heartbeat",
-      "schedule": "*/5 * * * *"
-    },
-    {
-      "path": "/api/cron/auto-resolve-disputes",
-      "schedule": "0 * * * *"
-    },
-    {
-      "path": "/api/cron/enforce-lead-sla",
-      "schedule": "30 9 * * *"
-    },
-    {
-      "path": "/api/cron/advisor-profile-gate-drip",
-      "schedule": "0 10 * * *"
-    },
-    {
-      "path": "/api/cron/advisor-dunning",
-      "schedule": "0 11 * * *"
-    },
-    {
-      "path": "/api/cron/afsl-expiry-monitor",
-      "schedule": "0 3 * * 1"
-    },
-    {
-      "path": "/api/cron/email-bounce-sweep",
-      "schedule": "0 4 * * *"
-    },
-    {
-      "path": "/api/cron/monthly-advisor-reports",
-      "schedule": "0 9 1 * *"
-    },
-    {
-      "path": "/api/cron/lead-quality-weights",
-      "schedule": "0 2 * * *"
-    },
-    {
-      "path": "/api/cron/investor-drip",
-      "schedule": "0 9 * * *"
-    },
-    {
-      "path": "/api/cron/check-fees",
-      "schedule": "0 6 * * *"
-    },
-    {
-      "path": "/api/cron/expire-deals",
-      "schedule": "0 5 * * *"
-    },
-    {
-      "path": "/api/cron/welcome-drip",
-      "schedule": "0 10 * * *"
-    },
-    {
-      "path": "/api/cron/quiz-follow-up",
-      "schedule": "0 23 * * *"
-    },
-    {
-      "path": "/api/cron/weekly-newsletter",
-      "schedule": "0 8 * * 1"
-    },
-    {
-      "path": "/api/cron/check-affiliate-links",
-      "schedule": "0 7 * * 1"
-    },
-    {
-      "path": "/api/cron/auto-publish",
-      "schedule": "0 0 * * *"
-    },
-    {
-      "path": "/api/cron/content-staleness",
-      "schedule": "0 3 * * 1"
-    },
-    {
-      "path": "/api/cron/marketplace-stats",
-      "schedule": "0 4 * * *"
-    },
-    {
-      "path": "/api/cron/low-balance-alerts",
-      "schedule": "0 2 * * *"
-    },
-    {
-      "path": "/api/cron/retry-webhooks",
-      "schedule": "*/15 * * * *"
-    },
-    {
-      "path": "/api/cron/cleanup",
-      "schedule": "0 1 * * *"
-    },
-    {
-      "path": "/api/cron/advisor-onboarding",
-      "schedule": "0 10 * * *"
-    },
-    {
-      "path": "/api/cron/advisor-quality",
-      "schedule": "0 5 * * *"
-    },
-    {
-      "path": "/api/cron/post-enquiry-drip",
-      "schedule": "0 11 * * *"
-    },
-    {
-      "path": "/api/cron/annual-review-reminder",
-      "schedule": "0 9 1 * *"
-    },
-    {
-      "path": "/api/cron/portfolio-alerts",
-      "schedule": "0 7 * * *"
-    },
-    {
-      "path": "/api/cron/portfolio-monitor",
-      "schedule": "0 8 1 * *"
-    },
-    {
-      "path": "/api/cron/rotate-featured-advisors",
-      "schedule": "0 0 * * 0"
-    },
-    {
-      "path": "/api/cron/refresh-revenue-view",
-      "schedule": "0 2 * * *"
-    },
-    {
-      "path": "/api/cron/advisor-nudge",
-      "schedule": "0 9 * * *"
-    },
-    {
-      "path": "/api/cron/weekly-rate-update",
-      "schedule": "0 8 * * 1"
-    },
-    {
-      "path": "/api/cron/confirm-lead-notify",
-      "schedule": "*/10 * * * *"
-    },
-    {
-      "path": "/api/admin/run-migration",
-      "schedule": "0 */6 * * *"
-    },
-    {
-      "path": "/api/cron/monthly-affiliate-report",
-      "schedule": "0 6 1 * *"
-    },
-    {
-      "path": "/api/cron/fee-digest",
-      "schedule": "0 9 * * 1"
-    },
-    {
-      "path": "/api/cron/personalized-digest",
-      "schedule": "0 8 * * 1"
-    },
-    {
-      "path": "/api/cron/price-drop-alerts",
-      "schedule": "0 7 * * *"
-    },
-    {
-      "path": "/api/cron/verify-review-clients",
-      "schedule": "0 4 * * *"
-    },
-    {
-      "path": "/api/cron/property-suburb-refresh",
-      "schedule": "0 3 1 * *"
-    },
-    {
-      "path": "/api/cron/automation-verdict-rollup",
-      "schedule": "15 * * * *"
-    },
-    {
-      "path": "/api/cron/ab-auto-promote",
-      "schedule": "0 4 * * *"
-    },
-    {
-      "path": "/api/cron/abandoned-quiz-drip",
-      "schedule": "0 10 * * *"
-    },
-    {
-      "path": "/api/cron/advisor-dormant-nudge",
-      "schedule": "0 11 * * 1"
-    },
-    {
-      "path": "/api/cron/winback-drip",
-      "schedule": "0 10 1 * *"
-    },
-    {
-      "path": "/api/cron/referral-payouts",
-      "schedule": "0 3 * * *"
-    },
-    {
-      "path": "/api/cron/embeddings-refresh",
-      "schedule": "30 * * * *"
-    },
-    {
-      "path": "/api/cron/review-sentiment-refresh",
-      "schedule": "0 5 * * *"
-    },
-    {
-      "path": "/api/cron/abandoned-form-drip",
-      "schedule": "0 12 * * *"
-    },
-    {
-      "path": "/api/cron/slo-monitor",
-      "schedule": "*/15 * * * *"
-    },
-    {
-      "path": "/api/cron/gdpr-retention-purge",
-      "schedule": "0 2 * * *"
-    },
-    {
-      "path": "/api/cron/job-queue-worker",
-      "schedule": "*/5 * * * *"
-    },
-    {
-      "path": "/api/cron/warehouse-rollup",
-      "schedule": "30 1 * * *"
-    },
-    {
-      "path": "/api/cron/data-integrity-audit",
-      "schedule": "0 3 * * *"
-    },
-    {
-      "path": "/api/cron/subscription-dunning",
-      "schedule": "0 9 * * *"
-    },
-    {
-      "path": "/api/cron/month-end-close",
-      "schedule": "0 3 2 * *"
-    },
-    {
-      "path": "/api/cron/revenue-reconciliation",
-      "schedule": "0 4 * * *"
-    },
-    {
-      "path": "/api/cron/complaints-sla",
-      "schedule": "0 8 * * *"
-    },
-    {
-      "path": "/api/cron/cron-freshness",
-      "schedule": "20 * * * *"
-    },
-    {
-      "path": "/api/cron/tmd-audit",
-      "schedule": "0 6 * * *"
-    },
-    {
-      "path": "/api/cron/broker-snapshot",
-      "schedule": "5 * * * *"
-    },
-    {
-      "path": "/api/cron/web-vitals-rollup",
-      "schedule": "0 15 * * *"
-    },
-    {
-      "path": "/api/cron/attribution-rollup",
-      "schedule": "0 16 * * *"
-    }
+    { "path": "/api/cron/_dispatch/every-5m", "schedule": "*/5 * * * *" },
+    { "path": "/api/cron/_dispatch/every-10m", "schedule": "*/10 * * * *" },
+    { "path": "/api/cron/_dispatch/every-15m", "schedule": "*/15 * * * *" },
+    { "path": "/api/cron/_dispatch/every-6h", "schedule": "0 */6 * * *" },
+
+    { "path": "/api/cron/_dispatch/hourly-0", "schedule": "0 * * * *" },
+    { "path": "/api/cron/_dispatch/hourly-5", "schedule": "5 * * * *" },
+    { "path": "/api/cron/_dispatch/hourly-15", "schedule": "15 * * * *" },
+    { "path": "/api/cron/_dispatch/hourly-20", "schedule": "20 * * * *" },
+    { "path": "/api/cron/_dispatch/hourly-30", "schedule": "30 * * * *" },
+
+    { "path": "/api/cron/_dispatch/daily-0", "schedule": "0 0 * * *" },
+    { "path": "/api/cron/_dispatch/daily-1", "schedule": "0 1 * * *" },
+    { "path": "/api/cron/_dispatch/daily-1-30", "schedule": "30 1 * * *" },
+    { "path": "/api/cron/_dispatch/daily-2", "schedule": "0 2 * * *" },
+    { "path": "/api/cron/_dispatch/daily-3", "schedule": "0 3 * * *" },
+    { "path": "/api/cron/_dispatch/daily-4", "schedule": "0 4 * * *" },
+    { "path": "/api/cron/_dispatch/daily-5", "schedule": "0 5 * * *" },
+    { "path": "/api/cron/_dispatch/daily-6", "schedule": "0 6 * * *" },
+    { "path": "/api/cron/_dispatch/daily-7", "schedule": "0 7 * * *" },
+    { "path": "/api/cron/_dispatch/daily-8", "schedule": "0 8 * * *" },
+    { "path": "/api/cron/_dispatch/daily-9", "schedule": "0 9 * * *" },
+    { "path": "/api/cron/_dispatch/daily-9-30", "schedule": "30 9 * * *" },
+    { "path": "/api/cron/_dispatch/daily-10", "schedule": "0 10 * * *" },
+    { "path": "/api/cron/_dispatch/daily-11", "schedule": "0 11 * * *" },
+    { "path": "/api/cron/_dispatch/daily-12", "schedule": "0 12 * * *" },
+    { "path": "/api/cron/_dispatch/daily-15", "schedule": "0 15 * * *" },
+    { "path": "/api/cron/_dispatch/daily-16", "schedule": "0 16 * * *" },
+    { "path": "/api/cron/_dispatch/daily-23", "schedule": "0 23 * * *" },
+
+    { "path": "/api/cron/_dispatch/weekly-sun-0", "schedule": "0 0 * * 0" },
+    { "path": "/api/cron/_dispatch/weekly-mon-3", "schedule": "0 3 * * 1" },
+    { "path": "/api/cron/_dispatch/weekly-mon-7", "schedule": "0 7 * * 1" },
+    { "path": "/api/cron/_dispatch/weekly-mon-8", "schedule": "0 8 * * 1" },
+    { "path": "/api/cron/_dispatch/weekly-mon-9", "schedule": "0 9 * * 1" },
+    { "path": "/api/cron/_dispatch/weekly-mon-11", "schedule": "0 11 * * 1" },
+
+    { "path": "/api/cron/_dispatch/monthly-1-3", "schedule": "0 3 1 * *" },
+    { "path": "/api/cron/_dispatch/monthly-1-6", "schedule": "0 6 1 * *" },
+    { "path": "/api/cron/_dispatch/monthly-1-8", "schedule": "0 8 1 * *" },
+    { "path": "/api/cron/_dispatch/monthly-1-9", "schedule": "0 9 1 * *" },
+    { "path": "/api/cron/_dispatch/monthly-1-10", "schedule": "0 10 1 * *" },
+    { "path": "/api/cron/_dispatch/monthly-2-3", "schedule": "0 3 2 * *" }
   ]
 }
