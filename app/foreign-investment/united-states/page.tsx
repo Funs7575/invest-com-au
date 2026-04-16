@@ -332,6 +332,43 @@ export default async function USAInvestingPage() {
           </div>
         </section>
 
+        {/* ── Critical Minerals ── */}
+        <section>
+          <SectionHeading
+            eyebrow="2026 Opportunity"
+            title="US-Australia Critical Minerals Framework"
+            sub="The bilateral framework signed at the White House mobilises $8.5B+ in critical minerals investment — creating a direct pipeline for US investors into Australian mining."
+          />
+          <div className="bg-gradient-to-r from-emerald-50 to-emerald-100/40 border border-emerald-200 rounded-2xl p-6 mb-6">
+            <div className="grid sm:grid-cols-3 gap-4 mb-5">
+              {[
+                { value: "$8.5B+", label: "Joint Investment Pipeline" },
+                { value: "$2.2B", label: "US EXIM Bank Letters of Interest" },
+                { value: "78", label: "Projects in Government Prospectus" },
+              ].map((stat) => (
+                <div key={stat.label} className="text-center">
+                  <p className="text-2xl font-extrabold text-emerald-700">{stat.value}</p>
+                  <p className="text-xs text-emerald-600">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+            <p className="text-sm text-emerald-800 leading-relaxed mb-4">
+              The US-Australia bilateral framework streamlines FIRB processing for American investors in critical minerals.
+              The Pentagon is directly funding gallium refining capacity in Western Australia. US EXIM Bank has issued
+              letters of interest for over $2.2 billion in Australian critical mineral project financing. Key commodities:
+              lithium, rare earths, cobalt, nickel, vanadium, and gallium.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <Link href="/invest/mining/listings" className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm px-5 py-2.5 rounded-lg transition-colors">
+                Browse Mining Opportunities
+              </Link>
+              <Link href="/article/australias-critical-minerals-boom-how-to-invest" className="inline-flex items-center gap-2 border border-emerald-300 hover:bg-emerald-50 text-emerald-700 font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors">
+                Read the Full Guide
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* ── Brokers ── */}
         {brokers.length > 0 && (
           <section>

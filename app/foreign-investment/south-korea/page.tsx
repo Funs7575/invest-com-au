@@ -162,6 +162,28 @@ export default async function SouthKoreaInvestingPage() {
           </div>
         </section>
 
+        {/* ── 2026 Boom Update ── */}
+        <section>
+          <div className="bg-gradient-to-r from-emerald-50 to-emerald-100/40 border border-emerald-200 rounded-2xl p-6">
+            <p className="text-xs font-extrabold uppercase tracking-wider text-emerald-700 mb-3">2026 Update</p>
+            <h3 className="text-lg font-bold text-slate-900 mb-3">Critical Minerals Framework Accelerates Korean Investment</h3>
+            <p className="text-sm text-emerald-800 leading-relaxed mb-4">
+              The US-Australia $8.5B bilateral critical minerals framework and EU-Australia FTA are creating new
+              co-investment opportunities for Korean companies. Australia&apos;s 78-project Critical Minerals
+              Prospectus specifically targets allied-nation investors including South Korea. Lithium demand for
+              Korean EV battery manufacturing is projected to grow 500-700% by 2030.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <Link href="/invest/mining/listings" className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm px-5 py-2.5 rounded-lg transition-colors">
+                Browse Mining Opportunities
+              </Link>
+              <Link href="/article/australias-critical-minerals-boom-how-to-invest" className="inline-flex items-center gap-2 border border-emerald-300 hover:bg-emerald-50 text-emerald-700 font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors">
+                Read the Full Guide
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* ── DTA Rates ── */}
         <section>
           <SectionHeading
