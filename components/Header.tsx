@@ -74,15 +74,42 @@ const foreignDropdown = [
   { label: "Migration Agents", href: "/advisors/migration-agents", desc: "Investor & skilled visa specialists" },
 ];
 
-const wealthDropdown = [
-  { label: "Financial Planners", href: "/advisors/financial-planners", desc: "Wealth strategy & retirement" },
-  { label: "SMSF Accountants", href: "/advisors/smsf-accountants", desc: "Self-managed super specialists" },
-  { label: "Insurance Hub", href: "/insurance", desc: "Life, income protection, health & home" },
-  { label: "Tax Strategy Hub", href: "/tax", desc: "CGT, franking credits & tax strategies" },
-  { label: "Insurance Brokers", href: "/advisors/insurance-brokers", desc: "Life, income protection & business" },
-  { label: "Tax Agents", href: "/advisors/tax-agents", desc: "Tax planning & lodgement" },
-  { label: "Estate Planners", href: "/advisors/estate-planners", desc: "Wills, trusts & succession" },
-  { label: "Wealth Managers", href: "/advisors/wealth-managers", desc: "Portfolio management" },
+// Categorised advisor mega-menu — renders under the "Advisors" nav
+// dropdown with four themed columns plus an "All" quick-links rail.
+// When adding a new advisor type, append to the relevant column here.
+const advisorsMegaMenu: { title: string; items: { label: string; href: string; desc: string }[] }[] = [
+  {
+    title: "Financial",
+    items: [
+      { label: "Financial Planners", href: "/advisors/financial-planners", desc: "Wealth strategy & retirement" },
+      { label: "SMSF Accountants", href: "/advisors/smsf-accountants", desc: "Self-managed super specialists" },
+      { label: "Wealth Managers", href: "/advisors/wealth-managers", desc: "Portfolio management for HNW" },
+      { label: "Tax Agents", href: "/advisors/tax-agents", desc: "Tax planning & lodgement" },
+    ],
+  },
+  {
+    title: "Property",
+    items: [
+      { label: "Mortgage Brokers", href: "/advisors/mortgage-brokers", desc: "Compare 30+ lenders — free" },
+      { label: "Buyers Agents", href: "/advisors/buyers-agents", desc: "Negotiation & off-market access" },
+      { label: "Real Estate Agents", href: "/advisors/real-estate-agents", desc: "Licensed agents, suburb specialists" },
+    ],
+  },
+  {
+    title: "Business & Investment",
+    items: [
+      { label: "Business Brokers", href: "/advisors/business-brokers", desc: "Buy / sell SMEs & franchises" },
+      { label: "Commercial Lawyers", href: "/advisors/commercial-lawyers", desc: "Contracts, M&A, structuring" },
+      { label: "Migration Agents", href: "/advisors/migration-agents", desc: "Investor & skilled visas (MARA)" },
+    ],
+  },
+  {
+    title: "Mining & Energy",
+    items: [
+      { label: "Mining Lawyers", href: "/advisors/mining-lawyers", desc: "Tenements, JVs, FIRB approvals" },
+      { label: "Energy Consultants", href: "/advisors/energy-consultants", desc: "Renewables, PPAs, grid connection" },
+    ],
+  },
 ];
 
 const platformsDropdown = [
@@ -153,23 +180,46 @@ const mobileNavSections = [
     ],
   },
   {
-    title: "Advisors & Finance",
-    items: [
-      { name: "Mortgage Brokers", href: "/advisors/mortgage-brokers" },
-      { name: "Real Estate Agents", href: "/advisors/real-estate-agents" },
-      { name: "Find an Advisor", href: "/find-advisor" },
-      { name: "All Advisors", href: "/advisors" },
-    ],
-  },
-  {
-    title: "Wealth & SMSF",
+    title: "Advisors — Financial",
     items: [
       { name: "Financial Planners", href: "/advisors/financial-planners" },
       { name: "SMSF Accountants", href: "/advisors/smsf-accountants" },
-      { name: "Insurance Hub", href: "/insurance" },
-      { name: "Tax Strategy Hub", href: "/tax" },
-      { name: "Insurance Brokers", href: "/advisors/insurance-brokers" },
+      { name: "Wealth Managers", href: "/advisors/wealth-managers" },
       { name: "Tax Agents", href: "/advisors/tax-agents" },
+      { name: "Insurance Brokers", href: "/advisors/insurance-brokers" },
+      { name: "Estate Planners", href: "/advisors/estate-planners" },
+    ],
+  },
+  {
+    title: "Advisors — Property",
+    items: [
+      { name: "Mortgage Brokers", href: "/advisors/mortgage-brokers" },
+      { name: "Buyers Agents", href: "/advisors/buyers-agents" },
+      { name: "Real Estate Agents", href: "/advisors/real-estate-agents" },
+    ],
+  },
+  {
+    title: "Advisors — Business & Investment",
+    items: [
+      { name: "Business Brokers", href: "/advisors/business-brokers" },
+      { name: "Commercial Lawyers", href: "/advisors/commercial-lawyers" },
+      { name: "Migration Agents", href: "/advisors/migration-agents" },
+    ],
+  },
+  {
+    title: "Advisors — Mining & Energy",
+    items: [
+      { name: "Mining Lawyers", href: "/advisors/mining-lawyers" },
+      { name: "Energy Consultants", href: "/advisors/energy-consultants" },
+    ],
+  },
+  {
+    title: "Advisors — All",
+    items: [
+      { name: "View All Advisors", href: "/advisors" },
+      { name: "Advanced Search", href: "/advisors/search" },
+      { name: "Find-an-Advisor Quiz", href: "/find-advisor" },
+      { name: "List Your Practice", href: "/for-advisors" },
     ],
   },
   {
@@ -272,6 +322,94 @@ function InvestMegaDropdown({ isActive }: { isActive: boolean }) {
   );
 }
 
+/**
+ * Advisors mega dropdown — categorised four-column layout plus an
+ * "All" quick-links rail with Advanced Search. Mirrors the invest
+ * mega dropdown structure so the nav feels consistent.
+ */
+function AdvisorsMegaDropdown({ isActive }: { isActive: boolean }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const timeout = useRef<ReturnType<typeof setTimeout>>(undefined);
+
+  const enter = () => { clearTimeout(timeout.current); setOpen(true); };
+  const leave = () => { timeout.current = setTimeout(() => setOpen(false), 150); };
+
+  useEffect(() => {
+    return () => clearTimeout(timeout.current);
+  }, []);
+
+  return (
+    <div ref={ref} className="relative" onMouseEnter={enter} onMouseLeave={leave}>
+      <button
+        onClick={() => setOpen(!open)}
+        className={`px-4 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-bold rounded-lg transition-colors flex items-center gap-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-700/40 ${
+          isActive ? "text-slate-900 bg-slate-50" : ""
+        }`}
+        aria-haspopup="true"
+        aria-expanded={open}
+      >
+        Advisors
+        <Icon name="chevron-down" size={14} className={`text-slate-400 transition-transform ${open ? "rotate-180" : ""}`} aria-hidden="true" />
+      </button>
+      {open && (
+        <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-xl p-5 flex gap-6" style={{ width: "820px" }}>
+            {advisorsMegaMenu.map((col) => (
+              <div key={col.title} className="flex-1 min-w-0">
+                <p className="text-[0.65rem] font-extrabold uppercase tracking-wider text-amber-500 mb-2 px-2">{col.title}</p>
+                <div className="space-y-0.5">
+                  {col.items.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setOpen(false)}
+                      className="block px-2 py-1.5 rounded-lg hover:bg-slate-50 transition-colors group"
+                    >
+                      <div className="text-sm font-bold text-slate-900 group-hover:text-amber-600 transition-colors">{item.label}</div>
+                      <div className="text-[0.68rem] text-slate-400 leading-tight">{item.desc}</div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ))}
+            <div className="border-l border-slate-100 pl-5 flex flex-col justify-between" style={{ minWidth: "150px" }}>
+              <div>
+                <p className="text-[0.65rem] font-extrabold uppercase tracking-wider text-amber-500 mb-2">All</p>
+                <Link href="/advisors" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
+                  View All Advisors
+                </Link>
+                <Link href="/advisors/search" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
+                  Advanced Search
+                </Link>
+                <Link href="/find-advisor" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
+                  Find-an-Advisor Quiz
+                </Link>
+                <div className="mt-3 pt-3 border-t border-slate-100">
+                  <p className="text-[0.6rem] uppercase tracking-wider text-slate-400 mb-1">Specialists</p>
+                  <Link href="/advisors/firb-specialists" onClick={() => setOpen(false)} className="block text-xs text-slate-600 hover:text-amber-600 py-0.5 transition-colors">
+                    FIRB Specialists
+                  </Link>
+                  <Link href="/advisors/international-tax-specialists" onClick={() => setOpen(false)} className="block text-xs text-slate-600 hover:text-amber-600 py-0.5 transition-colors">
+                    International Tax
+                  </Link>
+                </div>
+              </div>
+              <Link
+                href="/for-advisors"
+                onClick={() => setOpen(false)}
+                className="mt-3 flex items-center gap-1.5 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold text-xs px-3 py-2 rounded-lg transition-colors"
+              >
+                List your practice <Icon name="arrow-right" size={12} aria-hidden="true" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function DesktopDropdown({
   label,
   items,
@@ -340,9 +478,14 @@ export default function Header() {
   const isPropertyActive = ["/property", "/advisors/mortgage-brokers", "/advisors/buyers-agents", "/advisors/real-estate-agents", "/find-advisor"].some(
     (p) => pathname === p || pathname.startsWith(p + "/")
   );
-  const isWealthActive = ["/advisors/financial-planners", "/advisors/smsf-accountants", "/advisors/insurance-brokers", "/advisors/tax-agents", "/advisors/estate-planners", "/advisors/wealth-managers"].some(
-    (p) => pathname === p || pathname.startsWith(p + "/")
-  );
+  // Active when the user is anywhere in the advisor directory or the
+  // search / apply flows.
+  const isAdvisorsActive =
+    pathname === "/advisors" ||
+    pathname.startsWith("/advisors/") ||
+    pathname.startsWith("/advisor/") ||
+    pathname.startsWith("/find-advisor") ||
+    pathname.startsWith("/for-advisors");
   const isForeignActive = pathname === "/foreign-investment" || pathname.startsWith("/foreign-investment/");
   const isInvestActive = pathname === "/invest" || pathname.startsWith("/invest/");
 
@@ -361,7 +504,7 @@ export default function Header() {
           <nav className="hidden lg:flex space-x-1 items-center ml-8" aria-label="Main navigation">
             <InvestMegaDropdown isActive={isInvestActive} />
             <DesktopDropdown label="Property & Finance" items={propertyDropdown} isActive={isPropertyActive} />
-            <DesktopDropdown label="Wealth & SMSF" items={wealthDropdown} isActive={isWealthActive} />
+            <AdvisorsMegaDropdown isActive={isAdvisorsActive} />
             <div className="h-6 w-px bg-slate-200 mx-2" />
             <DesktopDropdown label="Compare Platforms" items={platformsDropdown} isActive={isPlatformsActive} />
             <div className="h-6 w-px bg-slate-200 mx-2" />

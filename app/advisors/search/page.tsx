@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { logger } from "@/lib/logger";
 import AdvisorSearchClient from "./AdvisorSearchClient";
 
+const log = logger("advisors-search");
+
 export const metadata: Metadata = {
-  title: "Find an Advisor — Advanced Search",
+  title: "Advanced Advisor Search — Find Your Advisor",
   description:
-    "Filter ASIC-registered advisors by specialty, location, fee structure and accepting-new-clients status. Independent matching from Invest.com.au.",
+    "Filter ASIC-registered Australian advisors by specialty, location, language, availability and international-client status. Independent matching from Invest.com.au.",
   alternates: { canonical: "/advisors/search" },
 };
 
@@ -28,36 +31,51 @@ interface AdvisorRow {
   photo_url: string | null;
   verified: boolean | null;
   accepts_new_clients: boolean | null;
+  accepts_international_clients: boolean | null;
+  languages: string[] | null;
   response_time_hours: number | null;
   advisor_tier: string | null;
   intro_video_url: string | null;
   booking_link: string | null;
+  featured_until: string | null;
+  created_at: string;
 }
 
 /**
- * /advisors/search — Wave 17 filtered advisor search.
+ * /advisors/search — Advanced advisor filter experience.
  *
  * Server-renders the initial dataset (every active advisor) and
  * hands it to the client component, which does filter + sort
- * entirely in the browser. This keeps the UX snappy without
- * needing an API round-trip on every filter tweak.
+ * entirely in the browser. Failure-tolerant: DB errors return an
+ * empty list so the page still responds 200 with a "No advisors
+ * available" state instead of 503.
  *
  * For a 10,000-advisor-scale future we'd move to server-side
  * filter — but for the current couple-hundred directory, client
  * filter wins on responsiveness.
  */
 export default async function AdvisorSearchPage() {
-  const supabase = createAdminClient();
-  const { data } = await supabase
-    .from("professionals")
-    .select(
-      "id, slug, name, firm_name, type, specialties, location_state, location_suburb, location_display, rating, review_count, fee_structure, fee_description, photo_url, verified, accepts_new_clients, response_time_hours, advisor_tier, intro_video_url, booking_link",
-    )
-    .eq("status", "active")
-    .order("rating", { ascending: false, nullsFirst: false })
-    .limit(500);
-
-  const advisors = (data as AdvisorRow[] | null) || [];
+  let advisors: AdvisorRow[] = [];
+  try {
+    const supabase = createAdminClient();
+    const { data, error } = await supabase
+      .from("professionals")
+      .select(
+        "id, slug, name, firm_name, type, specialties, location_state, location_suburb, location_display, rating, review_count, fee_structure, fee_description, photo_url, verified, accepts_new_clients, accepts_international_clients, languages, response_time_hours, advisor_tier, intro_video_url, booking_link, featured_until, created_at",
+      )
+      .eq("status", "active")
+      .order("rating", { ascending: false, nullsFirst: false })
+      .limit(500);
+    if (error) {
+      log.warn("professionals fetch failed", { error: error.message });
+    } else {
+      advisors = (data as AdvisorRow[] | null) ?? [];
+    }
+  } catch (err) {
+    log.error("professionals fetch threw", {
+      err: err instanceof Error ? err.message : String(err),
+    });
+  }
 
   return <AdvisorSearchClient initialAdvisors={advisors} />;
 }

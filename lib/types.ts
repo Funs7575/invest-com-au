@@ -944,7 +944,31 @@ export interface BrokerActivityLog {
 // Advisor Directory Types
 // ═══════════════════════════════════════════════
 
-export type ProfessionalType = 'smsf_accountant' | 'financial_planner' | 'property_advisor' | 'tax_agent' | 'mortgage_broker' | 'estate_planner' | 'insurance_broker' | 'buyers_agent' | 'real_estate_agent' | 'wealth_manager' | 'aged_care_advisor' | 'crypto_advisor' | 'debt_counsellor' | 'stockbroker_firm' | 'private_wealth_manager';
+export type ProfessionalType =
+  | 'smsf_accountant'
+  | 'financial_planner'
+  | 'property_advisor'
+  | 'tax_agent'
+  | 'mortgage_broker'
+  | 'estate_planner'
+  | 'insurance_broker'
+  | 'buyers_agent'
+  | 'real_estate_agent'
+  | 'wealth_manager'
+  | 'aged_care_advisor'
+  | 'crypto_advisor'
+  | 'debt_counsellor'
+  | 'stockbroker_firm'
+  | 'private_wealth_manager'
+  // New in 20260428 — see migration for CHECK constraint alignment.
+  | 'mining_lawyer'
+  | 'mining_tax_advisor'
+  | 'migration_agent'
+  | 'business_broker'
+  | 'commercial_lawyer'
+  | 'rural_property_agent'
+  | 'commercial_property_agent'
+  | 'energy_consultant';
 
 export interface Professional {
   id: number;
@@ -1102,6 +1126,14 @@ export const PROFESSIONAL_TYPE_LABELS: Record<ProfessionalType, string> = {
   debt_counsellor: "Debt Counsellor",
   stockbroker_firm: "Full-Service Stockbroker",
   private_wealth_manager: "Private Wealth Manager",
+  mining_lawyer: "Mining Lawyer",
+  mining_tax_advisor: "Mining Tax Advisor",
+  migration_agent: "Migration Agent",
+  business_broker: "Business Broker",
+  commercial_lawyer: "Commercial Lawyer",
+  rural_property_agent: "Rural Property Agent",
+  commercial_property_agent: "Commercial Property Agent",
+  energy_consultant: "Energy Consultant",
 };
 
 export const PROFESSIONAL_TYPE_ICONS: Record<ProfessionalType, string> = {
@@ -1120,9 +1152,41 @@ export const PROFESSIONAL_TYPE_ICONS: Record<ProfessionalType, string> = {
   debt_counsellor: "credit-card",
   stockbroker_firm: "trending-up",
   private_wealth_manager: "briefcase",
+  mining_lawyer: "pickaxe",
+  mining_tax_advisor: "calculator",
+  migration_agent: "plane",
+  business_broker: "handshake",
+  commercial_lawyer: "gavel",
+  rural_property_agent: "wheat",
+  commercial_property_agent: "building-2",
+  energy_consultant: "zap",
 };
 
 export const AU_STATES = ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT"] as const;
+
+/**
+ * Languages supported by the advisor directory — used as filter options
+ * on /advisors/search. Keep in rough order of Australian speaker volume
+ * so the top choices are the most common. Free-form input is still
+ * supported for exotic languages; this list just powers the dropdown.
+ */
+export const AU_LANGUAGES = [
+  "English",
+  "Mandarin",
+  "Cantonese",
+  "Arabic",
+  "Hindi",
+  "Korean",
+  "Japanese",
+  "Vietnamese",
+  "Punjabi",
+  "Greek",
+  "Italian",
+  "Spanish",
+  "Tagalog",
+  "German",
+  "French",
+] as const;
 
 export interface ProfessionalReview {
   id: number;
