@@ -38,8 +38,28 @@ export const revalidate = 1800; // ISR: revalidate every 30 minutes (deals chang
 export default async function DealsPage() {
   // Defensive fetch — both queries are independent. A broken advisors
   // query shouldn't wipe out the broker deals grid (or vice versa).
-  let allBrokers: unknown[] = [];
-  let topAdvisors: unknown[] = [];
+  // The explicit Broker[] and AdvisorRow[] types are load-bearing here:
+  // without them TS infers `unknown[]` from `any` destructuring which
+  // breaks the DealsClient advisors prop signature downstream.
+  type AdvisorRow = {
+    slug: string;
+    name: string;
+    firm_name: string | null;
+    type: string;
+    location_display: string | null;
+    rating: number | null;
+    review_count: number | null;
+    photo_url: string | null;
+    fee_description: string | null;
+    verified: boolean | null;
+    offer_text: string | null;
+    offer_terms: string | null;
+    offer_expiry: string | null;
+    offer_active: boolean | null;
+  };
+
+  let allBrokers: Broker[] = [];
+  let topAdvisors: AdvisorRow[] = [];
   try {
     const supabase = await createClient();
     const [brokersRes, advisorsRes] = await Promise.all([
@@ -58,13 +78,13 @@ export default async function DealsPage() {
         .order("review_count", { ascending: false })
         .limit(6),
     ]);
-    allBrokers = brokersRes.data ?? [];
-    topAdvisors = advisorsRes.data ?? [];
+    allBrokers = (brokersRes.data as Broker[] | null) ?? [];
+    topAdvisors = (advisorsRes.data as AdvisorRow[] | null) ?? [];
   } catch {
     // Silent degrade — empty deal hub renders without 503ing.
   }
 
-  const dealBrokers: Broker[] = sortWithSponsorship(allBrokers as Broker[]);
+  const dealBrokers: Broker[] = sortWithSponsorship(allBrokers);
 
   const breadcrumbs = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
@@ -107,7 +127,14 @@ export default async function DealsPage() {
           <h1 className="sr-only">Deals & Promotions</h1>
 
           {dealBrokers.length > 0 ? (
-            <DealsClient deals={dealBrokers} advisors={topAdvisors || []} />
+            // Cast via unknown to bridge the null-vs-undefined nullability
+            // mismatch between Supabase's `| null` columns and the client
+            // component's `?:` optional fields. Shape is compatible at
+            // runtime — only the nullability representation differs.
+            <DealsClient
+              deals={dealBrokers}
+              advisors={topAdvisors as unknown as Parameters<typeof DealsClient>[0]["advisors"]}
+            />
           ) : (
             <div className="text-center py-10 md:py-16">
               <div className="text-3xl md:text-4xl mb-3">📭</div>
