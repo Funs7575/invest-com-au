@@ -148,7 +148,7 @@ export async function POST(request: NextRequest) {
     word_count: wordCount, read_time: readTime, reading_time_mins: readTime,
     price_cents: pricing_tier === "premium" ? 49900 : pricing_tier === "standard" ? 29900 : 0,
   }).select("id, slug, status").single();
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) return NextResponse.json({ error: "Operation failed" }, { status: 500 });
 
   await logMod(supabase, article.id, isSubmit ? "submitted" : "draft_created", "advisor", undefined, undefined, article.status);
 
@@ -181,7 +181,7 @@ export async function PUT(request: NextRequest) {
 
   if (action === "approve") {
     const { error } = await supabase.from("advisor_articles").update({ status: "approved", reviewed_at: new Date().toISOString(), reviewed_by: updates.reviewed_by || "admin", admin_notes: updates.admin_notes || null }).eq("id", id);
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) return NextResponse.json({ error: "Operation failed" }, { status: 500 });
     await logMod(supabase, id, "approved", updates.reviewed_by || "admin", updates.admin_notes, oldStatus, "approved");
     if (advEmail) await sendEmail(advEmail, `Article approved: "${artTitle}"`, wrap("Article Approved ✓", `<p style="color:#334155;font-size:14px">Hi ${advName.split(" ")[0]},</p><p style="color:#64748b;font-size:14px"><strong>"${artTitle}"</strong> has been approved!</p>${updates.admin_notes ? `<p style="background:#f8fafc;padding:10px;border-radius:6px;font-size:13px;color:#64748b;border-left:3px solid #7c3aed"><strong>Note:</strong> ${updates.admin_notes}</p>` : ""}<p style="color:#64748b;font-size:14px">Once payment is confirmed, it will be published with your profile linked.</p>`, "View Portal →", `${SITE_URL}/advisor-portal`));
     return NextResponse.json({ status: "approved" });
@@ -190,7 +190,7 @@ export async function PUT(request: NextRequest) {
   if (action === "request_revision") {
     const notes = updates.admin_notes || "Please revise based on feedback";
     const { error } = await supabase.from("advisor_articles").update({ status: "revision_requested", admin_notes: notes, reviewed_at: new Date().toISOString(), reviewed_by: updates.reviewed_by || "admin" }).eq("id", id);
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) return NextResponse.json({ error: "Operation failed" }, { status: 500 });
     await logMod(supabase, id, "revision_requested", updates.reviewed_by || "admin", notes, oldStatus, "revision_requested");
     if (advEmail) await sendEmail(advEmail, `Revision needed: "${artTitle}"`, wrap("Revision Requested", `<p style="color:#334155;font-size:14px">Hi ${advName.split(" ")[0]},</p><p style="color:#64748b;font-size:14px"><strong>"${artTitle}"</strong> needs some changes before approval.</p><div style="background:#fef3c7;padding:12px;border-radius:8px;margin:12px 0;border-left:3px solid #f59e0b"><p style="font-size:13px;color:#92400e;margin:0"><strong>Feedback:</strong> ${notes}</p></div><p style="color:#64748b;font-size:14px">Please revise and resubmit from your portal.</p>`, "Edit Article →", `${SITE_URL}/advisor-portal`));
     return NextResponse.json({ status: "revision_requested" });
@@ -199,7 +199,7 @@ export async function PUT(request: NextRequest) {
   if (action === "reject") {
     const reason = updates.rejection_reason || "Does not meet editorial standards";
     const { error } = await supabase.from("advisor_articles").update({ status: "rejected", rejection_reason: reason, reviewed_at: new Date().toISOString(), reviewed_by: updates.reviewed_by || "admin" }).eq("id", id);
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) return NextResponse.json({ error: "Operation failed" }, { status: 500 });
     await logMod(supabase, id, "rejected", updates.reviewed_by || "admin", reason, oldStatus, "rejected");
     if (advEmail) await sendEmail(advEmail, `Article not accepted: "${artTitle}"`, wrap("Not Accepted", `<p style="color:#334155;font-size:14px">Hi ${advName.split(" ")[0]},</p><p style="color:#64748b;font-size:14px"><strong>"${artTitle}"</strong> was not accepted for publication.</p><div style="background:#fef2f2;padding:12px;border-radius:8px;margin:12px 0;border-left:3px solid #ef4444"><p style="font-size:13px;color:#991b1b;margin:0"><strong>Reason:</strong> ${reason}</p></div><p style="color:#64748b;font-size:14px">You may submit a new article. No charge was applied.</p>`, "Submit New →", `${SITE_URL}/advisor-portal`));
     return NextResponse.json({ status: "rejected" });
@@ -209,7 +209,7 @@ export async function PUT(request: NextRequest) {
     const { data: art } = await supabase.from("advisor_articles").select("payment_status, slug").eq("id", id).single();
     if (art && art.payment_status !== "paid" && art.payment_status !== "waived") return NextResponse.json({ error: "Payment required" }, { status: 400 });
     const { error } = await supabase.from("advisor_articles").update({ status: "published", published_at: new Date().toISOString() }).eq("id", id);
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) return NextResponse.json({ error: "Operation failed" }, { status: 500 });
     await logMod(supabase, id, "published", updates.reviewed_by || "admin", undefined, oldStatus, "published");
     if (advEmail) await sendEmail(advEmail, `Your article is live! 🎉`, wrap("Published! 🎉", `<p style="color:#334155;font-size:14px">Hi ${advName.split(" ")[0]},</p><p style="color:#64748b;font-size:14px"><strong>"${artTitle}"</strong> is now live on Invest.com.au with your profile linked.</p>`, "View Article →", `${SITE_URL}/expert/${art?.slug || ""}`));
     return NextResponse.json({ status: "published" });
@@ -217,14 +217,14 @@ export async function PUT(request: NextRequest) {
 
   if (action === "mark_paid") {
     const { error } = await supabase.from("advisor_articles").update({ payment_status: "paid", payment_reference: updates.payment_reference || "manual", paid_at: new Date().toISOString() }).eq("id", id);
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) return NextResponse.json({ error: "Operation failed" }, { status: 500 });
     await logMod(supabase, id, "mark_paid", updates.reviewed_by || "admin", `Ref: ${updates.payment_reference || "manual"}`);
     return NextResponse.json({ payment_status: "paid" });
   }
 
   if (action === "waive_fee") {
     const { error } = await supabase.from("advisor_articles").update({ payment_status: "waived", paid_at: new Date().toISOString() }).eq("id", id);
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) return NextResponse.json({ error: "Operation failed" }, { status: 500 });
     await logMod(supabase, id, "waive_fee", updates.reviewed_by || "admin");
     return NextResponse.json({ payment_status: "waived" });
   }
@@ -240,7 +240,7 @@ export async function PUT(request: NextRequest) {
       fields.read_time = calcReadTime(wc);
     }
     const { error } = await supabase.from("advisor_articles").update(fields).eq("id", id);
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) return NextResponse.json({ error: "Operation failed" }, { status: 500 });
     await logMod(supabase, id, "admin_edit", updates.reviewed_by || "admin", `Edited: ${Object.keys(fields).join(", ")}`);
     return NextResponse.json({ edited: true });
   }
@@ -257,7 +257,7 @@ export async function PUT(request: NextRequest) {
     for (const k of ["title", "content", "excerpt", "category"]) { if (updates[k]) sf[k] = updates[k]; }
     if (updates.content) { sf.word_count = submitWc; sf.read_time = calcReadTime(submitWc); }
     const { error } = await supabase.from("advisor_articles").update(sf).eq("id", id);
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) return NextResponse.json({ error: "Operation failed" }, { status: 500 });
     await logMod(supabase, id, "resubmitted", "advisor", undefined, oldStatus, "submitted");
     await sendEmail(getAdminEmail(), `Resubmitted: "${artTitle}" by ${advName}`, wrap("Article Resubmitted", `<p style="color:#64748b;font-size:14px"><strong>${advName}</strong> revised and resubmitted their article.</p><p style="color:#334155;font-size:15px;font-weight:600">"${artTitle}"</p>`, "Review →", `${SITE_URL}/admin/advisor-articles`));
     return NextResponse.json({ status: "submitted" });
@@ -272,6 +272,6 @@ export async function PUT(request: NextRequest) {
     df.read_time = calcReadTime(wc);
   }
   const { error } = await supabase.from("advisor_articles").update(df).eq("id", id);
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  if (error) return NextResponse.json({ error: "Operation failed" }, { status: 500 });
   return NextResponse.json({ updated: true });
 }

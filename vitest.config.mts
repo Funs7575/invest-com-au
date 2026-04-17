@@ -19,5 +19,25 @@ export default defineConfig({
     environmentMatchGlobs: [
       ["__tests__/components/**", "jsdom"],
     ],
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "text-summary", "lcov"],
+      include: ["lib/**/*.ts", "lib/**/*.tsx", "app/api/**/*.ts"],
+      exclude: [
+        "lib/database.types.ts",
+        "lib/types.ts",
+        "**/*.d.ts",
+      ],
+      // Floors, not aspirations. Set just below current numbers so
+      // CI catches coverage regressions without blocking ships that
+      // add new (legitimately untested) code. Ratchet these up as
+      // test suites grow; do not lower them.
+      thresholds: {
+        lines: 20,
+        functions: 45,
+        branches: 50,
+        statements: 20,
+      },
+    },
   },
 });

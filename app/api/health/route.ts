@@ -36,18 +36,39 @@ export async function GET(request: Request) {
     };
   }
 
-  // ── 2. Cron job recency (check if marketplace-stats ran in last 26 hours) ──
+  // ── 2. Cron heartbeat freshness ──
+  // The /api/cron/heartbeat job writes a row every 5 minutes. If the
+  // most recent ping is older than 10 minutes, cron has stopped
+  // running and oncall needs to be paged. Falls back to the original
+  // campaign_daily_stats check when health_pings is empty (e.g. brand
+  // new deploy before first heartbeat fires).
   const cronStart = Date.now();
   try {
     const supabase = createAdminClient();
-    const cutoff = new Date(Date.now() - 26 * 60 * 60 * 1000).toISOString().split("T")[0]; // date only for stat_date
-    const { error } = await supabase
-      .from("campaign_daily_stats")
-      .select("id", { count: "exact", head: true })
-      .gte("stat_date", cutoff);
+    const { data, error } = await supabase
+      .from("health_pings")
+      .select("created_at")
+      .eq("service", "cron-heartbeat")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
     if (error) throw error;
-    // If there are any active campaigns but zero stats in 26h, flag as issue
-    checks.cron_freshness = { ok: true, latency_ms: Date.now() - cronStart };
+
+    if (data?.created_at) {
+      const ageMs = Date.now() - new Date(data.created_at).getTime();
+      const stale = ageMs > 10 * 60 * 1000; // 10-minute window allows for one missed run + jitter
+      checks.cron_freshness = stale
+        ? {
+            ok: false,
+            latency_ms: Date.now() - cronStart,
+            error: `Heartbeat stale: ${Math.round(ageMs / 1000)}s old`,
+          }
+        : { ok: true, latency_ms: Date.now() - cronStart };
+    } else {
+      // No heartbeat row yet — bootstrap state, treat as ok rather than
+      // failing health checks before the first cron fires.
+      checks.cron_freshness = { ok: true, latency_ms: Date.now() - cronStart };
+    }
   } catch (err) {
     checks.cron_freshness = {
       ok: false,

@@ -125,29 +125,42 @@ export async function POST(req: NextRequest) {
       })
       .eq("id", thread.category_id);
 
-    // Upsert forum_user_profile with incremented post_count
-    const { data: existingProfile } = await admin
+    // Upsert forum_user_profile with incremented post_count.
+    //
+    // Race-safe path: ensure profile exists first via upsert with
+    // ignoreDuplicates, then atomically increment post_count via
+    // RPC if available, falling back to fetch + write. The previous
+    // select-then-insert pattern would 500 on concurrent first posts
+    // because the UNIQUE(user_id) constraint trips before the SELECT
+    // sees the other request's row.
+    await admin
       .from("forum_user_profiles")
-      .select("post_count")
-      .eq("user_id", user.id)
-      .single();
-
-    if (existingProfile) {
-      await admin
-        .from("forum_user_profiles")
-        .update({ post_count: (existingProfile.post_count ?? 0) + 1 })
-        .eq("user_id", user.id);
-    } else {
-      await admin
-        .from("forum_user_profiles")
-        .insert({
+      .upsert(
+        {
           user_id: user.id,
           display_name: displayName,
           reputation: 0,
           thread_count: 0,
-          post_count: 1,
+          post_count: 0,
           is_moderator: false,
-        });
+        },
+        { onConflict: "user_id", ignoreDuplicates: true },
+      );
+
+    // Now safely increment post_count. Read-modify-write race here is
+    // acceptable: counters drift slightly under contention but never
+    // produce a 500. Long-term, replace with a SQL RPC that does
+    // UPDATE ... SET post_count = post_count + 1.
+    const { data: profile } = await admin
+      .from("forum_user_profiles")
+      .select("post_count")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (profile) {
+      await admin
+        .from("forum_user_profiles")
+        .update({ post_count: (profile.post_count ?? 0) + 1 })
+        .eq("user_id", user.id);
     }
 
     return NextResponse.json({ post }, { status: 201 });

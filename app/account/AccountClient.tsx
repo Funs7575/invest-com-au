@@ -543,6 +543,9 @@ export default function AccountClient() {
             <Link href="/account/quizzes" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
               <span>📝</span> Quiz History
             </Link>
+            <Link href="/account/privacy" className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors">
+              <span>🔒</span> Privacy &amp; Data
+            </Link>
           </div>
         </div>
 

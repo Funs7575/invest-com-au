@@ -44,8 +44,8 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Test
-        run: npm test
+      - name: Test with coverage
+        run: npm run test:coverage
 
       - name: Build (catches production-only errors)
         run: npm run build
@@ -153,7 +153,10 @@ jobs:
         run: npm ci
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
+        # Install chromium + webkit for cross-browser coverage. Firefox
+        # is omitted to keep the install under 90s on cold cache; the
+        # Blink/WebKit pair catches the vast majority of engine bugs.
+        run: npx playwright install --with-deps chromium webkit
 
       - name: Build app
         run: npm run build

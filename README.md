@@ -66,7 +66,21 @@ Migrations live under `supabase/migrations/`. Apply to the hosted
 project via the Supabase dashboard SQL editor or `supabase db push`.
 The filenames follow `YYYYMMDD_description.sql`.
 
+See [docs/runbooks/database-rollback.md](docs/runbooks/database-rollback.md)
+for migration discipline and rollback procedures.
+
 ## Deployment
 
 Deploys to Vercel. Required env vars are documented in
 `.env.local.example`. Cron schedules are in `vercel.json`.
+
+## Architecture and contributing
+
+- [ARCHITECTURE.md](ARCHITECTURE.md) — system overview, data model,
+  request lifecycle, caching strategy.
+- [CONTRIBUTING.md](CONTRIBUTING.md) — branching, commits, code style,
+  PR conventions.
+- [docs/runbooks/](docs/runbooks/) — incident response procedures.
+  Read [launch-day.md](docs/runbooks/launch-day.md) and
+  [launch-rollback.md](docs/runbooks/launch-rollback.md) before
+  release.

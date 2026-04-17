@@ -129,6 +129,15 @@ export default async function CommunityPage() {
 
       {/* Category Grid */}
       <div className="container-custom max-w-4xl pb-16">
+        {cats.length === 0 && (
+          <div className="text-center py-16">
+            <Icon name="message-circle" size={48} className="text-slate-300 mx-auto mb-4" />
+            <h2 className="text-xl font-bold text-slate-900 mb-2">Community launching soon</h2>
+            <p className="text-sm text-slate-500 max-w-md mx-auto">
+              We&apos;re setting up discussion categories for Australian investors. Check back soon to join the conversation.
+            </p>
+          </div>
+        )}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {cats.map((cat) => (
             <Link

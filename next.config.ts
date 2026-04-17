@@ -1,5 +1,10 @@
 import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
+import withBundleAnalyzer from "@next/bundle-analyzer";
+
+const bundleAnalyzer = withBundleAnalyzer({
+  enabled: process.env.ANALYZE === "true",
+});
 
 const nextConfig: NextConfig = {
   experimental: {
@@ -218,7 +223,7 @@ const nextConfig: NextConfig = {
 // Using `as any` because Sentry v9 peer-deps target Next.js ≤15 types,
 // but the runtime integration works fine with Next.js 16.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const config: NextConfig = process.env.SENTRY_AUTH_TOKEN
+const sentryWrapped: NextConfig = process.env.SENTRY_AUTH_TOKEN
   ? (withSentryConfig(nextConfig as any, {
       org: process.env.SENTRY_ORG,
       project: process.env.SENTRY_PROJECT,
@@ -227,5 +232,8 @@ const config: NextConfig = process.env.SENTRY_AUTH_TOKEN
       tunnelRoute: "/monitoring",
     }) as NextConfig)
   : nextConfig;
+
+// Bundle analyzer wraps last so it sees the full Sentry-augmented config
+const config = bundleAnalyzer(sentryWrapped);
 
 export default config;

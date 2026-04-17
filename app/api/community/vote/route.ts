@@ -118,31 +118,34 @@ export async function POST(req: NextRequest) {
       log.error("Failed to update vote_score", { error: scoreError.message });
     }
 
-    // Update author's reputation
+    // Update author's reputation. Race-safe: ensure profile exists
+    // first via upsert with ignoreDuplicates, then read-modify-write
+    // the reputation. Same pattern as posts/threads route.
     if (reputationDelta !== 0) {
+      await admin
+        .from("forum_user_profiles")
+        .upsert(
+          {
+            user_id: target.author_id,
+            display_name: "User",
+            reputation: 0,
+            thread_count: 0,
+            post_count: 0,
+            is_moderator: false,
+          },
+          { onConflict: "user_id", ignoreDuplicates: true },
+        );
+
       const { data: authorProfile } = await admin
         .from("forum_user_profiles")
         .select("reputation")
         .eq("user_id", target.author_id)
-        .single();
-
+        .maybeSingle();
       if (authorProfile) {
         await admin
           .from("forum_user_profiles")
           .update({ reputation: (authorProfile.reputation ?? 0) + reputationDelta })
           .eq("user_id", target.author_id);
-      } else {
-        // Create profile for the author if it doesn't exist
-        await admin
-          .from("forum_user_profiles")
-          .insert({
-            user_id: target.author_id,
-            display_name: "User",
-            reputation: reputationDelta,
-            thread_count: 0,
-            post_count: 0,
-            is_moderator: false,
-          });
       }
     }
 

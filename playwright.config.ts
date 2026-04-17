@@ -43,6 +43,20 @@ export default defineConfig({
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
     },
+    // WebKit catches Safari-specific issues — different layout engine
+    // than Chromium/Blink. iOS Safari and macOS Safari ship the same
+    // engine, so this covers both. Mobile Safari viewport tested
+    // separately below.
+    {
+      name: "webkit",
+      use: { ...devices["Desktop Safari"] },
+    },
+    // Mobile viewport — catches responsive layout regressions and
+    // touch-specific event bugs that desktop projects miss.
+    {
+      name: "mobile-safari",
+      use: { ...devices["iPhone 13"] },
+    },
   ],
   webServer: process.env.CI
     ? {

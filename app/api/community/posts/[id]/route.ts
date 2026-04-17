@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { ADMIN_EMAILS } from "@/lib/admin";
+import { isRateLimited } from "@/lib/rate-limit";
 
 const log = logger("community:post");
 
@@ -31,6 +32,14 @@ export async function PATCH(
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) {
       return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    }
+
+    // 30 edits per minute per user — see threads/[id]/route.ts for rationale.
+    if (await isRateLimited(`community_post_edit:${user.id}`, 30, 60)) {
+      return NextResponse.json(
+        { error: "You're editing too quickly. Please slow down." },
+        { status: 429 },
+      );
     }
 
     const admin = createAdminClient();
@@ -91,6 +100,14 @@ export async function DELETE(
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) {
       return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+    }
+
+    // 10 deletions per minute per user — see threads/[id]/route.ts for rationale.
+    if (await isRateLimited(`community_post_delete:${user.id}`, 10, 60)) {
+      return NextResponse.json(
+        { error: "You're deleting too quickly. Please slow down." },
+        { status: 429 },
+      );
     }
 
     const admin = createAdminClient();

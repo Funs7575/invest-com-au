@@ -27,7 +27,7 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
   "hourly-20": ["/api/cron/cron-freshness"],
   "hourly-30": ["/api/cron/embeddings-refresh"],
 
-  "every-5m": ["/api/cron/job-queue-worker"],
+  "every-5m": ["/api/cron/heartbeat", "/api/cron/job-queue-worker"],
   "every-10m": ["/api/cron/confirm-lead-notify"],
   "every-15m": ["/api/cron/retry-webhooks", "/api/cron/slo-monitor"],
   "every-6h": ["/api/admin/run-migration"],

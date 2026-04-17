@@ -18,6 +18,9 @@
 
 import { createClient } from "@supabase/supabase-js";
 import { cached, CacheTTL } from "@/lib/cache";
+import { logger } from "@/lib/logger";
+
+const log = logger("fi-data");
 import {
   NON_RESIDENT_TAX_BRACKETS,
   RESIDENT_TAX_BRACKETS,
@@ -148,7 +151,7 @@ export const getNonResidentTaxBrackets = cached(
         }));
       }
     } catch {
-      console.error("[fi-data] non_resident_tax DB fetch failed — using static fallback");
+      log.warn("[fi-data] non_resident_tax DB fetch failed — using static fallback");
     }
     return NON_RESIDENT_TAX_BRACKETS;
   },
@@ -175,7 +178,7 @@ export const getResidentTaxBrackets = cached(
         }));
       }
     } catch {
-      console.error("[fi-data] resident_tax DB fetch failed — using static fallback");
+      log.warn("[fi-data] resident_tax DB fetch failed — using static fallback");
     }
     return RESIDENT_TAX_BRACKETS;
   },
@@ -207,7 +210,7 @@ export const getDtaCountries = cached(
         }));
       }
     } catch {
-      console.error("[fi-data] dta_countries DB fetch failed — using static fallback");
+      log.warn("[fi-data] dta_countries DB fetch failed — using static fallback");
     }
     return DTA_COUNTRIES;
   },
@@ -235,7 +238,7 @@ export const getDaspRates = cached(
         }));
       }
     } catch {
-      console.error("[fi-data] dasp_rates DB fetch failed — using static fallback");
+      log.warn("[fi-data] dasp_rates DB fetch failed — using static fallback");
     }
     return DASP_WITHHOLDING_RATES;
   },
@@ -258,7 +261,7 @@ export const getWithholdingRates = cached(
         return data as DbWithholdingRate[];
       }
     } catch {
-      console.error("[fi-data] withholding_rates DB fetch failed — using static fallback");
+      log.warn("[fi-data] withholding_rates DB fetch failed — using static fallback");
     }
     // Static fallback — same data as WITHHOLDING_TABLE in tax/page.tsx
     return [
@@ -291,7 +294,7 @@ export const getPropertyRules = cached(
         return data as DbPropertyRule[];
       }
     } catch {
-      console.error("[fi-data] property_rules DB fetch failed — using static fallback");
+      log.warn("[fi-data] property_rules DB fetch failed — using static fallback");
     }
     return [];
   },
@@ -320,7 +323,7 @@ export const getDataCategories = cached(
 
       if (!error && data) return data as DbDataCategory[];
     } catch {
-      console.error("[fi-data] data_categories DB fetch failed");
+      log.warn("[fi-data] data_categories DB fetch failed");
     }
     return [];
   },
@@ -341,7 +344,7 @@ export const getChangeLog = cached(
 
       if (!error && data) return data as DbChangeLog[];
     } catch {
-      console.error("[fi-data] change_log DB fetch failed");
+      log.warn("[fi-data] change_log DB fetch failed");
     }
     return [];
   },
