@@ -43,6 +43,7 @@ const ALLOWLIST = new Set<string>([
   "app/calculators/layout.tsx",
   // Pure redirects — no product content ever rendered
   "app/broker/page.tsx",
+  "app/brokers/[slug]/page.tsx",
 ]);
 
 const COMPLIANCE_PATTERNS = [
