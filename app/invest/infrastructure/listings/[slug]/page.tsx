@@ -1,14 +1,29 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import ListingImageGallery from "@/components/ListingImageGallery";
 import ListingCard, { type InvestmentListing } from "@/components/ListingCard";
 import ListingEnquiryForm from "@/components/ListingEnquiryForm";
+import ListingsEmptyState from "@/components/ListingsEmptyState";
+import SubCategoryListingsView from "@/components/SubCategoryListingsView";
+import {
+  fetchListingBySlug,
+  fetchListingsBySubCategory,
+  fetchRelatedListings,
+  INFRASTRUCTURE_SUB_CATEGORIES,
+} from "@/lib/investment-listings-query";
+import { getSubcategoryBySlug } from "@/lib/invest-categories";
 
 export const revalidate = 300;
+
+const CATEGORY_SLUG = "infrastructure";
+const CATEGORY_LABEL = "Infrastructure";
+// Infrastructure listings live under vertical='fund' with
+// sub_category='infrastructure'. The old code queried
+// vertical='infrastructure' which isn't a valid vertical and
+// always returned zero rows.
+const VERTICAL = "fund" as const;
 
 export async function generateMetadata({
   params,
@@ -16,30 +31,45 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("investment_listings")
-    .select("title, description, location_state, price_display")
-    .eq("slug", slug)
-    .eq("vertical", "infrastructure")
-    .single();
 
-  if (!data) return { title: "Infrastructure Investment" };
+  const subCat = getSubcategoryBySlug(CATEGORY_SLUG, slug);
+  if (subCat) {
+    return {
+      title: subCat.title,
+      description: subCat.metaDescription,
+      alternates: { canonical: `${SITE_URL}/invest/${CATEGORY_SLUG}/listings/${slug}` },
+      openGraph: {
+        title: subCat.title,
+        description: subCat.metaDescription,
+        url: `${SITE_URL}/invest/${CATEGORY_SLUG}/listings/${slug}`,
+      },
+      twitter: { card: "summary_large_image" as const },
+    };
+  }
 
-  const title = `${data.title} — Infrastructure Investment ${data.location_state ? `in ${data.location_state}` : "in Australia"} (${CURRENT_YEAR})`;
+  const listing = await fetchListingBySlug(VERTICAL, slug);
+  if (
+    !listing ||
+    !listing.sub_category ||
+    !(INFRASTRUCTURE_SUB_CATEGORIES as readonly string[]).includes(listing.sub_category)
+  ) {
+    return { title: `Infrastructure Investments (${CURRENT_YEAR})` };
+  }
+
+  const title = `${listing.title} — Infrastructure Investment ${listing.location_state ? `in ${listing.location_state}` : "in Australia"} (${CURRENT_YEAR})`;
   return {
     title,
-    description: data.description?.slice(0, 160) ?? `Infrastructure investment opportunity. ${data.price_display ?? ""}`,
+    description: listing.description?.slice(0, 160) ?? `Infrastructure investment opportunity. ${listing.price_display ?? ""}`,
     alternates: { canonical: `${SITE_URL}/invest/infrastructure/listings/${slug}` },
     openGraph: {
       title,
-      description: data.description?.slice(0, 160),
+      description: listing.description?.slice(0, 160),
       url: `${SITE_URL}/invest/infrastructure/listings/${slug}`,
       images: [{
-        url: `/api/og?title=${encodeURIComponent(data.title)}&type=invest`,
+        url: `/api/og?title=${encodeURIComponent(listing.title)}&type=invest`,
         width: 1200,
         height: 630,
-        alt: data.title,
+        alt: listing.title,
       }],
     },
     twitter: { card: "summary_large_image" as const },
@@ -58,30 +88,36 @@ export default async function InfrastructureListingDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const supabase = await createClient();
 
-  const { data: listing } = await supabase
-    .from("investment_listings")
-    .select("*")
-    .eq("slug", slug)
-    .eq("vertical", "infrastructure")
-    .single();
+  const subCat = getSubcategoryBySlug(CATEGORY_SLUG, slug);
+  if (subCat) {
+    const listings = await fetchListingsBySubCategory(VERTICAL, subCat.dbValue);
+    return (
+      <SubCategoryListingsView
+        listings={listings}
+        subCategory={subCat}
+        categorySlug={CATEGORY_SLUG}
+        categoryLabel={CATEGORY_LABEL}
+      />
+    );
+  }
 
-  if (!listing) notFound();
+  const listing = await fetchListingBySlug(VERTICAL, slug);
+  if (
+    !listing ||
+    !listing.sub_category ||
+    !(INFRASTRUCTURE_SUB_CATEGORIES as readonly string[]).includes(listing.sub_category)
+  ) {
+    return (
+      <ListingsEmptyState
+        categoryLabel={CATEGORY_LABEL}
+        categorySlug={CATEGORY_SLUG}
+      />
+    );
+  }
 
   const l = listing as InvestmentListing;
-
-  // Fetch related listings
-  const { data: related } = await supabase
-    .from("investment_listings")
-    .select("*")
-    .eq("vertical", "infrastructure")
-    .eq("status", "active")
-    .neq("slug", slug)
-    .eq("sub_category", l.sub_category ?? "")
-    .limit(3);
-
-  const relatedListings = (related ?? []) as InvestmentListing[];
+  const relatedListings = await fetchRelatedListings(VERTICAL, slug, l.sub_category, 3);
 
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },

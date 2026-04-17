@@ -1,14 +1,24 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import ListingImageGallery from "@/components/ListingImageGallery";
 import ListingCard, { type InvestmentListing } from "@/components/ListingCard";
 import ListingEnquiryForm from "@/components/ListingEnquiryForm";
+import ListingsEmptyState from "@/components/ListingsEmptyState";
+import SubCategoryListingsView from "@/components/SubCategoryListingsView";
+import {
+  fetchListingBySlug,
+  fetchListingsBySubCategory,
+  fetchRelatedListings,
+} from "@/lib/investment-listings-query";
+import { getSubcategoryBySlug } from "@/lib/invest-categories";
 
 export const revalidate = 300;
+
+const CATEGORY_SLUG = "mining";
+const CATEGORY_LABEL = "Mining";
+const VERTICAL = "mining" as const;
 
 export async function generateMetadata({
   params,
@@ -16,30 +26,39 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("investment_listings")
-    .select("title, description, location_state, key_metrics")
-    .eq("slug", slug)
-    .eq("vertical", "mining")
-    .single();
 
-  if (!data) return { title: "Mining Opportunity" };
-  const commodity = (data.key_metrics as Record<string, unknown>)?.commodity as string | undefined;
-  const title = `${data.title}${commodity ? ` — ${commodity}` : ""} Mining Investment (${CURRENT_YEAR})`;
+  const subCat = getSubcategoryBySlug(CATEGORY_SLUG, slug);
+  if (subCat) {
+    return {
+      title: subCat.title,
+      description: subCat.metaDescription,
+      alternates: { canonical: `${SITE_URL}/invest/${CATEGORY_SLUG}/listings/${slug}` },
+      openGraph: {
+        title: subCat.title,
+        description: subCat.metaDescription,
+        url: `${SITE_URL}/invest/${CATEGORY_SLUG}/listings/${slug}`,
+      },
+      twitter: { card: "summary_large_image" as const },
+    };
+  }
+
+  const listing = await fetchListingBySlug(VERTICAL, slug);
+  if (!listing) return { title: `Mining Opportunities (${CURRENT_YEAR})` };
+  const commodity = (listing.key_metrics as Record<string, unknown>)?.commodity as string | undefined;
+  const title = `${listing.title}${commodity ? ` — ${commodity}` : ""} Mining Investment (${CURRENT_YEAR})`;
   return {
     title,
-    description: data.description?.slice(0, 160) ?? `Mining investment opportunity in ${data.location_state ?? "Australia"}.`,
+    description: listing.description?.slice(0, 160) ?? `Mining investment opportunity in ${listing.location_state ?? "Australia"}.`,
     alternates: { canonical: `${SITE_URL}/invest/mining/listings/${slug}` },
     openGraph: {
       title,
-      description: data.description?.slice(0, 160),
+      description: listing.description?.slice(0, 160),
       url: `${SITE_URL}/invest/mining/listings/${slug}`,
       images: [{
-        url: `/api/og?title=${encodeURIComponent(data.title)}&type=invest`,
+        url: `/api/og?title=${encodeURIComponent(listing.title)}&type=invest`,
         width: 1200,
         height: 630,
-        alt: data.title,
+        alt: listing.title,
       }],
     },
     twitter: { card: "summary_large_image" as const },
@@ -58,28 +77,38 @@ export default async function MiningOpportunityDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const supabase = await createClient();
 
-  const { data: listing } = await supabase
-    .from("investment_listings")
-    .select("*")
-    .eq("slug", slug)
-    .eq("vertical", "mining")
-    .single();
+  // Sub-category filter first — SubCategoryNav generates these URLs.
+  const subCat = getSubcategoryBySlug(CATEGORY_SLUG, slug);
+  if (subCat) {
+    const listings = await fetchListingsBySubCategory(VERTICAL, subCat.dbValue);
+    return (
+      <SubCategoryListingsView
+        listings={listings}
+        subCategory={subCat}
+        categorySlug={CATEGORY_SLUG}
+        categoryLabel={CATEGORY_LABEL}
+      />
+    );
+  }
 
-  if (!listing) notFound();
+  // Then try as a single listing.
+  const listing = await fetchListingBySlug(VERTICAL, slug);
+  if (!listing) {
+    // Friendly empty state instead of 404 — matches user
+    // expectation that every URL under /invest/<cat>/listings/*
+    // resolves to a valid page.
+    return (
+      <ListingsEmptyState
+        categoryLabel={CATEGORY_LABEL}
+        categorySlug={CATEGORY_SLUG}
+      />
+    );
+  }
   const l = listing as InvestmentListing;
 
-  const { data: related } = await supabase
-    .from("investment_listings")
-    .select("*")
-    .eq("vertical", "mining")
-    .eq("status", "active")
-    .neq("slug", slug)
-    .limit(3);
-
-  const relatedListings = (related ?? []) as InvestmentListing[];
-  const km = l.key_metrics ?? {};
+  const relatedListings = await fetchRelatedListings(VERTICAL, slug, null, 3);
+  const km = (l.key_metrics ?? {}) as Record<string, unknown>;
   const location = [l.location_city, l.location_state].filter(Boolean).join(", ");
 
   const breadcrumb = breadcrumbJsonLd([

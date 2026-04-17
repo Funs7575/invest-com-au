@@ -1,14 +1,28 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import ListingImageGallery from "@/components/ListingImageGallery";
 import ListingCard, { type InvestmentListing } from "@/components/ListingCard";
 import ListingEnquiryForm from "@/components/ListingEnquiryForm";
+import ListingsEmptyState from "@/components/ListingsEmptyState";
+import SubCategoryListingsView from "@/components/SubCategoryListingsView";
+import {
+  fetchListingBySlug,
+  fetchListingsBySubCategory,
+  fetchRelatedListings,
+  ALTERNATIVES_SUB_CATEGORIES,
+} from "@/lib/investment-listings-query";
+import { getSubcategoryBySlug } from "@/lib/invest-categories";
 
 export const revalidate = 300;
+
+const CATEGORY_SLUG = "alternatives";
+const CATEGORY_LABEL = "Alternative Investments";
+// Alternatives listings live under vertical='fund' with sub_category
+// in ALTERNATIVES_SUB_CATEGORIES. When the trailing [slug] is a listing
+// slug (not a sub-category), we still look it up in the fund vertical.
+const VERTICAL = "fund" as const;
 
 export async function generateMetadata({
   params,
@@ -16,30 +30,51 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("investment_listings")
-    .select("title, description, location_state, price_display")
-    .eq("slug", slug)
-    .eq("vertical", "alternatives")
-    .single();
 
-  if (!data) return { title: "Alternative Investment" };
+  // Sub-category metadata takes precedence — if the slug names a
+  // known sub-category (e.g. "coins"), use the sub-category's own
+  // title/meta rather than trying a DB lookup that would miss.
+  const subCat = getSubcategoryBySlug(CATEGORY_SLUG, slug);
+  if (subCat) {
+    return {
+      title: subCat.title,
+      description: subCat.metaDescription,
+      alternates: { canonical: `${SITE_URL}/invest/${CATEGORY_SLUG}/listings/${slug}` },
+      openGraph: {
+        title: subCat.title,
+        description: subCat.metaDescription,
+        url: `${SITE_URL}/invest/${CATEGORY_SLUG}/listings/${slug}`,
+      },
+      twitter: { card: "summary_large_image" as const },
+    };
+  }
 
-  const title = `${data.title} — Alternative Investment ${data.location_state ? `in ${data.location_state}` : "in Australia"} (${CURRENT_YEAR})`;
+  // Otherwise look up the listing. We restrict the query to
+  // alternatives-eligible sub_categories so a fund that isn't
+  // really an alternative can't steal the URL.
+  const listing = await fetchListingBySlug(VERTICAL, slug);
+  if (
+    !listing ||
+    !listing.sub_category ||
+    !(ALTERNATIVES_SUB_CATEGORIES as readonly string[]).includes(listing.sub_category)
+  ) {
+    return { title: `Alternative Investments (${CURRENT_YEAR})` };
+  }
+
+  const title = `${listing.title} — Alternative Investment ${listing.location_state ? `in ${listing.location_state}` : "in Australia"} (${CURRENT_YEAR})`;
   return {
     title,
-    description: data.description?.slice(0, 160) ?? `Alternative investment opportunity. ${data.price_display ?? ""}`,
-    alternates: { canonical: `${SITE_URL}/invest/alternatives/listings/${slug}` },
+    description: listing.description?.slice(0, 160) ?? `Alternative investment opportunity. ${listing.price_display ?? ""}`,
+    alternates: { canonical: `${SITE_URL}/invest/${CATEGORY_SLUG}/listings/${slug}` },
     openGraph: {
       title,
-      description: data.description?.slice(0, 160),
-      url: `${SITE_URL}/invest/alternatives/listings/${slug}`,
+      description: listing.description?.slice(0, 160),
+      url: `${SITE_URL}/invest/${CATEGORY_SLUG}/listings/${slug}`,
       images: [{
-        url: `/api/og?title=${encodeURIComponent(data.title)}&type=invest`,
+        url: `/api/og?title=${encodeURIComponent(listing.title)}&type=invest`,
         width: 1200,
         height: 630,
-        alt: data.title,
+        alt: listing.title,
       }],
     },
     twitter: { card: "summary_large_image" as const },
@@ -58,40 +93,60 @@ export default async function AlternativesListingDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const supabase = await createClient();
 
-  const { data: listing } = await supabase
-    .from("investment_listings")
-    .select("*")
-    .eq("slug", slug)
-    .eq("vertical", "alternatives")
-    .single();
+  // ── Resolution order ────────────────────────────────────────
+  // 1. Sub-category filter: if the slug names a known sub-category
+  //    of this vertical, show the filtered listings grid.
+  // 2. Single listing detail: if a listing exists with that slug,
+  //    show the detail page.
+  // 3. Empty state (200, NOT notFound): friendly "nothing here yet"
+  //    page with links back to the category and the submit form.
+  // This ordering means SubCategoryNav links always resolve (even
+  // with zero matching listings) while pre-existing listing URLs
+  // keep working.
 
-  if (!listing) notFound();
+  const subCat = getSubcategoryBySlug(CATEGORY_SLUG, slug);
+  if (subCat) {
+    const listings = await fetchListingsBySubCategory(VERTICAL, subCat.dbValue);
+    return (
+      <SubCategoryListingsView
+        listings={listings}
+        subCategory={subCat}
+        categorySlug={CATEGORY_SLUG}
+        categoryLabel={CATEGORY_LABEL}
+      />
+    );
+  }
+
+  const listing = await fetchListingBySlug(VERTICAL, slug);
+
+  // Reject listings that aren't really alternatives (the fund
+  // vertical also covers private credit, infrastructure, etc.)
+  if (
+    !listing ||
+    !listing.sub_category ||
+    !(ALTERNATIVES_SUB_CATEGORIES as readonly string[]).includes(listing.sub_category)
+  ) {
+    return (
+      <ListingsEmptyState
+        categoryLabel={CATEGORY_LABEL}
+        categorySlug={CATEGORY_SLUG}
+      />
+    );
+  }
 
   const l = listing as InvestmentListing;
-
-  // Fetch related listings
-  const { data: related } = await supabase
-    .from("investment_listings")
-    .select("*")
-    .eq("vertical", "alternatives")
-    .eq("status", "active")
-    .neq("slug", slug)
-    .eq("sub_category", l.sub_category ?? "")
-    .limit(3);
-
-  const relatedListings = (related ?? []) as InvestmentListing[];
+  const relatedListings = await fetchRelatedListings(VERTICAL, slug, l.sub_category, 3);
 
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
     { name: "Invest", url: `${SITE_URL}/invest` },
-    { name: "Alternative Investments", url: `${SITE_URL}/invest/alternatives` },
-    { name: "Listings", url: `${SITE_URL}/invest/alternatives/listings` },
+    { name: "Alternative Investments", url: `${SITE_URL}/invest/${CATEGORY_SLUG}` },
+    { name: "Listings", url: `${SITE_URL}/invest/${CATEGORY_SLUG}/listings` },
     { name: l.title },
   ]);
 
-  const km = l.key_metrics ?? {};
+  const km = (l.key_metrics ?? {}) as Record<string, unknown>;
   const location = [l.location_city, l.location_state].filter(Boolean).join(", ");
 
   return (
@@ -106,11 +161,11 @@ export default async function AlternativesListingDetailPage({
         <div className="container-custom">
           <nav className="flex items-center gap-1.5 text-xs text-slate-500 mb-4" aria-label="Breadcrumb">
             <Link href="/" className="hover:text-slate-900 transition-colors">Home</Link>
-            <Icon name="chevron-right" size={12} className="text-slate-300" />
+            <Icon name="chevron-right" size={12} className="text-slate-300" aria-hidden="true" />
             <Link href="/invest" className="hover:text-slate-900 transition-colors">Invest</Link>
-            <Icon name="chevron-right" size={12} className="text-slate-300" />
-            <Link href="/invest/alternatives/listings" className="hover:text-slate-900 transition-colors">Alternative Investments</Link>
-            <Icon name="chevron-right" size={12} className="text-slate-300" />
+            <Icon name="chevron-right" size={12} className="text-slate-300" aria-hidden="true" />
+            <Link href={`/invest/${CATEGORY_SLUG}/listings`} className="hover:text-slate-900 transition-colors">{CATEGORY_LABEL}</Link>
+            <Icon name="chevron-right" size={12} className="text-slate-300" aria-hidden="true" />
             <span className="text-slate-900 font-medium truncate max-w-[160px]">{l.title}</span>
           </nav>
 
@@ -134,7 +189,7 @@ export default async function AlternativesListingDetailPage({
           <h1 className="text-2xl md:text-3xl font-extrabold mb-2 text-slate-900">{l.title}</h1>
           {location && (
             <div className="flex items-center gap-1.5 text-slate-600 text-sm">
-              <Icon name="map-pin" size={14} />
+              <Icon name="map-pin" size={14} aria-hidden="true" />
               {location}
             </div>
           )}
@@ -194,14 +249,14 @@ export default async function AlternativesListingDetailPage({
               {/* FIRB info */}
               {l.firb_eligible && (
                 <div className="bg-blue-50 border border-blue-200 rounded-xl p-5 flex gap-4">
-                  <Icon name="globe" size={20} className="text-blue-600 shrink-0 mt-0.5" />
+                  <Icon name="globe" size={20} className="text-blue-600 shrink-0 mt-0.5" aria-hidden="true" />
                   <div>
                     <p className="font-bold text-blue-900 text-sm mb-1">FIRB Eligible</p>
                     <p className="text-sm text-blue-700">
                       This alternative investment is eligible for foreign investment under the Foreign Investment Review Board framework. FIRB approval may be required for foreign buyers. Our advisors can guide you through the process.
                     </p>
                     <Link href="/foreign-investment" className="inline-flex items-center gap-1 text-blue-700 font-semibold text-xs mt-2 hover:text-blue-900">
-                      Learn about FIRB <Icon name="arrow-right" size={11} />
+                      Learn about FIRB <Icon name="arrow-right" size={11} aria-hidden="true" />
                     </Link>
                   </div>
                 </div>
@@ -255,11 +310,11 @@ export default async function AlternativesListingDetailPage({
         <div className="container-custom text-center">
           <p className="text-slate-500 text-sm mb-4">Looking for more opportunities?</p>
           <Link
-            href="/invest/alternatives/listings"
+            href={`/invest/${CATEGORY_SLUG}/listings`}
             className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold px-6 py-3 rounded-xl transition-colors"
           >
             Browse All Alternative Investments
-            <Icon name="arrow-right" size={16} />
+            <Icon name="arrow-right" size={16} aria-hidden="true" />
           </Link>
         </div>
       </section>

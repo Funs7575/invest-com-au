@@ -141,3 +141,138 @@ export const ALTERNATIVES_SUB_CATEGORIES = [
   "coins",
   "whisky",
 ] as const;
+
+// Infrastructure and private-credit are URL categories that live
+// under the 'fund' vertical distinguished by sub_category. See
+// lib/listing-url.ts FUND_SUB_TO_CATEGORY for the canonical mapping.
+export const INFRASTRUCTURE_SUB_CATEGORIES = ["infrastructure"] as const;
+export const PRIVATE_CREDIT_SUB_CATEGORIES = ["private_credit"] as const;
+
+/**
+ * Fetches the listings that match a specific sub_category within a
+ * vertical. Used by /invest/{category}/listings/[slug] when the slug
+ * resolves to a sub-category (as opposed to a single listing slug).
+ *
+ * Never throws — returns [] on any failure so the caller can render
+ * a graceful empty state.
+ */
+export async function fetchListingsBySubCategory(
+  vertical: InvestListingVertical,
+  subCategory: string,
+  limit: number = DEFAULT_LIMIT,
+): Promise<InvestmentListing[]> {
+  if (!subCategory) return [];
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("investment_listings")
+      .select("*")
+      .eq("vertical", vertical)
+      .eq("sub_category", subCategory)
+      .eq("status", "active")
+      .order("listing_type", { ascending: false })
+      .order("created_at", { ascending: false })
+      .limit(limit);
+
+    if (error) {
+      log.warn("investment_listings subcategory query failed", {
+        vertical,
+        sub_category: subCategory,
+        error: error.message,
+        code: error.code,
+      });
+      return [];
+    }
+    return (data ?? []) as InvestmentListing[];
+  } catch (err) {
+    log.error("investment_listings subcategory fetch threw", {
+      vertical,
+      sub_category: subCategory,
+      err: err instanceof Error ? err.message : String(err),
+    });
+    return [];
+  }
+}
+
+/**
+ * Fetches a single listing by slug within a vertical. Returns null
+ * on any failure (not found, DB error, etc.) — never throws. The
+ * caller decides what to do with null (show empty state, try a
+ * different lookup, etc.).
+ */
+export async function fetchListingBySlug(
+  vertical: InvestListingVertical,
+  slug: string,
+): Promise<InvestmentListing | null> {
+  if (!slug) return null;
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("investment_listings")
+      .select("*")
+      .eq("vertical", vertical)
+      .eq("slug", slug)
+      .maybeSingle();
+
+    if (error) {
+      log.warn("investment_listings slug lookup failed", {
+        vertical,
+        slug,
+        error: error.message,
+        code: error.code,
+      });
+      return null;
+    }
+    return (data as InvestmentListing | null) ?? null;
+  } catch (err) {
+    log.error("investment_listings slug lookup threw", {
+      vertical,
+      slug,
+      err: err instanceof Error ? err.message : String(err),
+    });
+    return null;
+  }
+}
+
+/**
+ * Fetches up to `limit` related listings in the same vertical and
+ * (optionally) same sub-category, excluding the given slug. Used on
+ * single-listing detail pages. Returns [] on any failure.
+ */
+export async function fetchRelatedListings(
+  vertical: InvestListingVertical,
+  excludeSlug: string,
+  subCategory: string | null | undefined,
+  limit: number = 3,
+): Promise<InvestmentListing[]> {
+  try {
+    const supabase = await createClient();
+    let query = supabase
+      .from("investment_listings")
+      .select("*")
+      .eq("vertical", vertical)
+      .eq("status", "active")
+      .neq("slug", excludeSlug)
+      .limit(limit);
+    if (subCategory) {
+      query = query.eq("sub_category", subCategory);
+    }
+    const { data, error } = await query;
+    if (error) {
+      log.warn("investment_listings related fetch failed", {
+        vertical,
+        exclude_slug: excludeSlug,
+        error: error.message,
+      });
+      return [];
+    }
+    return (data ?? []) as InvestmentListing[];
+  } catch (err) {
+    log.error("investment_listings related fetch threw", {
+      vertical,
+      exclude_slug: excludeSlug,
+      err: err instanceof Error ? err.message : String(err),
+    });
+    return [];
+  }
+}

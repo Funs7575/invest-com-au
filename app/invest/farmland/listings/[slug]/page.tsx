@@ -1,14 +1,24 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import ListingImageGallery from "@/components/ListingImageGallery";
 import ListingCard, { type InvestmentListing } from "@/components/ListingCard";
 import ListingEnquiryForm from "@/components/ListingEnquiryForm";
+import ListingsEmptyState from "@/components/ListingsEmptyState";
+import SubCategoryListingsView from "@/components/SubCategoryListingsView";
+import {
+  fetchListingBySlug,
+  fetchListingsBySubCategory,
+  fetchRelatedListings,
+} from "@/lib/investment-listings-query";
+import { getSubcategoryBySlug } from "@/lib/invest-categories";
 
 export const revalidate = 300;
+
+const CATEGORY_SLUG = "farmland";
+const CATEGORY_LABEL = "Farmland";
+const VERTICAL = "farmland" as const;
 
 export async function generateMetadata({
   params,
@@ -16,30 +26,39 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("investment_listings")
-    .select("title, description, location_state, key_metrics")
-    .eq("slug", slug)
-    .eq("vertical", "farmland")
-    .single();
 
-  if (!data) return { title: "Farmland Listing" };
-  const ha = (data.key_metrics as Record<string, unknown>)?.hectares;
-  const title = `${data.title}${ha ? ` — ${ha} ha` : ""} Agricultural Property (${CURRENT_YEAR})`;
+  const subCat = getSubcategoryBySlug(CATEGORY_SLUG, slug);
+  if (subCat) {
+    return {
+      title: subCat.title,
+      description: subCat.metaDescription,
+      alternates: { canonical: `${SITE_URL}/invest/${CATEGORY_SLUG}/listings/${slug}` },
+      openGraph: {
+        title: subCat.title,
+        description: subCat.metaDescription,
+        url: `${SITE_URL}/invest/${CATEGORY_SLUG}/listings/${slug}`,
+      },
+      twitter: { card: "summary_large_image" as const },
+    };
+  }
+
+  const listing = await fetchListingBySlug(VERTICAL, slug);
+  if (!listing) return { title: `Farmland for Sale (${CURRENT_YEAR})` };
+  const ha = (listing.key_metrics as Record<string, unknown>)?.hectares;
+  const title = `${listing.title}${ha ? ` — ${ha} ha` : ""} Agricultural Property (${CURRENT_YEAR})`;
   return {
     title,
-    description: data.description?.slice(0, 160) ?? `Farmland for sale in ${data.location_state ?? "Australia"}.`,
+    description: listing.description?.slice(0, 160) ?? `Farmland for sale in ${listing.location_state ?? "Australia"}.`,
     alternates: { canonical: `${SITE_URL}/invest/farmland/listings/${slug}` },
     openGraph: {
       title,
-      description: data.description?.slice(0, 160),
+      description: listing.description?.slice(0, 160),
       url: `${SITE_URL}/invest/farmland/listings/${slug}`,
       images: [{
-        url: `/api/og?title=${encodeURIComponent(data.title)}&type=invest`,
+        url: `/api/og?title=${encodeURIComponent(listing.title)}&type=invest`,
         width: 1200,
         height: 630,
-        alt: data.title,
+        alt: listing.title,
       }],
     },
     twitter: { card: "summary_large_image" as const },
@@ -58,28 +77,33 @@ export default async function FarmlandListingDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const supabase = await createClient();
 
-  const { data: listing } = await supabase
-    .from("investment_listings")
-    .select("*")
-    .eq("slug", slug)
-    .eq("vertical", "farmland")
-    .single();
+  const subCat = getSubcategoryBySlug(CATEGORY_SLUG, slug);
+  if (subCat) {
+    const listings = await fetchListingsBySubCategory(VERTICAL, subCat.dbValue);
+    return (
+      <SubCategoryListingsView
+        listings={listings}
+        subCategory={subCat}
+        categorySlug={CATEGORY_SLUG}
+        categoryLabel={CATEGORY_LABEL}
+      />
+    );
+  }
 
-  if (!listing) notFound();
+  const listing = await fetchListingBySlug(VERTICAL, slug);
+  if (!listing) {
+    return (
+      <ListingsEmptyState
+        categoryLabel={CATEGORY_LABEL}
+        categorySlug={CATEGORY_SLUG}
+      />
+    );
+  }
   const l = listing as InvestmentListing;
 
-  const { data: related } = await supabase
-    .from("investment_listings")
-    .select("*")
-    .eq("vertical", "farmland")
-    .eq("status", "active")
-    .neq("slug", slug)
-    .limit(3);
-
-  const relatedListings = (related ?? []) as InvestmentListing[];
-  const km = l.key_metrics ?? {};
+  const relatedListings = await fetchRelatedListings(VERTICAL, slug, null, 3);
+  const km = (l.key_metrics ?? {}) as Record<string, unknown>;
   const location = [l.location_city, l.location_state].filter(Boolean).join(", ");
 
   const breadcrumb = breadcrumbJsonLd([

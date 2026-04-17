@@ -1,13 +1,21 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import Icon from "@/components/Icon";
 import ListingCard, { type InvestmentListing } from "@/components/ListingCard";
 import ListingEnquiryForm from "@/components/ListingEnquiryForm";
+import ListingsEmptyState from "@/components/ListingsEmptyState";
+import {
+  fetchListingBySlug,
+  fetchRelatedListings,
+} from "@/lib/investment-listings-query";
 
 export const revalidate = 300;
+
+// /invest/funds/[slug] does not use sub-category filtering — the
+// fund directory is flat. If the slug doesn't match a listing, we
+// render a friendly empty state rather than 404 so users always
+// land on a valid page.
 
 export async function generateMetadata({
   params,
@@ -15,30 +23,23 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("investment_listings")
-    .select("title, description, key_metrics, siv_complying")
-    .eq("slug", slug)
-    .eq("vertical", "fund")
-    .single();
-
-  if (!data) return { title: "Investment Fund" };
-  const sivLabel = data.siv_complying ? " — SIV Complying" : "";
-  const title = `${data.title}${sivLabel} Australian Fund (${CURRENT_YEAR})`;
+  const listing = await fetchListingBySlug("fund", slug);
+  if (!listing) return { title: `Investment Funds (${CURRENT_YEAR})` };
+  const sivLabel = listing.siv_complying ? " — SIV Complying" : "";
+  const title = `${listing.title}${sivLabel} Australian Fund (${CURRENT_YEAR})`;
   return {
     title,
-    description: data.description?.slice(0, 160) ?? `Australian investment fund. ${sivLabel ? "SIV-complying." : ""}`,
+    description: listing.description?.slice(0, 160) ?? `Australian investment fund. ${sivLabel ? "SIV-complying." : ""}`,
     alternates: { canonical: `${SITE_URL}/invest/funds/${slug}` },
     openGraph: {
       title,
-      description: data.description?.slice(0, 160),
+      description: listing.description?.slice(0, 160),
       url: `${SITE_URL}/invest/funds/${slug}`,
       images: [{
-        url: `/api/og?title=${encodeURIComponent(data.title)}&type=invest`,
+        url: `/api/og?title=${encodeURIComponent(listing.title)}&type=invest`,
         width: 1200,
         height: 630,
-        alt: data.title,
+        alt: listing.title,
       }],
     },
     twitter: { card: "summary_large_image" as const },
@@ -57,28 +58,20 @@ export default async function FundDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const supabase = await createClient();
 
-  const { data: listing } = await supabase
-    .from("investment_listings")
-    .select("*")
-    .eq("slug", slug)
-    .eq("vertical", "fund")
-    .single();
-
-  if (!listing) notFound();
+  const listing = await fetchListingBySlug("fund", slug);
+  if (!listing) {
+    return (
+      <ListingsEmptyState
+        categoryLabel="Investment Funds"
+        categorySlug="funds"
+      />
+    );
+  }
   const l = listing as InvestmentListing;
 
-  const { data: related } = await supabase
-    .from("investment_listings")
-    .select("*")
-    .eq("vertical", "fund")
-    .eq("status", "active")
-    .neq("slug", slug)
-    .limit(3);
-
-  const relatedListings = (related ?? []) as InvestmentListing[];
-  const km = l.key_metrics ?? {};
+  const relatedListings = await fetchRelatedListings("fund", slug, null, 3);
+  const km = (l.key_metrics ?? {}) as Record<string, unknown>;
 
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", url: `${SITE_URL}/` },
