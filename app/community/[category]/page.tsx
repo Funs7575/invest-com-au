@@ -34,22 +34,27 @@ export async function generateMetadata({
   params: Promise<{ category: string }>;
 }): Promise<Metadata> {
   const { category: slug } = await params;
-  const supabase = await createClient();
+  // maybeSingle returns null when zero rows without throwing; the
+  // outer try/catch covers DB connection or RLS errors.
+  try {
+    const supabase = await createClient();
+    const { data: cat } = await supabase
+      .from("forum_categories")
+      .select("name, description")
+      .eq("slug", slug)
+      .eq("status", "active")
+      .maybeSingle();
 
-  const { data: cat } = await supabase
-    .from("forum_categories")
-    .select("name, description")
-    .eq("slug", slug)
-    .eq("status", "active")
-    .single();
+    if (!cat) return { title: "Category Not Found" };
 
-  if (!cat) return { title: "Category Not Found" };
-
-  return {
-    title: `${cat.name} - Community Forum`,
-    description: cat.description,
-    alternates: { canonical: `/community/${slug}` },
-  };
+    return {
+      title: `${cat.name} - Community Forum`,
+      description: cat.description,
+      alternates: { canonical: `/community/${slug}` },
+    };
+  } catch {
+    return { title: "Category Not Found" };
+  }
 }
 
 /* ─── Types ─── */
@@ -114,51 +119,68 @@ export default async function CategoryPage({
   const page = Math.max(1, parseInt(pageParam ?? "1", 10));
   const limit = 20;
 
-  const supabase = await createClient();
-
-  // Fetch category
-  const { data: cat, error: catError } = await supabase
-    .from("forum_categories")
-    .select(
-      "id, slug, name, description, icon, color, thread_count, post_count"
-    )
-    .eq("slug", slug)
-    .eq("status", "active")
-    .single();
-
-  if (catError || !cat) notFound();
-
-  const category = cat as ForumCategory;
-
-  // Fetch threads
-  let query = supabase
-    .from("forum_threads")
-    .select(
-      "id, category_id, author_id, author_name, title, slug, is_pinned, is_locked, reply_count, view_count, vote_score, last_reply_at, created_at",
-      { count: "exact" }
-    )
-    .eq("category_id", category.id)
-    .eq("is_removed", false)
-    .order("is_pinned", { ascending: false });
-
-  switch (sort) {
-    case "popular":
-      query = query.order("vote_score", { ascending: false });
-      break;
-    case "unanswered":
-      query = query.eq("reply_count", 0).order("created_at", { ascending: false });
-      break;
-    case "recent":
-    default:
-      query = query.order("created_at", { ascending: false });
-      break;
+  // Look up the category. maybeSingle() returns null for "not found"
+  // without throwing — .single() was throwing when the category was
+  // missing, which manifested as a 500 rather than a 404. Wrap in
+  // try/catch so DB failures also fall through to notFound rather
+  // than crashing the route.
+  let category: ForumCategory | null = null;
+  try {
+    const supabase = await createClient();
+    const { data: cat } = await supabase
+      .from("forum_categories")
+      .select(
+        "id, slug, name, description, icon, color, thread_count, post_count"
+      )
+      .eq("slug", slug)
+      .eq("status", "active")
+      .maybeSingle();
+    if (cat) category = cat as ForumCategory;
+  } catch {
+    // Fall through — category stays null, we notFound below.
   }
 
-  query = query.range((page - 1) * limit, page * limit - 1);
+  if (!category) notFound();
 
-  const { data: threadsData, count } = await query;
-  const threads: ForumThread[] = threadsData ?? [];
-  const totalThreads = count ?? 0;
+  // Fetch threads — defensive: if the forum_threads table fails
+  // we still render the category page with an empty thread list
+  // rather than bubbling a 500.
+  let threads: ForumThread[] = [];
+  let totalThreads = 0;
+  try {
+    const supabase = await createClient();
+    let query = supabase
+      .from("forum_threads")
+      .select(
+        "id, category_id, author_id, author_name, title, slug, is_pinned, is_locked, reply_count, view_count, vote_score, last_reply_at, created_at",
+        { count: "exact" }
+      )
+      .eq("category_id", category.id)
+      .eq("is_removed", false)
+      .order("is_pinned", { ascending: false });
+
+    switch (sort) {
+      case "popular":
+        query = query.order("vote_score", { ascending: false });
+        break;
+      case "unanswered":
+        query = query.eq("reply_count", 0).order("created_at", { ascending: false });
+        break;
+      case "recent":
+      default:
+        query = query.order("created_at", { ascending: false });
+        break;
+    }
+
+    query = query.range((page - 1) * limit, page * limit - 1);
+
+    const { data: threadsData, count } = await query;
+    threads = threadsData ?? [];
+    totalThreads = count ?? 0;
+  } catch {
+    // Empty thread list — category page still renders with its
+    // hero and "Be the first to post" empty state below.
+  }
   const hasMore = page * limit < totalThreads;
 
   const breadcrumbLd = breadcrumbJsonLd([

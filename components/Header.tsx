@@ -121,6 +121,7 @@ const platformsDropdown = [
   { label: "Deals & Offers", href: "/deals", desc: "Current promotions" },
   { label: "Platform Reviews", href: "/reviews", desc: "User ratings & reviews" },
   { label: "Platform Quiz", href: "/quiz", desc: "Get a platform match" },
+  { label: "Best Broker For…", href: "/best-for", desc: "Ranked picks for 50+ scenarios" },
 ];
 
 const popularLinks = [
@@ -227,6 +228,7 @@ const mobileNavSections = [
     items: [
       { name: "Compare", href: "/compare" },
       { name: "Best Platforms", href: "/best" },
+      { name: "Best Broker For…", href: "/best-for" },
       { name: "ETF Hub", href: "/etfs" },
       { name: "Fee Tracker", href: "/fee-tracker" },
       { name: "Deals & Offers", href: "/deals" },
@@ -305,6 +307,9 @@ function InvestMegaDropdown({ isActive }: { isActive: boolean }) {
                 </Link>
                 <Link href="/invest/private-equity" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
                   Private Equity
+                </Link>
+                <Link href="/invest/list" onClick={() => setOpen(false)} className="block text-sm font-bold text-slate-900 hover:text-amber-600 py-1 transition-colors">
+                  List a Listing
                 </Link>
               </div>
               <Link

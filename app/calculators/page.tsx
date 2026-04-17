@@ -72,13 +72,22 @@ export async function generateMetadata({ searchParams }: Props): Promise<Metadat
 }
 
 export default async function CalculatorsPage() {
-  const supabase = await createClient();
-
-  const { data: brokers } = await supabase
-    .from("brokers")
-    .select("id, name, slug, color, icon, logo_url, rating, asx_fee, asx_fee_value, us_fee, us_fee_value, fx_rate, chess_sponsored, smsf_support, is_crypto, cta_text, affiliate_url, sponsorship_tier, benefit_cta, status")
-    .eq("status", "active")
-    .order("name");
+  // Defensive fetch — the hub is just navigation tiles, so failing
+  // the broker query should not take the page down. Degrade to an
+  // empty broker list and let CalculatorsClient render without the
+  // "select your broker" preselects.
+  let brokers: Broker[] = [];
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("brokers")
+      .select("id, name, slug, color, icon, logo_url, rating, asx_fee, asx_fee_value, us_fee, us_fee_value, fx_rate, chess_sponsored, smsf_support, is_crypto, cta_text, affiliate_url, sponsorship_tier, benefit_cta, status")
+      .eq("status", "active")
+      .order("name");
+    brokers = (data as Broker[]) || [];
+  } catch {
+    // Silent degrade — client renders tools with no preselected broker.
+  }
 
   const calcJsonLd = {
     "@context": "https://schema.org",
@@ -94,7 +103,7 @@ export default async function CalculatorsPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(calcJsonLd) }} />
       <Suspense fallback={<CalculatorsLoading />}>
-        <CalculatorsClient brokers={(brokers as Broker[]) || []} />
+        <CalculatorsClient brokers={brokers} />
       </Suspense>
       <div className="container-custom max-w-4xl pb-6 md:pb-12">
         <AdvisorPrompt context="tax" />

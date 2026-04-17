@@ -64,17 +64,35 @@ function generatePairs(brokers: Broker[]): { a: Broker; b: Broker; slug: string 
 }
 
 export default async function VersusHubPage() {
-  const supabase = await createClient();
+  // Defensive fetch: any DB failure now degrades to an empty hub
+  // rather than throwing an uncaught 503. Both queries are independent
+  // — wrap each individually so a broken analytics_events read doesn't
+  // wipe out the broker list.
+  let allBrokers: Broker[] = [];
+  let popularEvents: { page: string | null }[] = [];
+  try {
+    const supabase = await createClient();
+    const { data: brokers } = await supabase
+      .from("brokers")
+      .select(
+        "id, name, slug, color, icon, logo_url, rating, asx_fee, asx_fee_value, platform_type, status"
+      )
+      .eq("status", "active")
+      .order("rating", { ascending: false });
+    allBrokers = (brokers as Broker[]) || [];
 
-  const { data: brokers } = await supabase
-    .from("brokers")
-    .select(
-      "id, name, slug, color, icon, logo_url, rating, asx_fee, asx_fee_value, platform_type, status"
-    )
-    .eq("status", "active")
-    .order("rating", { ascending: false });
-
-  const allBrokers = (brokers as Broker[]) || [];
+    const { data: events } = await supabase
+      .from("analytics_events")
+      .select("page")
+      .eq("event_type", "page_view")
+      .like("page", "/versus/%")
+      .order("created_at", { ascending: false })
+      .limit(5000);
+    popularEvents = (events as { page: string | null }[]) || [];
+  } catch {
+    // Fall through with empty arrays — the page renders all sections
+    // but with empty state, never 503s.
+  }
 
   // Separate by type
   const shareBrokers = allBrokers.filter(
@@ -84,18 +102,9 @@ export default async function VersusHubPage() {
     (b) => b.platform_type === "crypto_exchange"
   );
 
-  // Query analytics for popular comparisons
-  const { data: popularEvents } = await supabase
-    .from("analytics_events")
-    .select("page")
-    .eq("event_type", "page_view")
-    .like("page", "/versus/%")
-    .order("created_at", { ascending: false })
-    .limit(5000);
-
   // Count occurrences of each versus page
   const pageCounts = new Map<string, number>();
-  for (const event of popularEvents || []) {
+  for (const event of popularEvents) {
     if (!event.page) continue;
     const path = event.page as string;
     // Only count pages with "-vs-" pattern (not the hub page)

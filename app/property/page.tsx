@@ -49,24 +49,64 @@ const PROPERTY_TYPES = [
 ];
 
 export default async function PropertyHubPage() {
-  const supabase = await createClient();
+  // Defensive fetch — if the property_listings or suburb_data table
+  // is missing, RLS blocks the read, or the query times out, render
+  // the hub with empty state sections instead of 503ing.
+  type FeaturedListing = {
+    id: number;
+    slug: string;
+    title: string;
+    city: string | null;
+    suburb: string | null;
+    state: string | null;
+    price_from_cents: number | null;
+    price_to_cents: number | null;
+    rental_yield_estimate: number | null;
+    completion_date: string | null;
+    property_type: string | null;
+    images: string[] | null;
+    sponsored: boolean | null;
+    featured: boolean | null;
+    developer_name: string | null;
+    bedrooms_min: number | null;
+    bedrooms_max: number | null;
+    firb_approved: boolean | null;
+    off_the_plan: boolean | null;
+  };
+  type SuburbRow = {
+    suburb: string;
+    state: string | null;
+    median_price_house: number | null;
+    rental_yield_house: number | null;
+    capital_growth_10yr: number | null;
+    distance_to_cbd_km: number | null;
+  };
 
-  const [{ data: featuredListings }, { data: topSuburbs }] = await Promise.all([
-    supabase
-      .from("property_listings")
-      .select("id, slug, title, city, suburb, state, price_from_cents, price_to_cents, rental_yield_estimate, completion_date, property_type, images, sponsored, featured, developer_name, bedrooms_min, bedrooms_max, firb_approved, off_the_plan")
-      .eq("status", "active")
-      .eq("featured", true)
-      .order("sponsored", { ascending: false })
-      .limit(6),
-    supabase
-      .from("suburb_data")
-      .select("suburb, state, median_price_house, rental_yield_house, capital_growth_10yr, distance_to_cbd_km")
-      .order("capital_growth_10yr", { ascending: false })
-      .limit(6),
-  ]);
+  let featuredListings: FeaturedListing[] = [];
+  let topSuburbs: SuburbRow[] = [];
+  try {
+    const supabase = await createClient();
+    const [listingsRes, suburbsRes] = await Promise.all([
+      supabase
+        .from("property_listings")
+        .select("id, slug, title, city, suburb, state, price_from_cents, price_to_cents, rental_yield_estimate, completion_date, property_type, images, sponsored, featured, developer_name, bedrooms_min, bedrooms_max, firb_approved, off_the_plan")
+        .eq("status", "active")
+        .eq("featured", true)
+        .order("sponsored", { ascending: false })
+        .limit(6),
+      supabase
+        .from("suburb_data")
+        .select("suburb, state, median_price_house, rental_yield_house, capital_growth_10yr, distance_to_cbd_km")
+        .order("capital_growth_10yr", { ascending: false })
+        .limit(6),
+    ]);
+    featuredListings = (listingsRes.data as FeaturedListing[] | null) ?? [];
+    topSuburbs = (suburbsRes.data as SuburbRow[] | null) ?? [];
+  } catch {
+    // Graceful degrade — page renders with zero listings / suburbs.
+  }
 
-  const maxGrowth = Math.max(...(topSuburbs || []).map(s => s.capital_growth_10yr ?? 0), 1);
+  const maxGrowth = Math.max(...topSuburbs.map(s => s.capital_growth_10yr ?? 0), 1);
 
   const stats = [
     { value: "50+", label: "New Developments" },

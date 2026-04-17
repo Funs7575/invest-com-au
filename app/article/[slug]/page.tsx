@@ -3,7 +3,7 @@ import { createStaticClient } from "@/lib/supabase/static";
 import { getArticleBySlug } from "@/lib/request-cache";
 import LastUpdatedBadge from "@/components/LastUpdatedBadge";
 import Link from "next/link";
-import Image from "next/image";
+import ArticleCover from "@/components/ArticleCover";
 import type { Article, Broker } from "@/lib/types";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -301,21 +301,19 @@ export default async function ArticlePage({
               </p>
             )}
 
-            {/* Cover Image — gradient background shows through if the
-                image itself 404s, rather than the broken-image icon
-                users previously saw on articles with dead cover URLs. */}
-            {a.cover_image_url && (
-              <div className="mt-4 mb-2 rounded-xl overflow-hidden aspect-[2/1] md:aspect-[5/2] bg-gradient-to-br from-amber-50 via-slate-50 to-emerald-50 relative">
-                <Image
-                  src={a.cover_image_url}
-                  alt={a.title}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 800px"
-                  className="object-cover"
-                  priority
-                />
-              </div>
-            )}
+            {/* Cover — always renders. Real cover_image_url if present,
+                otherwise a category-tinted gradient with the article
+                title overlaid. Handled by <ArticleCover /> so the hub
+                cards and detail pages stay visually consistent. */}
+            <div className="mt-4 mb-2">
+              <ArticleCover
+                title={a.title}
+                coverImageUrl={a.cover_image_url ?? null}
+                category={a.category ?? null}
+                variant="detail"
+                priority
+              />
+            </div>
 
             {/* Author Byline */}
             <AuthorByline

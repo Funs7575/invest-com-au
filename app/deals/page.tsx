@@ -36,25 +36,35 @@ export const metadata: Metadata = {
 export const revalidate = 1800; // ISR: revalidate every 30 minutes (deals change frequently)
 
 export default async function DealsPage() {
-  const supabase = await createClient();
-  const [{ data: allBrokers }, { data: topAdvisors }] = await Promise.all([
-    supabase
-      .from("brokers")
-      .select("id, name, slug, color, icon, logo_url, rating, deal, deal_text, deal_expiry, deal_terms, deal_verified_date, deal_category, platform_type, cta_text, affiliate_url, sponsorship_tier, benefit_cta, status")
-      .eq("status", "active")
-      .eq("deal", true)
-      .order("rating", { ascending: false }),
-    supabase
-      .from("professionals")
-      .select("slug, name, firm_name, type, location_display, rating, review_count, photo_url, fee_description, verified, offer_text, offer_terms, offer_expiry, offer_active")
-      .eq("status", "active")
-      .eq("verified", true)
-      .order("rating", { ascending: false })
-      .order("review_count", { ascending: false })
-      .limit(6),
-  ]);
+  // Defensive fetch — both queries are independent. A broken advisors
+  // query shouldn't wipe out the broker deals grid (or vice versa).
+  let allBrokers: unknown[] = [];
+  let topAdvisors: unknown[] = [];
+  try {
+    const supabase = await createClient();
+    const [brokersRes, advisorsRes] = await Promise.all([
+      supabase
+        .from("brokers")
+        .select("id, name, slug, color, icon, logo_url, rating, deal, deal_text, deal_expiry, deal_terms, deal_verified_date, deal_category, platform_type, cta_text, affiliate_url, sponsorship_tier, benefit_cta, status")
+        .eq("status", "active")
+        .eq("deal", true)
+        .order("rating", { ascending: false }),
+      supabase
+        .from("professionals")
+        .select("slug, name, firm_name, type, location_display, rating, review_count, photo_url, fee_description, verified, offer_text, offer_terms, offer_expiry, offer_active")
+        .eq("status", "active")
+        .eq("verified", true)
+        .order("rating", { ascending: false })
+        .order("review_count", { ascending: false })
+        .limit(6),
+    ]);
+    allBrokers = brokersRes.data ?? [];
+    topAdvisors = advisorsRes.data ?? [];
+  } catch {
+    // Silent degrade — empty deal hub renders without 503ing.
+  }
 
-  const dealBrokers: Broker[] = sortWithSponsorship((allBrokers || []) as Broker[]);
+  const dealBrokers: Broker[] = sortWithSponsorship(allBrokers as Broker[]);
 
   const breadcrumbs = breadcrumbJsonLd([
     { name: "Home", url: absoluteUrl("/") },
