@@ -212,7 +212,7 @@ export default async function PropertyHubPage() {
               {/* Large hero card (first listing) */}
               {featuredListings![0] && (() => {
                 const hero = featuredListings![0];
-                const heroImgs = getListingImages(hero.slug, hero.images, hero.property_type);
+                const heroImgs = getListingImages(hero.slug, hero.images, hero.property_type ?? undefined);
                 return (
                   <Link
                     href={`/property/listings/${hero.slug}`}
@@ -243,7 +243,7 @@ export default async function PropertyHubPage() {
                           {hero.developer_name && <p className="text-xs text-white/70">{hero.developer_name}</p>}
                         </div>
                         <div className="text-right shrink-0 ml-4">
-                          <div className="text-xl md:text-2xl font-extrabold text-white">From {formatPrice(hero.price_from_cents)}</div>
+                          <div className="text-xl md:text-2xl font-extrabold text-white">From {formatPrice(hero.price_from_cents ?? 0)}</div>
                           {hero.rental_yield_estimate && (
                             <div className="text-xs font-semibold text-emerald-400 mt-0.5">{hero.rental_yield_estimate}% est. yield</div>
                           )}
@@ -261,7 +261,7 @@ export default async function PropertyHubPage() {
               {(featuredListings!.length > 1) && (
                 <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
                   {featuredListings!.slice(1).map((listing) => {
-                    const imgs = getListingImages(listing.slug, listing.images, listing.property_type);
+                    const imgs = getListingImages(listing.slug, listing.images, listing.property_type ?? undefined);
                     return (
                       <Link
                         key={listing.id}
@@ -286,7 +286,7 @@ export default async function PropertyHubPage() {
                           <p className="text-[0.6rem] font-bold uppercase tracking-wider text-slate-400 mb-0.5">{listing.city} · {listing.suburb}</p>
                           <h3 className="text-xs font-bold text-slate-900 group-hover:text-slate-600 transition-colors line-clamp-2 mb-1.5">{listing.title}</h3>
                           <div className="flex items-center justify-between">
-                            <span className="text-sm font-extrabold text-slate-900">From {formatPrice(listing.price_from_cents)}</span>
+                            <span className="text-sm font-extrabold text-slate-900">From {formatPrice(listing.price_from_cents ?? 0)}</span>
                           </div>
                           {listing.completion_date && (
                             <p className="text-[0.6rem] text-slate-400 mt-1">Completion: {listing.completion_date}</p>
