@@ -110,14 +110,16 @@ export default function BookmarksList({ initialItems }: Props) {
         </div>
       )}
 
-      {TYPE_ORDER.filter((t) => grouped[t] && grouped[t].length > 0).map(
-        (type) => (
+      {TYPE_ORDER.filter((t) => (grouped[t]?.length ?? 0) > 0).map(
+        (type) => {
+          const rows = grouped[type] ?? [];
+          return (
           <section key={type} className="mb-6">
             <h2 className="text-[0.7rem] font-extrabold uppercase tracking-wider text-slate-500 mb-2">
               {TYPE_LABEL[type] || type}
             </h2>
             <ul className="divide-y divide-slate-200 rounded-xl border border-slate-200 bg-white">
-              {grouped[type].map((item) => {
+              {rows.map((item) => {
                 const when = new Date(item.created_at).toLocaleDateString(
                   "en-AU",
                   { day: "numeric", month: "short", year: "numeric" },
@@ -151,7 +153,8 @@ export default function BookmarksList({ initialItems }: Props) {
               })}
             </ul>
           </section>
-        ),
+          );
+        },
       )}
     </div>
   );
