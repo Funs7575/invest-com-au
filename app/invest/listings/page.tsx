@@ -13,8 +13,11 @@ import {
 } from "@/lib/compliance";
 import { getAllInvestCategories } from "@/lib/invest-categories";
 import type { InvestmentListing } from "@/lib/types";
+import { logger } from "@/lib/logger";
 import InvestListingsClient from "@/components/InvestListingsClient";
 import { listingUrl } from "@/lib/listing-url";
+
+const log = logger("invest-listings-all");
 
 export const revalidate = 3600;
 
@@ -34,16 +37,33 @@ export const metadata: Metadata = {
 };
 
 // ── Page ─────────────────────────────────────────────────────────────
+async function fetchAllActiveListings(): Promise<InvestmentListing[]> {
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("investment_listings")
+      .select("*")
+      .eq("status", "active")
+      .order("created_at", { ascending: false })
+      .limit(500);
+    if (error) {
+      log.warn("investment_listings all-listings fetch failed", {
+        error: error.message,
+        code: error.code,
+      });
+      return [];
+    }
+    return (data ?? []) as InvestmentListing[];
+  } catch (err) {
+    log.error("investment_listings all-listings fetch threw", {
+      err: err instanceof Error ? err.message : String(err),
+    });
+    return [];
+  }
+}
+
 export default async function InvestListingsPage() {
-  const supabase = await createClient();
-
-  const { data } = await supabase
-    .from("investment_listings")
-    .select("*")
-    .eq("status", "active")
-    .order("created_at", { ascending: false });
-
-  const listings: InvestmentListing[] = (data as InvestmentListing[]) ?? [];
+  const listings = await fetchAllActiveListings();
 
   // Category tabs from invest-categories config
   const allCategories = getAllInvestCategories();

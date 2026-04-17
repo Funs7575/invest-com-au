@@ -248,7 +248,7 @@ export default function ProfileClient() {
                 value={form.display_name}
                 onChange={(e) => setForm((p) => ({ ...p, display_name: e.target.value }))}
                 placeholder="How should we address you?"
-                className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+                className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
                 maxLength={100}
               />
             </div>
@@ -348,7 +348,7 @@ export default function ProfileClient() {
             value={form.preferred_broker}
             onChange={(e) => setForm((p) => ({ ...p, preferred_broker: e.target.value }))}
             placeholder="e.g. CommSec, Stake..."
-            className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
+            className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors"
             maxLength={100}
           />
         </div>

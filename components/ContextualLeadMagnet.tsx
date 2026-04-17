@@ -136,7 +136,7 @@ export default function ContextualLeadMagnet({ segment = "fee-audit" }: { segmen
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="w-full px-4 py-2.5 rounded-lg border border-slate-200 text-slate-900 text-sm placeholder:text-slate-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-1 focus:border-amber-500"
+            className="w-full px-4 py-2.5 rounded-lg border border-slate-200 text-slate-900 text-sm placeholder:text-slate-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-1 focus:border-amber-500"
           />
           <label className="flex items-start gap-2 cursor-pointer">
             <input

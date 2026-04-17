@@ -61,6 +61,22 @@ export default function NewsletterSignup({
   }
 
   if (variant === "compact") {
+    // Success takes over the whole form slot so the message is
+    // unmissable — just changing the button label ("✓ Signed up") was
+    // too subtle, especially on mobile where the button is small and
+    // users often focus elsewhere after tapping.
+    if (status === "done") {
+      return (
+        <div
+          role="status"
+          aria-live="polite"
+          className={`px-3 py-2 bg-emerald-50 border border-emerald-200 rounded text-xs text-emerald-800 ${className}`}
+        >
+          ✓ Thanks — check your inbox to confirm.
+        </div>
+      );
+    }
+
     return (
       <form
         onSubmit={submit}
@@ -78,10 +94,10 @@ export default function NewsletterSignup({
         />
         <button
           type="submit"
-          disabled={status === "sending" || status === "done"}
+          disabled={status === "sending"}
           className="px-4 py-2 rounded bg-slate-900 text-white text-sm font-semibold hover:bg-slate-800 disabled:opacity-50"
         >
-          {status === "done" ? "✓ Signed up" : status === "sending" ? "…" : "Subscribe"}
+          {status === "sending" ? "…" : "Subscribe"}
         </button>
         {error && (
           <p role="alert" className="text-xs text-red-700 ml-2">

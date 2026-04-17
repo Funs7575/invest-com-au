@@ -1,23 +1,19 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { createClient } from "@/lib/supabase/server";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
-import type { InvestmentListing } from "@/lib/types";
 import { getAllInvestCategories, getInvestCategoryBySlug } from "@/lib/invest-categories";
+import {
+  fetchListingsByVertical,
+  countListingsByVertical,
+} from "@/lib/investment-listings-query";
 import InvestListingsClient from "@/components/InvestListingsClient";
 import SubCategoryNav from "@/components/SubCategoryNav";
 
 export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
-  const supabase = await createClient();
-  const { count } = await supabase
-    .from("investment_listings")
-    .select("id", { count: "exact", head: true })
-    .eq("vertical", "franchise")
-    .eq("status", "active");
-
-  const countLabel = count && count > 0 ? `${count} ` : "";
+  const count = await countListingsByVertical("franchise");
+  const countLabel = count > 0 ? `${count} ` : "";
   return {
     title: `Franchise Opportunities Australia — ${countLabel}Available Territories (${CURRENT_YEAR})`,
     description:
@@ -31,15 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function FranchiseListingsPage() {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("investment_listings")
-    .select("*")
-    .eq("status", "active")
-    .order("listing_type", { ascending: false })
-    .order("created_at", { ascending: false });
-
-  const listings: InvestmentListing[] = (data ?? []) as InvestmentListing[];
+  const listings = await fetchListingsByVertical("franchise");
   const categoryTabs = getAllInvestCategories().map((c) => ({ slug: c.slug, label: c.label }));
   const category = getInvestCategoryBySlug("franchise");
 

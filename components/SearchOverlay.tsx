@@ -152,7 +152,7 @@ export default function SearchOverlay({ isOpen, onClose }: { isOpen: boolean; on
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search platforms, verticals, advisors, tools..."
-              className="flex-1 text-base text-slate-900 placeholder:text-slate-400 outline-none bg-transparent"
+              className="flex-1 text-base text-slate-900 placeholder:text-slate-500 outline-none bg-transparent"
               aria-label="Search"
             />
             <kbd className="hidden sm:flex items-center gap-1 px-2 py-1 text-[0.6rem] font-semibold text-slate-400 bg-slate-100 rounded-md border border-slate-200">

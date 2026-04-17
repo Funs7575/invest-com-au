@@ -111,11 +111,23 @@ export default function QuizQuestionScreen({
 
         {/* Progress bar */}
         <div className="mb-1.5 md:mb-2">
-          <div className="flex justify-between text-[0.62rem] md:text-xs text-slate-500 mb-1">
+          <div className="flex justify-between items-center text-[0.62rem] md:text-xs text-slate-500 mb-1">
             <span>Question {displayIndex + 1} of {displayTotal}</span>
-            <span className="font-semibold text-amber-600">
-              {Math.round(((displayIndex + 1) / displayTotal) * 100)}%
-            </span>
+            <div className="flex items-center gap-3">
+              <span className="font-semibold text-amber-600">
+                {Math.round(((displayIndex + 1) / displayTotal) * 100)}%
+              </span>
+              {/* Escape hatch — users who started the quiz but changed
+                  their mind previously had to use the browser back
+                  button. This lets them exit cleanly without feeling
+                  trapped in the flow. */}
+              <a
+                href="/"
+                className="text-slate-400 hover:text-slate-600 underline-offset-2 hover:underline"
+              >
+                Exit quiz
+              </a>
+            </div>
           </div>
           <div
             className="h-1.5 bg-slate-100 rounded-full overflow-hidden"

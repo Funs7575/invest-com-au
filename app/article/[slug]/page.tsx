@@ -301,9 +301,11 @@ export default async function ArticlePage({
               </p>
             )}
 
-            {/* Cover Image */}
+            {/* Cover Image — gradient background shows through if the
+                image itself 404s, rather than the broken-image icon
+                users previously saw on articles with dead cover URLs. */}
             {a.cover_image_url && (
-              <div className="mt-4 mb-2 rounded-xl overflow-hidden aspect-[2/1] md:aspect-[5/2] bg-slate-100 relative">
+              <div className="mt-4 mb-2 rounded-xl overflow-hidden aspect-[2/1] md:aspect-[5/2] bg-gradient-to-br from-amber-50 via-slate-50 to-emerald-50 relative">
                 <Image
                   src={a.cover_image_url}
                   alt={a.title}

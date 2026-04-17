@@ -38,7 +38,7 @@ export default function DTASearchTable({ countries, defaultRates, dtaDisclaimer 
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search your country (e.g. United States, Japan, UK…)"
-          className="w-full sm:max-w-md px-4 py-2.5 text-sm border border-slate-300 rounded-xl bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-400 transition"
+          className="w-full sm:max-w-md px-4 py-2.5 text-sm border border-slate-300 rounded-xl bg-white text-slate-900 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-400/50 focus:border-amber-400 transition"
           aria-label="Search countries in DTA table"
         />
         {query && (

@@ -55,7 +55,7 @@ export default function HomepageSearchBar() {
           onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           placeholder="Search platforms, advisors, fees, or features..."
           aria-label="Search platforms and advisors"
-          className="w-full h-12 sm:h-14 pl-12 pr-4 sm:pr-32 rounded-xl bg-white border-2 border-slate-200 shadow-sm text-sm sm:text-base text-slate-900 placeholder:text-slate-400 focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/30 transition-all duration-200"
+          className="w-full h-12 sm:h-14 pl-12 pr-4 sm:pr-32 rounded-xl bg-white border-2 border-slate-200 shadow-sm text-sm sm:text-base text-slate-900 placeholder:text-slate-500 focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/30 transition-all duration-200"
         />
         <button
           onClick={handleSearch}
