@@ -49,12 +49,12 @@ export default function FunnelChart({ title, description, stages, loading }: Fun
           <div className="space-y-2">
             {stages.map((stage, i) => {
               const widthPct = Math.max(8, (stage.value / maxValue) * 100);
-              const prevValue = i > 0 ? stages[i - 1].value : stage.value;
+              const prevValue = i > 0 ? (stages[i - 1]?.value ?? stage.value) : stage.value;
               const conversionRate = i > 0 && prevValue > 0
                 ? ((stage.value / prevValue) * 100).toFixed(1)
                 : null;
               const totalRate = ((stage.value / maxValue) * 100).toFixed(1);
-              const color = stage.color || DEFAULT_COLORS[i % DEFAULT_COLORS.length];
+              const color = stage.color || DEFAULT_COLORS[i % DEFAULT_COLORS.length] || "#64748b";
 
               return (
                 <div key={stage.label} className="group">

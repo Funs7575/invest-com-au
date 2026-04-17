@@ -303,7 +303,7 @@ export default function FunnelTab({ loading: parentLoading, funnelData }: Funnel
                 { label: "Reviews Submitted", value: funnelCounts.advisor_review_submitted },
               ].map((stage, i, arr) => {
                 const total = arr[0]?.value || 1;
-                const prev = i > 0 ? arr[i - 1].value : stage.value;
+                const prev = i > 0 ? (arr[i - 1]?.value ?? stage.value) : stage.value;
                 const stepConv = i > 0 && prev > 0 ? ((stage.value / prev) * 100).toFixed(1) : "---";
                 const overallConv = ((stage.value / total) * 100).toFixed(1);
                 return (
@@ -348,7 +348,7 @@ export default function FunnelTab({ loading: parentLoading, funnelData }: Funnel
                 { label: "Deals Claimed", value: funnelCounts.deal_claimed },
               ].map((stage, i, arr) => {
                 const total = arr[0]?.value || 1;
-                const prev = i > 0 ? arr[i - 1].value : stage.value;
+                const prev = i > 0 ? (arr[i - 1]?.value ?? stage.value) : stage.value;
                 const stepConv = i > 0 && prev > 0 ? ((stage.value / prev) * 100).toFixed(1) : "---";
                 const overallConv = ((stage.value / total) * 100).toFixed(1);
                 return (
