@@ -45,7 +45,13 @@ function formatCents(cents: number): string {
 }
 
 function getKeyMetric(listing: InvestmentListing): string | null {
-  const km = listing.key_metrics ?? {};
+  // Cast explicitly — with key_metrics now nullable (`?: Record | null`)
+  // the `?? {}` narrowing widens km to `Record<string, unknown> | {}`,
+  // and `{}` has no index signature so `km.annual_ebitda` wouldn't type-
+  // check. The empty-object branch is only reachable when key_metrics
+  // is null/undefined, in which case every downstream lookup returns
+  // undefined anyway — same runtime behaviour as before.
+  const km: Record<string, unknown> = listing.key_metrics ?? {};
   switch (listing.vertical) {
     case "business": {
       const ebitda = km.annual_ebitda as number | undefined;
