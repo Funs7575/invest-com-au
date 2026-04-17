@@ -538,7 +538,17 @@ export const VERIFICATION_CONFIGS: Record<ProfessionalType, VerificationConfig> 
   mining_lawyer: {
     type: "mining_lawyer",
     label: "Mining Lawyer",
-    primaryLicence: { name: "Admitted legal practitioner (state Supreme Court)", acronym: "LPC", url: "https://www.lawcouncil.asn.au" },
+    primaryLicence: {
+      code: "LPC",
+      name: "Legal Practising Certificate",
+      regulator: "State Law Society / Legal Services Commission",
+      regulatorShort: "Law Society",
+      verifyUrl: "https://www.lawcouncil.asn.au",
+      verifyLabel: "Verify on state Law Society register",
+      mandatory: true,
+      field: "registration_number",
+      description: "Required to practise law in Australia — issued by the state Law Society to admitted practitioners.",
+    },
     additionalLicences: [],
     qualifications: [
       "Admitted to practice in at least one Australian state or territory",
@@ -558,7 +568,17 @@ export const VERIFICATION_CONFIGS: Record<ProfessionalType, VerificationConfig> 
   mining_tax_advisor: {
     type: "mining_tax_advisor",
     label: "Mining Tax Advisor",
-    primaryLicence: { name: "Tax Practitioners Board — Tax Agent", acronym: "TPB", url: "https://www.tpb.gov.au/public-register" },
+    primaryLicence: {
+      code: "TPB",
+      name: "Registered Tax Agent",
+      regulator: "Tax Practitioners Board",
+      regulatorShort: "TPB",
+      verifyUrl: "https://www.tpb.gov.au/public-register",
+      verifyLabel: "Verify on TPB Public Register",
+      mandatory: true,
+      field: "registration_number",
+      description: "Required to provide tax agent services for a fee — verifies registration with the Tax Practitioners Board.",
+    },
     additionalLicences: [],
     qualifications: [
       "Registered tax agent with the Tax Practitioners Board (TPB)",
@@ -578,7 +598,17 @@ export const VERIFICATION_CONFIGS: Record<ProfessionalType, VerificationConfig> 
   migration_agent: {
     type: "migration_agent",
     label: "Migration Agent",
-    primaryLicence: { name: "Office of the Migration Agents Registration Authority", acronym: "MARA", url: "https://www.mara.gov.au/search-the-register-of-migration-agents" },
+    primaryLicence: {
+      code: "MARN",
+      name: "Migration Agents Registration Number",
+      regulator: "Office of the Migration Agents Registration Authority",
+      regulatorShort: "MARA",
+      verifyUrl: "https://www.mara.gov.au/search-the-register-of-migration-agents",
+      verifyLabel: "Verify on MARA Register",
+      mandatory: true,
+      field: "registration_number",
+      description: "Required by law to provide immigration assistance in Australia — all practising agents must hold a current MARN.",
+    },
     additionalLicences: [],
     qualifications: [
       "MARA-registered (Migration Agents Registration Number, MARN)",
@@ -597,7 +627,17 @@ export const VERIFICATION_CONFIGS: Record<ProfessionalType, VerificationConfig> 
   business_broker: {
     type: "business_broker",
     label: "Business Broker",
-    primaryLicence: { name: "State real estate / business agent licence", acronym: "RE Agent", url: "https://www.abba.asn.au" },
+    primaryLicence: {
+      code: "RE Agent",
+      name: "State Real Estate / Business Agent Licence",
+      regulator: "State Fair Trading / Consumer Affairs",
+      regulatorShort: "Fair Trading",
+      verifyUrl: "https://www.abba.asn.au",
+      verifyLabel: "Verify on state Fair Trading register",
+      mandatory: true,
+      field: "registration_number",
+      description: "Required to broker the sale of businesses in Australia — licensed by state consumer protection authorities.",
+    },
     additionalLicences: [],
     qualifications: [
       "Licensed as a business agent or real estate agent in the relevant state",
@@ -616,7 +656,17 @@ export const VERIFICATION_CONFIGS: Record<ProfessionalType, VerificationConfig> 
   commercial_lawyer: {
     type: "commercial_lawyer",
     label: "Commercial Lawyer",
-    primaryLicence: { name: "Admitted legal practitioner (state Supreme Court)", acronym: "LPC", url: "https://www.lawcouncil.asn.au" },
+    primaryLicence: {
+      code: "LPC",
+      name: "Legal Practising Certificate",
+      regulator: "State Law Society / Legal Services Commission",
+      regulatorShort: "Law Society",
+      verifyUrl: "https://www.lawcouncil.asn.au",
+      verifyLabel: "Verify on state Law Society register",
+      mandatory: true,
+      field: "registration_number",
+      description: "Required to practise law in Australia — issued by the state Law Society to admitted practitioners.",
+    },
     additionalLicences: [],
     qualifications: [
       "Admitted to practice in at least one Australian state or territory",
@@ -634,7 +684,17 @@ export const VERIFICATION_CONFIGS: Record<ProfessionalType, VerificationConfig> 
   rural_property_agent: {
     type: "rural_property_agent",
     label: "Rural Property Agent",
-    primaryLicence: { name: "State real estate agent licence", acronym: "RE Agent", url: "https://reia.asn.au" },
+    primaryLicence: {
+      code: "RE Agent",
+      name: "State Real Estate Agent Licence",
+      regulator: "State Fair Trading / Consumer Affairs",
+      regulatorShort: "Fair Trading",
+      verifyUrl: "https://reia.asn.au",
+      verifyLabel: "Verify on state Fair Trading register",
+      mandatory: true,
+      field: "registration_number",
+      description: "Required to sell or auction rural / agricultural real estate — issued by state consumer protection authorities.",
+    },
     additionalLicences: [],
     qualifications: [
       "Licensed real estate agent in the relevant state",
@@ -652,7 +712,17 @@ export const VERIFICATION_CONFIGS: Record<ProfessionalType, VerificationConfig> 
   commercial_property_agent: {
     type: "commercial_property_agent",
     label: "Commercial Property Agent",
-    primaryLicence: { name: "State real estate agent licence", acronym: "RE Agent", url: "https://reia.asn.au" },
+    primaryLicence: {
+      code: "RE Agent",
+      name: "State Real Estate Agent Licence",
+      regulator: "State Fair Trading / Consumer Affairs",
+      regulatorShort: "Fair Trading",
+      verifyUrl: "https://reia.asn.au",
+      verifyLabel: "Verify on state Fair Trading register",
+      mandatory: true,
+      field: "registration_number",
+      description: "Required to sell, lease or auction commercial real estate — issued by state consumer protection authorities.",
+    },
     additionalLicences: [],
     qualifications: [
       "Licensed real estate agent in the relevant state",
@@ -671,7 +741,17 @@ export const VERIFICATION_CONFIGS: Record<ProfessionalType, VerificationConfig> 
   energy_consultant: {
     type: "energy_consultant",
     label: "Energy Consultant",
-    primaryLicence: { name: "Engineers Australia / CEC Approved Consultant", acronym: "CEC", url: "https://www.cleanenergycouncil.org.au" },
+    primaryLicence: {
+      code: "CEC",
+      name: "Clean Energy Council Approved Consultant",
+      regulator: "Clean Energy Council",
+      regulatorShort: "CEC",
+      verifyUrl: "https://www.cleanenergycouncil.org.au",
+      verifyLabel: "Verify on CEC Approved Consultants register",
+      mandatory: false,
+      field: "registration_number",
+      description: "Recognised industry accreditation for renewable energy consultants — not statutorily required but an industry benchmark.",
+    },
     additionalLicences: [],
     qualifications: [
       "Relevant engineering degree or equivalent technical qualifications",
