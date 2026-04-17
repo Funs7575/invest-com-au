@@ -94,9 +94,9 @@ export default function FunnelChart({ title, description, stages, loading }: Fun
                         <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                         </svg>
-                        {stages[i + 1] && prevValue > 0 && (
+                        {stages[i + 1] !== undefined && prevValue > 0 && stage.value > 0 && (
                           <span className="text-red-400 font-medium">
-                            -{((1 - stages[i + 1].value / stage.value) * 100).toFixed(1)}% drop
+                            -{((1 - (stages[i + 1]?.value ?? 0) / stage.value) * 100).toFixed(1)}% drop
                           </span>
                         )}
                       </div>

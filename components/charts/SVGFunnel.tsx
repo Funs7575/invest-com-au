@@ -60,7 +60,7 @@ export default function SVGFunnel({
         const bottomHalfWidth = (bottomWidthRatio * funnelAreaWidth) / 2;
 
         const color =
-          stage.color || DEFAULT_FUNNEL_COLORS[i % DEFAULT_FUNNEL_COLORS.length];
+          stage.color || DEFAULT_FUNNEL_COLORS[i % DEFAULT_FUNNEL_COLORS.length] || "#64748b";
 
         // Trapezoid points
         const x1 = centerX - topHalfWidth; // top-left
