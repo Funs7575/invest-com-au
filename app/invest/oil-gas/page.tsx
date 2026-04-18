@@ -6,10 +6,12 @@ import {
   listSectorStocks,
   listSectorEtfs,
   listSectorNewsBriefs,
+  getLatestPriceSnapshots,
 } from "@/lib/commodities";
 import AsxTickerCard from "@/components/commodities/AsxTickerCard";
 import EtfComparisonCard from "@/components/commodities/EtfComparisonCard";
 import GeneralAdviceWarning from "@/components/commodities/GeneralAdviceWarning";
+import EnergyPriceWidget from "@/components/commodities/EnergyPriceWidget";
 import Icon from "@/components/Icon";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 
@@ -70,10 +72,11 @@ export default async function OilGasPage() {
   const sector = await getSector("oil-gas");
   if (!sector) notFound();
 
-  const [stocks, etfs, newsBriefs] = await Promise.all([
+  const [stocks, etfs, newsBriefs, priceSnapshots] = await Promise.all([
     listSectorStocks("oil-gas"),
     listSectorEtfs("oil-gas"),
     listSectorNewsBriefs("oil-gas"),
+    getLatestPriceSnapshots(["brent-crude", "wti-crude", "jkm-lng"]),
   ]);
 
   const breadcrumb = breadcrumbJsonLd([
@@ -90,6 +93,8 @@ export default async function OilGasPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }}
       />
+
+      <EnergyPriceWidget snapshots={priceSnapshots} />
 
       {/* Hero */}
       <section className="relative bg-white border-b border-slate-100 overflow-hidden py-8 md:py-12">
