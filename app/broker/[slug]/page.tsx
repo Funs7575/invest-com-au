@@ -21,6 +21,7 @@ import { scoreBrokerSimilarity } from "@/lib/internal-links";
 import QASection from "@/components/QASection";
 import AskQuestionForm from "@/components/AskQuestionForm";
 import ComplianceFooter from "@/components/ComplianceFooter";
+import ClaimListingButton from "@/components/claims/ClaimListingButton";
 
 export const revalidate = 3600; // ISR: revalidate every hour
 
@@ -334,6 +335,11 @@ async function BrokerQASection({ brokerSlug, brokerName, pageUrl }: { brokerSlug
         brokerName={brokerName}
         pageType="broker"
         pageSlug={brokerSlug}
+      />
+      <ClaimListingButton
+        claimType="broker"
+        targetSlug={brokerSlug}
+        targetName={brokerName}
       />
       <div className="container-custom pb-8">
         <ComplianceFooter />

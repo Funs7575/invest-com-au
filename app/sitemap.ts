@@ -174,6 +174,81 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   ];
 
+  // Dynamic /best-for/[slug] scenarios (from best_for_scenarios)
+  const { data: bestForScenarios } = supabase
+    ? await supabase
+        .from("best_for_scenarios")
+        .select("slug, updated_at")
+        .eq("status", "active")
+    : { data: null };
+  const bestForPages = [
+    { url: `${baseUrl}/best-for`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.85 },
+    ...(bestForScenarios || []).map((s: { slug: string; updated_at: string | null }) => ({
+      url: `${baseUrl}/best-for/${s.slug}`,
+      lastModified: s.updated_at ? new Date(s.updated_at) : new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.75,
+    })),
+  ];
+
+  // Dynamic commodity sector stocks + ETFs pages
+  const { data: commoditySectors } = supabase
+    ? await supabase
+        .from("commodity_sectors")
+        .select("slug")
+        .eq("status", "active")
+    : { data: null };
+  const commodityPages = (commoditySectors || []).flatMap(
+    (s: { slug: string }) => [
+      {
+        url: `${baseUrl}/invest/${s.slug}/stocks`,
+        lastModified: new Date(),
+        changeFrequency: "weekly" as const,
+        priority: 0.7,
+      },
+      {
+        url: `${baseUrl}/invest/${s.slug}/etfs`,
+        lastModified: new Date(),
+        changeFrequency: "weekly" as const,
+        priority: 0.7,
+      },
+    ],
+  );
+
+  // Individual stock detail pages
+  const { data: commodityStocks } = supabase
+    ? await supabase
+        .from("commodity_stocks")
+        .select("sector_slug, ticker")
+        .eq("status", "active")
+    : { data: null };
+  const stockDetailPages = (commodityStocks || []).map(
+    (s: { sector_slug: string; ticker: string }) => ({
+      url: `${baseUrl}/invest/${s.sector_slug}/stocks/${s.ticker.toLowerCase()}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
+    }),
+  );
+
+  // Broker transfer guides
+  const { data: transferGuides } = supabase
+    ? await supabase
+        .from("broker_transfer_guides")
+        .select("broker_slug, updated_at")
+    : { data: null };
+  const transferGuidePages = [
+    { url: `${baseUrl}/how-to/transfer-from`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.8 },
+    ...(transferGuides || []).map(
+      (g: { broker_slug: string; updated_at: string | null }) => ({
+        url: `${baseUrl}/how-to/transfer-from/${g.broker_slug}`,
+        lastModified: g.updated_at ? new Date(g.updated_at) : new Date(),
+        changeFrequency: "monthly" as const,
+        priority: 0.7,
+      }),
+    ),
+  ];
+
   // Dynamic team member pages (authors + reviewers)
   const { data: teamMembers } = supabase
     ? await supabase.from("team_members").select("slug, role, updated_at").eq("status", "active")
@@ -652,5 +727,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  return [...staticPages, ...bestPages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorCityPages, ...advisorLocationPages, ...investingCityPages, ...glossaryPages, ...firmPages, ...propertyListingPages, ...suburbGuidePages, ...propertyHubPages, ...newHubPages, newsletterArchivePage, ...newsletterEditionPages, ...investStaticPages, ...investCategoryPages, ...investSubcategoryPages, ...investListingPages, ...stockbrokerFirmPages];
+  return [...staticPages, ...bestPages, ...bestForPages, ...commodityPages, ...stockDetailPages, ...transferGuidePages, ...costPages, ...brokerPages, ...articlePages, ...scenarioPages, ...authorPages, ...reviewerPages, ...alertPages, ...reportPages, ...versusPages, ...howToPages, ...expertArticlePages, ...advisorPages, ...advisorTypePages, ...advisorStatePages, ...advisorCityPages, ...advisorLocationPages, ...investingCityPages, ...glossaryPages, ...firmPages, ...propertyListingPages, ...suburbGuidePages, ...propertyHubPages, ...newHubPages, newsletterArchivePage, ...newsletterEditionPages, ...investStaticPages, ...investCategoryPages, ...investSubcategoryPages, ...investListingPages, ...stockbrokerFirmPages];
 }

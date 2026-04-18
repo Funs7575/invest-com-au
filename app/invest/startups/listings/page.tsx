@@ -50,7 +50,13 @@ export default async function StartupOpportunitiesPage() {
         </div>
       )}
       <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading listings...</div>}>
-        <InvestListingsClient listings={listings} categories={categoryTabs} initialCategory="startups" />
+        <InvestListingsClient
+          listings={listings}
+          categories={categoryTabs}
+          lockedCategory="startups"
+          pageTitle="Startups & Tech Investment Listings"
+          pageSubtitle="Browse Australian startup investment opportunities — VC, angel rounds, SAFE notes and equity crowdfunding."
+        />
       </Suspense>
     </>
   );

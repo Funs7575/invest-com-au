@@ -12,6 +12,23 @@ export interface InvestListingsClientProps {
   categories: { slug: string; label: string }[];
   initialCategory?: string;
   initialSubcategory?: string;
+  /**
+   * When set, the filter is locked to this category and the
+   * global category tab bar is hidden. Used on every
+   * /invest/[vertical]/listings page to prevent a ?category=
+   * URL param bleeding in from other pages and collapsing the
+   * result set to zero.
+   */
+  lockedCategory?: string;
+  /**
+   * Optional page title rendered above filters. Required on
+   * vertical listings pages per Phase 1D spec.
+   */
+  pageTitle?: string;
+  /**
+   * Optional page subtitle / lead paragraph.
+   */
+  pageSubtitle?: string;
 }
 
 // VERTICAL_TO_CATEGORY, FUND_SUB_TO_CATEGORY, and categoryForListing
@@ -61,13 +78,21 @@ export default function InvestListingsClient({
   categories,
   initialCategory,
   initialSubcategory,
+  lockedCategory,
+  pageTitle,
+  pageSubtitle,
 }: InvestListingsClientProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  // Read filter state from URL search params (fall back to props)
-  const activeCategory = searchParams.get("category") ?? initialCategory ?? "all";
+  // When a vertical listings page passes lockedCategory, that
+  // value wins unconditionally — a ?category= URL param from
+  // another page must not bleed in. Otherwise fall back to the
+  // URL search param, then the initial prop, then 'all'.
+  const activeCategory = lockedCategory
+    ? lockedCategory
+    : (searchParams.get("category") ?? initialCategory ?? "all");
   const activeSubcategory = searchParams.get("sub") ?? initialSubcategory ?? "";
   const activeState = searchParams.get("state") ?? "";
   const activePriceIdx = Number(searchParams.get("price") ?? "0");
@@ -151,32 +176,52 @@ export default function InvestListingsClient({
 
   return (
     <div>
-      {/* ── Sticky category tab bar ── */}
-      <div className="sticky top-0 z-20 bg-white/95 backdrop-blur border-b border-slate-200">
-        <div className="container-custom overflow-x-auto scrollbar-hide">
-          <div className="flex gap-1.5 py-2.5 min-w-max">
-            {tabs.map((tab) => {
-              const isActive = tab.slug === activeCategory;
-              const colors = CATEGORY_COLORS[tab.slug] ?? CATEGORY_COLORS.all;
-              return (
-                <button
-                  key={tab.slug}
-                  onClick={() =>
-                    setParam({ category: tab.slug === "all" ? "" : tab.slug, sub: "" })
-                  }
-                  className={`whitespace-nowrap rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
-                    isActive
-                      ? `${colors.bg} ${colors.text} ring-1 ${colors.ring}`
-                      : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              );
-            })}
+      {pageTitle && (
+        <div className="bg-white border-b border-slate-100 py-6 md:py-8">
+          <div className="container-custom">
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-slate-900 leading-tight">
+              {pageTitle}
+            </h1>
+            {pageSubtitle && (
+              <p className="text-sm md:text-base text-slate-600 leading-relaxed mt-2 max-w-3xl">
+                {pageSubtitle}
+              </p>
+            )}
           </div>
         </div>
-      </div>
+      )}
+
+      {/* ── Sticky category tab bar — ONLY on the global /invest/listings
+          marketplace. Hidden on every /invest/[vertical]/listings page
+          to prevent a ?category= URL param from the wrong vertical
+          filtering the result set down to zero. ── */}
+      {!lockedCategory && (
+        <div className="sticky top-0 z-20 bg-white/95 backdrop-blur border-b border-slate-200">
+          <div className="container-custom overflow-x-auto scrollbar-hide">
+            <div className="flex gap-1.5 py-2.5 min-w-max">
+              {tabs.map((tab) => {
+                const isActive = tab.slug === activeCategory;
+                const colors = CATEGORY_COLORS[tab.slug] ?? CATEGORY_COLORS.all;
+                return (
+                  <button
+                    key={tab.slug}
+                    onClick={() =>
+                      setParam({ category: tab.slug === "all" ? "" : tab.slug, sub: "" })
+                    }
+                    className={`whitespace-nowrap rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all ${
+                      isActive
+                        ? `${colors.bg} ${colors.text} ring-1 ${colors.ring}`
+                        : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="container-custom py-5 md:py-8">
         {/* ── Secondary filters row ── */}

@@ -50,7 +50,13 @@ export default async function CommercialListingsPage() {
         </div>
       )}
       <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading listings...</div>}>
-        <InvestListingsClient listings={listings} categories={categoryTabs} initialCategory="commercial-property" />
+        <InvestListingsClient
+          listings={listings}
+          categories={categoryTabs}
+          lockedCategory="commercial-property"
+          pageTitle="Commercial Property Investment Listings"
+          pageSubtitle="Browse Australian commercial property investment opportunities — office, industrial, retail, healthcare and childcare."
+        />
       </Suspense>
     </>
   );
