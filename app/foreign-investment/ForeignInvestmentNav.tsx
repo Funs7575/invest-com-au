@@ -4,6 +4,7 @@ const NAV_ITEMS = [
   { label: "Hub", href: "/foreign-investment", short: "Hub" },
   { label: "Guides", href: "/foreign-investment/guides", short: "Guides" },
   { label: "Shares", href: "/foreign-investment/shares", short: "Shares" },
+  { label: "Energy", href: "/foreign-investment/energy", short: "Energy" },
   { label: "Property", href: "/foreign-investment/property", short: "Property" },
   { label: "Tax Guide", href: "/foreign-investment/tax", short: "Tax" },
   { label: "Super & DASP", href: "/foreign-investment/super", short: "Super" },

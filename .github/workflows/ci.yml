@@ -216,3 +216,99 @@ jobs:
           configPath: ./.lighthouserc.json
           uploadArtifacts: true
           temporaryPublicStorage: true
+
+  preview-smoke:
+    name: Preview smoke test (critical URLs)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    if: github.event_name == 'pull_request'
+
+    # Why this exists: our CI up to this point compiles and tests
+    # against placeholder credentials, so a handful of pages that
+    # look fine locally still return 4xx/5xx against real Supabase.
+    # This job waits for Vercel's preview deploy (which runs on the
+    # real project env), then curls a curated set of high-value
+    # paths and fails the PR if any of them return >=400. The list
+    # is deliberately small; grow it as new hubs come online so a
+    # missed seed row or renamed route trips CI, not the user.
+    steps:
+      - name: Wait for Vercel preview + smoke test
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const CRITICAL_PATHS = [
+              '/',
+              '/invest',
+              '/invest/oil-gas',
+              '/invest/gold',
+              '/invest/mining',
+              '/invest/commodities',
+              '/articles',
+              '/brokers',
+              '/advisors',
+              '/about',
+              '/foreign-investment',
+              '/privacy',
+              '/glossary',
+              '/how-we-earn',
+            ];
+            const sha = context.payload.pull_request.head.sha;
+
+            // Poll GitHub deployments for up to 6 minutes waiting
+            // for Vercel's preview to land. We filter by environment
+            // containing "Preview" because Vercel's env name varies
+            // ("Preview" vs "Preview – invest-com-au").
+            const deadline = Date.now() + 6 * 60 * 1000;
+            let previewUrl = null;
+            while (Date.now() < deadline && !previewUrl) {
+              const deploys = await github.rest.repos.listDeployments({
+                ...context.repo,
+                sha,
+                per_page: 30,
+              });
+              for (const dep of deploys.data) {
+                if (!(dep.environment || '').toLowerCase().includes('preview')) continue;
+                const statuses = await github.rest.repos.listDeploymentStatuses({
+                  ...context.repo,
+                  deployment_id: dep.id,
+                  per_page: 20,
+                });
+                const success = statuses.data.find(
+                  (s) => s.state === 'success' && s.target_url,
+                );
+                if (success) {
+                  previewUrl = success.target_url.replace(/\/$/, '');
+                  break;
+                }
+              }
+              if (!previewUrl) await new Promise((r) => setTimeout(r, 15000));
+            }
+            if (!previewUrl) {
+              core.setFailed('No Vercel preview URL found within 6 min.');
+              return;
+            }
+            core.info(`Preview URL: ${previewUrl}`);
+
+            const results = [];
+            for (const p of CRITICAL_PATHS) {
+              const url = `${previewUrl}${p}`;
+              const t0 = Date.now();
+              let status = 0;
+              try {
+                const res = await fetch(url, { redirect: 'manual' });
+                status = res.status;
+              } catch (e) {
+                status = 0;
+              }
+              const ms = Date.now() - t0;
+              results.push({ path: p, status, ms });
+              core.info(`  ${status >= 400 || status === 0 ? 'FAIL' : ' OK '}  ${status}  ${ms}ms  ${p}`);
+            }
+
+            const failures = results.filter((r) => r.status === 0 || r.status >= 400);
+            if (failures.length) {
+              const lines = failures.map((f) => `- ${f.path} → ${f.status || 'network error'}`).join('\n');
+              core.setFailed(`${failures.length} critical path(s) failed:\n${lines}`);
+            } else {
+              core.info(`All ${results.length} critical paths returned <400.`);
+            }

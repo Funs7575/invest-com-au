@@ -109,6 +109,8 @@ export default function Footer() {
               <ul className="space-y-1.5 md:space-y-2 text-xs md:text-sm">
                 <li><Link href="/invest" className="hover:text-white transition-colors inline-block py-0.5">All Verticals</Link></li>
                 <li><Link href="/invest/mining" className="hover:text-white transition-colors inline-block py-0.5">Mining & Resources</Link></li>
+                <li><Link href="/invest/oil-gas" className="hover:text-white transition-colors inline-block py-0.5">Oil &amp; Gas</Link></li>
+                <li><Link href="/invest/lithium" className="hover:text-white transition-colors inline-block py-0.5">Lithium</Link></li>
                 <li><Link href="/invest/buy-business" className="hover:text-white transition-colors inline-block py-0.5">Buy a Business</Link></li>
                 <li><Link href="/invest/farmland" className="hover:text-white transition-colors inline-block py-0.5">Farmland</Link></li>
                 <li><Link href="/invest/commercial-property" className="hover:text-white transition-colors inline-block py-0.5">Commercial Property</Link></li>

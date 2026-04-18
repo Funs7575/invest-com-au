@@ -767,6 +767,125 @@ export const VERIFICATION_CONFIGS: Record<ProfessionalType, VerificationConfig> 
     cpd: "Ongoing CPD as per Engineers Australia / Clean Energy Council requirements",
     disclosure: "Energy consultants are not a regulated profession in Australia. Verify qualifications via Engineers Australia membership or Clean Energy Council accreditation before engaging.",
   },
+
+  // ─── Oil-gas expansion (20260429) ─────────────────────────────
+  // Specialist financial-services and legal roles focused on the
+  // Australian oil, gas, LNG and petroleum royalty ecosystem. Each
+  // role is anchored on an existing Australian regulator (ASIC,
+  // Law Society, TPB) rather than a bespoke register so the
+  // verification flow is consistent with the rest of the directory.
+
+  energy_financial_planner: {
+    type: "energy_financial_planner",
+    label: "Energy Financial Planner",
+    primaryLicence: AFSL,
+    additionalLicences: [ASIC_FAR],
+    qualifications: [
+      "Listed on the ASIC Financial Advisers Register with a current authorisation",
+      "CFP or Graduate Diploma of Financial Planning",
+      "Demonstrated client experience with concentrated ASX energy holdings, LNG project personnel, or SMSF energy infrastructure",
+    ],
+    associations: [
+      { name: "Financial Advice Association of Australia", acronym: "FAAA", url: "https://faaa.au" },
+      { name: "CFA Society Australia", acronym: "CFA", url: "https://www.cfa.com.au" },
+    ],
+    insurance: "Professional Indemnity Insurance — required under AFSL conditions",
+    edr: "Australian Financial Complaints Authority (AFCA) membership required",
+    cpd: "40 CPD hours per year (ASIC / FAAA CPD policy)",
+    disclosure: "Energy financial planners hold a standard AFSL authorisation — there is no separate 'energy' licence in Australia. Always verify the adviser's authorisation on the ASIC Financial Advisers Register before engaging and confirm whether advice is fee-for-service or percentage-of-AUM.",
+  },
+
+  resources_fund_manager: {
+    type: "resources_fund_manager",
+    label: "Resources Fund Manager",
+    primaryLicence: {
+      code: "AFSL",
+      name: "Australian Financial Services Licence — Managed Investment Scheme / Custody",
+      regulator: "Australian Securities and Investments Commission",
+      regulatorShort: "ASIC",
+      verifyUrl: "https://asic.gov.au/online-services/search-asics-registers/",
+      verifyLabel: "Verify AFSL on ASIC Register",
+      mandatory: true,
+      field: "afsl_number",
+      description: "Required to operate a managed investment scheme or provide advice on financial products to wholesale or retail investors — issued by ASIC.",
+    },
+    additionalLicences: [],
+    qualifications: [
+      "AFSL authorisation covering managed investment schemes or wholesale client dealing",
+      "PM / analyst team with CFA, CA/CPA, or equivalent senior-industry experience",
+      "Published 3 and 5-year track record against a relevant resources or energy benchmark",
+    ],
+    associations: [
+      { name: "Financial Services Council", acronym: "FSC", url: "https://fsc.org.au" },
+      { name: "CFA Society Australia", acronym: "CFA", url: "https://www.cfa.com.au" },
+      { name: "Alternative Investment Management Association (Aus)", acronym: "AIMA", url: "https://www.aima.org" },
+    ],
+    insurance: "Professional Indemnity + Directors & Officers — required under AFSL conditions",
+    edr: "Australian Financial Complaints Authority (AFCA) — retail funds only",
+    cpd: "Ongoing fund-manager training as required under RG 104 / RG 133",
+    disclosure: "Resources fund managers must operate under a valid AFSL. Verify the fund's PDS (retail) or Information Memorandum (wholesale), and confirm the AFSL covers the specific activities being offered. Past performance is not an indicator of future returns.",
+  },
+
+  foreign_investment_lawyer: {
+    type: "foreign_investment_lawyer",
+    label: "Foreign Investment Lawyer",
+    primaryLicence: {
+      code: "LPC",
+      name: "Legal Practising Certificate",
+      regulator: "State Law Society / Legal Services Commission",
+      regulatorShort: "Law Society",
+      verifyUrl: "https://www.lawcouncil.asn.au",
+      verifyLabel: "Verify on state Law Society register",
+      mandatory: true,
+      field: "registration_number",
+      description: "Required to practise law in Australia — issued by the state Law Society to admitted practitioners.",
+    },
+    additionalLicences: [],
+    qualifications: [
+      "Admitted to practice in at least one Australian state or territory",
+      "Practising certificate current with state Law Society",
+      "Substantive FIRB application and Security of Critical Infrastructure Act experience, particularly in energy / infrastructure sectors",
+    ],
+    associations: [
+      { name: "Law Council of Australia — Business Law Section", acronym: "LCA", url: "https://www.lawcouncil.asn.au" },
+      { name: "Australian Mining & Petroleum Law Association", acronym: "AMPLA", url: "https://www.ampla.org" },
+    ],
+    insurance: "Professional Indemnity Insurance — mandatory under state legal profession acts",
+    edr: "Complaints handled by the relevant state Legal Services Commissioner",
+    cpd: "10 CPD units per year as required by state Law Society",
+    disclosure: "Foreign investment lawyers must hold a current practising certificate in their admitted jurisdiction. Since the 2025 national-security amendments, many energy and infrastructure assets now fall inside the 'critical infrastructure' regime — always confirm the lawyer's recent practice in sensitive-sector FIRB matters before engaging.",
+  },
+
+  petroleum_royalties_advisor: {
+    type: "petroleum_royalties_advisor",
+    label: "Petroleum Royalties Advisor",
+    primaryLicence: {
+      code: "TPB",
+      name: "Registered Tax Agent",
+      regulator: "Tax Practitioners Board",
+      regulatorShort: "TPB",
+      verifyUrl: "https://www.tpb.gov.au/public-register",
+      verifyLabel: "Verify on TPB Public Register",
+      mandatory: true,
+      field: "registration_number",
+      description: "Required to provide tax agent services for a fee — verifies registration with the Tax Practitioners Board. Royalty valuation and restructuring advice on petroleum assets is tax-agent work.",
+    },
+    additionalLicences: [],
+    qualifications: [
+      "Registered tax agent with the Tax Practitioners Board (TPB)",
+      "Chartered Accountant (CA) or CPA with substantive PRRT, state royalty, and upstream tax experience",
+      "Track record of published or signed royalty valuations and royalty-structure advice",
+    ],
+    associations: [
+      { name: "Chartered Accountants Australia & New Zealand", acronym: "CA ANZ", url: "https://www.charteredaccountantsanz.com" },
+      { name: "CPA Australia", acronym: "CPA", url: "https://www.cpaaustralia.com.au" },
+      { name: "Australian Petroleum Production & Exploration Association", acronym: "APPEA", url: "https://www.appea.com.au" },
+    ],
+    insurance: "Professional Indemnity Insurance — required under TPB registration conditions",
+    edr: "Complaints escalate to the Tax Practitioners Board",
+    cpd: "120 hours over 3 years as per TPB requirements",
+    disclosure: "Petroleum royalty advice sits at the intersection of state royalty legislation, federal PRRT, and general tax. Advisors must be registered with the TPB — verify their registration number before engaging. Fees attract GST.",
+  },
 };
 
 // ═══════════════════════════════════════════════════════════════════

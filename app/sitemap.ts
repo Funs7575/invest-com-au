@@ -32,6 +32,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/invest/commodities", "/invest/alternatives", "/invest/infrastructure",
     "/invest/hybrid-securities", "/invest/crypto-staking", "/invest/smsf",
     "/invest/private-equity", "/invest/bonds", "/invest/gold", "/invest/ipos",
+    "/invest/oil-gas", "/invest/lithium",
     "/invest/listings",
     "/invest/buy-business/listings", "/invest/mining/listings",
     "/invest/farmland/listings", "/invest/commercial-property/listings",
@@ -80,7 +81,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Foreign investment hub
     "/foreign-investment",
     "/foreign-investment/property", "/foreign-investment/tax", "/foreign-investment/super",
-    "/foreign-investment/shares", "/foreign-investment/savings", "/foreign-investment/cfd",
+    "/foreign-investment/shares", "/foreign-investment/energy",
+    "/foreign-investment/savings", "/foreign-investment/cfd",
     "/foreign-investment/send-money-australia",
     "/foreign-investment/hong-kong", "/foreign-investment/china",
     "/foreign-investment/singapore", "/foreign-investment/united-kingdom",

@@ -968,7 +968,12 @@ export type ProfessionalType =
   | 'commercial_lawyer'
   | 'rural_property_agent'
   | 'commercial_property_agent'
-  | 'energy_consultant';
+  | 'energy_consultant'
+  // New in 20260429 — oil-gas expansion.
+  | 'energy_financial_planner'
+  | 'resources_fund_manager'
+  | 'foreign_investment_lawyer'
+  | 'petroleum_royalties_advisor';
 
 export interface Professional {
   id: number;
@@ -1134,6 +1139,10 @@ export const PROFESSIONAL_TYPE_LABELS: Record<ProfessionalType, string> = {
   rural_property_agent: "Rural Property Agent",
   commercial_property_agent: "Commercial Property Agent",
   energy_consultant: "Energy Consultant",
+  energy_financial_planner: "Energy Financial Planner",
+  resources_fund_manager: "Resources Fund Manager",
+  foreign_investment_lawyer: "Foreign Investment Lawyer",
+  petroleum_royalties_advisor: "Petroleum Royalties Advisor",
 };
 
 export const PROFESSIONAL_TYPE_ICONS: Record<ProfessionalType, string> = {
@@ -1160,6 +1169,10 @@ export const PROFESSIONAL_TYPE_ICONS: Record<ProfessionalType, string> = {
   rural_property_agent: "wheat",
   commercial_property_agent: "building-2",
   energy_consultant: "zap",
+  energy_financial_planner: "fuel",
+  resources_fund_manager: "bar-chart-2",
+  foreign_investment_lawyer: "globe",
+  petroleum_royalties_advisor: "banknote",
 };
 
 export const AU_STATES = ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT"] as const;
