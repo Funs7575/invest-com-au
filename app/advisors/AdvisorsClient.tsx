@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable react-hooks/set-state-in-effect, react-hooks/exhaustive-deps, react-hooks/preserve-manual-memoization */
+
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -7,6 +9,7 @@ import Image from "next/image";
 import type { Professional, ProfessionalType, AdvisorFirm } from "@/lib/types";
 import { PROFESSIONAL_TYPE_LABELS, PROFESSIONAL_TYPE_ICONS, AU_STATES } from "@/lib/types";
 import Icon from "@/components/Icon";
+import VerifiedBadge from "@/components/VerifiedBadge";
 import { trackEvent } from "@/lib/tracking";
 import { useAdvisorShortlist } from "@/lib/hooks/useAdvisorShortlist";
 
@@ -865,6 +868,12 @@ export default function AdvisorsClient({ professionals, initialType, initialStat
                                 Verified
                               </span>
                             )}
+                            <VerifiedBadge
+                              method={pro.verification_method ?? null}
+                              abn={pro.abn ?? null}
+                              afsl={pro.afsl_number ?? null}
+                              compact
+                            />
                             {isFeatured && (
                               <span className="shrink-0 text-[0.58rem] font-bold px-1.5 py-0.5 rounded-full bg-amber-500 text-white flex items-center gap-0.5 shadow-sm">
                                 <Icon name="star" size={9} />

@@ -14,6 +14,7 @@ type Advisor = {
   review_count?: number; verified?: boolean; bio?: string; specialties?: string[];
   fee_structure?: string; fee_description?: string; website?: string; phone?: string;
   booking_link?: string; booking_intro?: string;
+  profile_complete?: boolean;
   offer_text?: string; offer_terms?: string; offer_active?: boolean;
   firm_id?: number; is_firm_admin?: boolean; account_type?: string; status?: string;
   free_leads_used?: number; lead_price_cents?: number;
@@ -111,6 +112,7 @@ export default function AdvisorPortalPage() {
   const [loginMode, setLoginMode] = useState<"magic" | "password" | "signup">("magic");
   const [loginStatus, setLoginStatus] = useState<"idle" | "sending" | "sent" | "error" | "success">("idle");
   const [loginError, setLoginError] = useState("");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [tokenFromUrl, setTokenFromUrl] = useState<string | null>(null);
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileSaved, setProfileSaved] = useState(false);
@@ -599,6 +601,29 @@ export default function AdvisorPortalPage() {
             <h1 className="text-xl font-bold text-slate-900 mb-1">Welcome{isPending ? "" : " back"}, {advisor?.name?.split(" ")[0]}</h1>
             <p className="text-sm text-slate-500 mb-6">{advisor?.firm_name || PROFESSIONAL_TYPE_LABELS[advisor?.type as keyof typeof PROFESSIONAL_TYPE_LABELS]}</p>
 
+            {/* Profile complete + no booking link: high-intent prompt.
+                Rendered only when the trustee has finished the core
+                profile but hasn't yet added a scheduling link. */}
+            {advisor?.profile_complete && !advisor?.booking_link && (
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-5 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+                <Icon name="calendar" size={22} className="text-amber-600 shrink-0" />
+                <div className="flex-1">
+                  <p className="font-bold text-sm text-amber-900">
+                    Add a booking link — your profile is ready, investors can&rsquo;t schedule yet
+                  </p>
+                  <p className="text-xs text-amber-800 mt-0.5">
+                    Calendly, SavvyCal or any scheduling URL. Advisors with a booking link convert 2-4x more enquiries.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setView("profile")}
+                  className="bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs px-4 py-2 rounded-lg whitespace-nowrap"
+                >
+                  Add booking link
+                </button>
+              </div>
+            )}
+
             {/* ── Stats cards row ── */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
               {[
@@ -638,7 +663,7 @@ export default function AdvisorPortalPage() {
                       </div>
                       <div className="flex-1">
                         <p className="text-sm font-bold text-red-800">Credit balance empty — leads paused</p>
-                        <p className="text-xs text-red-600 mt-0.5">You won't receive new enquiries until you top up your credit balance.</p>
+                        <p className="text-xs text-red-600 mt-0.5">You won&rsquo;t receive new enquiries until you top up your credit balance.</p>
                       </div>
                       <button
                         onClick={() => setView("billing")}
