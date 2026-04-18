@@ -50,7 +50,13 @@ export default async function EnergyProjectsPage() {
         </div>
       )}
       <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading listings...</div>}>
-        <InvestListingsClient listings={listings} categories={categoryTabs} initialCategory="renewable-energy" />
+        <InvestListingsClient
+          listings={listings}
+          categories={categoryTabs}
+          lockedCategory="renewable-energy"
+          pageTitle="Renewable Energy Investment Listings"
+          pageSubtitle="Browse Australian renewable energy investment opportunities — solar, wind, battery storage and grid-scale projects."
+        />
       </Suspense>
     </>
   );

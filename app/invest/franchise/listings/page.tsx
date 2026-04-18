@@ -50,7 +50,13 @@ export default async function FranchiseListingsPage() {
         </div>
       )}
       <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading listings...</div>}>
-        <InvestListingsClient listings={listings} categories={categoryTabs} initialCategory="franchise" />
+        <InvestListingsClient
+          listings={listings}
+          categories={categoryTabs}
+          lockedCategory="franchise"
+          pageTitle="Franchise Investment Listings"
+          pageSubtitle="Browse Australian franchise opportunities — food, fitness, automotive and service businesses with proven models."
+        />
       </Suspense>
     </>
   );

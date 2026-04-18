@@ -61,7 +61,13 @@ export default async function InfrastructureListingsPage() {
         </div>
       )}
       <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading listings...</div>}>
-        <InvestListingsClient listings={listings} categories={categoryTabs} initialCategory="infrastructure" />
+        <InvestListingsClient
+          listings={listings}
+          categories={categoryTabs}
+          lockedCategory="infrastructure"
+          pageTitle="Infrastructure Investment Listings"
+          pageSubtitle="Browse Australian infrastructure investment opportunities — toll roads, airports, utilities and public-private partnerships."
+        />
       </Suspense>
     </>
   );
