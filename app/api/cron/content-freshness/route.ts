@@ -74,7 +74,16 @@ export async function GET(req: NextRequest) {
       status: "planned",
       notes: `Auto-queued by content-freshness cron. Last updated: ${a.updated_at}`,
     });
-    if (!insertErr) queued++;
+    if (!insertErr) {
+      queued++;
+      // Audit-trail log — separate from the active work queue above.
+      // Unresolved rows here indicate freshness work not yet completed.
+      await supabase.from("content_freshness_log").insert({
+        article_id: a.id,
+        reason: `Published article older than ${STALE_DAYS} days (last updated ${a.updated_at ?? "unknown"})`,
+        resolved: false,
+      });
+    }
   }
 
   // Fire-and-forget digest email
