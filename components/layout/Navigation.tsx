@@ -79,12 +79,18 @@ const advisorsMenu = {
 
 const opportunitiesMenu = {
   sectors: [
-    { label: "Mining & Resources", href: "/invest/mining", desc: "Iron ore, lithium, gold & critical minerals" },
-    { label: "Buy a Business", href: "/invest/buy-business", desc: "SME acquisitions & franchise pathways" },
-    { label: "Farmland & Agriculture", href: "/invest/farmland", desc: "Livestock, cropping, water rights" },
+    { label: "Investment Funds", href: "/invest/funds", desc: "Managed, syndicated, infrastructure, wholesale" },
+    { label: "Mining & Resources", href: "/invest/mining", desc: "Iron ore, copper & critical minerals" },
+    { label: "Oil & Gas", href: "/invest/oil-gas", desc: "ASX majors, LNG, refineries" },
+    { label: "Uranium", href: "/invest/uranium", desc: "Paladin, Boss Energy, ATOM ETF" },
+    { label: "Lithium", href: "/invest/lithium", desc: "Pilbara producers & processing" },
+    { label: "Hydrogen", href: "/invest/hydrogen", desc: "Green H2, fuel cells & HGEN ETF" },
+    { label: "Gold & Precious Metals", href: "/invest/gold", desc: "Perth Mint, ETFs & ASX miners" },
+    { label: "Renewable Energy", href: "/invest/renewable-energy", desc: "Solar, wind, battery" },
+    { label: "Buy a Business", href: "/invest/buy-business", desc: "SME acquisitions" },
+    { label: "Farmland & Agriculture", href: "/invest/farmland", desc: "Livestock, cropping, water" },
     { label: "Commercial Property", href: "/invest/commercial-property", desc: "Office, industrial, hotels" },
-    { label: "Renewable Energy", href: "/invest/renewable-energy", desc: "Solar, wind, hydrogen & battery" },
-    { label: "Startups & Tech", href: "/invest/startups", desc: "VC, angel investing & crowdfunding" },
+    { label: "Startups & Tech", href: "/invest/startups", desc: "VC, angel, crowdfunding" },
     { label: "Infrastructure", href: "/invest/infrastructure", desc: "Toll roads, airports, utilities" },
   ],
   markets: [
@@ -276,8 +282,16 @@ const mobileSections = [
     title: "Invest — Sectors",
     items: [
       { name: "All Investment Verticals", href: "/invest" },
+      { name: "Investment Funds", href: "/invest/funds" },
+      { name: "SMSF Hub", href: "/smsf" },
+      { name: "Research Reports", href: "/research" },
       { name: "Investment Marketplace", href: "/invest/listings" },
       { name: "Mining & Resources", href: "/invest/mining" },
+      { name: "Oil & Gas", href: "/invest/oil-gas" },
+      { name: "Uranium", href: "/invest/uranium" },
+      { name: "Lithium", href: "/invest/lithium" },
+      { name: "Hydrogen", href: "/invest/hydrogen" },
+      { name: "Gold & Precious Metals", href: "/invest/gold" },
       { name: "Buy a Business", href: "/invest/buy-business" },
       { name: "Farmland & Agriculture", href: "/invest/farmland" },
       { name: "Commercial Property", href: "/invest/commercial-property" },
@@ -367,6 +381,7 @@ export function Navigation() {
     user ? mobileAccountSectionLoggedIn : mobileAccountSectionLoggedOut,
   ];
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setMobileOpen(false); }, [pathname]);
 
   const isPlatformsActive = ["/compare", "/best", "/versus", "/deals", "/broker"].some(

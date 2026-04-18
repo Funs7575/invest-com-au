@@ -2,6 +2,7 @@ import Link from "next/link";
 
 const NAV_ITEMS = [
   { label: "Hub", href: "/foreign-investment", short: "Hub" },
+  { label: "SIV", href: "/foreign-investment/siv", short: "SIV" },
   { label: "Guides", href: "/foreign-investment/guides", short: "Guides" },
   { label: "Shares", href: "/foreign-investment/shares", short: "Shares" },
   { label: "Energy", href: "/foreign-investment/energy", short: "Energy" },

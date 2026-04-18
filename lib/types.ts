@@ -973,7 +973,12 @@ export type ProfessionalType =
   | 'energy_financial_planner'
   | 'resources_fund_manager'
   | 'foreign_investment_lawyer'
-  | 'petroleum_royalties_advisor';
+  | 'petroleum_royalties_advisor'
+  // New in 20260506 — revenue expansion.
+  | 'smsf_auditor'
+  | 'smsf_specialist'
+  | 'immigration_investment_lawyer'
+  | 'fund_manager';
 
 export interface Professional {
   id: number;
@@ -1143,6 +1148,10 @@ export const PROFESSIONAL_TYPE_LABELS: Record<ProfessionalType, string> = {
   resources_fund_manager: "Resources Fund Manager",
   foreign_investment_lawyer: "Foreign Investment Lawyer",
   petroleum_royalties_advisor: "Petroleum Royalties Advisor",
+  smsf_auditor: "SMSF Auditor",
+  smsf_specialist: "SMSF Specialist",
+  immigration_investment_lawyer: "Immigration Investment Lawyer",
+  fund_manager: "Fund Manager",
 };
 
 export const PROFESSIONAL_TYPE_ICONS: Record<ProfessionalType, string> = {
@@ -1173,6 +1182,10 @@ export const PROFESSIONAL_TYPE_ICONS: Record<ProfessionalType, string> = {
   resources_fund_manager: "bar-chart-2",
   foreign_investment_lawyer: "globe",
   petroleum_royalties_advisor: "banknote",
+  smsf_auditor: "shield-check",
+  smsf_specialist: "building",
+  immigration_investment_lawyer: "plane",
+  fund_manager: "briefcase",
 };
 
 export const AU_STATES = ["NSW", "VIC", "QLD", "WA", "SA", "TAS", "ACT", "NT"] as const;

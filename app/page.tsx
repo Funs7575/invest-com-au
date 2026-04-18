@@ -72,6 +72,14 @@ export default async function HomePage() {
       .eq("status", "active"),
   ]);
 
+  // Latest research reports — non-blocking, safe on failure
+  const { data: reports } = await supabase
+    .from("sector_reports")
+    .select("slug, title, summary, sector, sponsor_name, gated, published_at")
+    .eq("status", "published")
+    .order("published_at", { ascending: false })
+    .limit(3);
+
   const dealBrokers = ((brokers as Broker[]) || []).filter((b) => b.deal).slice(0, 3);
   const brokerCount = brokers?.length || 0;
 
@@ -375,6 +383,8 @@ export default async function HomePage() {
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
               {[
+                { title: "Investment Funds", icon: "briefcase", href: "/invest/funds", color: "bg-amber-600" },
+                { title: "SMSF Hub", icon: "shield", href: "/smsf", color: "bg-slate-800" },
                 { title: "Businesses for Sale", icon: "briefcase", href: "/invest/buy-business/listings", color: "bg-slate-800" },
                 { title: "Mining & Resources", icon: "layers", href: "/invest/mining/listings", color: "bg-amber-600" },
                 { title: "Farmland & Agriculture", icon: "leaf", href: "/invest/farmland/listings", color: "bg-green-600" },
@@ -578,6 +588,69 @@ export default async function HomePage() {
           </div>
         </section>
       </ScrollFadeIn>
+
+      {/* ═══════ RESEARCH REPORTS ═══════ */}
+      {reports && reports.length > 0 && (
+        <ScrollFadeIn>
+          <section className="py-10 md:py-12 bg-slate-50 border-t border-slate-200">
+            <div className="container-custom max-w-6xl">
+              <div className="flex items-baseline justify-between mb-5 flex-wrap gap-2">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-wider text-amber-600 mb-1">
+                    Research
+                  </p>
+                  <h2 className="text-xl md:text-2xl font-extrabold text-slate-900">
+                    Latest sector reports
+                  </h2>
+                </div>
+                <Link
+                  href="/research"
+                  className="text-sm font-bold text-amber-600 hover:text-amber-700 shrink-0"
+                >
+                  All research &rarr;
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {reports.map((r) => (
+                  <Link
+                    key={r.slug}
+                    href={`/research/${r.slug}`}
+                    className="block bg-white hover:shadow-md border border-slate-200 rounded-xl p-5 transition-shadow"
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      {r.sector && (
+                        <span className="text-[10px] font-bold uppercase tracking-wide text-slate-500">
+                          {r.sector.replace(/_/g, " ")}
+                        </span>
+                      )}
+                      <span
+                        className={`text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full ${
+                          r.gated
+                            ? "bg-amber-100 text-amber-800"
+                            : "bg-emerald-100 text-emerald-800"
+                        }`}
+                      >
+                        {r.gated ? "Free · email" : "Free download"}
+                      </span>
+                    </div>
+                    <h3 className="text-sm md:text-base font-extrabold text-slate-900 leading-tight mb-2 line-clamp-2">
+                      {r.title}
+                    </h3>
+                    {r.summary && (
+                      <p className="text-xs text-slate-600 leading-relaxed line-clamp-3">
+                        {r.summary}
+                      </p>
+                    )}
+                    <p className="text-xs font-bold text-amber-600 mt-3">
+                      {r.gated ? "Download free report →" : "Read the report →"}
+                    </p>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+        </ScrollFadeIn>
+      )}
 
       {/* ═══════ MOBILE STICKY CTA (item 68) ═══════ */}
       <MobileStickyAdvisorCta />
