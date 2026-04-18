@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 import { createAdminClient } from "@/lib/supabase/admin";
 import FundsDirectoryClient, { type FundListing } from "./FundsDirectoryClient";
+import VerticalMarketplaceListings from "@/components/marketplace/VerticalMarketplaceListings";
 
 export const revalidate = 600;
 
@@ -93,6 +94,20 @@ export default async function FundsPage() {
         <Suspense fallback={<div className="min-h-[60vh]" />}>
           <FundsDirectoryClient funds={funds} />
         </Suspense>
+
+        {/* Additional fund opportunities in the general marketplace
+            (investment_listings with vertical='funds'). Separate from
+            the fund_listings directory above — this surfaces
+            syndicated and SIV-tagged opportunities the editorial team
+            has curated. */}
+        <VerticalMarketplaceListings
+          vertical="funds"
+          accent="amber"
+          limit={6}
+          heading="More fund opportunities"
+          sub="Editorial-curated investment opportunities with vertical='funds' in our marketplace — syndicated, SIV-complying, and wholesale deal flow."
+          id="fund-marketplace"
+        />
       </div>
     </>
   );

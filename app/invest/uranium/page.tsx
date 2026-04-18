@@ -9,6 +9,7 @@ import {
 import AsxTickerCard from "@/components/commodities/AsxTickerCard";
 import EtfComparisonCard from "@/components/commodities/EtfComparisonCard";
 import GeneralAdviceWarning from "@/components/commodities/GeneralAdviceWarning";
+import VerticalMarketplaceListings from "@/components/marketplace/VerticalMarketplaceListings";
 import Icon from "@/components/Icon";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 
@@ -462,6 +463,13 @@ export default async function UraniumPage() {
           </div>
         </div>
       </section>
+
+      <VerticalMarketplaceListings
+        vertical="uranium"
+        accent="yellow"
+        id="marketplace"
+        sub="Twelve active uranium opportunities — ASX producers and developers plus named project-equity deals. Register interest directly with the listing contact."
+      />
 
       <GeneralAdviceWarning sectorDisplayName={sector.display_name} />
     </div>

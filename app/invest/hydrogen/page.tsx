@@ -9,6 +9,7 @@ import {
 import AsxTickerCard from "@/components/commodities/AsxTickerCard";
 import EtfComparisonCard from "@/components/commodities/EtfComparisonCard";
 import GeneralAdviceWarning from "@/components/commodities/GeneralAdviceWarning";
+import VerticalMarketplaceListings from "@/components/marketplace/VerticalMarketplaceListings";
 import Icon from "@/components/Icon";
 import { breadcrumbJsonLd, SITE_URL, CURRENT_YEAR } from "@/lib/seo";
 
@@ -459,6 +460,13 @@ export default async function HydrogenPage() {
           </div>
         </div>
       </section>
+
+      <VerticalMarketplaceListings
+        vertical="hydrogen"
+        accent="sky"
+        id="marketplace"
+        sub="Ten active hydrogen opportunities — ASX pure-plays, indirect majors, and project-equity deals. Register interest directly with the listing contact."
+      />
 
       <GeneralAdviceWarning sectorDisplayName={sector.display_name} />
     </div>
