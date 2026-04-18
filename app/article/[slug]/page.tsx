@@ -8,6 +8,7 @@ import type { Article, Broker } from "@/lib/types";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import ArticleDetailClient from "./ArticleDetailClient";
+import ArticleBrokerTable from "@/components/ArticleBrokerTable";
 import IntlBrokersEnhanced from "@/components/IntlBrokersEnhanced";
 import ArticleSidebar from "@/components/ArticleSidebar";
 import SponsoredBrokerWidget from "@/components/SponsoredBrokerWidget";
@@ -337,6 +338,17 @@ export default async function ArticlePage({
               changelog={a.changelog ?? undefined}
               showMethodologyLink
             />
+
+            {/* Top-of-article broker compare — every article becomes an
+                affiliate revenue surface. Vertical comes from article
+                category; falls back to '*' for generic articles. */}
+            <div className="mt-6">
+              <ArticleBrokerTable
+                vertical={a.category ?? "*"}
+                maxBrokers={3}
+                heading="Top platforms for this topic"
+              />
+            </div>
           </div>
         </div>
       </section>

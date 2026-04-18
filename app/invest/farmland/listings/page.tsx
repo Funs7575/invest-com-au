@@ -50,7 +50,13 @@ export default async function FarmlandListingsPage() {
         </div>
       )}
       <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading listings...</div>}>
-        <InvestListingsClient listings={listings} categories={categoryTabs} initialCategory="farmland" />
+        <InvestListingsClient
+          listings={listings}
+          categories={categoryTabs}
+          lockedCategory="farmland"
+          pageTitle="Farmland & Agriculture Investment Listings"
+          pageSubtitle="Browse Australian farmland and agricultural investments — cropping, dairy, viticulture and horticulture across NSW, VIC, QLD, WA and SA."
+        />
       </Suspense>
     </>
   );

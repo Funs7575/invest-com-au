@@ -61,7 +61,13 @@ export default async function PrivateCreditListingsPage() {
         </div>
       )}
       <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading listings...</div>}>
-        <InvestListingsClient listings={listings} categories={categoryTabs} initialCategory="private-credit" />
+        <InvestListingsClient
+          listings={listings}
+          categories={categoryTabs}
+          lockedCategory="private-credit"
+          pageTitle="Private Credit Investment Listings"
+          pageSubtitle="Browse Australian private credit investment opportunities — senior secured loans, mezzanine debt and structured credit."
+        />
       </Suspense>
     </>
   );

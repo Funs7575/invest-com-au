@@ -50,7 +50,13 @@ export default async function MiningOpportunitiesPage() {
         </div>
       )}
       <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading listings...</div>}>
-        <InvestListingsClient listings={listings} categories={categoryTabs} initialCategory="mining" />
+        <InvestListingsClient
+          listings={listings}
+          categories={categoryTabs}
+          lockedCategory="mining"
+          pageTitle="Mining Investment Listings"
+          pageSubtitle="Browse Australian mining investment opportunities — filter by commodity (lithium, gold, copper, iron ore, rare earths), project stage and state."
+        />
       </Suspense>
     </>
   );

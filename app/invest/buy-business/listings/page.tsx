@@ -52,7 +52,13 @@ export default async function BusinessListingsPage() {
         </div>
       )}
       <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading listings...</div>}>
-        <InvestListingsClient listings={listings} categories={categoryTabs} initialCategory="buy-business" />
+        <InvestListingsClient
+          listings={listings}
+          categories={categoryTabs}
+          lockedCategory="buy-business"
+          pageTitle="Buy a Business Investment Listings"
+          pageSubtitle="Browse Australian businesses for sale — cafes, agencies, franchises, professional practices and e-commerce."
+        />
       </Suspense>
     </>
   );

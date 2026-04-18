@@ -62,7 +62,13 @@ export default async function AlternativesListingsPage() {
         </div>
       )}
       <Suspense fallback={<div className="py-12 text-center text-slate-400">Loading listings...</div>}>
-        <InvestListingsClient listings={listings} categories={categoryTabs} initialCategory="alternatives" />
+        <InvestListingsClient
+          listings={listings}
+          categories={categoryTabs}
+          lockedCategory="alternatives"
+          pageTitle="Alternative Investment Investment Listings"
+          pageSubtitle="Browse Australian alternative investment opportunities — art, wine, collectibles and non-correlated assets."
+        />
       </Suspense>
     </>
   );

@@ -95,7 +95,7 @@ export const CRON_GROUPS: Record<string, readonly string[]> = {
     "/api/cron/weekly-rate-update",
     "/api/cron/personalized-digest",
   ],
-  "weekly-mon-9": ["/api/cron/fee-digest"],
+  "weekly-mon-9": ["/api/cron/fee-digest", "/api/cron/content-freshness"],
   "weekly-mon-11": ["/api/cron/advisor-dormant-nudge"],
 
   "monthly-1-3": ["/api/cron/property-suburb-refresh"],

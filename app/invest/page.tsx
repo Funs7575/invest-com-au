@@ -5,7 +5,6 @@ import {
   absoluteUrl,
   breadcrumbJsonLd,
   CURRENT_YEAR,
-  SITE_NAME,
 } from "@/lib/seo";
 import {
   getAllInvestCategories,
@@ -16,6 +15,7 @@ import {
   GENERAL_ADVICE_WARNING,
 } from "@/lib/compliance";
 import ScrollReveal from "@/components/ScrollReveal";
+import Icon from "@/components/Icon";
 
 export const revalidate = 3600;
 
@@ -231,6 +231,107 @@ export default async function InvestHubPage() {
               })}
             </div>
           </ScrollReveal>
+
+          {/* Energy & commodity sector hubs */}
+          <div className="mb-8 md:mb-12">
+            <h2 className="text-lg md:text-2xl font-bold mb-3 md:mb-4">
+              Energy &amp; commodity sector hubs
+            </h2>
+            <p className="text-xs md:text-sm text-slate-600 mb-4 md:mb-5 max-w-3xl">
+              ASX stocks, ETFs, and project-equity listings across the
+              commodities that move Australian markets.
+            </p>
+            <ScrollReveal animation="scroll-fade-in">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+                {[
+                  {
+                    slug: "oil-gas",
+                    label: "Oil & Gas",
+                    description: "LNG, exploration, refineries and energy infrastructure",
+                    icon: "fuel",
+                    accentCard: "border-amber-200 hover:border-amber-400",
+                    accentBadge: "bg-amber-100 text-amber-700",
+                    accentHover: "group-hover:text-amber-700",
+                  },
+                  {
+                    slug: "uranium",
+                    label: "Uranium",
+                    description: "ASX uranium producers, explorers and sector ETFs",
+                    icon: "atom",
+                    accentCard: "border-yellow-200 hover:border-yellow-400",
+                    accentBadge: "bg-yellow-100 text-yellow-700",
+                    accentHover: "group-hover:text-yellow-700",
+                  },
+                  {
+                    slug: "hydrogen",
+                    label: "Hydrogen",
+                    description: "Green hydrogen, fuel cells and H2 infrastructure",
+                    icon: "droplets",
+                    accentCard: "border-sky-200 hover:border-sky-400",
+                    accentBadge: "bg-sky-100 text-sky-700",
+                    accentHover: "group-hover:text-sky-700",
+                  },
+                  {
+                    slug: "lithium",
+                    label: "Lithium",
+                    description: "Pilbara producers, downstream processing and battery metals",
+                    icon: "zap",
+                    accentCard: "border-emerald-200 hover:border-emerald-400",
+                    accentBadge: "bg-emerald-100 text-emerald-700",
+                    accentHover: "group-hover:text-emerald-700",
+                  },
+                  {
+                    slug: "gold",
+                    label: "Gold & Precious Metals",
+                    description: "Perth Mint, gold ETFs and ASX gold miners",
+                    icon: "coins",
+                    accentCard: "border-amber-200 hover:border-amber-400",
+                    accentBadge: "bg-amber-100 text-amber-700",
+                    accentHover: "group-hover:text-amber-700",
+                  },
+                  {
+                    slug: "mining",
+                    label: "Mining & Resources",
+                    description: "Iron ore, copper, rare earths and critical minerals",
+                    icon: "layers",
+                    accentCard: "border-slate-200 hover:border-slate-400",
+                    accentBadge: "bg-slate-100 text-slate-700",
+                    accentHover: "group-hover:text-slate-700",
+                  },
+                ].map((s) => {
+                  const count = verticalCounts[s.slug] || 0;
+                  return (
+                    <Link
+                      key={s.slug}
+                      href={`/invest/${s.slug}`}
+                      className={`group relative block rounded-xl border bg-white p-3 md:p-4 transition-all duration-200 hover:shadow-lg hover:scale-[1.01] ${s.accentCard}`}
+                    >
+                      <div className="flex items-start gap-2 mb-2">
+                        <span className={`shrink-0 p-1.5 rounded-lg ${s.accentBadge}`}>
+                          <Icon name={s.icon} size={18} className="" />
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <h3
+                            className={`font-bold text-sm md:text-base text-slate-900 transition-colors ${s.accentHover}`}
+                          >
+                            {s.label}
+                          </h3>
+                          <span className="text-[0.62rem] md:text-xs font-semibold text-slate-400">
+                            {count > 0
+                              ? `${count} ${count === 1 ? "listing" : "listings"} · Sector hub`
+                              : "Sector hub"}
+                          </span>
+                        </div>
+                      </div>
+                      <p className="text-[0.62rem] md:text-xs text-slate-500 leading-relaxed line-clamp-2">
+                        {s.description}
+                      </p>
+                    </Link>
+                  );
+                })}
+              </div>
+            </ScrollReveal>
+          </div>
 
           {/* Bottom CTA */}
           <div className="bg-slate-50 rounded-xl p-4 md:p-6 text-center">
